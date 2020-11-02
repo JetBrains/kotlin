@@ -1,14 +1,14 @@
 package transformers
 
 import org.jetbrains.dokka.DokkaSourceSetID
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import transformers.AbstractContextModuleAndPackageDocumentationReaderTest.Companion.texts
 import java.nio.file.Path
 import kotlin.test.assertEquals
 
-class ModuleAndPackageDocumentationTransformerFunctionalTest : AbstractCoreTest() {
+class ModuleAndPackageDocumentationTransformerFunctionalTest : BaseAbstractTest() {
 
     @Test
     fun `multiplatform project`(@TempDir tempDir: Path) {

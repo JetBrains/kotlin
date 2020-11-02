@@ -8,11 +8,11 @@ import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.MemberPageNode
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class DRITest : AbstractCoreTest() {
+class DRITest : BaseAbstractTest() {
     @Test
     fun issue634() {
         val configuration = dokkaConfiguration {

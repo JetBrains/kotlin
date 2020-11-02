@@ -2,9 +2,9 @@ package multiplatform
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 
-class BasicMultiplatformTest : AbstractCoreTest() {
+class BasicMultiplatformTest : BaseAbstractTest() {
 
     @Test
     fun dataTestExample() {
