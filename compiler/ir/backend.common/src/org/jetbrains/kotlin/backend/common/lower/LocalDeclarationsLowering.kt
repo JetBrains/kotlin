@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
@@ -765,18 +766,22 @@ class LocalDeclarationsLowering(
             if (isSpecial) asString().substring(1, asString().length - 1) else asString()
 
         private fun suggestNameForCapturedValue(declaration: IrValueDeclaration, usedNames: MutableSet<String>): Name {
-            if (declaration is IrValueParameter && declaration.name.asString() == "<this>") {
-                if (declaration.isDispatchReceiver()) {
+            if (declaration is IrValueParameter) {
+                if (declaration.name.asString() == "<this>" && declaration.isDispatchReceiver()) {
                     return findFirstUnusedName("this\$0", usedNames) {
                         "this\$$it"
                     }
-                } else if (declaration.isExtensionReceiver()) {
+                } else if (declaration.name.asString() == "<this>" && declaration.isExtensionReceiver()) {
                     val parentNameSuffix = declaration.parentNameSuffixForExtensionReceiver
                     return findFirstUnusedName("\$this_$parentNameSuffix", usedNames) {
                         "\$this_$parentNameSuffix\$$it"
                     }
+                } else if (declaration.isCapturedReceiver()) {
+                    val baseName = declaration.name.asString().removePrefix(CAPTURED_RECEIVER_PREFIX)
+                    return findFirstUnusedName("\$this_$baseName", usedNames) {
+                        "\$this_$baseName\$$it"
+                    }
                 }
-                // TODO captured extension receivers of extension lambdas?
             }
             val base = if (declaration.name.isSpecial)
                 declaration.name.stripSpecialMarkers()
@@ -809,6 +814,11 @@ class LocalDeclarationsLowering(
             val parentFun = parent as? IrFunction ?: return false
             return parentFun.extensionReceiverParameter == this
         }
+
+        private val CAPTURED_RECEIVER_PREFIX = "\$this\$"
+
+        private fun IrValueParameter.isCapturedReceiver(): Boolean =
+            name.asString().startsWith(CAPTURED_RECEIVER_PREFIX)
 
         private val IrValueParameter.parentNameSuffixForExtensionReceiver: String
             get() {
