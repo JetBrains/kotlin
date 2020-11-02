@@ -1432,8 +1432,8 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
     @Test
     fun testComposableColorFunInterfaceExample(): Unit = checkApi(
         """
+            import androidx.compose.material.Text
             import androidx.compose.ui.graphics.Color
-            import androidx.compose.foundation.Text
 
             @Composable fun condition(): Boolean = true
 
