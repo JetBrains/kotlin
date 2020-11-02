@@ -706,7 +706,6 @@ public class DefaultErrorMessages {
         MAP.put(INLINE_CLASS_NOT_TOP_LEVEL, "Inline classes are only allowed on top level");
         MAP.put(INLINE_CLASS_NOT_FINAL, "Inline classes can be only final");
         MAP.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS, "Primary constructor is required for inline class");
-        MAP.put(NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS, "Primary constructor of inline class must be public");
         MAP.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter");
         MAP.put(INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER, "Inline class primary constructor must have only final read-only (val) property parameter");
         MAP.put(PROPERTY_WITH_BACKING_FIELD_INSIDE_INLINE_CLASS, "Inline class cannot have properties with backing fields");

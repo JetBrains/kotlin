@@ -837,6 +837,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/computablePropertiesInsideInlineClass.kt");
         }
 
+        @TestMetadata("constructor.kt")
+        public void testConstructor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/constructor.kt");
+        }
+
         @TestMetadata("constructorsWithDefaultParameterValues.kt")
         public void testConstructorsWithDefaultParameterValues() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/constructorsWithDefaultParameterValues.kt");

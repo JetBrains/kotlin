@@ -14967,6 +14967,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethod.kt");
         }
 
+        @TestMetadata("constructorImplVisibility.kt")
+        public void testConstructorImplVisibility() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/constructorImplVisibility.kt");
+        }
+
         @TestMetadata("correctBoxingForBranchExpressions.kt")
         public void testCorrectBoxingForBranchExpressions() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressions.kt");
