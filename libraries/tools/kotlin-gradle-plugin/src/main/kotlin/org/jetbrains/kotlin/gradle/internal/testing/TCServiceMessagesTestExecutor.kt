@@ -44,7 +44,7 @@ class TCServiceMessagesTestExecutor(
 
     override fun execute(spec: TCServiceMessagesTestExecutionSpec, testResultProcessor: TestResultProcessor) {
         spec.wrapExecute {
-            val rootOperation = buildOperationExecutor.currentOperation.parentId
+            val rootOperation = buildOperationExecutor.currentOperation.parentId!!
 
             val client = spec.createClient(testResultProcessor, log)
 
