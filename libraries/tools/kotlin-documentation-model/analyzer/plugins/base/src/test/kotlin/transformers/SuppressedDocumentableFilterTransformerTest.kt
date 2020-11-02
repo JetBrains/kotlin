@@ -2,12 +2,12 @@ package transformers
 
 import org.jetbrains.dokka.PackageOptionsImpl
 import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertIterableEquals
 import org.junit.jupiter.api.Test
 
-class SuppressedDocumentableFilterTransformerTest : AbstractCoreTest() {
+class SuppressedDocumentableFilterTransformerTest : BaseAbstractTest() {
 
     @Test
     fun `class filtered by package options`() {

@@ -2,13 +2,13 @@ package transformers
 
 import org.jetbrains.dokka.PackageOptionsImpl
 import org.jetbrains.dokka.Platform
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 
-class ReportUndocumentedTransformerTest : AbstractCoreTest() {
+class ReportUndocumentedTransformerTest : BaseAbstractTest() {
     @Test
     fun `undocumented class gets reported`() {
         val configuration = dokkaConfiguration {

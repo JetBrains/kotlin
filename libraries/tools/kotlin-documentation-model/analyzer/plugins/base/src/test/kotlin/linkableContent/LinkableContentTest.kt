@@ -7,7 +7,7 @@ import org.jetbrains.dokka.model.WithGenerics
 import org.jetbrains.dokka.model.dfs
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.pages.*
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.junit.jupiter.api.Assertions
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 import java.net.URL
 import java.nio.file.Paths
 
-class LinkableContentTest : AbstractCoreTest() {
+class LinkableContentTest : BaseAbstractTest() {
 
     @Test
     fun `Include module and package documentation`() {

@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Assertions.*
 import org.jetbrains.dokka.model.doc.CodeBlock
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 
-class DefaultDescriptorToDocumentableTranslatorTest : AbstractCoreTest() {
+class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
     val configuration = dokkaConfiguration {
         sourceSets {
             sourceSet {
