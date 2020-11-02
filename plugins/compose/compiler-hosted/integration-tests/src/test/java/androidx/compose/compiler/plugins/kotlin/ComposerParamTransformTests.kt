@@ -88,11 +88,14 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             }
         """,
         """
+            @StabilityInferred(parameters = 0)
             abstract class BaseFoo {
               @ComposableContract(restartable = false)
               @Composable
               abstract fun bar(%composer: Composer<*>?, %changed: Int)
+              static val %stable: Int = 0
             }
+            @StabilityInferred(parameters = 0)
             class FooImpl : BaseFoo {
               @ComposableContract(restartable = false)
               @Composable
@@ -100,6 +103,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                 %composer.startReplaceableGroup(<>, "C(bar):Test.kt#2487m")
                 %composer.endReplaceableGroup()
               }
+              static val %stable: Int = 0
             }
         """
     )
@@ -254,7 +258,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             @Composable
             fun Example(children: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
               %composer.startReplaceableGroup(<>, "C(Example)<childr...>:Test.kt#2487m")
-              children(%composer, 0b0110 and %changed)
+              children(%composer, 0b1110 and %changed)
               %composer.endReplaceableGroup()
             }
             @ComposableContract(restartable = false)
@@ -263,7 +267,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
               %composer.startReplaceableGroup(<>, "C(Test)<Exampl...>:Test.kt#2487m")
               Example({ %composer: Composer<*>?, %changed: Int ->
                 %composer.startReplaceableGroup(<>, "C:Test.kt#2487m")
-                if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                   Unit
                 } else {
                   %composer.skipToGroupEnd()
@@ -314,6 +318,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             interface A {
               open fun b() { }
             }
+            @StabilityInferred(parameters = 0)
             class C {
               val foo: Int = 1
               inner class D : A {
@@ -321,6 +326,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                   print(foo)
                 }
               }
+              static val %stable: Int = 0
             }
         """
     )

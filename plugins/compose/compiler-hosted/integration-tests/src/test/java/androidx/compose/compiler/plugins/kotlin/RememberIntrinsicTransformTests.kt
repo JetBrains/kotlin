@@ -54,7 +54,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             @Composable
             fun rememberFoo(a: Int, b: Int, %composer: Composer<*>?, %changed: Int): Foo {
               %composer.startReplaceableGroup(<>, "C(rememberFoo):Test.kt")
-              val tmp0 = %composer.cache(%changed and 0b0110 === 0 && %composer.changed(a) || %changed and 0b0110 === 0b0100 or %changed and 0b00011000 === 0 && %composer.changed(b) || %changed and 0b00011000 === 0b00010000) {
+              val tmp0 = %composer.cache(%changed and 0b0110 === 0 && %composer.changed(a) || %changed and 0b1110 === 0b0100 or %changed and 0b00110000 === 0 && %composer.changed(b) || %changed and 0b01110000 === 0b00100000) {
                 val tmp0_return = Foo(a, b)
                 tmp0_return
               }
@@ -296,10 +296,10 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             fun Test(condition: Boolean, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<A()>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 A(%composer, 0)
                 if (condition) {
                   %composer.startReplaceableGroup(<>)
@@ -342,10 +342,10 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             fun Test(condition: Boolean, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 if (condition) {
                   %composer.startReplaceableGroup(<>, "<A()>,<rememb...>")
                   A(%composer, 0)
@@ -485,9 +485,26 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             @Composable
             fun Test(a: Int, b: Int, c: Bar, d: Boolean, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test):Test.kt")
-              val foo = %composer.cache(%changed and 0b0110 === 0 && %composer.changed(a) || %changed and 0b0110 === 0b0100 or %changed and 0b00011000 === 0 && %composer.changed(b) || %changed and 0b00011000 === 0b00010000 or %changed and 0b01100000 === 0 && %composer.changed(c) || %changed and 0b01100000 === 0b01000000 or %changed and 0b000110000000 === 0 && %composer.changed(d) || %changed and 0b000110000000 === 0b000100000000) {
-                val tmp0_return = Foo()
-                tmp0_return
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+              }
+              if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(b)) 0b00100000 else 0b00010000
+              }
+              if (%changed and 0b001110000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(c)) 0b000100000000 else 0b10000000
+              }
+              if (%changed and 0b0001110000000000 === 0) {
+                %dirty = %dirty or if (%composer.changed(d)) 0b100000000000 else 0b010000000000
+              }
+              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+                val foo = %composer.cache(%dirty and 0b1110 === 0b0100 or %dirty and 0b01110000 === 0b00100000 or %dirty and 0b001110000000 === 0b000100000000 or %dirty and 0b0001110000000000 === 0b100000000000) {
+                  val tmp0_return = Foo()
+                  tmp0_return
+                }
+              } else {
+                %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
                 Test(a, b, c, d, %composer, %changed or 0b0001)
@@ -541,12 +558,12 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             fun Test(inlineInt: InlineInt, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)P(0:InlineInt):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(inlineInt.value)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 val a = InlineInt(123)
-                val foo = %composer.cache(%dirty and 0b0110 === 0b0100 or false) {
+                val foo = %composer.cache(%dirty and 0b1110 === 0b0100 or false) {
                   val tmp0_return = Foo()
                   tmp0_return
                 }
@@ -622,12 +639,12 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             fun Test(a: Int, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test):Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 val b = someInt()
-                val foo = %composer.cache(%dirty and 0b0110 === 0b0100 or %composer.changed(b)) {
+                val foo = %composer.cache(%dirty and 0b1110 === 0b0100 or %composer.changed(b)) {
                   val tmp0_return = Foo(a, b)
                   tmp0_return
                 }
@@ -659,7 +676,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             fun Test(a: Int, %composer: Composer<*>?, %changed: Int): Foo {
               %composer.startReplaceableGroup(<>, "C(Test):Test.kt")
               val b = someInt()
-              val tmp0 = %composer.cache(%changed and 0b0110 === 0 && %composer.changed(a) || %changed and 0b0110 === 0b0100 or %composer.changed(b)) {
+              val tmp0 = %composer.cache(%changed and 0b0110 === 0 && %composer.changed(a) || %changed and 0b1110 === 0b0100 or %composer.changed(b)) {
                 val tmp0_return = Foo(a, b)
                 tmp0_return
               }

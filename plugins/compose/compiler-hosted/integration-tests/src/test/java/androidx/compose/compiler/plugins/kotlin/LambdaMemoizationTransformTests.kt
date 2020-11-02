@@ -41,25 +41,25 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
               val content = content
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
-              } else if (%changed and 0b0110 === 0) {
+              } else if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(enabled)) 0b0100 else 0b0010
               }
               if (%default and 0b0010 !== 0) {
-                %dirty = %dirty or 0b00011000
-              } else if (%changed and 0b00011000 === 0) {
-                %dirty = %dirty or if (%composer.changed(content)) 0b00010000 else 0b1000
+                %dirty = %dirty or 0b00110000
+              } else if (%changed and 0b01110000 === 0) {
+                %dirty = %dirty or if (%composer.changed(content)) 0b00100000 else 0b00010000
               }
-              if (%dirty and 0b1011 xor 0b1010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
                 if (%default and 0b0010 !== 0) {
                   content = composableLambda(%composer, <>, true, "C<Displa...>:Test.kt") { %composer: Composer<*>?, %changed: Int ->
-                    if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                    if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                       Display("%enabled", %composer, 0)
                     } else {
                       %composer.skipToGroupEnd()
                     }
                   }
                 }
-                Wrap(content, %composer, 0b0110 and %dirty shr 0b0010)
+                Wrap(content, %composer, 0b1110 and %dirty shr 0b0011)
               } else {
                 %composer.skipToGroupEnd()
               }
@@ -94,12 +94,12 @@ class LambdaMemoizationTransformTests : ComposeIrTransformTest() {
             fun Test(enabled: Boolean, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(Test)<Wrap(c...>:Test.kt")
               val %dirty = %changed
-              if (%changed and 0b0110 === 0) {
+              if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(enabled)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                 val content = composableLambda(%composer, <>, true, "C<Displa...>:Test.kt") { %composer: Composer<*>?, %changed: Int ->
-                  if (%changed and 0b0011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                     Display("%enabled", %composer, 0)
                   } else {
                     %composer.skipToGroupEnd()
