@@ -24,7 +24,7 @@ buildscript {
     }
 }
 
-def rootBuildDirectory = rootProject.projectDir
+def rootBuildDirectory = projectDir.parentFile
 
 task konanRun {
     subprojects.each {
