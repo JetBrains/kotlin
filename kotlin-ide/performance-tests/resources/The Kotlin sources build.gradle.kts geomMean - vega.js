@@ -6,10 +6,10 @@
 {
   "note": "May https://vega.github.io/vega/docs/ be with you",
   "$schema": "https://vega.github.io/schema/vega/v4.3.0.json",
-  "description": "TestData highlight",
-  "title": "TestData highlight",
+  "description": "The Kotlin sources: highlight build.gradle.kts (geom mean)",
+  "title": "The Kotlin sources: highlight build.gradle.kts (geom mean)",
   "width": 800,
-  "height": 400,
+  "height": 500,
   "padding": 5,
   "autosize": {"type": "pad", "resize": true},
   "signals": [
@@ -95,65 +95,25 @@
       "name": "table",
       "comment": "To test chart in VEGA editor https://vega.github.io/editor/#/ change `_values` to `values` and rename `url` property",
       "_values": {
-        "hits" : {
-          "hits" : [
-            {
-              "_source" : {
-                "buildId" : 87834896,
-                "buildTimestamp" : "2020-09-21T21:00:31+0000",
-                "metrics" : [
-                  {"metricName" : "NonNullAssertion", "metricValue" : 31, "metricError" : 1 },
-                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 191, "metricError" : 4 }
-                ],
-                "benchmark" : "highlight"
+          "hits" : {
+            "hits" : [
+              {
+                "_source" : {"buildId" : 87834896, "buildTimestamp" : "2020-09-21T21:00:31+0000", "metricValue" : 37, "benchmark" : "addImport"}
+              },
+              {
+                "_source" : {"buildId" : 87783396, "buildTimestamp" : "2020-09-21T12:34:19+0000", "metricValue" : 37, "benchmark" : "addImport"}
+              },
+              {
+                "_source" : {"buildId" : 87809918, "buildTimestamp" : "2020-09-21T16:47:11+0000", "metricValue" : 37, "benchmark" : "addImport"}
+              },
+              {
+                "_source" : {"buildId" : 87905203, "buildTimestamp" : "2020-09-22T13:23:44+0000", "metricValue" : 37, "benchmark" : "addImport"}
+              },
+              {
+                "_source" : {"buildId" : 87894638, "buildTimestamp" : "2020-09-22T09:12:16+0000", "metricValue" : 37, "benchmark" : "addImport"}
               }
-            },
-            {
-              "_source" : {
-                "buildId" : 87783396,
-                "buildTimestamp" : "2020-09-21T12:34:19+0000",
-                "metrics" : [
-                  {"metricName" : "NonNullAssertion", "metricValue" : 32, "metricError" : 1 },
-                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 189, "metricError" : 4 }
-                ],
-                "benchmark" : "highlight"
-              }
-            },
-            {
-              "_source" : {
-                "buildId" : 87809918,
-                "buildTimestamp" : "2020-09-21T16:47:11+0000",
-                "metrics" : [
-                  {"metricName" : "NonNullAssertion", "metricValue" : 30, "metricError" : 1 },
-                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 188, "metricError" : 4 }
-                ],
-                "benchmark" : "highlight"
-              }
-            },
-            {
-              "_source" : {
-                "buildId" : 87905203,
-                "buildTimestamp" : "2020-09-22T13:23:44+0000",
-                "metrics" : [
-                  {"metricName" : "NonNullAssertion", "metricValue" : 30, "metricError" : 1 },
-                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 180, "metricError" : 4 }
-                ],
-                "benchmark" : "highlight"
-              }
-            },
-            {
-              "_source" : {
-                "buildId" : 87894638,
-                "buildTimestamp" : "2020-09-22T09:12:16+0000",
-                "metrics" : [
-                  {"metricName" : "NonNullAssertion", "metricValue" : 32, "metricError" : 1 },
-                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 193, "metricError" : 4 }
-                ],
-                "benchmark" : "highlight"
-              }
-            }
-          ]
-        }
+            ]
+          }
       },
       "url": {
         //"comment": "source index pattern",
@@ -162,24 +122,30 @@
         //"comment": "it uses Kibana specific %timefilter% for time frame selection",
         "body": {
           "size": 1000,
-
           "query": {
             "bool": {
               "must": [
+                {"exists": {"field": "synthetic"}},
                 {
                   "bool": {
                     "must_not": [
-                       {"exists": {"field": "warmUp"}},
-                       {"exists": {"field": "synthetic"}}
+                       {"exists": {"field": "warmUp"}}
                      ]
                    }
                 },
-                {"term": {"benchmark.keyword": "highlight"}},
+                {
+                  "bool": {
+                    "should": [
+                      {"term": {"benchmark.keyword": "kotlin gradle.kts"}}
+                    ]
+                  }
+                }
+                {"term": {"name.keyword": "geomMean"}},
                 {"range": {"buildTimestamp": {"%timefilter%": true}}}
               ]
             }
           },
-          "_source": ["buildId", "benchmark", "name", "buildTimestamp", "hasError", "metricValue", "metricError"],
+          "_source": ["buildId", "benchmark", "buildTimestamp", "hasError", "metricValue"],
           "sort": [{"buildTimestamp": {"order": "asc"}}]
         }
       },
@@ -207,12 +173,6 @@
           "expr": "datum._source.metricValue"
         },
         {
-          "comment": "make alias: _source.name -> metricName",
-          "type": "formula",
-          "as": "metricName",
-          "expr": "datum._source.name"
-        },
-        {
           "comment": "define metricError",
           "type": "formula",
           "as": "metricError",
@@ -233,7 +193,7 @@
           "comment": "create `url` value that points to TC build",
           "type": "formula",
           "as": "url",
-          "expr": "'https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_Benchmarks_PluginPerformanceTests_IdeaPluginPerformanceTests/' + datum.buildId"
+          "expr": "'https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_Benchmarks_PluginPerformanceTests_IdeaPluginPerformanceTests/' + datum._source.buildId"
         }
       ]
     },

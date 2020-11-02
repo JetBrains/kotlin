@@ -32,6 +32,8 @@ fun main(args: Array<String>) {
                         index = it.index,
                         hasError = it.hasError,
                         buildTimestamp = benchmark.buildTimestamp,
+                        metricValue = it.metricValue,
+                        metricError = it.metricError,
                         metrics = it.metrics ?: emptyList()
                     )
                     warmUpBenchmark.writeJson()

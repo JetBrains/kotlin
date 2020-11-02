@@ -176,17 +176,17 @@
                 {
                   "bool": {
                     "should": [
+                       {"exists": {"field": "synthetic"}},
+                       {"term": {"name.keyword": "geomMean"}}
+                     ]
+                   }
+                },
+                {
+                  "bool": {
+                    "should": [
                       {"term": {"benchmark.keyword": "completion-basic"}},
-                      {
-                        "term": {
-                          "benchmark.keyword": "completion-basic-charFilter"
-                        }
-                      },
-                      {
-                        "term": {
-                          "benchmark.keyword": "completion-basic-keyword"
-                        }
-                      },
+                      {"term": {"benchmark.keyword": "completion-basic-charFilter"}},
+                      {"term": {"benchmark.keyword": "completion-basic-keyword"}},
                       {"term": {"benchmark.keyword": "completion-incremental"}},
                       {"term": {"benchmark.keyword": "completion-smart"}}
                     ]
@@ -195,7 +195,7 @@
               ]
             }
           },
-          "_source": ["buildId", "benchmark", "buildTimestamp", "metrics.hasError", "geomMean"],
+          "_source": ["buildId", "benchmark", "buildTimestamp", "name", "metricValue", "hasError"],
           "sort": [{"buildTimestamp": {"order": "asc"}}]
         }
       },
@@ -217,10 +217,10 @@
           "expr": "datum._source.benchmark"
         },
         {
-          "comment": "make alias: _source.geomMean -> metricValue",
+          "comment": "make alias: _source.metricValue -> metricValue",
           "type": "formula",
           "as": "metricValue",
-          "expr": "datum._source.geomMean"
+          "expr": "datum._source.metricValue"
         },
         {
           "comment": "define metricError",
@@ -229,10 +229,10 @@
           "expr": "1"
         },
         {
-          "comment": "make alias: _source.metrics[0].hasError -> hasError",
+          "comment": "make alias: _source.hasError -> hasError",
           "type": "formula",
           "as": "hasError",
-          "expr": "datum._source.metrics ? datum._source.metrics[0].hasError : false"
+          "expr": "datum._source.hasError ? datum._source.hasError : false"
         },
         {
           "type": "formula",

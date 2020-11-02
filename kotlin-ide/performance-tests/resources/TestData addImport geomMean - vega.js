@@ -6,8 +6,8 @@
 {
   "note": "May https://vega.github.io/vega/docs/ be with you",
   "$schema": "https://vega.github.io/schema/vega/v4.3.0.json",
-  "description": "TestData geomMean",
-  "title": "TestData geomMean",
+  "description": "TestData addImport geomMean",
+  "title": "TestData addImport geomMean",
   "width": 800,
   "height": 500,
   "padding": 5,
@@ -98,19 +98,19 @@
           "hits" : {
             "hits" : [
               {
-                "_source" : {"buildId" : 87834896, "buildTimestamp" : "2020-09-21T21:00:31+0000", "geomMean" : 37, "benchmark" : "highlight"}
+                "_source" : {"buildId" : 87834896, "buildTimestamp" : "2020-09-21T21:00:31+0000", "metricValue" : 37, "benchmark" : "addImport"}
               },
               {
-                "_source" : {"buildId" : 87783396, "buildTimestamp" : "2020-09-21T12:34:19+0000", "geomMean" : 37, "benchmark" : "highlight"}
+                "_source" : {"buildId" : 87783396, "buildTimestamp" : "2020-09-21T12:34:19+0000", "metricValue" : 37, "benchmark" : "addImport"}
               },
               {
-                "_source" : {"buildId" : 87809918, "buildTimestamp" : "2020-09-21T16:47:11+0000", "geomMean" : 37, "benchmark" : "highlight"}
+                "_source" : {"buildId" : 87809918, "buildTimestamp" : "2020-09-21T16:47:11+0000", "metricValue" : 37, "benchmark" : "addImport"}
               },
               {
-                "_source" : {"buildId" : 87905203, "buildTimestamp" : "2020-09-22T13:23:44+0000", "geomMean" : 37, "benchmark" : "highlight"}
+                "_source" : {"buildId" : 87905203, "buildTimestamp" : "2020-09-22T13:23:44+0000", "metricValue" : 37, "benchmark" : "addImport"}
               },
               {
-                "_source" : {"buildId" : 87894638, "buildTimestamp" : "2020-09-22T09:12:16+0000", "geomMean" : 37, "benchmark" : "highlight"}
+                "_source" : {"buildId" : 87894638, "buildTimestamp" : "2020-09-22T09:12:16+0000", "metricValue" : 37, "benchmark" : "addImport"}
               }
             ]
           }
@@ -125,12 +125,21 @@
           "query": {
             "bool": {
               "must": [
-                {"term": {"benchmark.keyword": "highlight"}},
+                {"exists": {"field": "synthetic"}},
+                {
+                  "bool": {
+                    "must_not": [
+                       {"exists": {"field": "warmUp"}}
+                     ]
+                   }
+                },
+                {"term": {"benchmark.keyword": "add-import"}},
+                {"term": {"name.keyword": "geomMean"}},
                 {"range": {"buildTimestamp": {"%timefilter%": true}}}
               ]
             }
           },
-          "_source": ["buildId", "benchmark", "buildTimestamp", "metrics.hasError", "geomMean"],
+          "_source": ["buildId", "benchmark", "buildTimestamp", "hasError", "metricValue"],
           "sort": [{"buildTimestamp": {"order": "asc"}}]
         }
       },
@@ -152,10 +161,10 @@
           "expr": "datum._source.benchmark"
         },
         {
-          "comment": "make alias: _source.geomMean -> metricValue",
+          "comment": "make alias: _source.metricValue -> metricValue",
           "type": "formula",
           "as": "metricValue",
-          "expr": "datum._source.geomMean"
+          "expr": "datum._source.metricValue"
         },
         {
           "comment": "define metricError",
@@ -164,10 +173,10 @@
           "expr": "1"
         },
         {
-          "comment": "make alias: _source.metrics[0].hasError -> hasError",
+          "comment": "make alias: _source.hasError -> hasError",
           "type": "formula",
           "as": "hasError",
-          "expr": "datum._source.metrics ? datum._source.metrics[0].hasError : false"
+          "expr": "datum._source.metrics ? datum._source.hasError : false"
         },
         {
           "type": "formula",

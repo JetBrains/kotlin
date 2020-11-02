@@ -34,8 +34,7 @@ abstract class AbstractPerformanceImportTest : KotlinLightCodeInsightFixtureTest
 
     override fun tearDown() {
         RunAll(
-            ThrowableRunnable { super.tearDown() },
-            ThrowableRunnable { stats().flush() }
+            ThrowableRunnable { super.tearDown() }
         ).run()
     }
 

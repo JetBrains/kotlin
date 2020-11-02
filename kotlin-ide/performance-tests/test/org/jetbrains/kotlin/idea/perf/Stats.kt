@@ -162,6 +162,8 @@ class Stats(
         } else {
             block()
         }
+
+        flush()
     }
 
     private fun convertStatInfoIntoMetrics(
@@ -350,7 +352,7 @@ class Stats(
         flush()
     }
 
-    fun flush() {
+    private fun flush() {
         val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
         simpleDateFormat.timeZone = TimeZone.getTimeZone("UTC")
 //        properties["buildTimestamp"] = simpleDateFormat.format(Date())
