@@ -242,7 +242,7 @@ fun main(args: Array<String>) {
 
 
             testClass<AbstractBytecodeListingTest> {
-                model("codegen/bytecodeListing")
+                model("codegen/bytecodeListing", targetBackend = TargetBackend.JVM)
             }
 
             testClass<AbstractTopLevelMembersInvocationTest> {
