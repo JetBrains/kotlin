@@ -776,7 +776,7 @@ fun test(j1: J1) {
 }
 ----
 
-To achieve such behaviour the syntactic `foo` (returning 1) should have less priority than the declared `foo` (returning 2).
+To achieve such behaviour the syntactic `foo` (returning 1) should have lower priority than the declared `foo` (returning 2).
 
 Finding the most specific member is divided into two steps:
 

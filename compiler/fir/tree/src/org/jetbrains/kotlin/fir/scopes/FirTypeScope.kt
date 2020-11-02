@@ -26,7 +26,7 @@ abstract class FirTypeScope : FirScope(), FirContainingNamesAwareScope {
     //
     // Currently, this function and its property brother both have very weak guarantees
     // - It may silently do nothing on symbols originated from different scope instance
-    // - It may return the same overridden symbols more then once in case of substitution
+    // - It may return the same overridden symbols more than once in case of substitution
     abstract fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirFunctionSymbol<*>,
         processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction

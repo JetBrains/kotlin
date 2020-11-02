@@ -25,7 +25,7 @@ import javax.swing.SwingUtilities
  * Loading tasks scheduled by calling [ensureScheduled].
  *
  * Progress indicator will be shown after [PROGRESS_INDICATOR_DELAY] ms or if
- * more then [PROGRESS_INDICATOR_MIN_QUEUE] tasks scheduled.
+ * more than [PROGRESS_INDICATOR_MIN_QUEUE] tasks scheduled.
  *
  * States:
  *                                 silentWorker     underProgressWorker

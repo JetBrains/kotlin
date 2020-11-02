@@ -15,7 +15,7 @@ class DefaultCallArgs(val size: Int) {
 
     fun mark(index: Int) {
         assert (index < size) {
-            "Mask index should be less then size, but $index >= $size"
+            "Mask index should be less than size, but $index >= $size"
         }
         bits.set(index)
     }
