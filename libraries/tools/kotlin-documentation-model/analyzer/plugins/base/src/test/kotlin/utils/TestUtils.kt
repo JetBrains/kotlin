@@ -3,7 +3,7 @@ package utils
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.doc.P
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.collections.orEmpty
 
@@ -11,7 +11,7 @@ import kotlin.collections.orEmpty
 annotation class TestDSL
 
 @TestDSL
-abstract class ModelDSL : AbstractCoreTest() {
+abstract class ModelDSL : BaseAbstractTest() {
     operator fun Documentable?.div(name: String): Documentable? =
         this?.children?.find { it.name == name }
 

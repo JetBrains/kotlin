@@ -6,12 +6,12 @@ import org.jetbrains.dokka.model.childrenOfType
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.firstChildOfType
 import org.jetbrains.dokka.model.firstMemberOfType
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
 import utils.text
 
-class JavadocParserTest : AbstractCoreTest() {
+class JavadocParserTest : BaseAbstractTest() {
 
     private fun performJavadocTest(testOperation: (DModule) -> Unit) {
         val configuration = dokkaConfiguration {

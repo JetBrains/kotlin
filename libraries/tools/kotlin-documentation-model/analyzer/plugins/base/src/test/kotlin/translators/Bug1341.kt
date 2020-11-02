@@ -1,11 +1,11 @@
 package translators
 
 import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-class Bug1341 : AbstractCoreTest() {
+class Bug1341 : BaseAbstractTest() {
     @Test
     fun `reproduce bug #1341`() {
         val configuration = dokkaConfiguration {

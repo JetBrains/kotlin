@@ -1,10 +1,10 @@
 package filter
 
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class EmptyPackagesFilterTest : AbstractCoreTest() {
+class EmptyPackagesFilterTest : BaseAbstractTest() {
     @Test
     fun `empty package with false skipEmptyPackages`() {
         val configuration = dokkaConfiguration {

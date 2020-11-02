@@ -2,13 +2,13 @@ package basic
 
 import org.jetbrains.dokka.DokkaException
 import org.jetbrains.dokka.testApi.logger.TestLogger
-import org.jetbrains.dokka.testApi.testRunner.AbstractCoreTest
+import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-class FailOnWarningTest : AbstractCoreTest() {
+class FailOnWarningTest : BaseAbstractTest() {
 
     @Test
     fun `throws exception if one or more warnings were emitted`() {
