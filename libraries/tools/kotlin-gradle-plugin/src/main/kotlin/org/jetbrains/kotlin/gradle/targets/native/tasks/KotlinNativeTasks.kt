@@ -14,10 +14,10 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.logging.Logger
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
@@ -112,7 +112,7 @@ private fun Collection<File>.filterKlibsPassedToCompiler(project: Project) = fil
 }
 
 // endregion
-abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : AbstractKotlinNativeCompilation> : SourceTask() {
+abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : AbstractKotlinNativeCompilation> : AbstractCompile() {
     @get:Internal
     abstract val compilation: Provider<K>
 
@@ -145,10 +145,11 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Abst
         else project.files()
     }
 
-    @get:Internal
-    @get:Deprecated("Use libraries instead", ReplaceWith("libraries"))
-    val classpath: FileCollection
-        get() = libraries
+    @Deprecated("For native tasks use 'libraries' instead", ReplaceWith("libraries"))
+    override fun getClasspath(): FileCollection = libraries
+    override fun setClasspath(configuration: FileCollection?) {
+        throw UnsupportedOperationException("Setting classpath directly is unsupported.")
+    }
 
     @get:Input
     val target: String by project.provider { compilation.get().konanTarget.name }
@@ -178,13 +179,6 @@ abstract class AbstractKotlinNativeCompile<T : KotlinCommonToolOptions, K : Abst
     @get:Input
     val kotlinNativeVersion: String
         get() = project.konanVersion.toString()
-
-    private val destinationDirectory = getProject().getObjects().directoryProperty()
-
-    @get:Internal
-    open var destinationDir: File
-        get() = destinationDirectory.get().asFile
-        set(value) = destinationDirectory.set(value)
 
     @Internal
     open val outputFile: Provider<File> = project.provider {
@@ -487,10 +481,14 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
     override fun getSource(): FileTree =
         project.files(intermediateLibrary.get()).asFileTree
 
-    @get:OutputDirectory
-    override var destinationDir: File
-        get() = binary.outputDirectory
-        set(value) { binary.outputDirectory = value }
+    @OutputDirectory
+    override fun getDestinationDir(): File {
+        return binary.outputDirectory
+    }
+
+    override fun setDestinationDir(destinationDir: File) {
+        binary.outputDirectory = destinationDir
+    }
 
     override val outputKind: CompilerOutputKind
         @Input get() = binary.outputKind.compilerOutputKind
