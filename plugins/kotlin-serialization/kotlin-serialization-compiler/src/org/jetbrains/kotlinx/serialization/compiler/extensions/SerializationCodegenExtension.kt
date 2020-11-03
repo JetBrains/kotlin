@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -35,9 +36,10 @@ open class SerializationCodegenExtension @JvmOverloads constructor(val metadataP
         type: KotlinType,
         asmType: Type,
         typeMapper: KotlinTypeMapper,
-        typeSystem: TypeSystemCommonBackendContext
-    ): Boolean {
-        return JvmSerializerIntrinsic.applyPluginDefinedReifiedOperationMarker(insn, instructions, type, asmType, typeMapper, typeSystem)
+        typeSystem: TypeSystemCommonBackendContext,
+        module: ModuleDescriptor
+    ): Int {
+        return JvmSerializerIntrinsic.applyPluginDefinedReifiedOperationMarker(insn, instructions, type, asmType, typeMapper, typeSystem, module)
     }
 
     override val shouldGenerateClassSyntheticPartsInLightClassesMode: Boolean

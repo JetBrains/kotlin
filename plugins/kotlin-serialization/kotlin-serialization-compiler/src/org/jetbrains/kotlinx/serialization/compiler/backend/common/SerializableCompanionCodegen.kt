@@ -12,6 +12,9 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_PROVIDER_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
+import org.jetbrains.kotlinx.serialization.compiler.resolve.isKSerializer
+import org.jetbrains.kotlinx.serialization.compiler.resolve.isSerializableObject
 
 abstract class SerializableCompanionCodegen(
     protected val companionDescriptor: ClassDescriptor,
@@ -20,15 +23,7 @@ abstract class SerializableCompanionCodegen(
     protected val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorByCompanion(companionDescriptor)!!
 
     fun generate() {
-        val serializerGetterDescriptor = companionDescriptor.unsubstitutedMemberScope.getContributedFunctions(
-            SERIALIZER_PROVIDER_NAME,
-            NoLookupLocation.FROM_BACKEND
-        ).firstOrNull {
-            it.valueParameters.size == serializableDescriptor.declaredTypeParameters.size
-                    && it.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
-                    && it.valueParameters.all { p -> isKSerializer(p.type) }
-                    && it.returnType != null && isKSerializer(it.returnType)
-        } ?: throw IllegalStateException(
+        val serializerGetterDescriptor = findSerializerGetterOnCompanion(serializableDescriptor) ?: throw IllegalStateException(
             "Can't find synthesized 'Companion.serializer()' function to generate, " +
                     "probably clash with user-defined function has occurred"
         )
@@ -44,5 +39,20 @@ abstract class SerializableCompanionCodegen(
 
     protected open fun generateLazySerializerGetter(methodDescriptor: FunctionDescriptor) {
         generateSerializerGetter(methodDescriptor)
+    }
+
+    companion object {
+        fun findSerializerGetterOnCompanion(serializableDescriptor: ClassDescriptor): FunctionDescriptor? {
+            val companionObjectDesc = if (serializableDescriptor.isSerializableObject) serializableDescriptor else serializableDescriptor.companionObjectDescriptor
+            return companionObjectDesc?.unsubstitutedMemberScope?.getContributedFunctions(
+                SERIALIZER_PROVIDER_NAME,
+                NoLookupLocation.FROM_BACKEND
+            )?.firstOrNull {
+                it.valueParameters.size == serializableDescriptor.declaredTypeParameters.size
+                        && it.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
+                        && it.valueParameters.all { p -> isKSerializer(p.type) }
+                        && it.returnType != null && isKSerializer(it.returnType)
+            }
+        }
     }
 }

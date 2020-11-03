@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
@@ -45,7 +46,7 @@ interface ExpressionCodegenExtension {
      * Called when inliner encounters [ReifiedTypeInliner.OperationKind.PLUGIN_DEFINED] marker
      * to perform extension-specific operation with reified type parameter.
      *
-     * @return false if this extension ignores the marker, true when operation was performed.
+     * @return Required stack size for method after inlining is performed, 0 if the size is unknown, or -1 if extension ignores this marker
      */
     fun applyPluginDefinedReifiedOperationMarker(
         insn: MethodInsnNode,
@@ -53,8 +54,9 @@ interface ExpressionCodegenExtension {
         type: KotlinType,
         asmType: Type,
         typeMapper: KotlinTypeMapper,
-        typeSystem: TypeSystemCommonBackendContext
-    ): Boolean = false
+        typeSystem: TypeSystemCommonBackendContext,
+        module: ModuleDescriptor
+    ): Int = -1
 
     fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {}
 
