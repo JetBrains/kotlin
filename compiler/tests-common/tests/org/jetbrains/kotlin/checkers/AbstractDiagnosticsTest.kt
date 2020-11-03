@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.checkers
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import junit.framework.AssertionFailedError
@@ -15,6 +16,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
+import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -292,6 +294,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         }
         if (testDataFile.readText().contains("// FIR_IDENTICAL")) {
             try {
+                PsiElementFinder.EP.getPoint(environment.project).unregisterExtension(JavaElementFinder::class.java)
                 testRunner.analyzeAndCheckUnhandled(testDataFile, files)
             } catch (e: FileComparisonFailure) {
                 println("Old FE & FIR produces different diagnostics for this file. Please remove FIR_IDENTICAL line manually")
