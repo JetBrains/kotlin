@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SPEC_TASK_NAME
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -736,6 +737,31 @@ class CocoaPodsIT : BaseGradleIT() {
             gradleBuildScript().appendToCocoapodsBlock("useLibraries()")
             gradleBuildScript().addPod(defaultLibraryPodName)
             testImport()
+        }
+    }
+
+    @Test
+    fun testCommaSeparatedTargets() {
+        with(project) {
+            gradleBuildScript().modify {
+                // Replace a single target with a pair (iosX64 + iosArm64) to test building a fat framework.
+                it.replace("iosX64(\"iOS\")", "ios()")
+            }
+            hooks.addHook {
+                // Check that a built universal framework includes both device and simulator architectures.
+                val framework = fileInWorkingDir("build/cocoapods/framework/cocoapods.framework/cocoapods")
+                with(runProcess(listOf("file", framework.absolutePath), projectDir)) {
+                    assertTrue(isSuccessful)
+                    assertTrue(output.contains("\\(for architecture x86_64\\):\\s+current ar archive".toRegex()))
+                    assertTrue(output.contains("\\(for architecture arm64\\):\\s+current ar archive".toRegex()))
+                }
+            }
+            // Run the build.
+            test(
+                "syncFramework",
+                "-Pkotlin.native.cocoapods.target=ios_x64,ios_arm64",
+                "-Pkotlin.native.cocoapods.configuration=DEBUG"
+            )
         }
     }
 
