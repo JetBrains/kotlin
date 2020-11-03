@@ -72,10 +72,8 @@ object InlineClassAbi {
         }
 
         val suffix = when {
-            irFunction.fullValueParameterList.any { it.type.requiresMangling } ->
-                hashSuffix(irFunction)
-            mangleReturnTypes && irFunction.hasMangledReturnType ->
-                returnHashSuffix(irFunction)
+            irFunction.fullValueParameterList.any { it.type.requiresMangling } || (mangleReturnTypes && irFunction.hasMangledReturnType) ->
+                hashSuffix(irFunction, mangleReturnTypes)
             (irFunction.parent as? IrClass)?.isInline == true &&
                     irFunction.origin != IrDeclarationOrigin.IR_BUILTINS_STUB ->
                 "impl"
@@ -100,27 +98,26 @@ object InlineClassAbi {
     private val IrFunction.propertyName: Name
         get() = (this as IrSimpleFunction).correspondingPropertySymbol!!.owner.name
 
-    fun returnHashSuffix(irFunction: IrFunction) =
-        md5base64(":${irFunction.returnType.eraseToString()}")
-
-    private fun hashSuffix(irFunction: IrFunction): String {
+    fun hashSuffix(irFunction: IrFunction, mangleReturnTypes: Boolean): String {
         val signatureElementsForMangling =
             irFunction.fullValueParameterList.mapTo(mutableListOf()) { it.type.eraseToString() }
         if (irFunction.isSuspend) {
             // The JVM backend computes mangled names after creating suspend function views, but before default argument
             // stub insertion. It would be nice if this part of the continuation lowering happened earlier in the pipeline.
             // TODO: Move suspend function view creation before JvmInlineClassLowering.
-            signatureElementsForMangling += "Lkotlin.coroutines.Continuation;"
+            signatureElementsForMangling += "x"
         }
-        return md5base64(signatureElementsForMangling.joinToString())
+        val signatureString = signatureElementsForMangling.joinToString() +
+                if (mangleReturnTypes && irFunction.hasMangledReturnType) ":${irFunction.returnType.eraseToString()}" else ""
+        return md5base64(signatureString)
     }
 
-    private fun IrType.eraseToString() = buildString {
+    private fun IrType.eraseToString() = if (getClass()?.isInline == true) buildString {
         append('L')
         append(erasedUpperBound.fqNameWhenAvailable!!)
         if (isNullable()) append('?')
         append(';')
-    }
+    } else "x"
 }
 
 internal val IrType.requiresMangling: Boolean

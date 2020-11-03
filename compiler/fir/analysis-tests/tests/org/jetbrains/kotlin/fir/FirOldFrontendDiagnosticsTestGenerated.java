@@ -12837,6 +12837,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/inlineClasses/basicInlineClassDeclarationDisabled.kt");
         }
 
+        @TestMetadata("changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt")
+        public void testChangingNullabilityOfOrdinaryClassIsBinaryCompatibleChange() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inlineClasses/changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt");
+        }
+
         @TestMetadata("constructorsJvmSignaturesClash.kt")
         public void testConstructorsJvmSignaturesClash() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inlineClasses/constructorsJvmSignaturesClash.kt");

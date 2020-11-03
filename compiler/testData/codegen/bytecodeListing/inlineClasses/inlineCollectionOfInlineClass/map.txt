@@ -50,8 +50,8 @@ public final class InlineMap {
     public static method equals-impl(p0: java.util.Map, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.util.Map, p1: java.util.Map): boolean
     public bridge final method get(p0: java.lang.Object): java.lang.Object
-    public method get-FSIWiWE(p0: int): IV
-    public static method get-FSIWiWE(p0: java.util.Map, p1: int): IV
+    public method get-qgyy0Jc(p0: int): IV
+    public static method get-qgyy0Jc(p0: java.util.Map, p1: int): IV
     public method getEntries(): java.util.Set
     public static method getEntries-impl(p0: java.util.Map): java.util.Set
     public method getKeys(): java.util.Set
@@ -66,7 +66,7 @@ public final class InlineMap {
     public static method isEmpty-impl(p0: java.util.Map): boolean
     public bridge final method keySet(): java.util.Set
     public synthetic method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public method put-pjrbk2k(p0: int, p1: double): IV
+    public method put-eSoqwEg(p0: int, p1: double): IV
     public method putAll(p0: java.util.Map): void
     public method remove(p0: java.lang.Object): java.lang.Object
     public bridge final method size(): int

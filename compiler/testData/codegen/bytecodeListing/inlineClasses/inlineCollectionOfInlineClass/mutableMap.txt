@@ -51,8 +51,8 @@ public final class InlineMutableMap {
     public static method equals-impl(p0: java.util.Map, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.util.Map, p1: java.util.Map): boolean
     public bridge final method get(p0: java.lang.Object): java.lang.Object
-    public method get-FSIWiWE(p0: int): IV
-    public static method get-FSIWiWE(p0: java.util.Map, p1: int): IV
+    public method get-qgyy0Jc(p0: int): IV
+    public static method get-qgyy0Jc(p0: java.util.Map, p1: int): IV
     public method getEntries(): java.util.Set
     public static method getEntries-impl(p0: java.util.Map): java.util.Set
     public method getKeys(): java.util.Set
@@ -67,13 +67,13 @@ public final class InlineMutableMap {
     public static method isEmpty-impl(p0: java.util.Map): boolean
     public bridge final method keySet(): java.util.Set
     public synthetic bridge method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public method put-pjrbk2k(p0: int, p1: double): IV
-    public static method put-pjrbk2k(p0: java.util.Map, p1: int, p2: double): IV
+    public method put-eSoqwEg(p0: int, p1: double): IV
+    public static method put-eSoqwEg(p0: java.util.Map, p1: int, p2: double): IV
     public method putAll(p0: java.util.Map): void
     public static method putAll-impl(p0: java.util.Map, p1: java.util.Map): void
     public bridge final method remove(p0: java.lang.Object): java.lang.Object
-    public method remove-FSIWiWE(p0: int): IV
-    public static method remove-FSIWiWE(p0: java.util.Map, p1: int): IV
+    public method remove-qgyy0Jc(p0: int): IV
+    public static method remove-qgyy0Jc(p0: java.util.Map, p1: int): IV
     public bridge final method size(): int
     public method toString(): java.lang.String
     public static method toString-impl(p0: java.util.Map): java.lang.String

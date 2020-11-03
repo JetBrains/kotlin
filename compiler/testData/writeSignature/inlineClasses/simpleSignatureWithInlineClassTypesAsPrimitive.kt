@@ -21,6 +21,6 @@ object Test {
 // jvm signature: (I)V
 // generic signature: null
 
-// method: Test::asAll--J2ODwA
+// method: Test::asAll-wqC9CcI
 // jvm signature: (ILjava/lang/Object;II)I
 // generic signature: null
