@@ -32,6 +32,14 @@ private enum class KotlinRootKind {
 }
 
 private fun File.getKotlinRootKind(): KotlinRootKind? {
+    if (resolve("intellij.idea.ultimate.main.iml").isFile && this.parentFile?.resolve("kotlin.kotlin-ide.iml")?.exists() != true) {
+        return KotlinRootKind.ULTIMATE
+    }
+
+    if (resolve("intellij.idea.community.main.iml").isFile && this.parentFile?.resolve("kotlin.intellij-kotlin.iml")?.exists() != true) {
+        return KotlinRootKind.COMMUNITY
+    }
+
     if (resolve("kotlin.kotlin-ide.iml").isFile && resolve("intellij").isDirectory && resolve("kotlin/idea/kotlin.idea.iml").isFile) {
         return KotlinRootKind.ULTIMATE
     }
