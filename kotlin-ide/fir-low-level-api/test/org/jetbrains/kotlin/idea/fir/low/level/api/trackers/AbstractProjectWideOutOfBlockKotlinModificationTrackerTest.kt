@@ -32,6 +32,6 @@ abstract class AbstractProjectWideOutOfBlockKotlinModificationTrackerTest : Kotl
     }
 
     companion object {
-        private const val DEFAULT_TEXT_TO_TYPE = "hello"
+        const val DEFAULT_TEXT_TO_TYPE = "hello"
     }
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.element.builder
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
@@ -13,9 +14,11 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureElement
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 
 /**
@@ -52,6 +55,16 @@ internal class FirElementBuilder {
         mappings[psi]?.let { return it }
         return psi.getFirOfClosestParent(mappings)?.second
             ?: error("FirElement is not found for:\n${element.getElementTextInContext()}")
+    }
+
+    @TestOnly
+    fun getStructureElementFor(
+        element: KtElement,
+        moduleFileCache: ModuleFileCache,
+        fileStructureCache: FileStructureCache,
+    ): FileStructureElement {
+        val fileStructure = fileStructureCache.getFileStructure(element.containingKtFile, moduleFileCache)
+        return fileStructure.getStructureElementFor(element)
     }
 }
 
