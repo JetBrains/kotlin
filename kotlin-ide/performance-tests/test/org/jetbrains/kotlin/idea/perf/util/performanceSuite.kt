@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.perf.util.ProfileTools.Companion.enableAllInspe
 import org.jetbrains.kotlin.idea.perf.util.ProfileTools.Companion.enableInspections
 import org.jetbrains.kotlin.idea.perf.util.ProfileTools.Companion.enableSingleInspection
 import org.jetbrains.kotlin.idea.perf.util.ProfileTools.Companion.initDefaultProfile
+import org.jetbrains.kotlin.idea.test.GradleProcessOutputInterceptor
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.testFramework.*
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
