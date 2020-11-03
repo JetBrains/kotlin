@@ -927,6 +927,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/annotations/deprecatedRepeatable.kt");
             }
 
+            @TestMetadata("dontReportWarningAboutChangingExecutionOrderForVararg.kt")
+            public void testDontReportWarningAboutChangingExecutionOrderForVararg() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/dontReportWarningAboutChangingExecutionOrderForVararg.kt");
+            }
+
             @TestMetadata("extensionFunctionType.kt")
             public void testExtensionFunctionType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/extensionFunctionType.kt");
