@@ -111,7 +111,8 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
                           implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinHighLevelExpressionTypeProvider"/>
     <highlightingPassFactory implementation="org.jetbrains.kotlin.idea.fir.highlighter.KotlinDiagnosticHighlightingPassFactory"/>
 
-
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirModificationTrackerService"/>
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory"/>
   </extensions>
 
   <!--  scripts  -->

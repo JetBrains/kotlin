@@ -86,6 +86,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyRes
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
 import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractMemberScopeByFqNameTest
 import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolFromLibraryPointerRestoreTest
 import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByFqNameBuildingTest
@@ -1036,6 +1037,9 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractFirLazyDeclarationResolveTest> {
                 model("lazyResolve")
+            }
+            testClass<AbstractProjectWideOutOfBlockKotlinModificationTrackerTest> {
+                model("outOfBlockProjectWide")
             }
             testClass<AbstractFileStructureTest> {
                 model("fileStructure")
