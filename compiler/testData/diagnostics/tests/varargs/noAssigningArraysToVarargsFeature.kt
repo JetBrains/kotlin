@@ -30,7 +30,7 @@ fun jTest1() {}
 @JavaAnn(value = <!NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, TYPE_MISMATCH!>["value"]<!>)
 fun jTest2() {}
 
-@JavaAnn(<!NI;CHANGING_ARGUMENTS_EXECUTION_ORDER_FOR_NAMED_VARARGS!>value = <!NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, TYPE_MISMATCH!>["value"]<!><!>, path = ["path"])
+@JavaAnn(value = <!NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH, TYPE_MISMATCH!>["value"]<!>, path = ["path"])
 fun jTest3() {}
 
 annotation class IntAnn(vararg val i: Int)
