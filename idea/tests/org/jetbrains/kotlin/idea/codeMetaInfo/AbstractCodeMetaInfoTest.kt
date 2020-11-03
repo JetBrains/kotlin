@@ -67,7 +67,7 @@ class CodeMetaInfoTestCase(
     ): List<CodeMetaInfo> {
         val tempSourceKtFile = PsiManager.getInstance(project).findFile(file.virtualFile) as KtFile
         val resolutionFacade = tempSourceKtFile.getResolutionFacade()
-        val (bindingContext, moduleDescriptor) = resolutionFacade.analyzeWithAllCompilerChecks(listOf(tempSourceKtFile))
+        val (bindingContext, moduleDescriptor, _) = resolutionFacade.analyzeWithAllCompilerChecks(listOf(tempSourceKtFile))
         val directives = KotlinTestUtils.parseDirectives(file.text)
         val diagnosticsFilter = BaseDiagnosticsTest.parseDiagnosticFilterDirective(directives, allowUnderscoreUsage = false)
         val diagnostics = CheckerTestUtil.getDiagnosticsIncludingSyntaxErrors(

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.idea.codeMetaInfo.models.LineMarkerCodeMetaInfo
 
 
 abstract class AbstractCodeMetaInfoRenderConfiguration(var renderParams: Boolean = true) {
-    private val clickOrPressRegex = "Click or press (.*)to navigate".toRegex() //We have different hotkeys on different platforms
+    private val clickOrPressRegex = "Click or press (.*)to navigate".toRegex() // We have different hotkeys on different platforms
     open fun asString(codeMetaInfo: CodeMetaInfo) = codeMetaInfo.getTag() + getPlatformsString(codeMetaInfo)
 
     open fun getAdditionalParams(codeMetaInfo: CodeMetaInfo) = ""
@@ -62,6 +62,8 @@ open class DiagnosticCodeMetaInfoRenderConfiguration(
     private fun getParamsString(codeMetaInfo: DiagnosticCodeMetaInfo): String {
         if (!renderParams) return ""
         val params = mutableListOf<String>()
+
+        @Suppress("UNCHECKED_CAST")
         val renderer = when (codeMetaInfo.diagnostic.factory) {
             is DebugInfoDiagnosticFactory1 -> DiagnosticWithParameters1Renderer(
                 "{0}",
