@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
+import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
-import org.jetbrains.kotlin.idea.caches.trackers.KotlinModuleOutOfCodeBlockModificationTracker
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirTransformerProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
 import java.util.concurrent.ConcurrentHashMap
 
@@ -102,7 +103,9 @@ private class FromModuleViewSessionCache(
 private class FirSessionWithModificationTracker(
     val firSession: FirIdeSourcesSession,
 ) {
-    private val modificationTracker = KotlinModuleOutOfCodeBlockModificationTracker(firSession.moduleInfo.module)
+    private val modificationTracker = firSession.project.service<KotlinFirOutOfBlockModificationTrackerFactory>()
+        .createModuleOutOfBlockModificationTracker(firSession.moduleInfo.module)
+
     private val timeStamp = modificationTracker.modificationCount
 
     @Volatile
