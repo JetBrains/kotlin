@@ -2238,6 +2238,7 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/uast/uast-kotlin-idea/kotlin.uast.uast-kotlin-idea.iml" filepath="$PROJECT_DIR$/kotlin/uast/uast-kotlin-idea/kotlin.uast.uast-kotlin-idea.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml" filepath="$PROJECT_DIR$/kotlin/kotlin-compiler-classpath/kotlin.util.compiler-classpath.iml" />
       <module fileurl="file://$PROJECT_DIR$/tools/kotlin-artifact-dependencies/util.kotlin-compiler-dependencies.iml" filepath="$PROJECT_DIR$/tools/kotlin-artifact-dependencies/util.kotlin-compiler-dependencies.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tools/kotlin-maven-artifacts-publishing/util.kotlin-maven-artifacts-publishing.iml" filepath="$PROJECT_DIR$/tools/kotlin-maven-artifacts-publishing/util.kotlin-maven-artifacts-publishing.iml" />
       <module fileurl="file://$PROJECT_DIR$/tools/project-model-updater/util.project-model-updater.iml" filepath="$PROJECT_DIR$/tools/project-model-updater/util.project-model-updater.iml" />
     </modules>
   </component>
