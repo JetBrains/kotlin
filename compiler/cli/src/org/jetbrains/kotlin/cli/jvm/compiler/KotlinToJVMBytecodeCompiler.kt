@@ -339,7 +339,7 @@ object KotlinToJVMBytecodeCompiler {
             val firAnalyzerFacade = FirAnalyzerFacade(session, moduleConfiguration.languageVersionSettings, ktFiles)
 
             firAnalyzerFacade.runResolution()
-            val firDiagnostics = firAnalyzerFacade.runCheckers()
+            val firDiagnostics = firAnalyzerFacade.runCheckers().values.flatten()
             AnalyzerWithCompilerReport.reportDiagnostics(
                 SimpleDiagnostics(
                     firDiagnostics.map { it.toRegularDiagnostic() }

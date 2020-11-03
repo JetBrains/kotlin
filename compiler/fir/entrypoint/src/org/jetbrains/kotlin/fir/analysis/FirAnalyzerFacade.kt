@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.psi.KtFile
 class FirAnalyzerFacade(val session: FirSession, val languageVersionSettings: LanguageVersionSettings, val ktFiles: List<KtFile>) {
     private var firFiles: List<FirFile>? = null
     private var scopeSession: ScopeSession? = null
-    private var collectedDiagnostics: List<FirDiagnostic<*>>? = null
+    private var collectedDiagnostics: Map<FirFile, List<FirDiagnostic<*>>>? = null
 
     private fun buildRawFir() {
         if (firFiles != null) return
@@ -52,13 +52,13 @@ class FirAnalyzerFacade(val session: FirSession, val languageVersionSettings: La
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun runCheckers(): List<FirDiagnostic<*>> {
+    fun runCheckers(): Map<FirFile, List<FirDiagnostic<*>>> {
         if (scopeSession == null) runResolution()
         if (collectedDiagnostics != null) return collectedDiagnostics!!
         val collector = FirDiagnosticsCollector.create(session)
-        collectedDiagnostics = buildList {
+        collectedDiagnostics = buildMap {
             for (file in firFiles!!) {
-                addAll(collector.collectDiagnostics(file))
+                put(file, collector.collectDiagnostics(file))
             }
         }
         return collectedDiagnostics!!
