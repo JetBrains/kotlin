@@ -26,17 +26,7 @@ abstract class StructureTransformAction : TransformAction<TransformParameters.No
 
     override fun transform(outputs: TransformOutputs) {
         try {
-            val input = inputArtifact.get().asFile
-
-            val data = if (input.isDirectory) {
-                visitDirectory(input)
-            } else {
-                visitJar(input)
-            }
-
-            val dataFile = outputs.file("output.bin")
-            data.saveTo(dataFile)
-
+            transform(inputArtifact.get().asFile, outputs)
         } catch (e: Throwable) {
             throw e
         }
@@ -55,21 +45,22 @@ abstract class StructureTransformLegacyAction : TransformAction<TransformParamet
 
     override fun transform(outputs: TransformOutputs) {
         try {
-            val input = inputArtifact
-
-            val data = if (input.isDirectory) {
-                visitDirectory(input)
-            } else {
-                visitJar(input)
-            }
-
-            val dataFile = outputs.file("output.bin")
-            data.saveTo(dataFile)
-
+            transform(inputArtifact, outputs)
         } catch (e: Throwable) {
             throw e
         }
     }
+}
+
+private fun transform(input: File, outputs: TransformOutputs) {
+    val data = if (input.isDirectory) {
+        visitDirectory(input)
+    } else {
+        visitJar(input)
+    }
+
+    val dataFile = outputs.file("output.bin")
+    data.saveTo(dataFile)
 }
 
 private fun visitDirectory(directory: File): ClasspathEntryData {
