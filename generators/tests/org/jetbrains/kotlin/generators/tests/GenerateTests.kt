@@ -84,6 +84,7 @@ import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqual
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
@@ -1039,6 +1040,9 @@ fun main(args: Array<String>) {
                 model("lazyResolve")
             }
             testClass<AbstractProjectWideOutOfBlockKotlinModificationTrackerTest> {
+                model("outOfBlockProjectWide")
+            }
+            testClass<AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest> {
                 model("outOfBlockProjectWide")
             }
             testClass<AbstractFileStructureTest> {
