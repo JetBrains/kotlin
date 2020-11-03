@@ -3497,6 +3497,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             public void testDontInferToNullableNothingInDelegates() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/nothingType/dontInferToNullableNothingInDelegates.kt");
             }
+
+            @TestMetadata("dontSpreadWarningToNotReturningNothingSubResolvedAtoms.kt")
+            public void testDontSpreadWarningToNotReturningNothingSubResolvedAtoms() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/nothingType/dontSpreadWarningToNotReturningNothingSubResolvedAtoms.kt");
+            }
         }
     }
 
