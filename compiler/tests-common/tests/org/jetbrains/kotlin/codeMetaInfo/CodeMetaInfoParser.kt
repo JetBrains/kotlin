@@ -3,11 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.codeMetaInfo
+package org.jetbrains.kotlin.codeMetaInfo
 
-import com.intellij.util.containers.Stack
-import org.jetbrains.kotlin.idea.codeMetaInfo.models.ParsedCodeMetaInfo
-import org.junit.Assert
+import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 
 object CodeMetaInfoParser {
     private val openingRegex = "(<!([^>]+?)!>)".toRegex()
@@ -18,8 +16,8 @@ object CodeMetaInfoParser {
 
     fun getCodeMetaInfoFromText(renderedText: String): List<ParsedCodeMetaInfo> {
         var text = renderedText
-        val openingMatchResults = Stack<MatchResult>()
-        val closingMatchResults = Stack<MatchResult>()
+        val openingMatchResults = ArrayDeque<MatchResult>()
+        val closingMatchResults = ArrayDeque<MatchResult>()
         val result = mutableListOf<ParsedCodeMetaInfo>()
 
         while (true) {
@@ -35,19 +33,21 @@ object CodeMetaInfoParser {
                 closingStartOffset = closing.range.first
 
             text = if (openingStartOffset < closingStartOffset) {
-                openingMatchResults.push(opening)
-                text.removeRange(openingStartOffset, opening!!.range.last + 1)
+                requireNotNull(opening)
+                openingMatchResults.addLast(opening)
+                text.removeRange(openingStartOffset, opening.range.last + 1)
             } else {
-                closingMatchResults.push(closing)
-                text.removeRange(closingStartOffset, closing!!.range.last + 1)
+                requireNotNull(closing)
+                closingMatchResults.addLast(closing)
+                text.removeRange(closingStartOffset, closing.range.last + 1)
             }
         }
         if (openingMatchResults.size != closingMatchResults.size) {
-            Assert.fail("Opening and closing tags counts are not equals")
+            error("Opening and closing tags counts are not equals")
         }
         while (!openingMatchResults.isEmpty()) {
-            val openingMatchResult = openingMatchResults.pop()
-            val closingMatchResult = closingMatchResults.pop()
+            val openingMatchResult = openingMatchResults.removeLast()
+            val closingMatchResult = closingMatchResults.removeLast()
             val metaInfoWithoutParams = openingMatchResult.groups[2]!!.value.replace(descriptionRegex, "")
             metaInfoWithoutParams.split(",").forEach {
                 val tag = platformRegex.replace(it, "").trim()

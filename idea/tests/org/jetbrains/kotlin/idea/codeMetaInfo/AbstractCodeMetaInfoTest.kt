@@ -34,14 +34,18 @@ import org.jetbrains.kotlin.checkers.diagnostics.SyntaxErrorDiagnostic
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory0
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
+import org.jetbrains.kotlin.codeMetaInfo.CodeMetaInfoParser
+import org.jetbrains.kotlin.codeMetaInfo.CodeMetaInfoRenderer
+import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
+import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
+import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.AbstractCodeMetaInfoRenderConfiguration
+import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.DiagnosticCodeMetaInfoRenderConfiguration
 import org.jetbrains.kotlin.daemon.common.OSKind
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.AbstractDiagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.codeMetaInfo.models.*
-import org.jetbrains.kotlin.idea.codeMetaInfo.renderConfigurations.AbstractCodeMetaInfoRenderConfiguration
-import org.jetbrains.kotlin.idea.codeMetaInfo.renderConfigurations.DiagnosticCodeMetaInfoRenderConfiguration
 import org.jetbrains.kotlin.idea.codeMetaInfo.renderConfigurations.HighlightingRenderConfiguration
 import org.jetbrains.kotlin.idea.codeMetaInfo.renderConfigurations.LineMarkerRenderConfiguration
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromTextFile
@@ -193,17 +197,14 @@ class CodeMetaInfoTestCase(
             assert(
                 diagnostics.any { diagnosticCodeMetaInfo ->
                     diagnosticCodeMetaInfo.start == highlightingCodeMetaInfo.start &&
-                            when (diagnosticCodeMetaInfo.diagnostic) {
+                            when (val diagnostic = diagnosticCodeMetaInfo.diagnostic) {
                                 is SyntaxErrorDiagnostic -> {
-                                    val diagnostic: SyntaxErrorDiagnostic = diagnosticCodeMetaInfo.diagnostic
                                     (highlightingCodeMetaInfo as HighlightingCodeMetaInfo).highlightingInfo.description in (diagnostic.psiElement as PsiErrorElementImpl).errorDescription
                                 }
                                 is AbstractDiagnostic<*> -> {
-                                    val diagnostic: AbstractDiagnostic<*> = diagnosticCodeMetaInfo.diagnostic
                                     diagnostic.factory.toString() in (highlightingCodeMetaInfo as HighlightingCodeMetaInfo).highlightingInfo.description
                                 }
                                 is DebugInfoDiagnostic -> {
-                                    val diagnostic: DebugInfoDiagnostic = diagnosticCodeMetaInfo.diagnostic
                                     diagnostic.factory == DebugInfoDiagnosticFactory0.MISSING_UNRESOLVED &&
                                             "[DEBUG] Reference is not resolved to anything, but is not marked unresolved" in (highlightingCodeMetaInfo as HighlightingCodeMetaInfo).highlightingInfo.description
                                 }
