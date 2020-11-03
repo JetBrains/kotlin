@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.originalConstructorIfTypeAlias
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -274,7 +275,11 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(
         if (it is FirAccessorSymbol || it.fir.visibility == Visibilities.Private) {
             return@processDirectlyOverriddenProperties ProcessorAction.NEXT
         }
-        val overriddenProperty = declarationStorage.getIrPropertySymbol(it.unwrapFakeOverrides()) as IrPropertySymbol
+
+        val unwrapped =
+            it.fir.delegatedWrapperData?.takeIf { it.containingClass == containingClass.symbol.toLookupTag() }?.wrapped?.symbol ?: it
+
+        val overriddenProperty = declarationStorage.getIrPropertySymbol(unwrapped.unwrapFakeOverrides()) as IrPropertySymbol
         val overriddenAccessor = if (isGetter) overriddenProperty.owner.getter?.symbol else overriddenProperty.owner.setter?.symbol
         if (overriddenAccessor != null) {
             overriddenSet += overriddenAccessor
