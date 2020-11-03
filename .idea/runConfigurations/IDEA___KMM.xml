@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="IDEA + KMM" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="com.intellij.idea.Main" />
+    <module name="intellij.idea.ultimate.main" />
+    <shortenClasspath name="ARGS_FILE" />
+    <option name="VM_PARAMETERS" value="-ea -Xmx1250m -XX:ReservedCodeCacheSize=240m -XX:+UseConcMarkSweepGC -XX:+HeapDumpOnOutOfMemoryError -XX:SoftRefLRUPolicyMSPerMB=50 -XX:MaxJavaStackTraceDepth=10000 -XX:CICompilerCount=2 -Dsun.io.useCanonCaches=false -Djdk.attach.allowAttachSelf -Djdk.module.illegalAccess.silent=true -Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Didea.jre.check=true -Didea.is.internal=true -Didea.debug.mode=true -Didea.initially.ask.config=true -Didea.config.path=$PROJECT_DIR$/out/idea-kmm-config -Didea.system.path=$PROJECT_DIR$/out/idea-kmm-system -Dplugin.path=$PROJECT_DIR$/out/artifacts/KotlinPlugin,$PROJECT_DIR$/out/artifacts/KmmPlugin -Dfus.internal.test.mode=true -Dkotlinx.coroutines.debug=off" />
+    <method v="2">
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="DownloadKmmDependencies" run_configuration_type="JetRunConfigurationType" />
+      <option name="Make" enabled="true" />
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="KmmPlugin" />
+        <artifact name="KotlinPlugin" />
+      </option>
+    </method>
+  </configuration>
+</component>
