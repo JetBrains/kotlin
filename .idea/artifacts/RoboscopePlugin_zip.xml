@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="RoboscopePlugin.zip">
+    <output-path>$PROJECT_DIR$/out/artifacts/RoboscopePlugin_zip</output-path>
+    <root id="archive" name="RoboscopePlugin.zip">
+      <element id="directory" name="Roboscope">
+        <element id="artifact" artifact-name="RoboscopePlugin" />
+      </element>
+    </root>
+  </artifact>
+</component>

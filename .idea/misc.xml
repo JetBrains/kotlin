@@ -87,7 +87,7 @@
   <component name="ProjectResources">
     <resource url="http://jetbrains.org/intellij/schema/application-info" location="$PROJECT_DIR$/intellij/community/platform/platform-resources/src/idea/ApplicationInfo.xsd" />
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="false" project-jdk-name="corretto-11" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="corretto-11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>
   <component name="PropertiesSeparatorManager">

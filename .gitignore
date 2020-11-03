@@ -8,5 +8,8 @@
 # Compiler output
 /out
 
+# Android Studio caches
+/local/androidStudioDebug
+
 # Other
 .DS_Store

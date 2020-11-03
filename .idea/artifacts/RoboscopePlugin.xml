@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact name="RoboscopePlugin">
+    <output-path>$PROJECT_DIR$/out/artifacts/RoboscopePlugin</output-path>
+    <root id="root">
+      <element id="directory" name="lib">
+        <element id="archive" name="RoboscopePlugin.jar">
+          <element id="module-output" name="util.android-studio.android-studio-finder" />
+          <element id="module-output" name="util.android-studio.android-studio-roboscope-plugin" />
+        </element>
+        <element id="library" level="project" name="kotlin-stdlib-jdk8" />
+      </element>
+    </root>
+  </artifact>
+</component>

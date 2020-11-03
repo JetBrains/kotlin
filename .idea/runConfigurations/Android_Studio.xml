@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Android Studio" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="org.jetbrains.kotlin.util.androidStudio.KotlinAndroidStudioRunner" />
+    <module name="util.android-studio.android-studio-runner" />
+    <option name="VM_PARAMETERS" value="-ea -Xmx1250m -XX:ReservedCodeCacheSize=240m -XX:+UseConcMarkSweepGC -XX:+HeapDumpOnOutOfMemoryError -XX:SoftRefLRUPolicyMSPerMB=50 -XX:MaxJavaStackTraceDepth=10000 -XX:CICompilerCount=2 -Dsun.io.useCanonCaches=false -Djdk.attach.allowAttachSelf -Djdk.module.illegalAccess.silent=true -Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Didea.jre.check=true -Didea.is.internal=true -Didea.debug.mode=true -Didea.initially.ask.config=true -Didea.system.path=$PROJECT_DIR$/local/androidStudioDebug -Didea.config.path=$PROJECT_DIR$/local/androidStudioDebug/config -Dplugin.path=$PROJECT_DIR$/../kotlin/out/artifacts/KotlinPluginCommunity -Dfus.internal.test.mode=true -Dkotlinx.coroutines.debug=off -Didea.platform.prefix=AndroidStudio" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="BuildArtifacts" enabled="true">
+        <artifact name="KotlinPluginCommunity" />
+      </option>
+    </method>
+  </configuration>
+</component>
