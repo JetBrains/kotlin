@@ -38,6 +38,13 @@ abstract class KotlinAbstractHintsProvider<T : Any> : InlayHintsProvider<T> {
         }
     }
 
+    /**
+     * Similar to [handlePresentations] we need to have a special handler to remove lambda related hints.
+     * Therefore [KotlinLambdasHintsProvider] provides its own "crutch" implementation.
+     */
+    protected open fun handleAfterLineEndHintsRemoval(editor: Editor, resolved: HintType, element: PsiElement) {
+    }
+
     override fun getCollectorFor(file: PsiFile, editor: Editor, settings: T, sink: InlayHintsSink): InlayHintsCollector? {
         return object : FactoryInlayHintsCollector(editor) {
             override fun collect(element: PsiElement, editor: Editor, sink: InlayHintsSink): Boolean {
@@ -45,8 +52,12 @@ abstract class KotlinAbstractHintsProvider<T : Any> : InlayHintsProvider<T> {
                 if (!isElementSupported(resolved, settings)) return true
 
                 val presentations = resolved.provideHints(element).mapNotNull { info -> convert(info, editor.project) }
-                if (presentations.isNotEmpty())
+                if (presentations.isNotEmpty()) {
                     handlePresentations(presentations, editor, sink)
+                } else {
+                    handleAfterLineEndHintsRemoval(editor, resolved, element)
+                }
+
                 return true
             }
 

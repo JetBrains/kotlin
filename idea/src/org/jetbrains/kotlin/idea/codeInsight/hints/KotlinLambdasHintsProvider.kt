@@ -13,8 +13,13 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorCustomElementRenderer
 import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.markup.TextAttributes
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.application.invokeLater
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import java.awt.Graphics
 import java.awt.Rectangle
 
@@ -60,6 +65,26 @@ class KotlinLambdasHintsProvider : KotlinAbstractHintsProvider<KotlinLambdasHint
                     .filter { it.renderer is LambdaHintsRenderer }
                     .forEach { it.dispose() }
                 editor.inlayModel.addAfterLineEndElement(p.offset, p.relatesToPrecedingText, LambdaHintsRenderer(p.presentation))
+            }
+        }
+    }
+
+    override fun handleAfterLineEndHintsRemoval(editor: Editor, resolved: HintType, element: PsiElement) {
+        invokeLater {
+            val offset = when (resolved) {
+                HintType.LAMBDA_IMPLICIT_PARAMETER_RECEIVER -> {
+                    val lambdaExpression = (element as? KtFunctionLiteral)?.parent as? KtLambdaExpression
+                    lambdaExpression?.leftCurlyBrace?.textRange?.endOffset
+                }
+                HintType.LAMBDA_RETURN_EXPRESSION -> (element as? KtExpression)?.endOffset
+                else -> null
+            }
+
+            offset?.let {
+                val logicalLine = editor.offsetToLogicalPosition(offset).line
+                editor.inlayModel.getAfterLineEndElementsForLogicalLine(logicalLine)
+                    .filter { it.renderer is LambdaHintsRenderer }
+                    .forEach { it.dispose() }
             }
         }
     }
