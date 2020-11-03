@@ -518,26 +518,19 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
     private fun maybeRegisterTransform(project: Project) {
         if (!project.extensions.extraProperties.has("KaptStructureTransformAdded")) {
-            if (GradleVersion.current() >= GradleVersion.version("5.4")) {
-                project.dependencies.registerTransform(StructureTransformAction::class.java) { transformSpec ->
-                    transformSpec.from.attribute(artifactType, "jar")
-                    transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
-                }
+            val transformActionClass =
+                if (GradleVersion.current() >= GradleVersion.version("5.4"))
+                    StructureTransformAction::class.java
+                else
+                    StructureTransformLegacyAction::class.java
+            project.dependencies.registerTransform(transformActionClass) { transformSpec ->
+                transformSpec.from.attribute(artifactType, "jar")
+                transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
+            }
 
-                project.dependencies.registerTransform(StructureTransformAction::class.java) { transformSpec ->
-                    transformSpec.from.attribute(artifactType, "directory")
-                    transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
-                }
-            } else {
-                project.dependencies.registerTransform(StructureTransformLegacyAction::class.java) { transformSpec ->
-                    transformSpec.from.attribute(artifactType, "jar")
-                    transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
-                }
-
-                project.dependencies.registerTransform(StructureTransformLegacyAction::class.java) { transformSpec ->
-                    transformSpec.from.attribute(artifactType, "directory")
-                    transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
-                }
+            project.dependencies.registerTransform(transformActionClass) { transformSpec ->
+                transformSpec.from.attribute(artifactType, "directory")
+                transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }
 
             project.extensions.extraProperties["KaptStructureTransformAdded"] = true

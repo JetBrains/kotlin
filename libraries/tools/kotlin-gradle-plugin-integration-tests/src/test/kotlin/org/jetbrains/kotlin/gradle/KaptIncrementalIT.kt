@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -21,13 +20,7 @@ open class KaptIncrementalIT : BaseGradleIT() {
         arrayOf("A", "funA", "valA", "funUtil", "valUtil", "B", "funB", "valB", "useB")
 
     override fun defaultBuildOptions(): BuildOptions {
-        val gradleVersion = GradleVersion.version(this.getProject().chooseWrapperVersionOrFinishTest())
-        //The feature of failing the build on deprecation warnings is introduced in gradle 5.6
-        return if (gradleVersion >= GradleVersion.version("5.6")) {
-            super.defaultBuildOptions().copy(incremental = true, warningMode = WarningMode.Fail)
-        } else {
-            super.defaultBuildOptions().copy(incremental = true)
-        }
+        return super.defaultBuildOptions().copy(incremental = true, warningMode = WarningMode.Fail)
     }
 
     @Test

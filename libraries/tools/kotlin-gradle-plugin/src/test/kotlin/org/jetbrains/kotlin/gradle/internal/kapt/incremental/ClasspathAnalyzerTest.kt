@@ -8,12 +8,8 @@ package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.file.FileSystemLocation
-import org.gradle.api.internal.file.DefaultFileSystemLocation
-import org.gradle.api.internal.provider.DefaultProvider
 import org.gradle.api.provider.Provider
-import org.gradle.api.provider.ProviderFactory
-import org.jetbrains.kotlin.gradle.fixtures.FakeGradleProvider
-import org.jetbrains.kotlin.gradle.fixtures.FakeGradleRegularFile
+import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert.*
@@ -21,7 +17,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
-import java.util.concurrent.Callable
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -172,7 +167,9 @@ class ClasspathAnalyzerTest {
 }
 
 class StructureTransformTestAction(val input: File) : StructureTransformAction() {
-    override val inputArtifact: Provider<FileSystemLocation> = FakeGradleProvider(FakeGradleRegularFile(input))
+    private val project = ProjectBuilder.builder().build()
+
+    override val inputArtifact: Provider<FileSystemLocation> = project.provider { project.objects.fileProperty().fileValue(input).get() }
 
     override fun getParameters(): TransformParameters.None? {
         //no need for StructureTransformAction and so for test

@@ -830,7 +830,16 @@ Finished executing task ':$taskName'|
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")
-            add("--warning-mode=${options.warningMode.name.toLowerCase()}")
+            //The feature of failing the build on deprecation warnings is introduced in gradle 5.6
+            val supportFailingBuildOnWarning =
+                GradleVersion.version(chooseWrapperVersionOrFinishTest()) >= GradleVersion.version("5.6")
+            // Agp uses Gradle internal API constructor DefaultDomainObjectSet(Class<T>) until Agp 3.6.0 which is deprecated by Gradle,
+            // so we don't run with --warning-mode=fail when Agp 3.6 or less is used.
+            val notUsingAgpWithWarnings =
+                options.androidGradlePluginVersion == null || options.androidGradlePluginVersion > AGPVersion.v3_6_0
+            if (supportFailingBuildOnWarning && notUsingAgpWithWarnings && options.warningMode == WarningMode.Fail) {
+                add("--warning-mode=${WarningMode.Fail.name.toLowerCase()}")
+            }
             addAll(options.freeCommandLineArgs)
         }
 
