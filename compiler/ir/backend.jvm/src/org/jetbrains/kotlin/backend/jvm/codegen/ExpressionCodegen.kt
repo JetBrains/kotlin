@@ -305,7 +305,12 @@ class ExpressionCodegen(
             return
 
         irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
-        irFunction.valueParameters.forEach(::generateNonNullAssertion)
+
+        // Private operator functions don't have null checks on value parameters,
+        // see `DescriptorAsmUtil.genNotNullAssertionsForParameters`.
+        if (!DescriptorVisibilities.isPrivate(irFunction.visibility) || irFunction !is IrSimpleFunction || !irFunction.isOperator) {
+            irFunction.valueParameters.forEach(::generateNonNullAssertion)
+        }
     }
 
     private fun generateNonNullAssertion(param: IrValueParameter) {

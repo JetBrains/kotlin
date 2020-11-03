@@ -16119,6 +16119,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/paramAssertionMessage.kt");
             }
 
+            @TestMetadata("privateOperatorParameterAssertions.kt")
+            public void testPrivateOperatorParameterAssertions() throws Exception {
+                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/privateOperatorParameterAssertions.kt");
+            }
+
             @TestMetadata("staticCallErrorMessage.kt")
             public void testStaticCallErrorMessage() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/staticCallErrorMessage.kt");
