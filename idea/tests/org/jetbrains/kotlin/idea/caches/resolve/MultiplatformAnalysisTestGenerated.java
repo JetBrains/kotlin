@@ -208,6 +208,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("idea/testData/multiplatform/simple/");
     }
 
+    @TestMetadata("simple")
+    public void testSmartCastOnPropertyFromDependentModule() throws Exception {
+        runTest("idea/testData/multiplatform/smartCastOnPropertyFromDependentModule/");
+    }
+
     @TestMetadata("supertypes")
     public void testSupertypes() throws Exception {
         runTest("idea/testData/multiplatform/supertypes/");
