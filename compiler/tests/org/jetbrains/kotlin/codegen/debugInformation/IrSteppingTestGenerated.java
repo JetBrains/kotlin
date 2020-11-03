@@ -380,6 +380,18 @@ public class IrSteppingTestGenerated extends AbstractIrSteppingTest {
     }
 
     @Test
+    @TestMetadata("suspendFunWithLambdaParameter.kt")
+    public void testSuspendFunWithLambdaParameter() throws Exception {
+        runTest("compiler/testData/debug/stepping/suspendFunWithLambdaParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFunWithSuspendLambdaParameter.kt")
+    public void testSuspendFunWithSuspendLambdaParameter() throws Exception {
+        runTest("compiler/testData/debug/stepping/suspendFunWithSuspendLambdaParameter.kt");
+    }
+
+    @Test
     @TestMetadata("throwException.kt")
     public void testThrowException() throws Exception {
         runTest("compiler/testData/debug/stepping/throwException.kt");
