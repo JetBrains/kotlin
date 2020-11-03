@@ -4343,6 +4343,25 @@ dynamicTest("interop_cleaners_leak") {
     flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
+dynamicTest("interop_migrating_main_thread") {
+    // TODO: Fix it.
+    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    source = "interop/migrating_main_thread/lib.kt"
+    cSource = "$projectDir/interop/migrating_main_thread/main.cpp"
+    clangTool = "clang++"
+}
+
+dynamicTest("interop_memory_leaks") {
+    // TODO: Fix it.
+    disabled = (project.testTarget != null && project.testTarget != project.hostName) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
+    source = "interop/memory_leaks/lib.kt"
+    cSource = "$projectDir/interop/memory_leaks/main.cpp"
+    clangTool = "clang++"
+    flags = ['-g']
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
+}
+
 task library_mismatch(type: KonanDriverTest) {
     // Does not work for cross targets yet.
     enabled = !(project.testTarget != null && project.target.name != project.hostName)
