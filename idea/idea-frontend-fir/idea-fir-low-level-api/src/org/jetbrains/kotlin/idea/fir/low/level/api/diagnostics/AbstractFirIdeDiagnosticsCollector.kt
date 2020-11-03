@@ -56,7 +56,7 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
         checkCanceled()
     }
 
-    override fun getCollectedDiagnostics(): Iterable<FirDiagnostic<*>> {
+    override fun getCollectedDiagnostics(): List<FirDiagnostic<*>> {
         // Not necessary in IDE
         return emptyList()
     }

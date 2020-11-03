@@ -33,7 +33,7 @@ abstract class AbstractDiagnosticCollector(
     override val scopeSession: ScopeSession = ScopeSession(),
     returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve()
 ) : SessionHolder {
-    fun collectDiagnostics(firFile: FirFile): Iterable<FirDiagnostic<*>> {
+    fun collectDiagnostics(firFile: FirFile): List<FirDiagnostic<*>> {
         if (!componentsInitialized) {
             throw IllegalStateException("Components are not initialized")
         }
@@ -43,7 +43,7 @@ abstract class AbstractDiagnosticCollector(
     }
 
     protected abstract fun initializeCollector()
-    protected abstract fun getCollectedDiagnostics(): Iterable<FirDiagnostic<*>>
+    protected abstract fun getCollectedDiagnostics(): List<FirDiagnostic<*>>
     abstract val reporter: DiagnosticReporter
 
     private val components: MutableList<AbstractDiagnosticCollectorComponent> = mutableListOf()
