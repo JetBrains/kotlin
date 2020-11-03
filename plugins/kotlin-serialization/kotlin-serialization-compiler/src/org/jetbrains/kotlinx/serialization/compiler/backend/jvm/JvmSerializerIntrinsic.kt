@@ -8,7 +8,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
-import org.jetbrains.kotlin.codegen.inline.wrapWithMaxLocalCalc
+import org.jetbrains.kotlin.codegen.inline.newMethodNodeWithCorrectStackSize
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -24,12 +24,10 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSeria
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContextUnchecked
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isSerializableObject
-import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 object JvmSerializerIntrinsic {
     fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue? {
@@ -57,17 +55,12 @@ object JvmSerializerIntrinsic {
         typeSystem: TypeSystemCommonBackendContext,
         module: ModuleDescriptor
     ): Int {
-        val newMethodNode = MethodNode(Opcodes.API_VERSION, "fake", "()V", null, null) // fake signature for maxLocalCalc to work
-        val mv = wrapWithMaxLocalCalc(newMethodNode)
-        generateSerializerForType(type, InstructionAdapter(mv), typeMapper, typeSystem, module)
-        // Adding a fake return (and removing it below) to trigger maxStack calculation
-        mv.visitInsn(Opcodes.RETURN)
-        mv.visitMaxs(-1, -1)
+        val newMethodNode = newMethodNodeWithCorrectStackSize {
+            generateSerializerForType(type, it, typeMapper, typeSystem, module)
+        }
 
         instructions.remove(insn.next)
-        instructions.insert(insn, newMethodNode.instructions.apply { remove(last) })
-
-
+        instructions.insert(insn, newMethodNode.instructions)
 
         return newMethodNode.maxStack
     }
@@ -96,9 +89,8 @@ object JvmSerializerIntrinsic {
         module: ModuleDescriptor
     ): Unit = with(adapter) {
         if (putReifyMarkerIfNeeded(type, typeSystem)) return
-        val typeDescriptor = (type as SimpleType).constructor.declarationDescriptor!!
+        val typeDescriptor = (type as SimpleType).constructor.declarationDescriptor!! as ClassDescriptor
 
-        typeDescriptor as ClassDescriptor
         val serializerMethod = SerializableCompanionCodegen.findSerializerGetterOnCompanion(typeDescriptor)
         if (serializerMethod != null) {
             // fast path
