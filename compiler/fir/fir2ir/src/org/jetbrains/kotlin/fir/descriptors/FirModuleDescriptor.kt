@@ -42,6 +42,8 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
         get() = TODO("not implemented")
     override val expectedByModules: List<ModuleDescriptor>
         get() = TODO("not implemented")
+    override val allExpectedByModules: Set<ModuleDescriptor>
+        get() = TODO("not implemented")
 
     override fun <T> getCapability(capability: ModuleCapability<T>): T? {
         return null

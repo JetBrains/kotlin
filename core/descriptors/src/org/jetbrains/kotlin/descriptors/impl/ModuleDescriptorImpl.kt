@@ -75,7 +75,10 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allDependencies.filter { it != this }
 
     override val expectedByModules: List<ModuleDescriptor>
-        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.expectedByDependencies
+        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.directExpectedByDependencies
+
+    override val allExpectedByModules: Set<ModuleDescriptor>
+        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allExpectedByDependencies
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
         assertValid()
@@ -118,7 +121,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     }
 
     fun setDependencies(descriptors: List<ModuleDescriptorImpl>, friends: Set<ModuleDescriptorImpl>) {
-        setDependencies(ModuleDependenciesImpl(descriptors, friends, emptyList()))
+        setDependencies(ModuleDependenciesImpl(descriptors, friends, emptyList(), emptySet()))
     }
 
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
@@ -154,11 +157,13 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
 interface ModuleDependencies {
     val allDependencies: List<ModuleDescriptorImpl>
     val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
-    val expectedByDependencies: List<ModuleDescriptorImpl>
+    val directExpectedByDependencies: List<ModuleDescriptorImpl>
+    val allExpectedByDependencies: Set<ModuleDescriptorImpl>
 }
 
 class ModuleDependenciesImpl(
     override val allDependencies: List<ModuleDescriptorImpl>,
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>,
-    override val expectedByDependencies: List<ModuleDescriptorImpl>
+    override val directExpectedByDependencies: List<ModuleDescriptorImpl>,
+    override val allExpectedByDependencies: Set<ModuleDescriptorImpl>,
 ) : ModuleDependencies
