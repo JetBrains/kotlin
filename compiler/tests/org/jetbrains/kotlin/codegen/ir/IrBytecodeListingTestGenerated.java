@@ -670,14 +670,19 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/defaultArguments"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("functionInMultifileClass.kt")
+        public void testFunctionInMultifileClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/defaultArguments/functionInMultifileClass.kt");
+        }
+
+        @TestMetadata("functionInMultifileClassWithInheritedParts.kt")
+        public void testFunctionInMultifileClassWithInheritedParts() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/defaultArguments/functionInMultifileClassWithInheritedParts.kt");
+        }
+
         @TestMetadata("internalNameMangling.kt")
         public void testInternalNameMangling() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/defaultArguments/internalNameMangling.kt");
-        }
-
-        @TestMetadata("privateFunctionInMultifilePart.kt")
-        public void testPrivateFunctionInMultifilePart() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/defaultArguments/privateFunctionInMultifilePart.kt");
         }
     }
 

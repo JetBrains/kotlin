@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
+import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
@@ -213,7 +214,7 @@ class ExpressionCodegen(
     fun generate() {
         mv.visitCode()
         val startLabel = markNewLabel()
-        if (irFunction.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE) {
+        if (irFunction.isMultifileBridge()) {
             // Multifile bridges need to have line number 1 to be filtered out by the intellij debugging filters.
             mv.visitLineNumber(1, startLabel)
         }
@@ -279,23 +280,22 @@ class ExpressionCodegen(
         if (state.isParamAssertionsDisabled)
             return
 
-        val notCallableFromJava = inlinedInto != null ||
-                (DescriptorVisibilities.isPrivate(irFunction.visibility) && !(irFunction is IrSimpleFunction && irFunction.isOperator)) ||
-                irFunction.origin.isSynthetic ||
-                // TODO: refine this condition to not generate nullability assertions on parameters
-                //       corresponding to captured variables and anonymous object super constructor arguments
-                (irFunction is IrConstructor && irFunction.parentAsClass.isAnonymousObject) ||
-                // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
-                irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
-                // Although these are accessible from Java, the functions they bridge to already have the assertions.
-                irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE ||
-                irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
-                irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
-
-        if (notCallableFromJava)
+        if (inlinedInto != null ||
+            (DescriptorVisibilities.isPrivate(irFunction.visibility) && !(irFunction is IrSimpleFunction && irFunction.isOperator)) ||
+            irFunction.origin.isSynthetic ||
+            // TODO: refine this condition to not generate nullability assertions on parameters
+            //       corresponding to captured variables and anonymous object super constructor arguments
+            (irFunction is IrConstructor && irFunction.parentAsClass.isAnonymousObject) ||
+            // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
+            irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
+            // Although these are accessible from Java, the functions they bridge to already have the assertions.
+            irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
+            irFunction.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
+            irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
+            irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
+            irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
+            irFunction.isMultifileBridge()
+        )
             return
 
         // Do not generate non-null checks for suspend functions. When resumed the arguments

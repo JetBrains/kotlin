@@ -116,7 +116,7 @@ private fun generateMultifileFacades(
         }.apply {
             parent = file
             createImplicitParameterDeclarationWithWrappedDescriptor()
-            origin = IrDeclarationOrigin.FILE_CLASS
+            origin = IrDeclarationOrigin.JVM_MULTIFILE_CLASS
             if (jvmClassName.packageFqName != kotlinPackageFqName) {
                 context.classNameOverride[this] = jvmClassName
             }
@@ -230,7 +230,6 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
         function.body = null
         function.overriddenSymbols = listOf(symbol)
     } else {
-        function.origin = JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
         function.overriddenSymbols = overriddenSymbols.toList()
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             +irReturn(irCall(target).also { call ->
@@ -261,7 +260,7 @@ private class UpdateFunctionCallSites(
         super.visitFunction(declaration, declaration)
 
     override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
-        if (data?.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE)
+        if (data != null && data.isMultifileBridge())
             return super.visitCall(expression, data)
 
         val newFunction = functionDelegates[expression.symbol.owner]
@@ -318,3 +317,6 @@ private class UpdateConstantFacadePropertyReferences(
         ) facadeClass else null
     }
 }
+
+internal fun IrFunction.isMultifileBridge(): Boolean =
+    (parent as? IrClass)?.origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS

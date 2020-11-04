@@ -529,7 +529,10 @@ val IrFunctionAccessExpression.typeSubstitutionMap: Map<IrTypeParameterSymbol, I
     get() = getTypeSubstitutionMap(symbol.owner)
 
 val IrDeclaration.isFileClass: Boolean
-    get() = origin == IrDeclarationOrigin.FILE_CLASS || origin == IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
+    get() =
+        origin == IrDeclarationOrigin.FILE_CLASS ||
+                origin == IrDeclarationOrigin.SYNTHETIC_FILE_CLASS ||
+                origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS
 
 val IrValueDeclaration.isImmutable: Boolean
     get() = this is IrValueParameter || this is IrVariable && !isVar

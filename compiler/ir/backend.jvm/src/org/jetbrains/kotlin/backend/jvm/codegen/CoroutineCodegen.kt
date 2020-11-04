@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
+import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
@@ -143,7 +144,6 @@ internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspen
         // These are tail-call bridges and do not require any bytecode modifications.
         origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
         origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER &&
-        origin != JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE &&
         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR &&
         origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE &&
@@ -153,6 +153,7 @@ internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspen
         origin != IrDeclarationOrigin.BRIDGE &&
         origin != IrDeclarationOrigin.BRIDGE_SPECIAL &&
         origin != IrDeclarationOrigin.DELEGATED_MEMBER &&
+        !isMultifileBridge() &&
         !isInvokeOfSuspendCallableReference() &&
         !isBridgeToSuspendImplMethod() &&
         !isStaticInlineClassReplacementDelegatingCall()
