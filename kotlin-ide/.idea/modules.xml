@@ -668,6 +668,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/inspect/intellij.platform.inspect.iml" filepath="$PROJECT_DIR$/intellij/platform/inspect/intellij.platform.inspect.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/jps/jps-builders/intellij.platform.jps.build.iml" filepath="$PROJECT_DIR$/intellij/jps/jps-builders/intellij.platform.jps.build.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/jps/jps-builders-6/intellij.platform.jps.build.javac.rt.iml" filepath="$PROJECT_DIR$/intellij/jps/jps-builders-6/intellij.platform.jps.build.javac.rt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/jps/jps-builders-6/rpc/intellij.platform.jps.build.javac.rt.rpc.iml" filepath="$PROJECT_DIR$/intellij/jps/jps-builders-6/rpc/intellij.platform.jps.build.javac.rt.rpc.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/jps/jps-launcher/intellij.platform.jps.build.launcher.iml" filepath="$PROJECT_DIR$/intellij/jps/jps-launcher/intellij.platform.jps.build.launcher.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/jps/model-api/intellij.platform.jps.model.iml" filepath="$PROJECT_DIR$/intellij/jps/model-api/intellij.platform.jps.model.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/jps/model-impl/intellij.platform.jps.model.impl.iml" filepath="$PROJECT_DIR$/intellij/jps/model-impl/intellij.platform.jps.model.impl.iml" />
