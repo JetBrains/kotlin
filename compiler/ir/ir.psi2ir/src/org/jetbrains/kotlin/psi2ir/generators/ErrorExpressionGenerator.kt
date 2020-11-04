@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.types.ErrorUtils
 class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
     private val ignoreErrors: Boolean get() = context.configuration.ignoreErrors
 
-    private inline fun generateErrorExpression(ktElement: KtElement, e: Throwable? = null, body: () -> IrExpression) =
+    private inline fun generateErrorExpression(ktElement: KtElement, e: Throwable? = null, body: () -> IrExpression): IrExpression =
         if (ignoreErrors)
             body()
         else
-            throw RuntimeException("${e?.message}: ${ktElement::class.java.simpleName}:\n${ktElement.text}", e)
+            throw ErrorExpressionException(ktElement, e)
 
     fun generateErrorExpression(ktElement: KtElement, e: Throwable): IrExpression =
         generateErrorExpression(ktElement, e) {
@@ -81,3 +81,8 @@ class ErrorExpressionGenerator(statementGenerator: StatementGenerator) : Stateme
     }
 
 }
+
+class ErrorExpressionException(val ktElement: KtElement, cause: Throwable?) : RuntimeException(
+    "${cause?.message}: ${ktElement::class.java.simpleName}:\n${ktElement.text}",
+    cause
+)
