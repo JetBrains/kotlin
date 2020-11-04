@@ -26,10 +26,10 @@ internal class KtFirAnonymousFunctionSymbol(
     private val builder: KtSymbolByFirBuilder
 ) : KtAnonymousFunctionSymbol(), KtFirSymbol<FirAnonymousFunction> {
     override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
+    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.session) }
 
     override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { builder.buildKtType(it.returnTypeRef) }
-    override val valueParameters: List<KtParameterSymbol> by firRef.withFirAndCache {
+    override val valueParameters: List<KtParameterSymbol> by firRef.withFirAndCache { fir ->
         fir.valueParameters.map { valueParameter ->
             check(valueParameter is FirValueParameterImpl)
             builder.buildParameterSymbol(valueParameter)
