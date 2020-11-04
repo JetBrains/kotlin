@@ -796,11 +796,6 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         kotlinOptions.noJdk = true
         ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
-        val androidPluginIds = listOf(
-            "android", "com.android.application", "android-library", "com.android.library",
-            "com.android.test", "com.android.feature", "com.android.dynamic-feature", "com.android.instantapp"
-        )
-
         val plugin by lazy {
             androidPluginIds.asSequence()
                 .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
@@ -904,6 +899,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
         // Trivial mapping of Android variants to Android source set names is impossible here,
         // because some variants have their dedicated source sets with mismatching names,
+        // because some variants have their dedicated source sets with mismatching names,
         // e.g. variant 'fooBarDebugAndroidTest' <-> source set 'androidTestFooBarDebug'
 
         // In single-platform projects, the Kotlin compilations already reference the Android plugin's configurations by the names,
@@ -974,6 +970,8 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
         // Register the source only after the task is created, because the task is required for that:
         compilation.source(defaultSourceSet)
+
+        compilation.androidVariant.forEachKotlinSourceSet { kotlinSourceSet -> compilation.source(kotlinSourceSet) }
     }
 
     private fun postprocessVariant(
@@ -983,7 +981,6 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         androidExt: BaseExtension,
         androidPlugin: BasePlugin
     ) {
-        val javaTask = variantData.getJavaTaskProvider()
 
         getTestedVariantData(variantData)?.let { testedVariant ->
             val testedVariantName = getVariantName(testedVariant)
@@ -991,33 +988,23 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
             compilation.associateWith(testedCompilation)
         }
 
+        val javaTask = variantData.getJavaTaskProvider()
         val kotlinTask = compilation.compileKotlinTaskProvider
-        processAndroidKotlinAndJavaSources(
-            compilation,
-            addKotlinSources = { kotlinSourceSet -> compilation.source(kotlinSourceSet) },
-            addJavaSources = { sources -> compilation.compileKotlinTaskProvider.configure { it.source(sources) } }
-        )
+        compilation.androidVariant.forEachJavaSourceDir { sources -> kotlinTask.configure { it.source(sources) } }
         wireKotlinTasks(project, compilation, androidPlugin, androidExt, variantData, javaTask, kotlinTask)
     }
 }
 
-private fun getAllJavaSources(variantData: BaseVariant): Iterable<File> =
-    variantData.getSourceFolders(SourceKind.JAVA).map { it.dir }
-
-internal fun processAndroidKotlinAndJavaSources(
-    compilation: KotlinJvmAndroidCompilation,
-    addKotlinSources: (KotlinSourceSet) -> Unit,
-    addJavaSources: (Iterable<File>) -> Unit
-) {
-    val variantData = compilation.androidVariant
-
-    for (provider in variantData.sourceSets) {
-        val kotlinSourceSet = provider.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet ?: continue
-        addKotlinSources(kotlinSourceSet)
-    }
-
-    addJavaSources(getAllJavaSources(variantData))
+internal inline fun BaseVariant.forEachKotlinSourceSet(action: (KotlinSourceSet) -> Unit) {
+    sourceSets
+        .mapNotNull { provider -> provider.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet }
+        .forEach(action)
 }
+
+internal inline fun BaseVariant.forEachJavaSourceDir(action: (File) -> Unit) {
+    getSourceFolders(SourceKind.JAVA).map { it.dir }.forEach(action)
+}
+
 
 internal fun configureJavaTask(
     kotlinTaskProvider: TaskProvider<out KotlinCompile>,
