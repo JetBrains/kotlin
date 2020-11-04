@@ -17774,6 +17774,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/jvmStatic/funAccess.kt");
         }
 
+        @TestMetadata("functionReference.kt")
+        public void testFunctionReference() throws Exception {
+            runTest("compiler/testData/codegen/box/jvmStatic/functionReference.kt");
+        }
+
         @TestMetadata("importStaticMemberFromObject.kt")
         public void testImportStaticMemberFromObject() throws Exception {
             runTest("compiler/testData/codegen/box/jvmStatic/importStaticMemberFromObject.kt");
