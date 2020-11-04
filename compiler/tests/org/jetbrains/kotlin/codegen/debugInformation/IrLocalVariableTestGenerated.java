@@ -68,21 +68,9 @@ public class IrLocalVariableTestGenerated extends AbstractIrLocalVariableTest {
     }
 
     @Test
-    @TestMetadata("lambdaWithExtensionReceiver.kt")
-    public void testLambdaWithExtensionReceiver() throws Exception {
-        runTest("compiler/testData/debug/localVariables/lambdaWithExtensionReceiver.kt");
-    }
-
-    @Test
     @TestMetadata("localFun.kt")
     public void testLocalFun() throws Exception {
         runTest("compiler/testData/debug/localVariables/localFun.kt");
-    }
-
-    @Test
-    @TestMetadata("receiverParameter.kt")
-    public void testReceiverParameter() throws Exception {
-        runTest("compiler/testData/debug/localVariables/receiverParameter.kt");
     }
 
     @Test
@@ -105,9 +93,51 @@ public class IrLocalVariableTestGenerated extends AbstractIrLocalVariableTest {
         }
 
         @Test
+        @TestMetadata("capturedThisField.kt")
+        public void testCapturedThisField() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/capturedThisField.kt");
+        }
+
+        @Test
+        @TestMetadata("labeledThisParameterLabel.kt")
+        public void testLabeledThisParameterLabel() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/labeledThisParameterLabel.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaWithExtensionReceiver.kt")
+        public void testLambdaWithExtensionReceiver() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/lambdaWithExtensionReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("receiverParameter.kt")
+        public void testReceiverParameter() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/receiverParameter.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/debug/localVariables/receiverMangling/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleCapturedReceiver.kt")
+        public void testSimpleCapturedReceiver() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simpleCapturedReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleCapturedReceiverWithLabel.kt")
+        public void testSimpleCapturedReceiverWithLabel() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simpleCapturedReceiverWithLabel.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleCapturedReceiverWithParenthesis.kt")
+        public void testSimpleCapturedReceiverWithParenthesis() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simpleCapturedReceiverWithParenthesis.kt");
         }
     }
 
