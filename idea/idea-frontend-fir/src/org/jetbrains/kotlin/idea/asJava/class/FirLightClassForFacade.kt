@@ -71,14 +71,6 @@ class FirLightClassForFacade(
 
     override fun getScope(): PsiElement? = parent
 
-    private inline fun <reified T : FirDeclaration, K> KtFile.withFir(body: T.() -> K): K {
-        val resolveState = LowLevelFirApiFacade.getResolveStateFor(this)
-        return LowLevelFirApiFacade.withFirFile(this, resolveState) {
-            require(it is T)
-            it.body()
-        }
-    }
-
     private fun loadMethodsFromFile(
         file: KtFile,
         result: MutableList<KtLightMethod>
