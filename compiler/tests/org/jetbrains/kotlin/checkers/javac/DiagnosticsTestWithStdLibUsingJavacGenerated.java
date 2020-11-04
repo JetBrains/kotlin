@@ -39,6 +39,11 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
         runTest("compiler/testData/diagnostics/testsWithStdLib/ArrayOfNothing.kt");
     }
 
+    @TestMetadata("assignedInSynchronized.kt")
+    public void testAssignedInSynchronized() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/assignedInSynchronized.kt");
+    }
+
     @TestMetadata("CallCompanionProtectedNonStatic.kt")
     public void testCallCompanionProtectedNonStatic() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithStdLib/CallCompanionProtectedNonStatic.kt");

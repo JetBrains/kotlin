@@ -90,3 +90,15 @@ class DefiniteInitializationInInitSection {
         unknownRun { <!CAPTURED_MEMBER_VAL_INITIALIZATION!>y<!> = 239 }
     }
 }
+
+class DefiniteInitializationAfterThrow {
+    fun test() {
+        val a: Int
+        myRun {
+            if (bar()) throw RuntimeException()
+            a = 42
+        }
+        a.hashCode()
+    }
+    fun bar() = false
+}
