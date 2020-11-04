@@ -59,8 +59,16 @@ class WasmIrToText : SExpressionBuilder() {
     }
 
     private fun appendInstr(wasmInstr: WasmInstr) {
+        val op = wasmInstr.operator
+        if (op == WasmOp.END || op == WasmOp.ELSE)
+            indent--
+
         newLine()
         stringBuilder.append(wasmInstr.operator.mnemonic)
+
+        if (op == WasmOp.BLOCK || op == WasmOp.LOOP || op == WasmOp.IF || op == WasmOp.ELSE)
+            indent++
+
         if (wasmInstr.operator in setOf(WasmOp.CALL_INDIRECT, WasmOp.TABLE_INIT)) {
             wasmInstr.immediates.reversed().forEach {
                 appendImmediate(it)
