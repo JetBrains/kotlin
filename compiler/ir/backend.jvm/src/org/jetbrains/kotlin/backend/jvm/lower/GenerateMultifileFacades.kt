@@ -143,13 +143,14 @@ private fun generateMultifileFacades(
             moveFieldsOfConstProperties(partClass, facadeClass)
 
             for (member in partClass.declarations) {
-                if (member is IrSimpleFunction &&
-                    !member.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
-                ) {
-                    val newMember = member.createMultifileDelegateIfNeeded(context, facadeClass, shouldGeneratePartHierarchy)
-                    if (newMember != null) {
-                        functionDelegates[member] = newMember
-                    }
+                if (member !is IrSimpleFunction) continue
+                if (member.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) ||
+                    member.correspondingPropertySymbol?.owner?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true
+                ) continue
+
+                val newMember = member.createMultifileDelegateIfNeeded(context, facadeClass, shouldGeneratePartHierarchy)
+                if (newMember != null) {
+                    functionDelegates[member] = newMember
                 }
             }
         }
