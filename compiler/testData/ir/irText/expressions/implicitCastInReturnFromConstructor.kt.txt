@@ -1,0 +1,19 @@
+class C {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  constructor(x: Any?) {
+    TODO("IrDelegatingConstructorCall")
+    when {
+      x is Unit -> return x /*~> Unit */
+    }
+  }
+
+
+
+
+}
+

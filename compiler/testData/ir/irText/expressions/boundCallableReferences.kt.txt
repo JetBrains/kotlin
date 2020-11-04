@@ -1,0 +1,34 @@
+class A {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  fun foo() {
+  }
+
+  val bar: Int
+    field = 0
+    get
+
+
+
+
+}
+
+fun A.qux() {
+}
+
+val test1: KFunction0<Unit>
+  field = ::foo
+  get
+
+val test2: KProperty0<Int>
+  field = ::bar
+  get
+
+val test3: KFunction0<Unit>
+  field = ::qux
+  get
+

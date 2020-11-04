@@ -1,0 +1,50 @@
+interface ILeft {
+  fun foo() {
+  }
+
+  val bar: Int
+    get(): Int {
+      return 1
+    }
+
+
+
+
+}
+
+interface IRight {
+  fun foo() {
+  }
+
+  val bar: Int
+    get(): Int {
+      return 2
+    }
+
+
+
+
+}
+
+class CBoth : ILeft, IRight {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  override fun foo() {
+    <this>.foo()
+    <this>.foo()
+  }
+
+  override val bar: Int
+    override get(): Int {
+      return <this>.<get-bar>().plus(other = <this>.<get-bar>())
+    }
+
+
+
+
+}
+

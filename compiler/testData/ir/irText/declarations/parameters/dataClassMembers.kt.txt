@@ -1,0 +1,63 @@
+data class Test<T : Any?> {
+  constructor(x: T, y: String = "") /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: T
+    field = x
+    get
+
+  val y: String
+    field = y
+    get
+
+  operator fun component1(): T {
+    return #x
+  }
+
+  operator fun component2(): String {
+    return #y
+  }
+
+  fun copy(x: T = #x, y: String = #y): Test<T> {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "Test(" + 
+"x=" + 
+#x + 
+", " + 
+"y=" + 
+#y + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = #x, arg1 = null) -> 0
+      true -> #x.hashCode()
+    }.times(other = 31).plus(other = #y.hashCode())
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Test<T> -> return false
+    }
+    val tmp0_other_with_cast: Test<T> = other as Test<T>
+    when {
+      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = #y, arg1 = #y).not() -> return false
+    }
+    return true
+  }
+
+}
+

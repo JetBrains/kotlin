@@ -1,0 +1,26 @@
+fun String.extension() {
+}
+
+class C {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  fun String.memberExtension() {
+  }
+
+
+
+
+}
+
+fun testExt() {
+  extension($receiver = s() /*!! String */)
+}
+
+fun C.testMemberExt() {
+  <this>.memberExtension($receiver = s() /*!! String */)
+}
+

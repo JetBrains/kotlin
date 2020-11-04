@@ -1,0 +1,19 @@
+class A {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+operator fun A.set(vararg i: Int, v: Int) {
+}
+
+fun testSimpleAssignment(a: A) {
+  set($receiver = a, i = [1, 2, 3], v = 0)
+}
+

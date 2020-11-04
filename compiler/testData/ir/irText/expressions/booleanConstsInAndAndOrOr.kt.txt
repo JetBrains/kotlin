@@ -1,0 +1,14 @@
+fun test1(b: Boolean) {
+  when {
+    b -> return Unit
+    true -> false
+  } /*~> Unit */
+}
+
+fun test2(b: Boolean) {
+  when {
+    b -> true
+    true -> return Unit
+  } /*~> Unit */
+}
+

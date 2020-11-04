@@ -1,0 +1,69 @@
+data class A {
+  constructor(x: Int, y: Int) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  operator fun component1(): Int {
+    return #x
+  }
+
+  operator fun component2(): Int {
+    return #y
+  }
+
+  fun copy(x: Int = #x, y: Int = #y): A {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "A(" + 
+"x=" + 
+#x + 
+", " + 
+"y=" + 
+#y + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return #x.hashCode().times(other = 31).plus(other = #y.hashCode())
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is A -> return false
+    }
+    val tmp0_other_with_cast: A = other as A
+    when {
+      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = #y, arg1 = #y).not() -> return false
+    }
+    return true
+  }
+
+}
+
+var fn: Function1<A, Int>
+  field =   local fun <anonymous>(<name for destructuring parameter 0>: A): Int {
+    val y: Int = <name for destructuring parameter 0>.component2()
+    return 42.plus(other = y)
+  }
+
+  get
+  set
+

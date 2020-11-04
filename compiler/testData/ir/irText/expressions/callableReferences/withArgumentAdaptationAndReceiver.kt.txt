@@ -1,0 +1,79 @@
+fun use(fn: Function1<Int, Unit>) {
+  fn.invoke(p1 = 1)
+}
+
+class Host {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  fun withVararg(vararg xs: Int): String {
+    return ""
+  }
+
+  fun testImplicitThis() {
+    use(fn = { //BLOCK
+      local fun Host.withVararg(p0: Int) {
+        receiver.withVararg(xs = [p0]) /*~> Unit */
+      }
+
+
+      ::withVararg
+    })
+  }
+
+  fun testBoundReceiverLocalVal() {
+    val h: Host = TODO("IrConstructorCall")
+    use(fn = { //BLOCK
+      local fun Host.withVararg(p0: Int) {
+        receiver.withVararg(xs = [p0]) /*~> Unit */
+      }
+
+
+      ::withVararg
+    })
+  }
+
+  fun testBoundReceiverLocalVar() {
+    var h: Host = TODO("IrConstructorCall")
+    use(fn = { //BLOCK
+      val tmp0_receiver: Host = h
+      local fun Host.withVararg(p0: Int) {
+        receiver.withVararg(xs = [p0]) /*~> Unit */
+      }
+
+
+      ::withVararg
+    })
+  }
+
+  fun testBoundReceiverParameter(h: Host) {
+    use(fn = { //BLOCK
+      local fun Host.withVararg(p0: Int) {
+        receiver.withVararg(xs = [p0]) /*~> Unit */
+      }
+
+
+      ::withVararg
+    })
+  }
+
+  fun testBoundReceiverExpression() {
+    use(fn = { //BLOCK
+      val tmp0_receiver: Host = TODO("IrConstructorCall")
+      local fun Host.withVararg(p0: Int) {
+        receiver.withVararg(xs = [p0]) /*~> Unit */
+      }
+
+
+      ::withVararg
+    })
+  }
+
+
+
+
+}
+

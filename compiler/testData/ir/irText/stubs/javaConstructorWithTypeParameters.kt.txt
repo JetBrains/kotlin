@@ -1,0 +1,16 @@
+fun test1(): J1<Int> {
+  return TODO("IrConstructorCall")
+}
+
+fun test2(): J1<Int> {
+  return TODO("IrConstructorCall")
+}
+
+fun test3(j1: J1<Any>): J2<Int, Any> {
+  return TODO("IrConstructorCall")
+}
+
+fun test4(j1: J1<Any>): J2<Int, Any> {
+  return TODO("IrConstructorCall")
+}
+

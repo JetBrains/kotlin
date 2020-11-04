@@ -1,0 +1,150 @@
+enum class TestEnum1 : Enum<TestEnum1> {
+  private constructor() /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  TEST1 init = TODO("IrEnumConstructorCall")  TEST2 init = TODO("IrEnumConstructorCall")
+
+
+
+
+
+
+  fun values(): Array<TestEnum1> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestEnum1 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+enum class TestEnum2 : Enum<TestEnum2> {
+  private constructor(x: Int) /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  TEST1 init = TODO("IrEnumConstructorCall")  TEST2 init = TODO("IrEnumConstructorCall")  TEST3 init = TODO("IrEnumConstructorCall")
+
+
+
+
+
+
+  fun values(): Array<TestEnum2> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestEnum2 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+abstract enum class TestEnum3 : Enum<TestEnum3> {
+  private constructor() /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  TEST init = TODO("IrEnumConstructorCall")  abstract fun foo() 
+
+
+
+
+
+
+
+  fun values(): Array<TestEnum3> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestEnum3 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+abstract enum class TestEnum4 : Enum<TestEnum4> {
+  private constructor(x: Int) /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  TEST1 init = TODO("IrEnumConstructorCall")  TEST2 init = TODO("IrEnumConstructorCall")  abstract fun foo() 
+
+
+
+
+
+
+
+  fun values(): Array<TestEnum4> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestEnum4 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+enum class TestEnum5 : Enum<TestEnum5> {
+  private constructor(x: Int = 0) /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  TEST1 init = TODO("IrEnumConstructorCall")  TEST2 init = TODO("IrEnumConstructorCall")  TEST3 init = TODO("IrEnumConstructorCall")
+
+
+
+
+
+
+  fun values(): Array<TestEnum5> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestEnum5 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+fun f(): Int {
+  return 1
+}
+
+enum class TestEnum6 : Enum<TestEnum6> {
+  private constructor(x: Int, y: Int) /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  TEST init = { //BLOCK
+    val tmp0_y: Int = f()
+    val tmp1_x: Int = f()
+    TODO("IrEnumConstructorCall")
+  }
+
+
+
+
+
+
+  fun values(): Array<TestEnum6> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestEnum6 /* Synthetic body for ENUM_VALUEOF */
+
+}
+

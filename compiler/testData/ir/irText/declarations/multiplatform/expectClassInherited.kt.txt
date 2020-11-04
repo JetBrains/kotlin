@@ -1,0 +1,48 @@
+expect abstract class A {
+  protected expect constructor() /* primary */ 
+  expect abstract fun foo() 
+
+
+
+}
+
+expect open class B : A {
+  expect constructor(i: Int) /* primary */ 
+  expect override fun foo() 
+  expect open fun bar(s: String) 
+
+
+
+}
+
+abstract class A {
+  protected constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  abstract fun foo() 
+
+
+
+}
+
+open class B : A {
+  constructor(i: Int) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  override fun foo() {
+  }
+
+  open fun bar(s: String) {
+  }
+
+
+
+
+}
+

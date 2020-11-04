@@ -1,0 +1,48 @@
+interface IFooStr {
+  abstract fun foo(x: String) 
+
+
+
+}
+
+interface IBar {
+  abstract val bar: Int
+    abstract get
+
+
+
+
+}
+
+abstract class CFoo<T : Any?> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  fun foo(x: T) {
+  }
+
+
+
+
+}
+
+class Test1 : CFoo<String>, IFooStr, IBar {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  override val bar: Int
+    field = 42
+    override get
+
+
+
+
+
+}
+

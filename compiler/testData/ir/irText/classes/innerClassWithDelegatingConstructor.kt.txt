@@ -1,0 +1,32 @@
+class Outer {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  inner class Inner {
+    constructor(x: Int) /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    val x: Int
+      field = x
+      get
+
+    constructor() {
+      TODO("IrDelegatingConstructorCall")
+    }
+
+
+
+
+  }
+
+
+
+
+}
+

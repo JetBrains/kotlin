@@ -1,0 +1,58 @@
+class A {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+operator fun A.plusAssign(s: String) {
+}
+
+operator fun A.minusAssign(s: String) {
+}
+
+operator fun A.timesAssign(s: String) {
+}
+
+operator fun A.divAssign(s: String) {
+}
+
+operator fun A.remAssign(s: String) {
+}
+
+val p: A
+  field = TODO("IrConstructorCall")
+  get
+
+fun testVariable() {
+  val a: A = TODO("IrConstructorCall")
+  plusAssign($receiver = a, s = "+=")
+  minusAssign($receiver = a, s = "-=")
+  timesAssign($receiver = a, s = "*=")
+  divAssign($receiver = a, s = "/=")
+  remAssign($receiver = a, s = "*=")
+}
+
+fun testProperty() {
+  { //BLOCK
+    plusAssign($receiver = <get-p>(), s = "+=")
+  }
+  { //BLOCK
+    minusAssign($receiver = <get-p>(), s = "-=")
+  }
+  { //BLOCK
+    timesAssign($receiver = <get-p>(), s = "*=")
+  }
+  { //BLOCK
+    divAssign($receiver = <get-p>(), s = "/=")
+  }
+  { //BLOCK
+    remAssign($receiver = <get-p>(), s = "%=")
+  }
+}
+

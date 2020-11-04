@@ -1,0 +1,58 @@
+@ImplicitIntegerCoercion
+const val IMPLICIT_INT: Int
+  field = 255
+  get
+
+@ImplicitIntegerCoercion
+const val EXPLICIT_INT: Int
+  field = 255
+  get
+
+@ImplicitIntegerCoercion
+const val LONG_CONST: Long
+  field = 255L
+  get
+
+@ImplicitIntegerCoercion
+val NON_CONST: Int
+  field = 255
+  get
+
+@ImplicitIntegerCoercion
+const val BIGGER_THAN_UBYTE: Int
+  field = 256
+  get
+
+@ImplicitIntegerCoercion
+const val UINT_CONST: UInt
+  field = 42
+  get
+
+fun takeUByte(u: UByte) {
+}
+
+fun takeUShort(u: UShort) {
+}
+
+fun takeUInt(u: UInt) {
+}
+
+fun takeULong(u: ULong) {
+}
+
+fun takeUBytes(vararg u: UByte) {
+}
+
+fun takeLong(l: Long) {
+}
+
+fun test() {
+  takeUByte(u = toUByte($receiver = <get-IMPLICIT_INT>()))
+  takeUByte(u = toUByte($receiver = <get-EXPLICIT_INT>()))
+  takeUShort(u = toUShort($receiver = <get-IMPLICIT_INT>()))
+  takeUShort(u = toUShort($receiver = <get-BIGGER_THAN_UBYTE>()))
+  takeUInt(u = toUInt($receiver = <get-IMPLICIT_INT>()))
+  takeULong(u = toULong($receiver = <get-IMPLICIT_INT>()))
+  takeUBytes(u = [toUByte($receiver = <get-IMPLICIT_INT>()), toUByte($receiver = <get-EXPLICIT_INT>()), 42B])
+}
+

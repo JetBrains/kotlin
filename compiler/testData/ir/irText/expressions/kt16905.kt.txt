@@ -1,0 +1,53 @@
+class Outer {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  open inner class Inner {
+    constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+
+
+
+  }
+
+  inner class InnerDerived0 : Inner {
+    constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+
+
+
+  }
+
+  inner class InnerDerived1 : Inner {
+    constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+
+
+
+  }
+
+
+
+
+}
+
+typealias OI = Inner
+fun test(): Inner {
+  return TODO("IrConstructorCall")
+}
+

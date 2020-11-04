@@ -1,0 +1,35 @@
+abstract class Base {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+object Test : Base {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = 1
+    get
+
+  val y: Int
+    get
+
+  init {
+    #y = <this>.<get-x>()
+  }
+
+
+
+
+}
+

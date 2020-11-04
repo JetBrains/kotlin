@@ -1,0 +1,20 @@
+class Derived : Base {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  fun setValue(v: Any) {
+    when {
+      v is String -> { //BLOCK
+        #value = v /*as String */
+      }
+    }
+  }
+
+
+
+
+}
+

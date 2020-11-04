@@ -1,0 +1,25 @@
+annotation class A : Annotation {
+  constructor(x: String) /* primary */ 
+  val x: String
+    field = x
+    get
+
+
+
+
+}
+
+fun foo(m: Map<String, Int>) {
+  @A(...)
+  val test: Int
+    val test$delegate: Lazy<Int> = lazy<Int>(initializer =     local fun <anonymous>(): Int {
+      return 42
+    }
+)
+    local get(): Int {
+      return getValue<Int>($receiver = test$delegate, thisRef = null, property = ::test)
+    }
+
+
+}
+

@@ -1,0 +1,16 @@
+annotation class Ann : Annotation {
+  constructor() /* primary */ 
+
+
+
+}
+
+val test1: Int /* by */ 
+  field = lazy<Int>(initializer =   local fun <anonymous>(): Int {
+    return 42
+  }
+)
+  get(): Int {
+    return getValue<Int>($receiver = #test1$delegate, thisRef = null, property = ::test1)
+  }
+

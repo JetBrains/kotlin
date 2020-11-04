@@ -1,0 +1,46 @@
+class Delegate {
+  constructor(value: String) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val value: String
+    field = value
+    get
+
+  operator fun getValue(thisRef: Any?, property: Any?): String {
+    return <this>.<get-value>()
+  }
+
+
+
+
+}
+
+class DelegateProvider {
+  constructor(value: String) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val value: String
+    field = value
+    get
+
+  operator fun provideDelegate(thisRef: Any?, property: Any?): Delegate {
+    return TODO("IrConstructorCall")
+  }
+
+
+
+
+}
+
+val testTopLevel: String /* by */ 
+  field = TODO("IrConstructorCall").provideDelegate(thisRef = null, property = ::testTopLevel)
+  get(): String {
+    return #testTopLevel$delegate.getValue(thisRef = null, property = ::testTopLevel)
+  }
+

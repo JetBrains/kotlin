@@ -1,0 +1,27 @@
+class Outer<T1 : Any?> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  inner class Inner<T2 : Any?> {
+    constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    fun foo(x1: T1, x2: T2) {
+    }
+
+
+
+
+  }
+
+
+
+
+}
+

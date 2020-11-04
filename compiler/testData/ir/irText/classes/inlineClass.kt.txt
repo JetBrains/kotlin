@@ -1,0 +1,35 @@
+inline class Test {
+  constructor(x: Int) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  override fun toString(): String {
+    return "Test(" + 
+"x=" + 
+#x + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return #x.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is Test -> return false
+    }
+    val tmp0_other_with_cast: Test = other as Test
+    when {
+      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+    }
+    return true
+  }
+
+}
+

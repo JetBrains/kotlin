@@ -1,0 +1,19 @@
+class A {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+fun test() {
+  A::class /*~> Unit */
+  TODO("IrConstructorCall")::class /*~> Unit */
+  <get-java><A>($receiver = A::class) /*~> Unit */
+  <get-java><A>($receiver = TODO("IrConstructorCall")::class) /*~> Unit */
+}
+

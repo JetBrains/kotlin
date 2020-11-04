@@ -1,0 +1,16 @@
+operator fun J?.component1(): Int {
+  return 1
+}
+
+private operator fun J.component2(): Int {
+  return 2
+}
+
+fun test() {
+  // COMPOSITE {
+  val tmp0_container: @FlexibleNullability J? = j()
+  val a: Int = component1($receiver = tmp0_container)
+  val b: Int = component2($receiver = tmp0_container /*!! J */)
+  // }
+}
+

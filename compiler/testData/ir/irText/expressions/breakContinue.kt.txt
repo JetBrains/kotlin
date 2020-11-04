@@ -1,0 +1,51 @@
+fun test1() {
+  while (true) { //BLOCK
+    break
+  }
+  { //BLOCK
+    do// COMPOSITE {
+    break
+    // }    while (true)
+  }
+  while (true) { //BLOCK
+    continue
+  }
+  { //BLOCK
+    do// COMPOSITE {
+    continue
+    // }    while (true)
+  }
+}
+
+fun test2() {
+  while (true) { //BLOCK
+    while (true) { //BLOCK
+      break
+      break
+    }
+    break
+  }
+  while (true) { //BLOCK
+    while (true) { //BLOCK
+      continue
+      continue
+    }
+    continue
+  }
+}
+
+fun test3() {
+  while (true) { //BLOCK
+    while (true) { //BLOCK
+      break
+    }
+    break
+  }
+  while (true) { //BLOCK
+    while (true) { //BLOCK
+      continue
+    }
+    continue
+  }
+}
+

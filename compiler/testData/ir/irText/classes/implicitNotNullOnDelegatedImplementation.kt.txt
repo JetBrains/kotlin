@@ -1,0 +1,150 @@
+interface IFoo {
+  abstract fun foo(): String 
+
+
+
+}
+
+class K1 : JFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+
+}
+
+class K2 : JFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  override fun foo(): String {
+    return <this>.foo() /*!! String */
+  }
+
+
+
+
+}
+
+class K3 : JUnrelatedFoo, IFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+
+}
+
+class K4 : JUnrelatedFoo, IFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  override fun foo(): @FlexibleNullability String? {
+    return <this>.foo()
+  }
+
+
+
+
+}
+
+class TestJFoo : IFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  private /*final field*/ val $$delegate_0: JFoo = TODO("IrConstructorCall")
+  override fun foo(): String {
+    return #$$delegate_0.foo() /*!! String */
+  }
+
+
+
+
+}
+
+class TestK1 : IFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  private /*final field*/ val $$delegate_0: K1 = TODO("IrConstructorCall")
+  override fun foo(): String {
+    return #$$delegate_0.foo() /*!! String */
+  }
+
+
+
+
+}
+
+class TestK2 : IFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  private /*final field*/ val $$delegate_0: K2 = TODO("IrConstructorCall")
+  override fun foo(): String {
+    return #$$delegate_0.foo()
+  }
+
+
+
+
+}
+
+class TestK3 : IFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  private /*final field*/ val $$delegate_0: K3 = TODO("IrConstructorCall")
+  override fun foo(): String {
+    return #$$delegate_0.foo()
+  }
+
+
+
+
+}
+
+class TestK4 : IFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  private /*final field*/ val $$delegate_0: K4 = TODO("IrConstructorCall")
+  override fun foo(): String {
+    return #$$delegate_0.foo() /*!! String */
+  }
+
+
+
+
+}
+

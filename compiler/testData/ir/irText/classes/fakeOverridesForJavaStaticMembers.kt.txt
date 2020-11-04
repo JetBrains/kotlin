@@ -1,0 +1,14 @@
+class Test : Base {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+
+
+}
+

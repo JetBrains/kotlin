@@ -1,0 +1,40 @@
+object A {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+object B {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  operator fun A.component1(): Int {
+    return 1
+  }
+
+  operator fun A.component2(): Int {
+    return 2
+  }
+
+
+
+
+}
+
+fun B.test() {
+  // COMPOSITE {
+  val tmp0_container: A = A
+  val x: Int = <this>.component1($receiver = tmp0_container)
+  val y: Int = <this>.component2($receiver = tmp0_container)
+  // }
+}
+

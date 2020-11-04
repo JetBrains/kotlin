@@ -1,0 +1,38 @@
+expect sealed class Ops {
+  private expect constructor() /* primary */ 
+
+
+
+}
+
+expect class Add : Ops {
+  expect constructor() /* primary */ 
+
+
+
+}
+
+sealed class Ops {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class Add : Ops {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+

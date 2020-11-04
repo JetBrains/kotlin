@@ -1,0 +1,60 @@
+sealed class Expr {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  class Const : Expr {
+    constructor(number: Double) /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    val number: Double
+      field = number
+      get
+
+
+
+
+  }
+
+  class Sum : Expr {
+    constructor(e1: Expr, e2: Expr) /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    val e1: Expr
+      field = e1
+      get
+
+    val e2: Expr
+      field = e2
+      get
+
+
+
+
+  }
+
+  object NotANumber : Expr {
+    private constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+
+
+
+  }
+
+
+
+
+}
+

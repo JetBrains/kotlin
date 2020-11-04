@@ -1,0 +1,102 @@
+open class A {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  fun f(): Int {
+    return 1
+  }
+
+  val aVal: Int
+    field = 42
+    get
+
+  fun testA1(x: Any): Int? {
+    return when {
+      x is B -> x /*as B */.f()
+      true -> null
+    }
+  }
+
+  fun testA2(x: Any): Int? {
+    return when {
+      x is B -> x /*as B */.<get-aVal>()
+      true -> null
+    }
+  }
+
+
+
+
+}
+
+class B : A {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  fun testB1(x: Any): Int? {
+    return when {
+      x is B -> x /*as B */.f()
+      true -> null
+    }
+  }
+
+  fun testB2(x: Any): Int? {
+    return when {
+      x is B -> x /*as B */.<get-aVal>()
+      true -> null
+    }
+  }
+
+
+
+
+
+
+
+}
+
+open class GA<T : Any?> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  fun f(): Int {
+    return 1
+  }
+
+  val aVal: Int
+    field = 42
+    get
+
+
+
+
+}
+
+class GB<T : Any?, S : Any?> : GA<T> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  fun testGB1(a: Any) {
+    a as GB<Int, String> /*~> Unit */
+    a /*as GB<*, *> */.f() /*~> Unit */
+    a /*as GB<*, *> */.<get-aVal>() /*~> Unit */
+  }
+
+
+
+
+
+}
+

@@ -1,0 +1,60 @@
+class C {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val test1: Int
+    field = 0
+    get
+
+  val test2: Int
+    get(): Int {
+      return 0
+    }
+
+  var test3: Int
+    field = 0
+    get
+    set
+
+  var test4: Int
+    field = 1
+    get
+    set(value: Int) {
+      #test4 = value
+    }
+
+  var test5: Int
+    field = 1
+    get
+    private set
+
+  val test6: Int
+    field = 1
+    get
+
+  val test7: Int /* by */ 
+    field = lazy<Int>(initializer =     local fun <anonymous>(): Int {
+      return 42
+    }
+)
+    get(): Int {
+      return getValue<Int>($receiver = #test7$delegate, thisRef = <this>, property = ::test7)
+    }
+
+  var test8: Int /* by */ 
+    field = hashMapOf<String, Int>()
+    get(): Int {
+      return getValue<Int, Int>($receiver = #test8$delegate, thisRef = <this>, property = ::test8)
+    }
+    set(<set-?>: Int) {
+      return setValue<Int>($receiver = #test8$delegate, thisRef = <this>, property = ::test8, value = <set-?>)
+    }
+
+
+
+
+}
+

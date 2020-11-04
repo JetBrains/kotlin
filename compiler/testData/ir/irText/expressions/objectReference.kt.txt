@@ -1,0 +1,103 @@
+object Z {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  var counter: Int
+    field = 0
+    get
+    set
+
+  fun foo() {
+  }
+
+  fun bar() {
+    <this>.<set-counter>(<set-?> = 1)
+    <this>.foo()
+    Z.<set-counter>(<set-?> = 1)
+    Z.foo()
+  }
+
+  class Nested {
+    constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    init {
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+    }
+
+    fun test() {
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+    }
+
+
+
+
+  }
+
+  val aLambda: Function0<Unit>
+    field =     local fun <anonymous>() {
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+      Z.<set-counter>(<set-?> = 1)
+      Z.foo()
+    }
+
+    get
+
+  val anObject: Any
+    field = { //BLOCK
+      local class <no name provided> {
+        constructor() /* primary */ {
+          TODO("IrDelegatingConstructorCall")
+                    /* InstanceInitializerCall */
+
+        }
+
+        init {
+          Z.<set-counter>(<set-?> = 1)
+          Z.foo()
+          Z.<set-counter>(<set-?> = 1)
+          Z.foo()
+        }
+
+        fun test() {
+          Z.<set-counter>(<set-?> = 1)
+          Z.foo()
+          Z.<set-counter>(<set-?> = 1)
+          Z.foo()
+        }
+
+
+
+
+      }
+
+
+      TODO("IrConstructorCall")
+    }
+    get
+
+
+
+
+}
+
+fun Z.test() {
+  <this>.<set-counter>(<set-?> = 1)
+  <this>.foo()
+  Z.<set-counter>(<set-?> = 1)
+  Z.foo()
+}
+

@@ -1,0 +1,58 @@
+operator fun Int.compareTo(c: Char): Int {
+  return 0
+}
+
+fun testOverloadedCompareToCall(x: Int, y: Char): Boolean {
+  return less(arg0 = compareTo($receiver = x, c = y), arg1 = 0)
+}
+
+fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
+  return when {
+    when {
+      x is Int -> y is Char
+      true -> false
+    } -> less(arg0 = compareTo($receiver = x /*as Int */, c = y /*as Char */), arg1 = 0)
+    true -> false
+  }
+}
+
+fun testEqualsWithSmartCast(x: Any, y: Any): Boolean {
+  return when {
+    when {
+      x is Int -> y is Char
+      true -> false
+    } -> EQEQ(arg0 = x, arg1 = y)
+    true -> false
+  }
+}
+
+class C {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  operator fun Int.compareTo(c: Char): Int {
+    return 0
+  }
+
+  fun testMemberExtensionCompareToCall(x: Int, y: Char): Boolean {
+    return less(arg0 = <this>.compareTo($receiver = x, c = y), arg1 = 0)
+  }
+
+  fun testMemberExtensionCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
+    return when {
+      when {
+        x is Int -> y is Char
+        true -> false
+      } -> less(arg0 = <this>.compareTo($receiver = x /*as Int */, c = y /*as Char */), arg1 = 0)
+      true -> false
+    }
+  }
+
+
+
+
+}
+

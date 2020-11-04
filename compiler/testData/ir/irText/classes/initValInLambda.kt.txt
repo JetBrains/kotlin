@@ -1,0 +1,22 @@
+class TestInitValInLambdaCalledOnce {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    get
+
+  init {
+    run<Int, Unit>($receiver = 1, block =     local fun Int.<anonymous>() {
+      #x = 0
+    }
+)
+  }
+
+
+
+
+}
+

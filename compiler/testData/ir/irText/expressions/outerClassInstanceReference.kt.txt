@@ -1,0 +1,31 @@
+class Outer {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  fun outer() {
+  }
+
+  inner class Inner {
+    constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    fun inner() {
+      return <this>.outer()
+    }
+
+
+
+
+  }
+
+
+
+
+}
+

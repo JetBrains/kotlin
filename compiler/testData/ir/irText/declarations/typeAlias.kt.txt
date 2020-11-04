@@ -1,0 +1,20 @@
+typealias Test1 = String
+fun foo() {
+  { //BLOCK
+  }
+}
+
+class C {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  @Suppress(...)
+  typealias TestNested = String
+
+
+
+}
+

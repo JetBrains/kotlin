@@ -1,0 +1,33 @@
+annotation class TestAnn : Annotation {
+  constructor(x: String) /* primary */ 
+  val x: String
+    field = x
+    get
+
+
+
+
+}
+
+open enum class TestEnum : Enum<TestEnum> {
+  private constructor() /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  @TestAnn(...)
+  ENTRY1 init = TODO("IrEnumConstructorCall")  @TestAnn(...)
+  ENTRY2 init = TODO("IrEnumConstructorCall")
+
+
+
+
+
+
+  fun values(): Array<TestEnum> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestEnum /* Synthetic body for ENUM_VALUEOF */
+
+}
+

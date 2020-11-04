@@ -1,0 +1,27 @@
+annotation class A : Annotation {
+  constructor(klass: KClass<*>) /* primary */ 
+  val klass: KClass<*>
+    field = klass
+    get
+
+
+
+
+}
+
+class C {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+@A(...)
+fun test1() {
+}
+

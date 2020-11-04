@@ -1,0 +1,85 @@
+interface IFoo {
+
+
+
+}
+
+class Derived1 : JFieldOwner, IFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class Derived2 : JFieldOwner, IFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+open class Mid : JFieldOwner {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class DerivedThroughMid1 : Mid, IFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class DerivedThroughMid2 : Mid, IFoo {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+fun test(b: Boolean) {
+  val d1: Derived1 = TODO("IrConstructorCall")
+  val d2: Derived2 = TODO("IrConstructorCall")
+  val k: Any = when {
+    b -> d1
+    true -> d2
+  }
+  #f = 42
+  #f /*~> Unit */
+  val md1: DerivedThroughMid1 = TODO("IrConstructorCall")
+  val md2: DerivedThroughMid2 = TODO("IrConstructorCall")
+  val mk: Any = when {
+    b -> md1
+    true -> md2
+  }
+  #f = 44
+  #f /*~> Unit */
+}
+

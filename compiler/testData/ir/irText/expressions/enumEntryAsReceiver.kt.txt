@@ -1,0 +1,27 @@
+abstract enum class X : Enum<X> {
+  private constructor() /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  B init = TODO("IrEnumConstructorCall")  abstract val value: Function0<String>
+    abstract get
+
+
+
+
+
+
+
+
+  fun values(): Array<X> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): X /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+fun box(): String {
+  return X.<get-value>().invoke()
+}
+

@@ -1,0 +1,40 @@
+class C<T : Any?> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+object Delegate {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  operator fun getValue(thisRef: Any?, kProp: Any?): Int {
+    return 42
+  }
+
+  operator fun setValue(thisRef: Any?, kProp: Any?, newValue: Int) {
+  }
+
+
+
+
+}
+
+var <T : Any?> C<T>.genericDelegatedProperty: Int /* by */ 
+  field = Delegate
+  get(): Int {
+    return #genericDelegatedProperty$delegate.getValue(thisRef = <this>, kProp = ::genericDelegatedProperty)
+  }
+  set(<set-?>: Int) {
+    return #genericDelegatedProperty$delegate.setValue(thisRef = <this>, kProp = ::genericDelegatedProperty, newValue = <set-?>)
+  }
+

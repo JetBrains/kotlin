@@ -1,0 +1,78 @@
+interface In<in T : Any?> {
+
+
+
+}
+
+inline fun <reified T : Any?> In<T>.isT(): Boolean {
+  return <this> is T
+}
+
+inline fun <reified T : Any?> In<T>.asT() {
+  <this> as T /*~> Unit */
+}
+
+fun <S : Any?> sel(x: S, y: S): S {
+  return x
+}
+
+interface A {
+
+
+
+}
+
+interface B {
+
+
+
+}
+
+interface A1 : A {
+
+
+
+}
+
+interface A2 : A {
+
+
+
+}
+
+interface Z1 : A, B {
+
+
+
+}
+
+interface Z2 : A, B {
+
+
+
+}
+
+fun testInIs1(x: In<A>, y: In<B>): Boolean {
+  return isT<Any>($receiver = sel<In<Any>>(x = x, y = y))
+}
+
+fun testInIs2(x: In<Z1>, y: In<Z2>): Boolean {
+  return isT<Any>($receiver = sel<In<Any>>(x = x, y = y))
+}
+
+fun testInIs3(x: In<A1>, y: In<A2>): Boolean {
+  return isT<A>($receiver = sel<In<A>>(x = x, y = y))
+}
+
+fun testInAs1(x: In<A>, y: In<B>) {
+  return asT<Any>($receiver = sel<In<Any>>(x = x, y = y))
+}
+
+fun testInAs2(x: In<Z1>, y: In<Z2>) {
+  return asT<Any>($receiver = sel<In<Any>>(x = x, y = y))
+}
+
+fun testInAs3(x: In<A1>, y: In<A2>) {
+  return asT<A>($receiver = sel<In<A>>(x = x, y = y))
+}
+

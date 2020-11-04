@@ -1,0 +1,110 @@
+data class A {
+  constructor(runA: @ExtensionFunctionType Function2<A, String, Unit> =   local fun A.<anonymous>(it: String) {
+    return Unit
+  }
+) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val runA: @ExtensionFunctionType Function2<A, String, Unit>
+    field = runA
+    get
+
+  operator fun component1(): @ExtensionFunctionType Function2<A, String, Unit> {
+    return #runA
+  }
+
+  fun copy(runA: @ExtensionFunctionType Function2<A, String, Unit> = #runA): A {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "A(" + 
+"runA=" + 
+#runA + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return #runA.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is A -> return false
+    }
+    val tmp0_other_with_cast: A = other as A
+    when {
+      EQEQ(arg0 = #runA, arg1 = #runA).not() -> return false
+    }
+    return true
+  }
+
+}
+
+data class B {
+  constructor(x: Any = { //BLOCK
+    local class <no name provided> {
+      constructor() /* primary */ {
+        TODO("IrDelegatingConstructorCall")
+                /* InstanceInitializerCall */
+
+      }
+
+
+
+
+    }
+
+
+    TODO("IrConstructorCall")
+  }) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Any
+    field = x
+    get
+
+  operator fun component1(): Any {
+    return #x
+  }
+
+  fun copy(x: Any = #x): B {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "B(" + 
+"x=" + 
+#x + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return #x.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is B -> return false
+    }
+    val tmp0_other_with_cast: B = other as B
+    when {
+      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+    }
+    return true
+  }
+
+}
+

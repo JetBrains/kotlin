@@ -1,0 +1,7 @@
+fun <T : Any?> problematic(lss: List<List<T>>): List<T> {
+  return flatMap<List<T>, T?>($receiver = lss, transform =   local fun <anonymous>(it: List<T>): List<T?>? {
+    return id<T?>(v = it) /*!! List<T?> */
+  }
+)
+}
+

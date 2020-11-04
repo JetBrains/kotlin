@@ -1,0 +1,38 @@
+annotation class TestAnn : Annotation {
+  constructor(x: String) /* primary */ 
+  val x: String
+    field = x
+    get
+
+
+
+
+}
+
+val test1: String
+  @TestAnn(...)
+  get(): String {
+    return ""
+  }
+
+var test2: String
+  @TestAnn(...)
+  get(): String {
+    return ""
+  }
+  @TestAnn(...)
+  set(value: String) {
+  }
+
+val test3: String
+  field = ""
+  @TestAnn(...)
+  get
+
+var test4: String
+  field = ""
+  @TestAnn(...)
+  get
+  @TestAnn(...)
+  set
+

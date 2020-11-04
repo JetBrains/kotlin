@@ -1,0 +1,29 @@
+interface I {
+  val <T : Any?> T.id: T
+    get(): T {
+      return <this>
+    }
+
+
+
+
+}
+
+class A : I {
+  constructor(i: I) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  private /*final field*/ val $$delegate_0: I = i
+  override val <T : Any?> T.id: T
+    override get(): T {
+      return #$$delegate_0.<get-id><T>($receiver = <this>)
+    }
+
+
+
+
+}
+

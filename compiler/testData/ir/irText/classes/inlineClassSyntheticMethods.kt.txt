@@ -1,0 +1,66 @@
+class C<T : Any?> {
+  constructor(t: T) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val t: T
+    field = t
+    get
+
+  override fun hashCode(): Int {
+    return <this>.<get-t>() as Int
+  }
+
+
+
+}
+
+inline class IC<TT : Any?> {
+  constructor(c: C<TT>) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val c: C<TT>
+    field = c
+    get
+
+  fun foo(): Int {
+    return <this>.<get-c>().hashCode()
+  }
+
+  override fun toString(): String {
+    return "IC(" + 
+"c=" + 
+#c + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return #c.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is IC<TT> -> return false
+    }
+    val tmp0_other_with_cast: IC<TT> = other as IC<TT>
+    when {
+      EQEQ(arg0 = #c, arg1 = #c).not() -> return false
+    }
+    return true
+  }
+
+}
+
+fun box(): String {
+  val ic: IC<Int> = TODO("IrConstructorCall")
+  when {
+    EQEQ(arg0 = ic.foo(), arg1 = 42).not() -> return "FAIL"
+  }
+  return "OK"
+}
+

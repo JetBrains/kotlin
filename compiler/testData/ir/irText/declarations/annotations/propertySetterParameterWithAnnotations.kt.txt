@@ -1,0 +1,29 @@
+annotation class AnnParam : Annotation {
+  constructor() /* primary */ 
+
+
+
+}
+
+var p: Int
+  field = 0
+  get
+  set
+
+class C {
+  constructor(p: Int) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  var p: Int
+    field = p
+    get
+    set
+
+
+
+
+}
+

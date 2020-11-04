@@ -1,0 +1,14 @@
+fun create(): String {
+  return "OK"
+}
+
+@Deprecated(...)
+fun create(s: String): String {
+  return create()
+}
+
+@Deprecated(...)
+fun create(b: Boolean): String {
+  return create()
+}
+

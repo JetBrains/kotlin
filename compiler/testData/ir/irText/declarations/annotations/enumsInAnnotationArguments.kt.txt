@@ -1,0 +1,35 @@
+enum class En : Enum<En> {
+  private constructor() /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  A init = TODO("IrEnumConstructorCall")  B init = TODO("IrEnumConstructorCall")  C init = TODO("IrEnumConstructorCall")  D init = TODO("IrEnumConstructorCall")
+
+
+
+
+
+
+  fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+annotation class TestAnn : Annotation {
+  constructor(x: En) /* primary */ 
+  val x: En
+    field = x
+    get
+
+
+
+
+}
+
+@TestAnn(...)
+fun test1() {
+}
+

@@ -1,0 +1,52 @@
+val test1: Int /* by */ 
+  field = lazy<Int>(initializer =   local fun <anonymous>(): Int {
+    return 42
+  }
+)
+  get(): Int {
+    return getValue<Int>($receiver = #test1$delegate, thisRef = null, property = ::test1)
+  }
+
+class C {
+  constructor(map: MutableMap<String, Any>) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val map: MutableMap<String, Any>
+    field = map
+    get
+
+  val test2: Int /* by */ 
+    field = lazy<Int>(initializer =     local fun <anonymous>(): Int {
+      return 42
+    }
+)
+    get(): Int {
+      return getValue<Int>($receiver = #test2$delegate, thisRef = <this>, property = ::test2)
+    }
+
+  var test3: Any /* by */ 
+    field = <this>.<get-map>()
+    get(): Any {
+      return getValue<Any, Any>($receiver = #test3$delegate, thisRef = <this>, property = ::test3)
+    }
+    set(<set-?>: Any) {
+      return setValue<Any>($receiver = #test3$delegate, thisRef = <this>, property = ::test3, value = <set-?>)
+    }
+
+
+
+
+}
+
+var test4: Any /* by */ 
+  field = hashMapOf<String, Any>()
+  get(): Any {
+    return getValue<Any, Any>($receiver = #test4$delegate, thisRef = null, property = ::test4)
+  }
+  set(<set-?>: Any) {
+    return setValue<Any>($receiver = #test4$delegate, thisRef = null, property = ::test4, value = <set-?>)
+  }
+

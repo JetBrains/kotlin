@@ -1,0 +1,42 @@
+open class Cell<T : Any?> {
+  constructor(value: T) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val value: T
+    field = value
+    get
+
+
+
+
+}
+
+typealias CT<T : Any?> = Cell<T>
+typealias CStr = Cell<String>
+class C1 : Cell<String> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class C2 : Cell<String> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+

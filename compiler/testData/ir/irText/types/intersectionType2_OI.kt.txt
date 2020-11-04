@@ -1,0 +1,53 @@
+interface A<out T : Any?> {
+
+
+
+}
+
+interface Foo {
+
+
+
+}
+
+open class B : Foo, A<B> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+open class C : Foo, A<C> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+fun <T : Any?> run(fn: Function0<T>): T {
+  return fn.invoke()
+}
+
+fun foo(): Any {
+  return run<Any>(fn =   local fun <anonymous>(): Any {
+    val mm: B = TODO("IrConstructorCall")
+    val nn: C = TODO("IrConstructorCall")
+    val c: Any = when {
+      true -> mm
+      true -> nn
+    }
+    return c
+  }
+)
+}
+

@@ -1,0 +1,43 @@
+open class Base {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  open fun foo() {
+  }
+
+  open val bar: String
+    field = ""
+    open get
+
+  override fun hashCode(): Int {
+    return <this>.hashCode()
+  }
+
+
+
+}
+
+class Derived : Base {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  override fun foo() {
+    <this>.foo()
+  }
+
+  override val bar: String
+    override get(): String {
+      return <this>.<get-bar>()
+    }
+
+
+
+
+}
+

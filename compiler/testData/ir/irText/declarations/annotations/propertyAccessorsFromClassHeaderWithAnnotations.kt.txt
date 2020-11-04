@@ -1,0 +1,35 @@
+annotation class A : Annotation {
+  constructor(x: String) /* primary */ 
+  val x: String
+    field = x
+    get
+
+
+
+
+}
+
+class C {
+  constructor(x: Int, y: Int) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    @A(...)
+    get
+
+  var y: Int
+    field = y
+    @A(...)
+    get
+    @A(...)
+    set
+
+
+
+
+}
+

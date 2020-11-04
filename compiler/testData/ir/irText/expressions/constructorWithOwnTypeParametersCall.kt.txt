@@ -1,0 +1,32 @@
+fun testKotlin(): K2<String, Int> {
+  return TODO("IrConstructorCall")
+}
+
+fun testJava(): J2<Double, Int> {
+  return TODO("IrConstructorCall")
+}
+
+class K1<T1 : Number> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  inner class K2<T2 : CharSequence> {
+    constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+
+
+
+  }
+
+
+
+
+}
+

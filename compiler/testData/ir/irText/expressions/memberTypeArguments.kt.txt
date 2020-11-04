@@ -1,0 +1,20 @@
+class GenericClass<T : Any?> {
+  constructor(value: T) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val value: T
+    field = value
+    get
+
+  fun withNewValue(newValue: T): GenericClass<T> {
+    return TODO("IrConstructorCall")
+  }
+
+
+
+
+}
+

@@ -1,0 +1,54 @@
+open class Base {
+  constructor(x: Int, y: Int) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+
+
+
+}
+
+class Test1 : Base {
+  constructor(xx: Int, yy: Int) /* primary */ {
+    { //BLOCK
+      TODO("IrDelegatingConstructorCall")
+    }
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class Test2 : Base {
+  constructor(xx: Int, yy: Int) {
+    { //BLOCK
+      TODO("IrDelegatingConstructorCall")
+    }
+        /* InstanceInitializerCall */
+
+  }
+
+  constructor(xxx: Int, yyy: Int, a: Any) {
+    { //BLOCK
+      TODO("IrDelegatingConstructorCall")
+    }
+  }
+
+
+
+
+}
+

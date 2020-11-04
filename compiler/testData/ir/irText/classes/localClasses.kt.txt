@@ -1,0 +1,20 @@
+fun outer() {
+  local class LocalClass {
+    constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    fun foo() {
+    }
+
+
+
+
+  }
+
+
+  TODO("IrConstructorCall").foo()
+}
+

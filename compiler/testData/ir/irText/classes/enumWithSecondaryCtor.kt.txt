@@ -1,0 +1,85 @@
+enum class Test0 : Enum<Test0> {
+  private constructor(x: Int) /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  ZERO init = TODO("IrEnumConstructorCall")  private constructor() {
+    TODO("IrDelegatingConstructorCall")
+  }
+
+
+
+
+
+
+
+
+  fun values(): Array<Test0> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): Test0 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+enum class Test1 : Enum<Test1> {
+  private constructor(x: Int) /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  ZERO init = TODO("IrEnumConstructorCall")  ONE init = TODO("IrEnumConstructorCall")  private constructor() {
+    TODO("IrDelegatingConstructorCall")
+  }
+
+
+
+
+
+
+
+
+  fun values(): Array<Test1> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): Test1 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+abstract enum class Test2 : Enum<Test2> {
+  private constructor(x: Int) /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  ZERO init = TODO("IrEnumConstructorCall")  ONE init = TODO("IrEnumConstructorCall")  private constructor() {
+    TODO("IrDelegatingConstructorCall")
+  }
+
+  abstract fun foo() 
+
+
+
+
+
+
+
+  fun values(): Array<Test2> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): Test2 /* Synthetic body for ENUM_VALUEOF */
+
+}
+

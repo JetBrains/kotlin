@@ -1,0 +1,8 @@
+val test: Unit
+  field = try { //BLOCK
+  }
+  catch (...) { //BLOCK
+  }
+
+  get
+

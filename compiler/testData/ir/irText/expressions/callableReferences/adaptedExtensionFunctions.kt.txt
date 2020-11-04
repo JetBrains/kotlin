@@ -1,0 +1,45 @@
+fun use(f: @ExtensionFunctionType Function2<C, Int, Unit>) {
+}
+
+class C {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+fun C.extensionVararg(i: Int, vararg s: String) {
+}
+
+fun C.extensionDefault(i: Int, s: String = "") {
+}
+
+fun C.extensionBoth(i: Int, s: String = "", vararg t: String) {
+}
+
+fun testExtensionVararg() {
+  use(f =   local fun extensionVararg(p0: C, p1: Int) {
+    extensionVararg($receiver = p0, i = p1)
+  }
+)
+}
+
+fun testExtensionDefault() {
+  use(f =   local fun extensionDefault(p0: C, p1: Int) {
+    extensionDefault($receiver = p0, i = p1)
+  }
+)
+}
+
+fun testExtensionBoth() {
+  use(f =   local fun extensionBoth(p0: C, p1: Int) {
+    extensionBoth($receiver = p0, i = p1)
+  }
+)
+}
+

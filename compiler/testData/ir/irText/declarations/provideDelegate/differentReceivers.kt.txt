@@ -1,0 +1,40 @@
+class MyClass {
+  constructor(value: String) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val value: String
+    field = value
+    get
+
+
+
+
+}
+
+operator fun MyClass.provideDelegate(host: Any?, p: Any): String {
+  return <this>.<get-value>()
+}
+
+operator fun String.getValue(receiver: Any?, p: Any): String {
+  return <this>
+}
+
+val testO: String /* by */ 
+  field = provideDelegate($receiver = TODO("IrConstructorCall"), host = null, p = ::testO)
+  get(): String {
+    return getValue($receiver = #testO$delegate, receiver = null, p = ::testO)
+  }
+
+val testK: String /* by */ 
+  field = "K"
+  get(): String {
+    return getValue($receiver = #testK$delegate, receiver = null, p = ::testK)
+  }
+
+val testOK: String
+  field = <get-testO>().plus(other = <get-testK>())
+  get
+

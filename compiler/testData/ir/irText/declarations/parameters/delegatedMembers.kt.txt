@@ -1,0 +1,37 @@
+interface IBase<T : Any?> {
+  abstract fun foo(x: Int) 
+  abstract val bar: Int
+    abstract get
+
+  abstract fun <X : Any?> qux(t: T, x: X) 
+
+
+
+}
+
+class Test<TT : Any?> : IBase<TT> {
+  constructor(impl: IBase<TT>) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  private /*final field*/ val $$delegate_0: IBase<TT> = impl
+  override fun <X : Any?> qux(t: TT, x: X) {
+    #$$delegate_0.qux<X>(t = t, x = x)
+  }
+
+  override fun foo(x: Int) {
+    #$$delegate_0.foo(x = x)
+  }
+
+  override val bar: Int
+    override get(): Int {
+      return #$$delegate_0.<get-bar>()
+    }
+
+
+
+
+}
+

@@ -1,0 +1,37 @@
+class C<T : Any?> {
+  constructor(x: T) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  var x: T
+    field = x
+    get
+    set
+
+
+
+
+}
+
+var <T : Any?> C<T>.y: T
+  get(): T {
+    return <this>.<get-x>()
+  }
+  set(v: T) {
+    <this>.<set-x>(<set-?> = v)
+  }
+
+fun use(p: KMutableProperty<String>) {
+}
+
+fun test1() {
+  use(p = ::y)
+}
+
+fun test2(a: Any) {
+  a as C<String> /*~> Unit */
+  use(p = ::y)
+}
+

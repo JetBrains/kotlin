@@ -1,0 +1,29 @@
+annotation class TestAnn : Annotation {
+  constructor(x: Int) /* primary */ 
+  val x: Int
+    field = x
+    get
+
+
+
+
+}
+
+class TestClass {
+  @TestAnn(...)
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  @TestAnn(...)
+  constructor(x: Int) {
+    TODO("IrDelegatingConstructorCall")
+  }
+
+
+
+
+}
+

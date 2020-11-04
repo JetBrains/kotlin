@@ -1,0 +1,30 @@
+annotation class TestAnn : Annotation {
+  constructor(x: String) /* primary */ 
+  val x: String
+    field = x
+    get
+
+
+
+
+}
+
+fun testFun(x: Int) {
+}
+
+class TestClassConstructor1 {
+  constructor(x: Int) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val xx: Int
+    field = x
+    get
+
+
+
+
+}
+

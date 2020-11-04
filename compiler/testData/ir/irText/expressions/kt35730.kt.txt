@@ -1,0 +1,27 @@
+interface Base {
+  fun foo() {
+  }
+
+
+
+
+}
+
+object Derived : Base {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+
+}
+
+fun test() {
+  Derived.foo()
+  Derived.foo()
+}
+

@@ -1,0 +1,28 @@
+val n: Any?
+  field = null
+  get
+
+enum class En : Enum<En> {
+  private constructor(x: String?) /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: String?
+    field = x
+    get
+
+  ENTRY init = TODO("IrEnumConstructorCall")
+
+
+
+
+
+
+  fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
+
+}
+

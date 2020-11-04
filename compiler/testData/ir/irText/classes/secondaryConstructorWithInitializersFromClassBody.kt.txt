@@ -1,0 +1,57 @@
+open class Base {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class TestProperty : Base {
+  val x: Int
+    field = 0
+    get
+
+  constructor() {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class TestInitBlock : Base {
+  val x: Int
+    get
+
+  init {
+    #x = 0
+  }
+
+  constructor() {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  constructor(z: Any) {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  constructor(y: Int) {
+    TODO("IrDelegatingConstructorCall")
+  }
+
+
+
+
+}
+

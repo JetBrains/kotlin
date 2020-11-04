@@ -1,0 +1,27 @@
+fun test1() {
+  try { //BLOCK
+    println()
+  }
+  catch (...) { //BLOCK
+    println()
+  }
+  finally { //BLOCK
+    println()
+  }
+}
+
+fun test2(): Int {
+  return try { //BLOCK
+    println()
+    42
+  }
+  catch (...) { //BLOCK
+    println()
+    24
+  }
+  finally { //BLOCK
+    println()
+    555 /*~> Unit */
+  }
+}
+

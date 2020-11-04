@@ -1,0 +1,87 @@
+data class TestData {
+  constructor(nn: Nothing?) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val nn: Nothing?
+    field = nn
+    get
+
+  operator fun component1(): Nothing? {
+    return #nn
+  }
+
+  fun copy(nn: Nothing? = #nn): TestData {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "TestData(" + 
+"nn=" + 
+#nn + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = #nn, arg1 = null) -> 0
+      true -> #nn.hashCode()
+    }
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is TestData -> return false
+    }
+    val tmp0_other_with_cast: TestData = other as TestData
+    when {
+      EQEQ(arg0 = #nn, arg1 = #nn).not() -> return false
+    }
+    return true
+  }
+
+}
+
+inline class TestInline {
+  constructor(nn: Nothing?) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val nn: Nothing?
+    field = nn
+    get
+
+  override fun toString(): String {
+    return "TestInline(" + 
+"nn=" + 
+#nn + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = #nn, arg1 = null) -> 0
+      true -> #nn.hashCode()
+    }
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is TestInline -> return false
+    }
+    val tmp0_other_with_cast: TestInline = other as TestInline
+    when {
+      EQEQ(arg0 = #nn, arg1 = #nn).not() -> return false
+    }
+    return true
+  }
+
+}
+

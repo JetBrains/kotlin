@@ -1,0 +1,67 @@
+@Deprecated(...)
+val testVal: Int
+  field = 1
+  get
+
+@Deprecated(...)
+var testVar: Int
+  field = 1
+  get
+  set
+
+@Deprecated(...)
+val testValWithExplicitDefaultGet: Int
+  field = 1
+  get
+
+@Deprecated(...)
+val testValWithExplicitGet: Int
+  get(): Int {
+    return 1
+  }
+
+@Deprecated(...)
+var testVarWithExplicitDefaultGet: Int
+  field = 1
+  get
+  set
+
+@Deprecated(...)
+var testVarWithExplicitDefaultSet: Int
+  field = 1
+  get
+  set
+
+@Deprecated(...)
+var testVarWithExplicitDefaultGetSet: Int
+  field = 1
+  get
+  set
+
+@Deprecated(...)
+var testVarWithExplicitGetSet: Int
+  get(): Int {
+    return 1
+  }
+  set(v: Int) {
+  }
+
+@Deprecated(...)
+lateinit var testLateinitVar: Any
+  get
+  set
+
+@Deprecated(...)
+val Any.testExtVal: Int
+  get(): Int {
+    return 1
+  }
+
+@Deprecated(...)
+var Any.textExtVar: Int
+  get(): Int {
+    return 1
+  }
+  set(v: Int) {
+  }
+

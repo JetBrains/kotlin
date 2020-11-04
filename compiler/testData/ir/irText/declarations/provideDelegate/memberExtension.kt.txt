@@ -1,0 +1,46 @@
+object Host {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  class StringDelegate {
+    constructor(s: String) /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    val s: String
+      field = s
+      get
+
+    operator fun getValue(receiver: String, p: Any): String {
+      return receiver.plus(other = <this>.<get-s>())
+    }
+
+
+
+
+  }
+
+  operator fun String.provideDelegate(host: Any?, p: Any): StringDelegate {
+    return TODO("IrConstructorCall")
+  }
+
+  val String.plusK: String /* by */ 
+    field = <this>.provideDelegate($receiver = "K", host = <this>, p = ::plusK)
+    get(): String {
+      return #plusK$delegate.getValue(receiver = <this>, p = ::plusK)
+    }
+
+  val ok: String
+    field = <this>.<get-plusK>($receiver = "O")
+    get
+
+
+
+
+}
+

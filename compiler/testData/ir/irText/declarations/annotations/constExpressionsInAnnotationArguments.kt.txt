@@ -1,0 +1,23 @@
+const val ONE: Int
+  field = 1
+  get
+
+annotation class A : Annotation {
+  constructor(x: Int) /* primary */ 
+  val x: Int
+    field = x
+    get
+
+
+
+
+}
+
+@A(...)
+fun test1() {
+}
+
+@A(...)
+fun test2() {
+}
+

@@ -1,0 +1,10 @@
+fun <K1 : Any?, V1 : Any?> Map<out K1, V1>.plus(pair: Pair<K1, V1>): Map<K1, V1> {
+  return when {
+    <this>.isEmpty() -> mapOf<K1, V1>(pair = pair)
+    true -> apply<LinkedHashMap<K1?, V1?>>($receiver = TODO("IrConstructorCall"), block =     local fun LinkedHashMap<K1?, V1?>.<anonymous>() {
+      <this>.put(key = pair.<get-first>(), value = pair.<get-second>()) /*~> Unit */
+    }
+)
+  }
+}
+

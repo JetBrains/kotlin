@@ -1,0 +1,46 @@
+fun f(s: String) {
+}
+
+class MySet : Set<String> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  override val size: Int
+    override get(): Int {
+      TODO()
+    }
+
+  override operator fun contains(element: String): Boolean {
+    TODO()
+  }
+
+  override fun containsAll(elements: Collection<String>): Boolean {
+    TODO()
+  }
+
+  override fun isEmpty(): Boolean {
+    TODO()
+  }
+
+  override operator fun iterator(): Iterator<String> {
+    TODO()
+  }
+
+
+
+
+}
+
+fun test() {
+  f(s = s() /*!! String */)
+  f(s = #STRING /*!! String */)
+}
+
+fun testContains(m: MySet) {
+  m.contains(element = #STRING /*!! String */) /*~> Unit */
+  m.contains(element = "abc") /*~> Unit */
+}
+

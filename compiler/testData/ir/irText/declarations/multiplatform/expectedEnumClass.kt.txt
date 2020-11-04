@@ -1,0 +1,36 @@
+expect enum class MyEnum : Enum<MyEnum> {
+  FOO
+  BAR
+
+
+
+
+
+
+
+  fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+enum class MyEnum : Enum<MyEnum> {
+  private constructor() /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  FOO init = TODO("IrEnumConstructorCall")  BAR init = TODO("IrEnumConstructorCall")  BAZ init = TODO("IrEnumConstructorCall")
+
+
+
+
+
+
+  fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): MyEnum /* Synthetic body for ENUM_VALUEOF */
+
+}
+

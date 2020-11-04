@@ -1,0 +1,12 @@
+@JavaAnn(...)
+fun test1() {
+}
+
+@JavaAnn(...)
+fun test2() {
+}
+
+@JavaAnn(...)
+fun test3() {
+}
+

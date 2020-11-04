@@ -1,0 +1,51 @@
+class TestInitValFromParameter {
+  constructor(x: Int) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+
+
+
+}
+
+class TestInitValInClass {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = 0
+    get
+
+
+
+
+}
+
+class TestInitValInInitBlock {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    get
+
+  init {
+    #x = 0
+  }
+
+
+
+
+}
+

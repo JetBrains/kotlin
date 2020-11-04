@@ -1,0 +1,71 @@
+package test
+
+class C {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+var C?.p: Int
+  get(): Int {
+    return 42
+  }
+  set(value: Int) {
+  }
+
+operator fun Int?.inc(): Int? {
+  return { //BLOCK
+    val tmp0_safe_receiver: Int? = <this>
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      true -> tmp0_safe_receiver.inc()
+    }
+  }
+}
+
+operator fun Int?.get(index: Int): Int {
+  return 42
+}
+
+operator fun Int?.set(index: Int, value: Int) {
+}
+
+fun testProperty(nc: C?) {
+  { //BLOCK
+    val tmp0_safe_receiver: C? = nc
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      true -> { //BLOCK
+        val tmp1_receiver: C? = tmp0_safe_receiver
+        { //BLOCK
+          val tmp2: Int = <get-p>($receiver = tmp1_receiver)
+          <set-p>($receiver = tmp1_receiver, value = inc($receiver = tmp2))
+          tmp2
+        }
+      }
+    }
+  } /*~> Unit */
+}
+
+fun testArrayAccess(nc: C?) {
+  { //BLOCK
+    val tmp1_array: Int? = { //BLOCK
+      val tmp0_safe_receiver: C? = nc
+      when {
+        EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+        true -> <get-p>($receiver = tmp0_safe_receiver)
+      }
+    }
+    val tmp2_index0: Int = 0
+    val tmp3: Int = get($receiver = tmp1_array, index = tmp2_index0)
+    set($receiver = tmp1_array, index = tmp2_index0, value = tmp3.inc())
+    tmp3
+  } /*~> Unit */
+}
+

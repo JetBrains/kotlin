@@ -1,0 +1,15 @@
+annotation class TestAnn : Annotation {
+  constructor(x: Int) /* primary */ 
+  val x: Int
+    field = x
+    get
+
+
+
+
+}
+
+@TestAnn(...)
+fun testSimpleFunction() {
+}
+

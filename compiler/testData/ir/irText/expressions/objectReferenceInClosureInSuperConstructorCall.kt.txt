@@ -1,0 +1,28 @@
+abstract class Base {
+  constructor(lambda: Function0<Any>) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val lambda: Function0<Any>
+    field = lambda
+    get
+
+
+
+
+}
+
+object Test : Base {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+

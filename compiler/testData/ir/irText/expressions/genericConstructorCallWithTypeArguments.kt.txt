@@ -1,0 +1,24 @@
+fun testSimple(): Box<Long> {
+  return TODO("IrConstructorCall")
+}
+
+inline fun <reified T : Any?> testArray(n: Int, crossinline block: Function0<T>): Array<T> {
+  return TODO("IrConstructorCall")
+}
+
+class Box<T : Any?> {
+  constructor(value: T) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val value: T
+    field = value
+    get
+
+
+
+
+}
+

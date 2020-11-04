@@ -1,0 +1,49 @@
+fun test3(f1: Function1<String, String>, f2: Function1<Int, String>): D<@FlexibleNullability Int?, @FlexibleNullability String?> {
+  return TODO("IrConstructorCall")
+}
+
+class Outer<T1 : Any?> {
+  constructor(j11: J<T1, T1>) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val j11: J<T1, T1>
+    field = j11
+    get
+
+  inner class Inner<T2 : Any?> {
+    constructor(j12: J<T1, T2>) /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    val j12: J<T1, T2>
+      field = j12
+      get
+
+
+
+
+  }
+
+
+
+
+}
+
+fun test4(f: Function1<String, String>, g: Function1<Any, String>): Inner<@FlexibleNullability Any?, @FlexibleNullability String?> {
+  return TODO("IrConstructorCall")
+}
+
+fun testGenericJavaCtor1(f: Function1<String, Int>): G<@FlexibleNullability String?> {
+  return TODO("IrConstructorCall")
+}
+
+fun testGenericJavaCtor2(x: Any) {
+  x as Function1<String, Int> /*~> Unit */
+  TODO("IrConstructorCall") /*~> Unit */
+}
+

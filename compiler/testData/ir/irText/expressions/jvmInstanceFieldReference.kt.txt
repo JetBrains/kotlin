@@ -1,0 +1,24 @@
+class Derived : Base {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  init {
+    #value = 0
+  }
+
+  fun getValue(): Int {
+    return #value
+  }
+
+  fun setValue(value: Int) {
+    #value = value
+  }
+
+
+
+
+}
+

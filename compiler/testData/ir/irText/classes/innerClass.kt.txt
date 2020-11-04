@@ -1,0 +1,36 @@
+class Outer {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  open inner class TestInnerClass {
+    constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+
+
+
+  }
+
+  inner class DerivedInnerClass : TestInnerClass {
+    constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+
+
+
+  }
+
+
+
+
+}
+

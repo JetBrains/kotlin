@@ -1,0 +1,16 @@
+class C {
+  constructor() {
+    TODO("IrDelegatingConstructorCall")
+  }
+
+  constructor(x: Int) {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+

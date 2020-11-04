@@ -1,0 +1,63 @@
+fun WithCompanion.test() {
+  val test1: <no name provided> = { //BLOCK
+    local class <no name provided> : WithCompanion {
+      constructor() /* primary */ {
+        TODO("IrDelegatingConstructorCall")
+                /* InstanceInitializerCall */
+
+      }
+
+
+
+
+    }
+
+
+    TODO("IrConstructorCall")
+  }
+  val test2: <no name provided> = { //BLOCK
+    local class <no name provided> : WithCompanion {
+      constructor() /* primary */ {
+        TODO("IrDelegatingConstructorCall")
+                /* InstanceInitializerCall */
+
+      }
+
+
+
+
+    }
+
+
+    TODO("IrConstructorCall")
+  }
+}
+
+open class WithCompanion {
+  constructor(a: Companion) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    fun foo(): Companion {
+      return <this>
+    }
+
+
+
+
+  }
+
+
+
+
+}
+

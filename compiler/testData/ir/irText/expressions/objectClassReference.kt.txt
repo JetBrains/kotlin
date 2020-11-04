@@ -1,0 +1,17 @@
+object A {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+fun test() {
+  A::class /*~> Unit */
+  <get-java><A>($receiver = A::class) /*~> Unit */
+}
+

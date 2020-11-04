@@ -1,0 +1,15 @@
+@file:A(...)
+package test
+
+@Target(...)
+annotation class A : Annotation {
+  constructor(x: String) /* primary */ 
+  val x: String
+    field = x
+    get
+
+
+
+
+}
+

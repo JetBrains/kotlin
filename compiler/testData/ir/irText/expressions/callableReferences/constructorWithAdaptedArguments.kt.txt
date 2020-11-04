@@ -1,0 +1,70 @@
+fun use(fn: Function1<Int, Any>): Any {
+  return fn.invoke(p1 = 42)
+}
+
+class C {
+  constructor(vararg xs: Int) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class Outer {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  inner class Inner {
+    constructor(vararg xs: Int) /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+
+
+
+  }
+
+
+
+
+}
+
+fun testConstructor(): Any {
+  return use(fn =   local fun <init>(p0: Int): C {
+    return TODO("IrConstructorCall")
+  }
+)
+}
+
+fun testInnerClassConstructor(outer: Outer): Any {
+  return use(fn = { //BLOCK
+    local fun Outer.<init>(p0: Int): Inner {
+      return TODO("IrConstructorCall")
+    }
+
+
+    ::<init>
+  })
+}
+
+fun testInnerClassConstructorCapturingOuter(): Any {
+  return use(fn = { //BLOCK
+    val tmp0_receiver: Outer = TODO("IrConstructorCall")
+    local fun Outer.<init>(p0: Int): Inner {
+      return TODO("IrConstructorCall")
+    }
+
+
+    ::<init>
+  })
+}
+

@@ -1,0 +1,67 @@
+class Outer {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  open inner class Inner {
+    constructor(x: Int) /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    val x: Int
+      field = x
+      get
+
+
+
+
+  }
+
+
+
+
+}
+
+class Host {
+  constructor(y: Int) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val y: Int
+    field = y
+    get
+
+  fun Outer.test(): Inner {
+    return { //BLOCK
+      local class <no name provided> : Inner {
+        constructor() /* primary */ {
+          TODO("IrDelegatingConstructorCall")
+                    /* InstanceInitializerCall */
+
+        }
+
+        val xx: Int
+          field = <this>.<get-x>().plus(other = <this>.<get-y>())
+          get
+
+
+
+
+      }
+
+
+      TODO("IrConstructorCall")
+    }
+  }
+
+
+
+
+}
+

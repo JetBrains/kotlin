@@ -1,0 +1,16 @@
+class A {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+val test: A
+  field = TODO("IrConstructorCall")
+  get
+

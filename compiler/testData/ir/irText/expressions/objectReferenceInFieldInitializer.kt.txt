@@ -1,0 +1,25 @@
+object A {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  private val a: String
+    field = "$"
+    private get
+
+  private val b: String
+    field = "1234" + 
+<this>.<get-a>()
+    private get
+
+  private val c: Int
+    field = 10000
+    private get
+
+
+
+
+}
+

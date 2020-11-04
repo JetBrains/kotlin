@@ -1,0 +1,40 @@
+val test1: String
+  field = "🤗"
+  get
+
+val test2: String
+  field = "🤗🤗"
+  get
+
+const val testConst1: String
+  field = "🤗"
+  get
+
+const val testConst2: String
+  field = "🤗🤗"
+  get
+
+const val testConst3: String
+  field = "🤗🤗🤗"
+  get
+
+const val testConst4: String
+  field = "🤗🤗🤗🤗"
+  get
+
+fun test1(x: Int): String {
+  return "🤗" + 
+x
+}
+
+fun test2(x: Int): String {
+  return x + 
+"🤗"
+}
+
+fun test3(x: Int): String {
+  return x + 
+"🤗" + 
+x
+}
+

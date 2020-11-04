@@ -1,0 +1,19 @@
+class C {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  internal fun bar() {
+  }
+
+
+
+
+}
+
+inline fun C.foo() {
+  <this>.bar()
+}
+

@@ -1,0 +1,9 @@
+@file:JvmName(...)
+
+fun foo() {
+}
+
+val bar: Int
+  field = 42
+  get
+

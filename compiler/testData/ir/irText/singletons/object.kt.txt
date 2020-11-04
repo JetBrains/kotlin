@@ -1,0 +1,31 @@
+object Z {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  fun test() {
+  }
+
+  class A {
+    constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    fun test2() {
+      Z.test()
+    }
+
+
+
+
+  }
+
+
+
+
+}
+

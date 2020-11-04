@@ -1,0 +1,57 @@
+class TestClass {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+interface TestInterface {
+
+
+
+}
+
+object TestObject {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+annotation class TestAnnotationClass : Annotation {
+  constructor() /* primary */ 
+
+
+
+}
+
+enum class TestEnumClass : Enum<TestEnumClass> {
+  private constructor() /* primary */ {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+
+
+
+
+  fun values(): Array<TestEnumClass> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestEnumClass /* Synthetic body for ENUM_VALUEOF */
+
+}
+

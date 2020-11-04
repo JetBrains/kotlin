@@ -1,0 +1,217 @@
+data class Test1 {
+  constructor(x: Int, y: String, z: Any) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  val y: String
+    field = y
+    get
+
+  val z: Any
+    field = z
+    get
+
+  operator fun component1(): Int {
+    return #x
+  }
+
+  operator fun component2(): String {
+    return #y
+  }
+
+  operator fun component3(): Any {
+    return #z
+  }
+
+  fun copy(x: Int = #x, y: String = #y, z: Any = #z): Test1 {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "Test1(" + 
+"x=" + 
+#x + 
+", " + 
+"y=" + 
+#y + 
+", " + 
+"z=" + 
+#z + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return #x.hashCode().times(other = 31).plus(other = #y.hashCode()).times(other = 31).plus(other = #z.hashCode())
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Test1 -> return false
+    }
+    val tmp0_other_with_cast: Test1 = other as Test1
+    when {
+      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = #y, arg1 = #y).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = #z, arg1 = #z).not() -> return false
+    }
+    return true
+  }
+
+}
+
+data class Test2 {
+  constructor(x: Any?) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Any?
+    field = x
+    get
+
+  operator fun component1(): Any? {
+    return #x
+  }
+
+  fun copy(x: Any? = #x): Test2 {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "Test2(" + 
+"x=" + 
+#x + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = #x, arg1 = null) -> 0
+      true -> #x.hashCode()
+    }
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Test2 -> return false
+    }
+    val tmp0_other_with_cast: Test2 = other as Test2
+    when {
+      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+    }
+    return true
+  }
+
+}
+
+data class Test3 {
+  constructor(d: Double, dn: Double?, f: Float, df: Float?) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val d: Double
+    field = d
+    get
+
+  val dn: Double?
+    field = dn
+    get
+
+  val f: Float
+    field = f
+    get
+
+  val df: Float?
+    field = df
+    get
+
+  operator fun component1(): Double {
+    return #d
+  }
+
+  operator fun component2(): Double? {
+    return #dn
+  }
+
+  operator fun component3(): Float {
+    return #f
+  }
+
+  operator fun component4(): Float? {
+    return #df
+  }
+
+  fun copy(d: Double = #d, dn: Double? = #dn, f: Float = #f, df: Float? = #df): Test3 {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "Test3(" + 
+"d=" + 
+#d + 
+", " + 
+"dn=" + 
+#dn + 
+", " + 
+"f=" + 
+#f + 
+", " + 
+"df=" + 
+#df + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return #d.hashCode().times(other = 31).plus(other = when {
+      EQEQ(arg0 = #dn, arg1 = null) -> 0
+      true -> #dn.hashCode()
+    }).times(other = 31).plus(other = #f.hashCode()).times(other = 31).plus(other = when {
+      EQEQ(arg0 = #df, arg1 = null) -> 0
+      true -> #df.hashCode()
+    })
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Test3 -> return false
+    }
+    val tmp0_other_with_cast: Test3 = other as Test3
+    when {
+      EQEQ(arg0 = #d, arg1 = #d).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = #dn, arg1 = #dn).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = #f, arg1 = #f).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = #df, arg1 = #df).not() -> return false
+    }
+    return true
+  }
+
+}
+

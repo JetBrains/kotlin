@@ -1,0 +1,31 @@
+class Z {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  fun test2() {
+    Companion.test()
+  }
+
+  companion object Companion {
+    private constructor() /* primary */ {
+      TODO("IrDelegatingConstructorCall")
+            /* InstanceInitializerCall */
+
+    }
+
+    fun test() {
+    }
+
+
+
+
+  }
+
+
+
+
+}
+

@@ -1,0 +1,54 @@
+open enum class A : Enum<A> {
+  X init = TODO("IrEnumConstructorCall")  Y init = TODO("IrEnumConstructorCall")  Z init = TODO("IrEnumConstructorCall")  val prop1: String
+    get
+
+  val prop2: String
+    field = "const2"
+    get
+
+  var prop3: String
+    field = ""
+    get
+    set
+
+  private constructor(arg: String) {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+    #prop1 = arg
+  }
+
+  private constructor() {
+    TODO("IrEnumConstructorCall")
+        /* InstanceInitializerCall */
+
+    #prop1 = "default"
+    <this>.<set-prop3>(<set-?> = "empty")
+  }
+
+  private constructor(x: Int) {
+    TODO("IrDelegatingConstructorCall")
+    <this>.<set-prop3>(<set-?> = "int")
+  }
+
+  open fun f(): String {
+    return <this>.<get-prop1>() + 
+"#" + 
+<this>.<get-prop2>() + 
+"#" + 
+<this>.<get-prop3>()
+  }
+
+
+
+
+
+
+
+
+  fun values(): Array<A> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
+
+}
+

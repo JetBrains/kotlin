@@ -1,0 +1,15 @@
+annotation class A : Annotation {
+  constructor(vararg xs: String) /* primary */ 
+  val xs: Array<out String>
+    field = xs
+    get
+
+
+
+
+}
+
+@A(...)
+fun test() {
+}
+

@@ -1,0 +1,9 @@
+fun test1(f: Function1<String, String>): C<@FlexibleNullability String?> {
+  return TODO("IrConstructorCall")
+}
+
+fun test2(x: Any) {
+  x as Function1<String, String> /*~> Unit */
+  TODO("IrConstructorCall") /*~> Unit */
+}
+

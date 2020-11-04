@@ -1,0 +1,16 @@
+class Test {
+  constructor(x: Int = 0) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+
+
+
+}
+

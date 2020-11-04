@@ -1,0 +1,46 @@
+interface IFooBar {
+  abstract fun foo() 
+  abstract fun bar() 
+
+
+
+}
+
+object FooBarImpl : IFooBar {
+  private constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  override fun foo() {
+  }
+
+  override fun bar() {
+  }
+
+
+
+
+}
+
+class C : IFooBar {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  private /*final field*/ val $$delegate_0: FooBarImpl = FooBarImpl
+  override fun foo() {
+    #$$delegate_0.foo()
+  }
+
+  override fun bar() {
+  }
+
+
+
+
+}
+

@@ -1,0 +1,60 @@
+open class Base {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class TestImplicitPrimaryConstructor : Base {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class TestExplicitPrimaryConstructor : Base {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class TestWithDelegatingConstructor : Base {
+  constructor(x: Int, y: Int) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  constructor(x: Int) {
+    TODO("IrDelegatingConstructorCall")
+  }
+
+
+
+
+}
+

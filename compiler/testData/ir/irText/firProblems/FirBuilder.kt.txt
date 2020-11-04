@@ -1,0 +1,26 @@
+open class BaseConverter : BaseFirBuilder<Any> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+
+}
+
+class DeclarationsConverter : BaseConverter {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+
+}
+

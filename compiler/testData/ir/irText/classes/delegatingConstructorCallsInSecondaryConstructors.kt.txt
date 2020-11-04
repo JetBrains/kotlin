@@ -1,0 +1,34 @@
+open class Base {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+
+class Test : Base {
+  constructor() {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  constructor(xx: Int) {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  constructor(xx: Short) {
+    TODO("IrDelegatingConstructorCall")
+  }
+
+
+
+
+}
+

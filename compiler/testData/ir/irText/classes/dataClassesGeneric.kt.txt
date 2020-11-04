@@ -1,0 +1,187 @@
+data class Test1<T : Any?> {
+  constructor(x: T) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: T
+    field = x
+    get
+
+  operator fun component1(): T {
+    return #x
+  }
+
+  fun copy(x: T = #x): Test1<T> {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "Test1(" + 
+"x=" + 
+#x + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = #x, arg1 = null) -> 0
+      true -> #x.hashCode()
+    }
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Test1<T> -> return false
+    }
+    val tmp0_other_with_cast: Test1<T> = other as Test1<T>
+    when {
+      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+    }
+    return true
+  }
+
+}
+
+data class Test2<T : Number> {
+  constructor(x: T) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: T
+    field = x
+    get
+
+  operator fun component1(): T {
+    return #x
+  }
+
+  fun copy(x: T = #x): Test2<T> {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "Test2(" + 
+"x=" + 
+#x + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return #x.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Test2<T> -> return false
+    }
+    val tmp0_other_with_cast: Test2<T> = other as Test2<T>
+    when {
+      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+    }
+    return true
+  }
+
+}
+
+data class Test3<T : Any?> {
+  constructor(x: List<T>) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: List<T>
+    field = x
+    get
+
+  operator fun component1(): List<T> {
+    return #x
+  }
+
+  fun copy(x: List<T> = #x): Test3<T> {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "Test3(" + 
+"x=" + 
+#x + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return #x.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Test3<T> -> return false
+    }
+    val tmp0_other_with_cast: Test3<T> = other as Test3<T>
+    when {
+      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+    }
+    return true
+  }
+
+}
+
+data class Test4 {
+  constructor(x: List<String>) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val x: List<String>
+    field = x
+    get
+
+  operator fun component1(): List<String> {
+    return #x
+  }
+
+  fun copy(x: List<String> = #x): Test4 {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "Test4(" + 
+"x=" + 
+#x + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return #x.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Test4 -> return false
+    }
+    val tmp0_other_with_cast: Test4 = other as Test4
+    when {
+      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+    }
+    return true
+  }
+
+}
+
