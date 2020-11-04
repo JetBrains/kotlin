@@ -14,10 +14,15 @@ class KotlinFirOutOfBlockModificationTrackerFactory(private val project: Project
     fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker =
         KotlinFirOutOfBlockModificationTracker(project)
 
-    fun createModuleOutOfBlockModificationTracker(module: Module): ModificationTracker =
+    fun createModuleWithoutDependenciesOutOfBlockModificationTracker(module: Module): ModificationTracker =
         KotlinFirOutOfBlockModuleModificationTracker(module)
-
 }
+
+fun Project.createProjectWideOutOfBlockModificationTracker() =
+    service<KotlinFirOutOfBlockModificationTrackerFactory>().createProjectWideOutOfBlockModificationTracker()
+
+fun Module.createModuleWithoutDependenciesOutOfBlockModificationTracker() =
+    project.service<KotlinFirOutOfBlockModificationTrackerFactory>().createModuleWithoutDependenciesOutOfBlockModificationTracker(this)
 
 private class KotlinFirOutOfBlockModificationTracker(project: Project) : ModificationTracker {
     private val trackerService = project.service<KotlinFirModificationTrackerService>()

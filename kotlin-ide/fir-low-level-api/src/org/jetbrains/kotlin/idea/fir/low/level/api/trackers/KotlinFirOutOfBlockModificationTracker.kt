@@ -20,40 +20,42 @@ import com.intellij.pom.tree.TreeAspect
 import com.intellij.pom.tree.events.TreeChangeEvent
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingInBodyDeclarationWith
-import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileElementFactory
 import org.jetbrains.kotlin.idea.util.module
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import java.util.*
 
 internal class KotlinFirModificationTrackerService(project: Project) : Disposable {
     init {
-        val model = PomManager.getModel(project)
-        model.addModelListener(Listener())
+        PomManager.getModel(project).addModelListener(Listener())
 
-        val connection = project.messageBus.connect(this)
-        connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent) {
-                projectGlobalOutOfBlockInKotlinFilesModificationCount++
-
-                // todo increase modificationCountForModule
+        project.messageBus.connect(this).subscribe(
+            ProjectTopics.PROJECT_ROOTS,
+            object : ModuleRootListener {
+                override fun rootsChanged(event: ModuleRootEvent) = increaseModificationCountForAllModules()
             }
-        })
+        )
     }
 
-    internal var projectGlobalOutOfBlockInKotlinFilesModificationCount = 0L
+    var projectGlobalOutOfBlockInKotlinFilesModificationCount = 0L
         private set
 
-    internal fun getOutOfBlockModificationCountForModules(module: Module): Long =
-        modificationCountForModule[module] ?: 0L
+    private val moduleModificationsState = ModuleModificationsState()
 
-    private val modificationCountForModule = WeakHashMap<Module, Long>()
+    fun getOutOfBlockModificationCountForModules(module: Module): Long =
+        moduleModificationsState.getModificationsCountForModule(module)
+
     private val treeAspect = TreeAspect.getInstance(project)
 
     override fun dispose() {}
 
+    private fun increaseModificationCountForAllModules() {
+        projectGlobalOutOfBlockInKotlinFilesModificationCount++
+        moduleModificationsState.increaseModificationCountForAllModules()
+    }
+
     private inner class Listener : PomModelListener {
+        override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean =
+            treeAspect == aspect
+
         override fun modelChanged(event: PomModelEvent) {
             val changeSet = event.getChangeSet(treeAspect) as TreeChangeEvent? ?: return
             if (changeSet.rootElement.psi.language != KotlinLanguage.INSTANCE) return
@@ -66,7 +68,7 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
                 isOutOfBlockChangeInAnyModule = isOutOfBlockChangeInAnyModule || isOutOfBlock
                 if (isOutOfBlock) {
                     element.psi.module?.let { module ->
-                        modificationCountForModule.compute(module) { _, value -> (value ?: 0) + 1 }
+                        moduleModificationsState.increaseModificationCountForModule(module)
                     }
                 }
             }
@@ -84,8 +86,33 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
                 !FileElementFactory.isReanalyzableContainer(container)
             }
         }
-
-        override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean =
-            treeAspect == aspect
     }
+}
+
+private class ModuleModificationsState {
+    private val modificationCountForModule = hashMapOf<Module, ModuleModifications>()
+    private var state: Long = 0L
+
+    fun getModificationsCountForModule(module: Module) = modificationCountForModule.compute(module) { _, modifications ->
+        when {
+            modifications == null -> ModuleModifications(0, state)
+            modifications.state == state -> modifications
+            else -> ModuleModifications(modificationsCount = modifications.modificationsCount + 1, state = state)
+        }
+    }!!.modificationsCount
+
+    fun increaseModificationCountForAllModules() {
+        state++
+    }
+
+    fun increaseModificationCountForModule(module: Module) {
+        modificationCountForModule.compute(module) { _, modifications ->
+            when (modifications) {
+                null -> ModuleModifications(0, state)
+                else -> ModuleModifications(ModuleModifications(0, state).modificationsCount + 1, state)
+            }
+        }
+    }
+
+    private data class ModuleModifications(val modificationsCount: Long, val state: Long)
 }

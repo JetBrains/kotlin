@@ -104,7 +104,7 @@ private class FirSessionWithModificationTracker(
     val firSession: FirIdeSourcesSession,
 ) {
     private val modificationTracker = firSession.project.service<KotlinFirOutOfBlockModificationTrackerFactory>()
-        .createModuleOutOfBlockModificationTracker(firSession.moduleInfo.module)
+        .createModuleWithoutDependenciesOutOfBlockModificationTracker(firSession.moduleInfo.module)
 
     private val timeStamp = modificationTracker.modificationCount
 
