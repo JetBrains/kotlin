@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen.state
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -14,14 +13,14 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import java.security.MessageDigest
 import java.util.*
 
 fun getManglingSuffixBasedOnKotlinSignature(
     descriptor: CallableMemberDescriptor,
-    shouldMangleByReturnType: Boolean
+    shouldMangleByReturnType: Boolean,
+    useOldManglingRules: Boolean
 ): String? {
     if (descriptor !is FunctionDescriptor) return null
     if (descriptor is ConstructorDescriptor) return null
@@ -33,41 +32,76 @@ fun getManglingSuffixBasedOnKotlinSignature(
 
     val unwrappedDescriptor = descriptor.unwrapInitialDescriptorForSuspendFunction()
 
-    // If a function accepts inline class parameters, mangle its name.
-    if (requiresFunctionNameManglingForParameterTypes(descriptor) ||
-        (shouldMangleByReturnType && requiresFunctionNameManglingForReturnType(unwrappedDescriptor))
-    ) {
+    if (useOldManglingRules) {
+        if (requiresFunctionNameManglingForParameterTypes(descriptor)) {
+            return "-" + md5base64(collectSignatureForMangling(descriptor, useOldManglingRules))
+        }
+
         // If a class member function returns inline class value, mangle its name.
         // NB here function can be a suspend function JVM view with return type replaced with 'Any',
         // should unwrap it and take original return type instead.
-        val signature = collectSignatureForMangling(descriptor) +
-                if (shouldMangleByReturnType && requiresFunctionNameManglingForReturnType(unwrappedDescriptor))
-                    ":" + getSignatureElementForMangling(unwrappedDescriptor.returnType!!)
-                else ""
-        return "-" + md5base64(signature)
+        if (shouldMangleByReturnType) {
+            if (requiresFunctionNameManglingForReturnType(unwrappedDescriptor)) {
+                return "-" + md5base64(
+                    ":" + getSignatureElementForMangling(
+                        unwrappedDescriptor.returnType!!, useOldManglingRules
+                    )
+                )
+            }
+        }
+    } else {
+        // If a function accepts inline class parameters, mangle its name.
+        if (requiresFunctionNameManglingForParameterTypes(descriptor) ||
+            (shouldMangleByReturnType && requiresFunctionNameManglingForReturnType(unwrappedDescriptor))
+        ) {
+            // If a class member function returns inline class value, mangle its name.
+            // NB here function can be a suspend function JVM view with return type replaced with 'Any',
+            // should unwrap it and take original return type instead.
+            val signature = collectSignatureForMangling(descriptor, useOldManglingRules) +
+                    if (shouldMangleByReturnType && requiresFunctionNameManglingForReturnType(unwrappedDescriptor))
+                        ":" + getSignatureElementForMangling(unwrappedDescriptor.returnType!!, useOldManglingRules)
+                    else ""
+            return "-" + md5base64(signature)
+        }
     }
+
     return null
 }
 
-private fun collectSignatureForMangling(descriptor: CallableMemberDescriptor): String {
+private fun collectSignatureForMangling(descriptor: CallableMemberDescriptor, useOldManglingRules: Boolean): String {
     val types = listOfNotNull(descriptor.extensionReceiverParameter?.type) + descriptor.valueParameters.map { it.type }
-    return types.joinToString { getSignatureElementForMangling(it) }
+    return types.joinToString { getSignatureElementForMangling(it, useOldManglingRules) }
 }
 
-private fun getSignatureElementForMangling(type: KotlinType): String = buildString {
+private fun getSignatureElementForMangling(type: KotlinType, useOldManglingRules: Boolean): String = buildString {
     val descriptor = type.constructor.declarationDescriptor ?: return ""
-    when (descriptor) {
-        is ClassDescriptor -> if (descriptor.isInline) {
-            append('L')
-            append(descriptor.fqNameUnsafe)
-            if (type.isMarkedNullable) append('?')
-            append(';')
-        } else {
-            append('x')
-        }
+    if (useOldManglingRules) {
+        when (descriptor) {
+            is ClassDescriptor -> {
+                append('L')
+                append(descriptor.fqNameUnsafe)
+                if (type.isMarkedNullable) append('?')
+                append(';')
+            }
 
-        is TypeParameterDescriptor -> {
-            append(getSignatureElementForMangling(descriptor.representativeUpperBound))
+            is TypeParameterDescriptor -> {
+                append(getSignatureElementForMangling(descriptor.representativeUpperBound, useOldManglingRules))
+            }
+        }
+    } else {
+        when (descriptor) {
+            is ClassDescriptor -> if (descriptor.isInline) {
+                append('L')
+                append(descriptor.fqNameUnsafe)
+                if (type.isMarkedNullable) append('?')
+                append(';')
+            } else {
+                append('x')
+            }
+
+            is TypeParameterDescriptor -> {
+                append(getSignatureElementForMangling(descriptor.representativeUpperBound, useOldManglingRules))
+            }
         }
     }
 }

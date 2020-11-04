@@ -2684,7 +2684,19 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             fd = ArgumentGeneratorKt.getFunctionWithDefaultArguments(fd);
         }
 
-        return typeMapper.mapToCallableMethod(fd, superCall, null, resolvedCall);
+        CallableMethod method = typeMapper.mapToCallableMethod(fd, superCall, null, resolvedCall);
+
+        if (method.getAsmMethod().getName().contains("-")) {
+            Boolean classFileContainsMethod =
+                    InlineClassesCodegenUtilKt.classFileContainsMethod(fd, state, method.getAsmMethod());
+            if (classFileContainsMethod != null && !classFileContainsMethod) {
+                typeMapper.setUseOldManglingRulesForFunctionAcceptingInlineClass(true);
+                method = typeMapper.mapToCallableMethod(fd, superCall, null, resolvedCall);
+                typeMapper.setUseOldManglingRulesForFunctionAcceptingInlineClass(false);
+            }
+        }
+
+        return method;
     }
 
     public void invokeMethodWithArguments(
@@ -2900,6 +2912,15 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         sourceCompiler.initializeInlineFunctionContext(functionDescriptor);
         JvmMethodSignature signature = typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompiler.getContextKind());
+        if (signature.getAsmMethod().getName().contains("-")) {
+            Boolean classFileContainsMethod =
+                    InlineClassesCodegenUtilKt.classFileContainsMethod(functionDescriptor, state, signature.getAsmMethod());
+            if (classFileContainsMethod != null && !classFileContainsMethod) {
+                typeMapper.setUseOldManglingRulesForFunctionAcceptingInlineClass(true);
+                signature = typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompiler.getContextKind());
+                typeMapper.setUseOldManglingRulesForFunctionAcceptingInlineClass(false);
+            }
+        }
         Type methodOwner = typeMapper.mapImplementationOwner(functionDescriptor);
         if (isDefaultCompilation) {
             return new InlineCodegenForDefaultBody(functionDescriptor, this, state, methodOwner, signature, sourceCompiler);

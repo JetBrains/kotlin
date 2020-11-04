@@ -91,6 +91,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 ) : KotlinTypeMapperBase() {
     private val isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
     val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
+    var useOldManglingRulesForFunctionAcceptingInlineClass: Boolean = false
 
     private val typeMappingConfiguration = object : TypeMappingConfiguration<Type> {
         override fun commonSupertype(types: Collection<KotlinType>): KotlinType {
@@ -636,7 +637,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
         // so that we don't have to repeat the same logic in reflection
         // in case of properties without getter methods.
         if (kind !== OwnerKind.PROPERTY_REFERENCE_SIGNATURE || descriptor.isPropertyWithGetterSignaturePresent()) {
-            val suffix = getManglingSuffixBasedOnKotlinSignature(descriptor, shouldMangleByReturnType)
+            val suffix = getManglingSuffixBasedOnKotlinSignature(
+                descriptor,
+                shouldMangleByReturnType,
+                useOldManglingRulesForFunctionAcceptingInlineClass
+            )
             if (suffix != null) {
                 newName += suffix
             } else if (kind === OwnerKind.ERASED_INLINE_CLASS) {
