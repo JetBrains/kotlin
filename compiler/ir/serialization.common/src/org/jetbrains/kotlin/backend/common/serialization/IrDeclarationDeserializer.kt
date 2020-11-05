@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as Pro
 
 
 internal class IrDeclarationDeserializer(
+    val linker: KotlinIrLinker,
     val logger: LoggingContext,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
@@ -61,17 +62,15 @@ internal class IrDeclarationDeserializer(
     val fileReader: IrLibraryFile,
     file: IrFile,
     val deserializeFakeOverrides: Boolean,
-    val fakeOverrideQueue: MutableList<IrClass>,
     val allowErrorNodes: Boolean,
     val deserializeInlineFunctions: Boolean,
     protected var deserializeBodies: Boolean,
-    fakeOverrideBuilder: FakeOverrideBuilder,
     val symbolDeserializer: IrSymbolDeserializer,
 ) {
 
     private val bodyDeserializer = IrBodyDeserializer(logger, builtIns, allowErrorNodes, irFactory, fileReader, symbolDeserializer, this)
 
-    private val platformFakeOverrideClassFilter = fakeOverrideBuilder.platformSpecificClassFilter
+    private val platformFakeOverrideClassFilter = linker.fakeOverrideBuilder.platformSpecificClassFilter
 
     private fun deserializeName(index: Int): Name {
         val name = fileReader.deserializeString(index)
@@ -298,7 +297,7 @@ internal class IrDeclarationDeserializer(
 
                 if (!deserializeFakeOverrides) {
                     if (symbol.isPublicApi) {
-                        fakeOverrideQueue.add(this)
+                        linker.fakeOverrideClassQueue.add(this)
                     }
                 }
             }

@@ -23,14 +23,10 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as Pr
 import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature as ProtoPublicIdSignature
 
 internal class IrSymbolDeserializer(
+    val linker: KotlinIrLinker,
     val fileReader: IrLibraryFile,
-    val symbolTable: SymbolTable,
     val fileDeserializer: IrFileDeserializer,
     val actuals: List<Actual>,
-    val topLevelActualUniqItToDeserializer: MutableMap<IdSignature, IrModuleDeserializer>,
-    val expectUniqIdToActualUniqId: MutableMap<IdSignature, IdSignature>,
-    val expectSymbols: MutableMap<IdSignature, IrSymbol>,
-    val actualSymbols: MutableMap<IdSignature, IrSymbol>,
 ) {
 
     val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
@@ -44,19 +40,19 @@ internal class IrSymbolDeserializer(
     }
 
     private fun handleExpectActualMapping(idSig: IdSignature, rawSymbol: IrSymbol): IrSymbol {
-        val referencingSymbol = if (idSig in expectUniqIdToActualUniqId.keys) {
+        val referencingSymbol = if (idSig in linker.expectUniqIdToActualUniqId.keys) {
             assert(idSig.run { IdSignature.Flags.IS_EXPECT.test() })
-            wrapInDelegatedSymbol(rawSymbol).also { expectSymbols[idSig] = it }
+            wrapInDelegatedSymbol(rawSymbol).also { linker.expectSymbols[idSig] = it }
         } else rawSymbol
 
-        if (idSig in expectUniqIdToActualUniqId.values) {
-            actualSymbols[idSig] = rawSymbol
+        if (idSig in linker.expectUniqIdToActualUniqId.values) {
+            linker.actualSymbols[idSig] = rawSymbol
         }
 
         return referencingSymbol
     }
 
-    private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, idSig: IdSignature): IrSymbol = symbolTable.run {
+    private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, idSig: IdSignature): IrSymbol = linker.symbolTable.run {
         when (symbolKind) {
             BinarySymbolData.SymbolKind.ANONYMOUS_INIT_SYMBOL -> IrAnonymousInitializerSymbolImpl(WrappedClassDescriptor())
             BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClassFromLinker(WrappedClassDescriptor(), idSig)
@@ -85,12 +81,12 @@ internal class IrSymbolDeserializer(
             val expect = deserializeIdSignature(expectSymbol.signatureId)
             val actual = deserializeIdSignature(actualSymbol.signatureId)
 
-            assert(expectUniqIdToActualUniqId[expect] == null) {
-                "Expect signature $expect is already actualized by ${expectUniqIdToActualUniqId[expect]}, while we try to record $actual"
+            assert(linker.expectUniqIdToActualUniqId[expect] == null) {
+                "Expect signature $expect is already actualized by ${linker.expectUniqIdToActualUniqId[expect]}, while we try to record $actual"
             }
-            expectUniqIdToActualUniqId[expect] = actual
+            linker.expectUniqIdToActualUniqId[expect] = actual
             // Non-null only for topLevel declarations.
-            fileDeserializer.getModuleForTopLevelId(actual)?.let { md -> topLevelActualUniqItToDeserializer[actual] = md }
+            fileDeserializer.getModuleForTopLevelId(actual)?.let { md -> linker.topLevelActualUniqItToDeserializer[actual] = md }
         }
     }
 

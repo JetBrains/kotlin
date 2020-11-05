@@ -106,6 +106,7 @@ abstract class BasicIrModuleDeserializer(
 
         val fileDeserializer =
             IrFileDeserializer(
+                linker,
                 linker.logger,
                 linker.builtIns,
                 linker.symbolTable,
@@ -115,17 +116,11 @@ abstract class BasicIrModuleDeserializer(
                 fileProto.declarationIdList,
                 strategy.needBodies,
                 linker.deserializeFakeOverrides,
-                linker.fakeOverrideClassQueue,
                 allowErrorNodes,
                 fileProto.annotationList,
                 fileProto.actualsList,
                 strategy.inlineBodies,
                 moduleDeserializer,
-                linker.fakeOverrideBuilder,
-                linker.expectUniqIdToActualUniqId,
-                linker.expectSymbols,
-                linker.actualSymbols,
-                linker.topLevelActualUniqItToDeserializer,
                 handleNoModuleDeserializerFound,
             )
 

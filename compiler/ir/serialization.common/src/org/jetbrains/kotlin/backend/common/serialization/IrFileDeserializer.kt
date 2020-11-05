@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 internal open class IrFileDeserializer(
+    val linker: KotlinIrLinker,
     val logger: LoggingContext,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
@@ -35,26 +36,21 @@ internal open class IrFileDeserializer(
     declarationIdList: List<Int>,
     protected var deserializeBodies: Boolean,
     deserializeFakeOverrides: Boolean,
-    fakeOverrideQueue: MutableList<IrClass>,
     allowErrorNodes: Boolean,
     private var annotations: List<ProtoConstructorCall>?,
     actuals: List<Actual>,
     deserializeInlineFunctions: Boolean,
     private val moduleDeserializer: IrModuleDeserializer,
-    fakeOverrideBuilder: FakeOverrideBuilder,
-    expectUniqIdToActualUniqId: MutableMap<IdSignature, IdSignature>,
-    expectSymbols: MutableMap<IdSignature, IrSymbol>,
-    actualSymbols: MutableMap<IdSignature, IrSymbol>,
-    topLevelActualUniqItToDeserializer: MutableMap<IdSignature, IrModuleDeserializer>,
     val handleNoModuleDeserializerFound: (IdSignature) -> IrModuleDeserializer,
 ) {
     protected val irFactory: IrFactory get() = symbolTable.irFactory
 
-    val symbolDeserializer = IrSymbolDeserializer(fileReader, symbolTable, this, actuals, topLevelActualUniqItToDeserializer, expectUniqIdToActualUniqId, expectSymbols, actualSymbols)
+    val symbolDeserializer = IrSymbolDeserializer(linker, fileReader,this, actuals)
 
     val reversedSignatureIndex = declarationIdList.map { symbolDeserializer.deserializeIdSignature(it) to it }.toMap()
 
     private val declarationDeserializer = IrDeclarationDeserializer(
+        linker,
         logger,
         builtIns,
         symbolTable,
@@ -62,11 +58,9 @@ internal open class IrFileDeserializer(
         fileReader,
         file,
         deserializeFakeOverrides,
-        fakeOverrideQueue,
         allowErrorNodes,
         deserializeInlineFunctions,
         deserializeBodies,
-        fakeOverrideBuilder,
         symbolDeserializer,
     )
 
