@@ -47,7 +47,11 @@ class JavaClassesInScriptDependenciesShortNameCache(private val project: Project
 
     override fun getMethodsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiMethod> = PsiMethod.EMPTY_ARRAY
 
-    override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<in PsiMethod>) = true
+    override fun processMethodsWithName(
+        name: String,
+        scope: GlobalSearchScope,
+        processor: Processor<in PsiMethod>
+    ) = true
 
     override fun getAllFieldNames() = emptyArray<String>()
 

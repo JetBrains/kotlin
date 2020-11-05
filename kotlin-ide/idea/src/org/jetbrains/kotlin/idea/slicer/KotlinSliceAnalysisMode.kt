@@ -35,7 +35,11 @@ data class KotlinSliceAnalysisMode(val behaviourStack: List<Behaviour>, val inli
         get() = behaviourStack.lastOrNull()
 
     interface Behaviour {
-        fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: Processor<in SliceUsage>)
+        fun processUsages(
+            element: KtElement,
+            parent: KotlinSliceUsage,
+            uniqueProcessor: Processor<in SliceUsage>
+        )
 
         val slicePresentationPrefix: String
         val testPresentationPrefix: String

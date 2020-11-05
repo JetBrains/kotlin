@@ -11,7 +11,11 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.psi.KtElement
 
 object LambdaResultInflowBehaviour : KotlinSliceAnalysisMode.Behaviour {
-    override fun processUsages(element: KtElement, parent: KotlinSliceUsage, uniqueProcessor: Processor<in SliceUsage>) {
+    override fun processUsages(
+        element: KtElement,
+        parent: KotlinSliceUsage,
+        uniqueProcessor: Processor<in SliceUsage>
+    ) {
         InflowSlicer(element, uniqueProcessor, parent).processChildren(parent.forcedExpressionMode)
     }
 

@@ -55,7 +55,11 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
             elementsToSearch.toTypedArray()
     }
 
-    private fun searchTextOccurrences(element: PsiElement, processor: Processor<in UsageInfo>, options: FindUsagesOptions): Boolean {
+    private fun searchTextOccurrences(
+        element: PsiElement,
+        processor: Processor<in UsageInfo>,
+        options: FindUsagesOptions
+    ): Boolean {
         if (!options.isSearchForTextOccurrences) return true
 
         val scope = options.searchScope
@@ -71,7 +75,11 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
         return true
     }
 
-    override fun processElementUsages(element: PsiElement, processor: Processor<in UsageInfo>, options: FindUsagesOptions): Boolean {
+    override fun processElementUsages(
+        element: PsiElement,
+        processor: Processor<in UsageInfo>,
+        options: FindUsagesOptions
+    ): Boolean {
         return searchReferences(element, processor, options, forHighlight = false) && searchTextOccurrences(element, processor, options)
     }
 
@@ -86,7 +94,11 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
         return searcher.executeTasks()
     }
 
-    protected abstract fun createSearcher(element: PsiElement, processor: Processor<in UsageInfo>, options: FindUsagesOptions): Searcher
+    protected abstract fun createSearcher(
+        element: PsiElement,
+        processor: Processor<in UsageInfo>,
+        options: FindUsagesOptions
+    ): Searcher
 
     override fun findReferencesToHighlight(target: PsiElement, searchScope: SearchScope): Collection<PsiReference> {
         val results = Collections.synchronizedList(arrayListOf<PsiReference>())
@@ -102,7 +114,11 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
         return results
     }
 
-    protected abstract class Searcher(val element: PsiElement, val processor: Processor<in UsageInfo>, val options: FindUsagesOptions) {
+    protected abstract class Searcher(
+        val element: PsiElement,
+        val processor: Processor<in UsageInfo>,
+        val options: FindUsagesOptions
+    ) {
         private val tasks = ArrayList<() -> Boolean>()
 
         /**
@@ -137,7 +153,10 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
                 }
             }
 
-        internal fun processUsage(processor: Processor<in UsageInfo>, element: PsiElement): Boolean =
+        internal fun processUsage(
+            processor: Processor<in UsageInfo>,
+            element: PsiElement
+        ): Boolean =
             processor.processIfNotNull { if (element.isValid) UsageInfo(element) else null }
 
         private fun Processor<in UsageInfo>.processIfNotNull(callback: () -> UsageInfo?): Boolean {

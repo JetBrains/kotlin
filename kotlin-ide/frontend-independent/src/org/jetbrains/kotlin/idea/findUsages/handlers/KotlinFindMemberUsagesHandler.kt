@@ -102,7 +102,11 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
         factory: KotlinFindUsagesHandlerFactory
     ) : KotlinFindMemberUsagesHandler<KtNamedDeclaration>(propertyDeclaration, elementsToSearch, factory) {
 
-        override fun processElementUsages(element: PsiElement, processor: Processor<in UsageInfo>, options: FindUsagesOptions): Boolean {
+        override fun processElementUsages(
+            element: PsiElement,
+            processor: Processor<in UsageInfo>,
+            options: FindUsagesOptions
+        ): Boolean {
 
             if (ApplicationManager.getApplication().isUnitTestMode ||
                 !isPropertyOfDataClass ||
@@ -200,7 +204,11 @@ abstract class KotlinFindMemberUsagesHandler<T : KtNamedDeclaration> protected c
         }
     }
 
-    override fun createSearcher(element: PsiElement, processor: Processor<in UsageInfo>, options: FindUsagesOptions): Searcher {
+    override fun createSearcher(
+        element: PsiElement,
+        processor: Processor<in UsageInfo>,
+        options: FindUsagesOptions
+    ): Searcher {
         return MySearcher(element, processor, options)
     }
 

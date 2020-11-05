@@ -75,7 +75,11 @@ class DelegatingFindMemberUsagesHandler(
         return kotlinHandler.getFindUsagesOptions(dataContext)
     }
 
-    override fun processElementUsages(element: PsiElement, processor: Processor<in UsageInfo>, options: FindUsagesOptions): Boolean {
+    override fun processElementUsages(
+        element: PsiElement,
+        processor: Processor<in UsageInfo>,
+        options: FindUsagesOptions
+    ): Boolean {
         val (handler, handlerOptions) = runReadAction { getHandlerAndOptions(element, options) } ?: return true
         return handler.processElementUsages(element, processor, handlerOptions!!)
     }

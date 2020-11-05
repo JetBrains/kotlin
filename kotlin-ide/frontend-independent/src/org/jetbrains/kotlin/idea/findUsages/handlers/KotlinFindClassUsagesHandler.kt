@@ -67,7 +67,11 @@ class KotlinFindClassUsagesHandler(
         )
     }
 
-    override fun createSearcher(element: PsiElement, processor: Processor<in UsageInfo>, options: FindUsagesOptions): Searcher {
+    override fun createSearcher(
+        element: PsiElement,
+        processor: Processor<in UsageInfo>,
+        options: FindUsagesOptions
+    ): Searcher {
         return MySearcher(element, processor, options)
     }
 

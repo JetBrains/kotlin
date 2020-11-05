@@ -150,7 +150,11 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
 
     //region Methods
 
-    override fun processAllMethodNames(processor: Processor<in String>, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
+    override fun processAllMethodNames(
+        processor: Processor<in String>,
+        scope: GlobalSearchScope,
+        filter: IdFilter?
+    ): Boolean {
         if (disableSearch.get()) return true
         return processAllMethodNames(processor)
     }
@@ -245,7 +249,11 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache()
         }
     }
 
-    override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<in PsiMethod>): Boolean {
+    override fun processMethodsWithName(
+        name: String,
+        scope: GlobalSearchScope,
+        processor: Processor<in PsiMethod>
+    ): Boolean {
         if (disableSearch.get()) return true
         return ContainerUtil.process(getMethodsByName(name, scope), processor)
     }

@@ -98,7 +98,10 @@ open class KotlinSliceUsage : SliceUsage {
 
     override fun canBeLeaf() = element != null && mode == KotlinSliceAnalysisMode.Default
 
-    public override fun processUsagesFlownDownTo(element: PsiElement, uniqueProcessor: Processor<in SliceUsage>) {
+    public override fun processUsagesFlownDownTo(
+        element: PsiElement,
+        uniqueProcessor: Processor<in SliceUsage>
+    ) {
         val ktElement = element as? KtElement ?: return
         val behaviour = mode.currentBehaviour
         if (behaviour != null) {
@@ -108,7 +111,10 @@ open class KotlinSliceUsage : SliceUsage {
         }
     }
 
-    public override fun processUsagesFlownFromThe(element: PsiElement, uniqueProcessor: Processor<in SliceUsage>) {
+    public override fun processUsagesFlownFromThe(
+        element: PsiElement,
+        uniqueProcessor: Processor<in SliceUsage>
+    ) {
         val ktElement = element as? KtElement ?: return
         val behaviour = mode.currentBehaviour
         if (behaviour != null) {

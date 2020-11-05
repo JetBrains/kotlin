@@ -39,7 +39,11 @@ class KotlinTypeParameterFindUsagesHandler(
         )
     }
 
-    override fun createSearcher(element: PsiElement, processor: Processor<in UsageInfo>, options: FindUsagesOptions): Searcher {
+    override fun createSearcher(
+        element: PsiElement,
+        processor: Processor<in UsageInfo>,
+        options: FindUsagesOptions
+    ): Searcher {
         return object : Searcher(element, processor, options) {
             override fun buildTaskList(forHighlight: Boolean): Boolean {
                 addTask {
