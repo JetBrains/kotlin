@@ -50,7 +50,7 @@ interface IOther {
 }
 
 fun otherImpl(x0: String, y0: Int): IOther {
-  return { //BLOCK
+  return { // BLOCK
     local class <no name provided> : IOther {
       constructor() /* primary */ {
         TODO("IrDelegatingConstructorCall")

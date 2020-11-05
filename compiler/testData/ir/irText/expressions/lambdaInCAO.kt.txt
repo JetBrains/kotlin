@@ -16,7 +16,7 @@ fun test1(a: Any) {
 }
 
 fun test2(a: Any) {
-  { //BLOCK
+  { // BLOCK
     val tmp0_array: Any = a
     val tmp1_index0: Function0<Unit> =     local fun <anonymous>() {
       return Unit
@@ -27,7 +27,7 @@ fun test2(a: Any) {
 }
 
 fun test3(a: Any) {
-  { //BLOCK
+  { // BLOCK
     val tmp0_array: Any = a
     val tmp1_index0: Function0<Unit> =     local fun <anonymous>() {
       return Unit

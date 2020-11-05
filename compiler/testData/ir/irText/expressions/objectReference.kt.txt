@@ -57,7 +57,7 @@ object Z {
     get
 
   val anObject: Any
-    field = { //BLOCK
+    field = { // BLOCK
       local class <no name provided> {
         constructor() /* primary */ {
           TODO("IrDelegatingConstructorCall")

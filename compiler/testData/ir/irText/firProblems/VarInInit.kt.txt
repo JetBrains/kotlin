@@ -12,7 +12,7 @@ class Some {
 
   init {
     when {
-      less(arg0 = <this>.<get-foo>(), arg1 = 0) -> { //BLOCK
+      less(arg0 = <this>.<get-foo>(), arg1 = 0) -> { // BLOCK
         <this>.<set-foo>(<set-?> = 0)
       }
     }

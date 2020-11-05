@@ -92,7 +92,7 @@ fun testWithDefaults() {
 }
 
 fun testWithBoundReceiver() {
-  useSuspend(fn = { //BLOCK
+  useSuspend(fn = { // BLOCK
     local suspend fun C.bar() {
       receiver.bar()
     }

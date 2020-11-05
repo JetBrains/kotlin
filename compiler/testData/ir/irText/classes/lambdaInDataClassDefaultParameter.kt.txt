@@ -48,7 +48,7 @@ data class A {
 }
 
 data class B {
-  constructor(x: Any = { //BLOCK
+  constructor(x: Any = { // BLOCK
     local class <no name provided> {
       constructor() /* primary */ {
         TODO("IrDelegatingConstructorCall")

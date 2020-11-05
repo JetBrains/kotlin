@@ -44,7 +44,7 @@ fun testUnbound() {
 }
 
 fun testBound(a: A) {
-  use2(fn = { //BLOCK
+  use2(fn = { // BLOCK
     local fun A.foo(p0: Int) {
       receiver.foo(xs = [p0]) /*~> Unit */
     }
@@ -55,7 +55,7 @@ fun testBound(a: A) {
 }
 
 fun testObject() {
-  use2(fn = { //BLOCK
+  use2(fn = { // BLOCK
     local fun Obj.foo(p0: Int) {
       receiver.foo(xs = [p0]) /*~> Unit */
     }

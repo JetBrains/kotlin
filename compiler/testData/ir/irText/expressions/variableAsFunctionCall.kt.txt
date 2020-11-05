@@ -18,8 +18,8 @@ fun test3(): String {
 }
 
 fun test4(ns: String?): String? {
-  return { //BLOCK
-    val tmp1_safe_receiver: Function0<String>? = { //BLOCK
+  return { // BLOCK
+    val tmp1_safe_receiver: Function0<String>? = { // BLOCK
       val tmp0_safe_receiver: String? = ns
       when {
         EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null

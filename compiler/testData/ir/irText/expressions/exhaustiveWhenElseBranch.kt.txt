@@ -20,7 +20,7 @@ enum class A : Enum<A> {
 
 fun testVariableAssignment_throws(a: A) {
   val x: Int
-  { //BLOCK
+  { // BLOCK
     val tmp0_subject: A = a
     when {
       EQEQ(arg0 = tmp0_subject, arg1 = A) -> x = 11
@@ -30,7 +30,7 @@ fun testVariableAssignment_throws(a: A) {
 }
 
 fun testStatement_empty(a: A) {
-  { //BLOCK
+  { // BLOCK
     val tmp0_subject: A = a
     when {
       EQEQ(arg0 = tmp0_subject, arg1 = A) -> 1 /*~> Unit */
@@ -39,7 +39,7 @@ fun testStatement_empty(a: A) {
 }
 
 fun testParenthesized_throwsJvm(a: A) {
-  { //BLOCK
+  { // BLOCK
     val tmp0_subject: A = a
     when {
       EQEQ(arg0 = tmp0_subject, arg1 = A) -> 1 /*~> Unit */
@@ -48,7 +48,7 @@ fun testParenthesized_throwsJvm(a: A) {
 }
 
 fun testAnnotated_throwsJvm(a: A) {
-  { //BLOCK
+  { // BLOCK
     val tmp0_subject: A = a
     when {
       EQEQ(arg0 = tmp0_subject, arg1 = A) -> 1 /*~> Unit */
@@ -57,7 +57,7 @@ fun testAnnotated_throwsJvm(a: A) {
 }
 
 fun testExpression_throws(a: A): Int {
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_subject: A = a
     when {
       EQEQ(arg0 = tmp0_subject, arg1 = A) -> 1
@@ -69,8 +69,8 @@ fun testExpression_throws(a: A): Int {
 fun testIfTheElseStatement_empty(a: A, flag: Boolean) {
   when {
     flag -> 0 /*~> Unit */
-    true -> { //BLOCK
-      { //BLOCK
+    true -> { // BLOCK
+      { // BLOCK
         val tmp0_subject: A = a
         when {
           EQEQ(arg0 = tmp0_subject, arg1 = A) -> 1 /*~> Unit */
@@ -83,8 +83,8 @@ fun testIfTheElseStatement_empty(a: A, flag: Boolean) {
 fun testIfTheElseParenthesized_throwsJvm(a: A, flag: Boolean) {
   when {
     flag -> 0 /*~> Unit */
-    true -> { //BLOCK
-      { //BLOCK
+    true -> { // BLOCK
+      { // BLOCK
         val tmp0_subject: A = a
         when {
           EQEQ(arg0 = tmp0_subject, arg1 = A) -> 1 /*~> Unit */
@@ -97,8 +97,8 @@ fun testIfTheElseParenthesized_throwsJvm(a: A, flag: Boolean) {
 fun testIfTheElseAnnotated_throwsJvm(a: A, flag: Boolean) {
   when {
     flag -> 0 /*~> Unit */
-    true -> { //BLOCK
-      { //BLOCK
+    true -> { // BLOCK
+      { // BLOCK
         val tmp0_subject: A = a
         when {
           EQEQ(arg0 = tmp0_subject, arg1 = A) -> 1 /*~> Unit */
@@ -110,7 +110,7 @@ fun testIfTheElseAnnotated_throwsJvm(a: A, flag: Boolean) {
 
 fun testLambdaResultExpression_throws(a: A) {
     local fun <anonymous>(): Int {
-    return { //BLOCK
+    return { // BLOCK
       val tmp0_subject: A = a
       when {
         EQEQ(arg0 = tmp0_subject, arg1 = A) -> 1

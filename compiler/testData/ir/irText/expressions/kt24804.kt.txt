@@ -4,7 +4,7 @@ inline fun foo(): Boolean {
 
 fun run(x: Boolean, y: Boolean): String {
   var z: Int = 10
-  { //BLOCK
+  { // BLOCK
     do// COMPOSITE {
     z = z.plus(other = 1)
     when {

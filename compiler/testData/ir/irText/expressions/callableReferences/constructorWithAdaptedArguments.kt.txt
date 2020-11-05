@@ -46,7 +46,7 @@ fun testConstructor(): Any {
 }
 
 fun testInnerClassConstructor(outer: Outer): Any {
-  return use(fn = { //BLOCK
+  return use(fn = { // BLOCK
     local fun Outer.<init>(p0: Int): Inner {
       return TODO("IrConstructorCall")
     }
@@ -57,7 +57,7 @@ fun testInnerClassConstructor(outer: Outer): Any {
 }
 
 fun testInnerClassConstructorCapturingOuter(): Any {
-  return use(fn = { //BLOCK
+  return use(fn = { // BLOCK
     local fun Outer.<init>(p0: Int): Inner {
       return TODO("IrConstructorCall")
     }

@@ -51,9 +51,9 @@ object X1 {
 
 fun test1(a: IntArray) {
   var i: Int = 0
-  { //BLOCK
+  { // BLOCK
     val tmp1_array: IntArray = a
-    val tmp2_index0: Int = { //BLOCK
+    val tmp2_index0: Int = { // BLOCK
       val tmp0: Int = i
       i = tmp0.inc()
       tmp0
@@ -65,25 +65,25 @@ fun test1(a: IntArray) {
 }
 
 fun test2() {
-  { //BLOCK
+  { // BLOCK
     val tmp0_this: X1 = X1
-    { //BLOCK
+    { // BLOCK
       val tmp1: Int = tmp0_this.<get-x1>()
       tmp0_this.<set-x1>(<set-?> = tmp1.inc())
       tmp1
     }
   } /*~> Unit */
-  { //BLOCK
+  { // BLOCK
     val tmp2_this: X2 = X2
-    { //BLOCK
+    { // BLOCK
       val tmp3: Int = tmp2_this.<get-x2>()
       tmp2_this.<set-x2>(<set-?> = tmp3.inc())
       tmp3
     }
   } /*~> Unit */
-  { //BLOCK
+  { // BLOCK
     val tmp4_this: X3 = X3
-    { //BLOCK
+    { // BLOCK
       val tmp5: Int = tmp4_this.<get-x3>()
       tmp4_this.<set-x3>(<set-?> = tmp5.inc())
       tmp5
@@ -116,7 +116,7 @@ object Host {
   }
 
   operator fun B.plusAssign(b: B) {
-    { //BLOCK
+    { // BLOCK
       val tmp0_this: B = <this>
       tmp0_this.<set-s>(<set-?> = tmp0_this.<get-s>().plus(other = b.<get-s>()))
     }

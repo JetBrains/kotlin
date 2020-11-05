@@ -10,14 +10,14 @@ fun test2(mc: MutableCollection<String>) {
 }
 
 fun test3() {
-  { //BLOCK
+  { // BLOCK
     val tmp0_safe_receiver: @FlexibleNullability PrintStream? = #out
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
       true -> tmp0_safe_receiver /*!! PrintStream */.println(p0 = "Hello,")
     }
   } /*~> Unit */
-  { //BLOCK
+  { // BLOCK
     val tmp1_safe_receiver: @FlexibleNullability PrintStream? = #out
     when {
       EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null

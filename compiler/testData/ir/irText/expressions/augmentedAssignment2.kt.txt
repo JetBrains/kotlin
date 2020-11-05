@@ -39,19 +39,19 @@ fun testVariable() {
 }
 
 fun testProperty() {
-  { //BLOCK
+  { // BLOCK
     plusAssign($receiver = <get-p>(), s = "+=")
   }
-  { //BLOCK
+  { // BLOCK
     minusAssign($receiver = <get-p>(), s = "-=")
   }
-  { //BLOCK
+  { // BLOCK
     timesAssign($receiver = <get-p>(), s = "*=")
   }
-  { //BLOCK
+  { // BLOCK
     divAssign($receiver = <get-p>(), s = "/=")
   }
-  { //BLOCK
+  { // BLOCK
     remAssign($receiver = <get-p>(), s = "%=")
   }
 }

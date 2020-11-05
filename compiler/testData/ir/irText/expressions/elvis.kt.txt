@@ -7,7 +7,7 @@ fun foo(): Any? {
 }
 
 fun test1(a: Any?, b: Any): Any {
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_elvis_lhs: Any? = a
     when {
       EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> b
@@ -17,7 +17,7 @@ fun test1(a: Any?, b: Any): Any {
 }
 
 fun test2(a: String?, b: Any): Any {
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_elvis_lhs: String? = a
     when {
       EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> b
@@ -33,7 +33,7 @@ fun test3(a: Any?, b: Any?): String {
   when {
     a !is String? -> return ""
   }
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_elvis_lhs: Any? = a
     when {
       EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> b /*as String */
@@ -43,7 +43,7 @@ fun test3(a: Any?, b: Any?): String {
 }
 
 fun test4(x: Any): Any {
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_elvis_lhs: Any? = <get-p>()
     when {
       EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> x
@@ -53,7 +53,7 @@ fun test4(x: Any): Any {
 }
 
 fun test5(x: Any): Any {
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_elvis_lhs: Any? = foo()
     when {
       EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> x

@@ -3,7 +3,7 @@ fun foo(): Any {
 }
 
 fun test(): Int {
-  return { //BLOCK
+  return { // BLOCK
     val y: Any = foo()
     when {
       EQEQ(arg0 = y, arg1 = 42) -> 1

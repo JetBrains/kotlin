@@ -10,10 +10,10 @@ fun f(f1: Function0<String> = local fun <anonymous>(): String {
 
 fun box(): String {
   var result: String = "fail"
-  try { //BLOCK
+  try { // BLOCK
     f() /*~> Unit */
   }
-  catch (...) { //BLOCK
+  catch (...) { // BLOCK
     result = "OK"
   }
 

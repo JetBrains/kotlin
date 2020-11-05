@@ -1,16 +1,16 @@
 fun test1() {
-  while (true) { //BLOCK
+  while (true) { // BLOCK
     break
   }
-  { //BLOCK
+  { // BLOCK
     do// COMPOSITE {
     break
     // }    while (true)
   }
-  while (true) { //BLOCK
+  while (true) { // BLOCK
     continue
   }
-  { //BLOCK
+  { // BLOCK
     do// COMPOSITE {
     continue
     // }    while (true)
@@ -18,15 +18,15 @@ fun test1() {
 }
 
 fun test2() {
-  while (true) { //BLOCK
-    while (true) { //BLOCK
+  while (true) { // BLOCK
+    while (true) { // BLOCK
       break
       break
     }
     break
   }
-  while (true) { //BLOCK
-    while (true) { //BLOCK
+  while (true) { // BLOCK
+    while (true) { // BLOCK
       continue
       continue
     }
@@ -35,14 +35,14 @@ fun test2() {
 }
 
 fun test3() {
-  while (true) { //BLOCK
-    while (true) { //BLOCK
+  while (true) { // BLOCK
+    while (true) { // BLOCK
       break
     }
     break
   }
-  while (true) { //BLOCK
-    while (true) { //BLOCK
+  while (true) { // BLOCK
+    while (true) { // BLOCK
       continue
     }
     continue

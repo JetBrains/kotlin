@@ -1,5 +1,5 @@
 fun test(receiver: Any?, fn: @ExtensionFunctionType Function3<Any, Int, String, Unit>): Unit? {
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_safe_receiver: Any? = receiver
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null

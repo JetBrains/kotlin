@@ -20,7 +20,7 @@ class TestClass {
 
   val test: Int
     field = when {
-      true -> { //BLOCK
+      true -> { // BLOCK
         #out /*!! PrintStream */.println(p0 = "TestClass/test")
         42
       }

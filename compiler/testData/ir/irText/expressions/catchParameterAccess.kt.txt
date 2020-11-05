@@ -1,8 +1,8 @@
 fun test(f: Function0<Unit>) {
-  return try { //BLOCK
+  return try { // BLOCK
     f.invoke()
   }
-  catch (...) { //BLOCK
+  catch (...) { // BLOCK
     throw e
   }
 

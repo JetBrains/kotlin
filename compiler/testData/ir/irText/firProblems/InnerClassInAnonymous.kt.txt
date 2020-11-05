@@ -1,5 +1,5 @@
 fun box(): String {
-  val obj: <no name provided> = { //BLOCK
+  val obj: <no name provided> = { // BLOCK
     local class <no name provided> {
       constructor() /* primary */ {
         TODO("IrDelegatingConstructorCall")

@@ -4,14 +4,14 @@ fun test1() {
 }
 
 fun test2() {
-  while (true) { //BLOCK
+  while (true) { // BLOCK
     error("") /* ERROR EXPRESSION */
     error("") /* ERROR EXPRESSION */
   }
 }
 
 fun test3() {
-  while (true) { //BLOCK
+  while (true) { // BLOCK
     val lambda: Function0<Nothing> =     local fun <anonymous>(): Nothing {
       error("") /* ERROR EXPRESSION */
       error("") /* ERROR EXPRESSION */
@@ -21,9 +21,9 @@ fun test3() {
 }
 
 fun test4() {
-  while (error("") /* ERROR EXPRESSION */) { //BLOCK
+  while (error("") /* ERROR EXPRESSION */) { // BLOCK
   }
-  while (error("") /* ERROR EXPRESSION */) { //BLOCK
+  while (error("") /* ERROR EXPRESSION */) { // BLOCK
   }
 }
 

@@ -1,5 +1,5 @@
 fun WithCompanion.test() {
-  val test1: <no name provided> = { //BLOCK
+  val test1: <no name provided> = { // BLOCK
     local class <no name provided> : WithCompanion {
       constructor() /* primary */ {
         TODO("IrDelegatingConstructorCall")
@@ -15,7 +15,7 @@ fun WithCompanion.test() {
 
     TODO("IrConstructorCall")
   }
-  val test2: <no name provided> = { //BLOCK
+  val test2: <no name provided> = { // BLOCK
     local class <no name provided> : WithCompanion {
       constructor() /* primary */ {
         TODO("IrDelegatingConstructorCall")

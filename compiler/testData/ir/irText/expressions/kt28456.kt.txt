@@ -22,7 +22,7 @@ fun testSimpleAssignment(a: A) {
 }
 
 fun testPostfixIncrement(a: A): Int {
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_array: A = a
     val tmp1_index0: Int = 1
     val tmp2_index1: Int = 2
@@ -33,7 +33,7 @@ fun testPostfixIncrement(a: A): Int {
 }
 
 fun testCompoundAssignment(a: A) {
-  { //BLOCK
+  { // BLOCK
     val tmp0_array: A = a
     val tmp1_index0: Int = 1
     val tmp2_index1: Int = 2

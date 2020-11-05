@@ -22,7 +22,7 @@ class J {
 }
 
 val fsi: Fn<String, Int>
-  field = { //BLOCK
+  field = { // BLOCK
     local class <no name provided> : Fn<String, Int> {
       constructor() /* primary */ {
         TODO("IrDelegatingConstructorCall")
@@ -45,7 +45,7 @@ val fsi: Fn<String, Int>
   get
 
 val fis: Fn<Int, String>
-  field = { //BLOCK
+  field = { // BLOCK
     local class <no name provided> : Fn<Int, String> {
       constructor() /* primary */ {
         TODO("IrDelegatingConstructorCall")

@@ -1,5 +1,5 @@
 fun testSimple(x: Double): Int {
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_subject: Double = x
     when {
       ieee754equals(arg0 = tmp0_subject, arg1 = 0.0D) -> 0
@@ -12,7 +12,7 @@ fun testSmartCastInWhenSubject(x: Any): Int {
   when {
     x !is Double -> return -1
   }
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_subject: Any = x
     when {
       ieee754equals(arg0 = tmp0_subject /*as Double */, arg1 = 0.0D) -> 0
@@ -25,7 +25,7 @@ fun testSmartCastInWhenCondition(x: Double, y: Any): Int {
   when {
     y !is Double -> return -1
   }
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_subject: Double = x
     when {
       ieee754equals(arg0 = tmp0_subject, arg1 = y /*as Double */) -> 0
@@ -35,7 +35,7 @@ fun testSmartCastInWhenCondition(x: Double, y: Any): Int {
 }
 
 fun testSmartCastInWhenConditionInBranch(x: Any): Int {
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_subject: Any = x
     when {
       tmp0_subject is Double.not() -> -1
@@ -52,7 +52,7 @@ fun testSmartCastToDifferentTypes(x: Any, y: Any): Int {
   when {
     y !is Float -> return -1
   }
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_subject: Any = x
     when {
       ieee754equals(arg0 = tmp0_subject /*as Double */, arg1 = y /*as Float */.toDouble()) -> 0
@@ -66,7 +66,7 @@ fun foo(x: Double): Double {
 }
 
 fun testWithPrematureExitInConditionSubexpression(x: Any): Int {
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_subject: Any = x
     when {
       EQEQ(arg0 = tmp0_subject, arg1 = foo(x = when {

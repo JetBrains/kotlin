@@ -26,7 +26,7 @@ val aFloat: A<Float>
   get
 
 val aInt: Float
-  field = { //BLOCK
+  field = { // BLOCK
     val tmp0_array: A<Float> = <get-aFloat>()
     val tmp1_index0: Int = 1
     val tmp2: Float = tmp0_array.get(i = tmp1_index0)

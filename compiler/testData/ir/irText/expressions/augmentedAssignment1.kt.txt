@@ -13,19 +13,19 @@ fun testVariable() {
 }
 
 fun testProperty() {
-  { //BLOCK
+  { // BLOCK
     <set-p>(<set-?> = <get-p>().plus(other = 1))
   }
-  { //BLOCK
+  { // BLOCK
     <set-p>(<set-?> = <get-p>().minus(other = 2))
   }
-  { //BLOCK
+  { // BLOCK
     <set-p>(<set-?> = <get-p>().times(other = 3))
   }
-  { //BLOCK
+  { // BLOCK
     <set-p>(<set-?> = <get-p>().div(other = 4))
   }
-  { //BLOCK
+  { // BLOCK
     <set-p>(<set-?> = <get-p>().rem(other = 5))
   }
 }

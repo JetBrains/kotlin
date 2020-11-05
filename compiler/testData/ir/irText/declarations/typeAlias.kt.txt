@@ -1,6 +1,6 @@
 typealias Test1 = String
 fun foo() {
-  { //BLOCK
+  { // BLOCK
   }
 }
 

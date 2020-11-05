@@ -16,7 +16,7 @@ class C {
 }
 
 fun test(nc: C?) {
-  { //BLOCK
+  { // BLOCK
     val tmp0_safe_receiver: C? = nc
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null /*~> Unit */

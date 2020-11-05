@@ -8,7 +8,7 @@ fun test(i: Int): Int {
 
 fun testEmptyBranches1(flag: Boolean) {
   when {
-    flag -> { //BLOCK
+    flag -> { // BLOCK
     }
     true -> true /*~> Unit */
   }
@@ -19,20 +19,20 @@ fun testEmptyBranches1(flag: Boolean) {
 
 fun testEmptyBranches2(flag: Boolean) {
   when {
-    flag -> { //BLOCK
+    flag -> { // BLOCK
     }
     true -> true /*~> Unit */
   }
   when {
     flag -> true /*~> Unit */
-    true -> { //BLOCK
+    true -> { // BLOCK
     }
   }
 }
 
 fun testEmptyBranches3(flag: Boolean) {
   when {
-    flag -> { //BLOCK
+    flag -> { // BLOCK
     }
     true -> true /*~> Unit */
   }

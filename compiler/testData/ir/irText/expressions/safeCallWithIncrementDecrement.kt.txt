@@ -20,7 +20,7 @@ var C?.p: Int
   }
 
 operator fun Int?.inc(): Int? {
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_safe_receiver: Int? = <this>
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
@@ -37,13 +37,13 @@ operator fun Int?.set(index: Int, value: Int) {
 }
 
 fun testProperty(nc: C?) {
-  { //BLOCK
+  { // BLOCK
     val tmp0_safe_receiver: C? = nc
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> { //BLOCK
+      true -> { // BLOCK
         val tmp1_receiver: C? = tmp0_safe_receiver
-        { //BLOCK
+        { // BLOCK
           val tmp2: Int = <get-p>($receiver = tmp1_receiver)
           <set-p>($receiver = tmp1_receiver, value = inc($receiver = tmp2))
           tmp2
@@ -54,8 +54,8 @@ fun testProperty(nc: C?) {
 }
 
 fun testArrayAccess(nc: C?) {
-  { //BLOCK
-    val tmp1_array: Int? = { //BLOCK
+  { // BLOCK
+    val tmp1_array: Int? = { // BLOCK
       val tmp0_safe_receiver: C? = nc
       when {
         EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null

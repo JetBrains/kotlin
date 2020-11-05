@@ -1,25 +1,25 @@
 fun test1() {
-  try { //BLOCK
+  try { // BLOCK
     println()
   }
-  catch (...) { //BLOCK
+  catch (...) { // BLOCK
     println()
   }
-  finally { //BLOCK
+  finally { // BLOCK
     println()
   }
 }
 
 fun test2(): Int {
-  return try { //BLOCK
+  return try { // BLOCK
     println()
     42
   }
-  catch (...) { //BLOCK
+  catch (...) { // BLOCK
     println()
     24
   }
-  finally { //BLOCK
+  finally { // BLOCK
     println()
     555 /*~> Unit */
   }

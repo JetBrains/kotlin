@@ -9,21 +9,21 @@ interface X {
 }
 
 fun test(x: X, nx: X?) {
-  { //BLOCK
+  { // BLOCK
     val tmp0_this: X = x
     plusAssign<Int>($receiver = tmp0_this.<get-xs>(), element = 1)
   }
   plusAssign<Int>($receiver = x.f(), element = 2)
   plusAssign<Int>($receiver = x.<get-xs>() as MutableList<Int>, element = 3)
   plusAssign<Int>($receiver = x.f() as MutableList<Int>, element = 4)
-  plusAssign<Int>($receiver = CHECK_NOT_NULL<MutableList<Any>>(arg0 = { //BLOCK
+  plusAssign<Int>($receiver = CHECK_NOT_NULL<MutableList<Any>>(arg0 = { // BLOCK
     val tmp1_safe_receiver: X? = nx
     when {
       EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
       true -> tmp1_safe_receiver.<get-xs>()
     }
   }), element = 5)
-  plusAssign<Int>($receiver = CHECK_NOT_NULL<MutableList<Any>>(arg0 = { //BLOCK
+  plusAssign<Int>($receiver = CHECK_NOT_NULL<MutableList<Any>>(arg0 = { // BLOCK
     val tmp2_safe_receiver: X? = nx
     when {
       EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null

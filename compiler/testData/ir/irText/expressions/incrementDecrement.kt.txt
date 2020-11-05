@@ -9,11 +9,11 @@ val arr: IntArray
 
 fun testVarPrefix() {
   var x: Int = 0
-  val x1: Int = { //BLOCK
+  val x1: Int = { // BLOCK
     x = x.inc()
     x
   }
-  val x2: Int = { //BLOCK
+  val x2: Int = { // BLOCK
     x = x.dec()
     x
   }
@@ -21,12 +21,12 @@ fun testVarPrefix() {
 
 fun testVarPostfix() {
   var x: Int = 0
-  val x1: Int = { //BLOCK
+  val x1: Int = { // BLOCK
     val tmp0: Int = x
     x = tmp0.inc()
     tmp0
   }
-  val x2: Int = { //BLOCK
+  val x2: Int = { // BLOCK
     val tmp1: Int = x
     x = tmp1.dec()
     tmp1
@@ -34,14 +34,14 @@ fun testVarPostfix() {
 }
 
 fun testPropPrefix() {
-  val p1: Int = { //BLOCK
-    { //BLOCK
+  val p1: Int = { // BLOCK
+    { // BLOCK
       <set-p>(<set-?> = <get-p>().inc())
       <get-p>()
     }
   }
-  val p2: Int = { //BLOCK
-    { //BLOCK
+  val p2: Int = { // BLOCK
+    { // BLOCK
       <set-p>(<set-?> = <get-p>().dec())
       <get-p>()
     }
@@ -49,15 +49,15 @@ fun testPropPrefix() {
 }
 
 fun testPropPostfix() {
-  val p1: Int = { //BLOCK
-    { //BLOCK
+  val p1: Int = { // BLOCK
+    { // BLOCK
       val tmp0: Int = <get-p>()
       <set-p>(<set-?> = tmp0.inc())
       tmp0
     }
   }
-  val p2: Int = { //BLOCK
-    { //BLOCK
+  val p2: Int = { // BLOCK
+    { // BLOCK
       <set-p>(<set-?> = <get-p>().dec())
       <get-p>()
     }
@@ -65,13 +65,13 @@ fun testPropPostfix() {
 }
 
 fun testArrayPrefix() {
-  val a1: Int = { //BLOCK
+  val a1: Int = { // BLOCK
     val tmp0_array: IntArray = <get-arr>()
     val tmp1_index0: Int = 0
     tmp0_array.set(index = tmp1_index0, value = tmp0_array.get(index = tmp1_index0).inc())
     tmp0_array.get(index = tmp1_index0)
   }
-  val a2: Int = { //BLOCK
+  val a2: Int = { // BLOCK
     val tmp2_array: IntArray = <get-arr>()
     val tmp3_index0: Int = 0
     tmp2_array.set(index = tmp3_index0, value = tmp2_array.get(index = tmp3_index0).dec())
@@ -80,14 +80,14 @@ fun testArrayPrefix() {
 }
 
 fun testArrayPostfix() {
-  val a1: Int = { //BLOCK
+  val a1: Int = { // BLOCK
     val tmp0_array: IntArray = <get-arr>()
     val tmp1_index0: Int = 0
     val tmp2: Int = tmp0_array.get(index = tmp1_index0)
     tmp0_array.set(index = tmp1_index0, value = tmp2.inc())
     tmp2
   }
-  val a2: Int = { //BLOCK
+  val a2: Int = { // BLOCK
     val tmp3_array: IntArray = <get-arr>()
     val tmp4_index0: Int = 0
     val tmp5: Int = tmp3_array.get(index = tmp4_index0)

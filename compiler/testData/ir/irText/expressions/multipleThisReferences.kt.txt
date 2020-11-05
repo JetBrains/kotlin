@@ -38,7 +38,7 @@ class Host {
     get
 
   fun Outer.test(): Inner {
-    return { //BLOCK
+    return { // BLOCK
       local class <no name provided> : Inner {
         constructor() /* primary */ {
           TODO("IrDelegatingConstructorCall")

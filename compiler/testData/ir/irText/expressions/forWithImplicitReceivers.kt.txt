@@ -37,9 +37,9 @@ interface IReceiver {
   }
 
   operator fun IntCell.next(): Int {
-    return { //BLOCK
+    return { // BLOCK
       val tmp0_this: IntCell = <this>
-      { //BLOCK
+      { // BLOCK
         val tmp1: Int = tmp0_this.<get-value>()
         tmp0_this.<set-value>(<set-?> = tmp1.dec())
         tmp1
@@ -53,11 +53,11 @@ interface IReceiver {
 }
 
 fun IReceiver.test() {
-  { //BLOCK
+  { // BLOCK
     val tmp0_iterator: IntCell = <this>.iterator($receiver = FiveTimes)
-    while (<this>.hasNext($receiver = tmp0_iterator)) { //BLOCK
+    while (<this>.hasNext($receiver = tmp0_iterator)) { // BLOCK
       val i: Int = <this>.next($receiver = tmp0_iterator)
-      { //BLOCK
+      { // BLOCK
         println(message = i)
       }
     }

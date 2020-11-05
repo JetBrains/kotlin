@@ -3,7 +3,7 @@ private const val BACKSLASH: Char
   private get
 
 private fun Reader.nextChar(): Char? {
-  return { //BLOCK
+  return { // BLOCK
     val tmp0_safe_receiver: Int? = takeUnless<Int>($receiver = <this>.read(), predicate =     local fun <anonymous>(it: Int): Boolean {
       return EQEQ(arg0 = it, arg1 = -1)
     }
@@ -20,9 +20,9 @@ fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
   while (when {
     EQEQ(arg0 = ch, arg1 = null).not() -> EQEQ(arg0 = ch, arg1 = quote).not()
     true -> false
-  }) { //BLOCK
+  }) { // BLOCK
     when {
-      EQEQ(arg0 = ch, arg1 = <get-BACKSLASH>()) -> { //BLOCK
+      EQEQ(arg0 = ch, arg1 = <get-BACKSLASH>()) -> { // BLOCK
         val tmp0_safe_receiver: Char? = nextChar($receiver = <this>)
         when {
           EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null

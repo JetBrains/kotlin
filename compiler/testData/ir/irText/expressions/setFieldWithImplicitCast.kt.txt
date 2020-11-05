@@ -7,7 +7,7 @@ class Derived : Base {
 
   fun setValue(v: Any) {
     when {
-      v is String -> { //BLOCK
+      v is String -> { // BLOCK
         #value = v /*as String */
       }
     }

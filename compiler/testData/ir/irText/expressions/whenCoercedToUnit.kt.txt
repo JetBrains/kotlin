@@ -1,5 +1,5 @@
 fun foo(x: Int) {
-  { //BLOCK
+  { // BLOCK
     val tmp0_subject: Int = x
     when {
       EQEQ(arg0 = tmp0_subject, arg1 = 0) -> 0 /*~> Unit */

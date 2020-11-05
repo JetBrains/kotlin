@@ -24,7 +24,7 @@ fun test2() {
 
 
   <set-x>(value = 0)
-  { //BLOCK
+  { // BLOCK
     val tmp0: Int = <get-x>()
     <set-x>(value = tmp0.inc())
     tmp0

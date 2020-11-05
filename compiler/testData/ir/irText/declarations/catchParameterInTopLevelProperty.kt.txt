@@ -1,7 +1,7 @@
 val test: Unit
-  field = try { //BLOCK
+  field = try { // BLOCK
   }
-  catch (...) { //BLOCK
+  catch (...) { // BLOCK
   }
 
   get

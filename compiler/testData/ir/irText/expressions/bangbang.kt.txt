@@ -3,7 +3,7 @@ fun test1(a: Any?): Any {
 }
 
 fun test2(a: Any?): Int {
-  return CHECK_NOT_NULL<Int>(arg0 = { //BLOCK
+  return CHECK_NOT_NULL<Int>(arg0 = { // BLOCK
     val tmp0_safe_receiver: Any? = a
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null

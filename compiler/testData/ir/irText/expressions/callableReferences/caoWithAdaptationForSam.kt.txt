@@ -55,7 +55,7 @@ fun withVararg(vararg xs: Int): Int {
 }
 
 fun test1() {
-  { //BLOCK
+  { // BLOCK
     val tmp0_array: A = A
     val tmp2_sam: IFoo =     local fun withVararg(p0: Int) {
       withVararg(xs = [p0]) /*~> Unit */
@@ -66,7 +66,7 @@ fun test1() {
 }
 
 fun test2() {
-  { //BLOCK
+  { // BLOCK
     val tmp0_array: B = B
     val tmp2_sam: IFoo2 =     local fun withVararg(p0: Int) {
       withVararg(xs = [p0]) /*~> Unit */
@@ -77,7 +77,7 @@ fun test2() {
 }
 
 fun test3(fn: Function1<Int, Unit>) {
-  { //BLOCK
+  { // BLOCK
     val tmp0_array: A = A
     val tmp2_sam: IFoo = fn /*-> IFoo */
     set($receiver = tmp0_array, i = tmp2_sam, newValue = get($receiver = tmp0_array, i = tmp2_sam).plus(other = 1))
@@ -86,8 +86,8 @@ fun test3(fn: Function1<Int, Unit>) {
 
 fun test4(fn: Function1<Int, Unit>) {
   when {
-    fn is IFoo -> { //BLOCK
-      { //BLOCK
+    fn is IFoo -> { // BLOCK
+      { // BLOCK
         val tmp0_array: A = A
         val tmp1_index0: Function1<Int, Unit> = fn
         set($receiver = tmp0_array, i = tmp1_index0 /*as IFoo */, newValue = get($receiver = tmp0_array, i = tmp1_index0 /*as IFoo */).plus(other = 1))
@@ -98,7 +98,7 @@ fun test4(fn: Function1<Int, Unit>) {
 
 fun test5(a: Any) {
   a as Function1<Int, Unit> /*~> Unit */
-  { //BLOCK
+  { // BLOCK
     val tmp0_array: A = A
     val tmp2_sam: IFoo = a /*as Function1<@ParameterName(...) Int, Unit> */ /*-> IFoo */
     set($receiver = tmp0_array, i = tmp2_sam, newValue = get($receiver = tmp0_array, i = tmp2_sam).plus(other = 1))
@@ -108,7 +108,7 @@ fun test5(a: Any) {
 fun test6(a: Any) {
   a as Function1<Int, Unit> /*~> Unit */
   a as IFoo /*~> Unit */
-  { //BLOCK
+  { // BLOCK
     val tmp0_array: A = A
     val tmp1_index0: Any = a
     set($receiver = tmp0_array, i = tmp1_index0 /*as IFoo */, newValue = get($receiver = tmp0_array, i = tmp1_index0 /*as IFoo */).plus(other = 1))

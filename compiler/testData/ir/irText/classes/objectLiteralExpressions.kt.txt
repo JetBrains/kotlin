@@ -6,7 +6,7 @@ interface IFoo {
 }
 
 val test1: Any
-  field = { //BLOCK
+  field = { // BLOCK
     local class <no name provided> {
       constructor() /* primary */ {
         TODO("IrDelegatingConstructorCall")
@@ -25,7 +25,7 @@ val test1: Any
   get
 
 val test2: IFoo
-  field = { //BLOCK
+  field = { // BLOCK
     local class <no name provided> : IFoo {
       constructor() /* primary */ {
         TODO("IrDelegatingConstructorCall")
@@ -68,7 +68,7 @@ class Outer {
   }
 
   fun test3(): Inner {
-    return { //BLOCK
+    return { // BLOCK
       local class <no name provided> : Inner {
         constructor() /* primary */ {
           TODO("IrDelegatingConstructorCall")
@@ -96,7 +96,7 @@ class Outer {
 }
 
 fun Outer.test4(): Inner {
-  return { //BLOCK
+  return { // BLOCK
     local class <no name provided> : Inner {
       constructor() /* primary */ {
         TODO("IrDelegatingConstructorCall")

@@ -20,7 +20,7 @@ open class Base {
 
 class Test1 : Base {
   constructor(xx: Int, yy: Int) /* primary */ {
-    { //BLOCK
+    { // BLOCK
       TODO("IrDelegatingConstructorCall")
     }
         /* InstanceInitializerCall */
@@ -34,7 +34,7 @@ class Test1 : Base {
 
 class Test2 : Base {
   constructor(xx: Int, yy: Int) {
-    { //BLOCK
+    { // BLOCK
       TODO("IrDelegatingConstructorCall")
     }
         /* InstanceInitializerCall */
@@ -42,7 +42,7 @@ class Test2 : Base {
   }
 
   constructor(xxx: Int, yyy: Int, a: Any) {
-    { //BLOCK
+    { // BLOCK
       TODO("IrDelegatingConstructorCall")
     }
   }
