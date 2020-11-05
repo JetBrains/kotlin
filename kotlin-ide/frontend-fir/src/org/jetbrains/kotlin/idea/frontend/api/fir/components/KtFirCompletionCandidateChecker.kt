@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.util.concurrent.ConcurrentHashMap
 
 internal class KtFirCompletionCandidateChecker(
     analysisSession: KtFirAnalysisSession,
@@ -40,7 +41,7 @@ internal class KtFirCompletionCandidateChecker(
     override val analysisSession: KtFirAnalysisSession by weakRef(analysisSession)
 
     private val completionContextCache =
-        HashMap<Pair<FirFile, KtCallableDeclaration>, LowLevelFirApiFacadeForCompletion.FirCompletionContext>()
+        ConcurrentHashMap<Pair<FirFile, KtCallableDeclaration>, LowLevelFirApiFacadeForCompletion.FirCompletionContext>()
 
     override fun checkExtensionFitsCandidate(
         firSymbolForCandidate: KtCallableSymbol,
@@ -94,7 +95,7 @@ internal class KtFirCompletionCandidateChecker(
     ): Sequence<ImplicitReceiverValue<*>?> {
         val enclosingContext = EnclosingDeclarationContext.detect(originalFile, fakeNameExpression)
 
-        val completionContext = completionContextCache.getOrCreate(firFile to enclosingContext.fakeEnclosingDeclaration) {
+        val completionContext = completionContextCache.computeIfAbsent(firFile to enclosingContext.fakeEnclosingDeclaration) {
             enclosingContext.buildCompletionContext(firFile, firResolveState)
         }
 
