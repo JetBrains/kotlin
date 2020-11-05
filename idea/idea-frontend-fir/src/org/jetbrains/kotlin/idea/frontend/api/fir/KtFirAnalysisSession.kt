@@ -41,9 +41,9 @@ private constructor(
     override val scopeProvider by threadLocal { KtFirScopeProvider(this, firSymbolBuilder, project, firResolveState, token) }
     override val symbolProvider: KtSymbolProvider =
         KtFirSymbolProvider(this, firResolveState.rootModuleSession.firSymbolProvider, firResolveState, firSymbolBuilder, token)
-    override val completionCandidateChecker: KtCompletionCandidateChecker by threadLocal { KtFirCompletionCandidateChecker(this, token) }
-    override val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider
-            by threadLocal { KtFirSymbolDeclarationOverridesProvider(this, token) }
+    override val completionCandidateChecker: KtCompletionCandidateChecker = KtFirCompletionCandidateChecker(this, token)
+    override val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider =
+        KtFirSymbolDeclarationOverridesProvider(this, token)
 
     override fun createContextDependentCopy(): KtAnalysisSession {
         check(!isContextSession) { "Cannot create context-dependent copy of KtAnalysis session from a context dependent one" }
