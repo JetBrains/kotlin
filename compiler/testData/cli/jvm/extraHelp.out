@@ -99,7 +99,6 @@ where advanced options include:
   -Xsam-conversions={class|indy} Select code generation scheme for SAM conversions.
                              -Xsam-conversions=indy              Generate SAM conversions using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 1.8` or greater.
                              -Xsam-conversions=class             Generate SAM conversions as explicit classes
-  -Xir-run-lowerings-in-parallel When using the IR backend, run lowerings for each file in parallel
   -Xsanitize-parentheses     Transform '(' and ')' in method names to some other character sequence.
                              This mode can BREAK BINARY COMPATIBILITY and is only supposed to be used to workaround
                              problems with parentheses in identifiers on certain platforms
@@ -123,6 +122,9 @@ where advanced options include:
                              Suppress deprecation warning about deprecated JVM target versions
   -Xsuppress-missing-builtins-error
                              Suppress the "cannot access built-in declaration" error (useful with -no-stdlib)
+  -Xir-threads-for-file-lowerings
+                             When using the IR backend, run lowerings by file in N parallel threads.
+                             Default value is 1
   -Xuse-ir                   Use the IR backend
   -Xuse-javac                Use javac for Java source and class files analysis
   -Xuse-old-backend          Use the old JVM backend

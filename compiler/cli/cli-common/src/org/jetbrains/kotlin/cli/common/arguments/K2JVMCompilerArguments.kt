@@ -115,10 +115,11 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var doNotClearBindingContext: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xir-run-lowerings-in-parallel",
-        description = "When using the IR backend, run lowerings for each file in parallel"
+        value = "-Xir-threads-for-file-lowerings",
+        description = "When using the IR backend, run lowerings by file in N parallel threads.\n" +
+                      "Default value is 1"
     )
-    var runLoweringsInParallel: Boolean by FreezableVar(false)
+    var threadsForFileLowerings: String by FreezableVar("1")
 
     @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
     var javaModulePath: String? by NullableStringFreezableVar(null)

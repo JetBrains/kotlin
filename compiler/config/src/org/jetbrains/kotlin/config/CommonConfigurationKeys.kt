@@ -52,8 +52,8 @@ object CommonConfigurationKeys {
     val USE_FIR_EXTENDED_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir extended checkers")
 
     @JvmField
-    val RUN_LOWERINGS_IN_PARALLEL =
-        CompilerConfigurationKey.create<Boolean>("When using the IR backend, run lowerings for each file in parallel")
+    val THREADS_FOR_FILE_LOWERINGS =
+        CompilerConfigurationKey.create<Int>("When using the IR backend, run lowerings by file in N parallel threads")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
