@@ -28,4 +28,6 @@ abstract class ControlFlowInfo<S : ControlFlowInfo<S, K, V>, K : Any, V : Any> p
     override fun put(key: K, value: V): S {
         return constructor(map.put(key, value))
     }
+
+    abstract fun merge(other: S): S
 }

@@ -205,8 +205,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
     class LambdaInvocationInfo(
         map: PersistentMap<FirBasedSymbol<*>, EventOccurrencesRange> = persistentMapOf(),
-    ) : ControlFlowInfo<LambdaInvocationInfo, FirBasedSymbol<*>, EventOccurrencesRange>(map) {
-
+    ) : EventOccurrencesRangeInfo<LambdaInvocationInfo, FirBasedSymbol<*>>(map) {
         companion object {
             val EMPTY = LambdaInvocationInfo()
         }
@@ -214,15 +213,6 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         override val constructor: (PersistentMap<FirBasedSymbol<*>, EventOccurrencesRange>) -> LambdaInvocationInfo =
             ::LambdaInvocationInfo
 
-        fun merge(other: LambdaInvocationInfo): LambdaInvocationInfo {
-            var result = this
-            for (symbol in keys.union(other.keys)) {
-                val kind1 = this[symbol] ?: EventOccurrencesRange.ZERO
-                val kind2 = other[symbol] ?: EventOccurrencesRange.ZERO
-                result = result.put(symbol, kind1 or kind2)
-            }
-            return result
-        }
     }
 
     class PathAwareLambdaInvocationInfo(
@@ -278,7 +268,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
             }
         }
 
-        fun merge(other: PathAwareLambdaInvocationInfo): PathAwareLambdaInvocationInfo {
+        override fun merge(other: PathAwareLambdaInvocationInfo): PathAwareLambdaInvocationInfo {
             var resultMap = persistentMapOf<EdgeLabel, LambdaInvocationInfo>()
             for (label in keys.union(other.keys)) {
                 // disjoint merging to preserve paths. i.e., merge the property initialization info if and only if both have the key.

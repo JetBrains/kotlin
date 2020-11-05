@@ -106,7 +106,7 @@ object UnusedChecker : FirControlFlowChecker() {
         override val constructor: (PersistentMap<FirPropertySymbol, VariableStatus>) -> VariableStatusInfo =
             ::VariableStatusInfo
 
-        fun merge(other: VariableStatusInfo): VariableStatusInfo {
+        override fun merge(other: VariableStatusInfo): VariableStatusInfo {
             var result = this
             for (symbol in keys.union(other.keys)) {
                 val kind1 = this[symbol] ?: VariableStatus.UNUSED
