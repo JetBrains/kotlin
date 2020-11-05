@@ -13,18 +13,13 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import java.lang.IllegalStateException
 
-class PropertyInitializationInfo(
-    map: PersistentMap<FirPropertySymbol, EventOccurrencesRange> = persistentMapOf()
-) : ControlFlowInfo<PropertyInitializationInfo, FirPropertySymbol, EventOccurrencesRange>(map) {
-    companion object {
-        val EMPTY = PropertyInitializationInfo()
-    }
+abstract class EventOccurrencesRangeInfo<E : EventOccurrencesRangeInfo<E, K>, K : Any>(
+    map: PersistentMap<K, EventOccurrencesRange> = persistentMapOf()
+) : ControlFlowInfo<E, K, EventOccurrencesRange>(map) {
 
-    override val constructor: (PersistentMap<FirPropertySymbol, EventOccurrencesRange>) -> PropertyInitializationInfo =
-        ::PropertyInitializationInfo
-
-    fun merge(other: PropertyInitializationInfo): PropertyInitializationInfo {
-        var result = this
+    override fun merge(other: E): E {
+        @Suppress("UNCHECKED_CAST")
+        var result = this as E
         for (symbol in keys.union(other.keys)) {
             val kind1 = this[symbol] ?: EventOccurrencesRange.ZERO
             val kind2 = other[symbol] ?: EventOccurrencesRange.ZERO
@@ -32,6 +27,18 @@ class PropertyInitializationInfo(
         }
         return result
     }
+}
+
+class PropertyInitializationInfo(
+    map: PersistentMap<FirPropertySymbol, EventOccurrencesRange> = persistentMapOf()
+) : EventOccurrencesRangeInfo<PropertyInitializationInfo, FirPropertySymbol>(map) {
+    companion object {
+        val EMPTY = PropertyInitializationInfo()
+    }
+
+    override val constructor: (PersistentMap<FirPropertySymbol, EventOccurrencesRange>) -> PropertyInitializationInfo =
+        ::PropertyInitializationInfo
+
 }
 
 class LocalPropertyCollector private constructor() : ControlFlowGraphVisitorVoid() {
@@ -105,7 +112,7 @@ class PathAwarePropertyInitializationInfo(
         }
     }
 
-    fun merge(other: PathAwarePropertyInitializationInfo): PathAwarePropertyInitializationInfo {
+    override fun merge(other: PathAwarePropertyInitializationInfo): PathAwarePropertyInitializationInfo {
         var resultMap = persistentMapOf<EdgeLabel, PropertyInitializationInfo>()
         for (label in keys.union(other.keys)) {
             // disjoint merging to preserve paths. i.e., merge the property initialization info if and only if both have the key.
