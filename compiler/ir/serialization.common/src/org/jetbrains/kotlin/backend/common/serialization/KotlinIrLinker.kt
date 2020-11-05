@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -21,34 +20,19 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.newInstance
-import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-import org.jetbrains.kotlin.backend.common.serialization.proto.Actual as ProtoActual
-import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
 
 abstract class KotlinIrLinker(
     private val currentModule: ModuleDescriptor?,
@@ -158,23 +142,22 @@ abstract class KotlinIrLinker(
 
         private fun deserializeIrFile(fileProto: ProtoFile, fileIndex: Int, moduleDeserializer: IrModuleDeserializer, allowErrorNodes: Boolean): IrFile {
 
-            val fileName = fileProto.fileEntry.name
-
-            val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetsList.toIntArray())
-
+            val fileReader = IrLibraryFile(moduleDeserializer.klib, fileIndex)
+            val file = fileReader.createFile(moduleDescriptor, fileProto)
 
             val fileDeserializer =
                 IrFileDeserializer(
                     logger,
                     builtIns,
                     symbolTable,
+                    file,
+                    fileReader,
                     strategy.needBodies,
                     deserializeFakeOverrides,
                     fakeOverrideClassQueue,
                     allowErrorNodes,
                     fileProto.annotationList,
                     fileProto.actualsList,
-                    fileIndex,
                     strategy.inlineBodies,
                     moduleDeserializer,
                     fakeOverrideBuilder,
@@ -195,14 +178,6 @@ abstract class KotlinIrLinker(
                     }
                 }
 
-            val fqName = FqName(fileDeserializer.deserializeFqName(fileProto.fqNameList))
-
-            val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
-
-            val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
-            val file = IrFileImpl(fileEntry, symbol, fqName)
-
-            fileDeserializer.file = file
             fileToDeserializerMap[file] = fileDeserializer
 
             val fileSignatureIndex = fileProto.declarationIdList.map { fileDeserializer.deserializeIdSignature(it) to it }

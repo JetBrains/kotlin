@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.protobuf.CodedInputStream
+import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
@@ -41,6 +43,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoF
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as ProtoFunction
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorDeclaration as ProtoErrorDeclaration
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty as ProtoLocalDelegatedProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType as ProtoSimpleType
@@ -57,6 +61,7 @@ internal class IrDeclarationDeserializer(
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     val irFactory: IrFactory,
+    val fileReader: IrLibraryFile,
     val deserializeFakeOverrides: Boolean,
     val fakeOverrideQueue: MutableList<IrClass>,
     val allowErrorNodes: Boolean,
@@ -66,20 +71,27 @@ internal class IrDeclarationDeserializer(
     val fileDeserializer: IrFileDeserializer,
 ) {
 
-    private val bodyDeserializer = IrBodyDeserializer(logger, builtIns, allowErrorNodes, irFactory, fileDeserializer, this)
+    private val bodyDeserializer = IrBodyDeserializer(logger, builtIns, allowErrorNodes, irFactory, fileReader, fileDeserializer, this)
 
     private val platformFakeOverrideClassFilter = fakeOverrideBuilder.platformSpecificClassFilter
 
     private fun deserializeName(index: Int): Name {
-        val name = fileDeserializer.deserializeString(index)
+        val name = fileReader.deserializeString(index)
         return Name.guessByFirstCharacter(name)
     }
 
     private val irTypeCache = mutableMapOf<Int, IrType>()
 
+    private fun readType(index: Int): CodedInputStream =
+        fileReader.type(index).codedInputStream
+
+    internal fun loadTypeProto(index: Int): ProtoType {
+        return ProtoType.parseFrom(readType(index), ExtensionRegistryLite.newInstance())
+    }
+
     fun deserializeIrType(index: Int): IrType {
         return irTypeCache.getOrPut(index) {
-            val typeData = fileDeserializer.loadTypeProto(index)
+            val typeData = loadTypeProto(index)
             deserializeIrTypeData(typeData)
         }
     }
@@ -401,9 +413,20 @@ internal class IrDeclarationDeserializer(
         }
     }
 
+    private fun readBody(index: Int): CodedInputStream =
+        fileReader.body(index).codedInputStream
+
+    internal fun loadStatementBodyProto(index: Int): ProtoStatement {
+        return ProtoStatement.parseFrom(readBody(index), ExtensionRegistryLite.newInstance())
+    }
+
+    internal fun loadExpressionBodyProto(index: Int): ProtoExpression {
+        return ProtoExpression.parseFrom(readBody(index), ExtensionRegistryLite.newInstance())
+    }
+
     fun deserializeExpressionBody(index: Int): IrExpression {
         return if (deserializeBodies) {
-            val bodyData = fileDeserializer.loadExpressionBodyProto(index)
+            val bodyData = loadExpressionBodyProto(index)
             bodyDeserializer.deserializeExpression(bodyData)
         } else {
             val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
@@ -413,7 +436,7 @@ internal class IrDeclarationDeserializer(
 
     fun deserializeStatementBody(index: Int): IrElement {
         return if (deserializeBodies) {
-            val bodyData = fileDeserializer.loadStatementBodyProto(index)
+            val bodyData = loadStatementBodyProto(index)
             bodyDeserializer.deserializeStatement(bodyData)
         } else {
             val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
@@ -642,7 +665,7 @@ internal class IrDeclarationDeserializer(
     }
 
     private fun deserializeIrDeclarationOrigin(protoName: Int): IrDeclarationOriginImpl {
-        val originName = fileDeserializer.deserializeString(protoName)
+        val originName = fileReader.deserializeString(protoName)
         return declarationOriginIndex[originName] ?: object : IrDeclarationOriginImpl(originName) {}
     }
 

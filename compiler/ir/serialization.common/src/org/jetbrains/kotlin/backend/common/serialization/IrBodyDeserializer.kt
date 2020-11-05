@@ -76,6 +76,7 @@ internal class IrBodyDeserializer(
     val builtIns: IrBuiltIns,
     val allowErrorNodes: Boolean,
     val irFactory: IrFactory,
+    val fileReader: IrLibraryFile,
     val fileDeserializer: IrFileDeserializer,
     val declarationDeserializer: IrDeclarationDeserializer,
 ) {
@@ -294,9 +295,9 @@ internal class IrBodyDeserializer(
         start: Int, end: Int, type: IrType
     ): IrErrorExpression {
         require(allowErrorNodes) {
-            "IrErrorExpression($start, $end, \"${fileDeserializer.deserializeString(proto.description)}\") found but error code is not allowed"
+            "IrErrorExpression($start, $end, \"${fileReader.deserializeString(proto.description)}\") found but error code is not allowed"
         }
-        return IrErrorExpressionImpl(start, end, type, fileDeserializer.deserializeString(proto.description))
+        return IrErrorExpressionImpl(start, end, type, fileReader.deserializeString(proto.description))
     }
 
     private fun deserializeErrorCallExpression(
@@ -304,9 +305,9 @@ internal class IrBodyDeserializer(
         start: Int, end: Int, type: IrType
     ): IrErrorCallExpression {
         require(allowErrorNodes) {
-            "IrErrorCallExpressionImpl($start, $end, \"${fileDeserializer.deserializeString(proto.description)}\") found but error code is not allowed"
+            "IrErrorCallExpressionImpl($start, $end, \"${fileReader.deserializeString(proto.description)}\") found but error code is not allowed"
         }
-        return IrErrorCallExpressionImpl(start, end, type, fileDeserializer.deserializeString(proto.description)).apply {
+        return IrErrorCallExpressionImpl(start, end, type, fileReader.deserializeString(proto.description)).apply {
             if (proto.hasReceiver()) {
                 explicitReceiver = deserializeExpression(proto.receiver)
             }
@@ -565,7 +566,7 @@ internal class IrBodyDeserializer(
     }
 
     private fun deserializeLoop(proto: ProtoLoop, loop: IrLoop): IrLoop {
-        val label = if (proto.hasLabel()) fileDeserializer.deserializeString(proto.label) else null
+        val label = if (proto.hasLabel()) fileReader.deserializeString(proto.label) else null
         val body = if (proto.hasBody()) deserializeExpression(proto.body) else null
         val condition = deserializeExpression(proto.condition)
 
@@ -606,7 +607,7 @@ internal class IrBodyDeserializer(
             start,
             end,
             type,
-            fileDeserializer.deserializeString(proto.memberName),
+            fileReader.deserializeString(proto.memberName),
             deserializeExpression(proto.receiver)
         )
 
@@ -667,7 +668,7 @@ internal class IrBodyDeserializer(
         }
 
     private fun deserializeBreak(proto: ProtoBreak, start: Int, end: Int, type: IrType): IrBreak {
-        val label = if (proto.hasLabel()) fileDeserializer.deserializeString(proto.label) else null
+        val label = if (proto.hasLabel()) fileReader.deserializeString(proto.label) else null
         val loopId = proto.loopId
         val loop = deserializeLoopHeader(loopId) { error("break clause before loop header") }
         val irBreak = IrBreakImpl(start, end, type, loop)
@@ -677,7 +678,7 @@ internal class IrBodyDeserializer(
     }
 
     private fun deserializeContinue(proto: ProtoContinue, start: Int, end: Int, type: IrType): IrContinue {
-        val label = if (proto.hasLabel()) fileDeserializer.deserializeString(proto.label) else null
+        val label = if (proto.hasLabel()) fileReader.deserializeString(proto.label) else null
         val loopId = proto.loopId
         val loop = deserializeLoopHeader(loopId) { error("continue clause before loop header") }
         val irContinue = IrContinueImpl(start, end, type, loop)
@@ -703,7 +704,7 @@ internal class IrBodyDeserializer(
             LONG
             -> IrConstImpl.long(start, end, type, proto.long)
             STRING
-            -> IrConstImpl.string(start, end, type, fileDeserializer.deserializeString(proto.string))
+            -> IrConstImpl.string(start, end, type, fileReader.deserializeString(proto.string))
             FLOAT_BITS
             -> IrConstImpl.float(start, end, type, Float.fromBits(proto.floatBits))
             DOUBLE_BITS
@@ -770,7 +771,7 @@ internal class IrBodyDeserializer(
     }
 
     fun deserializeIrStatementOrigin(protoName: Int): IrStatementOrigin {
-        return fileDeserializer.deserializeString(protoName).let {
+        return fileReader.deserializeString(protoName).let {
             val componentPrefix = "COMPONENT_"
             when {
                 it.startsWith(componentPrefix) -> {

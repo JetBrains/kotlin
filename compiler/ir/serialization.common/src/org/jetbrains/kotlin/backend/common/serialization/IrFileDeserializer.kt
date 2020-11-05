@@ -10,10 +10,16 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.Actual
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdsigCase.*
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
@@ -21,22 +27,21 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignat
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature as ProtoPublicIdSignature
 
-open class IrFileDeserializer(
+internal open class IrFileDeserializer(
     val logger: LoggingContext,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
+    val file: IrFile,
+    private val fileReader: IrLibraryFile,
     protected var deserializeBodies: Boolean,
     deserializeFakeOverrides: Boolean,
     fakeOverrideQueue: MutableList<IrClass>,
     allowErrorNodes: Boolean,
     private var annotations: List<ProtoConstructorCall>?,
     private val actuals: List<Actual>,
-    private val fileIndex: Int,
     deserializeInlineFunctions: Boolean,
     private val moduleDeserializer: IrModuleDeserializer,
     fakeOverrideBuilder: FakeOverrideBuilder,
@@ -48,8 +53,6 @@ open class IrFileDeserializer(
 ) {
     protected val irFactory: IrFactory get() = symbolTable.irFactory
 
-    lateinit var file: IrFile
-
     var reversedSignatureIndex = emptyMap<IdSignature, Int>()
 
     private val declarationDeserializer = IrDeclarationDeserializer(
@@ -57,6 +60,7 @@ open class IrFileDeserializer(
         builtIns,
         symbolTable,
         irFactory,
+        fileReader,
         deserializeFakeOverrides,
         fakeOverrideQueue,
         allowErrorNodes,
@@ -113,40 +117,18 @@ open class IrFileDeserializer(
     }
 
     private fun readDeclaration(index: Int): CodedInputStream =
-        moduleDeserializer.klib.irDeclaration(index, fileIndex).codedInputStream
+        fileReader.irDeclaration(index).codedInputStream
 
     private fun loadTopLevelDeclarationProto(idSig: IdSignature): ProtoDeclaration {
         val idSigIndex = reversedSignatureIndex[idSig] ?: error("Not found Idx for $idSig")
         return ProtoDeclaration.parseFrom(readDeclaration(idSigIndex), ExtensionRegistryLite.newInstance())
     }
 
-    private fun readType(index: Int): CodedInputStream =
-        moduleDeserializer.klib.type(index, fileIndex).codedInputStream
-
-    internal fun loadTypeProto(index: Int): ProtoType {
-        return ProtoType.parseFrom(readType(index), ExtensionRegistryLite.newInstance())
-    }
-
     private fun readSignature(index: Int): CodedInputStream =
-        moduleDeserializer.klib.signature(index, fileIndex).codedInputStream
+        fileReader.signature(index).codedInputStream
 
     private fun loadSignatureProto(index: Int): ProtoIdSignature {
         return ProtoIdSignature.parseFrom(readSignature(index), ExtensionRegistryLite.newInstance())
-    }
-
-    private fun readBody(index: Int): CodedInputStream =
-        moduleDeserializer.klib.body(index, fileIndex).codedInputStream
-
-    internal fun loadStatementBodyProto(index: Int): ProtoStatement {
-        return ProtoStatement.parseFrom(readBody(index), ExtensionRegistryLite.newInstance())
-    }
-
-    internal fun loadExpressionBodyProto(index: Int): ProtoExpression {
-        return ProtoExpression.parseFrom(readBody(index), ExtensionRegistryLite.newInstance())
-    }
-
-    private fun loadStringProto(index: Int): String {
-        return String(moduleDeserializer.klib.string(index, fileIndex))
     }
 
     private fun getModuleForTopLevelId(idSignature: IdSignature): IrModuleDeserializer? {
@@ -206,9 +188,6 @@ open class IrFileDeserializer(
         return deserializeSignatureData(sigData)
     }
 
-    fun deserializeString(index: Int): String =
-        loadStringProto(index)
-
     fun referenceIrSymbol(symbol: IrSymbol, signature: IdSignature) {
         referenceIrSymbolData(symbol, signature)
     }
@@ -223,9 +202,6 @@ open class IrFileDeserializer(
     fun deserializeAllFileReachableTopLevel() {
         fileLocalDeserializationState.processPendingDeclarations()
     }
-
-    fun deserializeFqName(fqn: List<Int>): String =
-        fqn.joinToString(".", transform = ::deserializeString)
 
     private val delegatedSymbolMap = mutableMapOf<IrSymbol, IrSymbol>()
 
@@ -253,8 +229,8 @@ open class IrFileDeserializer(
     // TODO: Think about isolating id signature related logic behind corresponding interface
 
     private fun deserializePublicIdSignature(proto: ProtoPublicIdSignature): IdSignature.PublicSignature {
-        val pkg = deserializeFqName(proto.packageFqNameList)
-        val cls = deserializeFqName(proto.declarationFqNameList)
+        val pkg = fileReader.deserializeFqName(proto.packageFqNameList)
+        val cls = fileReader.deserializeFqName(proto.declarationFqNameList)
         val memberId = if (proto.hasMemberUniqId()) proto.memberUniqId else null
 
         return IdSignature.PublicSignature(pkg, cls, memberId, proto.flags)
@@ -263,7 +239,7 @@ open class IrFileDeserializer(
     private fun deserializeAccessorIdSignature(proto: ProtoAccessorIdSignature): IdSignature.AccessorSignature {
         val propertySignature = deserializeIdSignature(proto.propertySignature)
         require(propertySignature is IdSignature.PublicSignature) { "For public accessor corresponding property supposed to be public as well" }
-        val name = deserializeString(proto.name)
+        val name = fileReader.deserializeString(proto.name)
         val hash = proto.accessorHashId
         val mask = proto.flags
 
@@ -290,4 +266,26 @@ open class IrFileDeserializer(
             else -> error("Unexpected IdSignature kind: ${proto.idsigCase}")
         }
     }
+}
+
+internal class IrLibraryFile(private val klib: IrLibrary, private val fileIndex: Int) {
+    fun irDeclaration(index: Int): ByteArray = klib.irDeclaration(index, fileIndex)
+    fun type(index: Int): ByteArray = klib.type(index, fileIndex)
+    fun signature(index: Int): ByteArray = klib.signature(index, fileIndex)
+    fun string(index: Int): ByteArray = klib.string(index, fileIndex)
+    fun body(index: Int): ByteArray = klib.body(index, fileIndex)
+}
+
+internal fun IrLibraryFile.deserializeString(index: Int): String = String(string(index))
+
+internal fun IrLibraryFile.deserializeFqName(fqn: List<Int>): String =
+    fqn.joinToString(".", transform = ::deserializeString)
+
+internal fun IrLibraryFile.createFile(moduleDescriptor: ModuleDescriptor, fileProto: ProtoFile): IrFile {
+    val fileName = fileProto.fileEntry.name
+    val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetsList.toIntArray())
+    val fqName = FqName(deserializeFqName(fileProto.fqNameList))
+    val packageFragmentDescriptor = EmptyPackageFragmentDescriptor(moduleDescriptor, fqName)
+    val symbol = IrFileSymbolImpl(packageFragmentDescriptor)
+    return IrFileImpl(fileEntry, symbol, fqName)
 }
