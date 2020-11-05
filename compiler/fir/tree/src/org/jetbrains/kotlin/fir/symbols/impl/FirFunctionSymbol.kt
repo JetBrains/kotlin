@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.symbols.impl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.AccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -24,7 +23,7 @@ sealed class FirFunctionSymbol<D : FirFunction<D>>(
 
 open class FirNamedFunctionSymbol(
     callableId: CallableId,
-) : FirFunctionSymbol<FirSimpleFunction>(callableId), PossiblyFirFakeOverrideSymbol<FirSimpleFunction, FirNamedFunctionSymbol>
+) : FirFunctionSymbol<FirSimpleFunction>(callableId)
 
 class FirConstructorSymbol(
     callableId: CallableId

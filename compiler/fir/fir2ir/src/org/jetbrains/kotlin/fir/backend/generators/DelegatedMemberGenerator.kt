@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.ir.declarations.*
@@ -85,12 +84,12 @@ internal class DelegatedMemberGenerator(
         }
     }
 
-    private inline fun <reified S, reified D : FirCallableMemberDeclaration<D>> S.unwrapDelegateTarget(
+    private inline fun <reified S : FirCallableSymbol<D>, reified D : FirCallableMemberDeclaration<D>> S.unwrapDelegateTarget(
         subClassLookupTag: ConeClassLikeLookupTag,
         noinline directOverridden: S.() -> List<S>,
         firField: FirField,
         firSubClass: FirClass<*>,
-    ): D? where S : FirCallableSymbol<D>, S : PossiblyFirFakeOverrideSymbol<D, S> {
+    ): D? {
         val unwrappedIntersectionSymbol =
             this.unwrapIntersectionOverride(directOverridden) ?: return null
 
@@ -117,7 +116,6 @@ internal class DelegatedMemberGenerator(
     }
 
     private fun <S : FirCallableSymbol<*>> S.unwrapIntersectionOverride(directOverridden: S.() -> List<S>): S? {
-        if (this !is PossiblyFirFakeOverrideSymbol<*, *>) return this
         if (this.fir.isIntersectionOverride) return directOverridden().firstOrNull { it.fir.delegatedWrapperData != null }
         return this
     }

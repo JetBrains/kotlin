@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -23,7 +22,7 @@ open class FirVariableSymbol<D : FirVariable<D>>(override val callableId: Callab
 
 open class FirPropertySymbol(
     callableId: CallableId,
-) : FirVariableSymbol<FirProperty>(callableId), PossiblyFirFakeOverrideSymbol<FirProperty, FirPropertySymbol> {
+) : FirVariableSymbol<FirProperty>(callableId) {
     // TODO: should we use this constructor for local variables?
     constructor(name: Name) : this(CallableId(name))
 }

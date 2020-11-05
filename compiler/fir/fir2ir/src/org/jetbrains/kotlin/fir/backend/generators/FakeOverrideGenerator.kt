@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -130,7 +129,7 @@ class FakeOverrideGenerator(
         return result
     }
 
-    private inline fun <reified D : FirCallableMemberDeclaration<D>, reified S, reified I : IrDeclaration> createFakeOverriddenIfNeeded(
+    private inline fun <reified D : FirCallableMemberDeclaration<D>, reified S : FirCallableSymbol<D>, reified I : IrDeclaration> createFakeOverriddenIfNeeded(
         klass: FirClass<*>,
         irClass: IrClass,
         isLocal: Boolean,
@@ -144,7 +143,7 @@ class FakeOverrideGenerator(
         realDeclarationSymbols: Set<AbstractFirBasedSymbol<*>>,
         computeDirectOverridden: FirTypeScope.(S) -> List<S>,
         scope: FirTypeScope,
-    ) where S : FirCallableSymbol<D>, S : PossiblyFirFakeOverrideSymbol<D, S> {
+    ) {
         if (originalSymbol !is S || originalSymbol in realDeclarationSymbols) return
         val classLookupTag = klass.symbol.toLookupTag()
         val originalDeclaration = originalSymbol.fir
@@ -189,7 +188,7 @@ class FakeOverrideGenerator(
         }
     }
 
-    private inline fun <S : FirCallableSymbol<*>> computeBaseSymbols(
+    private inline fun <reified S : FirCallableSymbol<*>> computeBaseSymbols(
         symbol: S,
         basedSymbol: S,
         directOverridden: FirTypeScope.(S) -> List<S>,
@@ -199,7 +198,7 @@ class FakeOverrideGenerator(
         if (symbol.fir.origin != FirDeclarationOrigin.IntersectionOverride) return listOf(basedSymbol)
         return scope.directOverridden(symbol).map {
             @Suppress("UNCHECKED_CAST")
-            if (it is PossiblyFirFakeOverrideSymbol<*, *> && it.fir.isSubstitutionOverride && it.dispatchReceiverClassOrNull() == containingClass)
+            if (it.fir.isSubstitutionOverride && it.dispatchReceiverClassOrNull() == containingClass)
                 it.originalForSubstitutionOverride!!
             else
                 it
