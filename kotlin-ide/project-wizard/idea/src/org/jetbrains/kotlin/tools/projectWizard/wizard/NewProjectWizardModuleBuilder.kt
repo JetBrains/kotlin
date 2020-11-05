@@ -117,20 +117,24 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
     }
 
     private fun logToFUS() {
+        val projectCreationStats = ProjectCreationStats(
+            KotlinTemplatesFactory.KOTLIN_GROUP_NAME,
+            wizard.projectTemplate!!.id,
+            wizard.buildSystemType!!.id,
+        )
+        WizardStatsService.logDataOnProjectGenerated(
+            projectCreationStats,
+            uiEditorUsagesStats
+        )
+
         val moduleTemplates = wizard.context.read {
             KotlinPlugin.modules.reference.settingValue.map { module ->
                 module.template?.id ?: "none"
             }
         }
-        val projectCreationStats = ProjectCreationStats(
-            KotlinTemplatesFactory.KOTLIN_GROUP_NAME,
+        WizardStatsService.logUsedModuleTemplatesOnNewWizardProjectCreated(
             wizard.projectTemplate!!.id,
-            wizard.buildSystemType!!.id,
             moduleTemplates,
-        )
-        WizardStatsService.logDataOnProjectGenerated(
-            projectCreationStats,
-            uiEditorUsagesStats
         )
     }
 
