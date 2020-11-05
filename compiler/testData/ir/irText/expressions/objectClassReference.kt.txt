@@ -12,6 +12,6 @@ object A {
 
 fun test() {
   A::class /*~> Unit */
-  <get-java><A>($receiver = A::class) /*~> Unit */
+  A::class.<get-java><A>() /*~> Unit */
 }
 

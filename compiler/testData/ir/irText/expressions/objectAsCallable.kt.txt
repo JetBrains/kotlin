@@ -39,10 +39,10 @@ operator fun En.invoke(i: Int): Int {
 }
 
 val test1: Int
-  field = invoke($receiver = A, i = 42)
+  field = A.invoke(i = 42)
   get
 
 val test2: Int
-  field = invoke($receiver = En, i = 42)
+  field = En.invoke(i = 42)
   get
 

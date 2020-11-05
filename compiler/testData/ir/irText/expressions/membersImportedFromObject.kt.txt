@@ -36,10 +36,10 @@ val test2: Int
   get
 
 val test3: Int
-  field = A.fooExt($receiver = 1)
+  field = (A, 1).fooExt()
   get
 
 val test4: Int
-  field = A.<get-barExt>($receiver = 1)
+  field = (A, 1).<get-barExt>()
   get
 

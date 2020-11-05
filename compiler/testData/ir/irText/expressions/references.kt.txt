@@ -34,6 +34,6 @@ val String.okext: String
   }
 
 fun String.test5(): String {
-  return <get-okext>($receiver = <this>)
+  return <this>.<get-okext>()
 }
 

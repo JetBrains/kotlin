@@ -34,13 +34,13 @@ class CBoth : ILeft, IRight {
   }
 
   override fun foo() {
-    <this>.foo()
-    <this>.foo()
+    super.foo()
+    super.foo()
   }
 
   override val bar: Int
     override get(): Int {
-      return <this>.<get-bar>().plus(other = <this>.<get-bar>())
+      return super.<get-bar>().plus(other = super.<get-bar>())
     }
 
 

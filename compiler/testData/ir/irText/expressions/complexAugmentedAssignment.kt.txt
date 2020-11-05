@@ -128,6 +128,6 @@ object Host {
 }
 
 fun Host.test3(v: B) {
-  <this>.plusAssign($receiver = v, b = TODO("IrConstructorCall"))
+  (<this>, v).plusAssign(b = TODO("IrConstructorCall"))
 }
 

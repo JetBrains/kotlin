@@ -54,9 +54,9 @@ interface IReceiver {
 
 fun IReceiver.test() {
   { // BLOCK
-    val tmp0_iterator: IntCell = <this>.iterator($receiver = FiveTimes)
-    while (<this>.hasNext($receiver = tmp0_iterator)) { // BLOCK
-      val i: Int = <this>.next($receiver = tmp0_iterator)
+    val tmp0_iterator: IntCell = (<this>, FiveTimes).iterator()
+    while ((<this>, tmp0_iterator).hasNext()) { // BLOCK
+      val i: Int = (<this>, tmp0_iterator).next()
       { // BLOCK
         println(message = i)
       }

@@ -31,28 +31,28 @@ val p: A
 
 fun testVariable() {
   val a: A = TODO("IrConstructorCall")
-  plusAssign($receiver = a, s = "+=")
-  minusAssign($receiver = a, s = "-=")
-  timesAssign($receiver = a, s = "*=")
-  divAssign($receiver = a, s = "/=")
-  remAssign($receiver = a, s = "*=")
+  a.plusAssign(s = "+=")
+  a.minusAssign(s = "-=")
+  a.timesAssign(s = "*=")
+  a.divAssign(s = "/=")
+  a.remAssign(s = "*=")
 }
 
 fun testProperty() {
   { // BLOCK
-    plusAssign($receiver = <get-p>(), s = "+=")
+    <get-p>().plusAssign(s = "+=")
   }
   { // BLOCK
-    minusAssign($receiver = <get-p>(), s = "-=")
+    <get-p>().minusAssign(s = "-=")
   }
   { // BLOCK
-    timesAssign($receiver = <get-p>(), s = "*=")
+    <get-p>().timesAssign(s = "*=")
   }
   { // BLOCK
-    divAssign($receiver = <get-p>(), s = "/=")
+    <get-p>().divAssign(s = "/=")
   }
   { // BLOCK
-    remAssign($receiver = <get-p>(), s = "%=")
+    <get-p>().remAssign(s = "%=")
   }
 }
 

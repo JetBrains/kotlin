@@ -33,7 +33,7 @@ class DFoo : IFoo {
   private /*final field*/ val $$delegate_0: IFoo = d
   @Ann
   override fun String.testExtFun() {
-    #$$delegate_0.testExtFun($receiver = <this>)
+    (#$$delegate_0, <this>).testExtFun()
   }
 
   @Ann
@@ -43,7 +43,7 @@ class DFoo : IFoo {
 
   override val String.testExtVal: String
     override get(): String {
-      return #$$delegate_0.<get-testExtVal>($receiver = <this>)
+      return (#$$delegate_0, <this>).<get-testExtVal>()
     }
 
   override val testVal: String

@@ -23,18 +23,18 @@ val testULongWithExpectedType: ULong
   get
 
 val testToUByte: UByte
-  field = toUByte($receiver = 1)
+  field = 1.toUByte()
   get
 
 val testToUShort: UShort
-  field = toUShort($receiver = 1)
+  field = 1.toUShort()
   get
 
 val testToUInt: UInt
-  field = toUInt($receiver = 1)
+  field = 1.toUInt()
   get
 
 val testToULong: ULong
-  field = toULong($receiver = 1)
+  field = 1.toULong()
   get
 

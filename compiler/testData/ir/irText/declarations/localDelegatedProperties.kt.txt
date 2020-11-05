@@ -5,7 +5,7 @@ fun test1() {
     }
 )
     local get(): Int {
-      return getValue<Int>($receiver = x$delegate, thisRef = null, property = ::x)
+      return x$delegate.getValue<Int>(thisRef = null, property = ::x)
     }
 
 
@@ -16,10 +16,10 @@ fun test2() {
   var x: Int
     val x$delegate: HashMap<String, Int> = hashMapOf<String, Int>()
     local get(): Int {
-      return getValue<Int, Int>($receiver = x$delegate, thisRef = null, property = ::x)
+      return x$delegate.getValue<Int, Int>(thisRef = null, property = ::x)
     }
     local set(value: Int) {
-      return setValue<Int>($receiver = x$delegate, thisRef = null, property = ::x, value = value)
+      return x$delegate.setValue<Int>(thisRef = null, property = ::x, value = value)
     }
 
 

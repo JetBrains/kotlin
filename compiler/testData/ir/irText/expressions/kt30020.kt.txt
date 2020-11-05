@@ -11,29 +11,29 @@ interface X {
 fun test(x: X, nx: X?) {
   { // BLOCK
     val tmp0_this: X = x
-    plusAssign<Int>($receiver = tmp0_this.<get-xs>(), element = 1)
+    tmp0_this.<get-xs>().plusAssign<Int>(element = 1)
   }
-  plusAssign<Int>($receiver = x.f(), element = 2)
-  plusAssign<Int>($receiver = x.<get-xs>() as MutableList<Int>, element = 3)
-  plusAssign<Int>($receiver = x.f() as MutableList<Int>, element = 4)
-  plusAssign<Int>($receiver = CHECK_NOT_NULL<MutableList<Any>>(arg0 = { // BLOCK
+  x.f().plusAssign<Int>(element = 2)
+  x.<get-xs>() as MutableList<Int>.plusAssign<Int>(element = 3)
+  x.f() as MutableList<Int>.plusAssign<Int>(element = 4)
+  CHECK_NOT_NULL<MutableList<Any>>(arg0 = { // BLOCK
     val tmp1_safe_receiver: X? = nx
     when {
       EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
       true -> tmp1_safe_receiver.<get-xs>()
     }
-  }), element = 5)
-  plusAssign<Int>($receiver = CHECK_NOT_NULL<MutableList<Any>>(arg0 = { // BLOCK
+  }).plusAssign<Int>(element = 5)
+  CHECK_NOT_NULL<MutableList<Any>>(arg0 = { // BLOCK
     val tmp2_safe_receiver: X? = nx
     when {
       EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
       true -> tmp2_safe_receiver.f()
     }
-  }), element = 6)
+  }).plusAssign<Int>(element = 6)
 }
 
 fun MutableList<Any>.testExtensionReceiver() {
-  plusAssign<Int>($receiver = <this>, element = 100)
+  <this>.plusAssign<Int>(element = 100)
 }
 
 abstract class AML : MutableList<Int> {
@@ -44,7 +44,7 @@ abstract class AML : MutableList<Int> {
   }
 
   fun testExplicitThis() {
-    plusAssign<Int>($receiver = <this>, element = 200)
+    <this>.plusAssign<Int>(element = 200)
   }
 
   inner class Inner {
@@ -55,7 +55,7 @@ abstract class AML : MutableList<Int> {
     }
 
     fun testOuterThis() {
-      plusAssign<Int>($receiver = <this>, element = 300)
+      <this>.plusAssign<Int>(element = 300)
     }
 
 

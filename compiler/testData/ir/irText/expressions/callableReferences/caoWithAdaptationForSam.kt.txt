@@ -61,7 +61,7 @@ fun test1() {
       withVararg(xs = [p0]) /*~> Unit */
     }
  /*-> IFoo */
-    set($receiver = tmp0_array, i = tmp2_sam, newValue = get($receiver = tmp0_array, i = tmp2_sam).plus(other = 1))
+    tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
   }
 }
 
@@ -72,7 +72,7 @@ fun test2() {
       withVararg(xs = [p0]) /*~> Unit */
     }
  /*-> IFoo2 */
-    set($receiver = tmp0_array, i = tmp2_sam, newValue = get($receiver = tmp0_array, i = tmp2_sam).plus(other = 1))
+    tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
   }
 }
 
@@ -80,7 +80,7 @@ fun test3(fn: Function1<Int, Unit>) {
   { // BLOCK
     val tmp0_array: A = A
     val tmp2_sam: IFoo = fn /*-> IFoo */
-    set($receiver = tmp0_array, i = tmp2_sam, newValue = get($receiver = tmp0_array, i = tmp2_sam).plus(other = 1))
+    tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
   }
 }
 
@@ -90,7 +90,7 @@ fun test4(fn: Function1<Int, Unit>) {
       { // BLOCK
         val tmp0_array: A = A
         val tmp1_index0: Function1<Int, Unit> = fn
-        set($receiver = tmp0_array, i = tmp1_index0 /*as IFoo */, newValue = get($receiver = tmp0_array, i = tmp1_index0 /*as IFoo */).plus(other = 1))
+        tmp0_array.set(i = tmp1_index0 /*as IFoo */, newValue = tmp0_array.get(i = tmp1_index0 /*as IFoo */).plus(other = 1))
       }
     }
   }
@@ -101,7 +101,7 @@ fun test5(a: Any) {
   { // BLOCK
     val tmp0_array: A = A
     val tmp2_sam: IFoo = a /*as Function1<@ParameterName(...) Int, Unit> */ /*-> IFoo */
-    set($receiver = tmp0_array, i = tmp2_sam, newValue = get($receiver = tmp0_array, i = tmp2_sam).plus(other = 1))
+    tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
   }
 }
 
@@ -111,7 +111,7 @@ fun test6(a: Any) {
   { // BLOCK
     val tmp0_array: A = A
     val tmp1_index0: Any = a
-    set($receiver = tmp0_array, i = tmp1_index0 /*as IFoo */, newValue = get($receiver = tmp0_array, i = tmp1_index0 /*as IFoo */).plus(other = 1))
+    tmp0_array.set(i = tmp1_index0 /*as IFoo */, newValue = tmp0_array.get(i = tmp1_index0 /*as IFoo */).plus(other = 1))
   }
 }
 

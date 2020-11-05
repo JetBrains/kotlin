@@ -23,15 +23,15 @@ operator fun String.getValue(receiver: Any?, p: Any): String {
 }
 
 val testO: String /* by */ 
-  field = provideDelegate($receiver = TODO("IrConstructorCall"), host = null, p = ::testO)
+  field = TODO("IrConstructorCall").provideDelegate(host = null, p = ::testO)
   get(): String {
-    return getValue($receiver = #testO$delegate, receiver = null, p = ::testO)
+    return #testO$delegate.getValue(receiver = null, p = ::testO)
   }
 
 val testK: String /* by */ 
   field = "K"
   get(): String {
-    return getValue($receiver = #testK$delegate, receiver = null, p = ::testK)
+    return #testK$delegate.getValue(receiver = null, p = ::testK)
   }
 
 val testOK: String

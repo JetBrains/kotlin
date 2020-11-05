@@ -9,7 +9,7 @@ class TestInitValInLambdaCalledOnce {
     get
 
   init {
-    run<Int, Unit>($receiver = 1, block =     local fun Int.<anonymous>() {
+    1.run<Int, Unit>(block =     local fun Int.<anonymous>() {
       #x = 0
     }
 )

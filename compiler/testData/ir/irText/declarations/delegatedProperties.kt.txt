@@ -4,7 +4,7 @@ val test1: Int /* by */
   }
 )
   get(): Int {
-    return getValue<Int>($receiver = #test1$delegate, thisRef = null, property = ::test1)
+    return #test1$delegate.getValue<Int>(thisRef = null, property = ::test1)
   }
 
 class C {
@@ -24,16 +24,16 @@ class C {
     }
 )
     get(): Int {
-      return getValue<Int>($receiver = #test2$delegate, thisRef = <this>, property = ::test2)
+      return #test2$delegate.getValue<Int>(thisRef = <this>, property = ::test2)
     }
 
   var test3: Any /* by */ 
     field = <this>.<get-map>()
     get(): Any {
-      return getValue<Any, Any>($receiver = #test3$delegate, thisRef = <this>, property = ::test3)
+      return #test3$delegate.getValue<Any, Any>(thisRef = <this>, property = ::test3)
     }
     set(<set-?>: Any) {
-      return setValue<Any>($receiver = #test3$delegate, thisRef = <this>, property = ::test3, value = <set-?>)
+      return #test3$delegate.setValue<Any>(thisRef = <this>, property = ::test3, value = <set-?>)
     }
 
 
@@ -44,9 +44,9 @@ class C {
 var test4: Any /* by */ 
   field = hashMapOf<String, Any>()
   get(): Any {
-    return getValue<Any, Any>($receiver = #test4$delegate, thisRef = null, property = ::test4)
+    return #test4$delegate.getValue<Any, Any>(thisRef = null, property = ::test4)
   }
   set(<set-?>: Any) {
-    return setValue<Any>($receiver = #test4$delegate, thisRef = null, property = ::test4, value = <set-?>)
+    return #test4$delegate.setValue<Any>(thisRef = null, property = ::test4, value = <set-?>)
   }
 

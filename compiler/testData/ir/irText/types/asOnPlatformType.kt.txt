@@ -1,10 +1,10 @@
 fun test() {
   val nullStr: @FlexibleNullability String? = nullString()
   val nonnullStr: @FlexibleNullability String? = nonnullString()
-  foo<@FlexibleNullability String?>($receiver = nullStr) /*~> Unit */
-  foo<@FlexibleNullability String?>($receiver = nonnullStr) /*~> Unit */
-  fooN<@FlexibleNullability String?>($receiver = nullStr) /*~> Unit */
-  fooN<@FlexibleNullability String?>($receiver = nonnullStr) /*~> Unit */
+  nullStr.foo<@FlexibleNullability String?>() /*~> Unit */
+  nonnullStr.foo<@FlexibleNullability String?>() /*~> Unit */
+  nullStr.fooN<@FlexibleNullability String?>() /*~> Unit */
+  nonnullStr.fooN<@FlexibleNullability String?>() /*~> Unit */
 }
 
 inline fun <reified T : Any?> T.foo(): T {

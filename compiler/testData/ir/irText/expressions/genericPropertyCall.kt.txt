@@ -4,6 +4,6 @@ val <T : Any?> T.id: T
   }
 
 val test: String
-  field = <get-id><String>($receiver = "abc")
+  field = "abc".<get-id><String>()
   get
 

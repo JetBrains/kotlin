@@ -70,7 +70,7 @@ fun IHost.test5(s: String?): Int? {
     val tmp0_safe_receiver: String? = s
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> <this>.extLength($receiver = tmp0_safe_receiver)
+      true -> (<this>, tmp0_safe_receiver).extLength()
     }
   }
 }
@@ -84,7 +84,7 @@ fun box() {
     val tmp0_safe_receiver: Int = 42
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> foo($receiver = tmp0_safe_receiver)
+      true -> tmp0_safe_receiver.foo()
     }
   } /*~> Unit */
 }

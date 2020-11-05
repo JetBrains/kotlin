@@ -37,8 +37,8 @@ object B {
 fun B.test() {
   // COMPOSITE {
   val tmp0_container: A = A
-  val x: Int = <this>.component1($receiver = tmp0_container)
-  val z: Int = <this>.component3($receiver = tmp0_container)
+  val x: Int = (<this>, tmp0_container).component1()
+  val z: Int = (<this>, tmp0_container).component3()
   // }
 }
 

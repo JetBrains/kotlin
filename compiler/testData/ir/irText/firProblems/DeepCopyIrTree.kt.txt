@@ -60,19 +60,19 @@ class DeepCopyIrTreeWithSymbols {
   }
 
   fun IrTypeParametersContainer.copyTypeParametersFrom(other: IrTypeParametersContainer) {
-    <this>.<set-typeParameters>(<set-?> = map<IrTypeParameter, IrTypeParameter>($receiver = other.<get-typeParameters>(), transform =     local fun <anonymous>(it: IrTypeParameter): IrTypeParameter {
+    <this>.<set-typeParameters>(<set-?> = other.<get-typeParameters>().map<IrTypeParameter, IrTypeParameter>(transform =     local fun <anonymous>(it: IrTypeParameter): IrTypeParameter {
       return <this>.copyTypeParameter(declaration = it)
     }
 ))
-    withinScope<Unit>($receiver = <this>.<get-typeRemapper>(), irTypeParametersContainer = <this>, fn =     local fun <anonymous>() {
+    <this>.<get-typeRemapper>().withinScope<Unit>(irTypeParametersContainer = <this>, fn =     local fun <anonymous>() {
       { // BLOCK
-        val tmp0_iterator: Iterator<Pair<IrTypeParameter, IrTypeParameter>> = zip<IrTypeParameter, IrTypeParameter>($receiver = <this>.<get-typeParameters>(), other = other.<get-typeParameters>()).iterator()
+        val tmp0_iterator: Iterator<Pair<IrTypeParameter, IrTypeParameter>> = <this>.<get-typeParameters>().zip<IrTypeParameter, IrTypeParameter>(other = other.<get-typeParameters>()).iterator()
         while (tmp0_iterator.hasNext()) { // BLOCK
           val tmp1_loop_parameter: Pair<IrTypeParameter, IrTypeParameter> = tmp0_iterator.next()
           val thisTypeParameter: IrTypeParameter = tmp1_loop_parameter.component1()
           val otherTypeParameter: IrTypeParameter = tmp1_loop_parameter.component2()
           { // BLOCK
-            mapTo<IrType, IrType, MutableList<IrType>>($receiver = otherTypeParameter.<get-superTypes>(), destination = thisTypeParameter.<get-superTypes>(), transform =             local fun <anonymous>(it: IrType): IrType {
+            otherTypeParameter.<get-superTypes>().mapTo<IrType, IrType, MutableList<IrType>>(destination = thisTypeParameter.<get-superTypes>(), transform =             local fun <anonymous>(it: IrType): IrType {
               return <this>.<get-typeRemapper>().remapType(type = it)
             }
 ) /*~> Unit */

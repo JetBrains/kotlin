@@ -26,7 +26,7 @@ class K2 : JFoo {
   }
 
   override fun foo(): String {
-    return <this>.foo() /*!! String */
+    return super.foo() /*!! String */
   }
 
 
@@ -55,7 +55,7 @@ class K4 : JUnrelatedFoo, IFoo {
   }
 
   override fun foo(): @FlexibleNullability String? {
-    return <this>.foo()
+    return super.foo()
   }
 
 

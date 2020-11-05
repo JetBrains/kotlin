@@ -17,7 +17,7 @@ fun foo(m: Map<String, Int>) {
     }
 )
     local get(): Int {
-      return getValue<Int>($receiver = test$delegate, thisRef = null, property = ::test)
+      return test$delegate.getValue<Int>(thisRef = null, property = ::test)
     }
 
 

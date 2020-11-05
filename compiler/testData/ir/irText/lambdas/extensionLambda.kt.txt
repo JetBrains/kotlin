@@ -1,5 +1,5 @@
 fun test1(): Int {
-  return run<String, Int>($receiver = "42", block =   local fun String.<anonymous>(): Int {
+  return "42".run<String, Int>(block =   local fun String.<anonymous>(): Int {
     return <this>.<get-length>()
   }
 )

@@ -11,6 +11,6 @@ val test1: Int /* by */
   }
 )
   get(): Int {
-    return getValue<Int>($receiver = #test1$delegate, thisRef = null, property = ::test1)
+    return #test1$delegate.getValue<Int>(thisRef = null, property = ::test1)
   }
 

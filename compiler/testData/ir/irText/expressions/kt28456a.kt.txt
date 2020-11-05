@@ -14,6 +14,6 @@ operator fun A.set(vararg i: Int, v: Int) {
 }
 
 fun testSimpleAssignment(a: A) {
-  set($receiver = a, i = [1, 2, 3], v = 0)
+  a.set(i = [1, 2, 3], v = 0)
 }
 

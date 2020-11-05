@@ -16,7 +16,7 @@ fun IB.test(a: IA) {
   { // BLOCK
     val tmp0_array: IA = a
     val tmp1_index0: String = ""
-    <this>.set($receiver = tmp0_array, index = tmp1_index0, value = tmp0_array.get(index = tmp1_index0).plus(other = 42))
+    (<this>, tmp0_array).set(index = tmp1_index0, value = tmp0_array.get(index = tmp1_index0).plus(other = 42))
   }
 }
 

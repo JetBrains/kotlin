@@ -45,6 +45,6 @@ class IdType : CPointed {
 }
 
 fun foo(value: IdType, cv: CInt32VarX<Int>) {
-  <set-value><Int>($receiver = cv, value = value.<get-value>())
+  cv.<set-value><Int>(value = value.<get-value>())
 }
 

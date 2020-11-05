@@ -19,6 +19,6 @@ fun Int.ext2(x: Int): Int {
 }
 
 fun Int.ext3(x: Int): Int {
-  return foo(x = ext1($receiver = <this>), y = x)
+  return foo(x = <this>.ext1(), y = x)
 }
 

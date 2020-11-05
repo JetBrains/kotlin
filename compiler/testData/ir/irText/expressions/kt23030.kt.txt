@@ -3,7 +3,7 @@ operator fun Int.compareTo(c: Char): Int {
 }
 
 fun testOverloadedCompareToCall(x: Int, y: Char): Boolean {
-  return less(arg0 = compareTo($receiver = x, c = y), arg1 = 0)
+  return less(arg0 = x.compareTo(c = y), arg1 = 0)
 }
 
 fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
@@ -11,7 +11,7 @@ fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
     when {
       x is Int -> y is Char
       true -> false
-    } -> less(arg0 = compareTo($receiver = x /*as Int */, c = y /*as Char */), arg1 = 0)
+    } -> less(arg0 = x /*as Int */.compareTo(c = y /*as Char */), arg1 = 0)
     true -> false
   }
 }
@@ -38,7 +38,7 @@ class C {
   }
 
   fun testMemberExtensionCompareToCall(x: Int, y: Char): Boolean {
-    return less(arg0 = <this>.compareTo($receiver = x, c = y), arg1 = 0)
+    return less(arg0 = (<this>, x).compareTo(c = y), arg1 = 0)
   }
 
   fun testMemberExtensionCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
@@ -46,7 +46,7 @@ class C {
       when {
         x is Int -> y is Char
         true -> false
-      } -> less(arg0 = <this>.compareTo($receiver = x /*as Int */, c = y /*as Char */), arg1 = 0)
+      } -> less(arg0 = (<this>, x /*as Int */).compareTo(c = y /*as Char */), arg1 = 0)
       true -> false
     }
   }

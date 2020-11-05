@@ -10,7 +10,7 @@ fun String.id(s: String = <this>, vararg xs: Int): String {
 fun test() {
   foo(x = { // BLOCK
     local fun String.id() {
-      id($receiver = receiver, ) /*~> Unit */
+      receiver.id() /*~> Unit */
     }
 
 

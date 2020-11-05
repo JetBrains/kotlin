@@ -18,7 +18,7 @@ fun testWithSubject(x: Any?): String {
       EQEQ(arg0 = tmp0_subject, arg1 = A) -> "A"
       tmp0_subject is String -> "String"
       tmp0_subject is Number.not() -> "!Number"
-      contains<Number>($receiver = setOf<Nothing>(), element = tmp0_subject /*as Number */) -> "nothingness?"
+      setOf<Nothing>().contains<Number>(element = tmp0_subject /*as Number */) -> "nothingness?"
       true -> "something"
     }
   }
@@ -30,7 +30,7 @@ fun test(x: Any?): String {
     EQEQ(arg0 = x, arg1 = A) -> "A"
     x is String -> "String"
     x !is Number -> "!Number"
-    contains<Number>($receiver = setOf<Nothing>(), element = x /*as Number */) -> "nothingness?"
+    setOf<Nothing>().contains<Number>(element = x /*as Number */) -> "nothingness?"
     true -> "something"
   }
 }

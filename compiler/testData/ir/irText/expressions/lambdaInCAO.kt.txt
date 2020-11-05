@@ -9,7 +9,7 @@ operator fun Any.set(index: Function0<Unit>, value: Int) {
 }
 
 fun test1(a: Any) {
-  plusAssign($receiver = a, lambda =   local fun <anonymous>() {
+  a.plusAssign(lambda =   local fun <anonymous>() {
     return Unit
   }
 )
@@ -22,7 +22,7 @@ fun test2(a: Any) {
       return Unit
     }
 
-    set($receiver = tmp0_array, index = tmp1_index0, value = get($receiver = tmp0_array, index = tmp1_index0).plus(other = 42))
+    tmp0_array.set(index = tmp1_index0, value = tmp0_array.get(index = tmp1_index0).plus(other = 42))
   }
 }
 
@@ -33,8 +33,8 @@ fun test3(a: Any) {
       return Unit
     }
 
-    val tmp2: Int = get($receiver = tmp0_array, index = tmp1_index0)
-    set($receiver = tmp0_array, index = tmp1_index0, value = tmp2.inc())
+    val tmp2: Int = tmp0_array.get(index = tmp1_index0)
+    tmp0_array.set(index = tmp1_index0, value = tmp2.inc())
     tmp2
   } /*~> Unit */
 }

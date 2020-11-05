@@ -7,7 +7,7 @@ val <T : CharSequence> T.gk: Function0<T>
   }
 
 fun testGeneric1(x: String): String {
-  return <get-gk><String>($receiver = x).invoke()
+  return x.<get-gk><String>().invoke()
 }
 
 val <T : Any?> T.kt26531Val: Function0<T>
@@ -19,6 +19,6 @@ val <T : Any?> T.kt26531Val: Function0<T>
   }
 
 fun kt26531(): Int {
-  return <get-kt26531Val><Int>($receiver = 7).invoke()
+  return 7.<get-kt26531Val><Int>().invoke()
 }
 

@@ -47,12 +47,12 @@ fun takeLong(l: Long) {
 }
 
 fun test() {
-  takeUByte(u = toUByte($receiver = <get-IMPLICIT_INT>()))
-  takeUByte(u = toUByte($receiver = <get-EXPLICIT_INT>()))
-  takeUShort(u = toUShort($receiver = <get-IMPLICIT_INT>()))
-  takeUShort(u = toUShort($receiver = <get-BIGGER_THAN_UBYTE>()))
-  takeUInt(u = toUInt($receiver = <get-IMPLICIT_INT>()))
-  takeULong(u = toULong($receiver = <get-IMPLICIT_INT>()))
-  takeUBytes(u = [toUByte($receiver = <get-IMPLICIT_INT>()), toUByte($receiver = <get-EXPLICIT_INT>()), 42B])
+  takeUByte(u = <get-IMPLICIT_INT>().toUByte())
+  takeUByte(u = <get-EXPLICIT_INT>().toUByte())
+  takeUShort(u = <get-IMPLICIT_INT>().toUShort())
+  takeUShort(u = <get-BIGGER_THAN_UBYTE>().toUShort())
+  takeUInt(u = <get-IMPLICIT_INT>().toUInt())
+  takeULong(u = <get-IMPLICIT_INT>().toULong())
+  takeUBytes(u = [<get-IMPLICIT_INT>().toUByte(), <get-EXPLICIT_INT>().toUByte(), 42B])
 }
 

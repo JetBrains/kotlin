@@ -17,10 +17,10 @@ class C {
 }
 
 fun testExt() {
-  extension($receiver = s() /*!! String */)
+  s() /*!! String */.extension()
 }
 
 fun C.testMemberExt() {
-  <this>.memberExtension($receiver = s() /*!! String */)
+  (<this>, s() /*!! String */).memberExtension()
 }
 

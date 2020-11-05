@@ -24,16 +24,16 @@ operator fun String.getValue(receiver: Any?, p: Any): String {
 
 fun box(): String {
   val testO: String
-    val testO$delegate: String = provideDelegate($receiver = TODO("IrConstructorCall"), host = null, p = ::testO)
+    val testO$delegate: String = TODO("IrConstructorCall").provideDelegate(host = null, p = ::testO)
     local get(): String {
-      return getValue($receiver = testO$delegate, receiver = null, p = ::testO)
+      return testO$delegate.getValue(receiver = null, p = ::testO)
     }
 
 
   val testK: String
     val testK$delegate: String = "K"
     local get(): String {
-      return getValue($receiver = testK$delegate, receiver = null, p = ::testK)
+      return testK$delegate.getValue(receiver = null, p = ::testK)
     }
 
 
