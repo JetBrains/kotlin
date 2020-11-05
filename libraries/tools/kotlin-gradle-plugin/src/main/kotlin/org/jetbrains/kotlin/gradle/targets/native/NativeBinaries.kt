@@ -31,6 +31,7 @@ sealed class NativeBinary(
     private val name: String,
     baseNameProvided: String,
     val buildType: NativeBuildType,
+    @Transient
     var compilation: KotlinNativeCompilation
 ) : Named {
     open var baseName: String
