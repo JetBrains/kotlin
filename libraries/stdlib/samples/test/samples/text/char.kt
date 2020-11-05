@@ -123,4 +123,5 @@ class Chars {
         assertFalse('a'.equals('A', false))
         assertTrue('a'.equals('A', true))
     }
+
 }
