@@ -123,16 +123,25 @@ class PropertyInitializationInfoCollector(private val localProperties: Set<FirPr
         symbol: FirPropertySymbol
     ): PathAwarePropertyInitializationInfo {
         assert(dataForNode.keys.isNotEmpty())
-        var resultMap = persistentMapOf<EdgeLabel, PropertyInitializationInfo>()
-        // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 }
-        for (label in dataForNode.keys) {
-            val dataPerLabel = dataForNode[label]!!
-            val existingKind = dataPerLabel[symbol] ?: EventOccurrencesRange.ZERO
-            val kind = existingKind + EventOccurrencesRange.EXACTLY_ONCE
-            resultMap = resultMap.put(label, dataPerLabel.put(symbol, kind))
-        }
-        // after (if symbol is p1):
-        //   { |-> { p1 |-> PI1 + 1 }, l1 |-> { p1 |-> [1, 1], p2 |-> PI2 }
-        return PathAwarePropertyInitializationInfo(resultMap)
+        return addRange(dataForNode, symbol, EventOccurrencesRange.EXACTLY_ONCE, ::PathAwarePropertyInitializationInfo)
     }
+}
+
+internal fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> addRange(
+    info: P,
+    key: K,
+    range: EventOccurrencesRange,
+    constructor: (PersistentMap<EdgeLabel, S>) -> P
+): P {
+    var resultMap = persistentMapOf<EdgeLabel, S>()
+    // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
+    for (label in info.keys) {
+        val dataPerLabel = info[label]!!
+        val existingKind = dataPerLabel[key] ?: EventOccurrencesRange.ZERO
+        val kind = existingKind + range
+        resultMap = resultMap.put(label, dataPerLabel.put(key, kind))
+    }
+    // after (if key is p1):
+    //   { |-> { p1 |-> PI1 + r }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
+    return constructor(resultMap)
 }
