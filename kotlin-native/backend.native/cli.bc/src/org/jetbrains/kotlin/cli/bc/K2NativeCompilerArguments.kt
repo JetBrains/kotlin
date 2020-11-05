@@ -121,9 +121,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xcheck-dependencies", deprecatedName = "--check_dependencies", description = "Check dependencies and download the missing ones")
     var checkDependencies: Boolean = false
 
-    @Argument(value="-Xcompatible-compiler-version", valueDescription = "<version>", description = "Assume the given compiler version to be binary compatible")
-    var compatibleCompilerVersions: Array<String>? = null
-
     @Argument(value = EMBED_BITCODE_FLAG, description = "Embed LLVM IR bitcode as data")
     var embedBitcode: Boolean = false
 
