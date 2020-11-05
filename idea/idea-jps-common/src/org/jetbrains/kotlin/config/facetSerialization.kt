@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -160,6 +160,7 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
         isTestModule = element.getAttributeValue("isTestModule")?.toBoolean() ?: false
         externalProjectId = element.getAttributeValue("externalProjectId") ?: ""
         isHmppEnabled = element.getAttribute("isHmppProject")?.booleanValue ?: false
+        isCommonModule = element.getAttribute("isCommonModule")?.booleanValue ?: false
         pureKotlinSourceFolders = element.getAttributeValue("pureKotlinSourceFolders")?.split(";")?.toList() ?: emptyList()
         element.getChild("compilerSettings")?.let {
             compilerSettings = CompilerSettings()
@@ -332,6 +333,9 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     }
     if (isHmppEnabled) {
         element.setAttribute("isHmppProject", mppVersion.isHmpp.toString())
+    }
+    if (isCommonModule) {
+        element.setAttribute("isCommonModule", "true")
     }
     if (externalSystemRunTasks.isNotEmpty()) {
         element.addContent(

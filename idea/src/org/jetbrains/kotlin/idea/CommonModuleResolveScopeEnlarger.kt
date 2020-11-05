@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
-import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.idea.project.isCommon
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
 class CommonModuleResolveScopeEnlarger : ResolveScopeEnlarger() {
@@ -28,7 +28,7 @@ class CommonModuleResolveScopeEnlarger : ResolveScopeEnlarger() {
         val modulesWithFacet = ProjectFacetManager.getInstance(project).getModulesWithFacet(KotlinFacetType.TYPE_ID)
         if (modulesWithFacet.isEmpty()) return null
         val module = ProjectFileIndex.getInstance(project).getModuleForFile(file) ?: return null
-        if (!module.platform.isCommon()) return null
+        if (!module.isCommon) return null
 
         val moduleFileIndex = ModuleRootManager.getInstance(module).fileIndex
         if (!moduleFileIndex.isInSourceContentWithoutInjected(file) && !moduleFileIndex.isInTestSourceContentKotlinAware(file)) {

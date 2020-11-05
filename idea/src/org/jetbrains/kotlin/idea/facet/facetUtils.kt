@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -157,7 +157,7 @@ fun KotlinFacet.configureFacet(
     platform: TargetPlatform?,
     modelsProvider: IdeModifiableModelsProvider
 ) {
-    configureFacet(compilerVersion, coroutineSupport, platform, modelsProvider, false, emptyList(), emptyList())
+    configureFacet(compilerVersion, coroutineSupport, platform, modelsProvider, false, false, emptyList(), emptyList())
 }
 
 fun KotlinFacet.configureFacet(
@@ -166,6 +166,7 @@ fun KotlinFacet.configureFacet(
     platform: TargetPlatform?, // if null, detect by module dependencies
     modelsProvider: IdeModifiableModelsProvider,
     hmppEnabled: Boolean,
+    commonModule: Boolean,
     pureKotlinSourceFolders: List<String>,
     dependsOnList: List<String>
 ) {
@@ -175,6 +176,7 @@ fun KotlinFacet.configureFacet(
         targetPlatform = null
         compilerSettings = null
         isHmppEnabled = hmppEnabled
+        isCommonModule = commonModule
         dependsOnModuleNames = dependsOnList
         initializeIfNeeded(
             module,

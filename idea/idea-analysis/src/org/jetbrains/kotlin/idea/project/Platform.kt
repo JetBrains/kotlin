@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.project
@@ -262,6 +251,9 @@ val Module.platform: TargetPlatform?
 val Module.isHMPPEnabled: Boolean
     get() = KotlinFacetSettingsProvider.getInstance(project)?.getInitializedSettings(this)?.isHmppEnabled ?: false
 
+val Module.isCommon: Boolean
+    get() = KotlinFacetSettingsProvider.getInstance(project)?.getInitializedSettings(this)?.isCommonModule == true
+
 // FIXME(dsavvinov): this logic is clearly wrong in MPP environment; review and fix
 val Project.platform: TargetPlatform?
     get() {
@@ -271,8 +263,8 @@ val Project.platform: TargetPlatform?
     }
 
 private val Module.implementsCommonModule: Boolean
-    get() = !platform.isCommon() // FIXME(dsavvinov): this doesn't seems right, in multilevel-MPP 'common' modules can implement other commons
-            && ModuleRootManager.getInstance(this).dependencies.any { it.platform.isCommon() }
+    get() = !isCommon // FIXME(dsavvinov): this doesn't seems right, in multilevel-MPP 'common' modules can implement other commons
+            && ModuleRootManager.getInstance(this).dependencies.any { it.isCommon }
 
 private fun parseArguments(
     platformKind: TargetPlatform,

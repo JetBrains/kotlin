@@ -1,0 +1,62 @@
+buildscript {
+    repositories {
+        {{kotlin_plugin_repositories}}
+    }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}")
+    }
+}
+
+repositories {
+    {{kotlin_plugin_repositories}}
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+group 'com.example'
+version '0.0.1'
+
+kotlin {
+    jvm {}
+
+    js {
+        browser {
+        }
+        nodejs {
+        }
+    }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation kotlin('test-common')
+                implementation kotlin('test-annotations-common')
+            }
+        }
+        jsMain {
+            dependencies {
+                implementation kotlin('stdlib-js')
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation kotlin('test-js')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib-jvm')
+            }
+        }
+        jvmTest {
+            dependencies {
+                implementation kotlin('test')
+                implementation kotlin('test-junit')            }
+        }
+    }
+}

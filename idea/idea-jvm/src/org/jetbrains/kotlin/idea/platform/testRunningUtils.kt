@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,15 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.highlighter.KotlinTestRunLineMarkerContributor.Companion.getTestStateIcon
 import org.jetbrains.kotlin.idea.util.string.joinWithEscape
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.SimplePlatform
+import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
+import org.jetbrains.kotlin.platform.js.JsPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatform
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -43,10 +52,8 @@ fun getGenericTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationD
 
     val prefix = if (testName != null) "test://" else "suite://"
     val url = prefix + locations.joinWithEscape('.')
-    val javaUrl = "java:$url"
 
-    val project = declaration.project
-    return getTestStateIcon(javaUrl, project, strict = true) ?: getTestStateIcon(url, project, strict = false)
+    return getTestStateIcon(listOf("java:$url", url), declaration.project, strict = false)
 }
 
 private tailrec fun DeclarationDescriptor.isIgnored(): Boolean {
@@ -69,4 +76,14 @@ fun DeclarationDescriptor.isKotlinTestDeclaration(): Boolean {
 
     val classDescriptor = this as? ClassDescriptorWithResolutionScopes ?: return false
     return classDescriptor.declaredCallableMembers.any { it.isKotlinTestDeclaration() }
+}
+
+internal fun IdePlatformKind<*>.isCompatibleWith(platform: SimplePlatform): Boolean {
+    return when (this) {
+        is JvmIdePlatformKind -> platform is JvmPlatform
+        is NativeIdePlatformKind -> platform is NativePlatform
+        is JsIdePlatformKind -> platform is JsPlatform
+        is CommonIdePlatformKind -> true
+        else -> false
+    }
 }

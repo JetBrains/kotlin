@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -315,7 +315,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final TargetPlatform platform = facetSettings.getTargetPlatform();
         if (platform == null) return false;
 
-        return TargetPlatformKt.isCommon(platform);
+        return facetSettings.isCommonModule();
     }
 
     private static Collection<String> findNativeGradleBuildTasks(Collection<String> gradleTasks, String sourceSetName) {

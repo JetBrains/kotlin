@@ -168,7 +168,9 @@ private fun ideaModelDependencies(
     debugString?.appendLine("]")
 
     // Some dependencies prohibited (e.g. common can not depend on a platform)
-    val correctedResult = result.filterNot { it is LibraryInfo && !platform.canDependOn(it, module.isHMPPEnabled) }
+    val correctedResult = result.filterNot {
+        it is LibraryInfo && !platform.canDependOn(it, module.isHMPPEnabled, module.isCommon)
+    }
     debugString?.appendLine("    Corrected result: ${correctedResult.joinToString(prefix = "[", postfix = "]", separator = ";") { it.displayedName }}")
 
     LOG.debug(debugString?.toString())
@@ -176,7 +178,7 @@ private fun ideaModelDependencies(
     return correctedResult
 }
 
-private fun TargetPlatform.canDependOn(other: IdeaModuleInfo, isHmppEnabled: Boolean): Boolean {
+private fun TargetPlatform.canDependOn(other: IdeaModuleInfo, isHmppEnabled: Boolean, isCommonModule: Boolean): Boolean {
     if (isHmppEnabled) {
         // HACK: allow depending on stdlib even if platforms do not match
         if (isNative() && other is AbstractKlibLibraryInfo && other.libraryRoot.endsWith(KONAN_STDLIB_NAME)) return true
@@ -191,7 +193,7 @@ private fun TargetPlatform.canDependOn(other: IdeaModuleInfo, isHmppEnabled: Boo
         return this.isJvm() && other.platform.isJvm() ||
                 this.isJs() && other.platform.isJs() ||
                 this.isNative() && other.platform.isNative() ||
-                this.isCommon() && other.platform.isCommon()
+                (this.isCommon() || isCommonModule) && other.platform.isCommon()
     }
 }
 
