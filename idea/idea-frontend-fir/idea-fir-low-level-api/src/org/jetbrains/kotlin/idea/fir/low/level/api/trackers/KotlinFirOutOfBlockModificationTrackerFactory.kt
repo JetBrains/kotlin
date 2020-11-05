@@ -9,6 +9,7 @@ import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
+import org.jetbrains.annotations.TestOnly
 
 class KotlinFirOutOfBlockModificationTrackerFactory(private val project: Project) {
     fun createProjectWideOutOfBlockModificationTracker(): ModificationTracker =
@@ -16,6 +17,11 @@ class KotlinFirOutOfBlockModificationTrackerFactory(private val project: Project
 
     fun createModuleWithoutDependenciesOutOfBlockModificationTracker(module: Module): ModificationTracker =
         KotlinFirOutOfBlockModuleModificationTracker(module)
+
+    @TestOnly
+    fun incrementModificationsCount() {
+        project.service<KotlinFirModificationTrackerService>().incrementModificationsCount()
+    }
 }
 
 fun Project.createProjectWideOutOfBlockModificationTracker() =
