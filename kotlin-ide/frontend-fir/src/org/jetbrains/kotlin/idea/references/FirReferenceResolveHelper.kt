@@ -139,20 +139,6 @@ internal object FirReferenceResolveHelper {
         val fir = expression.getOrBuildFir(analysisSession.firResolveState)
         val session = analysisSession.firResolveState.rootModuleSession
         when (fir) {
-            is FirResolvable -> {
-                val calleeReference =
-                    if (fir is FirFunctionCall
-                        && fir.isImplicitFunctionCall()
-                        && expression is KtNameReferenceExpression
-                    ) {
-                        // we are resolving implicit invoke call, like
-                        // fun foo(a: () -> Unit) {
-                        //     <expression>a</expression>()
-                        // }
-                        (fir.dispatchReceiver as FirQualifiedAccessExpression).calleeReference
-                    } else fir.calleeReference
-                return listOfNotNull(calleeReference.toTargetSymbol(session, symbolBuilder))
-            }
             is FirResolvedTypeRef -> {
                 if (expression.isPartOfUserTypeRefQualifier()) {
                     return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = true))
@@ -160,21 +146,37 @@ internal object FirReferenceResolveHelper {
                 return listOfNotNull(fir.toTargetSymbol(session, symbolBuilder))
             }
             is FirResolvedQualifier -> {
+                // TODO refactor that block
                 val classId = fir.classId ?: return emptyList()
+
+                var parent = expression.parent as? KtDotQualifiedExpression
                 // Distinguish A.foo() from A(.Companion).foo()
                 // Make expression.parent as? KtDotQualifiedExpression local function
-                var parent = expression.parent as? KtDotQualifiedExpression
                 while (parent != null) {
                     val selectorExpression = parent.selectorExpression ?: break
                     if (selectorExpression === expression) {
                         parent = parent.parent as? KtDotQualifiedExpression
                         continue
                     }
+                    val receiverClassId = if (parent.receiverExpression == expression) {
+                        /*
+                         * <caret>A.Named.i -> class A
+                         */
+                        val name = fir.relativeClassFqName?.pathSegments()?.firstOrNull()
+                        name?.let { ClassId(fir.packageFqName, it) }
+                    } else null
                     val parentFir = selectorExpression.getOrBuildFir(analysisSession.firResolveState)
-                    if (parentFir is FirQualifiedAccess) {
-                        return listOfNotNull(classId.toTargetPsi(session, symbolBuilder, parentFir.calleeReference))
+                    when {
+                        parentFir is FirQualifiedAccess -> {
+                            return listOfNotNull(
+                                (receiverClassId ?: classId).toTargetPsi(session, symbolBuilder, parentFir.calleeReference)
+                            )
+                        }
+                        receiverClassId != null -> {
+                            return listOfNotNull(receiverClassId.toTargetPsi(session, symbolBuilder))
+                        }
+                        else -> parent = parent.parent as? KtDotQualifiedExpression
                     }
-                    parent = parent.parent as? KtDotQualifiedExpression
                 }
                 return listOfNotNull(classId.toTargetPsi(session, symbolBuilder))
             }
@@ -229,6 +231,20 @@ internal object FirReferenceResolveHelper {
                     else -> emptyList()
                 }
                 return candidates.mapNotNull { it.fir.buildSymbol(symbolBuilder) }
+            }
+            is FirResolvable -> {
+                val calleeReference =
+                    if (fir is FirFunctionCall
+                        && fir.isImplicitFunctionCall()
+                        && expression is KtNameReferenceExpression
+                    ) {
+                        // we are resolving implicit invoke call, like
+                        // fun foo(a: () -> Unit) {
+                        //     <expression>a</expression>()
+                        // }
+                        (fir.dispatchReceiver as FirQualifiedAccessExpression).calleeReference
+                    } else fir.calleeReference
+                return listOfNotNull(calleeReference.toTargetSymbol(session, symbolBuilder))
             }
             else -> {
                 // Handle situation when we're in the middle/beginning of qualifier
