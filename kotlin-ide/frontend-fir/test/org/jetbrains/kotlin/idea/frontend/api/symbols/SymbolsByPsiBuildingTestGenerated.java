@@ -65,4 +65,9 @@ public class SymbolsByPsiBuildingTestGenerated extends AbstractSymbolsByPsiBuild
     public void testImplicitReturn() throws Exception {
         runTest("testData/symbolsByPsi/implicitReturn.kt");
     }
+
+    @TestMetadata("localDeclarations.kt")
+    public void testLocalDeclarations() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolsByPsi/localDeclarations.kt");
+    }
 }

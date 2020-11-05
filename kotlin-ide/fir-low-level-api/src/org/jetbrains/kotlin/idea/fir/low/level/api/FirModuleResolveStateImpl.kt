@@ -97,6 +97,10 @@ internal class FirModuleResolveStateImpl(
             rootModuleSession.firIdeProvider.symbolProvider,
             sessionProvider.getModuleCache(ktDeclaration.getModuleInfo() as ModuleSourceInfo)
         )
+        if (container.resolvePhase < FirResolvePhase.BODY_RESOLVE) {
+            val cache = (container.session as FirIdeSourcesSession).cache
+            firLazyDeclarationResolver.lazyResolveDeclaration(container, cache, FirResolvePhase.BODY_RESOLVE, checkPCE = false /*TODO*/)
+        }
         val firDeclaration = FirElementFinder.findElementIn<FirDeclaration>(container) { firDeclaration ->
             firDeclaration.psi == ktDeclaration
         }
