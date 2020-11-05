@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
@@ -57,6 +56,12 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
     fun KtExpression.getKtType(): KtType = typeProvider.getKtExpressionType(this)
 
     fun KtDeclaration.getReturnKtType(): KtType = typeProvider.getReturnTypeForKtDeclaration(this)
+
+    fun KtType.isEqualTo(other: KtType): Boolean = typeProvider.isEqualTo(this, other)
+
+    fun KtType.isSubTypeOf(superType: KtType): Boolean = typeProvider.isSubTypeOf(this, superType)
+
+    fun KtType.isBuiltInFunctionalType(): Boolean = typeProvider.isBuiltinFunctionalType(this)
 
     fun KtElement.getDiagnostics(): Collection<Diagnostic> = diagnosticProvider.getDiagnosticsForElement(this)
 

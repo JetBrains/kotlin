@@ -14,9 +14,9 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
@@ -33,9 +33,9 @@ internal class KotlinFirLookupElementFactory {
     private val functionLookupElementFactory = FunctionLookupElementFactory()
     private val typeParameterLookupElementFactory = TypeParameterLookupElementFactory()
 
-    fun createLookupElement(symbol: KtNamedSymbol): LookupElement? {
+    fun KtAnalysisSession.createLookupElement(symbol: KtNamedSymbol): LookupElement? {
         val elementBuilder = when (symbol) {
-            is KtFunctionSymbol -> functionLookupElementFactory.createLookup(symbol)
+            is KtFunctionSymbol -> with(functionLookupElementFactory) { createLookup(symbol) }
             is KtVariableLikeSymbol -> variableLookupElementFactory.createLookup(symbol)
             is KtClassLikeSymbol -> classLookupElementFactory.createLookup(symbol)
             is KtTypeParameterSymbol -> typeParameterLookupElementFactory.createLookup(symbol)
@@ -78,7 +78,7 @@ private class VariableLookupElementFactory {
 }
 
 private class FunctionLookupElementFactory {
-    fun createLookup(symbol: KtFunctionSymbol): LookupElementBuilder? {
+    fun KtAnalysisSession.createLookup(symbol: KtFunctionSymbol): LookupElementBuilder? {
         return try {
             LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
                 .withTailText(getTailText(symbol), true)
@@ -91,16 +91,16 @@ private class FunctionLookupElementFactory {
         }
     }
 
-    private fun getTailText(symbol: KtFunctionSymbol): String {
+    private fun KtAnalysisSession.getTailText(symbol: KtFunctionSymbol): String {
         return if (insertLambdaBraces(symbol)) " {...}" else ShortNamesRenderer.renderFunctionParameters(symbol)
     }
 
-    private fun insertLambdaBraces(symbol: KtFunctionSymbol): Boolean {
+    private fun KtAnalysisSession.insertLambdaBraces(symbol: KtFunctionSymbol): Boolean {
         val singleParam = symbol.valueParameters.singleOrNull()
-        return singleParam != null && !singleParam.hasDefaultValue && singleParam.type.isBuiltInFunctionalType
+        return singleParam != null && !singleParam.hasDefaultValue && singleParam.type.isBuiltInFunctionalType()
     }
 
-    private fun createInsertHandler(symbol: KtFunctionSymbol): InsertHandler<LookupElement> {
+    private fun KtAnalysisSession.createInsertHandler(symbol: KtFunctionSymbol): InsertHandler<LookupElement> {
         return FunctionInsertionHandler(
             symbol.name,
             inputValueArguments = symbol.valueParameters.isNotEmpty(),
