@@ -138,6 +138,7 @@ internal class NonReanalyzableDeclarationStructureElement(
             firFile,
             onDeclarationEnter = { firDeclaration ->
                 when {
+                    firDeclaration is FirFile -> DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
                     firDeclaration == fir -> {
                         inCurrentDeclaration = true
                         DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
