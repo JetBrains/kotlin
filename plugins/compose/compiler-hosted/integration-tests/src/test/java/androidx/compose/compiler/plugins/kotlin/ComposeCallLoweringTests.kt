@@ -21,6 +21,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -1945,6 +1946,7 @@ fun <T> B(foo: T, bar: String) { }
         }
     }
 
+    @Ignore("b/171801506")
     @Test
     fun testEffects3(): Unit = ensureSetup {
         val log = StringBuilder()
@@ -1988,6 +1990,7 @@ fun <T> B(foo: T, bar: String) { }
         }
     }
 
+    @Ignore("b/171801506")
     @Test
     fun testEffects4(): Unit = ensureSetup {
         val log = StringBuilder()
@@ -2333,6 +2336,7 @@ fun <T> B(foo: T, bar: String) { }
         )
     }
 
+    @Ignore("b/171801506")
     @Test
     fun testStableParameters_Various(): Unit = ensureSetup {
         val output = ArrayList<String>()
