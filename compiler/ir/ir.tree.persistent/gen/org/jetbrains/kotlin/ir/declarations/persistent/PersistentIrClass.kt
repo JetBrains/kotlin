@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ClassCarrier
-import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -47,7 +46,8 @@ internal class PersistentIrClass(
     override val isInline: Boolean = false,
     override val isExpect: Boolean = false,
     override val isFun: Boolean = false,
-    override val source: SourceElement = SourceElement.NO_SOURCE
+    override val source: SourceElement = SourceElement.NO_SOURCE,
+    override val factory: PersistentIrFactory
 ) : IrClass(),
     PersistentIrDeclarationBase<ClassCarrier>,
     ClassCarrier {
@@ -56,10 +56,10 @@ internal class PersistentIrClass(
         symbol.bind(this)
     }
 
-    override var lastModified: Int = stageController.currentStage
-    override var loweredUpTo: Int = stageController.currentStage
+    override var lastModified: Int = factory.stageController.currentStage
+    override var loweredUpTo: Int = factory.stageController.currentStage
     override var values: Array<Carrier>? = null
-    override val createdOn: Int = stageController.currentStage
+    override val createdOn: Int = factory.stageController.currentStage
 
     override var parentField: IrDeclarationParent? = null
     override var originField: IrDeclarationOrigin = origin
@@ -94,11 +94,11 @@ internal class PersistentIrClass(
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
         get() {
-            if (createdOn < stageController.currentStage && initialDeclarations == null) {
+            if (createdOn < factory.stageController.currentStage && initialDeclarations == null) {
                 initialDeclarations = Collections.unmodifiableList(ArrayList(field))
             }
 
-            return if (stageController.canAccessDeclarationsOf(this)) {
+            return if (factory.stageController.canAccessDeclarationsOf(this)) {
                 ensureLowered()
                 field
             } else {

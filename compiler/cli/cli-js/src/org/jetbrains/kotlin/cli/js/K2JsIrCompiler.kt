@@ -199,7 +199,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 configuration = config.configuration,
                 allDependencies = resolvedLibraries,
                 friendDependencies = friendDependencies,
-                irFactory = PersistentIrFactory,
+                irFactory = PersistentIrFactory(), // TODO IrFactoryImpl?
                 outputKlibPath = outputFile.path,
                 nopack = arguments.irProduceKlibDir
             )

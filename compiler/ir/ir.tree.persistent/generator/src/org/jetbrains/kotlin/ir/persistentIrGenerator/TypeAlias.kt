@@ -22,6 +22,7 @@ internal fun PersistentIrGenerator.generateTypeAlias() {
                 +"expandedType: " + IrType,
                 +"override val isActual: Boolean",
                 origin,
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("TypeAlias") + " " + blockSpaced(
                 initBlock,

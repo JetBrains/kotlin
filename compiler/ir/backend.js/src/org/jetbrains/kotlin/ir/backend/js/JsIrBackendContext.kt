@@ -115,7 +115,7 @@ class JsIrBackendContext(
     val testRoots: Map<IrModuleFragment, IrSimpleFunction>
         get() = testContainerFuns
 
-    override val mapping = JsMapping()
+    override val mapping = JsMapping(irFactory)
 
     override val inlineClassesUtils = JsInlineClassesUtils(this)
 
@@ -362,7 +362,7 @@ class JsIrBackendContext(
         /*TODO*/
         print(message)
     }
-}
 
-// TODO: investigate if it could be removed
-fun <T> lazy2(fn: () -> T) = lazy { stageController.withInitialIr(fn) }
+    // TODO: investigate if it could be removed
+    fun <T> lazy2(fn: () -> T) = lazy { irFactory.stageController.withInitialIr(fn) }
+}

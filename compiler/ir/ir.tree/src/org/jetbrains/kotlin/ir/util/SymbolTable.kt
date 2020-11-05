@@ -362,7 +362,7 @@ class SymbolTable(
     fun declareScript(
         descriptor: ScriptDescriptor,
         scriptFactory: (IrScriptSymbol) -> IrScript = { symbol: IrScriptSymbol ->
-            IrScriptImpl(symbol, nameProvider.nameForDeclaration(descriptor))
+            IrScriptImpl(symbol, nameProvider.nameForDeclaration(descriptor), irFactory)
         }
     ): IrScript {
         return scriptSymbolTable.declare(

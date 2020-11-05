@@ -39,6 +39,7 @@ internal fun PersistentIrGenerator.generateFunction() {
                 +"override val isInfix: Boolean",
                 isExpect,
                 containerSource + " = null",
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("Function", baseClass = "IrSimpleFunction") + " " + blockSpaced(
                 commonFields,

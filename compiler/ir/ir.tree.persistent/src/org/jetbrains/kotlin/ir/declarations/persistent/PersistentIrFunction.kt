@@ -33,11 +33,12 @@ internal class PersistentIrFunction(
     isInfix: Boolean,
     isExpect: Boolean,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-    containerSource: DeserializedContainerSource?
+    containerSource: DeserializedContainerSource?,
+    factory: PersistentIrFactory,
 ) : PersistentIrFunctionCommon(
     startOffset, endOffset, origin, name, visibility, returnType, isInline,
     isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
-    containerSource
+    containerSource, factory
 ) {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
@@ -63,9 +64,10 @@ internal class PersistentIrFakeOverrideFunction(
     isOperator: Boolean,
     isInfix: Boolean,
     isExpect: Boolean,
+    factory: PersistentIrFactory,
 ) : PersistentIrFunctionCommon(
     startOffset, endOffset, origin, name, visibility, returnType, isInline,
-    isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
+    isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, factory = factory
 ), IrFakeOverrideFunction {
     override val isFakeOverride: Boolean
         get() = true

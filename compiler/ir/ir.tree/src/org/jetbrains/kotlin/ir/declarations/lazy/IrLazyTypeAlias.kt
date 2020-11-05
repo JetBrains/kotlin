@@ -44,10 +44,8 @@ class IrLazyTypeAlias(
     }
 
     override var expandedType: IrType by lazyVar {
-        withInitialIr {
-            typeTranslator.buildWithScope(this) {
-                descriptor.expandedType.toIrType()
-            }
+        typeTranslator.buildWithScope(this) {
+            descriptor.expandedType.toIrType()
         }
     }
 }

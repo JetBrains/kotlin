@@ -113,7 +113,8 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitScript(declaration: IrScript): IrStatement {
         return IrScriptImpl(
             symbolRemapper.getDeclaredScript(declaration.symbol),
-            declaration.name
+            declaration.name,
+            declaration.factory,
         ).also { scriptCopy ->
             scriptCopy.thisReceiver = declaration.thisReceiver.transform()
             declaration.statements.mapTo(scriptCopy.statements) { it.transform() }

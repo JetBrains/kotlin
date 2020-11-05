@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
-import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -51,9 +50,7 @@ fun compile(
     relativeRequirePath: Boolean = false,
     propertyLazyInitialization: Boolean,
 ): CompilerResult {
-    stageController = StageController()
-
-    val irFactory = if (dceDriven) PersistentIrFactory else IrFactoryImpl
+    val irFactory = if (dceDriven) PersistentIrFactory() else IrFactoryImpl
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
@@ -93,14 +90,15 @@ fun compile(
 
     if (dceDriven) {
         val controller = MutableController(context, pirLowerings)
-        stageController = controller
+
+        check(irFactory is PersistentIrFactory)
+        irFactory.stageController = controller
 
         controller.currentStage = controller.lowerings.size + 1
 
         eliminateDeadDeclarations(allModules, context)
 
-        // TODO investigate whether this is needed anymore
-        stageController = StageController(controller.currentStage)
+        irFactory.stageController = StageController(controller.currentStage)
 
         val transformer = IrModuleToJsTransformer(
             context,

@@ -27,6 +27,7 @@ internal fun PersistentIrGenerator.generateField() {
                 isFinal,
                 isExternal,
                 isStatic,
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("Field") + " " + blockSpaced(
                 initBlock,
