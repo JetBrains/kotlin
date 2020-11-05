@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.jvm.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideControl
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
