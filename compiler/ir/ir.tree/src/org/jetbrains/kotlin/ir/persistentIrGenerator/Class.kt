@@ -35,6 +35,7 @@ internal fun PersistentIrGenerator.generateClass() {
                 isExpect + " = false",
                 isFun,
                 source,
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("Class") + " " + blockSpaced(
                 initBlock,

@@ -18,26 +18,25 @@ package org.jetbrains.kotlin.ir.expressions.persistent
 
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrBodyBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
-import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 
 internal class PersistentIrBlockBody(
     override val startOffset: Int,
     override val endOffset: Int,
+    override val factory: PersistentIrFactory,
     override var initializer: (PersistentIrBlockBody.() -> Unit)? = null
 ) : IrBlockBody(), PersistentIrBodyBase<PersistentIrBlockBody> {
-    override var lastModified: Int = stageController.currentStage
-    override var loweredUpTo: Int = stageController.currentStage
+    override var lastModified: Int = factory.stageController.currentStage
+    override var loweredUpTo: Int = factory.stageController.currentStage
     override var values: Array<Carrier>? = null
-    override val createdOn: Int = stageController.currentStage
+    override val createdOn: Int = factory.stageController.currentStage
 
     override var containerField: IrDeclaration? = null
 
-    constructor(startOffset: Int, endOffset: Int, statements: List<IrStatement>) : this(startOffset, endOffset) {
+    constructor(startOffset: Int, endOffset: Int, statements: List<IrStatement>, factory: PersistentIrFactory) : this(startOffset, endOffset, factory) {
         statementsField.addAll(statements)
     }
 
@@ -45,7 +44,4 @@ internal class PersistentIrBlockBody(
 
     override val statements: MutableList<IrStatement>
         get() = checkEnabled { statementsField }
-
-    override val factory: IrFactory
-        get() = PersistentIrFactory
 }

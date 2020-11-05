@@ -29,11 +29,11 @@ fun eliminateDeadDeclarations(
     context: JsIrBackendContext
 ) {
 
-    val allRoots = stageController.withInitialIr { buildRoots(modules, context) }
+    val allRoots = context.irFactory.stageController.withInitialIr { buildRoots(modules, context) }
 
     val usefulDeclarations = usefulDeclarations(allRoots, context)
 
-    stageController.unrestrictDeclarationListsAccess {
+    context.irFactory.stageController.unrestrictDeclarationListsAccess {
         removeUselessDeclarations(modules, usefulDeclarations)
     }
 }
@@ -169,7 +169,7 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
     }
 
     // use withInitialIr to avoid ConcurrentModificationException in dce-driven lowering when adding roots' nested declarations (members)
-    stageController.withInitialIr {
+    context.irFactory.stageController.withInitialIr {
         // Add roots
         roots.forEach {
             it.enqueue(null, null, altFromFqn = "<ROOT>")

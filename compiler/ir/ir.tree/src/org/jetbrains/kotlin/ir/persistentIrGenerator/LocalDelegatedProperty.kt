@@ -25,6 +25,7 @@ internal fun PersistentIrGenerator.generateLocalDelegatedProperty() {
                 name,
                 +"type: " + IrType,
                 +"override val isVar: Boolean",
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("LocalDelegatedProperty") + " " + blockSpaced(
                 initBlock,

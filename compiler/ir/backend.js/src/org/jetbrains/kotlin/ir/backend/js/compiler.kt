@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
-import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -50,10 +49,10 @@ fun compile(
     multiModule: Boolean = false,
     relativeRequirePath: Boolean = false
 ): CompilerResult {
-    stageController = StageController()
+    val irFactory = PersistentIrFactory()
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
-        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, PersistentIrFactory)
+        loadIr(project, mainModule, analyzer, configuration, allDependencies, friendDependencies, irFactory)
 
     val moduleDescriptor = moduleFragment.descriptor
 
@@ -62,7 +61,7 @@ fun compile(
         is MainModule.Klib -> dependencyModules
     }
 
-    val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, allModules.first(), exportedDeclarations, configuration, es6mode = es6mode)
+    val context = JsIrBackendContext(moduleDescriptor, irBuiltIns, symbolTable, allModules.first(), exportedDeclarations, configuration, irFactory, es6mode = es6mode)
 
     // Load declarations referenced during `context` initialization
     val irProviders = listOf(deserializer)
@@ -71,6 +70,7 @@ fun compile(
     deserializer.postProcess()
     symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
 
+    // This won't work incrementally
     allModules.forEach { module ->
         moveBodilessDeclarationsToSeparatePlace(context, module)
     }
@@ -80,14 +80,14 @@ fun compile(
 
     if (dceDriven) {
         val controller = MutableController(context, pirLowerings)
-        stageController = controller
+        irFactory.stageController = controller
 
         controller.currentStage = controller.lowerings.size + 1
 
         eliminateDeadDeclarations(allModules, context)
 
         // TODO investigate whether this is needed anymore
-        stageController = StageController(controller.currentStage)
+        irFactory.stageController = StageController(controller.currentStage)
 
         val transformer = IrModuleToJsTransformer(
             context,
@@ -99,6 +99,8 @@ fun compile(
         )
         return transformer.generateModule(allModules)
     } else {
+        // TODO need to use a special StageController here
+
         jsPhases.invokeToplevel(phaseConfig, context, allModules)
         val transformer = IrModuleToJsTransformer(
             context,
@@ -108,6 +110,11 @@ fun compile(
             multiModule = multiModule,
             relativeRequirePath = relativeRequirePath
         )
+
+        // TODO serialize the data
+        // All the declarations
+        // Mappings
+
         return transformer.generateModule(allModules)
     }
 }

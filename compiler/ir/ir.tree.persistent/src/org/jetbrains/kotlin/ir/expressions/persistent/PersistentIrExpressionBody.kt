@@ -17,40 +17,36 @@
 package org.jetbrains.kotlin.ir.expressions.persistent
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrBodyBase
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
-import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
 internal class PersistentIrExpressionBody private constructor(
     override val startOffset: Int,
     override val endOffset: Int,
+    override val factory: PersistentIrFactory,
     private var expressionField: IrExpression? = null,
-    override var initializer: (PersistentIrExpressionBody.() -> Unit)? = null
+    override var initializer: (PersistentIrExpressionBody.() -> Unit)? = null,
 ) : IrExpressionBody(), PersistentIrBodyBase<PersistentIrExpressionBody> {
-    override var lastModified: Int = stageController.currentStage
-    override var loweredUpTo: Int = stageController.currentStage
+    override var lastModified: Int = factory.stageController.currentStage
+    override var loweredUpTo: Int = factory.stageController.currentStage
     override var values: Array<Carrier>? = null
-    override val createdOn: Int = stageController.currentStage
+    override val createdOn: Int = factory.stageController.currentStage
 
     override var containerField: IrDeclaration? = null
 
-    constructor(expression: IrExpression) : this(expression.startOffset, expression.endOffset, expression, null)
+    constructor(expression: IrExpression, factory: PersistentIrFactory) : this(expression.startOffset, expression.endOffset, factory, expression, null)
 
-    constructor(startOffset: Int, endOffset: Int, expression: IrExpression) : this(startOffset, endOffset, expression, null)
+    constructor(startOffset: Int, endOffset: Int, expression: IrExpression,factory: PersistentIrFactory) : this(startOffset, endOffset, factory, expression, null)
 
-    constructor(startOffset: Int, endOffset: Int, initializer: IrExpressionBody.() -> Unit) :
-            this(startOffset, endOffset, null, initializer)
+    constructor(startOffset: Int, endOffset: Int, factory: PersistentIrFactory, initializer: IrExpressionBody.() -> Unit) :
+            this(startOffset, endOffset, factory, null, initializer)
 
     override var expression: IrExpression
         get() = checkEnabled { expressionField!! }
         set(e) {
             checkEnabled { expressionField = e }
         }
-
-    override val factory: IrFactory
-        get() = PersistentIrFactory
 }

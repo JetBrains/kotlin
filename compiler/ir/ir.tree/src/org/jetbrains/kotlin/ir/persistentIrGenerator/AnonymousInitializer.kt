@@ -18,6 +18,7 @@ internal fun PersistentIrGenerator.generateAnonymousInitializer() {
                 origin,
                 +"override val symbol: " + IrAnonymousInitializerSymbol,
                 isStatic + " = false",
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("AnonymousInitializer") + " " + blockSpaced(
                 initBlock,

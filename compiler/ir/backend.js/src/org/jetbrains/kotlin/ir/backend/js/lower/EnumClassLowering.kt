@@ -73,7 +73,7 @@ class EnumUsageLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             it.parent = irClass
 
             // TODO need a way to emerge local declarations from BodyLoweringPass
-            stageController.unrestrictDeclarationListsAccess {
+            context.irFactory.stageController.unrestrictDeclarationListsAccess {
                 irClass.declarations += it
             }
         }
@@ -383,7 +383,7 @@ class EnumClassCreateInitializerLowering(val context: JsIrBackendContext) : Decl
 
             // TODO Why not move to upper level?
             // TODO Also doesn't fit the transformFlat-ish API
-            stageController.unrestrictDeclarationListsAccess {
+            context.irFactory.stageController.unrestrictDeclarationListsAccess {
                 declaration.declarations += entryInstancesInitializedVar
                 declaration.declarations += initEntryInstancesFun
             }
@@ -440,7 +440,7 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsIrBackendContext): 
 
                 // TODO prettify
                 entryGetInstanceFun.parent = irClass.parent
-                stageController.unrestrictDeclarationListsAccess {
+                context.irFactory.stageController.unrestrictDeclarationListsAccess {
                     (irClass.parent as IrDeclarationContainer).declarations += entryGetInstanceFun
                 }
 
