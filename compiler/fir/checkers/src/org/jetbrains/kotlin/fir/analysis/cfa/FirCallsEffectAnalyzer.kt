@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.lang.IllegalStateException
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -213,11 +212,13 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         override val constructor: (PersistentMap<FirBasedSymbol<*>, EventOccurrencesRange>) -> LambdaInvocationInfo =
             ::LambdaInvocationInfo
 
+        override val empty: () -> LambdaInvocationInfo =
+            ::EMPTY
     }
 
     class PathAwareLambdaInvocationInfo(
         map: PersistentMap<EdgeLabel, LambdaInvocationInfo> = persistentMapOf()
-    ) : ControlFlowInfo<PathAwareLambdaInvocationInfo, EdgeLabel, LambdaInvocationInfo>(map) {
+    ) : PathAwareControlFlowInfo<PathAwareLambdaInvocationInfo, LambdaInvocationInfo>(map) {
         companion object {
             val EMPTY = PathAwareLambdaInvocationInfo(persistentMapOf(NormalPath to LambdaInvocationInfo.EMPTY))
         }
@@ -225,70 +226,8 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         override val constructor: (PersistentMap<EdgeLabel, LambdaInvocationInfo>) -> PathAwareLambdaInvocationInfo =
             ::PathAwareLambdaInvocationInfo
 
-        val infoAtNormalPath: LambdaInvocationInfo
-            get() = map[NormalPath] ?: LambdaInvocationInfo.EMPTY
-
-        val hasNormalPath: Boolean
-            get() = map.containsKey(NormalPath)
-
-        fun applyLabel(node: CFGNode<*>, label: EdgeLabel): PathAwareLambdaInvocationInfo {
-            if (label.isNormal) {
-                // Special case: when we exit the try expression, null label means a normal path.
-                // Filter out any info bound to non-null label
-                // One day, if we allow multiple edges between nodes with different labels, e.g., labeling all paths in try/catch/finally,
-                // instead of this kind of special handling, proxy enter/exit nodes per label are preferred.
-                if (node is TryExpressionExitNode) {
-                    return if (hasNormalPath) {
-                        constructor(persistentMapOf(NormalPath to infoAtNormalPath))
-                    } else {
-                        /* This means no info for normal path. */
-                        EMPTY
-                    }
-                }
-                // In general, null label means no additional path info, hence return `this` as-is.
-                return this
-            }
-
-            val hasAbnormalLabels = map.keys.any { !it.isNormal }
-            return if (hasAbnormalLabels) {
-                // { |-> ... l1 |-> I1, l2 |-> I2, ... }
-                //   | l1         // path exit: if the given info has non-null labels, this acts like a filtering
-                // { |-> I1 }     // NB: remove the path info
-                if (map.keys.contains(label)) {
-                    constructor(persistentMapOf(NormalPath to map[label]!!))
-                } else {
-                    /* This means no info for the specific label. */
-                    EMPTY
-                }
-            } else {
-                // { |-> ... }    // empty path info
-                //   | l1         // path entry
-                // { l1 -> ... }  // now, every info bound to the label
-                constructor(persistentMapOf(label to infoAtNormalPath))
-            }
-        }
-
-        override fun merge(other: PathAwareLambdaInvocationInfo): PathAwareLambdaInvocationInfo {
-            var resultMap = persistentMapOf<EdgeLabel, LambdaInvocationInfo>()
-            for (label in keys.union(other.keys)) {
-                // disjoint merging to preserve paths. i.e., merge the property initialization info if and only if both have the key.
-                // merge({ |-> I1 }, { |-> I2, l1 |-> I3 }
-                //   == { |-> merge(I1, I2), l1 |-> I3 }
-                val i1 = this[label]
-                val i2 = other[label]
-                resultMap = when {
-                    i1 != null && i2 != null ->
-                        resultMap.put(label, i1.merge(i2))
-                    i1 != null ->
-                        resultMap.put(label, i1)
-                    i2 != null ->
-                        resultMap.put(label, i2)
-                    else ->
-                        throw IllegalStateException()
-                }
-            }
-            return constructor(resultMap)
-        }
+        override val empty: () -> PathAwareLambdaInvocationInfo =
+            ::EMPTY
     }
 
     private class InvocationDataCollector(
