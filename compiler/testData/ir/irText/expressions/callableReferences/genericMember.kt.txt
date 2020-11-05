@@ -12,9 +12,6 @@ class A<T : Any?> {
     field = 42
     get
 
-
-
-
 }
 
 val test1: KFunction1<A<String>, Unit>

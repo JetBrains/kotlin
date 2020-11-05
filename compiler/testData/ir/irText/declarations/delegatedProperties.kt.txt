@@ -36,9 +36,6 @@ class C {
       return #test3$delegate.setValue<Any>(thisRef = <this>, property = ::test3, value = <set-?>)
     }
 
-
-
-
 }
 
 var test4: Any /* by */ 

@@ -10,9 +10,6 @@ class C<T : Any?> {
     get
     set
 
-
-
-
 }
 
 var <T : Any?> C<T>.y: T

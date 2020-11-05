@@ -9,9 +9,6 @@ class C {
 
   }
 
-
-
-
 }
 
 class Outer {
@@ -28,13 +25,7 @@ class Outer {
 
     }
 
-
-
-
   }
-
-
-
 
 }
 
@@ -51,7 +42,6 @@ fun testInnerClassConstructor(outer: Outer): Any {
       return receiver.Inner(xs = [p0])
     }
 
-
     ::<init>
   })
 }
@@ -61,7 +51,6 @@ fun testInnerClassConstructorCapturingOuter(): Any {
     local fun Outer.<init>(p0: Int): Inner {
       return receiver.Inner(xs = [p0])
     }
-
 
     ::<init>
   })

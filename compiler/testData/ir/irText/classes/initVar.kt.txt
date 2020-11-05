@@ -10,9 +10,6 @@ class TestInitVarFromParameter {
     get
     set
 
-
-
-
 }
 
 class TestInitVarInClass {
@@ -26,9 +23,6 @@ class TestInitVarInClass {
     field = 0
     get
     set
-
-
-
 
 }
 
@@ -47,9 +41,6 @@ class TestInitVarInInitBlock {
     <this>.<set-x>(<set-?> = 0)
   }
 
-
-
-
 }
 
 class TestInitVarWithCustomSetter {
@@ -65,9 +56,6 @@ class TestInitVarWithCustomSetter {
     set(value: Int) {
       #x = value
     }
-
-
-
 
 }
 
@@ -88,9 +76,6 @@ class TestInitVarWithCustomSetterWithExplicitCtor {
 
   }
 
-
-
-
 }
 
 class TestInitVarWithCustomSetterInCtor {
@@ -106,9 +91,6 @@ class TestInitVarWithCustomSetterInCtor {
 
     <this>.<set-x>(value = 42)
   }
-
-
-
 
 }
 

@@ -1,7 +1,5 @@
 interface IFoo {
 
-
-
 }
 
 class Derived1 : JFieldOwner, IFoo {
@@ -10,9 +8,6 @@ class Derived1 : JFieldOwner, IFoo {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 
@@ -23,9 +18,6 @@ class Derived2 : JFieldOwner, IFoo {
 
   }
 
-
-
-
 }
 
 open class Mid : JFieldOwner {
@@ -34,9 +26,6 @@ open class Mid : JFieldOwner {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 
@@ -47,9 +36,6 @@ class DerivedThroughMid1 : Mid, IFoo {
 
   }
 
-
-
-
 }
 
 class DerivedThroughMid2 : Mid, IFoo {
@@ -58,9 +44,6 @@ class DerivedThroughMid2 : Mid, IFoo {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 

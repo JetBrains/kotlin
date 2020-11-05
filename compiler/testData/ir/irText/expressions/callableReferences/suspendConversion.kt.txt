@@ -33,9 +33,6 @@ class C {
   fun bar() {
   }
 
-
-
-
 }
 
 fun testLambda() {
@@ -96,7 +93,6 @@ fun testWithBoundReceiver() {
     local suspend fun C.bar() {
       receiver.bar()
     }
-
 
     ::bar
   })

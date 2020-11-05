@@ -39,13 +39,6 @@ open enum class A : Enum<A> {
 <this>.<get-prop3>()
   }
 
-
-
-
-
-
-
-
   fun values(): Array<A> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */

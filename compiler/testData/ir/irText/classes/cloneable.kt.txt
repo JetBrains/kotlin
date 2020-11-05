@@ -5,16 +5,9 @@ class A : Cloneable {
 
   }
 
-
-
-
-
 }
 
 interface I : Cloneable {
-
-
-
 
 }
 
@@ -24,10 +17,6 @@ class C : I {
         /* InstanceInitializerCall */
 
   }
-
-
-
-
 
 }
 
@@ -41,9 +30,6 @@ class OC : I {
   protected override fun clone(): OC {
     return OC()
   }
-
-
-
 
 }
 

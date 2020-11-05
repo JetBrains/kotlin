@@ -15,13 +15,7 @@ class Outer<T1 : Any?> {
     fun foo(x1: T1, x2: T2) {
     }
 
-
-
-
   }
-
-
-
 
 }
 

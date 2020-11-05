@@ -7,11 +7,6 @@ open enum class Z : Enum<Z> {
 
   ENTRY init = TODO("IrEnumConstructorCall")
 
-
-
-
-
-
   fun values(): Array<Z> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): Z /* Synthetic body for ENUM_VALUEOF */

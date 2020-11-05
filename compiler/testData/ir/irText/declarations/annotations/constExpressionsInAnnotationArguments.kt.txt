@@ -8,9 +8,6 @@ annotation class A : Annotation {
     field = x
     get
 
-
-
-
 }
 
 @A(x = 1)

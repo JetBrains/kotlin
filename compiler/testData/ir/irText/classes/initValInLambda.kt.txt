@@ -15,8 +15,5 @@ class TestInitValInLambdaCalledOnce {
 )
   }
 
-
-
-
 }
 

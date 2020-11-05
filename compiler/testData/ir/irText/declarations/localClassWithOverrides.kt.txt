@@ -14,11 +14,7 @@ fun outer() {
       abstract get
       abstract set
 
-
-
-
   }
-
 
   local class Local : ALocal {
     constructor() /* primary */ {
@@ -39,11 +35,7 @@ fun outer() {
       override get
       override set
 
-
-
-
   }
-
 
 }
 

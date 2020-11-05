@@ -22,13 +22,7 @@ class Foo<T : Any?> {
       field = b
       get
 
-
-
-
   }
-
-
-
 
 }
 

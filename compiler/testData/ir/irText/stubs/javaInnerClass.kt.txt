@@ -9,9 +9,5 @@ class Test1 : J {
     field = <this>.JInner()
     get
 
-
-
-
-
 }
 

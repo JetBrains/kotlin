@@ -2,9 +2,6 @@ interface Base {
   fun foo() {
   }
 
-
-
-
 }
 
 object Derived : Base {
@@ -13,10 +10,6 @@ object Derived : Base {
         /* InstanceInitializerCall */
 
   }
-
-
-
-
 
 }
 

@@ -4,9 +4,6 @@ annotation class TestAnnWithIntArray : Annotation {
     field = x
     get
 
-
-
-
 }
 
 annotation class TestAnnWithStringArray : Annotation {
@@ -14,9 +11,6 @@ annotation class TestAnnWithStringArray : Annotation {
   val x: Array<String>
     field = x
     get
-
-
-
 
 }
 

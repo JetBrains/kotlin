@@ -34,18 +34,9 @@ object X1 {
         get
         set
 
-
-
-
     }
 
-
-
-
   }
-
-
-
 
 }
 
@@ -103,9 +94,6 @@ class B {
     get
     set
 
-
-
-
 }
 
 object Host {
@@ -121,9 +109,6 @@ object Host {
       tmp0_this.<set-s>(<set-?> = tmp0_this.<get-s>().plus(other = b.<get-s>()))
     }
   }
-
-
-
 
 }
 

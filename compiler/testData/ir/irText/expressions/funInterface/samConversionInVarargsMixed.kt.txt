@@ -1,8 +1,6 @@
 fun interface MyRunnable {
   abstract fun run() 
 
-
-
 }
 
 fun test(a: Any, r: MyRunnable) {

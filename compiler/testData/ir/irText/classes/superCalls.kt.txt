@@ -16,8 +16,6 @@ open class Base {
     return super.hashCode()
   }
 
-
-
 }
 
 class Derived : Base {
@@ -35,9 +33,6 @@ class Derived : Base {
     override get(): String {
       return super.<get-bar>()
     }
-
-
-
 
 }
 

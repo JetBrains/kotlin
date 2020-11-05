@@ -9,9 +9,6 @@ class TestInitValFromParameter {
     field = x
     get
 
-
-
-
 }
 
 class TestInitValInClass {
@@ -24,9 +21,6 @@ class TestInitValInClass {
   val x: Int
     field = 0
     get
-
-
-
 
 }
 
@@ -43,9 +37,6 @@ class TestInitValInInitBlock {
   init {
     #x = 0
   }
-
-
-
 
 }
 

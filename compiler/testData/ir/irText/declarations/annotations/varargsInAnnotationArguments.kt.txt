@@ -4,9 +4,6 @@ annotation class A1 : Annotation {
     field = xs
     get
 
-
-
-
 }
 
 annotation class A2 : Annotation {
@@ -15,9 +12,6 @@ annotation class A2 : Annotation {
     field = xs
     get
 
-
-
-
 }
 
 annotation class AA : Annotation {
@@ -25,9 +19,6 @@ annotation class AA : Annotation {
   val xs: Array<out A1>
     field = xs
     get
-
-
-
 
 }
 

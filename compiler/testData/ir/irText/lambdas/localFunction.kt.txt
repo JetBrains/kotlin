@@ -8,7 +8,6 @@ fun outer() {
     } /*~> Unit */
   }
 
-
   local()
 }
 

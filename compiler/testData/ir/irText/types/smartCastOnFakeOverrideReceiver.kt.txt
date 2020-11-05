@@ -27,9 +27,6 @@ open class A {
     }
   }
 
-
-
-
 }
 
 class B : A {
@@ -53,12 +50,6 @@ class B : A {
     }
   }
 
-
-
-
-
-
-
 }
 
 open class GA<T : Any?> {
@@ -76,9 +67,6 @@ open class GA<T : Any?> {
     field = 42
     get
 
-
-
-
 }
 
 class GB<T : Any?, S : Any?> : GA<T> {
@@ -93,10 +81,6 @@ class GB<T : Any?, S : Any?> : GA<T> {
     a /*as GB<*, *> */.f() /*~> Unit */
     a /*as GB<*, *> */.<get-aVal>() /*~> Unit */
   }
-
-
-
-
 
 }
 

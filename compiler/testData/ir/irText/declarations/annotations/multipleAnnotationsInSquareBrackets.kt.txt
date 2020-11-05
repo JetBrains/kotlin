@@ -1,21 +1,15 @@
 annotation class A1 : Annotation {
   constructor() /* primary */ 
 
-
-
 }
 
 annotation class A2 : Annotation {
   constructor() /* primary */ 
 
-
-
 }
 
 annotation class A3 : Annotation {
   constructor() /* primary */ 
-
-
 
 }
 

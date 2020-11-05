@@ -49,22 +49,6 @@ data class Some<T : Any?> {
 
 interface MyList<T : Any?> : List<Some<T>> {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {
@@ -74,42 +58,6 @@ open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {
 
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 class FinalList : SomeList<String> {
@@ -118,42 +66,6 @@ class FinalList : SomeList<String> {
         /* InstanceInitializerCall */
 
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
 

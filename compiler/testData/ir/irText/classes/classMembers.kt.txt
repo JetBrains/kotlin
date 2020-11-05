@@ -58,9 +58,6 @@ class C {
       println(message = "4")
     }
 
-
-
-
   }
 
   interface NestedInterface {
@@ -68,9 +65,6 @@ class C {
     fun bar() {
       return <this>.foo()
     }
-
-
-
 
   }
 
@@ -81,13 +75,7 @@ class C {
 
     }
 
-
-
-
   }
-
-
-
 
 }
 

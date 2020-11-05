@@ -4,9 +4,6 @@ annotation class A : Annotation {
     field = x
     get
 
-
-
-
 }
 
 class C {
@@ -27,9 +24,6 @@ class C {
     get
     @A(x = "C.y.set")
     set
-
-
-
 
 }
 

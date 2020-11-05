@@ -7,9 +7,6 @@ class C {
 
   }
 
-
-
-
 }
 
 var C?.p: Int

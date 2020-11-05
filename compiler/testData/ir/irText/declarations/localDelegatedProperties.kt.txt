@@ -8,7 +8,6 @@ fun test1() {
       return x$delegate.getValue<Int>(thisRef = null, property = ::x)
     }
 
-
   println(message = <get-x>())
 }
 
@@ -21,7 +20,6 @@ fun test2() {
     local set(value: Int) {
       return x$delegate.setValue<Int>(thisRef = null, property = ::x, value = value)
     }
-
 
   <set-x>(value = 0)
   { // BLOCK

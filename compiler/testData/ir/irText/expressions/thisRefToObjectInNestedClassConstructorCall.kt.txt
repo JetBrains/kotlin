@@ -9,9 +9,6 @@ open class Base {
     field = x
     get
 
-
-
-
 }
 
 object Host {
@@ -28,9 +25,6 @@ object Host {
 
     }
 
-
-
-
   }
 
   class Derived2 : Base {
@@ -40,13 +34,7 @@ object Host {
 
     }
 
-
-
-
   }
-
-
-
 
 }
 

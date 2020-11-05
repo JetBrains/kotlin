@@ -5,9 +5,6 @@ class ResolvedCall<C : Any?> {
 
   }
 
-
-
-
 }
 
 class MyCandidate {
@@ -20,9 +17,6 @@ class MyCandidate {
   val resolvedCall: ResolvedCall<*>
     field = resolvedCall
     get
-
-
-
 
 }
 

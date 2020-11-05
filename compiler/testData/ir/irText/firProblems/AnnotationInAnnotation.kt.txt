@@ -4,9 +4,6 @@ annotation class Storage : Annotation {
     field = value
     get
 
-
-
-
 }
 
 annotation class State : Annotation {
@@ -19,9 +16,6 @@ annotation class State : Annotation {
     field = storages
     get
 
-
-
-
 }
 
 @State(name = "1", storages = [Storage(value = "HELLO")])
@@ -31,9 +25,6 @@ class Test {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 

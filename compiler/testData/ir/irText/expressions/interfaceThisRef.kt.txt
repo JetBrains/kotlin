@@ -4,8 +4,5 @@ interface IFoo {
     <this>.foo()
   }
 
-
-
-
 }
 

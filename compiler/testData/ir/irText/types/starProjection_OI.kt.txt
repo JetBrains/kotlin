@@ -1,7 +1,5 @@
 interface Continuation<in T : Any?> {
 
-
-
 }
 
 abstract class C {
@@ -12,8 +10,6 @@ abstract class C {
   }
 
   abstract fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean 
-
-
 
 }
 

@@ -29,8 +29,5 @@ class Host {
     set(value: Int) {
     }
 
-
-
-
 }
 

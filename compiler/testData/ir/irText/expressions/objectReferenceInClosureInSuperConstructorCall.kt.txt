@@ -9,9 +9,6 @@ abstract class Base {
     field = lambda
     get
 
-
-
-
 }
 
 object Test : Base {
@@ -23,9 +20,6 @@ object Test : Base {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 

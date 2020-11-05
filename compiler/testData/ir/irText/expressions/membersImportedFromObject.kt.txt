@@ -22,9 +22,6 @@ object A {
       return 43
     }
 
-
-
-
 }
 
 val test1: Int

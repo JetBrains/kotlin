@@ -7,11 +7,7 @@ fun WithCompanion.test() {
 
       }
 
-
-
-
     }
-
 
     <no name provided>()
   }
@@ -23,11 +19,7 @@ fun WithCompanion.test() {
 
       }
 
-
-
-
     }
-
 
     <no name provided>()
   }
@@ -51,13 +43,7 @@ open class WithCompanion {
       return <this>
     }
 
-
-
-
   }
-
-
-
 
 }
 

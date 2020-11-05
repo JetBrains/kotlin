@@ -19,7 +19,6 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-
       ::withVararg
     })
   }
@@ -30,7 +29,6 @@ class Host {
       local fun Host.withVararg(p0: Int) {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
-
 
       ::withVararg
     })
@@ -43,7 +41,6 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-
       ::withVararg
     })
   }
@@ -53,7 +50,6 @@ class Host {
       local fun Host.withVararg(p0: Int) {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
-
 
       ::withVararg
     })
@@ -65,13 +61,9 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-
       ::withVararg
     })
   }
-
-
-
 
 }
 

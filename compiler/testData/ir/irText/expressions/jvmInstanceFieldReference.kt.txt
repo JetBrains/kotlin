@@ -17,8 +17,5 @@ class Derived : Base {
     #value = value
   }
 
-
-
-
 }
 

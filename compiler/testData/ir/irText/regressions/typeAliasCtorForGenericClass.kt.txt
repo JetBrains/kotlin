@@ -9,9 +9,6 @@ class A<Q : Any?> {
     field = q
     get
 
-
-
-
 }
 
 typealias B<X : Any?> = A<X>

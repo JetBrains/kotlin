@@ -14,28 +14,18 @@ object Factory {
     return "Omega"
   }
 
-
-
-
 }
 
 interface Base {
-
-
 
 }
 
 interface Delegate : Base {
   abstract fun bar() 
 
-
-
 }
 
 interface Derived : Delegate {
-
-
-
 
 }
 

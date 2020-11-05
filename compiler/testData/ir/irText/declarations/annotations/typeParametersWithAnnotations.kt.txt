@@ -2,8 +2,6 @@
 annotation class Anno : Annotation {
   constructor() /* primary */ 
 
-
-
 }
 
 fun <@Anno T : Any?> foo() {

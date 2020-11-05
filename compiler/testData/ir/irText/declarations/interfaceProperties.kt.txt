@@ -18,8 +18,5 @@ interface C {
     set(value: Int) {
     }
 
-
-
-
 }
 

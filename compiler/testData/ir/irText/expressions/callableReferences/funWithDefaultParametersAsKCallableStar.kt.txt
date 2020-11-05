@@ -21,9 +21,6 @@ class C {
     field = x
     get
 
-
-
-
 }
 
 fun useKCallableStar(fn: KCallable<*>) {

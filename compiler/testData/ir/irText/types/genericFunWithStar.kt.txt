@@ -1,24 +1,16 @@
 interface IBase {
 
-
-
 }
 
 interface IFoo : IBase {
-
-
 
 }
 
 interface IBar : IBase {
 
-
-
 }
 
 interface I<G> where G : IFoo, G : IBar {
-
-
 
 }
 
@@ -33,9 +25,6 @@ abstract class Box<T> : IFoo, IBar where T : IFoo, T : IBar {
   fun bar(vararg serializers: I<*>): I<*> {
     return <this>.foo<IBase>(tSerializer = serializers.get(index = 0))
   }
-
-
-
 
 }
 

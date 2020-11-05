@@ -26,7 +26,6 @@ fun testSimple(fn: Function0<Unit>) {
       callee.invoke()
     }
 
-
     ::suspendConversion0
   })
 }
@@ -36,7 +35,6 @@ fun testSimpleNonVal() {
     local suspend fun Function0<Unit>.suspendConversion0() {
       callee.invoke()
     }
-
 
     ::suspendConversion0
   })
@@ -48,7 +46,6 @@ fun testExtAsExt(fn: @ExtensionFunctionType Function1<Int, Unit>) {
       callee.invoke(p1 = p0)
     }
 
-
     ::suspendConversion0
   })
 }
@@ -58,7 +55,6 @@ fun testExtAsSimple(fn: @ExtensionFunctionType Function1<Int, Unit>) {
     local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
       callee.invoke(p1 = p0)
     }
-
 
     ::suspendConversion0
   })
@@ -70,7 +66,6 @@ fun testSimpleAsExt(fn: Function1<Int, Unit>) {
       callee.invoke(p1 = p0)
     }
 
-
     ::suspendConversion0
   })
 }
@@ -80,7 +75,6 @@ fun testSimpleAsSimpleT(fn: Function1<Int, Unit>) {
     local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
       callee.invoke(p1 = p0)
     }
-
 
     ::suspendConversion0
   })
@@ -92,7 +86,6 @@ fun testSimpleAsExtT(fn: Function1<Int, Unit>) {
       callee.invoke(p1 = p0)
     }
 
-
     ::suspendConversion0
   })
 }
@@ -102,7 +95,6 @@ fun testExtAsSimpleT(fn: @ExtensionFunctionType Function1<Int, Unit>) {
     local suspend fun Function1<Int, Unit>.suspendConversion0(p0: Int) {
       callee.invoke(p1 = p0)
     }
-
 
     ::suspendConversion0
   })
@@ -114,7 +106,6 @@ fun testExtAsExtT(fn: @ExtensionFunctionType Function1<Int, Unit>) {
       callee.invoke(p1 = p0)
     }
 
-
     ::suspendConversion0
   })
 }
@@ -124,7 +115,6 @@ fun <S : Any?> testSimpleSAsSimpleT(fn: Function1<S, Unit>) {
     local suspend fun Function1<S, Unit>.suspendConversion0(p0: S) {
       callee.invoke(p1 = p0)
     }
-
 
     ::suspendConversion0
   })
@@ -136,7 +126,6 @@ fun <S : Any?> testSimpleSAsExtT(fn: Function1<S, Unit>) {
       callee.invoke(p1 = p0)
     }
 
-
     ::suspendConversion0
   })
 }
@@ -147,7 +136,6 @@ fun <S : Any?> testExtSAsSimpleT(fn: @ExtensionFunctionType Function1<S, Unit>) 
       callee.invoke(p1 = p0)
     }
 
-
     ::suspendConversion0
   })
 }
@@ -157,7 +145,6 @@ fun <S : Any?> testExtSAsExtT(fn: @ExtensionFunctionType Function1<S, Unit>) {
     local suspend fun @ExtensionFunctionType Function1<S, Unit>.suspendConversion0(p0: S) {
       callee.invoke(p1 = p0)
     }
-
 
     ::suspendConversion0
   })
@@ -170,7 +157,6 @@ fun testSmartCastWithSuspendConversion(a: Any) {
       callee.invoke()
     }
 
-
     ::suspendConversion0
   })
 }
@@ -182,7 +168,6 @@ fun testSmartCastOnVarWithSuspendConversion(a: Any) {
     local suspend fun Function0<Unit>.suspendConversion0() {
       callee.invoke()
     }
-
 
     ::suspendConversion0
   })

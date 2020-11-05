@@ -12,9 +12,6 @@ class A {
     field = 0
     get
 
-
-
-
 }
 
 fun A.qux() {

@@ -1,8 +1,6 @@
 fun interface IRunnable {
   abstract fun run() 
 
-
-
 }
 
 fun foo1(r: IRunnable, vararg s: String) {

@@ -4,8 +4,6 @@ interface K {
   abstract fun kg1(c: Collection<out CharSequence>) 
   abstract fun kg2(c: Collection<CharSequence>) 
 
-
-
 }
 
 class C : J, K {
@@ -48,9 +46,6 @@ class C : J, K {
   override fun kg2(c: Collection<CharSequence>) {
     #$$delegate_1.kg2(c = c)
   }
-
-
-
 
 }
 

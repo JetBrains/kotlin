@@ -1,8 +1,6 @@
 annotation class Ann : Annotation {
   constructor() /* primary */ 
 
-
-
 }
 
 interface IFoo {
@@ -18,8 +16,6 @@ interface IFoo {
 
   @Ann
   abstract fun String.testExtFun() 
-
-
 
 }
 
@@ -50,9 +46,6 @@ class DFoo : IFoo {
     override get(): String {
       return #$$delegate_0.<get-testVal>()
     }
-
-
-
 
 }
 

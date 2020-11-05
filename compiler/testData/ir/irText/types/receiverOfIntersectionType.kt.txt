@@ -1,19 +1,13 @@
 interface K {
 
-
-
 }
 
 interface I : K {
   abstract fun ff() 
 
-
-
 }
 
 interface J : K {
-
-
 
 }
 
@@ -27,9 +21,6 @@ class A : I, J {
   override fun ff() {
   }
 
-
-
-
 }
 
 class B : I, J {
@@ -41,9 +32,6 @@ class B : I, J {
 
   override fun ff() {
   }
-
-
-
 
 }
 

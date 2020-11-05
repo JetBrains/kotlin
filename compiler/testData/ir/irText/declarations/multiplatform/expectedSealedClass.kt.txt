@@ -1,14 +1,10 @@
 expect sealed class Ops {
   private expect constructor() /* primary */ 
 
-
-
 }
 
 expect class Add : Ops {
   expect constructor() /* primary */ 
-
-
 
 }
 
@@ -19,9 +15,6 @@ sealed class Ops {
 
   }
 
-
-
-
 }
 
 class Add : Ops {
@@ -30,9 +23,6 @@ class Add : Ops {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 

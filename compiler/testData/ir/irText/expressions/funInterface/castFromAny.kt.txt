@@ -1,8 +1,6 @@
 fun interface KRunnable {
   abstract fun invoke() 
 
-
-
 }
 
 fun test(a: Any?) {

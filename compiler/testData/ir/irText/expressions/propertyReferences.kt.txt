@@ -12,9 +12,6 @@ object Delegate {
   operator fun setValue(thisRef: Any?, kProp: Any, value: Int) {
   }
 
-
-
-
 }
 
 open class C {
@@ -33,9 +30,6 @@ open class C {
     field = 1
     get
     protected set
-
-
-
 
 }
 

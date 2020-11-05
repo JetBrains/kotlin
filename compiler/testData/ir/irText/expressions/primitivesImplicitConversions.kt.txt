@@ -46,8 +46,5 @@ class TestImplicitArguments {
     field = x
     get
 
-
-
-
 }
 

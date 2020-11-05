@@ -13,9 +13,6 @@ class Delegate {
     return <this>.<get-value>()
   }
 
-
-
-
 }
 
 class DelegateProvider {
@@ -33,9 +30,6 @@ class DelegateProvider {
     return Delegate(value = <this>.<get-value>())
   }
 
-
-
-
 }
 
 class Host {
@@ -50,9 +44,6 @@ class Host {
     get(): String {
       return #testMember$delegate.getValue(thisRef = <this>, property = ::testMember)
     }
-
-
-
 
 }
 

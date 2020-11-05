@@ -7,8 +7,6 @@ inline fun <reified T : Any> Any.test1(): T? {
 
 interface Foo<T : Any?> {
 
-
-
 }
 
 val <reified T : Any> Foo<T>.asT: T?
@@ -33,9 +31,6 @@ class Bar<T : Any?> {
 
   fun useT(t: T) {
   }
-
-
-
 
 }
 

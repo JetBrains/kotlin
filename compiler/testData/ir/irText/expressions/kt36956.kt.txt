@@ -16,9 +16,6 @@ class A<T : Any?> {
   operator fun set(i: Int, v: T) {
   }
 
-
-
-
 }
 
 val aFloat: A<Float>

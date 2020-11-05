@@ -9,9 +9,6 @@ class Candidate {
     field = symbol
     get
 
-
-
-
 }
 
 abstract class AbstractFirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
@@ -25,14 +22,9 @@ abstract class AbstractFirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDec
     get
     set
 
-
-
-
 }
 
 interface FirDeclaration {
-
-
 
 }
 
@@ -40,17 +32,11 @@ interface FirSymbolOwner<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
   abstract val symbol: AbstractFirBasedSymbol<E>
     abstract get
 
-
-
-
 }
 
 interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : FirSymbolOwner<F>, FirDeclaration {
   abstract override val symbol: AbstractFirBasedSymbol<F>
     abstract override get
-
-
-
 
 }
 

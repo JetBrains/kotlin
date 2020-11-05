@@ -5,9 +5,6 @@ open class Base {
 
   }
 
-
-
-
 }
 
 class Test : Base {
@@ -26,9 +23,6 @@ class Test : Base {
   constructor(xx: Short) {
     this/*Test*/()
   }
-
-
-
 
 }
 

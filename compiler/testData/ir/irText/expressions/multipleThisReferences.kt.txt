@@ -16,13 +16,7 @@ class Outer {
       field = x
       get
 
-
-
-
   }
-
-
-
 
 }
 
@@ -50,18 +44,11 @@ class Host {
           field = <this>.<get-x>().plus(other = <this>.<get-y>())
           get
 
-
-
-
       }
-
 
       <no name provided>()
     }
   }
-
-
-
 
 }
 

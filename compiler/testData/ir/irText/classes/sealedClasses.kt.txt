@@ -16,9 +16,6 @@ sealed class Expr {
       field = number
       get
 
-
-
-
   }
 
   class Sum : Expr {
@@ -36,9 +33,6 @@ sealed class Expr {
       field = e2
       get
 
-
-
-
   }
 
   object NotANumber : Expr {
@@ -48,13 +42,7 @@ sealed class Expr {
 
     }
 
-
-
-
   }
-
-
-
 
 }
 

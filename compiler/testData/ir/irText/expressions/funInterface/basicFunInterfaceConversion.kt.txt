@@ -1,8 +1,6 @@
 fun interface Foo {
   abstract fun invoke(): String 
 
-
-
 }
 
 fun foo(f: Foo): String {

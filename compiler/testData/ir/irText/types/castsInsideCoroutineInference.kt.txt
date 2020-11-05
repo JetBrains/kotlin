@@ -81,9 +81,6 @@ class SafeCollector<T : Any?> : FlowCollector<T> {
   override suspend fun emit(value: T) {
   }
 
-
-
-
 }
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
@@ -109,34 +106,23 @@ open class ChannelCoroutine<E : Any?> {
   suspend fun sendFair(element: E) {
   }
 
-
-
-
 }
 
 interface CoroutineScope {
-
-
 
 }
 
 interface Flow<out T : Any?> {
   abstract suspend fun collect(collector: FlowCollector<T>) 
 
-
-
 }
 
 interface FlowCollector<in T : Any?> {
   abstract suspend fun emit(value: T) 
 
-
-
 }
 
 interface ReceiveChannel<out E : Any?> {
-
-
 
 }
 
@@ -149,16 +135,10 @@ interface ProducerScope<in E : Any?> : CoroutineScope, SendChannel<E> {
   abstract val channel: SendChannel<E>
     abstract get
 
-
-
-
-
 }
 
 interface SendChannel<in E : Any?> {
   abstract suspend fun send(e: E) 
-
-
 
 }
 

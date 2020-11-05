@@ -26,9 +26,6 @@ fun box(): String {
           return <this>.<get-s>().plus(other = <this>.<get-end>())
         }
 
-
-
-
       }
 
       local open inner class Base {
@@ -42,16 +39,9 @@ fun box(): String {
           field = s
           get
 
-
-
-
       }
 
-
-
-
     }
-
 
     <no name provided>()
   }

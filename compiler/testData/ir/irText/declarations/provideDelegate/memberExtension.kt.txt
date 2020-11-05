@@ -20,9 +20,6 @@ object Host {
       return receiver.plus(other = <this>.<get-s>())
     }
 
-
-
-
   }
 
   operator fun String.provideDelegate(host: Any?, p: Any): StringDelegate {
@@ -38,9 +35,6 @@ object Host {
   val ok: String
     field = (<this>, "O").<get-plusK>()
     get
-
-
-
 
 }
 

@@ -13,9 +13,6 @@ class C {
     field = x
     get
 
-
-
-
 }
 
 fun use(fn: Function0<Any>): Any {

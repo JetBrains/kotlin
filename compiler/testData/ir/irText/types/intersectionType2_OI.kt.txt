@@ -1,12 +1,8 @@
 interface A<out T : Any?> {
 
-
-
 }
 
 interface Foo {
-
-
 
 }
 
@@ -17,9 +13,6 @@ open class B : Foo, A<B> {
 
   }
 
-
-
-
 }
 
 open class C : Foo, A<C> {
@@ -28,9 +21,6 @@ open class C : Foo, A<C> {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 

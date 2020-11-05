@@ -5,9 +5,6 @@ class C {
 
   }
 
-
-
-
 }
 
 typealias CA = C
@@ -25,13 +22,7 @@ object Host {
 
     }
 
-
-
-
   }
-
-
-
 
 }
 

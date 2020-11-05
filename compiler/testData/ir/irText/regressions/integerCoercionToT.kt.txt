@@ -1,7 +1,5 @@
 interface CPointed {
 
-
-
 }
 
 inline fun <reified T : CPointed> CPointed.reinterpret(): T {
@@ -14,9 +12,6 @@ class CInt32VarX<T : Any?> : CPointed {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 
@@ -38,9 +33,6 @@ class IdType : CPointed {
   val value: Int
     field = value
     get
-
-
-
 
 }
 

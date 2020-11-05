@@ -1,8 +1,6 @@
 fun interface IFoo {
   abstract fun foo(i: Int) 
 
-
-
 }
 
 fun useFoo(foo: IFoo) {

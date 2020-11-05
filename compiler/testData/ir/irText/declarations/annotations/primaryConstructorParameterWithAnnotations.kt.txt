@@ -1,8 +1,6 @@
 annotation class Ann : Annotation {
   constructor() /* primary */ 
 
-
-
 }
 
 class Test {
@@ -15,9 +13,6 @@ class Test {
   val x: Int
     field = x
     get
-
-
-
 
 }
 

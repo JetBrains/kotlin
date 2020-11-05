@@ -14,29 +14,20 @@ class Value<T : Any?, IT : IR<T>> {
     field = value2
     get
 
-
-
-
 }
 
 interface IDelegate1<T1 : Any?, R1 : Any?> {
   abstract operator fun getValue(t: T1, p: KProperty<*>): R1 
-
-
 
 }
 
 interface IDelegate2<T2 : Any?, R2 : Any?> {
   abstract operator fun getValue(t: T2, p: KProperty<*>): R2 
 
-
-
 }
 
 interface IR<R : Any?> {
   abstract fun foo(): R 
-
-
 
 }
 
@@ -55,9 +46,6 @@ class CR<R : Any?> : IR<R> {
     return <this>.<get-r>()
   }
 
-
-
-
 }
 
 class P<P1 : Any?, P2 : Any?> {
@@ -74,9 +62,6 @@ class P<P1 : Any?, P2 : Any?> {
   val p2: P2
     field = p2
     get
-
-
-
 
 }
 
@@ -118,11 +103,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
               return t.foo() /*as Any? */
             }
 
-
-
-
           }
-
 
           <no name provided>()
         }
@@ -143,11 +124,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
               return t.<get-value2>().foo() /*as Any? */
             }
 
-
-
-
           }
-
 
           <no name provided>()
         }
@@ -159,11 +136,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
         return P<Any?, Any?>(p1 = (<this>, t).<get-deepO>() /*as Any? */, p2 = (<this>, t).<get-deepK>() /*as Any? */)
       }
 
-
-
-
     }
-
 
     <no name provided>()
   }

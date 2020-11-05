@@ -4,9 +4,6 @@ annotation class TestAnn : Annotation {
     field = x
     get
 
-
-
-
 }
 
 @TestAnn(x = "class")
@@ -17,15 +14,10 @@ class TestClass {
 
   }
 
-
-
-
 }
 
 @TestAnn(x = "interface")
 interface TestInterface {
-
-
 
 }
 
@@ -36,9 +28,6 @@ object TestObject {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 
@@ -57,13 +46,7 @@ class Host {
 
     }
 
-
-
-
   }
-
-
-
 
 }
 
@@ -75,13 +58,6 @@ enum class TestEnum : Enum<TestEnum> {
 
   }
 
-
-
-
-
-
-
-
   fun values(): Array<TestEnum> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestEnum /* Synthetic body for ENUM_VALUEOF */
@@ -91,8 +67,6 @@ enum class TestEnum : Enum<TestEnum> {
 @TestAnn(x = "annotation")
 annotation class TestAnnotation : Annotation {
   constructor() /* primary */ 
-
-
 
 }
 

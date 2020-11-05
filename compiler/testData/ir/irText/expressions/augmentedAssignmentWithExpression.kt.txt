@@ -12,9 +12,6 @@ class Host {
     <this>.plusAssign(x = 1)
   }
 
-
-
-
 }
 
 fun foo(): Host {

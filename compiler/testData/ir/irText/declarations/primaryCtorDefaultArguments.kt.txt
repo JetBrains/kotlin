@@ -9,8 +9,5 @@ class Test {
     field = x
     get
 
-
-
-
 }
 

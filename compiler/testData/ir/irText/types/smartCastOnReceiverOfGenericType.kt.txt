@@ -35,9 +35,6 @@ class Cell<T : Any?> {
     get
     set
 
-
-
-
 }
 
 class Outer<T1 : Any?> {
@@ -57,13 +54,7 @@ class Outer<T1 : Any?> {
     fun use(x1: T1, x2: T2) {
     }
 
-
-
-
   }
-
-
-
 
 }
 

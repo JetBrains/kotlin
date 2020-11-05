@@ -1,12 +1,7 @@
 interface TestInterface<T : Any?> {
   interface TestNestedInterface<TT : Any?> {
 
-
-
   }
-
-
-
 
 }
 
@@ -24,9 +19,6 @@ class Test<T0 : Any?> {
 
     }
 
-
-
-
   }
 
   inner class TestInner<T2 : Any?> {
@@ -36,13 +28,7 @@ class Test<T0 : Any?> {
 
     }
 
-
-
-
   }
-
-
-
 
 }
 

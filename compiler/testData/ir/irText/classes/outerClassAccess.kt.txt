@@ -35,18 +35,9 @@ class Outer {
         <this>.foo()
       }
 
-
-
-
     }
 
-
-
-
   }
-
-
-
 
 }
 

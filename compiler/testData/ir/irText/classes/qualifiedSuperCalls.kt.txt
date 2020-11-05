@@ -7,9 +7,6 @@ interface ILeft {
       return 1
     }
 
-
-
-
 }
 
 interface IRight {
@@ -20,9 +17,6 @@ interface IRight {
     get(): Int {
       return 2
     }
-
-
-
 
 }
 
@@ -42,9 +36,6 @@ class CBoth : ILeft, IRight {
     override get(): Int {
       return super.<get-bar>().plus(other = super.<get-bar>())
     }
-
-
-
 
 }
 

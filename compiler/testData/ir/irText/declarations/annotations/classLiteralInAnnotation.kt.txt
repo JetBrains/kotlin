@@ -4,9 +4,6 @@ annotation class A : Annotation {
     field = klass
     get
 
-
-
-
 }
 
 class C {
@@ -15,9 +12,6 @@ class C {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 

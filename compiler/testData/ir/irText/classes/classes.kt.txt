@@ -5,14 +5,9 @@ class TestClass {
 
   }
 
-
-
-
 }
 
 interface TestInterface {
-
-
 
 }
 
@@ -23,15 +18,10 @@ object TestObject {
 
   }
 
-
-
-
 }
 
 annotation class TestAnnotationClass : Annotation {
   constructor() /* primary */ 
-
-
 
 }
 
@@ -41,13 +31,6 @@ enum class TestEnumClass : Enum<TestEnumClass> {
         /* InstanceInitializerCall */
 
   }
-
-
-
-
-
-
-
 
   fun values(): Array<TestEnumClass> /* Synthetic body for ENUM_VALUES */
 

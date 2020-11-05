@@ -15,8 +15,5 @@ object Definitions {
     field = #CONSTANT
     get
 
-
-
-
 }
 

@@ -24,9 +24,6 @@ class P {
     return <this>.<get-y>()
   }
 
-
-
-
 }
 
 class Q<T1 : Any?, T2 : Any?> {
@@ -51,9 +48,6 @@ class Q<T1 : Any?, T2 : Any?> {
   operator fun component2(): T2 {
     return <this>.<get-y>()
   }
-
-
-
 
 }
 

@@ -1,8 +1,6 @@
 interface IFoo {
   abstract fun foo(): String 
 
-
-
 }
 
 class K1 : JFoo {
@@ -11,10 +9,6 @@ class K1 : JFoo {
         /* InstanceInitializerCall */
 
   }
-
-
-
-
 
 }
 
@@ -29,9 +23,6 @@ class K2 : JFoo {
     return super.foo() /*!! String */
   }
 
-
-
-
 }
 
 class K3 : JUnrelatedFoo, IFoo {
@@ -40,10 +31,6 @@ class K3 : JUnrelatedFoo, IFoo {
         /* InstanceInitializerCall */
 
   }
-
-
-
-
 
 }
 
@@ -57,9 +44,6 @@ class K4 : JUnrelatedFoo, IFoo {
   override fun foo(): @FlexibleNullability String? {
     return super.foo()
   }
-
-
-
 
 }
 
@@ -75,9 +59,6 @@ class TestJFoo : IFoo {
     return #$$delegate_0.foo() /*!! String */
   }
 
-
-
-
 }
 
 class TestK1 : IFoo {
@@ -91,9 +72,6 @@ class TestK1 : IFoo {
   override fun foo(): String {
     return #$$delegate_0.foo() /*!! String */
   }
-
-
-
 
 }
 
@@ -109,9 +87,6 @@ class TestK2 : IFoo {
     return #$$delegate_0.foo()
   }
 
-
-
-
 }
 
 class TestK3 : IFoo {
@@ -126,9 +101,6 @@ class TestK3 : IFoo {
     return #$$delegate_0.foo()
   }
 
-
-
-
 }
 
 class TestK4 : IFoo {
@@ -142,9 +114,6 @@ class TestK4 : IFoo {
   override fun foo(): String {
     return #$$delegate_0.foo() /*!! String */
   }
-
-
-
 
 }
 

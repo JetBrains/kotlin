@@ -12,9 +12,6 @@ class Outer {
 
     }
 
-
-
-
   }
 
   inner class InnerDerived0 : Inner {
@@ -23,9 +20,6 @@ class Outer {
             /* InstanceInitializerCall */
 
     }
-
-
-
 
   }
 
@@ -36,13 +30,7 @@ class Outer {
 
     }
 
-
-
-
   }
-
-
-
 
 }
 

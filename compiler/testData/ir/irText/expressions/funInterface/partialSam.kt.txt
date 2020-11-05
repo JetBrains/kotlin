@@ -1,8 +1,6 @@
 fun interface Fn<T : Any?, R : Any?> {
   abstract fun run(s: String, i: Int, t: T): R 
 
-
-
 }
 
 class J {
@@ -15,9 +13,6 @@ class J {
   fun runConversion(f1: Fn<String, Int>, f2: Fn<Int, String>): Int {
     return f1.run(s = "Bar", i = 1, t = f2.run(s = "Foo", i = 42, t = 239))
   }
-
-
-
 
 }
 
@@ -34,11 +29,7 @@ val fsi: Fn<String, Int>
         return 1
       }
 
-
-
-
     }
-
 
     <no name provided>()
   }
@@ -57,11 +48,7 @@ val fis: Fn<Int, String>
         return ""
       }
 
-
-
-
     }
-
 
     <no name provided>()
   }

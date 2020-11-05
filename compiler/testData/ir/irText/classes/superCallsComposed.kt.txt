@@ -12,18 +12,12 @@ open class Base {
     field = ""
     open get
 
-
-
-
 }
 
 interface BaseI {
   abstract fun foo() 
   abstract val bar: String
     abstract get
-
-
-
 
 }
 
@@ -42,9 +36,6 @@ class Derived : Base, BaseI {
     override get(): String {
       return super.<get-bar>()
     }
-
-
-
 
 }
 

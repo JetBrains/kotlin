@@ -1,14 +1,9 @@
 fun interface IFoo {
   abstract fun foo(i: Int) 
 
-
-
 }
 
 fun interface IFoo2 : IFoo {
-
-
-
 
 }
 
@@ -19,9 +14,6 @@ object A {
 
   }
 
-
-
-
 }
 
 object B {
@@ -30,9 +22,6 @@ object B {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 

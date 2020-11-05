@@ -4,9 +4,6 @@ annotation class TestAnn : Annotation {
     field = x
     get
 
-
-
-
 }
 
 fun testFun(x: Int) {
@@ -22,9 +19,6 @@ class TestClassConstructor1 {
   val xx: Int
     field = x
     get
-
-
-
 
 }
 

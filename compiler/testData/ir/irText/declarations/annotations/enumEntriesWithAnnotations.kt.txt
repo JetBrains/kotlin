@@ -4,9 +4,6 @@ annotation class TestAnn : Annotation {
     field = x
     get
 
-
-
-
 }
 
 open enum class TestEnum : Enum<TestEnum> {
@@ -19,11 +16,6 @@ open enum class TestEnum : Enum<TestEnum> {
   @TestAnn(x = "ENTRY1")
   ENTRY1 init = TODO("IrEnumConstructorCall")  @TestAnn(x = "ENTRY2")
   ENTRY2 init = TODO("IrEnumConstructorCall")
-
-
-
-
-
 
   fun values(): Array<TestEnum> /* Synthetic body for ENUM_VALUES */
 

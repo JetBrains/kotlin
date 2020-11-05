@@ -9,8 +9,5 @@ abstract class BaseFirBuilder<T : Any?> {
     return block.invoke()
   }
 
-
-
-
 }
 

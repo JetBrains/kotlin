@@ -4,8 +4,6 @@ interface X {
 
   abstract fun f(): MutableList<Any> 
 
-
-
 }
 
 fun test(x: X, nx: X?) {
@@ -58,33 +56,7 @@ abstract class AML : MutableList<Int> {
       <this>.plusAssign<Int>(element = 300)
     }
 
-
-
-
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
 

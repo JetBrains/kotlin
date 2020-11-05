@@ -4,9 +4,6 @@ annotation class TestAnn : Annotation {
     field = x
     get
 
-
-
-
 }
 
 val testVal: String

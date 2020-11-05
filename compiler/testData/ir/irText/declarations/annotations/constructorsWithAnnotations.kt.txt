@@ -4,9 +4,6 @@ annotation class TestAnn : Annotation {
     field = x
     get
 
-
-
-
 }
 
 class TestClass {
@@ -21,9 +18,6 @@ class TestClass {
   constructor(x: Int) {
     this/*TestClass*/()
   }
-
-
-
 
 }
 

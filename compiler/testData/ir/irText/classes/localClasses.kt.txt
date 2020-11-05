@@ -9,11 +9,7 @@ fun outer() {
     fun foo() {
     }
 
-
-
-
   }
-
 
   LocalClass().foo()
 }

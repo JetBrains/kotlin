@@ -4,8 +4,6 @@ interface Foo<in T : Any?> {
 
   abstract fun foo(x: T) 
 
-
-
 }
 
 fun Foo<*>.testReceiver(): Int {

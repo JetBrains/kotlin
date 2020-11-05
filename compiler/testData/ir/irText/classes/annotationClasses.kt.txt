@@ -4,9 +4,6 @@ annotation class Test1 : Annotation {
     field = x
     get
 
-
-
-
 }
 
 annotation class Test2 : Annotation {
@@ -14,9 +11,6 @@ annotation class Test2 : Annotation {
   val x: Int
     field = x
     get
-
-
-
 
 }
 
@@ -26,9 +20,6 @@ annotation class Test3 : Annotation {
     field = x
     get
 
-
-
-
 }
 
 annotation class Test4 : Annotation {
@@ -36,9 +27,6 @@ annotation class Test4 : Annotation {
   val xs: IntArray
     field = xs
     get
-
-
-
 
 }
 

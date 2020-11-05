@@ -1,7 +1,5 @@
 interface In<in T : Any?> {
 
-
-
 }
 
 inline fun <reified T : Any?> In<T>.isT(): Boolean {
@@ -18,37 +16,25 @@ fun <S : Any?> sel(x: S, y: S): S {
 
 interface A {
 
-
-
 }
 
 interface B {
-
-
 
 }
 
 interface A1 : A {
 
-
-
 }
 
 interface A2 : A {
-
-
 
 }
 
 interface Z1 : A, B {
 
-
-
 }
 
 interface Z2 : A, B {
-
-
 
 }
 

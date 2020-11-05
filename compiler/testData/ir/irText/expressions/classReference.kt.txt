@@ -5,9 +5,6 @@ class A {
 
   }
 
-
-
-
 }
 
 fun test() {

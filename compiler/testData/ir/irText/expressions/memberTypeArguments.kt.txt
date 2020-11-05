@@ -13,8 +13,5 @@ class GenericClass<T : Any?> {
     return GenericClass<T>(value = newValue)
   }
 
-
-
-
 }
 

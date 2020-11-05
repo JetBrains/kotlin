@@ -23,9 +23,6 @@ class Host {
     get
     set
 
-
-
-
 }
 
 class InPrimaryCtor<T : Any?> {
@@ -43,9 +40,6 @@ class InPrimaryCtor<T : Any?> {
     field = testInPrimaryCtor2
     get
     set
-
-
-
 
 }
 

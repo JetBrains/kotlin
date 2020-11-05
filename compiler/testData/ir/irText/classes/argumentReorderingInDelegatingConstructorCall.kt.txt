@@ -13,9 +13,6 @@ open class Base {
     field = y
     get
 
-
-
-
 }
 
 class Test1 : Base {
@@ -26,9 +23,6 @@ class Test1 : Base {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 
@@ -46,9 +40,6 @@ class Test2 : Base {
       this/*Test2*/(xx = xxx, yy = yyy)
     }
   }
-
-
-
 
 }
 

@@ -5,9 +5,6 @@ object A {
 
   }
 
-
-
-
 }
 
 enum class En : Enum<En> {
@@ -18,11 +15,6 @@ enum class En : Enum<En> {
   }
 
   X init = TODO("IrEnumConstructorCall")
-
-
-
-
-
 
   fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
 

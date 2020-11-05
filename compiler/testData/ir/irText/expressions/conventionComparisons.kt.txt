@@ -1,13 +1,9 @@
 interface IA {
 
-
-
 }
 
 interface IB {
   abstract operator fun IA.compareTo(other: IA): Int 
-
-
 
 }
 

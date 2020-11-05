@@ -7,9 +7,6 @@ interface IBase<A : Any?> {
     abstract get
     abstract set
 
-
-
-
 }
 
 class Test1<E : Any?> : IBase<E> {
@@ -36,9 +33,6 @@ class Test1<E : Any?> : IBase<E> {
     override set(<set-?>: D?) {
       (#$$delegate_0, <this>).<set-x><D>(<set-?> = <set-?>)
     }
-
-
-
 
 }
 
@@ -71,9 +65,6 @@ class Test2 : IBase<String> {
     override set(<set-?>: D?) {
       (#$$delegate_0, <this>).<set-x><D>(<set-?> = <set-?>)
     }
-
-
-
 
 }
 

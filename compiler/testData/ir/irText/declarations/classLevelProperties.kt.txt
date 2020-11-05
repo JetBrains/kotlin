@@ -53,8 +53,5 @@ class C {
       return #test8$delegate.setValue<Int>(thisRef = <this>, property = ::test8, value = <set-?>)
     }
 
-
-
-
 }
 

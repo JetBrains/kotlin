@@ -1,7 +1,5 @@
 interface IThing {
 
-
-
 }
 
 fun test1(x: Any): Boolean {

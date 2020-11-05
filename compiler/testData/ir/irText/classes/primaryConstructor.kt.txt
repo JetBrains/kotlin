@@ -13,9 +13,6 @@ class Test1 {
     field = y
     get
 
-
-
-
 }
 
 class Test2 {
@@ -32,9 +29,6 @@ class Test2 {
   val x: Int
     field = x
     get
-
-
-
 
 }
 
@@ -55,9 +49,6 @@ class Test3 {
   init {
     #x = x
   }
-
-
-
 
 }
 

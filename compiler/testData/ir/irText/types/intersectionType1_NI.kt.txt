@@ -5,9 +5,6 @@ class In<in I : Any?> {
 
   }
 
-
-
-
 }
 
 fun <S : Any?> select(x: S, y: S): S {

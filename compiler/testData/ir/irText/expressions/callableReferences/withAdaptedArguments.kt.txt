@@ -32,9 +32,6 @@ object Host {
     return "abc"
   }
 
-
-
-
 }
 
 fun testDefault(): String {
@@ -63,7 +60,6 @@ fun testImportedObjectMember(): String {
     local fun importedObjectMemberWithVarargs(p0: Int): String {
       return importedObjectMemberWithVarargs(xs = [p0])
     }
-
 
     ::importedObjectMemberWithVarargs
   })

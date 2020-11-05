@@ -14,9 +14,6 @@ abstract class A {
     get
     set
 
-
-
-
 }
 
 class B {
@@ -28,9 +25,6 @@ class B {
 
   operator fun plusAssign(x: Int) {
   }
-
-
-
 
 }
 
@@ -49,9 +43,6 @@ class Test1 : A {
     }
   }
 
-
-
-
 }
 
 class Test2 : J {
@@ -64,9 +55,6 @@ class Test2 : J {
   init {
     #field = 42
   }
-
-
-
 
 }
 

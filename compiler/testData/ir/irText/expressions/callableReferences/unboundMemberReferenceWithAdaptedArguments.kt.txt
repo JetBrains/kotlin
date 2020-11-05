@@ -15,9 +15,6 @@ open class A {
     return 1
   }
 
-
-
-
 }
 
 object Obj : A {
@@ -30,9 +27,6 @@ object Obj : A {
   override fun foo(vararg xs: Int): Int {
     return 1
   }
-
-
-
 
 }
 
@@ -49,7 +43,6 @@ fun testBound(a: A) {
       receiver.foo(xs = [p0]) /*~> Unit */
     }
 
-
     ::foo
   })
 }
@@ -59,7 +52,6 @@ fun testObject() {
     local fun Obj.foo(p0: Int) {
       receiver.foo(xs = [p0]) /*~> Unit */
     }
-
 
     ::foo
   })

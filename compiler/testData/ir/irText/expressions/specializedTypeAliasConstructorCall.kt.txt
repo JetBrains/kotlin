@@ -9,9 +9,6 @@ class Cell<T : Any?> {
     field = value
     get
 
-
-
-
 }
 
 typealias IntAlias = Cell<Int>

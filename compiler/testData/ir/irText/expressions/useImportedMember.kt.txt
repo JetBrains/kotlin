@@ -7,9 +7,6 @@ interface I<G : Any?> {
     return g
   }
 
-
-
-
 }
 
 open class BaseClass {
@@ -23,9 +20,6 @@ open class BaseClass {
     get(): T {
       return <this>
     }
-
-
-
 
 }
 
@@ -66,11 +60,6 @@ object C : BaseClass, I<String> {
     get(): T {
       return <this>
     }
-
-
-
-
-
 
 }
 

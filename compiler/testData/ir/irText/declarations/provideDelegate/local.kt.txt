@@ -13,9 +13,6 @@ class Delegate {
     return <this>.<get-value>()
   }
 
-
-
-
 }
 
 class DelegateProvider {
@@ -33,9 +30,6 @@ class DelegateProvider {
     return Delegate(value = <this>.<get-value>())
   }
 
-
-
-
 }
 
 fun foo() {
@@ -44,7 +38,6 @@ fun foo() {
     local get(): String {
       return testMember$delegate.getValue(thisRef = null, property = ::testMember)
     }
-
 
 }
 

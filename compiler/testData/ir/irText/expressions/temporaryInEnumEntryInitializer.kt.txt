@@ -15,11 +15,6 @@ enum class En : Enum<En> {
 
   ENTRY init = TODO("IrEnumConstructorCall")
 
-
-
-
-
-
   fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */

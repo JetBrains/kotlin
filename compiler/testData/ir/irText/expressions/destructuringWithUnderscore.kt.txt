@@ -5,9 +5,6 @@ object A {
 
   }
 
-
-
-
 }
 
 object B {
@@ -28,9 +25,6 @@ object B {
   operator fun A.component3(): Int {
     return 3
   }
-
-
-
 
 }
 

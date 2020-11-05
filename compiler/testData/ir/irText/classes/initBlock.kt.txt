@@ -9,9 +9,6 @@ class Test1 {
     println()
   }
 
-
-
-
 }
 
 class Test2 {
@@ -29,9 +26,6 @@ class Test2 {
     println()
   }
 
-
-
-
 }
 
 class Test3 {
@@ -44,9 +38,6 @@ class Test3 {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 
@@ -64,9 +55,6 @@ class Test4 {
   init {
     println(message = "2")
   }
-
-
-
 
 }
 
@@ -92,13 +80,7 @@ class Test5 {
       println(message = "2")
     }
 
-
-
-
   }
-
-
-
 
 }
 

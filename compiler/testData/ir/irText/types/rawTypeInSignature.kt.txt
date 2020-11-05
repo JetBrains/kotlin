@@ -5,9 +5,6 @@ class GenericInv<T : Number> {
 
   }
 
-
-
-
 }
 
 class GenericIn<in T : Number> {
@@ -17,9 +14,6 @@ class GenericIn<in T : Number> {
 
   }
 
-
-
-
 }
 
 class GenericOut<out T : Number> {
@@ -28,9 +22,6 @@ class GenericOut<out T : Number> {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 
@@ -85,9 +76,6 @@ class KRaw : JRaw {
   override fun takesRawList(list: @FlexibleNullability @RawType MutableList<Any?>?) {
     #$$delegate_0.takesRawList(list = list)
   }
-
-
-
 
 }
 

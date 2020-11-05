@@ -4,9 +4,6 @@ annotation class A : Annotation {
     field = x
     get
 
-
-
-
 }
 
 fun foo(m: Map<String, Int>) {
@@ -19,7 +16,6 @@ fun foo(m: Map<String, Int>) {
     local get(): Int {
       return test$delegate.getValue<Int>(thisRef = null, property = ::test)
     }
-
 
 }
 

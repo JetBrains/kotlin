@@ -23,8 +23,5 @@ class Host {
   fun <T : Any?> String.testMembetExt2(i: Int, j: T) {
   }
 
-
-
-
 }
 

@@ -1,14 +1,10 @@
 interface IA {
   abstract operator fun get(index: String): Int 
 
-
-
 }
 
 interface IB {
   abstract operator fun IA.set(index: String, value: Int) 
-
-
 
 }
 

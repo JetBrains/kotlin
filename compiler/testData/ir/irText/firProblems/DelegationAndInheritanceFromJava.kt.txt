@@ -51,9 +51,6 @@ class Impl : A, B {
       return #$$delegate_0.<get-size>()
     }
 
-
-
-
 }
 
 fun box(): String {

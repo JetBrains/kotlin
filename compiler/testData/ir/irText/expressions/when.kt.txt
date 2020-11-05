@@ -5,9 +5,6 @@ object A {
 
   }
 
-
-
-
 }
 
 fun testWithSubject(x: Any?): String {

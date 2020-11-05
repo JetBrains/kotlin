@@ -10,18 +10,12 @@ class Ref {
     get
     set
 
-
-
-
 }
 
 interface IHost {
   fun String.extLength(): Int {
     return <this>.<get-length>()
   }
-
-
-
 
 }
 

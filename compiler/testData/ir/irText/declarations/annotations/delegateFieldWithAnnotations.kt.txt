@@ -1,8 +1,6 @@
 annotation class Ann : Annotation {
   constructor() /* primary */ 
 
-
-
 }
 
 val test1: Int /* by */ 

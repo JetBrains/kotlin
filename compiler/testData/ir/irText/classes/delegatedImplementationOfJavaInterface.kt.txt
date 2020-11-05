@@ -35,8 +35,5 @@ class Test : J {
     #j.takeNullable(x = x)
   }
 
-
-
-
 }
 

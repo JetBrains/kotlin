@@ -11,9 +11,6 @@ class C {
   fun String.memberExtension() {
   }
 
-
-
-
 }
 
 fun testExt() {

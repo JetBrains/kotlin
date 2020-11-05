@@ -20,13 +20,7 @@ class Outer<T : Any?> {
       field = y
       get
 
-
-
-
   }
-
-
-
 
 }
 
@@ -43,11 +37,7 @@ fun Outer<Int>.test(): Inner<Int> {
         field = <this>.<get-x>().plus(other = <this>.<get-y>())
         get
 
-
-
-
     }
-
 
     <no name provided>()
   }

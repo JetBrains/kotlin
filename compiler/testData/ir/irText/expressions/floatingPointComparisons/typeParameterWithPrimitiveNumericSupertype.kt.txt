@@ -61,8 +61,5 @@ class F<T : Float> {
     }
   }
 
-
-
-
 }
 

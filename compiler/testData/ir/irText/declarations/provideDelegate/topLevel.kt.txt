@@ -13,9 +13,6 @@ class Delegate {
     return <this>.<get-value>()
   }
 
-
-
-
 }
 
 class DelegateProvider {
@@ -32,9 +29,6 @@ class DelegateProvider {
   operator fun provideDelegate(thisRef: Any?, property: Any?): Delegate {
     return Delegate(value = <this>.<get-value>())
   }
-
-
-
 
 }
 

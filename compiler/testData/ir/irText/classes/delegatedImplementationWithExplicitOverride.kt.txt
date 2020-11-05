@@ -2,8 +2,6 @@ interface IFooBar {
   abstract fun foo() 
   abstract fun bar() 
 
-
-
 }
 
 object FooBarImpl : IFooBar {
@@ -18,9 +16,6 @@ object FooBarImpl : IFooBar {
 
   override fun bar() {
   }
-
-
-
 
 }
 
@@ -38,9 +33,6 @@ class C : IFooBar {
 
   override fun bar() {
   }
-
-
-
 
 }
 

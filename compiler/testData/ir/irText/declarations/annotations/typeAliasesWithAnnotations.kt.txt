@@ -5,9 +5,6 @@ annotation class TestAnn : Annotation {
     field = x
     get
 
-
-
-
 }
 
 @TestAnn(x = "TestTypeAlias")

@@ -4,8 +4,6 @@ fun <X : Any?, Y : Any?> foo(): Function1<X, Y> {
 
 interface Inv2<A : Any?, B : Any?> {
 
-
-
 }
 
 fun <T : Any?, R : Any?> check(x: T, y: R, f: Function1<T, R>): Inv2<T, R> {

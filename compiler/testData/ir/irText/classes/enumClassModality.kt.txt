@@ -7,11 +7,6 @@ enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
 
   X1 init = TODO("IrEnumConstructorCall")
 
-
-
-
-
-
   fun values(): Array<TestFinalEnum1> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestFinalEnum1 /* Synthetic body for ENUM_VALUEOF */
@@ -31,11 +26,6 @@ enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
 
   X1 init = TODO("IrEnumConstructorCall")
 
-
-
-
-
-
   fun values(): Array<TestFinalEnum2> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestFinalEnum2 /* Synthetic body for ENUM_VALUEOF */
@@ -52,13 +42,6 @@ enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
   X1 init = TODO("IrEnumConstructorCall")  fun doStuff() {
   }
 
-
-
-
-
-
-
-
   fun values(): Array<TestFinalEnum3> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestFinalEnum3 /* Synthetic body for ENUM_VALUEOF */
@@ -73,11 +56,6 @@ open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
   }
 
   X1 init = TODO("IrEnumConstructorCall")
-
-
-
-
-
 
   fun values(): Array<TestOpenEnum1> /* Synthetic body for ENUM_VALUES */
 
@@ -95,13 +73,6 @@ open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
   X1 init = TODO("IrEnumConstructorCall")  open fun foo() {
   }
 
-
-
-
-
-
-
-
   fun values(): Array<TestOpenEnum2> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestOpenEnum2 /* Synthetic body for ENUM_VALUEOF */
@@ -117,12 +88,6 @@ abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
 
   X1 init = TODO("IrEnumConstructorCall")  abstract fun foo() 
 
-
-
-
-
-
-
   fun values(): Array<TestAbstractEnum1> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestAbstractEnum1 /* Synthetic body for ENUM_VALUEOF */
@@ -131,8 +96,6 @@ abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
 
 interface IFoo {
   abstract fun foo() 
-
-
 
 }
 
@@ -144,12 +107,6 @@ abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
   }
 
   X1 init = TODO("IrEnumConstructorCall")
-
-
-
-
-
-
 
   fun values(): Array<TestAbstractEnum2> /* Synthetic body for ENUM_VALUES */
 

@@ -5,9 +5,6 @@ abstract class Base {
 
   }
 
-
-
-
 }
 
 object Test : Base {
@@ -27,9 +24,6 @@ object Test : Base {
   init {
     #y = <this>.<get-x>()
   }
-
-
-
 
 }
 

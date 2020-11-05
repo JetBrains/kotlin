@@ -19,13 +19,7 @@ class Z {
     fun test() {
     }
 
-
-
-
   }
-
-
-
 
 }
 

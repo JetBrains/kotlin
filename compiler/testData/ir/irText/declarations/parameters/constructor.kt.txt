@@ -13,9 +13,6 @@ class Test1<T1 : Any?, T2 : Any?> {
     field = y
     get
 
-
-
-
 }
 
 class Test2 {
@@ -44,13 +41,7 @@ class Test2 {
       <this>.this/*TestInner*/<Z>(z = z)
     }
 
-
-
-
   }
-
-
-
 
 }
 
@@ -69,9 +60,6 @@ class Test3 {
     field = y
     get
 
-
-
-
 }
 
 class Test4<T : Any?> {
@@ -88,9 +76,6 @@ class Test4<T : Any?> {
   constructor(x: Int, y: Int = 42) {
     this/*Test4*/<T>(x = x.plus(other = y))
   }
-
-
-
 
 }
 

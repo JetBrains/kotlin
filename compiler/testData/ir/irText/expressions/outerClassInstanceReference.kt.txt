@@ -19,13 +19,7 @@ class Outer {
       return <this>.outer()
     }
 
-
-
-
   }
-
-
-
 
 }
 

@@ -13,7 +13,6 @@ fun test() {
       receiver.id() /*~> Unit */
     }
 
-
     ::id
   })
 }

@@ -1,8 +1,6 @@
 fun interface KRunnable {
   abstract fun run() 
 
-
-
 }
 
 fun foo0() {

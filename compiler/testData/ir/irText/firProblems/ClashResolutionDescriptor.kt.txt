@@ -1,18 +1,12 @@
 interface ComponentContainer {
 
-
-
 }
 
 interface PlatformSpecificExtension<S : PlatformSpecificExtension<S>> {
 
-
-
 }
 
 interface ComponentDescriptor {
-
-
 
 }
 
@@ -26,9 +20,6 @@ abstract class PlatformExtensionsClashResolver<E : PlatformSpecificExtension<E>>
   val applicableTo: Class<E>
     field = applicableTo
     get
-
-
-
 
 }
 
@@ -46,9 +37,6 @@ class ClashResolutionDescriptor<E : PlatformSpecificExtension<E>> {
   private val clashedComponents: List<ComponentDescriptor>
     field = clashedComponents
     private get
-
-
-
 
 }
 

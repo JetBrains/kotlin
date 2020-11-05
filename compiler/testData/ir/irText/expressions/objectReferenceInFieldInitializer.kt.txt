@@ -18,8 +18,5 @@ object A {
     field = 10000
     private get
 
-
-
-
 }
 

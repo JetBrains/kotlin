@@ -13,9 +13,6 @@ abstract class AbstractClass {
     abstract get
     abstract set
 
-
-
-
 }
 
 interface Interface {
@@ -26,9 +23,6 @@ interface Interface {
   abstract var abstractVar: Int
     abstract get
     abstract set
-
-
-
 
 }
 

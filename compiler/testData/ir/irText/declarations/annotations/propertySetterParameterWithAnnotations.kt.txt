@@ -1,8 +1,6 @@
 annotation class AnnParam : Annotation {
   constructor() /* primary */ 
 
-
-
 }
 
 var p: Int
@@ -21,9 +19,6 @@ class C {
     field = p
     get
     set
-
-
-
 
 }
 

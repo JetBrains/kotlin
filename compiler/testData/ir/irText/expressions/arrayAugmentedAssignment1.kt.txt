@@ -17,9 +17,6 @@ class C {
     field = x
     get
 
-
-
-
 }
 
 fun testVariable() {

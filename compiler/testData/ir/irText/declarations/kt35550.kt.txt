@@ -4,9 +4,6 @@ interface I {
       return <this>
     }
 
-
-
-
 }
 
 class A : I {
@@ -21,9 +18,6 @@ class A : I {
     override get(): T {
       return (#$$delegate_0, <this>).<get-id><T>()
     }
-
-
-
 
 }
 

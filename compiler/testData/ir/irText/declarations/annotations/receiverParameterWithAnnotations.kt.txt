@@ -1,8 +1,6 @@
 annotation class Ann : Annotation {
   constructor() /* primary */ 
 
-
-
 }
 
 class A {
@@ -20,9 +18,6 @@ class A {
     get(): String {
       return ""
     }
-
-
-
 
 }
 

@@ -20,13 +20,7 @@ class Outer {
       <this>.this/*Inner*/(x = 0)
     }
 
-
-
-
   }
-
-
-
 
 }
 

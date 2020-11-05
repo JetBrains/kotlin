@@ -4,9 +4,6 @@ annotation class A : Annotation {
     field = x
     get
 
-
-
-
 }
 
 class Cell {
@@ -28,9 +25,6 @@ class Cell {
   operator fun setValue(thisRef: Any?, kProp: Any?, newValue: Int) {
     <this>.<set-value>(<set-?> = newValue)
   }
-
-
-
 
 }
 

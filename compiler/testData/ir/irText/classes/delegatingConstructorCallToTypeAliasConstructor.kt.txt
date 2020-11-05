@@ -9,9 +9,6 @@ open class Cell<T : Any?> {
     field = value
     get
 
-
-
-
 }
 
 typealias CT<T : Any?> = Cell<T>
@@ -23,9 +20,6 @@ class C1 : Cell<String> {
 
   }
 
-
-
-
 }
 
 class C2 : Cell<String> {
@@ -34,9 +28,6 @@ class C2 : Cell<String> {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 

@@ -1,36 +1,25 @@
 interface In<in T : Any?> {
 
-
-
 }
 
 interface Inv<T : Any?> {
   abstract val t: T
     abstract get
 
-
-
-
 }
 
 interface Z {
   abstract fun <T : Any?> create(x: In<T>, y: In<T>): Inv<T> 
-
-
 
 }
 
 interface IA {
   abstract fun foo() 
 
-
-
 }
 
 interface IB {
   abstract fun bar() 
-
-
 
 }
 

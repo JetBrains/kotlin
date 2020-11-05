@@ -13,9 +13,6 @@ class C {
     return <this>
   }
 
-
-
-
 }
 
 fun test(nc: C?): C? {

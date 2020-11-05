@@ -1,15 +1,11 @@
 interface IrType {
 
-
-
 }
 
 interface TypeRemapper {
   abstract fun enterScope(irTypeParametersContainer: IrTypeParametersContainer) 
   abstract fun remapType(type: IrType): IrType 
   abstract fun leaveScope() 
-
-
 
 }
 
@@ -18,14 +14,9 @@ interface IrTypeParametersContainer : IrDeclaration, IrDeclarationParent {
     abstract get
     abstract set
 
-
-
-
 }
 
 interface IrDeclaration {
-
-
 
 }
 
@@ -33,14 +24,9 @@ interface IrTypeParameter : IrDeclaration {
   abstract val superTypes: MutableList<IrType>
     abstract get
 
-
-
-
 }
 
 interface IrDeclarationParent {
-
-
 
 }
 
@@ -82,9 +68,6 @@ class DeepCopyIrTreeWithSymbols {
     }
 )
   }
-
-
-
 
 }
 

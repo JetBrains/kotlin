@@ -8,9 +8,6 @@ object Host {
   inline fun <reified T : Any?> objectMember(x: T) {
   }
 
-
-
-
 }
 
 inline fun <reified T : Any?> topLevel1(x: T) {

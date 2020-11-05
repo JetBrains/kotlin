@@ -31,8 +31,5 @@ class TestClass {
     #out /*!! PrintStream */.println(p0 = "TestClass/init")
   }
 
-
-
-
 }
 

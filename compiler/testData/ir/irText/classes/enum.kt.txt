@@ -7,11 +7,6 @@ enum class TestEnum1 : Enum<TestEnum1> {
 
   TEST1 init = TODO("IrEnumConstructorCall")  TEST2 init = TODO("IrEnumConstructorCall")
 
-
-
-
-
-
   fun values(): Array<TestEnum1> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestEnum1 /* Synthetic body for ENUM_VALUEOF */
@@ -31,11 +26,6 @@ enum class TestEnum2 : Enum<TestEnum2> {
 
   TEST1 init = TODO("IrEnumConstructorCall")  TEST2 init = TODO("IrEnumConstructorCall")  TEST3 init = TODO("IrEnumConstructorCall")
 
-
-
-
-
-
   fun values(): Array<TestEnum2> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestEnum2 /* Synthetic body for ENUM_VALUEOF */
@@ -50,12 +40,6 @@ abstract enum class TestEnum3 : Enum<TestEnum3> {
   }
 
   TEST init = TODO("IrEnumConstructorCall")  abstract fun foo() 
-
-
-
-
-
-
 
   fun values(): Array<TestEnum3> /* Synthetic body for ENUM_VALUES */
 
@@ -76,12 +60,6 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
 
   TEST1 init = TODO("IrEnumConstructorCall")  TEST2 init = TODO("IrEnumConstructorCall")  abstract fun foo() 
 
-
-
-
-
-
-
   fun values(): Array<TestEnum4> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestEnum4 /* Synthetic body for ENUM_VALUEOF */
@@ -100,11 +78,6 @@ enum class TestEnum5 : Enum<TestEnum5> {
     get
 
   TEST1 init = TODO("IrEnumConstructorCall")  TEST2 init = TODO("IrEnumConstructorCall")  TEST3 init = TODO("IrEnumConstructorCall")
-
-
-
-
-
 
   fun values(): Array<TestEnum5> /* Synthetic body for ENUM_VALUES */
 
@@ -136,11 +109,6 @@ enum class TestEnum6 : Enum<TestEnum6> {
     val tmp1_x: Int = f()
     TODO("IrEnumConstructorCall")
   }
-
-
-
-
-
 
   fun values(): Array<TestEnum6> /* Synthetic body for ENUM_VALUES */
 

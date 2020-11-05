@@ -15,9 +15,6 @@ object Foo {
     return ""
   }
 
-
-
-
 }
 
 val test1: KProperty0<String>

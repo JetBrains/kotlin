@@ -5,9 +5,6 @@ open class Base {
 
   }
 
-
-
-
 }
 
 class TestProperty : Base {
@@ -20,9 +17,6 @@ class TestProperty : Base {
         /* InstanceInitializerCall */
 
   }
-
-
-
 
 }
 
@@ -49,9 +43,6 @@ class TestInitBlock : Base {
   constructor(y: Int) {
     this/*TestInitBlock*/()
   }
-
-
-
 
 }
 

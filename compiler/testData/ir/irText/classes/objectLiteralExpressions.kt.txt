@@ -1,8 +1,6 @@
 interface IFoo {
   abstract fun foo() 
 
-
-
 }
 
 val test1: Any
@@ -14,11 +12,7 @@ val test1: Any
 
       }
 
-
-
-
     }
-
 
     <no name provided>()
   }
@@ -37,11 +31,7 @@ val test2: IFoo
         println(message = "foo")
       }
 
-
-
-
     }
-
 
     <no name provided>()
   }
@@ -61,10 +51,6 @@ class Outer {
 
     }
 
-
-
-
-
   }
 
   fun test3(): Inner {
@@ -80,18 +66,11 @@ class Outer {
           println(message = "foo")
         }
 
-
-
-
       }
-
 
       <no name provided>()
     }
   }
-
-
-
 
 }
 
@@ -108,11 +87,7 @@ fun Outer.test4(): Inner {
         println(message = "foo")
       }
 
-
-
-
     }
-
 
     <no name provided>()
   }

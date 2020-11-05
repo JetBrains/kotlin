@@ -41,9 +41,6 @@ object Z {
       Z.foo()
     }
 
-
-
-
   }
 
   val aLambda: Function0<Unit>
@@ -79,18 +76,11 @@ object Z {
           Z.foo()
         }
 
-
-
-
       }
-
 
       <no name provided>()
     }
     get
-
-
-
 
 }
 

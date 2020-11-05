@@ -5,9 +5,6 @@ class Test1<T : U, U : Any?> {
 
   }
 
-
-
-
 }
 
 fun <T : U, U : Any?> test2() {

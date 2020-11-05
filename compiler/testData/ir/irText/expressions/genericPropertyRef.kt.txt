@@ -15,9 +15,6 @@ class Value<T : Any?> {
     get
     set
 
-
-
-
 }
 
 val <T : Any?> Value<T>.additionalText: Int /* by */ 
@@ -46,9 +43,6 @@ class DVal {
   operator fun getValue(t: Any?, p: Any): Int {
     return 42
   }
-
-
-
 
 }
 

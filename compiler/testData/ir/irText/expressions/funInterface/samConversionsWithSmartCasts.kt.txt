@@ -1,8 +1,6 @@
 fun interface KRunnable {
   abstract fun run() 
 
-
-
 }
 
 fun <T : Any?> id(x: T): T {

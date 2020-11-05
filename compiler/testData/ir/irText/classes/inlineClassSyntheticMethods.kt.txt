@@ -13,8 +13,6 @@ class C<T : Any?> {
     return <this>.<get-t>() as Int
   }
 
-
-
 }
 
 inline class IC<TT : Any?> {

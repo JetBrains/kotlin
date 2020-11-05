@@ -10,9 +10,6 @@ class Ref {
     get
     set
 
-
-
-
 }
 
 fun test1() {

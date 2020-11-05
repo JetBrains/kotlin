@@ -9,9 +9,6 @@ class MyClass {
     field = value
     get
 
-
-
-
 }
 
 operator fun MyClass.provideDelegate(host: Any?, p: Any): String {

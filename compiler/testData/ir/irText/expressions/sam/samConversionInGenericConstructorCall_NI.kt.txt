@@ -24,13 +24,7 @@ class Outer<T1 : Any?> {
       field = j12
       get
 
-
-
-
   }
-
-
-
 
 }
 

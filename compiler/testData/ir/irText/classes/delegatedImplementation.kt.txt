@@ -3,8 +3,6 @@ interface IBase {
   abstract fun bar(): Int 
   abstract fun String.qux() 
 
-
-
 }
 
 object BaseImpl : IBase {
@@ -24,9 +22,6 @@ object BaseImpl : IBase {
   override fun String.qux() {
   }
 
-
-
-
 }
 
 interface IOther {
@@ -43,9 +38,6 @@ interface IOther {
   abstract var Byte.z2: Int
     abstract get
     abstract set
-
-
-
 
 }
 
@@ -79,11 +71,7 @@ fun otherImpl(x0: String, y0: Int): IOther {
         override set(value: Int) {
         }
 
-
-
-
     }
-
 
     <no name provided>()
   }
@@ -108,9 +96,6 @@ class Test1 : IBase {
   override fun String.qux() {
     (#$$delegate_0, <this>).qux()
   }
-
-
-
 
 }
 
@@ -160,9 +145,6 @@ class Test2 : IBase, IOther {
     override set(<set-?>: Int) {
       #$$delegate_1.<set-y>(<set-?> = <set-?>)
     }
-
-
-
 
 }
 
