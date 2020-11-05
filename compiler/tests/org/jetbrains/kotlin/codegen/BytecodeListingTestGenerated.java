@@ -738,6 +738,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/deprecated/deprecatedEnumEntryFields.kt");
         }
 
+        @TestMetadata("deprecatedInMultifileClass.kt")
+        public void testDeprecatedInMultifileClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/deprecated/deprecatedInMultifileClass.kt");
+        }
+
         @TestMetadata("deprecatedLateinitVar.kt")
         public void testDeprecatedLateinitVar() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/deprecated/deprecatedLateinitVar.kt");
