@@ -13,11 +13,8 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.idea.search.getKotlinFqName
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import java.util.concurrent.ConcurrentHashMap
 
@@ -97,7 +94,7 @@ internal class FileStructure(
                 FirResolvePhase.IMPORTS,
                 checkPCE = true
             )
-            FileWithoutDeclarationsFileStructureElement(
+            RootStructureElement(
                 firFile,
                 container,
             )

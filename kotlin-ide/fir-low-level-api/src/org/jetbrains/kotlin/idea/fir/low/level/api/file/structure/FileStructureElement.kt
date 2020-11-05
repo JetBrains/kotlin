@@ -64,7 +64,7 @@ internal sealed class ReanalyzableStructureElement<KT : KtDeclaration> : FileStr
     }
 }
 
-internal class IncrementallyReanalyzableFunction(
+internal class ReanalyzableFunctionStructureElement(
     override val firFile: FirFile,
     override val psi: KtNamedFunction,
     override val firSymbol: FirFunctionSymbol<*>,
@@ -90,7 +90,7 @@ internal class IncrementallyReanalyzableFunction(
         cache: ModuleFileCache,
         firLazyDeclarationResolver: FirLazyDeclarationResolver,
         firIdeProvider: FirIdeProvider,
-    ): IncrementallyReanalyzableFunction {
+    ): ReanalyzableFunctionStructureElement {
         val newFunction = firIdeProvider.buildFunctionWithBody(newKtDeclaration) as FirSimpleFunction
         val originalFunction = firSymbol.fir as FirSimpleFunction
 
@@ -108,7 +108,7 @@ internal class IncrementallyReanalyzableFunction(
                 reresolveFile = true,
             )
             return cache.firFileLockProvider.withReadLock(firFile) {
-                IncrementallyReanalyzableFunction(
+                ReanalyzableFunctionStructureElement(
                     firFile,
                     newKtDeclaration,
                     newFunction.symbol,
@@ -124,7 +124,7 @@ internal class IncrementallyReanalyzableFunction(
     }
 }
 
-internal class NonLocalDeclarationFileStructureElement(
+internal class NonReanalyzableDeclarationStructureElement(
     override val firFile: FirFile,
     fir: FirDeclaration,
     override val psi: KtDeclaration,
@@ -172,7 +172,7 @@ internal class NonLocalDeclarationFileStructureElement(
 }
 
 
-internal data class FileWithoutDeclarationsFileStructureElement(
+internal data class RootStructureElement(
     override val firFile: FirFile,
     override val psi: KtFile,
 ) : FileStructureElement() {

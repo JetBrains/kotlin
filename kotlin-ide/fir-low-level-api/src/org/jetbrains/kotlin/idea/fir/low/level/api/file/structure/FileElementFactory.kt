@@ -21,14 +21,14 @@ internal object FileElementFactory {
         firFile: FirFile,
     ): FileStructureElement = when {
         ktDeclaration is KtNamedFunction && ktDeclaration.name != null && ktDeclaration.hasExplicitTypeOrUnit ->
-            IncrementallyReanalyzableFunction(
+            ReanalyzableFunctionStructureElement(
                 firFile,
                 ktDeclaration,
                 (firDeclaration as FirSimpleFunction).symbol,
                 ktDeclaration.modificationStamp
             )
 
-        else -> NonLocalDeclarationFileStructureElement(
+        else -> NonReanalyzableDeclarationStructureElement(
             firFile,
             firDeclaration,
             ktDeclaration,
@@ -45,6 +45,6 @@ internal object FileElementFactory {
         else -> false
     }
 
-    val KtNamedFunction.hasExplicitTypeOrUnit
+    private val KtNamedFunction.hasExplicitTypeOrUnit
         get() = hasBlockBody() || typeReference != null
 }
