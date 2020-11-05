@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -360,7 +357,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     data
      */
     private fun printModifiersWithNoIndent(
-        visibility: Visibility,
+        visibility: DescriptorVisibility,
         isExpect: Boolean,
         modality: Modality?,
         isExternal: Boolean,
@@ -412,9 +409,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p(isOperator, "operator")
     }
 
-    private fun printVisibility(visibility: Visibility) {
+    private fun printVisibility(visibility: DescriptorVisibility) {
         // TODO don't print visibility if it's not changed in override?
-        p(visibility, Visibilities.DEFAULT_VISIBILITY) { name }
+        p(visibility, DescriptorVisibilities.DEFAULT_VISIBILITY) { name }
     }
 
     private fun printParameterModifiersWithNoIndent(
@@ -970,7 +967,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printWithNoIndent(expression.symbol.owner.name.asString())
     }
 
-    override fun visitSetVariable(expression: IrSetVariable) {
+    override fun visitSetValue(expression: IrSetValue) {
         p.printWithNoIndent(expression.symbol.owner.name.asString() + " = ")
         expression.value.acceptVoid(this)
     }
