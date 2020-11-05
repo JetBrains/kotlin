@@ -25,9 +25,7 @@ dependencies {
     testCompileOnly(intellijDep())
     testRuntime(intellijDep())
 
-    Platform[192].orHigher {
-        compile(intellijPluginDep("java"))
-    }
+    compile(intellijPluginDep("java"))
 }
 
 sourceSets {

@@ -17,10 +17,8 @@ dependencies {
         includeJars("extensions", "idea_rt", "util", "asm-all", "platform-util-ex", rootProject = rootProject)
     }
 
-    Platform[192].orHigher {
-        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
-        testRuntimeOnly(intellijPluginDep("java"))
-    }
+    testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
+    testRuntimeOnly(intellijPluginDep("java"))
 
     testRuntimeOnly(intellijDep())
 

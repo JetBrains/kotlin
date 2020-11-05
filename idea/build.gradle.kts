@@ -95,17 +95,14 @@ dependencies {
     compileOnly(project(":kotlin-daemon-client"))
 
     compileOnly(intellijDep())
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-        testCompileOnly(intellijPluginDep("java"))
-        testRuntime(intellijPluginDep("java"))
-    }
 
-    Platform[193].orHigher {
-        implementation(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
-        Ide.IJ {
-            implementation(intellijPluginDep("stats-collector"))
-        }
+    compileOnly(intellijPluginDep("java"))
+    testCompileOnly(intellijPluginDep("java"))
+    testRuntime(intellijPluginDep("java"))
+
+    implementation(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
+    Ide.IJ {
+        implementation(intellijPluginDep("stats-collector"))
     }
 
     compileOnly(commonDep("org.jetbrains", "markdown"))

@@ -22,9 +22,6 @@ dependencies {
     testRuntimeOnly(project(":nj2k:nj2k-services"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":idea:kotlin-gradle-tooling"))
-    Platform[193].orLower {
-        testRuntimeOnly(project(":idea:idea-gradle-tooling-api"))
-    }
     testRuntimeOnly(project(":kotlin-gradle-statistics"))
 
     testImplementation(intellijPluginDep("gradle"))
@@ -40,22 +37,14 @@ dependencies {
     testImplementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.11.+")
     testImplementation("khttp:khttp:1.0.0")
 
+    testCompileOnly(intellijPluginDep("java"))
+    testRuntimeOnly(intellijPluginDep("java"))
 
-    Platform[192].orHigher {
-        testCompileOnly(intellijPluginDep("java"))
-        testRuntimeOnly(intellijPluginDep("java"))
-    }
-
-    Platform[193].orHigher {
-        testImplementation(intellijPluginDep("gradle-java"))
-        testRuntimeOnly(intellijPluginDep("gradle-java"))
-    }
+    testImplementation(intellijPluginDep("gradle-java"))
+    testRuntimeOnly(intellijPluginDep("gradle-java"))
 
     testCompileOnly(intellijDep())
     testCompileOnly(project(":nj2k"))
-    Platform[193].orLower {
-        testCompileOnly(project(":idea:idea-gradle-tooling-api"))
-    }
     testCompileOnly(intellijDep()) { includeJars("slf4j-api-1.7.25") }
 }
 

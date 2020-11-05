@@ -88,11 +88,7 @@ the Kotlin IntelliJ IDEA plugin:
  - Path: plugins/lint/lint-idea
       - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
       - Origin: Copyright (C) 2011-15 The Android Open Source Project
-      
- - Path: idea/idea-gradle-tooling-api/src/org/gradle/tooling/model/kotlin/dsl
-       - License: Apache 2 ([license/third_party/gradle_license.txt][gradle])
-       - Origin: Gradle, Copyright 2002-2017 Gradle, Inc.
-       
+          
  - Path: wasm/ir/src/org/jetbrains/kotlin/wasm/ir/convertors
       - License: MIT ([license/third_party/asmble_license.txt][asmble])
       - Origin: Copyright (C) 2018 Chad Retz
@@ -225,7 +221,6 @@ any distributions of the compiler, libraries or plugin:
 
 [aosp]: third_party/aosp_license.txt
 [asm]: third_party/asm_license.txt
-[asmble]: third_party/asmble_license.txt
 [boost]: third_party/boost_LICENSE.txt
 [closure-compiler]: third_party/closure-compiler_LICENSE.txt
 [dagger]: third_party/testdata/dagger_license.txt
