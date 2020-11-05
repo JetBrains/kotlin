@@ -49,9 +49,6 @@ object CommonConfigurationKeys {
     val EXPECT_ACTUAL_LINKER = CompilerConfigurationKey.create<Boolean>("Experimental expext/actual linker")
 
     @JvmField
-    val DESERIALIZE_FAKE_OVERRIDES = CompilerConfigurationKey.create<Boolean>("Deserialize fake overrides")
-
-    @JvmField
     val USE_FIR_EXTENDED_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir extended checkers")
 }
 

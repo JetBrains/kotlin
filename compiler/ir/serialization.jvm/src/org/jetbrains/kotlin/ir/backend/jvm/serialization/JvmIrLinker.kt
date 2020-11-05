@@ -41,9 +41,8 @@ class JvmIrLinker(
     override val functionalInterfaceFactory: IrAbstractFunctionFactory,
     override val translationPluginContext: TranslationPluginContext?,
     private val stubGenerator: DeclarationStubGenerator,
-    private val manglerDesc: JvmManglerDesc,
-    deserializeFakeOverrides: Boolean = FakeOverrideControl.deserializeFakeOverrides
-) : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, emptyList(), deserializeFakeOverrides) {
+    private val manglerDesc: JvmManglerDesc
+) : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, emptyList()) {
 
     override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, IdSignatureSerializer(JvmManglerIr), builtIns)
 

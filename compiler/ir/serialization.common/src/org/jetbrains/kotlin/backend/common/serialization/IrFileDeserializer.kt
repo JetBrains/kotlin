@@ -114,7 +114,6 @@ abstract class IrFileDeserializer(
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     protected var deserializeBodies: Boolean,
-    private val deserializeFakeOverrides: Boolean,
     private val fakeOverrideBuilder: FakeOverrideBuilder,
     private val allowErrorNodes: Boolean
 ) {
@@ -1468,7 +1467,6 @@ abstract class IrFileDeserializer(
     // Depending on deserialization strategy we either deserialize public api fake overrides
     // or reconstruct them after IR linker completes.
     private fun isSkippableFakeOverride(proto: ProtoDeclaration, parent: IrClass): Boolean {
-        if (deserializeFakeOverrides) return false
         if (!platformFakeOverrideClassFilter.needToConstructFakeOverrides(parent)) return false
 
         val symbol = when (proto.declaratorCase!!) {
