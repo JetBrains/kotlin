@@ -1170,8 +1170,10 @@ abstract class IrFileDeserializer(
      *
      * For more information see `anonymousClassLeak.kt` test and issue KT-40216
      */
-    private fun IrType.checkObjectLeak(isPrivate: Boolean): Boolean {
-        return isPrivate && this is IrSimpleType && classifier.let { !it.isPublicApi && it !is IrTypeParameterSymbol }
+    private fun IrType.checkObjectLeak(): Boolean {
+        return if (this is IrSimpleType) {
+            classifier.let { !it.isPublicApi && it !is IrTypeParameterSymbol } || arguments.any { it.typeOrNull?.checkObjectLeak() == true }
+        } else false
     }
 
     private fun <T : IrFunction> T.withBodyGuard(block: T.() -> Unit) {
@@ -1180,7 +1182,7 @@ abstract class IrFileDeserializer(
         fun checkInlineBody(): Boolean = deserializeInlineFunctions && this is IrSimpleFunction && isInline
 
         try {
-            deserializeBodies = oldBodiesPolicy || checkInlineBody() || returnType.checkObjectLeak(!symbol.isPublicApi)
+            deserializeBodies = oldBodiesPolicy || checkInlineBody() || returnType.checkObjectLeak()
             block()
         } finally {
             deserializeBodies = oldBodiesPolicy
@@ -1188,11 +1190,11 @@ abstract class IrFileDeserializer(
     }
 
 
-    private fun IrField.withInitializerGuard(isPrivateProperty: Boolean, f: IrField.() -> Unit) {
+    private fun IrField.withInitializerGuard(f: IrField.() -> Unit) {
         val oldBodiesPolicy = deserializeBodies
 
         try {
-            deserializeBodies = oldBodiesPolicy || type.checkObjectLeak(isPrivateProperty)
+            deserializeBodies = oldBodiesPolicy || type.checkObjectLeak()
             f()
         } finally {
             deserializeBodies = oldBodiesPolicy
@@ -1319,7 +1321,7 @@ abstract class IrFileDeserializer(
 
 
 
-    private fun deserializeIrField(proto: ProtoField, isPrivateProperty: Boolean): IrField =
+    private fun deserializeIrField(proto: ProtoField): IrField =
         withDeserializedIrDeclarationBase(proto.base) { symbol, uniqId, startOffset, endOffset, origin, fcode ->
             val nameType = BinaryNameAndType.decode(proto.nameType)
             val type = deserializeIrType(nameType.typeIndex)
@@ -1337,7 +1339,7 @@ abstract class IrFileDeserializer(
                 )
             }.usingParent {
                 if (proto.hasInitializer()) {
-                    withInitializerGuard(isPrivateProperty) {
+                    withInitializerGuard {
                         initializer = irFactory.createExpressionBody(deserializeExpressionBody(proto.initializer))
                     }
                 }
@@ -1396,7 +1398,7 @@ abstract class IrFileDeserializer(
                     }
                 }
                 if (proto.hasBackingField()) {
-                    backingField = deserializeIrField(proto.backingField, !symbol.isPublicApi).also {
+                    backingField = deserializeIrField(proto.backingField).also {
                         // A property symbol and its field symbol share the same descriptor.
                         // Unfortunately symbol deserialization doesn't know anything about that.
                         // So we can end up with two wrapped property descriptors for property and its field.
@@ -1444,7 +1446,7 @@ abstract class IrFileDeserializer(
         val declaration: IrDeclaration = when (proto.declaratorCase!!) {
             IR_ANONYMOUS_INIT -> deserializeIrAnonymousInit(proto.irAnonymousInit)
             IR_CONSTRUCTOR -> deserializeIrConstructor(proto.irConstructor)
-            IR_FIELD -> deserializeIrField(proto.irField, false)
+            IR_FIELD -> deserializeIrField(proto.irField)
             IR_CLASS -> deserializeIrClass(proto.irClass)
             IR_FUNCTION -> deserializeIrFunction(proto.irFunction)
             IR_PROPERTY -> deserializeIrProperty(proto.irProperty)
