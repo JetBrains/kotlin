@@ -415,8 +415,10 @@ class Strings {
         assertPrints(string.last(), "0")
         assertPrints(string.last { it.isLetter() }, "n")
         assertFails { string.last { it > 'z' } }
+        assertPrints(string.lastOrNull { it > 'z' }, "null")
 
         val emptyString = ""
         assertFails { emptyString.last() }
+        assertPrints(emptyString.lastOrNull(), "null")
     }
 }

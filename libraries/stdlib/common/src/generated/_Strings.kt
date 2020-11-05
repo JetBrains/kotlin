@@ -167,6 +167,8 @@ public inline fun CharSequence.last(predicate: (Char) -> Boolean): Char {
 
 /**
  * Returns the last character, or `null` if the char sequence is empty.
+ *
+ * @sample samples.text.Strings.last
  */
 public fun CharSequence.lastOrNull(): Char? {
     return if (isEmpty()) null else this[length - 1]
@@ -174,6 +176,8 @@ public fun CharSequence.lastOrNull(): Char? {
 
 /**
  * Returns the last character matching the given [predicate], or `null` if no such character was found.
+ *
+ * @sample samples.text.Strings.last
  */
 public inline fun CharSequence.lastOrNull(predicate: (Char) -> Boolean): Char? {
     for (index in this.indices.reversed()) {
