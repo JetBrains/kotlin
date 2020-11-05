@@ -289,17 +289,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         ): PathAwareLambdaInvocationInfo {
             val symbol = referenceToSymbol(reference)
             return if (symbol != null) {
-                var resultMap = persistentMapOf<EdgeLabel, LambdaInvocationInfo>()
-                // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 }
-                for (label in this.keys) {
-                    val dataPerLabel = this[label]!!
-                    val existingKind = dataPerLabel[symbol] ?: EventOccurrencesRange.ZERO
-                    val kind = existingKind + range
-                    resultMap = resultMap.put(label, dataPerLabel.put(symbol, kind))
-                }
-                // after (if symbol is p1):
-                //   { |-> { p1 |-> PI1 + r }, l1 |-> { p1 |-> r, p2 |-> PI2 }
-                PathAwareLambdaInvocationInfo(resultMap)
+                addRange(this, symbol, range, ::PathAwareLambdaInvocationInfo)
             } else this
         }
     }
