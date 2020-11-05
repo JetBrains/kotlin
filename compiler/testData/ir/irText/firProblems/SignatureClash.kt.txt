@@ -59,7 +59,7 @@ data class DataClass : Derived, Delegate {
   }
 
   fun copy(delegate: Delegate = #delegate): DataClass {
-    return TODO("IrConstructorCall")
+    return DataClass(delegate = delegate)
   }
 
   override fun toString(): String {

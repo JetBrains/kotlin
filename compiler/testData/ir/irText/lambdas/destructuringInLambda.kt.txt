@@ -22,7 +22,7 @@ data class A {
   }
 
   fun copy(x: Int = #x, y: Int = #y): A {
-    return TODO("IrConstructorCall")
+    return A(x = x, y = y)
   }
 
   override fun toString(): String {

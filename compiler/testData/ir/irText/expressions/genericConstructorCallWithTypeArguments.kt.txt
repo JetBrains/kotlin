@@ -1,9 +1,12 @@
 fun testSimple(): Box<Long> {
-  return TODO("IrConstructorCall")
+  return Box<Long>(value = 2L.times(other = 3))
 }
 
 inline fun <reified T : Any?> testArray(n: Int, crossinline block: Function0<T>): Array<T> {
-  return TODO("IrConstructorCall")
+  return Array<T>(size = n, init =   local fun <anonymous>(it: Int): T {
+    return block.invoke()
+  }
+)
 }
 
 class Box<T : Any?> {

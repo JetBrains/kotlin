@@ -11,6 +11,6 @@ class A {
 }
 
 val test: A
-  field = TODO("IrConstructorCall")
+  field = A()
   get
 

@@ -37,7 +37,7 @@ inline fun <A : Any?, B : Any?> foo(a: A, b: B, x: Function2<A, B, Inner<B, A>>)
 }
 
 fun box(): String {
-  val z: Foo<String> = TODO("IrConstructorCall")
+  val z: Foo<String> = Foo<String>()
   val foo: Inner<String, String> = foo<String, String>(a = "O", b = "K", x = ::<init>)
   return foo.<get-a>().plus(other = foo.<get-b>())
 }

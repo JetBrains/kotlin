@@ -24,7 +24,7 @@ operator fun String.getValue(receiver: Any?, p: Any): String {
 
 fun box(): String {
   val testO: String
-    val testO$delegate: String = TODO("IrConstructorCall").provideDelegate(host = null, p = ::testO)
+    val testO$delegate: String = MyClass(value = "O").provideDelegate(host = null, p = ::testO)
     local get(): String {
       return testO$delegate.getValue(receiver = null, p = ::testO)
     }

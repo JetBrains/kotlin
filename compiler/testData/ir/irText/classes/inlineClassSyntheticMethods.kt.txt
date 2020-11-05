@@ -57,7 +57,7 @@ inline class IC<TT : Any?> {
 }
 
 fun box(): String {
-  val ic: IC<Int> = TODO("IrConstructorCall")
+  val ic: IC<Int> = IC<Int>(c = C<Int>(t = 42))
   when {
     EQEQ(arg0 = ic.foo(), arg1 = 42).not() -> return "FAIL"
   }

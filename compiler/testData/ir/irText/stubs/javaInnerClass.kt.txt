@@ -6,7 +6,7 @@ class Test1 : J {
   }
 
   val test: JInner
-    field = TODO("IrConstructorCall")
+    field = <this>.JInner()
     get
 
 

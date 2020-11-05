@@ -56,7 +56,7 @@ class Host {
       }
 
 
-      TODO("IrConstructorCall")
+      <no name provided>()
     }
   }
 

@@ -26,7 +26,7 @@ object Host {
   }
 
   operator fun String.provideDelegate(host: Any?, p: Any): StringDelegate {
-    return TODO("IrConstructorCall")
+    return StringDelegate(s = <this>)
   }
 
   val String.plusK: String /* by */ 

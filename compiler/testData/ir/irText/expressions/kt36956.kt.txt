@@ -22,7 +22,7 @@ class A<T : Any?> {
 }
 
 val aFloat: A<Float>
-  field = TODO("IrConstructorCall")
+  field = A<Float>(value = 0.0F)
   get
 
 val aInt: Float

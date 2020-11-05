@@ -11,7 +11,7 @@ class V8Array {
 }
 
 fun box(): String {
-  val array: V8Array = TODO("IrConstructorCall")
+  val array: V8Array = V8Array()
   val list: List<String> = toList(array = array) as List<String>
   return list.get(index = 0)
 }

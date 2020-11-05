@@ -12,7 +12,7 @@ fun box(): String {
         get
 
       fun foo(): String {
-        return TODO("IrConstructorCall").bar()
+        return <this>.Some(s = "O").bar()
       }
 
       local inner class Some : Base {
@@ -53,7 +53,7 @@ fun box(): String {
     }
 
 
-    TODO("IrConstructorCall")
+    <no name provided>()
   }
   return obj.foo()
 }

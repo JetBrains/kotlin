@@ -39,7 +39,7 @@ class OC : I {
   }
 
   protected override fun clone(): OC {
-    return TODO("IrConstructorCall")
+    return OC()
   }
 
 

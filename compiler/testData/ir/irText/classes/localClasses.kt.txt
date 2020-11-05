@@ -15,6 +15,6 @@ fun outer() {
   }
 
 
-  TODO("IrConstructorCall").foo()
+  LocalClass().foo()
 }
 

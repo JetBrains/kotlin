@@ -23,7 +23,7 @@ operator fun String.getValue(receiver: Any?, p: Any): String {
 }
 
 val testO: String /* by */ 
-  field = TODO("IrConstructorCall").provideDelegate(host = null, p = ::testO)
+  field = MyClass(value = "O").provideDelegate(host = null, p = ::testO)
   get(): String {
     return #testO$delegate.getValue(receiver = null, p = ::testO)
   }

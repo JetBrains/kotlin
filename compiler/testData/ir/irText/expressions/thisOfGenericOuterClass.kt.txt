@@ -49,7 +49,7 @@ fun Outer<Int>.test(): Inner<Int> {
     }
 
 
-    TODO("IrConstructorCall")
+    <no name provided>()
   }
 }
 

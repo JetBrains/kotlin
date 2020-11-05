@@ -40,7 +40,7 @@ val fsi: Fn<String, Int>
     }
 
 
-    TODO("IrConstructorCall")
+    <no name provided>()
   }
   get
 
@@ -63,7 +63,7 @@ val fis: Fn<Int, String>
     }
 
 
-    TODO("IrConstructorCall")
+    <no name provided>()
   }
   get
 

@@ -1,5 +1,5 @@
 fun test1() {
-  throw TODO("IrConstructorCall")
+  throw Throwable()
 }
 
 fun testImplicitCast(a: Any) {

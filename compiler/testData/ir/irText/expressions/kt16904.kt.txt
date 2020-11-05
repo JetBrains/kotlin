@@ -6,7 +6,7 @@ abstract class A {
   }
 
   val x: B
-    field = TODO("IrConstructorCall")
+    field = B()
     get
 
   var y: Int

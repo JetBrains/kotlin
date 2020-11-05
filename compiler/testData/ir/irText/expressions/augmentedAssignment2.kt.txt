@@ -26,11 +26,11 @@ operator fun A.remAssign(s: String) {
 }
 
 val p: A
-  field = TODO("IrConstructorCall")
+  field = A()
   get
 
 fun testVariable() {
-  val a: A = TODO("IrConstructorCall")
+  val a: A = A()
   a.plusAssign(s = "+=")
   a.minusAssign(s = "-=")
   a.timesAssign(s = "*=")

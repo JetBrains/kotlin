@@ -35,14 +35,14 @@ class Cell {
 }
 
 val test1: Int /* by */ 
-  field = TODO("IrConstructorCall")
+  field = Cell(value = 1)
   @A(...)
   get(): Int {
     return #test1$delegate.getValue(thisRef = null, kProp = ::test1)
   }
 
 var test2: Int /* by */ 
-  field = TODO("IrConstructorCall")
+  field = Cell(value = 2)
   @A(...)
   get(): Int {
     return #test2$delegate.getValue(thisRef = null, kProp = ::test2)

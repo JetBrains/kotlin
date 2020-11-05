@@ -14,7 +14,7 @@ data class Some<T : Any?> {
   }
 
   fun copy(value: T = #value): Some<T> {
-    return TODO("IrConstructorCall")
+    return Some<T>(value = value)
   }
 
   override fun toString(): String {

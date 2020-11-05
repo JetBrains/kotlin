@@ -11,7 +11,10 @@ fun sum(vararg args: Int): Int {
 }
 
 fun nsum(vararg args: Number): Int {
-  return sum(args = [*TODO("IrConstructorCall")])
+  return sum(args = [*IntArray(size = args.<get-size>(), init =   local fun <anonymous>(it: Int): Int {
+    return args.get(index = it).toInt()
+  }
+)])
 }
 
 fun zap(vararg b: String, k: Int = 42) {

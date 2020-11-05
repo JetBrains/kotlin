@@ -1,5 +1,8 @@
 fun testBreakFor() {
-  val xs: IntArray = TODO("IrConstructorCall")
+  val xs: IntArray = IntArray(size = 10, init =   local fun <anonymous>(i: Int): Int {
+    return i
+  }
+)
   var k: Int = 0
   { // BLOCK
     val tmp0_iterator: IntIterator = xs.iterator()
@@ -35,7 +38,10 @@ fun testBreakDoWhile() {
 }
 
 fun testContinueFor() {
-  val xs: IntArray = TODO("IrConstructorCall")
+  val xs: IntArray = IntArray(size = 10, init =   local fun <anonymous>(i: Int): Int {
+    return i
+  }
+)
   var k: Int = 0
   { // BLOCK
     val tmp0_iterator: IntIterator = xs.iterator()
@@ -76,7 +82,7 @@ fun testContinueDoWhile() {
     // }    while (less(arg0 = k, arg1 = 10))
   }
   when {
-    EQEQ(arg0 = s, arg1 = "1;2;").not() -> throw TODO("IrConstructorCall")
+    EQEQ(arg0 = s, arg1 = "1;2;").not() -> throw AssertionError(p0 = s)
   }
 }
 

@@ -1,4 +1,4 @@
 val test: @FlexibleNullability String?
-  field = TODO("IrConstructorCall").getFoo()
+  field = J().getFoo()
   get
 

@@ -22,7 +22,7 @@ data class Test<T : Any?> {
   }
 
   fun copy(x: T = #x, y: String = #y): Test<T> {
-    return TODO("IrConstructorCall")
+    return Test<T>(x = x, y = y)
   }
 
   override fun toString(): String {

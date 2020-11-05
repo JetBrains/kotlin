@@ -1,5 +1,5 @@
 fun box(): String {
-  val a: DoubleArray = TODO("IrConstructorCall")
+  val a: DoubleArray = DoubleArray(size = 5)
   val x: DoubleIterator = a.iterator()
   var i: Int = 0
   while (x.hasNext()) { // BLOCK

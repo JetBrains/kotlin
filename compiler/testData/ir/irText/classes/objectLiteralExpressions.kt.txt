@@ -20,7 +20,7 @@ val test1: Any
     }
 
 
-    TODO("IrConstructorCall")
+    <no name provided>()
   }
   get
 
@@ -43,7 +43,7 @@ val test2: IFoo
     }
 
 
-    TODO("IrConstructorCall")
+    <no name provided>()
   }
   get
 
@@ -86,7 +86,7 @@ class Outer {
       }
 
 
-      TODO("IrConstructorCall")
+      <no name provided>()
     }
   }
 
@@ -114,7 +114,7 @@ fun Outer.test4(): Inner {
     }
 
 
-    TODO("IrConstructorCall")
+    <no name provided>()
   }
 }
 

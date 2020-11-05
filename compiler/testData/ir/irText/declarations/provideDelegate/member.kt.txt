@@ -30,7 +30,7 @@ class DelegateProvider {
     get
 
   operator fun provideDelegate(thisRef: Any?, property: Any?): Delegate {
-    return TODO("IrConstructorCall")
+    return Delegate(value = <this>.<get-value>())
   }
 
 
@@ -46,7 +46,7 @@ class Host {
   }
 
   val testMember: String /* by */ 
-    field = TODO("IrConstructorCall").provideDelegate(thisRef = <this>, property = ::testMember)
+    field = DelegateProvider(value = "OK").provideDelegate(thisRef = <this>, property = ::testMember)
     get(): String {
       return #testMember$delegate.getValue(thisRef = <this>, property = ::testMember)
     }

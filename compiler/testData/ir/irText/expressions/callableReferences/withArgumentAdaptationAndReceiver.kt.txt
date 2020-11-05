@@ -25,7 +25,7 @@ class Host {
   }
 
   fun testBoundReceiverLocalVal() {
-    val h: Host = TODO("IrConstructorCall")
+    val h: Host = Host()
     use(fn = { // BLOCK
       local fun Host.withVararg(p0: Int) {
         receiver.withVararg(xs = [p0]) /*~> Unit */
@@ -37,7 +37,7 @@ class Host {
   }
 
   fun testBoundReceiverLocalVar() {
-    var h: Host = TODO("IrConstructorCall")
+    var h: Host = Host()
     use(fn = { // BLOCK
       local fun Host.withVararg(p0: Int) {
         receiver.withVararg(xs = [p0]) /*~> Unit */

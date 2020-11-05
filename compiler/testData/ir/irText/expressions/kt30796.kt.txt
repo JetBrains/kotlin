@@ -1,5 +1,5 @@
 fun <T : Any?> magic(): T {
-  throw TODO("IrConstructorCall")
+  throw Exception()
 }
 
 fun <T : Any?> test(value: T, value2: T) {

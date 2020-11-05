@@ -1,9 +1,9 @@
 fun testKotlin(): K2<String, Int> {
-  return TODO("IrConstructorCall")
+  return K1<Int>().K2<String>()
 }
 
 fun testJava(): J2<Double, Int> {
-  return TODO("IrConstructorCall")
+  return J1<@FlexibleNullability Int?, @FlexibleNullability String?>().J2<@FlexibleNullability Double?, @FlexibleNullability CharSequence?>()
 }
 
 class K1<T1 : Number> {

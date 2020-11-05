@@ -78,7 +78,7 @@ data class Test1 {
   }
 
   fun copy(stringArray: Array<String> = #stringArray, charArray: CharArray = #charArray, booleanArray: BooleanArray = #booleanArray, byteArray: ByteArray = #byteArray, shortArray: ShortArray = #shortArray, intArray: IntArray = #intArray, longArray: LongArray = #longArray, floatArray: FloatArray = #floatArray, doubleArray: DoubleArray = #doubleArray): Test1 {
-    return TODO("IrConstructorCall")
+    return Test1(stringArray = stringArray, charArray = charArray, booleanArray = booleanArray, byteArray = byteArray, shortArray = shortArray, intArray = intArray, longArray = longArray, floatArray = floatArray, doubleArray = doubleArray)
   }
 
   override fun toString(): String {
@@ -181,7 +181,7 @@ data class Test2<T : Any?> {
   }
 
   fun copy(genericArray: Array<T> = #genericArray): Test2<T> {
-    return TODO("IrConstructorCall")
+    return Test2<T>(genericArray = genericArray)
   }
 
   override fun toString(): String {
@@ -227,7 +227,7 @@ data class Test3 {
   }
 
   fun copy(anyArrayN: Array<Any>? = #anyArrayN): Test3 {
-    return TODO("IrConstructorCall")
+    return Test3(anyArrayN = anyArrayN)
   }
 
   override fun toString(): String {

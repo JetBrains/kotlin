@@ -18,7 +18,7 @@ class Host {
 }
 
 fun foo(): Host {
-  return TODO("IrConstructorCall")
+  return Host()
 }
 
 fun Host.test2() {

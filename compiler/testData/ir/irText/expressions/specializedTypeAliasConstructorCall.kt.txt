@@ -16,6 +16,6 @@ class Cell<T : Any?> {
 
 typealias IntAlias = Cell<Int>
 fun test(): Cell<Int> {
-  return TODO("IrConstructorCall")
+  return Cell<Int>(value = 42)
 }
 

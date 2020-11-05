@@ -100,7 +100,7 @@ data class P {
   }
 
   fun copy(x: Int = #x, y: Int = #y): P {
-    return TODO("IrConstructorCall")
+    return P(x = x, y = y)
   }
 
   override fun toString(): String {

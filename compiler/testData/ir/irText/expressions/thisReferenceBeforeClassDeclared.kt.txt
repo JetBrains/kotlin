@@ -13,7 +13,7 @@ fun WithCompanion.test() {
     }
 
 
-    TODO("IrConstructorCall")
+    <no name provided>()
   }
   val test2: <no name provided> = { // BLOCK
     local class <no name provided> : WithCompanion {
@@ -29,7 +29,7 @@ fun WithCompanion.test() {
     }
 
 
-    TODO("IrConstructorCall")
+    <no name provided>()
   }
 }
 

@@ -29,7 +29,7 @@ class IntCell {
 
 interface IReceiver {
   operator fun FiveTimes.iterator(): IntCell {
-    return TODO("IrConstructorCall")
+    return IntCell(value = 5)
   }
 
   operator fun IntCell.hasNext(): Boolean {

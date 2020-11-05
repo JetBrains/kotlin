@@ -10,7 +10,7 @@ class GenericClass<T : Any?> {
     get
 
   fun withNewValue(newValue: T): GenericClass<T> {
-    return TODO("IrConstructorCall")
+    return GenericClass<T>(value = newValue)
   }
 
 

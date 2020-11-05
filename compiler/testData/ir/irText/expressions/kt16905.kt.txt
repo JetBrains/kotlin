@@ -48,6 +48,6 @@ class Outer {
 
 typealias OI = Inner
 fun test(): Inner {
-  return TODO("IrConstructorCall")
+  return Outer().Inner()
 }
 

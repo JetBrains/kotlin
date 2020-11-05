@@ -14,7 +14,7 @@ data class TestData {
   }
 
   fun copy(nn: Nothing? = #nn): TestData {
-    return TODO("IrConstructorCall")
+    return TestData(nn = nn)
   }
 
   override fun toString(): String {

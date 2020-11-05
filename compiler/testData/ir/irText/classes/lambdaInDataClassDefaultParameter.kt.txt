@@ -17,7 +17,7 @@ data class A {
   }
 
   fun copy(runA: @ExtensionFunctionType Function2<A, String, Unit> = #runA): A {
-    return TODO("IrConstructorCall")
+    return A(runA = runA)
   }
 
   override fun toString(): String {
@@ -62,7 +62,7 @@ data class B {
     }
 
 
-    TODO("IrConstructorCall")
+    <no name provided>()
   }) /* primary */ {
     TODO("IrDelegatingConstructorCall")
         /* InstanceInitializerCall */
@@ -78,7 +78,7 @@ data class B {
   }
 
   fun copy(x: Any = #x): B {
-    return TODO("IrConstructorCall")
+    return B(x = x)
   }
 
   override fun toString(): String {

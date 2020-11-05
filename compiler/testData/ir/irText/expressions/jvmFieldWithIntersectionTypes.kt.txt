@@ -65,16 +65,16 @@ class DerivedThroughMid2 : Mid, IFoo {
 }
 
 fun test(b: Boolean) {
-  val d1: Derived1 = TODO("IrConstructorCall")
-  val d2: Derived2 = TODO("IrConstructorCall")
+  val d1: Derived1 = Derived1()
+  val d2: Derived2 = Derived2()
   val k: Any = when {
     b -> d1
     true -> d2
   }
   #f = 42
   #f /*~> Unit */
-  val md1: DerivedThroughMid1 = TODO("IrConstructorCall")
-  val md2: DerivedThroughMid2 = TODO("IrConstructorCall")
+  val md1: DerivedThroughMid1 = DerivedThroughMid1()
+  val md2: DerivedThroughMid2 = DerivedThroughMid2()
   val mk: Any = when {
     b -> md1
     true -> md2

@@ -30,7 +30,7 @@ data class Test1 {
   }
 
   fun copy(x: Int = #x, y: String = #y, z: Any = #z): Test1 {
-    return TODO("IrConstructorCall")
+    return Test1(x = x, y = y, z = z)
   }
 
   override fun toString(): String {
@@ -91,7 +91,7 @@ data class Test2 {
   }
 
   fun copy(x: Any? = #x): Test2 {
-    return TODO("IrConstructorCall")
+    return Test2(x = x)
   }
 
   override fun toString(): String {
@@ -164,7 +164,7 @@ data class Test3 {
   }
 
   fun copy(d: Double = #d, dn: Double? = #dn, f: Float = #f, df: Float? = #df): Test3 {
-    return TODO("IrConstructorCall")
+    return Test3(d = d, dn = dn, f = f, df = df)
   }
 
   override fun toString(): String {

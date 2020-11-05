@@ -85,7 +85,7 @@ object Z {
       }
 
 
-      TODO("IrConstructorCall")
+      <no name provided>()
     }
     get
 

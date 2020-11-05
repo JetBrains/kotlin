@@ -85,7 +85,7 @@ fun otherImpl(x0: String, y0: Int): IOther {
     }
 
 
-    TODO("IrConstructorCall")
+    <no name provided>()
   }
 }
 

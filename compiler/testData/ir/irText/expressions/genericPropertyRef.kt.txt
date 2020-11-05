@@ -21,13 +21,13 @@ class Value<T : Any?> {
 }
 
 val <T : Any?> Value<T>.additionalText: Int /* by */ 
-  field = TODO("IrConstructorCall")
+  field = DVal(kmember = ::text)
   get(): Int {
     return #additionalText$delegate.getValue(t = <this>, p = ::additionalText)
   }
 
 val <T : Any?> Value<T>.additionalValue: Int /* by */ 
-  field = TODO("IrConstructorCall")
+  field = DVal(kmember = ::value)
   get(): Int {
     return #additionalValue$delegate.getValue(t = <this>, p = ::additionalValue)
   }
