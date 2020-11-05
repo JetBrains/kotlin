@@ -296,8 +296,10 @@ private val IrDeclaration.correspondingProperty: IrProperty?
     }
 
 private fun IrDeclaration.propertyWithPersistentSafe(transform: IrDeclaration.() -> IrProperty?): IrProperty? =
-    if (((this as? PersistentIrElementBase<*>)?.createdOn ?: 0) <= stageController.currentStage) {
-        transform()
+    if (this is PersistentIrElementBase<*>) {
+        if (this.createdOn <= this.factory.stageController.currentStage) {
+            transform()
+        } else null
     } else null
 
 private fun IrDeclaration.isCompatibleDeclaration() =

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.FunctionCarrier
-import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -42,15 +41,16 @@ internal abstract class PersistentIrFunctionCommon(
     override val isOperator: Boolean,
     override val isInfix: Boolean,
     override val isExpect: Boolean,
-    override val containerSource: DeserializedContainerSource? = null
+    override val containerSource: DeserializedContainerSource? = null,
+    override val factory: PersistentIrFactory
 ) : IrSimpleFunction(),
     PersistentIrDeclarationBase<FunctionCarrier>,
     FunctionCarrier {
 
-    override var lastModified: Int = stageController.currentStage
-    override var loweredUpTo: Int = stageController.currentStage
+    override var lastModified: Int = factory.stageController.currentStage
+    override var loweredUpTo: Int = factory.stageController.currentStage
     override var values: Array<Carrier>? = null
-    override val createdOn: Int = stageController.currentStage
+    override val createdOn: Int = factory.stageController.currentStage
 
     override var parentField: IrDeclarationParent? = null
     override var originField: IrDeclarationOrigin = origin

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 
 // TODO threadlocal
 // TODO make a IrDeclarationBase field? (requires IR factory)
-var stageController: StageController = StageController()
+//var stageController: StageController = StageController()
 
 // TODO make a class
 open class StageController(open val currentStage: Int = 0) {
@@ -35,7 +35,7 @@ open class StageController(open val currentStage: Int = 0) {
     open fun canAccessDeclarationsOf(irClass: IrClass): Boolean = true
 }
 
-@Suppress("NOTHING_TO_INLINE")
-inline fun <T> withInitialIr(noinline fn: () -> T): T {
-    return stageController.withInitialIr(fn)
-}
+//@Suppress("NOTHING_TO_INLINE")
+//inline fun <T> withInitialIr(noinline fn: () -> T): T {
+//    return stageController.withInitialIr(fn)
+//}

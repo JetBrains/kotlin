@@ -72,7 +72,7 @@ abstract class AbstractBlockDecomposerLowering(
                     val lastStatement = newBody.statements.last()
                     val actualParent = if (newBody.statements.size > 1 || lastStatement !is IrReturn || lastStatement.value != expression) {
                         expression = JsIrBuilder.buildCall(initFunction.symbol, expression.type)
-                        stageController.unrestrictDeclarationListsAccess {
+                        context.irFactory.stageController.unrestrictDeclarationListsAccess {
                             (container.parent as IrDeclarationContainer).declarations += initFunction
                         }
                         initFunction

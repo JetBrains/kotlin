@@ -32,6 +32,7 @@ internal fun PersistentIrGenerator.generateConstructor() {
                 isPrimary,
                 isExpect,
                 containerSource,
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("Constructor") + " " + blockSpaced(
                 initBlock,

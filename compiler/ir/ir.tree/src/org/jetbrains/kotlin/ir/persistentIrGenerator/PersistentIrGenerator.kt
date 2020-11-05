@@ -54,8 +54,6 @@ internal object PersistentIrGenerator {
 
     val ObsoleteDescriptorBasedAPI = import("ObsoleteDescriptorBasedAPI", "org.jetbrains.kotlin.ir")
 
-    val stageController = import("stageController", "org.jetbrains.kotlin.ir.declarations")
-
     val IrType = import("IrType", "org.jetbrains.kotlin.ir.types")
 
     val IrPropertySymbol = irSymbol("IrPropertySymbol")
@@ -83,15 +81,17 @@ internal object PersistentIrGenerator {
     val isPrimary = +"override val isPrimary: Boolean"
     val containerSource = +"override val containerSource: " + import("DeserializedContainerSource", "org.jetbrains.kotlin.serialization.deserialization.descriptors") + "?"
 
+    val irFactory = +"override val factory: PersistentIrFactory"
+
     val initBlock = +"init " + block(
         +"symbol.bind(this)"
     )
 
     // Fields
-    val lastModified = +"override var lastModified: Int = " + stageController + ".currentStage"
-    val loweredUpTo = +"override var loweredUpTo: Int = " + stageController + ".currentStage"
+    val lastModified = +"override var lastModified: Int = factory.stageController.currentStage"
+    val loweredUpTo = +"override var loweredUpTo: Int = factory.stageController.currentStage"
     val values = +"override var values: Array<" + Carrier + ">? = null"
-    val createdOn = +"override val createdOn: Int = " + stageController + ".currentStage"
+    val createdOn = +"override val createdOn: Int = factory.stageController.currentStage"
 
     val parentField = +"override var parentField: " + IrDeclarationParent + "? = null"
     val originField = +"override var originField: " + IrDeclarationOrigin + " = origin"

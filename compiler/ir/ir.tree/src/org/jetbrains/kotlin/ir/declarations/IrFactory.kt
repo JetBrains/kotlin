@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.Variance
 
 interface IrFactory {
+    val stageController: StageController
+
     fun createAnonymousInitializer(
         startOffset: Int,
         endOffset: Int,

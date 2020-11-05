@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
-import org.jetbrains.kotlin.ir.declarations.withInitialIr
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -19,7 +18,7 @@ private class UnsafeLazyVar<T>(initializer: () -> T) : ReadWriteProperty<Any?, T
     private val value: T
         get() {
             if (!isInitialized) {
-                withInitialIr { _value = initializer!!() }
+                /*withInitialIr { */_value = initializer!!()/* }*/
                 isInitialized = true
                 initializer = null
             }

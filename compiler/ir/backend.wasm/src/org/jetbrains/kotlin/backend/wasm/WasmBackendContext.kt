@@ -37,13 +37,13 @@ class WasmBackendContext(
     @Suppress("UNUSED_PARAMETER") symbolTable: SymbolTable,
     @Suppress("UNUSED_PARAMETER") irModuleFragment: IrModuleFragment,
     val additionalExportedDeclarations: Set<FqName>,
-    override val configuration: CompilerConfiguration
+    override val configuration: CompilerConfiguration,
+    override val irFactory: IrFactory
 ) : JsCommonBackendContext {
     override val builtIns = module.builtIns
     override var inVerbosePhase: Boolean = false
     override val scriptMode = false
     override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
-    override val irFactory: IrFactory = PersistentIrFactory
 
     // Place to store declarations excluded from code generation
     private val excludedDeclarations = mutableMapOf<FqName, IrPackageFragment>()
@@ -55,7 +55,7 @@ class WasmBackendContext(
         )
     }
 
-    override val mapping = JsMapping()
+    override val mapping = JsMapping(irFactory)
 
     val innerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 

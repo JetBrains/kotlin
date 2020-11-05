@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.PropertyCarrier
-import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -34,15 +33,16 @@ internal abstract class PersistentIrPropertyCommon(
     override val isDelegated: Boolean,
     override val isExternal: Boolean,
     override val isExpect: Boolean,
-    override val containerSource: DeserializedContainerSource?
+    override val containerSource: DeserializedContainerSource?,
+    override val factory: PersistentIrFactory
 ) : IrProperty(),
     PersistentIrDeclarationBase<PropertyCarrier>,
     PropertyCarrier {
 
-    override var lastModified: Int = stageController.currentStage
-    override var loweredUpTo: Int = stageController.currentStage
+    override var lastModified: Int = factory.stageController.currentStage
+    override var loweredUpTo: Int = factory.stageController.currentStage
     override var values: Array<Carrier>? = null
-    override val createdOn: Int = stageController.currentStage
+    override val createdOn: Int = factory.stageController.currentStage
 
     override var parentField: IrDeclarationParent? = null
     override var originField: IrDeclarationOrigin = origin

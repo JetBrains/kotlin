@@ -15,7 +15,8 @@ internal fun PersistentIrGenerator.generateErrorDeclaration() {
             arrayOf(
                 startOffset,
                 endOffset,
-                +"private val _descriptor: " + DeclarationDescriptor + "?"
+                +"private val _descriptor: " + DeclarationDescriptor + "?",
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("ErrorDeclaration") + " " + block(
                 lines(

@@ -35,9 +35,10 @@ internal class PersistentIrProperty(
     isExpect: Boolean = false,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     containerSource: DeserializedContainerSource?,
+    factory: PersistentIrFactory,
 ) : PersistentIrPropertyCommon(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
-    containerSource,
+    containerSource, factory
 ) {
     init {
         symbol.bind(this)
@@ -61,10 +62,11 @@ internal class PersistentIrFakeOverrideProperty(
     isDelegated: Boolean,
     isExternal: Boolean,
     isExpect: Boolean,
+    factory: PersistentIrFactory,
 ) : PersistentIrPropertyCommon(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit,
     isDelegated, isExternal, isExpect,
-    containerSource = null,
+    containerSource = null, factory
 ), IrFakeOverrideProperty {
     override val isFakeOverride: Boolean
         get() = true
