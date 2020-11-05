@@ -42,4 +42,9 @@ internal class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessio
         analysisSessionByModuleInfoCache.value.getOrPut(firModuleResolveState.moduleInfo) {
             KtFirAnalysisSession.createAnalysisSessionByResolveState(firModuleResolveState)
         }
+
+    @TestOnly
+    fun clearCaches() {
+        analysisSessionByModuleInfoCache.value.clear()
+    }
 }

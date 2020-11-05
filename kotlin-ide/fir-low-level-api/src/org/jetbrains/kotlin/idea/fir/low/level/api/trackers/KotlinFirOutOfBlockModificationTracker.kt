@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.trackers
 import com.intellij.ProjectTopics
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootEvent
@@ -18,6 +19,7 @@ import com.intellij.pom.event.PomModelEvent
 import com.intellij.pom.event.PomModelListener
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.pom.tree.events.TreeChangeEvent
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingInBodyDeclarationWith
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileElementFactory
@@ -50,6 +52,11 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
     private fun increaseModificationCountForAllModules() {
         projectGlobalOutOfBlockInKotlinFilesModificationCount++
         moduleModificationsState.increaseModificationCountForAllModules()
+    }
+
+    @TestOnly
+    fun incrementModificationsCount() {
+        increaseModificationCountForAllModules()
     }
 
     private inner class Listener : PomModelListener {
