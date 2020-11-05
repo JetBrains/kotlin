@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
@@ -73,9 +75,34 @@ internal class IrBodyDeserializer(
     val logger: LoggingContext,
     val builtIns: IrBuiltIns,
     val allowErrorNodes: Boolean,
+    val deserializeBodies: Boolean,
     val irFactory: IrFactory,
     val fileDeserializer: IrFileDeserializer,
+    val declarationDeserializer: IrDeclarationDeserializer,
 ) {
+
+    fun deserializeExpressionBody(index: Int): IrExpression {
+        return if (deserializeBodies) {
+            val bodyData = fileDeserializer.loadExpressionBodyProto(index)
+            deserializeExpression(bodyData)
+        } else {
+            val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
+            IrErrorExpressionImpl(-1, -1, errorType, "Expression body is not deserialized yet")
+        }
+    }
+
+    fun deserializeStatementBody(index: Int): IrElement {
+        return if (deserializeBodies) {
+            val bodyData = fileDeserializer.loadStatementBodyProto(index)
+            deserializeStatement(bodyData)
+        } else {
+            val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
+            irFactory.createBlockBody(
+                -1, -1, listOf(IrErrorExpressionImpl(-1, -1, errorType, "Statement body is not deserialized yet"))
+            )
+        }
+    }
+
 
     private val fileLoops = mutableMapOf<Int, IrLoop>()
 
@@ -106,7 +133,7 @@ internal class IrBodyDeserializer(
     }
 
     fun deserializeCatch(proto: ProtoCatch, start: Int, end: Int): IrCatch {
-        val catchParameter = fileDeserializer.deserializeIrVariable(proto.catchParameter)
+        val catchParameter = declarationDeserializer.deserializeIrVariable(proto.catchParameter)
         val result = deserializeExpression(proto.result)
 
         return IrCatchImpl(start, end, catchParameter, result)
@@ -132,7 +159,7 @@ internal class IrBodyDeserializer(
             StatementCase.CATCH //proto.hasCatch()
             -> deserializeCatch(proto.catch, start, end)
             StatementCase.DECLARATION // proto.hasDeclaration()
-            -> fileDeserializer.deserializeDeclaration(proto.declaration)
+            -> declarationDeserializer.deserializeDeclaration(proto.declaration)
             StatementCase.EXPRESSION // proto.hasExpression()
             -> deserializeExpression(proto.expression)
             StatementCase.SYNTHETIC_BODY // proto.hasSyntheticBody()
@@ -168,7 +195,7 @@ internal class IrBodyDeserializer(
         }
 
         proto.typeArgumentList.mapIndexed { i, arg ->
-            access.putTypeArgument(i, fileDeserializer.deserializeIrType(arg))
+            access.putTypeArgument(i, declarationDeserializer.deserializeIrType(arg))
         }
 
         if (proto.hasDispatchReceiver()) {
@@ -186,7 +213,7 @@ internal class IrBodyDeserializer(
         type: IrType
     ): IrClassReference {
         val symbol = fileDeserializer.deserializeIrSymbolAndRemap(proto.classSymbol) as IrClassifierSymbol
-        val classType = fileDeserializer.deserializeIrType(proto.classType)
+        val classType = declarationDeserializer.deserializeIrType(proto.classType)
         /** TODO: [createClassifierSymbolForClassReference] is internal function */
         return IrClassReferenceImpl(start, end, type, symbol, classType)
     }
@@ -282,7 +309,7 @@ internal class IrBodyDeserializer(
     ) =
         IrFunctionExpressionImpl(
             start, end, type,
-            fileDeserializer.deserializeIrFunction(functionExpression.function),
+            declarationDeserializer.deserializeIrFunction(functionExpression.function),
             deserializeIrStatementOrigin(functionExpression.originName)
         )
 
@@ -523,13 +550,13 @@ internal class IrBodyDeserializer(
 
     private fun deserializeTypeOp(proto: ProtoTypeOp, start: Int, end: Int, type: IrType): IrTypeOperatorCall {
         val operator = deserializeTypeOperator(proto.operator)
-        val operand = fileDeserializer.deserializeIrType(proto.operand)//.brokenIr
+        val operand = declarationDeserializer.deserializeIrType(proto.operand)//.brokenIr
         val argument = deserializeExpression(proto.argument)
         return IrTypeOperatorCallImpl(start, end, type, operator, operand, argument)
     }
 
     private fun deserializeVararg(proto: ProtoVararg, start: Int, end: Int, type: IrType): IrVararg {
-        val elementType = fileDeserializer.deserializeIrType(proto.elementType)
+        val elementType = declarationDeserializer.deserializeIrType(proto.elementType)
 
         val elements = mutableListOf<IrVarargElement>()
         proto.elementList.forEach {
@@ -758,7 +785,7 @@ internal class IrBodyDeserializer(
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
         val start = coordinates.startOffset
         val end = coordinates.endOffset
-        val type = fileDeserializer.deserializeIrType(proto.type)
+        val type = declarationDeserializer.deserializeIrType(proto.type)
         val operation = proto.operation
         val expression = deserializeOperation(operation, start, end, type)
 
