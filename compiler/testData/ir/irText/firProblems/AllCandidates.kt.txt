@@ -1,6 +1,6 @@
 class ResolvedCall<C : Any?> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -12,7 +12,7 @@ class ResolvedCall<C : Any?> {
 
 class MyCandidate {
   constructor(resolvedCall: ResolvedCall<*>) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -16,7 +16,7 @@ interface IBar {
 
 abstract class CFoo<T : Any?> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -31,7 +31,7 @@ abstract class CFoo<T : Any?> {
 
 class Test1 : CFoo<String>, IFooStr, IBar {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*CFoo*/<String>()
         /* InstanceInitializerCall */
 
   }

@@ -10,7 +10,7 @@ enum class Test0 : Enum<Test0> {
     get
 
   ZERO init = TODO("IrEnumConstructorCall")  private constructor() {
-    TODO("IrDelegatingConstructorCall")
+    this/*Test0*/(x = 0)
   }
 
 
@@ -38,7 +38,7 @@ enum class Test1 : Enum<Test1> {
     get
 
   ZERO init = TODO("IrEnumConstructorCall")  ONE init = TODO("IrEnumConstructorCall")  private constructor() {
-    TODO("IrDelegatingConstructorCall")
+    this/*Test1*/(x = 0)
   }
 
 
@@ -66,7 +66,7 @@ abstract enum class Test2 : Enum<Test2> {
     get
 
   ZERO init = TODO("IrEnumConstructorCall")  ONE init = TODO("IrEnumConstructorCall")  private constructor() {
-    TODO("IrDelegatingConstructorCall")
+    this/*Test2*/(x = 0)
   }
 
   abstract fun foo() 

@@ -27,7 +27,7 @@ annotation class State : Annotation {
 @State(name = "1", storages = [Storage(value = "HELLO")])
 class Test {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

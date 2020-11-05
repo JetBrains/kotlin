@@ -9,7 +9,7 @@ interface IBase {
 
 object BaseImpl : IBase {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -53,7 +53,7 @@ fun otherImpl(x0: String, y0: Int): IOther {
   return { // BLOCK
     local class <no name provided> : IOther {
       constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        super/*Any*/()
                 /* InstanceInitializerCall */
 
       }
@@ -91,7 +91,7 @@ fun otherImpl(x0: String, y0: Int): IOther {
 
 class Test1 : IBase {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -116,7 +116,7 @@ class Test1 : IBase {
 
 class Test2 : IBase, IOther {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -3,7 +3,7 @@ fun use(f: @ExtensionFunctionType Function2<C, Int, Unit>) {
 
 class C {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

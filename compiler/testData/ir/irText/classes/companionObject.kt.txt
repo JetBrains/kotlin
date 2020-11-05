@@ -1,13 +1,13 @@
 class Test1 {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   companion object Companion {
     private constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }
@@ -24,14 +24,14 @@ class Test1 {
 
 class Test2 {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   companion object Named {
     private constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }

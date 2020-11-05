@@ -1,7 +1,7 @@
 typealias Some = Function1<Any, String?>
 object Factory {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -41,7 +41,7 @@ interface Derived : Delegate {
 
 data class DataClass : Derived, Delegate {
   constructor(delegate: Delegate) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

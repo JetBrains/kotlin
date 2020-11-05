@@ -11,7 +11,7 @@ annotation class A : Annotation {
 
 class Cell {
   constructor(value: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -1,6 +1,6 @@
 class TestInitVarFromParameter {
   constructor(x: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -17,7 +17,7 @@ class TestInitVarFromParameter {
 
 class TestInitVarInClass {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -34,7 +34,7 @@ class TestInitVarInClass {
 
 class TestInitVarInInitBlock {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -54,7 +54,7 @@ class TestInitVarInInitBlock {
 
 class TestInitVarWithCustomSetter {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -83,7 +83,7 @@ class TestInitVarWithCustomSetterWithExplicitCtor {
   }
 
   constructor() {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -101,7 +101,7 @@ class TestInitVarWithCustomSetterInCtor {
     }
 
   constructor() {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
     <this>.<set-x>(value = 42)

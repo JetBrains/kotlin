@@ -1,13 +1,13 @@
 class Outer {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   open inner class Inner {
     constructor(x: Int) /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }
@@ -28,7 +28,7 @@ class Outer {
 
 class Host {
   constructor(y: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -41,7 +41,7 @@ class Host {
     return { // BLOCK
       local class <no name provided> : Inner {
         constructor() /* primary */ {
-          TODO("IrDelegatingConstructorCall")
+          <this>.super/*Inner*/(x = 42)
                     /* InstanceInitializerCall */
 
         }

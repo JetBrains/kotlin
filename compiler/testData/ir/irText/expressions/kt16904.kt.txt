@@ -1,6 +1,6 @@
 abstract class A {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -21,7 +21,7 @@ abstract class A {
 
 class B {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -36,7 +36,7 @@ class B {
 
 class Test1 : A {
   constructor() {
-    TODO("IrDelegatingConstructorCall")
+    super/*A*/()
         /* InstanceInitializerCall */
 
     { // BLOCK
@@ -56,7 +56,7 @@ class Test1 : A {
 
 class Test2 : J {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*J*/()
         /* InstanceInitializerCall */
 
   }

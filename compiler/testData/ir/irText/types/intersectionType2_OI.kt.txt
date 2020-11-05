@@ -12,7 +12,7 @@ interface Foo {
 
 open class B : Foo, A<B> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -24,7 +24,7 @@ open class B : Foo, A<B> {
 
 open class C : Foo, A<C> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

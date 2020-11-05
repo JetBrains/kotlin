@@ -3,7 +3,7 @@ data class A {
     return Unit
   }
 ) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -51,7 +51,7 @@ data class B {
   constructor(x: Any = { // BLOCK
     local class <no name provided> {
       constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        super/*Any*/()
                 /* InstanceInitializerCall */
 
       }
@@ -64,7 +64,7 @@ data class B {
 
     <no name provided>()
   }) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -1,6 +1,6 @@
 class MyClass {
   constructor(value: String) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

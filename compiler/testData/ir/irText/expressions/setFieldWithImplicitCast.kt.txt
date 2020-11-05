@@ -1,6 +1,6 @@
 class Derived : Base {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/()
         /* InstanceInitializerCall */
 
   }

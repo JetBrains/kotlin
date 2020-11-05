@@ -1,6 +1,6 @@
 class Value<T : Any?, IT : IR<T>> {
   constructor(value1: T, value2: IT) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -42,7 +42,7 @@ interface IR<R : Any?> {
 
 class CR<R : Any?> : IR<R> {
   constructor(r: R) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -62,7 +62,7 @@ class CR<R : Any?> : IR<R> {
 
 class P<P1 : Any?, P2 : Any?> {
   constructor(p1: P1, p2: P2) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -84,7 +84,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
   field = { // BLOCK
     local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, P<Any?, Any?>> {
       constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        super/*Any*/()
                 /* InstanceInitializerCall */
 
       }
@@ -101,7 +101,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
         field = { // BLOCK
           local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, Any?> {
             constructor() /* primary */ {
-              TODO("IrDelegatingConstructorCall")
+              super/*Any*/()
                             /* InstanceInitializerCall */
 
             }
@@ -134,7 +134,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
         field = { // BLOCK
           local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, Any?> {
             constructor() /* primary */ {
-              TODO("IrDelegatingConstructorCall")
+              super/*Any*/()
                             /* InstanceInitializerCall */
 
             }

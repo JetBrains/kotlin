@@ -1,6 +1,6 @@
 object Z {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -22,7 +22,7 @@ object Z {
 
   class Nested {
     constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }
@@ -60,7 +60,7 @@ object Z {
     field = { // BLOCK
       local class <no name provided> {
         constructor() /* primary */ {
-          TODO("IrDelegatingConstructorCall")
+          super/*Any*/()
                     /* InstanceInitializerCall */
 
         }

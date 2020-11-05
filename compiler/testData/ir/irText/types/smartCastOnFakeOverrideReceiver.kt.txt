@@ -1,6 +1,6 @@
 open class A {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -34,7 +34,7 @@ open class A {
 
 class B : A {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*A*/()
         /* InstanceInitializerCall */
 
   }
@@ -63,7 +63,7 @@ class B : A {
 
 open class GA<T : Any?> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -83,7 +83,7 @@ open class GA<T : Any?> {
 
 class GB<T : Any?, S : Any?> : GA<T> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*GA*/<T>()
         /* InstanceInitializerCall */
 
   }

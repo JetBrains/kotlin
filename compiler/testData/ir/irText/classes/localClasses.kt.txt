@@ -1,7 +1,7 @@
 fun outer() {
   local class LocalClass {
     constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }

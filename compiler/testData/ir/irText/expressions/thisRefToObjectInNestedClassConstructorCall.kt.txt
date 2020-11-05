@@ -1,6 +1,6 @@
 open class Base {
   constructor(x: Any) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -16,14 +16,14 @@ open class Base {
 
 object Host {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   class Derived1 : Base {
     constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Base*/(x = Host)
             /* InstanceInitializerCall */
 
     }
@@ -35,7 +35,7 @@ object Host {
 
   class Derived2 : Base {
     constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Base*/(x = Host)
             /* InstanceInitializerCall */
 
     }

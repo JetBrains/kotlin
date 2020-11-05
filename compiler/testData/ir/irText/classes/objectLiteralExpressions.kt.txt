@@ -9,7 +9,7 @@ val test1: Any
   field = { // BLOCK
     local class <no name provided> {
       constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        super/*Any*/()
                 /* InstanceInitializerCall */
 
       }
@@ -28,7 +28,7 @@ val test2: IFoo
   field = { // BLOCK
     local class <no name provided> : IFoo {
       constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        super/*Any*/()
                 /* InstanceInitializerCall */
 
       }
@@ -49,14 +49,14 @@ val test2: IFoo
 
 class Outer {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   abstract inner class Inner : IFoo {
     constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }
@@ -71,7 +71,7 @@ class Outer {
     return { // BLOCK
       local class <no name provided> : Inner {
         constructor() /* primary */ {
-          TODO("IrDelegatingConstructorCall")
+          <this>.super/*Inner*/()
                     /* InstanceInitializerCall */
 
         }
@@ -99,7 +99,7 @@ fun Outer.test4(): Inner {
   return { // BLOCK
     local class <no name provided> : Inner {
       constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        <this>.super/*Inner*/()
                 /* InstanceInitializerCall */
 
       }

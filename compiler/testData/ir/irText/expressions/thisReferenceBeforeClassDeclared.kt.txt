@@ -2,7 +2,7 @@ fun WithCompanion.test() {
   val test1: <no name provided> = { // BLOCK
     local class <no name provided> : WithCompanion {
       constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        super/*WithCompanion*/(a = Companion)
                 /* InstanceInitializerCall */
 
       }
@@ -18,7 +18,7 @@ fun WithCompanion.test() {
   val test2: <no name provided> = { // BLOCK
     local class <no name provided> : WithCompanion {
       constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        super/*WithCompanion*/(a = Companion.foo())
                 /* InstanceInitializerCall */
 
       }
@@ -35,14 +35,14 @@ fun WithCompanion.test() {
 
 open class WithCompanion {
   constructor(a: Companion) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   companion object Companion {
     private constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }

@@ -1,6 +1,6 @@
 open class Base {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -29,7 +29,7 @@ interface BaseI {
 
 class Derived : Base, BaseI {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/()
         /* InstanceInitializerCall */
 
   }

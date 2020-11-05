@@ -1,6 +1,6 @@
 class GenericInv<T : Number> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -12,7 +12,7 @@ class GenericInv<T : Number> {
 
 class GenericIn<in T : Number> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -24,7 +24,7 @@ class GenericIn<in T : Number> {
 
 class GenericOut<out T : Number> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -48,7 +48,7 @@ fun testReturnsRawGenericOut(j: JRaw): @FlexibleNullability @RawType GenericOut<
 
 class KRaw : JRaw {
   constructor(j: JRaw) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

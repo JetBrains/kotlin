@@ -1,6 +1,6 @@
 abstract class BaseFirBuilder<T : Any?> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

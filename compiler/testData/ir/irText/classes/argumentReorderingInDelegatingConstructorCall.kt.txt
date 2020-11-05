@@ -1,6 +1,6 @@
 open class Base {
   constructor(x: Int, y: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -21,7 +21,7 @@ open class Base {
 class Test1 : Base {
   constructor(xx: Int, yy: Int) /* primary */ {
     { // BLOCK
-      TODO("IrDelegatingConstructorCall")
+      super/*Base*/(x = xx, y = yy)
     }
         /* InstanceInitializerCall */
 
@@ -35,7 +35,7 @@ class Test1 : Base {
 class Test2 : Base {
   constructor(xx: Int, yy: Int) {
     { // BLOCK
-      TODO("IrDelegatingConstructorCall")
+      super/*Base*/(x = xx, y = yy)
     }
         /* InstanceInitializerCall */
 
@@ -43,7 +43,7 @@ class Test2 : Base {
 
   constructor(xxx: Int, yyy: Int, a: Any) {
     { // BLOCK
-      TODO("IrDelegatingConstructorCall")
+      this/*Test2*/(xx = xxx, yy = yyy)
     }
   }
 

@@ -9,7 +9,7 @@ var test2: Int
 
 class Host {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -30,7 +30,7 @@ class Host {
 
 class InPrimaryCtor<T : Any?> {
   constructor(testInPrimaryCtor1: T, testInPrimaryCtor2: Int = 42) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

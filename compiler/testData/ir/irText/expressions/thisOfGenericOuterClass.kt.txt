@@ -1,6 +1,6 @@
 class Outer<T : Any?> {
   constructor(x: T) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -11,7 +11,7 @@ class Outer<T : Any?> {
 
   open inner class Inner {
     constructor(y: Int) /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }
@@ -34,7 +34,7 @@ fun Outer<Int>.test(): Inner<Int> {
   return { // BLOCK
     local class <no name provided> : Inner<Int> {
       constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        <this>.super/*Inner*/(y = 42)
                 /* InstanceInitializerCall */
 
       }

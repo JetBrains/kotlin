@@ -1,6 +1,6 @@
 class MyMap<K : Any, V : Any> : AbstractMutableMap<K, V> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*AbstractMutableMap*/<K, V>()
         /* InstanceInitializerCall */
 
   }

@@ -12,14 +12,14 @@ annotation class TestAnn : Annotation {
 class TestClass {
   @TestAnn(x = 1)
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   @TestAnn(x = 2)
   constructor(x: Int) {
-    TODO("IrDelegatingConstructorCall")
+    this/*TestClass*/()
   }
 
 

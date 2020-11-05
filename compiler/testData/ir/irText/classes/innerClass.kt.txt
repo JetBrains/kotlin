@@ -1,13 +1,13 @@
 class Outer {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   open inner class TestInnerClass {
     constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }
@@ -19,7 +19,7 @@ class Outer {
 
   inner class DerivedInnerClass : TestInnerClass {
     constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      <this>.super/*TestInnerClass*/()
             /* InstanceInitializerCall */
 
     }

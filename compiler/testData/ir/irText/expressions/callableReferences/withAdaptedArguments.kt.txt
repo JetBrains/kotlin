@@ -23,7 +23,7 @@ fun fnWithVarargs(vararg xs: Int): String {
 
 object Host {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

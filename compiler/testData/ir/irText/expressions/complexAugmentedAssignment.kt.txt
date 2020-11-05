@@ -1,6 +1,6 @@
 object X1 {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -12,7 +12,7 @@ object X1 {
 
   object X2 {
     private constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }
@@ -24,7 +24,7 @@ object X1 {
 
     object X3 {
       private constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        super/*Any*/()
                 /* InstanceInitializerCall */
 
       }
@@ -93,7 +93,7 @@ fun test2() {
 
 class B {
   constructor(s: Int = 0) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -110,7 +110,7 @@ class B {
 
 object Host {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

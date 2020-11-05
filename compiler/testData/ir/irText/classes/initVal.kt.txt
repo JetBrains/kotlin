@@ -1,6 +1,6 @@
 class TestInitValFromParameter {
   constructor(x: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -16,7 +16,7 @@ class TestInitValFromParameter {
 
 class TestInitValInClass {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -32,7 +32,7 @@ class TestInitValInClass {
 
 class TestInitValInInitBlock {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -1,6 +1,6 @@
 class Cell<T : Any?> {
   constructor(value: T) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

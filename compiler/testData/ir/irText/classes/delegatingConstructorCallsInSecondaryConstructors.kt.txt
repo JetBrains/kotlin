@@ -1,6 +1,6 @@
 open class Base {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -12,19 +12,19 @@ open class Base {
 
 class Test : Base {
   constructor() {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/()
         /* InstanceInitializerCall */
 
   }
 
   constructor(xx: Int) {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/()
         /* InstanceInitializerCall */
 
   }
 
   constructor(xx: Short) {
-    TODO("IrDelegatingConstructorCall")
+    this/*Test*/()
   }
 
 

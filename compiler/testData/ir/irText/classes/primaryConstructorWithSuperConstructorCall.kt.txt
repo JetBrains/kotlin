@@ -1,6 +1,6 @@
 open class Base {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -12,7 +12,7 @@ open class Base {
 
 class TestImplicitPrimaryConstructor : Base {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/()
         /* InstanceInitializerCall */
 
   }
@@ -24,7 +24,7 @@ class TestImplicitPrimaryConstructor : Base {
 
 class TestExplicitPrimaryConstructor : Base {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/()
         /* InstanceInitializerCall */
 
   }
@@ -36,7 +36,7 @@ class TestExplicitPrimaryConstructor : Base {
 
 class TestWithDelegatingConstructor : Base {
   constructor(x: Int, y: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/()
         /* InstanceInitializerCall */
 
   }
@@ -50,7 +50,7 @@ class TestWithDelegatingConstructor : Base {
     get
 
   constructor(x: Int) {
-    TODO("IrDelegatingConstructorCall")
+    this/*TestWithDelegatingConstructor*/(x = x, y = 0)
   }
 
 

@@ -1,6 +1,6 @@
 class C {
   constructor(x: Int, y: Int, z: Int = 1) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -15,7 +15,7 @@ class C {
     set
 
   constructor() {
-    TODO("IrDelegatingConstructorCall")
+    this/*C*/(x = 0, y = 0, z = 0)
   }
 
   val property: Int
@@ -45,7 +45,7 @@ class C {
 
   class NestedClass {
     constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }
@@ -76,7 +76,7 @@ class C {
 
   companion object Companion {
     private constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }

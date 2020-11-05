@@ -7,7 +7,7 @@ fun interface Fn<T : Any?, R : Any?> {
 
 class J {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -25,7 +25,7 @@ val fsi: Fn<String, Int>
   field = { // BLOCK
     local class <no name provided> : Fn<String, Int> {
       constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        super/*Any*/()
                 /* InstanceInitializerCall */
 
       }
@@ -48,7 +48,7 @@ val fis: Fn<Int, String>
   field = { // BLOCK
     local class <no name provided> : Fn<Int, String> {
       constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        super/*Any*/()
                 /* InstanceInitializerCall */
 
       }

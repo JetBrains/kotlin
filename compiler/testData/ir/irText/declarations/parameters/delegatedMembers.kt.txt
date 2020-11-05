@@ -11,7 +11,7 @@ interface IBase<T : Any?> {
 
 class Test<TT : Any?> : IBase<TT> {
   constructor(impl: IBase<TT>) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

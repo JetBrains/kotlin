@@ -1,6 +1,6 @@
 data class Test<T : Any?> {
   constructor(x: T, y: String = "") /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

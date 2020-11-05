@@ -1,6 +1,6 @@
 data class Some<T : Any?> {
   constructor(value: T) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -69,7 +69,7 @@ interface MyList<T : Any?> : List<Some<T>> {
 
 open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*ArrayList*/<@FlexibleNullability Some<T>?>()
         /* InstanceInitializerCall */
 
   }
@@ -114,7 +114,7 @@ open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {
 
 class FinalList : SomeList<String> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*SomeList*/<String>()
         /* InstanceInitializerCall */
 
   }

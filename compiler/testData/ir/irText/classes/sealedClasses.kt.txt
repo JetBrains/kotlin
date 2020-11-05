@@ -1,13 +1,13 @@
 sealed class Expr {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   class Const : Expr {
     constructor(number: Double) /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Expr*/()
             /* InstanceInitializerCall */
 
     }
@@ -23,7 +23,7 @@ sealed class Expr {
 
   class Sum : Expr {
     constructor(e1: Expr, e2: Expr) /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Expr*/()
             /* InstanceInitializerCall */
 
     }
@@ -43,7 +43,7 @@ sealed class Expr {
 
   object NotANumber : Expr {
     private constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Expr*/()
             /* InstanceInitializerCall */
 
     }

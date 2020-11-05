@@ -13,7 +13,7 @@ val <T : Any?> T.castExtVal: T
 
 class Host<T : Any?> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

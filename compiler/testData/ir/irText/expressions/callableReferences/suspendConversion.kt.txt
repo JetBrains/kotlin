@@ -25,7 +25,7 @@ fun foo4(i: Int = 42) {
 
 class C {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

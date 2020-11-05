@@ -12,7 +12,7 @@ annotation class TestAnn : Annotation {
 @TestAnn(x = "class")
 class TestClass {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -32,7 +32,7 @@ interface TestInterface {
 @TestAnn(x = "object")
 object TestObject {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -44,7 +44,7 @@ object TestObject {
 
 class Host {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -52,7 +52,7 @@ class Host {
   @TestAnn(x = "companion")
   companion object TestCompanion {
     private constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }

@@ -12,7 +12,7 @@ var p: Int
 
 class C {
   constructor(p: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

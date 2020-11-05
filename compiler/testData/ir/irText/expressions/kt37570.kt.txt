@@ -4,7 +4,7 @@ fun a(): String {
 
 class A {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

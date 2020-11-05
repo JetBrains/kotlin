@@ -12,7 +12,7 @@ fun String.textExt1(i: Int, j: String) {
 
 class Host {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

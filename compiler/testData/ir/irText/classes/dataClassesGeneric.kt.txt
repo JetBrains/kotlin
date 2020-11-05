@@ -1,6 +1,6 @@
 data class Test1<T : Any?> {
   constructor(x: T) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -49,7 +49,7 @@ data class Test1<T : Any?> {
 
 data class Test2<T : Number> {
   constructor(x: T) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -95,7 +95,7 @@ data class Test2<T : Number> {
 
 data class Test3<T : Any?> {
   constructor(x: List<T>) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -141,7 +141,7 @@ data class Test3<T : Any?> {
 
 data class Test4 {
   constructor(x: List<String>) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

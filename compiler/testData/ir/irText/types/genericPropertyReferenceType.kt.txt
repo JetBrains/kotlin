@@ -1,6 +1,6 @@
 class C<T : Any?> {
   constructor(x: T) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

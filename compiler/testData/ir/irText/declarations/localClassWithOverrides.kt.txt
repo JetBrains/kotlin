@@ -1,7 +1,7 @@
 fun outer() {
   local abstract class ALocal {
     constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }
@@ -22,7 +22,7 @@ fun outer() {
 
   local class Local : ALocal {
     constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*ALocal*/()
             /* InstanceInitializerCall */
 
     }

@@ -1,6 +1,6 @@
 class Ref {
   constructor(x: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

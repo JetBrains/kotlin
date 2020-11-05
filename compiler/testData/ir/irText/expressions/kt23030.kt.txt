@@ -28,7 +28,7 @@ fun testEqualsWithSmartCast(x: Any, y: Any): Boolean {
 
 class C {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

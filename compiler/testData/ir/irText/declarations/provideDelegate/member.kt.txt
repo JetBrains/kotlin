@@ -1,6 +1,6 @@
 class Delegate {
   constructor(value: String) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -20,7 +20,7 @@ class Delegate {
 
 class DelegateProvider {
   constructor(value: String) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -40,7 +40,7 @@ class DelegateProvider {
 
 class Host {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

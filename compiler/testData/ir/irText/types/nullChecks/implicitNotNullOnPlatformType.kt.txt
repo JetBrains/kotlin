@@ -3,7 +3,7 @@ fun f(s: String) {
 
 class MySet : Set<String> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

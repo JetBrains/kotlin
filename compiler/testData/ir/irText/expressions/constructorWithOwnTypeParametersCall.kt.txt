@@ -8,14 +8,14 @@ fun testJava(): J2<Double, Int> {
 
 class K1<T1 : Number> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   inner class K2<T2 : CharSequence> {
     constructor() /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }

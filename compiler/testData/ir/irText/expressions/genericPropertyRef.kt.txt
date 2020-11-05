@@ -1,6 +1,6 @@
 class Value<T : Any?> {
   constructor(value: T = null as T, text: String? = null) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -34,7 +34,7 @@ val <T : Any?> Value<T>.additionalValue: Int /* by */
 
 class DVal {
   constructor(kmember: Any) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -1,6 +1,6 @@
 data class A {
   constructor(x: Int, y: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

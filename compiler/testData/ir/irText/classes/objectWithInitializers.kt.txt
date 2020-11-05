@@ -1,6 +1,6 @@
 abstract class Base {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -12,7 +12,7 @@ abstract class Base {
 
 object Test : Base {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/()
         /* InstanceInitializerCall */
 
   }

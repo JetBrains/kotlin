@@ -21,7 +21,7 @@ val <reified T : Any> Foo<T>.asT: T?
 
 class Bar<T : Any?> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

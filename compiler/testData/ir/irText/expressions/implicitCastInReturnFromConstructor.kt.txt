@@ -1,12 +1,12 @@
 class C {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   constructor(x: Any?) {
-    TODO("IrDelegatingConstructorCall")
+    this/*C*/()
     when {
       x is Unit -> return x /*~> Unit */
     }

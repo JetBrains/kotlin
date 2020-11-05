@@ -11,7 +11,7 @@ annotation class A : Annotation {
 
 class C {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -10,7 +10,7 @@ interface K {
 
 class C : J, K {
   constructor(j: J, k: K) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

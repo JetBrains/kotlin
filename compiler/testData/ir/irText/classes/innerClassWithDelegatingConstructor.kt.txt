@@ -1,13 +1,13 @@
 class Outer {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   inner class Inner {
     constructor(x: Int) /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }
@@ -17,7 +17,7 @@ class Outer {
       get
 
     constructor() {
-      TODO("IrDelegatingConstructorCall")
+      <this>.this/*Inner*/(x = 0)
     }
 
 

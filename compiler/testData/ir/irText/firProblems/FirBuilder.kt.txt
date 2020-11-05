@@ -1,6 +1,6 @@
 open class BaseConverter : BaseFirBuilder<Any> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*BaseFirBuilder*/<Any>()
         /* InstanceInitializerCall */
 
   }
@@ -13,7 +13,7 @@ open class BaseConverter : BaseFirBuilder<Any> {
 
 class DeclarationsConverter : BaseConverter {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*BaseConverter*/()
         /* InstanceInitializerCall */
 
   }

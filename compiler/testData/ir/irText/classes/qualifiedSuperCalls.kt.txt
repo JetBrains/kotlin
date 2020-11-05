@@ -28,7 +28,7 @@ interface IRight {
 
 class CBoth : ILeft, IRight {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -14,7 +14,7 @@ fun testFun(x: Int) {
 
 class TestClassConstructor1 {
   constructor(x: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

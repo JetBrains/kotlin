@@ -17,7 +17,7 @@ expect open class B : A {
 
 abstract class A {
   protected constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -30,7 +30,7 @@ abstract class A {
 
 open class B : A {
   constructor(i: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*A*/()
         /* InstanceInitializerCall */
 
   }

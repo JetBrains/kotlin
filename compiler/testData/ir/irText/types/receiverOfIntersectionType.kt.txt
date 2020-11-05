@@ -19,7 +19,7 @@ interface J : K {
 
 class A : I, J {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -34,7 +34,7 @@ class A : I, J {
 
 class B : I, J {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -6,7 +6,7 @@ fun use2(fn: Function1<Int, Unit>) {
 
 open class A {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -22,7 +22,7 @@ open class A {
 
 object Obj : A {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*A*/()
         /* InstanceInitializerCall */
 
   }

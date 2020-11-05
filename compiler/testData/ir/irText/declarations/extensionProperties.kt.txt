@@ -12,7 +12,7 @@ var String.test2: Int
 
 class Host {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

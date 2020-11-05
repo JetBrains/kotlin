@@ -7,7 +7,7 @@ annotation class Ann : Annotation {
 
 class A {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -24,7 +24,7 @@ interface I<G> where G : IFoo, G : IBar {
 
 abstract class Box<T> : IFoo, IBar where T : IFoo, T : IBar {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

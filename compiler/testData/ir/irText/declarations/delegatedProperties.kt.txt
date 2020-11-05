@@ -9,7 +9,7 @@ val test1: Int /* by */
 
 class C {
   constructor(map: MutableMap<String, Any>) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -8,7 +8,7 @@ interface IFooBar {
 
 object FooBarImpl : IFooBar {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -26,7 +26,7 @@ object FooBarImpl : IFooBar {
 
 class C : IFooBar {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -12,7 +12,7 @@ fun varargs(vararg xs: String): Int {
 
 class C {
   constructor(x: String = "") /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

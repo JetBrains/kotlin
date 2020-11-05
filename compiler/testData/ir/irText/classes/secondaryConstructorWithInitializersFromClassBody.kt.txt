@@ -1,6 +1,6 @@
 open class Base {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -16,7 +16,7 @@ class TestProperty : Base {
     get
 
   constructor() {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/()
         /* InstanceInitializerCall */
 
   }
@@ -35,19 +35,19 @@ class TestInitBlock : Base {
   }
 
   constructor() {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/()
         /* InstanceInitializerCall */
 
   }
 
   constructor(z: Any) {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/()
         /* InstanceInitializerCall */
 
   }
 
   constructor(y: Int) {
-    TODO("IrDelegatingConstructorCall")
+    this/*TestInitBlock*/()
   }
 
 

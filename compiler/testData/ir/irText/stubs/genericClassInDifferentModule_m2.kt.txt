@@ -1,6 +1,6 @@
 class Derived1<T : Any?> : Base<T> {
   constructor(x: T) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/<T>(x = x)
         /* InstanceInitializerCall */
 
   }

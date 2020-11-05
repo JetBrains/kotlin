@@ -1,6 +1,6 @@
 open class Base {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -22,7 +22,7 @@ open class Base {
 
 class Derived : Base {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base*/()
         /* InstanceInitializerCall */
 
   }

@@ -14,7 +14,7 @@ interface IBase<A : Any?> {
 
 class Test1<E : Any?> : IBase<E> {
   constructor(i: IBase<E>) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -44,7 +44,7 @@ class Test1<E : Any?> : IBase<E> {
 
 class Test2 : IBase<String> {
   constructor(j: IBase<String>) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

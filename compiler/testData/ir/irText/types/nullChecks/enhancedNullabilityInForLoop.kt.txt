@@ -78,7 +78,7 @@ interface K {
 
 data class P {
   constructor(x: Int, y: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -11,7 +11,7 @@ interface I {
 
 class A : I {
   constructor(i: I) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

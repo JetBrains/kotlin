@@ -1,6 +1,6 @@
 class Some {
   constructor(foo: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

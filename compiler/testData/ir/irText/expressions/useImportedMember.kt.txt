@@ -14,7 +14,7 @@ interface I<G : Any?> {
 
 open class BaseClass {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -31,7 +31,7 @@ open class BaseClass {
 
 object C : BaseClass, I<String> {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*BaseClass*/()
         /* InstanceInitializerCall */
 
   }

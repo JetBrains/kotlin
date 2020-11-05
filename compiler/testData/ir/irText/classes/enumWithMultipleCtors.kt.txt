@@ -27,7 +27,7 @@ open enum class A : Enum<A> {
   }
 
   private constructor(x: Int) {
-    TODO("IrDelegatingConstructorCall")
+    this/*A*/(arg = x.toString())
     <this>.<set-prop3>(<set-?> = "int")
   }
 

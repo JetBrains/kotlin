@@ -1,6 +1,6 @@
 class TestInitValInLambdaCalledOnce {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

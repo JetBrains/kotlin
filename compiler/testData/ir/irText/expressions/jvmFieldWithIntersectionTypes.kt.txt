@@ -6,7 +6,7 @@ interface IFoo {
 
 class Derived1 : JFieldOwner, IFoo {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*JFieldOwner*/()
         /* InstanceInitializerCall */
 
   }
@@ -18,7 +18,7 @@ class Derived1 : JFieldOwner, IFoo {
 
 class Derived2 : JFieldOwner, IFoo {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*JFieldOwner*/()
         /* InstanceInitializerCall */
 
   }
@@ -30,7 +30,7 @@ class Derived2 : JFieldOwner, IFoo {
 
 open class Mid : JFieldOwner {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*JFieldOwner*/()
         /* InstanceInitializerCall */
 
   }
@@ -42,7 +42,7 @@ open class Mid : JFieldOwner {
 
 class DerivedThroughMid1 : Mid, IFoo {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Mid*/()
         /* InstanceInitializerCall */
 
   }
@@ -54,7 +54,7 @@ class DerivedThroughMid1 : Mid, IFoo {
 
 class DerivedThroughMid2 : Mid, IFoo {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Mid*/()
         /* InstanceInitializerCall */
 
   }

@@ -14,7 +14,7 @@ fun interface IFoo2 : IFoo {
 
 object A {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -26,7 +26,7 @@ object A {
 
 object B {
   private constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

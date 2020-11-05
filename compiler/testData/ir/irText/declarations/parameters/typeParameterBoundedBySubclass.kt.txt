@@ -1,6 +1,6 @@
 abstract class Base1<T : Derived1> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -12,7 +12,7 @@ abstract class Base1<T : Derived1> {
 
 class Derived1 : Base1<Derived1> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base1*/<Derived1>()
         /* InstanceInitializerCall */
 
   }
@@ -24,7 +24,7 @@ class Derived1 : Base1<Derived1> {
 
 abstract class Base2 {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -39,7 +39,7 @@ abstract class Base2 {
 
 class Derived2 : Base2 {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Base2*/()
         /* InstanceInitializerCall */
 
   }

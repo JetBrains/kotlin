@@ -2,7 +2,7 @@ fun box(): String {
   val obj: <no name provided> = { // BLOCK
     local class <no name provided> {
       constructor() /* primary */ {
-        TODO("IrDelegatingConstructorCall")
+        super/*Any*/()
                 /* InstanceInitializerCall */
 
       }
@@ -17,7 +17,7 @@ fun box(): String {
 
       local inner class Some : Base {
         constructor(s: String) /* primary */ {
-          TODO("IrDelegatingConstructorCall")
+          <this>.super/*Base*/(s = s)
                     /* InstanceInitializerCall */
 
         }
@@ -33,7 +33,7 @@ fun box(): String {
 
       local open inner class Base {
         constructor(s: String) /* primary */ {
-          TODO("IrDelegatingConstructorCall")
+          super/*Any*/()
                     /* InstanceInitializerCall */
 
         }

@@ -1,6 +1,6 @@
 open class Cell<T : Any?> {
   constructor(value: T) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -18,7 +18,7 @@ typealias CT<T : Any?> = Cell<T>
 typealias CStr = Cell<String>
 class C1 : Cell<String> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Cell*/<String>(value = "O")
         /* InstanceInitializerCall */
 
   }
@@ -30,7 +30,7 @@ class C1 : Cell<String> {
 
 class C2 : Cell<String> {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Cell*/<String>(value = "K")
         /* InstanceInitializerCall */
 
   }

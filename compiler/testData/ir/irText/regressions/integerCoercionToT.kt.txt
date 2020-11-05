@@ -10,7 +10,7 @@ inline fun <reified T : CPointed> CPointed.reinterpret(): T {
 
 class CInt32VarX<T : Any?> : CPointed {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -30,7 +30,7 @@ var <T_INT : Int> CInt32VarX<T_INT>.value: T_INT
 
 class IdType : CPointed {
   constructor(value: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -4,7 +4,7 @@ fun use(fn: Function1<Int, Unit>) {
 
 class Host {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -4,7 +4,7 @@ fun use(fn: Function1<Int, Any>): Any {
 
 class C {
   constructor(vararg xs: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -16,14 +16,14 @@ class C {
 
 class Outer {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
 
   inner class Inner {
     constructor(vararg xs: Int) /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }

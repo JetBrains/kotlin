@@ -11,7 +11,7 @@ inline fun <reified T : Any?> testArray(n: Int, crossinline block: Function0<T>)
 
 class Box<T : Any?> {
   constructor(value: T) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

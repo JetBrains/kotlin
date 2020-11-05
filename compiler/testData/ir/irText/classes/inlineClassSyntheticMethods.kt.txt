@@ -1,6 +1,6 @@
 class C<T : Any?> {
   constructor(t: T) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -19,7 +19,7 @@ class C<T : Any?> {
 
 inline class IC<TT : Any?> {
   constructor(c: C<TT>) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

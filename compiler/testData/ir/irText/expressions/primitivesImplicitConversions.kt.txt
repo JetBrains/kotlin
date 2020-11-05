@@ -37,7 +37,7 @@ fun testImplicitArguments(x: Long = 1.unaryMinus().toLong()) {
 
 class TestImplicitArguments {
   constructor(x: Long = 1.unaryMinus().toLong()) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

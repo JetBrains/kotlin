@@ -1,6 +1,6 @@
 class Test1<T1 : Any?, T2 : Any?> {
   constructor(x: T1, y: T2) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -20,7 +20,7 @@ class Test1<T1 : Any?, T2 : Any?> {
 
 class Test2 {
   constructor(x: Int, y: String) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -31,7 +31,7 @@ class Test2 {
 
   inner class TestInner<Z : Any?> {
     constructor(z: Z) /* primary */ {
-      TODO("IrDelegatingConstructorCall")
+      super/*Any*/()
             /* InstanceInitializerCall */
 
     }
@@ -41,7 +41,7 @@ class Test2 {
       get
 
     constructor(z: Z, i: Int) {
-      TODO("IrDelegatingConstructorCall")
+      <this>.this/*TestInner*/<Z>(z = z)
     }
 
 
@@ -56,7 +56,7 @@ class Test2 {
 
 class Test3 {
   constructor(x: Int, y: String = "") /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -76,7 +76,7 @@ class Test3 {
 
 class Test4<T : Any?> {
   constructor(x: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -86,7 +86,7 @@ class Test4<T : Any?> {
     get
 
   constructor(x: Int, y: Int = 42) {
-    TODO("IrDelegatingConstructorCall")
+    this/*Test4*/<T>(x = x.plus(other = y))
   }
 
 

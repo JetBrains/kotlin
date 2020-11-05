@@ -18,7 +18,7 @@ interface ComponentDescriptor {
 
 abstract class PlatformExtensionsClashResolver<E : PlatformSpecificExtension<E>> {
   constructor(applicableTo: Class<E>) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -34,7 +34,7 @@ abstract class PlatformExtensionsClashResolver<E : PlatformSpecificExtension<E>>
 
 class ClashResolutionDescriptor<E : PlatformSpecificExtension<E>> {
   constructor(container: ComponentContainer, resolver: PlatformExtensionsClashResolver<E>, clashedComponents: List<ComponentDescriptor>) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

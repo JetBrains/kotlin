@@ -1,6 +1,6 @@
 class Impl : A, B {
   constructor(b: B) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

@@ -3,7 +3,7 @@ fun use(x: Any, y: Any) {
 
 class P {
   constructor(x: Int, y: Int) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
@@ -31,7 +31,7 @@ class P {
 
 class Q<T1 : Any?, T2 : Any?> {
   constructor(x: T1, y: T2) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

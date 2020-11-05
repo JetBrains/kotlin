@@ -1,6 +1,6 @@
 abstract class Base<T : Any?> {
   constructor(x: T) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

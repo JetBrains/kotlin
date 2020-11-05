@@ -8,7 +8,7 @@ fun bar(): Int {
 
 class C {
   constructor(x: IntArray) /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }

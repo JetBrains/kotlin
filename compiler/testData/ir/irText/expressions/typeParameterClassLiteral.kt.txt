@@ -13,7 +13,7 @@ val <reified T : Any> T.classRefExtVal: KClass<T>
 
 class Host {
   constructor() /* primary */ {
-    TODO("IrDelegatingConstructorCall")
+    super/*Any*/()
         /* InstanceInitializerCall */
 
   }
