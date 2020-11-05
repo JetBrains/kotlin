@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
+
 abstract class BasicIrModuleDeserializer(
     val linker: KotlinIrLinker,
     moduleDescriptor: ModuleDescriptor,
@@ -68,16 +70,13 @@ abstract class BasicIrModuleDeserializer(
 
         for (i in 0 until fileCount) {
             val fileStream = klib.file(i).codedInputStream
-            files.add(deserializeIrFile(
-                org.jetbrains.kotlin.backend.common.serialization.proto.IrFile.parseFrom(
-                    fileStream,
-                    ExtensionRegistryLite.newInstance()
-                ), i, delegate, containsErrorCode))
+            val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
+            files.add(deserializeIrFile(fileProto, i, delegate, containsErrorCode))
         }
 
         moduleFragment.files.addAll(files)
 
-        fileToDeserializerMap.values.forEach { it.deserializeExpectActualMapping() }
+        fileToDeserializerMap.values.forEach { it.symbolDeserializer.deserializeExpectActualMapping() }
     }
 
     // TODO: fix to topLevel checker
@@ -90,9 +89,7 @@ abstract class BasicIrModuleDeserializer(
         val fileDeserializer = moduleReversedFileIndex[topLevelSignature]
             ?: error("No file for $topLevelSignature (@ $idSig) in module $moduleDescriptor")
 
-        val fileDeserializationState = fileDeserializer.fileLocalDeserializationState
-
-        fileDeserializationState.addIdSignature(topLevelSignature)
+        fileDeserializer.fileLocalDeserializationState.addIdSignature(topLevelSignature)
         moduleDeserializationState.enqueueFile(fileDeserializer)
 
         return fileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
@@ -102,12 +99,7 @@ abstract class BasicIrModuleDeserializer(
 
     override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, linker.builtIns, emptyList())
 
-    private fun deserializeIrFile(
-        fileProto: org.jetbrains.kotlin.backend.common.serialization.proto.IrFile,
-        fileIndex: Int,
-        moduleDeserializer: IrModuleDeserializer,
-        allowErrorNodes: Boolean
-    ): IrFile {
+    private fun deserializeIrFile(fileProto: ProtoFile, fileIndex: Int, moduleDeserializer: IrModuleDeserializer, allowErrorNodes: Boolean): IrFile {
 
         val fileReader = IrLibraryFile(moduleDeserializer.klib, fileIndex)
         val file = fileReader.createFile(moduleDescriptor, fileProto)

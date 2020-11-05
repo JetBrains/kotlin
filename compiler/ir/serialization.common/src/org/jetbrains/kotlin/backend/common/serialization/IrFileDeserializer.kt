@@ -38,19 +38,19 @@ internal open class IrFileDeserializer(
     fakeOverrideQueue: MutableList<IrClass>,
     allowErrorNodes: Boolean,
     private var annotations: List<ProtoConstructorCall>?,
-    private val actuals: List<Actual>,
+    actuals: List<Actual>,
     deserializeInlineFunctions: Boolean,
     private val moduleDeserializer: IrModuleDeserializer,
     fakeOverrideBuilder: FakeOverrideBuilder,
-    val expectUniqIdToActualUniqId: MutableMap<IdSignature, IdSignature>,
-    val expectSymbols: MutableMap<IdSignature, IrSymbol>,
-    val actualSymbols: MutableMap<IdSignature, IrSymbol>,
-    val topLevelActualUniqItToDeserializer: MutableMap<IdSignature, IrModuleDeserializer>,
+    expectUniqIdToActualUniqId: MutableMap<IdSignature, IdSignature>,
+    expectSymbols: MutableMap<IdSignature, IrSymbol>,
+    actualSymbols: MutableMap<IdSignature, IrSymbol>,
+    topLevelActualUniqItToDeserializer: MutableMap<IdSignature, IrModuleDeserializer>,
     val handleNoModuleDeserializerFound: (IdSignature) -> IrModuleDeserializer,
 ) {
     protected val irFactory: IrFactory get() = symbolTable.irFactory
 
-    val symbolDeserializer = IrSymbolDeserializer(fileReader, symbolTable, this, expectUniqIdToActualUniqId, expectSymbols, actualSymbols)
+    val symbolDeserializer = IrSymbolDeserializer(fileReader, symbolTable, this, actuals, topLevelActualUniqItToDeserializer, expectUniqIdToActualUniqId, expectSymbols, actualSymbols)
 
     val reversedSignatureIndex = declarationIdList.map { symbolDeserializer.deserializeIdSignature(it) to it }.toMap()
 
@@ -114,23 +114,6 @@ internal open class IrFileDeserializer(
         return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig))
     }
 
-    fun deserializeExpectActualMapping() {
-        actuals.forEach {
-            val expectSymbol = symbolDeserializer.parseSymbolData(it.expectSymbol)
-            val actualSymbol = symbolDeserializer.parseSymbolData(it.actualSymbol)
-
-            val expect = symbolDeserializer.deserializeIdSignature(expectSymbol.signatureId)
-            val actual = symbolDeserializer.deserializeIdSignature(actualSymbol.signatureId)
-
-            assert(expectUniqIdToActualUniqId[expect] == null) {
-                "Expect signature $expect is already actualized by ${expectUniqIdToActualUniqId[expect]}, while we try to record $actual"
-            }
-            expectUniqIdToActualUniqId[expect] = actual
-            // Non-null only for topLevel declarations.
-            getModuleForTopLevelId(actual)?.let { md -> topLevelActualUniqItToDeserializer[actual] = md }
-        }
-    }
-
     private fun readDeclaration(index: Int): CodedInputStream =
         fileReader.irDeclaration(index).codedInputStream
 
@@ -139,7 +122,7 @@ internal open class IrFileDeserializer(
         return ProtoDeclaration.parseFrom(readDeclaration(idSigIndex), ExtensionRegistryLite.newInstance())
     }
 
-    private fun getModuleForTopLevelId(idSignature: IdSignature): IrModuleDeserializer? {
+    internal fun getModuleForTopLevelId(idSignature: IdSignature): IrModuleDeserializer? {
         if (idSignature in moduleDeserializer) return moduleDeserializer
         return moduleDeserializer.moduleDependencies.firstOrNull { idSignature in it }
     }

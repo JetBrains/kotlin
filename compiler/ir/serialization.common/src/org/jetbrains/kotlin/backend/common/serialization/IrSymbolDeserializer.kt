@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
+import org.jetbrains.kotlin.backend.common.serialization.proto.Actual
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdsigCase.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.*
@@ -25,6 +26,8 @@ internal class IrSymbolDeserializer(
     val fileReader: IrLibraryFile,
     val symbolTable: SymbolTable,
     val fileDeserializer: IrFileDeserializer,
+    val actuals: List<Actual>,
+    val topLevelActualUniqItToDeserializer: MutableMap<IdSignature, IrModuleDeserializer>,
     val expectUniqIdToActualUniqId: MutableMap<IdSignature, IdSignature>,
     val expectSymbols: MutableMap<IdSignature, IrSymbol>,
     val actualSymbols: MutableMap<IdSignature, IrSymbol>,
@@ -73,6 +76,24 @@ internal class IrSymbolDeserializer(
             else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
         }
     }
+
+    fun deserializeExpectActualMapping() {
+        actuals.forEach {
+            val expectSymbol = parseSymbolData(it.expectSymbol)
+            val actualSymbol = parseSymbolData(it.actualSymbol)
+
+            val expect = deserializeIdSignature(expectSymbol.signatureId)
+            val actual = deserializeIdSignature(actualSymbol.signatureId)
+
+            assert(expectUniqIdToActualUniqId[expect] == null) {
+                "Expect signature $expect is already actualized by ${expectUniqIdToActualUniqId[expect]}, while we try to record $actual"
+            }
+            expectUniqIdToActualUniqId[expect] = actual
+            // Non-null only for topLevel declarations.
+            fileDeserializer.getModuleForTopLevelId(actual)?.let { md -> topLevelActualUniqItToDeserializer[actual] = md }
+        }
+    }
+
 
     fun referenceIrSymbol(symbol: IrSymbol, signature: IdSignature) {
         assert(signature.isLocal)
