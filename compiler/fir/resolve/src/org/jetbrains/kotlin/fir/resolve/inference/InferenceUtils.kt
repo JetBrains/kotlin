@@ -46,6 +46,11 @@ fun ConeKotlinType.isBuiltinFunctionalType(session: FirSession): Boolean {
             kind == FunctionClassKind.KSuspendFunction
 }
 
+fun ConeKotlinType.isFunctionalType(session: FirSession): Boolean {
+    val kind = functionClassKind(session) ?: return false
+    return kind == FunctionClassKind.Function
+}
+
 fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
     val kind = functionClassKind(session) ?: return false
     return kind == FunctionClassKind.SuspendFunction ||
