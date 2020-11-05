@@ -1,0 +1,159 @@
+data class Some<T : Any?> {
+  constructor(value: T) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val value: T
+    field = value
+    get
+
+  operator fun component1(): T {
+    return #value
+  }
+
+  fun copy(value: T = #value): Some<T> {
+    return TODO("IrConstructorCall")
+  }
+
+  override fun toString(): String {
+    return "Some(" + 
+"value=" + 
+#value + 
+")"
+  }
+
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = #value, arg1 = null) -> 0
+      true -> #value.hashCode()
+    }
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Some<T> -> return false
+    }
+    val tmp0_other_with_cast: Some<T> = other as Some<T>
+    when {
+      EQEQ(arg0 = #value, arg1 = #value).not() -> return false
+    }
+    return true
+  }
+
+}
+
+interface MyList<T : Any?> : List<Some<T>> {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+class FinalList : SomeList<String> {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+

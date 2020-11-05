@@ -1,0 +1,60 @@
+fun box(): String {
+  val obj: <no name provided> = { //BLOCK
+    local class <no name provided> {
+      constructor() /* primary */ {
+        TODO("IrDelegatingConstructorCall")
+                /* InstanceInitializerCall */
+
+      }
+
+      val end: String
+        field = "K"
+        get
+
+      fun foo(): String {
+        return TODO("IrConstructorCall").bar()
+      }
+
+      local inner class Some : Base {
+        constructor(s: String) /* primary */ {
+          TODO("IrDelegatingConstructorCall")
+                    /* InstanceInitializerCall */
+
+        }
+
+        fun bar(): String {
+          return <this>.<get-s>().plus(other = <this>.<get-end>())
+        }
+
+
+
+
+      }
+
+      local open inner class Base {
+        constructor(s: String) /* primary */ {
+          TODO("IrDelegatingConstructorCall")
+                    /* InstanceInitializerCall */
+
+        }
+
+        val s: String
+          field = s
+          get
+
+
+
+
+      }
+
+
+
+
+    }
+
+
+    TODO("IrConstructorCall")
+  }
+  return obj.foo()
+}
+

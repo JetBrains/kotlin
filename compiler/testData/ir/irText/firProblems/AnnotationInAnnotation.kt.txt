@@ -1,0 +1,39 @@
+annotation class Storage : Annotation {
+  constructor(value: String) /* primary */ 
+  val value: String
+    field = value
+    get
+
+
+
+
+}
+
+annotation class State : Annotation {
+  constructor(name: String, storages: Array<Storage>) /* primary */ 
+  val name: String
+    field = name
+    get
+
+  val storages: Array<Storage>
+    field = storages
+    get
+
+
+
+
+}
+
+@State(...)
+class Test {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+}
+

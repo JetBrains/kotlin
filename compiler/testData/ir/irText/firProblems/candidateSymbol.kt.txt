@@ -1,0 +1,67 @@
+class Candidate {
+  constructor(symbol: AbstractFirBasedSymbol<*>) /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  val symbol: AbstractFirBasedSymbol<*>
+    field = symbol
+    get
+
+
+
+
+}
+
+abstract class AbstractFirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  lateinit var fir: E
+    get
+    set
+
+
+
+
+}
+
+interface FirDeclaration {
+
+
+
+}
+
+interface FirSymbolOwner<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
+  abstract val symbol: AbstractFirBasedSymbol<E>
+    abstract get
+
+
+
+
+}
+
+interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> : FirSymbolOwner<F>, FirDeclaration {
+  abstract override val symbol: AbstractFirBasedSymbol<F>
+    abstract override get
+
+
+
+
+}
+
+fun foo(candidate: Candidate) {
+  val me: FirSymbolOwner<*> = candidate.<get-symbol>().<get-fir>()
+  when {
+    when {
+      me is FirCallableMemberDeclaration<*> -> EQEQ(arg0 = me /*as FirCallableMemberDeclaration<out FirCallableMemberDeclaration<*>> */.<get-symbol>(), arg1 = null).not()
+      true -> false
+    } -> { //BLOCK
+    }
+  }
+}
+

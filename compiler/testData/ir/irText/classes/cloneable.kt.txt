@@ -1,0 +1,49 @@
+class A : Cloneable {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+
+}
+
+interface I : Cloneable {
+
+
+
+
+}
+
+class C : I {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+
+
+
+
+}
+
+class OC : I {
+  constructor() /* primary */ {
+    TODO("IrDelegatingConstructorCall")
+        /* InstanceInitializerCall */
+
+  }
+
+  protected override fun clone(): OC {
+    return TODO("IrConstructorCall")
+  }
+
+
+
+
+}
+
