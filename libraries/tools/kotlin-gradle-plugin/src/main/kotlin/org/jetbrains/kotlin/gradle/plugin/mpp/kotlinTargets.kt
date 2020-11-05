@@ -125,14 +125,19 @@ abstract class AbstractKotlinTarget(
 
             adhocVariant as SoftwareComponent
 
+            // Resolve the values early here instead of passing `adhocVariant` to the SoftwareComponent object below (which would break
+            // configuration caching---see KT-43054). Passing `kotlinVariant` to the object did not break configuration caching, but we also
+            // avoid doing that just to be safe.
+            val coordinates = (kotlinVariant as? ComponentWithCoordinates)?.coordinates
+            val variants = (kotlinVariant as? KotlinVariantWithMetadataVariant)?.variants.orEmpty()
+            val name = adhocVariant.name
+            val usages = (adhocVariant as SoftwareComponentInternal).usages
+
             object : ComponentWithVariants, ComponentWithCoordinates, SoftwareComponentInternal {
-                override fun getCoordinates() = (kotlinVariant as? ComponentWithCoordinates)?.coordinates
-
-                override fun getVariants(): Set<out SoftwareComponent> =
-                    (kotlinVariant as? KotlinVariantWithMetadataVariant)?.variants.orEmpty()
-
-                override fun getName(): String = adhocVariant.name
-                override fun getUsages(): MutableSet<out UsageContext> = (adhocVariant as SoftwareComponentInternal).usages
+                override fun getCoordinates() = coordinates
+                override fun getVariants(): Set<out SoftwareComponent> = variants
+                override fun getName(): String = name
+                override fun getUsages(): MutableSet<out UsageContext> = usages
             }
         }.toSet()
     }
