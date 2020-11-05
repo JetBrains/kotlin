@@ -766,6 +766,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         )
     }
 
+    @Ignore("b/171801506")
     @Test
     fun testCrossModule_SimpleComposition(): Unit = ensureSetup {
         val tvId = 29
