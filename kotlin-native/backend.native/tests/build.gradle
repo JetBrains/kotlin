@@ -4299,6 +4299,7 @@ dynamicTest("produce_dynamic") {
 
 dynamicTest("interop_concurrentRuntime") {
     disabled = (project.target.name != project.hostName)
+    disabled = true  // KT-43180
     source = "interop/concurrentTerminate/reverseInterop.kt"
     cSource = "$projectDir/interop/concurrentTerminate/main.cpp"
     clangTool = "clang++"
