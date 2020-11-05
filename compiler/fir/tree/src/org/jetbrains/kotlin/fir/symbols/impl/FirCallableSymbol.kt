@@ -14,9 +14,6 @@ import org.jetbrains.kotlin.fir.symbols.CallableId
 
 abstract class FirCallableSymbol<D : FirCallableDeclaration<D>> : AbstractFirBasedSymbol<D>() {
     abstract val callableId: CallableId
-
-    open val overriddenSymbol: FirCallableSymbol<D>?
-        get() = null
 }
 
 val FirCallableSymbol<*>.isStatic: Boolean get() = (fir as? FirMemberDeclaration)?.status?.isStatic == true

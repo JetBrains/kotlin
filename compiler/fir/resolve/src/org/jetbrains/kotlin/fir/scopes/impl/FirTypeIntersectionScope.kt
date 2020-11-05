@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
+import org.jetbrains.kotlin.fir.originalForIntersectionOverrideAttr
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
@@ -263,8 +264,7 @@ class FirTypeIntersectionScope private constructor(
                 CallableId(
                     dispatchReceiverType.classId ?: mostSpecific.dispatchReceiverClassOrNull()?.classId!!,
                     mostSpecific.fir.name
-                ),
-                mostSpecific
+                )
             )
         val mostSpecificFunction = mostSpecific.fir
         FirFakeOverrideGenerator.createCopyForFirFunction(
@@ -274,7 +274,9 @@ class FirTypeIntersectionScope private constructor(
             newDispatchReceiverType = dispatchReceiverType,
             newModality = newModality,
             newVisibility = newVisibility,
-        )
+        ).apply {
+            originalForIntersectionOverrideAttr = mostSpecific.fir
+        }
         return newSymbol
     }
 
@@ -283,14 +285,16 @@ class FirTypeIntersectionScope private constructor(
         newModality: Modality,
         newVisibility: Visibility,
     ): FirPropertySymbol {
-        val newSymbol = FirPropertySymbol(mostSpecific.callableId, mostSpecific)
+        val newSymbol = FirPropertySymbol(mostSpecific.callableId)
         val mostSpecificProperty = mostSpecific.fir
         FirFakeOverrideGenerator.createCopyForFirProperty(
             newSymbol, mostSpecificProperty, mostSpecificProperty.session, FirDeclarationOrigin.IntersectionOverride,
             newModality = newModality,
             newVisibility = newVisibility,
             newDispatchReceiverType = dispatchReceiverType,
-        )
+        ).apply {
+            originalForIntersectionOverrideAttr = mostSpecific.fir
+        }
         return newSymbol
     }
 

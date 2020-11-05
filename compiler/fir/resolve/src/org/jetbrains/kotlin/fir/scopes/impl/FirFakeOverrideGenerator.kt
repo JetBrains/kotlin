@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
+import org.jetbrains.kotlin.fir.originalForSubstitutionOverrideAttr
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -28,7 +29,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object FirFakeOverrideGenerator {
-    fun createFakeOverrideFunction(
+    fun createSubstitutionOverrideFunction(
         session: FirSession,
         baseFunction: FirSimpleFunction,
         baseSymbol: FirNamedFunctionSymbol,
@@ -42,17 +43,16 @@ object FirFakeOverrideGenerator {
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirNamedFunctionSymbol {
         val symbol = FirNamedFunctionSymbol(
-            CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseFunction.name),
-            overriddenSymbol = baseSymbol
+            CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseFunction.name)
         )
-        createFakeOverrideFunction(
+        createSubstitutionOverrideFunction(
             symbol, session, baseFunction, newDispatchReceiverType, newReceiverType, newReturnType,
             newParameterTypes, newTypeParameters, isExpect, fakeOverrideSubstitution
         )
         return symbol
     }
 
-    private fun createFakeOverrideFunction(
+    private fun createSubstitutionOverrideFunction(
         fakeOverrideSymbol: FirFunctionSymbol<FirSimpleFunction>,
         session: FirSession,
         baseFunction: FirSimpleFunction,
@@ -78,7 +78,9 @@ object FirFakeOverrideGenerator {
             newReceiverType,
             newReturnType,
             fakeOverrideSubstitution = fakeOverrideSubstitution
-        )
+        ).apply {
+            originalForSubstitutionOverrideAttr = baseFunction
+        }
     }
 
     fun createCopyForFirFunction(
@@ -113,7 +115,7 @@ object FirFakeOverrideGenerator {
         }
     }
 
-    fun createFakeOverrideConstructor(
+    fun createSubstitutionOverrideConstructor(
         fakeOverrideSymbol: FirConstructorSymbol,
         session: FirSession,
         baseConstructor: FirConstructor,
@@ -142,6 +144,8 @@ object FirFakeOverrideGenerator {
             resolvePhase = baseConstructor.resolvePhase
             source = baseConstructor.source
             attributes = baseConstructor.attributes.copy()
+        }.apply {
+            originalForSubstitutionOverrideAttr = baseConstructor
         }
     }
 
@@ -236,7 +240,7 @@ object FirFakeOverrideGenerator {
         }
     }
 
-    fun createFakeOverrideProperty(
+    fun createSubstitutionOverrideProperty(
         session: FirSession,
         baseProperty: FirProperty,
         baseSymbol: FirPropertySymbol,
@@ -249,14 +253,15 @@ object FirFakeOverrideGenerator {
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirPropertySymbol {
         val symbol = FirPropertySymbol(
-            CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseProperty.name),
-            overriddenSymbol = baseSymbol
+            CallableId(derivedClassId ?: baseSymbol.callableId.classId!!, baseProperty.name)
         )
         createCopyForFirProperty(
             symbol, baseProperty, session, FirDeclarationOrigin.SubstitutionOverride, isExpect,
             newDispatchReceiverType, newTypeParameters, newReceiverType, newReturnType,
             fakeOverrideSubstitution = fakeOverrideSubstitution
-        )
+        ).apply {
+            originalForSubstitutionOverrideAttr = baseProperty
+        }
         return symbol
     }
 
@@ -372,7 +377,7 @@ object FirFakeOverrideGenerator {
         receiverTypeRef = baseProperty.receiverTypeRef?.withReplacedConeType(newReceiverType)
     }
 
-    fun createFakeOverrideField(
+    fun createSubstitutionOverrideField(
         session: FirSession,
         baseField: FirField,
         baseSymbol: FirFieldSymbol,
@@ -397,6 +402,8 @@ object FirFakeOverrideGenerator {
             annotations += baseField.annotations
             attributes = baseField.attributes.copy()
             dispatchReceiverType = baseField.dispatchReceiverType
+        }.apply {
+            originalForSubstitutionOverrideAttr = baseField
         }
         return symbol
     }
@@ -411,7 +418,7 @@ object FirFakeOverrideGenerator {
         fakeOverrideSubstitution: FakeOverrideSubstitution?
     ): FirAccessorSymbol {
         val functionSymbol = FirNamedFunctionSymbol(baseSymbol.accessorId)
-        val function = createFakeOverrideFunction(
+        val function = createSubstitutionOverrideFunction(
             functionSymbol,
             session,
             baseProperty.getter.delegate,

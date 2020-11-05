@@ -29,15 +29,15 @@ class FirClassSubstitutionScope(
     private val makeExpect: Boolean = false
 ) : FirTypeScope() {
 
-    private val fakeOverrideFunctions = mutableMapOf<FirFunctionSymbol<*>, FirFunctionSymbol<*>>()
-    private val fakeOverrideConstructors = mutableMapOf<FirConstructorSymbol, FirConstructorSymbol>()
-    private val fakeOverrideVariables = mutableMapOf<FirVariableSymbol<*>, FirVariableSymbol<*>>()
+    private val substitutionOverrideFunctions = mutableMapOf<FirFunctionSymbol<*>, FirFunctionSymbol<*>>()
+    private val substitutionOverrideConstructors = mutableMapOf<FirConstructorSymbol, FirConstructorSymbol>()
+    private val substitutionOverrideVariables = mutableMapOf<FirVariableSymbol<*>, FirVariableSymbol<*>>()
 
     private val newOwnerClassId = dispatchReceiverTypeForSubstitutedMembers.lookupTag.classId
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         useSiteMemberScope.processFunctionsByName(name) process@{ original ->
-            val function = fakeOverrideFunctions.getOrPut(original) { createFakeOverrideFunction(original) }
+            val function = substitutionOverrideFunctions.getOrPut(original) { createSubstitutionOverrideFunction(original) }
             processor(function)
         }
 
@@ -49,7 +49,7 @@ class FirClassSubstitutionScope(
         processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
         processDirectOverriddenWithBaseScope(
-            functionSymbol, processor, FirTypeScope::processDirectOverriddenFunctionsWithBaseScope, fakeOverrideFunctions
+            functionSymbol, processor, FirTypeScope::processDirectOverriddenFunctionsWithBaseScope, substitutionOverrideFunctions
         )
 
     private inline fun <reified D : FirCallableSymbol<*>> processDirectOverriddenWithBaseScope(
@@ -70,15 +70,15 @@ class FirClassSubstitutionScope(
         return useSiteMemberScope.processPropertiesByName(name) process@{ original ->
             when (original) {
                 is FirPropertySymbol -> {
-                    val property = fakeOverrideVariables.getOrPut(original) { createFakeOverrideProperty(original) }
+                    val property = substitutionOverrideVariables.getOrPut(original) { createSubstitutionOverrideProperty(original) }
                     processor(property)
                 }
                 is FirFieldSymbol -> {
-                    val field = fakeOverrideVariables.getOrPut(original) { createFakeOverrideField(original) }
+                    val field = substitutionOverrideVariables.getOrPut(original) { createSubstitutionOverrideField(original) }
                     processor(field)
                 }
                 is FirAccessorSymbol -> {
-                    val accessor = fakeOverrideVariables.getOrPut(original) { createFakeOverrideAccessor(original) }
+                    val accessor = substitutionOverrideVariables.getOrPut(original) { createSubstitutionOverrideAccessor(original) }
                     processor(accessor)
                 }
                 else -> {
@@ -94,7 +94,7 @@ class FirClassSubstitutionScope(
     ): ProcessorAction =
         processDirectOverriddenWithBaseScope(
             propertySymbol, processor, FirTypeScope::processDirectOverriddenPropertiesWithBaseScope,
-            fakeOverrideVariables
+            substitutionOverrideVariables
         )
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
@@ -111,7 +111,7 @@ class FirClassSubstitutionScope(
         return substitutor.substituteOrNull(this)
     }
 
-    private fun createFakeOverrideFunction(original: FirFunctionSymbol<*>): FirFunctionSymbol<*> {
+    private fun createSubstitutionOverrideFunction(original: FirFunctionSymbol<*>): FirFunctionSymbol<*> {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = when (original) {
             is FirNamedFunctionSymbol -> original.fir
@@ -135,7 +135,7 @@ class FirClassSubstitutionScope(
          *   it's safe to cast newTypeParameters to List<FirTypeParameter>
          */
         @Suppress("UNCHECKED_CAST")
-        return FirFakeOverrideGenerator.createFakeOverrideFunction(
+        return FirFakeOverrideGenerator.createSubstitutionOverrideFunction(
             session,
             member,
             original,
@@ -150,7 +150,7 @@ class FirClassSubstitutionScope(
         )
     }
 
-    private fun createFakeOverrideConstructor(original: FirConstructorSymbol): FirConstructorSymbol {
+    private fun createSubstitutionOverrideConstructor(original: FirConstructorSymbol): FirConstructorSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val constructor = original.fir
 
@@ -162,14 +162,14 @@ class FirClassSubstitutionScope(
         if (newReturnType == null && newParameterTypes.all { it == null } && newTypeParameters === constructor.typeParameters) {
             return original
         }
-        return FirFakeOverrideGenerator.createFakeOverrideConstructor(
-            FirConstructorSymbol(original.callableId, overriddenSymbol = original),
+        return FirFakeOverrideGenerator.createSubstitutionOverrideConstructor(
+            FirConstructorSymbol(original.callableId),
             session, constructor, dispatchReceiverTypeForSubstitutedMembers,
             newReturnType, newParameterTypes, newTypeParameters, makeExpect, fakeOverrideSubstitution
         ).symbol
     }
 
-    private fun createFakeOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
+    private fun createSubstitutionOverrideProperty(original: FirPropertySymbol): FirPropertySymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
@@ -182,7 +182,7 @@ class FirClassSubstitutionScope(
         }
 
         @Suppress("UNCHECKED_CAST")
-        return FirFakeOverrideGenerator.createFakeOverrideProperty(
+        return FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
             session,
             member,
             original,
@@ -220,7 +220,7 @@ class FirClassSubstitutionScope(
         return SubstitutedData(newTypeParameters, newReceiverType, newReturnType, substitutor, fakeOverrideSubstitution)
     }
 
-    private fun createFakeOverrideField(original: FirFieldSymbol): FirFieldSymbol {
+    private fun createSubstitutionOverrideField(original: FirFieldSymbol): FirFieldSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
@@ -229,10 +229,10 @@ class FirClassSubstitutionScope(
         // TODO: do we have fields with implicit type?
         val newReturnType = returnType?.substitute() ?: return original
 
-        return FirFakeOverrideGenerator.createFakeOverrideField(session, member, original, newReturnType, newOwnerClassId)
+        return FirFakeOverrideGenerator.createSubstitutionOverrideField(session, member, original, newReturnType, newOwnerClassId)
     }
 
-    private fun createFakeOverrideAccessor(original: FirAccessorSymbol): FirAccessorSymbol {
+    private fun createSubstitutionOverrideAccessor(original: FirAccessorSymbol): FirAccessorSymbol {
         if (substitutor == ConeSubstitutor.Empty) return original
         val member = original.fir as FirSyntheticProperty
         if (skipPrivateMembers && member.visibility == Visibilities.Private) return original
@@ -262,7 +262,7 @@ class FirClassSubstitutionScope(
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         useSiteMemberScope.processDeclaredConstructors process@{ original ->
-            val constructor = fakeOverrideConstructors.getOrPut(original) { createFakeOverrideConstructor(original) }
+            val constructor = substitutionOverrideConstructors.getOrPut(original) { createSubstitutionOverrideConstructor(original) }
             processor(constructor)
         }
     }

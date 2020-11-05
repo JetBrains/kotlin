@@ -23,7 +23,6 @@ open class FirVariableSymbol<D : FirVariable<D>>(override val callableId: Callab
 
 open class FirPropertySymbol(
     callableId: CallableId,
-    override val overriddenSymbol: FirPropertySymbol? = null,
 ) : FirVariableSymbol<FirProperty>(callableId), PossiblyFirFakeOverrideSymbol<FirProperty, FirPropertySymbol> {
     // TODO: should we use this constructor for local variables?
     constructor(name: Name) : this(CallableId(name))

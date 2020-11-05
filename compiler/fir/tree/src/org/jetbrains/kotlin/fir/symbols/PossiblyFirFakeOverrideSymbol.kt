@@ -8,6 +8,4 @@ package org.jetbrains.kotlin.fir.symbols
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 
-interface PossiblyFirFakeOverrideSymbol<E, S : FirBasedSymbol<E>> : FirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
-    val overriddenSymbol: S?
-}
+interface PossiblyFirFakeOverrideSymbol<E, S : FirBasedSymbol<E>> : FirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDeclaration

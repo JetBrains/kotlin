@@ -34,13 +34,13 @@ val FirCallableDeclaration<*>.isIntersectionOverride get() = origin == FirDeclar
 val FirCallableDeclaration<*>.isSubstitutionOverride get() = origin == FirDeclarationOrigin.SubstitutionOverride
 
 inline val <reified D : FirCallableDeclaration<*>> D.originalForSubstitutionOverride: D?
-    get() = if (isSubstitutionOverride) symbol.overriddenSymbol?.fir as D? else null
+    get() = if (isSubstitutionOverride) originalForSubstitutionOverrideAttr else null
 
 inline val <reified S : FirCallableSymbol<*>> S.originalForSubstitutionOverride: S?
     get() = fir.originalForSubstitutionOverride?.symbol as S?
 
 inline val <reified D : FirCallableDeclaration<*>> D.baseForIntersectionOverride: D?
-    get() = if (isIntersectionOverride) symbol.overriddenSymbol?.fir as D? else null
+    get() = if (isIntersectionOverride) originalForIntersectionOverrideAttr else null
 
 inline val <reified S : FirCallableSymbol<*>> S.baseForIntersectionOverride: S?
     get() = fir.baseForIntersectionOverride?.symbol as S?
@@ -61,3 +61,11 @@ inline fun <reified D : FirCallableDeclaration<*>> D.unwrapFakeOverrides(): D {
 }
 
 inline fun <reified S : FirCallableSymbol<*>> S.unwrapFakeOverrides(): S = fir.unwrapFakeOverrides().symbol as S
+
+private object SubstitutedOverrideOriginalKey : FirDeclarationDataKey()
+var <D : FirCallableDeclaration<*>>
+        D.originalForSubstitutionOverrideAttr: D? by FirDeclarationDataRegistry.data(SubstitutedOverrideOriginalKey)
+
+private object IntersectionOverrideOriginalKey : FirDeclarationDataKey()
+var <D : FirCallableDeclaration<*>>
+        D.originalForIntersectionOverrideAttr: D? by FirDeclarationDataRegistry.data(IntersectionOverrideOriginalKey)

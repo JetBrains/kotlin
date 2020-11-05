@@ -24,12 +24,10 @@ sealed class FirFunctionSymbol<D : FirFunction<D>>(
 
 open class FirNamedFunctionSymbol(
     callableId: CallableId,
-    override val overriddenSymbol: FirNamedFunctionSymbol? = null,
 ) : FirFunctionSymbol<FirSimpleFunction>(callableId), PossiblyFirFakeOverrideSymbol<FirSimpleFunction, FirNamedFunctionSymbol>
 
 class FirConstructorSymbol(
-    callableId: CallableId,
-    override val overriddenSymbol: FirConstructorSymbol? = null
+    callableId: CallableId
 ) : FirFunctionSymbol<FirConstructor>(callableId)
 
 open class FirAccessorSymbol(
