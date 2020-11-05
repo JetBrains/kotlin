@@ -9,9 +9,6 @@ import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
-import org.jetbrains.kotlin.backend.common.peek
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
@@ -62,6 +59,7 @@ internal class IrDeclarationDeserializer(
     val symbolTable: SymbolTable,
     val irFactory: IrFactory,
     val fileReader: IrLibraryFile,
+    file: IrFile,
     val deserializeFakeOverrides: Boolean,
     val fakeOverrideQueue: MutableList<IrClass>,
     val allowErrorNodes: Boolean,
@@ -162,19 +160,18 @@ internal class IrDeclarationDeserializer(
         }
     }
 
-    private val parentsStack = mutableListOf<IrDeclarationParent>()
-
-    private inline fun <T : IrDeclarationParent, R> usingParent(parent: T, block: (T) -> R): R {
-        parentsStack.push(parent)
-        try {
-            return block(parent)
-        } finally {
-            parentsStack.pop()
-        }
-    }
+    private var currentParent: IrDeclarationParent = file
 
     private inline fun <T : IrDeclarationParent> T.usingParent(block: T.() -> Unit): T =
-        this.apply { usingParent(this) { block(it) } }
+        this.apply {
+            val oldParent = currentParent
+            currentParent = this
+            try {
+                block(this)
+            } finally {
+                currentParent = oldParent
+            }
+        }
 
     private inline fun <T> withDeserializedIrDeclarationBase(
         proto: ProtoDeclarationBase,
@@ -191,7 +188,7 @@ internal class IrDeclarationDeserializer(
                 deserializeIrDeclarationOrigin(proto.originName), proto.flags
             )
             result.annotations += deserializeAnnotations(proto.annotationList)
-            result.parent = parentsStack.peek()!!
+            result.parent = currentParent
             return result
         } finally {
             symbolDeserializer.eraseDelegatedSymbol(s)
@@ -238,7 +235,7 @@ internal class IrDeclarationDeserializer(
         // make sure this symbol is known to linker
         symbolDeserializer.referenceIrSymbol(result.symbol, sig)
         result.annotations += deserializeAnnotations(proto.base.annotationList)
-        result.parent = parentsStack.peek()!!
+        result.parent = currentParent
         return result
     }
 
@@ -334,7 +331,7 @@ internal class IrDeclarationDeserializer(
         val descriptor = WrappedErrorDescriptor()
         return irFactory.createErrorDeclaration(coordinates.startOffset, coordinates.endOffset, descriptor).also {
             descriptor.bind(it)
-            it.parent = parentsStack.peek()!!
+            it.parent = currentParent
         }
     }
 
@@ -539,7 +536,7 @@ internal class IrDeclarationDeserializer(
 //                body = deserializeBlockBody(proto.body.blockBody, startOffset, endOffset)
                 body = deserializeStatementBody(proto.body) as IrBlockBody
 
-                (descriptor as? WrappedClassDescriptor)?.bind(parentsStack.peek() as IrClass)
+                (descriptor as? WrappedClassDescriptor)?.bind(currentParent as IrClass)
             }
         }
 
@@ -714,9 +711,4 @@ internal class IrDeclarationDeserializer(
             else -> false
         }
     }
-
-    fun deserializeDeclaration(proto: ProtoDeclaration, parent: IrDeclarationParent): IrDeclaration =
-        usingParent(parent) {
-            deserializeDeclaration(proto)
-        }
 }

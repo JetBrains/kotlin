@@ -43,14 +43,14 @@ internal open class IrFileDeserializer(
     private val moduleDeserializer: IrModuleDeserializer,
     fakeOverrideBuilder: FakeOverrideBuilder,
     val expectUniqIdToActualUniqId: MutableMap<IdSignature, IdSignature>,
+    val expectSymbols: MutableMap<IdSignature, IrSymbol>,
+    val actualSymbols: MutableMap<IdSignature, IrSymbol>,
     val topLevelActualUniqItToDeserializer: MutableMap<IdSignature, IrModuleDeserializer>,
     val handleNoModuleDeserializerFound: (IdSignature) -> IrModuleDeserializer,
-    val haveSeen: MutableSet<IrSymbol>,
-    val referenceDeserializedSymbol: (BinarySymbolData.SymbolKind, IdSignature) -> IrSymbol,
 ) {
     protected val irFactory: IrFactory get() = symbolTable.irFactory
 
-    val symbolDeserializer = IrSymbolDeserializer(fileReader, haveSeen, this)
+    val symbolDeserializer = IrSymbolDeserializer(fileReader, symbolTable, this, expectUniqIdToActualUniqId, expectSymbols, actualSymbols)
 
     val reversedSignatureIndex = declarationIdList.map { symbolDeserializer.deserializeIdSignature(it) to it }.toMap()
 
@@ -60,6 +60,7 @@ internal open class IrFileDeserializer(
         symbolTable,
         irFactory,
         fileReader,
+        file,
         deserializeFakeOverrides,
         fakeOverrideQueue,
         allowErrorNodes,
@@ -110,7 +111,7 @@ internal open class IrFileDeserializer(
 
 
     fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
-        return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig), file)
+        return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig))
     }
 
     fun deserializeExpectActualMapping() {

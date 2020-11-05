@@ -83,7 +83,7 @@ internal class IrBodyDeserializer(
 
     private val fileLoops = mutableMapOf<Int, IrLoop>()
 
-    private fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoop) =
+    private fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoop): IrLoop =
         fileLoops.getOrPut(loopIndex, loopBuilder)
 
     fun deserializeBlockBody(

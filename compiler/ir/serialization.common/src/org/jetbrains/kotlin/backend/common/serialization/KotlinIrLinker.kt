@@ -11,20 +11,16 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -109,7 +105,7 @@ abstract class KotlinIrLinker(
                 val fileStream = klib.file(i).codedInputStream
                 files.add(deserializeIrFile(ProtoFile.parseFrom(fileStream, newInstance()), i, delegate, containsErrorCode))
             }
-
+s
             moduleFragment.files.addAll(files)
 
             fileToDeserializerMap.values.forEach { it.deserializeExpectActualMapping() }
@@ -130,11 +126,8 @@ abstract class KotlinIrLinker(
             fileDeserializationState.addIdSignature(topLevelSignature)
             moduleDeserializationState.enqueueFile(fileDeserializer)
 
-            return fileDeserializer.symbolDeserializer.deserializedSymbols.getOrPut(idSig) {
-//                val descriptor = resolveSpecialSignature(idSig)
-                val symbol = referenceDeserializedSymbol(symbolKind, idSig)
-
-                handleExpectActualMapping(idSig, symbol)
+            return fileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
+                haveSeen.add(it)
             }
         }
 
@@ -164,10 +157,10 @@ abstract class KotlinIrLinker(
                     moduleDeserializer,
                     fakeOverrideBuilder,
                     expectUniqIdToActualUniqId,
+                    expectSymbols,
+                    actualSymbols,
                     topLevelActualUniqItToDeserializer,
                     ::handleNoModuleDeserializerFound,
-                    haveSeen,
-                    ::referenceDeserializedSymbol,
                 )
 
             fileToDeserializerMap[file] = fileDeserializer
@@ -217,42 +210,6 @@ abstract class KotlinIrLinker(
     protected abstract val functionalInterfaceFactory: IrAbstractFunctionFactory
 
     protected abstract fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean
-
-    // TODO: the following code worth some refactoring in the nearest future
-
-    private fun handleExpectActualMapping(idSig: IdSignature, rawSymbol: IrSymbol): IrSymbol {
-        val referencingSymbol = if (idSig in expectUniqIdToActualUniqId.keys) {
-            assert(idSig.run { IdSignature.Flags.IS_EXPECT.test() })
-            wrapInDelegatedSymbol(rawSymbol).also { expectSymbols[idSig] = it }
-        } else rawSymbol
-
-        if (idSig in expectUniqIdToActualUniqId.values) {
-            actualSymbols[idSig] = rawSymbol
-        }
-
-        return referencingSymbol
-    }
-
-    private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, idSig: IdSignature): IrSymbol = symbolTable.run {
-        when (symbolKind) {
-            BinarySymbolData.SymbolKind.ANONYMOUS_INIT_SYMBOL -> IrAnonymousInitializerSymbolImpl(WrappedClassDescriptor())
-            BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClassFromLinker(WrappedClassDescriptor(), idSig)
-            BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructorFromLinker(WrappedClassConstructorDescriptor(), idSig)
-            BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameterFromLinker(WrappedTypeParameterDescriptor(), idSig)
-            BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> referenceEnumEntryFromLinker(WrappedEnumEntryDescriptor(), idSig)
-            BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL -> referenceFieldFromLinker(WrappedFieldDescriptor(), idSig)
-            BinarySymbolData.SymbolKind.FIELD_SYMBOL -> referenceFieldFromLinker(WrappedPropertyDescriptor(), idSig)
-            BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> referenceSimpleFunctionFromLinker(WrappedSimpleFunctionDescriptor(), idSig)
-            BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAliasFromLinker(WrappedTypeAliasDescriptor(), idSig)
-            BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referencePropertyFromLinker(WrappedPropertyDescriptor(), idSig)
-            BinarySymbolData.SymbolKind.VARIABLE_SYMBOL -> IrVariableSymbolImpl(WrappedVariableDescriptor())
-            BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl(WrappedValueParameterDescriptor())
-            BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl(WrappedReceiverParameterDescriptor())
-            BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
-                IrLocalDelegatedPropertySymbolImpl(WrappedVariableDescriptorWithAccessor())
-            else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
-        }
-    }
 
     private fun deserializeAllReachableTopLevels() {
         while (modulesWithReachableTopLevels.isNotEmpty()) {

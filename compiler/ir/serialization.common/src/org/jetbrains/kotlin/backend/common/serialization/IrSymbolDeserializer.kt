@@ -7,7 +7,12 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature.IdsigCase.*
+import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrLocalDelegatedPropertySymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -18,11 +23,56 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature
 
 internal class IrSymbolDeserializer(
     val fileReader: IrLibraryFile,
-    val haveSeen: MutableSet<IrSymbol>,
+    val symbolTable: SymbolTable,
     val fileDeserializer: IrFileDeserializer,
+    val expectUniqIdToActualUniqId: MutableMap<IdSignature, IdSignature>,
+    val expectSymbols: MutableMap<IdSignature, IrSymbol>,
+    val actualSymbols: MutableMap<IdSignature, IrSymbol>,
 ) {
 
     val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
+
+    fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+        return deserializedSymbols.getOrPut(idSig) {
+            val symbol = referenceDeserializedSymbol(symbolKind, idSig)
+
+            handleExpectActualMapping(idSig, symbol)
+        }
+    }
+
+    private fun handleExpectActualMapping(idSig: IdSignature, rawSymbol: IrSymbol): IrSymbol {
+        val referencingSymbol = if (idSig in expectUniqIdToActualUniqId.keys) {
+            assert(idSig.run { IdSignature.Flags.IS_EXPECT.test() })
+            wrapInDelegatedSymbol(rawSymbol).also { expectSymbols[idSig] = it }
+        } else rawSymbol
+
+        if (idSig in expectUniqIdToActualUniqId.values) {
+            actualSymbols[idSig] = rawSymbol
+        }
+
+        return referencingSymbol
+    }
+
+    private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, idSig: IdSignature): IrSymbol = symbolTable.run {
+        when (symbolKind) {
+            BinarySymbolData.SymbolKind.ANONYMOUS_INIT_SYMBOL -> IrAnonymousInitializerSymbolImpl(WrappedClassDescriptor())
+            BinarySymbolData.SymbolKind.CLASS_SYMBOL -> referenceClassFromLinker(WrappedClassDescriptor(), idSig)
+            BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL -> referenceConstructorFromLinker(WrappedClassConstructorDescriptor(), idSig)
+            BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL -> referenceTypeParameterFromLinker(WrappedTypeParameterDescriptor(), idSig)
+            BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL -> referenceEnumEntryFromLinker(WrappedEnumEntryDescriptor(), idSig)
+            BinarySymbolData.SymbolKind.STANDALONE_FIELD_SYMBOL -> referenceFieldFromLinker(WrappedFieldDescriptor(), idSig)
+            BinarySymbolData.SymbolKind.FIELD_SYMBOL -> referenceFieldFromLinker(WrappedPropertyDescriptor(), idSig)
+            BinarySymbolData.SymbolKind.FUNCTION_SYMBOL -> referenceSimpleFunctionFromLinker(WrappedSimpleFunctionDescriptor(), idSig)
+            BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL -> referenceTypeAliasFromLinker(WrappedTypeAliasDescriptor(), idSig)
+            BinarySymbolData.SymbolKind.PROPERTY_SYMBOL -> referencePropertyFromLinker(WrappedPropertyDescriptor(), idSig)
+            BinarySymbolData.SymbolKind.VARIABLE_SYMBOL -> IrVariableSymbolImpl(WrappedVariableDescriptor())
+            BinarySymbolData.SymbolKind.VALUE_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl(WrappedValueParameterDescriptor())
+            BinarySymbolData.SymbolKind.RECEIVER_PARAMETER_SYMBOL -> IrValueParameterSymbolImpl(WrappedReceiverParameterDescriptor())
+            BinarySymbolData.SymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
+                IrLocalDelegatedPropertySymbolImpl(WrappedVariableDescriptorWithAccessor())
+            else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
+        }
+    }
 
     fun referenceIrSymbol(symbol: IrSymbol, signature: IdSignature) {
         assert(signature.isLocal)
@@ -37,16 +87,14 @@ internal class IrSymbolDeserializer(
         }
 
         return deserializedSymbols.getOrPut(idSig) {
-            fileDeserializer.referenceDeserializedSymbol(symbolKind, idSig)
+            referenceDeserializedSymbol(symbolKind, idSig)
         }
     }
 
     private fun deserializeIrSymbolData(idSignature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         if (idSignature.isLocal) return deserializeIrLocalSymbolData(idSignature, symbolKind)
 
-        return fileDeserializer.findModuleDeserializer(idSignature).deserializeIrSymbol(idSignature, symbolKind).also {
-            haveSeen.add(it)
-        }
+        return fileDeserializer.findModuleDeserializer(idSignature).deserializeIrSymbol(idSignature, symbolKind)
     }
 
     fun deserializeIrSymbolToDeclare(code: Long): Pair<IrSymbol, IdSignature> {
