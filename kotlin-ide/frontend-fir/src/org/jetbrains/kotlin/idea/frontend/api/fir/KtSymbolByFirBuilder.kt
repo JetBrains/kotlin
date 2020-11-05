@@ -43,13 +43,7 @@ internal class KtSymbolByFirBuilder private constructor(
     private val symbolsCache: BuilderCache<FirDeclaration, KtSymbol>,
     private val typesCache: BuilderCache<ConeKotlinType, KtType>
 ) : ValidityTokenOwner {
-    private val typeCheckerContext by threadLocal {
-        ConeTypeCheckerContext(
-            isErrorTypeEqualsToAnything = true,
-            isStubTypeEqualsToAnything = true,
-            resolveState.rootModuleSession
-        )
-    }
+    private val resolveState by weakRef(resolveState)
 
     private val firProvider get() = resolveState.rootModuleSession.firSymbolProvider
 
@@ -66,7 +60,6 @@ internal class KtSymbolByFirBuilder private constructor(
         typesCache = BuilderCache()
     )
 
-    private val resolveState by weakRef(resolveState)
 
     fun createReadOnlyCopy(newResolveState: FirModuleResolveState): KtSymbolByFirBuilder {
         check(!withReadOnlyCaching) { "Cannot create readOnly KtSymbolByFirBuilder from a readonly one" }
@@ -197,11 +190,11 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun buildKtType(coneType: ConeKotlinType): KtType = typesCache.cache(coneType) {
         when (coneType) {
-            is ConeClassLikeTypeImpl -> KtFirClassType(coneType, typeCheckerContext, token, this)
-            is ConeTypeParameterType -> KtFirTypeParameterType(coneType, typeCheckerContext, token, this)
-            is ConeClassErrorType -> KtFirErrorType(coneType, typeCheckerContext, token)
-            is ConeFlexibleType -> KtFirFlexibleType(coneType, typeCheckerContext, token, this)
-            is ConeIntersectionType -> KtFirIntersectionType(coneType, typeCheckerContext, token, this)
+            is ConeClassLikeTypeImpl -> KtFirClassType(coneType, token, this)
+            is ConeTypeParameterType -> KtFirTypeParameterType(coneType, token, this)
+            is ConeClassErrorType -> KtFirErrorType(coneType, token)
+            is ConeFlexibleType -> KtFirFlexibleType(coneType, token, this)
+            is ConeIntersectionType -> KtFirIntersectionType(coneType, token, this)
             is ConeDefinitelyNotNullType -> buildKtType(coneType.original)
             else -> TODO(coneType::class.toString())
         }
