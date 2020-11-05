@@ -39,7 +39,7 @@ class ClasspathAnalyzerTest {
             }
         }
         val outputs = TransformOutputsMock(tmp.newFolder())
-        StructureTransformTestAction(classesDir).transform(outputs)
+        StructureTransformTestAction(classesDir, tmp.newFolder("project")).transform(outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertEquals(setOf("test/A", "test/B"), data.classAbiHash.keys)
@@ -75,7 +75,7 @@ class ClasspathAnalyzerTest {
             }
         }
         val outputs = TransformOutputsMock(tmp.newFolder())
-        StructureTransformTestAction(inputJar).transform(outputs)
+        StructureTransformTestAction(inputJar, tmp.newFolder("project")).transform(outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertEquals(setOf("test/A", "test/B"), data.classAbiHash.keys)
@@ -101,7 +101,7 @@ class ClasspathAnalyzerTest {
             }
         }
         val outputsA = TransformOutputsMock(tmp.newFolder())
-        StructureTransformTestAction(jarA).transform(outputsA)
+        StructureTransformTestAction(jarA, tmp.newFolder("projectA")).transform(outputsA)
 
         val jarB = tmp.newFile("inputB.jar").also { jar ->
             ZipOutputStream(jar.outputStream()).use {
@@ -115,14 +115,14 @@ class ClasspathAnalyzerTest {
             }
         }
         val outputsB = TransformOutputsMock(tmp.newFolder())
-        StructureTransformTestAction(jarB).transform(outputsB)
+        StructureTransformTestAction(jarB, tmp.newFolder("projectB")).transform(outputsB)
 
         assertArrayEquals(outputsA.createdOutputs.single().readBytes(), outputsB.createdOutputs.single().readBytes())
     }
 
     @Test
     fun emptyInput() {
-        val transformAction = StructureTransformTestAction(tmp.newFolder("input"))
+        val transformAction = StructureTransformTestAction(tmp.newFolder("input"), tmp.newFolder("project"))
         val outputs = TransformOutputsMock(tmp.newFolder())
 
         transformAction.transform(outputs)
@@ -149,7 +149,7 @@ class ClasspathAnalyzerTest {
                 it.closeEntry()
             }
         }
-        val transformAction = StructureTransformTestAction(inputJar)
+        val transformAction = StructureTransformTestAction(inputJar, tmp.newFolder("project"))
         val outputs = TransformOutputsMock(tmp.newFolder())
 
         transformAction.transform(outputs)
@@ -166,8 +166,8 @@ class ClasspathAnalyzerTest {
     }
 }
 
-class StructureTransformTestAction(val input: File) : StructureTransformAction() {
-    private val project = ProjectBuilder.builder().build()
+class StructureTransformTestAction(val input: File, val projectDir: File) : StructureTransformAction() {
+    private val project = ProjectBuilder.builder().withProjectDir(projectDir).build()
 
     override val inputArtifact: Provider<FileSystemLocation> = project.provider { project.objects.fileProperty().fileValue(input).get() }
 
