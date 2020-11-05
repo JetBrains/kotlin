@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -263,11 +264,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     private fun IrConstructorCall.printAnAnnotationWithNoIndent(prefix: String = "") {
-        val clazz = symbol.owner.parentAsClass
-        assert(clazz.isAnnotationClass)
-        // TODO render arguments / reuse visitCall or visitConstructorCall
-        p.printWithNoIndent("@" + (if (prefix.isEmpty()) "" else "$prefix:") + clazz.name.asString())
-        if (valueArgumentsCount > 0) p.printWithNoIndent("(...)")
+        p.printWithNoIndent("@" + (if (prefix.isEmpty()) "" else "$prefix:"))
+        visitConstructorCall(this)
     }
 
     private fun IrAnnotationContainer.printlnAnnotations(prefix: String = "") {
@@ -818,48 +816,99 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitCall(expression: IrCall) {
-        val declaration = expression.symbol.owner
+        // TODO process specially builtin symbols
+        expression.printIrFunctionAccessExpressionWithNoIndent(
+            expression.symbol.owner.name,
+            superQualifierSymbol = expression.superQualifierSymbol,
+            omitBracesIfNoArguments = false
+        )
+    }
 
-        expression.dispatchReceiver?.let {
-            it.acceptVoid(this)
+    override fun visitConstructorCall(expression: IrConstructorCall) {
+        // TODO could constructors have receiver?
+        val clazz = expression.symbol.owner.parentAsClass
+        expression.printIrFunctionAccessExpressionWithNoIndent(
+            clazz.name,
+            superQualifierSymbol = null,
+            omitBracesIfNoArguments = clazz.isAnnotationClass
+        )
+    }
+
+    private fun IrFunctionAccessExpression.printIrFunctionAccessExpressionWithNoIndent(
+        name: Name,
+        superQualifierSymbol: IrClassSymbol?,
+        omitBracesIfNoArguments: Boolean
+    ) {
+        // TODO origin
+
+        val twoReceivers =
+            (dispatchReceiver != null || superQualifierSymbol != null) && extensionReceiver != null
+
+        if (twoReceivers) {
+            p.printWithNoIndent("(")
+        }
+
+        superQualifierSymbol?.let {
+            // TODO should we print super classifier somehow?
+            p.printWithNoIndent("super")
+        }
+
+        dispatchReceiver?.let {
+            if (superQualifierSymbol == null) it.acceptVoid(this@KotlinLikeDumper)
+            // else assert dispatchReceiver === this
+        }
+        if (twoReceivers) {
+            p.printWithNoIndent(", ")
+        }
+        extensionReceiver?.acceptVoid(this@KotlinLikeDumper)
+        if (twoReceivers) {
+            p.printWithNoIndent(")")
+        }
+
+
+        if (dispatchReceiver != null || extensionReceiver != null || superQualifierSymbol != null) {
             p.printWithNoIndent(".")
         }
 
-        p.printWithNoIndent(declaration.name.asString())
+        // what if it's unbound
+        val declaration = symbol.owner
 
-        if (expression.typeArgumentsCount > 0) {
+        p.printWithNoIndent(name.asString())
+
+        if (typeArgumentsCount > 0) {
             p.printWithNoIndent("<")
-            repeat(expression.typeArgumentsCount) {
+            repeat(typeArgumentsCount) {
                 if (it > 0) {
                     p.printWithNoIndent(", ")
                 }
-                expression.getTypeArgument(it)!!.printTypeWithNoIndent()
+                // TODO flag to print type param name?
+                getTypeArgument(it)!!.printTypeWithNoIndent()
             }
             p.printWithNoIndent(">")
         }
 
-        p.printWithNoIndent("(")
-        expression.extensionReceiver?.let {
-            // TODO
-            p.printWithNoIndent("\$receiver = ")
-            it.acceptVoid(this)
-            if (expression.valueArgumentsCount > 0) p.printWithNoIndent(", ")
-        }
+        if (omitBracesIfNoArguments && valueArgumentsCount == 0 && typeArgumentsCount == 0) return
 
-        repeat(expression.valueArgumentsCount) { i ->
-            expression.getValueArgument(i)?.let {
+        p.printWithNoIndent("(")
+
+// TODO introduce a flag to print receiver this way?
+//
+//        expression.extensionReceiver?.let {
+//            p.printWithNoIndent("\$receiver = ")
+//            it.acceptVoid(this)
+//            if (expression.valueArgumentsCount > 0) p.printWithNoIndent(", ")
+//        }
+
+        repeat(valueArgumentsCount) { i ->
+            getValueArgument(i)?.let {
                 if (i > 0) p.printWithNoIndent(", ")
+                // TODO flag to print param name
                 p.printWithNoIndent(declaration.valueParameters[i].name.asString() + " = ")
-                it.acceptVoid(this)
+                it.acceptVoid(this@KotlinLikeDumper)
             }
         }
 
         p.printWithNoIndent(")")
-    }
-
-    override fun visitConstructorCall(expression: IrConstructorCall) {
-        // TODO
-        p.printWithNoIndent("TODO(\"IrConstructorCall\")")
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
@@ -939,6 +988,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitVararg(expression: IrVararg) {
+        // TODO ???
         p.printWithNoIndent("[")
         expression.elements.forEachIndexed { i, e ->
             if (i > 0) p.printWithNoIndent(", ")
