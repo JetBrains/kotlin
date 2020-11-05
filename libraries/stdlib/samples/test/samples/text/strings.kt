@@ -411,15 +411,12 @@ class Strings {
 
     @Sample
     fun last() {
-        val str0 = "Sample String 0"
-        val str1 = ""
-        assertEquals('0', str0.last())
-        assertEquals('g', str0.last( {it.isLetter()} ))
-        assertFailsWith<NoSuchElementException>{
-            str1.last()
-        }
-        assertFailsWith<NoSuchElementException>{
-            str0.last( {it > 'z'} )
-        }
+        val string = "Kotlin 1.4.0"
+        assertPrints(string.last(), "0")
+        assertPrints(string.last { it.isLetter() }, "n")
+        assertFails { string.last { it > 'z' } }
+
+        val emptyString = ""
+        assertFails { emptyString.last() }
     }
 }
