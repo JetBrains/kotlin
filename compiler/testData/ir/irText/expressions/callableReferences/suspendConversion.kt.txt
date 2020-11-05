@@ -93,7 +93,6 @@ fun testWithDefaults() {
 
 fun testWithBoundReceiver() {
   useSuspend(fn = { //BLOCK
-    val tmp0_receiver: C = TODO("IrConstructorCall")
     local suspend fun C.bar() {
       receiver.bar()
     }

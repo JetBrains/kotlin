@@ -36,10 +36,12 @@ data class Test<T : Any?> {
   }
 
   override fun hashCode(): Int {
-    return when {
+    var result: Int = when {
       EQEQ(arg0 = #x, arg1 = null) -> 0
       true -> #x.hashCode()
-    }.times(other = 31).plus(other = #y.hashCode())
+    }
+    result = result.times(other = 31).plus(other = #y.hashCode())
+    return result
   }
 
   override operator fun equals(other: Any?): Boolean {

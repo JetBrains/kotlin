@@ -36,7 +36,9 @@ data class A {
   }
 
   override fun hashCode(): Int {
-    return #x.hashCode().times(other = 31).plus(other = #y.hashCode())
+    var result: Int = #x.hashCode()
+    result = result.times(other = 31).plus(other = #y.hashCode())
+    return result
   }
 
   override operator fun equals(other: Any?): Boolean {

@@ -26,7 +26,7 @@ fun test1(): @FlexibleNullability String? {
 }
 
 fun test2(): String {
-  return checkT<String?>(fn =   local fun <anonymous>(): String? {
+  return checkT<@EnhancedNullability String>(fn =   local fun <anonymous>(): @EnhancedNullability String {
     return nnFoo()
   }
 ) /*!! String */
@@ -40,7 +40,7 @@ fun test3(): @FlexibleNullability String? {
 }
 
 fun test4(): String {
-  return checkTAny<String?>(fn =   local fun <anonymous>(): String? {
+  return checkTAny<@EnhancedNullability String>(fn =   local fun <anonymous>(): @EnhancedNullability String {
     return nnFoo()
   }
 ) /*!! String */

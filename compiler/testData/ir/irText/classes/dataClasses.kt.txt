@@ -47,7 +47,10 @@ data class Test1 {
   }
 
   override fun hashCode(): Int {
-    return #x.hashCode().times(other = 31).plus(other = #y.hashCode()).times(other = 31).plus(other = #z.hashCode())
+    var result: Int = #x.hashCode()
+    result = result.times(other = 31).plus(other = #y.hashCode())
+    result = result.times(other = 31).plus(other = #z.hashCode())
+    return result
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -181,13 +184,17 @@ data class Test3 {
   }
 
   override fun hashCode(): Int {
-    return #d.hashCode().times(other = 31).plus(other = when {
+    var result: Int = #d.hashCode()
+    result = result.times(other = 31).plus(other = when {
       EQEQ(arg0 = #dn, arg1 = null) -> 0
       true -> #dn.hashCode()
-    }).times(other = 31).plus(other = #f.hashCode()).times(other = 31).plus(other = when {
+    })
+    result = result.times(other = 31).plus(other = #f.hashCode())
+    result = result.times(other = 31).plus(other = when {
       EQEQ(arg0 = #df, arg1 = null) -> 0
       true -> #df.hashCode()
     })
+    return result
   }
 
   override operator fun equals(other: Any?): Boolean {

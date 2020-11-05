@@ -113,7 +113,16 @@ dataClassArrayMemberToString(arg0 = #doubleArray) +
   }
 
   override fun hashCode(): Int {
-    return dataClassArrayMemberHashCode(arg0 = #stringArray).times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #charArray)).times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #booleanArray)).times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #byteArray)).times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #shortArray)).times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #intArray)).times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #longArray)).times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #floatArray)).times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #doubleArray))
+    var result: Int = dataClassArrayMemberHashCode(arg0 = #stringArray)
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #charArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #booleanArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #byteArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #shortArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #intArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #longArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #floatArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #doubleArray))
+    return result
   }
 
   override operator fun equals(other: Any?): Boolean {

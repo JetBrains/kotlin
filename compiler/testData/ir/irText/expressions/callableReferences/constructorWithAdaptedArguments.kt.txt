@@ -58,7 +58,6 @@ fun testInnerClassConstructor(outer: Outer): Any {
 
 fun testInnerClassConstructorCapturingOuter(): Any {
   return use(fn = { //BLOCK
-    val tmp0_receiver: Outer = TODO("IrConstructorCall")
     local fun Outer.<init>(p0: Int): Inner {
       return TODO("IrConstructorCall")
     }
