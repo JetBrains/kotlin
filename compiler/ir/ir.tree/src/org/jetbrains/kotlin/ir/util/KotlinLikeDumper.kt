@@ -424,19 +424,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p(isNoinline, "noinline")
     }
 
-    private val INAPPLICABLE = false
-    private val INAPPLICABLE_N = null
-
-    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        declaration.printSimpleFunction(
-            "fun ",
-            declaration.name.asString(),
-            printTypeParametersAndExtensionReceiver = true,
-            printSignatureAndBody = true
-        )
-        p.printlnWithNoIndent()
-    }
-
     private fun IrValueParameter.printExtensionReceiverParameter() {
         type.printTypeWithNoIndent()
         p.printWithNoIndent(".")
@@ -513,6 +500,16 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
     }
 
+    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+        declaration.printSimpleFunction(
+            "fun ",
+            declaration.name.asString(),
+            printTypeParametersAndExtensionReceiver = true,
+            printSignatureAndBody = true
+        )
+        p.printlnWithNoIndent()
+    }
+
     override fun visitConstructor(declaration: IrConstructor) {
         // TODO primary!!!
         // TODO name?
@@ -556,9 +553,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         declaration.body?.acceptVoid(this)
         p.printlnWithNoIndent()
     }
-
-    private fun commentBlock(text: String) = "/* $text */"
-    private fun commentBlockH(text: String) = "/* $text */"
 
     override fun visitProperty(declaration: IrProperty) {
         if (options.printFakeOverridesStrategy == FakeOverridesStrategy.NONE && declaration.isFakeOverride) return
@@ -792,7 +786,20 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printlnWithNoIndent()
     }
 
+    override fun visitComposite(expression: IrComposite) {
+        expression.printStatementContainer("// COMPOSITE {", "// }", withIndentation = false)
+    }
+
+    override fun visitBlock(expression: IrBlock) {
+        // TODO special blocks using `origin`
+        // TODO inlineFunctionSymbol for IrReturnableBlock
+        // TODO no tests for IrReturnableBlock?
+        val kind = if (expression is IrReturnableBlock) "RETURNABLE BLOCK" else "BLOCK"
+        expression.printStatementContainer("{ // $kind", "}")
+    }
+
     private fun IrStatementContainer.printStatementContainer(before: String, after: String, withIndentation: Boolean = true) {
+        // TODO type for IrContainerExpression
         p.printlnWithNoIndent(before)
         if (withIndentation) p.pushIndent()
 
@@ -876,12 +883,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         expression.function.printSimpleFunction("fun ", expression.function.name.asString(), printTypeParametersAndExtensionReceiver = true, printSignatureAndBody = true)
     }
 
-    private fun IrFieldAccessExpression.printFieldAccess() {
-        // TODO receiver, superQualifierSymbol?
-        // TODO is not valid kotlin
-        p.printWithNoIndent("#" + symbol.owner.name.asString())
-    }
-
     override fun visitGetField(expression: IrGetField) {
         expression.printFieldAccess()
     }
@@ -892,6 +893,12 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         expression.value.acceptVoid(this)
     }
 
+    private fun IrFieldAccessExpression.printFieldAccess() {
+        // TODO receiver, superQualifierSymbol?
+        // TODO is not valid kotlin
+        p.printWithNoIndent("#" + symbol.owner.name.asString())
+    }
+
     override fun visitReturn(expression: IrReturn) {
         p.printWithNoIndent("return ")
         expression.value.acceptVoid(this)
@@ -900,14 +907,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitThrow(expression: IrThrow) {
         p.printWithNoIndent("throw ")
         expression.value.acceptVoid(this)
-    }
-
-    override fun visitComposite(expression: IrComposite) {
-        expression.printStatementContainer("// COMPOSITE {", "// }", withIndentation = false)
-    }
-
-    override fun visitBlock(expression: IrBlock) {
-        expression.printStatementContainer("{ //BLOCK", "}")
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation) {
@@ -1095,5 +1094,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitErrorCallExpression(expression: IrErrorCallExpression) {
         // TODO receiver, arguments
         p.printWithNoIndent("error(\"\") /* ERROR CALL */")
+    }
+
+    private fun commentBlock(text: String) = "/* $text */"
+    private fun commentBlockH(text: String) = "/* $text */"
+
+    private companion object {
+        private const val INAPPLICABLE = false
+        private val INAPPLICABLE_N = null
     }
 }
