@@ -4,19 +4,19 @@
 fun main(ak: AK, akn: AKN, bk: BK, ck: CK, ckn: CKN): Unit {
     ak.foo(ak)
     // jspecify_nullness_mismatch
-    ak.foo(null)
+    ak.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     // jspecify_nullness_mismatch
-    akn.foo(null)
+    akn.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     bk.foo(bk)
     // jspecify_nullness_mismatch
-    bk.foo(null)
+    bk.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     ck.foo(ck)
     // jspecify_nullness_mismatch
-    ck.foo(null)
+    ck.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     // jspecify_nullness_mismatch
-    ckn.foo(null)
+    ckn.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 }

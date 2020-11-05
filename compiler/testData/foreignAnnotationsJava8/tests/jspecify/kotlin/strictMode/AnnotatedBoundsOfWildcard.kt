@@ -15,9 +15,9 @@ fun main(
             b: AnnotatedBoundsOfWildcard
 ): Unit {
     // jspecify_nullness_mismatch
-    b.superAsIs(aAnyNotNullNotNullNotNull)
+    b.superAsIs(<!TYPE_MISMATCH!>aAnyNotNullNotNullNotNull<!>)
     // jspecify_nullness_mismatch
-    b.superAsIs(aAnyNotNullNotNullNull)
+    b.superAsIs(<!TYPE_MISMATCH!>aAnyNotNullNotNullNull<!>)
     b.superAsIs(aAnyNotNullNullNotNull)
     b.superAsIs(aAnyNotNullNullNull)
 
@@ -54,7 +54,7 @@ fun main(
     b.extendsNullable(aNotNullNullNull)
 
     b.noBounds(aNotNullNotNullNotNull)
-    b.noBounds(<!TYPE_MISMATCH!>aNotNullNotNullNull<!>)
-    b.noBounds(<!TYPE_MISMATCH!>aNotNullNullNotNull<!>)
-    b.noBounds(<!TYPE_MISMATCH!>aNotNullNullNull<!>)
+    b.noBounds(aNotNullNotNullNull)
+    b.noBounds(aNotNullNullNotNull)
+    b.noBounds(aNotNullNullNull)
 }

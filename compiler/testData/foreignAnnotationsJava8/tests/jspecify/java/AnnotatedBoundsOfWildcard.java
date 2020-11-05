@@ -2,15 +2,15 @@ import org.jspecify.annotations.*;
 
 @DefaultNonNull
 public class AnnotatedBoundsOfWildcard {
-    public void superAsIs(Test<? super @NullnessUnspecified Base, ? super @NullnessUnspecified Base, ? super @NullnessUnspecified Base> a) {}
+    public void superAsIs(Test<? super Base, ? super @Nullable Base, ? super @NullnessUnspecified Base> a) {}
     public void superNotNull(Test<? super Base, ? super Base, ? super Base> a) {}
     public void superNullable(Test<? super @Nullable Base, ? super @Nullable Base, ? super @Nullable Base> a) {}
 
-    public void extendsAsIs(Test<? extends @NullnessUnspecified Base, ? extends @NullnessUnspecified Base, ? extends @NullnessUnspecified Base> a) {}
+    public void extendsAsIs(Test<? extends Base, ? extends @Nullable Base, ? extends @NullnessUnspecified Base> a) {}
     public void extendsNotNull(Test<? extends Base, ? extends Base, ? extends Base> a) {}
     public void extendsNullable(Test<? extends @Nullable Base, ? extends @Nullable Base, ? extends @Nullable Base> a) {}
 
-    public void noBounds(Test<@NullnessUnspecified ?, @NullnessUnspecified ?, @NullnessUnspecified ?> a) {}
+    public void noBounds(Test<? extends @NullnessUnspecified Object, ? extends @NullnessUnspecified Object, ? extends @NullnessUnspecified Object> a) {}
 }
 
 class Base {}

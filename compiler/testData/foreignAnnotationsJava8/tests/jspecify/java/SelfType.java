@@ -1,6 +1,6 @@
 import org.jspecify.annotations.*;
 
-@DefaultNotNull
+@DefaultNonNull
 public class SelfType<T extends SelfType<T>> {
     public void foo(T t) {}
 }
