@@ -17,10 +17,6 @@ abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() 
     override fun getProjectDescriptor(): KotlinLightProjectDescriptor =
         KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE_FULL_JDK
 
-    override fun setUp() {
-        super.setUp()
-    }
-
     override fun doTest(path: String) {
         assert(path.endsWith(".kt")) { path }
         myFixture.configureWithExtraFile(path, ".Data")
@@ -34,9 +30,5 @@ abstract class AbstractFirReferenceResolveTest : AbstractReferenceResolveTest() 
             throw AssertionError("Looks like test is passing, please remove IGNORE_FIR")
         }
         performChecks()
-    }
-
-    override fun tearDown() {
-        super.tearDown()
     }
 }
