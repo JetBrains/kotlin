@@ -93,8 +93,9 @@ sealed class NativeBinary(
         buildDir.resolve("bin/$targetSubDirectory${this@NativeBinary.name}")
     }
 
-    val outputFile: File
-        get() = linkTask.outputFile.get()
+    val outputFile: File by lazy {
+        linkTask.outputFile.get()
+    }
 
     // Named implementation.
     override fun getName(): String = name
