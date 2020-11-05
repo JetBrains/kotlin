@@ -62,7 +62,7 @@ object InlineClassAbi {
      * Returns a mangled name for a function taking inline class arguments
      * to avoid clashes between overloaded methods.
      */
-    fun mangledNameFor(irFunction: IrFunction, mangleReturnTypes: Boolean): Name {
+    fun mangledNameFor(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): Name {
         if (irFunction is IrConstructor) {
             // Note that we might drop this convention and use standard mangling for constructors too, see KT-37186.
             assert(irFunction.constructedClass.isInline) {
@@ -71,14 +71,28 @@ object InlineClassAbi {
             return Name.identifier("constructor-impl")
         }
 
-        val suffix = when {
-            irFunction.fullValueParameterList.any { it.type.requiresMangling } || (mangleReturnTypes && irFunction.hasMangledReturnType) ->
-                hashSuffix(irFunction, mangleReturnTypes)
-            (irFunction.parent as? IrClass)?.isInline == true &&
-                    irFunction.origin != IrDeclarationOrigin.IR_BUILTINS_STUB ->
-                "impl"
-            else ->
-                return irFunction.name
+        val suffix = if (useOldMangleRules) {
+            when {
+                irFunction.fullValueParameterList.any { it.type.requiresMangling } ->
+                    hashSuffix(irFunction, false, useOldMangleRules)
+                mangleReturnTypes && irFunction.hasMangledReturnType ->
+                    returnHashSuffix(irFunction)
+                (irFunction.parent as? IrClass)?.isInline == true &&
+                        irFunction.origin != IrDeclarationOrigin.IR_BUILTINS_STUB ->
+                    "impl"
+                else ->
+                    return irFunction.name
+            }
+        } else {
+            when {
+                irFunction.fullValueParameterList.any { it.type.requiresMangling } || (mangleReturnTypes && irFunction.hasMangledReturnType) ->
+                    hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
+                (irFunction.parent as? IrClass)?.isInline == true &&
+                        irFunction.origin != IrDeclarationOrigin.IR_BUILTINS_STUB ->
+                    "impl"
+                else ->
+                    return irFunction.name
+            }
         }
 
         val base = when {
@@ -98,26 +112,40 @@ object InlineClassAbi {
     private val IrFunction.propertyName: Name
         get() = (this as IrSimpleFunction).correspondingPropertySymbol!!.owner.name
 
-    fun hashSuffix(irFunction: IrFunction, mangleReturnTypes: Boolean): String {
+    fun hashSuffix(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): String {
         val signatureElementsForMangling =
-            irFunction.fullValueParameterList.mapTo(mutableListOf()) { it.type.eraseToString() }
+            irFunction.fullValueParameterList.mapTo(mutableListOf()) { it.type.eraseToString(useOldMangleRules) }
         if (irFunction.isSuspend) {
             // The JVM backend computes mangled names after creating suspend function views, but before default argument
             // stub insertion. It would be nice if this part of the continuation lowering happened earlier in the pipeline.
             // TODO: Move suspend function view creation before JvmInlineClassLowering.
-            signatureElementsForMangling += "x"
+            signatureElementsForMangling += if (useOldMangleRules) "Lkotlin.coroutines.Continuation;" else "x"
         }
         val signatureString = signatureElementsForMangling.joinToString() +
-                if (mangleReturnTypes && irFunction.hasMangledReturnType) ":${irFunction.returnType.eraseToString()}" else ""
+                if (mangleReturnTypes && irFunction.hasMangledReturnType && !useOldMangleRules)
+                    ":${irFunction.returnType.eraseToString(useOldMangleRules)}" else ""
         return md5base64(signatureString)
     }
 
-    private fun IrType.eraseToString() = if (getClass()?.isInline == true) buildString {
-        append('L')
-        append(erasedUpperBound.fqNameWhenAvailable!!)
-        if (isNullable()) append('?')
-        append(';')
-    } else "x"
+    private fun returnHashSuffix(irFunction: IrFunction) =
+        md5base64(":${irFunction.returnType.eraseToString(false)}")
+
+    private fun IrType.eraseToString(useOldMangleRules: Boolean) =
+        if (useOldMangleRules) {
+            buildString {
+                append('L')
+                append(erasedUpperBound.fqNameWhenAvailable!!)
+                if (isNullable()) append('?')
+                append(';')
+            }
+        } else {
+            if (getClass()?.isInline == true) buildString {
+                append('L')
+                append(erasedUpperBound.fqNameWhenAvailable!!)
+                if (isNullable()) append('?')
+                append(';')
+            } else "x"
+        }
 }
 
 internal val IrType.requiresMangling: Boolean

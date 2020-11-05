@@ -133,7 +133,7 @@ class JvmBackendContext(
 
     val staticDefaultStubs = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunction>()
 
-    val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory)
+    val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory, this)
 
     internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
         symbolTable.lazyWrapper.referenceClass(descriptor)

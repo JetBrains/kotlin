@@ -369,7 +369,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 name = if (samSuperType == null && callee.returnType.erasedUpperBound.isInline && context.state.functionsWithInlineClassReturnTypesMangled) {
                     // For functions with inline class return type we need to mangle the invoke method.
                     // Otherwise, bridge lowering may fail to generate bridges for inline class types erasing to Any.
-                    val suffix = InlineClassAbi.hashSuffix(callee, true)
+                    val suffix = InlineClassAbi.hashSuffix(callee, mangleReturnTypes = true, useOldMangleRules = false)
                     Name.identifier("${superMethod.owner.name.asString()}-${suffix}")
                 } else superMethod.owner.name
                 returnType = callee.returnType

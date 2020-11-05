@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.codegen.classFileContainsMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -33,7 +35,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 /**
  * Keeps track of replacement functions and inline class box/unbox functions.
  */
-class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, private val irFactory: IrFactory) {
+class MemoizedInlineClassReplacements(
+    private val mangleReturnTypes: Boolean,
+    private val irFactory: IrFactory,
+    private val context: JvmBackendContext
+) {
     private val storageManager = LockBasedStorageManager("inline-class-replacements")
     private val propertyMap = mutableMapOf<IrPropertySymbol, IrProperty>()
 
@@ -215,7 +221,10 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
         if (noFakeOverride) {
             isFakeOverride = false
         }
-        name = mangledNameFor(function, mangleReturnTypes)
+        name = mangledNameFor(function, mangleReturnTypes, false)
+        if (name.asString().contains("-") && classFileContainsMethod(function, context, name.asString()) == false) {
+            name = mangledNameFor(function, mangleReturnTypes, true)
+        }
         returnType = function.returnType
     }.apply {
         parent = function.parent
