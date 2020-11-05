@@ -1247,6 +1247,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-features-trainer/intellij.go.featuresTrainer.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-features-trainer/intellij.go.featuresTrainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-grazie/intellij.go.grazie.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-grazie/intellij.go.grazie.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/ide/intellij.go.ide.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/ide/intellij.go.ide.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/go-markdown/intellij.go.markdown.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/go-markdown/intellij.go.markdown.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/plan9/intellij.go.plan9.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/plan9/intellij.go.plan9.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/intellij.go.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/goland/intellij-go/profiler/intellij.go.profiler.iml" filepath="$PROJECT_DIR$/intellij/goland/intellij-go/profiler/intellij.go.profiler.iml" />
