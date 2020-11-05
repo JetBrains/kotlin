@@ -68,10 +68,10 @@ internal class IrDeclarationDeserializer(
     val deserializeInlineFunctions: Boolean,
     protected var deserializeBodies: Boolean,
     fakeOverrideBuilder: FakeOverrideBuilder,
-    val fileDeserializer: IrFileDeserializer,
+    val symbolDeserializer: IrSymbolDeserializer,
 ) {
 
-    private val bodyDeserializer = IrBodyDeserializer(logger, builtIns, allowErrorNodes, irFactory, fileReader, fileDeserializer, this)
+    private val bodyDeserializer = IrBodyDeserializer(logger, builtIns, allowErrorNodes, irFactory, fileReader, symbolDeserializer, this)
 
     private val platformFakeOverrideClassFilter = fakeOverrideBuilder.platformSpecificClassFilter
 
@@ -111,7 +111,7 @@ internal class IrDeclarationDeserializer(
     }
 
     private fun deserializeSimpleType(proto: ProtoSimpleType): IrSimpleType {
-        val symbol = fileDeserializer.deserializeIrSymbolAndRemap(proto.classifier) as? IrClassifierSymbol
+        val symbol = symbolDeserializer.deserializeIrSymbolAndRemap(proto.classifier) as? IrClassifierSymbol
             ?: error("could not convert sym to ClassifierSymbol")
         logger.log { "deserializeSimpleType: symbol=$symbol" }
 
@@ -133,7 +133,7 @@ internal class IrDeclarationDeserializer(
 
     private fun deserializeTypeAbbreviation(proto: ProtoTypeAbbreviation): IrTypeAbbreviation =
         IrTypeAbbreviationImpl(
-            fileDeserializer.deserializeIrSymbolAndRemap(proto.typeAlias).let {
+            symbolDeserializer.deserializeIrSymbolAndRemap(proto.typeAlias).let {
                 it as? IrTypeAliasSymbol
                     ?: error("IrTypeAliasSymbol expected: $it")
             },
@@ -180,10 +180,10 @@ internal class IrDeclarationDeserializer(
         proto: ProtoDeclarationBase,
         block: (IrSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T
     ): T where T : IrDeclaration, T : IrSymbolOwner {
-        val (s, uid) = fileDeserializer.deserializeIrSymbolToDeclare(proto.symbol)
+        val (s, uid) = symbolDeserializer.deserializeIrSymbolToDeclare(proto.symbol)
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
         try {
-            fileDeserializer.recordDelegatedSymbol(s)
+            symbolDeserializer.recordDelegatedSymbol(s)
             val result = block(
                 s,
                 uid,
@@ -194,7 +194,7 @@ internal class IrDeclarationDeserializer(
             result.parent = parentsStack.peek()!!
             return result
         } finally {
-            fileDeserializer.eraseDelegatedSymbol(s)
+            symbolDeserializer.eraseDelegatedSymbol(s)
         }
     }
 
@@ -219,7 +219,7 @@ internal class IrDeclarationDeserializer(
         val sig: IdSignature
         val result = symbolTable.run {
             if (isGlobal) {
-                val p = fileDeserializer.deserializeIrSymbolToDeclare(proto.base.symbol)
+                val p = symbolDeserializer.deserializeIrSymbolToDeclare(proto.base.symbol)
                 val symbol = p.first
                 sig = p.second
                 val descriptor = (symbol as IrTypeParameterSymbol).descriptor
@@ -227,7 +227,7 @@ internal class IrDeclarationDeserializer(
             } else {
                 val symbolData = BinarySymbolData
                     .decode(proto.base.symbol)
-                sig = fileDeserializer.deserializeIdSignature(symbolData.signatureId)
+                sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
                 val descriptor = WrappedTypeParameterDescriptor()
                 declareScopedTypeParameterFromLinker(descriptor, sig, factory)
             }
@@ -236,7 +236,7 @@ internal class IrDeclarationDeserializer(
         (result.descriptor as? WrappedTypeParameterDescriptor)?.bind(result)
 
         // make sure this symbol is known to linker
-        fileDeserializer.referenceIrSymbol(result.symbol, sig)
+        symbolDeserializer.referenceIrSymbol(result.symbol, sig)
         result.annotations += deserializeAnnotations(proto.base.annotationList)
         result.parent = parentsStack.peek()!!
         return result
@@ -492,7 +492,7 @@ internal class IrDeclarationDeserializer(
                     flags.isFakeOverride
                 )
             }.apply {
-                overriddenSymbols = proto.overriddenList.map { fileDeserializer.deserializeIrSymbolAndRemap(it) as IrSimpleFunctionSymbol }
+                overriddenSymbols = proto.overriddenList.map { symbolDeserializer.deserializeIrSymbolAndRemap(it) as IrSimpleFunctionSymbol }
 
                 (descriptor as? WrappedSimpleFunctionDescriptor)?.bind(this)
             }
@@ -699,8 +699,8 @@ internal class IrDeclarationDeserializer(
         if (!platformFakeOverrideClassFilter.constructFakeOverrides(parent)) return false
 
         val symbol = when (proto.declaratorCase!!) {
-            IR_FUNCTION -> fileDeserializer.deserializeIrSymbol(proto.irFunction.base.base.symbol)
-            IR_PROPERTY -> fileDeserializer.deserializeIrSymbol(proto.irProperty.base.symbol)
+            IR_FUNCTION -> symbolDeserializer.deserializeIrSymbol(proto.irFunction.base.base.symbol)
+            IR_PROPERTY -> symbolDeserializer.deserializeIrSymbol(proto.irProperty.base.symbol)
             // Don't consider IR_FIELDS here.
             else -> return false
         }

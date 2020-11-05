@@ -130,7 +130,7 @@ abstract class KotlinIrLinker(
             fileDeserializationState.addIdSignature(topLevelSignature)
             moduleDeserializationState.enqueueFile(fileDeserializer)
 
-            return fileDeserializationState.deserializedSymbols.getOrPut(idSig) {
+            return fileDeserializer.symbolDeserializer.deserializedSymbols.getOrPut(idSig) {
 //                val descriptor = resolveSpecialSignature(idSig)
                 val symbol = referenceDeserializedSymbol(symbolKind, idSig)
 
@@ -152,6 +152,8 @@ abstract class KotlinIrLinker(
                     symbolTable,
                     file,
                     fileReader,
+                    fileProto.explicitlyExportedToCompilerList,
+                    fileProto.declarationIdList,
                     strategy.needBodies,
                     deserializeFakeOverrides,
                     fakeOverrideClassQueue,
@@ -166,32 +168,17 @@ abstract class KotlinIrLinker(
                     ::handleNoModuleDeserializerFound,
                     haveSeen,
                     ::referenceDeserializedSymbol,
-                ).apply {
-
-                    // Explicitly exported declarations (e.g. top-level initializers) must be deserialized before all other declarations.
-                    // Thus we schedule their deserialization in deserializer's constructor.
-                    fileProto.explicitlyExportedToCompilerList.forEach {
-                        val symbolData = parseSymbolData(it)
-                        val sig = deserializeIdSignature(symbolData.signatureId)
-                        assert(!sig.isPackageSignature())
-                        fileLocalDeserializationState.addIdSignature(sig.topLevelSignature())
-                    }
-                }
+                )
 
             fileToDeserializerMap[file] = fileDeserializer
 
-            val fileSignatureIndex = fileProto.declarationIdList.map { fileDeserializer.deserializeIdSignature(it) to it }
-
-            fileSignatureIndex.forEach {
-                moduleReversedFileIndex.getOrPut(it.first) { fileDeserializer }
+            val topLevelDeclarations = fileDeserializer.reversedSignatureIndex.keys
+            topLevelDeclarations.forEach {
+                moduleReversedFileIndex.putIfAbsent(it, fileDeserializer) // TODO Why not simple put?
             }
 
-            fileDeserializer.reversedSignatureIndex = fileSignatureIndex.toMap()
-
             if (strategy.theWholeWorld) {
-                for (id in fileSignatureIndex) {
-                    moduleDeserializationState.addIdSignature(id.first)
-                }
+                fileDeserializer.enqueueAllDeclarations()
                 moduleDeserializationState.enqueueFile(fileDeserializer)
             } else if (strategy.explicitlyExported) {
                 moduleDeserializationState.enqueueFile(fileDeserializer)
