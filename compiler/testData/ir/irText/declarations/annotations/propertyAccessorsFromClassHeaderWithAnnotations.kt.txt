@@ -18,14 +18,14 @@ class C {
 
   val x: Int
     field = x
-    @A(...)
+    @A(x = "C.x.get")
     get
 
   var y: Int
     field = y
-    @A(...)
+    @A(x = "C.y.get")
     get
-    @A(...)
+    @A(x = "C.y.set")
     set
 
 

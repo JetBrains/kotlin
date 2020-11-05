@@ -1,4 +1,4 @@
-@Target(...)
+@Target(allowedTargets = [AnnotationTarget])
 annotation class Anno : Annotation {
   constructor() /* primary */ 
 

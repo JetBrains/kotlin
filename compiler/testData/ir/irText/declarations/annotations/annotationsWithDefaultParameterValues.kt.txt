@@ -13,23 +13,23 @@ annotation class A : Annotation {
 
 }
 
-@A(...)
+@A(x = "abc", y = 123)
 fun test1() {
 }
 
-@A(...)
+@A(x = "def")
 fun test2() {
 }
 
-@A(...)
+@A(x = "ghi")
 fun test3() {
 }
 
-@A(...)
+@A(, y = 456)
 fun test4() {
 }
 
-@A(...)
+@A()
 fun test5() {
 }
 

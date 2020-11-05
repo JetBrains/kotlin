@@ -31,15 +31,15 @@ annotation class AA : Annotation {
 
 }
 
-@A1(...)
-@A2(...)
-@AA(...)
+@A1(xs = [1, 2, 3])
+@A2(xs = ["a", "b", "c"])
+@AA(xs = [A1(xs = [4]), A1(xs = [5]), A1(xs = [6])])
 fun test1() {
 }
 
-@A1(...)
-@A2(...)
-@AA(...)
+@A1(xs = [])
+@A2(xs = [])
+@AA(xs = [])
 fun test2() {
 }
 

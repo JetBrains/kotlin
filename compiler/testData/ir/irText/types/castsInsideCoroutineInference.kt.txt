@@ -1,4 +1,4 @@
-@OptIn(...)
+@OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <R : Any?> scopedFlow(block: @ExtensionFunctionType SuspendFunction2<CoroutineScope, FlowCollector<R>, Unit>): Flow<R> {
   return flow<R>(block =   local suspend fun FlowCollector<R>.<anonymous>() {
     val collector: FlowCollector<R> = <this>
@@ -10,7 +10,7 @@ fun <R : Any?> scopedFlow(block: @ExtensionFunctionType SuspendFunction2<Corouti
 )
 }
 
-fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, @ParameterName(...) Throwable?, Unit>): Flow<T> {
+fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, @ParameterName(name = "cause") Throwable?, Unit>): Flow<T> {
   return unsafeFlow<T>(block =   local suspend fun FlowCollector<T>.<anonymous>() {
     val safeCollector: SafeCollector<T> = SafeCollector<T>(collector = <this>)
     safeCollector.invokeSafely<T>(action = action)
@@ -18,16 +18,16 @@ fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType SuspendFuncti
 )
 }
 
-suspend fun <T : Any?> FlowCollector<T>.invokeSafely(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, @ParameterName(...) Throwable?, Unit>) {
+suspend fun <T : Any?> FlowCollector<T>.invokeSafely(action: @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, @ParameterName(name = "cause") Throwable?, Unit>) {
 }
 
-@OptIn(...)
+@OptIn(markerClass = [ExperimentalTypeInference::class])
 inline fun <T : Any?> unsafeFlow(crossinline block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
   TODO()
 }
 
-@Deprecated(...)
-fun <T : Any?> Flow<T>.onCompletion(action: SuspendFunction1<@ParameterName(...) Throwable?, Unit>): Flow<T> {
+@Deprecated(message = "binary compatibility with a version w/o FlowCollector receiver", level = DeprecationLevel)
+fun <T : Any?> Flow<T>.onCompletion(action: SuspendFunction1<@ParameterName(name = "cause") Throwable?, Unit>): Flow<T> {
   return <this>.onCompletion<T>(action =   local suspend fun FlowCollector<T>.<anonymous>(it: Throwable?) {
     action.invoke(p1 = it)
   }
@@ -86,17 +86,17 @@ class SafeCollector<T : Any?> : FlowCollector<T> {
 
 }
 
-@OptIn(...)
+@OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <T : Any?> flow(block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
   TODO()
 }
 
-@OptIn(...)
+@OptIn(markerClass = [ExperimentalTypeInference::class])
 suspend fun <R : Any?> flowScope(block: @ExtensionFunctionType SuspendFunction1<CoroutineScope, R>): R {
   TODO()
 }
 
-suspend inline fun <T : Any?> Flow<T>.collect(crossinline action: SuspendFunction1<@ParameterName(...) T, Unit>) {
+suspend inline fun <T : Any?> Flow<T>.collect(crossinline action: SuspendFunction1<@ParameterName(name = "value") T, Unit>) {
 }
 
 open class ChannelCoroutine<E : Any?> {
@@ -140,7 +140,7 @@ interface ReceiveChannel<out E : Any?> {
 
 }
 
-@OptIn(...)
+@OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <E : Any?> CoroutineScope.produce(block: @ExtensionFunctionType SuspendFunction1<ProducerScope<E>, Unit>): ReceiveChannel<E> {
   TODO()
 }

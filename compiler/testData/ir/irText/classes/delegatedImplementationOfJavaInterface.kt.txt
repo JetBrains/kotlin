@@ -9,12 +9,12 @@ class Test : J {
     field = j
     private get
 
-  @NotNull(...)
+  @NotNull()
   override fun returnNotNull(): @EnhancedNullability String {
     return #j.returnNotNull()
   }
 
-  @Nullable(...)
+  @Nullable()
   override fun returnNullable(): @EnhancedNullability String? {
     return #j.returnNullable()
   }

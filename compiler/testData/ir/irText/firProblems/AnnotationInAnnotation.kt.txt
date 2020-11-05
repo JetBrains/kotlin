@@ -24,7 +24,7 @@ annotation class State : Annotation {
 
 }
 
-@State(...)
+@State(name = "1", storages = [Storage(value = "HELLO")])
 class Test {
   constructor() /* primary */ {
     TODO("IrDelegatingConstructorCall")

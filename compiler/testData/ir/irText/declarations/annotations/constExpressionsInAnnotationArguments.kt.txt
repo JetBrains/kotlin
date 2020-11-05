@@ -13,11 +13,11 @@ annotation class A : Annotation {
 
 }
 
-@A(...)
+@A(x = 1)
 fun test1() {
 }
 
-@A(...)
+@A(x = 2)
 fun test2() {
 }
 

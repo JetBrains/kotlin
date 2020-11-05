@@ -11,7 +11,7 @@ class C {
 
   }
 
-  @Suppress(...)
+  @Suppress(names = ["TOPLEVEL_TYPEALIASES_ONLY"])
   typealias TestNested = String
 
 

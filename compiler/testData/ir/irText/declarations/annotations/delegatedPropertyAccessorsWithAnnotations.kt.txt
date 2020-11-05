@@ -36,18 +36,18 @@ class Cell {
 
 val test1: Int /* by */ 
   field = Cell(value = 1)
-  @A(...)
+  @A(x = "test1.get")
   get(): Int {
     return #test1$delegate.getValue(thisRef = null, kProp = ::test1)
   }
 
 var test2: Int /* by */ 
   field = Cell(value = 2)
-  @A(...)
+  @A(x = "test2.get")
   get(): Int {
     return #test2$delegate.getValue(thisRef = null, kProp = ::test2)
   }
-  @A(...)
+  @A(x = "test2.set")
   set(<set-?>: Int) {
     return #test2$delegate.setValue(thisRef = null, kProp = ::test2, newValue = <set-?>)
   }

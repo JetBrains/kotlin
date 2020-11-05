@@ -10,29 +10,29 @@ annotation class TestAnn : Annotation {
 }
 
 val test1: String
-  @TestAnn(...)
+  @TestAnn(x = "test1.get")
   get(): String {
     return ""
   }
 
 var test2: String
-  @TestAnn(...)
+  @TestAnn(x = "test2.get")
   get(): String {
     return ""
   }
-  @TestAnn(...)
+  @TestAnn(x = "test2.set")
   set(value: String) {
   }
 
 val test3: String
   field = ""
-  @TestAnn(...)
+  @TestAnn(x = "test3.get")
   get
 
 var test4: String
   field = ""
-  @TestAnn(...)
+  @TestAnn(x = "test4.get")
   get
-  @TestAnn(...)
+  @TestAnn(x = "test4.set")
   set
 

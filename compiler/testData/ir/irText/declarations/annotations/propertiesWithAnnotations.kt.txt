@@ -9,7 +9,7 @@ annotation class TestAnn : Annotation {
 
 }
 
-@TestAnn(...)
+@TestAnn(x = "testVal.property")
 val testVal: String
   field = ""
   get

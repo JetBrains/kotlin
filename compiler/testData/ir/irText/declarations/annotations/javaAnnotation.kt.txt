@@ -1,12 +1,12 @@
-@JavaAnn(...)
+@JavaAnn()
 fun test1() {
 }
 
-@JavaAnn(...)
+@JavaAnn(value = "abc", i = 123)
 fun test2() {
 }
 
-@JavaAnn(...)
+@JavaAnn(value = "abc", i = 123)
 fun test3() {
 }
 

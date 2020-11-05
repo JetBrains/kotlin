@@ -1,4 +1,4 @@
-@Target(...)
+@Target(allowedTargets = [AnnotationTarget])
 annotation class TestAnn : Annotation {
   constructor(x: String) /* primary */ 
   val x: String
@@ -10,5 +10,5 @@ annotation class TestAnn : Annotation {
 
 }
 
-@TestAnn(...)
+@TestAnn(x = "TestTypeAlias")
 typealias TestTypeAlias = String

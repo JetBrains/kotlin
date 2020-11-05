@@ -44,6 +44,6 @@ fun testGenericJavaCtor1(f: Function1<String, Int>): G<@FlexibleNullability Stri
 
 fun testGenericJavaCtor2(x: Any) {
   x as Function1<String, Int> /*~> Unit */
-  G<@FlexibleNullability String?, @FlexibleNullability Int?>(x = x /*as Function1<@ParameterName(...) @FlexibleNullability String?, @FlexibleNullability Int?> */ /*-> @FlexibleNullability J<@FlexibleNullability Int?, @FlexibleNullability String?>? */) /*~> Unit */
+  G<@FlexibleNullability String?, @FlexibleNullability Int?>(x = x /*as Function1<@ParameterName(name = "x") @FlexibleNullability String?, @FlexibleNullability Int?> */ /*-> @FlexibleNullability J<@FlexibleNullability Int?, @FlexibleNullability String?>? */) /*~> Unit */
 }
 

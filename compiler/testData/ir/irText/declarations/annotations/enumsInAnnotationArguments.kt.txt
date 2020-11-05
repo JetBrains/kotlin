@@ -29,7 +29,7 @@ annotation class TestAnn : Annotation {
 
 }
 
-@TestAnn(...)
+@TestAnn(x = En)
 fun test1() {
 }
 

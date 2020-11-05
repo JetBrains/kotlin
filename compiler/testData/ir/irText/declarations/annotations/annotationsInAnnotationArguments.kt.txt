@@ -31,8 +31,8 @@ annotation class AA : Annotation {
 
 }
 
-@A2(...)
-@AA(...)
+@A2(a = A1(x = 42))
+@AA(xs = [A1(x = 1), A1(x = 2)])
 fun test() {
 }
 

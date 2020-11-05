@@ -9,7 +9,7 @@ annotation class A : Annotation {
 
 }
 
-@A(...)
+@A(xs = [["a"], ["b"]])
 fun test() {
 }
 

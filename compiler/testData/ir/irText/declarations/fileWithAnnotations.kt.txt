@@ -1,4 +1,4 @@
-@file:JvmName(...)
+@file:JvmName(name = "FileWithAnnotations")
 
 fun foo() {
 }

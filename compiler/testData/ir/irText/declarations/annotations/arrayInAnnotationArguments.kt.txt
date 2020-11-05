@@ -20,13 +20,13 @@ annotation class TestAnnWithStringArray : Annotation {
 
 }
 
-@TestAnnWithIntArray(...)
-@TestAnnWithStringArray(...)
+@TestAnnWithIntArray(x = [1, 2, 3])
+@TestAnnWithStringArray(x = ["a", "b", "c"])
 fun test1() {
 }
 
-@TestAnnWithIntArray(...)
-@TestAnnWithStringArray(...)
+@TestAnnWithIntArray(x = [4, 5, 6])
+@TestAnnWithStringArray(x = ["d", "e", "f"])
 fun test2() {
 }
 

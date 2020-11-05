@@ -21,7 +21,7 @@ class C {
 
 }
 
-@A(...)
+@A(klass = C::class)
 fun test1() {
 }
 

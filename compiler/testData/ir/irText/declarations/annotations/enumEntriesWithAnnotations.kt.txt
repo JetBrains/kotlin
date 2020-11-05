@@ -16,8 +16,8 @@ open enum class TestEnum : Enum<TestEnum> {
 
   }
 
-  @TestAnn(...)
-  ENTRY1 init = TODO("IrEnumConstructorCall")  @TestAnn(...)
+  @TestAnn(x = "ENTRY1")
+  ENTRY1 init = TODO("IrEnumConstructorCall")  @TestAnn(x = "ENTRY2")
   ENTRY2 init = TODO("IrEnumConstructorCall")
 
 

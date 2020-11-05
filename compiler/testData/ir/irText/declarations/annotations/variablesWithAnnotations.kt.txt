@@ -10,9 +10,9 @@ annotation class TestAnn : Annotation {
 }
 
 fun foo() {
-  @TestAnn(...)
+  @TestAnn(x = "foo/testVal")
   val testVal: String = "testVal"
-  @TestAnn(...)
+  @TestAnn(x = "foo/testVar")
   var testVar: String = "testVar"
 }
 

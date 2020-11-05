@@ -2,12 +2,12 @@ fun create(): String {
   return "OK"
 }
 
-@Deprecated(...)
+@Deprecated(message = "Use create() instead()", replaceWith = ReplaceWith(expression = "create()", imports = []))
 fun create(s: String): String {
   return create()
 }
 
-@Deprecated(...)
+@Deprecated(message = "Use create() instead()")
 fun create(b: Boolean): String {
   return create()
 }

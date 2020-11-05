@@ -100,7 +100,7 @@ fun test5(a: Any) {
   a as Function1<Int, Unit> /*~> Unit */
   { // BLOCK
     val tmp0_array: A = A
-    val tmp2_sam: IFoo = a /*as Function1<@ParameterName(...) Int, Unit> */ /*-> IFoo */
+    val tmp2_sam: IFoo = a /*as Function1<@ParameterName(name = "i") Int, Unit> */ /*-> IFoo */
     tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
   }
 }

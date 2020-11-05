@@ -9,15 +9,15 @@ annotation class A : Annotation {
 
 }
 
-@A(...)
+@A(xs = ["abc", "def"])
 fun test1() {
 }
 
-@A(...)
+@A(xs = ["abc"])
 fun test2() {
 }
 
-@A(...)
+@A(xs = [])
 fun test3() {
 }
 
