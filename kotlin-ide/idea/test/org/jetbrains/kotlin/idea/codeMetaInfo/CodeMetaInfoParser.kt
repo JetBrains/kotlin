@@ -10,11 +10,16 @@ import org.jetbrains.kotlin.idea.codeMetaInfo.models.ParsedCodeMetaInfo
 import org.junit.Assert
 
 object CodeMetaInfoParser {
-    private val openingRegex = "(<!([^>]+?)!>)".toRegex()
-    private val closingRegex = "(<!>)".toRegex()
+    private val openingRegex = """(<!([^>]+?)!>)""".toRegex()
+    private val closingRegex = """(<!>)""".toRegex()
 
-    private val descriptionRegex = "\\(\".*?\"\\)".toRegex()
-    private val platformRegex = "\\{(.+)}".toRegex()
+    /*
+     * ([\S&&[^,(){}]]+) -- tag, allowing all non-space characters except bracers and curly bracers
+     * ([{](.*?)[}])? -- list of platforms
+     * (\("(.*?)"\))? -- arguments of meta info
+     * (, )? -- possible separator between different infos
+     */
+    private val tagRegex = """([\S&&[^,(){}]]+)([{](.*?)[}])?(\("(.*?)"\))?(, )?""".toRegex()
 
     fun getCodeMetaInfoFromText(renderedText: String): List<ParsedCodeMetaInfo> {
         var text = renderedText
@@ -46,16 +51,21 @@ object CodeMetaInfoParser {
             Assert.fail("Opening and closing tags counts are not equals")
         }
         while (!openingMatchResults.isEmpty()) {
-            val openingMatchResult = openingMatchResults.pop()
-            val closingMatchResult = closingMatchResults.pop()
-            val metaInfoWithoutParams = openingMatchResult.groups[2]!!.value.replace(descriptionRegex, "")
-            metaInfoWithoutParams.split(",").forEach {
-                val tag = platformRegex.replace(it, "").trim()
-                val platforms =
-                    if (platformRegex.containsMatchIn(it)) platformRegex.find(it)!!.destructured.component1().split(";") else listOf()
+            val openingMatchResult = openingMatchResults.removeLast()
+            val closingMatchResult = closingMatchResults.removeLast()
+            val allMetaInfos = openingMatchResult.groups[2]!!.value
+            tagRegex.findAll(allMetaInfos).map { it.groups }.forEach {
+                val tag = it[1]!!.value
+                val platforms = it[3]?.value?.split(";") ?: emptyList()
+                val description = it[5]?.value
+
                 result.add(
                     ParsedCodeMetaInfo(
-                        openingMatchResult.range.first, closingMatchResult.range.first, platforms.toMutableList(), tag,
+                        openingMatchResult.range.first,
+                        closingMatchResult.range.first,
+                        platforms.toMutableList(),
+                        tag,
+                        description
                     )
                 )
             }
