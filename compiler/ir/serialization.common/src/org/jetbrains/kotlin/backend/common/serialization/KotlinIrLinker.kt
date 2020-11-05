@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.newInstance
+import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -80,12 +81,12 @@ abstract class KotlinIrLinker(
     abstract inner class BasicIrModuleDeserializer(moduleDescriptor: ModuleDescriptor, override val klib: IrLibrary, override val strategy: DeserializationStrategy, private val containsErrorCode: Boolean = false) :
         IrModuleDeserializer(moduleDescriptor) {
 
-        private val fileToDeserializerMap = mutableMapOf<IrFile, IrDeserializerForFile>()
+        private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
 
         private inner class ModuleDeserializationState {
-            private val filesWithPendingTopLevels = mutableSetOf<IrDeserializerForFile>()
+            private val filesWithPendingTopLevels = mutableSetOf<IrFileDeserializer>()
 
-            fun enqueueFile(fileDeserializer: IrDeserializerForFile) {
+            fun enqueueFile(fileDeserializer: IrFileDeserializer) {
                 filesWithPendingTopLevels.add(fileDeserializer)
                 enqueueModule()
             }
@@ -110,7 +111,7 @@ abstract class KotlinIrLinker(
         }
 
         private val moduleDeserializationState = ModuleDeserializationState()
-        private val moduleReversedFileIndex = mutableMapOf<IdSignature, IrDeserializerForFile>()
+        private val moduleReversedFileIndex = mutableMapOf<IdSignature, IrFileDeserializer>()
         override val moduleDependencies by lazy {
             moduleDescriptor.allDependencyModules.filter { it != moduleDescriptor }.map { resolveModuleDeserializer(it) }
         }
@@ -161,20 +162,21 @@ abstract class KotlinIrLinker(
 
             val fileEntry = NaiveSourceBasedFileEntryImpl(fileName, fileProto.fileEntry.lineStartOffsetsList.toIntArray())
 
+
             val fileDeserializer =
-                IrDeserializerForFile(
-                    fileProto.annotationList,
-                    fileProto.actualsList,
-                    fileIndex,
-                    !strategy.needBodies,
-                    strategy.inlineBodies,
-                    deserializeFakeOverrides,
-                    moduleDeserializer,
-                    allowErrorNodes,
+                IrFileDeserializer(
                     logger,
                     builtIns,
                     symbolTable,
+                    strategy.needBodies,
+                    deserializeFakeOverrides,
                     fakeOverrideClassQueue,
+                    allowErrorNodes,
+                    fileProto.annotationList,
+                    fileProto.actualsList,
+                    fileIndex,
+                    strategy.inlineBodies,
+                    moduleDeserializer,
                     fakeOverrideBuilder,
                     expectUniqIdToActualUniqId,
                     topLevelActualUniqItToDeserializer,
