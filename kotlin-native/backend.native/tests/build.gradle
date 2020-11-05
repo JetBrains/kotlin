@@ -4344,16 +4344,15 @@ dynamicTest("interop_cleaners_leak") {
 }
 
 dynamicTest("interop_migrating_main_thread") {
-    // TODO: Fix it.
-    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    disabled = (project.target.name != project.hostName)
     source = "interop/migrating_main_thread/lib.kt"
     cSource = "$projectDir/interop/migrating_main_thread/main.cpp"
     clangTool = "clang++"
 }
 
 dynamicTest("interop_memory_leaks") {
-    // TODO: Fix it.
-    disabled = (project.testTarget != null && project.testTarget != project.hostName) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
+    disabled = (project.target.name != project.hostName) ||
+            project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
     source = "interop/memory_leaks/lib.kt"
     cSource = "$projectDir/interop/memory_leaks/main.cpp"
     clangTool = "clang++"
