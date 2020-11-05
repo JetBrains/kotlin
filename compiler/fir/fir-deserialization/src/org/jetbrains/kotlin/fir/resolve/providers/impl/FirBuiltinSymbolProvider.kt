@@ -152,11 +152,6 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                                 type = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
                             }
                         }
-                        val superKind: FunctionClassKind? = when (kind) {
-                            FunctionClassKind.KFunction -> FunctionClassKind.Function
-                            FunctionClassKind.KSuspendFunction -> FunctionClassKind.SuspendFunction
-                            else -> null
-                        }
 
                         fun createSuperType(
                             kind: FunctionClassKind,
@@ -206,9 +201,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                                 this.name = name
                                 status = functionStatus
                                 symbol = FirNamedFunctionSymbol(
-                                    CallableId(packageFqName, relativeClassName, name),
-                                    // set overriddenSymbol for "invoke" of KFunction/KSuspendFunction
-                                    superKind?.getInvoke(arity)
+                                    CallableId(packageFqName, relativeClassName, name)
                                 )
                                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                 valueParameters += typeArguments.dropLast(1).mapIndexed { index, typeArgument ->
