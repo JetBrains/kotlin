@@ -19,6 +19,7 @@ internal fun PersistentIrGenerator.generateEnumEntry() {
                 origin,
                 +"override val symbol: " + irSymbol("IrEnumEntrySymbol"),
                 name,
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("EnumEntry") + " " + blockSpaced(
                 initBlock,

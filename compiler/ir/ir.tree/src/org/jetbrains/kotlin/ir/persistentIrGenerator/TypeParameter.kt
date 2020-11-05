@@ -20,7 +20,8 @@ internal fun PersistentIrGenerator.generateTypeParameter() {
                 name,
                 +"override val index: Int",
                 +"override val isReified: Boolean",
-                +"override val variance: " + import("Variance", "org.jetbrains.kotlin.types")
+                +"override val variance: " + import("Variance", "org.jetbrains.kotlin.types"),
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("TypeParameter") + " " + blockSpaced(
                 initBlock,

@@ -15,7 +15,8 @@ internal fun PersistentIrGenerator.generateErrorDeclaration() {
             arrayOf(
                 startOffset,
                 endOffset,
-                +"override val descriptor: " + DeclarationDescriptor
+                +"override val descriptor: " + DeclarationDescriptor,
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("ErrorDeclaration") + " " + block(
                 id,

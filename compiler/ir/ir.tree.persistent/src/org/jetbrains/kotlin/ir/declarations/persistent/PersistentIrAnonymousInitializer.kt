@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.AnonymousInitializerCarrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
-import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
@@ -24,7 +23,8 @@ internal class PersistentIrAnonymousInitializer(
     override val endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrAnonymousInitializerSymbol,
-    override val isStatic: Boolean = false
+    override val isStatic: Boolean = false,
+    override val factory: PersistentIrFactory
 ) : IrAnonymousInitializer(),
     PersistentIrDeclarationBase<AnonymousInitializerCarrier>,
     AnonymousInitializerCarrier {
@@ -33,10 +33,10 @@ internal class PersistentIrAnonymousInitializer(
         symbol.bind(this)
     }
 
-    override var lastModified: Int = stageController.currentStage
-    override var loweredUpTo: Int = stageController.currentStage
+    override var lastModified: Int = factory.stageController.currentStage
+    override var loweredUpTo: Int = factory.stageController.currentStage
     override var values: Array<Carrier>? = null
-    override val createdOn: Int = stageController.currentStage
+    override val createdOn: Int = factory.stageController.currentStage
 
     override var parentField: IrDeclarationParent? = null
     override var originField: IrDeclarationOrigin = origin

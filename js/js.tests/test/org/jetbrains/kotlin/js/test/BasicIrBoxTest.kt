@@ -180,7 +180,7 @@ abstract class BasicIrBoxTest(
                 configuration = config.configuration,
                 allDependencies = resolvedLibraries,
                 friendDependencies = emptyList(),
-                irFactory = PersistentIrFactory,
+                irFactory = PersistentIrFactory(), // TODO: IrFactoryImpl?
                 outputKlibPath = actualOutputFile,
                 nopack = true
             )

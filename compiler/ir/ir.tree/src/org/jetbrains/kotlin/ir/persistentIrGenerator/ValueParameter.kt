@@ -27,7 +27,8 @@ internal fun PersistentIrGenerator.generateValueParameter() {
                 +"override val isCrossinline: Boolean",
                 +"override val isNoinline: Boolean",
                 +"override val isHidden: Boolean = false",
-                +"override val isAssignable: Boolean"
+                +"override val isAssignable: Boolean",
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("ValueParameter") + " " + blockSpaced(
                 descriptor(descriptorType("ParameterDescriptor")),

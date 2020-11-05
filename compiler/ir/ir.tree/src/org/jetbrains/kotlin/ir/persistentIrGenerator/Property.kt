@@ -28,7 +28,8 @@ internal fun PersistentIrGenerator.generateProperty() {
                 +"override val isDelegated: Boolean",
                 isExternal,
                 isExpect,
-                containerSource
+                containerSource,
+                irFactory,
             ).join(separator = ",\n").indent(),
             +") : " + baseClasses("Property") + " " + blockSpaced(
                 commonFields,

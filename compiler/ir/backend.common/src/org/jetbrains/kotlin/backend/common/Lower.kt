@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -146,9 +148,13 @@ fun BodyLoweringPass.runOnFilePostfix(
                 if (allowDeclarationModification) {
                     lower(body, data!!)
                 } else {
-                    stageController.bodyLowering {
-                        lower(body, data!!)
-                    }
+                    // TODO streamline
+                    val factory = (body as? IrBlockBody)?.factory ?: (body as? IrExpressionBody)?.factory
+                    if (factory != null) {
+                        factory.stageController.bodyLowering {
+                            lower(body, data!!)
+                        }
+                    } else lower(body, data!!)
                 }
             }
 
@@ -186,7 +192,7 @@ interface DeclarationTransformer : FileLoweringPass {
 }
 
 fun DeclarationTransformer.transformFlatRestricted(declaration: IrDeclaration): List<IrDeclaration>? {
-    return stageController.restrictTo(declaration) {
+    return declaration.factory.stageController.restrictTo(declaration) {
         transformFlat(declaration)
     }
 }

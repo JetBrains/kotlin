@@ -16,13 +16,11 @@ import org.jetbrains.kotlin.ir.backend.js.JsSharedVariablesManager
 import org.jetbrains.kotlin.ir.backend.js.lower.JsInnerClassesSupport
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 
@@ -32,7 +30,8 @@ class WasmBackendContext(
     @Suppress("UNUSED_PARAMETER") symbolTable: SymbolTable,
     @Suppress("UNUSED_PARAMETER") irModuleFragment: IrModuleFragment,
     val additionalExportedDeclarations: Set<FqName>,
-    override val configuration: CompilerConfiguration
+    override val configuration: CompilerConfiguration,
+    override val irFactory: IrFactory
 ) : JsCommonBackendContext {
     override val builtIns = module.builtIns
     override var inVerbosePhase: Boolean = false
@@ -40,7 +39,6 @@ class WasmBackendContext(
     override val transformedFunction = mutableMapOf<IrFunctionSymbol, IrSimpleFunctionSymbol>()
     override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
     override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
-    override val irFactory: IrFactory = PersistentIrFactory
 
     // Place to store declarations excluded from code generation
     val excludedDeclarations: IrPackageFragment by lazy {
@@ -50,7 +48,7 @@ class WasmBackendContext(
         )
     }
 
-    override val mapping = JsMapping()
+    override val mapping = JsMapping(irFactory)
 
     val innerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 

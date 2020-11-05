@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.LocalDelegatedPropertyCarrier
-import org.jetbrains.kotlin.ir.declarations.stageController
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -31,7 +30,8 @@ internal class PersistentIrLocalDelegatedProperty(
     override val symbol: IrLocalDelegatedPropertySymbol,
     override val name: Name,
     type: IrType,
-    override val isVar: Boolean
+    override val isVar: Boolean,
+    override val factory: PersistentIrFactory
 ) : IrLocalDelegatedProperty(),
     PersistentIrDeclarationBase<LocalDelegatedPropertyCarrier>,
     LocalDelegatedPropertyCarrier {
@@ -40,10 +40,10 @@ internal class PersistentIrLocalDelegatedProperty(
         symbol.bind(this)
     }
 
-    override var lastModified: Int = stageController.currentStage
-    override var loweredUpTo: Int = stageController.currentStage
+    override var lastModified: Int = factory.stageController.currentStage
+    override var loweredUpTo: Int = factory.stageController.currentStage
     override var values: Array<Carrier>? = null
-    override val createdOn: Int = stageController.currentStage
+    override val createdOn: Int = factory.stageController.currentStage
 
     override var parentField: IrDeclarationParent? = null
     override var originField: IrDeclarationOrigin = origin
