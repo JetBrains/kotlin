@@ -39,13 +39,14 @@ group = "org.jetbrains.kotlin"
 version = konanVersion
 
 repositories {
-    jcenter()
     maven(kotlinCompilerRepo)
     maven(buildKotlinCompilerRepo)
     maven("https://cache-redirector.jetbrains.com/maven-central")
     mavenCentral()
     maven("https://kotlin.bintray.com/kotlinx")
     maven("https://dl.bintray.com/kotlin/kotlin-dev")
+    maven("https://cache-redirector.jetbrains.com/jcenter")
+    jcenter()
 }
 
 dependencies {

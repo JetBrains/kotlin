@@ -38,6 +38,7 @@ buildscript {
         maven { url "https://cache-redirector.jetbrains.com/maven-central" }
         mavenCentral()
         maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
+        maven { url "https://cache-redirector.jetbrains.com/jcenter" }
         jcenter()
     }
 
