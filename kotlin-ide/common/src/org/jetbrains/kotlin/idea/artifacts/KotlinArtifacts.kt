@@ -9,18 +9,17 @@ abstract class KotlinArtifacts(kotlincDistDir: File) {
     companion object {
         @get:JvmStatic
         val instance: KotlinArtifacts by lazy {
-            // ApplicationManager may absent in JPS process so we need to check it presence firstly
-            if (doRunFromSources() && doesClassExist("com.intellij.openapi.application.ApplicationManager")) {
-                // This isUnitTestMode is for reliability in case when Application is already initialized. This check isn't mandatory
-                if (ApplicationManager.getApplication()?.isUnitTestMode == true) {
-                    return@lazy getTestKotlinArtifacts() ?: error("""
-                        We are in unit test mode! TestKotlinArtifacts must be available in such mode. Probably class was renamed or broken classpath
-                    """.trimIndent())
-                }
+            if (
+                doRunFromSources() &&
+                doesClassExist("com.intellij.openapi.application.ApplicationManager") && // ApplicationManager may absent in JPS process so we need to check it presence firstly
+                ApplicationManager.getApplication()?.isUnitTestMode == true
+            ) {
+                getTestKotlinArtifacts() ?: error("We are in unit test mode! TestKotlinArtifacts must be available in such mode. " +
+                                                          "Probably class was renamed or broken classpath")
+            } else {
+                // If TestKotlinArtifacts is presented in classpath then it must be test environment
+                getTestKotlinArtifacts() ?: ProductionKotlinArtifacts
             }
-
-            // If TestKotlinArtifacts is presented in classpath then it must be test environment
-            getTestKotlinArtifacts() ?: ProductionKotlinArtifacts
         }
 
         private fun doRunFromSources(): Boolean {
