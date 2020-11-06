@@ -15,6 +15,7 @@ class KotlinFirReferenceContributor : KotlinReferenceProviderContributor {
             registerProvider(factory = ::KtFirDestructuringDeclarationReference)
             registerProvider(factory = ::KtFirArrayAccessReference)
             registerProvider(factory = ::KtFirConstructorDelegationReference)
+            registerProvider(factory = ::KtFirCollectionLiteralReference)
         }
     }
 }
