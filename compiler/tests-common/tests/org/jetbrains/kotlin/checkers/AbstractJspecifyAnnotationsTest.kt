@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.checkers
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.test.MockLibraryUtilExt
 import java.io.File
 import java.util.*
@@ -103,16 +103,16 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
         lineIndexesByRanges: TreeMap<Int, Int>,
         textLines: List<String>
     ) {
-        for ((diagnostic, jspecifyMark) in diagnosticsToJspecifyMarksMap) {
+        for ((diagnosticName, jspecifyMark) in diagnosticsToJspecifyMarksMap) {
             val diagnosticRanges = diagnosedRanges.filter { diagnostics ->
-                diagnostic.name in diagnostics.getDiagnostics().map { it.name }
+                diagnosticName in diagnostics.getDiagnostics().map { it.name }
             }.map { it.start }
             val lineIndexesWithJspecifyMarks =
                 textLines.mapIndexedNotNull { index, it -> getJspecifyMarkRegex(jspecifyMark).find(it)?.let { index } }
 
             for (lineIndex in lineIndexesWithJspecifyMarks) {
                 val lineStartPosition = lineIndexesByRanges.entries.find { (_, index) -> index == lineIndex + 1 }?.key
-                val errorMessage = "Diagnostic '$diagnostic' not found for jspecify mark '$jspecifyMark' at ${lineIndex + 1} line"
+                val errorMessage = "Diagnostic '$diagnosticName' not found for jspecify mark '$jspecifyMark' at ${lineIndex + 1} line"
 
                 assertNotNull(errorMessage, lineStartPosition)
 
@@ -162,7 +162,7 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
         private val javaSourcesPathRegex = Pattern.compile("""// JAVA_SOURCES: (.*?(?:\.java)?)\n""")
 
         val diagnosticsToJspecifyMarksMap = mapOf(
-            NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS to "jspecify_nullness_mismatch"
+            ErrorsJvm::NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS.name to JSPECIFY_NULLNESS_MISMATCH_MARK
         )
 
         private val importSectionRegex = Regex("""((?:import .*?;\n)+)""")
