@@ -51,6 +51,11 @@ public class ParcelizeCheckerTestGenerated extends AbstractParcelizeCheckerTest 
         runTest("testData/checker/delegate.kt");
     }
 
+    @TestMetadata("deprecatedAnnotations.kt")
+    public void testDeprecatedAnnotations() throws Exception {
+        runTest("plugins/parcelize/parcelize-ide/testData/checker/deprecatedAnnotations.kt");
+    }
+
     @TestMetadata("emptyPrimaryConstructor.kt")
     public void testEmptyPrimaryConstructor() throws Exception {
         runTest("testData/checker/emptyPrimaryConstructor.kt");

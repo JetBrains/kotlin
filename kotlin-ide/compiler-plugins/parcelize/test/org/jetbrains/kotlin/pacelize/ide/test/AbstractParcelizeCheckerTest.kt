@@ -16,19 +16,11 @@ import java.io.File
 abstract class AbstractParcelizeCheckerTest : AbstractPsiCheckerTest() {
     override fun setUp() {
         super.setUp()
-
-        ConfigLibraryUtil.addLibrary(module, "androidJar") {
-            addRoot(File(PathManager.getHomePath(), "community/android/android/testData/android.jar"), OrderRootType.CLASSES)
-        }
-        ConfigLibraryUtil.addLibrary(module, "androidExtensionsRuntime") {
-            addRoot(AdditionalKotlinArtifacts.parcelizeRuntime, OrderRootType.CLASSES)
-        }
+        addParcelizeLibraries(module)
     }
 
     override fun tearDown() {
-        ConfigLibraryUtil.removeLibrary(module, "androidJar")
-        ConfigLibraryUtil.removeLibrary(module, "androidExtensionsRuntime")
-
+        removeParcelizeLibraries(module)
         super.tearDown()
     }
 }
