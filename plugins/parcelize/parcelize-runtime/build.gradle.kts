@@ -9,6 +9,7 @@ jvmTarget = "1.6"
 
 dependencies {
     compile(kotlinStdlib())
+    compile(project(":kotlin-android-extensions-runtime"))
     compileOnly(commonDep("com.google.android", "android"))
 }
 

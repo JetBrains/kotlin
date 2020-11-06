@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.parcelize.RAW_VALUE_ANNOTATION_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.findAnyAnnotation
 import org.jetbrains.kotlin.parcelize.hasAnyAnnotation
 import org.jetbrains.kotlin.parcelize.isParcelize
@@ -42,11 +43,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-
-val RAW_VALUE_ANNOTATION_FQ_NAMES = listOf(
-    FqName(kotlinx.parcelize.RawValue::class.java.name),
-    @Suppress("DEPRECATION") FqName(kotlinx.android.parcel.RawValue::class.java.name)
-)
 
 internal typealias TypeParcelerMapping = Pair<KotlinType, KotlinType>
 

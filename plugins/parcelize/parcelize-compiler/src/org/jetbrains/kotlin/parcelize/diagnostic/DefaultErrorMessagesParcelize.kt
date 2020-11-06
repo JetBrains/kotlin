@@ -134,5 +134,20 @@ object DefaultErrorMessagesParcelize : DefaultErrorMessages.Extension {
             ErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY,
             "'@IgnoredOnParcel' is inapplicable to properties declared in the primary constructor"
         )
+
+        MAP.put(
+            ErrorsParcelize.FORBIDDEN_DEPRECATED_ANNOTATION,
+            "Parceler-related annotations from package 'kotlinx.android.parcel' are forbidden. Change package to 'kotlinx.parcelize'"
+        )
+
+        MAP.put(
+            ErrorsParcelize.DEPRECATED_ANNOTATION,
+            "Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlin.parcelize'"
+        )
+
+        MAP.put(
+            ErrorsParcelize.DEPRECATED_PARCELER,
+            "'kotlinx.android.parcel.Parceler' is deprecated. Use 'kotlinx.parcelize.Parceler' instead"
+        )
     }
 }

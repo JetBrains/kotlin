@@ -157,7 +157,7 @@ abstract class AbstractParcelizeBoxTest : CodegenTestCase() {
                 javaExe.absolutePath,
                 "-ea",
                 "-classpath",
-                (libraryClasspath + dirForTestClasses).joinToString(File.pathSeparator),
+                (libraryClasspath + dirForTestClasses).joinToString(File.pathSeparator) { it.absolutePath },
                 JUnitCore::class.java.name,
                 JUNIT_GENERATED_TEST_CLASS_FQNAME
             ).start()
