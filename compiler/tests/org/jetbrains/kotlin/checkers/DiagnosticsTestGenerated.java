@@ -14563,6 +14563,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/modifiers/NoLocalVisibility.kt");
             }
 
+            @TestMetadata("openInExpectInterface.kt")
+            public void testOpenInExpectInterface() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/modifiers/openInExpectInterface.kt");
+            }
+
             @TestMetadata("openInInterface.kt")
             public void testOpenInInterface() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/modifiers/openInInterface.kt");
@@ -15020,6 +15025,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
 
             public void testAllFilesPresentInMultiplatform() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("expectInterfaceApplicability.kt")
+            public void testExpectInterfaceApplicability() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/expectInterfaceApplicability.kt");
             }
 
             @TestMetadata("headerFunInNonHeaderClass.kt")
