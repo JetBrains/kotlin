@@ -819,7 +819,15 @@ class GeneralNativeIT : BaseGradleIT() {
             assertSuccessful()
             checkNativeCommandLineArguments(":compileKotlin${nativeHostTargetName.capitalize()}") { arguments ->
                 val escapedQuotedPath = "\"${fileWithSpacesInPath.absolutePath.replace("\"", "\\\"")}\""
-                assertTrue(escapedQuotedPath in arguments)
+                assertTrue(
+                    escapedQuotedPath in arguments,
+                    """
+                        Command-line arguments do not contain path with spaces.
+                        Raw path = ${fileWithSpacesInPath.absolutePath}
+                        Escaped quoted path = escapedQuotedPath
+                        Arguments: ${arguments.joinToString(separator = " ")}
+                    """.trimIndent()
+                )
             }
         }
     }
@@ -836,17 +844,17 @@ class GeneralNativeIT : BaseGradleIT() {
                     if (taskPath != null) dropWhile { "Executing actions for task '$taskPath'" !in it }.drop(1) else this
                 }
                 .dropWhile {
-                    check(taskPath == null || "Executing actions for task" !in it)
+                    check(taskPath == null || "Executing actions for task" !in it) { "Unexpected log line with new Gradle task: $it" }
                     "Run in-process tool \"$toolName\"" !in it && "Run \"$toolName\" tool in a separate JVM process" !in it
                 }
                 .drop(1)
                 .dropWhile {
-                    check(taskPath == null || "Executing actions for task" !in it)
+                    check(taskPath == null || "Executing actions for task" !in it) { "Unexpected log line with new Gradle task: $it" }
                     "Arguments = [" !in it
                 }
 
             val argumentsHeader = arguments.firstOrNull()
-            check(argumentsHeader != null && "Arguments = [" in argumentsHeader)
+            check(argumentsHeader != null && "Arguments = [" in argumentsHeader) { "No arguments in $argumentsHeader" }
 
             return if (argumentsHeader.trimEnd().endsWith(']'))
                 emptyList() // no arguments
