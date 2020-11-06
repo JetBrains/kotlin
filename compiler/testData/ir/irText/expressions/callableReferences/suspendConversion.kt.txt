@@ -36,7 +36,7 @@ class C {
 }
 
 fun testLambda() {
-  useSuspend(fn =   local suspend fun <anonymous>() {
+  useSuspend(fn = local suspend fun <anonymous>() {
     foo1()
   }
 )
@@ -47,42 +47,42 @@ fun testNoCoversion() {
 }
 
 fun testSuspendPlain() {
-  useSuspend(fn =   local suspend fun foo1() {
+  useSuspend(fn = local suspend fun foo1() {
     foo1()
   }
 )
 }
 
 fun testSuspendWithArgs() {
-  useSuspendInt(fn =   local suspend fun fooInt(p0: Int) {
+  useSuspendInt(fn = local suspend fun fooInt(p0: Int) {
     fooInt(x = p0)
   }
 )
 }
 
 fun testWithVararg() {
-  useSuspend(fn =   local suspend fun foo2() {
+  useSuspend(fn = local suspend fun foo2() {
     foo2()
   }
 )
 }
 
 fun testWithVarargMapped() {
-  useSuspendInt(fn =   local suspend fun foo2(p0: Int) {
+  useSuspendInt(fn = local suspend fun foo2(p0: Int) {
     foo2(xs = [p0])
   }
 )
 }
 
 fun testWithCoercionToUnit() {
-  useSuspend(fn =   local suspend fun foo3() {
+  useSuspend(fn = local suspend fun foo3() {
     foo3() /*~> Unit */
   }
 )
 }
 
 fun testWithDefaults() {
-  useSuspend(fn =   local suspend fun foo4() {
+  useSuspend(fn = local suspend fun foo4() {
     foo4()
   }
 )

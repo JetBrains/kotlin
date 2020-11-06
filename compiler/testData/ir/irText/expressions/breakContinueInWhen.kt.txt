@@ -1,5 +1,5 @@
 fun testBreakFor() {
-  val xs: IntArray = IntArray(size = 10, init =   local fun <anonymous>(i: Int): Int {
+  val xs: IntArray = IntArray(size = 10, init = local fun <anonymous>(i: Int): Int {
     return i
   }
 )
@@ -38,7 +38,7 @@ fun testBreakDoWhile() {
 }
 
 fun testContinueFor() {
-  val xs: IntArray = IntArray(size = 10, init =   local fun <anonymous>(i: Int): Int {
+  val xs: IntArray = IntArray(size = 10, init = local fun <anonymous>(i: Int): Int {
     return i
   }
 )

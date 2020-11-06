@@ -11,7 +11,7 @@ fun sum(vararg args: Int): Int {
 }
 
 fun nsum(vararg args: Number): Int {
-  return sum(args = [*IntArray(size = args.<get-size>(), init =   local fun <anonymous>(it: Int): Int {
+  return sum(args = [*IntArray(size = args.<get-size>(), init = local fun <anonymous>(it: Int): Int {
     return args.get(index = it).toInt()
   }
 )])
@@ -33,7 +33,7 @@ fun useStringArray(fn: Function1<Array<String>, Unit>) {
 }
 
 fun testPlainArgs() {
-  usePlainArgs(fn =   local fun sum(p0: Int, p1: Int): Int {
+  usePlainArgs(fn = local fun sum(p0: Int, p1: Int): Int {
     return sum(args = [p0, p1])
   }
 )
@@ -48,7 +48,7 @@ fun testArrayAsVararg() {
 }
 
 fun testArrayAndDefaults() {
-  useStringArray(fn =   local fun zap(p0: Array<out String>) {
+  useStringArray(fn = local fun zap(p0: Array<out String>) {
     zap(b = [*p0])
   }
 )

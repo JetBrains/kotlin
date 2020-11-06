@@ -1,19 +1,19 @@
 fun test1(): J<String> {
-  return   local fun <anonymous>(x: @FlexibleNullability String?): @FlexibleNullability String? {
+  return local fun <anonymous>(x: @FlexibleNullability String?): @FlexibleNullability String? {
     return x
   }
  /*-> J<String> */
 }
 
 fun test2(): J<@FlexibleNullability String?> {
-  return   local fun <anonymous>(x: String): @FlexibleNullability String? {
+  return local fun <anonymous>(x: String): @FlexibleNullability String? {
     return x
   }
  /*-> J<@FlexibleNullability String?> */
 }
 
 fun test3() {
-  return bar<@FlexibleNullability String?>(j =   local fun <anonymous>(x: String): @FlexibleNullability String? {
+  return bar<@FlexibleNullability String?>(j = local fun <anonymous>(x: String): @FlexibleNullability String? {
     return x
   }
  /*-> @FlexibleNullability J<@FlexibleNullability String?>? */)

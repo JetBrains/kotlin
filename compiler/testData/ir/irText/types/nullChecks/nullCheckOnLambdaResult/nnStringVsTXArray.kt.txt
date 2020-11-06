@@ -3,7 +3,7 @@ fun <T : Any?> useTX(x: T, fn: Function0<T>): T {
 }
 
 fun testWithNullCheck(xs: Array<String>) {
-  useTX<Serializable>(x = xs, fn =   local fun <anonymous>(): Serializable {
+  useTX<Serializable>(x = xs, fn = local fun <anonymous>(): Serializable {
     return notNullString() /*!! String */
   }
 ) /*~> Unit */

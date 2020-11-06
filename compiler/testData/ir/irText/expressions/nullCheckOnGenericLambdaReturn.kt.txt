@@ -19,28 +19,28 @@ fun <T : Any?> id(x: T): T {
 }
 
 fun test1(): @FlexibleNullability String? {
-  return checkT<@FlexibleNullability String?>(fn =   local fun <anonymous>(): @FlexibleNullability String? {
+  return checkT<@FlexibleNullability String?>(fn = local fun <anonymous>(): @FlexibleNullability String? {
     return foo()
   }
 )
 }
 
 fun test2(): String {
-  return checkT<@EnhancedNullability String>(fn =   local fun <anonymous>(): @EnhancedNullability String {
+  return checkT<@EnhancedNullability String>(fn = local fun <anonymous>(): @EnhancedNullability String {
     return nnFoo()
   }
 ) /*!! String */
 }
 
 fun test3(): @FlexibleNullability String? {
-  return checkTAny<@FlexibleNullability String?>(fn =   local fun <anonymous>(): @FlexibleNullability String? {
+  return checkTAny<@FlexibleNullability String?>(fn = local fun <anonymous>(): @FlexibleNullability String? {
     return foo()
   }
 )
 }
 
 fun test4(): String {
-  return checkTAny<@EnhancedNullability String>(fn =   local fun <anonymous>(): @EnhancedNullability String {
+  return checkTAny<@EnhancedNullability String>(fn = local fun <anonymous>(): @EnhancedNullability String {
     return nnFoo()
   }
 ) /*!! String */

@@ -3,7 +3,7 @@ fun <T : Any?> useT(fn: Function0<T>): T {
 }
 
 fun testNoNullCheck() {
-  useT<@FlexibleNullability String?>(fn =   local fun <anonymous>(): @FlexibleNullability String? {
+  useT<@FlexibleNullability String?>(fn = local fun <anonymous>(): @FlexibleNullability String? {
     return string()
   }
 ) /*~> Unit */

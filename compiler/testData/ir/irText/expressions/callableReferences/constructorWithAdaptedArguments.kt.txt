@@ -30,7 +30,7 @@ class Outer {
 }
 
 fun testConstructor(): Any {
-  return use(fn =   local fun <init>(p0: Int): C {
+  return use(fn = local fun <init>(p0: Int): C {
     return C(xs = [p0])
   }
 )

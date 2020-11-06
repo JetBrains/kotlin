@@ -1,5 +1,5 @@
 val test1: Int /* by */ 
-  field = lazy<Int>(initializer =   local fun <anonymous>(): Int {
+  field = lazy<Int>(initializer = local fun <anonymous>(): Int {
     return 42
   }
 )
@@ -19,7 +19,7 @@ class C {
     get
 
   val test2: Int /* by */ 
-    field = lazy<Int>(initializer =     local fun <anonymous>(): Int {
+    field = lazy<Int>(initializer = local fun <anonymous>(): Int {
       return 42
     }
 )

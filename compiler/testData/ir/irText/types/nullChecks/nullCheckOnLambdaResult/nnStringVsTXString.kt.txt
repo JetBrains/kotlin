@@ -3,7 +3,7 @@ fun <T : Any?> useTX(x: T, fn: Function0<T>): T {
 }
 
 fun testWithNullCheck() {
-  useTX<String>(x = "", fn =   local fun <anonymous>(): String {
+  useTX<String>(x = "", fn = local fun <anonymous>(): String {
     return notNullString() /*!! String */
   }
 ) /*~> Unit */

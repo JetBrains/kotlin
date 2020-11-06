@@ -27,7 +27,7 @@ open enum class MyEnum : Enum<MyEnum> {
     }
 
     val aLambda: Function0<Unit>
-      field =       local fun <anonymous>() {
+      field = local fun <anonymous>() {
         Z.<set-counter>(<set-?> = 1)
         Z.foo()
       }

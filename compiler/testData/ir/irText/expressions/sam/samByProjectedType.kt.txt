@@ -1,5 +1,5 @@
 fun test1() {
-  bar(j =   local fun <anonymous>(x: Any): @FlexibleNullability Any? {
+  bar(j = local fun <anonymous>(x: Any): @FlexibleNullability Any? {
     return x
   }
  /*-> @FlexibleNullability J<@FlexibleNullability Any?>? */)

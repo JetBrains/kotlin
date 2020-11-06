@@ -3,7 +3,7 @@ fun <T : Any> useTAny(fn: Function0<T>): T {
 }
 
 fun testNoNullCheck() {
-  useTAny<@FlexibleNullability String?>(fn =   local fun <anonymous>(): @FlexibleNullability String? {
+  useTAny<@FlexibleNullability String?>(fn = local fun <anonymous>(): @FlexibleNullability String? {
     return string()
   }
 ) /*~> Unit */

@@ -1,5 +1,5 @@
 fun String.k(): Function0<String> {
-  return   local fun <anonymous>(): String {
+  return local fun <anonymous>(): String {
     return <this>
   }
 

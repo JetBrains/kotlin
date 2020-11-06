@@ -32,9 +32,9 @@ interface IInvoke {
 }
 
 fun test(fooImpl: IFoo, invokeImpl: IInvoke) {
-  with<A, Int>(receiver = A, block =   local fun A.<anonymous>(): Int {
-    return with<IFoo, Int>(receiver = fooImpl, block =     local fun IFoo.<anonymous>(): Int {
-      return with<IInvoke, Int>(receiver = invokeImpl, block =       local fun IInvoke.<anonymous>(): Int {
+  with<A, Int>(receiver = A, block = local fun A.<anonymous>(): Int {
+    return with<IFoo, Int>(receiver = fooImpl, block = local fun IFoo.<anonymous>(): Int {
+      return with<IInvoke, Int>(receiver = invokeImpl, block = local fun IInvoke.<anonymous>(): Int {
         return (<this>, (<this>, <this>).<get-foo>()).invoke()
       }
 )

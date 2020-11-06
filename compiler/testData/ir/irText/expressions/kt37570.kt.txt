@@ -13,7 +13,7 @@ class A {
     get
 
   init {
-    a().apply<String>(block =     local fun String.<anonymous>() {
+    a().apply<String>(block = local fun String.<anonymous>() {
       #b = <this>
     }
 ) /*~> Unit */

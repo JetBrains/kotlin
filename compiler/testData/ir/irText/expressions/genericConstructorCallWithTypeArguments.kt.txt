@@ -3,7 +3,7 @@ fun testSimple(): Box<Long> {
 }
 
 inline fun <reified T : Any?> testArray(n: Int, crossinline block: Function0<T>): Array<T> {
-  return Array<T>(size = n, init =   local fun <anonymous>(it: Int): T {
+  return Array<T>(size = n, init = local fun <anonymous>(it: Int): T {
     return block.invoke()
   }
 )

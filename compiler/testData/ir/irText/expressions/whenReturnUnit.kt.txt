@@ -2,7 +2,7 @@ fun run(block: Function0<Unit>) {
 }
 
 fun branch(x: Int) {
-  return run(block =   local fun <anonymous>() {
+  return run(block = local fun <anonymous>() {
     { // BLOCK
       val tmp0_subject: Int = x
       when {

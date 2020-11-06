@@ -55,11 +55,11 @@ val fis: Fn<Int, String>
   get
 
 fun test(j: J) {
-  j.runConversion(f1 = <get-fsi>(), f2 =   local fun <anonymous>(s: String, i: Int, ti: Int): String {
+  j.runConversion(f1 = <get-fsi>(), f2 = local fun <anonymous>(s: String, i: Int, ti: Int): String {
     return ""
   }
  /*-> Fn<Int, String> */) /*~> Unit */
-  j.runConversion(f1 =   local fun <anonymous>(s: String, i: Int, ts: String): Int {
+  j.runConversion(f1 = local fun <anonymous>(s: String, i: Int, ts: String): Int {
     return 1
   }
  /*-> Fn<String, Int> */, f2 = <get-fis>()) /*~> Unit */

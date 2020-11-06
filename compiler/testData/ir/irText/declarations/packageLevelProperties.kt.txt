@@ -29,7 +29,7 @@ val test6: Int
   get
 
 val test7: Int /* by */ 
-  field = lazy<Int>(initializer =   local fun <anonymous>(): Int {
+  field = lazy<Int>(initializer = local fun <anonymous>(): Int {
     return 42
   }
 )

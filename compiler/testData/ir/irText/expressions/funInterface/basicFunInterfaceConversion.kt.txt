@@ -8,7 +8,7 @@ fun foo(f: Foo): String {
 }
 
 fun test(): String {
-  return foo(f =   local fun <anonymous>(): String {
+  return foo(f = local fun <anonymous>(): String {
     return "OK"
   }
  /*-> Foo */)

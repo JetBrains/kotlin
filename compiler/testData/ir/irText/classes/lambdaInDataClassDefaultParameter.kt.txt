@@ -1,5 +1,5 @@
 data class A {
-  constructor(runA: @ExtensionFunctionType Function2<A, String, Unit> =   local fun A.<anonymous>(it: String) {
+  constructor(runA: @ExtensionFunctionType Function2<A, String, Unit> = local fun A.<anonymous>(it: String) {
     return Unit
   }
 ) /* primary */ {

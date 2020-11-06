@@ -4,14 +4,14 @@ fun J.test0(a: Runnable) {
 }
 
 fun test1() {
-  runStatic(r =   local fun <anonymous>() {
+  runStatic(r = local fun <anonymous>() {
     test1()
   }
  /*-> @FlexibleNullability Runnable? */)
 }
 
 fun J.test2() {
-  <this>.runIt(r =   local fun <anonymous>() {
+  <this>.runIt(r = local fun <anonymous>() {
     test1()
   }
  /*-> @FlexibleNullability Runnable? */)

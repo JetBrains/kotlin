@@ -17,28 +17,28 @@ fun fnv(vararg xs: Int): Int {
 }
 
 fun test0() {
-  return useUnit0(fn =   local fun fn0() {
+  return useUnit0(fn = local fun fn0() {
     fn0() /*~> Unit */
   }
 )
 }
 
 fun test1() {
-  return useUnit1(fn =   local fun fn1(p0: Int) {
+  return useUnit1(fn = local fun fn1(p0: Int) {
     fn1(x = p0) /*~> Unit */
   }
 )
 }
 
 fun testV0() {
-  return useUnit0(fn =   local fun fnv() {
+  return useUnit0(fn = local fun fnv() {
     fnv() /*~> Unit */
   }
 )
 }
 
 fun testV1() {
-  return useUnit1(fn =   local fun fnv(p0: Int) {
+  return useUnit1(fn = local fun fnv(p0: Int) {
     fnv(xs = [p0]) /*~> Unit */
   }
 )

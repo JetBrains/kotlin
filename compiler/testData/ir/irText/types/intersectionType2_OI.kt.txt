@@ -29,7 +29,7 @@ fun <T : Any?> run(fn: Function0<T>): T {
 }
 
 fun foo(): Any {
-  return run<Any>(fn =   local fun <anonymous>(): Any {
+  return run<Any>(fn = local fun <anonymous>(): Any {
     val mm: B = B()
     val nn: C = C()
     val c: Any = when {

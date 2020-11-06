@@ -1,5 +1,5 @@
 fun test1() {
-  val hello: Runnable =   local fun <anonymous>() {
+  val hello: Runnable = local fun <anonymous>() {
     println(message = "Hello, world!")
   }
  /*-> Runnable */

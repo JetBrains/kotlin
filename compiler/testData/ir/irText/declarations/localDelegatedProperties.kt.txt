@@ -1,6 +1,6 @@
 fun test1() {
   val x: Int
-    val x$delegate: Lazy<Int> = lazy<Int>(initializer =     local fun <anonymous>(): Int {
+    val x$delegate: Lazy<Int> = lazy<Int>(initializer = local fun <anonymous>(): Int {
       return 42
     }
 )

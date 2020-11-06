@@ -13,7 +13,7 @@ abstract class Base {
 
 object Test : Base {
   private constructor() /* primary */ {
-    super/*Base*/(lambda =     local fun <anonymous>(): Any {
+    super/*Base*/(lambda = local fun <anonymous>(): Any {
       return Test
     }
 )

@@ -4,7 +4,7 @@ private const val BACKSLASH: Char
 
 private fun Reader.nextChar(): Char? {
   return { // BLOCK
-    val tmp0_safe_receiver: Int? = <this>.read().takeUnless<Int>(predicate =     local fun <anonymous>(it: Int): Boolean {
+    val tmp0_safe_receiver: Int? = <this>.read().takeUnless<Int>(predicate = local fun <anonymous>(it: Int): Boolean {
       return EQEQ(arg0 = it, arg1 = -1)
     }
 )
@@ -26,7 +26,7 @@ fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
         val tmp0_safe_receiver: Char? = <this>.nextChar()
         when {
           EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-          true -> tmp0_safe_receiver.let<Char, @FlexibleNullability StringBuilder?>(block =           local fun <anonymous>(it: Char): @FlexibleNullability StringBuilder? {
+          true -> tmp0_safe_receiver.let<Char, @FlexibleNullability StringBuilder?>(block = local fun <anonymous>(it: Char): @FlexibleNullability StringBuilder? {
             return sb.append(p0 = it)
           }
 )

@@ -20,14 +20,14 @@ fun use(fn: Function0<Any>): Any {
 }
 
 fun testFn(): Any {
-  return use(fn =   local fun foo(): String {
+  return use(fn = local fun foo(): String {
     return foo()
   }
 )
 }
 
 fun testCtor(): Any {
-  return use(fn =   local fun <init>(): C {
+  return use(fn = local fun <init>(): C {
     return C()
   }
 )

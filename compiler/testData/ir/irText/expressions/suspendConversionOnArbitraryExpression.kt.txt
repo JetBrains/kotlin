@@ -14,7 +14,7 @@ fun <T : Any?> useSuspendExtT(sfn: @ExtensionFunctionType SuspendFunction1<T, Un
 }
 
 fun produceFun(): Function0<Unit> {
-  return   local fun <anonymous>() {
+  return local fun <anonymous>() {
     return Unit
   }
 

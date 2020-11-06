@@ -9,7 +9,7 @@ operator fun Any.set(index: Function0<Unit>, value: Int) {
 }
 
 fun test1(a: Any) {
-  a.plusAssign(lambda =   local fun <anonymous>() {
+  a.plusAssign(lambda = local fun <anonymous>() {
     return Unit
   }
 )
@@ -18,7 +18,7 @@ fun test1(a: Any) {
 fun test2(a: Any) {
   { // BLOCK
     val tmp0_array: Any = a
-    val tmp1_index0: Function0<Unit> =     local fun <anonymous>() {
+    val tmp1_index0: Function0<Unit> = local fun <anonymous>() {
       return Unit
     }
 
@@ -29,7 +29,7 @@ fun test2(a: Any) {
 fun test3(a: Any) {
   { // BLOCK
     val tmp0_array: Any = a
-    val tmp1_index0: Function0<Unit> =     local fun <anonymous>() {
+    val tmp1_index0: Function0<Unit> = local fun <anonymous>() {
       return Unit
     }
 

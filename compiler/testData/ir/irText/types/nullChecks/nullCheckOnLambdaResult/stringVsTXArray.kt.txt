@@ -3,7 +3,7 @@ fun <T : Any?> useTX(x: T, fn: Function0<T>): T {
 }
 
 fun testNoNullCheck(xs: Array<String>) {
-  useTX<@FlexibleNullability Serializable?>(x = xs, fn =   local fun <anonymous>(): @FlexibleNullability Serializable? {
+  useTX<@FlexibleNullability Serializable?>(x = xs, fn = local fun <anonymous>(): @FlexibleNullability Serializable? {
     return string()
   }
 ) /*~> Unit */

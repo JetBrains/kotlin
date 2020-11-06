@@ -104,7 +104,7 @@ fun testIfTheElseAnnotated_throwsJvm(a: A, flag: Boolean) {
 }
 
 fun testLambdaResultExpression_throws(a: A) {
-    local fun <anonymous>(): Int {
+  local fun <anonymous>(): Int {
     return { // BLOCK
       val tmp0_subject: A = a
       when {

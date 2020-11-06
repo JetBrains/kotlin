@@ -6,7 +6,7 @@ fun interface MyRunnable {
 fun test(a: Any, r: MyRunnable) {
   when {
     a is MyRunnable -> { // BLOCK
-      foo(rs = [      local fun <anonymous>() {
+      foo(rs = [local fun <anonymous>() {
         return Unit
       }
  /*-> MyRunnable */, r, a /*as MyRunnable */])

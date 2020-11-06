@@ -9,7 +9,7 @@ annotation class A : Annotation {
 fun foo(m: Map<String, Int>) {
   @A(x = "foo/test")
   val test: Int
-    val test$delegate: Lazy<Int> = lazy<Int>(initializer =     local fun <anonymous>(): Int {
+    val test$delegate: Lazy<Int> = lazy<Int>(initializer = local fun <anonymous>(): Int {
       return 42
     }
 )

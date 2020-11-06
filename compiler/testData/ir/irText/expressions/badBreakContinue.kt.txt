@@ -12,7 +12,7 @@ fun test2() {
 
 fun test3() {
   while (true) { // BLOCK
-    val lambda: Function0<Nothing> =     local fun <anonymous>(): Nothing {
+    val lambda: Function0<Nothing> = local fun <anonymous>(): Nothing {
       error("") /* ERROR EXPRESSION */
       error("") /* ERROR EXPRESSION */
     }

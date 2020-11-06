@@ -18,7 +18,7 @@ abstract enum class X : Enum<X> {
       get
 
     override val value: Function0<String>
-      field =       local fun <anonymous>(): String {
+      field = local fun <anonymous>(): String {
         return B.<get-value2>()
       }
 
