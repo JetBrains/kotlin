@@ -541,6 +541,7 @@ class ControlFlowGraphBuilder {
 
     fun exitJump(jump: FirJump<*>): JumpNode {
         val node = createJumpNode(jump)
+        // TODO: if within `try` with `finally`, don't go to the target directly.
         val nextNode = when (jump) {
             is FirReturnExpression -> exitTargetsForReturn[jump.target.labeledElement.symbol]
             is FirContinueExpression -> loopEnterNodes[jump.target.labeledElement]
@@ -793,8 +794,6 @@ class ControlFlowGraphBuilder {
             catchNodeStorage.push(catchNode)
             // a flow where an exception of interest is thrown and caught before executing any of try-main block.
             addEdge(enterTryExpressionNode, catchNode)
-            // TODO: Should go to the finally block w/ a label, and exit to the exit target w/ the same label.
-            addEdge(catchNode, exitTargetsForTry.top())
         }
         levelCounter++
 
@@ -816,6 +815,7 @@ class ControlFlowGraphBuilder {
         val finallyEnterNode = finallyEnterNodes.topOrNull()
         // NB: Check the level to avoid adding an edge to the finally block at an upper level.
         if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
+            // TODO: in case of return/throw in try main block, we need a unique label.
             addEdge(node, finallyEnterNode)
         } else {
             addEdge(node, tryExitNodes.top())
@@ -828,6 +828,14 @@ class ControlFlowGraphBuilder {
             val tryMainExitNode = tryMainExitNodes.top()
             // a flow where an exception of interest is thrown and caught after executing all of try-main block.
             addEdge(tryMainExitNode, it)
+            val finallyEnterNode = finallyEnterNodes.topOrNull()
+            // a flow where an uncaught exception is thrown before executing any of catch clause.
+            // NB: Check the level to avoid adding an edge to the finally block at an upper level.
+            if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
+                addEdge(it, finallyEnterNode, label = UncaughtExceptionPath)
+            } else {
+                addEdge(it, exitTargetsForTry.top(), label = UncaughtExceptionPath)
+            }
             lastNodes.push(it)
             levelCounter++
         }
@@ -840,6 +848,7 @@ class ControlFlowGraphBuilder {
             val finallyEnterNode = finallyEnterNodes.topOrNull()
             // NB: Check the level to avoid adding an edge to the finally block at an upper level.
             if (finallyEnterNode != null && finallyEnterNode.level == levelCounter + 1) {
+                // TODO: in case of return/rethrow in catch clause, we need a unique label.
                 addEdge(it, finallyEnterNode, propagateDeadness = false)
             } else {
                 addEdge(it, tryExitNodes.top(), propagateDeadness = false)
@@ -861,6 +870,7 @@ class ControlFlowGraphBuilder {
             addEdge(it, tryExitNode)
             // a flow that exits to the exit target while there was an uncaught exception.
             addEdge(it, exitTargetsForTry.top(), label = UncaughtExceptionPath)
+            // TODO: differentiate flows that return/(re)throw in try main block or catch clauses.
         }
     }
 

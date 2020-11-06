@@ -315,7 +315,8 @@ digraph propertiesAndInitBlocks_kt {
     88 -> {89};
     89 -> {90};
     90 -> {96 91};
-    91 -> {102 92};
+    91 -> {92};
+    91 -> {96}    [label=onUncaughtException];
     92 -> {93};
     93 -> {94};
     94 -> {95};

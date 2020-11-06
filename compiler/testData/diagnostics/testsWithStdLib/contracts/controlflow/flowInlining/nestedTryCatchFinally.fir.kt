@@ -62,7 +62,7 @@ fun innerFinallyInitializes() {
         }
 
         // Properly initialized
-        <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+        x.inc()
     } catch (e: java.lang.Exception) {
         log()
     }
@@ -87,12 +87,12 @@ fun innerFinallyInitializesOuterRethrows() {
         }
 
         // Properly initialized
-        <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+        x.inc()
     } catch (e: java.lang.Exception) {
         log()
         throw e
     }
 
     // Guaranteed to be initialized because all catch-clauses are rethrowing
-    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+    x.inc()
 }
