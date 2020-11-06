@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 fun addParcelizeRuntimeLibrary(environment: KotlinCoreEnvironment) {
-    val runtimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, "parcelize-runtime.jar")
-    environment.updateClasspath(listOf(JvmClasspathRoot(runtimeLibrary)))
+    val runtimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, PathUtil.PARCELIZE_RUNTIME_PLUGIN_JAR_NAME)
+    val androidExtensionsRuntimeLibrary = File(PathUtil.kotlinPathsForCompiler.libPath, PathUtil.ANDROID_EXTENSIONS_RUNTIME_PLUGIN_JAR_NAME)
+    environment.updateClasspath(listOf(JvmClasspathRoot(runtimeLibrary), JvmClasspathRoot(androidExtensionsRuntimeLibrary)))
 }
 
 fun addAndroidJarLibrary(environment: KotlinCoreEnvironment) {

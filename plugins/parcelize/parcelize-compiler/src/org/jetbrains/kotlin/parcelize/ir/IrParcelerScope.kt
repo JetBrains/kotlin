@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.parcelize.ParcelizeAnnotationChecker
+import org.jetbrains.kotlin.parcelize.TYPE_PARCELER_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.WRITE_WITH_FQ_NAMES
 
 // Keep track of all custom parcelers which are currently in scope.
 // Note that custom parcelers are resolved in *reverse* lexical order.
@@ -29,7 +31,7 @@ class IrParcelerScope(private val parent: IrParcelerScope? = null) {
 }
 
 fun IrParcelerScope?.getCustomSerializer(irType: IrType): IrClass? {
-    return irType.getAnyAnnotation(ParcelizeAnnotationChecker.WRITE_WITH_FQ_NAMES)?.let { writeWith ->
+    return irType.getAnyAnnotation(WRITE_WITH_FQ_NAMES)?.let { writeWith ->
         (writeWith.type as IrSimpleType).arguments.single().typeOrNull!!.getClass()!!
     } ?: this?.get(irType)
 }
@@ -40,7 +42,7 @@ fun IrParcelerScope?.hasCustomSerializer(irType: IrType): Boolean {
 
 fun IrAnnotationContainer.getParcelerScope(parent: IrParcelerScope? = null): IrParcelerScope? {
     val typeParcelerAnnotations = annotations.filterTo(mutableListOf()) {
-        it.symbol.owner.constructedClass.fqNameWhenAvailable in ParcelizeAnnotationChecker.TYPE_PARCELER_FQ_NAMES
+        it.symbol.owner.constructedClass.fqNameWhenAvailable in TYPE_PARCELER_FQ_NAMES
     }
 
     if (typeParcelerAnnotations.isEmpty())

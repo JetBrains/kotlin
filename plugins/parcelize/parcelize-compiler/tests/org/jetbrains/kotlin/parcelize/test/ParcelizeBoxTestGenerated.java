@@ -74,11 +74,6 @@ public class ParcelizeBoxTestGenerated extends AbstractParcelizeBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelable.kt");
     }
 
-    @TestMetadata("customParcelableDeprecated.kt")
-    public void testCustomParcelableDeprecated() throws Exception {
-        runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelableDeprecated.kt");
-    }
-
     @TestMetadata("customParcelerScoping.kt")
     public void testCustomParcelerScoping() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelerScoping.kt");
@@ -94,19 +89,9 @@ public class ParcelizeBoxTestGenerated extends AbstractParcelizeBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerSimple.kt");
     }
 
-    @TestMetadata("customSerializerSimpleDeprecated.kt")
-    public void testCustomSerializerSimpleDeprecated() throws Exception {
-        runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerSimpleDeprecated.kt");
-    }
-
     @TestMetadata("customSerializerWriteWith.kt")
     public void testCustomSerializerWriteWith() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerWriteWith.kt");
-    }
-
-    @TestMetadata("customSerializerWriteWithDeprecated.kt")
-    public void testCustomSerializerWriteWithDeprecated() throws Exception {
-        runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerWriteWithDeprecated.kt");
     }
 
     @TestMetadata("customSimple.kt")
