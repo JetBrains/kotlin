@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.fir.declarations.isLambda
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -137,6 +138,17 @@ class PropertyInitializationInfoCollector(private val localProperties: Set<FirPr
         if (data.isEmpty()) return PathAwarePropertyInitializationInfo.EMPTY
         return data.map { (label, info) -> info.applyLabel(node, label) }
             .reduce(PathAwarePropertyInitializationInfo::merge)
+    }
+
+    override fun visitFunctionExitNode(
+        node: FunctionExitNode,
+        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
+    ): PathAwarePropertyInitializationInfo {
+        val filteredData = if (node.fir.isLambda) {
+            // Special case: when we exit the lambda, only normal path matters.
+            data.filter { it.first.isNormal }
+        } else data
+        return visitNode(node, filteredData)
     }
 
     override fun visitVariableAssignmentNode(

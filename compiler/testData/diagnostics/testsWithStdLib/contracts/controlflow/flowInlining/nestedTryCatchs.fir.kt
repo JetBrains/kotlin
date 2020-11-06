@@ -30,7 +30,7 @@ fun innerTryCatchInitializes() {
             }
         }
         // Can get here only when inlined lambda exited properly, i.e. x is initialized
-        <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+        x.inc()
         outerComputation()
 
     } catch (e: java.lang.Exception) {

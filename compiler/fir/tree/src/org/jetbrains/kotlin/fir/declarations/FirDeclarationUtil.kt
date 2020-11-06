@@ -70,6 +70,9 @@ inline val FirPropertyAccessor.allowsToHaveFakeOverride: Boolean
 inline val FirRegularClass.isLocal get() = symbol.classId.isLocal
 inline val FirSimpleFunction.isLocal get() = status.visibility == Visibilities.Local
 
+inline val FirFunction<*>.isLambda
+    get() = this is FirAnonymousFunction && this.isLambda
+
 fun FirRegularClassBuilder.addDeclaration(declaration: FirDeclaration) {
     declarations += declaration
     if (companionObject == null && declaration is FirRegularClass && declaration.isCompanion) {

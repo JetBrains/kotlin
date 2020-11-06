@@ -43,7 +43,7 @@ fun possibleReassignmentInTryCatch() {
         }
         x.inc()
     }
-    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+    x.inc()
 }
 
 fun tryCatchOuter() {

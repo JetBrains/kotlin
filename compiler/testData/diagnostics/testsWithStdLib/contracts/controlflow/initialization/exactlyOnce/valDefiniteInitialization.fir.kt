@@ -98,7 +98,7 @@ class DefiniteInitializationAfterThrow {
             if (bar()) throw RuntimeException()
             a = 42
         }
-        <!UNINITIALIZED_VARIABLE!>a<!>.hashCode()
+        a.hashCode()
     }
     fun bar() = false
 }
