@@ -22,3 +22,6 @@ projectTest {
 }
 
 publish()
+
+sourcesJar()
+javadocJar()
