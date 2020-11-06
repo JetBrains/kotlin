@@ -225,7 +225,7 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
         val candidateLibraryVersion = candidate.versions.libraryVersion
 
         if (candidateAbiVersion?.isCompatible() != true) {
-            logger.warning("skipping $candidatePath. Incompatible abi version. Expected '${KotlinAbiVersion.CURRENT}', found '${candidateAbiVersion}'. The library produced by ${candidateCompilerVersion} compiler")
+            logger.warning("skipping $candidatePath. Incompatible abi version. The current default is '${KotlinAbiVersion.CURRENT}', found '${candidateAbiVersion}'. The library produced by ${candidateCompilerVersion} compiler")
             return false
         }
 
