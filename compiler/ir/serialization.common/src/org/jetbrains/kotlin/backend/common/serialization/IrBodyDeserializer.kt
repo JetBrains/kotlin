@@ -75,34 +75,10 @@ internal class IrBodyDeserializer(
     val logger: LoggingContext,
     val builtIns: IrBuiltIns,
     val allowErrorNodes: Boolean,
-    val deserializeBodies: Boolean,
     val irFactory: IrFactory,
     val fileDeserializer: IrFileDeserializer,
     val declarationDeserializer: IrDeclarationDeserializer,
 ) {
-
-    fun deserializeExpressionBody(index: Int): IrExpression {
-        return if (deserializeBodies) {
-            val bodyData = fileDeserializer.loadExpressionBodyProto(index)
-            deserializeExpression(bodyData)
-        } else {
-            val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
-            IrErrorExpressionImpl(-1, -1, errorType, "Expression body is not deserialized yet")
-        }
-    }
-
-    fun deserializeStatementBody(index: Int): IrElement {
-        return if (deserializeBodies) {
-            val bodyData = fileDeserializer.loadStatementBodyProto(index)
-            deserializeStatement(bodyData)
-        } else {
-            val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
-            irFactory.createBlockBody(
-                -1, -1, listOf(IrErrorExpressionImpl(-1, -1, errorType, "Statement body is not deserialized yet"))
-            )
-        }
-    }
-
 
     private val fileLoops = mutableMapOf<Int, IrLoop>()
 

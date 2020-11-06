@@ -15,10 +15,12 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.*
@@ -64,7 +66,7 @@ internal class IrDeclarationDeserializer(
     val fileDeserializer: IrFileDeserializer,
 ) {
 
-    private val bodyDeserializer = IrBodyDeserializer(logger, builtIns, allowErrorNodes, deserializeBodies, irFactory, fileDeserializer, this)
+    private val bodyDeserializer = IrBodyDeserializer(logger, builtIns, allowErrorNodes, irFactory, fileDeserializer, this)
 
     private val platformFakeOverrideClassFilter = fakeOverrideBuilder.platformSpecificClassFilter
 
@@ -245,7 +247,7 @@ internal class IrDeclarationDeserializer(
                 flags.isAssignable
             ).apply {
                 if (proto.hasDefaultValue())
-                    defaultValue = irFactory.createExpressionBody(bodyDeserializer.deserializeExpressionBody(proto.defaultValue))
+                    defaultValue = irFactory.createExpressionBody(deserializeExpressionBody(proto.defaultValue))
 
                 (descriptor as? WrappedValueParameterDescriptor)?.bind(this)
                 (descriptor as? WrappedReceiverParameterDescriptor)?.bind(this)
@@ -399,6 +401,28 @@ internal class IrDeclarationDeserializer(
         }
     }
 
+    fun deserializeExpressionBody(index: Int): IrExpression {
+        return if (deserializeBodies) {
+            val bodyData = fileDeserializer.loadExpressionBodyProto(index)
+            bodyDeserializer.deserializeExpression(bodyData)
+        } else {
+            val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
+            IrErrorExpressionImpl(-1, -1, errorType, "Expression body is not deserialized yet")
+        }
+    }
+
+    fun deserializeStatementBody(index: Int): IrElement {
+        return if (deserializeBodies) {
+            val bodyData = fileDeserializer.loadStatementBodyProto(index)
+            bodyDeserializer.deserializeStatement(bodyData)
+        } else {
+            val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
+            irFactory.createBlockBody(
+                -1, -1, listOf(IrErrorExpressionImpl(-1, -1, errorType, "Statement body is not deserialized yet"))
+            )
+        }
+    }
+
     private inline fun <T : IrFunction> withDeserializedIrFunctionBase(
         proto: ProtoFunctionBase,
         block: (IrFunctionSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T
@@ -416,7 +440,7 @@ internal class IrDeclarationDeserializer(
                     if (proto.hasExtensionReceiver())
                         extensionReceiverParameter = deserializeIrValueParameter(proto.extensionReceiver, -1)
                     if (proto.hasBody()) {
-                        body = bodyDeserializer.deserializeStatementBody(proto.body) as IrBody
+                        body = deserializeStatementBody(proto.body) as IrBody
                     }
                 }
             }
@@ -480,7 +504,7 @@ internal class IrDeclarationDeserializer(
                 if (proto.hasCorrespondingClass())
                     correspondingClass = deserializeIrClass(proto.correspondingClass)
                 if (proto.hasInitializer())
-                    initializerExpression = irFactory.createExpressionBody(bodyDeserializer.deserializeExpressionBody(proto.initializer))
+                    initializerExpression = irFactory.createExpressionBody(deserializeExpressionBody(proto.initializer))
 
                 (descriptor as? WrappedEnumEntryDescriptor)?.bind(this)
             }
@@ -490,7 +514,7 @@ internal class IrDeclarationDeserializer(
         withDeserializedIrDeclarationBase(proto.base) { symbol, _, startOffset, endOffset, origin, _ ->
             irFactory.createAnonymousInitializer(startOffset, endOffset, origin, symbol as IrAnonymousInitializerSymbol).apply {
 //                body = deserializeBlockBody(proto.body.blockBody, startOffset, endOffset)
-                body = bodyDeserializer.deserializeStatementBody(proto.body) as IrBlockBody
+                body = deserializeStatementBody(proto.body) as IrBlockBody
 
                 (descriptor as? WrappedClassDescriptor)?.bind(parentsStack.peek() as IrClass)
             }
@@ -537,7 +561,7 @@ internal class IrDeclarationDeserializer(
             }.usingParent {
                 if (proto.hasInitializer()) {
                     withInitializerGuard(isPrivateProperty) {
-                        initializer = irFactory.createExpressionBody(bodyDeserializer.deserializeExpressionBody(proto.initializer))
+                        initializer = irFactory.createExpressionBody(deserializeExpressionBody(proto.initializer))
                     }
                 }
 
