@@ -32,22 +32,21 @@ internal open class IrFileDeserializer(
     val symbolTable: SymbolTable,
     val file: IrFile,
     private val fileReader: IrLibraryFile,
-    explicitlyExportedToCompilerList: List<Long>,
-    declarationIdList: List<Int>,
-    protected var deserializeBodies: Boolean,
+    fileProto: ProtoFile,
+    deserializeBodies: Boolean,
     deserializeFakeOverrides: Boolean,
     allowErrorNodes: Boolean,
-    private var annotations: List<ProtoConstructorCall>?,
-    actuals: List<Actual>,
     deserializeInlineFunctions: Boolean,
     private val moduleDeserializer: IrModuleDeserializer,
     val handleNoModuleDeserializerFound: (IdSignature) -> IrModuleDeserializer,
 ) {
     protected val irFactory: IrFactory get() = symbolTable.irFactory
 
-    val symbolDeserializer = IrSymbolDeserializer(linker, fileReader,this, actuals)
+    val symbolDeserializer = IrSymbolDeserializer(linker, fileReader,this, fileProto.actualsList)
 
-    val reversedSignatureIndex = declarationIdList.map { symbolDeserializer.deserializeIdSignature(it) to it }.toMap()
+    val reversedSignatureIndex = fileProto.declarationIdList.map { symbolDeserializer.deserializeIdSignature(it) to it }.toMap()
+
+    private var annotations: List<ProtoConstructorCall>? = fileProto.annotationList
 
     private val declarationDeserializer = IrDeclarationDeserializer(
         linker,
@@ -101,7 +100,7 @@ internal open class IrFileDeserializer(
         }
     }
 
-    val fileLocalDeserializationState = FileDeserializationState(explicitlyExportedToCompilerList)
+    val fileLocalDeserializationState = FileDeserializationState(fileProto.explicitlyExportedToCompilerList)
 
 
     fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
