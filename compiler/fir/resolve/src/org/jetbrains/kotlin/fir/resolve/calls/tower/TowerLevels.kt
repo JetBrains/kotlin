@@ -148,13 +148,7 @@ class MemberScopeTowerLevel(
                     }
                 )
             }
-            TowerScopeLevel.Token.Objects -> processMembers(processor) { consumer ->
-                this.processClassifiersByName(name) {
-                    // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
-                    @Suppress("UNCHECKED_CAST")
-                    consumer(it as T)
-                }
-            }
+            TowerScopeLevel.Token.Objects -> ProcessorAction.NEXT
         }
     }
 

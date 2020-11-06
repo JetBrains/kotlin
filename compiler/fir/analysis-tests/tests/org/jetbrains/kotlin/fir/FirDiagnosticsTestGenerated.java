@@ -48,6 +48,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/analysis-tests/testData/resolve/companion.kt");
     }
 
+    @TestMetadata("companionAccessInEnum.kt")
+    public void testCompanionAccessInEnum() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/companionAccessInEnum.kt");
+    }
+
     @TestMetadata("companionObjectCall.kt")
     public void testCompanionObjectCall() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/companionObjectCall.kt");
