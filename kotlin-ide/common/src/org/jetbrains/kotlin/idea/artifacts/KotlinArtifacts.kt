@@ -9,13 +9,18 @@ abstract class KotlinArtifacts {
     companion object {
         @get:JvmStatic
         val instance: KotlinArtifacts by lazy {
-            if (doRunFromSources() || doesClassExist("com.intellij.openapi.application.ApplicationManager") &&
-                ApplicationManager.getApplication()?.isUnitTestMode == true
-            ) {
-                TestKotlinArtifacts
-            } else {
-                ProductionKotlinArtifacts
+            // ApplicationManager may absent in JPS process so we need to check it presence firstly
+            if (doRunFromSources() && doesClassExist("com.intellij.openapi.application.ApplicationManager")) {
+                // This isUnitTestMode is for reliability in case when Application is already initialized. This check isn't mandatory
+                if (ApplicationManager.getApplication()?.isUnitTestMode == true) {
+                    return@lazy getTestKotlinArtifacts() ?: error("""
+                        We are in unit test mode! TestKotlinArtifacts must be available in such mode. Probably class was renamed or broken classpath
+                    """.trimIndent())
+                }
             }
+
+            // If TestKotlinArtifacts is presented in classpath then it must be test environment
+            getTestKotlinArtifacts() ?: ProductionKotlinArtifacts
         }
 
         private fun doRunFromSources(): Boolean {
@@ -26,6 +31,16 @@ abstract class KotlinArtifacts {
         private fun doesClassExist(fqName: String): Boolean {
             val classPath = fqName.replace('.', '/') + ".class"
             return KotlinArtifacts::class.java.classLoader.getResource(classPath) != null
+        }
+
+        private fun getTestKotlinArtifacts(): KotlinArtifacts? {
+            val clazz = try {
+                Class.forName("org.jetbrains.kotlin.idea.artifacts.TestKotlinArtifacts")
+            }
+            catch (ex: ClassNotFoundException) {
+                null
+            }
+            return clazz?.getConstructor()?.newInstance() as KotlinArtifacts?
         }
     }
 
