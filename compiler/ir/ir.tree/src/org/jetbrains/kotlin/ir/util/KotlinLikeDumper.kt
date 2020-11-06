@@ -826,7 +826,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitCall(expression: IrCall, data: IrDeclaration?) {
         // TODO process specially builtin symbols
-        expression.printIrFunctionAccessExpressionWithNoIndent(
+        expression.printFunctionAccessExpressionWithNoIndent(
             expression.symbol.owner.name.asString(),
             superQualifierSymbol = expression.superQualifierSymbol,
             omitBracesIfNoArguments = false,
@@ -837,7 +837,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitConstructorCall(expression: IrConstructorCall, data: IrDeclaration?) {
         // TODO could constructors have receiver?
         val clazz = expression.symbol.owner.parentAsClass
-        expression.printIrFunctionAccessExpressionWithNoIndent(
+        expression.printFunctionAccessExpressionWithNoIndent(
             clazz.name.asString(),
             superQualifierSymbol = null,
             omitBracesIfNoArguments = clazz.isAnnotationClass,
@@ -846,35 +846,34 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: IrDeclaration?) {
-        // TODO skip Any?
-        // TODO flag to omit comment block?
-        val delegatingClass = expression.symbol.owner.parentAsClass
-        val currentClass = data?.parentAsClass
-        val delegatingClassName = delegatingClass.name.asString()
-        val name = when (currentClass) {
-            null -> "delegating/*$delegatingClassName*/"
-            delegatingClass -> "this/*$delegatingClassName*/"
-            else -> "super/*$delegatingClassName*/"
-        }
-        expression.printIrFunctionAccessExpressionWithNoIndent(
-            name,
-            superQualifierSymbol = null,
-            omitBracesIfNoArguments = false,
-            data
-        )
+        // TODO skip call to Any?
+        expression.printConstructorCallWithNoIndent(data)
     }
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: IrDeclaration?) {
-        val delegatingClass = expression.symbol.owner.parentAsClass
+        // TODO skip call to Enum?
+        expression.printConstructorCallWithNoIndent(data)
+    }
+
+    private fun IrFunctionAccessExpression.printConstructorCallWithNoIndent(
+        data: IrDeclaration?
+    ) {
+        // TODO flag to omit comment block?
+        val delegatingClass = symbol.owner.parentAsClass
         val currentClass = data?.parentAsClass
         val delegatingClassName = delegatingClass.name.asString()
-        val name = when {
-            data !is IrConstructor -> delegatingClassName
-            currentClass == null -> "delegating/*$delegatingClassName*/"
-            currentClass == delegatingClass -> "this/*$delegatingClassName*/"
-            else -> "super/*$delegatingClassName*/"
+
+        val name = if (data is IrConstructor) {
+            when (currentClass) {
+                null -> "delegating/*$delegatingClassName*/"
+                delegatingClass -> "this/*$delegatingClassName*/"
+                else -> "super/*$delegatingClassName*/"
+            }
+        } else {
+            delegatingClassName // required only for IrEnumConstructorCall
         }
-        expression.printIrFunctionAccessExpressionWithNoIndent(
+
+        printFunctionAccessExpressionWithNoIndent(
             name,
             superQualifierSymbol = null,
             omitBracesIfNoArguments = false,
@@ -882,7 +881,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         )
     }
 
-    private fun IrFunctionAccessExpression.printIrFunctionAccessExpressionWithNoIndent(
+    private fun IrFunctionAccessExpression.printFunctionAccessExpressionWithNoIndent(
         name: String,
         superQualifierSymbol: IrClassSymbol?,
         omitBracesIfNoArguments: Boolean,
