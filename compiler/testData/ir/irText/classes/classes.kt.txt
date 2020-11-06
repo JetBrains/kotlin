@@ -27,7 +27,7 @@ annotation class TestAnnotationClass : Annotation {
 
 enum class TestEnumClass : Enum<TestEnumClass> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestEnumClass>()
         /* InstanceInitializerCall */
 
   }

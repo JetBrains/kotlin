@@ -1,11 +1,13 @@
 enum class TestEnum1 : Enum<TestEnum1> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestEnum1>()
         /* InstanceInitializerCall */
 
   }
 
-  TEST1 init = TODO("IrEnumConstructorCall")  TEST2 init = TODO("IrEnumConstructorCall")
+  TEST1 = TestEnum1()
+
+  TEST2 = TestEnum1()
 
   fun values(): Array<TestEnum1> /* Synthetic body for ENUM_VALUES */
 
@@ -15,7 +17,7 @@ enum class TestEnum1 : Enum<TestEnum1> {
 
 enum class TestEnum2 : Enum<TestEnum2> {
   private constructor(x: Int) /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestEnum2>()
         /* InstanceInitializerCall */
 
   }
@@ -24,7 +26,11 @@ enum class TestEnum2 : Enum<TestEnum2> {
     field = x
     get
 
-  TEST1 init = TODO("IrEnumConstructorCall")  TEST2 init = TODO("IrEnumConstructorCall")  TEST3 init = TODO("IrEnumConstructorCall")
+  TEST1 = TestEnum2(x = 1)
+
+  TEST2 = TestEnum2(x = 2)
+
+  TEST3 = TestEnum2(x = 3)
 
   fun values(): Array<TestEnum2> /* Synthetic body for ENUM_VALUES */
 
@@ -34,12 +40,26 @@ enum class TestEnum2 : Enum<TestEnum2> {
 
 abstract enum class TestEnum3 : Enum<TestEnum3> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestEnum3>()
         /* InstanceInitializerCall */
 
   }
 
-  TEST init = TODO("IrEnumConstructorCall")  abstract fun foo() 
+  TEST = TEST()
+  private enum entry class TEST : TestEnum3 {
+    private constructor() /* primary */ {
+      super/*TestEnum3*/() /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    override fun foo() {
+      println(message = "Hello, world!")
+    }
+
+  }
+
+  abstract fun foo() 
 
   fun values(): Array<TestEnum3> /* Synthetic body for ENUM_VALUES */
 
@@ -49,7 +69,7 @@ abstract enum class TestEnum3 : Enum<TestEnum3> {
 
 abstract enum class TestEnum4 : Enum<TestEnum4> {
   private constructor(x: Int) /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestEnum4>()
         /* InstanceInitializerCall */
 
   }
@@ -58,7 +78,42 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
     field = x
     get
 
-  TEST1 init = TODO("IrEnumConstructorCall")  TEST2 init = TODO("IrEnumConstructorCall")  abstract fun foo() 
+  TEST1 = TEST1()
+  private enum entry class TEST1 : TestEnum4 {
+    private constructor() /* primary */ {
+      super/*TestEnum4*/(x = 1) /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    override fun foo() {
+      println(message = TestEnum4)
+    }
+
+  }
+
+  TEST2 = TEST2()
+  private enum entry class TEST2 : TestEnum4 {
+    private constructor() /* primary */ {
+      super/*TestEnum4*/(x = 2) /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    val z: Int
+      get
+
+    init {
+      #z = <this>.<get-x>()
+    }
+
+    override fun foo() {
+      println(message = TestEnum4)
+    }
+
+  }
+
+  abstract fun foo() 
 
   fun values(): Array<TestEnum4> /* Synthetic body for ENUM_VALUES */
 
@@ -68,7 +123,7 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
 
 enum class TestEnum5 : Enum<TestEnum5> {
   private constructor(x: Int = 0) /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestEnum5>()
         /* InstanceInitializerCall */
 
   }
@@ -77,7 +132,11 @@ enum class TestEnum5 : Enum<TestEnum5> {
     field = x
     get
 
-  TEST1 init = TODO("IrEnumConstructorCall")  TEST2 init = TODO("IrEnumConstructorCall")  TEST3 init = TODO("IrEnumConstructorCall")
+  TEST1 = TestEnum5()
+
+  TEST2 = TestEnum5()
+
+  TEST3 = TestEnum5(x = 0)
 
   fun values(): Array<TestEnum5> /* Synthetic body for ENUM_VALUES */
 
@@ -91,7 +150,7 @@ fun f(): Int {
 
 enum class TestEnum6 : Enum<TestEnum6> {
   private constructor(x: Int, y: Int) /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestEnum6>()
         /* InstanceInitializerCall */
 
   }
@@ -104,10 +163,10 @@ enum class TestEnum6 : Enum<TestEnum6> {
     field = y
     get
 
-  TEST init = { // BLOCK
+  TEST = { // BLOCK
     val tmp0_y: Int = f()
     val tmp1_x: Int = f()
-    TODO("IrEnumConstructorCall")
+    TestEnum6(x = tmp1_x, y = tmp0_y)
   }
 
   fun values(): Array<TestEnum6> /* Synthetic body for ENUM_VALUES */

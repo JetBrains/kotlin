@@ -5,10 +5,6 @@ open class BaseConverter : BaseFirBuilder<Any> {
 
   }
 
-
-
-
-
 }
 
 class DeclarationsConverter : BaseConverter {
@@ -17,10 +13,6 @@ class DeclarationsConverter : BaseConverter {
         /* InstanceInitializerCall */
 
   }
-
-
-
-
 
 }
 

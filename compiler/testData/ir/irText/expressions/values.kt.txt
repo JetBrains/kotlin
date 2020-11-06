@@ -1,11 +1,11 @@
 enum class Enum : Enum<Enum> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<Enum>()
         /* InstanceInitializerCall */
 
   }
 
-  A init = TODO("IrEnumConstructorCall")
+  A = Enum()
 
   fun values(): Array<Enum> /* Synthetic body for ENUM_VALUES */
 

@@ -1,11 +1,11 @@
 enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestFinalEnum1>()
         /* InstanceInitializerCall */
 
   }
 
-  X1 init = TODO("IrEnumConstructorCall")
+  X1 = TestFinalEnum1()
 
   fun values(): Array<TestFinalEnum1> /* Synthetic body for ENUM_VALUES */
 
@@ -15,7 +15,7 @@ enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
 
 enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
   private constructor(x: Int) /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestFinalEnum2>()
         /* InstanceInitializerCall */
 
   }
@@ -24,7 +24,7 @@ enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
     field = x
     get
 
-  X1 init = TODO("IrEnumConstructorCall")
+  X1 = TestFinalEnum2(x = 1)
 
   fun values(): Array<TestFinalEnum2> /* Synthetic body for ENUM_VALUES */
 
@@ -34,12 +34,14 @@ enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
 
 enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestFinalEnum3>()
         /* InstanceInitializerCall */
 
   }
 
-  X1 init = TODO("IrEnumConstructorCall")  fun doStuff() {
+  X1 = TestFinalEnum3()
+
+  fun doStuff() {
   }
 
   fun values(): Array<TestFinalEnum3> /* Synthetic body for ENUM_VALUES */
@@ -50,12 +52,24 @@ enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
 
 open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestOpenEnum1>()
         /* InstanceInitializerCall */
 
   }
 
-  X1 init = TODO("IrEnumConstructorCall")
+  X1 = X1()
+  private enum entry class X1 : TestOpenEnum1 {
+    private constructor() /* primary */ {
+      super/*TestOpenEnum1*/() /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    override fun toString(): String {
+      return "X1"
+    }
+
+  }
 
   fun values(): Array<TestOpenEnum1> /* Synthetic body for ENUM_VALUES */
 
@@ -65,12 +79,25 @@ open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
 
 open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestOpenEnum2>()
         /* InstanceInitializerCall */
 
   }
 
-  X1 init = TODO("IrEnumConstructorCall")  open fun foo() {
+  X1 = X1()
+  private enum entry class X1 : TestOpenEnum2 {
+    private constructor() /* primary */ {
+      super/*TestOpenEnum2*/() /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    override fun foo() {
+    }
+
+  }
+
+  open fun foo() {
   }
 
   fun values(): Array<TestOpenEnum2> /* Synthetic body for ENUM_VALUES */
@@ -81,12 +108,25 @@ open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
 
 abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestAbstractEnum1>()
         /* InstanceInitializerCall */
 
   }
 
-  X1 init = TODO("IrEnumConstructorCall")  abstract fun foo() 
+  X1 = X1()
+  private enum entry class X1 : TestAbstractEnum1 {
+    private constructor() /* primary */ {
+      super/*TestAbstractEnum1*/() /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    override fun foo() {
+    }
+
+  }
+
+  abstract fun foo() 
 
   fun values(): Array<TestAbstractEnum1> /* Synthetic body for ENUM_VALUES */
 
@@ -101,12 +141,23 @@ interface IFoo {
 
 abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestAbstractEnum2>()
         /* InstanceInitializerCall */
 
   }
 
-  X1 init = TODO("IrEnumConstructorCall")
+  X1 = X1()
+  private enum entry class X1 : TestAbstractEnum2 {
+    private constructor() /* primary */ {
+      super/*TestAbstractEnum2*/() /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    override fun foo() {
+    }
+
+  }
 
   fun values(): Array<TestAbstractEnum2> /* Synthetic body for ENUM_VALUES */
 

@@ -1,5 +1,6 @@
 expect enum class MyEnum : Enum<MyEnum> {
   FOO
+
   BAR
 
   fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
@@ -10,12 +11,16 @@ expect enum class MyEnum : Enum<MyEnum> {
 
 enum class MyEnum : Enum<MyEnum> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<MyEnum>()
         /* InstanceInitializerCall */
 
   }
 
-  FOO init = TODO("IrEnumConstructorCall")  BAR init = TODO("IrEnumConstructorCall")  BAZ init = TODO("IrEnumConstructorCall")
+  FOO = MyEnum()
+
+  BAR = MyEnum()
+
+  BAZ = MyEnum()
 
   fun values(): Array<MyEnum> /* Synthetic body for ENUM_VALUES */
 

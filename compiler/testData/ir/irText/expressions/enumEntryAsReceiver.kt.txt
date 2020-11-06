@@ -1,11 +1,32 @@
 abstract enum class X : Enum<X> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<X>()
         /* InstanceInitializerCall */
 
   }
 
-  B init = TODO("IrEnumConstructorCall")  abstract val value: Function0<String>
+  B = B()
+  private enum entry class B : X {
+    private constructor() /* primary */ {
+      super/*X*/() /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    val value2: String
+      field = "OK"
+      get
+
+    override val value: Function0<String>
+      field =       local fun <anonymous>(): String {
+        return B.<get-value2>()
+      }
+
+      override get
+
+  }
+
+  abstract val value: Function0<String>
     abstract get
 
   fun values(): Array<X> /* Synthetic body for ENUM_VALUES */

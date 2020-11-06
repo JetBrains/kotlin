@@ -1,6 +1,6 @@
 enum class Test0 : Enum<Test0> {
   private constructor(x: Int) /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<Test0>()
         /* InstanceInitializerCall */
 
   }
@@ -9,7 +9,9 @@ enum class Test0 : Enum<Test0> {
     field = x
     get
 
-  ZERO init = TODO("IrEnumConstructorCall")  private constructor() {
+  ZERO = Test0()
+
+  private constructor() {
     this/*Test0*/(x = 0)
   }
 
@@ -21,7 +23,7 @@ enum class Test0 : Enum<Test0> {
 
 enum class Test1 : Enum<Test1> {
   private constructor(x: Int) /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<Test1>()
         /* InstanceInitializerCall */
 
   }
@@ -30,7 +32,11 @@ enum class Test1 : Enum<Test1> {
     field = x
     get
 
-  ZERO init = TODO("IrEnumConstructorCall")  ONE init = TODO("IrEnumConstructorCall")  private constructor() {
+  ZERO = Test1()
+
+  ONE = Test1(x = 1)
+
+  private constructor() {
     this/*Test1*/(x = 0)
   }
 
@@ -42,7 +48,7 @@ enum class Test1 : Enum<Test1> {
 
 abstract enum class Test2 : Enum<Test2> {
   private constructor(x: Int) /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<Test2>()
         /* InstanceInitializerCall */
 
   }
@@ -51,7 +57,35 @@ abstract enum class Test2 : Enum<Test2> {
     field = x
     get
 
-  ZERO init = TODO("IrEnumConstructorCall")  ONE init = TODO("IrEnumConstructorCall")  private constructor() {
+  ZERO = ZERO()
+  private enum entry class ZERO : Test2 {
+    private constructor() /* primary */ {
+      super/*Test2*/() /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    override fun foo() {
+      println(message = "ZERO")
+    }
+
+  }
+
+  ONE = ONE()
+  private enum entry class ONE : Test2 {
+    private constructor() /* primary */ {
+      super/*Test2*/(x = 1) /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    override fun foo() {
+      println(message = "ONE")
+    }
+
+  }
+
+  private constructor() {
     this/*Test2*/(x = 0)
   }
 

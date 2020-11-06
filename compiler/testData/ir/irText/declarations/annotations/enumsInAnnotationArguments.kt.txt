@@ -1,11 +1,17 @@
 enum class En : Enum<En> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<En>()
         /* InstanceInitializerCall */
 
   }
 
-  A init = TODO("IrEnumConstructorCall")  B init = TODO("IrEnumConstructorCall")  C init = TODO("IrEnumConstructorCall")  D init = TODO("IrEnumConstructorCall")
+  A = En()
+
+  B = En()
+
+  C = En()
+
+  D = En()
 
   fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
 

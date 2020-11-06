@@ -1,11 +1,35 @@
 open enum class Z : Enum<Z> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<Z>()
         /* InstanceInitializerCall */
 
   }
 
-  ENTRY init = TODO("IrEnumConstructorCall")
+  ENTRY = ENTRY()
+  private enum entry class ENTRY : Z {
+    private constructor() /* primary */ {
+      super/*Z*/() /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    fun test() {
+    }
+
+    inner class A {
+      constructor() /* primary */ {
+        super/*Any*/()
+                /* InstanceInitializerCall */
+
+      }
+
+      fun test2() {
+        ENTRY.test()
+      }
+
+    }
+
+  }
 
   fun values(): Array<Z> /* Synthetic body for ENUM_VALUES */
 

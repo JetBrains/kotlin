@@ -8,14 +8,29 @@ annotation class TestAnn : Annotation {
 
 open enum class TestEnum : Enum<TestEnum> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestEnum>()
         /* InstanceInitializerCall */
 
   }
 
   @TestAnn(x = "ENTRY1")
-  ENTRY1 init = TODO("IrEnumConstructorCall")  @TestAnn(x = "ENTRY2")
-  ENTRY2 init = TODO("IrEnumConstructorCall")
+  ENTRY1 = TestEnum()
+
+  @TestAnn(x = "ENTRY2")
+  ENTRY2 = ENTRY2()
+  @TestAnn(x = "ENTRY2")
+  private enum entry class ENTRY2 : TestEnum {
+    private constructor() /* primary */ {
+      super/*TestEnum*/() /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    val x: Int
+      field = 42
+      get
+
+  }
 
   fun values(): Array<TestEnum> /* Synthetic body for ENUM_VALUES */
 

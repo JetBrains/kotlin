@@ -1,5 +1,23 @@
 open enum class A : Enum<A> {
-  X init = TODO("IrEnumConstructorCall")  Y init = TODO("IrEnumConstructorCall")  Z init = TODO("IrEnumConstructorCall")  val prop1: String
+  X = A(arg = "asd")
+
+  Y = Y()
+  private enum entry class Y : A {
+    private constructor() /* primary */ {
+      super/*A*/() /*~> Unit */
+            /* InstanceInitializerCall */
+
+    }
+
+    override fun f(): String {
+      return super.f().plus(other = "#Y")
+    }
+
+  }
+
+  Z = A(x = 5)
+
+  val prop1: String
     get
 
   val prop2: String
@@ -12,14 +30,14 @@ open enum class A : Enum<A> {
     set
 
   private constructor(arg: String) {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<A>()
         /* InstanceInitializerCall */
 
     #prop1 = arg
   }
 
   private constructor() {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<A>()
         /* InstanceInitializerCall */
 
     #prop1 = "default"

@@ -53,7 +53,7 @@ class Host {
 @TestAnn(x = "enum")
 enum class TestEnum : Enum<TestEnum> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<TestEnum>()
         /* InstanceInitializerCall */
 
   }

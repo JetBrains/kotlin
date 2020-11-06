@@ -9,12 +9,12 @@ object A {
 
 enum class En : Enum<En> {
   private constructor() /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<En>()
         /* InstanceInitializerCall */
 
   }
 
-  X init = TODO("IrEnumConstructorCall")
+  X = En()
 
   fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
 

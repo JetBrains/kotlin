@@ -4,7 +4,7 @@ val n: Any?
 
 enum class En : Enum<En> {
   private constructor(x: String?) /* primary */ {
-    TODO("IrEnumConstructorCall")
+    super/*Enum*/<En>()
         /* InstanceInitializerCall */
 
   }
@@ -13,7 +13,13 @@ enum class En : Enum<En> {
     field = x
     get
 
-  ENTRY init = TODO("IrEnumConstructorCall")
+  ENTRY = En(x = { // BLOCK
+    val tmp0_safe_receiver: Any? = <get-n>()
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      true -> tmp0_safe_receiver.toString()
+    }
+  })
 
   fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
 
