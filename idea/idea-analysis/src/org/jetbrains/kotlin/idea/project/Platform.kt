@@ -263,8 +263,8 @@ val Project.platform: TargetPlatform?
     }
 
 private val Module.implementsCommonModule: Boolean
-    get() = !isCommon // FIXME(dsavvinov): this doesn't seems right, in multilevel-MPP 'common' modules can implement other commons
-            && ModuleRootManager.getInstance(this).dependencies.any { it.isCommon }
+    get() = !platform.isCommon() // FIXME(dsavvinov): this doesn't seems right, in multilevel-MPP 'common' modules can implement other commons
+            && ModuleRootManager.getInstance(this).dependencies.any { it.platform.isCommon() }
 
 private fun parseArguments(
     platformKind: TargetPlatform,

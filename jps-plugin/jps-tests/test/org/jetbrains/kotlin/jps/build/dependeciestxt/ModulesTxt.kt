@@ -56,7 +56,7 @@ data class ModulesTxt(
 
         val isCommonModule
             get() =
-                kotlinFacetSettings?.isCommonModule!! ||
+                kotlinFacetSettings?.targetPlatform.isCommon() ||
                         kotlinFacetSettings?.kind == SOURCE_SET_HOLDER
 
         val isJvmModule

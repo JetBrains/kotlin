@@ -315,7 +315,7 @@ class KotlinMPPGradleProjectTaskRunner extends ProjectTaskRunner
         final TargetPlatform platform = facetSettings.getTargetPlatform();
         if (platform == null) return false;
 
-        return facetSettings.isCommonModule();
+        return TargetPlatformKt.isCommon(platform);
     }
 
     private static Collection<String> findNativeGradleBuildTasks(Collection<String> gradleTasks, String sourceSetName) {

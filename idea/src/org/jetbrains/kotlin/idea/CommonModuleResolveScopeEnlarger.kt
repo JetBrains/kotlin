@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
-import org.jetbrains.kotlin.idea.project.isCommon
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
 class CommonModuleResolveScopeEnlarger : ResolveScopeEnlarger() {
@@ -28,7 +28,7 @@ class CommonModuleResolveScopeEnlarger : ResolveScopeEnlarger() {
         val modulesWithFacet = ProjectFacetManager.getInstance(project).getModulesWithFacet(KotlinFacetType.TYPE_ID)
         if (modulesWithFacet.isEmpty()) return null
         val module = ProjectFileIndex.getInstance(project).getModuleForFile(file) ?: return null
-        if (!module.isCommon) return null
+        if (!module.platform.isCommon()) return null
 
         val moduleFileIndex = ModuleRootManager.getInstance(module).fileIndex
         if (!moduleFileIndex.isInSourceContentWithoutInjected(file) && !moduleFileIndex.isInTestSourceContentKotlinAware(file)) {

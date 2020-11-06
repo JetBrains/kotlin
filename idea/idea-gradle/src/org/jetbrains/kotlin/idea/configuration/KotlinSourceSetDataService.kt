@@ -114,27 +114,14 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 else -> KotlinModuleKind.DEFAULT
             }
 
-        private fun relevantPlatformKinds(platform: TargetPlatform, projectPlatforms: List<KotlinPlatform>): Set<SimplePlatform> {
-            if (projectPlatforms.singleOrNull() == KotlinPlatform.COMMON) {
-                return platform.componentPlatforms
+        private fun SimplePlatform.isRelevantFor(projectPlatforms: List<KotlinPlatform>): Boolean {
+            val jvmPlatforms = listOf(KotlinPlatform.ANDROID, KotlinPlatform.JVM, KotlinPlatform.COMMON)
+            return when (this) {
+                is JvmPlatform -> projectPlatforms.intersect(jvmPlatforms).isNotEmpty()
+                is JsPlatform -> KotlinPlatform.JS in projectPlatforms
+                is NativePlatform -> KotlinPlatform.NATIVE in projectPlatforms
+                else -> true
             }
-
-            val result = HashSet<SimplePlatform>()
-
-            for (simplePlatform in platform.componentPlatforms) {
-                val list = when (simplePlatform) {
-                    is JvmPlatform -> listOf(KotlinPlatform.ANDROID, KotlinPlatform.JVM)
-                    is JsPlatform -> listOf(KotlinPlatform.JS)
-                    is NativePlatform -> listOf(KotlinPlatform.NATIVE)
-                    else -> enumValues<KotlinPlatform>().toList()
-                }
-
-                if (projectPlatforms.any { it in list }) {
-                    result += simplePlatform
-                }
-            }
-
-            return result
         }
 
         fun configureFacet(
@@ -175,7 +162,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                             JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget).componentPlatforms
                         }
                         is NativeIdePlatformKind -> NativePlatforms.nativePlatformByTargetNames(moduleData.konanTargets)
-                        else -> relevantPlatformKinds(platformKind.defaultPlatform, projectPlatforms)
+                        else -> platformKind.defaultPlatform.filter { it.isRelevantFor(projectPlatforms) }
                     }
                 }
                 .distinct()

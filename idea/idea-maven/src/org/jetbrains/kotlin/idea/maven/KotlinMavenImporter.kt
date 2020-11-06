@@ -375,7 +375,7 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         }.distinct()
 
     private fun setImplementedModuleName(kotlinFacet: KotlinFacet, mavenProject: MavenProject, module: Module) {
-        if (kotlinFacet.configuration.settings.isCommonModule) {
+        if (kotlinFacet.configuration.settings.targetPlatform.isCommon()) {
             kotlinFacet.configuration.settings.implementedModuleNames = emptyList()
         } else {
             val manager = MavenProjectsManager.getInstance(module.project)

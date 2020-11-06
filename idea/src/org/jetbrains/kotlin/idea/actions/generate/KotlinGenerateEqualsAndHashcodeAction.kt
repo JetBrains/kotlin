@@ -23,12 +23,11 @@ import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.insertMembersAfter
-import org.jetbrains.kotlin.idea.project.isCommon
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.util.projectStructure.module
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
@@ -122,8 +121,8 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         val defaultExpression = "javaClass != $paramName?.javaClass"
         if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
         return when {
-            targetClass.module?.isCommon == true -> "other == null || this::class != $paramName::class"
             targetClass.platform.isJs() -> "other == null || this::class.js != $paramName::class.js"
+            targetClass.platform.isCommon() -> "other == null || this::class != $paramName::class"
             else -> defaultExpression
         }
     }
@@ -132,8 +131,8 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
         val defaultExpression = "javaClass"
         if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
         return when {
-            targetClass.module?.isCommon == true -> "this::class"
             targetClass.platform.isJs() -> "this::class.js"
+            targetClass.platform.isCommon() -> "this::class"
             else -> defaultExpression
         }
     }
