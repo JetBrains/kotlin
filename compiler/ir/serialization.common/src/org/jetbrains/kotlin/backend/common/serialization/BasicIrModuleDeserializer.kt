@@ -130,8 +130,8 @@ abstract class BasicIrModuleDeserializer(
 
         if (strategy.theWholeWorld) {
             fileDeserializer.enqueueAllDeclarations()
-            moduleDeserializationState.enqueueFile(fileDeserializer)
-        } else if (strategy.explicitlyExported) {
+        }
+        if (strategy.theWholeWorld || strategy.explicitlyExported) {
             moduleDeserializationState.enqueueFile(fileDeserializer)
         }
 

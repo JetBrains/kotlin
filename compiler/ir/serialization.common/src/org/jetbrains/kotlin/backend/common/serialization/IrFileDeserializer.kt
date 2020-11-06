@@ -37,12 +37,12 @@ internal open class IrFileDeserializer(
     deserializeFakeOverrides: Boolean,
     allowErrorNodes: Boolean,
     deserializeInlineFunctions: Boolean,
-    private val moduleDeserializer: IrModuleDeserializer,
-    val handleNoModuleDeserializerFound: (IdSignature) -> IrModuleDeserializer,
+    moduleDeserializer: IrModuleDeserializer,
+    handleNoModuleDeserializerFound: (IdSignature) -> IrModuleDeserializer,
 ) {
     protected val irFactory: IrFactory get() = symbolTable.irFactory
 
-    val symbolDeserializer = IrSymbolDeserializer(linker, fileReader,this, fileProto.actualsList)
+    val symbolDeserializer = IrSymbolDeserializer(linker, fileReader,this, fileProto.actualsList, moduleDeserializer, handleNoModuleDeserializerFound)
 
     val reversedSignatureIndex = fileProto.declarationIdList.map { symbolDeserializer.deserializeIdSignature(it) to it }.toMap()
 
@@ -102,7 +102,6 @@ internal open class IrFileDeserializer(
 
     val fileLocalDeserializationState = FileDeserializationState(fileProto.explicitlyExportedToCompilerList)
 
-
     fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
         return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig))
     }
@@ -113,19 +112,6 @@ internal open class IrFileDeserializer(
     private fun loadTopLevelDeclarationProto(idSig: IdSignature): ProtoDeclaration {
         val idSigIndex = reversedSignatureIndex[idSig] ?: error("Not found Idx for $idSig")
         return ProtoDeclaration.parseFrom(readDeclaration(idSigIndex), ExtensionRegistryLite.newInstance())
-    }
-
-    internal fun getModuleForTopLevelId(idSignature: IdSignature): IrModuleDeserializer? {
-        if (idSignature in moduleDeserializer) return moduleDeserializer
-        return moduleDeserializer.moduleDependencies.firstOrNull { idSignature in it }
-    }
-
-    internal fun findModuleDeserializer(idSig: IdSignature): IrModuleDeserializer {
-        assert(idSig.isPublic)
-
-        val topLevelSig = idSig.topLevelSignature()
-        if (topLevelSig in moduleDeserializer) return moduleDeserializer
-        return moduleDeserializer.moduleDependencies.firstOrNull { topLevelSig in it } ?: handleNoModuleDeserializerFound(idSig)
     }
 
     fun deserializeFileImplicitDataIfFirstUse() {

@@ -27,6 +27,8 @@ internal class IrSymbolDeserializer(
     val fileReader: IrLibraryFile,
     val fileDeserializer: IrFileDeserializer,
     val actuals: List<Actual>,
+    private val moduleDeserializer: IrModuleDeserializer,
+    private val handleNoModuleDeserializerFound: (IdSignature) -> IrModuleDeserializer,
 ) {
 
     val deserializedSymbols = mutableMapOf<IdSignature, IrSymbol>()
@@ -86,10 +88,14 @@ internal class IrSymbolDeserializer(
             }
             linker.expectUniqIdToActualUniqId[expect] = actual
             // Non-null only for topLevel declarations.
-            fileDeserializer.getModuleForTopLevelId(actual)?.let { md -> linker.topLevelActualUniqItToDeserializer[actual] = md }
+            getModuleForTopLevelId(actual)?.let { md -> linker.topLevelActualUniqItToDeserializer[actual] = md }
         }
     }
 
+    private fun getModuleForTopLevelId(idSignature: IdSignature): IrModuleDeserializer? {
+        if (idSignature in moduleDeserializer) return moduleDeserializer
+        return moduleDeserializer.moduleDependencies.firstOrNull { idSignature in it }
+    }
 
     fun referenceIrSymbol(symbol: IrSymbol, signature: IdSignature) {
         assert(signature.isLocal)
@@ -111,7 +117,15 @@ internal class IrSymbolDeserializer(
     private fun deserializeIrSymbolData(idSignature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         if (idSignature.isLocal) return deserializeIrLocalSymbolData(idSignature, symbolKind)
 
-        return fileDeserializer.findModuleDeserializer(idSignature).deserializeIrSymbol(idSignature, symbolKind)
+        return findModuleDeserializer(idSignature).deserializeIrSymbol(idSignature, symbolKind)
+    }
+
+    private fun findModuleDeserializer(idSig: IdSignature): IrModuleDeserializer {
+        assert(idSig.isPublic)
+
+        val topLevelSig = idSig.topLevelSignature()
+        if (topLevelSig in moduleDeserializer) return moduleDeserializer
+        return moduleDeserializer.moduleDependencies.firstOrNull { topLevelSig in it } ?: handleNoModuleDeserializerFound(idSig)
     }
 
     fun deserializeIrSymbolToDeclare(code: Long): Pair<IrSymbol, IdSignature> {
