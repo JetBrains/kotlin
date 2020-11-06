@@ -25,6 +25,7 @@ import org.junit.Assume
 import org.junit.Ignore
 import org.junit.Test
 import java.io.File
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -261,27 +262,27 @@ class GeneralNativeIT : BaseGradleIT() {
             fileInWorkingDir(headerPaths[0]).readText().contains("+ (int32_t)exported")
 
             // Check that by default release frameworks have bitcode embedded.
-            checkNativeCommandLineFor(":linkMainReleaseFrameworkIos") {
-                assertTrue(it.contains("-Xembed-bitcode"))
-                assertTrue(it.contains("-opt"))
+            checkNativeCommandLineArguments(":linkMainReleaseFrameworkIos") { arguments ->
+                assertTrue("-Xembed-bitcode" in arguments)
+                assertTrue("-opt" in arguments)
             }
             // Check that by default debug frameworks have bitcode marker embedded.
-            checkNativeCommandLineFor(":linkMainDebugFrameworkIos") {
-                assertTrue(it.contains("-Xembed-bitcode-marker"))
-                assertTrue(it.contains("-g"))
+            checkNativeCommandLineArguments(":linkMainDebugFrameworkIos") { arguments ->
+                assertTrue("-Xembed-bitcode-marker" in arguments)
+                assertTrue("-g" in arguments)
             }
             // Check that bitcode can be disabled by setting custom compiler options
-            checkNativeCommandLineFor(":linkCustomDebugFrameworkIos") {
-                assertTrue(it.contains("-linker-option -L."))
-                assertTrue(it.contains("-Xtime"))
-                assertTrue(it.contains("-Xstatic-framework"))
-                assertFalse(it.contains("-Xembed-bitcode-marker"))
-                assertFalse(it.contains("-Xembed-bitcode"))
+            checkNativeCommandLineArguments(":linkCustomDebugFrameworkIos") { arguments ->
+                assertTrue(arguments.containsSequentially("-linker-option", "-L."))
+                assertTrue("-Xtime" in arguments)
+                assertTrue("-Xstatic-framework" in arguments)
+                assertFalse("-Xembed-bitcode-marker" in arguments)
+                assertFalse("-Xembed-bitcode" in arguments)
             }
             // Check that bitcode is disabled for iOS simulator.
-            checkNativeCommandLineFor(":linkMainReleaseFrameworkIosSim", ":linkMainDebugFrameworkIosSim") {
-                assertFalse(it.contains("-Xembed-bitcode"))
-                assertFalse(it.contains("-Xembed-bitcode-marker"))
+            checkNativeCommandLineArguments(":linkMainReleaseFrameworkIosSim", ":linkMainDebugFrameworkIosSim") { arguments ->
+                assertFalse("-Xembed-bitcode" in arguments)
+                assertFalse("-Xembed-bitcode-marker" in arguments)
             }
         }
 
@@ -302,10 +303,12 @@ class GeneralNativeIT : BaseGradleIT() {
     fun testExportApiOnlyToLibraries() {
         val project = transformNativeTestProjectWithPluginDsl("libraries", directoryPrefix = "native-binaries")
 
-        testExportApi(project, listOf(
-            ExportApiTestData("linkDebugSharedHost", "debugShared"),
-            ExportApiTestData("linkDebugStaticHost", "debugStatic"),
-        ))
+        testExportApi(
+            project, listOf(
+                ExportApiTestData("linkDebugSharedHost", "debugShared"),
+                ExportApiTestData("linkDebugStaticHost", "debugStatic"),
+            )
+        )
     }
 
     @Test
@@ -313,9 +316,11 @@ class GeneralNativeIT : BaseGradleIT() {
         Assume.assumeTrue(HostManager.hostIsMac)
         val project = transformNativeTestProjectWithPluginDsl("frameworks", directoryPrefix = "native-binaries")
 
-        testExportApi(project, listOf(
-            ExportApiTestData("linkMainDebugFrameworkIos", "mainDebugFramework")
-        ))
+        testExportApi(
+            project, listOf(
+                ExportApiTestData("linkMainDebugFrameworkIos", "mainDebugFramework")
+            )
+        )
     }
 
     private data class ExportApiTestData(val taskName: String, val binaryName: String)
@@ -336,16 +341,6 @@ class GeneralNativeIT : BaseGradleIT() {
             }
         }
     }
-
-    private fun CompiledProject.checkNativeCommandLineFor(vararg taskPaths: String, check: (String) -> Unit) =
-        taskPaths.forEach { taskPath ->
-            val commandLine = output.lineSequence().dropWhile {
-                !it.contains("Executing actions for task '$taskPath'")
-            }.first {
-                it.contains("Run tool: \"konanc\"")
-            }
-            check(commandLine)
-        }
 
     @Test
     fun testNativeExecutables() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
@@ -424,8 +419,8 @@ class GeneralNativeIT : BaseGradleIT() {
     ) {
         build(":compileKotlinHost") {
             assertSuccessful()
-            checkNativeCommandLineFor(":compileKotlinHost") {
-                assertFalse(it.contains("-verbose"))
+            checkNativeCommandLineArguments(":compileKotlinHost") { arguments ->
+                assertFalse("-verbose" in arguments)
             }
         }
 
@@ -438,8 +433,8 @@ class GeneralNativeIT : BaseGradleIT() {
         )
         build(":compileKotlinHost") {
             assertSuccessful()
-            checkNativeCommandLineFor(":compileKotlinHost") {
-                assertTrue(it.contains("-verbose"))
+            checkNativeCommandLineArguments(":compileKotlinHost") { arguments ->
+                assertTrue("-verbose" in arguments)
             }
         }
     }
@@ -822,9 +817,47 @@ class GeneralNativeIT : BaseGradleIT() {
 
         build("compileKotlin${nativeHostTargetName.capitalize()}") {
             assertSuccessful()
-            checkNativeCommandLineFor(":compileKotlin${nativeHostTargetName.capitalize()}") {
-                it.contains(fileWithSpacesInPath.absolutePath)
+            checkNativeCommandLineArguments(":compileKotlin${nativeHostTargetName.capitalize()}") { arguments ->
+                val escapedQuotedPath = "\"${fileWithSpacesInPath.absolutePath.replace("\"", "\\\"")}\""
+                assertTrue(escapedQuotedPath in arguments)
             }
         }
+    }
+
+    companion object {
+        fun List<String>.containsSequentially(vararg elements: String): Boolean {
+            check(elements.isNotEmpty())
+            return Collections.indexOfSubList(this, elements.toList()) != -1
+        }
+
+        fun CompiledProject.extractNativeCommandLineArguments(taskPath: String? = null, toolName: String): List<String> {
+            val arguments = output.lineSequence()
+                .run {
+                    if (taskPath != null) dropWhile { "Executing actions for task '$taskPath'" !in it }.drop(1) else this
+                }
+                .dropWhile {
+                    check(taskPath == null || "Executing actions for task" !in it)
+                    "Run in-process tool \"$toolName\"" !in it && "Run \"$toolName\" tool in a separate JVM process" !in it
+                }
+                .drop(1)
+                .dropWhile {
+                    check(taskPath == null || "Executing actions for task" !in it)
+                    "Arguments = [" !in it
+                }
+
+            val argumentsHeader = arguments.firstOrNull()
+            check(argumentsHeader != null && "Arguments = [" in argumentsHeader)
+
+            return if (argumentsHeader.trimEnd().endsWith(']'))
+                emptyList() // no arguments
+            else
+                arguments.drop(1).map { it.trim() }.takeWhile { it != "]" }.toList()
+        }
+
+        fun CompiledProject.checkNativeCommandLineArguments(
+            vararg taskPaths: String,
+            toolName: String = "konanc",
+            check: (List<String>) -> Unit
+        ) = taskPaths.forEach { taskPath -> check(extractNativeCommandLineArguments(taskPath, toolName)) }
     }
 }

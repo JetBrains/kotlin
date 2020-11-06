@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.embedProject
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.extractNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import org.junit.Assume
 import org.junit.BeforeClass
 import org.junit.Test
+import kotlin.test.assertTrue
 
 class NativePlatformLibsIT : BaseGradleIT() {
 
@@ -213,7 +216,7 @@ class NativePlatformLibsIT : BaseGradleIT() {
         // Check that user can change generation mode used by the cinterop tool.
         buildWithLightDist("tasks", "-Pkotlin.native.platform.libraries.mode=metadata") {
             assertSuccessful()
-            assertContainsRegex("Run tool: \"generatePlatformLibraries\" with args: .* -mode metadata".toRegex())
+            assertTrue(extractNativeCommandLineArguments(toolName = "generatePlatformLibraries").containsSequentially("-mode", "metadata"))
         }
     }
 
