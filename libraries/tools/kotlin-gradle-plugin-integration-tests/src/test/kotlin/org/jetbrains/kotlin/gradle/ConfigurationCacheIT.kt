@@ -19,6 +19,27 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @Test
+    fun testJvmWithMavenPublish() = with(Project("kotlinProject")) {
+        setupWorkingDir()
+        gradleBuildScript().appendText("""
+            apply plugin: "maven-publish"
+            group = "com.example"
+            version = "1.0"
+            publishing.repositories {
+                maven { 
+                    url = "${'$'}buildDir/repo"
+                }
+            }
+            publishing.publications {
+                maven(MavenPublication) {
+                    from(components["java"])
+                }
+            }
+        """.trimIndent())
+        testConfigurationCacheOf(":publishMavenPublicationToMavenRepository", checkUpToDateOnRebuild = false)
+    }
+
+    @Test
     fun testIncrementalKaptProject() = with(Project("kaptIncrementalCompilationProject")) {
         setupIncrementalAptProject("AGGREGATING")
 
@@ -57,6 +78,7 @@ abstract class AbstractConfigurationCacheIT : BaseGradleIT() {
     protected fun Project.testConfigurationCacheOf(
         vararg taskNames: String,
         executedTaskNames: List<String>? = null,
+        checkUpToDateOnRebuild: Boolean = true,
         buildOptions: BuildOptions = defaultBuildOptions()
     ) {
         // First, run a build that serializes the tasks state for instant execution in further builds
@@ -81,9 +103,11 @@ abstract class AbstractConfigurationCacheIT : BaseGradleIT() {
             assertContains("Reusing configuration cache.")
         }
 
-        build(*taskNames, options = buildOptions) {
-            assertSuccessful()
-            assertTasksUpToDate(executedTask)
+        if (checkUpToDateOnRebuild) {
+            build(*taskNames, options = buildOptions) {
+                assertSuccessful()
+                assertTasksUpToDate(executedTask)
+            }
         }
     }
 

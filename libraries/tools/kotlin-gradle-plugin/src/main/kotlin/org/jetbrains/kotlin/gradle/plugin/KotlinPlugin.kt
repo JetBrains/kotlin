@@ -22,6 +22,8 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.plugins.MavenPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPom
+import org.gradle.api.artifacts.maven.MavenPom as OldMavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -415,19 +417,32 @@ internal abstract class AbstractKotlinPlugin(
         project.components.addAll(target.components)
     }
 
+    private fun rewritePom(pom: MavenPom, rewriter: PomDependenciesRewriter, shouldRewritePom: Provider<Boolean>) {
+        pom.withXml { xml ->
+            if (shouldRewritePom.get())
+                rewriter.rewritePomMppDependenciesToActualTargetModules(xml)
+        }
+    }
+
+    private fun rewritePom(pom: OldMavenPom, rewriter: PomDependenciesRewriter, shouldRewritePom: Provider<Boolean>) {
+        pom.withXml { xml ->
+            if (shouldRewritePom.get())
+                rewriter.rewritePomMppDependenciesToActualTargetModules(xml)
+        }
+    }
+
     private fun rewriteMppDependenciesInPom(target: AbstractKotlinTarget) {
         val project = target.project
 
-        fun shouldRewritePoms(): Boolean =
+        val shouldRewritePoms = project.provider {
             PropertiesProvider(project).keepMppDependenciesIntactInPoms != true
+        }
 
         project.pluginManager.withPlugin("maven-publish") {
             project.extensions.configure(PublishingExtension::class.java) { publishing ->
+                val pomRewriter = PomDependenciesRewriter(project, target.kotlinComponents.single())
                 publishing.publications.withType(MavenPublication::class.java).all { publication ->
-                    publication.pom.withXml { xml ->
-                        if (shouldRewritePoms())
-                            project.rewritePomMppDependenciesToActualTargetModules(xml, target.kotlinComponents.single())
-                    }
+                    rewritePom(publication.pom, pomRewriter, shouldRewritePoms)
                 }
             }
         }
@@ -435,10 +450,8 @@ internal abstract class AbstractKotlinPlugin(
         project.pluginManager.withPlugin("maven") {
             project.tasks.withType(Upload::class.java).all { uploadTask ->
                 uploadTask.repositories.withType(MavenResolver::class.java).all { mavenResolver ->
-                    mavenResolver.pom.withXml { xml ->
-                        if (shouldRewritePoms())
-                            project.rewritePomMppDependenciesToActualTargetModules(xml, target.kotlinComponents.single())
-                    }
+                    val pomRewriter = PomDependenciesRewriter(project, target.kotlinComponents.single())
+                    rewritePom(mavenResolver.pom, pomRewriter, shouldRewritePoms)
                 }
             }
 

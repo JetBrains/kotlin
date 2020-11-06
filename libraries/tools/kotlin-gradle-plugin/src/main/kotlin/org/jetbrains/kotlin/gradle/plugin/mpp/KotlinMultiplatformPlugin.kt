@@ -13,8 +13,10 @@ import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.internal.FeaturePreviews
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.JavaBasePlugin
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublicationContainer
 import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.MavenPublicationInternal
 import org.gradle.api.tasks.SourceTask
@@ -234,6 +236,18 @@ class KotlinMultiplatformPlugin(
         project.components.add(kotlinSoftwareComponent)
     }
 
+    private fun rewritePom(
+        pom: MavenPom,
+        pomRewriter: PomDependenciesRewriter,
+        shouldRewritePomDependencies: Provider<Boolean>,
+        includeOnlySpecifiedDependencies: Provider<Set<ModuleCoordinates>>?
+    ) {
+        pom.withXml { xml ->
+            if (shouldRewritePomDependencies.get())
+                pomRewriter.rewritePomMppDependenciesToActualTargetModules(xml, includeOnlySpecifiedDependencies)
+        }
+    }
+
     private fun AbstractKotlinTarget.createMavenPublications(publications: PublicationContainer) {
         components
             .map { gradleComponent -> gradleComponent to kotlinComponents.single { it.name == gradleComponent.name } }
@@ -250,12 +264,16 @@ class KotlinMultiplatformPlugin(
                     (this as MavenPublicationInternal).publishWithOriginalFileName()
                     artifactId = kotlinComponent.defaultArtifactId
 
-                    pom.withXml { xml ->
-                        if (PropertiesProvider(project).keepMppDependenciesIntactInPoms != true)
-                            project.rewritePomMppDependenciesToActualTargetModules(xml, kotlinComponent) { id ->
-                                filterMetadataDependencies(this@createMavenPublications, id)
-                            }
-                    }
+                    val pomRewriter = PomDependenciesRewriter(project, kotlinComponent)
+                    val shouldRewritePomDependencies =
+                        project.provider { PropertiesProvider(project).keepMppDependenciesIntactInPoms != true }
+
+                    rewritePom(
+                        pom,
+                        pomRewriter,
+                        shouldRewritePomDependencies,
+                        dependenciesForPomRewriting(this@createMavenPublications)
+                    )
                 }
 
                 (kotlinComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate = componentPublication
@@ -269,22 +287,23 @@ class KotlinMultiplatformPlugin(
      * can't read Gradle module metadata won't resolve a dependency on an MPP to the granular metadata variant and won't then choose the
      * right dependencies for each source set, we put only the dependencies of the legacy common variant into the POM, i.e. commonMain API.
      */
-    private fun filterMetadataDependencies(target: AbstractKotlinTarget, groupNameVersion: Triple<String?, String, String?>): Boolean {
-        if (target !is KotlinMetadataTarget || !target.project.isKotlinGranularMetadataEnabled) {
-            return true
+    private fun dependenciesForPomRewriting(target: AbstractKotlinTarget): Provider<Set<ModuleCoordinates>>? =
+        if (target !is KotlinMetadataTarget || !target.project.isKotlinGranularMetadataEnabled)
+            null
+        else {
+            val commonMain = target.project.kotlinExtension.sourceSets.findByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
+            if (commonMain == null)
+                null
+            else
+                target.project.provider {
+                    val project = target.project
+
+                    // Only the commonMain API dependencies can be published for consumers who can't read Gradle project metadata
+                    val commonMainApi = project.sourceSetDependencyConfigurationByScope(commonMain, KotlinDependencyScope.API_SCOPE)
+                    val commonMainDependencies = commonMainApi.allDependencies
+                    commonMainDependencies.map { ModuleCoordinates(it.group, it.name, it.version) }.toSet()
+                }
         }
-
-        val (group, name, _) = groupNameVersion
-
-        val project = target.project
-        val commonMain = project.kotlinExtension.sourceSets?.findByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
-            ?: return true
-
-        // Only the commonMain API dependencies can be published for consumers who can't read Gradle project metadata
-        val commonMainApi = project.sourceSetDependencyConfigurationByScope(commonMain, KotlinDependencyScope.API_SCOPE)
-
-        return commonMainApi.allDependencies.any { it.group == group && it.name == name }
-    }
 
     private fun configureSourceSets(project: Project) = with(project.multiplatformExtension) {
         val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
