@@ -42,16 +42,33 @@ internal class IrSymbolDeserializer(
     }
 
     private fun handleExpectActualMapping(idSig: IdSignature, rawSymbol: IrSymbol): IrSymbol {
-        val referencingSymbol = if (idSig in linker.expectUniqIdToActualUniqId.keys) {
-            assert(idSig.run { IdSignature.Flags.IS_EXPECT.test() })
-            wrapInDelegatedSymbol(rawSymbol).also { linker.expectSymbols[idSig] = it }
-        } else rawSymbol
 
+        // Actual signature
         if (idSig in linker.expectUniqIdToActualUniqId.values) {
             linker.actualSymbols[idSig] = rawSymbol
         }
 
-        return referencingSymbol
+        // Expect signature
+        linker.expectUniqIdToActualUniqId[idSig]?.let { actualSig ->
+            assert(idSig.run { IdSignature.Flags.IS_EXPECT.test() })
+
+            val referencingSymbol = wrapInDelegatedSymbol(rawSymbol)
+
+            linker.expectSymbols[idSig] = referencingSymbol
+
+            // Trigger actual symbol deserialization
+            linker.topLevelActualUniqItToDeserializer[actualSig]?.let { moduleDeserializer -> // Not null if top-level
+                val actualSymbol = linker.actualSymbols[actualSig]
+                // Check if
+                if (actualSymbol == null || !actualSymbol.isBound) {
+                    moduleDeserializer.addModuleReachableTopLevel(actualSig)
+                }
+            }
+
+            return referencingSymbol
+        }
+
+        return rawSymbol
     }
 
     private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, idSig: IdSignature): IrSymbol = linker.symbolTable.run {

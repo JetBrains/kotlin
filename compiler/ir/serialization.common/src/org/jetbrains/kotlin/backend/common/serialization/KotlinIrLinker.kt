@@ -183,16 +183,7 @@ abstract class KotlinIrLinker(
     // because the expect can not see the actual higher in the module dependency dag.
     // So we force deserialization of actuals for all deserialized expect symbols here.
     private fun finalizeExpectActualLinker() {
-        expectUniqIdToActualUniqId.filter { topLevelActualUniqItToDeserializer[it.value] != null }.forEach {
-            val expectSymbol = expectSymbols[it.key]
-            val actualSymbol = actualSymbols[it.value]
-            if (expectSymbol != null && (actualSymbol == null || !actualSymbol.isBound)) {
-                topLevelActualUniqItToDeserializer[it.value]!!.addModuleReachableTopLevel(it.value)
-                deserializeAllReachableTopLevels()
-            }
-        }
-
-        // Now after all actuals have been deserialized, retarget delegating symbols from expects to actuals.
+        // All actuals have been deserialized, retarget delegating symbols from expects to actuals.
         expectUniqIdToActualUniqId.forEach {
             val expectSymbol = expectSymbols[it.key]
             val actualSymbol = actualSymbols[it.value]
