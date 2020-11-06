@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
@@ -144,9 +145,9 @@ class FunctionCodegen(
 
     private fun IrFunction.calculateMethodFlags(): Int {
         if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
-            return getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC or functionDeprecationFlags.let {
-                if (this is IrConstructor) it else it or Opcodes.ACC_STATIC
-            }
+            return getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC or
+                    (if (isDeprecatedFunction) Opcodes.ACC_DEPRECATED else 0) or
+                    (if (this is IrConstructor) 0 else Opcodes.ACC_STATIC)
         }
 
         val isVararg = valueParameters.lastOrNull()?.varargElementType != null && !isBridge()
@@ -162,12 +163,17 @@ class FunctionCodegen(
             // TODO transform interface modality on lowering to DefaultImpls
             else -> if (parentAsClass.isJvmInterface && body == null) Opcodes.ACC_ABSTRACT else 0
         }
-        val isSynthetic = origin.isSynthetic || hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
-                (isSuspend && DescriptorVisibilities.isPrivate(visibility) && !isInline) || isReifiable()
+        val isSynthetic = origin.isSynthetic ||
+                hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
+                (isSuspend && DescriptorVisibilities.isPrivate(visibility) && !isInline) ||
+                isReifiable() ||
+                isDeprecatedHidden()
+
         val isStrict = hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
         val isSynchronized = hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
 
-        return getVisibilityAccessFlag() or modalityFlag or functionDeprecationFlags or
+        return getVisibilityAccessFlag() or modalityFlag or
+                (if (isDeprecatedFunction) Opcodes.ACC_DEPRECATED else 0) or
                 (if (isStatic) Opcodes.ACC_STATIC else 0) or
                 (if (isVararg) Opcodes.ACC_VARARGS else 0) or
                 (if (isExternal) Opcodes.ACC_NATIVE else 0) or
@@ -175,6 +181,17 @@ class FunctionCodegen(
                 (if (isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
                 (if (isStrict) Opcodes.ACC_STRICT else 0) or
                 (if (isSynchronized) Opcodes.ACC_SYNCHRONIZED else 0)
+    }
+
+    private fun IrFunction.isDeprecatedHidden(): Boolean {
+        val mightBeDeprecated = if (this is IrSimpleFunction) {
+            allOverridden(true).any {
+                it.isAnnotatedWithDeprecated || it.correspondingPropertySymbol?.owner?.isAnnotatedWithDeprecated == true
+            }
+        } else {
+            isAnnotatedWithDeprecated
+        }
+        return mightBeDeprecated && context.state.deprecationProvider.isDeprecatedHidden(toIrBasedDescriptor())
     }
 
     private fun getThrownExceptions(function: IrFunction): List<String>? {

@@ -14,16 +14,18 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.FrameMapBase
+import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.codegen.SourceInfo
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -338,16 +340,11 @@ fun IrClass.isOptionalAnnotationClass(): Boolean =
     isAnnotationClass &&
             hasAnnotation(ExpectedActualDeclarationChecker.OPTIONAL_EXPECTATION_FQ_NAME)
 
-val IrDeclaration.callableDeprecationFlags: Int
-    get() {
-        val annotation = annotations.findAnnotation(FqNames.deprecated)
-            ?: return if ((this as? IrDeclaration)?.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY)
-                Opcodes.ACC_DEPRECATED
-            else 0
-        val isHidden = (annotation.getValueArgument(2) as? IrGetEnumValue)?.symbol?.owner
-            ?.name?.asString() == DeprecationLevel.HIDDEN.name
-        return Opcodes.ACC_DEPRECATED or if (isHidden) Opcodes.ACC_SYNTHETIC else 0
-    }
+val IrDeclaration.isAnnotatedWithDeprecated: Boolean
+    get() = annotations.hasAnnotation(FqNames.deprecated)
+
+val IrDeclaration.isDeprecatedCallable: Boolean
+    get() = isAnnotatedWithDeprecated || origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY
 
 // We can't check for JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS because for interface methods
 // moved to DefaultImpls, origin is changed to DEFAULT_IMPLS
@@ -355,12 +352,9 @@ val IrDeclaration.callableDeprecationFlags: Int
 val IrFunction.isSyntheticMethodForProperty: Boolean
     get() = name.asString().endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)
 
-val IrFunction.functionDeprecationFlags: Int
-    get() {
-        val originFlags = if (isSyntheticMethodForProperty) Opcodes.ACC_DEPRECATED else 0
-        val propertyFlags = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.callableDeprecationFlags ?: 0
-        return originFlags or propertyFlags or callableDeprecationFlags
-    }
+val IrFunction.isDeprecatedFunction: Boolean
+    get() = isSyntheticMethodForProperty || isDeprecatedCallable ||
+            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.isDeprecatedCallable == true
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrDeclaration.psiElement: PsiElement?

@@ -757,6 +757,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         public void testDeprecatedProperty() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/deprecated/deprecatedProperty.kt");
         }
+
+        @TestMetadata("hidden.kt")
+        public void testHidden() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/deprecated/hidden.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeListing/inline")

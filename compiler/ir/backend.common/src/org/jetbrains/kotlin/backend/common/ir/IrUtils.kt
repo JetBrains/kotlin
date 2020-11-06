@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.backend.common.ir
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.builders.Scope
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
@@ -602,22 +601,35 @@ private fun IrSimpleFunction.copyAndRenameConflictingTypeParametersFrom(
 val IrSymbol.isSuspend: Boolean
     get() = this is IrSimpleFunctionSymbol && owner.isSuspend
 
-fun IrSimpleFunction.allOverridden(includeSelf: Boolean = false): Set<IrSimpleFunction> {
-    val result = mutableSetOf<IrSimpleFunction>()
+fun IrSimpleFunction.allOverridden(includeSelf: Boolean = false): List<IrSimpleFunction> {
+    val result = mutableListOf<IrSimpleFunction>()
     if (includeSelf) {
-        computeAllOverridden(this, result)
-    } else {
-        for (override in overriddenSymbols) {
-            computeAllOverridden(override.owner, result)
+        result.add(this)
+    }
+
+    var current = this
+    while (true) {
+        val overridden = current.overriddenSymbols
+        when (overridden.size) {
+            0 -> return result
+            1 -> {
+                current = overridden[0].owner
+                result.add(current)
+            }
+            else -> {
+                val resultSet = result.toMutableSet()
+                computeAllOverridden(current, resultSet)
+                return resultSet.toList()
+            }
         }
     }
-    return result
 }
 
 private fun computeAllOverridden(function: IrSimpleFunction, result: MutableSet<IrSimpleFunction>) {
-    if (result.add(function)) {
-        for (override in function.overriddenSymbols) {
-            computeAllOverridden(override.owner, result)
+    for (overriddenSymbol in function.overriddenSymbols) {
+        val override = overriddenSymbol.owner
+        if (result.add(override)) {
+            computeAllOverridden(override, result)
         }
     }
 }
