@@ -16,33 +16,31 @@ import java.security.MessageDigest
  * This is used via reflection in [KotlinArtifacts]
  */
 @Suppress("unused")
-private class TestKotlinArtifacts : KotlinArtifacts() {
-    override val kotlincDistDir: File by lazy {
-        val outDir = File(PathManager.getHomePath(), "out")
-        val kotlincDistDir = outDir.resolve("kotlinc-dist")
-        val hashFile = outDir.resolve("kotlinc-dist/kotlinc-dist.md5")
-        val kotlincJar = findLibrary(
-                RepoLocation.MAVEN_REPOSITORY,
-                "kotlinc_dist.xml",
-                "org.jetbrains.kotlin",
-                "kotlin-dist-for-ide"
-        )
-        val hash = kotlincJar.md5()
-        if (hashFile.exists() && hashFile.readText() == hash && kotlincDistDir.exists()) {
-            return@lazy kotlincDistDir
-        }
-        val dirWhereToExtractKotlinc = kotlincDistDir.resolve("kotlinc").also {
-            it.deleteRecursively()
-            it.mkdirs()
-        }
-        hashFile.writeText(hash)
-        Decompressor.Zip(kotlincJar).extract(dirWhereToExtractKotlinc)
-        return@lazy kotlincDistDir
+private class TestKotlinArtifacts : KotlinArtifacts(run {
+    val outDir = File(PathManager.getHomePath(), "out")
+    val kotlincDistDir = outDir.resolve("kotlinc-dist")
+    val hashFile = outDir.resolve("kotlinc-dist/kotlinc-dist.md5")
+    val kotlincJar = findLibrary(
+        RepoLocation.MAVEN_REPOSITORY,
+        "kotlinc_dist.xml",
+        "org.jetbrains.kotlin",
+        "kotlin-dist-for-ide"
+    )
+    val hash = kotlincJar.md5()
+    if (hashFile.exists() && hashFile.readText() == hash && kotlincDistDir.exists()) {
+        return@run kotlincDistDir
     }
+    val dirWhereToExtractKotlinc = kotlincDistDir.resolve("kotlinc").also {
+        it.deleteRecursively()
+        it.mkdirs()
+    }
+    hashFile.writeText(hash)
+    Decompressor.Zip(kotlincJar).extract(dirWhereToExtractKotlinc)
+    return@run kotlincDistDir
+})
 
-    private fun File.md5(): String {
-        return MessageDigest.getInstance("MD5").digest(readBytes()).joinToString("") { "%02x".format(it) }
-    }
+private fun File.md5(): String {
+    return MessageDigest.getInstance("MD5").digest(readBytes()).joinToString("") { "%02x".format(it) }
 }
 
 private fun findLibrary(
