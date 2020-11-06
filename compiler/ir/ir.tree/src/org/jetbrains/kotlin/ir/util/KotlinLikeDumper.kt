@@ -961,6 +961,12 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printWithNoIndent(")")
     }
 
+    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: IrDeclaration?) {
+        // TODO assert that `expression.classSymbol.owner == data.parentAsClass
+        // TODO better rendering
+        p.printlnWithNoIndent("/* <init>() */")
+    }
+
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: IrDeclaration?) {
         // TODO support
         // TODO omit the name when it's possible
@@ -1076,10 +1082,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO use type
         p.printWithNoIndent((expression.symbol.owner as IrDeclarationWithName).name.asString())
         p.printWithNoIndent("::class")
-    }
-
-    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: IrDeclaration?) {
-        p.println("/* InstanceInitializerCall */")
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: IrDeclaration?) {
