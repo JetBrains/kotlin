@@ -13,58 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.generators.tests.generator
 
-package org.jetbrains.kotlin.generators.tests.generator;
+open class DelegatingTestClassModel(private val delegate: TestClassModel) : TestClassModel() {
+    override val name: String
+        get() = delegate.name
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+    override val innerTestClasses: Collection<TestClassModel>
+        get() = delegate.innerTestClasses
 
-import java.util.Collection;
+    override val methods: Collection<MethodModel>
+        get() = delegate.methods
 
-public class DelegatingTestClassModel extends TestClassModel {
-    private final TestClassModel delegate;
+    override val isEmpty: Boolean
+        get() = delegate.isEmpty
 
-    public DelegatingTestClassModel(TestClassModel delegate) {
-        this.delegate = delegate;
-    }
+    override val dataPathRoot: String?
+        get() = delegate.dataPathRoot
 
-    @NotNull
-    @Override
-    public String getName() {
-        return delegate.getName();
-    }
+    override val dataString: String?
+        get() = delegate.dataString
 
-    @NotNull
-    @Override
-    public Collection<TestClassModel> getInnerTestClasses() {
-        return delegate.getInnerTestClasses();
-    }
-
-    @NotNull
-    @Override
-    public Collection<MethodModel> getMethods() {
-        return delegate.getMethods();
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return delegate.isEmpty();
-    }
-
-    @Nullable
-    @Override
-    public String getDataPathRoot() {
-        return delegate.getDataPathRoot();
-    }
-
-    @Override
-    public String getDataString() {
-        return delegate.getDataString();
-    }
-
-    @NotNull
-    @Override
-    public Collection<AnnotationModel> getAnnotations() {
-        return delegate.getAnnotations();
-    }
+    override val annotations: Collection<AnnotationModel>
+        get() = delegate.annotations
 }

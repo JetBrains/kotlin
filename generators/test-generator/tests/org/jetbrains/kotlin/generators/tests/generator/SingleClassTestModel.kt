@@ -13,184 +13,96 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.generators.tests.generator
 
-package org.jetbrains.kotlin.generators.tests.generator;
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.utils.Printer
+import java.io.File
+import java.util.*
+import java.util.regex.Pattern
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.text.StringUtil;
-import kotlin.collections.CollectionsKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
-import org.jetbrains.kotlin.utils.Printer;
+class SingleClassTestModel(
+    private val rootFile: File,
+    private val filenamePattern: Pattern,
+    private val excludePattern: Pattern?,
+    private val checkFilenameStartsLowerCase: Boolean?,
+    private val doTestMethodName: String,
+    private val testClassName: String,
+    private val targetBackend: TargetBackend,
+    private val skipIgnored: Boolean,
+    private val testRunnerMethodName: String,
+    private val additionalRunnerArguments: List<String>,
+    override val annotations: List<AnnotationModel>
+) : TestClassModel() {
+    override val name: String
+        get() = testClassName
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
-public class SingleClassTestModel extends TestClassModel {
-    @NotNull
-    private final File rootFile;
-    @NotNull
-    private final Pattern filenamePattern;
-    @Nullable
-    private final Pattern excludePattern;
-    @Nullable
-    private final Boolean checkFilenameStartsLowerCase;
-    @NotNull
-    private final String doTestMethodName;
-    @NotNull
-    private final String testClassName;
-    @NotNull
-    private final TargetBackend targetBackend;
-    @Nullable
-    private Collection<MethodModel> methods;
-
-    private final boolean skipIgnored;
-    private final String testRunnerMethodName;
-    private final List<String> additionalRunnerArguments;
-
-    @NotNull
-    private final List<AnnotationModel> annotations;
-
-    public SingleClassTestModel(
-            @NotNull File rootFile,
-            @NotNull Pattern filenamePattern,
-            @Nullable Pattern excludePattern,
-            @Nullable Boolean checkFilenameStartsLowerCase,
-            @NotNull String doTestMethodName,
-            @NotNull String testClassName,
-            @NotNull TargetBackend targetBackend,
-            boolean skipIgnored,
-            String testRunnerMethodName,
-            List<String> additionalRunnerArguments,
-            @NotNull List<AnnotationModel> annotations
-    ) {
-        this.rootFile = rootFile;
-        this.filenamePattern = filenamePattern;
-        this.excludePattern = excludePattern;
-        this.checkFilenameStartsLowerCase = checkFilenameStartsLowerCase;
-        this.doTestMethodName = doTestMethodName;
-        this.testClassName = testClassName;
-        this.targetBackend = targetBackend;
-        this.skipIgnored = skipIgnored;
-        this.testRunnerMethodName = testRunnerMethodName;
-        this.additionalRunnerArguments = additionalRunnerArguments;
-        this.annotations = annotations;
-    }
-
-    @NotNull
-    @Override
-    public final Collection<TestClassModel> getInnerTestClasses() {
-        return Collections.emptyList();
-    }
-
-    @NotNull
-    @Override
-    public Collection<MethodModel> getMethods() {
-        if (methods == null) {
-            List<MethodModel> result = new ArrayList<>();
-
-            result.add(new RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments));
-
-            result.add(new TestAllFilesPresentMethodModel());
-
-            FileUtil.processFilesRecursively(rootFile, file -> {
-                if (!file.isDirectory() && filenamePattern.matcher(file.getName()).matches()) {
-                    result.addAll(getTestMethodsFromFile(file));
-                }
-
-                return true;
-            });
-
-            methods = CollectionsKt.sortedWith(result, (o1, o2) -> o1.getName().compareToIgnoreCase(o2.getName()));
+    override val methods: Collection<MethodModel> by lazy {
+        val result: MutableList<MethodModel> = ArrayList()
+        result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments))
+        result.add(TestAllFilesPresentMethodModel())
+        FileUtil.processFilesRecursively(rootFile) { file: File ->
+            if (!file.isDirectory && filenamePattern.matcher(file.name).matches()) {
+                result.addAll(getTestMethodsFromFile(file))
+            }
+            true
         }
-
-        return methods;
+        result.sortedWith { o1: MethodModel, o2: MethodModel -> o1.name.compareTo(o2.name, ignoreCase = true) }
     }
 
-    @NotNull
-    private Collection<TestMethodModel> getTestMethodsFromFile(File file) {
-        return Collections.singletonList(new SimpleTestMethodModel(
+    override val innerTestClasses: Collection<TestClassModel>
+        get() = emptyList()
+
+    private fun getTestMethodsFromFile(file: File): Collection<TestMethodModel> {
+        return listOf(
+            SimpleTestMethodModel(
                 rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored
-        ));
+            )
+        )
     }
 
-    @Override
-    public boolean isEmpty() {
-        // There's always one test for checking if all tests are present
-        return getMethods().size() <= 1;
-    }
+    // There's always one test for checking if all tests are present
+    override val isEmpty: Boolean
+        get() = methods.size <= 1
+    override val dataString: String = KotlinTestUtils.getFilePath(rootFile)
+    override val dataPathRoot: String = "\$PROJECT_ROOT"
 
-    @Override
-    public String getDataString() {
-        return KotlinTestUtils.getFilePath(rootFile);
-    }
+    private inner class TestAllFilesPresentMethodModel : TestMethodModel() {
+        override val name: String = "testAllFilesPresentIn$testClassName"
+        override val dataString: String?
+            get() = null
 
-    @Nullable
-    @Override
-    public String getDataPathRoot() {
-        return "$PROJECT_ROOT";
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        return testClassName;
-    }
-
-    @NotNull
-    @Override
-    public Collection<AnnotationModel> getAnnotations() {
-        return annotations;
-    }
-
-    private class TestAllFilesPresentMethodModel extends TestMethodModel {
-        @NotNull
-        @Override
-        public String getName() {
-            return "testAllFilesPresentIn" + testClassName;
-        }
-
-        @Override
-        public void generateBody(@NotNull Printer p) {
-            String assertTestsPresentStr;
-
-            String excludedArgument;
-            if (excludePattern != null) {
-                excludedArgument = String.format("Pattern.compile(\"%s\")", StringUtil.escapeStringCharacters(excludePattern.pattern()));
+        override fun generateBody(p: Printer) {
+            val assertTestsPresentStr: String
+            val excludedArgument = if (excludePattern != null) {
+                String.format(
+                    "Pattern.compile(\"%s\")", StringUtil.escapeStringCharacters(
+                        excludePattern.pattern()
+                    )
+                )
             } else {
-                excludedArgument = null;
+                null
             }
-
-            if (targetBackend != TargetBackend.ANY) {
-                assertTestsPresentStr = String.format(
-                        "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s);",
-                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
-                        excludedArgument, TargetBackend.class.getSimpleName(), targetBackend.toString()
-                );
+            assertTestsPresentStr = if (targetBackend !== TargetBackend.ANY) {
+                String.format(
+                    "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s);",
+                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
+                    excludedArgument, TargetBackend::class.java.simpleName, targetBackend.toString()
+                )
             } else {
-                assertTestsPresentStr = String.format(
-                        "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s);",
-                        KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), excludedArgument
-                );
+                String.format(
+                    "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s);",
+                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), excludedArgument
+                )
             }
-            p.println(assertTestsPresentStr);
+            p.println(assertTestsPresentStr)
         }
 
-        @Override
-        public String getDataString() {
-            return null;
-        }
-
-        @Override
-        public boolean shouldBeGenerated() {
-            return true;
+        override fun shouldBeGenerated(): Boolean {
+            return true
         }
     }
 }

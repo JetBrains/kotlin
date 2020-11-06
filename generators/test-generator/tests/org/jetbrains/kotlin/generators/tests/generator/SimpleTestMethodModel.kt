@@ -2,100 +2,65 @@
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.generators.tests.generator
 
-package org.jetbrains.kotlin.generators.tests.generator;
+import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.generators.tests.generator.TestGeneratorUtil.escapeForJavaIdentifier
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.utils.Printer
+import java.io.File
+import java.util.regex.Pattern
 
-import com.intellij.openapi.util.io.FileUtil;
-import kotlin.text.StringsKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.test.InTextDirectivesUtils;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TargetBackend;
-import org.jetbrains.kotlin.utils.Printer;
+open class SimpleTestMethodModel(
+    private val rootDir: File,
+    protected val file: File,
+    private val filenamePattern: Pattern,
+    checkFilenameStartsLowerCase: Boolean?,
+    protected val targetBackend: TargetBackend,
+    private val skipIgnored: Boolean
+) : TestMethodModel() {
+    override fun generateBody(p: Printer) {
+        val filePath = KotlinTestUtils.getFilePath(file) + if (file.isDirectory) "/" else ""
+        p.println(RunTestMethodModel.METHOD_NAME, "(\"", filePath, "\");")
+    }
 
-import java.io.File;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+    override val dataString: String
+        get() {
+            val path = FileUtil.getRelativePath(rootDir, file)!!
+            return KotlinTestUtils.getFilePath(File(path))
+        }
 
-import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget;
+    override fun shouldBeGenerated(): Boolean {
+        return InTextDirectivesUtils.isCompatibleTarget(targetBackend, file)
+    }
 
-public class SimpleTestMethodModel extends TestMethodModel {
+    override val name: String
+        get() {
+            val matcher = filenamePattern.matcher(file.name)
+            val found = matcher.find()
+            assert(found) { file.name + " isn't matched by regex " + filenamePattern.pattern() }
+            assert(matcher.groupCount() >= 1) { filenamePattern.pattern() }
+            val extractedName = matcher.group(1) ?: error("extractedName should not be null: " + filenamePattern.pattern())
+            val unescapedName = if (rootDir == file.parentFile) {
+                extractedName
+            } else {
+                val relativePath = FileUtil.getRelativePath(rootDir, file.parentFile)
+                relativePath + "-" + extractedName.capitalize()
+            }
+            val ignored = skipIgnored && InTextDirectivesUtils.isIgnoredTarget(targetBackend, file)
+            return (if (ignored) "ignore" else "test") + escapeForJavaIdentifier(unescapedName).capitalize()
+        }
 
-    @NotNull
-    private final File rootDir;
-    @NotNull
-    protected final File file;
-    @NotNull
-    private final Pattern filenamePattern;
-    @NotNull
-    protected final TargetBackend targetBackend;
-
-    private final boolean skipIgnored;
-
-    public SimpleTestMethodModel(
-            @NotNull File rootDir,
-            @NotNull File file,
-            @NotNull Pattern filenamePattern,
-            @Nullable Boolean checkFilenameStartsLowerCase,
-            @NotNull TargetBackend targetBackend,
-            boolean skipIgnored
-    ) {
-        this.rootDir = rootDir;
-        this.file = file;
-        this.filenamePattern = filenamePattern;
-        this.targetBackend = targetBackend;
-        this.skipIgnored = skipIgnored;
-
+    init {
         if (checkFilenameStartsLowerCase != null) {
-            char c = file.getName().charAt(0);
+            val c = file.name[0]
             if (checkFilenameStartsLowerCase) {
-                assert Character.isLowerCase(c) : "Invalid file name '" + file + "', file name should start with lower-case letter";
+                assert(Character.isLowerCase(c)) { "Invalid file name '$file', file name should start with lower-case letter" }
+            } else {
+                assert(Character.isUpperCase(c)) { "Invalid file name '$file', file name should start with upper-case letter" }
             }
-            else {
-                assert Character.isUpperCase(c) : "Invalid file name '" + file + "', file name should start with upper-case letter";
-            }
         }
-    }
-
-    @Override
-    public void generateBody(@NotNull Printer p) {
-        String filePath = KotlinTestUtils.getFilePath(file) + (file.isDirectory() ? "/" : "");
-        p.println(RunTestMethodModel.METHOD_NAME, "(\"", filePath, "\");");
-    }
-
-    @Override
-    public String getDataString() {
-        String path = FileUtil.getRelativePath(rootDir, file);
-        assert path != null;
-        return KotlinTestUtils.getFilePath(new File(path));
-    }
-
-    @Override
-    public boolean shouldBeGenerated() {
-        return InTextDirectivesUtils.isCompatibleTarget(targetBackend, file);
-    }
-
-    @NotNull
-    @Override
-    public String getName() {
-        Matcher matcher = filenamePattern.matcher(file.getName());
-        boolean found = matcher.find();
-        assert found : file.getName() + " isn't matched by regex " + filenamePattern.pattern();
-        assert matcher.groupCount() >= 1 : filenamePattern.pattern();
-        String extractedName = matcher.group(1);
-        assert extractedName != null : "extractedName should not be null: "  + filenamePattern.pattern();
-
-        String unescapedName;
-        if (rootDir.equals(file.getParentFile())) {
-            unescapedName = extractedName;
-        }
-        else {
-            String relativePath = FileUtil.getRelativePath(rootDir, file.getParentFile());
-            unescapedName = relativePath + "-" + StringsKt.capitalize(extractedName);
-        }
-
-        boolean ignored = skipIgnored && isIgnoredTarget(targetBackend, file);
-        return (ignored ? "ignore" : "test") + StringsKt.capitalize(TestGeneratorUtil.escapeForJavaIdentifier(unescapedName));
     }
 }
