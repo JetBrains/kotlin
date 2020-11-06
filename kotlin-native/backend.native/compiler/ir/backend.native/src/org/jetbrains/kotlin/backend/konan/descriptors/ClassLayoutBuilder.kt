@@ -9,7 +9,7 @@ import llvm.LLVMStoreSizeOfType
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.llvm.functionName
+import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.llvmType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.InnerClassLowering
@@ -462,5 +462,5 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
 
     private val functionIds = mutableMapOf<IrFunction, Long>()
 
-    private val IrFunction.uniqueId get() = functionIds.getOrPut(this) { functionName.localHash.value }
+    private val IrFunction.uniqueId get() = functionIds.getOrPut(this) { computeFunctionName().localHash.value }
 }

@@ -1934,7 +1934,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         scope.members.add(DICreateMemberType(
                 refBuilder   = context.debugInfo.builder,
                 refScope     = scope.scope as DIScopeOpaqueRef,
-                name         = expression.symbolName,
+                name         = expression.computeSymbolName(),
                 file         = irFile.file(),
                 lineNum      = expression.startLine(),
                 sizeInBits   = sizeInBits,
