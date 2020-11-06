@@ -60,13 +60,15 @@ class TestGroup(
             pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
             excludedPattern: String? = null,
             testMethod: String = "doTest",
-            singleClass: Boolean = false,
-            testClassName: String? = null,
+            singleClass: Boolean = false, // if true then tests from subdirectories will be flattern to single class
+            testClassName: String? = null, // specific name for generated test class
+            // which backend will be used in test. Specifying value may affect some test with
+            // directives TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND won't be generated
             targetBackend: TargetBackend = TargetBackend.ANY,
             excludeDirs: List<String> = listOf(),
-            filenameStartsLowerCase: Boolean? = null,
-            skipIgnored: Boolean = false,
-            deep: Int? = null
+            filenameStartsLowerCase: Boolean? = null, // assert that file is properly named
+            skipIgnored: Boolean = false, // pretty meaningless flag, affects only few test names in one test runner
+            deep: Int? = null, // specifies how deep recursive search will follow directory with testdata
         ) {
             val rootFile = File("$testDataRoot/$relativeRootPath")
             val compiledPattern = Pattern.compile(pattern)
