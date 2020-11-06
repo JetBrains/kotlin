@@ -51,8 +51,8 @@ digraph jumpFromRhsOfOperator_kt {
     10 -> {15 11};
     11 -> {12};
     12 -> {13};
-    13 -> {19};
-    13 -> {14} [style=dotted];
+    13 -> {19}    [label=onUncaughtException];
+    13 -> {14} [style=dotted]    [label=onUncaughtException];
     14 -> {15} [style=dotted];
     15 -> {16};
     16 -> {17};
@@ -93,8 +93,8 @@ digraph jumpFromRhsOfOperator_kt {
     26 -> {31 27};
     27 -> {28};
     28 -> {29};
-    29 -> {35};
-    29 -> {30} [style=dotted];
+    29 -> {35}    [label=onUncaughtException];
+    29 -> {30} [style=dotted]    [label=onUncaughtException];
     30 -> {31} [style=dotted];
     31 -> {32};
     32 -> {33};
@@ -157,8 +157,8 @@ digraph jumpFromRhsOfOperator_kt {
     44 -> {49 45};
     45 -> {46};
     46 -> {47};
-    47 -> {62};
-    47 -> {48} [style=dotted];
+    47 -> {62}    [label=onUncaughtException];
+    47 -> {48} [style=dotted]    [label=onUncaughtException];
     48 -> {49} [style=dotted];
     49 -> {50};
     50 -> {52 51};
@@ -230,8 +230,8 @@ digraph jumpFromRhsOfOperator_kt {
     71 -> {76 72};
     72 -> {73};
     73 -> {74};
-    74 -> {89};
-    74 -> {75} [style=dotted];
+    74 -> {89}    [label=onUncaughtException];
+    74 -> {75} [style=dotted]    [label=onUncaughtException];
     75 -> {76} [style=dotted];
     76 -> {77};
     77 -> {79 78};
@@ -281,8 +281,8 @@ digraph jumpFromRhsOfOperator_kt {
     96 -> {101 97};
     97 -> {98};
     98 -> {99};
-    99 -> {105};
-    99 -> {100} [style=dotted];
+    99 -> {105}    [label=onUncaughtException];
+    99 -> {100} [style=dotted]    [label=onUncaughtException];
     100 -> {101} [style=dotted];
     101 -> {102};
     102 -> {103};
@@ -323,8 +323,8 @@ digraph jumpFromRhsOfOperator_kt {
     112 -> {117 113};
     113 -> {114};
     114 -> {115};
-    115 -> {121};
-    115 -> {116} [style=dotted];
+    115 -> {121}    [label=onUncaughtException];
+    115 -> {116} [style=dotted]    [label=onUncaughtException];
     116 -> {117} [style=dotted];
     117 -> {118};
     118 -> {119};
@@ -387,8 +387,8 @@ digraph jumpFromRhsOfOperator_kt {
     130 -> {135 131};
     131 -> {132};
     132 -> {133};
-    133 -> {148};
-    133 -> {134} [style=dotted];
+    133 -> {148}    [label=onUncaughtException];
+    133 -> {134} [style=dotted]    [label=onUncaughtException];
     134 -> {135} [style=dotted];
     135 -> {136};
     136 -> {138 137};
@@ -460,8 +460,8 @@ digraph jumpFromRhsOfOperator_kt {
     157 -> {162 158};
     158 -> {159};
     159 -> {160};
-    160 -> {175};
-    160 -> {161} [style=dotted];
+    160 -> {175}    [label=onUncaughtException];
+    160 -> {161} [style=dotted]    [label=onUncaughtException];
     161 -> {162} [style=dotted];
     162 -> {163};
     163 -> {165 164};

@@ -21,8 +21,8 @@ digraph smartcastToNothing_kt {
     0 -> {1};
     1 -> {2};
     2 -> {3};
-    3 -> {8};
-    3 -> {4} [style=dotted];
+    3 -> {8}    [label=onUncaughtException];
+    3 -> {4} [style=dotted]    [label=onUncaughtException];
     4 -> {5} [style=dotted];
     5 -> {8 6} [style=dotted];
     6 -> {7} [style=dotted];

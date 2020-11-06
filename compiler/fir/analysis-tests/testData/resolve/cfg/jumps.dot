@@ -72,8 +72,8 @@ digraph jumps_kt {
     15 -> {16};
     16 -> {17};
     17 -> {18};
-    18 -> {29};
-    18 -> {19} [style=dotted];
+    18 -> {29}    [label=onUncaughtException];
+    18 -> {19} [style=dotted]    [label=onUncaughtException];
     19 -> {20} [style=dotted];
     20 -> {21} [style=dotted];
     21 -> {22} [style=dotted];

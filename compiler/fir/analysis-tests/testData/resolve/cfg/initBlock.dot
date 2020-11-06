@@ -84,8 +84,8 @@ digraph initBlock_kt {
     20 -> {21};
     21 -> {22};
     22 -> {23};
-    23 -> {28};
-    23 -> {24} [style=dotted];
+    23 -> {28}    [label=onUncaughtException];
+    23 -> {24} [style=dotted]    [label=onUncaughtException];
     24 -> {25} [style=dotted];
     25 -> {26} [style=dotted];
     26 -> {27} [style=dotted];

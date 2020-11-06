@@ -177,7 +177,8 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     44 -> {45};
     45 -> {46};
     46 -> {52 47};
-    47 -> {56 48};
+    47 -> {48};
+    47 -> {56}    [label=onUncaughtException];
     48 -> {49};
     49 -> {50};
     50 -> {51};
