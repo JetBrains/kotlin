@@ -109,7 +109,14 @@ object JvmSerializerIntrinsic {
             // More general path, including special ol built-in serializers for e.g. List
             val emptyGenerator: AbstractSerialGenerator? = null // stub indicating we do not look into @UseSerializers to avoid confusion
             val serializer = emptyGenerator.findTypeSerializerOrContextUnchecked(module, type)
-            emptyGenerator.stackValueSerializerInstance(typeMapper, module, type, serializer, this, null) { _, genericArg ->
+            emptyGenerator.stackValueSerializerInstance(
+                typeMapper,
+                module,
+                type,
+                serializer,
+                this,
+                insertExceptionOnNoSerializer = true
+            ) { _, genericArg ->
                 assert(putReifyMarkerIfNeeded(genericArg, typeSystem))
             }
             if (type.isMarkedNullable) wrapStackValueIntoNullableSerializer()

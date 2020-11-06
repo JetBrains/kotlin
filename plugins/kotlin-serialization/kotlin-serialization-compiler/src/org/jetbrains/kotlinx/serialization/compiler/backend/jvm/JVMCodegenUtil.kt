@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
@@ -239,7 +240,16 @@ internal fun AbstractSerialGenerator?.stackValueSerializerInstance(
     genericIndex: Int? = null,
     genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null
 ): Boolean {
-    return stackValueSerializerInstance(codegen.typeMapper, module, kType, maybeSerializer, iv, genericIndex, genericSerializerFieldGetter)
+    return stackValueSerializerInstance(
+        codegen.typeMapper,
+        module,
+        kType,
+        maybeSerializer,
+        iv,
+        genericIndex,
+        false,
+        genericSerializerFieldGetter
+    )
 }
 
 // returns false is cannot not use serializer
@@ -248,14 +258,26 @@ internal fun AbstractSerialGenerator?.stackValueSerializerInstance(
     typeMapper: KotlinTypeMapper, module: ModuleDescriptor, kType: KotlinType, maybeSerializer: ClassDescriptor?,
     iv: InstructionAdapter?,
     genericIndex: Int? = null,
-    genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null
+    insertExceptionOnNoSerializer: Boolean = false,
+    genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null,
 ): Boolean {
     if (maybeSerializer == null && genericIndex != null) {
         // get field from serializer object
         iv?.run { genericSerializerFieldGetter?.invoke(this, genericIndex, kType) }
         return true
     }
-    val serializer = maybeSerializer ?: return false
+    val serializer = maybeSerializer ?: run {
+        if (insertExceptionOnNoSerializer) iv?.apply {
+            aconst(kType.getJetTypeFqName(false))
+            invokestatic(
+                "kotlinx/serialization/SerializersKt",
+                "noCompiledSerializer",
+                "(Ljava/lang/String;)Lkotlinx/serialization/KSerializer;",
+                false
+            )
+        }
+        return false
+    }
     if (serializer.kind == ClassKind.OBJECT) {
         // singleton serializer -- just get it
         if (iv != null)
@@ -264,12 +286,10 @@ internal fun AbstractSerialGenerator?.stackValueSerializerInstance(
     }
     // serializer is not singleton object and shall be instantiated
     val argSerializers = kType.arguments.map { projection ->
-        // bail out from stackValueSerializerInstance if any type argument is not serializable
+        // check if any type argument is not serializable
         val argType = projection.type
-        val argSerializer = if (argType.isTypeParameter()) null else {
-            findTypeSerializerOrContext(module, argType)
-                ?: return false
-        }
+        val argSerializer =
+            if (argType.isTypeParameter()) null else findTypeSerializerOrContextUnchecked(module, argType)
         // check if it can be properly serialized with its args recursively
         if (!stackValueSerializerInstance(
                 typeMapper,
@@ -278,10 +298,13 @@ internal fun AbstractSerialGenerator?.stackValueSerializerInstance(
                 argSerializer,
                 null,
                 argType.genericIndex,
+                insertExceptionOnNoSerializer = false,
                 genericSerializerFieldGetter
             )
-        )
-            return false
+        ) {
+            // bail out only if we do not need to insert exception
+            if (!insertExceptionOnNoSerializer) return false
+        }
         Pair(argType, argSerializer)
     }
     // new serializer if needed
@@ -303,8 +326,9 @@ internal fun AbstractSerialGenerator?.stackValueSerializerInstance(
                     argSerializer,
                     this,
                     argType.genericIndex,
+                    insertExceptionOnNoSerializer,
                     genericSerializerFieldGetter
-                )
+                ) || insertExceptionOnNoSerializer
             )
             // wrap into nullable serializer if argType is nullable
             if (argType.isMarkedNullable) wrapStackValueIntoNullableSerializer()
@@ -318,7 +342,7 @@ internal fun AbstractSerialGenerator?.stackValueSerializerInstance(
                 signature.append("Ljava/lang/String;")
                 val enumJavaType = typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT)
                 val javaEnumArray = Type.getType("[Ljava/lang/Enum;")
-                invokestatic(enumJavaType.internalName, "values","()[${enumJavaType.descriptor}", false)
+                invokestatic(enumJavaType.internalName, "values", "()[${enumJavaType.descriptor}", false)
                 checkcast(javaEnumArray)
                 signature.append(javaEnumArray.descriptor)
             }
@@ -383,7 +407,8 @@ internal fun AbstractSerialGenerator?.stackValueSerializerInstance(
                                     module,
                                     (genericType.constructor.declarationDescriptor as TypeParameterDescriptor).representativeUpperBound,
                                     module.getClassFromSerializationPackage(SpecialBuiltins.polymorphicSerializer),
-                                    this
+                                    this,
+                                    insertExceptionOnNoSerializer = insertExceptionOnNoSerializer
                                 )
                             )
                         }
