@@ -968,7 +968,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO Is name of function used somehere? How it's important?
         // TODO Use lambda syntax when possible
         // TODO don't print visibility?
-        // TODO don't insert indentations, including when there are annotations
+        p.withholdIndentOnce()
         expression.function.printSimpleFunction("fun ", expression.function.name.asString(), printTypeParametersAndExtensionReceiver = true, printSignatureAndBody = true)
     }
 
