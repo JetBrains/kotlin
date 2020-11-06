@@ -121,8 +121,16 @@ ext.konanNoRun = true
 
 final CacheTesting cacheTesting = CacheTestingKt.configureCacheTesting(project)
 if (cacheTesting != null) {
-    // Note: can't do this in [CacheTesting.configure] since task classes aren't accessible there.
+    // Check for debug build and set the -g option.
+    if (project.globalTestArgs.contains("-opt")) {
+        throw new IllegalArgumentException("Cache testing should be run with debug build. " +
+                "Remove -opt options from the test args")
+    }
+    if (!project.globalTestArgs.contains("-g")) {
+        project.globalTestArgs.add("-g")
+    }
 
+    // Note: can't do this in [CacheTesting.configure] since task classes aren't accessible there.
     tasks.withType(KonanCompileNativeBinary.class).configureEach {
         dependsOn cacheTesting.buildCacheTask
         extraOpts cacheTesting.compilerArgs
