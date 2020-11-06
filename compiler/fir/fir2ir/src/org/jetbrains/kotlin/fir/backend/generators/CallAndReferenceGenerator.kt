@@ -55,7 +55,8 @@ class CallAndReferenceGenerator(
         callableReferenceAccess: FirCallableReferenceAccess,
         explicitReceiverExpression: IrExpression?
     ): IrExpression {
-        val symbol = callableReferenceAccess.calleeReference.toSymbolForCall(session, classifierStorage, declarationStorage, conversionScope)
+        val symbol =
+            callableReferenceAccess.calleeReference.toSymbolForCall(session, classifierStorage, declarationStorage, conversionScope)
         val type = callableReferenceAccess.typeRef.toIrType()
         fun propertyOrigin(): IrStatementOrigin? =
             when (callableReferenceAccess.source?.psi?.parent) {
@@ -84,8 +85,8 @@ class CallAndReferenceGenerator(
                     IrLocalDelegatedPropertyReferenceImpl(
                         startOffset, endOffset, type, symbol,
                         symbol.owner.delegate.symbol,
-                        symbol.owner.getter.symbol as IrSimpleFunctionSymbol,
-                        symbol.owner.setter?.symbol as IrSimpleFunctionSymbol?,
+                        symbol.owner.getter.symbol,
+                        symbol.owner.setter?.symbol,
                         IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE
                     )
                 }
@@ -223,7 +224,7 @@ class CallAndReferenceGenerator(
                     }
                     is IrLocalDelegatedPropertySymbol -> {
                         IrCallImpl(
-                            startOffset, endOffset, type, symbol.owner.getter.symbol as IrSimpleFunctionSymbol,
+                            startOffset, endOffset, type, symbol.owner.getter.symbol,
                             typeArgumentsCount = symbol.owner.getter.typeParameters.size,
                             valueArgumentsCount = 0,
                             origin = IrStatementOrigin.GET_LOCAL_PROPERTY,
@@ -289,7 +290,7 @@ class CallAndReferenceGenerator(
                     val setter = symbol.owner.setter
                     when {
                         setter != null -> IrCallImpl(
-                            startOffset, endOffset, type, setter.symbol as IrSimpleFunctionSymbol,
+                            startOffset, endOffset, type, setter.symbol,
                             typeArgumentsCount = setter.typeParameters.size,
                             valueArgumentsCount = 1,
                             origin = origin,

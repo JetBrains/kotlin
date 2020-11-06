@@ -52,6 +52,8 @@ fun getBuildReporter(
             CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES -> {
                 reporters.add(BuildReportICReporter(compilationResults, root, isVerbose = true))
             }
+            CompilationResultCategory.BUILD_METRICS -> {
+            }
         }
     }
     val areBuildMetricsNeeded = CompilationResultCategory.BUILD_METRICS in requestedResults
@@ -61,5 +63,3 @@ fun getBuildReporter(
 
     return RemoteBuildReporter(CompositeICReporter(reporters), metricsReporter)
 }
-
-

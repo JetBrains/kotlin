@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.daemon.report.experimental
 
-import kotlinx.coroutines.*
-import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.report.CompositeICReporter
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.jetbrains.kotlin.build.report.ICReporterBase
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.RemoteICReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.RemoteBuildMetricsReporter
-import org.jetbrains.kotlin.daemon.report.BuildReportICReporter
-import org.jetbrains.kotlin.daemon.report.CompileIterationICReporter
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.daemon.report.CompositeICReporter
 import java.io.File
 
 internal class DebugMessagesICReporterAsync(
@@ -136,6 +135,8 @@ fun getICReporterAsync(
             }
             CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES -> {
                 reporters.add(BuildReportICReporterAsync(compilationResults, root, isVerbose = true))
+            }
+            CompilationResultCategory.BUILD_METRICS -> {
             }
         }
     }

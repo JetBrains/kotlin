@@ -118,7 +118,9 @@ abstract class AbstractLocalVariableTest : AbstractDebugTest() {
             }
         }
 
+        @Suppress("UNCHECKED_CAST")
         val compressedLog = compressRunsWithoutLinenumber(loggedItems as List<LVTStep>, LVTStep::location)
+
         val actualLocalVariables = compressedLog.joinToString("\n") {
             "// ${it.location.formatAsExpectation()}: ${it.visibleVars.joinToString(", ")}".trim()
         }

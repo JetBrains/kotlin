@@ -56,6 +56,7 @@ abstract class AbstractSteppingTest : AbstractDebugTest() {
         val lines = wholeFile.readLines()
         val forceStepInto = lines.any { it.startsWith(FORCE_STEP_INTO_MARKER) }
 
+        @Suppress("UNCHECKED_CAST")
         val actualLineNumbers = compressRunsWithoutLinenumber(loggedItems as List<LocatableEvent>, LocatableEvent::location)
             .filter {
                 val location = it.location()
@@ -98,4 +99,3 @@ abstract class AbstractSteppingTest : AbstractDebugTest() {
         assertEqualsToFile(wholeFile, actual.joinToString("\n"))
     }
 }
-
