@@ -1,7 +1,7 @@
 class Derived : Base {
   constructor() /* primary */ {
     super/*Base*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

@@ -5,7 +5,7 @@ fun foo(x: String = ""): String {
 class C {
   constructor(x: String = "") /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

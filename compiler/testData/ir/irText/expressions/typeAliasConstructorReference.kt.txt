@@ -1,7 +1,7 @@
 class C {
   constructor(x: Int) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -11,14 +11,14 @@ typealias CA = C
 object Host {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
   class Nested {
     constructor(x: Int) /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

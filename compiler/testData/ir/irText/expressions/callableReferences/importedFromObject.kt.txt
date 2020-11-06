@@ -3,7 +3,7 @@ package test
 object Foo {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

@@ -14,7 +14,7 @@ expect open class B : A {
 abstract class A {
   protected constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -25,7 +25,7 @@ abstract class A {
 open class B : A {
   constructor(i: Int) /* primary */ {
     super/*A*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

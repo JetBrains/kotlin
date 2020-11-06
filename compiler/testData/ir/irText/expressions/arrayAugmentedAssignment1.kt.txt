@@ -9,7 +9,7 @@ fun bar(): Int {
 class C {
   constructor(x: IntArray) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

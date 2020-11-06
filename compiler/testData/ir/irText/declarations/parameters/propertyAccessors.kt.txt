@@ -37,7 +37,7 @@ var <T : Any?> T.testExt4: Int
 class Host<T : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

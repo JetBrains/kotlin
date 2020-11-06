@@ -1,7 +1,7 @@
 class TestClass {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -14,7 +14,7 @@ interface TestInterface {
 object TestObject {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -28,7 +28,7 @@ annotation class TestAnnotationClass : Annotation {
 enum class TestEnumClass : Enum<TestEnumClass> {
   private constructor() /* primary */ {
     super/*Enum*/<TestEnumClass>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

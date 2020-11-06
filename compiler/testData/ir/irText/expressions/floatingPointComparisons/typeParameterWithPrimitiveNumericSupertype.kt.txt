@@ -50,7 +50,7 @@ fun <T : Number> test6(x: Any, y: T): Boolean {
 class F<T : Float> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

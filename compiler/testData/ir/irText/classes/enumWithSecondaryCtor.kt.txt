@@ -1,7 +1,7 @@
 enum class Test0 : Enum<Test0> {
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<Test0>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -24,7 +24,7 @@ enum class Test0 : Enum<Test0> {
 enum class Test1 : Enum<Test1> {
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<Test1>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -49,7 +49,7 @@ enum class Test1 : Enum<Test1> {
 abstract enum class Test2 : Enum<Test2> {
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<Test2>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -61,7 +61,7 @@ abstract enum class Test2 : Enum<Test2> {
   private enum entry class ZERO : Test2 {
     private constructor() /* primary */ {
       super/*Test2*/() /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -75,7 +75,7 @@ abstract enum class Test2 : Enum<Test2> {
   private enum entry class ONE : Test2 {
     private constructor() /* primary */ {
       super/*Test2*/(x = 1) /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

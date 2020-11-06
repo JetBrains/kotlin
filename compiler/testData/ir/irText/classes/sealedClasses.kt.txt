@@ -1,14 +1,14 @@
 sealed class Expr {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
   class Const : Expr {
     constructor(number: Double) /* primary */ {
       super/*Expr*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -21,7 +21,7 @@ sealed class Expr {
   class Sum : Expr {
     constructor(e1: Expr, e2: Expr) /* primary */ {
       super/*Expr*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -38,7 +38,7 @@ sealed class Expr {
   object NotANumber : Expr {
     private constructor() /* primary */ {
       super/*Expr*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

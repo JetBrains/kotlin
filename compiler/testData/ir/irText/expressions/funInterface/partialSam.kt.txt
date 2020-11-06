@@ -6,7 +6,7 @@ fun interface Fn<T : Any?, R : Any?> {
 class J {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -21,7 +21,7 @@ val fsi: Fn<String, Int>
     local class <no name provided> : Fn<String, Int> {
       constructor() /* primary */ {
         super/*Any*/()
-                /* InstanceInitializerCall */
+        /* <init>() */
 
       }
 
@@ -40,7 +40,7 @@ val fis: Fn<Int, String>
     local class <no name provided> : Fn<Int, String> {
       constructor() /* primary */ {
         super/*Any*/()
-                /* InstanceInitializerCall */
+        /* <init>() */
 
       }
 

@@ -1,7 +1,7 @@
 data class Test1 {
   constructor(stringArray: Array<String>, charArray: CharArray, booleanArray: BooleanArray, byteArray: ByteArray, shortArray: ShortArray, intArray: IntArray, longArray: LongArray, floatArray: FloatArray, doubleArray: DoubleArray) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -168,7 +168,7 @@ dataClassArrayMemberToString(arg0 = #doubleArray) +
 data class Test2<T : Any?> {
   constructor(genericArray: Array<T>) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -214,7 +214,7 @@ dataClassArrayMemberToString(arg0 = #genericArray) +
 data class Test3 {
   constructor(anyArrayN: Array<Any>?) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

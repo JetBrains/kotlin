@@ -9,7 +9,7 @@ interface I {
 class A : I {
   constructor(i: I) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

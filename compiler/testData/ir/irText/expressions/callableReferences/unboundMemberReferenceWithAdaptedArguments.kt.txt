@@ -7,7 +7,7 @@ fun use2(fn: Function1<Int, Unit>) {
 open class A {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -20,7 +20,7 @@ open class A {
 object Obj : A {
   private constructor() /* primary */ {
     super/*A*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

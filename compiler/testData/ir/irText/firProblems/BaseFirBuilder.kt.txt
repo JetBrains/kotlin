@@ -1,7 +1,7 @@
 abstract class BaseFirBuilder<T : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

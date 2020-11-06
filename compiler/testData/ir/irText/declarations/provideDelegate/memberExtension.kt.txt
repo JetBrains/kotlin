@@ -1,14 +1,14 @@
 object Host {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
   class StringDelegate {
     constructor(s: String) /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

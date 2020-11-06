@@ -1,7 +1,7 @@
 abstract class A {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -19,7 +19,7 @@ abstract class A {
 class B {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -31,7 +31,7 @@ class B {
 class Test1 : A {
   constructor() {
     super/*A*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
     { // BLOCK
       val tmp0_this: Test1 = <this>
@@ -48,7 +48,7 @@ class Test1 : A {
 class Test2 : J {
   constructor() /* primary */ {
     super/*J*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

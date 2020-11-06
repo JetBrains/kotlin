@@ -1,14 +1,14 @@
 class Outer<T1 : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
   inner class Inner<T2 : Any?> {
     constructor() /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

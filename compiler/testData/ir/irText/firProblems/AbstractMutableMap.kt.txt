@@ -1,7 +1,7 @@
 class MyMap<K : Any, V : Any> : AbstractMutableMap<K, V> {
   constructor() /* primary */ {
     super/*AbstractMutableMap*/<K, V>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

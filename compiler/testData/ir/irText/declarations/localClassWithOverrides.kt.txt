@@ -2,7 +2,7 @@ fun outer() {
   local abstract class ALocal {
     constructor() /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -19,7 +19,7 @@ fun outer() {
   local class Local : ALocal {
     constructor() /* primary */ {
       super/*ALocal*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

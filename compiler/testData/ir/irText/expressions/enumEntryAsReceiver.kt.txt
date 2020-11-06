@@ -1,7 +1,7 @@
 abstract enum class X : Enum<X> {
   private constructor() /* primary */ {
     super/*Enum*/<X>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -9,7 +9,7 @@ abstract enum class X : Enum<X> {
   private enum entry class B : X {
     private constructor() /* primary */ {
       super/*X*/() /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

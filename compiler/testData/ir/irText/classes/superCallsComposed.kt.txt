@@ -1,7 +1,7 @@
 open class Base {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -24,7 +24,7 @@ interface BaseI {
 class Derived : Base, BaseI {
   constructor() /* primary */ {
     super/*Base*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

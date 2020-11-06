@@ -1,7 +1,7 @@
 data class TestData {
   constructor(nn: Nothing?) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -50,7 +50,7 @@ data class TestData {
 inline class TestInline {
   constructor(nn: Nothing?) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

@@ -7,7 +7,7 @@ interface Base {
 object Derived : Base {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

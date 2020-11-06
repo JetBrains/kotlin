@@ -1,7 +1,7 @@
 open class Base {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -10,7 +10,7 @@ open class Base {
 class TestImplicitPrimaryConstructor : Base {
   constructor() /* primary */ {
     super/*Base*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -19,7 +19,7 @@ class TestImplicitPrimaryConstructor : Base {
 class TestExplicitPrimaryConstructor : Base {
   constructor() /* primary */ {
     super/*Base*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -28,7 +28,7 @@ class TestExplicitPrimaryConstructor : Base {
 class TestWithDelegatingConstructor : Base {
   constructor(x: Int, y: Int) /* primary */ {
     super/*Base*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

@@ -7,7 +7,7 @@ interface IFooBar {
 object FooBarImpl : IFooBar {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -22,7 +22,7 @@ object FooBarImpl : IFooBar {
 class C : IFooBar {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

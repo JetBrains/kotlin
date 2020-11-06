@@ -4,7 +4,7 @@ fun String.extension() {
 class C {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

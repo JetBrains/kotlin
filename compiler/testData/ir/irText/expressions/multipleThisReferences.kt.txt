@@ -1,14 +1,14 @@
 class Outer {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
   open inner class Inner {
     constructor(x: Int) /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -23,7 +23,7 @@ class Outer {
 class Host {
   constructor(y: Int) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -36,7 +36,7 @@ class Host {
       local class <no name provided> : Inner {
         constructor() /* primary */ {
           <this>.super/*Inner*/(x = 42)
-                    /* InstanceInitializerCall */
+          /* <init>() */
 
         }
 

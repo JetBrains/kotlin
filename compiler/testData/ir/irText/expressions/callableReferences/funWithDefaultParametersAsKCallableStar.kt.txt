@@ -13,7 +13,7 @@ fun varargs(vararg xs: String): Int {
 class C {
   constructor(x: String = "") /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

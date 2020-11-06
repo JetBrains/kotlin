@@ -13,7 +13,7 @@ var String.test2: Int
 class Host {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

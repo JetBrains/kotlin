@@ -1,7 +1,7 @@
 class Test1<T : U, U : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

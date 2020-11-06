@@ -8,7 +8,7 @@ interface IBase {
 object BaseImpl : IBase {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -46,7 +46,7 @@ fun otherImpl(x0: String, y0: Int): IOther {
     local class <no name provided> : IOther {
       constructor() /* primary */ {
         super/*Any*/()
-                /* InstanceInitializerCall */
+        /* <init>() */
 
       }
 
@@ -80,7 +80,7 @@ fun otherImpl(x0: String, y0: Int): IOther {
 class Test1 : IBase {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -102,7 +102,7 @@ class Test1 : IBase {
 class Test2 : IBase, IOther {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

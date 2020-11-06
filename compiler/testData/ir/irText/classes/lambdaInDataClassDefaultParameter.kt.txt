@@ -4,7 +4,7 @@ data class A {
   }
 ) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -52,7 +52,7 @@ data class B {
     local class <no name provided> {
       constructor() /* primary */ {
         super/*Any*/()
-                /* InstanceInitializerCall */
+        /* <init>() */
 
       }
 
@@ -61,7 +61,7 @@ data class B {
     <no name provided>()
   }) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

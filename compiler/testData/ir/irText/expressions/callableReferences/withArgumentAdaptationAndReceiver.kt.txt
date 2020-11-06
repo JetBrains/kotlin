@@ -5,7 +5,7 @@ fun use(fn: Function1<Int, Unit>) {
 class Host {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

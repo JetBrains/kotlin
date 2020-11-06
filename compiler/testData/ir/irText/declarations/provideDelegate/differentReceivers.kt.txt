@@ -1,7 +1,7 @@
 class MyClass {
   constructor(value: String) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

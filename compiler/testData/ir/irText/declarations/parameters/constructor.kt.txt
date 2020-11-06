@@ -1,7 +1,7 @@
 class Test1<T1 : Any?, T2 : Any?> {
   constructor(x: T1, y: T2) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -18,7 +18,7 @@ class Test1<T1 : Any?, T2 : Any?> {
 class Test2 {
   constructor(x: Int, y: String) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -29,7 +29,7 @@ class Test2 {
   inner class TestInner<Z : Any?> {
     constructor(z: Z) /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -48,7 +48,7 @@ class Test2 {
 class Test3 {
   constructor(x: Int, y: String = "") /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -65,7 +65,7 @@ class Test3 {
 class Test4<T : Any?> {
   constructor(x: Int) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

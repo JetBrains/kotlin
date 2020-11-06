@@ -5,7 +5,7 @@ class C {
 
   constructor(x: Int) {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

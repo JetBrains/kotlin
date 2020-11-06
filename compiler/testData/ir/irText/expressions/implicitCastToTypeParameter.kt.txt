@@ -20,7 +20,7 @@ val <reified T : Any> Foo<T>.asT: T?
 class Bar<T : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

@@ -1,7 +1,7 @@
 class C {
   constructor(test1: Int, test2: Int) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

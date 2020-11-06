@@ -8,7 +8,7 @@ val test1: Any
     local class <no name provided> {
       constructor() /* primary */ {
         super/*Any*/()
-                /* InstanceInitializerCall */
+        /* <init>() */
 
       }
 
@@ -23,7 +23,7 @@ val test2: IFoo
     local class <no name provided> : IFoo {
       constructor() /* primary */ {
         super/*Any*/()
-                /* InstanceInitializerCall */
+        /* <init>() */
 
       }
 
@@ -40,14 +40,14 @@ val test2: IFoo
 class Outer {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
   abstract inner class Inner : IFoo {
     constructor() /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -58,7 +58,7 @@ class Outer {
       local class <no name provided> : Inner {
         constructor() /* primary */ {
           <this>.super/*Inner*/()
-                    /* InstanceInitializerCall */
+          /* <init>() */
 
         }
 
@@ -79,7 +79,7 @@ fun Outer.test4(): Inner {
     local class <no name provided> : Inner {
       constructor() /* primary */ {
         <this>.super/*Inner*/()
-                /* InstanceInitializerCall */
+        /* <init>() */
 
       }
 

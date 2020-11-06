@@ -3,14 +3,14 @@ package test
 class Foo<T : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
   inner class Inner<P : Any?> {
     constructor(a: T, b: P) /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

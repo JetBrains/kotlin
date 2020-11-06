@@ -1,7 +1,7 @@
 inline class IT {
   constructor(x: Int) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -36,7 +36,7 @@ inline class IT {
 inline class InlineMutableSet : MutableSet<IT> {
   constructor(ms: MutableSet<IT>) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

@@ -10,7 +10,7 @@ val test1: Int /* by */
 class C {
   constructor(map: MutableMap<String, Any>) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

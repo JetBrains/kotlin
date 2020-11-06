@@ -37,7 +37,7 @@ fun MutableList<Any>.testExtensionReceiver() {
 abstract class AML : MutableList<Int> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -48,7 +48,7 @@ abstract class AML : MutableList<Int> {
   inner class Inner {
     constructor() /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

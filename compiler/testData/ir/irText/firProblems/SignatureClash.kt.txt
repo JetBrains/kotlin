@@ -2,7 +2,7 @@ typealias Some = Function1<Any, String?>
 object Factory {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -32,7 +32,7 @@ interface Derived : Delegate {
 data class DataClass : Derived, Delegate {
   constructor(delegate: Delegate) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

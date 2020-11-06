@@ -23,7 +23,7 @@ interface IRight {
 class CBoth : ILeft, IRight {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

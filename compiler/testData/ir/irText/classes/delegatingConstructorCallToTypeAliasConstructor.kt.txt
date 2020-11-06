@@ -1,7 +1,7 @@
 open class Cell<T : Any?> {
   constructor(value: T) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -16,7 +16,7 @@ typealias CStr = Cell<String>
 class C1 : Cell<String> {
   constructor() /* primary */ {
     super/*Cell*/<String>(value = "O")
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -25,7 +25,7 @@ class C1 : Cell<String> {
 class C2 : Cell<String> {
   constructor() /* primary */ {
     super/*Cell*/<String>(value = "K")
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

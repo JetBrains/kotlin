@@ -29,7 +29,7 @@ fun testEqualsWithSmartCast(x: Any, y: Any): Boolean {
 class C {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

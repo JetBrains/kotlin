@@ -1,7 +1,7 @@
 data class Test1 {
   constructor(x: Int, y: String, z: Any) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -78,7 +78,7 @@ data class Test1 {
 data class Test2 {
   constructor(x: Any?) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -127,7 +127,7 @@ data class Test2 {
 data class Test3 {
   constructor(d: Double, dn: Double?, f: Float, df: Float?) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

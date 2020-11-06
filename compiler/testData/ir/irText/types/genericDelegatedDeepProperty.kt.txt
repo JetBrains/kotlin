@@ -1,7 +1,7 @@
 class Value<T : Any?, IT : IR<T>> {
   constructor(value1: T, value2: IT) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -34,7 +34,7 @@ interface IR<R : Any?> {
 class CR<R : Any?> : IR<R> {
   constructor(r: R) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -51,7 +51,7 @@ class CR<R : Any?> : IR<R> {
 class P<P1 : Any?, P2 : Any?> {
   constructor(p1: P1, p2: P2) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -70,7 +70,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
     local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, P<Any?, Any?>> {
       constructor() /* primary */ {
         super/*Any*/()
-                /* InstanceInitializerCall */
+        /* <init>() */
 
       }
 
@@ -87,7 +87,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
           local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, Any?> {
             constructor() /* primary */ {
               super/*Any*/()
-                            /* InstanceInitializerCall */
+              /* <init>() */
 
             }
 
@@ -116,7 +116,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
           local class <no name provided> : IDelegate1<Value<Any?, CR<Any?>>, Any?> {
             constructor() /* primary */ {
               super/*Any*/()
-                            /* InstanceInitializerCall */
+              /* <init>() */
 
             }
 

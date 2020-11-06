@@ -1,7 +1,7 @@
 object X1 {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -13,7 +13,7 @@ object X1 {
   object X2 {
     private constructor() /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -25,7 +25,7 @@ object X1 {
     object X3 {
       private constructor() /* primary */ {
         super/*Any*/()
-                /* InstanceInitializerCall */
+        /* <init>() */
 
       }
 
@@ -85,7 +85,7 @@ fun test2() {
 class B {
   constructor(s: Int = 0) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -99,7 +99,7 @@ class B {
 object Host {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

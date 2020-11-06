@@ -1,7 +1,7 @@
 abstract class Base1<T : Derived1> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -10,7 +10,7 @@ abstract class Base1<T : Derived1> {
 class Derived1 : Base1<Derived1> {
   constructor() /* primary */ {
     super/*Base1*/<Derived1>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -19,7 +19,7 @@ class Derived1 : Base1<Derived1> {
 abstract class Base2 {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -31,7 +31,7 @@ abstract class Base2 {
 class Derived2 : Base2 {
   constructor() /* primary */ {
     super/*Base2*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

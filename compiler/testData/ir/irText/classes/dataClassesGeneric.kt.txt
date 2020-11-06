@@ -1,7 +1,7 @@
 data class Test1<T : Any?> {
   constructor(x: T) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -50,7 +50,7 @@ data class Test1<T : Any?> {
 data class Test2<T : Number> {
   constructor(x: T) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -96,7 +96,7 @@ data class Test2<T : Number> {
 data class Test3<T : Any?> {
   constructor(x: List<T>) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -142,7 +142,7 @@ data class Test3<T : Any?> {
 data class Test4 {
   constructor(x: List<String>) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

@@ -2,7 +2,7 @@ fun outer() {
   local class LocalClass {
     constructor() /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

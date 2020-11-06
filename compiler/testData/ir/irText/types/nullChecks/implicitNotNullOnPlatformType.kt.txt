@@ -4,7 +4,7 @@ fun f(s: String) {
 class MySet : Set<String> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

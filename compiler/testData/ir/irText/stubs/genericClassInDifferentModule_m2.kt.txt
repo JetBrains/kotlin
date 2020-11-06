@@ -1,7 +1,7 @@
 class Derived1<T : Any?> : Base<T> {
   constructor(x: T) /* primary */ {
     super/*Base*/<T>(x = x)
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

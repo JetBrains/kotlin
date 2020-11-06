@@ -1,7 +1,7 @@
 class C<T : Any?> {
   constructor(t: T) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -18,7 +18,7 @@ class C<T : Any?> {
 inline class IC<TT : Any?> {
   constructor(c: C<TT>) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

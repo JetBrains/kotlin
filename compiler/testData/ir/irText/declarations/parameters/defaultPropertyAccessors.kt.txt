@@ -10,7 +10,7 @@ var test2: Int
 class Host {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -28,7 +28,7 @@ class Host {
 class InPrimaryCtor<T : Any?> {
   constructor(testInPrimaryCtor1: T, testInPrimaryCtor2: Int = 42) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

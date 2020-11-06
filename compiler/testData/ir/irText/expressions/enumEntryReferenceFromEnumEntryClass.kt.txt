@@ -1,7 +1,7 @@
 open enum class MyEnum : Enum<MyEnum> {
   private constructor() /* primary */ {
     super/*Enum*/<MyEnum>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -9,7 +9,7 @@ open enum class MyEnum : Enum<MyEnum> {
   private enum entry class Z : MyEnum {
     private constructor() /* primary */ {
       super/*MyEnum*/() /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -39,7 +39,7 @@ open enum class MyEnum : Enum<MyEnum> {
         local class <no name provided> {
           constructor() /* primary */ {
             super/*Any*/()
-                        /* InstanceInitializerCall */
+            /* <init>() */
 
           }
 

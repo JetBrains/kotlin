@@ -14,7 +14,7 @@ var testProp: Any
 class TestClass {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

@@ -12,7 +12,7 @@ expect enum class MyEnum : Enum<MyEnum> {
 enum class MyEnum : Enum<MyEnum> {
   private constructor() /* primary */ {
     super/*Enum*/<MyEnum>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

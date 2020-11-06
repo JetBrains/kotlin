@@ -9,14 +9,14 @@ fun testJava(): J2<Double, Int> {
 class K1<T1 : Number> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
   inner class K2<T2 : CharSequence> {
     constructor() /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

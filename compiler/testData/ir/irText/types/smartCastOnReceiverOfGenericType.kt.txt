@@ -26,7 +26,7 @@ fun <T : Any?> testNonSubstitutedTypeParameter(a: Any, b: Any) {
 class Cell<T : Any?> {
   constructor(value: T) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -40,14 +40,14 @@ class Cell<T : Any?> {
 class Outer<T1 : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
   inner class Inner<T2 : Any?> {
     constructor() /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

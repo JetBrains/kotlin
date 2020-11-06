@@ -1,7 +1,7 @@
 class ResolvedCall<C : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -10,7 +10,7 @@ class ResolvedCall<C : Any?> {
 class MyCandidate {
   constructor(resolvedCall: ResolvedCall<*>) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

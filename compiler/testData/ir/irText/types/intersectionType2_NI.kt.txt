@@ -9,7 +9,7 @@ interface Foo {
 open class B : Foo, A<B> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -18,7 +18,7 @@ open class B : Foo, A<B> {
 open class C : Foo, A<C> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

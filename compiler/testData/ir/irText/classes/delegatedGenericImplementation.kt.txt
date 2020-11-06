@@ -12,7 +12,7 @@ interface IBase<A : Any?> {
 class Test1<E : Any?> : IBase<E> {
   constructor(i: IBase<E>) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -39,7 +39,7 @@ class Test1<E : Any?> : IBase<E> {
 class Test2 : IBase<String> {
   constructor(j: IBase<String>) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

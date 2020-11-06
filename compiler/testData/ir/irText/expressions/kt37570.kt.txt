@@ -5,7 +5,7 @@ fun a(): String {
 class A {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

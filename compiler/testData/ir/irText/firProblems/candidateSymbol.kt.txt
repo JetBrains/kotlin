@@ -1,7 +1,7 @@
 class Candidate {
   constructor(symbol: AbstractFirBasedSymbol<*>) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -14,7 +14,7 @@ class Candidate {
 abstract class AbstractFirBasedSymbol<E> where E : FirSymbolOwner<E>, E : FirDeclaration {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

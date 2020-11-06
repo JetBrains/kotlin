@@ -22,7 +22,7 @@ interface IFoo {
 class DFoo : IFoo {
   constructor(d: IFoo) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

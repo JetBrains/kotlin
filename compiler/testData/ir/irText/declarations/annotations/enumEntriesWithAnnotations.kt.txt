@@ -9,7 +9,7 @@ annotation class TestAnn : Annotation {
 open enum class TestEnum : Enum<TestEnum> {
   private constructor() /* primary */ {
     super/*Enum*/<TestEnum>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -22,7 +22,7 @@ open enum class TestEnum : Enum<TestEnum> {
   private enum entry class ENTRY2 : TestEnum {
     private constructor() /* primary */ {
       super/*TestEnum*/() /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

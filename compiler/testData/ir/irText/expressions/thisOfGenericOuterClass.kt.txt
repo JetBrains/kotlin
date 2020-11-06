@@ -1,7 +1,7 @@
 class Outer<T : Any?> {
   constructor(x: T) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -12,7 +12,7 @@ class Outer<T : Any?> {
   open inner class Inner {
     constructor(y: Int) /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -29,7 +29,7 @@ fun Outer<Int>.test(): Inner<Int> {
     local class <no name provided> : Inner<Int> {
       constructor() /* primary */ {
         <this>.super/*Inner*/(y = 42)
-                /* InstanceInitializerCall */
+        /* <init>() */
 
       }
 

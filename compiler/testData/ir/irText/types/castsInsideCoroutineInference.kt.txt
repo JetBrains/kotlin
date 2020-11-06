@@ -70,7 +70,7 @@ private fun CoroutineScope.asChannel(flow: Flow<*>): ReceiveChannel<Any> {
 class SafeCollector<T : Any?> : FlowCollector<T> {
   constructor(collector: FlowCollector<T>) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -99,7 +99,7 @@ suspend inline fun <T : Any?> Flow<T>.collect(crossinline action: SuspendFunctio
 open class ChannelCoroutine<E : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

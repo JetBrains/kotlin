@@ -10,7 +10,7 @@ class TestClass {
   @TestAnn(x = 1)
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

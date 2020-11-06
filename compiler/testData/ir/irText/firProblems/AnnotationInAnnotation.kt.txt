@@ -22,7 +22,7 @@ annotation class State : Annotation {
 class Test {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

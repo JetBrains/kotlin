@@ -5,7 +5,7 @@ open enum class A : Enum<A> {
   private enum entry class Y : A {
     private constructor() /* primary */ {
       super/*A*/() /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -31,14 +31,14 @@ open enum class A : Enum<A> {
 
   private constructor(arg: String) {
     super/*Enum*/<A>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
     #prop1 = arg
   }
 
   private constructor() {
     super/*Enum*/<A>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
     #prop1 = "default"
     <this>.<set-prop3>(<set-?> = "empty")

@@ -1,7 +1,7 @@
 class C {
   constructor(x: Int, y: Int, z: Int = 1) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -46,7 +46,7 @@ class C {
   class NestedClass {
     constructor() /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -71,7 +71,7 @@ class C {
   companion object Companion {
     private constructor() /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

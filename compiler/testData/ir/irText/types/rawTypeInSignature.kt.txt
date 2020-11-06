@@ -1,7 +1,7 @@
 class GenericInv<T : Number> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -10,7 +10,7 @@ class GenericInv<T : Number> {
 class GenericIn<in T : Number> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -19,7 +19,7 @@ class GenericIn<in T : Number> {
 class GenericOut<out T : Number> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -40,7 +40,7 @@ fun testReturnsRawGenericOut(j: JRaw): @FlexibleNullability @RawType GenericOut<
 class KRaw : JRaw {
   constructor(j: JRaw) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

@@ -1,7 +1,7 @@
 inline class Test {
   constructor(x: Int) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

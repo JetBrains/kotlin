@@ -3,7 +3,7 @@ package interop
 object Definitions {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

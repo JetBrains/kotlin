@@ -1,7 +1,7 @@
 data class Some<T : Any?> {
   constructor(value: T) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -54,7 +54,7 @@ interface MyList<T : Any?> : List<Some<T>> {
 open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {
   constructor() /* primary */ {
     super/*ArrayList*/<@FlexibleNullability Some<T>?>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -63,7 +63,7 @@ open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {
 class FinalList : SomeList<String> {
   constructor() /* primary */ {
     super/*SomeList*/<String>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

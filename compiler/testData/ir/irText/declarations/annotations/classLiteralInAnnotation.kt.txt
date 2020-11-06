@@ -9,7 +9,7 @@ annotation class A : Annotation {
 class C {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

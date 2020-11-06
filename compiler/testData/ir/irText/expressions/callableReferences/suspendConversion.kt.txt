@@ -26,7 +26,7 @@ fun foo4(i: Int = 42) {
 class C {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

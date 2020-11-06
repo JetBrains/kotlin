@@ -1,7 +1,7 @@
 enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
   private constructor() /* primary */ {
     super/*Enum*/<TestFinalEnum1>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -16,7 +16,7 @@ enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
 enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<TestFinalEnum2>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -35,7 +35,7 @@ enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
 enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
   private constructor() /* primary */ {
     super/*Enum*/<TestFinalEnum3>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -53,7 +53,7 @@ enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
 open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
   private constructor() /* primary */ {
     super/*Enum*/<TestOpenEnum1>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -61,7 +61,7 @@ open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
   private enum entry class X1 : TestOpenEnum1 {
     private constructor() /* primary */ {
       super/*TestOpenEnum1*/() /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -80,7 +80,7 @@ open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
 open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
   private constructor() /* primary */ {
     super/*Enum*/<TestOpenEnum2>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -88,7 +88,7 @@ open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
   private enum entry class X1 : TestOpenEnum2 {
     private constructor() /* primary */ {
       super/*TestOpenEnum2*/() /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -109,7 +109,7 @@ open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
 abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
   private constructor() /* primary */ {
     super/*Enum*/<TestAbstractEnum1>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -117,7 +117,7 @@ abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
   private enum entry class X1 : TestAbstractEnum1 {
     private constructor() /* primary */ {
       super/*TestAbstractEnum1*/() /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -142,7 +142,7 @@ interface IFoo {
 abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
   private constructor() /* primary */ {
     super/*Enum*/<TestAbstractEnum2>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -150,7 +150,7 @@ abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
   private enum entry class X1 : TestAbstractEnum2 {
     private constructor() /* primary */ {
       super/*TestAbstractEnum2*/() /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

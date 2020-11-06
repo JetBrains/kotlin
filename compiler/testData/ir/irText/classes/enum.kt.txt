@@ -1,7 +1,7 @@
 enum class TestEnum1 : Enum<TestEnum1> {
   private constructor() /* primary */ {
     super/*Enum*/<TestEnum1>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -18,7 +18,7 @@ enum class TestEnum1 : Enum<TestEnum1> {
 enum class TestEnum2 : Enum<TestEnum2> {
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<TestEnum2>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -41,7 +41,7 @@ enum class TestEnum2 : Enum<TestEnum2> {
 abstract enum class TestEnum3 : Enum<TestEnum3> {
   private constructor() /* primary */ {
     super/*Enum*/<TestEnum3>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -49,7 +49,7 @@ abstract enum class TestEnum3 : Enum<TestEnum3> {
   private enum entry class TEST : TestEnum3 {
     private constructor() /* primary */ {
       super/*TestEnum3*/() /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -70,7 +70,7 @@ abstract enum class TestEnum3 : Enum<TestEnum3> {
 abstract enum class TestEnum4 : Enum<TestEnum4> {
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<TestEnum4>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -82,7 +82,7 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
   private enum entry class TEST1 : TestEnum4 {
     private constructor() /* primary */ {
       super/*TestEnum4*/(x = 1) /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -96,7 +96,7 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
   private enum entry class TEST2 : TestEnum4 {
     private constructor() /* primary */ {
       super/*TestEnum4*/(x = 2) /*~> Unit */
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -124,7 +124,7 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
 enum class TestEnum5 : Enum<TestEnum5> {
   private constructor(x: Int = 0) /* primary */ {
     super/*Enum*/<TestEnum5>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -151,7 +151,7 @@ fun f(): Int {
 enum class TestEnum6 : Enum<TestEnum6> {
   private constructor(x: Int, y: Int) /* primary */ {
     super/*Enum*/<TestEnum6>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

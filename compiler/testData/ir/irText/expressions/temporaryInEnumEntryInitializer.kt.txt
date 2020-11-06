@@ -5,7 +5,7 @@ val n: Any?
 enum class En : Enum<En> {
   private constructor(x: String?) /* primary */ {
     super/*Enum*/<En>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

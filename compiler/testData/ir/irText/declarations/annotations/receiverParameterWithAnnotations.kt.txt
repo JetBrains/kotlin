@@ -6,7 +6,7 @@ annotation class Ann : Annotation {
 class A {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

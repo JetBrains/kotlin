@@ -12,7 +12,7 @@ interface I<G : Any?> {
 open class BaseClass {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -26,7 +26,7 @@ open class BaseClass {
 object C : BaseClass, I<String> {
   private constructor() /* primary */ {
     super/*BaseClass*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

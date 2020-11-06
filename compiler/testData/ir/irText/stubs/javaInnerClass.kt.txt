@@ -1,7 +1,7 @@
 class Test1 : J {
   constructor() /* primary */ {
     super/*J*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

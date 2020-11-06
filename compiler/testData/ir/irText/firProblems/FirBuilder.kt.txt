@@ -1,7 +1,7 @@
 open class BaseConverter : BaseFirBuilder<Any> {
   constructor() /* primary */ {
     super/*BaseFirBuilder*/<Any>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -10,7 +10,7 @@ open class BaseConverter : BaseFirBuilder<Any> {
 class DeclarationsConverter : BaseConverter {
   constructor() /* primary */ {
     super/*BaseConverter*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

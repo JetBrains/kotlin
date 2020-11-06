@@ -1,14 +1,14 @@
 class Outer {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
   open inner class TestInnerClass {
     constructor() /* primary */ {
       super/*Any*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 
@@ -17,7 +17,7 @@ class Outer {
   inner class DerivedInnerClass : TestInnerClass {
     constructor() /* primary */ {
       <this>.super/*TestInnerClass*/()
-            /* InstanceInitializerCall */
+      /* <init>() */
 
     }
 

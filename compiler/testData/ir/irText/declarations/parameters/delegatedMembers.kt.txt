@@ -10,7 +10,7 @@ interface IBase<T : Any?> {
 class Test<TT : Any?> : IBase<TT> {
   constructor(impl: IBase<TT>) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

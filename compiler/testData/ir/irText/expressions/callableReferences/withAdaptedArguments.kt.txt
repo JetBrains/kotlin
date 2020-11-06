@@ -24,7 +24,7 @@ fun fnWithVarargs(vararg xs: Int): String {
 object Host {
   private constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

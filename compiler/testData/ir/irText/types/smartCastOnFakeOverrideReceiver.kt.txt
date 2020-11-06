@@ -1,7 +1,7 @@
 open class A {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -32,7 +32,7 @@ open class A {
 class B : A {
   constructor() /* primary */ {
     super/*A*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -55,7 +55,7 @@ class B : A {
 open class GA<T : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -72,7 +72,7 @@ open class GA<T : Any?> {
 class GB<T : Any?, S : Any?> : GA<T> {
   constructor() /* primary */ {
     super/*GA*/<T>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

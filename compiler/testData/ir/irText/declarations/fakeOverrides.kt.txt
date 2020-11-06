@@ -12,7 +12,7 @@ interface IBar {
 abstract class CFoo<T : Any?> {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -24,7 +24,7 @@ abstract class CFoo<T : Any?> {
 class Test1 : CFoo<String>, IFooStr, IBar {
   constructor() /* primary */ {
     super/*CFoo*/<String>()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

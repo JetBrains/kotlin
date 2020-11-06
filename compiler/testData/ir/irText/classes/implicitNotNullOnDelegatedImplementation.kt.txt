@@ -6,7 +6,7 @@ interface IFoo {
 class K1 : JFoo {
   constructor() /* primary */ {
     super/*JFoo*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -15,7 +15,7 @@ class K1 : JFoo {
 class K2 : JFoo {
   constructor() /* primary */ {
     super/*JFoo*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -28,7 +28,7 @@ class K2 : JFoo {
 class K3 : JUnrelatedFoo, IFoo {
   constructor() /* primary */ {
     super/*JUnrelatedFoo*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -37,7 +37,7 @@ class K3 : JUnrelatedFoo, IFoo {
 class K4 : JUnrelatedFoo, IFoo {
   constructor() /* primary */ {
     super/*JUnrelatedFoo*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -50,7 +50,7 @@ class K4 : JUnrelatedFoo, IFoo {
 class TestJFoo : IFoo {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -64,7 +64,7 @@ class TestJFoo : IFoo {
 class TestK1 : IFoo {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -78,7 +78,7 @@ class TestK1 : IFoo {
 class TestK2 : IFoo {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -92,7 +92,7 @@ class TestK2 : IFoo {
 class TestK3 : IFoo {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -106,7 +106,7 @@ class TestK3 : IFoo {
 class TestK4 : IFoo {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

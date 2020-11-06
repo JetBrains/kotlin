@@ -3,7 +3,7 @@ fun box(): String {
     local class <no name provided> {
       constructor() /* primary */ {
         super/*Any*/()
-                /* InstanceInitializerCall */
+        /* <init>() */
 
       }
 
@@ -18,7 +18,7 @@ fun box(): String {
       local inner class Some : Base {
         constructor(s: String) /* primary */ {
           <this>.super/*Base*/(s = s)
-                    /* InstanceInitializerCall */
+          /* <init>() */
 
         }
 
@@ -31,7 +31,7 @@ fun box(): String {
       local open inner class Base {
         constructor(s: String) /* primary */ {
           super/*Any*/()
-                    /* InstanceInitializerCall */
+          /* <init>() */
 
         }
 

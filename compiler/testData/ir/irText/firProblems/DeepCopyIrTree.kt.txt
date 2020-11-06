@@ -33,7 +33,7 @@ interface IrDeclarationParent {
 class DeepCopyIrTreeWithSymbols {
   constructor(typeRemapper: TypeRemapper) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

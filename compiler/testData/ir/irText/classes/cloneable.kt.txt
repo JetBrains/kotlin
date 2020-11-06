@@ -1,7 +1,7 @@
 class A : Cloneable {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -14,7 +14,7 @@ interface I : Cloneable {
 class C : I {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -23,7 +23,7 @@ class C : I {
 class OC : I {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

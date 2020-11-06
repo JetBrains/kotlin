@@ -13,7 +13,7 @@ fun String.textExt1(i: Int, j: String) {
 class Host {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

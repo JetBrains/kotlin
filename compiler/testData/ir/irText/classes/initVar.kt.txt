@@ -1,7 +1,7 @@
 class TestInitVarFromParameter {
   constructor(x: Int) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -15,7 +15,7 @@ class TestInitVarFromParameter {
 class TestInitVarInClass {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -29,7 +29,7 @@ class TestInitVarInClass {
 class TestInitVarInInitBlock {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -46,7 +46,7 @@ class TestInitVarInInitBlock {
 class TestInitVarWithCustomSetter {
   constructor() /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -72,7 +72,7 @@ class TestInitVarWithCustomSetterWithExplicitCtor {
 
   constructor() {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -87,7 +87,7 @@ class TestInitVarWithCustomSetterInCtor {
 
   constructor() {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
     <this>.<set-x>(value = 42)
   }

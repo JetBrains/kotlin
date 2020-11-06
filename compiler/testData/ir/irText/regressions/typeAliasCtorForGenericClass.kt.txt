@@ -1,7 +1,7 @@
 class A<Q : Any?> {
   constructor(q: Q) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 

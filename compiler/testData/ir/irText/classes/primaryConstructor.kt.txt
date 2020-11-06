@@ -1,7 +1,7 @@
 class Test1 {
   constructor(x: Int, y: Int) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -18,7 +18,7 @@ class Test1 {
 class Test2 {
   constructor(x: Int, y: Int) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
@@ -35,7 +35,7 @@ class Test2 {
 class Test3 {
   constructor(x: Int, y: Int) /* primary */ {
     super/*Any*/()
-        /* InstanceInitializerCall */
+    /* <init>() */
 
   }
 
