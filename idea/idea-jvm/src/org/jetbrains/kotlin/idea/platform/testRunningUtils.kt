@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.idea.util.string.joinWithEscape
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.SimplePlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
@@ -78,11 +79,11 @@ fun DeclarationDescriptor.isKotlinTestDeclaration(): Boolean {
     return classDescriptor.declaredCallableMembers.any { it.isKotlinTestDeclaration() }
 }
 
-internal fun IdePlatformKind<*>.isCompatibleWith(platform: SimplePlatform): Boolean {
+internal fun IdePlatformKind<*>.isCompatibleWith(platform: TargetPlatform): Boolean {
     return when (this) {
-        is JvmIdePlatformKind -> platform is JvmPlatform
-        is NativeIdePlatformKind -> platform is NativePlatform
-        is JsIdePlatformKind -> platform is JsPlatform
+        is JvmIdePlatformKind -> platform.componentPlatforms.any { it is JvmPlatform }
+        is NativeIdePlatformKind -> platform.componentPlatforms.any { it is NativePlatform }
+        is JsIdePlatformKind -> platform.componentPlatforms.any { it is JsPlatform }
         is CommonIdePlatformKind -> true
         else -> false
     }

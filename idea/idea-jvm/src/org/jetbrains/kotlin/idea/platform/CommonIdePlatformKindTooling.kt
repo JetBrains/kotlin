@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.platform.SimplePlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.isCommon
@@ -47,14 +48,14 @@ object CommonIdePlatformKindTooling : IdePlatformKindTooling() {
         return ::getCommonRuntimeLibraryVersion
     }
 
-    private fun getRelevantToolings(projectPlatforms: Set<SimplePlatform>?): List<IdePlatformKindTooling> {
+    private fun getRelevantToolings(platform: TargetPlatform?): List<IdePlatformKindTooling> {
         return getInstances()
             .filter { it != this }
-            .filter { tooling -> projectPlatforms?.any { tooling.kind.isCompatibleWith(it) } ?: true }
+            .filter { platform == null || it.kind.isCompatibleWith(platform) }
     }
 
     override fun getTestIcon(declaration: KtNamedDeclaration, descriptor: DeclarationDescriptor): Icon? {
-        val icons = getRelevantToolings(declaration.module?.platform?.componentPlatforms)
+        val icons = getRelevantToolings(declaration.module?.platform)
             .mapNotNull { it.getTestIcon(declaration, descriptor) }
             .distinct()
 
