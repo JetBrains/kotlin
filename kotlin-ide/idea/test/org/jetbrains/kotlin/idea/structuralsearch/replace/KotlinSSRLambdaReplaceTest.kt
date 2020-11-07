@@ -65,4 +65,21 @@ class KotlinSSRLambdaReplaceTest : KotlinSSRReplaceTest() {
             """.trimIndent()
         )
     }
+
+    fun testLambdaCallArgument() {
+        doTest(
+            searchPattern = "'_FUNCTION.map { '_LAMBDA }",
+            replacePattern = "'_FUNCTION.map { '_LAMBDA }",
+            match = """
+                fun main() {
+                    listOf().map { i -> 4*i }
+                }
+            """.trimIndent(),
+            """
+                fun main() {
+                    listOf().map { i -> 4*i }
+                }
+            """.trimIndent()
+        )
+    }
 }

@@ -64,35 +64,67 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
                     replaceProperty(searchTemplate, match)
             }
         } else { // KtExpression
-            if(this is KtWhenExpression) {
-                if(subjectExpression == null) {
-                    leftParenthesis?.delete()
-                    rightParenthesis?.delete()
-                }
-            }
-            if(this is KtLambdaExpression) {
-                if(searchTemplate is KtLambdaExpression && match is KtLambdaExpression) {
-                    if(valueParameters.isEmpty() && searchTemplate.valueParameters.isEmpty()) { // { $A$ } templates
-                        match.functionLiteral.valueParameterList?.let {
-                            functionLiteral.addAfter(it, functionLiteral.lBrace)
-                            functionLiteral.addAfter(match.functionLiteral.arrow!!, functionLiteral.valueParameterList!!)
-                            functionLiteral.addSurroundingWhiteSpace(
-                                functionLiteral.valueParameterList!!,
-                                match.functionLiteral.valueParameterList!!
-                            )
-                        }
-                    }
-                }
-                if(valueParameters.isEmpty()) {
-                    findDescendantOfType<PsiElement> { it.elementType == KtTokens.ARROW }?.let {
-                        it.deleteSurroundingWhitespace()
-                        it.delete()
-                    }
-                }
+            when(this) {
+                is KtWhenExpression -> replaceWhenExpression()
+                is KtLambdaExpression -> replaceLambdaExpression(searchTemplate, match)
+                is KtDotQualifiedExpression -> replaceDotQualifiedExpression(searchTemplate, match)
+                is KtCallExpression -> replaceCallExpression(searchTemplate, match)
             }
             fixWhiteSpace(match)
         }
         return this
+    }
+
+    private fun KtCallExpression.replaceCallExpression(searchTemplate: PsiElement, match: PsiElement) {
+        if(searchTemplate is KtCallExpression && match is KtCallExpression) {
+            lambdaArguments.firstOrNull()?.getLambdaExpression()?.replaceLambdaExpression(
+                searchTemplate.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return,
+                match.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return
+            )
+        }
+    }
+
+    private fun KtDotQualifiedExpression.replaceDotQualifiedExpression(
+        searchTemplate: PsiElement,
+        match: PsiElement
+    ) {
+        if(searchTemplate is KtDotQualifiedExpression && match is KtDotQualifiedExpression) {
+            receiverExpression.structuralReplace(searchTemplate.receiverExpression, match.receiverExpression)
+            val selectorExpr = selectorExpression
+            val searchSelectorExpr = searchTemplate.selectorExpression
+            val matchSelectorExpr = match.selectorExpression
+            if(selectorExpr != null && searchSelectorExpr != null && matchSelectorExpr != null) {
+                selectorExpr.structuralReplace(searchSelectorExpr, matchSelectorExpr)
+            }
+        }
+    }
+
+    private fun KtWhenExpression.replaceWhenExpression() {
+        if(subjectExpression == null) {
+            leftParenthesis?.delete()
+            rightParenthesis?.delete()
+        }
+    }
+
+    private fun KtLambdaExpression.replaceLambdaExpression(searchTemplate: PsiElement, match: PsiElement) {
+        if(searchTemplate is KtLambdaExpression && match is KtLambdaExpression) {
+            if(valueParameters.isEmpty() && searchTemplate.valueParameters.isEmpty()) { // { $A$ } templates
+                match.functionLiteral.valueParameterList?.let {
+                    functionLiteral.addAfter(it, functionLiteral.lBrace)
+                    functionLiteral.addAfter(match.functionLiteral.arrow!!, functionLiteral.valueParameterList!!)
+                    functionLiteral.addSurroundingWhiteSpace(
+                        functionLiteral.valueParameterList!!,
+                        match.functionLiteral.valueParameterList!!
+                    )
+                }
+            }
+        }
+        if(valueParameters.isEmpty()) {
+            findDescendantOfType<PsiElement> { it.elementType == KtTokens.ARROW }?.let {
+                it.deleteSurroundingWhitespace()
+                it.delete()
+            }
+        }
     }
 
     private fun PsiElement.fixWhiteSpace(match: PsiElement) {
