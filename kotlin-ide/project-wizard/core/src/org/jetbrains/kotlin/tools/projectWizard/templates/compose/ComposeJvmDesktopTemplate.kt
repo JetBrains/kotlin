@@ -46,7 +46,18 @@ class ComposeJvmDesktopTemplate : Template() {
         +RepositoryIR(Repositories.JETBRAINS_COMPOSE_DEV)
         +RepositoryIR(DefaultRepository.JCENTER)
         +GradleOnlyPluginByNameIR("org.jetbrains.compose", version = Versions.JETBRAINS_COMPOSE)
-        +runTaskIrs("MainKt")
+
+        +GradleImportIR("org.jetbrains.compose.desktop.application.dsl.TargetFormat")
+        "compose.desktop" {
+            "application" {
+                "mainClass" assign const("MainKt")
+
+                "nativeDistributions" {
+                    "targetFormats"(raw("TargetFormat.Dmg"), raw("TargetFormat.Msi"), raw("TargetFormat.Deb"))
+                    "packageName" assign const(module.name)
+                }
+            }
+        }
 
         +GradleImportIR("org.jetbrains.compose.compose")
     }

@@ -1,11 +1,11 @@
 plugins {
-    id("org.jetbrains.compose") version "0.1.0-dev106"
+    id("org.jetbrains.compose") version "0.1.0-m1-build62"
     id("com.android.application")
     kotlin("android")
 }
 
 group = "me.user"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     google()

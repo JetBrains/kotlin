@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.tools.projectWizard.projectTemplates
 
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.*
@@ -18,6 +19,8 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.templates.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.JvmSinglePlatformModuleConfigurator
+import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.templates.compose.ComposeAndroidTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.compose.ComposeJvmDesktopTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.compose.ComposeMppModuleTemplate
@@ -130,6 +133,9 @@ data class SettingWithValue<V : Any, T : SettingType<V>>(val setting: SettingRef
 
 infix fun <V : Any, T : SettingType<V>> PluginSettingReference<V, T>.withValue(value: V): SettingWithValue<V, T> =
     SettingWithValue(this, value)
+
+inline infix fun <V : Any, reified T : SettingType<V>> PluginSetting<V, T>.withValue(value: V): SettingWithValue<V, T> =
+    SettingWithValue(reference, value)
 
 private fun createDefaultSourcesets() =
     SourcesetType.values().map { sourcesetType ->
@@ -463,19 +469,24 @@ object ComposeDesktopApplicationProjectTemplate : ProjectTemplate() {
 
     override val setsPluginSettings: List<SettingWithValue<*, *>>
         get() = listOf(
-            KotlinPlugin.modules.reference withValue listOf(
-                Module(
-                    "compose",
-                    JvmSinglePlatformModuleConfigurator,
-                    template = ComposeJvmDesktopTemplate(),
-                    sourcesets = SourcesetType.ALL.map { type ->
-                        Sourceset(type, dependencies = emptyList())
-                    },
-                    subModules = emptyList()
-                ).withConfiguratorSettings(JvmSinglePlatformModuleConfigurator) {
-                    ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
-                }
-            )
+            GradlePlugin.gradleVersion withValue Versions.GRADLE_VERSION_FOR_COMPOSE,
+            StructurePlugin.version withValue "1.0",
+        )
+
+    override val setsModules: List<Module>
+        get() = listOf(
+            Module(
+                "compose",
+                JvmSinglePlatformModuleConfigurator,
+                template = ComposeJvmDesktopTemplate(),
+                sourcesets = SourcesetType.ALL.map { type ->
+                    Sourceset(type, dependencies = emptyList())
+                },
+                subModules = emptyList()
+            ).withConfiguratorSettings(JvmSinglePlatformModuleConfigurator) {
+                ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+                JvmModuleConfigurator.targetJvmVersion withValue TargetJvmVersion.JVM_11
+            }
         )
 }
 
@@ -487,6 +498,12 @@ object ComposeMultiplatformApplicationProjectTemplate : ProjectTemplate() {
     @NonNls
     override val suggestedProjectName = "myComposeMultiplatformApplication"
     override val projectKind = ProjectKind.COMPOSE
+
+    override val setsPluginSettings: List<SettingWithValue<*, *>>
+        get() = listOf(
+            GradlePlugin.gradleVersion withValue Versions.GRADLE_VERSION_FOR_COMPOSE,
+            StructurePlugin.version withValue "1.0",
+        )
 
     override val setsModules: List<Module>
         get() = buildList {

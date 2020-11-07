@@ -1,13 +1,13 @@
 import org.jetbrains.compose.compose
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.1.0-dev106"
-    application
+    id("org.jetbrains.compose") version "0.1.0-m1-build62"
 }
 
 group = "me.user"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 kotlin {
     jvm {
@@ -26,6 +26,12 @@ kotlin {
     }
 }
 
-application {
-    mainClassName = "MainKt"
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "jvm"
+        }
+    }
 }
