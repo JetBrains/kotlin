@@ -25,6 +25,7 @@ internal interface Stack {
 
     fun fixCallEntryPoint(irExpression: IrExpression)
     fun getStackTrace(): List<String>
+    fun getCurrentStackInfo(): String
     fun getStackCount(): Int
 
     fun clean(rootFile: IrFile?)
@@ -97,6 +98,13 @@ internal class StackImpl : Stack {
         return frameList.map { it.toString() }
     }
 
+    override fun getCurrentStackInfo(): String {
+        val frame = getCurrentFrame()
+        frame.irFile ?: return "Not defined"
+        val lineNum = if (frame.lineNumber != -1) ":${frame.lineNumber}" else ""
+        return "${frame.irFile.name}$lineNum"
+    }
+
     override fun getStackCount(): Int = stackCount
 
     override fun clean(rootFile: IrFile?) {
@@ -143,6 +151,11 @@ internal class StackImpl : Stack {
 }
 
 private class FrameContainer(val irFile: IrFile? = null, private val entryPoint: IrFunction? = null, current: Frame = InterpreterFrame()) {
+    /*var lineNumber: Int
+        get() = getTopFrame().lineOfCall
+        set(value) {
+            getTopFrame().lineOfCall = value
+        }*/
     var lineNumber: Int = -1
     private val innerStack = mutableListOf(current)
     private fun getTopFrame() = innerStack.first()

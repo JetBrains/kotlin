@@ -268,6 +268,7 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
     }
 
     private fun interpretCall(expression: IrCall): ExecutionResult {
+        stack.fixCallEntryPoint(expression)
         val valueArguments = mutableListOf<Variable>()
         // dispatch receiver processing
         val rawDispatchReceiver = expression.dispatchReceiver
@@ -309,7 +310,6 @@ class IrInterpreter(val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSigna
             generateSequence(dispatchReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { valueArguments.add(it) }
         }
 
-        stack.fixCallEntryPoint(expression)
         return stack.newFrame(irFunction, initPool = valueArguments) {
             // inline only methods are not presented in lookup table, so must be interpreted instead of execution
             val isInlineOnly = irFunction.hasAnnotation(FqName("kotlin.internal.InlineOnly"))
