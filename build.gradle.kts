@@ -935,6 +935,17 @@ tasks {
             )
         }
     }
+
+    register("jarsForIde") {
+        val idePluginDependencies = rootProject.file("prepare/ide-plugin-dependencies").listFiles()!!.map {
+            ":prepare:ide-plugin-dependencies:${it.name}:jar"
+        }.toTypedArray()
+        dependsOn(*idePluginDependencies)
+    }
+
+    register("classes") {
+        finalizedBy("jarsForIde")
+    }
 }
 
 fun CopySpec.setExecutablePermissions() {

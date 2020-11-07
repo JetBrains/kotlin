@@ -3,11 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+val KotlinBuildProperties.isCooperativeCompilationWithKotlinIde: Boolean
+    get() = rootProjectDir.resolve("../kotlin.kotlin-ide.iml").exists()
+
 val KotlinBuildProperties.includeJava9: Boolean
     get() = !isInJpsBuildIdeaSync && getBoolean("kotlin.build.java9", true)
 
 val KotlinBuildProperties.useBootstrapStdlib: Boolean
-    get() = isInJpsBuildIdeaSync || getBoolean("kotlin.build.useBootstrapStdlib", false)
+    get() = isInJpsBuildIdeaSync || getBoolean("kotlin.build.useBootstrapStdlib", false) || isCooperativeCompilationWithKotlinIde
 
 val KotlinBuildProperties.postProcessing: Boolean get() = isTeamcityBuild || getBoolean("kotlin.build.postprocessing", true)
 
