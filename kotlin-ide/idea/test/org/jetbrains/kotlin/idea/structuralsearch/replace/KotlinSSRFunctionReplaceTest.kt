@@ -74,4 +74,19 @@ class KotlinSSRFunctionReplaceTest : KotlinSSRReplaceTest() {
             result = "fun foo(one: Int, two: Double) {}"
         )
     }
+
+    fun testFunctionInitializer() {
+        doTest(
+            searchPattern = "'_ID()",
+            replacePattern = "'_ID()",
+            match = """
+                    class Foo
+                    fun foo() = Foo()
+                """.trimIndent(),
+            result = """
+                    class Foo
+                    fun foo() = Foo()
+                """.trimIndent()
+        )
+    }
 }

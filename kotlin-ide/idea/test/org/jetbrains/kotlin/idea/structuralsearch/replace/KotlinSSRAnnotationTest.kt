@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.idea.structuralsearch.replace
 
 import org.jetbrains.kotlin.idea.structuralsearch.KotlinSSRReplaceTest
 
-class KotlinSSAnnotationTest : KotlinSSRReplaceTest() {
+class KotlinSSRAnnotationTest : KotlinSSRReplaceTest() {
     fun testAnnotatedClassReplacement() {
         doTest(
             searchPattern = "class '_ID",
