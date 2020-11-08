@@ -64,38 +64,37 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
                     replaceProperty(searchTemplate, match)
             }
         } else { // KtExpression
-            when(this) {
-                is KtWhenExpression -> replaceWhenExpression()
-                is KtLambdaExpression -> replaceLambdaExpression(searchTemplate, match)
-                is KtDotQualifiedExpression -> replaceDotQualifiedExpression(searchTemplate, match)
-                is KtCallExpression -> replaceCallExpression(searchTemplate, match)
+            when {
+                this is KtWhenExpression -> replaceWhenExpression()
+                this is KtLambdaExpression && searchTemplate is KtLambdaExpression && match is KtLambdaExpression ->
+                    replaceLambdaExpression(searchTemplate, match)
+                this is KtDotQualifiedExpression && searchTemplate is KtDotQualifiedExpression && match is KtDotQualifiedExpression ->
+                    replaceDotQualifiedExpression(searchTemplate, match)
+                this is KtCallExpression && searchTemplate is KtCallExpression && match is KtCallExpression ->
+                    replaceCallExpression(searchTemplate, match)
             }
             fixWhiteSpace(match)
         }
         return this
     }
 
-    private fun KtCallExpression.replaceCallExpression(searchTemplate: PsiElement, match: PsiElement) {
-        if(searchTemplate is KtCallExpression && match is KtCallExpression) {
-            lambdaArguments.firstOrNull()?.getLambdaExpression()?.replaceLambdaExpression(
-                searchTemplate.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return,
-                match.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return
-            )
-        }
+    private fun KtCallExpression.replaceCallExpression(searchTemplate: KtCallExpression, match: KtCallExpression) {
+        lambdaArguments.firstOrNull()?.getLambdaExpression()?.replaceLambdaExpression(
+            searchTemplate.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return,
+            match.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return
+        )
     }
 
     private fun KtDotQualifiedExpression.replaceDotQualifiedExpression(
-        searchTemplate: PsiElement,
-        match: PsiElement
+        searchTemplate: KtDotQualifiedExpression,
+        match: KtDotQualifiedExpression
     ) {
-        if(searchTemplate is KtDotQualifiedExpression && match is KtDotQualifiedExpression) {
-            receiverExpression.structuralReplace(searchTemplate.receiverExpression, match.receiverExpression)
-            val selectorExpr = selectorExpression
-            val searchSelectorExpr = searchTemplate.selectorExpression
-            val matchSelectorExpr = match.selectorExpression
-            if(selectorExpr != null && searchSelectorExpr != null && matchSelectorExpr != null) {
-                selectorExpr.structuralReplace(searchSelectorExpr, matchSelectorExpr)
-            }
+        receiverExpression.structuralReplace(searchTemplate.receiverExpression, match.receiverExpression)
+        val selectorExpr = selectorExpression
+        val searchSelectorExpr = searchTemplate.selectorExpression
+        val matchSelectorExpr = match.selectorExpression
+        if(selectorExpr != null && searchSelectorExpr != null && matchSelectorExpr != null) {
+            selectorExpr.structuralReplace(searchSelectorExpr, matchSelectorExpr)
         }
     }
 
@@ -106,23 +105,31 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         }
     }
 
-    private fun KtLambdaExpression.replaceLambdaExpression(searchTemplate: PsiElement, match: PsiElement) {
-        if(searchTemplate is KtLambdaExpression && match is KtLambdaExpression) {
-            if(valueParameters.isEmpty() && searchTemplate.valueParameters.isEmpty()) { // { $A$ } templates
-                match.functionLiteral.valueParameterList?.let {
-                    functionLiteral.addAfter(it, functionLiteral.lBrace)
-                    functionLiteral.addAfter(match.functionLiteral.arrow!!, functionLiteral.valueParameterList!!)
-                    functionLiteral.addSurroundingWhiteSpace(
-                        functionLiteral.valueParameterList!!,
-                        match.functionLiteral.valueParameterList!!
-                    )
-                }
+    private fun KtLambdaExpression.replaceLambdaExpression(searchTemplate: KtLambdaExpression, match: KtLambdaExpression) {
+        if(valueParameters.isEmpty() && searchTemplate.valueParameters.isEmpty()) { // { $A$ } templates
+            match.functionLiteral.valueParameterList?.let {
+                functionLiteral.addAfter(it, functionLiteral.lBrace)
+                functionLiteral.addAfter(match.functionLiteral.arrow!!, functionLiteral.valueParameterList!!)
+                functionLiteral.addSurroundingWhiteSpace(
+                    functionLiteral.valueParameterList!!,
+                    match.functionLiteral.valueParameterList!!
+                )
             }
         }
         if(valueParameters.isEmpty()) {
             findDescendantOfType<PsiElement> { it.elementType == KtTokens.ARROW }?.let {
                 it.deleteSurroundingWhitespace()
                 it.delete()
+            }
+        }
+        valueParameters.forEachIndexed { i, par ->
+            val searchPar = searchTemplate.valueParameters.getOrElse(i) { return@forEachIndexed }
+            val matchPar = match.valueParameters.getOrElse(i) { return@forEachIndexed }
+            if(par.typeReference == null && searchPar.typeReference == null) {
+                matchPar.typeReference?.let {
+                    par.typeReference = it
+                    par.addSurroundingWhiteSpace(par.typeReference!!, it)
+                }
             }
         }
     }
