@@ -1923,6 +1923,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/nested/inner.kt");
         }
 
+        @TestMetadata("innerTypeFromSuperClassInBody.kt")
+        public void testInnerTypeFromSuperClassInBody() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/nested/innerTypeFromSuperClassInBody.kt");
+        }
+
         @TestMetadata("innerTypes.kt")
         public void testInnerTypes() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/nested/innerTypes.kt");

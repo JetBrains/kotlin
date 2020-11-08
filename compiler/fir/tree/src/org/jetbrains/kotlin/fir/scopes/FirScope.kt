@@ -35,6 +35,10 @@ abstract class FirScope {
     open fun mayContainName(name: Name) = true
 }
 
+fun FirScope.getSingleClassifier(name: Name): FirClassifierSymbol<*>? = mutableListOf<FirClassifierSymbol<*>>().apply {
+    processClassifiersByName(name, this::add)
+}.singleOrNull()
+
 fun FirScope.getFunctions(name: Name): List<FirFunctionSymbol<*>> = mutableListOf<FirFunctionSymbol<*>>().apply {
     processFunctionsByName(name, this::add)
 }

@@ -43,8 +43,6 @@ class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope(), FirContaini
         processor(matchedClass, ConeSubstitutorByMap(substitution))
     }
 
-    fun getClassifierByName(name: Name): FirRegularClassSymbol? = classIndex[name]
-
     override fun getClassifierNames(): Set<Name> = classIndex.keys
 
     override fun getCallableNames(): Set<Name> = emptySet()
