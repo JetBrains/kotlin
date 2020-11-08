@@ -183,6 +183,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
         runTest("compiler/fir/analysis-tests/testData/resolve/fib.kt");
     }
 
+    @TestMetadata("flexibleCapturedType.kt")
+    public void testFlexibleCapturedType() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/flexibleCapturedType.kt");
+    }
+
     @TestMetadata("ft.kt")
     public void testFt() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/ft.kt");

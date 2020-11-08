@@ -168,7 +168,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? {
         require(this is ConeCapturedType)
-        return this.lowerType
+        if (!this.isMarkedNullable) return this.lowerType
+        return this.lowerType?.makeNullable()
     }
 
     override fun TypeArgumentMarker.isStarProjection(): Boolean {
