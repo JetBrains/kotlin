@@ -95,6 +95,15 @@ internal val Annotations.serialRequired: Boolean
 internal val Annotations.serialTransient: Boolean
     get() = hasAnnotation(SerializationAnnotations.serialTransientFqName)
 
+enum class EncodeDefaultMode {
+    DEFAULT,
+    ALWAYS,
+    NEVER
+}
+
+internal val Annotations.encodeDefaultMode: EncodeDefaultMode
+    get() = findAnnotationEnumValue<EncodeDefaultMode>(SerializationAnnotations.encodeDefaultModeAnnotationFqName, "mode")
+        ?: EncodeDefaultMode.DEFAULT
 // ----------------------------------------
 
 val KotlinType?.toClassDescriptor: ClassDescriptor?

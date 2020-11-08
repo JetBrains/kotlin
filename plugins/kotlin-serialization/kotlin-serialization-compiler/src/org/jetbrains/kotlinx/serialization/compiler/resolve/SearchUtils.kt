@@ -51,6 +51,11 @@ inline fun <reified R> Annotations.findAnnotationConstantValue(annotationFqName:
         annotation.allValueArguments.entries.singleOrNull { it.key.asString() == property }?.value?.value
     } as? R
 
+inline fun <reified R : Enum<R>> Annotations.findAnnotationEnumValue(annotationFqName: FqName, property: String): R? =
+    this.findAnnotationConstantValue<Pair<ClassId, Name>>(annotationFqName, property)?.second?.asString()?.let {
+        enumValueOf<R>(it)
+    }
+
 internal fun Annotations.findAnnotationKotlinTypeValue(
     annotationFqName: FqName,
     moduleForResolve: ModuleDescriptor,

@@ -138,7 +138,7 @@ class SerializableCodegenImpl(
 
         for (i in myPropsStart until properties.serializableProperties.size) {
             val property = properties[i]
-            if (!property.optional) {
+            if (!property.optional || property.encodeDefaultMode == EncodeDefaultMode.ALWAYS) {
                 emitEncoderCall(property, i)
             } else {
                 val writeLabel = Label()
@@ -160,13 +160,14 @@ class SerializableCodegenImpl(
                 val rhs = StackValue.onStack(propAsmType)
                 // INVOKESTATIC kotlin/jvm/internal/Intrinsics.areEqual (Ljava/lang/Object;Ljava/lang/Object;)Z
                 DescriptorAsmUtil.genEqualsForExpressionsOnStack(KtTokens.EXCLEQ, lhs, rhs).put(Type.BOOLEAN_TYPE, null, this)
-                ifne(writeLabel)
-
-                // output.shouldEncodeElementDefault(descriptor, i)
-                load(outputI, kOutputType)
-                load(serialDescI, descType)
-                iconst(i)
-                invokeinterface(kOutputType.internalName, CallingConventions.shouldEncodeDefault, "(${descType.descriptor}I)Z")
+                if (property.encodeDefaultMode != EncodeDefaultMode.NEVER) {
+                    ifne(writeLabel)
+                    // output.shouldEncodeElementDefault(descriptor, i)
+                    load(outputI, kOutputType)
+                    load(serialDescI, descType)
+                    iconst(i)
+                    invokeinterface(kOutputType.internalName, CallingConventions.shouldEncodeDefault, "(${descType.descriptor}I)Z")
+                }
                 ifeq(nonWriteLabel)
 
                 visitLabel(writeLabel)
