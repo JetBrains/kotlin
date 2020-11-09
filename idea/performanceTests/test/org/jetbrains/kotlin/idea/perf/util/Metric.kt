@@ -30,6 +30,8 @@ data class Benchmark(
     var buildTimestamp: String,
     @set:JsonProperty("buildBranch")
     var buildBranch: String?,
+    @set:JsonProperty("commit")
+    var commit: String? = null,
     @set:JsonProperty("buildId")
     var buildId: Int?,
     @set:JsonProperty("metricValue")

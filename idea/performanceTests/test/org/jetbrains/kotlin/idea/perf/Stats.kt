@@ -359,6 +359,7 @@ class Stats(
         var buildId: Int? = null
         var agentName: String? = null
         var buildBranch: String? = null
+        var commit: String? = null
 
         System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE")?.let { teamcityConfig ->
             val buildProperties = Properties()
@@ -367,6 +368,7 @@ class Stats(
             buildId = buildProperties["teamcity.build.id"]?.toString()?.toInt()
             agentName = buildProperties["agent.name"]?.toString()
             buildBranch = buildProperties["teamcity.build.branch"]?.toString()
+            commit = buildProperties["build.vcs.number"]?.toString()
         }
 
         if (perfTestRawDataMs.isNotEmpty()) {
@@ -379,6 +381,7 @@ class Stats(
                 val benchmark = Benchmark(
                     agentName = agentName,
                     buildBranch = buildBranch,
+                    commit = commit,
                     buildId = buildId,
                     benchmark = name,
                     name = it.metricName,
@@ -389,6 +392,7 @@ class Stats(
                 )
 
                 benchmark.writeJson()
+                ESUploader.upload(benchmark)
             }
         } finally {
             metric = null
