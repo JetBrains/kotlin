@@ -1829,27 +1829,27 @@ public inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) -> Unit
     for (item in this) action(checkIndexOverflow(index++), item)
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Iterable<Double>.max(): Double? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Iterable<Float>.max(): Float? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T : Comparable<T>> Iterable<T>.max(): T? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): T? {
     return maxByOrNull(selector)
@@ -2103,7 +2103,7 @@ public fun <T : Comparable<T>> Iterable<T>.maxOrNull(): T? {
     return max
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T? {
     return maxWithOrNull(comparator)
@@ -2124,27 +2124,27 @@ public fun <T> Iterable<T>.maxWithOrNull(comparator: Comparator<in T>): T? {
     return max
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Iterable<Double>.min(): Double? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Iterable<Float>.min(): Float? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T : Comparable<T>> Iterable<T>.min(): T? {
     return minOrNull()
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): T? {
     return minByOrNull(selector)
@@ -2398,7 +2398,7 @@ public fun <T : Comparable<T>> Iterable<T>.minOrNull(): T? {
     return min
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T? {
     return minWithOrNull(comparator)
