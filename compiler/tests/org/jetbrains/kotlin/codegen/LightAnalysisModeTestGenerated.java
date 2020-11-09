@@ -23149,6 +23149,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/properties/kt9603.kt");
         }
 
+        @TestMetadata("lazyInitialization.kt")
+        public void testLazyInitialization() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/lazyInitialization.kt");
+        }
+
         @TestMetadata("primitiveOverrideDefaultAccessor.kt")
         public void testPrimitiveOverrideDefaultAccessor() throws Exception {
             runTest("compiler/testData/codegen/box/properties/primitiveOverrideDefaultAccessor.kt");
