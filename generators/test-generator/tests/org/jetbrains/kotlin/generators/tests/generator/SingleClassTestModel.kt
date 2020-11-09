@@ -16,22 +16,20 @@
 package org.jetbrains.kotlin.generators.tests.generator
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
 
 class SingleClassTestModel(
-    private val rootFile: File,
-    private val filenamePattern: Pattern,
-    private val excludePattern: Pattern?,
+    val rootFile: File,
+    val filenamePattern: Pattern,
+    val excludePattern: Pattern?,
     private val checkFilenameStartsLowerCase: Boolean?,
     private val doTestMethodName: String,
     private val testClassName: String,
-    private val targetBackend: TargetBackend,
+    val targetBackend: TargetBackend,
     private val skipIgnored: Boolean,
     private val testRunnerMethodName: String,
     private val additionalRunnerArguments: List<String>,
@@ -56,7 +54,7 @@ class SingleClassTestModel(
     override val innerTestClasses: Collection<TestClassModel>
         get() = emptyList()
 
-    private fun getTestMethodsFromFile(file: File): Collection<TestMethodModel> {
+    private fun getTestMethodsFromFile(file: File): Collection<MethodModel> {
         return listOf(
             SimpleTestMethodModel(
                 rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored
@@ -70,36 +68,18 @@ class SingleClassTestModel(
     override val dataString: String = KotlinTestUtils.getFilePath(rootFile)
     override val dataPathRoot: String = "\$PROJECT_ROOT"
 
-    private inner class TestAllFilesPresentMethodModel : TestMethodModel() {
+    object AllFilesPresentedMethodKind : MethodModel.Kind()
+
+    inner class TestAllFilesPresentMethodModel : MethodModel {
         override val name: String = "testAllFilesPresentIn$testClassName"
         override val dataString: String?
             get() = null
 
-        override fun generateBody(p: Printer) {
-            val assertTestsPresentStr: String
-            val excludedArgument = if (excludePattern != null) {
-                String.format(
-                    "Pattern.compile(\"%s\")", StringUtil.escapeStringCharacters(
-                        excludePattern.pattern()
-                    )
-                )
-            } else {
-                null
-            }
-            assertTestsPresentStr = if (targetBackend !== TargetBackend.ANY) {
-                String.format(
-                    "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s);",
-                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
-                    excludedArgument, TargetBackend::class.java.simpleName, targetBackend.toString()
-                )
-            } else {
-                String.format(
-                    "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s);",
-                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()), excludedArgument
-                )
-            }
-            p.println(assertTestsPresentStr)
-        }
+        val classModel: SingleClassTestModel
+            get() = this@SingleClassTestModel
+
+        override val kind: MethodModel.Kind
+            get() = AllFilesPresentedMethodKind
 
         override fun shouldBeGenerated(): Boolean {
             return true

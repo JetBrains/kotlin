@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests.generator
 
+import org.jetbrains.kotlin.generators.tests.generator.generators.MethodGenerator
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -22,8 +23,12 @@ class TestGenerator(
     suiteTestClassFqName: String,
     baseTestClassFqName: String,
     testClassModels: Collection<TestClassModel>,
-    useJunit4: Boolean
+    useJunit4: Boolean,
+    methodGenerators: List<MethodGenerator<*>>
 ) {
+    private val methodGenerators: Map<MethodModel.Kind, MethodGenerator<*>> =
+        methodGenerators.associateBy { it.kind }.withDefault { error("Generator for method with kind $it not found") }
+
     private val baseTestClassPackage: String
     private val suiteClassPackage: String
     private val suiteClassName: String
@@ -188,28 +193,31 @@ class TestGenerator(
         p.println("}")
     }
 
+    private fun generateTestMethod(p: Printer, methodModel: MethodModel, useJunit4: Boolean) {
+        if (useJunit4 && (methodModel !is RunTestMethodModel)) {
+            p.println("@Test")
+        }
+
+        val generator = methodGenerators.getValue(methodModel.kind)
+
+        generateMetadata(p, methodModel)
+        generator.generateSignature(methodModel, p)
+        p.printWithNoIndent(" {")
+        p.println()
+
+        p.pushIndent()
+
+        generator.generateBody(methodModel, p)
+
+        p.popIndent()
+        p.println("}")
+    }
+
     companion object {
         private val GENERATED_FILES = HashSet<String>()
         private val RUNNER = JUnit3RunnerWithInners::class.java
         private val JUNIT4_RUNNER = BlockJUnit4ClassRunner::class.java
 
-        private fun generateTestMethod(p: Printer, methodModel: MethodModel, useJunit4: Boolean) {
-            if (useJunit4 && (methodModel !is RunTestMethodModel)) {
-                p.println("@Test")
-            }
-            generateMetadata(p, methodModel)
-
-            methodModel.generateSignature(p)
-            p.printWithNoIndent(" {")
-            p.println()
-
-            p.pushIndent()
-
-            methodModel.generateBody(p)
-
-            p.popIndent()
-            p.println("}")
-        }
 
         private fun generateMetadata(p: Printer, testDataSource: TestEntityModel) {
             val dataString = testDataSource.dataString

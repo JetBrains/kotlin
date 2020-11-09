@@ -44,14 +44,9 @@ abstract class TestClassModel : ClassModel {
 }
 
 interface MethodModel : TestEntityModel {
+    abstract class Kind
+
+    val kind: Kind
     fun shouldBeGenerated(): Boolean = true
-    fun generateSignature(p: Printer)
-    fun generateBody(p: Printer)
     fun imports(): Collection<Class<*>> = emptyList()
 }
-
-abstract class TestMethodModel : MethodModel {
-    override fun generateSignature(p: Printer) {
-        p.print("public void $name() throws Exception")
-    }
-}   

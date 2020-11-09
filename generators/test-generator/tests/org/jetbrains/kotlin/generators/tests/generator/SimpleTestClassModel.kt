@@ -5,25 +5,23 @@
 package org.jetbrains.kotlin.generators.tests.generator
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.generators.tests.generator.TestGeneratorUtil.fileNameToJavaIdentifier
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.utils.Printer
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
 
 class SimpleTestClassModel(
-    private val rootFile: File,
-    private val recursive: Boolean,
+    val rootFile: File,
+    val recursive: Boolean,
     private val excludeParentDirs: Boolean,
-    private val filenamePattern: Pattern,
-    private val excludePattern: Pattern?,
+    val filenamePattern: Pattern,
+    val excludePattern: Pattern?,
     private val checkFilenameStartsLowerCase: Boolean?,
     private val doTestMethodName: String,
     private val testClassName: String,
-    private val targetBackend: TargetBackend,
+    val targetBackend: TargetBackend,
     excludeDirs: Collection<String>,
     private val skipIgnored: Boolean,
     private val testRunnerMethodName: String,
@@ -34,7 +32,7 @@ class SimpleTestClassModel(
     override val name: String
         get() = testClassName
 
-    private val excludeDirs: Set<String> = excludeDirs.toSet()
+    val excludeDirs: Set<String> = excludeDirs.toSet()
 
     override val innerTestClasses: Collection<TestClassModel> by lazy {
         if (!rootFile.isDirectory || !recursive || deep != null && deep < 1) {
@@ -127,43 +125,20 @@ class SimpleTestClassModel(
     override val dataPathRoot: String
         get() = "\$PROJECT_ROOT"
 
-    private inner class TestAllFilesPresentMethodModel : TestMethodModel() {
+    object TestAllFilesPresentMethodKind : MethodModel.Kind()
+
+    inner class TestAllFilesPresentMethodModel : MethodModel {
+        override val kind: MethodModel.Kind
+            get() = TestAllFilesPresentMethodKind
+
         override val name: String
             get() = "testAllFilesPresentIn$testClassName"
 
         override val dataString: String?
             get() = null
 
-        override fun generateBody(p: Printer) {
-            val exclude = StringBuilder()
-            for (dir in excludeDirs) {
-                exclude.append(", \"")
-                exclude.append(StringUtil.escapeStringCharacters(dir))
-                exclude.append("\"")
-            }
-            val excludedArgument = if (excludePattern != null) {
-                String.format("Pattern.compile(\"%s\")", StringUtil.escapeStringCharacters(excludePattern.pattern()))
-            } else {
-                null
-            }
-            val assertTestsPresentStr = if (targetBackend === TargetBackend.ANY) {
-                String.format(
-                    "KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s%s);",
-                    KotlinTestUtils.getFilePath(rootFile),
-                    StringUtil.escapeStringCharacters(filenamePattern.pattern()),
-                    excludedArgument,
-                    recursive,
-                    exclude
-                )
-            } else {
-                String.format(
-                    "KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s, %s%s);",
-                    KotlinTestUtils.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
-                    excludedArgument, TargetBackend::class.java.simpleName, targetBackend.toString(), recursive, exclude
-                )
-            }
-            p.println(assertTestsPresentStr)
-        }
+        val classModel: SimpleTestClassModel
+            get() = this@SimpleTestClassModel
 
         override fun shouldBeGenerated(): Boolean {
             return true

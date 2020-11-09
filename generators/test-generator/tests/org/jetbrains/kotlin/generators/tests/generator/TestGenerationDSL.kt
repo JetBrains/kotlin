@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tests.generator
 import junit.framework.TestCase
 import org.jetbrains.kotlin.generators.tests.generator.InconsistencyChecker.Companion.hasDryRunArg
 import org.jetbrains.kotlin.generators.tests.generator.InconsistencyChecker.Companion.inconsistencyChecker
+import org.jetbrains.kotlin.generators.tests.generator.generators.impl.*
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.*
@@ -42,7 +43,15 @@ class TestGroup(
             suiteTestClassName,
             baseTestClassName,
             TestClass(annotations).apply(init).testModels,
-            useJunit4
+            useJunit4,
+            methodGenerators = listOf(
+                CoroutinesTestMethodGenerator,
+                RunTestMethodGenerator,
+                RunTestMethodWithPackageReplacementGenerator,
+                SimpleTestClassModelTestAllFilesPresentMethodGenerator,
+                SimpleTestMethodGenerator,
+                SingleClassTestModelAllFilesPresentedMethodGenerator
+            )
         )
         if (testGenerator.generateAndSave(dryRun)) {
             inconsistencyChecker(dryRun).add(testGenerator.testSourceFilePath)

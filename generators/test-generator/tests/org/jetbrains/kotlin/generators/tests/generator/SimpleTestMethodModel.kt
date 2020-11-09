@@ -15,16 +15,16 @@ import java.util.regex.Pattern
 
 open class SimpleTestMethodModel(
     private val rootDir: File,
-    protected val file: File,
+    val file: File,
     private val filenamePattern: Pattern,
     checkFilenameStartsLowerCase: Boolean?,
     protected val targetBackend: TargetBackend,
     private val skipIgnored: Boolean
-) : TestMethodModel() {
-    override fun generateBody(p: Printer) {
-        val filePath = KotlinTestUtils.getFilePath(file) + if (file.isDirectory) "/" else ""
-        p.println(RunTestMethodModel.METHOD_NAME, "(\"", filePath, "\");")
-    }
+) : MethodModel {
+    object Kind : MethodModel.Kind()
+
+    override val kind: MethodModel.Kind
+        get() = Kind
 
     override val dataString: String
         get() {
