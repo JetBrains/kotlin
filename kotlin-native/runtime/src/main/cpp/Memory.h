@@ -236,7 +236,7 @@ void GC_UnregisterWorker(void* worker) RUNTIME_NOTHROW;
 void GC_CollectorCallback(void* worker) RUNTIME_NOTHROW;
 
 bool Kotlin_Any_isShareable(ObjHeader* thiz);
-void PerformFullGC() RUNTIME_NOTHROW;
+void PerformFullGC(MemoryState* memory) RUNTIME_NOTHROW;
 
 bool TryAddHeapRef(const ObjHeader* object);
 

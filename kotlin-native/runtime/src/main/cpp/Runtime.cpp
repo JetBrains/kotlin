@@ -76,12 +76,23 @@ inline bool isValidRuntime() {
 
 volatile int aliveRuntimesCount = 0;
 
+enum GlobalRuntimeStatus {
+    kGlobalRuntimeUninitialized = 0,
+    kGlobalRuntimeRunning,
+    kGlobalRuntimeShutdown,
+};
+
+volatile GlobalRuntimeStatus globalRuntimeStatus = kGlobalRuntimeUninitialized;
+
 RuntimeState* initRuntime() {
   SetKonanTerminateHandler();
   RuntimeState* result = konanConstructInstance<RuntimeState>();
   if (!result) return kInvalidRuntime;
   RuntimeCheck(!isValidRuntime(), "No active runtimes allowed");
   ::runtimeState = result;
+
+  compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
+
   result->memoryState = InitMemory();
   result->worker = WorkerInit(true);
   bool firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
@@ -147,6 +158,34 @@ void Kotlin_deinitRuntimeIfNeeded() {
     deinitRuntime(::runtimeState);
     ::runtimeState = kInvalidRuntime;
   }
+}
+
+// TODO: Consider exporting it to interop API.
+void Kotlin_shutdownRuntime() {
+    // TODO: If checkers are disabled, we can set status to "shutdown" here, and return.
+    auto* runtime = ::runtimeState;
+    RuntimeAssert(runtime != kInvalidRuntime, "Current thread must have Kotlin runtime initialized on it");
+
+    if (Kotlin_cleanersLeakCheckerEnabled()) {
+        // Make sure to collect any lingering cleaners.
+        PerformFullGC(runtime->memoryState);
+    }
+
+    // Stop cleaner worker. Only execute the cleaners if checker is enabled.
+    ShutdownCleaners(Kotlin_cleanersLeakCheckerEnabled());
+
+    // Cleaners are now done, disallow new runtimes.
+    auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
+    RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
+
+    // TODO: If we add early return at the top, this if would be unneeded.
+    if (Kotlin_memoryLeakCheckerEnabled() || Kotlin_cleanersLeakCheckerEnabled()) {
+        // First make sure workers are gone.
+        WaitNativeWorkersTermination();
+    }
+
+    deinitRuntime(runtime);
+    ::runtimeState = kInvalidRuntime;
 }
 
 KInt Konan_Platform_canAccessUnaligned() {

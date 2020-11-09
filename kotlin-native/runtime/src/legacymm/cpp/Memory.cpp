@@ -3607,8 +3607,8 @@ bool Kotlin_Any_isShareable(KRef thiz) {
     return thiz == nullptr || isShareable(containerFor(thiz));
 }
 
-RUNTIME_NOTHROW void PerformFullGC() {
-    garbageCollect(::memoryState, true);
+RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
+    garbageCollect(memory, true);
 }
 
 void CheckGlobalsAccessible() {

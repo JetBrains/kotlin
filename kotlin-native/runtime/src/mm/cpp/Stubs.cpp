@@ -198,7 +198,7 @@ bool Kotlin_Any_isShareable(ObjHeader* thiz) {
     RuntimeCheck(false, "Unimplemented");
 }
 
-RUNTIME_NOTHROW void PerformFullGC() {
+RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
     RuntimeCheck(false, "Unimplemented");
 }
 
