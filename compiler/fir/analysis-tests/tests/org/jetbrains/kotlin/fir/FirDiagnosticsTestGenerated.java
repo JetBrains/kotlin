@@ -358,6 +358,11 @@ public class FirDiagnosticsTestGenerated extends AbstractFirDiagnosticsTest {
         runTest("compiler/fir/analysis-tests/testData/resolve/qualifierWithCompanion.kt");
     }
 
+    @TestMetadata("rawTypeSam.kt")
+    public void testRawTypeSam() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolve/rawTypeSam.kt");
+    }
+
     @TestMetadata("recursiveCallOnWhenWithSealedClass.kt")
     public void testRecursiveCallOnWhenWithSealedClass() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolve/recursiveCallOnWhenWithSealedClass.kt");
