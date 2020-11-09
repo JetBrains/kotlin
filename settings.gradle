@@ -349,6 +349,7 @@ include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for
         ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-dist-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-reflect-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide",
         ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide",
         ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide",
