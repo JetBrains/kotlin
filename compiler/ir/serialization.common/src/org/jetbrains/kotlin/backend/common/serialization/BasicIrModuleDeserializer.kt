@@ -28,7 +28,7 @@ abstract class BasicIrModuleDeserializer(
 ) :
     IrModuleDeserializer(moduleDescriptor) {
 
-    private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
+    private val fileDeserializers = mutableListOf<IrFileDeserializer>()
 
     private inner class ModuleDeserializationState {
         private val filesWithPendingTopLevels = mutableSetOf<IrFileDeserializer>()
@@ -76,7 +76,7 @@ abstract class BasicIrModuleDeserializer(
 
         moduleFragment.files.addAll(files)
 
-        fileToDeserializerMap.values.forEach { it.symbolDeserializer.deserializeExpectActualMapping() }
+        fileDeserializers.forEach { it.symbolDeserializer.deserializeExpectActualMapping() }
     }
 
     // TODO: fix to topLevel checker
@@ -121,7 +121,7 @@ abstract class BasicIrModuleDeserializer(
                 handleNoModuleDeserializerFound,
             )
 
-        fileToDeserializerMap[file] = fileDeserializer
+        fileDeserializers += fileDeserializer
 
         val topLevelDeclarations = fileDeserializer.reversedSignatureIndex.keys
         topLevelDeclarations.forEach {
