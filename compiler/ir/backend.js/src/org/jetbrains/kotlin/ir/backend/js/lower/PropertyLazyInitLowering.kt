@@ -40,7 +40,14 @@ class PropertyLazyInitLowering(private val context: JsIrBackendContext) : FileLo
 
         val fieldToInitializer = calculateFieldToExpression(
             functions
-        ).onEach { it.key.initializer = null }
+        )
+
+        val allPropertyInitializersPure = fieldToInitializer
+            .all { it.value.isPure(anyVariable = true) }
+
+        if (allPropertyInitializersPure) return
+
+        fieldToInitializer.onEach { it.key.initializer = null }
 
         if (fieldToInitializer.isEmpty()) return
 
