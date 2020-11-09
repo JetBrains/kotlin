@@ -922,7 +922,7 @@ tasks {
                 ":prepare:ide-plugin-dependencies:kotlin-scripting-common-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-scripting-jvm-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-scripting-compiler-for-ide:publish",
-                ":kotlin-scripting-compiler-impl:publish",
+                ":prepare:ide-plugin-dependencies:kotlin-scripting-compiler-impl-for-ide:publish",
                 ":kotlin-stdlib-common:publish",
                 ":kotlin-stdlib:publish",
                 ":kotlin-stdlib-jdk7:publish",
