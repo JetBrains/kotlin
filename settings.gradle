@@ -358,6 +358,7 @@ include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for
         ":prepare:ide-plugin-dependencies:tests-common-tests-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-script-runtime-for-ide",
         ":prepare:ide-plugin-dependencies:kotlin-script-util-for-ide",
+        ":prepare:ide-plugin-dependencies:kotlin-scripting-common-for-ide",
         ":prepare:ide-plugin-dependencies:compiler-components-for-jps"
 
 if (buildProperties.includeCidrPlugins) {
