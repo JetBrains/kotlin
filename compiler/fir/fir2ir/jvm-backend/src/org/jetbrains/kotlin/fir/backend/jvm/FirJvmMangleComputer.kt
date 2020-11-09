@@ -223,6 +223,10 @@ open class FirJvmMangleComputer(
                 if (type.isMarkedNullable) {
                     tBuilder.appendSignature(MangleConstant.Q_MARK)
                 }
+
+                if (type.hasEnhancedNullability) {
+                    tBuilder.appendSignature(MangleConstant.ENHANCED_NULLABILITY_MARK)
+                }
             }
             is ConeFlexibleType -> {
                 // TODO: is that correct way to mangle flexible type?
