@@ -16737,6 +16737,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/innerNested/innerWithDefaultArgument.kt");
         }
 
+        @TestMetadata("innerWithDefaultInner.kt")
+        public void testInnerWithDefaultInner() throws Exception {
+            runTest("compiler/testData/codegen/box/innerNested/innerWithDefaultInner.kt");
+        }
+
         @TestMetadata("kt3132.kt")
         public void testKt3132() throws Exception {
             runTest("compiler/testData/codegen/box/innerNested/kt3132.kt");

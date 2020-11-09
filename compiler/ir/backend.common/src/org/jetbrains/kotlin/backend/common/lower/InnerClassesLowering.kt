@@ -97,9 +97,17 @@ private fun InnerClassesSupport.primaryConstructorParameterMap(originalConstruct
 
     val loweredConstructor = getInnerClassConstructorWithOuterThisParameter(originalConstructor)
 
-    originalConstructor.valueParameters.forEach { old ->
-        oldConstructorParameterToNew[old] = loweredConstructor.valueParameters[old.index + 1]
+    var index = 0
+
+    originalConstructor.dispatchReceiverParameter?.let {
+        oldConstructorParameterToNew[it] = loweredConstructor.valueParameters[index++]
     }
+
+    originalConstructor.valueParameters.forEach { old ->
+        oldConstructorParameterToNew[old] = loweredConstructor.valueParameters[index++]
+    }
+
+    assert(loweredConstructor.valueParameters.size == index)
 
     return oldConstructorParameterToNew
 }
