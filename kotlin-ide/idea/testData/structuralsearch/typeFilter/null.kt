@@ -1,4 +1,4 @@
-fun foo(x: Int?) { print(x) }
+fun foo(x: Int?): Int? { return x }
 
 fun main() {
     foo(1)
