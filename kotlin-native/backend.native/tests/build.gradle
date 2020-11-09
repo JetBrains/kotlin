@@ -4837,6 +4837,7 @@ task override_konan_properties0(type: KonanDriverTest) {
 KotlinNativeTestKt.createTest(project, 'stdlibTest', KonanGTest) { task ->
     def sources = UtilsKt.getFilesToCompile(project,
             [ 'build/stdlib_external/stdlib', 'stdlib_external/utils.kt',
+                                 'stdlib_external/collections',
                                  'stdlib_external/jsCollectionFactoriesActuals.kt',
                                  'stdlib_external/text/StringEncodingTestNative.kt'],
             [ 'build/stdlib_external/stdlib/test/internalAnnotations.kt' ])
