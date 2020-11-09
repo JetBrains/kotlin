@@ -85,5 +85,4 @@ FILE fqName:<root> fileName:/nullCheckOnLambdaReturn.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.test6'
-                  TYPE_OP type=@[EnhancedNullability] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[EnhancedNullability] kotlin.String
-                    CALL 'public open fun nnFoo (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
+                  CALL 'public open fun nnFoo (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null

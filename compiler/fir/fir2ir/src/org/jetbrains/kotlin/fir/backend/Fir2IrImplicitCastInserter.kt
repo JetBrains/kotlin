@@ -29,7 +29,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.removeAnnotations
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrImplicitCastInserter(
@@ -206,8 +209,7 @@ class Fir2IrImplicitCastInserter(
             expectedType.isUnit -> {
                 coerceToUnitIfNeeded(type, irBuiltIns)
             }
-            // TODO: Not exactly matched with psi2ir yet...
-            valueType.hasEnhancedNullability() -> {
+            valueType.hasEnhancedNullability() && !expectedType.acceptsNullValues() -> {
                 insertImplicitNotNullCastIfNeeded(expression)
             }
             // TODO: coerceIntToAnotherIntegerType
@@ -216,18 +218,24 @@ class Fir2IrImplicitCastInserter(
         }
     }
 
+    private fun FirTypeRef.acceptsNullValues(): Boolean =
+        isMarkedNullable == true || hasEnhancedNullability()
+
     private fun IrExpression.insertImplicitNotNullCastIfNeeded(expression: FirExpression): IrExpression {
         // [TypeOperatorLowering] will retrieve the source (from start offset to end offset) as an assertion message.
         // Avoid type casting if we can't determine the source for some reasons, e.g., implicit `this` receiver.
         if (expression.source == null) {
             return this
         }
+        val castType = type.removeAnnotations {
+            it.symbol.owner.parentAsClass.classId == CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID
+        }
         return IrTypeOperatorCallImpl(
             this.startOffset,
             this.endOffset,
-            this.type,
+            castType,
             IrTypeOperator.IMPLICIT_NOTNULL,
-            this.type,
+            castType,
             this
         )
     }

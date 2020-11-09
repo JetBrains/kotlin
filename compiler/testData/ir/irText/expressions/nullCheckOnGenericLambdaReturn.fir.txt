@@ -41,18 +41,17 @@ FILE fqName:<root> fileName:/nullCheckOnGenericLambdaReturn.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String? declared in <root>.test1'
                   CALL 'public open fun foo (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:@[EnhancedNullability] kotlin.String
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test2 (): @[EnhancedNullability] kotlin.String declared in <root>'
-        TYPE_OP type=@[EnhancedNullability] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[EnhancedNullability] kotlin.String
+      RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.String declared in <root>'
+        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
           CALL 'public final fun checkT <T> (fn: kotlin.Function0<T of <root>.checkT>): T of <root>.checkT declared in <root>' type=@[EnhancedNullability] kotlin.String origin=null
             <T>: @[EnhancedNullability] kotlin.String
             fn: FUN_EXPR type=kotlin.Function0<@[EnhancedNullability] kotlin.String> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:@[EnhancedNullability] kotlin.String
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): @[EnhancedNullability] kotlin.String declared in <root>.test2'
-                    TYPE_OP type=@[EnhancedNullability] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[EnhancedNullability] kotlin.String
-                      CALL 'public open fun nnFoo (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
+                    CALL 'public open fun nnFoo (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.String?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.String? declared in <root>'
@@ -63,15 +62,14 @@ FILE fqName:<root> fileName:/nullCheckOnGenericLambdaReturn.kt
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String? declared in <root>.test3'
                   CALL 'public open fun foo (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
-  FUN name:test4 visibility:public modality:FINAL <> () returnType:@[EnhancedNullability] kotlin.String
+  FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test4 (): @[EnhancedNullability] kotlin.String declared in <root>'
-        TYPE_OP type=@[EnhancedNullability] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[EnhancedNullability] kotlin.String
+      RETURN type=kotlin.Nothing from='public final fun test4 (): kotlin.String declared in <root>'
+        TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
           CALL 'public final fun checkTAny <T> (fn: kotlin.Function0<T of <root>.checkTAny>): T of <root>.checkTAny declared in <root>' type=@[EnhancedNullability] kotlin.String origin=null
             <T>: @[EnhancedNullability] kotlin.String
             fn: FUN_EXPR type=kotlin.Function0<@[EnhancedNullability] kotlin.String> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:@[EnhancedNullability] kotlin.String
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): @[EnhancedNullability] kotlin.String declared in <root>.test4'
-                    TYPE_OP type=@[EnhancedNullability] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[EnhancedNullability] kotlin.String
-                      CALL 'public open fun nnFoo (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
+                    CALL 'public open fun nnFoo (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null

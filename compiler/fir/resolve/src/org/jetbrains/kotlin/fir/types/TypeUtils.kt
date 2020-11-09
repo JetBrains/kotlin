@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -83,6 +84,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable, attributes)
         is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType.create(original.withAttributes(attributes))!!
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable, attributes)
+        is ConeFlexibleType -> ConeFlexibleType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
         else -> error("Not supported: $this: ${this.render()}")
     } as T
 }
@@ -186,6 +188,20 @@ fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
 fun FirTypeRef.hasEnhancedNullability(): Boolean =
     coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability == true
 
+fun FirTypeRef.withoutEnhancedNullability(): FirTypeRef {
+    require(this is FirResolvedTypeRef)
+    if (!hasEnhancedNullability()) return this
+    return buildResolvedTypeRef {
+        source = this@withoutEnhancedNullability.source
+        type = this@withoutEnhancedNullability.type.withAttributes(
+            ConeAttributes.create(
+                this@withoutEnhancedNullability.type.attributes.filter { it != CompilerConeAttributes.EnhancedNullability }
+            )
+        )
+        annotations += this@withoutEnhancedNullability.annotations
+    }
+}
+
 // Unlike other cases, return types may be implicit, i.e. unresolved
 // But in that cases newType should also be `null`
 fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
@@ -240,7 +256,7 @@ fun FirTypeRef.approximatedIfNeededOrSelf(
     } else {
         this
     }
-    return approximatedType.hideLocalTypeIfNeeded(containingCallableVisibility, isInlineFunction)
+    return approximatedType.hideLocalTypeIfNeeded(containingCallableVisibility, isInlineFunction).withoutEnhancedNullability()
 }
 
 private fun ConeKotlinType.requiresApproximationInPublicPosition(): Boolean {
