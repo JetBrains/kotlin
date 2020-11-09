@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.lower.optimizations.foldConstantLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.shouldContainSuspendMarkers
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -273,6 +275,42 @@ private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendCont
     description = "Throw proper exception for calls returning value of type 'kotlin.Nothing'"
 )
 
+private val notifyCodegenStartPhase = makeCustomPhase<JvmBackendContext, IrModuleFragment>(
+    op = { context, _ -> context.notifyCodegenStart() },
+    name = "NotifyCodegenStart",
+    description = "Notify time measuring subsystem that code generation is being started",
+)
+
+private fun codegenPhase(generateMultifileFacade: Boolean): NamedCompilerPhase<JvmBackendContext, IrModuleFragment> {
+    val suffix = if (generateMultifileFacade) "MultifileFacades" else "Regular"
+    val descriptionSuffix = if (generateMultifileFacade) ", multifile facades" else ", regular files"
+    return performByIrFile(
+        name = "CodegenByIrFile$suffix",
+        description = "Code generation by IrFile$descriptionSuffix",
+        lower = listOf(
+            makeIrFilePhase(
+                { context ->
+                    object : FileLoweringPass {
+                        override fun lower(irFile: IrFile) {
+                            val isMultifileFacade = irFile.fileEntry is MultifileFacadeFileEntry
+                            if (isMultifileFacade != generateMultifileFacade) return
+
+                            for (loweredClass in irFile.declarations) {
+                                if (loweredClass !is IrClass) {
+                                    throw AssertionError("File-level declaration should be IrClass after JvmLower, got: " + loweredClass.render())
+                                }
+                                ClassCodegen.getOrCreate(loweredClass, context).generate()
+                            }
+                        }
+                    }
+                },
+                name = "Codegen$suffix",
+                description = "Code generation"
+            )
+        )
+    )
+}
+
 private val jvmFilePhases = listOf(
     typeAliasAnnotationMethodsPhase,
     stripTypeAliasDeclarationsPhase,
@@ -379,11 +417,10 @@ private val jvmFilePhases = listOf(
     makePatchParentsPhase(3)
 )
 
-val jvmPhases = NamedCompilerPhase(
+private val jvmLoweringPhases = NamedCompilerPhase(
     name = "IrLowering",
     description = "IR lowering",
     nlevels = 1,
-    actions = setOf(defaultDumper, validationAction),
     lower = validateIrBeforeLowering then
             processOptionalAnnotationsPhase then
             expectDeclarationsRemovingPhase then
@@ -398,9 +435,25 @@ val jvmPhases = NamedCompilerPhase(
             validateIrAfterLowering
 )
 
-class JvmLower(val context: JvmBackendContext) {
-    fun lower(irModuleFragment: IrModuleFragment) {
-        // TODO run lowering passes as callbacks in bottom-up visitor
-        jvmPhases.invokeToplevel(context.phaseConfig, context, irModuleFragment)
-    }
-}
+// Generate multifile facades first, to compute and store JVM signatures of const properties which are later used
+// when serializing metadata in the multifile parts.
+// TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
+private val jvmCodegenPhases = NamedCompilerPhase(
+    name = "Codegen",
+    description = "Code generation",
+    nlevels = 1,
+    lower = codegenPhase(generateMultifileFacade = true) then
+            codegenPhase(generateMultifileFacade = false)
+
+)
+
+val jvmPhases = NamedCompilerPhase(
+    name = "IrBackend",
+    description = "IR Backend for JVM",
+    nlevels = 1,
+    actions = setOf(defaultDumper, validationAction),
+    lower = jvmLoweringPhases then
+            notifyCodegenStartPhase then
+            jvmCodegenPhases
+)
+

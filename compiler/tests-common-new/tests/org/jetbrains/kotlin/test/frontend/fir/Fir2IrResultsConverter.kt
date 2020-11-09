@@ -87,7 +87,8 @@ class Fir2IrResultsConverter(
                 irProviders,
                 extensions,
                 FirJvmBackendExtension(inputArtifact.session, components),
-            ) {}
+                notifyCodegenStart = {},
+            )
         )
     }
 }
