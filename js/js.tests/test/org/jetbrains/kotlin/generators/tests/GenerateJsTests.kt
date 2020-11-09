@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.generators.tests.generator.testGroupSuite
+import org.jetbrains.kotlin.generators.tests.generator.generateTestGroupSuite
 import org.jetbrains.kotlin.js.test.AbstractDceTest
 import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
 import org.jetbrains.kotlin.js.test.es6.semantics.*
@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
     // TODO: repair these tests
     //generateTestDataForReservedWords()
 
-    testGroupSuite(args) {
+    generateTestGroupSuite(args) {
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractBoxJsTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)

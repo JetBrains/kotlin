@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.generators.tests.generator
 import junit.framework.TestCase
 import org.jetbrains.kotlin.generators.tests.generator.InconsistencyChecker.Companion.hasDryRunArg
 import org.jetbrains.kotlin.generators.tests.generator.InconsistencyChecker.Companion.inconsistencyChecker
-import org.jetbrains.kotlin.generators.tests.generator.generators.TestGenerator
 import org.jetbrains.kotlin.generators.tests.generator.generators.impl.*
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
@@ -21,8 +20,11 @@ class TestGroup(
     val testRunnerMethodName: String,
     val additionalRunnerArguments: List<String> = emptyList(),
     val annotations: List<AnnotationModel> = emptyList(),
-    private val dryRun: Boolean = false
 ) {
+    private val _testClasses: MutableList<TestClass> = mutableListOf()
+    val testClasses: List<TestClass>
+        get() = _testClasses
+
     inline fun <reified T : TestCase> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
         useJunit4: Boolean = false,
@@ -39,11 +41,7 @@ class TestGroup(
         annotations: List<AnnotationModel> = emptyList(),
         init: TestClass.() -> Unit
     ) {
-        val testClass = TestClass(baseTestClassName, suiteTestClassName, useJunit4, annotations).apply(init)
-        val (changed, testSourceFilePath) = TestGeneratorImpl.generateAndSave(testClass, dryRun)
-        if (changed) {
-            inconsistencyChecker(dryRun).add(testSourceFilePath)
-        }
+        _testClasses += TestClass(baseTestClassName, suiteTestClassName, useJunit4, annotations).apply(init)
     }
 
     inner class TestClass(
@@ -99,20 +97,38 @@ class TestGroup(
 }
 
 fun testGroupSuite(
+    init: TestGroupSuite.() -> Unit
+): TestGroupSuite {
+    return TestGroupSuite().apply(init)
+}
+
+fun generateTestGroupSuite(
     args: Array<String>,
     init: TestGroupSuite.() -> Unit
 ) {
-    testGroupSuite(hasDryRunArg(args), init)
+    generateTestGroupSuite(hasDryRunArg(args), init)
 }
 
-fun testGroupSuite(
+fun generateTestGroupSuite(
     dryRun: Boolean = false,
     init: TestGroupSuite.() -> Unit
 ) {
-    TestGroupSuite(dryRun).init()
+    val suite = testGroupSuite(init)
+    for (testGroup in suite.testGroups) {
+        for (testClass in testGroup.testClasses) {
+            val (changed, testSourceFilePath) = TestGeneratorImpl.generateAndSave(testClass, dryRun)
+            if (changed) {
+                inconsistencyChecker(dryRun).add(testSourceFilePath)
+            }
+        }
+    }
 }
 
-class TestGroupSuite(private val dryRun: Boolean) {
+class TestGroupSuite {
+    private val _testGroups = mutableListOf<TestGroup>()
+    val testGroups: List<TestGroup>
+        get() = _testGroups
+
     fun testGroup(
         testsRoot: String,
         testDataRoot: String,
@@ -120,13 +136,12 @@ class TestGroupSuite(private val dryRun: Boolean) {
         additionalRunnerArguments: List<String> = emptyList(),
         init: TestGroup.() -> Unit
     ) {
-        TestGroup(
+        _testGroups += TestGroup(
             testsRoot,
             testDataRoot,
             testRunnerMethodName,
             additionalRunnerArguments,
-            dryRun = dryRun
-        ).init()
+        ).apply(init)
     }
 }
 

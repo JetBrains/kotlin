@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.spec.utils.tasks
 
-import org.jetbrains.kotlin.generators.tests.generator.testGroupSuite
+import org.jetbrains.kotlin.generators.tests.generator.generateTestGroupSuite
 import org.jetbrains.kotlin.spec.checkers.AbstractDiagnosticsTestSpec
 import org.jetbrains.kotlin.spec.checkers.AbstractFirDiagnosticsTestSpec
 import org.jetbrains.kotlin.spec.codegen.AbstractBlackBoxCodegenTestSpec
@@ -39,7 +39,7 @@ fun detectDirsWithTestsMapFileOnly(dirName: String): List<String> {
 fun generateTests() {
     val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
-    testGroupSuite {
+    generateTestGroupSuite {
         testGroup(SPEC_TEST_PATH, SPEC_TESTDATA_PATH) {
             testClass<AbstractDiagnosticsTestSpec> {
                 model(

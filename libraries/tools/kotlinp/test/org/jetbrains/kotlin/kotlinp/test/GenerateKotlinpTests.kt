@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.kotlinp.test
 
-import org.jetbrains.kotlin.generators.tests.generator.testGroupSuite
+import org.jetbrains.kotlin.generators.tests.generator.generateTestGroupSuite
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
-    testGroupSuite(args) {
+    generateTestGroupSuite(args) {
         testGroup("libraries/tools/kotlinp/test", "libraries/tools/kotlinp/testData") {
             testClass<AbstractKotlinpTest> {
                 model("")
