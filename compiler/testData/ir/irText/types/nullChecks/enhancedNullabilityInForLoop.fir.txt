@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
                 $this: GET_VAR 'val tmp_3: kotlin.collections.MutableIterator<<root>.P?> [val] declared in <root>.testForInListUse' type=kotlin.collections.MutableIterator<<root>.P?> origin=null
             CALL 'public final fun use (s: <root>.P): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
               s: GET_VAR 'val x: <root>.P? [val] declared in <root>.testForInListUse' type=<root>.P? origin=null
-            CALL 'public open fun use (s: <root>.P): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+            CALL 'public open fun use (s: @[EnhancedNullability] <root>.P): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
               s: GET_VAR 'val x: <root>.P? [val] declared in <root>.testForInListUse' type=<root>.P? origin=null
   FUN name:testForInArrayUse visibility:public modality:FINAL <> (j:<root>.J) returnType:kotlin.Unit
     VALUE_PARAMETER name:j index:0 type:<root>.J
@@ -95,7 +95,7 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
                 $this: GET_VAR 'val tmp_4: kotlin.collections.Iterator<<root>.P?> [val] declared in <root>.testForInArrayUse' type=kotlin.collections.Iterator<<root>.P?> origin=null
             CALL 'public final fun use (s: <root>.P): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
               s: GET_VAR 'val x: <root>.P? [val] declared in <root>.testForInArrayUse' type=<root>.P? origin=null
-            CALL 'public open fun use (s: <root>.P): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+            CALL 'public open fun use (s: @[EnhancedNullability] <root>.P): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
               s: GET_VAR 'val x: <root>.P? [val] declared in <root>.testForInArrayUse' type=<root>.P? origin=null
   CLASS INTERFACE name:K modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K

@@ -20,16 +20,16 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
           RETURN type=kotlin.Nothing from='private final fun <get-j> (): <root>.J declared in <root>.Test'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-j>' type=<root>.Test origin=null
-    FUN DELEGATED_MEMBER name:takeNotNull visibility:public modality:OPEN <> ($this:<root>.Test, x:kotlin.String) returnType:kotlin.Unit
+    FUN DELEGATED_MEMBER name:takeNotNull visibility:public modality:OPEN <> ($this:<root>.Test, x:@[EnhancedNullability] kotlin.String) returnType:kotlin.Unit
       overridden:
-        public abstract fun takeNotNull (x: kotlin.String): kotlin.Unit declared in <root>.J
+        public abstract fun takeNotNull (x: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:<root>.Test
-      VALUE_PARAMETER name:x index:0 type:kotlin.String
+      VALUE_PARAMETER name:x index:0 type:@[EnhancedNullability] kotlin.String
       BLOCK_BODY
-        CALL 'public abstract fun takeNotNull (x: kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+        CALL 'public abstract fun takeNotNull (x: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
             receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.takeNotNull' type=<root>.Test origin=null
-          x: GET_VAR 'x: kotlin.String declared in <root>.Test.takeNotNull' type=kotlin.String origin=null
+          x: GET_VAR 'x: @[EnhancedNullability] kotlin.String declared in <root>.Test.takeNotNull' type=@[EnhancedNullability] kotlin.String origin=null
     FUN DELEGATED_MEMBER name:takeNullable visibility:public modality:OPEN <> ($this:<root>.Test, x:kotlin.String?) returnType:kotlin.Unit
       overridden:
         public abstract fun takeNullable (x: kotlin.String?): kotlin.Unit declared in <root>.J
@@ -50,13 +50,13 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
             receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.takeFlexible' type=<root>.Test origin=null
           x: GET_VAR 'x: kotlin.String? declared in <root>.Test.takeFlexible' type=kotlin.String? origin=null
-    FUN DELEGATED_MEMBER name:returnNotNull visibility:public modality:OPEN <> ($this:<root>.Test) returnType:kotlin.String
+    FUN DELEGATED_MEMBER name:returnNotNull visibility:public modality:OPEN <> ($this:<root>.Test) returnType:@[EnhancedNullability] kotlin.String
       overridden:
-        public abstract fun returnNotNull (): kotlin.String declared in <root>.J
+        public abstract fun returnNotNull (): @[EnhancedNullability] kotlin.String declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:<root>.Test
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun returnNotNull (): kotlin.String declared in <root>.Test'
-          CALL 'public abstract fun returnNotNull (): kotlin.String declared in <root>.J' type=kotlin.String origin=null
+        RETURN type=kotlin.Nothing from='public open fun returnNotNull (): @[EnhancedNullability] kotlin.String declared in <root>.Test'
+          CALL 'public abstract fun returnNotNull (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.returnNotNull' type=<root>.Test origin=null
     FUN DELEGATED_MEMBER name:returnNullable visibility:public modality:OPEN <> ($this:<root>.Test) returnType:kotlin.String?

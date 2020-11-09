@@ -9,11 +9,11 @@ FILE fqName:<root> fileName:/nnStringVsT.kt
   FUN name:testNoNullCheck visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun useT <T> (fn: kotlin.Function0<T of <root>.useT>): T of <root>.useT declared in <root>' type=kotlin.String origin=null
-          <T>: kotlin.String
-          fn: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
+        CALL 'public final fun useT <T> (fn: kotlin.Function0<T of <root>.useT>): T of <root>.useT declared in <root>' type=@[EnhancedNullability] kotlin.String origin=null
+          <T>: @[EnhancedNullability] kotlin.String
+          fn: FUN_EXPR type=kotlin.Function0<@[EnhancedNullability] kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:@[EnhancedNullability] kotlin.String
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.testNoNullCheck'
-                  TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-                    CALL 'public open fun notNullString (): kotlin.String declared in <root>.J' type=kotlin.String origin=null
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): @[EnhancedNullability] kotlin.String declared in <root>.testNoNullCheck'
+                  TYPE_OP type=@[EnhancedNullability] kotlin.String origin=IMPLICIT_NOTNULL typeOperand=@[EnhancedNullability] kotlin.String
+                    CALL 'public open fun notNullString (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
