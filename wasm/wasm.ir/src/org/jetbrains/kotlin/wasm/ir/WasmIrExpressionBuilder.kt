@@ -19,4 +19,7 @@ class WasmIrExpressionBuilder(
             assert(value >= 0) { "end without matching block" }
             field = value
         }
+
+    override val lastInstr: WasmOp?
+        get() = expression.lastOrNull()?.operator
 }
