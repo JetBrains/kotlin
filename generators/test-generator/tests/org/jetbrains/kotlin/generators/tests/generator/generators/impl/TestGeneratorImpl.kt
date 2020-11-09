@@ -1,11 +1,13 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.generators.tests.generator
+package org.jetbrains.kotlin.generators.tests.generator.generators.impl
 
+import org.jetbrains.kotlin.generators.tests.generator.*
 import org.jetbrains.kotlin.generators.tests.generator.generators.MethodGenerator
+import org.jetbrains.kotlin.generators.tests.generator.generators.TestGenerator
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -18,45 +20,81 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 
-class TestGenerator(
+private val METHOD_GENERATORS = listOf(
+    RunTestMethodGenerator,
+    SimpleTestClassModelTestAllFilesPresentMethodGenerator,
+    SimpleTestMethodGenerator,
+    SingleClassTestModelAllFilesPresentedMethodGenerator
+)
+
+object TestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
+    override fun generateAndSave(data: GenerationData, dryRun: Boolean): GenerationResult {
+        val (baseDir, suiteTestClassFqName, baseTestClassFqName, testClassModels, useJunit4) = data
+        val generatorInstance = TestGeneratorImplInstance(
+            baseDir,
+            suiteTestClassFqName,
+            baseTestClassFqName,
+            testClassModels,
+            useJunit4,
+            methodGenerators
+        )
+        return generatorInstance.generateAndSave(dryRun)
+    }
+}
+
+private class TestGeneratorImplInstance(
     baseDir: String,
     suiteTestClassFqName: String,
     baseTestClassFqName: String,
-    testClassModels: Collection<TestClassModel>,
-    useJunit4: Boolean,
-    methodGenerators: List<MethodGenerator<*>>
+    private val testClassModels: Collection<TestClassModel>,
+    private val useJunit4: Boolean,
+    private val methodGenerators: Map<MethodModel.Kind, MethodGenerator<*>>
 ) {
-    private val methodGenerators: Map<MethodModel.Kind, MethodGenerator<*>> =
-        methodGenerators.associateBy { it.kind }.withDefault { error("Generator for method with kind $it not found") }
+    companion object {
+        private val GENERATED_FILES = HashSet<String>()
+        private val RUNNER = JUnit3RunnerWithInners::class.java
+        private val JUNIT4_RUNNER = BlockJUnit4ClassRunner::class.java
 
-    private val baseTestClassPackage: String
-    private val suiteClassPackage: String
-    private val suiteClassName: String
-    private val baseTestClassName: String
-    private val testClassModels: Collection<TestClassModel>
-    private val useJunit4: Boolean
-    internal val testSourceFilePath: String
+        private fun generateMetadata(p: Printer, testDataSource: TestEntityModel) {
+            val dataString = testDataSource.dataString
+            if (dataString != null) {
+                p.println("@TestMetadata(\"", dataString, "\")")
+            }
+        }
 
-    init {
-        this.baseTestClassPackage = baseTestClassFqName.substringBeforeLast('.', "")
-        this.baseTestClassName = baseTestClassFqName.substringAfterLast('.', baseTestClassFqName)
-        this.suiteClassPackage = suiteTestClassFqName.substringBeforeLast('.', baseTestClassPackage)
-        this.suiteClassName = suiteTestClassFqName.substringAfterLast('.', suiteTestClassFqName)
-        this.testClassModels = ArrayList(testClassModels)
-        this.useJunit4 = useJunit4
+        private fun generateTestDataPath(p: Printer, testClassModel: TestClassModel) {
+            val dataPathRoot = testClassModel.dataPathRoot
+            if (dataPathRoot != null) {
+                p.println("@TestDataPath(\"", dataPathRoot, "\")")
+            }
+        }
 
-        this.testSourceFilePath = baseDir + "/" + this.suiteClassPackage.replace(".", "/") + "/" + this.suiteClassName + ".java"
+        private fun generateParameterAnnotations(p: Printer, testClassModel: TestClassModel) {
+            for (annotationModel in testClassModel.annotations) {
+                annotationModel.generate(p)
+                p.println()
+            }
+        }
 
-        if (!GENERATED_FILES.add(testSourceFilePath)) {
-            throw IllegalArgumentException("Same test file already generated in current session: " + testSourceFilePath)
+        private fun generateSuppressAllWarnings(p: Printer) {
+            p.println("@SuppressWarnings(\"all\")")
         }
     }
 
-    /**
-     * @return true if a new file is generated
-     */
+    private val baseTestClassPackage: String = baseTestClassFqName.substringBeforeLast('.', "")
+    private val baseTestClassName: String = baseTestClassFqName.substringAfterLast('.', baseTestClassFqName)
+    private val suiteClassPackage: String = suiteTestClassFqName.substringBeforeLast('.', baseTestClassPackage)
+    private val suiteClassName: String = suiteTestClassFqName.substringAfterLast('.', suiteTestClassFqName)
+    private val testSourceFilePath: String = baseDir + "/" + this.suiteClassPackage.replace(".", "/") + "/" + this.suiteClassName + ".java"
+
+    init {
+        if (!GENERATED_FILES.add(testSourceFilePath)) {
+            throw IllegalArgumentException("Same test file already generated in current session: $testSourceFilePath")
+        }
+    }
+
     @Throws(IOException::class)
-    fun generateAndSave(dryRun: Boolean): Boolean {
+    fun generateAndSave(dryRun: Boolean): TestGenerator.GenerationResult {
         val generatedCode = generate()
 
         val testSourceFile = File(testSourceFilePath)
@@ -65,7 +103,7 @@ class TestGenerator(
         if (!dryRun) {
             GeneratorsFileUtil.writeFileIfContentChanged(testSourceFile, generatedCode, false)
         }
-        return changed
+        return TestGenerator.GenerationResult(changed, testSourceFilePath)
     }
 
     private fun generate(): String {
@@ -201,47 +239,25 @@ class TestGenerator(
         val generator = methodGenerators.getValue(methodModel.kind)
 
         generateMetadata(p, methodModel)
-        generator.generateSignature(methodModel, p)
+        generator.hackyGenerateSignature(methodModel, p)
         p.printWithNoIndent(" {")
         p.println()
 
         p.pushIndent()
 
-        generator.generateBody(methodModel, p)
+        generator.hackyGenerateBody(methodModel, p)
 
         p.popIndent()
         p.println("}")
     }
 
-    companion object {
-        private val GENERATED_FILES = HashSet<String>()
-        private val RUNNER = JUnit3RunnerWithInners::class.java
-        private val JUNIT4_RUNNER = BlockJUnit4ClassRunner::class.java
+    private fun <T : MethodModel> MethodGenerator<T>.hackyGenerateBody(method: MethodModel, p: Printer) {
+        @Suppress("UNCHECKED_CAST")
+        generateBody(method as T, p)
+    }
 
-
-        private fun generateMetadata(p: Printer, testDataSource: TestEntityModel) {
-            val dataString = testDataSource.dataString
-            if (dataString != null) {
-                p.println("@TestMetadata(\"", dataString, "\")")
-            }
-        }
-
-        private fun generateTestDataPath(p: Printer, testClassModel: TestClassModel) {
-            val dataPathRoot = testClassModel.dataPathRoot
-            if (dataPathRoot != null) {
-                p.println("@TestDataPath(\"", dataPathRoot, "\")")
-            }
-        }
-
-        private fun generateParameterAnnotations(p: Printer, testClassModel: TestClassModel) {
-            for (annotationModel in testClassModel.annotations) {
-                annotationModel.generate(p);
-                p.println()
-            }
-        }
-
-        private fun generateSuppressAllWarnings(p: Printer) {
-            p.println("@SuppressWarnings(\"all\")")
-        }
+    private fun <T : MethodModel> MethodGenerator<T>.hackyGenerateSignature(method: MethodModel, p: Printer) {
+        @Suppress("UNCHECKED_CAST")
+        generateSignature(method as T, p)
     }
 }

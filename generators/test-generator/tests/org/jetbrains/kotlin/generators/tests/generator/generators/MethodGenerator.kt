@@ -17,6 +17,6 @@ abstract class MethodGenerator<in T : MethodModel> {
 
     abstract val kind: MethodModel.Kind
 
-    abstract fun generateSignature(method: @UnsafeVariance T, p: Printer)
-    abstract fun generateBody(method: @UnsafeVariance T, p: Printer)
+    abstract fun generateSignature(method: T, p: Printer)
+    abstract fun generateBody(method: T, p: Printer)
 }

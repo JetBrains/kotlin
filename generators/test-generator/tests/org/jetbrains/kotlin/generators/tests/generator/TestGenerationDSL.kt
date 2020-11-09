@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.generators.tests.generator
 import junit.framework.TestCase
 import org.jetbrains.kotlin.generators.tests.generator.InconsistencyChecker.Companion.hasDryRunArg
 import org.jetbrains.kotlin.generators.tests.generator.InconsistencyChecker.Companion.inconsistencyChecker
+import org.jetbrains.kotlin.generators.tests.generator.generators.TestGenerator
 import org.jetbrains.kotlin.generators.tests.generator.generators.impl.*
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
@@ -38,23 +39,16 @@ class TestGroup(
         annotations: List<AnnotationModel> = emptyList(),
         init: TestClass.() -> Unit
     ) {
-        val testGenerator = TestGenerator(
+        val generationData = TestGenerator.GenerationData(
             testsRoot,
             suiteTestClassName,
             baseTestClassName,
             TestClass(annotations).apply(init).testModels,
             useJunit4,
-            methodGenerators = listOf(
-                CoroutinesTestMethodGenerator,
-                RunTestMethodGenerator,
-                RunTestMethodWithPackageReplacementGenerator,
-                SimpleTestClassModelTestAllFilesPresentMethodGenerator,
-                SimpleTestMethodGenerator,
-                SingleClassTestModelAllFilesPresentedMethodGenerator
-            )
         )
-        if (testGenerator.generateAndSave(dryRun)) {
-            inconsistencyChecker(dryRun).add(testGenerator.testSourceFilePath)
+        val (changed, testSourceFilePath) = TestGeneratorImpl.generateAndSave(generationData, dryRun)
+        if (changed) {
+            inconsistencyChecker(dryRun).add(testSourceFilePath)
         }
     }
 
@@ -69,7 +63,7 @@ class TestGroup(
             pattern: String = if (extension == null) """^([^\.]+)$""" else "^(.+)\\.$extension\$",
             excludedPattern: String? = null,
             testMethod: String = "doTest",
-            singleClass: Boolean = false, // if true then tests from subdirectories will be flattern to single class
+            singleClass: Boolean = false, // if true then tests from subdirectories will be flatten to single class
             testClassName: String? = null, // specific name for generated test class
             // which backend will be used in test. Specifying value may affect some test with
             // directives TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND won't be generated
