@@ -915,7 +915,7 @@ tasks {
                 ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:compiler-components-for-jps:publish",
+                ":prepare:ide-plugin-dependencies:compiler-components-for-jps-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-script-runtime-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-script-util-for-ide:publish",
