@@ -927,7 +927,7 @@ tasks {
                 ":kotlin-stdlib:publish",
                 ":kotlin-stdlib-jdk7:publish",
                 ":kotlin-stdlib-jdk8:publish",
-                ":kotlin-coroutines-experimental-compat:publish"
+                ":prepare:ide-plugin-dependencies:kotlin-coroutines-experimental-compat:publish"
             )
         }
     }
