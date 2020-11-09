@@ -51,6 +51,11 @@ public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTes
         runTest("testData/decompiler/decompiledTextJvm/ParameterName/");
     }
 
+    @TestMetadata("PrivateConstField")
+    public void testPrivateConstField() throws Exception {
+        runTest("idea/testData/decompiler/decompiledTextJvm/PrivateConstField/");
+    }
+
     @TestMetadata("TestKt")
     public void testTestKt() throws Exception {
         runTest("testData/decompiler/decompiledTextJvm/TestKt/");
