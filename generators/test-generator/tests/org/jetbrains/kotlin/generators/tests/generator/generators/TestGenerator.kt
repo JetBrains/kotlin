@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.generators.tests.generator.generators
 
 import org.jetbrains.kotlin.generators.tests.generator.MethodModel
-import org.jetbrains.kotlin.generators.tests.generator.TestClassModel
+import org.jetbrains.kotlin.generators.tests.generator.TestGroup
 
 abstract class TestGenerator(
     methodGenerators: List<MethodGenerator<*>>
@@ -14,15 +14,7 @@ abstract class TestGenerator(
     protected val methodGenerators: Map<MethodModel.Kind, MethodGenerator<*>> =
         methodGenerators.associateBy { it.kind }.withDefault { error("Generator for method with kind $it not found") }
 
-    abstract fun generateAndSave(data: GenerationData, dryRun: Boolean): GenerationResult
-
-    data class GenerationData(
-        val baseDir: String,
-        val suiteTestClassFqName: String,
-        val baseTestClassFqName: String,
-        val testClassModels: Collection<TestClassModel>,
-        val useJunit4: Boolean
-    )
+    abstract fun generateAndSave(testClass: TestGroup.TestClass, dryRun: Boolean): GenerationResult
 
     data class GenerationResult(val newFileGenerated: Boolean, val testSourceFilePath: String)
 }

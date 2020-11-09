@@ -39,20 +39,22 @@ class TestGroup(
         annotations: List<AnnotationModel> = emptyList(),
         init: TestClass.() -> Unit
     ) {
-        val generationData = TestGenerator.GenerationData(
-            testsRoot,
-            suiteTestClassName,
-            baseTestClassName,
-            TestClass(annotations).apply(init).testModels,
-            useJunit4,
-        )
-        val (changed, testSourceFilePath) = TestGeneratorImpl.generateAndSave(generationData, dryRun)
+        val testClass = TestClass(baseTestClassName, suiteTestClassName, useJunit4, annotations).apply(init)
+        val (changed, testSourceFilePath) = TestGeneratorImpl.generateAndSave(testClass, dryRun)
         if (changed) {
             inconsistencyChecker(dryRun).add(testSourceFilePath)
         }
     }
 
-    inner class TestClass(val annotations: List<AnnotationModel>) {
+    inner class TestClass(
+        val baseTestClassName: String,
+        val suiteTestClassName: String,
+        val useJunit4: Boolean,
+        val annotations: List<AnnotationModel>
+    ) {
+        val baseDir: String
+            get() = this@TestGroup.testsRoot
+
         val testModels = ArrayList<TestClassModel>()
 
         fun model(

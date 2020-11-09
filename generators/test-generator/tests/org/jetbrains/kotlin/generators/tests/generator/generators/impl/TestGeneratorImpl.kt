@@ -28,14 +28,13 @@ private val METHOD_GENERATORS = listOf(
 )
 
 object TestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
-    override fun generateAndSave(data: GenerationData, dryRun: Boolean): GenerationResult {
-        val (baseDir, suiteTestClassFqName, baseTestClassFqName, testClassModels, useJunit4) = data
+    override fun generateAndSave(testClass: TestGroup.TestClass, dryRun: Boolean): GenerationResult {
         val generatorInstance = TestGeneratorImplInstance(
-            baseDir,
-            suiteTestClassFqName,
-            baseTestClassFqName,
-            testClassModels,
-            useJunit4,
+            testClass.baseDir,
+            testClass.suiteTestClassName,
+            testClass.baseTestClassName,
+            testClass.testModels,
+            testClass.useJunit4,
             methodGenerators
         )
         return generatorInstance.generateAndSave(dryRun)
