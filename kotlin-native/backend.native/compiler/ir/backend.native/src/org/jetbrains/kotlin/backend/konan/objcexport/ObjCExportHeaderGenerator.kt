@@ -240,7 +240,7 @@ internal class ObjCExportTranslatorImpl(
                     .asSequence()
                     .filter { mapper.shouldBeExposed(it) }
                     .map {
-                        generator?.generateInterface(it)
+                        generator?.generateExtraInterfaceEarly(it)
                         referenceProtocol(it).objCName
                     }
                     .toList()
@@ -249,7 +249,7 @@ internal class ObjCExportTranslatorImpl(
             classDescriptor: ClassDescriptor,
             declarations: List<CallableMemberDescriptor>
     ): ObjCInterface {
-        generator?.generateClass(classDescriptor)
+        generator?.generateExtraClassEarly(classDescriptor)
 
         val name = referenceClass(classDescriptor).objCName
         val members = buildMembers {
@@ -301,7 +301,7 @@ internal class ObjCExportTranslatorImpl(
         val superName = if (superClass == null) {
             kotlinAnyName
         } else {
-            generator?.generateClass(superClass)
+            generator?.generateExtraClassEarly(superClass)
             referenceClass(superClass)
         }
 
@@ -1002,16 +1002,8 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     private val topLevel = mutableMapOf<SourceFile, MutableList<CallableMemberDescriptor>>()
 
     fun build(): List<String> = mutableListOf<String>().apply {
-        add("#import <Foundation/NSArray.h>")
-        add("#import <Foundation/NSDictionary.h>")
-        add("#import <Foundation/NSError.h>")
-        add("#import <Foundation/NSObject.h>")
-        add("#import <Foundation/NSSet.h>")
-        add("#import <Foundation/NSString.h>")
-        add("#import <Foundation/NSValue.h>")
-        getAdditionalImports().forEach {
-            add("#import <$it>")
-        }
+        addImports(foundationImports)
+        addImports(getAdditionalImports())
         add("")
 
         if (classForwardDeclarations.isNotEmpty()) {
@@ -1054,19 +1046,32 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, namer, mapper)
     }
 
+    fun getExportStubs(): ObjCExportedStubs =
+        ObjCExportedStubs(classForwardDeclarations, protocolForwardDeclarations, stubs)
+
     protected abstract fun reportWarning(text: String)
 
     protected abstract fun reportWarning(method: FunctionDescriptor, text: String)
 
     protected open fun getAdditionalImports(): List<String> = emptyList()
 
-
-    fun translateModule(): List<Stub<*>> {
+    fun translateModule() {
         // TODO: make the translation order stable
         // to stabilize name mangling.
+        translateBaseDeclarations()
+        translateModuleDeclarations()
+    }
 
+    fun translateBaseDeclarations() {
         stubs += translator.generateBaseDeclarations()
+    }
 
+    fun translateModuleDeclarations() {
+        translatePackageFragments()
+        translateExtraClasses()
+    }
+
+    private fun translatePackageFragments() {
         val packageFragments = moduleDescriptors.flatMap { it.getPackageFragments() }
 
         packageFragments.forEach { packageFragment ->
@@ -1119,18 +1124,31 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         topLevel.forEach { sourceFile, declarations ->
             generateFile(sourceFile, declarations)
         }
+    }
 
+    /**
+     * Translates additional classes referenced from the module's declarations, such as parameter types, return types,
+     * thrown exception types, and underlying enum types.
+     *
+     * This is required for classes from dependencies to be exported correctly. However, we also currently rely on this
+     * for a few edge cases, such as some inner classes. Sub classes may reject certain descriptors to be translated.
+     * Some referenced descriptors may be translated early for ordering reasons.
+     * @see shouldTranslateExtraClass
+     * @see generateExtraClassEarly
+     * @see generateExtraInterfaceEarly
+     */
+    private fun translateExtraClasses() {
         while (extraClassesToTranslate.isNotEmpty()) {
             val descriptor = extraClassesToTranslate.first()
             extraClassesToTranslate -= descriptor
+
+            assert(shouldTranslateExtraClass(descriptor)) { "Shouldn't be queued for translation: $descriptor" }
             if (descriptor.isInterface) {
                 generateInterface(descriptor)
             } else {
                 generateClass(descriptor)
             }
         }
-
-        return stubs
     }
 
     private fun generateFile(sourceFile: SourceFile, declarations: List<CallableMemberDescriptor>) {
@@ -1141,18 +1159,28 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         stubs.add(translator.translateExtensions(classDescriptor, declarations))
     }
 
-    internal fun generateClass(descriptor: ClassDescriptor) {
+    protected open fun shouldTranslateExtraClass(descriptor: ClassDescriptor): Boolean = true
+
+    internal fun generateExtraClassEarly(descriptor: ClassDescriptor) {
+        if (shouldTranslateExtraClass(descriptor)) generateClass(descriptor)
+    }
+
+    internal fun generateExtraInterfaceEarly(descriptor: ClassDescriptor) {
+        if (shouldTranslateExtraClass(descriptor)) generateInterface(descriptor)
+    }
+
+    private fun generateClass(descriptor: ClassDescriptor) {
         if (!generatedClasses.add(descriptor)) return
         stubs.add(translator.translateClass(descriptor))
     }
 
-    internal fun generateInterface(descriptor: ClassDescriptor) {
+    private fun generateInterface(descriptor: ClassDescriptor) {
         if (!generatedClasses.add(descriptor)) return
         stubs.add(translator.translateInterface(descriptor))
     }
 
     internal fun requireClassOrInterface(descriptor: ClassDescriptor) {
-        if (descriptor !in generatedClasses) {
+        if (shouldTranslateExtraClass(descriptor) && descriptor !in generatedClasses) {
             extraClassesToTranslate += descriptor
         }
     }
@@ -1163,6 +1191,24 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     internal fun referenceProtocol(objCName: String) {
         protocolForwardDeclarations += objCName
+    }
+
+    companion object {
+        val foundationImports = listOf(
+            "Foundation/NSArray.h",
+            "Foundation/NSDictionary.h",
+            "Foundation/NSError.h",
+            "Foundation/NSObject.h",
+            "Foundation/NSSet.h",
+            "Foundation/NSString.h",
+            "Foundation/NSValue.h"
+        )
+
+        private fun MutableList<String>.addImports(imports: Iterable<String>) {
+            imports.forEach {
+                add("#import <$it>")
+            }
+        }
     }
 }
 
