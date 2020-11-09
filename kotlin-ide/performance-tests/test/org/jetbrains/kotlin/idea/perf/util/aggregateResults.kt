@@ -25,6 +25,7 @@ fun main(args: Array<String>) {
                     val warmUpBenchmark = Benchmark(
                         agentName = benchmark.agentName,
                         buildBranch = benchmark.buildBranch,
+                        commit = benchmark.commit,
                         buildId = benchmark.buildId,
                         benchmark = benchmark.benchmark,
                         name = benchmark.name,
@@ -37,6 +38,7 @@ fun main(args: Array<String>) {
                         metrics = it.metrics ?: emptyList()
                     )
                     warmUpBenchmark.writeJson()
+                    ESUploader.upload(warmUpBenchmark)
                 }
             }
         }
@@ -47,6 +49,7 @@ fun main(args: Array<String>) {
         val geomMeanBenchmark = Benchmark(
             agentName = loadBenchmark.agentName,
             buildBranch = loadBenchmark.buildBranch,
+            commit = loadBenchmark.commit,
             buildId = loadBenchmark.buildId,
             benchmark = loadBenchmark.benchmark,
             synthetic = true,
@@ -58,5 +61,6 @@ fun main(args: Array<String>) {
             .filter { it.synthetic != true && it.warmUp != true }
             .forEach { geomMeanBenchmark.merge(it) }
         geomMeanBenchmark.writeJson()
+        ESUploader.upload(geomMeanBenchmark)
     }
 }

@@ -45,5 +45,21 @@
     <orderEntry type="library" scope="TEST" name="jackson-databind" level="project" />
     <orderEntry type="library" scope="TEST" name="jackson" level="project" />
     <orderEntry type="library" scope="TEST" name="jackson-module-kotlin" level="project" />
+    <orderEntry type="module-library" scope="TEST">
+      <library name="khttp:khttp:1.0.0" type="repository">
+        <properties maven-id="khttp:khttp:1.0.0" />
+        <CLASSES>
+          <root url="jar://$MAVEN_REPOSITORY$/khttp/khttp/1.0.0/khttp-1.0.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-stdlib/1.1.1/kotlin-stdlib-1.1.1.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/annotations/13.0/annotations-13.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/json/json/20150729/json-20150729.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/spek/spek-api/1.1.0/spek-api-1.1.0.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-reflect/1.0.6/kotlin-reflect-1.0.6.jar!/" />
+          <root url="jar://$MAVEN_REPOSITORY$/org/jetbrains/spek/spek-junit-platform-engine/1.1.0/spek-junit-platform-engine-1.1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
