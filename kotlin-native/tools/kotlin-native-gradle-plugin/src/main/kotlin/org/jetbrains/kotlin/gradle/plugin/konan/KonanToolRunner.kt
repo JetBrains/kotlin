@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyProcessor
+import java.nio.file.Files
 
 internal interface KonanToolRunner: Named {
     val mainClass: String
@@ -135,16 +136,12 @@ internal class KonanCompilerRunner(
             return args
         }
 
-        val argFile = createTempFile(prefix = "konancArgs", suffix = ".lst").apply {
-            deleteOnExit()
+        val argFile = Files.createTempFile("konancArgs", ".lst").toAbsolutePath().apply {
+            toFile().deleteOnExit()
         }
-        argFile.printWriter().use { writer ->
-            args.forEach {
-                writer.println(it)
-            }
-        }
+        Files.write(argFile, args)
 
-        return listOf("@${argFile.absolutePath}")
+        return listOf("@${argFile}")
     }
 }
 

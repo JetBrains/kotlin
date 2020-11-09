@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.native.interop.indexer
 
 import clang.*
 import kotlinx.cinterop.*
+import java.nio.file.Files
 
 data class ModulesInfo(val topLevelHeaders: List<String>, val ownHeaders: Set<String>)
 
@@ -39,13 +40,13 @@ internal open class ModularCompilation(compilation: Compilation): Compilation by
     }
 
     private val moduleCacheDirectory = if (compilation.compilerArgs.none { it.startsWith(moduleCacheFlag) }) {
-        createTempDir("ModuleCache")
+        Files.createTempDirectory("ModuleCache").toAbsolutePath().toFile()
     } else {
         null
     }
 
     override val compilerArgs: List<String> = compilation.compilerArgs +
-            listOfNotNull("-fmodules", moduleCacheDirectory?.let { "$moduleCacheFlag${it.absolutePath}" })
+            listOfNotNull("-fmodules", moduleCacheDirectory?.let { "$moduleCacheFlag${it}" })
 
     override fun dispose() {
         moduleCacheDirectory?.deleteRecursively()

@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.*
 import llvm.*
 import java.io.File
+import java.nio.file.Files
 
 internal fun verifyModule(llvmModule: LLVMModuleRef, current: String = "") = memScoped {
     val errorRef = allocPointerTo<ByteVar>()
@@ -49,7 +50,7 @@ private fun StringBuilder.appendModuleVerificationFailureDetails(
 
     appendVerificationError(verificationError)
 
-    val moduleDumpFile = createTempFile("kotlin_native_llvm_module_dump", ".ll")
+    val moduleDumpFile = Files.createTempFile("kotlin_native_llvm_module_dump", ".ll").toFile()
 
     dumpModuleAndAppendDetails(llvmModule, moduleDumpFile)
 

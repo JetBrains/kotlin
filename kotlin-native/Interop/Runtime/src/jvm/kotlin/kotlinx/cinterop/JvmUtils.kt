@@ -98,7 +98,7 @@ fun loadKonanLibrary(name: String) {
         try {
             System.load("$dir/$fullLibraryName")
         } catch (e: UnsatisfiedLinkError) {
-            val tempDir = createTempDir(directory = File(dir)).absolutePath
+            val tempDir = Files.createTempDirectory(Paths.get(dir), null).toAbsolutePath().toString()
             Files.createLink(Paths.get(tempDir, fullLibraryName), Paths.get(dir, fullLibraryName))
             // TODO: Does not work on Windows. May be use FILE_FLAG_DELETE_ON_CLOSE?
             File(tempDir).deleteOnExit()
