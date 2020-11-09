@@ -67,6 +67,18 @@ class Test3 {
     suspend fun test() = bar().s
 }
 
+class Test4 {
+    suspend fun <T> foo(value: T): T = value
+
+    suspend fun bar(): IC? {
+        run {
+            return foo(suspendMe())
+        }
+    }
+
+    suspend fun test() = bar()!!.s
+}
+
 fun box(): String {
 
     var result = "FAIL"
@@ -90,6 +102,15 @@ fun box(): String {
 
     builder {
         result = Test3().test()
+    }
+    c?.resume(IC("OK"))
+
+    if (result != "OK") return "FAIL 3 $result"
+
+    result = "FAIL 4"
+
+    builder {
+        result = Test4().test()
     }
     c?.resume(IC("OK"))
 

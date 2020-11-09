@@ -7208,6 +7208,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noSuspensionPoints.kt", "kotlin.coroutines");
         }
 
+        @TestMetadata("nonLocalReturn.kt")
+        public void testNonLocalReturn() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/nonLocalReturn.kt");
+        }
+
         @TestMetadata("nonLocalReturnFromInlineLambdaDeep.kt")
         public void testNonLocalReturnFromInlineLambdaDeep_1_2() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/nonLocalReturnFromInlineLambdaDeep.kt", "kotlin.coroutines.experimental");
