@@ -39,16 +39,19 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.UNREACHABLE)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun buildBlock(label: String?, resultType: WasmType? = null) {
         numberOfNestedBlocks++
         buildInstr(WasmOp.BLOCK, WasmImmediate.BlockType.Value(resultType))
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun buildLoop(label: String?, resultType: WasmType? = null) {
         numberOfNestedBlocks++
         buildInstr(WasmOp.LOOP, WasmImmediate.BlockType.Value(resultType))
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun buildIf(label: String?, resultType: WasmType? = null) {
         numberOfNestedBlocks++
         buildInstr(WasmOp.IF, WasmImmediate.BlockType.Value(resultType))

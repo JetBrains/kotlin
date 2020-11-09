@@ -90,6 +90,7 @@ class CheckIrElementVisitor(
     override fun <T> visitConst(expression: IrConst<T>) {
         super.visitConst(expression)
 
+        @Suppress("UNUSED_VARIABLE")
         val naturalType = when (expression.kind) {
             IrConstKind.Null -> {
                 expression.ensureNullable()
@@ -106,9 +107,9 @@ class CheckIrElementVisitor(
             IrConstKind.Double -> irBuiltIns.doubleType
         }
 
-        var type = expression.type
         /*
         TODO: This check used to have JS inline class helpers. Rewrite it in a common way.
+        var type = expression.type
         while (true) {
             val inlinedClass = type.getInlinedClass() ?: break
             if (getInlineClassUnderlyingType(inlinedClass) == type)

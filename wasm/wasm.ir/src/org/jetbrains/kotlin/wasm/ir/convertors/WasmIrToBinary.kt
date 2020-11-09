@@ -460,6 +460,7 @@ abstract class ByteWriter {
 
     private fun writeUnsignedLeb128(v: UInt) {
         // Taken from Android source, Apache licensed
+        @Suppress("NAME_SHADOWING")
         var v = v
         var remaining = v shr 7
         while (remaining != 0u) {
@@ -474,6 +475,7 @@ abstract class ByteWriter {
 
     private fun writeSignedLeb128(v: Long) {
         // Taken from Android source, Apache licensed
+        @Suppress("NAME_SHADOWING")
         var v = v
         var remaining = v shr 7
         var hasMore = true

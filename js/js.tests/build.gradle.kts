@@ -291,7 +291,6 @@ projectTest("wasmTest", true) {
     include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
     val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
     val v8ExecutablePath = File(unzipV8.get().destinationDir, "d8").absolutePath
-    println(v8ExecutablePath)
 
     systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
     systemProperty("javascript.engine.path.V8", v8ExecutablePath)

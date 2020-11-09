@@ -48,8 +48,8 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  *  Related issue: [https://github.com/WebAssembly/gc/issues/29]
  */
 class EraseVirtualDispatchReceiverParametersTypes(val context: CommonBackendContext) : FileLoweringPass {
-    override fun lower(file: IrFile) {
-        file.acceptChildrenVoid(object : IrElementVisitorVoid {
+    override fun lower(irFile: IrFile) {
+        irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }

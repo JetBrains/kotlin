@@ -41,12 +41,12 @@ class EnumUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPass 
                 val enumEntry = expression.symbol.owner
                 val klass = enumEntry.parent as IrClass
                 if (klass.isExternal) return expression
-                return lowerEnumEntry(enumEntry, klass)
+                return lowerEnumEntry(enumEntry)
             }
         })
     }
 
-    private fun lowerEnumEntry(enumEntry: IrEnumEntry, klass: IrClass) =
+    private fun lowerEnumEntry(enumEntry: IrEnumEntry) =
         enumEntry.getInstanceFun!!.run { JsIrBuilder.buildCall(symbol) }
 }
 

@@ -185,15 +185,15 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         // Handling null manually
         if (toType.isNullable() && fromType.isNullable()) {
             return builder.irComposite {
-                val value = cacheValue(value)
+                val cachedValue = cacheValue(value)
                 +builder.irIfNull(
                     type = toType,
-                    subject = value() as IrExpression,
+                    subject = cachedValue() as IrExpression,
                     thenPart = builder.irNull(toType),
                     elsePart = builder.irCall(symbols.wasmRefCast, type = toType).apply {
                         putTypeArgument(0, fromType)
                         putTypeArgument(1, toType)
-                        putValueArgument(0, value() as IrExpression)
+                        putValueArgument(0, cachedValue() as IrExpression)
                     }
                 )
             }

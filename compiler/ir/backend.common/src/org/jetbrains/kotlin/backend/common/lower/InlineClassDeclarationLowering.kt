@@ -272,10 +272,9 @@ class InlineClassLowering(val context: CommonBackendContext) {
     }
 
     private fun IrFunction.toInlineClassImplementationName(): Name {
-        val klass = this.parentAsClass!!
-        val newName = klass.name.asString() + "__" + name.asString() + INLINE_CLASS_IMPL_SUFFIX
+        val newName = parentAsClass.name.asString() + "__" + name.asString() + INLINE_CLASS_IMPL_SUFFIX
         return when {
-            name.isSpecial -> Name.special("<" + newName + ">")
+            name.isSpecial -> Name.special("<$newName>")
             else -> Name.identifier(newName)
         }
     }
