@@ -70,7 +70,6 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
         return originalInnerClassPrimaryConstructorByClass[innerClass]
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun createInnerClassConstructorWithOuterThisParameter(oldConstructor: IrConstructor): IrConstructor {
         val irClass = oldConstructor.parent as IrClass
         val outerThisType = (irClass.parent as IrClass).defaultType
