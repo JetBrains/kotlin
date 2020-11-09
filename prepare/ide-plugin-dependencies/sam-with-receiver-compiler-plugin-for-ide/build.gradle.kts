@@ -1,3 +1,3 @@
 idePluginDependency {
-    publishProjectJars(listOf(":kotlin-sam-with-receiver-compiler-plugin"))
+    publishProjectJarsForIde(listOf(":kotlin-sam-with-receiver-compiler-plugin"))
 }

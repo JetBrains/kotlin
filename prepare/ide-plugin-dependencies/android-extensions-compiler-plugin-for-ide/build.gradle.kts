@@ -1,3 +1,3 @@
 idePluginDependency {
-    publishProjectJars(listOf(":plugins:android-extensions-compiler"))
+    publishProjectJarsForIde(listOf(":plugins:android-extensions-compiler"))
 }

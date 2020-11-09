@@ -4,5 +4,5 @@ idePluginDependency {
 
     val otherProjects = listOf(":kotlin-daemon-client")
 
-    publishProjectJars(compilerComponents + otherProjects)
+    publishProjectJarsForIde(compilerComponents + otherProjects)
 }

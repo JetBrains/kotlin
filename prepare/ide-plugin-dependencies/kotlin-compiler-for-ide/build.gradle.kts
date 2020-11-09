@@ -22,7 +22,7 @@ idePluginDependency {
         ":kotlin-daemon-client-new"
     )
 
-    publishProjectJars(
+    publishProjectJarsForIde(
         projects = projects,
         libraryDependencies = listOf(protobufFull())
     )

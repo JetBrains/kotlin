@@ -1,3 +1,3 @@
 idePluginDependency {
-    publishProjectJars(listOf(":kotlin-allopen-compiler-plugin"))
+    publishProjectJarsForIde(listOf(":kotlin-allopen-compiler-plugin"))
 }
