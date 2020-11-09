@@ -229,7 +229,7 @@ public class ResolutionResultsHandler {
             specificCalls = specificCalls.stream()
                     .filter((call) ->
                                     !call.getCandidateDescriptor().getAnnotations().hasAnnotation(
-                                            AnnotationsForResolveKt.getOVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION())
+                                            AnnotationsForResolveKt.getOVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME())
                     ).collect(Collectors.toSet());
         }
 
