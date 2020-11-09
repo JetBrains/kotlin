@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
+import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.wasm.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.*
@@ -399,6 +400,12 @@ private val virtualDispatchReceiverExtractionPhase = makeWasmModulePhase(
     description = "Eliminate side-effects in dispatch receivers of virtual function calls"
 )
 
+private val forLoopsLoweringPhase = makeWasmModulePhase(
+    ::ForLoopsLowering,
+    name = "ForLoopsLowering",
+    description = "[Optimization] For loops lowering"
+)
+
 val wasmPhases = NamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
@@ -447,6 +454,9 @@ val wasmPhases = NamedCompilerPhase(
 
             stringConstructorLowering then
             returnableBlockLoweringPhase then
+
+            forLoopsLoweringPhase then
+
             defaultArgumentStubGeneratorPhase then
             defaultArgumentPatchOverridesPhase then
             defaultParameterInjectorPhase then
