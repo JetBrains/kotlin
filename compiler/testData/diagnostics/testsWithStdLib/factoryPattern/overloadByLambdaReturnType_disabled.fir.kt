@@ -26,7 +26,7 @@ fun test_1() {
 
 fun test_2() {
     val x = create { 1 }
-    <!INAPPLICABLE_CANDIDATE!>takeInt<!>(x)
+    takeInt(x)
 }
 
 fun test_3() {
@@ -44,5 +44,5 @@ fun test_4() {
 
 fun test_5() {
     val x = create("") { 1 }
-    <!INAPPLICABLE_CANDIDATE!>takeInt<!>(x)
+    takeInt(x)
 }

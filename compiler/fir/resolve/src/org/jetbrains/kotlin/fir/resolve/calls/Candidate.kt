@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 data class CallInfo(
     val callKind: CallKind,
@@ -108,6 +110,16 @@ class Candidate(
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
 
     val diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
+
+    fun addDiagnostic(diagnostic: ResolutionDiagnostic) {
+        diagnostics += diagnostic
+    }
+
+    fun isSuccessful(): Boolean {
+        if (system.hasContradiction) return false
+        val currentApplicability = diagnostics.map { it.applicability }.minOrNull() ?: CandidateApplicability.RESOLVED
+        return currentApplicability.isSuccess
+    }
 
     var passedStages: Int = 0
 
