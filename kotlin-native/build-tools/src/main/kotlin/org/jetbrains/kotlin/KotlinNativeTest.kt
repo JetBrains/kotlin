@@ -14,13 +14,13 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.language.base.plugins.LifecycleBasePlugin
-import org.gradle.process.ExecSpec
 
 import java.io.File
 import java.io.ByteArrayOutputStream
 import java.util.regex.Pattern
 
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 
 abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     enum class Logger {
@@ -439,25 +439,46 @@ open class KonanDynamicTest : KonanStandaloneTest() {
     private fun clang() {
         val log = ByteArrayOutputStream()
         val plugin = project.convention.getPlugin(ExecClang::class.java)
-        val execResult = plugin.execKonanClang(project.testTarget, Action<ExecSpec> {
+        val artifactsDir = "$outputDirectory/${project.testTarget}"
+
+        fun flagsContain(opt: String) = project.globalTestArgs.contains(opt) || flags.contains(opt)
+        val isOpt = flagsContain("-opt")
+        val isDebug = flagsContain("-g")
+
+        val execResult = plugin.execKonanClang(project.testTarget) {
             it.workingDir = File(outputDirectory)
             it.executable = clangTool
-            val artifactsDir = "$outputDirectory/${project.testTarget}"
             it.args = listOf(processCSource(),
-                    "-o", executable,
-                    "-I", artifactsDir,
-                    "-L", artifactsDir,
-                    "-l", name,
-                    "-Wl,-rpath,$artifactsDir")
-
+                    "-c",
+                    "-o", "$executable.o",
+                    "-I", artifactsDir
+            )
             it.standardOutput = log
             it.errorOutput = log
             it.isIgnoreExitValue = true
-        })
+        }
         log.toString("UTF-8").also {
             project.file("$executable.compilation.log").writeText(it)
             println(it)
         }
         execResult.assertNormalExitValue()
+
+        val linker = project.platformManager.platform(project.testTarget).linker
+        val commands = linker.finalLinkCommands(
+                objectFiles = listOf("$executable.o"),
+                executable = executable,
+                libraries = listOf("-l$name"),
+                linkerArgs = listOf("-L", artifactsDir, "-rpath", artifactsDir),
+                optimize = isOpt,
+                debug = isDebug,
+                kind = LinkerOutputKind.EXECUTABLE,
+                outputDsymBundle = "",
+                needsProfileLibrary = false,
+                mimallocEnabled = false
+        )
+        commands.forEach {
+            it.logWith { message -> project.file("$executable.compilation.log").appendText(message()) }
+            it.execute()
+        }
     }
 }
