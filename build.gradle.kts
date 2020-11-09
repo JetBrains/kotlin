@@ -923,14 +923,10 @@ tasks {
                 ":kotlin-scripting-jvm:publish",
                 ":kotlin-scripting-compiler:publish",
                 ":kotlin-scripting-compiler-impl:publish",
-                ":kotlin-android-extensions-runtime:publish",
                 ":kotlin-stdlib-common:publish",
                 ":kotlin-stdlib:publish",
                 ":kotlin-stdlib-jdk7:publish",
                 ":kotlin-stdlib-jdk8:publish",
-                ":kotlin-main-kts:publish",
-                ":kotlin-stdlib-js:publish",
-                ":kotlin-test:kotlin-test-js:publish",
                 ":kotlin-coroutines-experimental-compat:publish"
             )
         }
