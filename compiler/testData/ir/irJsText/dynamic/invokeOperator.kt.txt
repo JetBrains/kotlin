@@ -1,0 +1,37 @@
+fun invoke() {
+}
+
+fun test1(a: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun test2(a: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun test3(a: dynamic, b: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun test4(a: dynamic, b: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun test5(a: dynamic, b: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun test6(a: dynamic, b: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun test7(a: dynamic) {
+  return invoke()
+}
+

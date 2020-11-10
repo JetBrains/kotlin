@@ -1,0 +1,10 @@
+fun test1(d: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun test2(d: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+

@@ -1,0 +1,20 @@
+fun testLess(d: dynamic): Boolean {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testLessOrEqual(d: dynamic): Boolean {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testGreater(d: dynamic): Boolean {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testGreaterOrEqual(d: dynamic): Boolean {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+

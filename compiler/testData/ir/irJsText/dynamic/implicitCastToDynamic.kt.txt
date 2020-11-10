@@ -1,0 +1,42 @@
+val d1: dynamic
+  field = 1
+  get
+
+val p: Int
+  field = 1
+  get
+
+var d2: dynamic
+  field = <get-p>()
+  get
+  set
+
+fun withDynamic(d: dynamic): dynamic {
+  return d
+}
+
+fun test1(s: String) {
+  withDynamic(d = s)
+}
+
+fun test2(a: Any) {
+  val d: dynamic = a
+}
+
+fun test3(a: Any?) {
+  val d: dynamic = a
+}
+
+fun test4(a: Any, s: String, na: Any?) {
+  var d: dynamic = <get-p>()
+  d = a
+  d = na
+  d = s
+}
+
+fun test5(a: Any, s: String, na: Any?) {
+  <set-d2>(<set-?> = a)
+  <set-d2>(<set-?> = na)
+  <set-d2>(<set-?> = s)
+}
+

@@ -1,0 +1,12 @@
+fun test1(d: dynamic): String {
+  return d /*~> Any */.toString()
+}
+
+fun test2(d: dynamic): Int {
+  return d /*~> Any */.hashCode()
+}
+
+fun test3(d: dynamic): Boolean {
+  return d /*~> Any */.equals(other = 42)
+}
+

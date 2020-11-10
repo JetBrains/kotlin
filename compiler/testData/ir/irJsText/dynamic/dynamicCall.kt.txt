@@ -1,0 +1,21 @@
+fun test1(d: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun test2(d: dynamic): dynamic {
+  return { // BLOCK
+    val tmp0_safe_receiver: dynamic = d
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      true -> error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+    }
+  }
+}
+
+fun test3(d: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+

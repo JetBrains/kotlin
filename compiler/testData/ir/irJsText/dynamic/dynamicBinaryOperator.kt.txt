@@ -1,0 +1,25 @@
+fun testBinaryPlus(d: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testBinaryMinus(d: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testMul(d: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testDiv(d: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testMod(d: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+

@@ -1,0 +1,11 @@
+fun testArrayIncrementDecrement(d: dynamic) {
+  val t1: dynamic = error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+  val t2: dynamic = error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+  val t3: dynamic = error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+  val t4: dynamic = error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+

@@ -1,0 +1,13 @@
+fun testArrayAugmentedAssignment(d: dynamic) {
+  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+

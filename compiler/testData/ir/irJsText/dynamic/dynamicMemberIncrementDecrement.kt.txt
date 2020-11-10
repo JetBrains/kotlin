@@ -1,0 +1,46 @@
+fun testMemberIncrementDecrement(d: dynamic) {
+  val t1: dynamic = error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+  val t2: dynamic = error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+  val t3: dynamic = error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+  val t4: dynamic = error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testSafeMemberIncrementDecrement(d: dynamic) {
+  val t1: dynamic = { // BLOCK
+    val tmp0_safe_receiver: dynamic = d
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      true -> error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+    }
+  }
+  val t2: dynamic = { // BLOCK
+    val tmp1_safe_receiver: dynamic = d
+    when {
+      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
+      true -> error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+    }
+  }
+  val t3: dynamic = { // BLOCK
+    val tmp2_safe_receiver: dynamic = d
+    when {
+      EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
+      true -> error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+    }
+  }
+  val t4: dynamic = { // BLOCK
+    val tmp3_safe_receiver: dynamic = d
+    when {
+      EQEQ(arg0 = tmp3_safe_receiver, arg1 = null) -> null
+      true -> error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+    }
+  }
+}
+

@@ -1,0 +1,10 @@
+fun testArrayAssignment(d: dynamic) {
+  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testArrayAssignmentFake(d: dynamic) {
+  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+

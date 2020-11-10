@@ -1,0 +1,15 @@
+fun testArrayAccess1(d: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testArrayAccess2(d: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testArrayAccess3(d: dynamic): dynamic {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+

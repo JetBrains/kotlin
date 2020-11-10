@@ -1,0 +1,14 @@
+fun test1(d: dynamic): Int {
+  return when {
+    d is String -> d /*~> String */.<get-length>()
+    true -> -1
+  }
+}
+
+fun test2(d: dynamic): Int {
+  return when {
+    d is Array<*> -> d /*~> Array<out Any?> */.<get-size>()
+    true -> -1
+  }
+}
+

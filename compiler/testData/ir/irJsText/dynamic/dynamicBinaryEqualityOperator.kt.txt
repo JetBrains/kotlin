@@ -1,0 +1,20 @@
+fun testEqeq(d: dynamic): Boolean {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testExclEq(d: dynamic): Boolean {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testEqeqeq(d: dynamic): Boolean {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
+fun testExclEqeq(d: dynamic): Boolean {
+  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
+
+}
+
