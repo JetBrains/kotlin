@@ -3237,6 +3237,9 @@ public abstract interface annotation class kotlin/jvm/JvmDefaultWithoutCompatibi
 public abstract interface annotation class kotlin/jvm/JvmField : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/jvm/JvmInline : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/jvm/JvmMultifileClass : java/lang/annotation/Annotation {
 }
 
