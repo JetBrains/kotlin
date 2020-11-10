@@ -7,12 +7,25 @@ val a = "A"
 // FILE: B.kt
 val b = "B".apply {}
 
-val c = "C"
+val c = b
+
+// FILE: C.kt
+val d = "D".apply {}
+
+val e = d
 
 // FILE: main.kt
 
 fun box(): String {
-    return if (js("a") == "A" && js("typeof b") == "undefined" && js("typeof c") == "undefined")
+    d
+    e
+    return if (
+        js("a") === "A" &&
+        js("typeof b") == "undefined" &&
+        js("typeof c") == "undefined" &&
+        js("d") === "D" &&
+        js("e") === "D"
+    )
         "OK"
-    else "fail"
+    else "a = ${js("a")}; typeof b = ${js("typeof b")}; typeof c = ${js("typeof c")}; d = ${js("d")}; e = ${js("e")}"
 }
