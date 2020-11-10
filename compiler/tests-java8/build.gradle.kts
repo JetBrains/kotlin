@@ -70,8 +70,8 @@ task<Test>("jspecifyTestsWithAutoApplying") {
 
 task<Task>("generateKotlinUseSiteFromJavaOnesForJspecifyTestsWithAutoApplyingChanges") {
     dependsOn("generateKotlinUseSiteFromJavaOnesForJspecifyTests")
+    dependsOn("generateTests")
     dependsOn("jspecifyTestsWithAutoApplying")
-
 }
 
 testsJar()
