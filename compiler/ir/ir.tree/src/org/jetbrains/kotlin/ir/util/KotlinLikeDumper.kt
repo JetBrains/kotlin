@@ -1068,9 +1068,16 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         spread.expression.accept(this, data)
     }
 
-    override fun visitDeclarationReference(expression: IrDeclarationReference, data: IrDeclaration?) {
-        // TODO support
-        super.visitDeclarationReference(expression, data)
+    override fun visitGetObjectValue(expression: IrGetObjectValue, data: IrDeclaration?) {
+        // TODO what if symbol is unbound?
+        expression.symbol.defaultType.printTypeWithNoIndent()
+    }
+
+    override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrDeclaration?) {
+        val enumEntry = expression.symbol.owner
+        p.printWithNoIndent(enumEntry.parentAsClass.name.asString())
+        p.printWithNoIndent(".")
+        p.printWithNoIndent(enumEntry.name.asString())
     }
 
     override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: IrDeclaration?) {
@@ -1078,11 +1085,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO no test
         p.printWithNoIndent("&")
         super.visitRawFunctionReference(expression, data)
-    }
-
-    override fun visitSingletonReference(expression: IrGetSingletonValue, data: IrDeclaration?) {
-        // TODO check
-        expression.type.printTypeWithNoIndent()
     }
 
     override fun visitGetValue(expression: IrGetValue, data: IrDeclaration?) {
@@ -1311,16 +1313,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: IrDeclaration?) {
         super.visitSuspensionPoint(expression, data)
-    }
-
-    override fun visitGetObjectValue(expression: IrGetObjectValue, data: IrDeclaration?) {
-        // ???
-        super.visitGetObjectValue(expression, data)
-    }
-
-    override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrDeclaration?) {
-        // ???
-        super.visitGetEnumValue(expression, data)
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclaration?) {
