@@ -178,9 +178,11 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             val atElement = modifierList?.children?.find { it is PsiErrorElement }
             atElement?.delete()
         }
-
+        val annotationNames = annotationEntries.map { it.shortName }
+        val searchNames = searchTemplate.annotationEntries.map { it.shortName }
         match.annotationEntries.forEach { matchAnnotation ->
-            if(!annotationEntries.contains(matchAnnotation) && !searchTemplate.annotationEntries.contains(matchAnnotation)) {
+            val shortName = matchAnnotation.shortName
+            if(!annotationNames.contains(shortName) && !searchNames.contains(shortName)) {
                 addAnnotationEntry(matchAnnotation)
             }
         }
