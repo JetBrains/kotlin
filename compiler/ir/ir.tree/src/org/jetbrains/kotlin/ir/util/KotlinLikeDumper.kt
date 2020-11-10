@@ -300,7 +300,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                             first = false
                         }
 
-                        when(it) {
+                        when (it) {
                             is IrStarProjection ->
                                 p.printWithNoIndent("*")
                             is IrTypeProjection -> {
@@ -974,7 +974,12 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO Use lambda syntax when possible
         // TODO don't print visibility?
         p.withholdIndentOnce()
-        expression.function.printSimpleFunction("fun ", expression.function.name.asString(), printTypeParametersAndExtensionReceiver = true, printSignatureAndBody = true)
+        expression.function.printSimpleFunction(
+            "fun ",
+            expression.function.name.asString(),
+            printTypeParametersAndExtensionReceiver = true,
+            printSignatureAndBody = true
+        )
     }
 
     override fun visitGetField(expression: IrGetField, data: IrDeclaration?) {
