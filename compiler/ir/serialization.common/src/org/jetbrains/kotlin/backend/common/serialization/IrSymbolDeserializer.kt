@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature
 internal class IrSymbolDeserializer(
     val linker: KotlinIrLinker,
     val fileReader: IrLibraryFile,
-    val fileDeserializer: IrFileDeserializer,
+    val fileDeserializationState: FileDeserializationState,
     val actuals: List<Actual>,
     private val moduleDeserializer: IrModuleDeserializer,
     private val handleNoModuleDeserializerFound: (IdSignature) -> IrModuleDeserializer,
@@ -123,7 +123,7 @@ internal class IrSymbolDeserializer(
         assert(idSig.isLocal)
 
         if (idSig.hasTopLevel) {
-            fileDeserializer.fileLocalDeserializationState.addIdSignature(idSig.topLevelSignature())
+            fileDeserializationState.addIdSignature(idSig.topLevelSignature())
         }
 
         return deserializedSymbols.getOrPut(idSig) {

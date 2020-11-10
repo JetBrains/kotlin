@@ -30,35 +30,40 @@ abstract class BasicIrModuleDeserializer(
 
     private val fileDeserializers = mutableListOf<IrFileDeserializer>()
 
-    private inner class ModuleDeserializationState {
-        private val filesWithPendingTopLevels = mutableSetOf<IrFileDeserializer>()
+    private fun enqueueModule() {
+        linker.modulesWithReachableTopLevels.add(this)
+    }
 
-        fun enqueueFile(fileDeserializer: IrFileDeserializer) {
-            filesWithPendingTopLevels.add(fileDeserializer)
+    private inner class ModuleDeserializationState {
+        private val filesWithPendingTopLevels = mutableSetOf<FileDeserializationState>()
+
+        fun enqueueFile(fileDeserializationState: FileDeserializationState) {
+            filesWithPendingTopLevels.add(fileDeserializationState)
             enqueueModule()
         }
 
         fun addIdSignature(key: IdSignature) {
-            val fileDeserializer = moduleReversedFileIndex[key] ?: error("No file found for key $key")
-            fileDeserializer.fileLocalDeserializationState.addIdSignature(key)
+            val fileLocalDeserializationState = moduleReversedFileIndex[key] ?: error("No file found for key $key")
+            fileLocalDeserializationState.addIdSignature(key)
 
-            enqueueFile(fileDeserializer)
+            enqueueFile(fileLocalDeserializationState)
         }
 
         fun processPendingDeclarations() {
             while (filesWithPendingTopLevels.isNotEmpty()) {
-                val pendingDeserializer = filesWithPendingTopLevels.first()
+                val pendingFileDeserializationState = filesWithPendingTopLevels.first()
 
-                pendingDeserializer.deserializeFileImplicitDataIfFirstUse()
-                pendingDeserializer.deserializeAllFileReachableTopLevel()
+                pendingFileDeserializationState.fileDeserializer.deserializeFileImplicitDataIfFirstUse()
+                pendingFileDeserializationState.deserializeAllFileReachableTopLevel()
 
-                filesWithPendingTopLevels.remove(pendingDeserializer)
+                filesWithPendingTopLevels.remove(pendingFileDeserializationState)
             }
         }
     }
 
     private val moduleDeserializationState = ModuleDeserializationState()
-    private val moduleReversedFileIndex = mutableMapOf<IdSignature, IrFileDeserializer>()
+    private val moduleReversedFileIndex = mutableMapOf<IdSignature, FileDeserializationState>()
+
     override val moduleDependencies by lazy {
         moduleDescriptor.allDependencyModules.filter { it != moduleDescriptor }.map { resolveModuleDeserializer(it) }
     }
@@ -86,13 +91,13 @@ abstract class BasicIrModuleDeserializer(
         assert(idSig.isPublic)
 
         val topLevelSignature = idSig.topLevelSignature()
-        val fileDeserializer = moduleReversedFileIndex[topLevelSignature]
+        val fileLocalDeserializationState = moduleReversedFileIndex[topLevelSignature]
             ?: error("No file for $topLevelSignature (@ $idSig) in module $moduleDescriptor")
 
-        fileDeserializer.fileLocalDeserializationState.addIdSignature(topLevelSignature)
-        moduleDeserializationState.enqueueFile(fileDeserializer)
+        fileLocalDeserializationState.addIdSignature(topLevelSignature)
+        moduleDeserializationState.enqueueFile(fileLocalDeserializationState)
 
-        return fileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
+        return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
             linker.haveSeen.add(it)
         }
     }
@@ -104,35 +109,30 @@ abstract class BasicIrModuleDeserializer(
         val fileReader = IrLibraryFile(moduleDeserializer.klib, fileIndex)
         val file = fileReader.createFile(moduleDescriptor, fileProto)
 
-        val fileDeserializer =
-            IrFileDeserializer(
-                linker,
-                linker.logger,
-                linker.builtIns,
-                linker.symbolTable,
-                file,
-                fileReader,
-                fileProto,
-                strategy.needBodies,
-                linker.deserializeFakeOverrides,
-                allowErrorNodes,
-                strategy.inlineBodies,
-                moduleDeserializer,
-                handleNoModuleDeserializerFound,
-            )
+        val fileDeserializationState = FileDeserializationState(
+            linker,
+            file,
+            fileReader,
+            fileProto,
+            strategy.needBodies,
+            allowErrorNodes,
+            strategy.inlineBodies,
+            moduleDeserializer,
+            handleNoModuleDeserializerFound,
+        )
 
-        fileDeserializers += fileDeserializer
+        fileDeserializers += fileDeserializationState.fileDeserializer
 
-        val topLevelDeclarations = fileDeserializer.reversedSignatureIndex.keys
+        val topLevelDeclarations = fileDeserializationState.fileDeserializer.reversedSignatureIndex.keys
         topLevelDeclarations.forEach {
-            moduleReversedFileIndex.putIfAbsent(it, fileDeserializer) // TODO Why not simple put?
+            moduleReversedFileIndex.putIfAbsent(it, fileDeserializationState) // TODO Why not simple put?
         }
 
         if (strategy.theWholeWorld) {
-            fileDeserializer.enqueueAllDeclarations()
+            fileDeserializationState.enqueueAllDeclarations()
         }
         if (strategy.theWholeWorld || strategy.explicitlyExported) {
-            moduleDeserializationState.enqueueFile(fileDeserializer)
+            moduleDeserializationState.enqueueFile(fileDeserializationState)
         }
 
         return file
@@ -142,10 +142,7 @@ abstract class BasicIrModuleDeserializer(
         moduleDeserializationState.processPendingDeclarations()
     }
 
-    private fun enqueueModule() {
-        linker.modulesWithReachableTopLevels.add(this)
-    }
-
+    // TODO useless
     override fun addModuleReachableTopLevel(idSig: IdSignature) {
         moduleDeserializationState.addIdSignature(idSig)
     }
