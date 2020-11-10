@@ -636,4 +636,4 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val llvmVector128 = vector128Type
 }
 
-class IrStaticInitializer(val module: ModuleDescriptor, val initializer: LLVMValueRef)
+class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val initializer: LLVMValueRef)

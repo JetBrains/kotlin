@@ -7,9 +7,17 @@ package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
+import org.jetbrains.kotlin.backend.konan.llvm.KonanMetadata
+import org.jetbrains.kotlin.backend.konan.serialization.KonanFileMetadataSource
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleFragmentImpl
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.klibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -23,6 +31,7 @@ import org.jetbrains.kotlin.ir.types.IdSignatureValues
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -101,3 +110,23 @@ fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: I
 
 internal fun IrExpression.isBoxOrUnboxCall() =
         (this is IrCall && symbol.owner.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
+
+val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
+val IrModuleFragment.konanLibrary get() =
+    (this as? KonanIrModuleFragmentImpl)?.konanLibrary ?: descriptor.konanLibrary
+val IrFile.konanLibrary get() =
+    (metadata as? KonanFileMetadataSource)?.module?.konanLibrary ?: packageFragmentDescriptor.containingDeclaration.konanLibrary
+val IrDeclaration.konanLibrary: KotlinLibrary? get() {
+    ((this as? IrMetadataSourceOwner)?.metadata as? KonanMetadata)?.let { return it.konanLibrary }
+    val result = when (val parent = parent) {
+        is IrFile -> parent.konanLibrary
+        is IrPackageFragment -> parent.packageFragmentDescriptor.containingDeclaration.konanLibrary
+        is IrDeclaration -> parent.konanLibrary
+        else -> TODO("Unexpected declaration parent: $parent")
+    }
+    if (this is IrMetadataSourceOwner && this !is IrLazyDeclarationBase)
+        metadata = KonanMetadata(metadata?.name, result)
+    return result
+}
+
+fun IrDeclaration.isFromInteropLibrary() = konanLibrary?.isInteropLibrary() == true

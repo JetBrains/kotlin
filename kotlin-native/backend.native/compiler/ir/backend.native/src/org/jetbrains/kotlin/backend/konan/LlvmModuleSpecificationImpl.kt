@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 internal abstract class LlvmModuleSpecificationBase(protected val cachedLibraries: CachedLibraries) : LlvmModuleSpecification {
@@ -26,7 +25,7 @@ internal abstract class LlvmModuleSpecificationBase(protected val cachedLibrarie
             module.konanLibrary.let { it == null || containsLibrary(it) }
 
     override fun containsDeclaration(declaration: IrDeclaration): Boolean =
-            declaration.module.konanLibrary.let { it == null || containsLibrary(it) }
+            declaration.konanLibrary.let { it == null || containsLibrary(it) }
 }
 
 internal class DefaultLlvmModuleSpecification(cachedLibraries: CachedLibraries)

@@ -24,22 +24,24 @@ import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolD
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
-import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
+import org.jetbrains.kotlin.descriptors.konan.klibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.ClassId
@@ -107,8 +109,13 @@ internal class KonanIrLinker(
         return KonanModuleDeserializer(moduleDescriptor, klib ?: error("Expecting kotlin library"), strategy)
     }
 
-    private inner class KonanModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategy: DeserializationStrategy):
-        KotlinIrLinker.BasicIrModuleDeserializer(moduleDescriptor, klib, strategy)
+    private inner class KonanModuleDeserializer(
+            moduleDescriptor: ModuleDescriptor,
+            klib: IrLibrary,
+            strategy: DeserializationStrategy
+    ): KotlinIrLinker.BasicIrModuleDeserializer(moduleDescriptor, klib, strategy) {
+        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns, emptyList())
+    }
 
     private inner class KonanInteropModuleDeserializer(
             moduleDescriptor: ModuleDescriptor,
@@ -160,7 +167,7 @@ internal class KonanIrLinker(
             return symbolOwner.symbol
         }
 
-        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns)
+        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns)
         override val moduleDependencies: Collection<IrModuleDeserializer> = listOfNotNull(forwardDeclarationDeserializer)
     }
 
@@ -208,7 +215,7 @@ internal class KonanIrLinker(
             return declaredDeclaration.getOrPut(idSig) { buildForwardDeclarationStub(descriptor) }.symbol
         }
 
-        override val moduleFragment: IrModuleFragment = IrModuleFragmentImpl(moduleDescriptor, builtIns)
+        override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns)
         override val moduleDependencies: Collection<IrModuleDeserializer> = emptyList()
     }
 
@@ -225,4 +232,35 @@ internal class KonanIrLinker(
             override val typeTranslator: TypeTranslator,
             override val irBuiltIns: IrBuiltIns
     ):TranslationPluginContext
+}
+
+class KonanIrModuleFragmentImpl(
+        override val descriptor: ModuleDescriptor,
+        override val irBuiltins: IrBuiltIns,
+        files: List<IrFile> = emptyList(),
+) : IrModuleFragment() {
+    override val name: Name get() = descriptor.name // TODO
+
+    override val files: MutableList<IrFile> = files.toMutableList()
+
+    val konanLibrary = (descriptor.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+            visitor.visitModuleFragment(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        files.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        files.forEachIndexed { i, irFile ->
+            files[i] = irFile.transform(transformer, data)
+        }
+    }
+}
+
+fun IrModuleFragment.toKonanModule() = KonanIrModuleFragmentImpl(descriptor, irBuiltins, files)
+
+class KonanFileMetadataSource(val module: KonanIrModuleFragmentImpl) : MetadataSource.File {
+    override val name: Name? = null
 }

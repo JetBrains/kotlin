@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyToWithoutSuperTypes
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
 
 /**
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
@@ -254,10 +256,20 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
         KonanReflectionTypes(moduleDescriptor, KonanFqNames.internalPackageName)
     }
 
-    val layoutBuilders = mutableMapOf<IrClass, ClassLayoutBuilder>()
+    // TODO: Remove after adding special <userData> property to IrDeclaration.
+    private val layoutBuilders = mutableMapOf<IrClass, ClassLayoutBuilder>()
 
-    fun getLayoutBuilder(irClass: IrClass) = layoutBuilders.getOrPut(irClass) {
-        ClassLayoutBuilder(irClass, this, isLowered = shouldLower(this, irClass))
+    fun getLayoutBuilder(irClass: IrClass): ClassLayoutBuilder {
+        if (irClass is IrLazyClass)
+            return layoutBuilders.getOrPut(irClass) {
+                ClassLayoutBuilder(irClass, this, isLowered = shouldLower(this, irClass))
+            }
+        val metadata = irClass.metadata as? CodegenClassMetadata
+                ?: CodegenClassMetadata(irClass).also { irClass.metadata = it }
+        metadata.layoutBuilder?.let { return it }
+        val layoutBuilder = ClassLayoutBuilder(irClass, this, isLowered = shouldLower(this, irClass))
+        metadata.layoutBuilder = layoutBuilder
+        return layoutBuilder
     }
 
     lateinit var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult

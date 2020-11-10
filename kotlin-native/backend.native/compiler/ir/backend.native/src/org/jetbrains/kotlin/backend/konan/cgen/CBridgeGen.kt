@@ -8,7 +8,7 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
@@ -303,7 +303,7 @@ internal fun KotlinStubs.generateObjCCall(
 ) = builder.irBlock {
     val resolved = method.resolveFakeOverride(allowAbstract = true)?: method
     val exceptionMode = ForeignExceptionMode.byValue(
-            resolved.module.konanLibrary?.manifestProperties
+            resolved.konanLibrary?.manifestProperties
                     ?.getProperty(ForeignExceptionMode.manifestKey)
     )
 

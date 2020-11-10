@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -61,6 +62,11 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
 
     private fun lower(owner: IrSymbol, element: IrElement?) {
         element?.transformChildrenVoid(object: IrElementTransformerVoid() {
+            override fun visitClass(declaration: IrClass): IrStatement {
+                // Skip nested.
+                return declaration
+            }
+
             val transformer = this
 
             private fun replaceEmptyParameterWithEmptyArray(expression: IrFunctionAccessExpression) {

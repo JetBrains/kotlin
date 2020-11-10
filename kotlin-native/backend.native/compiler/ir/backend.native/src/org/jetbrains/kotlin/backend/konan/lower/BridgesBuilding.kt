@@ -53,6 +53,10 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
     private fun buildWorkerBridges(declaration: IrDeclaration): List<IrFunction> {
         val bridges = mutableListOf<IrFunction>()
         declaration.transformChildrenVoid(object: IrElementTransformerVoid() {
+            override fun visitClass(declaration: IrClass): IrStatement {
+                // Skip nested.
+                return declaration
+            }
 
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
@@ -133,20 +137,24 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val builtBridges = mutableSetOf<IrSimpleFunction>()
 
-        irClass.simpleFunctions()
-                .forEach { function ->
-                    function.allOverriddenFunctions
-                            .map { OverriddenFunctionInfo(function, it) }
-                            .filter { !it.bridgeDirections.allNotNeeded() }
-                            .filter { it.canBeCalledVirtually }
-                            .filter { !it.inheritsBridge }
-                            .distinctBy { it.bridgeDirections }
-                            .forEach {
-                                buildBridge(it, irClass)
-                                builtBridges += it.function
-                            }
+        for (function in irClass.simpleFunctions()) {
+            val set = mutableSetOf<BridgeDirections>()
+            for (overriddenFunction in function.allOverriddenFunctions) {
+                val overriddenFunctionInfo = OverriddenFunctionInfo(function, overriddenFunction)
+                val bridgeDirections = overriddenFunctionInfo.bridgeDirections
+                if (!bridgeDirections.allNotNeeded() && overriddenFunctionInfo.canBeCalledVirtually
+                        && !overriddenFunctionInfo.inheritsBridge && set.add(bridgeDirections)) {
+                    buildBridge(overriddenFunctionInfo, irClass)
+                    builtBridges += function
                 }
+            }
+        }
         irClass.transformChildrenVoid(object: IrElementTransformerVoid() {
+            override fun visitClass(declaration: IrClass): IrStatement {
+                // Skip nested.
+                return declaration
+            }
+
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 declaration.transformChildrenVoid(this)
 

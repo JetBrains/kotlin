@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
-import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
-import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.ir.companionObject
@@ -811,7 +809,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
     private fun tryGenerateInteropConstantRead(expression: IrCall): IrExpression? {
         val function = expression.symbol.owner
 
-        if (!function.descriptor.module.isFromInteropLibrary()) return null
+        if (!function.isFromInteropLibrary()) return null
         if (!function.isGetter) return null
 
         val constantProperty = (function as? IrSimpleFunction)
@@ -870,7 +868,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
         if (function.annotations.hasAnnotation(RuntimeNames.cCall)) {
             context.llvmImports.add(function.llvmSymbolOrigin)
             val exceptionMode = ForeignExceptionMode.byValue(
-                    function.module.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
+                    function.konanLibrary?.manifestProperties?.getProperty(ForeignExceptionMode.manifestKey)
             )
             return generateWithStubs { generateCCall(expression, builder, isInvoke = false, exceptionMode) }
         }
