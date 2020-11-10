@@ -25,22 +25,25 @@ import javax.swing.*;
 
 public class KotlinSteppingConfigurableUi implements ConfigurableUi<KotlinDebuggerSettings> {
     private JCheckBox ignoreKotlinMethods;
+    private JCheckBox alwaysDoSmartStep;
     private JPanel myPanel;
 
     @Override
     public void reset(@NotNull KotlinDebuggerSettings settings) {
-        boolean flag = settings.getDisableKotlinInternalClasses();
-        ignoreKotlinMethods.setSelected(flag);
+        ignoreKotlinMethods.setSelected(settings.getDisableKotlinInternalClasses());
+        alwaysDoSmartStep.setSelected(settings.getAlwaysDoSmartStep());
     }
 
     @Override
     public boolean isModified(@NotNull KotlinDebuggerSettings settings) {
-        return settings.getDisableKotlinInternalClasses() != ignoreKotlinMethods.isSelected();
+        return settings.getDisableKotlinInternalClasses() != ignoreKotlinMethods.isSelected() ||
+               settings.getAlwaysDoSmartStep() != alwaysDoSmartStep.isSelected();
     }
 
     @Override
     public void apply(@NotNull KotlinDebuggerSettings settings) {
         settings.setDisableKotlinInternalClasses(ignoreKotlinMethods.isSelected());
+        settings.setAlwaysDoSmartStep(alwaysDoSmartStep.isSelected());
     }
 
     @NotNull

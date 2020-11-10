@@ -9,10 +9,13 @@ import com.intellij.debugger.SourcePosition
 import com.intellij.debugger.actions.JvmSmartStepIntoHandler
 import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.debugger.engine.MethodFilter
+import com.intellij.debugger.impl.DebuggerSession
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.util.Range
 import com.intellij.util.containers.OrderedSet
+import org.jetbrains.concurrency.Promise
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils.getTopmostElementAtOffset
+import org.jetbrains.kotlin.idea.debugger.KotlinDebuggerSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 
@@ -33,6 +36,13 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
             ktElement.accept(visitor, null)
             return@runReadAction consumer
         }
+    }
+
+    override fun findStepIntoTargets(position: SourcePosition?, session: DebuggerSession?): Promise<MutableList<SmartStepTarget>> {
+        return if (KotlinDebuggerSettings.getInstance().alwaysDoSmartStep) super.findSmartStepTargetsAsync(
+            position,
+            session
+        ) else super.findStepIntoTargets(position, session)
     }
 
     override fun createMethodFilter(stepTarget: SmartStepTarget?): MethodFilter? {
