@@ -165,16 +165,35 @@ class FirCallResolver(
 
         if (
             reducedCandidates.size > 1 &&
-            session.languageVersionSettings.supportsFeature(LanguageFeature.OverloadResolutionByLambdaReturnType) &&
-            bestCandidates.all { components.context.inferenceSession.shouldRunCompletion(qualifiedAccess) }
+            session.languageVersionSettings.supportsFeature(LanguageFeature.OverloadResolutionByLambdaReturnType)
         ) {
-            val newCandidates = chooseCandidateRegardingOverloadResolutionByLambdaReturnType(
-                qualifiedAccess,
-                reducedCandidates,
-                bestCandidates
-            )
-            if (newCandidates != null) {
-                reducedCandidates = newCandidates
+            /*
+             * Inference session may look into candidate of call, and for that it uses callee reference.
+             * So we need replace reference with proper candidate before calling inference session
+             */
+            val shouldRunCompletion = if (components.context.inferenceSession != FirInferenceSession.DEFAULT) {
+                var shouldRunCompletion = true
+                val originalReference = qualifiedAccess.calleeReference
+                val inferenceSession = components.context.inferenceSession
+                for (candidate in bestCandidates) {
+                    qualifiedAccess.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
+                    shouldRunCompletion = shouldRunCompletion && inferenceSession.shouldRunCompletion(qualifiedAccess)
+                    if (!shouldRunCompletion) break
+                }
+                qualifiedAccess.replaceCalleeReference(originalReference)
+                shouldRunCompletion
+            } else {
+                true
+            }
+            if (shouldRunCompletion) {
+                val newCandidates = chooseCandidateRegardingOverloadResolutionByLambdaReturnType(
+                    qualifiedAccess,
+                    reducedCandidates,
+                    bestCandidates
+                )
+                if (newCandidates != null) {
+                    reducedCandidates = newCandidates
+                }
             }
         }
 
