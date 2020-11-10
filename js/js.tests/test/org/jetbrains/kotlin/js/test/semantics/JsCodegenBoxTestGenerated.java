@@ -14269,6 +14269,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testAllFilesPresentInJavaDefaults() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/javaDefaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
+
+            @TestMetadata("kt40920.kt")
+            public void testKt40920() throws Exception {
+                runTest("compiler/testData/codegen/box/jvm8/javaDefaults/kt40920.kt");
+            }
         }
     }
 
