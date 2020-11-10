@@ -206,7 +206,7 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
         codegenNoImports(
             """
             import androidx.compose.runtime.Composable
-            import androidx.compose.ui.graphics.vector.VectorAsset
+            import androidx.compose.ui.graphics.vector.ImageVector
             import androidx.compose.ui.Modifier
             import androidx.compose.foundation.layout.Row
 
@@ -224,8 +224,8 @@ class ComposeCallLoweringTests : AbstractLoweringTests() {
             fun TodoItemInput(
                 text: String,
                 onTextChange: (String) -> Unit,
-                icon: VectorAsset,
-                onIconChange: (VectorAsset) -> Unit,
+                icon: ImageVector,
+                onIconChange: (ImageVector) -> Unit,
                 primaryAction: () -> Unit,
                 iconsVisible: Boolean,
                 modifier: Modifier = Modifier,
