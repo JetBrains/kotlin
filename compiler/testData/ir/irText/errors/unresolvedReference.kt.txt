@@ -7,7 +7,7 @@ val test2: ErrorType /* ERROR */
   get
 
 val test3: ErrorType /* ERROR */
-  field = error("") /* ERROR CALL */
+  field = error("") /* ERROR CALL */42; 56; 
   get
 
 val test4: ErrorType /* ERROR */
