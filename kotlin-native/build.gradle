@@ -139,7 +139,7 @@ allprojects {
 
 void setupHostAndTarget() {
     ext.hostName = platformManager.hostName
-    ext.targetList = platformManager.filteredOutEnabledButNotSupported.collect { it.visibleName } as List
+    ext.targetList = platformManager.enabled.collect { it.visibleName } as List
     ext.konanTargetList = platformManager.enabled as List
 }
 
