@@ -29,3 +29,15 @@ class AnnotatedTypeParameterUnspec {
   // jspecify_unrecognized_location
   interface Lib3<@NullnessUnspecified T extends @Nullable Object> {}
 }
+
+static class Checker {
+  void main(
+          // jspecify_nullness_mismatch
+          AnnotatedTypeParameterUnspec.Lib1<@Nullable String> x1,
+          // jspecify_nullness_mismatch
+          AnnotatedTypeParameterUnspec.Lib1<@Nullable String> x2,
+          AnnotatedTypeParameterUnspec.Lib1<@Nullable String> x3
+  ) {
+
+  }
+}

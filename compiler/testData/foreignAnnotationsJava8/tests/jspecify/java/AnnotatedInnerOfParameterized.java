@@ -47,4 +47,25 @@ class AnnotatedInnerOfParameterized<T> {
   Lib<AnnotatedInnerOfParameterized<?>.@Nullable Nested.DoublyNested> l2;
 
   Lib<AnnotatedInnerOfParameterized<?>.Nested.DoublyNested> l3;
+
+  void takeNotNull(Object o) { }
+  void takeLibNotNull(Lib<Object> l) { }
+}
+
+static class Checker {
+  void main(AnnotatedInnerOfParameterized<?> o) {
+    // jspecify_nullness_mismatch
+    o.takeNotNull(o.x4);
+    o.takeNotNull(o.x5);
+    // jspecify_nullness_mismatch
+    o.takeNotNull(o.x6);
+    o.takeNotNull(o.x7);
+    o.takeNotNull(o.x8);
+    // jspecify_nullness_mismatch
+    o.takeNotNull(o.x9);
+
+    o.takeLibNotNull(o.l1);
+    o.takeLibNotNull(o.l2);
+    o.takeLibNotNull(o.l3);
+  }
 }

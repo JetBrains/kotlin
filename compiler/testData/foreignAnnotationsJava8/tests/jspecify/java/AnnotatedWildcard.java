@@ -35,4 +35,18 @@ class AnnotatedWildcard {
 
   // jspecify_unrecognized_location
   Lib<@Nullable ? super @Nullable Object> x5;
+
+  void takeLibNotNull(Lib<Object> l) { }
+}
+
+static class Checker {
+  void main(AnnotatedWildcard o) {
+    o.takeLibNotNull(o.x1);
+    o.takeLibNotNull(o.x2);
+    o.takeLibNotNull(o.x3);
+    // jspecify_nullness_mismatch
+    o.takeLibNotNull(o.x4);
+    // jspecify_nullness_mismatch
+    o.takeLibNotNull(o.x5);
+  }
 }
