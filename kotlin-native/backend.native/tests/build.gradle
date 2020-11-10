@@ -3740,6 +3740,10 @@ createInterop("embedStaticLibraries") {
     it.extraOpts '-staticLibrary', "2.a"
 }
 
+createInterop("kt43265") {
+    it.defFile 'interop/kt43265/kt43265.def'
+}
+
 if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
@@ -4038,6 +4042,12 @@ interopTest("interop_array_pointers") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     interop = 'carrayPointers'
     source = "interop/basics/arrayPointers.kt"
+}
+
+interopTest("interop_kt43265") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    interop = 'kt43265'
+    source = "interop/kt43265/usage.kt"
 }
 
 standaloneTest("interop_pinning") {
