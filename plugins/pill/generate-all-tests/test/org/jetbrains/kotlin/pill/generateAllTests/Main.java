@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.pill.generateAllTests;
 
 import org.jetbrains.kotlin.generators.tests.*;
-import org.jetbrains.kotlin.generators.tests.generator.InconsistencyChecker;
+import org.jetbrains.kotlin.generators.InconsistencyChecker;
 
 import java.util.List;
 

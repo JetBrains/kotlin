@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsNoAnnotation
 import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsTest
 import org.jetbrains.kotlin.checkers.AbstractJspecifyAnnotationsTest
 import org.jetbrains.kotlin.checkers.javac.AbstractJavacForeignJava8AnnotationsTest
-import org.jetbrains.kotlin.generators.tests.generator.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.generateTestGroupSuite
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJava8Test
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJava8WithPsiClassReadingTest
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJava8UsingJavacTest

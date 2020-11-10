@@ -3,10 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.generators.util
+package org.jetbrains.kotlin.generators.model
 
-import org.jetbrains.kotlin.generators.tests.generator.MethodModel
-import org.jetbrains.kotlin.generators.tests.generator.SimpleTestMethodModel
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.regex.Pattern

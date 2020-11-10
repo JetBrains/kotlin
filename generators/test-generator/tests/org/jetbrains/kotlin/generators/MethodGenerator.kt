@@ -3,9 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.generators.tests.generator.generators
+package org.jetbrains.kotlin.generators
 
-import org.jetbrains.kotlin.generators.tests.generator.MethodModel
+import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.utils.Printer
 
 abstract class MethodGenerator<in T : MethodModel> {

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.spec.utils.tasks
 
-import org.jetbrains.kotlin.generators.tests.generator.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.generateTestGroupSuite
 import org.jetbrains.kotlin.spec.checkers.AbstractDiagnosticsTestSpec
 import org.jetbrains.kotlin.spec.checkers.AbstractFirDiagnosticsTestSpec
 import org.jetbrains.kotlin.spec.codegen.AbstractBlackBoxCodegenTestSpec

@@ -3,11 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.generators.tests.generator.generators.impl
+package org.jetbrains.kotlin.generators.impl
 
-import org.jetbrains.kotlin.generators.tests.generator.*
-import org.jetbrains.kotlin.generators.tests.generator.generators.MethodGenerator
-import org.jetbrains.kotlin.generators.tests.generator.generators.TestGenerator
+import org.jetbrains.kotlin.generators.MethodGenerator
+import org.jetbrains.kotlin.generators.TestGenerator
+import org.jetbrains.kotlin.generators.TestGroup
+import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.KotlinTestUtils
