@@ -209,7 +209,7 @@ class JvmSymbols(
         }
 
     private val javaLangDeprecatedWithDeprecatedFlag: IrClassSymbol =
-        createClass(FqName("java.lang.Deprecated")) { klass ->
+        createClass(FqName("java.lang.Deprecated"), classKind = ClassKind.ANNOTATION_CLASS) { klass ->
             klass.addConstructor { isPrimary = true }
         }
 

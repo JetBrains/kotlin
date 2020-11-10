@@ -16759,6 +16759,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/defaultArgsViaAnonymousObject.kt");
                 }
 
+                @TestMetadata("deprecatedDefaultMethod.kt")
+                public void testDeprecatedDefaultMethod() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/deprecatedDefaultMethod.kt");
+                }
+
                 @TestMetadata("funInterface.kt")
                 public void testFunInterface() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/funInterface.kt");
@@ -16888,6 +16893,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 @TestMetadata("deprecatedAnnotation.kt")
                 public void testDeprecatedAnnotation() throws Exception {
                     runTest("compiler/testData/codegen/box/jvm8/defaults/compatibility/deprecatedAnnotation.kt");
+                }
+
+                @TestMetadata("deprecatedDefaultMethod.kt")
+                public void testDeprecatedDefaultMethod() throws Exception {
+                    runTest("compiler/testData/codegen/box/jvm8/defaults/compatibility/deprecatedDefaultMethod.kt");
                 }
 
                 @TestMetadata("inheritedFunctionWithDefaultParameters.kt")
