@@ -139,9 +139,9 @@ public inline fun CharSequence.indexOfLast(predicate: (Char) -> Boolean): Int {
 
 /**
  * Returns the last character.
- *
- * @throws [NoSuchElementException] if the char sequence is empty.
- *
+ * 
+ * @throws NoSuchElementException if the char sequence is empty.
+ * 
  * @sample samples.text.Strings.last
  */
 public fun CharSequence.last(): Char {
@@ -152,9 +152,9 @@ public fun CharSequence.last(): Char {
 
 /**
  * Returns the last character matching the given [predicate].
- *
- * @throws [NoSuchElementException] if no such character is found.
- *
+ * 
+ * @throws NoSuchElementException if no such character is found.
+ * 
  * @sample samples.text.Strings.last
  */
 public inline fun CharSequence.last(predicate: (Char) -> Boolean): Char {
@@ -167,7 +167,7 @@ public inline fun CharSequence.last(predicate: (Char) -> Boolean): Char {
 
 /**
  * Returns the last character, or `null` if the char sequence is empty.
- *
+ * 
  * @sample samples.text.Strings.last
  */
 public fun CharSequence.lastOrNull(): Char? {
@@ -176,7 +176,7 @@ public fun CharSequence.lastOrNull(): Char? {
 
 /**
  * Returns the last character matching the given [predicate], or `null` if no such character was found.
- *
+ * 
  * @sample samples.text.Strings.last
  */
 public inline fun CharSequence.lastOrNull(predicate: (Char) -> Boolean): Char? {
