@@ -399,10 +399,14 @@ private class CodegenInstanceFieldMetadata(
         name: Name?,
         konanLibrary: KotlinLibrary?,
         val llvm: FieldLlvmDeclarations
-) : KonanMetadata(name, konanLibrary), MetadataSource.Property
+) : KonanMetadata(name, konanLibrary), MetadataSource.Property {
+    override val isConst = false
+}
 
 private class CodegenStaticFieldMetadata(
         name: Name?,
         konanLibrary: KotlinLibrary?,
         val llvm: StaticFieldLlvmDeclarations
-) : KonanMetadata(name, konanLibrary), MetadataSource.Property
+) : KonanMetadata(name, konanLibrary), MetadataSource.Property {
+    override val isConst = false
+}
