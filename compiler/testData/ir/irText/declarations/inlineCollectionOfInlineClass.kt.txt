@@ -10,10 +10,7 @@ inline class IT {
     get
 
   override fun toString(): String {
-    return "IT(" + 
-"x=" + 
-<this>.#x + 
-")"
+    return "IT(" + "x=" + <this>.#x + ")"
   }
 
   override fun hashCode(): Int {
@@ -90,10 +87,7 @@ inline class InlineMutableSet : MutableSet<IT> {
   }
 
   override fun toString(): String {
-    return "InlineMutableSet(" + 
-"ms=" + 
-<this>.#ms + 
-")"
+    return "InlineMutableSet(" + "ms=" + <this>.#ms + ")"
   }
 
   override fun hashCode(): Int {

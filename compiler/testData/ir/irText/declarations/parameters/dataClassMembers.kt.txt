@@ -26,13 +26,7 @@ data class Test<T : Any?> {
   }
 
   override fun toString(): String {
-    return "Test(" + 
-"x=" + 
-<this>.#x + 
-", " + 
-"y=" + 
-<this>.#y + 
-")"
+    return "Test(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
   }
 
   override fun hashCode(): Int {

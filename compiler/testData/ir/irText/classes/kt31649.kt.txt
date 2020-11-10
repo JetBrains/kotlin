@@ -18,10 +18,7 @@ data class TestData {
   }
 
   override fun toString(): String {
-    return "TestData(" + 
-"nn=" + 
-<this>.#nn + 
-")"
+    return "TestData(" + "nn=" + <this>.#nn + ")"
   }
 
   override fun hashCode(): Int {
@@ -59,10 +56,7 @@ inline class TestInline {
     get
 
   override fun toString(): String {
-    return "TestInline(" + 
-"nn=" + 
-<this>.#nn + 
-")"
+    return "TestInline(" + "nn=" + <this>.#nn + ")"
   }
 
   override fun hashCode(): Int {

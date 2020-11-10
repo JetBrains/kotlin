@@ -31,10 +31,7 @@ inline class IC<TT : Any?> {
   }
 
   override fun toString(): String {
-    return "IC(" + 
-"c=" + 
-<this>.#c + 
-")"
+    return "IC(" + "c=" + <this>.#c + ")"
   }
 
   override fun hashCode(): Int {

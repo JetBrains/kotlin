@@ -77,8 +77,7 @@ fun testContinueDoWhile() {
     when {
       greater(arg0 = k, arg1 = 2) -> continue
     }
-    s = s.plus(other = k + 
-";")
+    s = s.plus(other = k + ";")
     // }    while (less(arg0 = k, arg1 = 10))
   }
   when {

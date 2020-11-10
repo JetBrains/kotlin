@@ -29,9 +29,7 @@ abc
   get
 
 val test6: String
-  field = <get-test1>() + 
-" " + 
-foo()
+  field = <get-test1>() + " " + foo()
   get
 
 val test7: String

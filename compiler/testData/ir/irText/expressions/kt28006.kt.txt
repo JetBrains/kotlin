@@ -23,18 +23,14 @@ const val testConst4: String
   get
 
 fun test1(x: Int): String {
-  return "🤗" + 
-x
+  return "🤗" + x
 }
 
 fun test2(x: Int): String {
-  return x + 
-"🤗"
+  return x + "🤗"
 }
 
 fun test3(x: Int): String {
-  return x + 
-"🤗" + 
-x
+  return x + "🤗" + x
 }
 

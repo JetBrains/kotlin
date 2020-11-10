@@ -34,16 +34,7 @@ data class Test1 {
   }
 
   override fun toString(): String {
-    return "Test1(" + 
-"x=" + 
-<this>.#x + 
-", " + 
-"y=" + 
-<this>.#y + 
-", " + 
-"z=" + 
-<this>.#z + 
-")"
+    return "Test1(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ", " + "z=" + <this>.#z + ")"
   }
 
   override fun hashCode(): Int {
@@ -95,10 +86,7 @@ data class Test2 {
   }
 
   override fun toString(): String {
-    return "Test2(" + 
-"x=" + 
-<this>.#x + 
-")"
+    return "Test2(" + "x=" + <this>.#x + ")"
   }
 
   override fun hashCode(): Int {
@@ -168,19 +156,7 @@ data class Test3 {
   }
 
   override fun toString(): String {
-    return "Test3(" + 
-"d=" + 
-<this>.#d + 
-", " + 
-"dn=" + 
-<this>.#dn + 
-", " + 
-"f=" + 
-<this>.#f + 
-", " + 
-"df=" + 
-<this>.#df + 
-")"
+    return "Test3(" + "d=" + <this>.#d + ", " + "dn=" + <this>.#dn + ", " + "f=" + <this>.#f + ", " + "df=" + <this>.#df + ")"
   }
 
   override fun hashCode(): Int {

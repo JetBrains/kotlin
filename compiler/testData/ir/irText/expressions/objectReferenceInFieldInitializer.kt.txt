@@ -10,8 +10,7 @@ object A {
     private get
 
   private val b: String
-    field = "1234" + 
-<this>.<get-a>()
+    field = "1234" + <this>.<get-a>()
     private get
 
   private val c: Int

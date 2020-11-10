@@ -82,34 +82,7 @@ data class Test1 {
   }
 
   override fun toString(): String {
-    return "Test1(" + 
-"stringArray=" + 
-dataClassArrayMemberToString(arg0 = <this>.#stringArray) + 
-", " + 
-"charArray=" + 
-dataClassArrayMemberToString(arg0 = <this>.#charArray) + 
-", " + 
-"booleanArray=" + 
-dataClassArrayMemberToString(arg0 = <this>.#booleanArray) + 
-", " + 
-"byteArray=" + 
-dataClassArrayMemberToString(arg0 = <this>.#byteArray) + 
-", " + 
-"shortArray=" + 
-dataClassArrayMemberToString(arg0 = <this>.#shortArray) + 
-", " + 
-"intArray=" + 
-dataClassArrayMemberToString(arg0 = <this>.#intArray) + 
-", " + 
-"longArray=" + 
-dataClassArrayMemberToString(arg0 = <this>.#longArray) + 
-", " + 
-"floatArray=" + 
-dataClassArrayMemberToString(arg0 = <this>.#floatArray) + 
-", " + 
-"doubleArray=" + 
-dataClassArrayMemberToString(arg0 = <this>.#doubleArray) + 
-")"
+    return "Test1(" + "stringArray=" + dataClassArrayMemberToString(arg0 = <this>.#stringArray) + ", " + "charArray=" + dataClassArrayMemberToString(arg0 = <this>.#charArray) + ", " + "booleanArray=" + dataClassArrayMemberToString(arg0 = <this>.#booleanArray) + ", " + "byteArray=" + dataClassArrayMemberToString(arg0 = <this>.#byteArray) + ", " + "shortArray=" + dataClassArrayMemberToString(arg0 = <this>.#shortArray) + ", " + "intArray=" + dataClassArrayMemberToString(arg0 = <this>.#intArray) + ", " + "longArray=" + dataClassArrayMemberToString(arg0 = <this>.#longArray) + ", " + "floatArray=" + dataClassArrayMemberToString(arg0 = <this>.#floatArray) + ", " + "doubleArray=" + dataClassArrayMemberToString(arg0 = <this>.#doubleArray) + ")"
   }
 
   override fun hashCode(): Int {
@@ -185,10 +158,7 @@ data class Test2<T : Any?> {
   }
 
   override fun toString(): String {
-    return "Test2(" + 
-"genericArray=" + 
-dataClassArrayMemberToString(arg0 = <this>.#genericArray) + 
-")"
+    return "Test2(" + "genericArray=" + dataClassArrayMemberToString(arg0 = <this>.#genericArray) + ")"
   }
 
   override fun hashCode(): Int {
@@ -231,10 +201,7 @@ data class Test3 {
   }
 
   override fun toString(): String {
-    return "Test3(" + 
-"anyArrayN=" + 
-dataClassArrayMemberToString(arg0 = <this>.#anyArrayN) + 
-")"
+    return "Test3(" + "anyArrayN=" + dataClassArrayMemberToString(arg0 = <this>.#anyArrayN) + ")"
   }
 
   override fun hashCode(): Int {

@@ -10,10 +10,7 @@ inline class Test {
     get
 
   override fun toString(): String {
-    return "Test(" + 
-"x=" + 
-<this>.#x + 
-")"
+    return "Test(" + "x=" + <this>.#x + ")"
   }
 
   override fun hashCode(): Int {
