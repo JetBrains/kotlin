@@ -1027,12 +1027,14 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/contrib/CFML/intellij.cfml.iml" filepath="$PROJECT_DIR$/intellij/contrib/CFML/intellij.cfml.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/charts/intellij.charts.iml" filepath="$PROJECT_DIR$/intellij/plugins/charts/intellij.charts.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-base/intellij.cidr.base.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-base/intellij.cidr.base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-base/plugin/intellij.cidr.base.plugin.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-base/plugin/intellij.cidr.base.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-clang-format/intellij.cidr.clangFormat.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-clang-format/intellij.cidr.clangFormat.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/cocoa/intellij.cidr.cocoa.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/cocoa/intellij.cidr.cocoa.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/cocoa-common/intellij.cidr.cocoaCommon.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/cocoa-common/intellij.cidr.cocoaCommon.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/cocoa-plistEditor/intellij.cidr.cocoaPlistEditor.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/cocoa-plistEditor/intellij.cidr.cocoaPlistEditor.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-common/intellij.cidr.common.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-common/intellij.cidr.common.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-common-testFramework/intellij.cidr.common.testFramework.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-common-testFramework/intellij.cidr.common.testFramework.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-common-testFramework/core/intellij.cidr.common.testFramework.core.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-common-testFramework/core/intellij.cidr.common.testFramework.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-common/tests/intellij.cidr.common.tests.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-common/tests/intellij.cidr.common.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-core/intellij.cidr.core.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-core/intellij.cidr.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-coverage/intellij.cidr.coverage.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-coverage/intellij.cidr.coverage.iml" />
@@ -2067,6 +2069,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift-doc-plugin/intellij.swift.doc.plugin.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift-doc-plugin/intellij.swift.doc.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift/language/intellij.swift.language.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift/language/intellij.swift.language.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift-package-manager/intellij.swift.packageManager.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift-package-manager/intellij.swift.packageManager.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift/plugin/intellij.swift.plugin.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift/plugin/intellij.swift.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift-testFramework/intellij.swift.testFramework.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift-testFramework/intellij.swift.testFramework.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/swift-tests/intellij.swift.tests.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/swift-tests/intellij.swift.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/tailwindcss/intellij.tailwindcss.iml" filepath="$PROJECT_DIR$/intellij/plugins/tailwindcss/intellij.tailwindcss.iml" />
