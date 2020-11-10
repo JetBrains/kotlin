@@ -26,7 +26,7 @@ inline fun <T : Any?> unsafeFlow(crossinline block: @ExtensionFunctionType Suspe
   TODO()
 }
 
-@Deprecated(message = "binary compatibility with a version w/o FlowCollector receiver", level = DeprecationLevel)
+@Deprecated(message = "binary compatibility with a version w/o FlowCollector receiver", level = DeprecationLevel.HIDDEN)
 fun <T : Any?> Flow<T>.onCompletion(action: SuspendFunction1<@ParameterName(name = "cause") Throwable?, Unit>): Flow<T> {
   return <this>.onCompletion<T>(action = local suspend fun FlowCollector<T>.<anonymous>(it: Throwable?) {
     action.invoke(p1 = it)

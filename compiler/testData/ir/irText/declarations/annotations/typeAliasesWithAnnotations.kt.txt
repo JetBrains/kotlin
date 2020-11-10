@@ -1,4 +1,4 @@
-@Target(allowedTargets = [AnnotationTarget])
+@Target(allowedTargets = [AnnotationTarget.TYPEALIAS])
 annotation class TestAnn : Annotation {
   constructor(x: String) /* primary */ 
   val x: String

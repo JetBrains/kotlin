@@ -28,8 +28,8 @@ open enum class MyEnum : Enum<MyEnum> {
 
     val aLambda: Function0<Unit>
       field = local fun <anonymous>() {
-        Z.<set-counter>(<set-?> = 1)
-        Z.foo()
+        MyEnum.Z.<set-counter>(<set-?> = 1)
+        MyEnum.Z.foo()
       }
 
       get
@@ -44,13 +44,13 @@ open enum class MyEnum : Enum<MyEnum> {
           }
 
           init {
-            Z.<set-counter>(<set-?> = 1)
-            Z.foo()
+            MyEnum.Z.<set-counter>(<set-?> = 1)
+            MyEnum.Z.foo()
           }
 
           fun test() {
-            Z.<set-counter>(<set-?> = 1)
-            Z.foo()
+            MyEnum.Z.<set-counter>(<set-?> = 1)
+            MyEnum.Z.foo()
           }
 
         }

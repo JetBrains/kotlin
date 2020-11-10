@@ -45,7 +45,7 @@ class Z {
 }
 
 fun test1(): Enum {
-  return Enum
+  return Enum.A
 }
 
 fun test2(): A {

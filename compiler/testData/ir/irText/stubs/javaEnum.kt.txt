@@ -1,4 +1,4 @@
 val test: JEnum
-  field = JEnum
+  field = JEnum.ONE
   get
 

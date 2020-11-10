@@ -19,7 +19,7 @@ abstract enum class X : Enum<X> {
 
     override val value: Function0<String>
       field = local fun <anonymous>(): String {
-        return B.<get-value2>()
+        return X.B.<get-value2>()
       }
 
       override get
@@ -36,6 +36,6 @@ abstract enum class X : Enum<X> {
 }
 
 fun box(): String {
-  return X.<get-value>().invoke()
+  return X.B.<get-value>().invoke()
 }
 

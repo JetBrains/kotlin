@@ -24,7 +24,7 @@ open enum class Z : Enum<Z> {
       }
 
       fun test2() {
-        ENTRY.test()
+        Z.ENTRY.test()
       }
 
     }

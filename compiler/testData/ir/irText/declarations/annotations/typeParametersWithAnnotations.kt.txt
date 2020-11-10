@@ -1,4 +1,4 @@
-@Target(allowedTargets = [AnnotationTarget])
+@Target(allowedTargets = [AnnotationTarget.TYPE_PARAMETER])
 annotation class Anno : Annotation {
   constructor() /* primary */ 
 
