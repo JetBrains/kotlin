@@ -1183,7 +1183,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitCatch(aCatch: IrCatch, data: IrDeclaration?) {
-        p.print("catch (...) ")
+        p.print("catch (")
+        aCatch.catchParameter.run {
+            p.printWithNoIndent(name.asString())
+            p.printWithNoIndent(": ")
+            type.printTypeWithNoIndent()
+        }
+        p.printWithNoIndent(")")
         aCatch.result.accept(this, data)
         p.printlnWithNoIndent()
     }
