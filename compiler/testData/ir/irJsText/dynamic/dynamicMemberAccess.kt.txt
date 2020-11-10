@@ -1,6 +1,5 @@
 fun test1(d: dynamic): dynamic {
-  return error("") /* ERROR: unsupported element type: IrDynamicMemberExpressionImpl */
-
+  return d.member
 }
 
 fun test2(d: dynamic): dynamic {
@@ -8,8 +7,7 @@ fun test2(d: dynamic): dynamic {
     val tmp0_safe_receiver: dynamic = d
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> error("") /* ERROR: unsupported element type: IrDynamicMemberExpressionImpl */
-
+      true -> tmp0_safe_receiver.member
     }
   }
 }

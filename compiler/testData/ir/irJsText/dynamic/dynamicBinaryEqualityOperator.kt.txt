@@ -1,20 +1,16 @@
 fun testEqeq(d: dynamic): Boolean {
-  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  return d == 3
 }
 
 fun testExclEq(d: dynamic): Boolean {
-  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  return d != 3
 }
 
 fun testEqeqeq(d: dynamic): Boolean {
-  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  return d === 3
 }
 
 fun testExclEqeq(d: dynamic): Boolean {
-  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  return d !== 3
 }
 

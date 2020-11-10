@@ -1,15 +1,12 @@
 fun testArrayAccess1(d: dynamic): dynamic {
-  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  return d["KEY"]
 }
 
 fun testArrayAccess2(d: dynamic): dynamic {
-  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  return d()["KEY"]
 }
 
 fun testArrayAccess3(d: dynamic): dynamic {
-  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  return d.get("KEY")
 }
 

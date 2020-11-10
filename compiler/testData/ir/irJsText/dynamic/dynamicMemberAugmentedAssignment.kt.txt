@@ -1,14 +1,9 @@
 fun testAugmentedMemberAssignment(d: dynamic) {
-  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
-  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
-  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
-  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
-  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  d.m += "+="
+  d.m -= "-="
+  d.m *= "*="
+  d.m /= "/="
+  d.m %= "%="
 }
 
 fun testSafeAugmentedMemberAssignment(d: dynamic) {
@@ -16,40 +11,35 @@ fun testSafeAugmentedMemberAssignment(d: dynamic) {
     val tmp0_safe_receiver: dynamic = d
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null /*~> Unit */
-      true -> error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+      true -> tmp0_safe_receiver.m += "+="
     }
   }
   { // BLOCK
     val tmp1_safe_receiver: dynamic = d
     when {
       EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null /*~> Unit */
-      true -> error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+      true -> tmp1_safe_receiver.m -= "-="
     }
   }
   { // BLOCK
     val tmp2_safe_receiver: dynamic = d
     when {
       EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null /*~> Unit */
-      true -> error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+      true -> tmp2_safe_receiver.m *= "*="
     }
   }
   { // BLOCK
     val tmp3_safe_receiver: dynamic = d
     when {
       EQEQ(arg0 = tmp3_safe_receiver, arg1 = null) -> null /*~> Unit */
-      true -> error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+      true -> tmp3_safe_receiver.m /= "/="
     }
   }
   { // BLOCK
     val tmp4_safe_receiver: dynamic = d
     when {
       EQEQ(arg0 = tmp4_safe_receiver, arg1 = null) -> null /*~> Unit */
-      true -> error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+      true -> tmp4_safe_receiver.m %= "%="
     }
   }
 }

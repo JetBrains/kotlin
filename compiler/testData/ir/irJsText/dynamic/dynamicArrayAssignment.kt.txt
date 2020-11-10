@@ -1,10 +1,8 @@
 fun testArrayAssignment(d: dynamic) {
-  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  d["KEY"] = 1
 }
 
 fun testArrayAssignmentFake(d: dynamic) {
-  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  d.set("KEY", 2)
 }
 

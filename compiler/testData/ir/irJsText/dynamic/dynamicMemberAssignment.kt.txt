@@ -1,6 +1,5 @@
 fun testMemberAssignment(d: dynamic) {
-  error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  d.m = 1
 }
 
 fun testSafeMemberAssignment(d: dynamic) {
@@ -8,8 +7,7 @@ fun testSafeMemberAssignment(d: dynamic) {
     val tmp0_safe_receiver: dynamic = d
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null /*~> Unit */
-      true -> error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+      true -> tmp0_safe_receiver.m = 1
     }
   }
 }

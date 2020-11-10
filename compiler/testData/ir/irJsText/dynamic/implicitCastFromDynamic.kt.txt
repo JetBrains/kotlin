@@ -19,7 +19,6 @@ fun test3(d: dynamic): Any? {
 }
 
 fun test4(d: dynamic): String {
-  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
- /*~> String */
+  return d.member(1, 2, 3) /*~> String */
 }
 

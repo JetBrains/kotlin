@@ -1,10 +1,8 @@
 fun testAndAnd(d: dynamic): Boolean {
-  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  return d && d
 }
 
 fun testOrOr(d: dynamic): Boolean {
-  return error("") /* ERROR: unsupported element type: IrDynamicOperatorExpressionImpl */
-
+  return d || d
 }
 
