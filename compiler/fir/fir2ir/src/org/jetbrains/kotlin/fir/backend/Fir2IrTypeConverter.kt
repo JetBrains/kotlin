@@ -91,7 +91,9 @@ class Fir2IrTypeConverter(
                     else mutableListOf(builtIns.extensionFunctionTypeAnnotationConstructorCall())
                 typeAnnotations += with(annotationGenerator) { annotations.toIrAnnotations() }
                 if (hasEnhancedNullability) {
-                    typeAnnotations += builtIns.enhancedNullabilityAnnotationConstructorCall()
+                    builtIns.enhancedNullabilityAnnotationConstructorCall()?.let {
+                        typeAnnotations += it
+                    }
                 }
                 IrSimpleTypeImpl(
                     irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,

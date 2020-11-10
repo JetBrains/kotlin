@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
+import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
@@ -71,7 +72,8 @@ class FirAnalyzerFacade(val session: FirSession, val languageVersionSettings: La
             session, scopeSession!!, firFiles!!,
             languageVersionSettings, signaturer,
             JvmGeneratorExtensions(generateFacades), FirJvmKotlinMangler(session), IrFactoryImpl,
-            FirJvmVisibilityConverter
+            FirJvmVisibilityConverter,
+            Fir2IrJvmSpecialAnnotationSymbolProvider()
         )
     }
 }

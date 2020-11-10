@@ -251,7 +251,8 @@ class Fir2IrConverter(
             generatorExtensions: GeneratorExtensions,
             mangler: FirMangler,
             irFactory: IrFactory,
-            visibilityConverter: Fir2IrVisibilityConverter
+            visibilityConverter: Fir2IrVisibilityConverter,
+            specialSymbolProvider: Fir2IrSpecialSymbolProvider?
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session)
             val symbolTable = SymbolTable(signaturer, irFactory)
@@ -274,7 +275,7 @@ class Fir2IrConverter(
             val fir2irVisitor = Fir2IrVisitor(converter, components, conversionScope)
             val declarationStorage = Fir2IrDeclarationStorage(components, fir2irVisitor, moduleDescriptor)
             val typeConverter = Fir2IrTypeConverter(components)
-            val builtIns = Fir2IrBuiltIns(components)
+            val builtIns = Fir2IrBuiltIns(components, specialSymbolProvider)
             components.declarationStorage = declarationStorage
             components.classifierStorage = classifierStorage
             components.typeConverter = typeConverter
