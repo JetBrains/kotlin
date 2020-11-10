@@ -319,6 +319,12 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             if(searchParam == null) { // count filter
                 addSurroundingWhiteSpace(param, matchParam)
             }
+            if(param.valOrVarKeyword == null && searchParam?.valOrVarKeyword == null) {
+                matchParam.valOrVarKeyword?.let {
+                    param.addBefore(it, param.nameIdentifier)
+                    param.addSurroundingWhiteSpace(param.valOrVarKeyword!!, it)
+                }
+            }
             if (param.typeReference == null && searchParam?.typeReference == null) {
                 matchParam.typeReference?.let{
                     param.typeReference = it
