@@ -1,0 +1,37 @@
+package
+
+public fun main(/*0*/ o: [ERROR : AnnotatedTypeParameterUnspec], /*1*/ o1: [ERROR : AnnotatedWildcardUnspec.Lib1<*>]<out [ERROR : *]>, /*2*/ o2: [ERROR : AnnotatedWildcardUnspec.Lib2<*>]<out [ERROR : *]>, /*3*/ o3: [ERROR : AnnotatedWildcardUnspec.Lib3<*>]<out [ERROR : *]>): kotlin.Unit
+
+@org.jspecify.annotations.DefaultNonNull public open class AnnotatedTypeParameter {
+    public constructor AnnotatedTypeParameter()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open fun takeLibNotNull(/*0*/ l: Lib!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface Lib1</*0*/ @org.jspecify.annotations.Nullable T : kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface Lib2</*0*/ @org.jspecify.annotations.Nullable T : kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface Lib3</*0*/ @org.jspecify.annotations.Nullable T : @org.jspecify.annotations.Nullable kotlin.Any!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public open class Use {
+    public constructor Use()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open fun main(/*0*/ o: AnnotatedTypeParameterUnspec!, /*1*/ o1: AnnotatedWildcardUnspec.Lib1!, /*2*/ o2: AnnotatedWildcardUnspec.Lib2!, /*3*/ o3: AnnotatedWildcardUnspec.Lib3!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

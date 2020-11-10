@@ -45,6 +45,36 @@ public class JspecifyAnnotationsTestGenerated extends AbstractJspecifyAnnotation
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/AnnotatedBoundsOfWildcard.kt");
         }
 
+        @TestMetadata("AnnotatedInnerOfNonParameterized.kt")
+        public void testAnnotatedInnerOfNonParameterized() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/AnnotatedInnerOfNonParameterized.kt");
+        }
+
+        @TestMetadata("AnnotatedInnerOfParameterized.kt")
+        public void testAnnotatedInnerOfParameterized() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/AnnotatedInnerOfParameterized.kt");
+        }
+
+        @TestMetadata("AnnotatedTypeParameter.kt")
+        public void testAnnotatedTypeParameter() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/AnnotatedTypeParameter.kt");
+        }
+
+        @TestMetadata("AnnotatedTypeParameterUnspec.kt")
+        public void testAnnotatedTypeParameterUnspec() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/AnnotatedTypeParameterUnspec.kt");
+        }
+
+        @TestMetadata("AnnotatedWildcard.kt")
+        public void testAnnotatedWildcard() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/AnnotatedWildcard.kt");
+        }
+
+        @TestMetadata("AnnotatedWildcardUnspec.kt")
+        public void testAnnotatedWildcardUnspec() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/AnnotatedWildcardUnspec.kt");
+        }
+
         @TestMetadata("ContravariantReturns.kt")
         public void testContravariantReturns() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/strictMode/ContravariantReturns.kt");
@@ -131,6 +161,36 @@ public class JspecifyAnnotationsTestGenerated extends AbstractJspecifyAnnotation
         @TestMetadata("AnnotatedBoundsOfWildcard.kt")
         public void testAnnotatedBoundsOfWildcard() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/AnnotatedBoundsOfWildcard.kt");
+        }
+
+        @TestMetadata("AnnotatedInnerOfNonParameterized.kt")
+        public void testAnnotatedInnerOfNonParameterized() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/AnnotatedInnerOfNonParameterized.kt");
+        }
+
+        @TestMetadata("AnnotatedInnerOfParameterized.kt")
+        public void testAnnotatedInnerOfParameterized() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/AnnotatedInnerOfParameterized.kt");
+        }
+
+        @TestMetadata("AnnotatedTypeParameter.kt")
+        public void testAnnotatedTypeParameter() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/AnnotatedTypeParameter.kt");
+        }
+
+        @TestMetadata("AnnotatedTypeParameterUnspec.kt")
+        public void testAnnotatedTypeParameterUnspec() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/AnnotatedTypeParameterUnspec.kt");
+        }
+
+        @TestMetadata("AnnotatedWildcard.kt")
+        public void testAnnotatedWildcard() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/AnnotatedWildcard.kt");
+        }
+
+        @TestMetadata("AnnotatedWildcardUnspec.kt")
+        public void testAnnotatedWildcardUnspec() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/kotlin/warnMode/AnnotatedWildcardUnspec.kt");
         }
 
         @TestMetadata("ContravariantReturns.kt")

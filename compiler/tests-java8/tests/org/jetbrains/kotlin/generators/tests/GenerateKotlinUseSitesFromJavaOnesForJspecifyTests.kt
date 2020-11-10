@@ -53,15 +53,17 @@ class GenerateKotlinUseSitesFromJavaOnesForJspecifyTests {
         private const val TYPE_PARAMETER = """\w(?: (?:extends|super) $TYPE_COMPONENT)?"""
         private const val TYPE_PARAMETERS = """<(?:$TYPE_PARAMETER)(?:\s*,\s*$TYPE_PARAMETER)*>\s*"""
         private const val TYPE = """$TYPE_COMPONENT(?:$TYPE_ARGUMENTS)?"""
-        private const val VALUE_PARAMETER = """\s*(?:$TYPE) (?:\w+)"""
-        private const val VALUE_PARAMETERS = """\((?:(?:$VALUE_PARAMETER)(?:\s*,\s*$VALUE_PARAMETER)*\s*)?\)"""
-        private const val VALUE_ARGUMENT = """\w+"""
+        private const val VALUE_PARAMETER = """\s*($JSPECIFY_MARK)?\s*(?:$TYPE) (?:\w+)"""
+        private const val VALUE_PARAMETERS = """\((?:(?:$VALUE_PARAMETER)(?:\s*,$VALUE_PARAMETER)*\s*)?\)"""
+        private const val VALUE_ARGUMENT = """\w+(?:\.\w+)*(?:\(\w*\))?"""
         private const val VALUE_ARGUMENTS = """\((?:(?:$VALUE_ARGUMENT)(?:\s*,\s*$VALUE_ARGUMENT)*\s*)?\)"""
         private const val CALL_COMPONENT = """\.($TYPE_ARGUMENTS)?(?:\w+)(?:$VALUE_ARGUMENTS)?"""
         private const val CALL = """\s*(?:$JSPECIFY_MARK)?(?:\w+)(?:(?:$CALL_COMPONENT)+);(\n+)\s*"""
-        private const val FUN_BODY = """\{((?:$CALL)+)\s*}"""
+        private const val FUN_BODY_WITH_CALLS = """\{((?:$CALL)+)\s*}"""
+        private const val EMPTY_FUN_BODY = """\{()\s*}"""
 
-        val methodRegex = Regex("""(?:public )?($TYPE_PARAMETERS)?(void|$TYPE) (\w+)($VALUE_PARAMETERS)? $FUN_BODY""")
+        val methodRegex = Regex("""(?:public )?($TYPE_PARAMETERS)?(void|$TYPE) (\w+)($VALUE_PARAMETERS) $FUN_BODY_WITH_CALLS""")
+        val emptyMethodRegex = Regex("""(?:public )?($TYPE_PARAMETERS)?(void|$TYPE) (\w+)($VALUE_PARAMETERS) $EMPTY_FUN_BODY""")
         val overrideMethodRegex =
             Regex("""$OVERRIDE_ANNOTATION\n\s*($JSPECIFY_ANNOTATIONS\n\s*)?($JSPECIFY_MARK)?(?:public )?($TYPE_PARAMETERS)?(void|$TYPE) (\w+)($VALUE_PARAMETERS);""")
         val interfaceWithOverrides = Regex("""(?:public )?interface (\w+) extends ($TYPE) \{\s*((?:$overrideMethodRegex\s*)+)}""")
@@ -73,9 +75,9 @@ class GenerateKotlinUseSitesFromJavaOnesForJspecifyTests {
         val generationNotNeededFiles = setOf("DereferenceClass.java")
     }
 
-    private fun parseMethod(sourceCode: String): ParsedMethod? {
+    private fun parseMethod(sourceCode: String, methodRegex: Regex): ParsedMethod? {
         val parsedResult = methodRegex.find(sourceCode) ?: return null
-        val (typeParameters, returnType, funName, arguments, body) = parsedResult.destructured
+        val (typeParameters, returnType, funName, arguments, _, _, body) = parsedResult.destructured
 
         return ParsedMethod(
             transformTypesByAnnotationsIfNeeded(returnType),
@@ -91,7 +93,7 @@ class GenerateKotlinUseSitesFromJavaOnesForJspecifyTests {
             val jspecifyMark = call.groups[2]?.value
             val receiver = call.groups[4]?.value ?: throw Exception("Unable to parse receiver of $call")
             val callComponents = call.groups[5] ?: throw Exception("Unable to parse call components of $call")
-            val indent = call.groups[35]?.value ?: throw Exception("Unable to parse indent of $call")
+            val indent = call.groups[39]?.value ?: throw Exception("Unable to parse indent of $call")
             val parsedCallComponents = callComponentRegex.findAll(callComponents.value).map { callComponent ->
                 val calle = callComponent.groups[24]?.value
                     ?: throw Exception("Unable to parse calle of $callComponent")
@@ -203,7 +205,7 @@ class GenerateKotlinUseSitesFromJavaOnesForJspecifyTests {
         for (file in javaFiles) {
             if (!file.isFile || file.extension != "java") continue
 
-            val parsedMethod = parseMethod(file.readText())
+            val parsedMethod = parseMethod(file.readText(), methodRegex) ?: parseMethod(file.readText(), emptyMethodRegex)
             val parsedOverrides = parseOverrides(file.readText())
             val generatedKotlinCode = buildString {
                 if (parsedMethod != null) {

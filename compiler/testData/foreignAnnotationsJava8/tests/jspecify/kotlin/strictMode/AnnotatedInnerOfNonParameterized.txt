@@ -1,0 +1,49 @@
+package
+
+public fun main(/*0*/ o: AnnotatedInnerOfNonParameterized): kotlin.Unit
+
+@org.jspecify.annotations.DefaultNonNull public open class AnnotatedInnerOfNonParameterized {
+    public constructor AnnotatedInnerOfNonParameterized()
+    public/*package*/ final var l1: AnnotatedInnerOfNonParameterized.Lib<@org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested.DoublyNested?>
+    public/*package*/ final var l2: AnnotatedInnerOfNonParameterized.Lib<AnnotatedInnerOfNonParameterized.Nested.DoublyNested>
+    public/*package*/ final var l3: AnnotatedInnerOfNonParameterized.Lib<AnnotatedInnerOfNonParameterized.Nested.DoublyNested>
+    @org.jspecify.annotations.Nullable public/*package*/ final var x4: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested?
+    @org.jspecify.annotations.Nullable public/*package*/ final var x5: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested?
+    public/*package*/ final var x6: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested?
+    @org.jspecify.annotations.Nullable public/*package*/ final var x7: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested.DoublyNested?
+    public/*package*/ final var x8: AnnotatedInnerOfNonParameterized.Nested.DoublyNested
+    public/*package*/ final var x9: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested.DoublyNested?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open fun takeLibNotNull(/*0*/ l: AnnotatedInnerOfNonParameterized.Lib<kotlin.Any>): kotlin.Unit
+    public/*package*/ open fun takeNotNull(/*0*/ o: kotlin.Any): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public interface Lib</*0*/ T> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public open inner class Nested {
+        public constructor Nested()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public open inner class DoublyNested {
+            public constructor DoublyNested()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+}
+
+public open class Use {
+    public constructor Use()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open fun main(/*0*/ o: AnnotatedInnerOfNonParameterized!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
