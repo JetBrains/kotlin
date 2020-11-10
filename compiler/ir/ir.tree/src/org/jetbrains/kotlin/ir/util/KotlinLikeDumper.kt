@@ -1224,19 +1224,45 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
     }
 
-    override fun visitDynamicExpression(expression: IrDynamicExpression, data: IrDeclaration?) {
-        // TODO support
-        super.visitDynamicExpression(expression, data)
-    }
-
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: IrDeclaration?) {
-        // TODO support
-        super.visitDynamicOperatorExpression(expression, data)
+        // TODO marker to show that it's dynamic call
+        val s = when (val op = expression.operator) {
+            IrDynamicOperator.ARRAY_ACCESS -> "[" to "]"
+            IrDynamicOperator.INVOKE -> "(" to ")"
+
+            // assert that arguments size is 0
+            IrDynamicOperator.UNARY_PLUS,
+            IrDynamicOperator.UNARY_MINUS,
+            IrDynamicOperator.EXCL,
+            IrDynamicOperator.PREFIX_INCREMENT,
+            IrDynamicOperator.PREFIX_DECREMENT -> {
+                p.printWithNoIndent(op.image)
+                "" to ""
+            }
+
+            // assert that arguments size is 0
+            IrDynamicOperator.POSTFIX_INCREMENT,
+            IrDynamicOperator.POSTFIX_DECREMENT -> {
+                op.image to ""
+            }
+
+            // assert that arguments size is 1
+            else -> " ${op.image} " to ""
+        }
+
+        expression.receiver.accept(this, data)
+        p.printWithNoIndent(s.first)
+        expression.arguments.forEachIndexed { i, e ->
+            if (i > 0) p.printWithNoIndent(", ")
+            e.accept(this, data)
+        }
+        p.printWithNoIndent(s.second)
     }
 
     override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: IrDeclaration?) {
-        // TODO support
-        super.visitDynamicMemberExpression(expression, data)
+        expression.receiver.accept(this, data)
+        p.printWithNoIndent(".")
+        p.printWithNoIndent(expression.memberName)
     }
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: IrDeclaration?) {
