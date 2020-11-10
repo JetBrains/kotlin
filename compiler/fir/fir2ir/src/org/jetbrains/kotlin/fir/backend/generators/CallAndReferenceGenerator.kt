@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.getExpectedTypeForSAMConversion
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
+import org.jetbrains.kotlin.fir.resolve.inference.isKMutableProperty
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -68,6 +69,9 @@ class CallAndReferenceGenerator(
                 is IrPropertySymbol -> {
                     val referencedProperty = symbol.owner
                     val referencedPropertyGetter = referencedProperty.getter
+                    val referencedPropertySetterSymbol =
+                        if (callableReferenceAccess.typeRef.coneType.isKMutableProperty(session)) referencedProperty.setter?.symbol
+                        else null
                     val backingFieldSymbol = when {
                         referencedPropertyGetter != null -> null
                         else -> referencedProperty.backingField?.symbol
@@ -75,18 +79,18 @@ class CallAndReferenceGenerator(
                     IrPropertyReferenceImpl(
                         startOffset, endOffset, type, symbol,
                         typeArgumentsCount = referencedPropertyGetter?.typeParameters?.size ?: 0,
-                        backingFieldSymbol,
-                        referencedPropertyGetter?.symbol,
-                        referencedProperty.setter?.symbol,
+                        field = backingFieldSymbol,
+                        getter = referencedPropertyGetter?.symbol,
+                        setter = referencedPropertySetterSymbol,
                         propertyOrigin()
                     )
                 }
                 is IrLocalDelegatedPropertySymbol -> {
                     IrLocalDelegatedPropertyReferenceImpl(
                         startOffset, endOffset, type, symbol,
-                        symbol.owner.delegate.symbol,
-                        symbol.owner.getter.symbol,
-                        symbol.owner.setter?.symbol,
+                        delegate = symbol.owner.delegate.symbol,
+                        getter = symbol.owner.getter.symbol,
+                        setter = symbol.owner.setter?.symbol,
                         IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE
                     )
                 }
@@ -104,7 +108,7 @@ class CallAndReferenceGenerator(
                         startOffset, endOffset, type,
                         propertySymbol,
                         typeArgumentsCount = (type as? IrSimpleType)?.arguments?.size ?: 0,
-                        symbol,
+                        field = symbol,
                         getter = if (referencedField.isStatic) null else propertySymbol.owner.getter?.symbol,
                         setter = if (referencedField.isStatic) null else propertySymbol.owner.setter?.symbol,
                         propertyOrigin()
