@@ -5,7 +5,7 @@ fun testImplicitCast(a: Any) {
   val t: String = try { // BLOCK
     a
   } /*as String */
-  catch (...) { // BLOCK
+  catch (e: Throwable){ // BLOCK
     ""
   }
 

@@ -13,7 +13,7 @@ fun box(): String {
   try { // BLOCK
     f() /*~> Unit */
   }
-  catch (...) { // BLOCK
+  catch (e: Exception){ // BLOCK
     result = "OK"
   }
 

@@ -2,7 +2,7 @@ fun test(f: Function0<Unit>) {
   return try { // BLOCK
     f.invoke()
   }
-  catch (...) { // BLOCK
+  catch (e: Exception){ // BLOCK
     throw e
   }
 

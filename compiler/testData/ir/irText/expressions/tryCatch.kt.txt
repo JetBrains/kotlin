@@ -2,7 +2,7 @@ fun test1() {
   try { // BLOCK
     println()
   }
-  catch (...) { // BLOCK
+  catch (e: Throwable){ // BLOCK
     println()
   }
   finally { // BLOCK
@@ -15,7 +15,7 @@ fun test2(): Int {
     println()
     42
   }
-  catch (...) { // BLOCK
+  catch (e: Throwable){ // BLOCK
     println()
     24
   }
