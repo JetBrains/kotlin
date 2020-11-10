@@ -993,7 +993,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     private fun IrFieldAccessExpression.printFieldAccess(data: IrDeclaration?) {
-        // TODO type
         // TODO is not valid kotlin
         receiver?.accept(this@KotlinLikeDumper, data)
         superQualifierSymbol?.let {
@@ -1012,6 +1011,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitReturn(expression: IrReturn, data: IrDeclaration?) {
+        // TODO label
         p.printWithNoIndent("return ")
         expression.value.accept(this, data)
     }
@@ -1022,7 +1022,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: IrDeclaration?) {
-        // TODO type
         // TODO escape? see IrTextTestCaseGenerated.Expressions#testStringTemplates
         // TODO optionally each argument at a separate line, another option add a wrapping
         expression.arguments.forEachIndexed { i, e ->
@@ -1054,6 +1053,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitVararg(expression: IrVararg, data: IrDeclaration?) {
         // TODO ???
+        // TODO varargElementType
         p.printWithNoIndent("[")
         expression.elements.forEachIndexed { i, e ->
             if (i > 0) p.printWithNoIndent(", ")
@@ -1068,6 +1068,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitDeclarationReference(expression: IrDeclarationReference, data: IrDeclaration?) {
+        // TODO support
         super.visitDeclarationReference(expression, data)
     }
 
@@ -1077,7 +1078,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitGetValue(expression: IrGetValue, data: IrDeclaration?) {
-        // TODO support `this` and receiver
         p.printWithNoIndent(expression.symbol.owner.name.asString())
     }
 
@@ -1093,6 +1093,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitCallableReference(expression: IrCallableReference<*>, data: IrDeclaration?) {
         // TODO check
+        /*
+        TODO
+            dispatchReceiver
+            extensionReceiver
+            getTypeArgument
+            getValueArgument
+         */
         p.printWithNoIndent("::")
         p.printWithNoIndent(expression.referencedName.asString())
     }
@@ -1126,6 +1133,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitWhen(expression: IrWhen, data: IrDeclaration?) {
+        // TODO print if when possible?
         p.printlnWithNoIndent("when {")
         p.pushIndent()
 
