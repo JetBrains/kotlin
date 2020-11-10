@@ -24,9 +24,6 @@ kotlin {
         }
         getByName("jvmMain") {
             dependsOn(jvmAndJsMain)
-        }
-        getByName("jvmMain") {
-            dependsOn(jvmAndJsMain)
             dependsOn(jvmAndAndroidMain)
         }
     }
