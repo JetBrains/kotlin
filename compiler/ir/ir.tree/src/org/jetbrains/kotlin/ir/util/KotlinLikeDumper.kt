@@ -1017,10 +1017,12 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: IrDeclaration?) {
+        // TODO type
         // TODO escape? see IrTextTestCaseGenerated.Expressions#testStringTemplates
+        // TODO optionally each argument at a separate line, another option add a wrapping
         expression.arguments.forEachIndexed { i, e ->
             if (i > 0) {
-                p.printlnWithNoIndent(" + ")
+                p.printWithNoIndent(" + ")
             }
             e.accept(this, data)
         }
