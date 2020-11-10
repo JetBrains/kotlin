@@ -6,10 +6,10 @@
 {
   "note": "May https://vega.github.io/vega/docs/ be with you",
   "$schema": "https://vega.github.io/schema/vega/v4.3.0.json",
-  "description": "The Kotlin sources: highlight build.gradle.kts (geom mean)",
-  "title": "The Kotlin sources: highlight build.gradle.kts (geom mean)",
+  "description": "TestData highlight - warmUp",
+  "title": "TestData highlight - warmUp",
   "width": 800,
-  "height": 500,
+  "height": 400,
   "padding": 5,
   "autosize": {"type": "pad", "resize": true},
   "signals": [
@@ -95,25 +95,7 @@
       "name": "table",
       "comment": "To test chart in VEGA editor https://vega.github.io/editor/#/ change `_values` to `values` and rename `url` property",
       "_values": {
-          "hits" : {
-            "hits" : [
-              {
-                "_source" : {"buildId" : 87834896, "buildTimestamp" : "2020-09-21T21:00:31+0000", "metricValue" : 37, "benchmark" : "addImport"}
-              },
-              {
-                "_source" : {"buildId" : 87783396, "buildTimestamp" : "2020-09-21T12:34:19+0000", "metricValue" : 37, "benchmark" : "addImport"}
-              },
-              {
-                "_source" : {"buildId" : 87809918, "buildTimestamp" : "2020-09-21T16:47:11+0000", "metricValue" : 37, "benchmark" : "addImport"}
-              },
-              {
-                "_source" : {"buildId" : 87905203, "buildTimestamp" : "2020-09-22T13:23:44+0000", "metricValue" : 37, "benchmark" : "addImport"}
-              },
-              {
-                "_source" : {"buildId" : 87894638, "buildTimestamp" : "2020-09-22T09:12:16+0000", "metricValue" : 37, "benchmark" : "addImport"}
-              }
-            ]
-          }
+        "comment": "same as `TestData highlight - vega.js`"
       },
       "url": {
         //"comment": "source index pattern",
@@ -121,80 +103,95 @@
         //"comment": "it's a body of ES _search query to check query place it into `POST /kotlin_ide_benchmarks*/_search`",
         //"comment": "it uses Kibana specific %timefilter% for time frame selection",
         "body": {
-          "size": 1000,
+          "size": 0,
           "query": {
             "bool": {
               "must": [
-                {"exists": {"field": "synthetic"}},
                 {
                   "bool": {
                     "must_not": [
-                       {"exists": {"field": "warmUp"}}
+                       {"exists": {"field": "synthetic"}}
                      ]
                    }
                 },
-                {
-                  "bool": {
-                    "should": [
-                      {"term": {"benchmark.keyword": "kotlin gradle.kts"}}
-                    ]
-                  }
-                }
-                {"term": {"name.keyword": "geomMean"}},
+                {"exists": {"field": "warmUp"}},
+                {"term": {"benchmark.keyword": "highlight"}},
                 {"range": {"buildTimestamp": {"%timefilter%": true}}}
               ]
             }
           },
-          "_source": ["buildId", "benchmark", "buildTimestamp", "hasError", "metricValue"],
-          "sort": [{"buildTimestamp": {"order": "asc"}}]
+          "aggs": {
+            "benchmark": {
+              "terms": {
+                "field": "benchmark.keyword",
+                "size": 500
+              },
+              "aggs": {
+                "name": {
+                  "terms": {
+                    "field": "name.keyword",
+                    "size": 500
+                  },
+                  "aggs": {
+                    "values": {
+                      "auto_date_histogram": {
+                          "buckets": 500,
+                          "field": "buildTimestamp",
+                          "minimum_interval": "hour"
+                      },
+                      "aggs": {
+                        "buildId": {
+                          "terms": {
+                            "size": 1,
+                            "field": "buildId"
+                          }
+                        },
+                        "avgValue":{
+                          "avg": {
+                            "field": "metricValue"
+                          }
+                        },
+                        "avgError":{
+                          "avg": {
+                            "field": "metricError"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       },
-      "format": {"property": "hits.hits"},
+      "format": {"property": "aggregations"},
       "comment": "we need to have follow data: \"buildId\", \"metricName\", \"metricValue\" and \"metricError\"",
       "comment": "so it has to be array of {\"buildId\": \"...\", \"metricName\": \"...\", \"metricValue\": ..., \"metricError\": ...}",
       "transform": [
-        {"type": "collect","sort": {"field": "_source.buildTimestamp"}},
-        {
-          "comment": "make alias: _source.buildId -> buildId",
-          "type": "formula",
-          "as": "buildId",
-          "expr": "datum._source.buildId"
-        },
-        {
-          "comment": "make alias: _source.benchmark -> metricName",
-          "type": "formula",
-          "as": "metricName",
-          "expr": "datum._source.benchmark"
-        },
-        {
-          "comment": "make alias: _source.metricValue -> metricValue",
-          "type": "formula",
-          "as": "metricValue",
-          "expr": "datum._source.metricValue"
-        },
-        {
-          "comment": "define metricError",
-          "type": "formula",
-          "as": "metricError",
-          "expr": "1"
-        },
-        {
-          "comment": "make alias: _source.hasError -> hasError",
-          "type": "formula",
-          "as": "hasError",
-          "expr": "datum._source.metrics ? datum._source.hasError : false"
-        },
+        {"type": "project", "fields": ["benchmark"]},
+        {"type": "flatten", "fields": ["benchmark.buckets"], "as": ["benchmark_buckets"]},
+        {"type": "project", "fields": ["benchmark_buckets.key", "benchmark_buckets.name"], "as": ["benchmark", "benchmark_buckets_name"]},
+        {"type": "flatten", "fields": ["benchmark_buckets_name.buckets"], "as": ["name_buckets"]},
+        {"type": "project", "fields": ["benchmark", "name_buckets.key", "name_buckets.values"], "as": ["benchmark", "name", "name_values"]},
+        {"type": "flatten", "fields": ["name_values.buckets"], "as": ["name_values_buckets"]},
+        {"type": "project", "fields": ["benchmark", "name", "name_values_buckets.key", "name_values_buckets.key_as_string", "name_values_buckets.avgError", "name_values_buckets.avgValue", "name_values_buckets.buildId.buckets"], "as": ["benchmark", "metricName", "buildTimestamp", "timestamp_value", "avgError", "avgValue", "buildId_buckets"]},
+        {"type": "formula", "as": "metricError", "expr": "datum.avgError.value"},
+        {"type": "formula", "as": "metricValue", "expr": "datum.avgValue.value"},
+        {"type": "flatten", "fields": ["buildId_buckets"], "as": ["buildId_values"]},
+        {"type": "formula", "as": "buildId", "expr": "datum.buildId_values.key"},
         {
           "type": "formula",
           "as": "timestamp",
-          "expr": "timeFormat(toDate(datum._source.buildTimestamp), '%Y-%m-%d %H:%M')"
+          "expr": "timeFormat(toDate(datum.buildTimestamp), '%Y-%m-%d %H:%M')"
         },
         {
           "comment": "create `url` value that points to TC build",
           "type": "formula",
           "as": "url",
-          "expr": "'https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_Benchmarks_PluginPerformanceTests_IdeaPluginPerformanceTests/' + datum._source.buildId"
-        }
+          "expr": "'https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_Benchmarks_PluginPerformanceTests_IdeaPluginPerformanceTests/' + datum.buildId"
+        },
+        {"type": "collect","sort": {"field": "timestamp"}}
       ]
     },
     {

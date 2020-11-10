@@ -95,80 +95,15 @@
       "name": "table",
       "comment": "To test chart in VEGA editor https://vega.github.io/editor/#/ change `_values` to `values` and rename `url` property",
       "_values": {
-       "hits" : {
-         "hits" : [
-           {
-             "_source" : {
-               "buildTimestamp" : "2020-10-14T15:12:14+0000",
-               "buildId" : 90615916,
-               "metrics" : [
-                 {
-                   "hasError" : true
-                 }
-               ],
-               "geomMean" : 157,
-               "benchmark" : "completion-basic"
-             }
-           },
-           {
-             "_source" : {
-               "buildTimestamp" : "2020-10-14T13:15:31+0000",
-               "buildId" : 90615916,
-               "geomMean" : 80,
-               "benchmark" : "completion-basic-charFilter"
-             }
-           },
-           {
-             "_source" : {
-               "buildTimestamp" : "2020-10-14T10:53:52+0000",
-               "buildId" : 90597868,
-               "geomMean" : 160,
-               "benchmark" : "completion-basic"
-             }
-           },
-           {
-             "_source" : {
-               "buildTimestamp" : "2020-10-14T08:57:05+0000",
-               "buildId" : 90597868,
-               "geomMean" : 79,
-               "benchmark" : "completion-basic-charFilter"
-             }
-           },
-           {
-             "_source" : {
-               "buildTimestamp" : "2020-10-14T03:04:10+0000",
-               "buildId" : 90570192,
-               "geomMean" : 79,
-               "benchmark" : "completion-basic-charFilter"
-             }
-           },
-           {
-             "_source" : {
-               "buildTimestamp" : "2020-10-14T03:04:09+0000",
-               "buildId" : 90570192,
-               "geomMean" : 60,
-               "benchmark" : "completion-basic"
-             }
-           },
-           {
-             "_source" : {
-               "buildTimestamp" : "2020-10-14T00:42:58+0000",
-               "buildId" : 90546466,
-               "geomMean" : 158,
-               "benchmark" : "completion-basic"
-             }
-           }
-         ]
-       }
-     },
-
+        "comment": "same as `TestData highlight - vega.js`"
+      },
       "url": {
         //"comment": "source index pattern",
         "index": "kotlin_ide_benchmarks*",
         //"comment": "it's a body of ES _search query to check query place it into `POST /kotlin_ide_benchmarks*/_search`",
         //"comment": "it uses Kibana specific %timefilter% for time frame selection",
         "body": {
-          "size": 1000,
+          "size": 0,
           "query": {
             "bool": {
               "must": [
@@ -195,56 +130,78 @@
               ]
             }
           },
-          "_source": ["buildId", "benchmark", "buildTimestamp", "name", "metricValue", "hasError"],
-          "sort": [{"buildTimestamp": {"order": "asc"}}]
+          "aggs": {
+            "benchmark": {
+              "terms": {
+                "field": "benchmark.keyword",
+                "size": 500
+              },
+              "aggs": {
+                "name": {
+                  "terms": {
+                    "field": "name.keyword",
+                    "size": 500
+                  },
+                  "aggs": {
+                    "values": {
+                      "auto_date_histogram": {
+                          "buckets": 500,
+                          "field": "buildTimestamp",
+                          "minimum_interval": "hour"
+                      },
+                      "aggs": {
+                        "buildId": {
+                          "terms": {
+                            "size": 1,
+                            "field": "buildId"
+                          }
+                        },
+                        "avgValue":{
+                          "avg": {
+                            "field": "metricValue"
+                          }
+                        },
+                        "avgError":{
+                          "avg": {
+                            "field": "metricError"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       },
-      "format": {"property": "hits.hits"},
+      "format": {"property": "aggregations"},
       "comment": "we need to have follow data: \"buildId\", \"metricName\", \"metricValue\" and \"metricError\"",
       "comment": "so it has to be array of {\"buildId\": \"...\", \"metricName\": \"...\", \"metricValue\": ..., \"metricError\": ...}",
       "transform": [
-        {"type": "collect","sort": {"field": "_source.buildTimestamp"}},
-        {
-          "comment": "make alias: _source.buildId -> buildId",
-          "type": "formula",
-          "as": "buildId",
-          "expr": "datum._source.buildId"
-        },
-        {
-          "comment": "make alias: _source.benchmark -> metricName",
-          "type": "formula",
-          "as": "metricName",
-          "expr": "datum._source.benchmark"
-        },
-        {
-          "comment": "make alias: _source.metricValue -> metricValue",
-          "type": "formula",
-          "as": "metricValue",
-          "expr": "datum._source.metricValue"
-        },
-        {
-          "comment": "define metricError",
-          "type": "formula",
-          "as": "metricError",
-          "expr": "1"
-        },
-        {
-          "comment": "make alias: _source.hasError -> hasError",
-          "type": "formula",
-          "as": "hasError",
-          "expr": "datum._source.hasError ? datum._source.hasError : false"
-        },
+        {"type": "project", "fields": ["benchmark"]},
+        {"type": "flatten", "fields": ["benchmark.buckets"], "as": ["benchmark_buckets"]},
+        {"type": "project", "fields": ["benchmark_buckets.key", "benchmark_buckets.name"], "as": ["benchmark", "benchmark_buckets_name"]},
+        {"type": "flatten", "fields": ["benchmark_buckets_name.buckets"], "as": ["name_buckets"]},
+        {"type": "project", "fields": ["benchmark", "name_buckets.key", "name_buckets.values"], "as": ["benchmark", "name", "name_values"]},
+        {"type": "flatten", "fields": ["name_values.buckets"], "as": ["name_values_buckets"]},
+        {"type": "project", "fields": ["benchmark", "name", "name_values_buckets.key", "name_values_buckets.key_as_string", "name_values_buckets.avgError", "name_values_buckets.avgValue", "name_values_buckets.buildId.buckets"], "as": ["metricName", "name", "buildTimestamp", "timestamp_value", "avgError", "avgValue", "buildId_buckets"]},
+        {"type": "formula", "as": "metricError", "expr": "datum.avgError.value"},
+        {"type": "formula", "as": "metricValue", "expr": "datum.avgValue.value"},
+        {"type": "flatten", "fields": ["buildId_buckets"], "as": ["buildId_values"]},
+        {"type": "formula", "as": "buildId", "expr": "datum.buildId_values.key"},
         {
           "type": "formula",
           "as": "timestamp",
-          "expr": "timeFormat(toDate(datum._source.buildTimestamp), '%Y-%m-%d %H:%M')"
+          "expr": "timeFormat(toDate(datum.buildTimestamp), '%Y-%m-%d %H:%M')"
         },
         {
           "comment": "create `url` value that points to TC build",
           "type": "formula",
           "as": "url",
-          "expr": "'https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_Benchmarks_PluginPerformanceTests_IdeaPluginPerformanceTests/' + datum._source.buildId"
-        }
+          "expr": "'https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_Benchmarks_PluginPerformanceTests_IdeaPluginPerformanceTests/' + datum.buildId"
+        },
+        {"type": "collect","sort": {"field": "timestamp"}}
       ]
     },
     {
