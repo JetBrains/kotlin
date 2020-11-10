@@ -108,7 +108,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
           <no name provided>()
         }
         private get(): Any? {
-          return #deepO$delegate.getValue(t = <this>, p = ::deepO) /*as Any? */
+          return <this>.#deepO$delegate.getValue(t = <this>, p = ::deepO) /*as Any? */
         }
 
       private val Value<Any?, CR<Any?>>.deepK: Any? /* by */ 
@@ -129,7 +129,7 @@ val <T : Any?> Value<T, CR<T>>.additionalText: P<T, T> /* by */
           <no name provided>()
         }
         private get(): Any? {
-          return #deepK$delegate.getValue(t = <this>, p = ::deepK) /*as Any? */
+          return <this>.#deepK$delegate.getValue(t = <this>, p = ::deepK) /*as Any? */
         }
 
       override operator fun getValue(t: Value<Any?, CR<Any?>>, p: KProperty<*>): P<Any?, Any?> {

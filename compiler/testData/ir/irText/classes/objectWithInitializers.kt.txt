@@ -22,7 +22,7 @@ object Test : Base {
     get
 
   init {
-    #y = <this>.<get-x>()
+    <this>.#y = <this>.<get-x>()
   }
 
 }

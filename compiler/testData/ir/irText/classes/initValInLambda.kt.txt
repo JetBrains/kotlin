@@ -10,7 +10,7 @@ class TestInitValInLambdaCalledOnce {
 
   init {
     1.run<Int, Unit>(block = local fun Int.<anonymous>() {
-      #x = 0
+      <this>.#x = 0
     }
 )
   }

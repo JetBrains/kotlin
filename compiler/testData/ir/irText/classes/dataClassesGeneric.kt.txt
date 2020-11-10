@@ -10,24 +10,24 @@ data class Test1<T : Any?> {
     get
 
   operator fun component1(): T {
-    return #x
+    return <this>.#x
   }
 
-  fun copy(x: T = #x): Test1<T> {
+  fun copy(x: T = <this>.#x): Test1<T> {
     return Test1<T>(x = x)
   }
 
   override fun toString(): String {
     return "Test1(" + 
 "x=" + 
-#x + 
+<this>.#x + 
 ")"
   }
 
   override fun hashCode(): Int {
     return when {
-      EQEQ(arg0 = #x, arg1 = null) -> 0
-      true -> #x.hashCode()
+      EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
+      true -> <this>.#x.hashCode()
     }
   }
 
@@ -40,7 +40,7 @@ data class Test1<T : Any?> {
     }
     val tmp0_other_with_cast: Test1<T> = other as Test1<T>
     when {
-      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
     }
     return true
   }
@@ -59,22 +59,22 @@ data class Test2<T : Number> {
     get
 
   operator fun component1(): T {
-    return #x
+    return <this>.#x
   }
 
-  fun copy(x: T = #x): Test2<T> {
+  fun copy(x: T = <this>.#x): Test2<T> {
     return Test2<T>(x = x)
   }
 
   override fun toString(): String {
     return "Test2(" + 
 "x=" + 
-#x + 
+<this>.#x + 
 ")"
   }
 
   override fun hashCode(): Int {
-    return #x.hashCode()
+    return <this>.#x.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -86,7 +86,7 @@ data class Test2<T : Number> {
     }
     val tmp0_other_with_cast: Test2<T> = other as Test2<T>
     when {
-      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
     }
     return true
   }
@@ -105,22 +105,22 @@ data class Test3<T : Any?> {
     get
 
   operator fun component1(): List<T> {
-    return #x
+    return <this>.#x
   }
 
-  fun copy(x: List<T> = #x): Test3<T> {
+  fun copy(x: List<T> = <this>.#x): Test3<T> {
     return Test3<T>(x = x)
   }
 
   override fun toString(): String {
     return "Test3(" + 
 "x=" + 
-#x + 
+<this>.#x + 
 ")"
   }
 
   override fun hashCode(): Int {
-    return #x.hashCode()
+    return <this>.#x.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -132,7 +132,7 @@ data class Test3<T : Any?> {
     }
     val tmp0_other_with_cast: Test3<T> = other as Test3<T>
     when {
-      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
     }
     return true
   }
@@ -151,22 +151,22 @@ data class Test4 {
     get
 
   operator fun component1(): List<String> {
-    return #x
+    return <this>.#x
   }
 
-  fun copy(x: List<String> = #x): Test4 {
+  fun copy(x: List<String> = <this>.#x): Test4 {
     return Test4(x = x)
   }
 
   override fun toString(): String {
     return "Test4(" + 
 "x=" + 
-#x + 
+<this>.#x + 
 ")"
   }
 
   override fun hashCode(): Int {
-    return #x.hashCode()
+    return <this>.#x.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -178,7 +178,7 @@ data class Test4 {
     }
     val tmp0_other_with_cast: Test4 = other as Test4
     when {
-      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
     }
     return true
   }

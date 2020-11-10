@@ -86,15 +86,15 @@ class Test1 : IBase {
 
   private /*final field*/ val $$delegate_0: BaseImpl = BaseImpl
   override fun bar(): Int {
-    return #$$delegate_0.bar()
+    return <this>.#$$delegate_0.bar()
   }
 
   override fun foo(x: Int, s: String) {
-    #$$delegate_0.foo(x = x, s = s)
+    <this>.#$$delegate_0.foo(x = x, s = s)
   }
 
   override fun String.qux() {
-    (#$$delegate_0, <this>).qux()
+    (<this>.#$$delegate_0, <this>).qux()
   }
 
 }
@@ -108,42 +108,42 @@ class Test2 : IBase, IOther {
 
   private /*final field*/ val $$delegate_0: BaseImpl = BaseImpl
   override fun bar(): Int {
-    return #$$delegate_0.bar()
+    return <this>.#$$delegate_0.bar()
   }
 
   override fun foo(x: Int, s: String) {
-    #$$delegate_0.foo(x = x, s = s)
+    <this>.#$$delegate_0.foo(x = x, s = s)
   }
 
   override fun String.qux() {
-    (#$$delegate_0, <this>).qux()
+    (<this>.#$$delegate_0, <this>).qux()
   }
 
   private /*final field*/ val $$delegate_1: IOther = otherImpl(x0 = "", y0 = 42)
   override val Byte.z1: Int
     override get(): Int {
-      return (#$$delegate_1, <this>).<get-z1>()
+      return (<this>.#$$delegate_1, <this>).<get-z1>()
     }
 
   override val x: String
     override get(): String {
-      return #$$delegate_1.<get-x>()
+      return <this>.#$$delegate_1.<get-x>()
     }
 
   override var Byte.z2: Int
     override get(): Int {
-      return (#$$delegate_1, <this>).<get-z2>()
+      return (<this>.#$$delegate_1, <this>).<get-z2>()
     }
     override set(<set-?>: Int) {
-      (#$$delegate_1, <this>).<set-z2>(<set-?> = <set-?>)
+      (<this>.#$$delegate_1, <this>).<set-z2>(<set-?> = <set-?>)
     }
 
   override var y: Int
     override get(): Int {
-      return #$$delegate_1.<get-y>()
+      return <this>.#$$delegate_1.<get-y>()
     }
     override set(<set-?>: Int) {
-      #$$delegate_1.<set-y>(<set-?> = <set-?>)
+      <this>.#$$delegate_1.<set-y>(<set-?> = <set-?>)
     }
 
 }

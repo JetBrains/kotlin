@@ -33,11 +33,11 @@ class MySet : Set<String> {
 
 fun test() {
   f(s = s() /*!! String */)
-  f(s = #STRING /*!! String */)
+  f(s = super.#STRING /*!! String */)
 }
 
 fun testContains(m: MySet) {
-  m.contains(element = #STRING /*!! String */) /*~> Unit */
+  m.contains(element = super.#STRING /*!! String */) /*~> Unit */
   m.contains(element = "abc") /*~> Unit */
 }
 

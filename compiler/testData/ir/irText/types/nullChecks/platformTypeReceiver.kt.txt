@@ -1,5 +1,5 @@
 fun test1(): Boolean {
-  return #BOOL_NULL /*!! Boolean */.equals(other = null)
+  return super.#BOOL_NULL /*!! Boolean */.equals(other = null)
 }
 
 fun test2(): Boolean {

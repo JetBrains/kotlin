@@ -23,7 +23,7 @@ class C {
     field = 1
     get
     set(value: Int) {
-      #test4 = value
+      <this>.#test4 = value
     }
 
   var test5: Int
@@ -41,16 +41,16 @@ class C {
     }
 )
     get(): Int {
-      return #test7$delegate.getValue<Int>(thisRef = <this>, property = ::test7)
+      return <this>.#test7$delegate.getValue<Int>(thisRef = <this>, property = ::test7)
     }
 
   var test8: Int /* by */ 
     field = hashMapOf<String, Int>()
     get(): Int {
-      return #test8$delegate.getValue<Int, Int>(thisRef = <this>, property = ::test8)
+      return <this>.#test8$delegate.getValue<Int, Int>(thisRef = <this>, property = ::test8)
     }
     set(<set-?>: Int) {
-      return #test8$delegate.setValue<Int>(thisRef = <this>, property = ::test8, value = <set-?>)
+      return <this>.#test8$delegate.setValue<Int>(thisRef = <this>, property = ::test8, value = <set-?>)
     }
 
 }

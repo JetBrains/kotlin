@@ -33,14 +33,14 @@ open enum class A : Enum<A> {
     super/*Enum*/<A>()
     /* <init>() */
 
-    #prop1 = arg
+    <this>.#prop1 = arg
   }
 
   private constructor() {
     super/*Enum*/<A>()
     /* <init>() */
 
-    #prop1 = "default"
+    <this>.#prop1 = "default"
     <this>.<set-prop3>(<set-?> = "empty")
   }
 

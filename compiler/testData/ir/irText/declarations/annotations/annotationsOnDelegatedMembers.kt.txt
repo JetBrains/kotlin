@@ -29,22 +29,22 @@ class DFoo : IFoo {
   private /*final field*/ val $$delegate_0: IFoo = d
   @Ann
   override fun String.testExtFun() {
-    (#$$delegate_0, <this>).testExtFun()
+    (<this>.#$$delegate_0, <this>).testExtFun()
   }
 
   @Ann
   override fun testFun() {
-    #$$delegate_0.testFun()
+    <this>.#$$delegate_0.testFun()
   }
 
   override val String.testExtVal: String
     override get(): String {
-      return (#$$delegate_0, <this>).<get-testExtVal>()
+      return (<this>.#$$delegate_0, <this>).<get-testExtVal>()
     }
 
   override val testVal: String
     override get(): String {
-      return #$$delegate_0.<get-testVal>()
+      return <this>.#$$delegate_0.<get-testVal>()
     }
 
 }

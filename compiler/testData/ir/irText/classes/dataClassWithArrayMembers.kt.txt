@@ -42,86 +42,86 @@ data class Test1 {
     get
 
   operator fun component1(): Array<String> {
-    return #stringArray
+    return <this>.#stringArray
   }
 
   operator fun component2(): CharArray {
-    return #charArray
+    return <this>.#charArray
   }
 
   operator fun component3(): BooleanArray {
-    return #booleanArray
+    return <this>.#booleanArray
   }
 
   operator fun component4(): ByteArray {
-    return #byteArray
+    return <this>.#byteArray
   }
 
   operator fun component5(): ShortArray {
-    return #shortArray
+    return <this>.#shortArray
   }
 
   operator fun component6(): IntArray {
-    return #intArray
+    return <this>.#intArray
   }
 
   operator fun component7(): LongArray {
-    return #longArray
+    return <this>.#longArray
   }
 
   operator fun component8(): FloatArray {
-    return #floatArray
+    return <this>.#floatArray
   }
 
   operator fun component9(): DoubleArray {
-    return #doubleArray
+    return <this>.#doubleArray
   }
 
-  fun copy(stringArray: Array<String> = #stringArray, charArray: CharArray = #charArray, booleanArray: BooleanArray = #booleanArray, byteArray: ByteArray = #byteArray, shortArray: ShortArray = #shortArray, intArray: IntArray = #intArray, longArray: LongArray = #longArray, floatArray: FloatArray = #floatArray, doubleArray: DoubleArray = #doubleArray): Test1 {
+  fun copy(stringArray: Array<String> = <this>.#stringArray, charArray: CharArray = <this>.#charArray, booleanArray: BooleanArray = <this>.#booleanArray, byteArray: ByteArray = <this>.#byteArray, shortArray: ShortArray = <this>.#shortArray, intArray: IntArray = <this>.#intArray, longArray: LongArray = <this>.#longArray, floatArray: FloatArray = <this>.#floatArray, doubleArray: DoubleArray = <this>.#doubleArray): Test1 {
     return Test1(stringArray = stringArray, charArray = charArray, booleanArray = booleanArray, byteArray = byteArray, shortArray = shortArray, intArray = intArray, longArray = longArray, floatArray = floatArray, doubleArray = doubleArray)
   }
 
   override fun toString(): String {
     return "Test1(" + 
 "stringArray=" + 
-dataClassArrayMemberToString(arg0 = #stringArray) + 
+dataClassArrayMemberToString(arg0 = <this>.#stringArray) + 
 ", " + 
 "charArray=" + 
-dataClassArrayMemberToString(arg0 = #charArray) + 
+dataClassArrayMemberToString(arg0 = <this>.#charArray) + 
 ", " + 
 "booleanArray=" + 
-dataClassArrayMemberToString(arg0 = #booleanArray) + 
+dataClassArrayMemberToString(arg0 = <this>.#booleanArray) + 
 ", " + 
 "byteArray=" + 
-dataClassArrayMemberToString(arg0 = #byteArray) + 
+dataClassArrayMemberToString(arg0 = <this>.#byteArray) + 
 ", " + 
 "shortArray=" + 
-dataClassArrayMemberToString(arg0 = #shortArray) + 
+dataClassArrayMemberToString(arg0 = <this>.#shortArray) + 
 ", " + 
 "intArray=" + 
-dataClassArrayMemberToString(arg0 = #intArray) + 
+dataClassArrayMemberToString(arg0 = <this>.#intArray) + 
 ", " + 
 "longArray=" + 
-dataClassArrayMemberToString(arg0 = #longArray) + 
+dataClassArrayMemberToString(arg0 = <this>.#longArray) + 
 ", " + 
 "floatArray=" + 
-dataClassArrayMemberToString(arg0 = #floatArray) + 
+dataClassArrayMemberToString(arg0 = <this>.#floatArray) + 
 ", " + 
 "doubleArray=" + 
-dataClassArrayMemberToString(arg0 = #doubleArray) + 
+dataClassArrayMemberToString(arg0 = <this>.#doubleArray) + 
 ")"
   }
 
   override fun hashCode(): Int {
-    var result: Int = dataClassArrayMemberHashCode(arg0 = #stringArray)
-    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #charArray))
-    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #booleanArray))
-    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #byteArray))
-    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #shortArray))
-    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #intArray))
-    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #longArray))
-    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #floatArray))
-    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = #doubleArray))
+    var result: Int = dataClassArrayMemberHashCode(arg0 = <this>.#stringArray)
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = <this>.#charArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = <this>.#booleanArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = <this>.#byteArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = <this>.#shortArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = <this>.#intArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = <this>.#longArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = <this>.#floatArray))
+    result = result.times(other = 31).plus(other = dataClassArrayMemberHashCode(arg0 = <this>.#doubleArray))
     return result
   }
 
@@ -134,31 +134,31 @@ dataClassArrayMemberToString(arg0 = #doubleArray) +
     }
     val tmp0_other_with_cast: Test1 = other as Test1
     when {
-      EQEQ(arg0 = #stringArray, arg1 = #stringArray).not() -> return false
+      EQEQ(arg0 = <this>.#stringArray, arg1 = tmp0_other_with_cast.#stringArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = #charArray, arg1 = #charArray).not() -> return false
+      EQEQ(arg0 = <this>.#charArray, arg1 = tmp0_other_with_cast.#charArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = #booleanArray, arg1 = #booleanArray).not() -> return false
+      EQEQ(arg0 = <this>.#booleanArray, arg1 = tmp0_other_with_cast.#booleanArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = #byteArray, arg1 = #byteArray).not() -> return false
+      EQEQ(arg0 = <this>.#byteArray, arg1 = tmp0_other_with_cast.#byteArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = #shortArray, arg1 = #shortArray).not() -> return false
+      EQEQ(arg0 = <this>.#shortArray, arg1 = tmp0_other_with_cast.#shortArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = #intArray, arg1 = #intArray).not() -> return false
+      EQEQ(arg0 = <this>.#intArray, arg1 = tmp0_other_with_cast.#intArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = #longArray, arg1 = #longArray).not() -> return false
+      EQEQ(arg0 = <this>.#longArray, arg1 = tmp0_other_with_cast.#longArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = #floatArray, arg1 = #floatArray).not() -> return false
+      EQEQ(arg0 = <this>.#floatArray, arg1 = tmp0_other_with_cast.#floatArray).not() -> return false
     }
     when {
-      EQEQ(arg0 = #doubleArray, arg1 = #doubleArray).not() -> return false
+      EQEQ(arg0 = <this>.#doubleArray, arg1 = tmp0_other_with_cast.#doubleArray).not() -> return false
     }
     return true
   }
@@ -177,22 +177,22 @@ data class Test2<T : Any?> {
     get
 
   operator fun component1(): Array<T> {
-    return #genericArray
+    return <this>.#genericArray
   }
 
-  fun copy(genericArray: Array<T> = #genericArray): Test2<T> {
+  fun copy(genericArray: Array<T> = <this>.#genericArray): Test2<T> {
     return Test2<T>(genericArray = genericArray)
   }
 
   override fun toString(): String {
     return "Test2(" + 
 "genericArray=" + 
-dataClassArrayMemberToString(arg0 = #genericArray) + 
+dataClassArrayMemberToString(arg0 = <this>.#genericArray) + 
 ")"
   }
 
   override fun hashCode(): Int {
-    return dataClassArrayMemberHashCode(arg0 = #genericArray)
+    return dataClassArrayMemberHashCode(arg0 = <this>.#genericArray)
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -204,7 +204,7 @@ dataClassArrayMemberToString(arg0 = #genericArray) +
     }
     val tmp0_other_with_cast: Test2<T> = other as Test2<T>
     when {
-      EQEQ(arg0 = #genericArray, arg1 = #genericArray).not() -> return false
+      EQEQ(arg0 = <this>.#genericArray, arg1 = tmp0_other_with_cast.#genericArray).not() -> return false
     }
     return true
   }
@@ -223,24 +223,24 @@ data class Test3 {
     get
 
   operator fun component1(): Array<Any>? {
-    return #anyArrayN
+    return <this>.#anyArrayN
   }
 
-  fun copy(anyArrayN: Array<Any>? = #anyArrayN): Test3 {
+  fun copy(anyArrayN: Array<Any>? = <this>.#anyArrayN): Test3 {
     return Test3(anyArrayN = anyArrayN)
   }
 
   override fun toString(): String {
     return "Test3(" + 
 "anyArrayN=" + 
-dataClassArrayMemberToString(arg0 = #anyArrayN) + 
+dataClassArrayMemberToString(arg0 = <this>.#anyArrayN) + 
 ")"
   }
 
   override fun hashCode(): Int {
     return when {
-      EQEQ(arg0 = #anyArrayN, arg1 = null) -> 0
-      true -> dataClassArrayMemberHashCode(arg0 = #anyArrayN)
+      EQEQ(arg0 = <this>.#anyArrayN, arg1 = null) -> 0
+      true -> dataClassArrayMemberHashCode(arg0 = <this>.#anyArrayN)
     }
   }
 
@@ -253,7 +253,7 @@ dataClassArrayMemberToString(arg0 = #anyArrayN) +
     }
     val tmp0_other_with_cast: Test3 = other as Test3
     when {
-      EQEQ(arg0 = #anyArrayN, arg1 = #anyArrayN).not() -> return false
+      EQEQ(arg0 = <this>.#anyArrayN, arg1 = tmp0_other_with_cast.#anyArrayN).not() -> return false
     }
     return true
   }

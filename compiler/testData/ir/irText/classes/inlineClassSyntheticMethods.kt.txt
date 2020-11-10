@@ -33,12 +33,12 @@ inline class IC<TT : Any?> {
   override fun toString(): String {
     return "IC(" + 
 "c=" + 
-#c + 
+<this>.#c + 
 ")"
   }
 
   override fun hashCode(): Int {
-    return #c.hashCode()
+    return <this>.#c.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -47,7 +47,7 @@ inline class IC<TT : Any?> {
     }
     val tmp0_other_with_cast: IC<TT> = other as IC<TT>
     when {
-      EQEQ(arg0 = #c, arg1 = #c).not() -> return false
+      EQEQ(arg0 = <this>.#c, arg1 = tmp0_other_with_cast.#c).not() -> return false
     }
     return true
   }

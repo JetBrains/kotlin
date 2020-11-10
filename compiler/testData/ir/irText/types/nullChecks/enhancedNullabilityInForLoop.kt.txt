@@ -90,30 +90,30 @@ data class P {
     get
 
   operator fun component1(): Int {
-    return #x
+    return <this>.#x
   }
 
   operator fun component2(): Int {
-    return #y
+    return <this>.#y
   }
 
-  fun copy(x: Int = #x, y: Int = #y): P {
+  fun copy(x: Int = <this>.#x, y: Int = <this>.#y): P {
     return P(x = x, y = y)
   }
 
   override fun toString(): String {
     return "P(" + 
 "x=" + 
-#x + 
+<this>.#x + 
 ", " + 
 "y=" + 
-#y + 
+<this>.#y + 
 ")"
   }
 
   override fun hashCode(): Int {
-    var result: Int = #x.hashCode()
-    result = result.times(other = 31).plus(other = #y.hashCode())
+    var result: Int = <this>.#x.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
     return result
   }
 
@@ -126,10 +126,10 @@ data class P {
     }
     val tmp0_other_with_cast: P = other as P
     when {
-      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
     }
     when {
-      EQEQ(arg0 = #y, arg1 = #y).not() -> return false
+      EQEQ(arg0 = <this>.#y, arg1 = tmp0_other_with_cast.#y).not() -> return false
     }
     return true
   }

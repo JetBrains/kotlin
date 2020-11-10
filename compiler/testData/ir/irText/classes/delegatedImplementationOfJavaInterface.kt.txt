@@ -11,28 +11,28 @@ class Test : J {
 
   @NotNull()
   override fun returnNotNull(): @EnhancedNullability String {
-    return #j.returnNotNull()
+    return <this>.#j.returnNotNull()
   }
 
   @Nullable()
   override fun returnNullable(): @EnhancedNullability String? {
-    return #j.returnNullable()
+    return <this>.#j.returnNullable()
   }
 
   override fun returnsFlexible(): @FlexibleNullability String? {
-    return #j.returnsFlexible()
+    return <this>.#j.returnsFlexible()
   }
 
   override fun takeFlexible(x: @FlexibleNullability String?) {
-    #j.takeFlexible(x = x)
+    <this>.#j.takeFlexible(x = x)
   }
 
   override fun takeNotNull(x: @EnhancedNullability String) {
-    #j.takeNotNull(x = x)
+    <this>.#j.takeNotNull(x = x)
   }
 
   override fun takeNullable(x: @EnhancedNullability String?) {
-    #j.takeNullable(x = x)
+    <this>.#j.takeNullable(x = x)
   }
 
 }

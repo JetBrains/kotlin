@@ -7,48 +7,48 @@ class Impl : A, B {
 
   private /*final field*/ val $$delegate_0: B = b
   override fun add(element: @FlexibleNullability String?): Boolean {
-    return #$$delegate_0.add(element = element)
+    return <this>.#$$delegate_0.add(element = element)
   }
 
   override fun addAll(elements: Collection<@FlexibleNullability String?>): Boolean {
-    return #$$delegate_0.addAll(elements = elements)
+    return <this>.#$$delegate_0.addAll(elements = elements)
   }
 
   override fun clear() {
-    #$$delegate_0.clear()
+    <this>.#$$delegate_0.clear()
   }
 
   override operator fun contains(element: @FlexibleNullability String?): Boolean {
-    return #$$delegate_0.contains(element = element)
+    return <this>.#$$delegate_0.contains(element = element)
   }
 
   override fun containsAll(elements: Collection<@FlexibleNullability String?>): Boolean {
-    return #$$delegate_0.containsAll(elements = elements)
+    return <this>.#$$delegate_0.containsAll(elements = elements)
   }
 
   override fun isEmpty(): Boolean {
-    return #$$delegate_0.isEmpty()
+    return <this>.#$$delegate_0.isEmpty()
   }
 
   override operator fun iterator(): MutableIterator<@FlexibleNullability String?> {
-    return #$$delegate_0.iterator()
+    return <this>.#$$delegate_0.iterator()
   }
 
   override fun remove(element: @FlexibleNullability String?): Boolean {
-    return #$$delegate_0.remove(element = element)
+    return <this>.#$$delegate_0.remove(element = element)
   }
 
   override fun removeAll(elements: Collection<@FlexibleNullability String?>): Boolean {
-    return #$$delegate_0.removeAll(elements = elements)
+    return <this>.#$$delegate_0.removeAll(elements = elements)
   }
 
   override fun retainAll(elements: Collection<@FlexibleNullability String?>): Boolean {
-    return #$$delegate_0.retainAll(elements = elements)
+    return <this>.#$$delegate_0.retainAll(elements = elements)
   }
 
   override val size: Int
     override get(): Int {
-      return #$$delegate_0.<get-size>()
+      return <this>.#$$delegate_0.<get-size>()
     }
 
 }

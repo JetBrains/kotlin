@@ -10,24 +10,24 @@ data class Some<T : Any?> {
     get
 
   operator fun component1(): T {
-    return #value
+    return <this>.#value
   }
 
-  fun copy(value: T = #value): Some<T> {
+  fun copy(value: T = <this>.#value): Some<T> {
     return Some<T>(value = value)
   }
 
   override fun toString(): String {
     return "Some(" + 
 "value=" + 
-#value + 
+<this>.#value + 
 ")"
   }
 
   override fun hashCode(): Int {
     return when {
-      EQEQ(arg0 = #value, arg1 = null) -> 0
-      true -> #value.hashCode()
+      EQEQ(arg0 = <this>.#value, arg1 = null) -> 0
+      true -> <this>.#value.hashCode()
     }
   }
 
@@ -40,7 +40,7 @@ data class Some<T : Any?> {
     }
     val tmp0_other_with_cast: Some<T> = other as Some<T>
     when {
-      EQEQ(arg0 = #value, arg1 = #value).not() -> return false
+      EQEQ(arg0 = <this>.#value, arg1 = tmp0_other_with_cast.#value).not() -> return false
     }
     return true
   }

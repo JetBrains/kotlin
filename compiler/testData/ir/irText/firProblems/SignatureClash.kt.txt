@@ -41,26 +41,26 @@ data class DataClass : Derived, Delegate {
     get
 
   override fun bar() {
-    #delegate.bar()
+    <this>.#delegate.bar()
   }
 
   operator fun component1(): Delegate {
-    return #delegate
+    return <this>.#delegate
   }
 
-  fun copy(delegate: Delegate = #delegate): DataClass {
+  fun copy(delegate: Delegate = <this>.#delegate): DataClass {
     return DataClass(delegate = delegate)
   }
 
   override fun toString(): String {
     return "DataClass(" + 
 "delegate=" + 
-#delegate + 
+<this>.#delegate + 
 ")"
   }
 
   override fun hashCode(): Int {
-    return #delegate.hashCode()
+    return <this>.#delegate.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -72,7 +72,7 @@ data class DataClass : Derived, Delegate {
     }
     val tmp0_other_with_cast: DataClass = other as DataClass
     when {
-      EQEQ(arg0 = #delegate, arg1 = #delegate).not() -> return false
+      EQEQ(arg0 = <this>.#delegate, arg1 = tmp0_other_with_cast.#delegate).not() -> return false
     }
     return true
   }

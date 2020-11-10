@@ -53,7 +53,7 @@ class Test2 : J {
   }
 
   init {
-    #field = 42
+    <this>super.#field = 42
   }
 
 }

@@ -54,7 +54,7 @@ class TestInitVarWithCustomSetter {
     field = 0
     get
     set(value: Int) {
-      #x = value
+      <this>.#x = value
     }
 
 }
@@ -63,7 +63,7 @@ class TestInitVarWithCustomSetterWithExplicitCtor {
   var x: Int
     get
     set(value: Int) {
-      #x = value
+      <this>.#x = value
     }
 
   init {
@@ -82,7 +82,7 @@ class TestInitVarWithCustomSetterInCtor {
   var x: Int
     get
     set(value: Int) {
-      #x = value
+      <this>.#x = value
     }
 
   constructor() {

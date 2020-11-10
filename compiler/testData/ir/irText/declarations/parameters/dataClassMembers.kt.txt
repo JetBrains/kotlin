@@ -14,33 +14,33 @@ data class Test<T : Any?> {
     get
 
   operator fun component1(): T {
-    return #x
+    return <this>.#x
   }
 
   operator fun component2(): String {
-    return #y
+    return <this>.#y
   }
 
-  fun copy(x: T = #x, y: String = #y): Test<T> {
+  fun copy(x: T = <this>.#x, y: String = <this>.#y): Test<T> {
     return Test<T>(x = x, y = y)
   }
 
   override fun toString(): String {
     return "Test(" + 
 "x=" + 
-#x + 
+<this>.#x + 
 ", " + 
 "y=" + 
-#y + 
+<this>.#y + 
 ")"
   }
 
   override fun hashCode(): Int {
     var result: Int = when {
-      EQEQ(arg0 = #x, arg1 = null) -> 0
-      true -> #x.hashCode()
+      EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
+      true -> <this>.#x.hashCode()
     }
-    result = result.times(other = 31).plus(other = #y.hashCode())
+    result = result.times(other = 31).plus(other = <this>.#y.hashCode())
     return result
   }
 
@@ -53,10 +53,10 @@ data class Test<T : Any?> {
     }
     val tmp0_other_with_cast: Test<T> = other as Test<T>
     when {
-      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
     }
     when {
-      EQEQ(arg0 = #y, arg1 = #y).not() -> return false
+      EQEQ(arg0 = <this>.#y, arg1 = tmp0_other_with_cast.#y).not() -> return false
     }
     return true
   }

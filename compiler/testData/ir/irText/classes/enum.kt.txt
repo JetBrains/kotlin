@@ -104,7 +104,7 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
       get
 
     init {
-      #z = <this>.<get-x>()
+      <this>.#z = <this>.<get-x>()
     }
 
     override fun foo() {

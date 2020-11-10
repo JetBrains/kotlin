@@ -12,12 +12,12 @@ inline class IT {
   override fun toString(): String {
     return "IT(" + 
 "x=" + 
-#x + 
+<this>.#x + 
 ")"
   }
 
   override fun hashCode(): Int {
-    return #x.hashCode()
+    return <this>.#x.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -26,7 +26,7 @@ inline class IT {
     }
     val tmp0_other_with_cast: IT = other as IT
     when {
-      EQEQ(arg0 = #x, arg1 = #x).not() -> return false
+      EQEQ(arg0 = <this>.#x, arg1 = tmp0_other_with_cast.#x).not() -> return false
     }
     return true
   }
@@ -92,12 +92,12 @@ inline class InlineMutableSet : MutableSet<IT> {
   override fun toString(): String {
     return "InlineMutableSet(" + 
 "ms=" + 
-#ms + 
+<this>.#ms + 
 ")"
   }
 
   override fun hashCode(): Int {
-    return #ms.hashCode()
+    return <this>.#ms.hashCode()
   }
 
   override operator fun equals(other: Any?): Boolean {
@@ -106,7 +106,7 @@ inline class InlineMutableSet : MutableSet<IT> {
     }
     val tmp0_other_with_cast: InlineMutableSet = other as InlineMutableSet
     when {
-      EQEQ(arg0 = #ms, arg1 = #ms).not() -> return false
+      EQEQ(arg0 = <this>.#ms, arg1 = tmp0_other_with_cast.#ms).not() -> return false
     }
     return true
   }

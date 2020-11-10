@@ -9,7 +9,7 @@ class C {
     get
 
   init {
-    #s = { // BLOCK
+    <this>.#s = { // BLOCK
       val tmp0_safe_receiver: Any? = x
       when {
         EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null

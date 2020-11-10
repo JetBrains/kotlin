@@ -46,35 +46,35 @@ class KRaw : JRaw {
 
   private /*final field*/ val $$delegate_0: JRaw = j
   override fun returnsRawGenericIn(): @FlexibleNullability @RawType GenericIn<Number>? {
-    return #$$delegate_0.returnsRawGenericIn()
+    return <this>.#$$delegate_0.returnsRawGenericIn()
   }
 
   override fun returnsRawGenericInv(): @FlexibleNullability @RawType GenericInv<Number>? {
-    return #$$delegate_0.returnsRawGenericInv()
+    return <this>.#$$delegate_0.returnsRawGenericInv()
   }
 
   override fun returnsRawGenericOut(): @FlexibleNullability @RawType GenericOut<Number>? {
-    return #$$delegate_0.returnsRawGenericOut()
+    return <this>.#$$delegate_0.returnsRawGenericOut()
   }
 
   override fun returnsRawList(): @FlexibleNullability @RawType MutableList<Any?>? {
-    return #$$delegate_0.returnsRawList()
+    return <this>.#$$delegate_0.returnsRawList()
   }
 
   override fun takesRawGenericIn(g: @FlexibleNullability @RawType GenericIn<Number>?) {
-    #$$delegate_0.takesRawGenericIn(g = g)
+    <this>.#$$delegate_0.takesRawGenericIn(g = g)
   }
 
   override fun takesRawGenericInv(g: @FlexibleNullability @RawType GenericInv<Number>?) {
-    #$$delegate_0.takesRawGenericInv(g = g)
+    <this>.#$$delegate_0.takesRawGenericInv(g = g)
   }
 
   override fun takesRawGenericOut(g: @FlexibleNullability @RawType GenericOut<Number>?) {
-    #$$delegate_0.takesRawGenericOut(g = g)
+    <this>.#$$delegate_0.takesRawGenericOut(g = g)
   }
 
   override fun takesRawList(list: @FlexibleNullability @RawType MutableList<Any?>?) {
-    #$$delegate_0.takesRawList(list = list)
+    <this>.#$$delegate_0.takesRawList(list = list)
   }
 
 }

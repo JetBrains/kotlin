@@ -47,7 +47,7 @@ class Test3 {
     get
 
   init {
-    #x = x
+    <this>.#x = x
   }
 
 }

@@ -25,7 +25,7 @@ class TestInitBlock : Base {
     get
 
   init {
-    #x = 0
+    <this>.#x = 0
   }
 
   constructor() {

@@ -7,10 +7,10 @@ fun testEquals(a: Int, b: Int): Boolean {
 }
 
 fun testJEqeqNull(): Boolean {
-  return EQEQ(arg0 = #INT_NULL, arg1 = null)
+  return EQEQ(arg0 = super.#INT_NULL, arg1 = null)
 }
 
 fun testJEqualsNull(): Boolean {
-  return #INT_NULL /*!! Int */.equals(other = null)
+  return super.#INT_NULL /*!! Int */.equals(other = null)
 }
 
