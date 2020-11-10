@@ -1,0 +1,9 @@
+interface I {
+    fun foo()
+}
+
+class C : I { // comment
+    override fun foo() {
+        <selection><caret>TODO("Not yet implemented")</selection>
+    }
+}

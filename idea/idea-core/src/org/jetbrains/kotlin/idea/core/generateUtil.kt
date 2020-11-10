@@ -159,7 +159,7 @@ fun Editor.moveCaret(offset: Int, scrollType: ScrollType = ScrollType.RELATIVE) 
 }
 
 private fun findInsertAfterAnchor(editor: Editor?, body: KtClassBody): PsiElement? {
-    val afterAnchor = body.lBrace ?: return null
+    val lBrace = body.lBrace ?: return null
 
     val offset = editor?.caretModel?.offset ?: body.startOffset
     val offsetCursorElement = PsiTreeUtil.findFirstParent(body.containingFile.findElementAt(offset)) {
@@ -174,7 +174,12 @@ private fun findInsertAfterAnchor(editor: Editor?, body: KtClassBody): PsiElemen
         return offsetCursorElement
     }
 
-    return afterAnchor
+    val comment = lBrace
+        .siblings(withItself = false)
+        .takeWhile { it is PsiWhiteSpace || it is PsiComment }
+        .lastOrNull { it is PsiComment }
+
+    return comment ?: lBrace
 }
 
 private fun removeAfterOffset(offset: Int, whiteSpace: PsiWhiteSpace): PsiElement {
@@ -226,7 +231,21 @@ fun <T : KtDeclaration> insertMembersAfter(
         }
 
         if (otherMembers.isNotEmpty()) {
+            val psiFactory = KtPsiFactory(project)
+            val tailComments = classOrObject.allChildren.toList()
+                .takeLastWhile { it is PsiComment || it is PsiWhiteSpace }
+                .map { commentOrSpace ->
+                    if (commentOrSpace is PsiWhiteSpace) {
+                        psiFactory.createWhiteSpace(commentOrSpace.text)
+                    } else {
+                        commentOrSpace.copy().also { commentOrSpace.delete() }
+                    }
+                }
             val body = classOrObject.getOrCreateBody()
+            val lBrace = body.lBrace
+            if (lBrace != null) {
+                tailComments.reversed().map { body.addAfter(it, lBrace) }
+            }
 
             var afterAnchor = anchor ?: findInsertAfterAnchor(editor, body) ?: return@runWriteAction emptyList<T>()
             otherMembers.mapTo(insertedMembers) {

@@ -338,4 +338,20 @@ class OverrideImplementTest : AbstractOverrideImplementTest() {
     fun testOverrideExternalFunction() {
         doOverrideFileTest()
     }
+
+    fun testImplementWithComment() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementWithComment2() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementWithComment3() {
+        doMultiImplementFileTest()
+    }
+
+    fun testImplementWithComment4() {
+        doMultiImplementFileTest()
+    }
 }
