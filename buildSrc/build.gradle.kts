@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 extra["versions.native-platform"] = "0.14"
 
 buildscript {
@@ -124,6 +126,11 @@ fun Project.`samWithReceiver`(configure: org.jetbrains.kotlin.samWithReceiver.gr
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs +=
+        listOf("-Xopt-in=kotlin.RequiresOptIn", "-Xskip-runtime-version-check")
 }
 
 tasks["build"].dependsOn(":prepare-deps:build")

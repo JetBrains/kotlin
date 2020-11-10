@@ -132,12 +132,10 @@ object IntellijRootUtils {
     }
 }
 
-fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project) =
-    includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).toTypedArray(), rootProject = project.rootProject)
-
-fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFilterPredicate: (String) -> Boolean) =
+@Suppress("UNCHECKED_CAST")
+fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFilterPredicate: (String) -> Boolean = { true }): Unit =
     includeJars(
-        *(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).filter { jarsFilterPredicate(it) }.toTypedArray(),
+        *(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).filter(jarsFilterPredicate).toTypedArray(),
         rootProject = project.rootProject
     )
 
