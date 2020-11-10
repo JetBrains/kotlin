@@ -158,7 +158,7 @@ class FirOverloadByLambdaReturnTypeResolver(
             val successfulCandidates = mutableSetOf<Candidate>()
 
             for (candidate in candidates) {
-                if (candidate.isSuccessful()) {
+                if (candidate.isSuccessful) {
                     successfulCandidates += candidate
                 } else {
                     errorCandidates += candidate

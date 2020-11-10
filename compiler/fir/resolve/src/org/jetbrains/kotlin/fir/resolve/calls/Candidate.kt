@@ -109,17 +109,22 @@ class Candidate(
     lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
 
-    val diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
+    var currentApplicability = CandidateApplicability.RESOLVED
+        private set
+
+    private val _diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
+    val diagnostics: List<ResolutionDiagnostic>
+        get() = _diagnostics
 
     fun addDiagnostic(diagnostic: ResolutionDiagnostic) {
-        diagnostics += diagnostic
+        _diagnostics += diagnostic
+        if (diagnostic.applicability < currentApplicability) {
+            currentApplicability = diagnostic.applicability
+        }
     }
 
-    fun isSuccessful(): Boolean {
-        if (system.hasContradiction) return false
-        val currentApplicability = diagnostics.map { it.applicability }.minOrNull() ?: CandidateApplicability.RESOLVED
-        return currentApplicability.isSuccess
-    }
+    val isSuccessful: Boolean
+        get() = currentApplicability.isSuccess && (!systemInitialized || !system.hasContradiction)
 
     var passedStages: Int = 0
 
