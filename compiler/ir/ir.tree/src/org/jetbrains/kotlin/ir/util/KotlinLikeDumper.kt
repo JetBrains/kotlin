@@ -1073,6 +1073,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         super.visitDeclarationReference(expression, data)
     }
 
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: IrDeclaration?) {
+        // TODO support
+        // TODO no test
+        p.printWithNoIndent("&")
+        super.visitRawFunctionReference(expression, data)
+    }
+
     override fun visitSingletonReference(expression: IrGetSingletonValue, data: IrDeclaration?) {
         // TODO check
         expression.type.printTypeWithNoIndent()
@@ -1106,7 +1113,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitClassReference(expression: IrClassReference, data: IrDeclaration?) {
-        // TODO use type
+        // TODO use classType
         p.printWithNoIndent((expression.symbol.owner as IrDeclarationWithName).name.asString())
         p.printWithNoIndent("::class")
     }
@@ -1217,6 +1224,21 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
     }
 
+    override fun visitDynamicExpression(expression: IrDynamicExpression, data: IrDeclaration?) {
+        // TODO support
+        super.visitDynamicExpression(expression, data)
+    }
+
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: IrDeclaration?) {
+        // TODO support
+        super.visitDynamicOperatorExpression(expression, data)
+    }
+
+    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: IrDeclaration?) {
+        // TODO support
+        super.visitDynamicMemberExpression(expression, data)
+    }
+
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: IrDeclaration?) {
         // TODO declaration.printlnAnnotations()
         p.println("/* ERROR DECLARATION */")
@@ -1239,6 +1261,60 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             arg.accept(this, data)
             p.printWithNoIndent("; ")
         }
+    }
+
+    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: IrDeclaration?) {
+        super.visitExternalPackageFragment(declaration, data)
+    }
+
+    override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
+        super.visitScript(declaration, data)
+    }
+
+    override fun visitTypeParameter(declaration: IrTypeParameter, data: IrDeclaration?) {
+        super.visitTypeParameter(declaration, data)
+    }
+
+    override fun visitValueParameter(declaration: IrValueParameter, data: IrDeclaration?) {
+        super.visitValueParameter(declaration, data)
+    }
+
+    override fun visitSuspendableExpression(expression: IrSuspendableExpression, data: IrDeclaration?) {
+        super.visitSuspendableExpression(expression, data)
+    }
+
+    override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: IrDeclaration?) {
+        super.visitSuspensionPoint(expression, data)
+    }
+
+    override fun visitGetObjectValue(expression: IrGetObjectValue, data: IrDeclaration?) {
+        // ???
+        super.visitGetObjectValue(expression, data)
+    }
+
+    override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrDeclaration?) {
+        // ???
+        super.visitGetEnumValue(expression, data)
+    }
+
+    override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclaration?) {
+        super.visitFunctionReference(expression, data)
+    }
+
+    override fun visitPropertyReference(expression: IrPropertyReference, data: IrDeclaration?) {
+        super.visitPropertyReference(expression, data)
+    }
+
+    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: IrDeclaration?) {
+        super.visitLocalDelegatedPropertyReference(expression, data)
+    }
+
+    override fun visitBranch(branch: IrBranch, data: IrDeclaration?) {
+        super.visitBranch(branch, data)
+    }
+
+    override fun visitElseBranch(branch: IrElseBranch, data: IrDeclaration?) {
+        super.visitElseBranch(branch, data)
     }
 
     private fun commentBlock(text: String) = "/* $text */"
