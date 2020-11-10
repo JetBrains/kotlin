@@ -1139,16 +1139,26 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.print("}")
     }
 
+    private fun IrLoop.printLabel() {
+        label?.let {
+            p.printWithNoIndent(it)
+            p.printWithNoIndent("@ ")
+        }
+    }
+
     override fun visitWhileLoop(loop: IrWhileLoop, data: IrDeclaration?) {
+        loop.printLabel()
+
         p.printWithNoIndent("while (")
         loop.condition.accept(this, data)
-
         p.printWithNoIndent(") ")
 
         loop.body?.accept(this, data)
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop, data: IrDeclaration?) {
+        loop.printLabel()
+
         p.printWithNoIndent("do")
 
         loop.body?.accept(this, data)
@@ -1178,14 +1188,21 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printlnWithNoIndent()
     }
 
+    private fun IrBreakContinue.printLabel() {
+        label?.let {
+            p.printWithNoIndent("@")
+            p.printWithNoIndent(it)
+        }
+    }
+
     override fun visitBreak(jump: IrBreak, data: IrDeclaration?) {
-        // TODO label
         p.printWithNoIndent("break")
+        jump.printLabel()
     }
 
     override fun visitContinue(jump: IrContinue, data: IrDeclaration?) {
-        // TODO label
         p.printWithNoIndent("continue")
+        jump.printLabel()
     }
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: IrDeclaration?) {
