@@ -115,7 +115,7 @@ class SubpluginEnvironment(
 internal fun addCompilationSourcesToExternalCompileTask(compilation: KotlinCompilation<*>, task: TaskProvider<out AbstractCompile>) {
     if (compilation is KotlinJvmAndroidCompilation) {
         compilation.androidVariant.forEachKotlinSourceSet { sourceSet -> task.configure { it.source(sourceSet.kotlin) } }
-        compilation.androidVariant.forEachJavaSourceDir { sources -> task.configure { it.source(sources) } }
+        compilation.androidVariant.forEachJavaSourceDir { sources -> task.configure { it.source(sources.dir) } }
     } else {
         task.configure { taskInstance ->
             compilation.allKotlinSourceSets.forEach { sourceSet -> taskInstance.source(sourceSet.kotlin) }
