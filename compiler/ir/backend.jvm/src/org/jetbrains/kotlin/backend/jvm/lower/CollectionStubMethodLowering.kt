@@ -66,7 +66,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         for (stub in methodStubsToGenerate) {
             val stubNameAndArity = stub.nameAndArity
             val relevantMembers = nonAbstractMethodsByNameAndArity[stubNameAndArity].orEmpty()
-            val existingOverrides = relevantMembers.filter { isOverriddenBy(stub, it) }
+            val existingOverrides = relevantMembers.filter { isEffectivelyOverriddenBy(stub, it) }
 
             if (existingOverrides.isNotEmpty()) {
                 // In the case that we find a defined method that matches the stub signature,
@@ -78,7 +78,8 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             }
 
             // Generated stub might still override some abstract member(s), which affects resulting method signature.
-            val overriddenAbstractMethods = abstractMethodsByNameAndArity[stubNameAndArity].orEmpty().filter { isOverriddenBy(it, stub) }
+            val overriddenAbstractMethods = abstractMethodsByNameAndArity[stubNameAndArity].orEmpty()
+                .filter { isEffectivelyOverriddenBy(it, stub) }
             stub.overriddenSymbols += overriddenAbstractMethods.map { it.symbol }
 
             // Some stub members require special handling.
@@ -121,8 +122,6 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                 else ->
                     irClass.declarations.add(stub)
             }
-
-
         }
     }
 
@@ -196,7 +195,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                 }
         }
 
-    private fun isOverriddenBy(superFun: IrSimpleFunction, overridingFun: IrSimpleFunction): Boolean {
+    private fun isEffectivelyOverriddenBy(superFun: IrSimpleFunction, overridingFun: IrSimpleFunction): Boolean {
         // Function 'f0' is overridden by function 'f1' if all of the following conditions are met,
         // assuming type parameter Ti of 'f1' is "equal" to type parameter Si of 'f0':
         //  - names are same;
@@ -301,32 +300,67 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
 
     // Compute stubs that should be generated, compare based on signature
     private fun generateRelevantStubMethods(irClass: IrClass): List<IrSimpleFunction> {
-        fun createStubFuns(stubs: StubsForCollectionClass): List<IrSimpleFunction> {
-            val (readOnlyClass, mutableClass, candidatesForStubs) = stubs
-            val substitutionMap = computeSubstitutionMap(readOnlyClass.owner, mutableClass.owner, irClass)
-            return candidatesForStubs.map { function ->
-                createStubMethod(function, irClass, substitutionMap)
-            }
-        }
+        val classStubFuns = collectionStubComputer.stubsForCollectionClasses(irClass)
+            .flatMap { createStubFuns(irClass, it) }
 
-        val classStubs = collectionStubComputer.stubsForCollectionClasses(irClass)
-
-        val superClassesStubs = irClass.superClass?.run {
-            superClassChain.flatMap { superClass ->
-                collectionStubComputer.stubsForCollectionClasses(superClass)
-            }.toList()
-        } ?: emptyList()
-
-        val relevantStubs =
-            classStubs.filter { (readOnlyClass) ->
-                classStubs.none { readOnlyClass != it.readOnlyClass && it.readOnlyClass.isSubtypeOfClass(readOnlyClass) } &&
-                        superClassesStubs.none { it.readOnlyClass == readOnlyClass }
-            }
-
-        val classStubFuns = relevantStubs.flatMap { createStubFuns(it) }
-        val superClassStubSignatures = superClassesStubs.flatMap { createStubFuns(it) }.mapTo(HashSet()) { it.toJvmSignature() }
+        val superClassStubSignatures = computeStubsForSuperClasses(irClass)
+            .flatMap { createStubFuns(irClass, it) }
+            .mapTo(HashSet()) { it.toJvmSignature() }
 
         return classStubFuns.filter { it.toJvmSignature() !in superClassStubSignatures }
+    }
+
+    private fun createStubFuns(irClass: IrClass, stubs: StubsForCollectionClass): List<IrSimpleFunction> {
+        val (readOnlyClass, mutableClass, candidatesForStubs) = stubs
+        val substitutionMap = computeSubstitutionMap(readOnlyClass.owner, mutableClass.owner, irClass)
+        return candidatesForStubs.map { function ->
+            createStubMethod(function, irClass, substitutionMap)
+        }
+    }
+
+    private fun computeStubsForSuperClasses(irClass: IrClass): List<StubsForCollectionClass> {
+        val immediateSuperClass = irClass.superClass ?: return emptyList()
+        return immediateSuperClass.superClassChain
+            .flatMap { superClass -> computeStubsForSuperClass(superClass) }
+            .toList()
+    }
+
+    private class FilteredStubsForCollectionClass(
+        override val readOnlyClass: IrClassSymbol,
+        override val mutableClass: IrClassSymbol,
+        override val candidatesForStubs: Collection<IrSimpleFunction>
+    ) : StubsForCollectionClass
+
+    private fun computeStubsForSuperClass(superClass: IrClass): List<StubsForCollectionClass> {
+        val superClassStubs = collectionStubComputer.stubsForCollectionClasses(superClass)
+
+        if (superClass.modality != Modality.ABSTRACT) return superClassStubs
+
+        // An abstract superclass might contain an abstract function declaration that effectively overrides a stub to be generated,
+        // and thus have no non-abstract stub.
+        // This calculation happens for each abstract class multiple times. TODO memoize.
+
+        val abstractFunsByNameAndArity = superClass.functions
+            .filter { !it.isFakeOverride && it.modality == Modality.ABSTRACT }
+            .groupBy { it.nameAndArity }
+
+        if (abstractFunsByNameAndArity.isEmpty()) return superClassStubs
+
+        return superClassStubs.map {
+            val (readOnlyClass, mutableClass, candidatesForStubs) = it
+            // NB here we should build a stub in substitution context of the given superclass.
+            // Resulting stub can be different from a stub created in substitution context of the "current" class
+            // in case of (partially) specialized generic superclass.
+            val substitutionMap = computeSubstitutionMap(readOnlyClass.owner, mutableClass.owner, superClass)
+            val filteredCandidates = candidatesForStubs.filter { candidateFun ->
+                val stubMethod = createStubMethod(candidateFun, superClass, substitutionMap)
+                val stubNameAndArity = stubMethod.nameAndArity
+                abstractFunsByNameAndArity[stubNameAndArity].orEmpty().none { abstractFun ->
+                    isEffectivelyOverriddenBy(stubMethod, abstractFun)
+                }
+            }
+            FilteredStubsForCollectionClass(readOnlyClass, mutableClass, filteredCandidates)
+        }
     }
 
     private fun Collection<IrType>.findMostSpecificTypeForClass(classifier: IrClassSymbol): IrType {
@@ -346,85 +380,95 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         get() = generateSequence(this) { it.superClass }
 }
 
-
-internal class StubsForCollectionClass(
-    val readOnlyClass: IrClassSymbol,
+internal interface StubsForCollectionClass {
+    val readOnlyClass: IrClassSymbol
     val mutableClass: IrClassSymbol
-) {
-    // Old back-end generates stubs for 'class A : C', where
-    //  'C' is some "read-only collection" interface from kotlin.collections,
-    //  'MC' is a corresponding "mutable collection" interface from kotlin.collections,
-    // by building fake overrides for a special 'class X : A(), MC'
-    // and taking fake overrides that override members from 'MC'.
-    //
-    // Here we are looking at this problem from a slightly different angle:
-    // we select suitable member functions 'f' in 'MC' that might potentially require stubs (we are here!),
-    // and then we generate stubs for functions 'f' that are not effectively overridden by members of 'A'
-    // (this happens in the lowering itself).
-    //
-    // In order for this to be equivalent to the old back-end approach,
-    // we should take 'f' in 'MC' such that any of the following conditions is true:
-    //  - 'f' is declared in 'MC' - that is, 'f' itself is not a fake override;
-    //  - 'f' is abstract and doesn't override anything from 'C'.
-    //
-    // NB1 it also covers default methods from JDK collection classes case
-    // (since that's the only way a member function in 'MC' might be non-abstract).
-    //
-    // NB2 the scheme of stub method generation in the old back-end depends too much on
-    // which particular declarations are present in 'MC'.
-    // Some of these declarations are redundant from the stub generation point of view -
-    // for example, 'kotlin.collections.MutableListIterator' contains the following (redundant) declarations:
-    //      override fun next(): T
-    //      override fun hasNext(): Boolean
-    // which cause stubs for 'next' and 'hasNext' to be generated in a 'abstract class A<T> : ListIterator<T>'.
-    // See https://youtrack.jetbrains.com/issue/KT-36724.
-    // In the ideal world, it should be enough to check that
-    // the given member function 'f' from 'MC' doesn't override anything from 'C'.
-    val candidatesForStubs: Collection<IrSimpleFunction> by lazy {
-        mutableClass.functions
-            .map { it.owner }
-            .filter { memberFun ->
-                !memberFun.isFakeOverride ||
-                        (memberFun.modality == Modality.ABSTRACT && memberFun.overriddenSymbols.none { overriddenFun ->
-                            overriddenFun.owner.parentAsClass.symbol == readOnlyClass
-                        })
-            }
-            .toHashSet()
-    }
-
-    operator fun component1() = readOnlyClass
-    operator fun component2() = mutableClass
-    operator fun component3() = candidatesForStubs
+    val candidatesForStubs: Collection<IrSimpleFunction>
 }
 
+internal operator fun StubsForCollectionClass.component1() = readOnlyClass
+internal operator fun StubsForCollectionClass.component2() = mutableClass
+internal operator fun StubsForCollectionClass.component3() = candidatesForStubs
 
 internal class CollectionStubComputer(val context: JvmBackendContext) {
+
+    private class LazyStubsForCollectionClass(
+        override val readOnlyClass: IrClassSymbol,
+        override val mutableClass: IrClassSymbol
+    ) : StubsForCollectionClass {
+        override val candidatesForStubs: Collection<IrSimpleFunction> by lazy {
+            // Old back-end generates stubs for 'class A : C', where
+            //  'C' is some "read-only collection" interface from kotlin.collections,
+            //  'MC' is a corresponding "mutable collection" interface from kotlin.collections,
+            // by building fake overrides for a special 'class X : A(), MC'
+            // and taking fake overrides that override members from 'MC'.
+            //
+            // Here we are looking at this problem from a slightly different angle:
+            // we select suitable member functions 'f' in 'MC' that might potentially require stubs (we are here!),
+            // and then we generate stubs for functions 'f' that are not effectively overridden by members of 'A'
+            // (this happens in the lowering itself).
+            //
+            // In order for this to be equivalent to the old back-end approach,
+            // we should take 'f' in 'MC' such that any of the following conditions is true:
+            //  - 'f' is declared in 'MC' - that is, 'f' itself is not a fake override;
+            //  - 'f' is abstract and doesn't override anything from 'C'.
+            //
+            // NB1 it also covers default methods from JDK collection classes case
+            // (since that's the only way a member function in 'MC' might be non-abstract).
+            //
+            // NB2 the scheme of stub method generation in the old back-end depends too much on
+            // which particular declarations are present in 'MC'.
+            // Some of these declarations are redundant from the stub generation point of view -
+            // for example, 'kotlin.collections.MutableListIterator' contains the following (redundant) declarations:
+            //      override fun next(): T
+            //      override fun hasNext(): Boolean
+            // which cause stubs for 'next' and 'hasNext' to be generated in a 'abstract class A<T> : ListIterator<T>'.
+            // See https://youtrack.jetbrains.com/issue/KT-36724.
+            // In the ideal world, it should be enough to check that
+            // the given member function 'f' from 'MC' doesn't override anything from 'C'.
+
+            mutableClass.functions
+                .map { it.owner }
+                .filter { memberFun ->
+                    !memberFun.isFakeOverride ||
+                            (memberFun.modality == Modality.ABSTRACT && memberFun.overriddenSymbols.none { overriddenFun ->
+                                overriddenFun.owner.parentAsClass.symbol == readOnlyClass
+                            })
+                }
+                .toHashSet()
+        }
+    }
 
     private val preComputedStubs: Collection<StubsForCollectionClass> by lazy {
         with(context.ir.symbols) {
             listOf(
-                collection to mutableCollection,
-                set to mutableSet,
-                list to mutableList,
-                map to mutableMap,
-                mapEntry to mutableMapEntry,
-                iterable to mutableIterable,
-                iterator to mutableIterator,
-                listIterator to mutableListIterator
-            ).map { (readOnlyClass, mutableClass) ->
-                StubsForCollectionClass(readOnlyClass, mutableClass)
-            }
+                LazyStubsForCollectionClass(collection, mutableCollection),
+                LazyStubsForCollectionClass(set, mutableSet),
+                LazyStubsForCollectionClass(list, mutableList),
+                LazyStubsForCollectionClass(map, mutableMap),
+                LazyStubsForCollectionClass(mapEntry, mutableMapEntry),
+                LazyStubsForCollectionClass(iterable, mutableIterable),
+                LazyStubsForCollectionClass(iterator, mutableIterator),
+                LazyStubsForCollectionClass(listIterator, mutableListIterator)
+            )
         }
     }
 
-    private val stubsCache = mutableMapOf<IrClass, Collection<StubsForCollectionClass>>()
+    private val stubsCache = mutableMapOf<IrClass, List<StubsForCollectionClass>>()
 
-    fun stubsForCollectionClasses(irClass: IrClass): Collection<StubsForCollectionClass> =
+    fun stubsForCollectionClasses(irClass: IrClass): List<StubsForCollectionClass> =
         stubsCache.getOrPut(irClass) {
-            if (irClass.isFromJava()) emptySet()
-            else preComputedStubs.filter { (readOnlyClass, mutableClass) ->
-                !irClass.symbol.isSubtypeOfClass(mutableClass) &&
-                        irClass.superTypes.any { it.isSubtypeOfClass(readOnlyClass) }
-            }
+            computeStubsForCollectionClasses(irClass)
         }
+
+    private fun computeStubsForCollectionClasses(irClass: IrClass): List<StubsForCollectionClass> {
+        if (irClass.isFromJava()) return emptyList()
+        val stubs = preComputedStubs.filter { (readOnlyClass, mutableClass) ->
+            !irClass.symbol.isSubtypeOfClass(mutableClass) &&
+                    irClass.superTypes.any { it.isSubtypeOfClass(readOnlyClass) }
+        }
+        return stubs.filter { (readOnlyClass) ->
+            stubs.none { readOnlyClass != it.readOnlyClass && it.readOnlyClass.isSubtypeOfClass(readOnlyClass) }
+        }
+    }
 }

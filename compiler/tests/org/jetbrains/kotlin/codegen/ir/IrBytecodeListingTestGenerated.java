@@ -339,6 +339,21 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/extendingAbstractCollection.kt");
         }
 
+        @TestMetadata("inheritingFromAbstractCollections.kt")
+        public void testInheritingFromAbstractCollections() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/inheritingFromAbstractCollections.kt");
+        }
+
+        @TestMetadata("inheritingFromAbstractMap.kt")
+        public void testInheritingFromAbstractMap() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/inheritingFromAbstractMap.kt");
+        }
+
+        @TestMetadata("inheritingFromAbstractMutableList.kt")
+        public void testInheritingFromAbstractMutableList() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/inheritingFromAbstractMutableList.kt");
+        }
+
         @TestMetadata("mapOfPrimitivesFullJdk.kt")
         public void testMapOfPrimitivesFullJdk() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/mapOfPrimitivesFullJdk.kt");
