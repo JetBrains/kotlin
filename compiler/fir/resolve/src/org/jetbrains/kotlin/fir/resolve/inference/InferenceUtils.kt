@@ -29,12 +29,22 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-private fun ConeKotlinType.functionClassKind(session: FirSession): FunctionClassKind? {
+private fun ConeKotlinType.classId(session: FirSession): ClassId? {
     contract {
-        returns(true) implies (this@functionClassKind is ConeClassLikeType)
+        returns(true) implies (this@classId is ConeClassLikeType)
     }
     if (this !is ConeClassLikeType) return null
-    val classId = fullyExpandedType(session).lookupTag.classId
+    return fullyExpandedType(session).lookupTag.classId
+}
+
+fun ConeKotlinType.isKMutableProperty(session: FirSession): Boolean {
+    val classId = classId(session) ?: return false
+    return classId.packageFqName == StandardClassIds.BASE_REFLECT_PACKAGE &&
+            classId.shortClassName.identifier.startsWith("KMutableProperty")
+}
+
+private fun ConeKotlinType.functionClassKind(session: FirSession): FunctionClassKind? {
+    val classId = classId(session) ?: return null
     return FunctionClassKind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString())
 }
 
