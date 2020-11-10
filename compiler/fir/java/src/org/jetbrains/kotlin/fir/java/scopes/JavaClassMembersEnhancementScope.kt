@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
@@ -46,11 +47,11 @@ class JavaClassMembersEnhancementScope(
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         useSiteMemberScope.processPropertiesByName(name) process@{ original ->
             val enhancedPropertySymbol = signatureEnhancement.enhancedProperty(original, name)
-
-            if (enhancedPropertySymbol is FirPropertySymbol) {
+            val originalFir = original.fir
+            if (originalFir is FirProperty && enhancedPropertySymbol is FirPropertySymbol) {
                 val enhancedProperty = enhancedPropertySymbol.fir
                 overriddenProperties[enhancedPropertySymbol] =
-                    enhancedProperty
+                    originalFir
                         .overriddenMembers(enhancedProperty.name)
                         .mapNotNull { it.symbol as? FirPropertySymbol }
             }
@@ -141,11 +142,15 @@ class JavaClassMembersEnhancementScope(
             val enhancedFunction = (symbol.fir as? FirSimpleFunction)?.changeSignatureIfErasedValueParameter()
             val enhancedFunctionSymbol = enhancedFunction?.symbol ?: symbol
 
+            val originalFunction = original.fir as? FirSimpleFunction
+
             overriddenFunctions[enhancedFunctionSymbol] =
-                enhancedFunction
-                    ?.overriddenMembers(enhancedFunction.name)
-                    ?.mapNotNull { it.symbol as? FirFunctionSymbol<*> }
-                    .orEmpty()
+                if (enhancedFunction != null && originalFunction != null)
+                    originalFunction
+                        .overriddenMembers(enhancedFunction.name)
+                        .mapNotNull { it.symbol as? FirFunctionSymbol<*> }
+                else
+                    emptyList()
 
             processor(enhancedFunctionSymbol)
         }
