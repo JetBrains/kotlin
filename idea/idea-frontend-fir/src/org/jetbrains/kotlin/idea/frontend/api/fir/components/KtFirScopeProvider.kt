@@ -138,7 +138,7 @@ internal class KtFirScopeProvider(
         positionInFakeFile: KtElement
     ): LowLevelFirApiFacadeForCompletion.FirCompletionContext {
         val firFile = LowLevelFirApiFacade.getFirFile(ktFile, firResolveState)
-        val declarationContext = EnclosingDeclarationContext.detect(positionInFakeFile)
+        val declarationContext = EnclosingDeclarationContext.detect(ktFile, positionInFakeFile)
 
         return declarationContext.buildCompletionContext(firFile, firResolveState)
     }
