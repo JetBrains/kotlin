@@ -978,18 +978,31 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitGetField(expression: IrGetField, data: IrDeclaration?) {
-        expression.printFieldAccess()
+        expression.printFieldAccess(data)
     }
 
     override fun visitSetField(expression: IrSetField, data: IrDeclaration?) {
-        expression.printFieldAccess()
+        expression.printFieldAccess(data)
         p.printWithNoIndent(" = ")
         expression.value.accept(this, data)
     }
 
-    private fun IrFieldAccessExpression.printFieldAccess() {
-        // TODO receiver, superQualifierSymbol?
+    private fun IrFieldAccessExpression.printFieldAccess(data: IrDeclaration?) {
+        // TODO type
         // TODO is not valid kotlin
+        receiver?.accept(this@KotlinLikeDumper, data)
+        superQualifierSymbol?.let {
+            // TODO should we print super classifier somehow?
+            // TODO which supper? smart mode?
+            // TODO super and receiver at the same time:
+            //  compiler/testData/ir/irText/types/smartCastOnFieldReceiverOfGenericType.kt
+            p.printWithNoIndent("super")
+        }
+
+        if (receiver != null || superQualifierSymbol != null) {
+            p.printWithNoIndent(".")
+        }
+
         p.printWithNoIndent("#" + symbol.owner.name.asString())
     }
 
