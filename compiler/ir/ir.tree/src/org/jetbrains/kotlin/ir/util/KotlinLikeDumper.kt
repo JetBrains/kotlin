@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
+
 // TODO look at
 //  IrSourcePrinter.kt -- androidx-master-dev/frameworks/support/compose/compiler/compiler-hosted/src/main/java/androidx/compose/compiler/plugins/kotlin/lower/IrSourcePrinter.kt
 //  DumpIrTree.kt -- compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/util/DumpIrTree.kt
@@ -1217,6 +1218,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: IrDeclaration?) {
+        // TODO declaration.printlnAnnotations()
         p.println("/* ERROR DECLARATION */")
     }
 
@@ -1226,8 +1228,17 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: IrDeclaration?) {
-        // TODO receiver, arguments
+        // TODO description
+        // TODO better rendering
         p.printWithNoIndent("error(\"\") /* ERROR CALL */")
+        expression.explicitReceiver?.let {
+            it.accept(this, data)
+            p.printWithNoIndent("; ")
+        }
+        expression.arguments.forEach { arg ->
+            arg.accept(this, data)
+            p.printWithNoIndent("; ")
+        }
     }
 
     private fun commentBlock(text: String) = "/* $text */"
