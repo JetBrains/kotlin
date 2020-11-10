@@ -48,7 +48,8 @@ abstract class KotlinIrLinker(
 
     abstract val translationPluginContext: TranslationPluginContext?
 
-    internal val haveSeen = mutableSetOf<IrSymbol>()
+    internal val triedToDeserializeDeclarationForSymbol = mutableSetOf<IrSymbol>()
+    internal val deserializedSymbols = mutableSetOf<IrSymbol>()
     internal val fakeOverrideClassQueue = mutableListOf<IrClass>()
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
@@ -83,10 +84,10 @@ abstract class KotlinIrLinker(
     private fun findDeserializedDeclarationForSymbol(symbol: IrSymbol): DeclarationDescriptor? {
         assert(symbol.isPublicApi || symbol.descriptor.module === currentModule || platformSpecificSymbol(symbol))
 
-        if (haveSeen.contains(symbol)) {
+        if (symbol in triedToDeserializeDeclarationForSymbol || symbol in deserializedSymbols) {
             return null
         }
-        haveSeen.add(symbol)
+        triedToDeserializeDeclarationForSymbol.add(symbol)
 
         val descriptor = symbol.descriptor
 
@@ -173,7 +174,7 @@ abstract class KotlinIrLinker(
             fakeOverrideBuilder.provideFakeOverrides(klass)
         }
 
-        haveSeen.clear()
+        triedToDeserializeDeclarationForSymbol.clear()
 
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")

@@ -68,7 +68,7 @@ abstract class BasicIrModuleDeserializer(
         moduleDeserializationState.enqueueFile(fileLocalDeserializationState)
 
         return fileLocalDeserializationState.fileDeserializer.symbolDeserializer.deserializeIrSymbol(idSig, symbolKind).also {
-            linker.haveSeen.add(it)
+            linker.deserializedSymbols.add(it)
         }
     }
 
