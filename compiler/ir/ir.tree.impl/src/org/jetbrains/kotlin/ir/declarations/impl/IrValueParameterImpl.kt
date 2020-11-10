@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.ir.IrFlags
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -24,7 +25,9 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.getFlag
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.toFlag
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -37,10 +40,10 @@ class IrValueParameterImpl(
     override val index: Int,
     override var type: IrType,
     override var varargElementType: IrType?,
-    override val isCrossinline: Boolean,
-    override val isNoinline: Boolean,
-    override val isHidden: Boolean = false,
-    override val isAssignable: Boolean = false
+    isCrossinline: Boolean,
+    isNoinline: Boolean,
+    isHidden: Boolean = false,
+    isAssignable: Boolean = false
 ) : IrValueParameter() {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ParameterDescriptor
@@ -49,6 +52,21 @@ class IrValueParameterImpl(
     init {
         symbol.bind(this)
     }
+
+    private val flags = isCrossinline.toFlag(IrFlags.IS_CROSSINLINE) or isNoinline.toFlag(IrFlags.IS_NOINLINE) or
+            isHidden.toFlag(IrFlags.IS_HIDDEN) or isAssignable.toFlag(IrFlags.IS_ASSIGNABLE)
+
+    override val isCrossinline: Boolean
+        get() = flags.getFlag(IrFlags.IS_CROSSINLINE)
+
+    override val isNoinline: Boolean
+        get() = flags.getFlag(IrFlags.IS_NOINLINE)
+
+    override val isHidden: Boolean
+        get() = flags.getFlag(IrFlags.IS_HIDDEN)
+
+    override val isAssignable: Boolean
+        get() = flags.getFlag(IrFlags.IS_ASSIGNABLE)
 
     override val factory: IrFactory
         get() = IrFactoryImpl

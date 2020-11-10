@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
+import org.jetbrains.kotlin.ir.IrFlags
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -24,7 +25,9 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.getFlag
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.toFlag
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -37,9 +40,9 @@ class IrVariableImpl(
     override val symbol: IrVariableSymbol,
     override val name: Name,
     override var type: IrType,
-    override val isVar: Boolean,
-    override val isConst: Boolean,
-    override val isLateinit: Boolean
+    isVar: Boolean,
+    isConst: Boolean,
+    isLateinit: Boolean
 ) : IrVariable() {
     private var _parent: IrDeclarationParent? = null
     override var parent: IrDeclarationParent
@@ -54,6 +57,17 @@ class IrVariableImpl(
     init {
         symbol.bind(this)
     }
+
+    private val flags = isVar.toFlag(IrFlags.IS_VAR) or isConst.toFlag(IrFlags.IS_CONST) or isLateinit.toFlag(IrFlags.IS_LATEINIT)
+
+    override val isVar: Boolean
+        get() = flags.getFlag(IrFlags.IS_VAR)
+
+    override val isConst: Boolean
+        get() = flags.getFlag(IrFlags.IS_CONST)
+
+    override val isLateinit: Boolean
+        get() = flags.getFlag(IrFlags.IS_LATEINIT)
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: VariableDescriptor

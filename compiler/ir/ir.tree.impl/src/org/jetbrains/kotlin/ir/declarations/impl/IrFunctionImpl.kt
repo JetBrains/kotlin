@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -28,13 +28,7 @@ abstract class IrFunctionCommonImpl(
     override val name: Name,
     override var visibility: DescriptorVisibility,
     returnType: IrType,
-    override val isInline: Boolean,
-    override val isExternal: Boolean,
-    override val isTailrec: Boolean,
-    override val isSuspend: Boolean,
-    override val isOperator: Boolean,
-    override val isInfix: Boolean,
-    override val isExpect: Boolean,
+    protected var flags: Int,
     override val containerSource: DeserializedContainerSource?,
 ) : IrSimpleFunction() {
     override val factory: IrFactory
@@ -49,6 +43,33 @@ abstract class IrFunctionCommonImpl(
         } else {
             field
         }
+
+    override var modality: Modality
+        get() = flags.toModality()
+        set(value) {
+            flags = flags.setModality(value)
+        }
+
+    override val isInline
+        get() = flags.getFlag(IrFlags.IS_INLINE)
+
+    override val isExternal
+        get() = flags.getFlag(IrFlags.IS_EXTERNAL)
+
+    override val isTailrec
+        get() = flags.getFlag(IrFlags.IS_TAILREC)
+
+    override val isSuspend
+        get() = flags.getFlag(IrFlags.IS_SUSPEND)
+
+    override val isOperator
+        get() = flags.getFlag(IrFlags.IS_OPERATOR)
+
+    override val isInfix
+        get() = flags.getFlag(IrFlags.IS_INFIX)
+
+    override val isExpect
+        get() = flags.getFlag(IrFlags.IS_EXPECT)
 
     override var typeParameters: List<IrTypeParameter> = emptyList()
 
@@ -75,7 +96,7 @@ class IrFunctionImpl(
     override val symbol: IrSimpleFunctionSymbol,
     name: Name,
     visibility: DescriptorVisibility,
-    override val modality: Modality,
+    modality: Modality,
     returnType: IrType,
     isInline: Boolean,
     isExternal: Boolean,
@@ -87,8 +108,10 @@ class IrFunctionImpl(
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     containerSource: DeserializedContainerSource? = null,
 ) : IrFunctionCommonImpl(
-    startOffset, endOffset, origin, name, visibility, returnType, isInline,
-    isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
+    startOffset, endOffset, origin, name, visibility, returnType,
+    modality.toFlags() or isInline.toFlag(IrFlags.IS_INLINE) or isExternal.toFlag(IrFlags.IS_EXTERNAL) or
+            isTailrec.toFlag(IrFlags.IS_TAILREC) or isSuspend.toFlag(IrFlags.IS_SUSPEND) or isOperator.toFlag(IrFlags.IS_OPERATOR) or
+            isInfix.toFlag(IrFlags.IS_INFIX) or isExpect.toFlag(IrFlags.IS_EXPECT),
     containerSource,
 ) {
     @ObsoleteDescriptorBasedAPI
@@ -106,7 +129,7 @@ class IrFakeOverrideFunctionImpl(
     origin: IrDeclarationOrigin,
     name: Name,
     override var visibility: DescriptorVisibility,
-    override var modality: Modality,
+    modality: Modality,
     returnType: IrType,
     isInline: Boolean,
     isExternal: Boolean,
@@ -116,8 +139,10 @@ class IrFakeOverrideFunctionImpl(
     isInfix: Boolean,
     isExpect: Boolean,
 ) : IrFunctionCommonImpl(
-    startOffset, endOffset, origin, name, visibility, returnType, isInline,
-    isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
+    startOffset, endOffset, origin, name, visibility, returnType,
+    modality.toFlags() or isInline.toFlag(IrFlags.IS_INLINE) or isExternal.toFlag(IrFlags.IS_EXTERNAL) or
+            isTailrec.toFlag(IrFlags.IS_TAILREC) or isSuspend.toFlag(IrFlags.IS_SUSPEND) or isOperator.toFlag(IrFlags.IS_OPERATOR) or
+            isInfix.toFlag(IrFlags.IS_INFIX) or isExpect.toFlag(IrFlags.IS_EXPECT),
     containerSource = null,
 ), IrFakeOverrideFunction {
     override val isFakeOverride: Boolean

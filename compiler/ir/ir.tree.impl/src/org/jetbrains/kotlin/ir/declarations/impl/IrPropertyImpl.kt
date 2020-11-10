@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.ir.declarations.impl
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -33,16 +33,35 @@ abstract class IrPropertyCommonImpl(
     override var origin: IrDeclarationOrigin,
     override val name: Name,
     override var visibility: DescriptorVisibility,
-    override val isVar: Boolean,
-    override val isConst: Boolean,
-    override val isLateinit: Boolean,
-    override val isDelegated: Boolean,
-    override val isExternal: Boolean,
-    override val isExpect: Boolean,
+    protected var flags: Int,
     override val containerSource: DeserializedContainerSource?,
 ) : IrProperty() {
     override val factory: IrFactory
         get() = IrFactoryImpl
+
+    override var modality: Modality
+        get() = flags.toModality()
+        set(value) {
+            flags = flags.setModality(value)
+        }
+
+    override val isVar: Boolean
+        get() = flags.getFlag(IrFlags.IS_VAR)
+
+    override val isConst: Boolean
+        get() = flags.getFlag(IrFlags.IS_CONST)
+
+    override val isLateinit: Boolean
+        get() = flags.getFlag(IrFlags.IS_LATEINIT)
+
+    override val isDelegated: Boolean
+        get() = flags.getFlag(IrFlags.IS_DELEGATED)
+
+    override val isExternal: Boolean
+        get() = flags.getFlag(IrFlags.IS_EXTERNAL)
+
+    override val isExpect: Boolean
+        get() = flags.getFlag(IrFlags.IS_EXPECT)
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
@@ -65,22 +84,29 @@ class IrPropertyImpl(
     override val symbol: IrPropertySymbol,
     name: Name,
     visibility: DescriptorVisibility,
-    override val modality: Modality,
+    modality: Modality,
     isVar: Boolean,
     isConst: Boolean,
     isLateinit: Boolean,
     isDelegated: Boolean,
     isExternal: Boolean,
     isExpect: Boolean = false,
-    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     containerSource: DeserializedContainerSource? = null,
 ) : IrPropertyCommonImpl(
-    startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
+    startOffset, endOffset, origin, name, visibility,
+    modality.toFlags() or
+            isVar.toFlag(IrFlags.IS_VAR) or isConst.toFlag(IrFlags.IS_CONST) or isLateinit.toFlag(IrFlags.IS_LATEINIT) or
+            isDelegated.toFlag(IrFlags.IS_DELEGATED) or isExternal.toFlag(IrFlags.IS_EXTERNAL) or isExpect.toFlag(IrFlags.IS_EXPECT) or
+            isFakeOverride.toFlag(IrFlags.IS_FAKE_OVERRIDE),
     containerSource
 ) {
     init {
         symbol.bind(this)
     }
+
+    override val isFakeOverride: Boolean
+        get() = flags.getFlag(IrFlags.IS_FAKE_OVERRIDE)
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor
@@ -93,7 +119,7 @@ class IrFakeOverridePropertyImpl(
     origin: IrDeclarationOrigin,
     name: Name,
     visibility: DescriptorVisibility,
-    override var modality: Modality,
+    modality: Modality,
     isVar: Boolean,
     isConst: Boolean,
     isLateinit: Boolean,
@@ -101,7 +127,10 @@ class IrFakeOverridePropertyImpl(
     isExternal: Boolean,
     isExpect: Boolean,
 ) : IrPropertyCommonImpl(
-    startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
+    startOffset, endOffset, origin, name, visibility,
+    modality.toFlags() or
+            isVar.toFlag(IrFlags.IS_VAR) or isConst.toFlag(IrFlags.IS_CONST) or isLateinit.toFlag(IrFlags.IS_LATEINIT) or
+            isDelegated.toFlag(IrFlags.IS_DELEGATED) or isExternal.toFlag(IrFlags.IS_EXTERNAL) or isExpect.toFlag(IrFlags.IS_EXPECT),
     containerSource = null,
 ), IrFakeOverrideProperty {
     override val isFakeOverride: Boolean

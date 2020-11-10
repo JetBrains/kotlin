@@ -18,11 +18,14 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.IrFlags
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.getFlag
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.toFlag
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
@@ -37,15 +40,30 @@ class IrConstructorImpl(
     override val name: Name,
     override var visibility: DescriptorVisibility,
     returnType: IrType,
-    override val isInline: Boolean,
-    override val isExternal: Boolean,
-    override val isPrimary: Boolean,
-    override val isExpect: Boolean,
+    isInline: Boolean,
+    isExternal: Boolean,
+    isPrimary: Boolean,
+    isExpect: Boolean,
     override val containerSource: DeserializedContainerSource? = null,
 ) : IrConstructor() {
     init {
         symbol.bind(this)
     }
+
+    val flags: Int = isInline.toFlag(IrFlags.IS_INLINE) or isExternal.toFlag(IrFlags.IS_EXTERNAL) or
+            isPrimary.toFlag(IrFlags.IS_PRIMARY) or isExpect.toFlag(IrFlags.IS_EXPECT)
+
+    override val isInline: Boolean
+        get() = flags.getFlag(IrFlags.IS_INLINE)
+
+    override val isExternal: Boolean
+        get() = flags.getFlag(IrFlags.IS_EXTERNAL)
+
+    override val isPrimary: Boolean
+        get() = flags.getFlag(IrFlags.IS_PRIMARY)
+
+    override val isExpect: Boolean
+        get() = flags.getFlag(IrFlags.IS_EXPECT)
 
     override val factory: IrFactory
         get() = IrFactoryImpl

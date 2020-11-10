@@ -18,12 +18,15 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.IrFlags
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.getFlag
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.toFlag
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
@@ -35,16 +38,27 @@ class IrFieldImpl(
     override val name: Name,
     override var type: IrType,
     override var visibility: DescriptorVisibility,
-    override val isFinal: Boolean,
-    override val isExternal: Boolean,
-    override val isStatic: Boolean,
+    isFinal: Boolean,
+    isExternal: Boolean,
+    isStatic: Boolean,
 ) : IrField() {
     init {
         symbol.bind(this)
     }
 
+    private val flags = isFinal.toFlag(IrFlags.IS_FINAL) or isExternal.toFlag(IrFlags.IS_EXTERNAL) or isStatic.toFlag(IrFlags.IS_STATIC)
+
     override val factory: IrFactory
         get() = IrFactoryImpl
+
+    override val isFinal: Boolean
+        get() = flags.getFlag(IrFlags.IS_FINAL)
+
+    override val isExternal: Boolean
+        get() = flags.getFlag(IrFlags.IS_EXTERNAL)
+
+    override val isStatic: Boolean
+        get() = flags.getFlag(IrFlags.IS_STATIC)
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
