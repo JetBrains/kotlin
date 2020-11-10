@@ -1194,21 +1194,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printlnWithNoIndent()
     }
 
-    private fun IrBreakContinue.printLabel() {
-        label?.let {
+    override fun visitBreakContinue(jump: IrBreakContinue, data: IrDeclaration?) {
+        // TODO render loop reference
+        p.printWithNoIndent(if (jump is IrContinue) "continue" else "break")
+        jump.label?.let {
             p.printWithNoIndent("@")
             p.printWithNoIndent(it)
         }
-    }
-
-    override fun visitBreak(jump: IrBreak, data: IrDeclaration?) {
-        p.printWithNoIndent("break")
-        jump.printLabel()
-    }
-
-    override fun visitContinue(jump: IrContinue, data: IrDeclaration?) {
-        p.printWithNoIndent("continue")
-        jump.printLabel()
     }
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: IrDeclaration?) {
