@@ -414,11 +414,11 @@ class Strings {
         val string = "Kotlin 1.4.0"
         assertPrints(string.last(), "0")
         assertPrints(string.last { it.isLetter() }, "n")
-        assertFails { string.last { it > 'z' } }
         assertPrints(string.lastOrNull { it > 'z' }, "null")
+        assertFails { string.last { it > 'z' } }
 
         val emptyString = ""
-        assertFails { emptyString.last() }
         assertPrints(emptyString.lastOrNull(), "null")
+        assertFails { emptyString.last() }
     }
 }
