@@ -147,13 +147,14 @@ class JavaClassUseSiteMemberScope(
         if (symbol.fir !is FirJavaClass) {
             return super.processFunctionsByName(name, processor)
         }
-        val potentialPropertyName = session.syntheticNamesProvider.propertyNameByAccessorName(name)
-            ?: return super.processFunctionsByName(name, processor)
+        val potentialPropertyNames = session.syntheticNamesProvider.possiblePropertyNamesByAccessorName(name)
         val accessors = mutableListOf<FirAccessorSymbol>()
-        val getterName = session.syntheticNamesProvider.getterNameBySetterName(name) ?: name
-        processAccessorFunctionsAndPropertiesByName(potentialPropertyName, listOf(getterName)) {
-            if (it is FirAccessorSymbol) {
-                accessors += it
+        val getterName by lazy { session.syntheticNamesProvider.getterNameBySetterName(name) ?: name }
+        for (potentialPropertyName in potentialPropertyNames) {
+            processAccessorFunctionsAndPropertiesByName(potentialPropertyName, listOf(getterName)) {
+                if (it is FirAccessorSymbol) {
+                    accessors += it
+                }
             }
         }
         if (accessors.isEmpty()) {
