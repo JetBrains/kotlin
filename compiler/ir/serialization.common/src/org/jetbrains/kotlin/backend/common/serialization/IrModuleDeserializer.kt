@@ -50,8 +50,6 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
 
     open fun addModuleReachableTopLevel(idSig: IdSignature) { error("Unsupported Operation (sig: $idSig") }
 
-    open fun deserializeReachableDeclarations() { error("Unsupported Operation") }
-
     abstract val moduleFragment: IrModuleFragment
 
     abstract val moduleDependencies: Collection<IrModuleDeserializer>
@@ -90,10 +88,6 @@ class IrModuleDeserializerWithBuiltIns(
         if (idSig in irBuiltInsMap) return true
 
         return checkIsFunctionInterface(idSig) || idSig in delegate
-    }
-
-    override fun deserializeReachableDeclarations() {
-        delegate.deserializeReachableDeclarations()
     }
 
     private fun computeFunctionDescriptor(className: String): FunctionClassDescriptor {

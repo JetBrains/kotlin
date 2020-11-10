@@ -40,7 +40,7 @@ abstract class KotlinIrLinker(
     internal val expectSymbols = mutableMapOf<IdSignature, IrSymbol>()
     internal val actualSymbols = mutableMapOf<IdSignature, IrSymbol>()
 
-    internal val modulesWithReachableTopLevels = mutableSetOf<IrModuleDeserializer>()
+    internal val modulesWithReachableTopLevels = mutableSetOf<ModuleDeserializationState>()
 
     protected val deserializersForModules = mutableMapOf<ModuleDescriptor, IrModuleDeserializer>()
 
@@ -73,10 +73,10 @@ abstract class KotlinIrLinker(
 
     private fun deserializeAllReachableTopLevels() {
         while (modulesWithReachableTopLevels.isNotEmpty()) {
-            val moduleDeserializer = modulesWithReachableTopLevels.first()
-            modulesWithReachableTopLevels.remove(moduleDeserializer)
+            val moduleDeserializationState = modulesWithReachableTopLevels.first()
+            modulesWithReachableTopLevels.remove(moduleDeserializationState)
 
-            moduleDeserializer.deserializeReachableDeclarations()
+            moduleDeserializationState.deserializeReachableDeclarations()
         }
     }
 

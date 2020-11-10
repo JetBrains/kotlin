@@ -100,10 +100,6 @@ class CurrentModuleWithICDeserializer(
         icDeserializer.addModuleReachableTopLevel(idSig)
     }
 
-    override fun deserializeReachableDeclarations() {
-        icDeserializer.deserializeReachableDeclarations()
-    }
-
     private fun DeclarationDescriptor.isDirtyDescriptor(): Boolean {
         if (this is PropertyAccessorDescriptor) return correspondingProperty.isDirtyDescriptor()
         // Since descriptors for FO methods of `kotlin.Any` (toString, equals, hashCode) are Deserialized even in
