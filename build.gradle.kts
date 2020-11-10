@@ -189,7 +189,7 @@ extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.4.30-dev-16766"
+    extra["versions.kotlin-native"] = "1.4.30-dev-17200"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
