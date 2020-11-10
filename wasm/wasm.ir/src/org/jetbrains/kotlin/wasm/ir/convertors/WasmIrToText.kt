@@ -295,7 +295,7 @@ class WasmIrToText : SExpressionBuilder() {
 
     private fun appendLimits(limits: WasmLimits) {
         appendElement(limits.minSize.toString())
-        limits.maxSize?.let { appendElement(limits.maxSize.toString()) }
+        limits.maxSize?.let { appendElement(it.toString()) }
     }
 
     private fun appendGlobal(global: WasmGlobal) {
