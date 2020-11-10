@@ -37,7 +37,8 @@
 
   <extensionPoints>
     <extensionPoint qualifiedName="org.jetbrains.kotlin.mavenProjectImportHandler" area="IDEA_PROJECT"
-                    interface="org.jetbrains.kotlin.idea.maven.MavenProjectImportHandler"/>
+                    interface="org.jetbrains.kotlin.idea.maven.MavenProjectImportHandler"
+                    dynamic="true"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
