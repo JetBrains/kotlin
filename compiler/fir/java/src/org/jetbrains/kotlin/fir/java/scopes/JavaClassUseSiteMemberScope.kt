@@ -61,7 +61,7 @@ class JavaClassUseSiteMemberScope(
         getterSymbol: FirNamedFunctionSymbol,
         setterSymbol: FirNamedFunctionSymbol?,
         syntheticPropertyName: Name,
-    ): FirAccessorSymbol? {
+    ): FirAccessorSymbol {
         return buildSyntheticProperty {
             session = this@JavaClassUseSiteMemberScope.session
             name = syntheticPropertyName
@@ -117,13 +117,8 @@ class JavaClassUseSiteMemberScope(
                             }
                         }
                     }
-                    val accessorSymbol = generateAccessorSymbol(
-                        getterSymbol!!, setterSymbol, propertyName
-                    )
-                    if (accessorSymbol != null) {
-                        // NB: accessor should not be processed directly unless we find matching property symbol in supertype
-                        overrideCandidates += accessorSymbol
-                    }
+                    val accessorSymbol = generateAccessorSymbol(getterSymbol!!, setterSymbol, propertyName)
+                    overrideCandidates += accessorSymbol
                 }
             }
         }
