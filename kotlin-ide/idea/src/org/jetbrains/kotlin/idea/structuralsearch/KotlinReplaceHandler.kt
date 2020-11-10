@@ -283,6 +283,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     private fun KtNamedFunction.replaceNamedFunction(searchTemplate: KtNamedFunction, match: KtNamedFunction): KtNamedFunction {
         FUN_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         fixModifierListFormatting(match)
+        findDescendantOfType<PsiElement>{ it.elementType == KtTokens.DOT }?.delete()
         if (!hasBody() && !searchTemplate.hasBody()) {
             match.equalsToken?.let { addFormatted(it) }
             match.bodyExpression?.let { addFormatted(it) }
