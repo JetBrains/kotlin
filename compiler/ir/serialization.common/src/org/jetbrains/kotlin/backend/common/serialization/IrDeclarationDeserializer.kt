@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
@@ -108,7 +107,7 @@ internal class IrDeclarationDeserializer(
     }
 
     private fun deserializeSimpleType(proto: ProtoSimpleType): IrSimpleType {
-        val symbol = symbolDeserializer.deserializeIrSymbolAndRemap(proto.classifier) as? IrClassifierSymbol
+        val symbol = deserializeIrSymbolAndRemap(proto.classifier) as? IrClassifierSymbol
             ?: error("could not convert sym to ClassifierSymbol")
         logger.log { "deserializeSimpleType: symbol=$symbol" }
 
@@ -130,7 +129,7 @@ internal class IrDeclarationDeserializer(
 
     private fun deserializeTypeAbbreviation(proto: ProtoTypeAbbreviation): IrTypeAbbreviation =
         IrTypeAbbreviationImpl(
-            symbolDeserializer.deserializeIrSymbolAndRemap(proto.typeAlias).let {
+            deserializeIrSymbolAndRemap(proto.typeAlias).let {
                 it as? IrTypeAliasSymbol
                     ?: error("IrTypeAliasSymbol expected: $it")
             },
@@ -172,6 +171,28 @@ internal class IrDeclarationDeserializer(
             }
         }
 
+    // Delegating symbol maps to it's delegate only inside the declaration the symbol belongs to.
+    private val delegatedSymbolMap = mutableMapOf<IrSymbol, IrSymbol>()
+
+    internal fun deserializeIrSymbolAndRemap(code: Long): IrSymbol {
+        // TODO: could be simplified
+        return symbolDeserializer.deserializeIrSymbol(code).let {
+            delegatedSymbolMap[it] ?: it
+        }
+    }
+
+    private fun recordDelegatedSymbol(symbol: IrSymbol) {
+        if (symbol is IrDelegatingSymbol<*, *, *>) {
+            delegatedSymbolMap[symbol] = symbol.delegate
+        }
+    }
+
+    private fun eraseDelegatedSymbol(symbol: IrSymbol) {
+        if (symbol is IrDelegatingSymbol<*, *, *>) {
+            delegatedSymbolMap.remove(symbol)
+        }
+    }
+
     private inline fun <T> withDeserializedIrDeclarationBase(
         proto: ProtoDeclarationBase,
         block: (IrSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T
@@ -179,7 +200,7 @@ internal class IrDeclarationDeserializer(
         val (s, uid) = symbolDeserializer.deserializeIrSymbolToDeclare(proto.symbol)
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
         try {
-            symbolDeserializer.recordDelegatedSymbol(s)
+            recordDelegatedSymbol(s)
             val result = block(
                 s,
                 uid,
@@ -190,7 +211,7 @@ internal class IrDeclarationDeserializer(
             result.parent = currentParent
             return result
         } finally {
-            symbolDeserializer.eraseDelegatedSymbol(s)
+            eraseDelegatedSymbol(s)
         }
     }
 
@@ -232,7 +253,7 @@ internal class IrDeclarationDeserializer(
         (result.descriptor as? WrappedTypeParameterDescriptor)?.bind(result)
 
         // make sure this symbol is known to linker
-        symbolDeserializer.referenceIrSymbol(result.symbol, sig)
+        symbolDeserializer.referenceLocalIrSymbol(result.symbol, sig)
         result.annotations += deserializeAnnotations(proto.base.annotationList)
         result.parent = currentParent
         return result
@@ -488,7 +509,7 @@ internal class IrDeclarationDeserializer(
                     flags.isFakeOverride
                 )
             }.apply {
-                overriddenSymbols = proto.overriddenList.map { symbolDeserializer.deserializeIrSymbolAndRemap(it) as IrSimpleFunctionSymbol }
+                overriddenSymbols = proto.overriddenList.map { deserializeIrSymbolAndRemap(it) as IrSimpleFunctionSymbol }
 
                 (descriptor as? WrappedSimpleFunctionDescriptor)?.bind(this)
             }

@@ -114,7 +114,7 @@ internal class IrSymbolDeserializer(
         return moduleDeserializer.moduleDependencies.firstOrNull { idSignature in it }
     }
 
-    fun referenceIrSymbol(symbol: IrSymbol, signature: IdSignature) {
+    fun referenceLocalIrSymbol(symbol: IrSymbol, signature: IdSignature) {
         assert(signature.isLocal)
         deserializedSymbols.putIfAbsent(signature, symbol)
     }
@@ -171,28 +171,6 @@ internal class IrSymbolDeserializer(
         return deserializeSignatureData(sigData)
     }
 
-    // TODO should this delegation logic be here?
-    private val delegatedSymbolMap = mutableMapOf<IrSymbol, IrSymbol>()
-
-    internal fun deserializeIrSymbolAndRemap(code: Long): IrSymbol {
-        // TODO: could be simplified
-        return deserializeIrSymbol(code).let {
-            delegatedSymbolMap[it] ?: it
-        }
-    }
-
-    internal fun recordDelegatedSymbol(symbol: IrSymbol) {
-        if (symbol is IrDelegatingSymbol<*, *, *>) {
-            delegatedSymbolMap[symbol] = symbol.delegate
-        }
-    }
-
-    internal fun eraseDelegatedSymbol(symbol: IrSymbol) {
-        if (symbol is IrDelegatingSymbol<*, *, *>) {
-            delegatedSymbolMap.remove(symbol)
-        }
-    }
-
     /* -------------------------------------------------------------- */
 
     // TODO: Think about isolating id signature related logic behind corresponding interface
@@ -226,7 +204,7 @@ internal class IrSymbolDeserializer(
         return IdSignature.ScopeLocalDeclaration(proto)
     }
 
-    fun deserializeSignatureData(proto: ProtoIdSignature): IdSignature {
+    private fun deserializeSignatureData(proto: ProtoIdSignature): IdSignature {
         return when (proto.idsigCase) {
             PUBLIC_SIG -> deserializePublicIdSignature(proto.publicSig)
             ACCESSOR_SIG -> deserializeAccessorIdSignature(proto.accessorSig)
