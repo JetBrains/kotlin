@@ -1,6 +1,6 @@
 fun test1(c: Boolean?) {
-  while (true) { // BLOCK
-    while ({ // BLOCK
+  L@ while (true) { // BLOCK
+    L2@ while ({ // BLOCK
       val tmp0_elvis_lhs: Boolean? = c
       when {
         EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> break
@@ -11,8 +11,8 @@ fun test1(c: Boolean?) {
 }
 
 fun test2(c: Boolean?) {
-  while (true) { // BLOCK
-    while ({ // BLOCK
+  L@ while (true) { // BLOCK
+    L2@ while ({ // BLOCK
       val tmp0_elvis_lhs: Boolean? = c
       when {
         EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> continue
@@ -23,7 +23,7 @@ fun test2(c: Boolean?) {
 }
 
 fun test3(ss: List<String>?) {
-  while (true) { // BLOCK
+  L@ while (true) { // BLOCK
     { // BLOCK
       val tmp1_iterator: Iterator<String> = { // BLOCK
         val tmp0_elvis_lhs: List<String>? = ss
@@ -32,7 +32,7 @@ fun test3(ss: List<String>?) {
           true -> tmp0_elvis_lhs
         }
       }.iterator()
-      while (tmp1_iterator.hasNext()) { // BLOCK
+      L2@ while (tmp1_iterator.hasNext()) { // BLOCK
         val s: String = tmp1_iterator.next()
       }
     }
@@ -40,7 +40,7 @@ fun test3(ss: List<String>?) {
 }
 
 fun test4(ss: List<String>?) {
-  while (true) { // BLOCK
+  L@ while (true) { // BLOCK
     { // BLOCK
       val tmp1_iterator: Iterator<String> = { // BLOCK
         val tmp0_elvis_lhs: List<String>? = ss
@@ -49,7 +49,7 @@ fun test4(ss: List<String>?) {
           true -> tmp0_elvis_lhs
         }
       }.iterator()
-      while (tmp1_iterator.hasNext()) { // BLOCK
+      L2@ while (tmp1_iterator.hasNext()) { // BLOCK
         val s: String = tmp1_iterator.next()
       }
     }
@@ -58,14 +58,14 @@ fun test4(ss: List<String>?) {
 
 fun test5() {
   var i: Int = 0
-  while (true) { // BLOCK
+  Outer@ while (true) { // BLOCK
     { // BLOCK
       i = i.inc()
       i
     } /*~> Unit */
     var j: Int = 0
     { // BLOCK
-      do// COMPOSITE {
+      Inner@ do// COMPOSITE {
       { // BLOCK
         j = j.inc()
         j

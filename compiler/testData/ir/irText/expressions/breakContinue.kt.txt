@@ -18,34 +18,34 @@ fun test1() {
 }
 
 fun test2() {
-  while (true) { // BLOCK
-    while (true) { // BLOCK
-      break
-      break
+  OUTER@ while (true) { // BLOCK
+    INNER@ while (true) { // BLOCK
+      break@INNER
+      break@OUTER
     }
-    break
+    break@OUTER
   }
-  while (true) { // BLOCK
-    while (true) { // BLOCK
-      continue
-      continue
+  OUTER@ while (true) { // BLOCK
+    INNER@ while (true) { // BLOCK
+      continue@INNER
+      continue@OUTER
     }
-    continue
+    continue@OUTER
   }
 }
 
 fun test3() {
-  while (true) { // BLOCK
-    while (true) { // BLOCK
-      break
+  L@ while (true) { // BLOCK
+    L@ while (true) { // BLOCK
+      break@L
     }
-    break
+    break@L
   }
-  while (true) { // BLOCK
-    while (true) { // BLOCK
-      continue
+  L@ while (true) { // BLOCK
+    L@ while (true) { // BLOCK
+      continue@L
     }
-    continue
+    continue@L
   }
 }
 
