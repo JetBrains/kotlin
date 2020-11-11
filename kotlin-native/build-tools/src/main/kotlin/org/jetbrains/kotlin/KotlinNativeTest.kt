@@ -14,6 +14,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.konan.exec.Command
 
 import java.io.File
 import java.io.ByteArrayOutputStream
@@ -476,7 +477,10 @@ open class KonanDynamicTest : KonanStandaloneTest() {
                 needsProfileLibrary = false,
                 mimallocEnabled = false
         )
-        commands.forEach {
+        commands.map { cmd ->
+            // Filter out linker option that defines __cxa_demangle because Konan_cxa_demangle is not defined in tests.
+            Command(cmd.argsWithExecutable.filterNot { it.contains("--defsym") || it.contains("Konan_cxa_demangle") })
+        }.forEach {
             it.logWith { message -> project.file("$executable.compilation.log").appendText(message()) }
             it.execute()
         }
