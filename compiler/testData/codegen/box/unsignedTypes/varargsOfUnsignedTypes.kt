@@ -2,6 +2,7 @@
 // WASM_MUTE_REASON: SPREAD_OPERATOR
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun uint(vararg us: UInt): UIntArray = us
 

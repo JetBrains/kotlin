@@ -19,6 +19,7 @@ object GenerateSteppedRangesCodegenTestData {
     private val KT_34166_AFFECTED_FILENAMES = setOf("illegalStepZero.kt", "illegalStepNegative.kt", "illegalStepNonConst.kt")
 
     private val JVM_IR_FAILING_FOR_UNSIGNED_FILENAMES = setOf<String>()
+    private val FIR_FAILING_FOR_UNSIGNED_FILENAMES = setOf("minValueToMaxValueStepMaxValue.kt", "zeroToMaxValueStepMaxValue.kt")
 
     private enum class Type(val type: String, val isLong: Boolean = false, val isUnsigned: Boolean = false) {
         INT("Int"),
@@ -163,12 +164,16 @@ object GenerateSteppedRangesCodegenTestData {
         extraCode: String?,
         fullSubdir: File,
         asLiteral: Boolean,
-        shouldIgnoreForJvmIR: Boolean = false
+        shouldIgnoreForJvmIR: Boolean = false,
+        shouldIgnoreForFir: Boolean = false,
     ) {
         fullSubdir.mkdirs()
         PrintWriter(File(fullSubdir, fileName)).use {
             with(it) {
                 println("// $PREAMBLE_MESSAGE")
+                if (shouldIgnoreForFir) {
+                    println("// IGNORE_BACKEND_FIR: JVM_IR")
+                }
                 if (shouldIgnoreForJvmIR) {
                     println("// IGNORE_BACKEND: JVM_IR")
                 }
@@ -220,6 +225,7 @@ object GenerateSteppedRangesCodegenTestData {
                 File(UNSIGNED_TEST_DATA_DIR, fullSubdirPath),
                 asLiteral,
                 shouldIgnoreForJvmIR = fileName in JVM_IR_FAILING_FOR_UNSIGNED_FILENAMES,
+                shouldIgnoreForFir = fileName in FIR_FAILING_FOR_UNSIGNED_FILENAMES,
             )
         }
         if (signedTests.isNotEmpty()) {
