@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 abstract class IrFunction :
     IrDeclarationBase(),
-    IrDeclarationWithName, IrDeclarationWithVisibility, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent, IrReturnTarget,
+    IrExternalDeclaration, IrDeclarationWithVisibility, IrTypeParametersContainer, IrSymbolOwner, IrDeclarationParent, IrReturnTarget,
     IrMemberWithContainerSource,
     IrMetadataSourceOwner {
 
@@ -39,7 +39,6 @@ abstract class IrFunction :
     abstract override val symbol: IrFunctionSymbol
 
     abstract val isInline: Boolean // NB: there's an inline constructor for Array and each primitive array class
-    abstract val isExternal: Boolean
     abstract val isExpect: Boolean
 
     abstract var returnType: IrType

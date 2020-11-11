@@ -21,4 +21,5 @@ internal interface FunctionBaseCarrier : DeclarationCarrier {
     var visibilityField: DescriptorVisibility
     var typeParametersField: List<IrTypeParameter>
     var valueParametersField: List<IrValueParameter>
+    var isExternalField: Boolean
 }

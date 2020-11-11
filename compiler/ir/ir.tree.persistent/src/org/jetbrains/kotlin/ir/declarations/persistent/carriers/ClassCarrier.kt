@@ -16,6 +16,7 @@ internal interface ClassCarrier : DeclarationCarrier {
     var metadataField: MetadataSource?
     var visibilityField: DescriptorVisibility
     var modalityField: Modality
+    var isExternalField: Boolean
     var attributeOwnerIdField: IrAttributeContainer
     var typeParametersField: List<IrTypeParameter>
     var superTypesField: List<IrType>
@@ -32,7 +33,8 @@ internal interface ClassCarrier : DeclarationCarrier {
             modalityField,
             attributeOwnerIdField,
             typeParametersField,
-            superTypesField
+            superTypesField,
+            isExternalField
         )
     }
 }
@@ -48,5 +50,6 @@ internal class ClassCarrierImpl(
     override var modalityField: Modality,
     override var attributeOwnerIdField: IrAttributeContainer,
     override var typeParametersField: List<IrTypeParameter>,
-    override var superTypesField: List<IrType>
+    override var superTypesField: List<IrType>,
+    override var isExternalField: Boolean
 ) : ClassCarrier

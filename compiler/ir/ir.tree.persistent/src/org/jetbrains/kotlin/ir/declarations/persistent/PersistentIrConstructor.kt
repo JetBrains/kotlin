@@ -40,7 +40,7 @@ internal class PersistentIrConstructor(
     visibility: DescriptorVisibility,
     returnType: IrType,
     override val isInline: Boolean,
-    override val isExternal: Boolean,
+    isExternal: Boolean,
     override val isPrimary: Boolean,
     override val isExpect: Boolean,
     override val containerSource: DeserializedContainerSource?
@@ -150,6 +150,16 @@ internal class PersistentIrConstructor(
         set(v) {
             if (visibility !== v) {
                 setCarrier().visibilityField = v
+            }
+        }
+
+    override var isExternalField: Boolean = isExternal
+
+    override var isExternal: Boolean
+        get() = getCarrier().isExternalField
+        set(v) {
+            if (isExternal != v) {
+                setCarrier().isExternalField = v
             }
         }
 

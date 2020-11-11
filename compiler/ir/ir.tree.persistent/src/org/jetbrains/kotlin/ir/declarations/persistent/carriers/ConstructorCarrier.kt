@@ -25,7 +25,8 @@ internal interface ConstructorCarrier : FunctionBaseCarrier {
             metadataField,
             visibilityField,
             typeParametersField,
-            valueParametersField
+            valueParametersField,
+            isExternalField,
         )
     }
 }
@@ -42,5 +43,6 @@ internal class ConstructorCarrierImpl(
     override var metadataField: MetadataSource?,
     override var visibilityField: DescriptorVisibility,
     override var typeParametersField: List<IrTypeParameter>,
-    override var valueParametersField: List<IrValueParameter>
+    override var valueParametersField: List<IrValueParameter>,
+    override var isExternalField: Boolean,
 ) : ConstructorCarrier
