@@ -447,7 +447,7 @@ class FirTypeIntersectionScope private constructor(
         functionSymbol: FirFunctionSymbol<*>,
         processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
-        processDirectOverriddenCallablesCallablesWithBaseScope(
+        processDirectOverriddenCallablesWithBaseScope(
             functionSymbol, processor,
             FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
         )
@@ -456,12 +456,12 @@ class FirTypeIntersectionScope private constructor(
         propertySymbol: FirPropertySymbol,
         processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
-        processDirectOverriddenCallablesCallablesWithBaseScope(
+        processDirectOverriddenCallablesWithBaseScope(
             propertySymbol, processor,
             FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
         )
 
-    private fun <D : FirCallableSymbol<*>> processDirectOverriddenCallablesCallablesWithBaseScope(
+    private fun <D : FirCallableSymbol<*>> processDirectOverriddenCallablesWithBaseScope(
         callableSymbol: D,
         processor: (D, FirTypeScope) -> ProcessorAction,
         processDirectOverriddenInBaseScope: FirTypeScope.(D, ((D, FirTypeScope) -> ProcessorAction)) -> ProcessorAction
