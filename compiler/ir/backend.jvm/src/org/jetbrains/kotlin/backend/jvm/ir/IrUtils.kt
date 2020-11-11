@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.Scope
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -223,25 +225,23 @@ fun IrExpression.isSmartcastFromHigherThanNullable(context: JvmBackendContext): 
     }
 }
 
-fun IrBody.replaceThisByStaticReference(
+fun IrElement.replaceThisByStaticReference(
     cachedDeclarations: JvmCachedDeclarations,
     irClass: IrClass,
     oldThisReceiverParameter: IrValueParameter
-): IrBody =
-    transform(object : IrElementTransformerVoid() {
-        override fun visitGetValue(expression: IrGetValue): IrExpression {
+) {
+    transformChildrenVoid(object : IrElementTransformerVoid() {
+        override fun visitGetValue(expression: IrGetValue): IrExpression =
             if (expression.symbol == oldThisReceiverParameter.symbol) {
-                val instanceField = cachedDeclarations.getPrivateFieldForObjectInstance(irClass)
-                return IrGetFieldImpl(
+                IrGetFieldImpl(
                     expression.startOffset,
                     expression.endOffset,
-                    instanceField.symbol,
+                    cachedDeclarations.getPrivateFieldForObjectInstance(irClass).symbol,
                     irClass.defaultType
                 )
-            }
-            return super.visitGetValue(expression)
-        }
-    }, null)
+            } else super.visitGetValue(expression)
+    })
+}
 
 // TODO: Interface Parameters
 //

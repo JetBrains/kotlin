@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
@@ -105,9 +104,8 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
             val newSymbol = IrAnonymousInitializerSymbolImpl(newParent.symbol)
             IrAnonymousInitializerImpl(startOffset, endOffset, origin, newSymbol, isStatic = true).apply {
                 parent = newParent
-                body = this@with.body
-                    .replaceThisByStaticReference(context.cachedDeclarations, oldParent, oldParent.thisReceiver!!)
-                    .patchDeclarationParents(newParent) as IrBlockBody
+                body = this@with.body.patchDeclarationParents(newParent)
+                replaceThisByStaticReference(context.cachedDeclarations, oldParent, oldParent.thisReceiver!!)
             }
         }
 

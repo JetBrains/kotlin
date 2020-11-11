@@ -139,11 +139,8 @@ private class SingletonObjectJvmStaticLowering(val context: JvmBackendContext) :
             val replacement = createReplacement(context, function as IrSimpleFunction)
             // Set dispatch receiver parameter for body move operation.
             replacement.dispatchReceiverParameter = function.dispatchReceiverParameter
-            replacement.body = function.moveBodyTo(replacement)?.replaceThisByStaticReference(
-                context.cachedDeclarations,
-                irClass,
-                function.dispatchReceiverParameter!!
-            )
+            replacement.body = function.moveBodyTo(replacement)
+            replacement.replaceThisByStaticReference(context.cachedDeclarations, irClass, function.dispatchReceiverParameter!!)
             // Clear dispatch receiver parameter again after body move operation.
             replacement.dispatchReceiverParameter = null
             irClass.declarations.remove(function)
