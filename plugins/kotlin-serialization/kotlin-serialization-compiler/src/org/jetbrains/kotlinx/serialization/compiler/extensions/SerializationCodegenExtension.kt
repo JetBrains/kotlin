@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,7 +27,7 @@ open class SerializationCodegenExtension @JvmOverloads constructor(val metadataP
     }
 
     override fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue? {
-        return JvmSerializerIntrinsic.applyFunction(receiver, resolvedCall, c)
+        return JvmSerializerIntrinsic.applyFunction(resolvedCall, c)
     }
 
     override fun applyPluginDefinedReifiedOperationMarker(
@@ -39,7 +39,7 @@ open class SerializationCodegenExtension @JvmOverloads constructor(val metadataP
         typeSystem: TypeSystemCommonBackendContext,
         module: ModuleDescriptor
     ): Int {
-        return JvmSerializerIntrinsic.applyPluginDefinedReifiedOperationMarker(insn, instructions, type, asmType, typeMapper, typeSystem, module)
+        return JvmSerializerIntrinsic.applyPluginDefinedReifiedOperationMarker(insn, instructions, type, typeMapper, typeSystem, module)
     }
 
     override val shouldGenerateClassSyntheticPartsInLightClassesMode: Boolean

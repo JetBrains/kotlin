@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,13 +24,12 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSeria
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContextUnchecked
 import org.jetbrains.kotlinx.serialization.compiler.resolve.isSerializableObject
-import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 
 object JvmSerializerIntrinsic {
-    fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue? {
+    fun applyFunction(resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue? {
         val targetFunction = resolvedCall.resultingDescriptor as? FunctionDescriptor ?: return null
         val isSerializerReifiedFunction =
             targetFunction.fqNameSafe.asString() == "kotlinx.serialization.serializer"
@@ -50,7 +49,6 @@ object JvmSerializerIntrinsic {
         insn: MethodInsnNode,
         instructions: InsnList,
         type: KotlinType,
-        asmType: Type,
         typeMapper: KotlinTypeMapper,
         typeSystem: TypeSystemCommonBackendContext,
         module: ModuleDescriptor
