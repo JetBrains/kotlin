@@ -53,7 +53,7 @@ class FirSamResolverImpl(
 
     override fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType? {
         return when (type) {
-            is ConeClassLikeType -> getFunctionTypeForPossibleSamType(type)
+            is ConeClassLikeType -> getFunctionTypeForPossibleSamType(type.fullyExpandedType(firSession))
             is ConeFlexibleType -> ConeFlexibleType(
                 getFunctionTypeForPossibleSamType(type.lowerBound) ?: return null,
                 getFunctionTypeForPossibleSamType(type.upperBound) ?: return null,

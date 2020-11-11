@@ -243,6 +243,11 @@ public class FirDiagnosticsWithStdlibTestGenerated extends AbstractFirDiagnostic
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/runOnIntegerLiteral.kt");
     }
 
+    @TestMetadata("samForComparator.kt")
+    public void testSamForComparator() throws Exception {
+        runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/samForComparator.kt");
+    }
+
     @TestMetadata("simpleLazy.kt")
     public void testSimpleLazy() throws Exception {
         runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/simpleLazy.kt");
