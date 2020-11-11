@@ -16,6 +16,7 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
     private var logger: TestLogger = GTestLogger()
     private var runTests = true
     private var useExitCode = true
+    private var reportExcludedTestSuites = true
     var iterations = 1
         private set
     var exitCode = 0
@@ -37,6 +38,7 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
                         logger.log(help); runTests = false
                     }
                     "--ktest_no_exit_code" -> useExitCode = false
+                    "--ktest_no_excluded_test_suites" -> reportExcludedTestSuites = false
                     else -> throw IllegalArgumentException("Unknown option: $it\n$help")
                 }
                 2 -> {
@@ -217,6 +219,9 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
             |--ktest_logger=GTEST|TEAMCITY|SIMPLE|SILENT         - Use the specified output format. The default one is GTEST.
             |
             |--ktest_no_exit_code                                - Don't return a non-zero exit code if there are failing tests.
+            |
+            |--ktest_no_excluded_test_suites                     - Don't report test suites that don't match the filter.
+            |                                                      Has no effect when filter is not specified.
         """.trimMargin()
 
     private inline fun sendToListeners(event: TestListener.() -> Unit) {
@@ -252,7 +257,9 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
         val iterationTime = measureTimeMillis {
             suitesFiltered.forEach {
                 if (it.ignored) {
-                    sendToListeners { ignoreSuite(it) }
+                    if (reportExcludedTestSuites) {
+                        sendToListeners { ignoreSuite(it) }
+                    }
                 } else {
                     sendToListeners { startSuite(it) }
                     val time = measureTimeMillis { it.run() }
