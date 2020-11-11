@@ -42,8 +42,9 @@ internal fun KtDeclaration.findFirDeclarationForAnyFirSourceDeclaration(
     val nonLocalDeclaration = getNonLocalContainingOrThisDeclaration()
         ?.findSourceNonLocalFirDeclaration(firFileBuilder, firSymbolProvider, moduleFileCache)
         ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile, moduleFileCache, lazyBodiesMode = true)
+    val originalDeclaration = originalDeclaration
     val fir = FirElementFinder.findElementIn<FirDeclaration>(nonLocalDeclaration) { firDeclaration ->
-        firDeclaration.psi == this
+        firDeclaration.psi == this || firDeclaration.psi == originalDeclaration
     }
     return fir
         ?: error("FirDeclaration was not found for\n${getElementTextInContext()}")
@@ -105,8 +106,10 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
 }
 
 val ORIGINAL_DECLARATION_KEY = com.intellij.openapi.util.Key<KtDeclaration>("ORIGINAL_DECLARATION_KEY")
-
 var KtDeclaration.originalDeclaration by UserDataProperty(ORIGINAL_DECLARATION_KEY)
+
+private val ORIGINAL_KT_FILE_KEY = com.intellij.openapi.util.Key<KtFile>("ORIGINAL_KT_FILE_KEY")
+var KtFile.originalKtFile by UserDataProperty(ORIGINAL_KT_FILE_KEY)
 
 
 private fun KtClassOrObject.findFir(firSymbolProvider: FirSymbolProvider): FirRegularClass? {
