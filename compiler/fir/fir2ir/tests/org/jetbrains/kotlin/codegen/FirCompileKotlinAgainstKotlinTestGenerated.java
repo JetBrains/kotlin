@@ -405,6 +405,11 @@ public class FirCompileKotlinAgainstKotlinTestGenerated extends AbstractFirCompi
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("AnonymousObjectInProperty.kt")
+        public void testAnonymousObjectInProperty() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/fir/AnonymousObjectInProperty.kt");
+        }
+
         @TestMetadata("LibraryProperty.kt")
         public void testLibraryProperty() throws Exception {
             runTest("compiler/testData/compileKotlinAgainstKotlin/fir/LibraryProperty.kt");
