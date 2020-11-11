@@ -10,18 +10,22 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.NlsContexts
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
+import com.intellij.psi.impl.source.resolve.reference.impl.PsiMultiReference
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInline
 import org.jetbrains.kotlin.idea.codeInliner.CodeToInlineBuilder
 import org.jetbrains.kotlin.idea.intentions.ConvertReferenceToLambdaIntention
+import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal fun buildCodeToInline(
     declaration: KtDeclaration,
@@ -82,7 +86,15 @@ internal fun buildCodeToInline(
     )
 }
 
-internal fun Editor.findSimpleNameReference(): PsiReference? = TargetElementUtil.findReference(this, caretModel.offset)
+internal fun Editor.findSimpleNameReference(): PsiReference? {
+    val reference = TargetElementUtil.findReference(this, caretModel.offset) ?: return null
+    return when {
+        reference.element.language != KotlinLanguage.INSTANCE -> reference
+        reference is KtSimpleNameReference -> reference
+        reference is PsiMultiReference -> reference.references.firstIsInstanceOrNull<KtSimpleNameReference>()
+        else -> null
+    }
+}
 
 fun findCallableConflictForUsage(usage: PsiElement): @NlsContexts.DialogMessage String? {
     val usageParent = usage.parent as? KtCallableReferenceExpression ?: return null
