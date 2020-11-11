@@ -1,4 +1,3 @@
-// IGNORE_FIR
 // EXPECTED_DUPLICATED_HIGHLIGHTING
 
 var <info textAttributesKey="KOTLIN_MUTABLE_VARIABLE"><info textAttributesKey="KOTLIN_PACKAGE_PROPERTY">x</info></info> = 5
