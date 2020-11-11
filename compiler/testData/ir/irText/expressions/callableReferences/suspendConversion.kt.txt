@@ -94,7 +94,7 @@ fun testWithBoundReceiver() {
       receiver.bar()
     }
 
-    ::bar
+    C()::bar
   })
 }
 

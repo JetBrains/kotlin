@@ -18,14 +18,14 @@ fun A.qux() {
 }
 
 val test1: KFunction0<Unit>
-  field = ::foo
+  field = A()::foo
   get
 
 val test2: KProperty0<Int>
-  field = ::bar
+  field = A()::bar
   get
 
 val test3: KFunction0<Unit>
-  field = ::qux
+  field = A()::qux
   get
 

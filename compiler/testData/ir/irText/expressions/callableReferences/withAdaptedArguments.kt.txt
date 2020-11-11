@@ -61,7 +61,7 @@ fun testImportedObjectMember(): String {
       return importedObjectMemberWithVarargs(xs = [p0])
     }
 
-    ::importedObjectMemberWithVarargs
+    Host::importedObjectMemberWithVarargs
   })
 }
 

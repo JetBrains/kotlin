@@ -20,13 +20,13 @@ class Value<T : Any?> {
 val <T : Any?> Value<T>.additionalText: Int /* by */ 
   field = DVal(kmember = ::text)
   get(): Int {
-    return #additionalText$delegate.getValue(t = <this>, p = ::additionalText)
+    return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*<T>()*/)
   }
 
 val <T : Any?> Value<T>.additionalValue: Int /* by */ 
   field = DVal(kmember = ::value)
   get(): Int {
-    return #additionalValue$delegate.getValue(t = <this>, p = ::additionalValue)
+    return #additionalValue$delegate.getValue(t = <this>, p = ::additionalValue/*<T>()*/)
   }
 
 class DVal {
@@ -66,6 +66,6 @@ var <T : Any?> T.bar: T
   }
 
 val barRef: KMutableProperty1<String?, String?>
-  field = ::bar
+  field = ::bar/*<String?>()*/
   get
 

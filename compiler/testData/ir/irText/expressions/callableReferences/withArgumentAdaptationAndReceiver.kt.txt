@@ -19,7 +19,7 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-      ::withVararg
+      <this>::withVararg
     })
   }
 
@@ -30,7 +30,7 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-      ::withVararg
+      h::withVararg
     })
   }
 
@@ -41,7 +41,7 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-      ::withVararg
+      h::withVararg
     })
   }
 
@@ -51,7 +51,7 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-      ::withVararg
+      h::withVararg
     })
   }
 
@@ -61,7 +61,7 @@ class Host {
         receiver.withVararg(xs = [p0]) /*~> Unit */
       }
 
-      ::withVararg
+      Host()::withVararg
     })
   }
 
