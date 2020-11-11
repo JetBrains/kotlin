@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
@@ -361,7 +362,17 @@ class DescriptorSerializer private constructor(
             }
 
             if (descriptor.hasInlineClassTypesInSignature()) {
-                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
+                if (descriptor.fqNameSafe.startsWith(Name.identifier("kotlin"))) {
+                    builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
+                } else {
+                    builder.addVersionRequirement(
+                        writeVersionRequirement(
+                            1, 4, 30,
+                            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
+                            this
+                        )
+                    )
+                }
             }
         }
 
