@@ -1189,16 +1189,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printlnWithNoIndent("when {")
         p.pushIndent()
 
-        for (b in expression.branches) {
-            p.printIndent()
-            b.condition.accept(this, data)
-
-            p.printWithNoIndent(" -> ")
-
-            b.result.accept(this, data)
-
-            p.println()
-        }
+        expression.branches.forEach { it.accept(this, data) }
 
         p.popIndent()
         p.print("}")
@@ -1382,11 +1373,19 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitBranch(branch: IrBranch, data: IrDeclaration?) {
-        super.visitBranch(branch, data)
+        p.printIndent()
+        branch.condition.accept(this, data)
+        p.printWithNoIndent(" -> ")
+        branch.result.accept(this, data)
+        p.println()
     }
 
     override fun visitElseBranch(branch: IrElseBranch, data: IrDeclaration?) {
-        super.visitElseBranch(branch, data)
+        p.printIndent()
+        // TODO assert that condition is `true`
+        p.printWithNoIndent("else -> ")
+        branch.result.accept(this, data)
+        p.println()
     }
 
     private fun commentBlock(text: String) = "/* $text */"
