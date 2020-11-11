@@ -248,8 +248,7 @@ fun Project.publishWithLegacyMavenPlugin(body: Upload.() -> Unit = {}): Upload {
 }
 
 fun Project.idePluginDependency(block: () -> Unit) {
-    val shouldActivate = rootProject.findProperty("publish.ide.plugin.dependencies")?.toString()?.toBoolean() == true ||
-                         kotlinBuildProperties.isCooperativeCompilationWithKotlinIde
+    val shouldActivate = rootProject.findProperty("publish.ide.plugin.dependencies")?.toString()?.toBoolean() == true
     if (shouldActivate) {
         block()
     }

@@ -96,17 +96,12 @@ fun Project.kotlinDep(artifactBaseName: String, version: String, classifier: Str
     listOfNotNull("org.jetbrains.kotlin:kotlin-$artifactBaseName:$version", classifier).joinToString(":")
 
 fun Project.kotlinStdlib(suffix: String? = null, classifier: String? = null): Any {
-    return if (kotlinBuildProperties.useBootstrapStdlib)
-        kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion, classifier)
-    else
-        dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"), classifier)
+    return kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion, classifier)
 }
 
 fun Project.kotlinBuiltins(): Any = kotlinBuiltins(forJvm = false)
 
-fun Project.kotlinBuiltins(forJvm: Boolean): Any =
-    if (kotlinBuildProperties.useBootstrapStdlib) "org.jetbrains.kotlin:builtins:$bootstrapKotlinVersion"
-    else dependencies.project(":core:builtins", configuration = "runtimeElementsJvm".takeIf { forJvm })
+fun Project.kotlinBuiltins(forJvm: Boolean): Any = "org.jetbrains.kotlin:builtins:$bootstrapKotlinVersion"
 
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
 fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")
