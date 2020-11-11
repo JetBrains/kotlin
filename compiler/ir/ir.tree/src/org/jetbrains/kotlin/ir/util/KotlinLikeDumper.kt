@@ -115,6 +115,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO omit Companion name for companion objects?
         // TODO thisReceiver
         // TODO primary constructor?
+        // TODO special support for objects
 
         declaration.printlnAnnotations()
         p.print("")
@@ -1023,10 +1024,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: IrDeclaration?) {
-        // TODO support
         // TODO omit the name when it's possible
         // TODO Is there a difference between `<anonymous>` and `<no name provided>`?
-        // TODO Is name of function used somehere? How it's important?
+        // TODO Is name of function used somewhere? How it's important?
         // TODO Use lambda syntax when possible
         // TODO don't print visibility?
         p.withholdIndentOnce()
@@ -1336,11 +1336,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitSuspendableExpression(expression: IrSuspendableExpression, data: IrDeclaration?) {
         // TODO support
+        // TODO no test
         super.visitSuspendableExpression(expression, data)
     }
 
     override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: IrDeclaration?) {
         // TODO support
+        // TODO no test
         super.visitSuspensionPoint(expression, data)
     }
 
