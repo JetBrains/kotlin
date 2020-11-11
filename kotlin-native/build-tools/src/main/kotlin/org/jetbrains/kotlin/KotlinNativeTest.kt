@@ -14,6 +14,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.konan.exec.Command
 
 import java.io.File
