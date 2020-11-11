@@ -34,7 +34,8 @@ internal interface FunctionCarrier : FunctionBaseCarrier {
             valueParametersField,
             correspondingPropertySymbolField,
             overriddenSymbolsField,
-            attributeOwnerIdField
+            attributeOwnerIdField,
+            isExternalField,
         )
     }
 }
@@ -54,5 +55,6 @@ internal class FunctionCarrierImpl(
     override var valueParametersField: List<IrValueParameter>,
     override var correspondingPropertySymbolField: IrPropertySymbol?,
     override var overriddenSymbolsField: List<IrSimpleFunctionSymbol>,
-    override var attributeOwnerIdField: IrAttributeContainer
+    override var attributeOwnerIdField: IrAttributeContainer,
+    override var isExternalField: Boolean,
 ) : FunctionCarrier
