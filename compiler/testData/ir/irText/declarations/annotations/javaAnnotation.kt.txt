@@ -1,4 +1,4 @@
-@JavaAnn()
+@JavaAnn
 fun test1() {
 }
 
