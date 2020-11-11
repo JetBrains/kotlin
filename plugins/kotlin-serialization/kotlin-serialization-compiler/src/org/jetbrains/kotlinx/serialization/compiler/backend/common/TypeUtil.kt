@@ -125,9 +125,6 @@ fun AbstractSerialGenerator.findTypeSerializerOrContextUnchecked(
     if (kType.isTypeParameter()) return null
     annotations.serializableWith(module)?.let { return it.toClassDescriptor }
     additionalSerializersInScopeOfCurrentFile[kType]?.let { return it }
-    if (!kType.isMarkedNullable) {
-        additionalSerializersInScopeOfCurrentFile[kType.makeNullable()]?.let { return it }
-    }
 
     if (kType in contextualKClassListInCurrentFile) return module.getClassFromSerializationPackage(SpecialBuiltins.contextSerializer)
     return analyzeSpecialSerializers(module, annotations) ?: findTypeSerializer(module, kType)
