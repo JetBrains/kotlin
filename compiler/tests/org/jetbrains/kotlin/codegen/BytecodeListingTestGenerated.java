@@ -1187,6 +1187,29 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
                 runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollectionOfInlineClass/set.kt");
             }
         }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/inlineClasses/stdlibManglingIn1430")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class StdlibManglingIn1430 extends AbstractBytecodeListingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInStdlibManglingIn1430() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/stdlibManglingIn1430"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("new.kt")
+            public void testNew() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/stdlibManglingIn1430/new.kt");
+            }
+
+            @TestMetadata("old.kt")
+            public void testOld() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/stdlibManglingIn1430/old.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeListing/jvm8")

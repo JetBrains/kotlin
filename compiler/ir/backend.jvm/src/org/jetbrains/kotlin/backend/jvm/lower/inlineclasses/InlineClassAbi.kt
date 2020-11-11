@@ -59,6 +59,8 @@ object InlineClassAbi {
         return irClass.primaryConstructor!!.valueParameters[0].type
     }
 
+    private fun IrFunction.isFunctionFromStdlib(): Boolean = fqNameForIrSerialization.startsWith(Name.identifier("kotlin"))
+
     /**
      * Returns a mangled name for a function taking inline class arguments
      * to avoid clashes between overloaded methods.
@@ -72,10 +74,10 @@ object InlineClassAbi {
             return Name.identifier("constructor-impl")
         }
 
-        val suffix = if (useOldMangleRules) {
+        val suffix = if (useOldMangleRules || irFunction.isFunctionFromStdlib()) {
             when {
                 irFunction.fullValueParameterList.any { it.type.requiresMangling } ->
-                    hashSuffix(irFunction, false, useOldMangleRules)
+                    hashSuffix(irFunction, mangleReturnTypes = false, useOldMangleRules = true)
                 mangleReturnTypes && irFunction.hasMangledReturnType ->
                     returnHashSuffix(irFunction)
                 (irFunction.parent as? IrClass)?.isInline == true &&
@@ -87,7 +89,7 @@ object InlineClassAbi {
         } else {
             when {
                 irFunction.fullValueParameterList.any { it.type.requiresMangling } || (mangleReturnTypes && irFunction.hasMangledReturnType) ->
-                    hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
+                    hashSuffix(irFunction, mangleReturnTypes, false)
                 (irFunction.parent as? IrClass)?.isInline == true &&
                         irFunction.origin != IrDeclarationOrigin.IR_BUILTINS_STUB ->
                     "impl"
