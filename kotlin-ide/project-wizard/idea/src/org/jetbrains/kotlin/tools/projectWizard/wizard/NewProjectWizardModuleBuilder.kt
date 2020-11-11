@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.tools.projectWizard.core.onFailure
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.Plugins
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.projectTemplates.ProjectTemplate
@@ -105,7 +104,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
             Messages.showErrorDialog(project, errorMessages, KotlinNewProjectWizardUIBundle.message("error.generation"))
         }.isSuccess
         if (success) {
-            logToFUS()
+            logToFUS(project)
         }
         return when {
             !success -> null
@@ -116,13 +115,14 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
         }
     }
 
-    private fun logToFUS() {
+    private fun logToFUS(project: Project?) {
         val projectCreationStats = ProjectCreationStats(
             KotlinTemplatesFactory.KOTLIN_GROUP_NAME,
             wizard.projectTemplate!!.id,
             wizard.buildSystemType!!.id,
         )
         WizardStatsService.logDataOnProjectGenerated(
+            project,
             projectCreationStats,
             uiEditorUsagesStats
         )
@@ -133,6 +133,7 @@ class NewProjectWizardModuleBuilder : EmptyModuleBuilder() {
             }
         }
         WizardStatsService.logUsedModuleTemplatesOnNewWizardProjectCreated(
+            project,
             wizard.projectTemplate!!.id,
             moduleTemplates,
         )
