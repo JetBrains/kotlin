@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.util.elementType
 import com.intellij.structuralsearch.StructuralReplaceHandler
 import com.intellij.structuralsearch.StructuralSearchUtil
@@ -267,7 +268,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
 
             // format semi colon
             if(superTypeListEntries.isNotEmpty() && match.superTypeListEntries.isNotEmpty()) {
-                node.children().find { it.elementType == KtTokens.COLON }?.let { replaceColon -> // TODO replace by getColon in 1.3
+                node.children().find { it.elementType == KtTokens.COLON }?.let { replaceColon -> // TODO replace by getColon in 1.4.30
                     val matchColon = match.node.children().find { it.elementType == KtTokens.COLON }!!
                     addSurroundingWhiteSpace(replaceColon.psi, matchColon.psi)
                 }
@@ -283,7 +284,9 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     private fun KtNamedFunction.replaceNamedFunction(searchTemplate: KtNamedFunction, match: KtNamedFunction): KtNamedFunction {
         FUN_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         fixModifierListFormatting(match)
-        findDescendantOfType<PsiElement>{ it.elementType == KtTokens.DOT }?.delete()
+        if(receiverTypeReference?.findDescendantOfType<PsiErrorElement> { true } != null) { //
+            findDescendantOfType<PsiElement>{ it.elementType == KtTokens.DOT }?.delete()
+        }
         if (!hasBody() && !searchTemplate.hasBody()) {
             match.equalsToken?.let { addFormatted(it) }
             match.bodyExpression?.let { addFormatted(it) }
