@@ -22,6 +22,6 @@ inline class SomeClass(val v: Int) {
 // jvm signature: (ILjava/lang/Object;)Ljava/lang/Object;
 // generic signature: <K:Ljava/lang/Object;>(ITK;)TK;
 
-// method: SomeClass$Companion::comp-aew-wRw
+// method: SomeClass$Companion::comp-TwaN_yk
 // jvm signature: (ILjava/lang/Object;)Ljava/lang/Object;
 // generic signature: <T:Ljava/lang/Object;>(ITT;)TT;

@@ -70,7 +70,7 @@ public final class InlineMap {
     public method putAll(p0: java.util.Map): void
     public bridge final method remove(p0: java.lang.Object): IV
     public synthetic bridge method remove(p0: java.lang.Object): java.lang.Object
-    public method remove-Ilea9M0(p0: java.lang.Object): IV
+    public method remove-TbaaF6U(p0: java.lang.Object): IV
     public synthetic bridge method size(): int
     public method toString(): java.lang.String
     public static method toString-impl(p0: java.util.Map): java.lang.String

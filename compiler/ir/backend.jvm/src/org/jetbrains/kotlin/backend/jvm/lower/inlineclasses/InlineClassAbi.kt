@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower.inlineclasses
 
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.codegen.state.NOT_INLINE_CLASS_PARAMETER_PLACEHOLDER
 import org.jetbrains.kotlin.codegen.state.md5base64
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
@@ -119,7 +120,8 @@ object InlineClassAbi {
             // The JVM backend computes mangled names after creating suspend function views, but before default argument
             // stub insertion. It would be nice if this part of the continuation lowering happened earlier in the pipeline.
             // TODO: Move suspend function view creation before JvmInlineClassLowering.
-            signatureElementsForMangling += if (useOldMangleRules) "Lkotlin.coroutines.Continuation;" else "x"
+            signatureElementsForMangling += if (useOldMangleRules) "Lkotlin.coroutines.Continuation;"
+            else NOT_INLINE_CLASS_PARAMETER_PLACEHOLDER
         }
         val signatureString = signatureElementsForMangling.joinToString() +
                 if (mangleReturnTypes && irFunction.hasMangledReturnType && !useOldMangleRules)
@@ -144,7 +146,7 @@ object InlineClassAbi {
                 append(erasedUpperBound.fqNameWhenAvailable!!)
                 if (isNullable()) append('?')
                 append(';')
-            } else "x"
+            } else NOT_INLINE_CLASS_PARAMETER_PLACEHOLDER
         }
 }
 

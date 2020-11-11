@@ -23,8 +23,8 @@ public final class InlineMutableList {
     public synthetic bridge method add(p0: java.lang.Object): boolean
     public static method add-jHY5zpA(p0: java.util.List, p1: long): boolean
     public method add-jHY5zpA(p0: long): boolean
-    public method add-rENGgLQ(p0: int, p1: long): void
-    public static method add-rENGgLQ(p0: java.util.List, p1: int, p2: long): void
+    public method add-paNdoDA(p0: int, p1: long): void
+    public static method add-paNdoDA(p0: java.util.List, p1: int, p2: long): void
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
     public static method addAll-impl(p0: java.util.List, p1: int, p2: java.util.Collection): boolean
@@ -42,8 +42,8 @@ public final class InlineMutableList {
     public static method equals-impl(p0: java.util.List, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.util.List, p1: java.util.List): boolean
     public synthetic bridge method get(p0: int): java.lang.Object
-    public method get-JnfgTak(p0: int): long
-    public static method get-JnfgTak(p0: java.util.List, p1: int): long
+    public method get-7aQB58E(p0: int): long
+    public static method get-7aQB58E(p0: java.util.List, p1: int): long
     public method getSize(): int
     public static method getSize-impl(p0: java.util.List): int
     public method hashCode(): int
@@ -69,13 +69,13 @@ public final class InlineMutableList {
     public method remove-jHY5zpA(p0: long): boolean
     public method removeAll(p0: java.util.Collection): boolean
     public static method removeAll-impl(p0: java.util.List, p1: java.util.Collection): boolean
-    public method removeAt-JnfgTak(p0: int): long
-    public static method removeAt-JnfgTak(p0: java.util.List, p1: int): long
+    public method removeAt-7aQB58E(p0: int): long
+    public static method removeAt-7aQB58E(p0: java.util.List, p1: int): long
     public method retainAll(p0: java.util.Collection): boolean
     public static method retainAll-impl(p0: java.util.List, p1: java.util.Collection): boolean
     public synthetic bridge method set(p0: int, p1: java.lang.Object): java.lang.Object
-    public method set-Geu8JnU(p0: int, p1: long): long
-    public static method set-Geu8JnU(p0: java.util.List, p1: int, p2: long): long
+    public method set-_wdf3hM(p0: int, p1: long): long
+    public static method set-_wdf3hM(p0: java.util.List, p1: int, p2: long): long
     public synthetic bridge method size(): int
     public method subList(p0: int, p1: int): java.util.List
     public static method subList-impl(p0: java.util.List, p1: int, p2: int): java.util.List

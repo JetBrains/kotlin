@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import java.security.MessageDigest
 import java.util.*
 
+const val NOT_INLINE_CLASS_PARAMETER_PLACEHOLDER = "_"
+
 fun getManglingSuffixBasedOnKotlinSignature(
     descriptor: CallableMemberDescriptor,
     shouldMangleByReturnType: Boolean,
@@ -96,7 +98,7 @@ private fun getSignatureElementForMangling(type: KotlinType, useOldManglingRules
                 if (type.isMarkedNullable) append('?')
                 append(';')
             } else {
-                append('x')
+                append(NOT_INLINE_CLASS_PARAMETER_PLACEHOLDER)
             }
 
             is TypeParameterDescriptor -> {
