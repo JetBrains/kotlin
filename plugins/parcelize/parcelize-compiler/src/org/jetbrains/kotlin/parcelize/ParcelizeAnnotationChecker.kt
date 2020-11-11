@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
-class ParcelizeAnnotationChecker : CallChecker {
+open class ParcelizeAnnotationChecker : CallChecker {
     @Suppress("DEPRECATION")
     companion object {
         val DEPRECATED_RUNTIME_PACKAGE = FqName("kotlinx.android.parcel")
