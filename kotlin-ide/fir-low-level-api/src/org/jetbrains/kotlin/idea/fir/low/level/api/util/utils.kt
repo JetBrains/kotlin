@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Lock
 
@@ -62,6 +63,9 @@ internal val FirDeclaration.ktDeclaration: KtDeclaration
             ?: error("PSI element was not found for${render()}")
         return psi as KtDeclaration
     }
+
+internal val FirDeclaration.containingKtFileIfAny: KtFile?
+    get() = psi?.containingFile as? KtFile
 
 
 internal fun IdeaModuleInfo.collectTransitiveDependenciesWithSelf(): List<IdeaModuleInfo> {
