@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 public class DiagnosticFactory0<E> {
     @NotNull
     public SimpleDiagnostic<E> on(@NotNull E element) {
-        return new SimpleDiagnostic<>(element);
+        return new SimpleDiagnostic<E>(element);
     }
 }
 
