@@ -151,6 +151,10 @@ internal abstract class KotlinToolRunner(
         }
 
         private fun String.toPrettyString(): String =
-            if (isEmpty()) "\"\"" else escapeStringCharacters(this).let { if (any(Char::isWhitespace)) "\"$it\"" else it }
+            when {
+                isEmpty() -> "\"\""
+                any { it == '"' || it.isWhitespace() } -> '"' + escapeStringCharacters(this) + '"'
+                else -> this
+            }
     }
 }

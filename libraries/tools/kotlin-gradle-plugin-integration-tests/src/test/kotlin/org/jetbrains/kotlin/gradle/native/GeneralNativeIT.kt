@@ -818,7 +818,8 @@ class GeneralNativeIT : BaseGradleIT() {
         build("compileKotlin${nativeHostTargetName.capitalize()}") {
             assertSuccessful()
             checkNativeCommandLineArguments(":compileKotlin${nativeHostTargetName.capitalize()}") { arguments ->
-                val escapedQuotedPath = "\"${fileWithSpacesInPath.absolutePath.replace("\"", "\\\"")}\""
+                val escapedQuotedPath =
+                    "\"${fileWithSpacesInPath.absolutePath.replace("\\", "\\\\").replace("\"", "\\\"")}\""
                 assertTrue(
                     escapedQuotedPath in arguments,
                     """
