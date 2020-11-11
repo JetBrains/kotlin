@@ -360,7 +360,7 @@ private val jvmFilePhases = listOf(
     initializersPhase,
     initializersCleanupPhase,
     functionNVarargBridgePhase,
-    jvmStaticAnnotationPhase,
+    jvmStaticInCompanionPhase,
     staticDefaultFunctionPhase,
     bridgePhase,
     syntheticAccessorPhase,
@@ -392,6 +392,7 @@ val jvmPhases = NamedCompilerPhase(
             expectDeclarationsRemovingPhase then
             scriptsToClassesPhase then
             fileClassPhase then
+            jvmStaticInObjectPhase then
             performByIrFile(lower = jvmFilePhases) then
             generateMultifileFacadesPhase then
             resolveInlineCallsPhase then

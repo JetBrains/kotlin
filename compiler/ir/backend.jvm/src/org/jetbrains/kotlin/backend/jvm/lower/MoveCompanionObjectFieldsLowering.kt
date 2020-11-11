@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.util.filterOutAnnotations
-import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
@@ -45,7 +42,7 @@ internal val remapObjectFieldAccesses = makeIrFilePhase(
 
 private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
-        if (irClass.isObject && !irClass.isCompanion) {
+        if (irClass.isNonCompanionObject) {
             irClass.handle()
         } else {
             (irClass.declarations.singleOrNull { it is IrClass && it.isCompanion } as IrClass?)?.handle()

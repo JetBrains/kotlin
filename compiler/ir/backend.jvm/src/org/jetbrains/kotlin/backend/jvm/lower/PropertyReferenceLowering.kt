@@ -31,11 +31,13 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -301,9 +303,7 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
         return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset).irBlock {
             +referenceClass
             +irCall(referenceClass.constructors.single()).apply {
-                var index = 0
-                expression.dispatchReceiver?.let { putValueArgument(index++, it) }
-                expression.extensionReceiver?.let { putValueArgument(index++, it) }
+                expression.getBoundReceiver()?.let { putValueArgument(0, it) }
             }
         }
     }
@@ -397,8 +397,7 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
     }
 
     private fun addConstructor(expression: IrCallableReference<*>, referenceClass: IrClass, superClass: IrClass) {
-        // See propertyReferenceKindFor -- only one of them could ever be present.
-        val hasBoundReceiver = expression.dispatchReceiver != null || expression.extensionReceiver != null
+        val hasBoundReceiver = expression.getBoundReceiver() != null
         val numOfSuperArgs =
             (if (hasBoundReceiver) 1 else 0) + (if (useOptimizedSuperClass) 4 else 0)
         val superConstructor = superClass.constructors.single { it.valueParameters.size == numOfSuperArgs }
@@ -433,5 +432,14 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
                 }
             }
         }
+    }
+
+    private fun IrCallableReference<*>.getBoundReceiver(): IrExpression? {
+        val callee = symbol.owner
+        return if (callee is IrDeclaration && callee.isJvmStaticInObject()) {
+            // See FunctionReferenceLowering.FunctionReferenceBuilder.createFakeBoundReceiverForJvmStaticInObject.
+            val objectClass = callee.parentAsClass
+            IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.typeWith(), objectClass.symbol)
+        } else dispatchReceiver ?: extensionReceiver
     }
 }

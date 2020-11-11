@@ -21,6 +21,10 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isNonCompanionObject
+import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 
 class Fir2IrLazySimpleFunction(
     components: Fir2IrComponents,
@@ -90,7 +94,9 @@ class Fir2IrLazySimpleFunction(
 
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar {
         val containingClass = parent as? IrClass
-        if (!fir.isStatic && containingClass != null) {
+        if (containingClass != null && !fir.isStatic &&
+            !(containingClass.isNonCompanionObject && hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME))
+        ) {
             declarationStorage.enterScope(this)
             declareThisReceiverParameter(
                 symbolTable,

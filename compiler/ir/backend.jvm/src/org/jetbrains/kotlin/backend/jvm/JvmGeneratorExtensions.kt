@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -78,6 +80,11 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
 
     override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean =
         descriptor.hasJvmFieldAnnotation()
+
+    override fun isStaticFunction(descriptor: FunctionDescriptor): Boolean =
+        DescriptorUtils.isNonCompanionObject(descriptor.containingDeclaration) &&
+                (descriptor.hasJvmStaticAnnotation() ||
+                        descriptor is PropertyAccessorDescriptor && descriptor.correspondingProperty.hasJvmStaticAnnotation())
 
     override val enhancedNullability: EnhancedNullability
         get() = JvmEnhancedNullability

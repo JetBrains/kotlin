@@ -18,14 +18,12 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -111,7 +109,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         // However, when we bind a value of an inline class type as a receiver, the receiver will turn into an argument of
         // the function in question. Yet we still need to record it as the "receiver" in CallableReference in order for reflection
         // to work correctly.
-        private val boundReceiver: Pair<IrValueParameter, IrExpression>? = irFunctionReference.getArgumentsWithIr().singleOrNull()
+        private val boundReceiver: Pair<IrValueParameter, IrExpression>? =
+            if (callee.isJvmStaticInObject()) createFakeBoundReceiverForJvmStaticInObject()
+            else irFunctionReference.getArgumentsWithIr().singleOrNull()
 
         // The type of the reference is KFunction<in A1, ..., in An, out R>
         private val parameterTypes = (irFunctionReference.type as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
@@ -485,6 +485,19 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 )
             }
 
+        private fun createFakeBoundReceiverForJvmStaticInObject(): Pair<IrValueParameter, IrGetObjectValueImpl> {
+            // JvmStatic functions in objects are special in that they are generated as static methods in the bytecode, and JVM IR lowers
+            // both declarations and call sites early on in jvmStaticInObjectPhase because it's easier that way in subsequent lowerings.
+            // However from the point of view of Kotlin language (and thus reflection), these functions still take the dispatch receiver
+            // parameter of the object type. So we pretend here that a JvmStatic function in object has an additional dispatch receiver
+            // parameter, so that the correct function reference object will be created and reflective calls will work at runtime.
+            val objectClass = callee.parentAsClass
+            return buildValueParameter(callee) {
+                name = Name.identifier("\$this")
+                type = objectClass.typeWith()
+            } to IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, objectClass.typeWith(), objectClass.symbol)
+        }
+
         private fun createLegacyMethodOverride(
             superFunction: IrSimpleFunction,
             generator: JvmIrBuilder.() -> IrExpression
@@ -494,7 +507,6 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     irExprBody(generator())
                 }
             }
-
     }
 
     companion object {
