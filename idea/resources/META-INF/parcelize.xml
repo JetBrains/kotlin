@@ -4,7 +4,7 @@
     <irGenerationExtension implementation="org.jetbrains.kotlin.parcelize.ParcelizeIrGeneratorExtension"/>
     <syntheticResolveExtension implementation="org.jetbrains.kotlin.parcelize.ide.IdeParcelizeResolveExtension"/>
     <classBuilderFactoryInterceptorExtension implementation="org.jetbrains.kotlin.parcelize.ParcelizeClinitClassBuilderInterceptorExtension"/>
-    <storageComponentContainerContributor implementation="org.jetbrains.kotlin.parcelize.ParcelizeDeclarationCheckerComponentContainerContributor"/>
+    <storageComponentContainerContributor implementation="org.jetbrains.kotlin.parcelize.ide.IdeParcelizeDeclarationCheckerComponentContainerContributor"/>
 
     <ultraLightClassModifierExtension implementation="org.jetbrains.kotlin.parcelize.ide.ParcelizeUltraLightClassModifierExtension"/>
     <quickFixContributor implementation="org.jetbrains.kotlin.parcelize.ide.quickfixes.ParcelizeQuickFixContributor"/>
