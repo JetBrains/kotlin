@@ -112,7 +112,8 @@ internal abstract class KotlinToolRunner(
         project.logger.info(
             """|Run in-process tool "$displayName"
                |Entry point method = $mainClass.$daemonEntryPoint
-               |Arguments = ${transformedArgs.toPrettyString()}
+               |Arguments = ${args.toPrettyString()}
+               |Transformed arguments = ${if (transformedArgs == args) "same as arguments" else transformedArgs.toPrettyString()}
             """.trimMargin()
         )
 
