@@ -26,11 +26,11 @@ val test2: KClass<out Int>
   get
 
 val test3: KFunction1<A, Unit>
-  field = ::foo
+  field = A::foo
   get
 
 val test4: KFunction0<A>
-  field = ::<init>
+  field = A::<init>
   get
 
 val test5: KFunction0<Unit>

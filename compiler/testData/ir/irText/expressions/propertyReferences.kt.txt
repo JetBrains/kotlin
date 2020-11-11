@@ -115,18 +115,18 @@ val test_constVal: KProperty0<Int>
   get
 
 val test_J_CONST: KProperty0<Int>
-  field = ::CONST
+  field = J::CONST
   get
 
 val test_J_nonConst: KMutableProperty0<Int>
-  field = ::nonConst
+  field = J::nonConst
   get
 
 val test_varWithPrivateSet: KProperty1<C, Int>
-  field = ::varWithPrivateSet
+  field = C::varWithPrivateSet
   get
 
 val test_varWithProtectedSet: KProperty1<C, Int>
-  field = ::varWithProtectedSet
+  field = C::varWithProtectedSet
   get
 

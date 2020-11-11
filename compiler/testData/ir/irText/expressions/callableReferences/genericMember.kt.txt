@@ -15,10 +15,10 @@ class A<T : Any?> {
 }
 
 val test1: KFunction1<A<String>, Unit>
-  field = ::foo
+  field = A::foo
   get
 
 val test2: KProperty1<A<String>, Int>
-  field = ::bar
+  field = A::bar
   get
 

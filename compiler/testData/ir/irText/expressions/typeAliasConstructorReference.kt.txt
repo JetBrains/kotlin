@@ -28,10 +28,10 @@ object Host {
 
 typealias NA = Nested
 val test1: Function1<Int, C>
-  field = ::<init>
+  field = C::<init>
   get
 
 val test2: Function1<Int, Nested>
-  field = ::<init>
+  field = Nested::<init>
   get
 
