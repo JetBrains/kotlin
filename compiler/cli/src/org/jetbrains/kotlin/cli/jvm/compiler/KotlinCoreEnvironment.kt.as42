@@ -649,8 +649,10 @@ class KotlinCoreEnvironment private constructor(
                 registerService(CliLightClassGenerationSupport::class.java, cliLightClassGenerationSupport)
                 registerService(KotlinAsJavaSupport::class.java, kotlinAsJavaSupport)
                 registerService(CodeAnalyzerInitializer::class.java, traceHolder)
-                @Suppress("UnstableApiUsage")
-                registerService(DumbUtil::class.java, KotlinCoreDumbUtil())
+                if (getService(DumbUtil::class.java) == null) {
+                    @Suppress("UnstableApiUsage")
+                    registerService(DumbUtil::class.java, KotlinCoreDumbUtil())
+                }
 
                 val area = Extensions.getArea(this)
 
