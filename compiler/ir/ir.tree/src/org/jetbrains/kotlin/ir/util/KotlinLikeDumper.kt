@@ -865,22 +865,24 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitCall(expression: IrCall, data: IrDeclaration?) {
         // TODO process specially builtin symbols
-        expression.printFunctionAccessExpressionWithNoIndent(
+        expression.printMemberAccessExpressionWithNoIndent(
             expression.symbol.owner.name.asString(),
-            superQualifierSymbol = expression.superQualifierSymbol,
-            omitBracesIfNoArguments = false,
-            data
+            expression.symbol.owner.valueParameters,
+            expression.superQualifierSymbol,
+            omitAllBracketsIfNoArguments = false,
+            data = data,
         )
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: IrDeclaration?) {
         // TODO could constructors have receiver?
         val clazz = expression.symbol.owner.parentAsClass
-        expression.printFunctionAccessExpressionWithNoIndent(
+        expression.printMemberAccessExpressionWithNoIndent(
             clazz.name.asString(),
+            expression.symbol.owner.valueParameters,
             superQualifierSymbol = null,
-            omitBracesIfNoArguments = clazz.isAnnotationClass,
-            data
+            omitAllBracketsIfNoArguments = clazz.isAnnotationClass,
+            data = data,
         )
     }
 
@@ -912,19 +914,24 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             delegatingClassName // required only for IrEnumConstructorCall
         }
 
-        printFunctionAccessExpressionWithNoIndent(
+        printMemberAccessExpressionWithNoIndent(
             name,
+            symbol.owner.valueParameters,
             superQualifierSymbol = null,
-            omitBracesIfNoArguments = false,
-            data
+            omitAllBracketsIfNoArguments = false,
+            data = data,
         )
     }
 
-    private fun IrFunctionAccessExpression.printFunctionAccessExpressionWithNoIndent(
+    private fun IrMemberAccessExpression<*>.printMemberAccessExpressionWithNoIndent(
         name: String,
+        valueParameters: List<IrValueParameter>,
         superQualifierSymbol: IrClassSymbol?,
-        omitBracesIfNoArguments: Boolean,
-        data: IrDeclaration?
+        omitAllBracketsIfNoArguments: Boolean,
+        data: IrDeclaration?,
+        accessOperator: String = ".",
+        omitAccessOperatorIfNoReceivers: Boolean = true,
+        wrapArguments: Boolean = false
     ) {
         // TODO origin
 
@@ -954,14 +961,24 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
 
 
-        if (dispatchReceiver != null || extensionReceiver != null || superQualifierSymbol != null) {
-            p.printWithNoIndent(".")
+        if (!omitAccessOperatorIfNoReceivers ||
+            (dispatchReceiver != null || extensionReceiver != null || superQualifierSymbol != null)
+        ) {
+            p.printWithNoIndent(accessOperator)
         }
 
-        // what if it's unbound
-        val declaration = symbol.owner
-
         p.printWithNoIndent(name)
+
+        fun allValueArgumentsAreNull(): Boolean {
+            for (i in 0 until valueArgumentsCount) {
+                if (getValueArgument(i) != null) return false
+            }
+            return true
+        }
+
+        if (omitAllBracketsIfNoArguments && typeArgumentsCount == 0 && (valueArgumentsCount == 0 || allValueArgumentsAreNull())) return
+
+        if (wrapArguments) p.printWithNoIndent("/*")
 
         if (typeArgumentsCount > 0) {
             p.printWithNoIndent("<")
@@ -974,15 +991,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             }
             p.printWithNoIndent(">")
         }
-
-        fun allValueArgumentsAreNull(): Boolean {
-            for (i in 0 until valueArgumentsCount) {
-                if (getValueArgument(i) != null) return false
-            }
-            return true
-        }
-
-        if (omitBracesIfNoArguments && typeArgumentsCount == 0 && (valueArgumentsCount == 0 || allValueArgumentsAreNull())) return
 
         p.printWithNoIndent("(")
 
@@ -999,12 +1007,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             getValueArgument(i)?.let {
                 if (i > 0) p.printWithNoIndent(", ")
                 // TODO flag to print param name
-                p.printWithNoIndent(declaration.valueParameters[i].name.asString() + " = ")
+                p.printWithNoIndent(valueParameters[i].name.asString() + " = ")
                 it.accept(this@KotlinLikeDumper, data)
             }
         }
 
         p.printWithNoIndent(")")
+        if (wrapArguments) p.printWithNoIndent("*/")
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: IrDeclaration?) {
@@ -1145,19 +1154,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitGetClass(expression: IrGetClass, data: IrDeclaration?) {
         expression.argument.accept(this, data)
         p.printWithNoIndent("::class")
-    }
-
-    override fun visitCallableReference(expression: IrCallableReference<*>, data: IrDeclaration?) {
-        // TODO check
-        /*
-        TODO
-            dispatchReceiver
-            extensionReceiver
-            getTypeArgument
-            getValueArgument
-         */
-        p.printWithNoIndent("::")
-        p.printWithNoIndent(expression.referencedName.asString())
     }
 
     override fun visitClassReference(expression: IrClassReference, data: IrDeclaration?) {
@@ -1358,15 +1354,31 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclaration?) {
-        super.visitFunctionReference(expression, data)
+        // TODO reflectionTarget
+        expression.printCallableReferenceWithNoIndent(expression.symbol.owner.valueParameters, data)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: IrDeclaration?) {
-        super.visitPropertyReference(expression, data)
+        // TODO do we need additional fields (field, getter, setter)?
+        expression.printCallableReferenceWithNoIndent(emptyList(), data)
     }
 
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: IrDeclaration?) {
-        super.visitLocalDelegatedPropertyReference(expression, data)
+        // TODO do we need additional fields (delegate, getter, setter)?
+        expression.printCallableReferenceWithNoIndent(emptyList(), data)
+    }
+
+    private fun IrCallableReference<*>.printCallableReferenceWithNoIndent(valueParameters: List<IrValueParameter>, data: IrDeclaration?) {
+        printMemberAccessExpressionWithNoIndent(
+            referencedName.asString(), // effectively it's same as `symbol.owner.name.asString()`
+            valueParameters,
+            superQualifierSymbol = null,
+            omitAllBracketsIfNoArguments = true,
+            data = data,
+            accessOperator = "::",
+            omitAccessOperatorIfNoReceivers = false,
+            wrapArguments = true
+        )
     }
 
     override fun visitBranch(branch: IrBranch, data: IrDeclaration?) {
