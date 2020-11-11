@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.state.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_N
 import org.jetbrains.kotlin.codegen.state.extractTypeMappingModeFromAnnotation
 import org.jetbrains.kotlin.codegen.state.isMethodWithDeclarationSiteWildcardsFqName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
@@ -257,7 +258,9 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         val signature = sw.makeJvmMethodSignature(mapFunctionName(function, skipSpecial))
 
         val specialSignatureInfo =
-            with(BuiltinMethodsWithSpecialGenericSignature) { function.toIrBasedDescriptor().getSpecialSignatureInfo() }
+            with(BuiltinMethodsWithSpecialGenericSignature) {
+                function.toIrBasedDescriptorWithOriginalOverrides().getSpecialSignatureInfo()
+            }
 
         // Old back-end doesn't patch generic signatures if corresponding function had special bridges.
         // See org.jetbrains.kotlin.codegen.FunctionCodegen#hasSpecialBridgeMethod and its usage.
@@ -270,6 +273,29 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         }
 
         return signature
+    }
+
+    private fun IrFunction.toIrBasedDescriptorWithOriginalOverrides(): FunctionDescriptor =
+        when (this) {
+            is IrConstructor ->
+                toIrBasedDescriptor()
+            is IrSimpleFunction ->
+                if (isPropertyAccessor)
+                    toIrBasedDescriptor()
+                else
+                    IrBasedSimpleFunctionDescriptorWithOriginalOverrides(this, context)
+            else ->
+                throw AssertionError("Unexpected function kind: $this")
+        }
+
+    private class IrBasedSimpleFunctionDescriptorWithOriginalOverrides(
+        owner: IrSimpleFunction,
+        private val context: JvmBackendContext
+    ) : IrBasedSimpleFunctionDescriptor(owner) {
+        override fun getOverriddenDescriptors(): List<FunctionDescriptor> =
+            context.getOverridesWithoutStubs(owner).map {
+                IrBasedSimpleFunctionDescriptorWithOriginalOverrides(it.owner, context)
+            }
     }
 
     // Boxing is only necessary for 'remove(E): Boolean' of a MutableCollection<Int> implementation.

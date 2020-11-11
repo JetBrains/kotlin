@@ -69,10 +69,16 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             val existingOverrides = relevantMembers.filter { isEffectivelyOverriddenBy(stub, it) }
 
             if (existingOverrides.isNotEmpty()) {
-                // In the case that we find a defined method that matches the stub signature,
-                // we add the overridden symbols to that defined method,
-                // so that bridge lowering can still generate correct bridge for that method.
-                existingOverrides.forEach { it.overriddenSymbols += stub.overriddenSymbols }
+                existingOverrides.forEach {
+                    // In the case that we find a defined method that matches the stub signature,
+                    // we add the overridden symbols to that defined method,
+                    // so that bridge lowering can still generate correct bridge for that method.
+                    // However, we still need to keep track of the original overrides
+                    // so that special built-in signature mapping doesn't confuse it with a method
+                    // that actually requires signature patching.
+                    context.recordOverridesWithoutStubs(it)
+                    it.overriddenSymbols += stub.overriddenSymbols
+                }
                 // We don't add a throwing stub if it's effectively overridden by an existing function.
                 continue
             }

@@ -10,14 +10,15 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyProperty
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -363,9 +364,9 @@ open class IrBasedVariableDescriptorWithAccessor(owner: IrLocalDelegatedProperty
     override fun isLateInit(): Boolean = false
 
     override val getter: VariableAccessorDescriptor?
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("not implemented")
     override val setter: VariableAccessorDescriptor?
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("not implemented")
     override val isDelegated: Boolean = true
 }
 
@@ -416,11 +417,11 @@ open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunc
         else CallableMemberDescriptor.Kind.SYNTHESIZED
 
     override fun copy(
-            newOwner: DeclarationDescriptor?,
-            modality: Modality?,
-            visibility: DescriptorVisibility?,
-            kind: CallableMemberDescriptor.Kind?,
-            copyOverrides: Boolean
+        newOwner: DeclarationDescriptor?,
+        modality: Modality?,
+        visibility: DescriptorVisibility?,
+        kind: CallableMemberDescriptor.Kind?,
+        copyOverrides: Boolean
     ): Nothing {
         TODO("not implemented")
     }
@@ -484,11 +485,11 @@ open class IrBasedClassConstructorDescriptor(owner: IrConstructor) : ClassConstr
     }
 
     override fun copy(
-            newOwner: DeclarationDescriptor,
-            modality: Modality,
-            visibility: DescriptorVisibility,
-            kind: CallableMemberDescriptor.Kind,
-            copyOverrides: Boolean
+        newOwner: DeclarationDescriptor,
+        modality: Modality,
+        visibility: DescriptorVisibility,
+        kind: CallableMemberDescriptor.Kind,
+        copyOverrides: Boolean
     ): ClassConstructorDescriptor {
         throw UnsupportedOperationException()
     }
@@ -556,11 +557,12 @@ open class IrBasedClassConstructorDescriptor(owner: IrConstructor) : ClassConstr
 
 fun IrConstructor.toIrBasedDescriptor() = IrBasedClassConstructorDescriptor(this)
 
-fun IrFunction.toIrBasedDescriptor(): FunctionDescriptor = when(this) {
-    is IrSimpleFunction -> toIrBasedDescriptor()
-    is IrConstructor -> toIrBasedDescriptor()
-    else -> error("Unknown function kind")
-}
+fun IrFunction.toIrBasedDescriptor(): FunctionDescriptor =
+    when (this) {
+        is IrSimpleFunction -> toIrBasedDescriptor()
+        is IrConstructor -> toIrBasedDescriptor()
+        else -> error("Unknown function kind")
+    }
 
 open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDeclarationDescriptor<IrClass>(owner) {
     override fun getName() = owner.name
@@ -590,7 +592,8 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
 
     override fun getModality() = owner.modality
 
-    override fun getCompanionObjectDescriptor() = owner.declarations.filterIsInstance<IrClass>().firstOrNull { it.isCompanion }?.toIrBasedDescriptor()
+    override fun getCompanionObjectDescriptor() =
+        owner.declarations.filterIsInstance<IrClass>().firstOrNull { it.isCompanion }?.toIrBasedDescriptor()
 
     override fun getVisibility() = owner.visibility
 
@@ -778,11 +781,11 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) : PropertyDescriptor, Ir
     override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> = mutableListOf()
 
     override fun copy(
-            newOwner: DeclarationDescriptor?,
-            modality: Modality?,
-            visibility: DescriptorVisibility?,
-            kind: CallableMemberDescriptor.Kind?,
-            copyOverrides: Boolean
+        newOwner: DeclarationDescriptor?,
+        modality: Modality?,
+        visibility: DescriptorVisibility?,
+        kind: CallableMemberDescriptor.Kind?,
+        copyOverrides: Boolean
     ): CallableMemberDescriptor {
         TODO("not implemented")
     }
@@ -822,13 +825,15 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) : PropertyDescriptor, Ir
 
     override fun isVar() = owner.isVar
 
-    override fun getDispatchReceiverParameter() = owner.getter?.dispatchReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
+    override fun getDispatchReceiverParameter() =
+        owner.getter?.dispatchReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
 
     override fun isConst() = owner.isConst
 
     override fun isLateInit() = owner.isLateinit
 
-    override fun getExtensionReceiverParameter() = owner.getter?.extensionReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
+    override fun getExtensionReceiverParameter() =
+        owner.getter?.extensionReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
 
     override fun isExternal() = owner.isExternal
 
@@ -973,11 +978,11 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
     override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> = mutableListOf()
 
     override fun copy(
-            newOwner: DeclarationDescriptor?,
-            modality: Modality?,
-            visibility: DescriptorVisibility?,
-            kind: CallableMemberDescriptor.Kind?,
-            copyOverrides: Boolean
+        newOwner: DeclarationDescriptor?,
+        modality: Modality?,
+        visibility: DescriptorVisibility?,
+        kind: CallableMemberDescriptor.Kind?,
+        copyOverrides: Boolean
     ): CallableMemberDescriptor {
         TODO("not implemented")
     }

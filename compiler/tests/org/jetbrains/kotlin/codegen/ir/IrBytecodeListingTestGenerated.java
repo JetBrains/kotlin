@@ -419,6 +419,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubForAbstractFunWithCovariantOverride.kt");
         }
 
+        @TestMetadata("stubLikeMethodSignatures.kt")
+        public void testStubLikeMethodSignatures() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubLikeMethodSignatures.kt");
+        }
+
         @TestMetadata("stubsFromSuperclass.kt")
         public void testStubsFromSuperclass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/stubsFromSuperclass.kt");

@@ -107,6 +107,16 @@ class JvmBackendContext(
     internal val hiddenConstructors = mutableMapOf<IrConstructor, IrConstructor>()
 
     internal val collectionStubComputer = CollectionStubComputer(this)
+
+    private val overridesWithoutStubs = HashMap<IrSimpleFunction, List<IrSimpleFunctionSymbol>>()
+
+    fun recordOverridesWithoutStubs(function: IrSimpleFunction) {
+        overridesWithoutStubs[function] = function.overriddenSymbols.toList()
+    }
+
+    fun getOverridesWithoutStubs(function: IrSimpleFunction): List<IrSimpleFunctionSymbol> =
+        overridesWithoutStubs.getOrElse(function) { function.overriddenSymbols }
+
     internal val bridgeLoweringCache = BridgeLowering.BridgeLoweringCache(this)
     internal val functionsWithSpecialBridges: MutableSet<IrFunction> = HashSet()
 
