@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
@@ -28,15 +27,13 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 
 class FakeOverrideGenerator(
-    private val session: FirSession,
-    private val scopeSession: ScopeSession,
-    private val classifierStorage: Fir2IrClassifierStorage,
-    private val declarationStorage: Fir2IrDeclarationStorage,
+    private val components: Fir2IrComponents,
     private val conversionScope: Fir2IrConversionScope
-) {
+) : Fir2IrComponents by components {
 
     private val baseFunctionSymbols = mutableMapOf<IrFunction, List<FirNamedFunctionSymbol>>()
     private val basePropertySymbols = mutableMapOf<IrProperty, List<FirPropertySymbol>>()
@@ -134,7 +131,7 @@ class FakeOverrideGenerator(
         irClass: IrClass,
         isLocal: Boolean,
         originalSymbol: FirCallableSymbol<*>,
-        cachedIrDeclaration: (D) -> I?,
+        cachedIrDeclaration: (D, (D) -> IdSignature?) -> I?,
         createIrDeclaration: (D, irParent: IrClass, thisReceiverOwner: IrClass?, origin: IrDeclarationOrigin, isLocal: Boolean) -> I,
         createFakeOverrideSymbol: (D, S) -> S,
         baseSymbols: MutableMap<I, List<S>>,
@@ -156,7 +153,13 @@ class FakeOverrideGenerator(
         if (originalSymbol.fir.origin.fromSupertypes && originalSymbol.dispatchReceiverClassOrNull() == classLookupTag) {
             // Substitution case
             // NB: see comment above about substituted function' parent
-            val irDeclaration = cachedIrDeclaration(originalDeclaration)?.takeIf { it.parent == irClass }
+            val irDeclaration = cachedIrDeclaration(originalDeclaration) {
+                // Sometimes we can have clashing here when FIR substitution/intersection override
+                // have the same signature.
+                // Now we avoid this problem by signature caching,
+                // so both FIR overrides correspond to one IR fake override
+                signatureComposer.composeSignature(originalDeclaration)
+            }?.takeIf { it.parent == irClass }
                 ?: createIrDeclaration(
                     originalDeclaration, irClass,
                     declarationStorage.findIrParent(baseSymbol.fir) as? IrClass,

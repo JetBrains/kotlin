@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -99,10 +97,9 @@ class Fir2IrConversionScope {
     fun returnTarget(expression: FirReturnExpression, declarationStorage: Fir2IrDeclarationStorage): IrFunction {
         val firTarget = expression.target.labeledElement
         val irTarget = (firTarget as? FirFunction)?.let {
-            if (it is FirConstructor) {
-                declarationStorage.getCachedIrConstructor(it)
-            } else {
-                declarationStorage.getCachedIrFunction(it)
+            when (it) {
+                is FirConstructor -> declarationStorage.getCachedIrConstructor(it)
+                else -> declarationStorage.getCachedIrFunction(it)
             }
         }
         for (potentialTarget in functionStack.asReversed()) {
