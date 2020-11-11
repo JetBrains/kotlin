@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
@@ -24,6 +25,7 @@ internal class FirIdeResolveStateService(project: Project) {
     private val stateCache by cachedValue(
         project,
         project.service<KotlinFirOutOfBlockModificationTrackerFactory>().createProjectWideOutOfBlockModificationTracker(),
+        ProjectRootModificationTracker.getInstance(project),
     ) {
         ConcurrentHashMap<IdeaModuleInfo, FirModuleResolveStateImpl>()
     }

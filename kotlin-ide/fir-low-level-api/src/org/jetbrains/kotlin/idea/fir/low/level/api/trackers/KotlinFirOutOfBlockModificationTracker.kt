@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.trackers
 import com.intellij.ProjectTopics
 import com.intellij.lang.ASTNode
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.service
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootEvent
@@ -28,23 +27,21 @@ import org.jetbrains.kotlin.idea.util.module
 internal class KotlinFirModificationTrackerService(project: Project) : Disposable {
     init {
         PomManager.getModel(project).addModelListener(Listener())
-
-        project.messageBus.connect(this).subscribe(
-            ProjectTopics.PROJECT_ROOTS,
-            object : ModuleRootListener {
-                override fun rootsChanged(event: ModuleRootEvent) = increaseModificationCountForAllModules()
-            }
-        )
+        subscribeForRootChanges(project)
     }
 
     var projectGlobalOutOfBlockInKotlinFilesModificationCount = 0L
         private set
 
-    private val moduleModificationsState = ModuleModificationsState()
-
     fun getOutOfBlockModificationCountForModules(module: Module): Long =
         moduleModificationsState.getModificationsCountForModule(module)
 
+    @TestOnly
+    fun incrementModificationsCount() {
+        increaseModificationCountForAllModules()
+    }
+
+    private val moduleModificationsState = ModuleModificationsState()
     private val treeAspect = TreeAspect.getInstance(project)
 
     override fun dispose() {}
@@ -54,9 +51,13 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
         moduleModificationsState.increaseModificationCountForAllModules()
     }
 
-    @TestOnly
-    fun incrementModificationsCount() {
-        increaseModificationCountForAllModules()
+    private fun subscribeForRootChanges(project: Project) {
+        project.messageBus.connect(this).subscribe(
+            ProjectTopics.PROJECT_ROOTS,
+            object : ModuleRootListener {
+                override fun rootsChanged(event: ModuleRootEvent) = increaseModificationCountForAllModules()
+            }
+        )
     }
 
     private inner class Listener : PomModelListener {
@@ -68,15 +69,20 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
             if (changeSet.rootElement.psi.language != KotlinLanguage.INSTANCE) return
             val changedElements = changeSet.changedElements
 
+            handleChangedElementsInAllModules(changedElements, changeSet)
+        }
+
+        private fun handleChangedElementsInAllModules(
+            changedElements: Array<out ASTNode>,
+            changeSet: TreeChangeEvent
+        ) {
             var isOutOfBlockChangeInAnyModule = false
 
             changedElements.forEach { element ->
                 val isOutOfBlock = element.isOutOfBlockChange(changeSet)
                 isOutOfBlockChangeInAnyModule = isOutOfBlockChangeInAnyModule || isOutOfBlock
                 if (isOutOfBlock) {
-                    element.psi.module?.let { module ->
-                        moduleModificationsState.increaseModificationCountForModule(module)
-                    }
+                    incrementModificationTrackerForContainingModule(element)
                 }
             }
 
@@ -85,13 +91,21 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
             }
         }
 
+        private fun incrementModificationTrackerForContainingModule(element: ASTNode) {
+            element.psi.module?.let { module ->
+                moduleModificationsState.increaseModificationCountForModule(module)
+            }
+        }
+
         private fun ASTNode.isOutOfBlockChange(changeSet: TreeChangeEvent): Boolean {
             val nodes = changeSet.getChangesByElement(this).affectedChildren
-            return nodes.any { node ->
-                val psi = node.psi ?: return@any true
-                val container = psi.getNonLocalContainingInBodyDeclarationWith() ?: return@any true
-                !FileElementFactory.isReanalyzableContainer(container)
-            }
+            return nodes.any(::isOutOfBlockChange)
+        }
+
+        private fun isOutOfBlockChange(node: ASTNode): Boolean {
+            val psi = node.psi ?: return true
+            val container = psi.getNonLocalContainingInBodyDeclarationWith() ?: return true
+            return !FileElementFactory.isReanalyzableContainer(container)
         }
     }
 }
