@@ -1360,6 +1360,14 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     private fun IrCallableReference<*>.printCallableReferenceWithNoIndent(valueParameters: List<IrValueParameter>, data: IrDeclaration?) {
+        // TODO where from to get type arguments for a class?
+        // TODO rendering for references to constructors
+        if (dispatchReceiver == null && extensionReceiver == null) {
+            (symbol.owner as IrDeclaration).parentClassOrNull?.let {
+                p.printWithNoIndent(it.name.asString())
+            }
+        }
+
         printMemberAccessExpressionWithNoIndent(
             referencedName.asString(), // effectively it's same as `symbol.owner.name.asString()`
             valueParameters,
