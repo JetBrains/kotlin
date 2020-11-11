@@ -63,8 +63,11 @@ class Fir2IrLazyProperty(
     override val isDelegated: Boolean
         get() = fir.delegate != null
 
-    override val isExternal: Boolean
+    override var isExternal: Boolean
         get() = fir.isExternal
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     override val isExpect: Boolean
         get() = fir.isExpect
