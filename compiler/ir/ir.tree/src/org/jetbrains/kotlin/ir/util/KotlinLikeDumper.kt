@@ -185,23 +185,33 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 first = false
             }
 
-            printParameterModifiersWithNoIndent(
-                isVararg = it.varargElementType != null,
-                it.isCrossinline,
-                it.isNoinline,
-            )
-
-            p.printWithNoIndent(it.name.asString())
-            p.printWithNoIndent(": ")
-            (it.varargElementType ?: it.type).printTypeWithNoIndent()
-            // TODO print it.type too for varargs?
-
-            it.defaultValue?.let { v ->
-                p.printWithNoIndent(" = ")
-                v.accept(this@KotlinLikeDumper, this)
-            }
+            it.printAValueParameterWithNoIndent(this)
         }
         p.printWithNoIndent(")")
+    }
+
+    private fun IrValueParameter.printAValueParameterWithNoIndent(data: IrDeclaration?) {
+        printAnnotationsWithNoIndent()
+
+        printParameterModifiersWithNoIndent(
+            isVararg = varargElementType != null,
+            isCrossinline,
+            isNoinline,
+            // TODO no test
+            isHidden,
+            // TODO no test
+            isAssignable
+        )
+
+        p.printWithNoIndent(name.asString())
+        p.printWithNoIndent(": ")
+        (varargElementType ?: type).printTypeWithNoIndent()
+        // TODO print it.type too for varargs?
+
+        defaultValue?.let { v ->
+            p.printWithNoIndent(" = ")
+            v.accept(this@KotlinLikeDumper, data)
+        }
     }
 
     private fun IrTypeParametersContainer.printWhereClauseIfNeededWithNoIndent() {
@@ -212,19 +222,27 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         var first = true
         typeParameters.forEach {
             if (it.superTypes.size > 1) {
-                it.superTypes.forEach { superType ->
-                    if (!first) {
-                        p.printWithNoIndent(", ")
-                    } else {
-                        first = false
-                    }
-
-                    p.printWithNoIndent(it.name.asString())
-                    p.printWithNoIndent(" : ")
-                    superType.printTypeWithNoIndent()
-                }
+                // TODO no test with more than one generic parameter with more supertypes
+                first = it.printWhereClauseTypesWithNoIndent(first)
             }
         }
+    }
+
+    private fun IrTypeParameter.printWhereClauseTypesWithNoIndent(first: Boolean): Boolean {
+        var myFirst = first
+        superTypes.forEachIndexed { i, superType ->
+            if (!myFirst) {
+                p.printWithNoIndent(", ")
+            } else {
+                myFirst = false
+            }
+
+            p.printWithNoIndent(name.asString())
+            p.printWithNoIndent(" : ")
+            superType.printTypeWithNoIndent()
+        }
+
+        return myFirst
     }
 
     private fun IrTypeParametersContainer.printTypeParametersWithNoIndent(postfix: String = "") {
@@ -240,20 +258,24 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 first = false
             }
 
-            it.variance.printVarianceWithNoIndent()
-            if (it.isReified) p.printWithNoIndent("reified ")
-
-            it.printAnnotationsWithNoIndent()
-
-            p.printWithNoIndent(it.name.asString())
-
-            if (it.superTypes.size == 1) {
-                p.printWithNoIndent(" : ")
-                it.superTypes.single().printTypeWithNoIndent()
-            }
+            it.printATypeParameterWithNoIndent()
         }
         p.printWithNoIndent(">")
         p.printWithNoIndent(postfix)
+    }
+
+    private fun IrTypeParameter.printATypeParameterWithNoIndent() {
+        variance.printVarianceWithNoIndent()
+        if (isReified) p.printWithNoIndent("reified ")
+
+        printAnnotationsWithNoIndent()
+
+        p.printWithNoIndent(name.asString())
+
+        if (superTypes.size == 1) {
+            p.printWithNoIndent(" : ")
+            superTypes.single().printTypeWithNoIndent()
+        }
     }
 
     private fun Variance.printVarianceWithNoIndent() {
@@ -393,7 +415,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         printParameterModifiersWithNoIndent(
             isVararg,
             isCrossinline = INAPPLICABLE,
-            isNoinline = INAPPLICABLE
+            isNoinline = INAPPLICABLE,
+            isHidden = INAPPLICABLE,
+            isAssignable = INAPPLICABLE
         )
         p(isSuspend, "suspend")
         p(isInner, "inner")
@@ -415,10 +439,14 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         isVararg: Boolean,
         isCrossinline: Boolean,
         isNoinline: Boolean,
+        isHidden: Boolean,
+        isAssignable: Boolean,
     ) {
         p(isVararg, "vararg")
         p(isCrossinline, "crossinline")
         p(isNoinline, "noinline")
+        p(isHidden, "hidden")
+        p(isAssignable, "var")
     }
 
     private fun IrValueParameter.printExtensionReceiverParameter() {
@@ -549,6 +577,16 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p(declaration.isPrimary, commentBlockH("primary"))
         declaration.body?.accept(this, declaration)
         p.printlnWithNoIndent()
+    }
+
+    override fun visitTypeParameter(declaration: IrTypeParameter, data: IrDeclaration?) {
+        declaration.printATypeParameterWithNoIndent()
+        if (declaration.superTypes.size > 1) declaration.printWhereClauseTypesWithNoIndent(true)
+    }
+
+    override fun visitValueParameter(declaration: IrValueParameter, data: IrDeclaration?) {
+        // TODO index?
+        declaration.printAValueParameterWithNoIndent(data)
     }
 
     override fun visitProperty(declaration: IrProperty, data: IrDeclaration?) {
@@ -937,7 +975,14 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             p.printWithNoIndent(">")
         }
 
-        if (omitBracesIfNoArguments && valueArgumentsCount == 0 && typeArgumentsCount == 0) return
+        fun allValueArgumentsAreNull(): Boolean {
+            for (i in 0 until valueArgumentsCount) {
+                if (getValueArgument(i) != null) return false
+            }
+            return true
+        }
+
+        if (omitBracesIfNoArguments && typeArgumentsCount == 0 && (valueArgumentsCount == 0 || allValueArgumentsAreNull())) return
 
         p.printWithNoIndent("(")
 
@@ -950,6 +995,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 //        }
 
         repeat(valueArgumentsCount) { i ->
+            // TODO should we print something for omitted arguments (== null)?
             getValueArgument(i)?.let {
                 if (i > 0) p.printWithNoIndent(", ")
                 // TODO flag to print param name
@@ -1292,26 +1338,22 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: IrDeclaration?) {
+        // TODO support
         super.visitExternalPackageFragment(declaration, data)
     }
 
     override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
+        // TODO support
         super.visitScript(declaration, data)
     }
 
-    override fun visitTypeParameter(declaration: IrTypeParameter, data: IrDeclaration?) {
-        super.visitTypeParameter(declaration, data)
-    }
-
-    override fun visitValueParameter(declaration: IrValueParameter, data: IrDeclaration?) {
-        super.visitValueParameter(declaration, data)
-    }
-
     override fun visitSuspendableExpression(expression: IrSuspendableExpression, data: IrDeclaration?) {
+        // TODO support
         super.visitSuspendableExpression(expression, data)
     }
 
     override fun visitSuspensionPoint(expression: IrSuspensionPoint, data: IrDeclaration?) {
+        // TODO support
         super.visitSuspensionPoint(expression, data)
     }
 
