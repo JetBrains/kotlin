@@ -1,5 +1,5 @@
 @OptIn(markerClass = [ExperimentalTypeInference::class])
-fun <R : Any?> scopedFlow(block: @ExtensionFunctionType SuspendFunction2<CoroutineScope, FlowCollector<R>, Unit>): Flow<R> {
+fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType SuspendFunction2<CoroutineScope, FlowCollector<R>, Unit>): Flow<R> {
   return flow<R>(block = local suspend fun FlowCollector<R>.<anonymous>() {
     val collector: FlowCollector<R> = <this>
     flowScope<Unit>(block = local suspend fun CoroutineScope.<anonymous>() {
@@ -22,7 +22,7 @@ suspend fun <T : Any?> FlowCollector<T>.invokeSafely(action: @ExtensionFunctionT
 }
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
-inline fun <T : Any?> unsafeFlow(crossinline block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
+inline fun <T : Any?> unsafeFlow(@BuilderInference crossinline block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
   TODO()
 }
 
@@ -84,12 +84,12 @@ class SafeCollector<T : Any?> : FlowCollector<T> {
 }
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
-fun <T : Any?> flow(block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
+fun <T : Any?> flow(@BuilderInference block: @ExtensionFunctionType SuspendFunction1<FlowCollector<T>, Unit>): Flow<T> {
   TODO()
 }
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
-suspend fun <R : Any?> flowScope(block: @ExtensionFunctionType SuspendFunction1<CoroutineScope, R>): R {
+suspend fun <R : Any?> flowScope(@BuilderInference block: @ExtensionFunctionType SuspendFunction1<CoroutineScope, R>): R {
   TODO()
 }
 
@@ -127,7 +127,7 @@ interface ReceiveChannel<out E : Any?> {
 }
 
 @OptIn(markerClass = [ExperimentalTypeInference::class])
-fun <E : Any?> CoroutineScope.produce(block: @ExtensionFunctionType SuspendFunction1<ProducerScope<E>, Unit>): ReceiveChannel<E> {
+fun <E : Any?> CoroutineScope.produce(@BuilderInference block: @ExtensionFunctionType SuspendFunction1<ProducerScope<E>, Unit>): ReceiveChannel<E> {
   TODO()
 }
 

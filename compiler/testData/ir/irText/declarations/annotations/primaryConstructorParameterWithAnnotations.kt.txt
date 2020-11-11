@@ -4,7 +4,7 @@ annotation class Ann : Annotation {
 }
 
 class Test {
-  constructor(x: Int) /* primary */ {
+  constructor(@Ann x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 

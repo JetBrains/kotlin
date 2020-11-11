@@ -42,7 +42,7 @@ var test2: Int /* by */
     return #test2$delegate.getValue(thisRef = null, kProp = ::test2)
   }
   @A(x = "test2.set")
-  set(<set-?>: Int) {
+  set(@A(x = "test2.set.param") <set-?>: Int) {
     return #test2$delegate.setValue(thisRef = null, kProp = ::test2, newValue = <set-?>)
   }
 

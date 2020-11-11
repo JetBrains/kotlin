@@ -28,22 +28,22 @@ const val UINT_CONST: UInt
   field = 42
   get
 
-fun takeUByte(u: UByte) {
+fun takeUByte(@ImplicitIntegerCoercion u: UByte) {
 }
 
-fun takeUShort(u: UShort) {
+fun takeUShort(@ImplicitIntegerCoercion u: UShort) {
 }
 
-fun takeUInt(u: UInt) {
+fun takeUInt(@ImplicitIntegerCoercion u: UInt) {
 }
 
-fun takeULong(u: ULong) {
+fun takeULong(@ImplicitIntegerCoercion u: ULong) {
 }
 
-fun takeUBytes(vararg u: UByte) {
+fun takeUBytes(@ImplicitIntegerCoercion vararg u: UByte) {
 }
 
-fun takeLong(l: Long) {
+fun takeLong(@ImplicitIntegerCoercion l: Long) {
 }
 
 fun test() {

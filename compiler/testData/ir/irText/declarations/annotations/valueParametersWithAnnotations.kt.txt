@@ -6,11 +6,11 @@ annotation class TestAnn : Annotation {
 
 }
 
-fun testFun(x: Int) {
+fun testFun(@TestAnn(x = "testFun.x") x: Int) {
 }
 
 class TestClassConstructor1 {
-  constructor(x: Int) /* primary */ {
+  constructor(@TestAnn(x = "TestClassConstructor1.x") x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
 

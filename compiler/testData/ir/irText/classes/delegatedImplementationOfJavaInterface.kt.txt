@@ -9,12 +9,12 @@ class Test : J {
     field = j
     private get
 
-  @NotNull()
+  @NotNull
   override fun returnNotNull(): @EnhancedNullability String {
     return <this>.#j.returnNotNull()
   }
 
-  @Nullable()
+  @Nullable
   override fun returnNullable(): @EnhancedNullability String? {
     return <this>.#j.returnNullable()
   }
@@ -27,11 +27,11 @@ class Test : J {
     <this>.#j.takeFlexible(x = x)
   }
 
-  override fun takeNotNull(x: @EnhancedNullability String) {
+  override fun takeNotNull(@NotNull x: @EnhancedNullability String) {
     <this>.#j.takeNotNull(x = x)
   }
 
-  override fun takeNullable(x: @EnhancedNullability String?) {
+  override fun takeNullable(@Nullable x: @EnhancedNullability String?) {
     <this>.#j.takeNullable(x = x)
   }
 
