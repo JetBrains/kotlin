@@ -17,7 +17,7 @@ fun test(nc: C?) {
     val tmp0_safe_receiver: C? = nc
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null /*~> Unit */
-      true -> tmp0_safe_receiver.<set-x>(<set-?> = 42)
+      else -> tmp0_safe_receiver.<set-x>(<set-?> = 42)
     }
   }
 }

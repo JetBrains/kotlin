@@ -42,7 +42,7 @@ private fun CoroutineScope.asFairChannel(flow: Flow<*>): ReceiveChannel<Any> {
         val tmp0_elvis_lhs: Any? = value
         when {
           EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> Any()
-          true -> tmp0_elvis_lhs
+          else -> tmp0_elvis_lhs
         }
       })
     }
@@ -58,7 +58,7 @@ private fun CoroutineScope.asChannel(flow: Flow<*>): ReceiveChannel<Any> {
         val tmp0_elvis_lhs: Any? = value
         when {
           EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> Any()
-          true -> tmp0_elvis_lhs
+          else -> tmp0_elvis_lhs
         }
       })
     }

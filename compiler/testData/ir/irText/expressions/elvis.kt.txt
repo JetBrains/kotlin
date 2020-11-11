@@ -11,7 +11,7 @@ fun test1(a: Any?, b: Any): Any {
     val tmp0_elvis_lhs: Any? = a
     when {
       EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> b
-      true -> tmp0_elvis_lhs
+      else -> tmp0_elvis_lhs
     }
   }
 }
@@ -21,7 +21,7 @@ fun test2(a: String?, b: Any): Any {
     val tmp0_elvis_lhs: String? = a
     when {
       EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> b
-      true -> tmp0_elvis_lhs
+      else -> tmp0_elvis_lhs
     }
   }
 }
@@ -37,7 +37,7 @@ fun test3(a: Any?, b: Any?): String {
     val tmp0_elvis_lhs: Any? = a
     when {
       EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> b /*as String */
-      true -> tmp0_elvis_lhs /*as String */
+      else -> tmp0_elvis_lhs /*as String */
     }
   }
 }
@@ -47,7 +47,7 @@ fun test4(x: Any): Any {
     val tmp0_elvis_lhs: Any? = <get-p>()
     when {
       EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> x
-      true -> tmp0_elvis_lhs
+      else -> tmp0_elvis_lhs
     }
   }
 }
@@ -57,7 +57,7 @@ fun test5(x: Any): Any {
     val tmp0_elvis_lhs: Any? = foo()
     when {
       EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> x
-      true -> tmp0_elvis_lhs
+      else -> tmp0_elvis_lhs
     }
   }
 }

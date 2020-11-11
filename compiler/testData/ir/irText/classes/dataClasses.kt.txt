@@ -92,7 +92,7 @@ data class Test2 {
   override fun hashCode(): Int {
     return when {
       EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
-      true -> <this>.#x.hashCode()
+      else -> <this>.#x.hashCode()
     }
   }
 
@@ -163,12 +163,12 @@ data class Test3 {
     var result: Int = <this>.#d.hashCode()
     result = result.times(other = 31).plus(other = when {
       EQEQ(arg0 = <this>.#dn, arg1 = null) -> 0
-      true -> <this>.#dn.hashCode()
+      else -> <this>.#dn.hashCode()
     })
     result = result.times(other = 31).plus(other = <this>.#f.hashCode())
     result = result.times(other = 31).plus(other = when {
       EQEQ(arg0 = <this>.#df, arg1 = null) -> 0
-      true -> <this>.#df.hashCode()
+      else -> <this>.#df.hashCode()
     })
     return result
   }

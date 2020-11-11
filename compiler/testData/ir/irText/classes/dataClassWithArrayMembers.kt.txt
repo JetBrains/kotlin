@@ -207,7 +207,7 @@ data class Test3 {
   override fun hashCode(): Int {
     return when {
       EQEQ(arg0 = <this>.#anyArrayN, arg1 = null) -> 0
-      true -> dataClassArrayMemberHashCode(arg0 = <this>.#anyArrayN)
+      else -> dataClassArrayMemberHashCode(arg0 = <this>.#anyArrayN)
     }
   }
 

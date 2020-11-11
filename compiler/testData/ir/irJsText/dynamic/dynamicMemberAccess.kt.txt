@@ -7,7 +7,7 @@ fun test2(d: dynamic): dynamic {
     val tmp0_safe_receiver: dynamic = d
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> tmp0_safe_receiver.member
+      else -> tmp0_safe_receiver.member
     }
   }
 }

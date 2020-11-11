@@ -10,7 +10,7 @@ private fun Reader.nextChar(): Char? {
 )
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> tmp0_safe_receiver.toChar()
+      else -> tmp0_safe_receiver.toChar()
     }
   }
 }
@@ -19,20 +19,20 @@ fun Reader.consumeRestOfQuotedSequence(sb: StringBuilder, quote: Char) {
   var ch: Char? = <this>.nextChar()
   while (when {
     EQEQ(arg0 = ch, arg1 = null).not() -> EQEQ(arg0 = ch, arg1 = quote).not()
-    true -> false
+    else -> false
   }) { // BLOCK
     when {
       EQEQ(arg0 = ch, arg1 = <get-BACKSLASH>()) -> { // BLOCK
         val tmp0_safe_receiver: Char? = <this>.nextChar()
         when {
           EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-          true -> tmp0_safe_receiver.let<Char, @FlexibleNullability StringBuilder?>(block = local fun <anonymous>(it: Char): @FlexibleNullability StringBuilder? {
+          else -> tmp0_safe_receiver.let<Char, @FlexibleNullability StringBuilder?>(block = local fun <anonymous>(it: Char): @FlexibleNullability StringBuilder? {
             return sb.append(p0 = it)
           }
 )
         }
       } /*~> Unit */
-      true -> sb.append(p0 = ch) /*~> Unit */
+      else -> sb.append(p0 = ch) /*~> Unit */
     }
     ch = <this>.nextChar()
   }

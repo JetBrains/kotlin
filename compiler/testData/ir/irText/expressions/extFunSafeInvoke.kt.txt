@@ -3,7 +3,7 @@ fun test(receiver: Any?, fn: @ExtensionFunctionType Function3<Any, Int, String, 
     val tmp0_safe_receiver: Any? = receiver
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> fn.invoke(p1 = tmp0_safe_receiver, p2 = 42, p3 = "Hello")
+      else -> fn.invoke(p1 = tmp0_safe_receiver, p2 = 42, p3 = "Hello")
     }
   }
 }

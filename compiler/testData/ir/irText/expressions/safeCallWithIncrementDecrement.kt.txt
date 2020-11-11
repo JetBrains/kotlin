@@ -21,7 +21,7 @@ operator fun Int?.inc(): Int? {
     val tmp0_safe_receiver: Int? = <this>
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> tmp0_safe_receiver.inc()
+      else -> tmp0_safe_receiver.inc()
     }
   }
 }
@@ -38,7 +38,7 @@ fun testProperty(nc: C?) {
     val tmp0_safe_receiver: C? = nc
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> { // BLOCK
+      else -> { // BLOCK
         val tmp1_receiver: C? = tmp0_safe_receiver
         { // BLOCK
           val tmp2: Int = tmp1_receiver.<get-p>()
@@ -56,7 +56,7 @@ fun testArrayAccess(nc: C?) {
       val tmp0_safe_receiver: C? = nc
       when {
         EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-        true -> tmp0_safe_receiver.<get-p>()
+        else -> tmp0_safe_receiver.<get-p>()
       }
     }
     val tmp2_index0: Int = 0

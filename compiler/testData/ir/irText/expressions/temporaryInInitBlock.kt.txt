@@ -13,7 +13,7 @@ class C {
       val tmp0_safe_receiver: Any? = x
       when {
         EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-        true -> tmp0_safe_receiver.toString()
+        else -> tmp0_safe_receiver.toString()
       }
     }
   }

@@ -34,7 +34,7 @@ fun foo(): Any {
     val nn: C = C()
     val c: Any = when {
       true -> mm
-      true -> nn
+      else -> nn
     }
     return c
   }

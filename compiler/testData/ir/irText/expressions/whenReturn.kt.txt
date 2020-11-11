@@ -6,7 +6,7 @@ fun toString(grade: String): String {
       EQEQ(arg0 = tmp0_subject, arg1 = "B") -> return "Good"
       EQEQ(arg0 = tmp0_subject, arg1 = "C") -> return "Mediocre"
       EQEQ(arg0 = tmp0_subject, arg1 = "D") -> return "Fair"
-      true -> return "Failure"
+      else -> return "Failure"
     }
   }
   return "???"

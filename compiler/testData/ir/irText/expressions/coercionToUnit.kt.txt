@@ -14,14 +14,14 @@ fun test3() {
     val tmp0_safe_receiver: @FlexibleNullability PrintStream? = super.#out
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> tmp0_safe_receiver /*!! PrintStream */.println(p0 = "Hello,")
+      else -> tmp0_safe_receiver /*!! PrintStream */.println(p0 = "Hello,")
     }
   } /*~> Unit */
   { // BLOCK
     val tmp1_safe_receiver: @FlexibleNullability PrintStream? = super.#out
     when {
       EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-      true -> tmp1_safe_receiver /*!! PrintStream */.println(p0 = "world!")
+      else -> tmp1_safe_receiver /*!! PrintStream */.println(p0 = "world!")
     }
   } /*~> Unit */
 }

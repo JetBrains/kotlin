@@ -7,7 +7,7 @@ fun lengthN(s: String?): Int? {
     val tmp0_safe_receiver: String? = s
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> tmp0_safe_receiver.<get-length>()
+      else -> tmp0_safe_receiver.<get-length>()
     }
   }
 }

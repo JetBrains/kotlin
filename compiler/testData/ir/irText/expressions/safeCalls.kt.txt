@@ -24,7 +24,7 @@ fun test1(x: String?): Int? {
     val tmp0_safe_receiver: String? = x
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> tmp0_safe_receiver.<get-length>()
+      else -> tmp0_safe_receiver.<get-length>()
     }
   }
 }
@@ -34,7 +34,7 @@ fun test2(x: String?): Int? {
     val tmp0_safe_receiver: String? = x
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> tmp0_safe_receiver.hashCode()
+      else -> tmp0_safe_receiver.hashCode()
     }
   }
 }
@@ -44,7 +44,7 @@ fun test3(x: String?, y: Any?): Boolean? {
     val tmp0_safe_receiver: String? = x
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> tmp0_safe_receiver.equals(other = y)
+      else -> tmp0_safe_receiver.equals(other = y)
     }
   }
 }
@@ -54,7 +54,7 @@ fun test4(x: Ref?) {
     val tmp0_safe_receiver: Ref? = x
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null /*~> Unit */
-      true -> tmp0_safe_receiver.<set-value>(<set-?> = 0)
+      else -> tmp0_safe_receiver.<set-value>(<set-?> = 0)
     }
   }
 }
@@ -64,7 +64,7 @@ fun IHost.test5(s: String?): Int? {
     val tmp0_safe_receiver: String? = s
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> (<this>, tmp0_safe_receiver).extLength()
+      else -> (<this>, tmp0_safe_receiver).extLength()
     }
   }
 }
@@ -78,7 +78,7 @@ fun box() {
     val tmp0_safe_receiver: Int = 42
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> tmp0_safe_receiver.foo()
+      else -> tmp0_safe_receiver.foo()
     }
   } /*~> Unit */
 }

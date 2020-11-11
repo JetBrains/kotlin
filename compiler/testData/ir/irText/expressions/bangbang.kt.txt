@@ -7,7 +7,7 @@ fun test2(a: Any?): Int {
     val tmp0_safe_receiver: Any? = a
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      true -> tmp0_safe_receiver.hashCode()
+      else -> tmp0_safe_receiver.hashCode()
     }
   })
 }

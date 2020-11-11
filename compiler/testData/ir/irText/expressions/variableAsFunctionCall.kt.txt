@@ -23,12 +23,12 @@ fun test4(ns: String?): String? {
       val tmp0_safe_receiver: String? = ns
       when {
         EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-        true -> tmp0_safe_receiver.k()
+        else -> tmp0_safe_receiver.k()
       }
     }
     when {
       EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-      true -> tmp1_safe_receiver.invoke()
+      else -> tmp1_safe_receiver.invoke()
     }
   }
 }

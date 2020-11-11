@@ -32,7 +32,7 @@ data class Test<T : Any?> {
   override fun hashCode(): Int {
     var result: Int = when {
       EQEQ(arg0 = <this>.#x, arg1 = null) -> 0
-      true -> <this>.#x.hashCode()
+      else -> <this>.#x.hashCode()
     }
     result = result.times(other = 31).plus(other = <this>.#y.hashCode())
     return result

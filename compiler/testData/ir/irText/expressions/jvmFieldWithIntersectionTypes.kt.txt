@@ -52,7 +52,7 @@ fun test(b: Boolean) {
   val d2: Derived2 = Derived2()
   val k: Any = when {
     b -> d1
-    true -> d2
+    else -> d2
   }
   k /*as JFieldOwner */super.#f = 42
   k /*as JFieldOwner */super.#f /*~> Unit */
@@ -60,7 +60,7 @@ fun test(b: Boolean) {
   val md2: DerivedThroughMid2 = DerivedThroughMid2()
   val mk: Any = when {
     b -> md1
-    true -> md2
+    else -> md2
   }
   mk /*as Mid */super.#f = 44
   mk /*as Mid */super.#f /*~> Unit */

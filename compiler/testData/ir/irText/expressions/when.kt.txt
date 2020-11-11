@@ -16,7 +16,7 @@ fun testWithSubject(x: Any?): String {
       tmp0_subject is String -> "String"
       tmp0_subject is Number.not() -> "!Number"
       setOf<Nothing>().contains<Number>(element = tmp0_subject /*as Number */) -> "nothingness?"
-      true -> "something"
+      else -> "something"
     }
   }
 }
@@ -28,7 +28,7 @@ fun test(x: Any?): String {
     x is String -> "String"
     x !is Number -> "!Number"
     setOf<Nothing>().contains<Number>(element = x /*as Number */) -> "nothingness?"
-    true -> "something"
+    else -> "something"
   }
 }
 
@@ -40,24 +40,24 @@ fun testComma(x: Int): String {
         when {
           when {
             EQEQ(arg0 = tmp0_subject, arg1 = 1) -> true
-            true -> EQEQ(arg0 = tmp0_subject, arg1 = 2)
+            else -> EQEQ(arg0 = tmp0_subject, arg1 = 2)
           } -> true
-          true -> EQEQ(arg0 = tmp0_subject, arg1 = 3)
+          else -> EQEQ(arg0 = tmp0_subject, arg1 = 3)
         } -> true
-        true -> EQEQ(arg0 = tmp0_subject, arg1 = 4)
+        else -> EQEQ(arg0 = tmp0_subject, arg1 = 4)
       } -> "1234"
       when {
         when {
           EQEQ(arg0 = tmp0_subject, arg1 = 5) -> true
-          true -> EQEQ(arg0 = tmp0_subject, arg1 = 6)
+          else -> EQEQ(arg0 = tmp0_subject, arg1 = 6)
         } -> true
-        true -> EQEQ(arg0 = tmp0_subject, arg1 = 7)
+        else -> EQEQ(arg0 = tmp0_subject, arg1 = 7)
       } -> "567"
       when {
         EQEQ(arg0 = tmp0_subject, arg1 = 8) -> true
-        true -> EQEQ(arg0 = tmp0_subject, arg1 = 9)
+        else -> EQEQ(arg0 = tmp0_subject, arg1 = 9)
       } -> "89"
-      true -> "?"
+      else -> "?"
     }
   }
 }

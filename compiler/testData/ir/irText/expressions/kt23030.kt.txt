@@ -10,9 +10,9 @@ fun testOverloadedCompareToCallWithSmartCast(x: Any, y: Any): Boolean {
   return when {
     when {
       x is Int -> y is Char
-      true -> false
+      else -> false
     } -> less(arg0 = x /*as Int */.compareTo(c = y /*as Char */), arg1 = 0)
-    true -> false
+    else -> false
   }
 }
 
@@ -20,9 +20,9 @@ fun testEqualsWithSmartCast(x: Any, y: Any): Boolean {
   return when {
     when {
       x is Int -> y is Char
-      true -> false
+      else -> false
     } -> EQEQ(arg0 = x, arg1 = y)
-    true -> false
+    else -> false
   }
 }
 
@@ -45,9 +45,9 @@ class C {
     return when {
       when {
         x is Int -> y is Char
-        true -> false
+        else -> false
       } -> less(arg0 = (<this>, x /*as Int */).compareTo(c = y /*as Char */), arg1 = 0)
-      true -> false
+      else -> false
     }
   }
 

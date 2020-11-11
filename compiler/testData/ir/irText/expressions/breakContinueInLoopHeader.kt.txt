@@ -4,7 +4,7 @@ fun test1(c: Boolean?) {
       val tmp0_elvis_lhs: Boolean? = c
       when {
         EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> break
-        true -> tmp0_elvis_lhs
+        else -> tmp0_elvis_lhs
       }
     }) 
   }
@@ -16,7 +16,7 @@ fun test2(c: Boolean?) {
       val tmp0_elvis_lhs: Boolean? = c
       when {
         EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> continue
-        true -> tmp0_elvis_lhs
+        else -> tmp0_elvis_lhs
       }
     }) 
   }
@@ -29,7 +29,7 @@ fun test3(ss: List<String>?) {
         val tmp0_elvis_lhs: List<String>? = ss
         when {
           EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> continue
-          true -> tmp0_elvis_lhs
+          else -> tmp0_elvis_lhs
         }
       }.iterator()
       L2@ while (tmp1_iterator.hasNext()) { // BLOCK
@@ -46,7 +46,7 @@ fun test4(ss: List<String>?) {
         val tmp0_elvis_lhs: List<String>? = ss
         when {
           EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> break
-          true -> tmp0_elvis_lhs
+          else -> tmp0_elvis_lhs
         }
       }.iterator()
       L2@ while (tmp1_iterator.hasNext()) { // BLOCK
@@ -72,7 +72,7 @@ fun test5() {
       } /*~> Unit */
       // }      while (when {
         greaterOrEqual(arg0 = j, arg1 = 3) -> false
-        true -> break
+        else -> break
       })
     }
     when {

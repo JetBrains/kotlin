@@ -7,7 +7,7 @@ fun testSafeMemberAssignment(d: dynamic) {
     val tmp0_safe_receiver: dynamic = d
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null /*~> Unit */
-      true -> tmp0_safe_receiver.m = 1
+      else -> tmp0_safe_receiver.m = 1
     }
   }
 }
