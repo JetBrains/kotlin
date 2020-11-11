@@ -824,7 +824,7 @@ class GeneralNativeIT : BaseGradleIT() {
                     """
                         Command-line arguments do not contain path with spaces.
                         Raw path = ${fileWithSpacesInPath.absolutePath}
-                        Escaped quoted path = escapedQuotedPath
+                        Escaped quoted path = $escapedQuotedPath
                         Arguments: ${arguments.joinToString(separator = " ")}
                     """.trimIndent()
                 )
