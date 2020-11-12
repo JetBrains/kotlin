@@ -49,7 +49,7 @@ internal fun PersistentIrGenerator.generateClass() {
                     +"override val declarations: MutableList<IrDeclaration> = " + import("ArrayList", "java.util") + "()",
                     lines(
                         +"get() " + block(
-                            +"if (createdOn < stageController.currentStage && initialDeclarations == null) " + block(
+                            +"if (createdOn < factory.stageController.currentStage && initialDeclarations == null) " + block(
                                 +"initialDeclarations = " + import("Collections", "java.util") + ".unmodifiableList(ArrayList(field))"
                             ),
                             id,
