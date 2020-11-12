@@ -14,8 +14,8 @@ internal fun PersistentIrGenerator.generateFunction() {
     val valueParametersField = Field("valueParameters", +"List<" + IrValueParameter + ">", valueParameterListProto)
     val bodyField = Field("body", IrBody + "?", bodyProto)
     val visibilityField = Field("visibility", DescriptorVisibility, visibilityProto)
-    val overriddenSymbolsField = Field("overriddenSymbols", +"List<" + irSymbol("IrSimpleFunctionSymbol") + ">", symbolListProto)
-    val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?", symbolProto)
+    val overriddenSymbolsField = Field("overriddenSymbols", +"List<" + IrSimpleFunctionSymbol + ">", simpleFunctionSymbolListProto)
+    val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?", propertySymbolProto)
 
     writeFile("PersistentIrFunctionCommon.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(

@@ -51,6 +51,9 @@ internal object PersistentIrGenerator {
     val IrDeclarationParent = irDeclaration("IrDeclarationParent")
     val IrAnonymousInitializer = irDeclaration("IrAnonymousInitializer")
     val IrClass = irDeclaration("IrClass")
+    val IrFunction = irDeclaration("IrFunction")
+    val IrSimpleFunction = irDeclaration("IrSimpleFunction")
+    val IrField = irDeclaration("IrField")
     val IrTypeParameter = irDeclaration("IrTypeParameter")
     val IrValueParameter = irDeclaration("IrValueParameter")
     val MetadataSource = irDeclaration("MetadataSource")
@@ -73,6 +76,7 @@ internal object PersistentIrGenerator {
     val IrType = import("IrType", "org.jetbrains.kotlin.ir.types")
 
     val IrPropertySymbol = irSymbol("IrPropertySymbol")
+    val IrSimpleFunctionSymbol = irSymbol("IrSimpleFunctionSymbol")
 
     // Constructor parameters
 
@@ -148,9 +152,14 @@ internal object PersistentIrGenerator {
     val superTypeListProto = Proto("int32", "superType", +"Int", IrType, fieldKind = FieldKind.REPEATED)
     val typeProto = Proto("IrType", "type", protoType, IrType, fieldKind = FieldKind.REQUIRED)
     val optionalTypeProto = Proto("IrType", "type", protoType, IrType, fieldKind = FieldKind.OPTIONAL)
-    val symbolProto = Proto("int64", "symbol", +"Long", +"Nothing")
-    val symbolListProto = Proto("int64", "symbol", +"Long", +"Nothing", fieldKind = FieldKind.REPEATED)
     val variableProto = Proto("IrVariable", "variable", protoVariable, IrVariable)
+
+    val classProto = Proto("int64", "class", +"Long", IrClass)
+    val propertySymbolProto = Proto("int64", "propertySymbol", +"Long", IrPropertySymbol)
+    val simpleFunctionProto = Proto("int64", "simpleFunction", +"Long", IrSimpleFunction)
+    val simpleFunctionSymbolListProto = Proto("int64", "simpleFunctionSymbol", +"Long", IrSimpleFunctionSymbol, fieldKind = FieldKind.REPEATED)
+    val functionProto = Proto("int64", "function", +"Long", IrFunction)
+    val fieldProto = Proto("int64", "field", +"Long", IrField)
 
     val visibilityProto = Proto(null, "visibility", +"Long", DescriptorVisibility)
     val modalityProto = Proto(null, "modality", +"Long", descriptorType("Modality"))
@@ -165,8 +174,12 @@ internal object PersistentIrGenerator {
         superTypeListProto,
         typeProto,
         optionalTypeProto,
-        symbolProto,
-        symbolListProto,
+        classProto,
+        propertySymbolProto,
+        simpleFunctionProto,
+        simpleFunctionSymbolListProto,
+        functionProto,
+        fieldProto,
         variableProto,
         visibilityProto,
         modalityProto
@@ -242,13 +255,6 @@ internal object PersistentIrGenerator {
                         if (f.proto == null) {
                             +"null"
                         } else {
-//                            val argument = if (f.proto.protoPrefix != null) {
-//                                val maybeList = if (f.proto.fieldKind == FieldKind.REPEATED) "List" else ""
-//                                "proto.${f.name}$maybeList"
-//                            } else "proto.flags"
-
-                            // proto.annotationList.map { deserializeAnnotation(it) },
-
                             val deserialize = "deserialize${f.proto.entityName.capitalize()}"
 
                             when {
@@ -261,12 +267,6 @@ internal object PersistentIrGenerator {
                                 else ->
                                     +"$deserialize(proto.${f.name})"
                             }
-
-//                            if (f.proto.protoPrefix != null && f.proto.fieldKind == FieldKind.OPTIONAL) {
-//                                +"if (proto.has${f.name.capitalize()}()) deserialize${f.proto.entityName.capitalize()}($argument) else null"
-//                            } else {
-//                                +"deserialize${f.proto.entityName.capitalize()}($argument)"
-//                            }
                         }
                     }.toTypedArray()
                 ).join(separator = ",\n").indent(),
@@ -322,11 +322,6 @@ internal object PersistentIrGenerator {
                                 else ->
                                     +"$action($serializationFun($argument))"
                             }
-//                            if (p.fieldKind == FieldKind.OPTIONAL) {
-//                                +"$argument?.let { $action($serializationFun(it)) }"
-//                            } else {
-//                                +"$action($serializationFun($argument))"
-//                            }
                         } else {
                             // It's a flag
                             if (!flagsHandled) {

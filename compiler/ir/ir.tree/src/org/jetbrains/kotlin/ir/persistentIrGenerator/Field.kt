@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateField() {
     val initializerField = Field("initializer", IrExpressionBody + "?", expressionBodyProto)
-    val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?", symbolProto)
+    val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?", propertySymbolProto)
     val typeField = Field("type", IrType, typeProto)
 
     writeFile("PersistentIrField.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
