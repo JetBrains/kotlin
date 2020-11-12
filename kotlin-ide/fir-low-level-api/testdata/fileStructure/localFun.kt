@@ -1,11 +1,11 @@
-fun x() {/* IncrementallyReanalyzableFunction */
+fun x() {/* ReanalyzableFunctionStructureElement */
     fun y() {
 
     }
 }
 
-class A {/* NonLocalDeclarationFileStructureElement */
-    fun z() {/* IncrementallyReanalyzableFunction */
+class A {/* NonReanalyzableDeclarationStructureElement */
+    fun z() {/* ReanalyzableFunctionStructureElement */
         fun q() {
 
         }

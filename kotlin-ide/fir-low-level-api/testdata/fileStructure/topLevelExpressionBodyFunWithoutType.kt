@@ -1,1 +1,1 @@
-fun foo() = 42/* NonLocalDeclarationFileStructureElement */
+fun foo() = 42/* NonReanalyzableDeclarationStructureElement */
