@@ -635,13 +635,7 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
     }
 
     private fun collectTypeParameters(): List<TypeParameterDescriptor> =
-        generateSequence(owner as IrTypeParametersContainer,
-                         { current ->
-                             val parent = current.parent as? IrTypeParametersContainer
-                             if (parent is IrClass && current is IrClass && !current.isInner) null
-                             else parent
-                         })
-            .flatMap { it.typeParameters }
+        owner.typeConstructorParameters
             .map { it.toIrBasedDescriptor() }
             .toList()
 

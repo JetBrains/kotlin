@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.typeConstructorParameters
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.*
@@ -612,13 +613,7 @@ open class WrappedClassDescriptor : ClassDescriptor, WrappedDeclarationDescripto
     }
 
     private fun collectTypeParameters(): List<TypeParameterDescriptor> =
-        generateSequence(owner as IrTypeParametersContainer,
-                         { current ->
-                             val parent = current.parent as? IrTypeParametersContainer
-                             if (parent is IrClass && current is IrClass && !current.isInner) null
-                             else parent
-                         })
-            .flatMap { it.typeParameters }
+        owner.typeConstructorParameters
             .map { it.descriptor }
             .toList()
 
