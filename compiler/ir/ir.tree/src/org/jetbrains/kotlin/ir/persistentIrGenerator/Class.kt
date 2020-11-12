@@ -10,9 +10,7 @@ internal fun PersistentIrGenerator.generateClass() {
     val thisReceiverField = Field("thisReceiver", irDeclaration("IrValueParameter") + "?", valueParameterProtoType)
     val typeParametersField = Field("typeParameters", +"List<" + irDeclaration("IrTypeParameter") + ">", typeParameterListProtoType)
     val superTypesField = Field("superTypes", +"List<" + import("IrType", "org.jetbrains.kotlin.ir.types") + ">", superTypeListProtoType)
-    val metadataField = Field("metadata", irDeclaration("MetadataSource") + "?", null)
     val modalityField = Field("modality", descriptorType("Modality"), null)
-    val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer, null)
 
     writeFile("PersistentIrClass.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -54,7 +52,7 @@ internal fun PersistentIrGenerator.generateClass() {
                             ),
                             id,
                             +"""
-                                return if (stageController.canAccessDeclarationsOf(this)) {
+                                return if (factory.stageController.canAccessDeclarationsOf(this)) {
                                     ensureLowered()
                                     field
                                 } else {
@@ -66,9 +64,9 @@ internal fun PersistentIrGenerator.generateClass() {
                 ),
                 typeParametersField.toPersistentField(+"emptyList()"),
                 superTypesField.toPersistentField(+"emptyList()"),
-                metadataField.toPersistentField(+"null"),
+                +"override var metadata: " + MetadataSource + "? = null",
                 modalityField.toPersistentField(+"modality"),
-                attributeOwnerIdField.toPersistentField(+"this"),
+                +"override var attributeOwnerId: " + IrAttributeContainer + " = this",
             ),
             id,
         )()
@@ -78,10 +76,8 @@ internal fun PersistentIrGenerator.generateClass() {
         carriers(
             "Class",
             thisReceiverField,
-            metadataField,
             visibilityField,
             modalityField,
-            attributeOwnerIdField,
             typeParametersField,
             superTypesField
         )()

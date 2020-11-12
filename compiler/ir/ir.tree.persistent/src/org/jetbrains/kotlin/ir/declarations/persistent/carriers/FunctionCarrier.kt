@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -25,13 +23,11 @@ internal interface FunctionCarrier : DeclarationCarrier{
     var dispatchReceiverParameterField: IrValueParameter?
     var extensionReceiverParameterField: IrValueParameter?
     var bodyField: IrBody?
-    var metadataField: MetadataSource?
     var visibilityField: DescriptorVisibility
     var typeParametersField: List<IrTypeParameter>
     var valueParametersField: List<IrValueParameter>
     var correspondingPropertySymbolField: IrPropertySymbol?
     var overriddenSymbolsField: List<IrSimpleFunctionSymbol>
-    var attributeOwnerIdField: IrAttributeContainer
 
     override fun clone(): FunctionCarrier {
         return FunctionCarrierImpl(
@@ -43,13 +39,11 @@ internal interface FunctionCarrier : DeclarationCarrier{
             dispatchReceiverParameterField,
             extensionReceiverParameterField,
             bodyField,
-            metadataField,
             visibilityField,
             typeParametersField,
             valueParametersField,
             correspondingPropertySymbolField,
-            overriddenSymbolsField,
-            attributeOwnerIdField
+            overriddenSymbolsField
         )
     }
 }
@@ -63,11 +57,9 @@ internal class FunctionCarrierImpl(
     override var dispatchReceiverParameterField: IrValueParameter?,
     override var extensionReceiverParameterField: IrValueParameter?,
     override var bodyField: IrBody?,
-    override var metadataField: MetadataSource?,
     override var visibilityField: DescriptorVisibility,
     override var typeParametersField: List<IrTypeParameter>,
     override var valueParametersField: List<IrValueParameter>,
     override var correspondingPropertySymbolField: IrPropertySymbol?,
-    override var overriddenSymbolsField: List<IrSimpleFunctionSymbol>,
-    override var attributeOwnerIdField: IrAttributeContainer
+    override var overriddenSymbolsField: List<IrSimpleFunctionSymbol>
 ) : FunctionCarrier

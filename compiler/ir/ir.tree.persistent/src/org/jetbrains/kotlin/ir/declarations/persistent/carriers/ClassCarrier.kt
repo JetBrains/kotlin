@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -20,10 +18,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 
 internal interface ClassCarrier : DeclarationCarrier{
     var thisReceiverField: IrValueParameter?
-    var metadataField: MetadataSource?
     var visibilityField: DescriptorVisibility
     var modalityField: Modality
-    var attributeOwnerIdField: IrAttributeContainer
     var typeParametersField: List<IrTypeParameter>
     var superTypesField: List<IrType>
 
@@ -34,10 +30,8 @@ internal interface ClassCarrier : DeclarationCarrier{
             originField,
             annotationsField,
             thisReceiverField,
-            metadataField,
             visibilityField,
             modalityField,
-            attributeOwnerIdField,
             typeParametersField,
             superTypesField
         )
@@ -50,10 +44,8 @@ internal class ClassCarrierImpl(
     override var originField: IrDeclarationOrigin,
     override var annotationsField: List<IrConstructorCall>,
     override var thisReceiverField: IrValueParameter?,
-    override var metadataField: MetadataSource?,
     override var visibilityField: DescriptorVisibility,
     override var modalityField: Modality,
-    override var attributeOwnerIdField: IrAttributeContainer,
     override var typeParametersField: List<IrTypeParameter>,
     override var superTypesField: List<IrType>
 ) : ClassCarrier

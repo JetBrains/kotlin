@@ -13,10 +13,8 @@ internal fun PersistentIrGenerator.generateFunction() {
     val extensionReceiverParameterField = Field("extensionReceiverParameter", IrValueParameter + "?", valueParameterProtoType)
     val valueParametersField = Field("valueParameters", +"List<" + IrValueParameter + ">", valueParameterListProtoType)
     val bodyField = Field("body", IrBody + "?", bodyProtoType)
-    val metadataField = Field("metadata", MetadataSource + "?")
     val visibilityField = Field("visibility", DescriptorVisibility)
     val overriddenSymbolsField = Field("overriddenSymbols", +"List<" + irSymbol("IrSimpleFunctionSymbol") + ">", symbolListProtoType)
-    val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer)
     val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?", symbolProtoType)
 
     writeFile("PersistentIrFunctionCommon.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
@@ -65,13 +63,10 @@ internal fun PersistentIrGenerator.generateFunction() {
                 extensionReceiverParameterField.toPersistentField(+"null"),
                 valueParametersField.toPersistentField(+"emptyList()"),
                 bodyField.toBody(),
-                metadataField.toPersistentField(+"null"),
+                +"override var metadata: " + MetadataSource + "? = null",
                 visibilityField.toPersistentField(+"visibility"),
                 overriddenSymbolsField.toPersistentField(+"emptyList()"),
-                lines(
-                    +"@Suppress(\"LeakingThis\")",
-                    attributeOwnerIdField.toPersistentField(+"this"),
-                ),
+                +"override var attributeOwnerId: " + IrAttributeContainer + " = this",
                 correspondingPropertySymbolField.toPersistentField(+"null"),
             ),
             id,
@@ -85,13 +80,11 @@ internal fun PersistentIrGenerator.generateFunction() {
             dispatchReceiverParameterField,
             extensionReceiverParameterField,
             bodyField,
-            metadataField,
             visibilityField,
             typeParametersField,
             valueParametersField,
             correspondingPropertySymbolField,
             overriddenSymbolsField,
-            attributeOwnerIdField,
         )()
     })
 

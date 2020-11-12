@@ -79,24 +79,7 @@ internal abstract class PersistentIrPropertyCommon(
             }
         }
 
-    override var metadataField: MetadataSource? = null
+    override var metadata: MetadataSource? = null
 
-    override var metadata: MetadataSource?
-        get() = getCarrier().metadataField
-        set(v) {
-            if (metadata !== v) {
-                setCarrier().metadataField = v
-            }
-        }
-
-    @Suppress("LeakingThis")
-    override var attributeOwnerIdField: IrAttributeContainer = this
-
-    override var attributeOwnerId: IrAttributeContainer
-        get() = getCarrier().attributeOwnerIdField
-        set(v) {
-            if (attributeOwnerId !== v) {
-                setCarrier().attributeOwnerIdField = v
-            }
-        }
+    override var attributeOwnerId: IrAttributeContainer = this
 }

@@ -128,15 +128,7 @@ internal abstract class PersistentIrFunctionCommon(
             }
         }
 
-    override var metadataField: MetadataSource? = null
-
-    override var metadata: MetadataSource?
-        get() = getCarrier().metadataField
-        set(v) {
-            if (metadata !== v) {
-                setCarrier().metadataField = v
-            }
-        }
+    override var metadata: MetadataSource? = null
 
     override var visibilityField: DescriptorVisibility = visibility
 
@@ -158,16 +150,7 @@ internal abstract class PersistentIrFunctionCommon(
             }
         }
 
-    @Suppress("LeakingThis")
-    override var attributeOwnerIdField: IrAttributeContainer = this
-
-    override var attributeOwnerId: IrAttributeContainer
-        get() = getCarrier().attributeOwnerIdField
-        set(v) {
-            if (attributeOwnerId !== v) {
-                setCarrier().attributeOwnerIdField = v
-            }
-        }
+    override var attributeOwnerId: IrAttributeContainer = this
 
     override var correspondingPropertySymbolField: IrPropertySymbol? = null
 

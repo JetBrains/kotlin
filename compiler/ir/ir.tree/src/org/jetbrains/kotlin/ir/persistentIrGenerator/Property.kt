@@ -9,8 +9,6 @@ internal fun PersistentIrGenerator.generateProperty() {
     val backingFieldField = Field("backingField", irDeclaration("IrField") + "?", symbolProtoType)
     val getterField = Field("getter", irDeclaration("IrSimpleFunction") + "?", symbolProtoType)
     val setterField = Field("setter", irDeclaration("IrSimpleFunction") + "?", symbolProtoType)
-    val metadataField = Field("metadata", MetadataSource + "?")
-    val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer)
 
     writeFile("PersistentIrPropertyCommon.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -36,11 +34,8 @@ internal fun PersistentIrGenerator.generateProperty() {
                 backingFieldField.toPersistentField(+"null"),
                 getterField.toPersistentField(+"null"),
                 setterField.toPersistentField(+"null"),
-                metadataField.toPersistentField(+"null"),
-                lines(
-                    +"@Suppress(\"LeakingThis\")",
-                    attributeOwnerIdField.toPersistentField(+"this"),
-                ),
+                +"override var metadata: " + MetadataSource + "? = null",
+                +"override var attributeOwnerId: " + IrAttributeContainer + " = this",
             ),
             id,
         )()
@@ -52,8 +47,6 @@ internal fun PersistentIrGenerator.generateProperty() {
             backingFieldField,
             getterField,
             setterField,
-            metadataField,
-            attributeOwnerIdField,
         )()
     })
 

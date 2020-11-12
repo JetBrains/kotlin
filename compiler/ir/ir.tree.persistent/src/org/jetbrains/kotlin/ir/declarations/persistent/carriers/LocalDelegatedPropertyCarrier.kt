@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 
@@ -20,7 +19,6 @@ internal interface LocalDelegatedPropertyCarrier : DeclarationCarrier{
     var delegateField: IrVariable?
     var getterField: IrFunction?
     var setterField: IrFunction?
-    var metadataField: MetadataSource?
 
     override fun clone(): LocalDelegatedPropertyCarrier {
         return LocalDelegatedPropertyCarrierImpl(
@@ -31,8 +29,7 @@ internal interface LocalDelegatedPropertyCarrier : DeclarationCarrier{
             typeField,
             delegateField,
             getterField,
-            setterField,
-            metadataField
+            setterField
         )
     }
 }
@@ -45,6 +42,5 @@ internal class LocalDelegatedPropertyCarrierImpl(
     override var typeField: IrType,
     override var delegateField: IrVariable?,
     override var getterField: IrFunction?,
-    override var setterField: IrFunction?,
-    override var metadataField: MetadataSource?
+    override var setterField: IrFunction?
 ) : LocalDelegatedPropertyCarrier

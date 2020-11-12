@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
-import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
@@ -22,7 +21,6 @@ internal interface ConstructorCarrier : DeclarationCarrier{
     var dispatchReceiverParameterField: IrValueParameter?
     var extensionReceiverParameterField: IrValueParameter?
     var bodyField: IrBody?
-    var metadataField: MetadataSource?
     var visibilityField: DescriptorVisibility
     var typeParametersField: List<IrTypeParameter>
     var valueParametersField: List<IrValueParameter>
@@ -37,7 +35,6 @@ internal interface ConstructorCarrier : DeclarationCarrier{
             dispatchReceiverParameterField,
             extensionReceiverParameterField,
             bodyField,
-            metadataField,
             visibilityField,
             typeParametersField,
             valueParametersField
@@ -54,7 +51,6 @@ internal class ConstructorCarrierImpl(
     override var dispatchReceiverParameterField: IrValueParameter?,
     override var extensionReceiverParameterField: IrValueParameter?,
     override var bodyField: IrBody?,
-    override var metadataField: MetadataSource?,
     override var visibilityField: DescriptorVisibility,
     override var typeParametersField: List<IrTypeParameter>,
     override var valueParametersField: List<IrValueParameter>

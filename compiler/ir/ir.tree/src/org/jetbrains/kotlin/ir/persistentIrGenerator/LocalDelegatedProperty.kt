@@ -10,7 +10,6 @@ internal fun PersistentIrGenerator.generateLocalDelegatedProperty() {
     val delegateField = Field("delegate", irDeclaration("IrVariable"), variableProtoType, lateinit = true)
     val getterField = Field("getter", irDeclaration("IrFunction"), symbolProtoType, lateinit = true)
     val setterField = Field("setter", irDeclaration("IrFunction") + "?", symbolProtoType)
-    val metadataField = Field("metadata", MetadataSource + "?")
 
     writeFile("PersistentIrLocalDelegatedProperty.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -35,7 +34,7 @@ internal fun PersistentIrGenerator.generateLocalDelegatedProperty() {
                 delegateField.toPersistentField(+"null"),
                 getterField.toPersistentField(+"null"),
                 setterField.toPersistentField(+"null"),
-                metadataField.toPersistentField(+"null"),
+                +"override var metadata: " + MetadataSource + "? = null",
             ),
             id,
         )()
@@ -48,7 +47,6 @@ internal fun PersistentIrGenerator.generateLocalDelegatedProperty() {
             delegateField,
             getterField,
             setterField,
-            metadataField,
         )()
     })
 

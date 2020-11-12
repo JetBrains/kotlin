@@ -12,7 +12,6 @@ internal fun PersistentIrGenerator.generateConstructor() {
     val extensionReceiverParameterField = Field("extensionReceiverParameter", IrValueParameter + "?", valueParameterProtoType)
     val valueParametersField = Field("valueParameters", +"List<" + IrValueParameter + ">", valueParameterListProtoType)
     val bodyField = Field("body", IrBody + "?", bodyProtoType)
-    val metadataField = Field("metadata", MetadataSource + "?")
     val visibilityField = Field("visibility", DescriptorVisibility)
 
     writeFile("PersistentIrConstructor.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
@@ -54,7 +53,7 @@ internal fun PersistentIrGenerator.generateConstructor() {
                 extensionReceiverParameterField.toPersistentField(+"null"),
                 valueParametersField.toPersistentField(+"emptyList()"),
                 bodyField.toBody(),
-                metadataField.toPersistentField(+"null"),
+                +"override var metadata: " + MetadataSource + "? = null",
                 visibilityField.toPersistentField(+"visibility"),
                 descriptor(ClassConstructorDescriptor)
             ),
@@ -69,7 +68,6 @@ internal fun PersistentIrGenerator.generateConstructor() {
             dispatchReceiverParameterField,
             extensionReceiverParameterField,
             bodyField,
-            metadataField,
             visibilityField,
             typeParametersField,
             valueParametersField
