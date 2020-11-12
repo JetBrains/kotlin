@@ -1,4 +1,4 @@
-fun foo(): Int {/* IncrementallyReanalyzableFunction */
+fun foo(): Int {/* ReanalyzableFunctionStructureElement */
     println("")
     return 10
 }

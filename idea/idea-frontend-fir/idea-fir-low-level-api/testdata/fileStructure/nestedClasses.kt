@@ -1,16 +1,16 @@
-class A {/* NonLocalDeclarationFileStructureElement */
-    class B {/* NonLocalDeclarationFileStructureElement */
-        fun x() {/* IncrementallyReanalyzableFunction */
+class A {/* NonReanalyzableDeclarationStructureElement */
+    class B {/* NonReanalyzableDeclarationStructureElement */
+        fun x() {/* ReanalyzableFunctionStructureElement */
         }
 
-        class C {/* NonLocalDeclarationFileStructureElement */
+        class C {/* NonReanalyzableDeclarationStructureElement */
 
         }
     }
 
-    class E {/* NonLocalDeclarationFileStructureElement */
+    class E {/* NonReanalyzableDeclarationStructureElement */
 
     }
 
-    fun y(): Int = 10/* IncrementallyReanalyzableFunction */
+    fun y(): Int = 10/* ReanalyzableFunctionStructureElement */
 }

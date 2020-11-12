@@ -1,6 +1,6 @@
-class A {/* NonLocalDeclarationFileStructureElement */
-    fun x() {/* IncrementallyReanalyzableFunction */
+class A {/* NonReanalyzableDeclarationStructureElement */
+    fun x() {/* ReanalyzableFunctionStructureElement */
 
     }
-    fun y(): Int = 10/* IncrementallyReanalyzableFunction */
+    fun y(): Int = 10/* ReanalyzableFunctionStructureElement */
 }

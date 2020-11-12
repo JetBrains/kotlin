@@ -1,9 +1,9 @@
-fun a() {/* IncrementallyReanalyzableFunction */
+fun a() {/* ReanalyzableFunctionStructureElement */
     class X
 }
 
-class Y {/* NonLocalDeclarationFileStructureElement */
-    fun b() {/* IncrementallyReanalyzableFunction */
+class Y {/* NonReanalyzableDeclarationStructureElement */
+    fun b() {/* ReanalyzableFunctionStructureElement */
         class Z
     }
 }

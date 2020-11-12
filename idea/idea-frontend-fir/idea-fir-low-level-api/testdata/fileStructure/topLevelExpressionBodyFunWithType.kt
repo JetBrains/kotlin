@@ -1,1 +1,1 @@
-fun foo(): Int = 42/* IncrementallyReanalyzableFunction */
+fun foo(): Int = 42/* ReanalyzableFunctionStructureElement */
