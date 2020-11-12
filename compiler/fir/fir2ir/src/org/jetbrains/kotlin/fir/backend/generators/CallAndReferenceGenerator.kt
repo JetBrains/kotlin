@@ -276,69 +276,77 @@ class CallAndReferenceGenerator(
     }
 
     fun convertToIrSetCall(variableAssignment: FirVariableAssignment, explicitReceiverExpression: IrExpression?): IrExpression {
-        val type = irBuiltIns.unitType
-        val calleeReference = variableAssignment.calleeReference
-        val symbol = calleeReference.toSymbolForCall(session, classifierStorage, declarationStorage, conversionScope, preferGetter = false)
-        val origin = IrStatementOrigin.EQ
-        return variableAssignment.convertWithOffsets { startOffset, endOffset ->
-            val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
-            when (symbol) {
-                is IrFieldSymbol -> IrSetFieldImpl(startOffset, endOffset, symbol, type, origin).apply {
-                    value = assignedValue
-                }
-                is IrLocalDelegatedPropertySymbol -> {
-                    val setter = symbol.owner.setter
-                    when {
-                        setter != null -> IrCallImpl(
-                            startOffset, endOffset, type, setter.symbol,
-                            typeArgumentsCount = setter.typeParameters.size,
+        try {
+            val type = irBuiltIns.unitType
+            val calleeReference = variableAssignment.calleeReference
+            val symbol =
+                calleeReference.toSymbolForCall(session, classifierStorage, declarationStorage, conversionScope, preferGetter = false)
+            val origin = IrStatementOrigin.EQ
+            return variableAssignment.convertWithOffsets { startOffset, endOffset ->
+                val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
+                when (symbol) {
+                    is IrFieldSymbol -> IrSetFieldImpl(startOffset, endOffset, symbol, type, origin).apply {
+                        value = assignedValue
+                    }
+                    is IrLocalDelegatedPropertySymbol -> {
+                        val setter = symbol.owner.setter
+                        when {
+                            setter != null -> IrCallImpl(
+                                startOffset, endOffset, type, setter.symbol,
+                                typeArgumentsCount = setter.typeParameters.size,
+                                valueArgumentsCount = 1,
+                                origin = origin,
+                                superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol(symbol)
+                            ).apply {
+                                putValueArgument(0, assignedValue)
+                            }
+                            else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
+                        }
+                    }
+                    is IrPropertySymbol -> {
+                        val irProperty = symbol.owner
+                        val setter = irProperty.setter
+                        val backingField = irProperty.backingField
+                        when {
+                            setter != null -> IrCallImpl(
+                                startOffset, endOffset, type, setter.symbol,
+                                typeArgumentsCount = setter.typeParameters.size,
+                                valueArgumentsCount = 1,
+                                origin = origin,
+                                superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol(symbol)
+                            ).apply {
+                                putValueArgument(0, assignedValue)
+                            }
+                            backingField != null -> IrSetFieldImpl(
+                                startOffset, endOffset, backingField.symbol, type,
+                                origin = null, // NB: to be consistent with PSI2IR, origin should be null here
+                                superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol(symbol)
+                            ).apply {
+                                value = assignedValue
+                            }
+                            else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
+                        }
+                    }
+                    is IrSimpleFunctionSymbol -> {
+                        IrCallImpl(
+                            startOffset, endOffset, type, symbol,
+                            typeArgumentsCount = symbol.owner.typeParameters.size,
                             valueArgumentsCount = 1,
-                            origin = origin,
-                            superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol(symbol)
+                            origin = origin
                         ).apply {
                             putValueArgument(0, assignedValue)
                         }
-                        else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
                     }
+                    is IrVariableSymbol -> IrSetValueImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
+                    else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
                 }
-                is IrPropertySymbol -> {
-                    val irProperty = symbol.owner
-                    val setter = irProperty.setter
-                    val backingField = irProperty.backingField
-                    when {
-                        setter != null -> IrCallImpl(
-                            startOffset, endOffset, type, setter.symbol,
-                            typeArgumentsCount = setter.typeParameters.size,
-                            valueArgumentsCount = 1,
-                            origin = origin,
-                            superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol(symbol)
-                        ).apply {
-                            putValueArgument(0, assignedValue)
-                        }
-                        backingField != null -> IrSetFieldImpl(
-                            startOffset, endOffset, backingField.symbol, type,
-                            origin = null, // NB: to be consistent with PSI2IR, origin should be null here
-                            superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol(symbol)
-                        ).apply {
-                            value = assignedValue
-                        }
-                        else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
-                    }
-                }
-                is IrSimpleFunctionSymbol -> {
-                    IrCallImpl(
-                        startOffset, endOffset, type, symbol,
-                        typeArgumentsCount = symbol.owner.typeParameters.size,
-                        valueArgumentsCount = 1,
-                        origin = origin
-                    ).apply {
-                        putValueArgument(0, assignedValue)
-                    }
-                }
-                is IrVariableSymbol -> IrSetValueImpl(startOffset, endOffset, type, symbol, assignedValue, origin)
-                else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
-            }
-        }.applyTypeArguments(variableAssignment).applyReceivers(variableAssignment, explicitReceiverExpression)
+            }.applyTypeArguments(variableAssignment).applyReceivers(variableAssignment, explicitReceiverExpression)
+        } catch (e: Throwable) {
+            throw IllegalStateException(
+                "Error while translating ${variableAssignment.render()} " +
+                        "from file ${conversionScope.containingFileIfAny()?.name ?: "???"} to BE IR", e
+            )
+        }
     }
 
     fun convertToIrConstructorCall(annotationCall: FirAnnotationCall): IrExpression {
