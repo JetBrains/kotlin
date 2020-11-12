@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.codeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 
 object CodeMetaInfoParser {
-    private val openingRegex = """(<!([^>]+?)!>)""".toRegex()
+    private val openingRegex = """(<!(.+?)!>)""".toRegex()
     private val closingRegex = """(<!>)""".toRegex()
 
     /*
