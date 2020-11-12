@@ -30,6 +30,7 @@ open class BasicMapsOwner(val cachesDir: File) {
     protected val String.storageFile: File
         get() = File(cachesDir, this + "." + CACHE_EXTENSION)
 
+    @Synchronized
     protected fun <K, V, M : BasicMap<K, V>> registerMap(map: M): M {
         maps.add(map)
         return map
@@ -47,6 +48,7 @@ open class BasicMapsOwner(val cachesDir: File) {
         forEachMapSafe("flush") { it.flush(memoryCachesOnly) }
     }
 
+    @Synchronized
     private fun forEachMapSafe(actionName: String, action: (BasicMap<*, *>) -> Unit) {
         val actionExceptions = LinkedHashMap<String, Exception>()
         maps.forEach {
@@ -66,5 +68,6 @@ open class BasicMapsOwner(val cachesDir: File) {
     }
 
     @TestOnly
+    @Synchronized
     fun dump(): String = maps.joinToString("\n\n") { it.dump() }
 }

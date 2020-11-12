@@ -176,8 +176,8 @@ abstract class AbstractIncrementalCache<ClassName>(
     protected class ClassFqNameToSourceMap(
         storageFile: File,
         private val pathConverter: FileToPathConverter
-    ) :
-        BasicStringMap<String>(storageFile, EnumeratorStringDescriptor(), PathStringDescriptor) {
+    ) : BasicStringMap<String>(storageFile, EnumeratorStringDescriptor(), PathStringDescriptor) {
+
         operator fun set(fqName: FqName, sourceFile: File) {
             storage[fqName.asString()] = pathConverter.toPath(sourceFile)
         }
