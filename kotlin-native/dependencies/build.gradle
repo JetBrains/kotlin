@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import static org.jetbrains.kotlin.konan.util.VisibleNamedKt.getVisibleName
 
 buildscript {
-    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+    apply from: "$rootDir/kotlin-native/gradle/kotlinGradlePlugin.gradle"
 
     repositories {
         maven {
@@ -33,7 +33,7 @@ class NativeDep extends DefaultTask {
     KonanPropertiesLoader konanPropertiesLoader = null
 
     final File getBaseOutDir() {
-        final File res = project.rootProject.ext.dependenciesDir
+        final File res = rootProject.project(":kotlin-native").ext.dependenciesDir
         res.mkdirs()
         return res
     }
@@ -75,7 +75,7 @@ enum DependencyKind {
     String toString() { return name }
 }
 
-def platformManager = rootProject.ext.platformManager
+def platformManager = rootProject.project(":kotlin-native").ext.platformManager
 
 
 platformManager.enabled.each { target ->
@@ -87,7 +87,7 @@ platformManager.enabled.each { target ->
 
     // Also resolves all dependencies:
     final DependencyProcessor dependencyProcessor = new DependencyProcessor(
-            project.rootProject.ext.dependenciesDir,
+            rootProject.project(":kotlin-native").ext.dependenciesDir,
             loader.properties,
             loader.dependencies,
             NativeDep.baseUrl,
@@ -99,7 +99,7 @@ platformManager.enabled.each { target ->
         def dir = kind.getDirectory(loader)
         if (dir != null) {
             String path = dependencyProcessor.resolve(dir).canonicalPath
-            rootProject.ext.set(kind.getPropertyName(target), path)
+            rootProject.project(":kotlin-native").ext.set(kind.getPropertyName(target), path)
         }
     }
 }

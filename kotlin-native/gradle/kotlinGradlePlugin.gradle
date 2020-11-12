@@ -1,17 +1,6 @@
-def properties = ['buildKotlinVersion', 'buildKotlinCompilerRepo', 'kotlinVersion', 'kotlinCompilerRepo']
-
-for (prop in properties) {
-    if (!hasProperty(prop)) {
-        throw new GradleException("Please ensure the '$prop' property is defined before applying this script.")
-    }
-}
-
 project.buildscript.repositories {
     maven {
-        url buildKotlinCompilerRepo
-    }
-    maven {
-        url kotlinCompilerRepo
+        url project.bootstrapKotlinRepo
     }
     maven {
         url 'https://cache-redirector.jetbrains.com/maven-central'
@@ -20,18 +9,12 @@ project.buildscript.repositories {
 }
 
 project.buildscript.dependencies {
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}"
 }
 configurations {
     kotlinCompilerClasspath
 }
-project.repositories {
-    maven { url buildKotlinCompilerRepo }
-    maven {
-        url kotlinCompilerRepo
-    }
-}
 
 project.dependencies {
-    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$buildKotlinVersion")
+    kotlinCompilerClasspath(project(":kotlin-compiler-embeddable"))
 }

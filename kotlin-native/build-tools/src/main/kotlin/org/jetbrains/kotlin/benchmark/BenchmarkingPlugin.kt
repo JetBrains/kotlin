@@ -125,7 +125,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
     protected open fun Project.configureSourceSets(kotlinVersion: String) {
         with(kotlin.sourceSets) {
             commonMain.dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinStdlibVersion")
+                implementation(project(":kotlin-stdlib-common"))
             }
 
             project.configurations.getByName(nativeMain.implementationConfigurationName).apply {
@@ -134,7 +134,7 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
             }
 
             repositories.maven {
-                it.setUrl(kotlinStdlibRepo)
+                setUrl(kotlinStdlibRepo)
             }
 
             additionalConfigurations(this@configureSourceSets)
@@ -215,10 +215,10 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
     protected open fun Project.configureKonanJsonTask(nativeTarget: KotlinNativeTarget): Task {
         return tasks.create("konanJsonReport") {
-            it.group = BENCHMARKING_GROUP
-            it.description = "Builds the benchmarking report for Kotlin/Native."
+            group = BENCHMARKING_GROUP
+            description = "Builds the benchmarking report for Kotlin/Native."
 
-            it.doLast {
+            doLast {
                 val applicationName = benchmark.applicationName
                 val benchContents = buildDir.resolve(nativeBenchResults).readText()
                 val nativeCompileTime = if (benchmark.compileTasks.isEmpty()) getNativeCompileTime(project, applicationName)

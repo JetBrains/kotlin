@@ -3,16 +3,10 @@
  * that can be found in the LICENSE file.
  */
 buildscript {
-    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+    apply from: "$rootDir/kotlin-native/gradle/kotlinGradlePlugin.gradle"
 }
 
 apply plugin: 'kotlin'
-
-repositories {
-    maven {
-        url buildKotlinCompilerRepo
-    }
-}
 
 compileKotlin {
     kotlinOptions {
@@ -22,9 +16,10 @@ compileKotlin {
 
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    implementation project(':backend.native')
-    implementation project(':Interop:StubGenerator')
-    implementation project(':klib')
-    implementation project(":utilities:basic-utils")
+    implementation project(":kotlin-stdlib")
+    implementation project(":kotlin-stdlib-common")
+    implementation project(':kotlin-native:backend.native')
+    implementation project(':kotlin-native:Interop:StubGenerator')
+    implementation project(':kotlin-native:klib')
+    implementation project(":kotlin-native:utilities:basic-utils")
 }

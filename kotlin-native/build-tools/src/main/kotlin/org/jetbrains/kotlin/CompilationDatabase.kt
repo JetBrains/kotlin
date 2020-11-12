@@ -96,9 +96,9 @@ fun mergeCompilationDatabases(project: Project, name: String, paths: List<String
         }
         task
     }
-    return project.tasks.create(name, MergeCompilationDatabases::class.java) { task ->
-        task.dependsOn(subtasks)
-        task.inputFiles.addAll(subtasks.map { it.outputFile })
+    return project.tasks.create(name, MergeCompilationDatabases::class.java) {
+        dependsOn(subtasks)
+        inputFiles.addAll(subtasks.map { it.outputFile })
     }
 }
 
@@ -120,10 +120,10 @@ fun createCompilationDatabasesFromCompileToBitcodeTasks(project: Project, name: 
                 task.objDir)
     }
     for ((target, tasks) in compdbTasks) {
-        project.tasks.create("${target}${name}", MergeCompilationDatabases::class.java) { task ->
-            task.dependsOn(tasks)
-            task.inputFiles.addAll(tasks.map { it.outputFile })
-            task.outputFile = File(File(project.buildDir, target), "compile_commands.json")
+        project.tasks.create("${target}${name}", MergeCompilationDatabases::class.java) {
+            dependsOn(tasks)
+            inputFiles.addAll(tasks.map { it.outputFile })
+            outputFile = File(File(project.buildDir, target), "compile_commands.json")
         }
     }
 }

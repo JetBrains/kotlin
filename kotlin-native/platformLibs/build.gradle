@@ -12,19 +12,11 @@ buildscript {
         }
         mavenCentral()
         maven {
-            url buildKotlinCompilerRepo
-        }
-        maven {
-            url kotlinCompilerRepo
+            url project.bootstrapKotlinRepo
         }
         maven {
             url "https://kotlin.bintray.com/kotlinx"
         }
-    }
-
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$gradlePluginVersion"
-        classpath "org.jetbrains.kotlin:kotlin-native-build-tools:$konanVersion"
     }
 }
 // These properties are used by the 'konan' plugin, thus we set them before applying it.
@@ -54,7 +46,7 @@ private String defFileToLibName(String target, String name) {
 
 // TODO: I think most for the non-DSL language below can either be incorporated into DSL
 // or moved out of .gradle file.
-project.rootProject.ext.platformManager.enabled.each { target ->
+rootProject.project("kotlin-native").ext.platformManager.enabled.each { target ->
 
     def targetName = target.visibleName
 

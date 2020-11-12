@@ -97,11 +97,11 @@ abstract class KonanArtifactTask: KonanTargetableTask(), KonanArtifactSpec {
         platformConfiguration = project.configurations.create("artifact${artifactName}_${target.name}")
         platformConfiguration.extendsFrom(configuration)
         platformConfiguration.attributes{
-            it.attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, Usage.NATIVE_LINK))
-            it.attribute(CppBinary.LINKAGE_ATTRIBUTE, Linkage.STATIC)
-            it.attribute(CppBinary.OPTIMIZED_ATTRIBUTE, false)
-            it.attribute(CppBinary.DEBUGGABLE_ATTRIBUTE, false)
-            it.attribute(Attribute.of("org.gradle.native.kotlin.platform", String::class.java), target.name)
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage::class.java, Usage.NATIVE_LINK))
+            attribute(CppBinary.LINKAGE_ATTRIBUTE, Linkage.STATIC)
+            attribute(CppBinary.OPTIMIZED_ATTRIBUTE, false)
+            attribute(CppBinary.DEBUGGABLE_ATTRIBUTE, false)
+            attribute(Attribute.of("org.gradle.native.kotlin.platform", String::class.java), target.name)
         }
 
         val artifactNameWithoutSuffix = artifact.name.removeSuffix("$artifactSuffix")
