@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorDeclarati
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.FirIdeStructureEl
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.FirIdeProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.isGeneratedDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.ktDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.replaceFirst
 import org.jetbrains.kotlin.psi.*
@@ -138,6 +140,7 @@ internal class NonReanalyzableDeclarationStructureElement(
             firFile,
             onDeclarationEnter = { firDeclaration ->
                 when {
+                    firDeclaration.isGeneratedDeclaration -> DiagnosticCollectorDeclarationAction.SKIP
                     firDeclaration is FirFile -> DiagnosticCollectorDeclarationAction.CHECK_CURRENT_DECLARATION_AND_CHECK_NESTED
                     firDeclaration == fir -> {
                         inCurrentDeclaration = true
