@@ -42,10 +42,11 @@ open class MarkdownParser(
         when (tagName) {
             "see" -> {
                 val referencedName = content.substringBefore(' ')
+                val dri = externalDri(referencedName)
                 See(
                     parseStringToDocNode(content.substringAfter(' ')),
-                    referencedName,
-                    externalDri(referencedName)
+                    dri?.fqName() ?: referencedName,
+                    dri
                 )
             }
             "throws", "exception" -> {
@@ -481,11 +482,14 @@ open class MarkdownParser(
                             )
                             KDocKnownTag.RECEIVER -> Receiver(parseStringToDocNode(it.getContent()))
                             KDocKnownTag.RETURN -> Return(parseStringToDocNode(it.getContent()))
-                            KDocKnownTag.SEE -> See(
-                                parseStringToDocNode(it.getContent()),
-                                it.getSubjectName().orEmpty(),
-                                pointedLink(it),
-                            )
+                            KDocKnownTag.SEE -> {
+                                val dri = pointedLink(it)
+                                See(
+                                    parseStringToDocNode(it.getContent()),
+                                    dri?.fqName() ?: it.getSubjectName().orEmpty(),
+                                    dri,
+                                )
+                            }
                             KDocKnownTag.SINCE -> Since(parseStringToDocNode(it.getContent()))
                             KDocKnownTag.CONSTRUCTOR -> Constructor(parseStringToDocNode(it.getContent()))
                             KDocKnownTag.PROPERTY -> Property(
@@ -504,7 +508,7 @@ open class MarkdownParser(
         }
 
         //Horrible hack but since link resolution is passed as a function i am not able to resolve them otherwise
-        fun DRI.fqName(): String = "$packageName.$classNames"
+        fun DRI.fqName(): String? = "$packageName.$classNames".takeIf { packageName != null && classNames != null }
 
         private fun findParent(kDoc: PsiElement): PsiElement =
             if (kDoc is KDocSection) findParent(kDoc.parent) else kDoc
