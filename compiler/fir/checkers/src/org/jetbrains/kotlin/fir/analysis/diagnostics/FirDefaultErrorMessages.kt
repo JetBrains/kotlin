@@ -127,6 +127,10 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
     }
 
     companion object {
+        fun getRendererForDiagnostic(diagnostic: FirDiagnostic<*>): FirDiagnosticRenderer<*>? {
+            return MAP[diagnostic.factory]
+        }
+
         // * - The old FE reports these diagnostics with additional parameters
         // & - New diagnostic that has no analogues in the old FE
         // + - Better message required
