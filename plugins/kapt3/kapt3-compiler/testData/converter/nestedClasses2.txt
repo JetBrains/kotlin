@@ -4,10 +4,10 @@ import java.lang.System;
 public final class A$B {
     public A$B.C c;
     public A$B.D$E de;
-    public J$B.C jc;
-    public J$B.D$E jde;
     public A$B.D$$E dee;
     public A$B.D$$$E deee;
+    public J$B.C jc;
+    public J$B.D$E jde;
     public J$B.D$$E jdee;
     public J$B.D$$$E jdeee;
 
@@ -245,6 +245,11 @@ public final class Test1 extends Foo.Bar implements IFoo.IBar, IFoo.IBar.IZoo {
     @org.jetbrains.annotations.NotNull()
     private final Foo.Bar.Zoo zoo = null;
 
+    public Test1(@org.jetbrains.annotations.NotNull()
+    Foo.Bar.Zoo zoo) {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final java.lang.Thread.State a() {
         return null;
@@ -258,10 +263,5 @@ public final class Test1 extends Foo.Bar implements IFoo.IBar, IFoo.IBar.IZoo {
     @org.jetbrains.annotations.NotNull()
     public final Foo.Bar.Zoo getZoo() {
         return null;
-    }
-
-    public Test1(@org.jetbrains.annotations.NotNull()
-    Foo.Bar.Zoo zoo) {
-        super();
     }
 }

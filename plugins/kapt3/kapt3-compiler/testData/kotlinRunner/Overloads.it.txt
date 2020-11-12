@@ -28,6 +28,15 @@ public final class State {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String someString = null;
 
+    public State(int someInt, long someLong) {
+        super();
+    }
+
+    public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
+    java.lang.String someString) {
+        super();
+    }
+
     public final int getSomeInt() {
         return 0;
     }
@@ -39,14 +48,5 @@ public final class State {
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getSomeString() {
         return null;
-    }
-
-    public State(int someInt, long someLong, @org.jetbrains.annotations.NotNull()
-    java.lang.String someString) {
-        super();
-    }
-
-    public State(int someInt, long someLong) {
-        super();
     }
 }

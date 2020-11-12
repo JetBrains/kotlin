@@ -387,11 +387,21 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
             )
         }
 
-        val fields = mapJList<FieldNode, JCTree>(clazz.fields) {
+        //   Class methods and fields are currently sorted at serialization (see DescriptorSerializer.sort) and at deserialization (see
+        // DeserializedMemberScope.OptimizedImplementation#addMembers). Therefore, the contents of the generated stub files are sorted in
+        // incremental builds but not in clean builds.
+        //   The consequence is that the contents of the generated stub files may not be consistent across a clean build and an incremental
+        // build, making the build non-deterministic and dependent tasks run unnecessarily (see KT-40882).
+        //   To work around that, we always sort class methods and fields when outputting stub files. Once we remove the sorting at both
+        // serialization and deserialization (KT-20980), we can remove this workaround.
+        val sortedFields = clazz.fields.toList().sortedWith(compareBy({ it.name }, { it.desc }))
+        val sortedMethods = clazz.methods.toList().sortedWith(compareBy({ it.name }, { it.desc }))
+
+        val fields = mapJList<FieldNode, JCTree>(sortedFields) {
             if (it.isEnumValue()) null else convertField(it, clazz, lineMappings, packageFqName)
         }
 
-        val methods = mapJList<MethodNode, JCTree>(clazz.methods) {
+        val methods = mapJList<MethodNode, JCTree>(sortedMethods) {
             if (isEnum) {
                 if (it.name == "values" && it.desc == "()[L${clazz.name};") return@mapJList null
                 if (it.name == "valueOf" && it.desc == "(Ljava/lang/String;)L${clazz.name};") return@mapJList null

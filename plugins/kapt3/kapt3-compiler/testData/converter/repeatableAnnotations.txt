@@ -4,9 +4,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoArray {
 
-    public abstract int x();
-
     public abstract java.lang.String[] a();
+
+    public abstract int x();
 }
 
 ////////////////////
@@ -18,9 +18,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoBoolean {
 
-    public abstract int x();
-
     public abstract boolean bool();
+
+    public abstract int x();
 }
 
 ////////////////////
@@ -32,9 +32,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoChar {
 
-    public abstract int x();
-
     public abstract char chr();
+
+    public abstract int x();
 }
 
 ////////////////////
@@ -46,9 +46,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoClass {
 
-    public abstract int x();
-
     public abstract java.lang.Class<Color> c();
+
+    public abstract int x();
 }
 
 ////////////////////
@@ -60,9 +60,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoDouble {
 
-    public abstract int x();
-
     public abstract double dbl();
+
+    public abstract int x();
 }
 
 ////////////////////
@@ -74,9 +74,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoEnum {
 
-    public abstract int x();
-
     public abstract Color c();
+
+    public abstract int x();
 }
 
 ////////////////////
@@ -88,9 +88,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoFloat {
 
-    public abstract int x();
-
     public abstract float flt();
+
+    public abstract int x();
 }
 
 ////////////////////
@@ -102,9 +102,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoInt {
 
-    public abstract int x();
-
     public abstract int i();
+
+    public abstract int x();
 }
 
 ////////////////////
@@ -116,9 +116,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoIntArray {
 
-    public abstract int x();
-
     public abstract int[] b();
+
+    public abstract int x();
 }
 
 ////////////////////
@@ -130,9 +130,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoLong {
 
-    public abstract int x();
-
     public abstract long l();
+
+    public abstract int x();
 }
 
 ////////////////////
@@ -144,9 +144,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoLongArray {
 
-    public abstract int x();
-
     public abstract long[] b();
+
+    public abstract int x();
 }
 
 ////////////////////
@@ -158,9 +158,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface AnnoString {
 
-    public abstract int x();
-
     public abstract java.lang.String s();
+
+    public abstract int x();
 }
 
 ////////////////////
@@ -186,11 +186,8 @@ public final class Test {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String value = "";
 
-    @lib.Anno(value = "3", construct = {"C"})
-    @lib.Anno(value = "2", construct = {"A", "B"})
-    @lib.Anno(value = "1")
-    @java.lang.Deprecated()
-    public static void getValue$annotations() {
+    public Test() {
+        super();
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -198,8 +195,11 @@ public final class Test {
         return null;
     }
 
-    public Test() {
-        super();
+    @lib.Anno(value = "3", construct = {"C"})
+    @lib.Anno(value = "2", construct = {"A", "B"})
+    @lib.Anno(value = "1")
+    @java.lang.Deprecated()
+    public static void getValue$annotations() {
     }
 }
 

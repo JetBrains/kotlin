@@ -398,9 +398,9 @@ open class Kapt3IT : Kapt3BaseIT() {
             val actual = getErrorMessages()
             // try as 0 starting lines first, then as 1 starting line
             try {
-                Assert.assertEquals(genJavaErrorString(8, 16), actual)
+                Assert.assertEquals(genJavaErrorString(8, 15), actual)
             } catch (e: AssertionError) {
-                Assert.assertEquals(genJavaErrorString(9, 17), actual)
+                Assert.assertEquals(genJavaErrorString(9, 16), actual)
             }
         }
 
