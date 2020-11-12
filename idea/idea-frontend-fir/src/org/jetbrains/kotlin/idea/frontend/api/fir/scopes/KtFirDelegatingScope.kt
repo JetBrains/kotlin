@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
@@ -73,6 +75,15 @@ internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builde
             }
             callables.add(symbol)
         }
+
+        if (name.isSpecial && name.asString() == "<init>") {
+            processDeclaredConstructors { firConstructor ->
+                firConstructor.fir.let { fir ->
+                    callables.add(builder.buildConstructorSymbol(fir))
+                }
+            }
+        }
+
         yieldAll(callables)
     }
 }

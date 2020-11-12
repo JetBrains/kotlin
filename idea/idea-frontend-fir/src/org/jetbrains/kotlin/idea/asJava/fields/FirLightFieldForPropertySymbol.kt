@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyGetterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 
@@ -42,14 +41,18 @@ internal class FirLightFieldForPropertySymbol(
 
     private val _modifierList: PsiModifierList by lazyPub {
 
-        val modifiersFromSymbol = propertySymbol.computeModalityForMethod(isTopLevel = isTopLevel, isOverride = false)
+        val isJvmField = propertySymbol.hasJvmFieldAnnotation()
+        val suppressFinal = !isJvmField && !propertySymbol.isVal
+
+        val modifiersFromSymbol = propertySymbol.computeModalityForMethod(
+            isTopLevel = isTopLevel,
+            suppressFinal = suppressFinal
+        )
 
         val basicModifiers = modifiersFromSymbol.add(
             what = PsiModifier.STATIC,
             `if` = forceStatic
         )
-
-        val isJvmField = propertySymbol.hasJvmFieldAnnotation()
 
         val visibility =
             if (isJvmField) propertySymbol.computeVisibility(isTopLevel = false) else PsiModifier.PRIVATE
@@ -58,7 +61,7 @@ internal class FirLightFieldForPropertySymbol(
 
         val modifiers = modifiersWithVisibility.add(
             what = PsiModifier.FINAL,
-            `if` = !isJvmField || propertySymbol.isVal
+            `if` = !suppressFinal
         )
 
         val annotations = propertySymbol.computeAnnotations(

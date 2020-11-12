@@ -18,8 +18,6 @@ abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithDeclarati
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
     abstract val containingEnumClassIdIfNonLocal: ClassId?
 
-    abstract val hasBody: Boolean
-
     abstract override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol>
 }
 
