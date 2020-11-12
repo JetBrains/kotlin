@@ -1,4 +1,4 @@
-public abstract interface GenericInterfaceParametersWithBounds<A : R|ft<kotlin/Comparable<ft<A, A?>!>, kotlin/Comparable<ft<A, A?>!>?>!|, R|ft<kotlin/Cloneable, kotlin/Cloneable?>!|, B : R|ft<kotlin/collections/MutableList<ft<A, A?>!>, kotlin/collections/List<ft<A, A?>!>?>!|> : R|kotlin/Any| {
-    public abstract fun method(a: R|ft<kotlin/Array<ft<A, A?>!>, kotlin/Array<out ft<A, A?>!>?>!|, b: R|ft<B, B?>!|): R|kotlin/Unit|
+public abstract interface GenericInterfaceParametersWithBounds<A : R|ft<@FlexibleNullability kotlin/Comparable<ft<@FlexibleNullability A, A?>!>, kotlin/Comparable<ft<@FlexibleNullability A, A?>!>?>!|, R|ft<@FlexibleNullability kotlin/Cloneable, kotlin/Cloneable?>!|, B : R|ft<@FlexibleNullability kotlin/collections/MutableList<ft<@FlexibleNullability A, A?>!>, kotlin/collections/List<ft<@FlexibleNullability A, A?>!>?>!|> : R|kotlin/Any| {
+    public abstract fun method(a: R|ft<@FlexibleNullability kotlin/Array<ft<@FlexibleNullability A, A?>!>, kotlin/Array<out ft<@FlexibleNullability A, A?>!>?>!|, b: R|ft<@FlexibleNullability B, B?>!|): R|kotlin/Unit|
 
 }

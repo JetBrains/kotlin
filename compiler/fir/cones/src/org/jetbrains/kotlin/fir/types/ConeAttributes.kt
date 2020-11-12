@@ -34,6 +34,7 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         }
 
         val Empty: ConeAttributes = ConeAttributes(emptyList())
+        val WithFlexibleNullability: ConeAttributes = ConeAttributes(listOf(CompilerConeAttributes.FlexibleNullability))
 
         fun create(attributes: List<ConeAttribute<*>>): ConeAttributes {
             return if (attributes.isEmpty()) {
@@ -48,7 +49,16 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         for (attribute in attributes) {
             registerComponent(attribute.key, attribute)
         }
+        assert(!hasEnhancedNullability || !hasFlexibleNullability) {
+            "It doesn't make sense to have @EnhancedNullability and @FlexibleNullability at the same time."
+        }
     }
+
+    val hasEnhancedNullability: Boolean
+        get() = enhancedNullability != null
+
+    val hasFlexibleNullability: Boolean
+        get() = flexibleNullability != null
 
     fun union(other: ConeAttributes): ConeAttributes {
         return perform(other) { this.union(it) }
@@ -56,6 +66,13 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
 
     fun intersect(other: ConeAttributes): ConeAttributes {
         return perform(other) { this.intersect(it) }
+    }
+
+    fun intersectUnless(other: ConeAttributes, predicate: (ConeAttributes) -> Boolean): ConeAttributes {
+        return if (predicate.invoke(this))
+            this
+        else
+            perform(other) { this.intersect(it) }
     }
 
     override fun iterator(): Iterator<ConeAttribute<*>> {

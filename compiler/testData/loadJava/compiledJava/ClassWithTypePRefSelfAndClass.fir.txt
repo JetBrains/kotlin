@@ -1,4 +1,4 @@
-public final class ClassWithTypePRefSelfAndClass<P : R|ft<test/ClassWithTypePRefSelfAndClass<ft<P, P?>!>, test/ClassWithTypePRefSelfAndClass<ft<P, P?>!>?>!|> : R|kotlin/Any| {
-    public constructor<P : R|ft<test/ClassWithTypePRefSelfAndClass<ft<P, P?>!>, test/ClassWithTypePRefSelfAndClass<ft<P, P?>!>?>!|>(): R|test/ClassWithTypePRefSelfAndClass<P>|
+public final class ClassWithTypePRefSelfAndClass<P : R|ft<@FlexibleNullability test/ClassWithTypePRefSelfAndClass<ft<@FlexibleNullability P, P?>!>, test/ClassWithTypePRefSelfAndClass<ft<@FlexibleNullability P, P?>!>?>!|> : R|kotlin/Any| {
+    public constructor<P : R|ft<@FlexibleNullability test/ClassWithTypePRefSelfAndClass<ft<@FlexibleNullability P, P?>!>, test/ClassWithTypePRefSelfAndClass<ft<@FlexibleNullability P, P?>!>?>!|>(): R|test/ClassWithTypePRefSelfAndClass<P>|
 
 }

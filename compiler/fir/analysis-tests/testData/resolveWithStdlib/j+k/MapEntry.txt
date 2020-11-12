@@ -7,7 +7,7 @@ FILE: main.kt
     }
     public final fun test(): R|kotlin/Unit| {
         lval b: R|MyMapEntry| = R|/MyMapEntry.MyMapEntry|()
-        lval key: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/b|.R|/Test.MapEntryImpl.key|
-        lval value: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/b|.R|/Test.MapEntryImpl.value|
+        lval key: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = R|<local>/b|.R|/Test.MapEntryImpl.key|
+        lval value: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = R|<local>/b|.R|/Test.MapEntryImpl.value|
         R|<local>/b|.R|/Test.MapEntryImpl.setValue|(Null(null))
     }

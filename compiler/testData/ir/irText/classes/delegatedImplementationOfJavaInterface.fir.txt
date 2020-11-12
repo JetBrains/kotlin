@@ -30,16 +30,16 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
             receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.takeNotNull' type=<root>.Test origin=null
           x: GET_VAR 'x: @[EnhancedNullability] kotlin.String declared in <root>.Test.takeNotNull' type=@[EnhancedNullability] kotlin.String origin=null
-    FUN DELEGATED_MEMBER name:takeNullable visibility:public modality:OPEN <> ($this:<root>.Test, x:kotlin.String?) returnType:kotlin.Unit
+    FUN DELEGATED_MEMBER name:takeNullable visibility:public modality:OPEN <> ($this:<root>.Test, x:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Unit
       overridden:
-        public abstract fun takeNullable (x: kotlin.String?): kotlin.Unit declared in <root>.J
+        public abstract fun takeNullable (x: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:<root>.Test
-      VALUE_PARAMETER name:x index:0 type:kotlin.String?
+      VALUE_PARAMETER name:x index:0 type:@[FlexibleNullability] kotlin.String?
       BLOCK_BODY
-        CALL 'public abstract fun takeNullable (x: kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+        CALL 'public abstract fun takeNullable (x: @[FlexibleNullability] kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
             receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.takeNullable' type=<root>.Test origin=null
-          x: GET_VAR 'x: kotlin.String? declared in <root>.Test.takeNullable' type=kotlin.String? origin=null
+          x: GET_VAR 'x: @[FlexibleNullability] kotlin.String? declared in <root>.Test.takeNullable' type=@[FlexibleNullability] kotlin.String? origin=null
     FUN DELEGATED_MEMBER name:takeFlexible visibility:public modality:OPEN <> ($this:<root>.Test, x:kotlin.String?) returnType:kotlin.Unit
       overridden:
         public abstract fun takeFlexible (x: kotlin.String?): kotlin.Unit declared in <root>.J
@@ -59,13 +59,13 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
           CALL 'public abstract fun returnNotNull (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.returnNotNull' type=<root>.Test origin=null
-    FUN DELEGATED_MEMBER name:returnNullable visibility:public modality:OPEN <> ($this:<root>.Test) returnType:kotlin.String?
+    FUN DELEGATED_MEMBER name:returnNullable visibility:public modality:OPEN <> ($this:<root>.Test) returnType:@[FlexibleNullability] kotlin.String?
       overridden:
-        public abstract fun returnNullable (): kotlin.String? declared in <root>.J
+        public abstract fun returnNullable (): @[FlexibleNullability] kotlin.String? declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:<root>.Test
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun returnNullable (): kotlin.String? declared in <root>.Test'
-          CALL 'public abstract fun returnNullable (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+        RETURN type=kotlin.Nothing from='public open fun returnNullable (): @[FlexibleNullability] kotlin.String? declared in <root>.Test'
+          CALL 'public abstract fun returnNullable (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.returnNullable' type=<root>.Test origin=null
     FUN DELEGATED_MEMBER name:returnsFlexible visibility:public modality:OPEN <> ($this:<root>.Test) returnType:kotlin.String?

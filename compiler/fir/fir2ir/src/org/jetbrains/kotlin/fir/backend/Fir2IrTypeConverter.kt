@@ -99,6 +99,11 @@ class Fir2IrTypeConverter(
                         typeAnnotations += it
                     }
                 }
+                if (hasFlexibleNullability) {
+                    builtIns.flexibleNullabilityAnnotationConstructorCall()?.let {
+                        typeAnnotations += it
+                    }
+                }
                 IrSimpleTypeImpl(
                     irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,
                     fullyExpandedType(session).typeArguments.map { it.toIrTypeArgument(typeContext) },

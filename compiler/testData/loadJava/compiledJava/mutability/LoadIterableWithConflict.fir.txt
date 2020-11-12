@@ -1,6 +1,6 @@
 public abstract interface LoadIterableWithConflict<T : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/Any| {
-    @R|kotlin/annotations/jvm/ReadOnly|() @R|kotlin/annotations/jvm/Mutable|() public abstract fun getIterable(): R|ft<kotlin/collections/MutableIterable<ft<T, T?>!>, kotlin/collections/Iterable<ft<T, T?>!>?>!|
+    @R|kotlin/annotations/jvm/ReadOnly|() @R|kotlin/annotations/jvm/Mutable|() public abstract fun getIterable(): R|ft<@FlexibleNullability kotlin/collections/MutableIterable<ft<@FlexibleNullability T, T?>!>, kotlin/collections/Iterable<ft<@FlexibleNullability T, T?>!>?>!|
 
-    public abstract fun setIterable(@R|kotlin/annotations/jvm/ReadOnly|() @R|kotlin/annotations/jvm/Mutable|() Iterable: R|ft<kotlin/collections/MutableIterable<ft<T, T?>!>, kotlin/collections/Iterable<ft<T, T?>!>?>!|): R|kotlin/Unit|
+    public abstract fun setIterable(@R|kotlin/annotations/jvm/ReadOnly|() @R|kotlin/annotations/jvm/Mutable|() Iterable: R|ft<@FlexibleNullability kotlin/collections/MutableIterable<ft<@FlexibleNullability T, T?>!>, kotlin/collections/Iterable<ft<@FlexibleNullability T, T?>!>?>!|): R|kotlin/Unit|
 
 }

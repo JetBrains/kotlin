@@ -1,4 +1,4 @@
 FILE: main.kt
     public final fun bar(bindingContext: R|BindingContext|): R|kotlin/Unit| {
-        R|<local>/bindingContext|.R|/BindingContext.get|<R|ft<kotlin/String, kotlin/String?>!|, R|ft<kotlin/Double, kotlin/Double?>!|>(Q|Slices|.R|/Slices.X|, R|<local>/bindingContext|.R|/BindingContext.get|<R|ft<kotlin/Int, kotlin/Int?>!|, R|ft<kotlin/String, kotlin/String?>!|>(Q|Slices|.R|/Slices.Y|, Int(1)))
+        R|<local>/bindingContext|.R|/BindingContext.get|<R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|, R|ft<@FlexibleNullability kotlin/Double, kotlin/Double?>!|>(Q|Slices|.R|/Slices.X|, R|<local>/bindingContext|.R|/BindingContext.get|<R|ft<@FlexibleNullability kotlin/Int, kotlin/Int?>!|, R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|>(Q|Slices|.R|/Slices.Y|, Int(1)))
     }

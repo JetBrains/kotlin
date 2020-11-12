@@ -1,4 +1,4 @@
-public final class ClassWithTypePP<P : R|ft<kotlin/Any, kotlin/Any?>!|, Q : R|ft<P, P?>!|> : R|kotlin/Any| {
-    public constructor<P : R|ft<kotlin/Any, kotlin/Any?>!|, Q : R|ft<P, P?>!|>(): R|test/ClassWithTypePP<P, Q>|
+public final class ClassWithTypePP<P : R|ft<kotlin/Any, kotlin/Any?>!|, Q : R|ft<@FlexibleNullability P, P?>!|> : R|kotlin/Any| {
+    public constructor<P : R|ft<kotlin/Any, kotlin/Any?>!|, Q : R|ft<@FlexibleNullability P, P?>!|>(): R|test/ClassWithTypePP<P, Q>|
 
 }

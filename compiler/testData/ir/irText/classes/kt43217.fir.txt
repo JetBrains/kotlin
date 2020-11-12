@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/kt43217.kt
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.DoubleExpression]'
               FUN name:get visibility:public modality:FINAL <> ($this:<root>.A.b.<no name provided>) returnType:kotlin.Double [operator]
                 overridden:
-                  public abstract fun get (): T of <root>.ObservableValue [operator] declared in <root>.ObservableValue
+                  public abstract fun get (): @[FlexibleNullability] T of <root>.ObservableValue [operator] declared in <root>.ObservableValue
                 $this: VALUE_PARAMETER name:<this> type:<root>.A.b.<no name provided>
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='public final fun get (): kotlin.Double [operator] declared in <root>.A.b.<no name provided>'
@@ -69,7 +69,7 @@ FILE fqName:<root> fileName:/kt43217.kt
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.DoubleExpression]'
     FUN name:get visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Double [operator]
       overridden:
-        public abstract fun get (): T of <root>.ObservableValue [operator] declared in <root>.ObservableValue
+        public abstract fun get (): @[FlexibleNullability] T of <root>.ObservableValue [operator] declared in <root>.ObservableValue
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun get (): kotlin.Double [operator] declared in <root>.C'

@@ -16,7 +16,7 @@ FILE: Main.kt
         R|/takeStrings|(R|<local>/list|)
     }
     public final fun testFromJava(): R|kotlin/Unit| {
-        lval values: R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!| = Q|Utils|.R|/Utils.getStrings|()
-        lval list: R|kotlin/collections/List<ft<kotlin/String, kotlin/String?>!>| = R|/myListOf|<R|ft<kotlin/String, kotlin/String?>!|>(vararg(*R|<local>/values|))
+        lval values: R|ft<@FlexibleNullability kotlin/Array<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<@FlexibleNullability kotlin/String, kotlin/String?>!>?>!| = Q|Utils|.R|/Utils.getStrings|()
+        lval list: R|kotlin/collections/List<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>| = R|/myListOf|<R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|>(vararg(*R|<local>/values|))
         R|/takeStrings|(R|<local>/list|)
     }

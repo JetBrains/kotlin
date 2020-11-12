@@ -15,11 +15,12 @@ import org.jetbrains.kotlin.name.ClassId
 
 fun ConeClassifierLookupTag.constructType(
     typeArguments: Array<out ConeTypeProjection>,
-    isNullable: Boolean
+    isNullable: Boolean,
+    attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeLookupTagBasedType {
     return when (this) {
-        is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isNullable)
-        is ConeClassLikeLookupTag -> this.constructClassType(typeArguments, isNullable)
+        is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isNullable, attributes)
+        is ConeClassLikeLookupTag -> this.constructClassType(typeArguments, isNullable, attributes)
         else -> error("! ${this::class}")
     }
 }

@@ -1,4 +1,4 @@
-public abstract class ClassWithTypePExtendsIterableP<P : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/Any|, R|kotlin/collections/MutableIterable<ft<P, P?>!>| {
+public abstract class ClassWithTypePExtendsIterableP<P : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/Any|, R|kotlin/collections/MutableIterable<ft<@FlexibleNullability P, P?>!>| {
     public constructor<P : R|ft<kotlin/Any, kotlin/Any?>!|>(): R|test/ClassWithTypePExtendsIterableP<P>|
 
 }
