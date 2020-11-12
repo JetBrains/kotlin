@@ -26,7 +26,7 @@ fun throwIfNotCalled() {
     }
     // x *is* initialized here, because if myRun was never called -> exception
     // were thrown and control flow wouldn't be here
-    println(<!UNINITIALIZED_VARIABLE!>x<!>)
+    println(x)
 }
 
 fun catchThrowIfNotCalled() {

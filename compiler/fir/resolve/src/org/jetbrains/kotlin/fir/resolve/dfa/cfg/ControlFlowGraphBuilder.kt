@@ -270,7 +270,9 @@ class ControlFlowGraphBuilder {
         val exitNode = createFunctionExitNode(anonymousFunction).also {
             exitsOfAnonymousFunctions[symbol] = it
             exitTargetsForReturn.push(it)
-            exitTargetsForTry.push(it)
+            if (!invocationKind.isInPlace) {
+                exitTargetsForTry.push(it)
+            }
         }
 
         if (invocationKind.hasTowardEdge) {
@@ -299,13 +301,16 @@ class ControlFlowGraphBuilder {
             else -> false
         }
 
+    private val EventOccurrencesRange?.isInPlace: Boolean
+        get() = this != null
+
     fun exitAnonymousFunction(anonymousFunction: FirAnonymousFunction): Triple<FunctionExitNode, PostponedLambdaExitNode?, ControlFlowGraph> {
-
-
         val symbol = anonymousFunction.symbol
         val exitNode = exitsOfAnonymousFunctions.remove(symbol)!!.also {
             require(it == exitTargetsForReturn.pop())
-            require(it == exitTargetsForTry.pop())
+            if (!anonymousFunction.invocationKind.isInPlace) {
+                require(it == exitTargetsForTry.pop())
+            }
         }
         popAndAddEdge(exitNode)
         exitNode.updateDeadStatus()

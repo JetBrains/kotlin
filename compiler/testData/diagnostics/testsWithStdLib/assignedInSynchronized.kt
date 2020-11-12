@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class A {
     fun test() {
         val a: A

@@ -246,7 +246,7 @@ digraph propertiesAndInitBlocks_kt {
     28 -> {48 34} [color=green];
     28 -> {48 34} [style=dashed];
     29 -> {30};
-    30 -> {33};
+    30 -> {81};
     30 -> {31} [style=dotted];
     31 -> {32} [style=dotted];
     32 -> {33} [style=dotted];
