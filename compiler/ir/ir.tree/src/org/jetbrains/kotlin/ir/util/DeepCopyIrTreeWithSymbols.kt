@@ -228,6 +228,7 @@ open class DeepCopyIrTreeWithSymbols(
             containerSource = declaration.containerSource,
         ).apply {
             transformAnnotations(declaration)
+            copyAttributes(declaration)
             this.backingField = declaration.backingField?.transform()?.also {
                 it.correspondingPropertySymbol = symbol
             }
