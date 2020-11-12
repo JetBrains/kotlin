@@ -29,7 +29,7 @@ KtFirPropertyGetterSymbol:
   modality: FINAL
   origin: SOURCE
   symbolKind: TOP_LEVEL
-  type: Could not render due to java.lang.ClassCastException: org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl cannot be cast to org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+  type: kotlin/Int
   visibility: PUBLIC
 
 KtFirPropertySymbol:
