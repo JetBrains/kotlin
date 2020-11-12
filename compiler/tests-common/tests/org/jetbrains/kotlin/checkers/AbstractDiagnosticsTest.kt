@@ -625,6 +625,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                         getTopLevelPackagesFromFileList(getKtFiles(testFiles, false))
                 ).toSet()
 
+        val checkTypeEnabled = testFiles.any { it.declareCheckType }
         val stepIntoFilter = Predicate<DeclarationDescriptor> { descriptor ->
             val module = DescriptorUtils.getContainingModuleOrNull(descriptor)
             if (module !in modules) return@Predicate false
@@ -633,6 +634,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 val fqName = descriptor.fqName
                 return@Predicate fqName.isRoot || fqName.pathSegments().first() in packagesNames
             }
+
+            if (checkTypeEnabled && descriptor.name in NAMES_OF_CHECK_TYPE_HELPER) return@Predicate false
 
             true
         }
@@ -768,5 +771,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         private val HASH_SANITIZER = fun(s: String): String = s.replace("@(\\d)+".toRegex(), "")
 
         private val MODULE_FILES = ModuleCapability<List<KtFile>>("")
+
+        private val NAMES_OF_CHECK_TYPE_HELPER = listOf("checkSubtype", "CheckTypeInv", "_", "checkType").map { Name.identifier(it) }
     }
 }

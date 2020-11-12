@@ -190,9 +190,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         private val imports: String
             get() = buildString {
                 // Line separator is "\n" intentionally here (see DocumentImpl.assertValidSeparators)
-                if (declareCheckType) {
-                    append(CHECK_TYPE_IMPORT + "\n")
-                }
                 if (declareFlexibleType) {
                     append(EXPLICIT_FLEXIBLE_TYPES_IMPORT + "\n")
                 }
@@ -403,8 +400,6 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
         )
 
         val CHECK_TYPE_DIRECTIVE = "CHECK_TYPE"
-        val CHECK_TYPE_PACKAGE = "tests._checkType"
-        val CHECK_TYPE_IMPORT = "import $CHECK_TYPE_PACKAGE.*"
 
         val EXPLICIT_FLEXIBLE_TYPES_DIRECTIVE = "EXPLICIT_FLEXIBLE_TYPES"
         val EXPLICIT_FLEXIBLE_PACKAGE = InternalFlexibleTypeTransformer.FLEXIBLE_TYPE_CLASSIFIER.packageFqName.asString()
