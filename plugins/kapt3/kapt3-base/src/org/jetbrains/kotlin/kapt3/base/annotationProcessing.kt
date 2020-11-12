@@ -31,7 +31,8 @@ import com.sun.tools.javac.util.List as JavacList
 fun KaptContext.doAnnotationProcessing(
     javaSourceFiles: List<File>,
     processors: List<IncrementalProcessor>,
-    additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil()
+    additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil(),
+    aggregatedTypes: List<String> = emptyList()
 ) {
     val processingEnvironment = JavacProcessingEnvironment.instance(context)
 
@@ -70,12 +71,14 @@ fun KaptContext.doAnnotationProcessing(
                 GeneratedTypesTaskListener(cacheManager!!.javaCache)
             }?.also { compiler.getTaskListeners().add(it) }
 
+            val additionalClassNames = JavacList.from(aggregatedTypes)
             if (isJava9OrLater()) {
-                val processAnnotationsMethod = compiler.javaClass.getMethod("processAnnotations", JavacList::class.java)
-                processAnnotationsMethod.invoke(compiler, analyzedFiles)
+                val processAnnotationsMethod =
+                    compiler.javaClass.getMethod("processAnnotations", JavacList::class.java, java.util.Collection::class.java)
+                processAnnotationsMethod.invoke(compiler, analyzedFiles, additionalClassNames)
                 compiler
             } else {
-                compiler.processAnnotations(analyzedFiles).also {
+                compiler.processAnnotations(analyzedFiles, additionalClassNames).also {
                     generatedSourcesListener?.let { compiler.getTaskListeners().remove(it) }
                 }
             }
@@ -156,7 +159,7 @@ private class ProcessorWrapper(private val delegate: IncrementalProcessor) : Pro
     private var initTime: Long = 0
     private val roundTime = mutableListOf<Long>()
 
-    override fun process(annotations: MutableSet<out TypeElement>?, roundEnv: RoundEnvironment?): Boolean {
+    override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         val (time, result) = measureTimeMillisWithResult {
             delegate.process(annotations, roundEnv)
         }

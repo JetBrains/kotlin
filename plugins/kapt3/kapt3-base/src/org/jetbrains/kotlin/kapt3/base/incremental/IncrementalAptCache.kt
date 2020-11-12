@@ -11,6 +11,7 @@ import java.io.Serializable
 class IncrementalAptCache : Serializable {
 
     private val aggregatingGenerated: MutableSet<File> = mutableSetOf()
+    private val aggregatedTypes: MutableSet<String> = linkedSetOf()
     private val isolatingMapping: MutableMap<File, File> = mutableMapOf()
     // Annotations claimed by aggregating annotation processors
     private val aggregatingClaimedAnnotations: MutableSet<String> = mutableSetOf()
@@ -41,6 +42,9 @@ class IncrementalAptCache : Serializable {
         aggregatingClaimedAnnotations.clear()
         aggregatingClaimedAnnotations.addAll(aggregating.flatMap { it.supportedAnnotationTypes })
 
+        aggregatedTypes.clear()
+        aggregatedTypes.addAll(aggregating.flatMap { it.getAggregatedTypes() })
+
         for (isolatingProcessor in isolating) {
             isolatingProcessor.getGeneratedToSources().forEach {
                 isolatingMapping[it.key] = it.value!!
@@ -52,12 +56,15 @@ class IncrementalAptCache : Serializable {
     fun getAggregatingClaimedAnnotations(): Set<String> = aggregatingClaimedAnnotations
 
     /** Returns generated Java sources originating from aggregating APs. */
-    fun invalidateAggregating(): List<File> {
+    fun invalidateAggregating(): Pair<List<File>, List<String>> {
         val dirtyAggregating = aggregatingGenerated.filter { it.extension == "java" }
         aggregatingGenerated.forEach { it.delete() }
         aggregatingGenerated.clear()
 
-        return dirtyAggregating
+        val dirtyAggregated = ArrayList(aggregatedTypes)
+        aggregatedTypes.clear()
+
+        return dirtyAggregating to dirtyAggregated
     }
 
     /** Returns generated Java sources originating from the specified sources, and generated  by isloating APs. */

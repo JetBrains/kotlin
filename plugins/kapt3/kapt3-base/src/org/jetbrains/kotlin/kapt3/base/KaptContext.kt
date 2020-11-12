@@ -111,7 +111,7 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
             val compileClasspath = if (sourcesToReprocess is SourcesToReprocess.FullRebuild) {
                 options.compileClasspath
             } else {
-                options.compileClasspath + options.compiledSources
+                options.compileClasspath + options.compiledSources + options.classesOutputDir
             }
 
             putJavacOption("CLASSPATH", "CLASS_PATH",

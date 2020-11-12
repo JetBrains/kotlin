@@ -201,10 +201,21 @@ fun getProcessedSources(output: String): Set<String> {
     return logging.drop(indexOf).split(",").map { it.trim() }.filter { !it.isEmpty() }.toSet()
 }
 
-fun BaseGradleIT.Project.setupIncrementalAptProject(procType: String, buildFile: File = projectDir.resolve("build.gradle")) {
+fun BaseGradleIT.Project.setupIncrementalAptProject(
+    procType: String,
+    buildFile: File = projectDir.resolve("build.gradle"),
+    procClass: Class<*> = IncrementalProcessor::class.java
+) {
+    setupIncrementalAptProject(procType to procClass, buildFile = buildFile)
+}
+
+fun BaseGradleIT.Project.setupIncrementalAptProject(
+    vararg processors: Pair<String, Class<*>>,
+    buildFile: File = projectDir.resolve("build.gradle")
+) {
     setupWorkingDir()
     val content = buildFile.readText()
-    val processorPath = generateProcessor(procType)
+    val processorPath = generateProcessor(*processors)
 
     val updatedContent = content.replace(
         Regex("^\\s*kapt\\s\"org\\.jetbrain.*$", RegexOption.MULTILINE),
@@ -213,20 +224,27 @@ fun BaseGradleIT.Project.setupIncrementalAptProject(procType: String, buildFile:
     buildFile.writeText(updatedContent)
 }
 
-fun BaseGradleIT.Project.generateProcessor(procType: String): File {
+fun BaseGradleIT.Project.generateProcessor(vararg processors: Pair<String, Class<*>>): File {
     val processorPath = projectDir.resolve("incrementalProcessor.jar")
 
     ZipOutputStream(processorPath.outputStream()).use {
-        val path = IncrementalProcessor::class.java.name.replace(".", "/") + ".class"
-        val inputStream = IncrementalProcessor::class.java.classLoader.getResourceAsStream(path)
-        it.putNextEntry(ZipEntry(path))
-        it.write(inputStream.readBytes())
-        it.closeEntry()
+        for ((_, procClass) in processors) {
+            val path = procClass.name.replace(".", "/") + ".class"
+            procClass.classLoader.getResourceAsStream(path).use { inputStream ->
+                it.putNextEntry(ZipEntry(path))
+                it.write(inputStream.readBytes())
+                it.closeEntry()
+            }
+        }
         it.putNextEntry(ZipEntry("META-INF/gradle/incremental.annotation.processors"))
-        it.write("${IncrementalProcessor::class.java.name},$procType".toByteArray())
+        it.write(processors.joinToString("\n") { (procType, procClass) ->
+            "${procClass.name},$procType"
+        }.toByteArray())
         it.closeEntry()
         it.putNextEntry(ZipEntry("META-INF/services/javax.annotation.processing.Processor"))
-        it.write(IncrementalProcessor::class.java.name.toByteArray())
+        it.write(processors.joinToString("\n") { (_, procClass) ->
+            procClass.name
+        }.toByteArray())
         it.closeEntry()
     }
     return processorPath
