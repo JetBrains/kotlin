@@ -15,6 +15,12 @@ import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.idea.util.module
 
 internal abstract class FirLightMethod(
     lightMemberOrigin: LightMemberOrigin?,
@@ -74,4 +80,19 @@ internal abstract class FirLightMethod(
         KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST) //TODO()
 
     override fun getDefaultValue(): PsiAnnotationMemberValue? = null //TODO()
+
+    protected fun <T> T.computeJvmMethodName(
+        defaultName: String,
+        annotationUseSiteTarget: AnnotationUseSiteTarget? = null
+    ): String where T : KtAnnotatedSymbol, T : KtSymbolWithVisibility {
+        getJvmNameFromAnnotation(annotationUseSiteTarget)?.let { return it }
+
+        if (visibility != KtSymbolVisibility.INTERNAL) return defaultName
+
+        val moduleName = module?.name ?: return defaultName
+
+        if (hasPublishedApiAnnotation(annotationUseSiteTarget)) return defaultName
+
+        return KotlinTypeMapper.InternalNameMapper.mangleInternalName(defaultName, moduleName)
+    }
 }

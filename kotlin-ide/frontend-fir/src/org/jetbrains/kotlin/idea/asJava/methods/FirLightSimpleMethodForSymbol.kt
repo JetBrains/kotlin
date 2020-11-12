@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.isUnit
+import org.jetbrains.kotlin.idea.util.ifTrue
+import org.jetbrains.kotlin.lexer.KtTokens
 import java.util.*
 
 internal class FirLightSimpleMethodForSymbol(
@@ -32,7 +34,7 @@ internal class FirLightSimpleMethodForSymbol(
 ) {
 
     private val _name: String by lazyPub {
-        functionSymbol.getJvmNameFromAnnotation(null) ?: functionSymbol.name.asString()
+        functionSymbol.computeJvmMethodName(functionSymbol.name.asString())
     }
 
     override fun getName(): String = _name
@@ -51,16 +53,34 @@ internal class FirLightSimpleMethodForSymbol(
         )
     }
 
+    open class X {
+        open val x: Int = 2
+        open fun u() = 2
+    }
+
     private val _modifiers: Set<String> by lazyPub {
 
         if (functionSymbol.hasInlineOnlyAnnotation()) return@lazyPub setOf(PsiModifier.FINAL, PsiModifier.PRIVATE)
 
-        val modifiers = functionSymbol.computeModalityForMethod(isTopLevel = isTopLevel, functionSymbol.isOverride) +
-                functionSymbol.computeVisibility(isTopLevel = isTopLevel)
+        val isOverrideMethod = functionSymbol.isOverride
 
-        if (functionSymbol.hasJvmStaticAnnotation()) return@lazyPub modifiers + PsiModifier.STATIC
+        val visibility = isOverrideMethod.ifTrue {
+            (containingClass as? FirLightClassForSymbol)
+                ?.tryGetEffectiveVisibility(functionSymbol)
+                ?.toPsiVisibility(isTopLevel)
+        } ?: functionSymbol.computeVisibility(isTopLevel = isTopLevel)
 
-        modifiers
+        val finalModifier = kotlinOrigin?.hasModifier(KtTokens.FINAL_KEYWORD) == true
+
+        val modifiers = functionSymbol.computeModalityForMethod(
+            isTopLevel = isTopLevel,
+            suppressFinal = !finalModifier && isOverrideMethod
+        ) + visibility
+
+        modifiers.add(
+            what = PsiModifier.STATIC,
+            `if` = functionSymbol.hasJvmStaticAnnotation()
+        )
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
@@ -79,10 +99,7 @@ internal class FirLightSimpleMethodForSymbol(
     override fun getReturnType(): PsiType = _returnedType
 
     override fun equals(other: Any?): Boolean =
-        this === other ||
-                (other is FirLightSimpleMethodForSymbol &&
-                        kotlinOrigin == other.kotlinOrigin &&
-                        functionSymbol == other.functionSymbol)
+        this === other || (other is FirLightSimpleMethodForSymbol && functionSymbol == other.functionSymbol)
 
-    override fun hashCode(): Int = kotlinOrigin.hashCode()
+    override fun hashCode(): Int = functionSymbol.hashCode()
 }

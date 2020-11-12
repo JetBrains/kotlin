@@ -11,12 +11,17 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyAccessorSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyGetterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySetterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPropertyGetterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
+import org.jetbrains.kotlin.idea.util.ifTrue
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
 import org.jetbrains.kotlin.load.java.JvmAbi.setterName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -26,7 +31,7 @@ internal class FirLightAccessorMethodForSymbol(
     containingPropertySymbol: KtPropertySymbol,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: FirLightClassBase,
-    isTopLevel: Boolean
+    isTopLevel: Boolean,
 ) : FirLightMethod(
     lightMemberOrigin,
     containingClass,
@@ -36,10 +41,11 @@ internal class FirLightAccessorMethodForSymbol(
         if (firPropertyAccessor is KtPropertyGetterSymbol) getterName(this)
         else setterName(this)
 
-    //TODO add JvmName
     private val _name: String by lazyPub {
-        containingPropertySymbol.name.identifier
-            .abiName(propertyAccessorSymbol)
+        val defaultName = containingPropertySymbol.name.identifier.let {
+            if (containingClass.isAnnotationType) it else it.abiName(propertyAccessorSymbol)
+        }
+        containingPropertySymbol.computeJvmMethodName(defaultName, accessorSite)
     }
 
     override fun getName(): String = _name
@@ -49,10 +55,12 @@ internal class FirLightAccessorMethodForSymbol(
     override val kotlinOrigin: KtDeclaration? =
         (propertyAccessorSymbol.psi ?: containingPropertySymbol.psi) as? KtDeclaration
 
-    private val _annotations: List<PsiAnnotation> by lazyPub {
-        val accessorSite =
+    private val accessorSite
+        get() =
             if (propertyAccessorSymbol is KtPropertyGetterSymbol) AnnotationUseSiteTarget.PROPERTY_GETTER
             else AnnotationUseSiteTarget.PROPERTY_SETTER
+
+    private val _annotations: List<PsiAnnotation> by lazyPub {
         containingPropertySymbol.computeAnnotations(
             parent = this,
             nullability = NullabilityType.Unknown,
@@ -61,17 +69,28 @@ internal class FirLightAccessorMethodForSymbol(
     }
 
     private val _modifiers: Set<String> by lazyPub {
+        val isOverrideMethod = propertyAccessorSymbol.isOverride || containingPropertySymbol.isOverride
+        val isInterfaceMethod = containingClass.isInterface
 
-        val isOverride = propertyAccessorSymbol.isOverride || containingPropertySymbol.isOverride
-        val modifiers = propertyAccessorSymbol.computeModalityForMethod(isTopLevel, isOverride) +
-                propertyAccessorSymbol.computeVisibility(isTopLevel)
+        val visibility = isOverrideMethod.ifTrue {
+            (containingClass as? FirLightClassForSymbol)
+                ?.tryGetEffectiveVisibility(containingPropertySymbol)
+                ?.toPsiVisibility(isTopLevel)
+        } ?: propertyAccessorSymbol.computeVisibility(isTopLevel)
 
-        val isJvmStatic =
-            _annotations.any { it.qualifiedName == "kotlin.jvm.JvmStatic" }
-
-        if (isJvmStatic) return@lazyPub modifiers + PsiModifier.STATIC
+        val modifiers = containingPropertySymbol.computeModalityForMethod(
+            isTopLevel = isTopLevel,
+            suppressFinal = isOverrideMethod || isInterfaceMethod
+        ) + visibility
 
         modifiers
+            .add(
+                what = PsiModifier.STATIC,
+                `if` = _annotations.any { it.qualifiedName == "kotlin.jvm.JvmStatic" }
+            ).add(
+                what = PsiModifier.ABSTRACT,
+                `if` = isInterfaceMethod
+            )
     }
 
     private val _modifierList: PsiModifierList by lazyPub {

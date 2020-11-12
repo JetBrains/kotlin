@@ -8,26 +8,23 @@ package org.jetbrains.kotlin.idea.asJava
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightEmptyImplementsList
 import com.intellij.psi.impl.light.LightModifierList
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.*
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.types.ConeNullability
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.idea.asJava.classes.createFields
+import org.jetbrains.kotlin.idea.asJava.classes.createMethods
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isPrivate
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
-import javax.swing.Icon
 
 class FirLightClassForFacade(
     manager: PsiManager,
@@ -200,19 +197,11 @@ class FirLightClassForFacade(
 
     override fun getAllInnerClasses(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
 
-    override fun getInitializers(): Array<out PsiClassInitializer> = PsiClassInitializer.EMPTY_ARRAY
-
     override fun findInnerClassByName(@NonNls name: String, checkBases: Boolean): PsiClass? = null
 
     override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = false
 
-    override fun getLBrace(): PsiElement? = null
-
-    override fun getRBrace(): PsiElement? = null
-
     override fun getName(): String = facadeClassFqName.shortName().asString()
-
-    override fun setName(name: String): PsiElement? = cannotModify()
 
     override fun getQualifiedName() = facadeClassFqName.asString()
 
@@ -224,8 +213,6 @@ class FirLightClassForFacade(
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
         equals(another) || another is FirLightClassForFacade && Comparing.equal(another.qualifiedName, qualifiedName)
-
-    override fun getElementIcon(flags: Int): Icon? = throw UnsupportedOperationException("This should be done by JetIconProvider")
 
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
         return baseClass.qualifiedName == CommonClassNames.JAVA_LANG_OBJECT
@@ -267,6 +254,4 @@ class FirLightClassForFacade(
     override fun getStartOffsetInParent() = firstFileInFacade.startOffsetInParent
 
     override fun isWritable() = files.all { it.isWritable }
-
-    override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = PsiSuperMethodImplUtil.getVisibleSignatures(this)
 }

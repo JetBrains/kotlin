@@ -66,6 +66,9 @@ internal fun KtAnnotatedSymbol.isHiddenByDeprecation(annotationUseSiteTarget: An
 internal fun KtAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean =
     hasAnnotation("kotlin/jvm/JvmField", null)
 
+internal fun KtAnnotatedSymbol.hasPublishedApiAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
+    hasAnnotation("kotlin/PublishedApi", annotationUseSiteTarget)
+
 internal fun KtAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean =
     hasAnnotation("kotlin/jvm/JvmOverloads", null)
 

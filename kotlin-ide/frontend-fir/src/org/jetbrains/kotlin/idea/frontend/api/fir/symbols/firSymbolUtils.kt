@@ -22,7 +22,7 @@ internal inline fun <reified M : KtSymbolModality> Modality?.getSymbolModality()
     Modality.OPEN -> KtCommonSymbolModality.OPEN
     Modality.ABSTRACT -> KtCommonSymbolModality.ABSTRACT
     Modality.SEALED -> KtSymbolModality.SEALED
-    null -> KtCommonSymbolModality.UNKNOWN
+    null -> error("Symbol modality should not be null, looks like the fir symbol was not properly resolved")
 } as? M ?: error("Sealed modality can only be applied to class")
 
 internal inline fun <F : FirMemberDeclaration, reified M : KtSymbolModality> KtFirSymbol<F>.getModality() =

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isPrimitiveNumberOrUnsignedNumberType
 import org.jetbrains.kotlin.fir.isPrimitiveType
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.typeCheckerContext
 import org.jetbrains.kotlin.fir.types.*
@@ -31,10 +32,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymb
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirClassType
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -89,6 +87,7 @@ private fun ConeKotlinType.asPsiType(
     if (this.typeArguments.any { it is ConeClassErrorType }) return psiContext.nonExistentType()
     if (this is ConeClassLikeType) {
         val classId = classId
+        //TODO make anonymous type deriving
         if (classId != null && classId.shortClassName.asString() == SpecialNames.ANONYMOUS) return PsiType.NULL
     }
 
@@ -98,8 +97,10 @@ private fun ConeKotlinType.asPsiType(
 
     val canonicalSignature = signatureWriter.toString()
 
-    if (canonicalSignature == "[L<error>;") return psiContext.nonExistentType()
-    val signature = StringCharacterIterator(canonicalSignature)
+    if (canonicalSignature.contains("L<error>")) return psiContext.nonExistentType()
+    //TODO Fix it in typemapper
+    val patchedCanonicalSignature = canonicalSignature.replace(SpecialNames.ANONYMOUS, "java.lang.Object")
+    val signature = StringCharacterIterator(patchedCanonicalSignature)
     val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
     val typeInfo = TypeInfo.fromString(javaType, false)
     val typeText = TypeInfo.createTypeText(typeInfo) ?: return psiContext.nonExistentType()
@@ -178,13 +179,16 @@ internal fun FirMemberDeclaration.computeModalityForMethod(isTopLevel: Boolean):
     return withTopLevelStatic
 }
 
-internal fun KtSymbolWithModality<KtCommonSymbolModality>.computeModalityForMethod(isTopLevel: Boolean, isOverride: Boolean): Set<String> {
+internal fun KtSymbolWithModality<KtCommonSymbolModality>.computeModalityForMethod(
+    isTopLevel: Boolean,
+    suppressFinal: Boolean
+): Set<String> {
     require(this !is KtClassLikeSymbol)
 
     val modality = mutableSetOf<String>()
 
     computeSimpleModality()?.run {
-        if (this != PsiModifier.FINAL || !isOverride) {
+        if (this != PsiModifier.FINAL || !suppressFinal) {
             modality.add(this)
         }
     }
@@ -209,14 +213,15 @@ internal fun FirMemberDeclaration.computeVisibility(isTopLevel: Boolean): String
     }
 }
 
-internal fun KtSymbolWithVisibility.computeVisibility(isTopLevel: Boolean): String {
-    return when (this.visibility) {
-        // Top-level private class has PACKAGE_LOCAL visibility in Java
-        // Nested private class has PRIVATE visibility
-        KtSymbolVisibility.PRIVATE -> if (isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
-        KtSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
-        else -> PsiModifier.PUBLIC
-    }
+internal fun KtSymbolWithVisibility.computeVisibility(isTopLevel: Boolean): String =
+    visibility.toPsiVisibility(isTopLevel)
+
+internal fun KtSymbolVisibility.toPsiVisibility(isTopLevel: Boolean): String = when (this) {
+    // Top-level private class has PACKAGE_LOCAL visibility in Java
+    // Nested private class has PRIVATE visibility
+    KtSymbolVisibility.PRIVATE -> if (isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
+    KtSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
+    else -> PsiModifier.PUBLIC
 }
 
 internal fun basicIsEquivalentTo(`this`: PsiElement?, that: PsiElement?): Boolean {
