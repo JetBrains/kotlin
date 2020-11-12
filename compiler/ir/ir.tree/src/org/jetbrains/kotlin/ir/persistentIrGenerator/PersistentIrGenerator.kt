@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
+import org.jetbrains.kotlin.ir.persistentIrGenerator.PersistentIrGenerator.plus
 import java.io.File
 import java.lang.IllegalStateException
 import java.lang.StringBuilder
@@ -138,20 +139,38 @@ internal object PersistentIrGenerator {
     val protoVariable = import("IrVariable", protoPackage, "ProtoIrVariable")
     val protoIrConstructorCall = import("IrConstructorCall", protoPackage, "ProtoIrConstructorCall")
 
-    val bodyProtoType = Proto("int32", "body", +"Int", IrBody)
-    val blockBodyProtoType = Proto("int32", "blockBody", +"Int", IrBlockBody)
-    val expressionBodyProtoType = Proto("int32", "expressionBody", +"Int", IrExpressionBody)
-    val valueParameterProtoType = Proto("IrValueParameter", "valueParameter", protoValueParameterType, IrValueParameter)
-    val valueParameterListProtoType = Proto("IrValueParameter", "valueParametersList", protoValueParameterType, IrValueParameter, fieldKind = FieldKind.REPEATED)
-    val typeParameterListProtoType = Proto("IrTypeParameter", "typeParametersList", protoTypeParameterType, IrTypeParameter, fieldKind = FieldKind.REPEATED)
-    val superTypeListProtoType = Proto("int32", "superTypesList", +"Int", IrType, fieldKind = FieldKind.REPEATED)
-    val typeProtoType = Proto("IrType", "type", protoType, IrType)
-    val symbolProtoType = Proto("int64", "symbol", +"Long", +"Nothing")
-    val symbolListProtoType = Proto("int64", "symbolList", +"Long", +"Nothing", fieldKind = FieldKind.REPEATED)
-    val variableProtoType = Proto("IrVariable", "variable", protoVariable, IrVariable)
+    val bodyProto = Proto("int32", "body", +"Int", IrBody)
+    val blockBodyProto = Proto("int32", "blockBody", +"Int", IrBlockBody)
+    val expressionBodyProto = Proto("int32", "expressionBody", +"Int", IrExpressionBody)
+    val valueParameterProto = Proto("IrValueParameter", "valueParameter", protoValueParameterType, IrValueParameter)
+    val valueParameterListProto = Proto("IrValueParameter", "valueParameter", protoValueParameterType, IrValueParameter, fieldKind = FieldKind.REPEATED)
+    val typeParameterListProto = Proto("IrTypeParameter", "typeParameter", protoTypeParameterType, IrTypeParameter, fieldKind = FieldKind.REPEATED)
+    val superTypeListProto = Proto("int32", "superType", +"Int", IrType, fieldKind = FieldKind.REPEATED)
+    val typeProto = Proto("IrType", "type", protoType, IrType, fieldKind = FieldKind.REQUIRED)
+    val optionalTypeProto = Proto("IrType", "type", protoType, IrType, fieldKind = FieldKind.OPTIONAL)
+    val symbolProto = Proto("int64", "symbol", +"Long", +"Nothing")
+    val symbolListProto = Proto("int64", "symbol", +"Long", +"Nothing", fieldKind = FieldKind.REPEATED)
+    val variableProto = Proto("IrVariable", "variable", protoVariable, IrVariable)
 
     val visibilityProto = Proto(null, "visibility", +"Long", DescriptorVisibility)
     val modalityProto = Proto(null, "modality", +"Long", descriptorType("Modality"))
+
+    private val allProto = listOf(
+        bodyProto,
+        blockBodyProto,
+        expressionBodyProto,
+        valueParameterProto,
+        valueParameterListProto,
+        typeParameterListProto,
+        superTypeListProto,
+        typeProto,
+        optionalTypeProto,
+        symbolProto,
+        symbolListProto,
+        variableProto,
+        visibilityProto,
+        modalityProto
+    )
 
 
     val protoMessages = mutableListOf<String>()
@@ -186,6 +205,7 @@ internal object PersistentIrGenerator {
         protoMessages += sb.toString()
 
         addDeserializerMessage(carrierName, *fields)
+        addSerializerMessage(carrierName, *fields)
     }
 
     val deserializerMethods = mutableListOf<E>().also { list ->
@@ -194,13 +214,13 @@ internal object PersistentIrGenerator {
         list += +"abstract fun deserializeOrigin(proto: Int): " + IrDeclarationOrigin
         list += +"abstract fun deserializeAnnotations(proto: List<" + protoIrConstructorCall + ">): List<" + IrConstructorCall + ">"
 
-        listOf(
-            bodyProtoType, blockBodyProtoType, expressionBodyProtoType, valueParameterProtoType, valueParameterListProtoType, typeParameterListProtoType, superTypeListProtoType,
-            typeProtoType, symbolProtoType, symbolListProtoType, variableProtoType, visibilityProto, modalityProto
-        ).forEach { p ->
-            val argumentType = if (p.fieldKind == FieldKind.REPEATED) +"List<" + p.protoType + ">" else p.protoType
-            val returnType = if (p.fieldKind == FieldKind.REPEATED) +"List<" + p.irType + ">" else p.irType
-            list += +"abstract fun deserialize${p.entityName.capitalize()}(proto: "+ argumentType +"): " + returnType
+        val seenEntities = mutableSetOf<String>()
+
+        allProto.forEach { p ->
+            if (p.entityName !in seenEntities) {
+                seenEntities += p.entityName
+                list += +"abstract fun deserialize${p.entityName.capitalize()}(proto: " + p.protoType + "): " + p.irType
+            }
         }
     }
 
@@ -215,22 +235,112 @@ internal object PersistentIrGenerator {
                 +"return " + carrierImpl + "(",
                 arrayOf(
                     +"proto.lastModified",
-                    +"deserializeParent(proto.parentSymbol)",
+                    +"if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null",
                     +"deserializeOrigin(proto.origin)",
                     +"deserializeAnnotations(proto.annotationList)",
                     *fields.map { f ->
                         if (f.proto == null) {
                             +"null"
                         } else {
-                            val argument = if (f.proto.protoPrefix != null) {
-                                val maybeList = if (f.proto.fieldKind == FieldKind.REPEATED) "List" else ""
-                                "proto.${f.name}$maybeList"
-                            } else "proto.flags"
-                            +"deserialize${f.proto.entityName.capitalize()}($argument)"
+//                            val argument = if (f.proto.protoPrefix != null) {
+//                                val maybeList = if (f.proto.fieldKind == FieldKind.REPEATED) "List" else ""
+//                                "proto.${f.name}$maybeList"
+//                            } else "proto.flags"
+
+                            // proto.annotationList.map { deserializeAnnotation(it) },
+
+                            val deserialize = "deserialize${f.proto.entityName.capitalize()}"
+
+                            when {
+                                f.proto.fieldKind == FieldKind.REPEATED ->
+                                    +"proto.${f.name}List.map { $deserialize(it) }"
+                                f.proto.protoPrefix != null && f.proto.fieldKind == FieldKind.OPTIONAL ->
+                                    +"if (proto.has${f.name.capitalize()}()) $deserialize(proto.${f.name}) else null"
+                                f.proto.protoPrefix == null ->
+                                    +"$deserialize(proto.flags)"
+                                else ->
+                                    +"$deserialize(proto.${f.name})"
+                            }
+
+//                            if (f.proto.protoPrefix != null && f.proto.fieldKind == FieldKind.OPTIONAL) {
+//                                +"if (proto.has${f.name.capitalize()}()) deserialize${f.proto.entityName.capitalize()}($argument) else null"
+//                            } else {
+//                                +"deserialize${f.proto.entityName.capitalize()}($argument)"
+//                            }
                         }
                     }.toTypedArray()
                 ).join(separator = ",\n").indent(),
                 +")",
+            ).indent(),
+            +"}",
+        )
+    }
+
+    val serializerMethods = mutableListOf<E>().also { list ->
+
+        list += +"abstract fun serializeParent(proto: " + IrDeclarationParent + "): Long"
+        list += +"abstract fun serializeOrigin(proto: " + IrDeclarationOrigin + "): Int"
+        list += +"abstract fun serializeAnnotation(proto: " + IrConstructorCall + "): " + protoIrConstructorCall
+
+        val seenEntities = mutableSetOf<String>()
+
+        allProto.forEach { p ->
+            if (p.entityName !in seenEntities) {
+                seenEntities += p.entityName
+                list += +"abstract fun serialize${p.entityName.capitalize()}(proto: "+ p.irType +"): " + p.protoType
+            }
+        }
+    }
+
+
+    fun addSerializerMessage(carrierName: String, vararg fields: Field) {
+        val argumentType = import("${carrierName}Carrier", carrierPackage)
+        val returnType = import("Pir${carrierName}Carrier", protoPackage)
+
+        var flagsHandled = false
+
+        serializerMethods += lines(
+            +"fun serialize${carrierName}Carrier(carrier: " + argumentType + "): " + returnType + " {",
+            lines(
+                +"val proto = " + returnType + ".newBuilder()",
+                +"proto.setLastModified(carrier.lastModified)",
+                +"carrier.parentField?.let { proto.setParentSymbol(serializeParent(it)) }",
+                +"proto.setOrigin(serializeOrigin(carrier.originField))",
+                +"proto.addAllAnnotation(carrier.annotationsField.map { serializeAnnotation(it) })",
+                *(fields.mapNotNull { f ->
+                    f.proto?.let { p ->
+                        if (p.protoPrefix != null) {
+                            val action = "proto." + (if (p.fieldKind == FieldKind.REPEATED) "addAll" else "set") + f.name.capitalize()
+                            val serializationFun = "serialize${f.proto.entityName.capitalize()}"
+                            val argument = "carrier.${f.name}Field"
+
+                            when {
+                                p.fieldKind == FieldKind.OPTIONAL ->
+                                    +"$argument?.let { $action($serializationFun(it)) }"
+                                p.fieldKind == FieldKind.REPEATED ->
+                                    +"$action($argument.map { $serializationFun(it) })"
+                                else ->
+                                    +"$action($serializationFun($argument))"
+                            }
+//                            if (p.fieldKind == FieldKind.OPTIONAL) {
+//                                +"$argument?.let { $action($serializationFun(it)) }"
+//                            } else {
+//                                +"$action($serializationFun($argument))"
+//                            }
+                        } else {
+                            // It's a flag
+                            if (!flagsHandled) {
+                                flagsHandled = true
+                                val flags = fields.filter { it.proto?.protoPrefix == null }
+
+                                val calls = flags.map { f -> "serialize${f.proto!!.entityName.capitalize()}(carrier.${f.name}Field)" }
+
+                                +"proto.setFlags(${calls.joinToString(separator = " or ")})"
+                            } else null
+                        }
+                    }
+                }).toTypedArray(),
+                +"return proto.build()",
             ).indent(),
             +"}",
         )
@@ -460,11 +570,23 @@ internal object PersistentIrGenerator {
     }
 
     fun generateCarrierDeserializer() {
-        writeFile("../../serialization/IrCarrierDeserializer.kt", renderFile("org.jetbrains.kotlin.ir.persistentIrGenerator") {
+        writeFile("../../serialization/IrCarrierDeserializer.kt", renderFile("org.jetbrains.kotlin.ir.serialization") {
             lines(
                 id,
                 +"internal abstract class IrCarrierDeserializer " + blockSpaced(
                     *deserializerMethods.toTypedArray()
+                ),
+                id,
+            )()
+        })
+    }
+
+    fun generateCarrierSerializer() {
+        writeFile("../../serialization/IrCarrierSerializer.kt", renderFile("org.jetbrains.kotlin.ir.serialization") {
+            lines(
+                id,
+                +"internal abstract class IrCarrierSerializer " + blockSpaced(
+                    *serializerMethods.toTypedArray()
                 ),
                 id,
             )()

@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateFunction() {
 
-    val returnTypeFieldField = Field("returnTypeField", IrType, typeProtoType)
-    val typeParametersField = Field("typeParameters", +"List<" + IrTypeParameter + ">", typeParameterListProtoType)
-    val dispatchReceiverParameterField = Field("dispatchReceiverParameter", IrValueParameter + "?", valueParameterProtoType)
-    val extensionReceiverParameterField = Field("extensionReceiverParameter", IrValueParameter + "?", valueParameterProtoType)
-    val valueParametersField = Field("valueParameters", +"List<" + IrValueParameter + ">", valueParameterListProtoType)
-    val bodyField = Field("body", IrBody + "?", bodyProtoType)
+    val returnTypeFieldField = Field("returnTypeField", IrType, typeProto)
+    val typeParametersField = Field("typeParameters", +"List<" + IrTypeParameter + ">", typeParameterListProto)
+    val dispatchReceiverParameterField = Field("dispatchReceiverParameter", IrValueParameter + "?", valueParameterProto)
+    val extensionReceiverParameterField = Field("extensionReceiverParameter", IrValueParameter + "?", valueParameterProto)
+    val valueParametersField = Field("valueParameters", +"List<" + IrValueParameter + ">", valueParameterListProto)
+    val bodyField = Field("body", IrBody + "?", bodyProto)
     val visibilityField = Field("visibility", DescriptorVisibility, visibilityProto)
-    val overriddenSymbolsField = Field("overriddenSymbols", +"List<" + irSymbol("IrSimpleFunctionSymbol") + ">", symbolListProtoType)
-    val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?", symbolProtoType)
+    val overriddenSymbolsField = Field("overriddenSymbols", +"List<" + irSymbol("IrSimpleFunctionSymbol") + ">", symbolListProto)
+    val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?", symbolProto)
 
     writeFile("PersistentIrFunctionCommon.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(

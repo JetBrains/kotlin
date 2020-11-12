@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateValueParameter() {
 
-    val defaultValueField = Field("defaultValue", IrExpressionBody + "?", expressionBodyProtoType)
-    val typeField = Field("type", IrType, typeProtoType)
-    val varargElementTypeField = Field("varargElementType", IrType + "?", typeProtoType)
+    val defaultValueField = Field("defaultValue", IrExpressionBody + "?", expressionBodyProto)
+    val typeField = Field("type", IrType, typeProto)
+    val varargElementTypeField = Field("varargElementType", IrType + "?", optionalTypeProto)
 
     writeFile("PersistentIrValueParameter.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(

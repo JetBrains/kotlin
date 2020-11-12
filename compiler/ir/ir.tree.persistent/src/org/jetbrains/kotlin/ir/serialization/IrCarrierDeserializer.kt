@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.persistentIrGenerator
+package org.jetbrains.kotlin.ir.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoIrConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoIrType
@@ -77,17 +77,13 @@ internal abstract class IrCarrierDeserializer {
 
     abstract fun deserializeValueParameter(proto: ProtoIrValueParameter): IrValueParameter
 
-    abstract fun deserializeValueParametersList(proto: List<ProtoIrValueParameter>): List<IrValueParameter>
+    abstract fun deserializeTypeParameter(proto: ProtoIrTypeParameter): IrTypeParameter
 
-    abstract fun deserializeTypeParametersList(proto: List<ProtoIrTypeParameter>): List<IrTypeParameter>
-
-    abstract fun deserializeSuperTypesList(proto: List<Int>): List<IrType>
+    abstract fun deserializeSuperType(proto: Int): IrType
 
     abstract fun deserializeType(proto: ProtoIrType): IrType
 
     abstract fun deserializeSymbol(proto: Long): Nothing
-
-    abstract fun deserializeSymbolList(proto: List<Long>): List<Nothing>
 
     abstract fun deserializeVariable(proto: ProtoIrVariable): IrVariable
 
@@ -98,58 +94,58 @@ internal abstract class IrCarrierDeserializer {
     fun deserializeAnonymousInitializerCarrier(proto: PirAnonymousInitializerCarrier): AnonymousInitializerCarrier {
         return AnonymousInitializerCarrierImpl(
             proto.lastModified,
-            deserializeParent(proto.parentSymbol),
+            if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null,
             deserializeOrigin(proto.origin),
             deserializeAnnotations(proto.annotationList),
-            deserializeBlockBody(proto.body)
+            if (proto.hasBody()) deserializeBlockBody(proto.body) else null
         )
     }
 
     fun deserializeClassCarrier(proto: PirClassCarrier): ClassCarrier {
         return ClassCarrierImpl(
             proto.lastModified,
-            deserializeParent(proto.parentSymbol),
+            if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null,
             deserializeOrigin(proto.origin),
             deserializeAnnotations(proto.annotationList),
-            deserializeValueParameter(proto.thisReceiver),
+            if (proto.hasThisReceiver()) deserializeValueParameter(proto.thisReceiver) else null,
             deserializeVisibility(proto.flags),
             deserializeModality(proto.flags),
-            deserializeTypeParametersList(proto.typeParametersList),
-            deserializeSuperTypesList(proto.superTypesList)
+            proto.typeParametersList.map { deserializeTypeParameter(it) },
+            proto.superTypesList.map { deserializeSuperType(it) }
         )
     }
 
     fun deserializeConstructorCarrier(proto: PirConstructorCarrier): ConstructorCarrier {
         return ConstructorCarrierImpl(
             proto.lastModified,
-            deserializeParent(proto.parentSymbol),
+            if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null,
             deserializeOrigin(proto.origin),
             deserializeAnnotations(proto.annotationList),
             deserializeType(proto.returnTypeField),
-            deserializeValueParameter(proto.dispatchReceiverParameter),
-            deserializeValueParameter(proto.extensionReceiverParameter),
-            deserializeBody(proto.body),
+            if (proto.hasDispatchReceiverParameter()) deserializeValueParameter(proto.dispatchReceiverParameter) else null,
+            if (proto.hasExtensionReceiverParameter()) deserializeValueParameter(proto.extensionReceiverParameter) else null,
+            if (proto.hasBody()) deserializeBody(proto.body) else null,
             deserializeVisibility(proto.flags),
-            deserializeTypeParametersList(proto.typeParametersList),
-            deserializeValueParametersList(proto.valueParametersList)
+            proto.typeParametersList.map { deserializeTypeParameter(it) },
+            proto.valueParametersList.map { deserializeValueParameter(it) }
         )
     }
 
     fun deserializeEnumEntryCarrier(proto: PirEnumEntryCarrier): EnumEntryCarrier {
         return EnumEntryCarrierImpl(
             proto.lastModified,
-            deserializeParent(proto.parentSymbol),
+            if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null,
             deserializeOrigin(proto.origin),
             deserializeAnnotations(proto.annotationList),
-            deserializeSymbol(proto.correspondingClass),
-            deserializeExpressionBody(proto.initializerExpression)
+            if (proto.hasCorrespondingClass()) deserializeSymbol(proto.correspondingClass) else null,
+            if (proto.hasInitializerExpression()) deserializeExpressionBody(proto.initializerExpression) else null
         )
     }
 
     fun deserializeErrorDeclarationCarrier(proto: PirErrorDeclarationCarrier): ErrorDeclarationCarrier {
         return ErrorDeclarationCarrierImpl(
             proto.lastModified,
-            deserializeParent(proto.parentSymbol),
+            if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null,
             deserializeOrigin(proto.origin),
             deserializeAnnotations(proto.annotationList)
         )
@@ -158,65 +154,65 @@ internal abstract class IrCarrierDeserializer {
     fun deserializeFieldCarrier(proto: PirFieldCarrier): FieldCarrier {
         return FieldCarrierImpl(
             proto.lastModified,
-            deserializeParent(proto.parentSymbol),
+            if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null,
             deserializeOrigin(proto.origin),
             deserializeAnnotations(proto.annotationList),
             deserializeType(proto.type),
-            deserializeExpressionBody(proto.initializer),
-            deserializeSymbol(proto.correspondingPropertySymbol)
+            if (proto.hasInitializer()) deserializeExpressionBody(proto.initializer) else null,
+            if (proto.hasCorrespondingPropertySymbol()) deserializeSymbol(proto.correspondingPropertySymbol) else null
         )
     }
 
     fun deserializeFunctionCarrier(proto: PirFunctionCarrier): FunctionCarrier {
         return FunctionCarrierImpl(
             proto.lastModified,
-            deserializeParent(proto.parentSymbol),
+            if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null,
             deserializeOrigin(proto.origin),
             deserializeAnnotations(proto.annotationList),
             deserializeType(proto.returnTypeField),
-            deserializeValueParameter(proto.dispatchReceiverParameter),
-            deserializeValueParameter(proto.extensionReceiverParameter),
-            deserializeBody(proto.body),
+            if (proto.hasDispatchReceiverParameter()) deserializeValueParameter(proto.dispatchReceiverParameter) else null,
+            if (proto.hasExtensionReceiverParameter()) deserializeValueParameter(proto.extensionReceiverParameter) else null,
+            if (proto.hasBody()) deserializeBody(proto.body) else null,
             deserializeVisibility(proto.flags),
-            deserializeTypeParametersList(proto.typeParametersList),
-            deserializeValueParametersList(proto.valueParametersList),
-            deserializeSymbol(proto.correspondingPropertySymbol),
-            deserializeSymbolList(proto.overriddenSymbolsList)
+            proto.typeParametersList.map { deserializeTypeParameter(it) },
+            proto.valueParametersList.map { deserializeValueParameter(it) },
+            if (proto.hasCorrespondingPropertySymbol()) deserializeSymbol(proto.correspondingPropertySymbol) else null,
+            proto.overriddenSymbolsList.map { deserializeSymbol(it) }
         )
     }
 
     fun deserializeLocalDelegatedPropertyCarrier(proto: PirLocalDelegatedPropertyCarrier): LocalDelegatedPropertyCarrier {
         return LocalDelegatedPropertyCarrierImpl(
             proto.lastModified,
-            deserializeParent(proto.parentSymbol),
+            if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null,
             deserializeOrigin(proto.origin),
             deserializeAnnotations(proto.annotationList),
             deserializeType(proto.type),
-            deserializeVariable(proto.delegate),
-            deserializeSymbol(proto.getter),
-            deserializeSymbol(proto.setter)
+            if (proto.hasDelegate()) deserializeVariable(proto.delegate) else null,
+            if (proto.hasGetter()) deserializeSymbol(proto.getter) else null,
+            if (proto.hasSetter()) deserializeSymbol(proto.setter) else null
         )
     }
 
     fun deserializePropertyCarrier(proto: PirPropertyCarrier): PropertyCarrier {
         return PropertyCarrierImpl(
             proto.lastModified,
-            deserializeParent(proto.parentSymbol),
+            if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null,
             deserializeOrigin(proto.origin),
             deserializeAnnotations(proto.annotationList),
-            deserializeSymbol(proto.backingField),
-            deserializeSymbol(proto.getter),
-            deserializeSymbol(proto.setter)
+            if (proto.hasBackingField()) deserializeSymbol(proto.backingField) else null,
+            if (proto.hasGetter()) deserializeSymbol(proto.getter) else null,
+            if (proto.hasSetter()) deserializeSymbol(proto.setter) else null
         )
     }
 
     fun deserializeTypeAliasCarrier(proto: PirTypeAliasCarrier): TypeAliasCarrier {
         return TypeAliasCarrierImpl(
             proto.lastModified,
-            deserializeParent(proto.parentSymbol),
+            if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null,
             deserializeOrigin(proto.origin),
             deserializeAnnotations(proto.annotationList),
-            deserializeTypeParametersList(proto.typeParametersList),
+            proto.typeParametersList.map { deserializeTypeParameter(it) },
             deserializeType(proto.expandedType)
         )
     }
@@ -224,22 +220,22 @@ internal abstract class IrCarrierDeserializer {
     fun deserializeTypeParameterCarrier(proto: PirTypeParameterCarrier): TypeParameterCarrier {
         return TypeParameterCarrierImpl(
             proto.lastModified,
-            deserializeParent(proto.parentSymbol),
+            if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null,
             deserializeOrigin(proto.origin),
             deserializeAnnotations(proto.annotationList),
-            deserializeSuperTypesList(proto.superTypesList)
+            proto.superTypesList.map { deserializeSuperType(it) }
         )
     }
 
     fun deserializeValueParameterCarrier(proto: PirValueParameterCarrier): ValueParameterCarrier {
         return ValueParameterCarrierImpl(
             proto.lastModified,
-            deserializeParent(proto.parentSymbol),
+            if (proto.hasParentSymbol()) deserializeParent(proto.parentSymbol) else null,
             deserializeOrigin(proto.origin),
             deserializeAnnotations(proto.annotationList),
-            deserializeExpressionBody(proto.defaultValue),
+            if (proto.hasDefaultValue()) deserializeExpressionBody(proto.defaultValue) else null,
             deserializeType(proto.type),
-            deserializeType(proto.varargElementType)
+            if (proto.hasVarargElementType()) deserializeType(proto.varargElementType) else null
         )
     }
 }

@@ -616,7 +616,7 @@ message PirConstructorCarrier {
     optional int64 parentSymbol = 2;
     optional int32 origin = 3;
     repeated IrConstructorCall annotation = 4;
-    optional IrType returnTypeField = 5;
+    required IrType returnTypeField = 5;
     optional IrValueParameter dispatchReceiverParameter = 6;
     optional IrValueParameter extensionReceiverParameter = 7;
     optional int32 body = 8;
@@ -646,7 +646,7 @@ message PirFieldCarrier {
     optional int64 parentSymbol = 2;
     optional int32 origin = 3;
     repeated IrConstructorCall annotation = 4;
-    optional IrType type = 5;
+    required IrType type = 5;
     optional int32 initializer = 6;
     optional int64 correspondingPropertySymbol = 7;
 }
@@ -656,7 +656,7 @@ message PirFunctionCarrier {
     optional int64 parentSymbol = 2;
     optional int32 origin = 3;
     repeated IrConstructorCall annotation = 4;
-    optional IrType returnTypeField = 5;
+    required IrType returnTypeField = 5;
     optional IrValueParameter dispatchReceiverParameter = 6;
     optional IrValueParameter extensionReceiverParameter = 7;
     optional int32 body = 8;
@@ -672,7 +672,7 @@ message PirLocalDelegatedPropertyCarrier {
     optional int64 parentSymbol = 2;
     optional int32 origin = 3;
     repeated IrConstructorCall annotation = 4;
-    optional IrType type = 5;
+    required IrType type = 5;
     optional IrVariable delegate = 6;
     optional int64 getter = 7;
     optional int64 setter = 8;
@@ -694,7 +694,7 @@ message PirTypeAliasCarrier {
     optional int32 origin = 3;
     repeated IrConstructorCall annotation = 4;
     repeated IrTypeParameter typeParameters = 5;
-    optional IrType expandedType = 6;
+    required IrType expandedType = 6;
 }
 
 message PirTypeParameterCarrier {
@@ -711,7 +711,7 @@ message PirValueParameterCarrier {
     optional int32 origin = 3;
     repeated IrConstructorCall annotation = 4;
     optional int32 defaultValue = 5;
-    optional IrType type = 6;
+    required IrType type = 6;
     optional IrType varargElementType = 7;
 }
 

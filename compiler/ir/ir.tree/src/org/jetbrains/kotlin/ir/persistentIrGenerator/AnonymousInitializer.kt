@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateAnonymousInitializer() {
-    val body = Field("body", IrBlockBody, blockBodyProtoType, lateinit = true)
+    val body = Field("body", IrBlockBody, blockBodyProto, lateinit = true)
 
     writeFile("PersistentIrAnonymousInitializer.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
