@@ -1114,9 +1114,7 @@ class Fir2IrDeclarationStorage(
             signatureComposer.composeSignature(it)
         }?.let { return it.symbol }
         val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
-        // TODO: Use computeDeclarationOrigin(firPropertySymbol, parentOrigin)
-        // Currently many backend tests are failing
-        val declarationOrigin = parentOrigin
+        val declarationOrigin = computeDeclarationOrigin(firPropertySymbol, parentOrigin, irParent)
         // TODO: package fragment members (?)
         val parent = irParent
         if (parent is Fir2IrLazyClass) {
