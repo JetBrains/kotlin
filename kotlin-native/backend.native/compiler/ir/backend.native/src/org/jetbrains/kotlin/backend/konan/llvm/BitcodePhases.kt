@@ -74,6 +74,16 @@ internal val disposeLLVMPhase = namedUnitPhase(
         }
 )
 
+internal val freeNativeMemPhase = namedUnitPhase(
+        name = "FreeNativeMem",
+        description = "Free native memory used by interop",
+        lower = object : CompilerPhase<Context, Unit, Unit> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
+                context.freeNativeMem()
+            }
+        }
+)
+
 internal val RTTIPhase = makeKonanModuleOpPhase(
         name = "RTTI",
         description = "RTTI generation",

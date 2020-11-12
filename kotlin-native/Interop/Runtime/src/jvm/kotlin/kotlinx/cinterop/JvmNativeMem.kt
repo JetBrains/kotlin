@@ -16,6 +16,7 @@
 
 package kotlinx.cinterop
 
+import org.jetbrains.kotlin.konan.util.nativeMemoryAllocator
 import sun.misc.Unsafe
 
 private val NativePointed.address: Long
@@ -95,18 +96,19 @@ internal object nativeMemUtils {
         return unsafe.allocateInstance(T::class.java) as T
     }
 
-    fun alloc(size: Long, align: Int): NativePointed {
-        val address = unsafe.allocateMemory(
-                if (size == 0L) 1L else size // It is a hack: `sun.misc.Unsafe` can't allocate zero bytes
-        )
-
+    internal fun allocRaw(size: Long, align: Int): NativePtr {
+        val address = unsafe.allocateMemory(size)
         if (address % align != 0L) TODO(align.toString())
-        return interpretOpaquePointed(address)
+        return address
     }
 
-    fun free(mem: NativePtr) {
+    internal fun freeRaw(mem: NativePtr) {
         unsafe.freeMemory(mem)
     }
+
+    fun alloc(size: Long, align: Int) = interpretOpaquePointed(nativeMemoryAllocator.alloc(size, align))
+
+    fun free(mem: NativePtr) = nativeMemoryAllocator.free(mem)
 
     private val unsafe = with(Unsafe::class.java.getDeclaredField("theUnsafe")) {
         isAccessible = true

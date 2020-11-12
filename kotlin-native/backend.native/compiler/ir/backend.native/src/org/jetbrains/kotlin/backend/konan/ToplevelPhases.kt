@@ -438,7 +438,8 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
                                 unitSink()
                 ) then
                 objectFilesPhase then
-                linkerPhase
+                linkerPhase then
+                freeNativeMemPhase
 )
 
 internal fun PhaseConfig.disableIf(phase: AnyNamedPhase, condition: Boolean) {

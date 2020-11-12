@@ -395,7 +395,7 @@ private object EmptyCString: CValues<ByteVar>() {
     override val align get() = 1
 
     private val placement =
-            interpretCPointer<ByteVar>(nativeMemUtils.alloc(1, 1).rawPtr)!!.also {
+            interpretCPointer<ByteVar>(nativeMemUtils.allocRaw(1, 1))!!.also {
                 it[0] = 0.toByte()
             }
 

@@ -46,9 +46,9 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
+import org.jetbrains.kotlin.konan.util.disposeNativeMemoryAllocator
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.utils.addToStdlib.getOrPut
 
 /**
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
@@ -345,6 +345,14 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
             LLVMDisposeModule(llvm.runtime.llvmModule)
         tryDisposeLLVMContext()
         llvmDisposed = true
+    }
+
+    private var nativeMemFreed = false
+
+    fun freeNativeMem() {
+        if (nativeMemFreed) return
+        disposeNativeMemoryAllocator()
+        nativeMemFreed = true
     }
 
     val cStubsManager = CStubsManager(config.target)
