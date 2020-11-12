@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.naming.isES5IdentifierPart
 import org.jetbrains.kotlin.js.naming.isES5IdentifierStart
+import org.jetbrains.kotlin.js.naming.isValidES5Identifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.util.*
@@ -44,7 +45,6 @@ private fun <T> mapToKey(declaration: T): String {
 class NameTable<T>(
     val parent: NameTable<*>? = null,
     val reserved: MutableSet<String> = mutableSetOf(),
-    val sanitizer: (String) -> String = ::sanitizeName,
     val mappedNames: MutableMap<String, String>? = null
 ) {
     var finished = false
@@ -65,7 +65,7 @@ class NameTable<T>(
     }
 
     fun declareFreshName(declaration: T, suggestedName: String): String {
-        val freshName = findFreshName(sanitizer(suggestedName))
+        val freshName = findFreshName(sanitizeName(suggestedName))
         declareStableName(declaration, freshName)
         return freshName
     }
@@ -424,6 +424,7 @@ class NameTables(
 
 
 fun sanitizeName(name: String): String {
+    if (name.isValidES5Identifier()) return name
     if (name.isEmpty()) return "_"
 
     val first = name.first().let { if (it.isES5IdentifierStart()) it else '_' }
