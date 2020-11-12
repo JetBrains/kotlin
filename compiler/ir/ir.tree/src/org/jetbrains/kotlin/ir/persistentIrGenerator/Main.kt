@@ -19,5 +19,7 @@ fun main() {
         generateTypeAlias()
         generateTypeParameter()
         generateValueParameter()
+
+        updateKotlinIrProto()
     }
 }

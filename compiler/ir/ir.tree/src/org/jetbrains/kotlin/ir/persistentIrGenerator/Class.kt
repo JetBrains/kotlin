@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateClass() {
-    val visibilityField = Field("visibility", descriptorType("DescriptorVisibility"))
-    val thisReceiverField = Field("thisReceiver", irDeclaration("IrValueParameter") + "?")
-    val typeParametersField = Field("typeParameters", +"List<" + irDeclaration("IrTypeParameter") + ">")
-    val superTypesField = Field("superTypes", +"List<" + import("IrType", "org.jetbrains.kotlin.ir.types") + ">")
-    val metadataField = Field("metadata", irDeclaration("MetadataSource") + "?")
-    val modalityField = Field("modality", descriptorType("Modality"))
-    val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer)
+    val visibilityField = Field("visibility", descriptorType("DescriptorVisibility"), null)
+    val thisReceiverField = Field("thisReceiver", irDeclaration("IrValueParameter") + "?", "optional IrValueParameter")
+    val typeParametersField = Field("typeParameters", +"List<" + irDeclaration("IrTypeParameter") + ">", "repeated IrTypeParameter")
+    val superTypesField = Field("superTypes", +"List<" + import("IrType", "org.jetbrains.kotlin.ir.types") + ">", "repeated int32")
+    val metadataField = Field("metadata", irDeclaration("MetadataSource") + "?", null)
+    val modalityField = Field("modality", descriptorType("Modality"), null)
+    val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer, null)
 
     writeFile("PersistentIrClass.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -86,4 +86,6 @@ internal fun PersistentIrGenerator.generateClass() {
             superTypesField
         )()
     })
+
+    addCarrierProtoMessage("Class", thisReceiverField, typeParametersField, superTypesField, withFlags = true)
 }

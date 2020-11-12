@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames.mutableList
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import java.io.File
+import java.lang.IllegalStateException
 import java.lang.StringBuilder
 
 internal interface R {
@@ -20,7 +22,7 @@ internal interface R {
 
 internal typealias E = R.() -> R
 
-internal class Field(val name: String, val type: E, val lateinit: Boolean = false)
+internal class Field(val name: String, val type: E, val protoType: String? = null, val lateinit: Boolean = false, val protoOptional: String? = null)
 
 internal object PersistentIrGenerator {
 
@@ -114,6 +116,40 @@ internal object PersistentIrGenerator {
         persistentField(name, type, initializer, lateinit, modifier)
 
     fun Field.toBody() = body(type, lateinit, name)
+
+    val protoMessages = mutableListOf<String>()
+
+    fun addCarrierProtoMessage(carrierName: String, vararg fields: Field, withFlags: Boolean = false) {
+        val protoFields = mutableListOf<Pair<String, String?>>(
+            "required int32 lastModified" to null,
+            "optional int64 parentSymbol" to null,
+            "optional int32 origin" to null,
+            "repeated IrConstructorCall annotation" to null
+        )
+
+        protoFields += fields.mapNotNull { f ->
+            f.protoType?.let { t ->
+                "$t ${f.name}" to f.protoOptional
+            }
+        }
+
+        if (withFlags) {
+            protoFields += "optional int64 flags" to "[default = 0]"
+        }
+
+
+        val sb = StringBuilder("message Pir${carrierName}Carrier {\n")
+        protoFields.forEachIndexed { i, (f, o) ->
+            sb.append("    $f = ${i + 1}")
+            if (o != null) {
+                sb.append(" $o")
+            }
+            sb.append(";\n")
+        }
+        sb.append("}\n")
+
+        protoMessages += sb.toString()
+    }
 
     // Helpers
 
@@ -312,5 +348,29 @@ internal object PersistentIrGenerator {
 
     fun writeFile(path: String, content: String) {
         File(prefix + path).writeText(content)
+    }
+
+    fun updateKotlinIrProto() {
+        val file = File("compiler/ir/serialization.common/src/KotlinIr.proto")
+
+        if (!file.exists()) throw IllegalStateException("KotlinIr.proto file not found!")
+
+        val lines = file.readText().lines()
+
+        val start = lines.indexOf("// PIR GENERATOR START")
+        if (start < 0) throw IllegalStateException("Couldn't find the '// PIR GENERATOR START' line. Don't know where to write generated messages.")
+
+        val end = lines.indexOf("// PIR GENERATOR END")
+        if (end < 0) throw IllegalStateException("Couldn't find the '// PIR GENERATOR END' line. Don't know where to write generated messages.")
+
+        val sb = StringBuilder(lines.subList(0, start + 1).joinToString(separator = "\n"))
+
+        for (m in protoMessages) {
+            sb.append("\n").append(m)
+        }
+
+        sb.append("\n").append(lines.subList(end, lines.size).joinToString(separator = "\n"))
+
+        file.writeText(sb.toString())
     }
 }
