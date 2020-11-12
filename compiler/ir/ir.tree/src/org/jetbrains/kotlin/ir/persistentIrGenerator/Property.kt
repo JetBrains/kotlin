@@ -50,5 +50,10 @@ internal fun PersistentIrGenerator.generateProperty() {
         )()
     })
 
-    addCarrierProtoMessage("Property", backingFieldField, getterField, setterField)
+    addCarrierProtoMessage(
+        "Property",
+        backingFieldField,
+        getterField,
+        setterField,
+    )
 }

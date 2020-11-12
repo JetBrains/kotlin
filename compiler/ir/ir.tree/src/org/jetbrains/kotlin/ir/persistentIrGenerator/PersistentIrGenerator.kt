@@ -19,12 +19,24 @@ internal interface R {
 
 internal typealias E = R.() -> R
 
-// protoPrefix is `optional int32` and like
-internal class ProtoType(val protoPrefix: String)
+internal enum class FieldKind {
+    REQUIRED, OPTIONAL, REPEATED
+}
 
-internal class Field(val name: String, val type: E, val protoType: ProtoType? = null, val lateinit: Boolean = false, val protoOptional: String? = null)
+internal class Proto(
+    val protoPrefix: String?, // null if flag, proto type if not
+    val entityName: String,   // what to deserialize
+    val protoType: E,         // what type ProtoBuf generates
+    val irType: E,            // what Ir class this maps to
+    val fieldKind: FieldKind = FieldKind.OPTIONAL
+)
+
+internal class Field(val name: String, val type: E, val proto: Proto? = null, val lateinit: Boolean = false)
 
 internal object PersistentIrGenerator {
+
+    private val protoPackage = "org.jetbrains.kotlin.backend.common.serialization.proto"
+    val carrierPackage = "org.jetbrains.kotlin.ir.declarations.persistent.carriers"
 
     // Imports
 
@@ -42,6 +54,7 @@ internal object PersistentIrGenerator {
     val IrValueParameter = irDeclaration("IrValueParameter")
     val MetadataSource = irDeclaration("MetadataSource")
     val IrAttributeContainer = irDeclaration("IrAttributeContainer")
+    val IrVariable = irDeclaration("IrVariable")
 
     val IrConstructorCall = irExpression("IrConstructorCall")
     val IrBody = irExpression("IrBody")
@@ -119,48 +132,108 @@ internal object PersistentIrGenerator {
 
     // Proto types
 
-    val bodyProtoType = ProtoType("optional int32")
-    val valueParameterProtoType = ProtoType("optional IrValueParameter")
-    val valueParameterListProtoType = ProtoType("repeated IrValueParameter")
-    val typeParameterListProtoType = ProtoType("repeated IrTypeParameter")
-    val superTypeListProtoType = ProtoType("repeated int32")
-    val typeProtoType = ProtoType("optional IrType")
-    val symbolProtoType = ProtoType("optional int64")
-    val symbolListProtoType = ProtoType("repeated int64")
-    val variableProtoType = ProtoType("optional IrVariable")
+    val protoValueParameterType = import("IrValueParameter", protoPackage, "ProtoIrValueParameter")
+    val protoTypeParameterType = import("IrTypeParameter", protoPackage, "ProtoIrTypeParameter")
+    val protoType = import("IrType", protoPackage, "ProtoIrType")
+    val protoVariable = import("IrVariable", protoPackage, "ProtoIrVariable")
+    val protoIrConstructorCall = import("IrConstructorCall", protoPackage, "ProtoIrConstructorCall")
+
+    val bodyProtoType = Proto("int32", "body", +"Int", IrBody)
+    val blockBodyProtoType = Proto("int32", "blockBody", +"Int", IrBlockBody)
+    val expressionBodyProtoType = Proto("int32", "expressionBody", +"Int", IrExpressionBody)
+    val valueParameterProtoType = Proto("IrValueParameter", "valueParameter", protoValueParameterType, IrValueParameter)
+    val valueParameterListProtoType = Proto("IrValueParameter", "valueParametersList", protoValueParameterType, IrValueParameter, fieldKind = FieldKind.REPEATED)
+    val typeParameterListProtoType = Proto("IrTypeParameter", "typeParametersList", protoTypeParameterType, IrTypeParameter, fieldKind = FieldKind.REPEATED)
+    val superTypeListProtoType = Proto("int32", "superTypesList", +"Int", IrType, fieldKind = FieldKind.REPEATED)
+    val typeProtoType = Proto("IrType", "type", protoType, IrType)
+    val symbolProtoType = Proto("int64", "symbol", +"Long", +"Nothing")
+    val symbolListProtoType = Proto("int64", "symbolList", +"Long", +"Nothing", fieldKind = FieldKind.REPEATED)
+    val variableProtoType = Proto("IrVariable", "variable", protoVariable, IrVariable)
+
+    val visibilityProto = Proto(null, "visibility", +"Long", DescriptorVisibility)
+    val modalityProto = Proto(null, "modality", +"Long", descriptorType("Modality"))
+
 
     val protoMessages = mutableListOf<String>()
 
-    fun addCarrierProtoMessage(carrierName: String, vararg fields: Field, withFlags: Boolean = false) {
-        val protoFields = mutableListOf<Pair<String, String?>>(
-            "required int32 lastModified" to null,
-            "optional int64 parentSymbol" to null,
-            "optional int32 origin" to null,
-            "repeated IrConstructorCall annotation" to null
+    fun addCarrierProtoMessage(carrierName: String, vararg fields: Field) {
+        val protoFields = mutableListOf(
+            "required int32 lastModified",
+            "optional int64 parentSymbol",
+            "optional int32 origin",
+            "repeated IrConstructorCall annotation"
         )
 
         protoFields += fields.mapNotNull { f ->
-            f.protoType?.let { t ->
-                "${t.protoPrefix} ${f.name}" to f.protoOptional
+            f.proto?.protoPrefix?.let { p ->
+                val modifier = f.proto.fieldKind.toString().toLowerCase()
+                "$modifier $p ${f.name}"
             }
         }
-
-        if (withFlags) {
-            protoFields += "optional int64 flags" to "[default = 0]"
-        }
-
 
         val sb = StringBuilder("message Pir${carrierName}Carrier {\n")
-        protoFields.forEachIndexed { i, (f, o) ->
+        protoFields.forEachIndexed { i, f ->
             sb.append("    $f = ${i + 1}")
-            if (o != null) {
-                sb.append(" $o")
-            }
             sb.append(";\n")
         }
+
+        if (fields.any { it.proto != null && it.proto.protoPrefix == null}) {
+            sb.append("    optional int64 flags = ${protoFields.size + 1} [default = 0];\n")
+        }
+
         sb.append("}\n")
 
         protoMessages += sb.toString()
+
+        addDeserializerMessage(carrierName, *fields)
+    }
+
+    val deserializerMethods = mutableListOf<E>().also { list ->
+
+        list += +"abstract fun deserializeParent(proto: Long): " + IrDeclarationParent
+        list += +"abstract fun deserializeOrigin(proto: Int): " + IrDeclarationOrigin
+        list += +"abstract fun deserializeAnnotations(proto: List<" + protoIrConstructorCall + ">): List<" + IrConstructorCall + ">"
+
+        listOf(
+            bodyProtoType, blockBodyProtoType, expressionBodyProtoType, valueParameterProtoType, valueParameterListProtoType, typeParameterListProtoType, superTypeListProtoType,
+            typeProtoType, symbolProtoType, symbolListProtoType, variableProtoType, visibilityProto, modalityProto
+        ).forEach { p ->
+            val argumentType = if (p.fieldKind == FieldKind.REPEATED) +"List<" + p.protoType + ">" else p.protoType
+            val returnType = if (p.fieldKind == FieldKind.REPEATED) +"List<" + p.irType + ">" else p.irType
+            list += +"abstract fun deserialize${p.entityName.capitalize()}(proto: "+ argumentType +"): " + returnType
+        }
+    }
+
+    fun addDeserializerMessage(carrierName: String, vararg fields: Field) {
+        val argumentType = import("Pir${carrierName}Carrier", protoPackage)
+        val returnType = import("${carrierName}Carrier", carrierPackage)
+        val carrierImpl = import("${carrierName}CarrierImpl", carrierPackage)
+
+        deserializerMethods += lines(
+            +"fun deserialize${carrierName}Carrier(proto: " + argumentType + "): " + returnType + " {",
+            lines(
+                +"return " + carrierImpl + "(",
+                arrayOf(
+                    +"proto.lastModified",
+                    +"deserializeParent(proto.parentSymbol)",
+                    +"deserializeOrigin(proto.origin)",
+                    +"deserializeAnnotations(proto.annotationList)",
+                    *fields.map { f ->
+                        if (f.proto == null) {
+                            +"null"
+                        } else {
+                            val argument = if (f.proto.protoPrefix != null) {
+                                val maybeList = if (f.proto.fieldKind == FieldKind.REPEATED) "List" else ""
+                                "proto.${f.name}$maybeList"
+                            } else "proto.flags"
+                            +"deserialize${f.proto.entityName.capitalize()}($argument)"
+                        }
+                    }.toTypedArray()
+                ).join(separator = ",\n").indent(),
+                +")",
+            ).indent(),
+            +"}",
+        )
     }
 
     // Helpers
@@ -237,7 +310,7 @@ internal object PersistentIrGenerator {
         return block(*(fn.flatMap { listOf(id, it) }.toTypedArray()))
     }
 
-    fun import(name: String, pkg: String): E = { import("$pkg.$name").text(name) }
+    fun import(name: String, pkg: String, alias: String = name): E = { import("$pkg.$name${ if (alias != name) " as $alias" else ""}").text(alias) }
 
     fun descriptorType(name: String): E = import(name, "org.jetbrains.kotlin.descriptors")
 
@@ -384,5 +457,17 @@ internal object PersistentIrGenerator {
         sb.append("\n").append(lines.subList(end, lines.size).joinToString(separator = "\n"))
 
         file.writeText(sb.toString())
+    }
+
+    fun generateCarrierDeserializer() {
+        writeFile("../../serialization/IrCarrierDeserializer.kt", renderFile("org.jetbrains.kotlin.ir.persistentIrGenerator") {
+            lines(
+                id,
+                +"internal abstract class IrCarrierDeserializer " + blockSpaced(
+                    *deserializerMethods.toTypedArray()
+                ),
+                id,
+            )()
+        })
     }
 }

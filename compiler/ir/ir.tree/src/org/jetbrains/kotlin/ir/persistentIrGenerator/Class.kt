@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateClass() {
-    val visibilityField = Field("visibility", descriptorType("DescriptorVisibility"), null)
+    val visibilityField = Field("visibility", DescriptorVisibility, visibilityProto)
     val thisReceiverField = Field("thisReceiver", irDeclaration("IrValueParameter") + "?", valueParameterProtoType)
     val typeParametersField = Field("typeParameters", +"List<" + irDeclaration("IrTypeParameter") + ">", typeParameterListProtoType)
     val superTypesField = Field("superTypes", +"List<" + import("IrType", "org.jetbrains.kotlin.ir.types") + ">", superTypeListProtoType)
-    val modalityField = Field("modality", descriptorType("Modality"), null)
+    val modalityField = Field("modality", descriptorType("Modality"), modalityProto)
 
     writeFile("PersistentIrClass.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(
@@ -83,5 +83,11 @@ internal fun PersistentIrGenerator.generateClass() {
         )()
     })
 
-    addCarrierProtoMessage("Class", thisReceiverField, typeParametersField, superTypesField, withFlags = true)
+    addCarrierProtoMessage(
+        "Class", thisReceiverField,
+        visibilityField,
+        modalityField,
+        typeParametersField,
+        superTypesField,
+    )
 }

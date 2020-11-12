@@ -50,5 +50,11 @@ internal fun PersistentIrGenerator.generateLocalDelegatedProperty() {
         )()
     })
 
-    addCarrierProtoMessage("LocalDelegatedProperty", typeField, delegateField, getterField, setterField)
+    addCarrierProtoMessage(
+        "LocalDelegatedProperty",
+        typeField,
+        delegateField,
+        getterField,
+        setterField,
+    )
 }

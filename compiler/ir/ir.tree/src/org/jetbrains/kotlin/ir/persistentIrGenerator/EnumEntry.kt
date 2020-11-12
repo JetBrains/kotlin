@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateEnumEntry() {
     val correspondingClassField = Field("correspondingClass", IrClass + "?", symbolProtoType)
-    val initializerExpressionField = Field("initializerExpression", IrExpressionBody + "?", bodyProtoType)
+    val initializerExpressionField = Field("initializerExpression", IrExpressionBody + "?", expressionBodyProtoType)
 
     writeFile("PersistentIrEnumEntry.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(

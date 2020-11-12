@@ -21,5 +21,6 @@ fun main() {
         generateValueParameter()
 
         updateKotlinIrProto()
+        generateCarrierDeserializer()
     }
 }
