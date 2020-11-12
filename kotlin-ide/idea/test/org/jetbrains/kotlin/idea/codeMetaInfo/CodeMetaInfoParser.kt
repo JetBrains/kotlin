@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.idea.codeMetaInfo.models.ParsedCodeMetaInfo
 import org.junit.Assert
 
 object CodeMetaInfoParser {
-    private val openingRegex = """(<!([^>]+?)!>)""".toRegex()
+    private val openingRegex = """(<!(.+?)!>)""".toRegex()
     private val closingRegex = """(<!>)""".toRegex()
 
     /*
