@@ -30,6 +30,8 @@ internal abstract class IrCarrierDeserializer(
 
     abstract fun deserializeConstructorCall(call: ProtoIrConstructorCall): IrConstructorCall
 
+    abstract fun deserializeAnnotations(annotationList: List<ProtoIrConstructorCall>): List<IrConstructorCall>
+
     fun deserializeAnonymousInitializerCarrier(proto: PirAnonymousInitializerCarrier): AnonymousInitializerCarrier {
         return AnonymousInitializerCarrierImpl(
             proto.lastModified,

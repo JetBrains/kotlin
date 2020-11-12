@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateProperty() {
-    val backingFieldField = Field("backingField", irDeclaration("IrField") + "?", "optional int64")
-    val getterField = Field("getter", irDeclaration("IrSimpleFunction") + "?", "optional int64")
-    val setterField = Field("setter", irDeclaration("IrSimpleFunction") + "?", "optional int64")
+    val backingFieldField = Field("backingField", irDeclaration("IrField") + "?", symbolProtoType)
+    val getterField = Field("getter", irDeclaration("IrSimpleFunction") + "?", symbolProtoType)
+    val setterField = Field("setter", irDeclaration("IrSimpleFunction") + "?", symbolProtoType)
     val metadataField = Field("metadata", MetadataSource + "?")
     val attributeOwnerIdField = Field("attributeOwnerId", IrAttributeContainer)
 

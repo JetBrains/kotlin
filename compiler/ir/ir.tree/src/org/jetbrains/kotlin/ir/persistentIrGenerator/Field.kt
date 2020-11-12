@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateField() {
-    val initializerField = Field("initializer", IrExpressionBody + "?", "optional int32")
-    val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?", "optional int64")
+    val initializerField = Field("initializer", IrExpressionBody + "?", bodyProtoType)
+    val correspondingPropertySymbolField = Field("correspondingPropertySymbol", IrPropertySymbol + "?", symbolProtoType)
     val metadataField = Field("metadata", MetadataSource + "?")
-    val typeField = Field("type", IrType, "optional IrType")
+    val typeField = Field("type", IrType, typeProtoType)
 
     writeFile("PersistentIrField.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(

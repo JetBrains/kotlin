@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
-import org.jetbrains.kotlin.builtins.StandardNames.FqNames.mutableList
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import java.io.File
 import java.lang.IllegalStateException
 import java.lang.StringBuilder
@@ -22,7 +19,10 @@ internal interface R {
 
 internal typealias E = R.() -> R
 
-internal class Field(val name: String, val type: E, val protoType: String? = null, val lateinit: Boolean = false, val protoOptional: String? = null)
+// protoPrefix is `optional int32` and like
+internal class ProtoType(val protoPrefix: String)
+
+internal class Field(val name: String, val type: E, val protoType: ProtoType? = null, val lateinit: Boolean = false, val protoOptional: String? = null)
 
 internal object PersistentIrGenerator {
 
@@ -117,6 +117,18 @@ internal object PersistentIrGenerator {
 
     fun Field.toBody() = body(type, lateinit, name)
 
+    // Proto types
+
+    val bodyProtoType = ProtoType("optional int32")
+    val valueParameterProtoType = ProtoType("optional IrValueParameter")
+    val valueParameterListProtoType = ProtoType("repeated IrValueParameter")
+    val typeParameterListProtoType = ProtoType("repeated IrTypeParameter")
+    val superTypeListProtoType = ProtoType("repeated int32")
+    val typeProtoType = ProtoType("optional IrType")
+    val symbolProtoType = ProtoType("optional int64")
+    val symbolListProtoType = ProtoType("repeated int64")
+    val variableProtoType = ProtoType("optional IrVariable")
+
     val protoMessages = mutableListOf<String>()
 
     fun addCarrierProtoMessage(carrierName: String, vararg fields: Field, withFlags: Boolean = false) {
@@ -129,7 +141,7 @@ internal object PersistentIrGenerator {
 
         protoFields += fields.mapNotNull { f ->
             f.protoType?.let { t ->
-                "$t ${f.name}" to f.protoOptional
+                "${t.protoPrefix} ${f.name}" to f.protoOptional
             }
         }
 

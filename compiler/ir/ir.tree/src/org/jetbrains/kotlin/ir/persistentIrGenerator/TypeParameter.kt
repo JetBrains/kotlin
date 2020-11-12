@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateTypeParameter() {
-    val superTypesField = Field("superTypes", +"List<" + IrType + ">", "repeated int32")
+    val superTypesField = Field("superTypes", +"List<" + IrType + ">", superTypeListProtoType)
 
     writeFile("PersistentIrTypeParameter.kt", renderFile("org.jetbrains.kotlin.ir.declarations.persistent") {
         lines(

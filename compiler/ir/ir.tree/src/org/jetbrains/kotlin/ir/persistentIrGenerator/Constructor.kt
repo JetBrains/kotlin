@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.ir.persistentIrGenerator
 
 internal fun PersistentIrGenerator.generateConstructor() {
-    val returnTypeFieldField = Field("returnTypeField", IrType, "optional IrType")
-    val typeParametersField = Field("typeParameters", +"List<" + IrTypeParameter + ">", "repeated IrTypeParameter")
-    val dispatchReceiverParameterField = Field("dispatchReceiverParameter", IrValueParameter + "?", "optional IrValueParameter")
-    val extensionReceiverParameterField = Field("extensionReceiverParameter", IrValueParameter + "?", "optional IrValueParameter")
-    val valueParametersField = Field("valueParameters", +"List<" + IrValueParameter + ">", "repeated IrValueParameter")
-    val bodyField = Field("body", IrBody + "?", "optional int32")
+    val returnTypeFieldField = Field("returnTypeField", IrType, typeProtoType)
+    val typeParametersField = Field("typeParameters", +"List<" + IrTypeParameter + ">", typeParameterListProtoType)
+    val dispatchReceiverParameterField = Field("dispatchReceiverParameter", IrValueParameter + "?", valueParameterProtoType)
+    val extensionReceiverParameterField = Field("extensionReceiverParameter", IrValueParameter + "?", valueParameterProtoType)
+    val valueParametersField = Field("valueParameters", +"List<" + IrValueParameter + ">", valueParameterListProtoType)
+    val bodyField = Field("body", IrBody + "?", bodyProtoType)
     val metadataField = Field("metadata", MetadataSource + "?")
     val visibilityField = Field("visibility", DescriptorVisibility)
 
