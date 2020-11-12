@@ -19,6 +19,8 @@ sealed class AbstractFirDiagnosticFactory<out E : FirSourceElement, D : FirDiagn
 ) {
     abstract val psiDiagnosticFactory: DiagnosticFactoryWithPsiElement<*, *>
 
+    abstract val defaultRenderer: FirDiagnosticRenderer<*>
+
     override fun toString(): String {
         return name
     }
@@ -27,6 +29,13 @@ sealed class AbstractFirDiagnosticFactory<out E : FirSourceElement, D : FirDiagn
 class FirDiagnosticFactory0<E : FirSourceElement, P : PsiElement>(
     name: String, severity: Severity, override val psiDiagnosticFactory: DiagnosticFactory0<P>
 ) : AbstractFirDiagnosticFactory<E, FirSimpleDiagnostic<E>>(name, severity) {
+    companion object {
+        private val DefaultRenderer = SimpleFirDiagnosticRenderer("")
+    }
+
+    override val defaultRenderer: FirDiagnosticRenderer<*>
+        get() = DefaultRenderer
+
     fun on(element: E): FirSimpleDiagnostic<E> {
         return when (element) {
             is FirPsiSourceElement<*> -> FirPsiSimpleDiagnostic(
@@ -41,6 +50,16 @@ class FirDiagnosticFactory0<E : FirSourceElement, P : PsiElement>(
 class FirDiagnosticFactory1<E : FirSourceElement, P : PsiElement, A : Any>(
     name: String, severity: Severity, override val psiDiagnosticFactory: DiagnosticFactory1<P, A>
 ) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters1<E, A>>(name, severity) {
+    companion object {
+        private val DefaultRenderer = FirDiagnosticWithParameters1Renderer(
+            "{0}",
+            FirDiagnosticRenderers.TO_STRING
+        )
+    }
+
+    override val defaultRenderer: FirDiagnosticRenderer<*>
+        get() = DefaultRenderer
+
     fun on(element: E, a: A): FirDiagnosticWithParameters1<E, A> {
         return when (element) {
             is FirPsiSourceElement<*> -> FirPsiDiagnosticWithParameters1(
@@ -55,6 +74,17 @@ class FirDiagnosticFactory1<E : FirSourceElement, P : PsiElement, A : Any>(
 class FirDiagnosticFactory2<E : FirSourceElement, P : PsiElement, A : Any, B : Any>(
     name: String, severity: Severity, override val psiDiagnosticFactory: DiagnosticFactory2<P, A, B>
 ) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters2<E, A, B>>(name, severity) {
+    companion object {
+        private val DefaultRenderer = FirDiagnosticWithParameters2Renderer(
+            "{0}, {1}",
+            FirDiagnosticRenderers.TO_STRING,
+            FirDiagnosticRenderers.TO_STRING
+        )
+    }
+
+    override val defaultRenderer: FirDiagnosticRenderer<*>
+        get() = DefaultRenderer
+
     fun on(element: E, a: A, b: B): FirDiagnosticWithParameters2<E, A, B> {
         return when (element) {
             is FirPsiSourceElement<*> -> FirPsiDiagnosticWithParameters2(
@@ -69,6 +99,18 @@ class FirDiagnosticFactory2<E : FirSourceElement, P : PsiElement, A : Any, B : A
 class FirDiagnosticFactory3<E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any>(
     name: String, severity: Severity, override val psiDiagnosticFactory: DiagnosticFactory3<P, A, B, C>
 ) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters3<E, A, B, C>>(name, severity) {
+    companion object {
+        private val DefaultRenderer = FirDiagnosticWithParameters3Renderer(
+            "{0}, {1}, {2}",
+            FirDiagnosticRenderers.TO_STRING,
+            FirDiagnosticRenderers.TO_STRING,
+            FirDiagnosticRenderers.TO_STRING
+        )
+    }
+
+    override val defaultRenderer: FirDiagnosticRenderer<*>
+        get() = DefaultRenderer
+
     fun on(element: E, a: A, b: B, c: C): FirDiagnosticWithParameters3<E, A, B, C> {
         return when (element) {
             is FirPsiSourceElement<*> -> FirPsiDiagnosticWithParameters3(
