@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     compileOnly(project(":compiler:ir.tree"))
+    compile(project(":compiler:ir.serialization.common"))
 }
 
 sourceSets {

@@ -35,11 +35,25 @@ public interface PirAnonymousInitializerCarrierOrBuilder extends
   int getOrigin();
 
   /**
-   * <code>optional int32 body = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
+      getAnnotationList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  int getAnnotationCount();
+
+  /**
+   * <code>optional int32 body = 5;</code>
    */
   boolean hasBody();
   /**
-   * <code>optional int32 body = 4;</code>
+   * <code>optional int32 body = 5;</code>
    */
   int getBody();
 }

@@ -119,20 +119,15 @@ internal class IrSymbolDeserializer(
         deserializedSymbols.putIfAbsent(signature, symbol)
     }
 
-    private fun deserializeIrLocalSymbolData(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        assert(idSig.isLocal)
-
-        if (idSig.hasTopLevel) {
-            fileDeserializationState.addIdSignature(idSig.topLevelSignature())
-        }
-
-        return deserializedSymbols.getOrPut(idSig) {
-            referenceDeserializedSymbol(symbolKind, idSig)
-        }
-    }
-
     private fun deserializeIrSymbolData(idSignature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        if (idSignature.isLocal) return deserializeIrLocalSymbolData(idSignature, symbolKind)
+        if (idSignature.isLocal) {
+            if (idSignature.hasTopLevel) {
+                fileDeserializationState.addIdSignature(idSignature.topLevelSignature())
+            }
+            return deserializedSymbols.getOrPut(idSignature) {
+                referenceDeserializedSymbol(symbolKind, idSignature)
+            }
+        }
 
         return findModuleDeserializer(idSignature).deserializeIrSymbol(idSignature, symbolKind)
     }

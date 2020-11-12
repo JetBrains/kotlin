@@ -94,11 +94,11 @@ internal class PersistentIrClass(
 
     override val declarations: MutableList<IrDeclaration> = ArrayList()
         get() {
-            if (createdOn < factory.stageController.currentStage && initialDeclarations == null) {
+            if (createdOn < stageController.currentStage && initialDeclarations == null) {
                 initialDeclarations = Collections.unmodifiableList(ArrayList(field))
             }
 
-            return if (factory.stageController.canAccessDeclarationsOf(this)) {
+            return if (stageController.canAccessDeclarationsOf(this)) {
                 ensureLowered()
                 field
             } else {

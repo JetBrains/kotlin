@@ -595,30 +595,33 @@ message PirAnonymousInitializerCarrier {
     required int32 lastModified = 1;
     optional int64 parentSymbol = 2;
     optional int32 origin = 3;
-    optional int32 body = 4;
+    repeated IrConstructorCall annotation = 4;
+    optional int32 body = 5;
 }
 
 message PirClassCarrier {
     required int32 lastModified = 1;
     optional int64 parentSymbol = 2;
     optional int32 origin = 3;
-    optional IrValueParameter thisReceiverField = 4;
-    repeated IrTypeParameter typeParameters = 5;
-    repeated int32 superTypes = 6;
-    optional int64 flags = 7 [default = 0];
+    repeated IrConstructorCall annotation = 4;
+    optional IrValueParameter thisReceiverField = 5;
+    repeated IrTypeParameter typeParameters = 6;
+    repeated int32 superTypes = 7;
+    optional int64 flags = 8 [default = 0];
 }
 
 message PirConstructorCarrier {
     required int32 lastModified = 1;
     optional int64 parentSymbol = 2;
     optional int32 origin = 3;
-    optional IrType returnTypeField = 4;
-    optional IrValueParameter dispatchReceiverParameter = 5;
-    optional IrValueParameter extensionReceiverParameter = 6;
-    optional int32 body = 7;
-    repeated IrTypeParameter typeParameters = 8;
-    repeated IrValueParameter valueParameters = 9;
-    optional int64 flags = 10 [default = 0];
+    repeated IrConstructorCall annotation = 4;
+    optional IrType returnTypeField = 5;
+    optional IrValueParameter dispatchReceiverParameter = 6;
+    optional IrValueParameter extensionReceiverParameter = 7;
+    optional int32 body = 8;
+    repeated IrTypeParameter typeParameters = 9;
+    repeated IrValueParameter valueParameters = 10;
+    optional int64 flags = 11 [default = 0];
 }
 
 message PirEnumEntryCarrier {
