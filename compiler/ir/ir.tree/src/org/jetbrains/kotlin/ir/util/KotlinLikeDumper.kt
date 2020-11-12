@@ -128,7 +128,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO special support for objects
 
         declaration.printlnAnnotations()
-        p.print("")
+        p.printIndent()
 
         declaration.run {
             printModifiersWithNoIndent(
@@ -302,7 +302,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private fun IrAnnotationContainer.printlnAnnotations(prefix: String = "") {
         annotations.forEach {
-            p.print("")
+            p.printIndent()
             it.printAnAnnotationWithNoIndent(prefix)
             p.printlnWithNoIndent()
         }
@@ -538,7 +538,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitTypeAlias(declaration: IrTypeAlias, data: IrDeclaration?) {
         declaration.printlnAnnotations()
-        p.print("")
+        p.printIndent()
 
         printVisibility(declaration.visibility)
         p(declaration.isActual, "actual")
@@ -559,7 +559,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         declaration.correspondingClass?.let { p.println() }
 
         declaration.printlnAnnotations()
-        p.print("")
+        p.printIndent()
         p.printWithNoIndent(declaration.name)
         declaration.initializerExpression?.let {
             p.printWithNoIndent(" = ")
@@ -575,7 +575,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: IrDeclaration?) {
         // Looks like IrAnonymousInitializer has annotations accidentally. No tests.
         declaration.printlnAnnotations()
-        p.print("")
+        p.printIndent()
 
         // TODO looks like there are no irText tests for isStatic flag
         p(declaration.isStatic, commentBlockH("static"))
@@ -603,7 +603,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO return type?
 
         declaration.printlnAnnotations()
-        p.print("")
+        p.printIndent()
 
         declaration.run {
             printModifiersWithNoIndent(
@@ -653,7 +653,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         if (options.printFakeOverridesStrategy == FakeOverridesStrategy.NONE && declaration.isFakeOverride) return
 
         declaration.printlnAnnotations()
-        p.print("")
+        p.printIndent()
 
         // TODO better rendering for modifiers on property and accessors
         // modifiers that could be different between accessors and property have a comment
@@ -739,7 +739,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitField(declaration: IrField, data: IrDeclaration?) {
         declaration.printlnAnnotations()
-        p.print("")
+        p.printIndent()
 
         declaration.run {
             printModifiersWithNoIndent(
@@ -788,7 +788,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitVariable(declaration: IrVariable, data: IrDeclaration?) {
         declaration.printlnAnnotations()
-        p.print("")
+        p.printIndent()
 
         p(declaration.isLateinit, "lateinit")
         p(declaration.isConst, "const")
@@ -810,7 +810,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: IrDeclaration?) {
         declaration.printlnAnnotations()
-        p.print("")
+        p.printIndent()
 
         // TODO think about better rendering
         declaration.run { printVariable(isVar, name, type) }
