@@ -30,7 +30,12 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
 ) {
     val pathConverter = IncrementalFileToPathConverter(rootProjectDir)
     private val caches = arrayListOf<BasicMapsOwner>()
+
+    var isClosed = false
+
+    @Synchronized
     protected fun <T : BasicMapsOwner> T.registerCache() {
+        assert(!isClosed) { "Attempted to add new cache into closed storage." }
         caches.add(this)
     }
 
@@ -41,9 +46,12 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
     val lookupCache: LookupStorage = LookupStorage(lookupCacheDir, pathConverter).apply { registerCache() }
     abstract val platformCache: PlatformCache
 
+    @Synchronized
     fun close(flush: Boolean = false): Boolean {
+        if (isClosed) {
+            return true
+        }
         var successful = true
-
         for (cache in caches) {
             if (flush) {
                 try {
@@ -62,6 +70,7 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
             }
         }
 
+        isClosed = true
         return successful
     }
 }
