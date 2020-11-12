@@ -1,4 +1,4 @@
-public abstract interface SubclassOfCollection<E : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/collections/MutableCollection<ft<E, E?>!>| {
-    public abstract operator fun iterator(): R|kotlin/collections/MutableIterator<ft<E, E?>!>|
+public abstract interface SubclassOfCollection<E : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/collections/MutableCollection<ft<@FlexibleNullability E, E?>!>| {
+    public abstract operator fun iterator(): R|@FlexibleNullability kotlin/collections/MutableIterator<ft<@FlexibleNullability E, E?>!>|
 
 }

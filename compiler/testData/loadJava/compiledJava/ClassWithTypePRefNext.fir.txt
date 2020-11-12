@@ -1,4 +1,4 @@
-public open class ClassWithTypePRefNext<R : R|ft<kotlin/collections/MutableIterable<ft<P, P?>!>, kotlin/collections/Iterable<ft<P, P?>!>?>!|, P : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/Any| {
-    public constructor<R : R|ft<kotlin/collections/MutableIterable<ft<P, P?>!>, kotlin/collections/Iterable<ft<P, P?>!>?>!|, P : R|ft<kotlin/Any, kotlin/Any?>!|>(): R|test/ClassWithTypePRefNext<R, P>|
+public open class ClassWithTypePRefNext<R : R|ft<@FlexibleNullability kotlin/collections/MutableIterable<ft<@FlexibleNullability P, P?>!>, kotlin/collections/Iterable<ft<@FlexibleNullability P, P?>!>?>!|, P : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/Any| {
+    public constructor<R : R|ft<@FlexibleNullability kotlin/collections/MutableIterable<ft<@FlexibleNullability P, P?>!>, kotlin/collections/Iterable<ft<@FlexibleNullability P, P?>!>?>!|, P : R|ft<kotlin/Any, kotlin/Any?>!|>(): R|test/ClassWithTypePRefNext<R, P>|
 
 }

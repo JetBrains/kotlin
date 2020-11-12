@@ -105,8 +105,12 @@ fun ConeTypeContext.hasNullableSuperType(type: ConeKotlinType): Boolean {
     return false
 }
 
-fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability, typeContext: ConeInferenceContext? = null): T {
-    if (this.nullability == nullability) {
+fun <T : ConeKotlinType> T.withNullability(
+    nullability: ConeNullability,
+    typeContext: ConeInferenceContext? = null,
+    attributes: ConeAttributes = this.attributes,
+): T {
+    if (this.nullability == nullability && this.attributes == attributes) {
         return this
     }
 
@@ -187,6 +191,9 @@ fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
 
 fun FirTypeRef.hasEnhancedNullability(): Boolean =
     coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability == true
+
+fun FirTypeRef.hasFlexibleNullability(): Boolean =
+    coneTypeSafe<ConeKotlinType>()?.hasFlexibleNullability == true
 
 fun FirTypeRef.withoutEnhancedNullability(): FirTypeRef {
     require(this is FirResolvedTypeRef)

@@ -37,6 +37,13 @@ class Fir2IrBuiltIns(
     internal fun enhancedNullabilityAnnotationConstructorCall(): IrConstructorCall? =
         enhancedNullabilityAnnotationSymbol?.toConstructorCall()
 
+    private val flexibleNullabilityAnnotationSymbol by lazy {
+        annotationSymbolById(CompilerConeAttributes.FlexibleNullability.ANNOTATION_CLASS_ID)
+    }
+
+    internal fun flexibleNullabilityAnnotationConstructorCall(): IrConstructorCall? =
+        flexibleNullabilityAnnotationSymbol?.toConstructorCall()
+
     private fun annotationSymbolById(id: ClassId): IrClassSymbol? =
         provider?.getClassSymbolById(id) ?: session.firSymbolProvider.getClassLikeSymbolByFqName(id)?.toSymbol(
             session, classifierStorage, ConversionTypeContext.DEFAULT

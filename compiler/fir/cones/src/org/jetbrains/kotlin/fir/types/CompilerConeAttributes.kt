@@ -59,6 +59,18 @@ object CompilerConeAttributes {
         override fun toString(): String = "@ExtensionFunctionType"
     }
 
+    object FlexibleNullability : ConeAttribute<FlexibleNullability>() {
+        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.internal.ir"), Name.identifier("FlexibleNullability"))
+
+        override fun union(other: FlexibleNullability?): FlexibleNullability? = other
+        override fun intersect(other: FlexibleNullability?): FlexibleNullability? = this
+        override fun isSubtypeOf(other: FlexibleNullability?): Boolean = true
+
+        override val key: KClass<out FlexibleNullability> = FlexibleNullability::class
+
+        override fun toString(): String = "@FlexibleNullability"
+    }
+
     object UnsafeVariance : ConeAttribute<UnsafeVariance>() {
         val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("UnsafeVariance"))
 
@@ -76,6 +88,7 @@ val ConeAttributes.exact: CompilerConeAttributes.Exact? by ConeAttributes.attrib
 val ConeAttributes.noInfer: CompilerConeAttributes.NoInfer? by ConeAttributes.attributeAccessor<CompilerConeAttributes.NoInfer>()
 val ConeAttributes.enhancedNullability: CompilerConeAttributes.EnhancedNullability? by ConeAttributes.attributeAccessor<CompilerConeAttributes.EnhancedNullability>()
 val ConeAttributes.extensionFunctionType: CompilerConeAttributes.ExtensionFunctionType? by ConeAttributes.attributeAccessor<CompilerConeAttributes.ExtensionFunctionType>()
+val ConeAttributes.flexibleNullability: CompilerConeAttributes.FlexibleNullability? by ConeAttributes.attributeAccessor<CompilerConeAttributes.FlexibleNullability>()
 val ConeAttributes.unsafeVarianceType: CompilerConeAttributes.UnsafeVariance? by ConeAttributes.attributeAccessor<CompilerConeAttributes.UnsafeVariance>()
 
 val ConeKotlinType.hasEnhancedNullability: Boolean
@@ -83,3 +96,6 @@ val ConeKotlinType.hasEnhancedNullability: Boolean
 
 val ConeKotlinType.isExtensionFunctionType: Boolean
     get() = attributes.extensionFunctionType != null
+
+val ConeKotlinType.hasFlexibleNullability: Boolean
+    get() = attributes.flexibleNullability != null

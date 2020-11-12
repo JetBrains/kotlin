@@ -104,7 +104,14 @@ class JavaClassMembersEnhancementScope(
                                 emptyArray(), valueParameter.returnTypeRef.isMarkedNullable == true
                             )
                             if (valueParameter.returnTypeRef.coneType is ConeFlexibleType) {
-                                ConeFlexibleType(type, type.withNullability(ConeNullability.NULLABLE))
+                                ConeFlexibleType(
+                                    type.withAttributes(
+                                        type.attributes.intersectUnless(ConeAttributes.WithFlexibleNullability) {
+                                            it.hasEnhancedNullability
+                                        }
+                                    ),
+                                    type.withNullability(ConeNullability.NULLABLE)
+                                )
                             } else {
                                 type
                             }
@@ -129,8 +136,8 @@ class JavaClassMembersEnhancementScope(
                 newParameterTypes = valueParameters.zip(newParameterTypes).map { (valueParameter, newType) ->
                     newType ?: valueParameter.returnTypeRef.coneType
                 },
-                    newDispatchReceiverType = dispatchReceiverType,
-                )
+                newDispatchReceiverType = dispatchReceiverType,
+            )
 
         }
         return this

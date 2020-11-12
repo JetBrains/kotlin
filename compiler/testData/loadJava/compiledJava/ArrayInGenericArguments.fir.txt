@@ -1,9 +1,9 @@
 public open class ArrayInGenericArguments : R|kotlin/Any| {
-    public final static field X: R|ft<ArrayInGenericArguments.DataKey<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!>, ArrayInGenericArguments.DataKey<ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!>?>!|
+    public final static field X: R|ft<@FlexibleNullability ArrayInGenericArguments.DataKey<ft<@FlexibleNullability kotlin/Array<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<@FlexibleNullability kotlin/String, kotlin/String?>!>?>!>, ArrayInGenericArguments.DataKey<ft<@FlexibleNullability kotlin/Array<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<@FlexibleNullability kotlin/String, kotlin/String?>!>?>!>?>!|
 
-    public final static field Y: R|ft<ArrayInGenericArguments.DataKey<ft<kotlin/IntArray, kotlin/IntArray?>!>, ArrayInGenericArguments.DataKey<ft<kotlin/IntArray, kotlin/IntArray?>!>?>!|
+    public final static field Y: R|ft<@FlexibleNullability ArrayInGenericArguments.DataKey<ft<@FlexibleNullability kotlin/IntArray, kotlin/IntArray?>!>, ArrayInGenericArguments.DataKey<ft<@FlexibleNullability kotlin/IntArray, kotlin/IntArray?>!>?>!|
 
-    public final static field Z: R|ft<ArrayInGenericArguments.DataKey<out ft<kotlin/Array<ft<kotlin/CharSequence, kotlin/CharSequence?>!>, kotlin/Array<out ft<kotlin/CharSequence, kotlin/CharSequence?>!>?>!>, ArrayInGenericArguments.DataKey<out ft<kotlin/Array<ft<kotlin/CharSequence, kotlin/CharSequence?>!>, kotlin/Array<out ft<kotlin/CharSequence, kotlin/CharSequence?>!>?>!>?>!|
+    public final static field Z: R|ft<@FlexibleNullability ArrayInGenericArguments.DataKey<out ft<@FlexibleNullability kotlin/Array<ft<@FlexibleNullability kotlin/CharSequence, kotlin/CharSequence?>!>, kotlin/Array<out ft<@FlexibleNullability kotlin/CharSequence, kotlin/CharSequence?>!>?>!>, ArrayInGenericArguments.DataKey<out ft<@FlexibleNullability kotlin/Array<ft<@FlexibleNullability kotlin/CharSequence, kotlin/CharSequence?>!>, kotlin/Array<out ft<@FlexibleNullability kotlin/CharSequence, kotlin/CharSequence?>!>?>!>?>!|
 
     public constructor(): R|ArrayInGenericArguments|
 

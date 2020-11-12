@@ -1,5 +1,5 @@
 public open class ArrayType : R|kotlin/Any| {
-    public open fun foo(): R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>?>!|
+    public open fun foo(): R|ft<@FlexibleNullability kotlin/Array<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<@FlexibleNullability kotlin/String, kotlin/String?>!>?>!|
 
     public constructor(): R|test/ArrayType|
 
