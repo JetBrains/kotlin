@@ -79,12 +79,12 @@ public final class PirClassCarrier extends
           case 42: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder subBuilder = null;
             if (((bitField0_ & 0x00000008) == 0x00000008)) {
-              subBuilder = thisReceiverField_.toBuilder();
+              subBuilder = thisReceiver_.toBuilder();
             }
-            thisReceiverField_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.PARSER, extensionRegistry);
+            thisReceiver_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.PARSER, extensionRegistry);
             if (subBuilder != null) {
-              subBuilder.mergeFrom(thisReceiverField_);
-              thisReceiverField_ = subBuilder.buildPartial();
+              subBuilder.mergeFrom(thisReceiver_);
+              thisReceiver_ = subBuilder.buildPartial();
             }
             bitField0_ |= 0x00000008;
             break;
@@ -246,19 +246,19 @@ public final class PirClassCarrier extends
     return annotation_.get(index);
   }
 
-  public static final int THISRECEIVERFIELD_FIELD_NUMBER = 5;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiverField_;
+  public static final int THISRECEIVER_FIELD_NUMBER = 5;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiver_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiverField = 5;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiver = 5;</code>
    */
-  public boolean hasThisReceiverField() {
+  public boolean hasThisReceiver() {
     return ((bitField0_ & 0x00000008) == 0x00000008);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiverField = 5;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiver = 5;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getThisReceiverField() {
-    return thisReceiverField_;
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getThisReceiver() {
+    return thisReceiver_;
   }
 
   public static final int TYPEPARAMETERS_FIELD_NUMBER = 6;
@@ -338,7 +338,7 @@ public final class PirClassCarrier extends
     parentSymbol_ = 0L;
     origin_ = 0;
     annotation_ = java.util.Collections.emptyList();
-    thisReceiverField_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
+    thisReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
     typeParameters_ = java.util.Collections.emptyList();
     superTypes_ = java.util.Collections.emptyList();
     flags_ = 0L;
@@ -359,8 +359,8 @@ public final class PirClassCarrier extends
         return false;
       }
     }
-    if (hasThisReceiverField()) {
-      if (!getThisReceiverField().isInitialized()) {
+    if (hasThisReceiver()) {
+      if (!getThisReceiver().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -391,7 +391,7 @@ public final class PirClassCarrier extends
       output.writeMessage(4, annotation_.get(i));
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeMessage(5, thisReceiverField_);
+      output.writeMessage(5, thisReceiver_);
     }
     for (int i = 0; i < typeParameters_.size(); i++) {
       output.writeMessage(6, typeParameters_.get(i));
@@ -429,7 +429,7 @@ public final class PirClassCarrier extends
     }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(5, thisReceiverField_);
+        .computeMessageSize(5, thisReceiver_);
     }
     for (int i = 0; i < typeParameters_.size(); i++) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -550,7 +550,7 @@ public final class PirClassCarrier extends
       bitField0_ = (bitField0_ & ~0x00000004);
       annotation_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000008);
-      thisReceiverField_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
+      thisReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000010);
       typeParameters_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000020);
@@ -601,7 +601,7 @@ public final class PirClassCarrier extends
       if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
         to_bitField0_ |= 0x00000008;
       }
-      result.thisReceiverField_ = thisReceiverField_;
+      result.thisReceiver_ = thisReceiver_;
       if (((bitField0_ & 0x00000020) == 0x00000020)) {
         typeParameters_ = java.util.Collections.unmodifiableList(typeParameters_);
         bitField0_ = (bitField0_ & ~0x00000020);
@@ -641,8 +641,8 @@ public final class PirClassCarrier extends
         }
         
       }
-      if (other.hasThisReceiverField()) {
-        mergeThisReceiverField(other.getThisReceiverField());
+      if (other.hasThisReceiver()) {
+        mergeThisReceiver(other.getThisReceiver());
       }
       if (!other.typeParameters_.isEmpty()) {
         if (typeParameters_.isEmpty()) {
@@ -683,8 +683,8 @@ public final class PirClassCarrier extends
           return false;
         }
       }
-      if (hasThisReceiverField()) {
-        if (!getThisReceiverField().isInitialized()) {
+      if (hasThisReceiver()) {
+        if (!getThisReceiver().isInitialized()) {
           
           return false;
         }
@@ -938,61 +938,61 @@ public final class PirClassCarrier extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiverField_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiverField = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiver = 5;</code>
      */
-    public boolean hasThisReceiverField() {
+    public boolean hasThisReceiver() {
       return ((bitField0_ & 0x00000010) == 0x00000010);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiverField = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiver = 5;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getThisReceiverField() {
-      return thisReceiverField_;
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter getThisReceiver() {
+      return thisReceiver_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiverField = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiver = 5;</code>
      */
-    public Builder setThisReceiverField(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
+    public Builder setThisReceiver(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
       if (value == null) {
         throw new NullPointerException();
       }
-      thisReceiverField_ = value;
+      thisReceiver_ = value;
 
       bitField0_ |= 0x00000010;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiverField = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiver = 5;</code>
      */
-    public Builder setThisReceiverField(
+    public Builder setThisReceiver(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.Builder builderForValue) {
-      thisReceiverField_ = builderForValue.build();
+      thisReceiver_ = builderForValue.build();
 
       bitField0_ |= 0x00000010;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiverField = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiver = 5;</code>
      */
-    public Builder mergeThisReceiverField(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
+    public Builder mergeThisReceiver(org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter value) {
       if (((bitField0_ & 0x00000010) == 0x00000010) &&
-          thisReceiverField_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance()) {
-        thisReceiverField_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.newBuilder(thisReceiverField_).mergeFrom(value).buildPartial();
+          thisReceiver_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance()) {
+        thisReceiver_ =
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.newBuilder(thisReceiver_).mergeFrom(value).buildPartial();
       } else {
-        thisReceiverField_ = value;
+        thisReceiver_ = value;
       }
 
       bitField0_ |= 0x00000010;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiverField = 5;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter thisReceiver = 5;</code>
      */
-    public Builder clearThisReceiverField() {
-      thisReceiverField_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
+    public Builder clearThisReceiver() {
+      thisReceiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000010);
       return this;

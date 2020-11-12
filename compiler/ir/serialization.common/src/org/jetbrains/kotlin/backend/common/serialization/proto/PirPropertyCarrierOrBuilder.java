@@ -35,29 +35,43 @@ public interface PirPropertyCarrierOrBuilder extends
   int getOrigin();
 
   /**
-   * <code>optional int64 backingField = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
+      getAnnotationList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  int getAnnotationCount();
+
+  /**
+   * <code>optional int64 backingField = 5;</code>
    */
   boolean hasBackingField();
   /**
-   * <code>optional int64 backingField = 4;</code>
+   * <code>optional int64 backingField = 5;</code>
    */
   long getBackingField();
 
   /**
-   * <code>optional int64 getter = 5;</code>
+   * <code>optional int64 getter = 6;</code>
    */
   boolean hasGetter();
   /**
-   * <code>optional int64 getter = 5;</code>
+   * <code>optional int64 getter = 6;</code>
    */
   long getGetter();
 
   /**
-   * <code>optional int64 setter = 6;</code>
+   * <code>optional int64 setter = 7;</code>
    */
   boolean hasSetter();
   /**
-   * <code>optional int64 setter = 6;</code>
+   * <code>optional int64 setter = 7;</code>
    */
   long getSetter();
 }

@@ -33,4 +33,18 @@ public interface PirErrorDeclarationCarrierOrBuilder extends
    * <code>optional int32 origin = 3;</code>
    */
   int getOrigin();
+
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
+      getAnnotationList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  int getAnnotationCount();
 }

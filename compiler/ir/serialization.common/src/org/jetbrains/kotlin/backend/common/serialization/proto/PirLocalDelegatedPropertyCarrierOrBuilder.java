@@ -35,38 +35,52 @@ public interface PirLocalDelegatedPropertyCarrierOrBuilder extends
   int getOrigin();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrType type = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
+      getAnnotationList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  int getAnnotationCount();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrType type = 5;</code>
    */
   boolean hasType();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrType type = 4;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrType type = 5;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrType getType();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 5;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 6;</code>
    */
   boolean hasDelegate();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 5;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 6;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable getDelegate();
 
   /**
-   * <code>optional int64 getter = 6;</code>
+   * <code>optional int64 getter = 7;</code>
    */
   boolean hasGetter();
   /**
-   * <code>optional int64 getter = 6;</code>
+   * <code>optional int64 getter = 7;</code>
    */
   long getGetter();
 
   /**
-   * <code>optional int64 setter = 7;</code>
+   * <code>optional int64 setter = 8;</code>
    */
   boolean hasSetter();
   /**
-   * <code>optional int64 setter = 7;</code>
+   * <code>optional int64 setter = 8;</code>
    */
   long getSetter();
 }

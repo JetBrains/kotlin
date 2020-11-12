@@ -68,17 +68,25 @@ public final class PirPropertyCarrier extends
             origin_ = input.readInt32();
             break;
           }
-          case 32: {
+          case 34: {
+            if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+              annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall>();
+              mutable_bitField0_ |= 0x00000008;
+            }
+            annotation_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.PARSER, extensionRegistry));
+            break;
+          }
+          case 40: {
             bitField0_ |= 0x00000008;
             backingField_ = input.readInt64();
             break;
           }
-          case 40: {
+          case 48: {
             bitField0_ |= 0x00000010;
             getter_ = input.readInt64();
             break;
           }
-          case 48: {
+          case 56: {
             bitField0_ |= 0x00000020;
             setter_ = input.readInt64();
             break;
@@ -91,6 +99,9 @@ public final class PirPropertyCarrier extends
       throw new org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException(
           e.getMessage()).setUnfinishedMessage(this);
     } finally {
+      if (((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
+        annotation_ = java.util.Collections.unmodifiableList(annotation_);
+      }
       try {
         unknownFieldsCodedOutput.flush();
       } catch (java.io.IOException e) {
@@ -162,46 +173,81 @@ public final class PirPropertyCarrier extends
     return origin_;
   }
 
-  public static final int BACKINGFIELD_FIELD_NUMBER = 4;
+  public static final int ANNOTATION_FIELD_NUMBER = 4;
+  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> annotation_;
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> getAnnotationList() {
+    return annotation_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCallOrBuilder> 
+      getAnnotationOrBuilderList() {
+    return annotation_;
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  public int getAnnotationCount() {
+    return annotation_.size();
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index) {
+    return annotation_.get(index);
+  }
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCallOrBuilder getAnnotationOrBuilder(
+      int index) {
+    return annotation_.get(index);
+  }
+
+  public static final int BACKINGFIELD_FIELD_NUMBER = 5;
   private long backingField_;
   /**
-   * <code>optional int64 backingField = 4;</code>
+   * <code>optional int64 backingField = 5;</code>
    */
   public boolean hasBackingField() {
     return ((bitField0_ & 0x00000008) == 0x00000008);
   }
   /**
-   * <code>optional int64 backingField = 4;</code>
+   * <code>optional int64 backingField = 5;</code>
    */
   public long getBackingField() {
     return backingField_;
   }
 
-  public static final int GETTER_FIELD_NUMBER = 5;
+  public static final int GETTER_FIELD_NUMBER = 6;
   private long getter_;
   /**
-   * <code>optional int64 getter = 5;</code>
+   * <code>optional int64 getter = 6;</code>
    */
   public boolean hasGetter() {
     return ((bitField0_ & 0x00000010) == 0x00000010);
   }
   /**
-   * <code>optional int64 getter = 5;</code>
+   * <code>optional int64 getter = 6;</code>
    */
   public long getGetter() {
     return getter_;
   }
 
-  public static final int SETTER_FIELD_NUMBER = 6;
+  public static final int SETTER_FIELD_NUMBER = 7;
   private long setter_;
   /**
-   * <code>optional int64 setter = 6;</code>
+   * <code>optional int64 setter = 7;</code>
    */
   public boolean hasSetter() {
     return ((bitField0_ & 0x00000020) == 0x00000020);
   }
   /**
-   * <code>optional int64 setter = 6;</code>
+   * <code>optional int64 setter = 7;</code>
    */
   public long getSetter() {
     return setter_;
@@ -211,6 +257,7 @@ public final class PirPropertyCarrier extends
     lastModified_ = 0;
     parentSymbol_ = 0L;
     origin_ = 0;
+    annotation_ = java.util.Collections.emptyList();
     backingField_ = 0L;
     getter_ = 0L;
     setter_ = 0L;
@@ -224,6 +271,12 @@ public final class PirPropertyCarrier extends
     if (!hasLastModified()) {
       memoizedIsInitialized = 0;
       return false;
+    }
+    for (int i = 0; i < getAnnotationCount(); i++) {
+      if (!getAnnotation(i).isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
     }
     memoizedIsInitialized = 1;
     return true;
@@ -241,14 +294,17 @@ public final class PirPropertyCarrier extends
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeInt32(3, origin_);
     }
+    for (int i = 0; i < annotation_.size(); i++) {
+      output.writeMessage(4, annotation_.get(i));
+    }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
-      output.writeInt64(4, backingField_);
+      output.writeInt64(5, backingField_);
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
-      output.writeInt64(5, getter_);
+      output.writeInt64(6, getter_);
     }
     if (((bitField0_ & 0x00000020) == 0x00000020)) {
-      output.writeInt64(6, setter_);
+      output.writeInt64(7, setter_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -271,17 +327,21 @@ public final class PirPropertyCarrier extends
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt32Size(3, origin_);
     }
+    for (int i = 0; i < annotation_.size(); i++) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(4, annotation_.get(i));
+    }
     if (((bitField0_ & 0x00000008) == 0x00000008)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(4, backingField_);
+        .computeInt64Size(5, backingField_);
     }
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(5, getter_);
+        .computeInt64Size(6, getter_);
     }
     if (((bitField0_ & 0x00000020) == 0x00000020)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(6, setter_);
+        .computeInt64Size(7, setter_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -383,12 +443,14 @@ public final class PirPropertyCarrier extends
       bitField0_ = (bitField0_ & ~0x00000002);
       origin_ = 0;
       bitField0_ = (bitField0_ & ~0x00000004);
-      backingField_ = 0L;
+      annotation_ = java.util.Collections.emptyList();
       bitField0_ = (bitField0_ & ~0x00000008);
-      getter_ = 0L;
+      backingField_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000010);
-      setter_ = 0L;
+      getter_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000020);
+      setter_ = 0L;
+      bitField0_ = (bitField0_ & ~0x00000040);
       return this;
     }
 
@@ -424,15 +486,20 @@ public final class PirPropertyCarrier extends
         to_bitField0_ |= 0x00000004;
       }
       result.origin_ = origin_;
-      if (((from_bitField0_ & 0x00000008) == 0x00000008)) {
+      if (((bitField0_ & 0x00000008) == 0x00000008)) {
+        annotation_ = java.util.Collections.unmodifiableList(annotation_);
+        bitField0_ = (bitField0_ & ~0x00000008);
+      }
+      result.annotation_ = annotation_;
+      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
         to_bitField0_ |= 0x00000008;
       }
       result.backingField_ = backingField_;
-      if (((from_bitField0_ & 0x00000010) == 0x00000010)) {
+      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
         to_bitField0_ |= 0x00000010;
       }
       result.getter_ = getter_;
-      if (((from_bitField0_ & 0x00000020) == 0x00000020)) {
+      if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
         to_bitField0_ |= 0x00000020;
       }
       result.setter_ = setter_;
@@ -450,6 +517,16 @@ public final class PirPropertyCarrier extends
       }
       if (other.hasOrigin()) {
         setOrigin(other.getOrigin());
+      }
+      if (!other.annotation_.isEmpty()) {
+        if (annotation_.isEmpty()) {
+          annotation_ = other.annotation_;
+          bitField0_ = (bitField0_ & ~0x00000008);
+        } else {
+          ensureAnnotationIsMutable();
+          annotation_.addAll(other.annotation_);
+        }
+        
       }
       if (other.hasBackingField()) {
         setBackingField(other.getBackingField());
@@ -469,6 +546,12 @@ public final class PirPropertyCarrier extends
       if (!hasLastModified()) {
         
         return false;
+      }
+      for (int i = 0; i < getAnnotationCount(); i++) {
+        if (!getAnnotation(i).isInitialized()) {
+          
+          return false;
+        }
       }
       return true;
     }
@@ -588,33 +671,158 @@ public final class PirPropertyCarrier extends
       return this;
     }
 
-    private long backingField_ ;
+    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> annotation_ =
+      java.util.Collections.emptyList();
+    private void ensureAnnotationIsMutable() {
+      if (!((bitField0_ & 0x00000008) == 0x00000008)) {
+        annotation_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall>(annotation_);
+        bitField0_ |= 0x00000008;
+       }
+    }
+
     /**
-     * <code>optional int64 backingField = 4;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
      */
-    public boolean hasBackingField() {
-      return ((bitField0_ & 0x00000008) == 0x00000008);
+    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> getAnnotationList() {
+      return java.util.Collections.unmodifiableList(annotation_);
     }
     /**
-     * <code>optional int64 backingField = 4;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+     */
+    public int getAnnotationCount() {
+      return annotation_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index) {
+      return annotation_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+     */
+    public Builder setAnnotation(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureAnnotationIsMutable();
+      annotation_.set(index, value);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+     */
+    public Builder setAnnotation(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.Builder builderForValue) {
+      ensureAnnotationIsMutable();
+      annotation_.set(index, builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+     */
+    public Builder addAnnotation(org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureAnnotationIsMutable();
+      annotation_.add(value);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+     */
+    public Builder addAnnotation(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      ensureAnnotationIsMutable();
+      annotation_.add(index, value);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+     */
+    public Builder addAnnotation(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.Builder builderForValue) {
+      ensureAnnotationIsMutable();
+      annotation_.add(builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+     */
+    public Builder addAnnotation(
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall.Builder builderForValue) {
+      ensureAnnotationIsMutable();
+      annotation_.add(index, builderForValue.build());
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+     */
+    public Builder addAllAnnotation(
+        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> values) {
+      ensureAnnotationIsMutable();
+      org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+          values, annotation_);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+     */
+    public Builder clearAnnotation() {
+      annotation_ = java.util.Collections.emptyList();
+      bitField0_ = (bitField0_ & ~0x00000008);
+
+      return this;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+     */
+    public Builder removeAnnotation(int index) {
+      ensureAnnotationIsMutable();
+      annotation_.remove(index);
+
+      return this;
+    }
+
+    private long backingField_ ;
+    /**
+     * <code>optional int64 backingField = 5;</code>
+     */
+    public boolean hasBackingField() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional int64 backingField = 5;</code>
      */
     public long getBackingField() {
       return backingField_;
     }
     /**
-     * <code>optional int64 backingField = 4;</code>
+     * <code>optional int64 backingField = 5;</code>
      */
     public Builder setBackingField(long value) {
-      bitField0_ |= 0x00000008;
+      bitField0_ |= 0x00000010;
       backingField_ = value;
       
       return this;
     }
     /**
-     * <code>optional int64 backingField = 4;</code>
+     * <code>optional int64 backingField = 5;</code>
      */
     public Builder clearBackingField() {
-      bitField0_ = (bitField0_ & ~0x00000008);
+      bitField0_ = (bitField0_ & ~0x00000010);
       backingField_ = 0L;
       
       return this;
@@ -622,31 +830,31 @@ public final class PirPropertyCarrier extends
 
     private long getter_ ;
     /**
-     * <code>optional int64 getter = 5;</code>
+     * <code>optional int64 getter = 6;</code>
      */
     public boolean hasGetter() {
-      return ((bitField0_ & 0x00000010) == 0x00000010);
+      return ((bitField0_ & 0x00000020) == 0x00000020);
     }
     /**
-     * <code>optional int64 getter = 5;</code>
+     * <code>optional int64 getter = 6;</code>
      */
     public long getGetter() {
       return getter_;
     }
     /**
-     * <code>optional int64 getter = 5;</code>
+     * <code>optional int64 getter = 6;</code>
      */
     public Builder setGetter(long value) {
-      bitField0_ |= 0x00000010;
+      bitField0_ |= 0x00000020;
       getter_ = value;
       
       return this;
     }
     /**
-     * <code>optional int64 getter = 5;</code>
+     * <code>optional int64 getter = 6;</code>
      */
     public Builder clearGetter() {
-      bitField0_ = (bitField0_ & ~0x00000010);
+      bitField0_ = (bitField0_ & ~0x00000020);
       getter_ = 0L;
       
       return this;
@@ -654,31 +862,31 @@ public final class PirPropertyCarrier extends
 
     private long setter_ ;
     /**
-     * <code>optional int64 setter = 6;</code>
+     * <code>optional int64 setter = 7;</code>
      */
     public boolean hasSetter() {
-      return ((bitField0_ & 0x00000020) == 0x00000020);
+      return ((bitField0_ & 0x00000040) == 0x00000040);
     }
     /**
-     * <code>optional int64 setter = 6;</code>
+     * <code>optional int64 setter = 7;</code>
      */
     public long getSetter() {
       return setter_;
     }
     /**
-     * <code>optional int64 setter = 6;</code>
+     * <code>optional int64 setter = 7;</code>
      */
     public Builder setSetter(long value) {
-      bitField0_ |= 0x00000020;
+      bitField0_ |= 0x00000040;
       setter_ = value;
       
       return this;
     }
     /**
-     * <code>optional int64 setter = 6;</code>
+     * <code>optional int64 setter = 7;</code>
      */
     public Builder clearSetter() {
-      bitField0_ = (bitField0_ & ~0x00000020);
+      bitField0_ = (bitField0_ & ~0x00000040);
       setter_ = 0L;
       
       return this;

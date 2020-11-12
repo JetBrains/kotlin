@@ -35,29 +35,43 @@ public interface PirValueParameterCarrierOrBuilder extends
   int getOrigin();
 
   /**
-   * <code>optional int32 defaultValue = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
+      getAnnotationList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  int getAnnotationCount();
+
+  /**
+   * <code>optional int32 defaultValue = 5;</code>
    */
   boolean hasDefaultValue();
   /**
-   * <code>optional int32 defaultValue = 4;</code>
+   * <code>optional int32 defaultValue = 5;</code>
    */
   int getDefaultValue();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrType type = 5;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrType type = 6;</code>
    */
   boolean hasType();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrType type = 5;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrType type = 6;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrType getType();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrType varargElementType = 6;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrType varargElementType = 7;</code>
    */
   boolean hasVarargElementType();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrType varargElementType = 6;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrType varargElementType = 7;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrType getVarargElementType();
 }

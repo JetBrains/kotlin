@@ -35,15 +35,29 @@ public interface PirTypeParameterCarrierOrBuilder extends
   int getOrigin();
 
   /**
-   * <code>repeated int32 superTypes = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
+      getAnnotationList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  int getAnnotationCount();
+
+  /**
+   * <code>repeated int32 superTypes = 5;</code>
    */
   java.util.List<java.lang.Integer> getSuperTypesList();
   /**
-   * <code>repeated int32 superTypes = 4;</code>
+   * <code>repeated int32 superTypes = 5;</code>
    */
   int getSuperTypesCount();
   /**
-   * <code>repeated int32 superTypes = 4;</code>
+   * <code>repeated int32 superTypes = 5;</code>
    */
   int getSuperTypes(int index);
 }

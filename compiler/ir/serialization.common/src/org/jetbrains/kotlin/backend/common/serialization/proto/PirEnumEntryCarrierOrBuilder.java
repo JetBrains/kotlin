@@ -35,20 +35,34 @@ public interface PirEnumEntryCarrierOrBuilder extends
   int getOrigin();
 
   /**
-   * <code>optional int64 correspondingClass = 4;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall> 
+      getAnnotationList();
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getAnnotation(int index);
+  /**
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall annotation = 4;</code>
+   */
+  int getAnnotationCount();
+
+  /**
+   * <code>optional int64 correspondingClass = 5;</code>
    */
   boolean hasCorrespondingClass();
   /**
-   * <code>optional int64 correspondingClass = 4;</code>
+   * <code>optional int64 correspondingClass = 5;</code>
    */
   long getCorrespondingClass();
 
   /**
-   * <code>optional int32 initializerExpression = 5;</code>
+   * <code>optional int32 initializerExpression = 6;</code>
    */
   boolean hasInitializerExpression();
   /**
-   * <code>optional int32 initializerExpression = 5;</code>
+   * <code>optional int32 initializerExpression = 6;</code>
    */
   int getInitializerExpression();
 }
