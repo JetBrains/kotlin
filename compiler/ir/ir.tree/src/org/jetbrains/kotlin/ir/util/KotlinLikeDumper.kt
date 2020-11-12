@@ -186,186 +186,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printlnWithNoIndent()
     }
 
-    private fun IrFunction.printValueParametersWithNoIndent() {
-        p.printWithNoIndent("(")
-        var first = true
-        valueParameters.forEach {
-            if (!first) {
-                p.printWithNoIndent(", ")
-            } else {
-                first = false
-            }
-
-            it.printAValueParameterWithNoIndent(this)
-        }
-        p.printWithNoIndent(")")
-    }
-
-    private fun IrValueParameter.printAValueParameterWithNoIndent(data: IrDeclaration?) {
-        printAnnotationsWithNoIndent()
-
-        printParameterModifiersWithNoIndent(
-            isVararg = varargElementType != null,
-            isCrossinline,
-            isNoinline,
-            // TODO no test
-            isHidden,
-            // TODO no test
-            isAssignable
-        )
-
-        p.printWithNoIndent(name.asString())
-        p.printWithNoIndent(": ")
-        (varargElementType ?: type).printTypeWithNoIndent()
-        // TODO print it.type too for varargs?
-
-        defaultValue?.let { v ->
-            p.printWithNoIndent(" = ")
-            v.accept(this@KotlinLikeDumper, data)
-        }
-    }
-
-    private fun IrTypeParametersContainer.printWhereClauseIfNeededWithNoIndent() {
-        if (typeParameters.none { it.superTypes.size > 1 }) return
-
-        p.printWithNoIndent(" where ")
-
-        var first = true
-        typeParameters.forEach {
-            if (it.superTypes.size > 1) {
-                // TODO no test with more than one generic parameter with more supertypes
-                first = it.printWhereClauseTypesWithNoIndent(first)
-            }
-        }
-    }
-
-    private fun IrTypeParameter.printWhereClauseTypesWithNoIndent(first: Boolean): Boolean {
-        var myFirst = first
-        superTypes.forEachIndexed { i, superType ->
-            if (!myFirst) {
-                p.printWithNoIndent(", ")
-            } else {
-                myFirst = false
-            }
-
-            p.printWithNoIndent(name.asString())
-            p.printWithNoIndent(" : ")
-            superType.printTypeWithNoIndent()
-        }
-
-        return myFirst
-    }
-
-    private fun IrTypeParametersContainer.printTypeParametersWithNoIndent(postfix: String = "") {
-        if (typeParameters.isEmpty()) return
-
-        p.printWithNoIndent("<")
-        var first = true
-        // TODO no commas in some types
-        typeParameters.forEach {
-            if (!first) {
-                p.printWithNoIndent(", ")
-            } else {
-                first = false
-            }
-
-            it.printATypeParameterWithNoIndent()
-        }
-        p.printWithNoIndent(">")
-        p.printWithNoIndent(postfix)
-    }
-
-    private fun IrTypeParameter.printATypeParameterWithNoIndent() {
-        variance.printVarianceWithNoIndent()
-        if (isReified) p.printWithNoIndent("reified ")
-
-        printAnnotationsWithNoIndent()
-
-        p.printWithNoIndent(name.asString())
-
-        if (superTypes.size == 1) {
-            p.printWithNoIndent(" : ")
-            superTypes.single().printTypeWithNoIndent()
-        }
-    }
-
-    private fun Variance.printVarianceWithNoIndent() {
-        if (this != Variance.INVARIANT) {
-            p.printWithNoIndent("$label ")
-        }
-    }
-
-    private fun IrConstructorCall.printAnAnnotationWithNoIndent(prefix: String = "") {
-        p.printWithNoIndent("@" + (if (prefix.isEmpty()) "" else "$prefix:"))
-        visitConstructorCall(this, null)
-    }
-
-    private fun IrAnnotationContainer.printlnAnnotations(prefix: String = "") {
-        annotations.forEach {
-            p.printIndent()
-            it.printAnAnnotationWithNoIndent(prefix)
-            p.printlnWithNoIndent()
-        }
-    }
-
-    private fun IrAnnotationContainer.printAnnotationsWithNoIndent() {
-        annotations.forEach {
-            it.printAnAnnotationWithNoIndent()
-            p.printWithNoIndent(" ")
-        }
-    }
-
-    private fun IrType.printTypeWithNoIndent() {
-        // TODO don't print `Any?` upper bound?
-        printAnnotationsWithNoIndent()
-        when (this) {
-            is IrSimpleType -> {
-                // TODO abbreviation
-
-                p.printWithNoIndent((classifier.owner as IrDeclarationWithName).name.asString())
-
-                if (arguments.isNotEmpty()) {
-                    p.printWithNoIndent("<")
-                    var first = true
-                    arguments.forEach {
-                        if (!first) {
-                            p.printWithNoIndent(", ")
-                        } else {
-                            first = false
-                        }
-
-                        when (it) {
-                            is IrStarProjection ->
-                                p.printWithNoIndent("*")
-                            is IrTypeProjection -> {
-                                it.variance.printVarianceWithNoIndent()
-                                it.type.printTypeWithNoIndent()
-                            }
-                        }
-                    }
-                    p.printWithNoIndent(">")
-                }
-
-                if (hasQuestionMark) p.printWithNoIndent("?")
-            }
-            is IrDynamicType ->
-                p.printWithNoIndent("dynamic")
-            is IrErrorType ->
-                p.printWithNoIndent("ErrorType /* ERROR */")
-            else ->
-                p.printWithNoIndent("??? /* ERROR: unknown type: ${this.javaClass.simpleName} */")
-        }
-    }
-
-    private fun p(condition: Boolean, s: String) {
-        if (condition) p.printWithNoIndent("$s ")
-    }
-
-    private fun <T : Any> p(value: T?, defaultValue: T? = null, getString: T.() -> String) {
-        if (value == null) return
-        p(value != defaultValue, value.getString())
-    }
-
     /*
     https://kotlinlang.org/docs/reference/coding-conventions.html#modifiers
     Modifiers order:
@@ -460,79 +280,135 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p(isAssignable, "var")
     }
 
-    private fun IrValueParameter.printExtensionReceiverParameter() {
-        type.printTypeWithNoIndent()
-        p.printWithNoIndent(".")
+    private fun IrTypeParametersContainer.printTypeParametersWithNoIndent(postfix: String = "") {
+        if (typeParameters.isEmpty()) return
+
+        p.printWithNoIndent("<")
+        var first = true
+        // TODO no commas in some types
+        typeParameters.forEach {
+            if (!first) {
+                p.printWithNoIndent(", ")
+            } else {
+                first = false
+            }
+
+            it.printATypeParameterWithNoIndent()
+        }
+        p.printWithNoIndent(">")
+        p.printWithNoIndent(postfix)
     }
 
-    private fun IrSimpleFunction.printSimpleFunction(
-        keyword: String,
-        name: String,
-        printTypeParametersAndExtensionReceiver: Boolean,
-        printSignatureAndBody: Boolean
-    ) {
-        /* TODO
-            correspondingProperty
-            overridden
-            dispatchReceiverParameter
-         */
+    private fun IrTypeParameter.printATypeParameterWithNoIndent() {
+        variance.printVarianceWithNoIndent()
+        if (isReified) p.printWithNoIndent("reified ")
 
-        if (options.printFakeOverridesStrategy == FakeOverridesStrategy.NONE && isFakeOverride ||
-            options.printFakeOverridesStrategy == FakeOverridesStrategy.ALL_EXCEPT_ANY && isFakeOverriddenFromAny()
-        ) {
-            return
+        printAnnotationsWithNoIndent()
+
+        p.printWithNoIndent(name.asString())
+
+        if (superTypes.size == 1) {
+            p.printWithNoIndent(" : ")
+            superTypes.single().printTypeWithNoIndent()
         }
+    }
 
-        printlnAnnotations()
-        p.print("")
-
-        run {
-            printModifiersWithNoIndent(
-                visibility,
-                isExpect,
-                modality,
-                isExternal,
-                isOverride = overriddenSymbols.isNotEmpty(), // TODO override
-                isFakeOverride,
-                isLateinit = INAPPLICABLE,
-                isTailrec,
-                isVararg = INAPPLICABLE,
-                isSuspend,
-                isInner = INAPPLICABLE,
-                isInline,
-                isData = INAPPLICABLE,
-                isCompanion = INAPPLICABLE,
-                isFunInterface = INAPPLICABLE,
-                classKind = INAPPLICABLE_N,
-                isInfix,
-                isOperator,
-                isInterfaceMember = (this@printSimpleFunction.parent as? IrClass)?.isInterface == true
-            )
+    private fun Variance.printVarianceWithNoIndent() {
+        if (this != Variance.INVARIANT) {
+            p.printWithNoIndent("$label ")
         }
+    }
 
-        p.printWithNoIndent(keyword)
-
-        if (printTypeParametersAndExtensionReceiver) printTypeParametersWithNoIndent(postfix = " ")
-
-        if (printTypeParametersAndExtensionReceiver) {
-            extensionReceiverParameter?.printExtensionReceiverParameter()
-        }
-
-        p.printWithNoIndent(name)
-
-        if (printSignatureAndBody) {
-            printValueParametersWithNoIndent()
-
-            if (!returnType.isUnit()) {
-                p.printWithNoIndent(": ")
-                returnType.printTypeWithNoIndent()
-            }
-            printWhereClauseIfNeededWithNoIndent()
+    private fun IrAnnotationContainer.printAnnotationsWithNoIndent() {
+        annotations.forEach {
+            it.printAnAnnotationWithNoIndent()
             p.printWithNoIndent(" ")
+        }
+    }
 
-            body?.accept(this@KotlinLikeDumper, null)
-        } else {
+    private fun IrAnnotationContainer.printlnAnnotations(prefix: String = "") {
+        annotations.forEach {
+            p.printIndent()
+            it.printAnAnnotationWithNoIndent(prefix)
             p.printlnWithNoIndent()
+        }
+    }
+
+    private fun IrConstructorCall.printAnAnnotationWithNoIndent(prefix: String = "") {
+        p.printWithNoIndent("@" + (if (prefix.isEmpty()) "" else "$prefix:"))
+        visitConstructorCall(this, null)
+    }
+
+    private fun IrTypeParametersContainer.printWhereClauseIfNeededWithNoIndent() {
+        if (typeParameters.none { it.superTypes.size > 1 }) return
+
+        p.printWithNoIndent(" where ")
+
+        var first = true
+        typeParameters.forEach {
+            if (it.superTypes.size > 1) {
+                // TODO no test with more than one generic parameter with more supertypes
+                first = it.printWhereClauseTypesWithNoIndent(first)
+            }
+        }
+    }
+
+    private fun IrTypeParameter.printWhereClauseTypesWithNoIndent(first: Boolean): Boolean {
+        var myFirst = first
+        superTypes.forEachIndexed { i, superType ->
+            if (!myFirst) {
+                p.printWithNoIndent(", ")
+            } else {
+                myFirst = false
+            }
+
+            p.printWithNoIndent(name.asString())
+            p.printWithNoIndent(" : ")
+            superType.printTypeWithNoIndent()
+        }
+
+        return myFirst
+    }
+
+    private fun IrType.printTypeWithNoIndent() {
+        // TODO don't print `Any?` upper bound?
+        printAnnotationsWithNoIndent()
+        when (this) {
+            is IrSimpleType -> {
+                // TODO abbreviation
+
+                p.printWithNoIndent((classifier.owner as IrDeclarationWithName).name.asString())
+
+                if (arguments.isNotEmpty()) {
+                    p.printWithNoIndent("<")
+                    var first = true
+                    arguments.forEach {
+                        if (!first) {
+                            p.printWithNoIndent(", ")
+                        } else {
+                            first = false
+                        }
+
+                        when (it) {
+                            is IrStarProjection ->
+                                p.printWithNoIndent("*")
+                            is IrTypeProjection -> {
+                                it.variance.printVarianceWithNoIndent()
+                                it.type.printTypeWithNoIndent()
+                            }
+                        }
+                    }
+                    p.printWithNoIndent(">")
+                }
+
+                if (hasQuestionMark) p.printWithNoIndent("?")
+            }
+            is IrDynamicType ->
+                p.printWithNoIndent("dynamic")
+            is IrErrorType ->
+                p.printWithNoIndent("ErrorType /* ERROR */")
+            else ->
+                p.printWithNoIndent("??? /* ERROR: unknown type: ${this.javaClass.simpleName} */")
         }
     }
 
@@ -637,6 +513,121 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p(declaration.isPrimary, commentBlockH("primary"))
         declaration.body?.accept(this, declaration)
         p.printlnWithNoIndent()
+    }
+
+    private fun IrSimpleFunction.printSimpleFunction(
+        keyword: String,
+        name: String,
+        printTypeParametersAndExtensionReceiver: Boolean,
+        printSignatureAndBody: Boolean
+    ) {
+        /* TODO
+            correspondingProperty
+            overridden
+            dispatchReceiverParameter
+         */
+
+        if (options.printFakeOverridesStrategy == FakeOverridesStrategy.NONE && isFakeOverride ||
+            options.printFakeOverridesStrategy == FakeOverridesStrategy.ALL_EXCEPT_ANY && isFakeOverriddenFromAny()
+        ) {
+            return
+        }
+
+        printlnAnnotations()
+        p.print("")
+
+        run {
+            printModifiersWithNoIndent(
+                visibility,
+                isExpect,
+                modality,
+                isExternal,
+                isOverride = overriddenSymbols.isNotEmpty(), // TODO override
+                isFakeOverride,
+                isLateinit = INAPPLICABLE,
+                isTailrec,
+                isVararg = INAPPLICABLE,
+                isSuspend,
+                isInner = INAPPLICABLE,
+                isInline,
+                isData = INAPPLICABLE,
+                isCompanion = INAPPLICABLE,
+                isFunInterface = INAPPLICABLE,
+                classKind = INAPPLICABLE_N,
+                isInfix,
+                isOperator,
+                isInterfaceMember = (this@printSimpleFunction.parent as? IrClass)?.isInterface == true
+            )
+        }
+
+        p.printWithNoIndent(keyword)
+
+        if (printTypeParametersAndExtensionReceiver) printTypeParametersWithNoIndent(postfix = " ")
+
+        if (printTypeParametersAndExtensionReceiver) {
+            extensionReceiverParameter?.printExtensionReceiverParameter()
+        }
+
+        p.printWithNoIndent(name)
+
+        if (printSignatureAndBody) {
+            printValueParametersWithNoIndent()
+
+            if (!returnType.isUnit()) {
+                p.printWithNoIndent(": ")
+                returnType.printTypeWithNoIndent()
+            }
+            printWhereClauseIfNeededWithNoIndent()
+            p.printWithNoIndent(" ")
+
+            body?.accept(this@KotlinLikeDumper, null)
+        } else {
+            p.printlnWithNoIndent()
+        }
+    }
+
+    private fun IrValueParameter.printExtensionReceiverParameter() {
+        type.printTypeWithNoIndent()
+        p.printWithNoIndent(".")
+    }
+
+    private fun IrFunction.printValueParametersWithNoIndent() {
+        p.printWithNoIndent("(")
+        var first = true
+        valueParameters.forEach {
+            if (!first) {
+                p.printWithNoIndent(", ")
+            } else {
+                first = false
+            }
+
+            it.printAValueParameterWithNoIndent(this)
+        }
+        p.printWithNoIndent(")")
+    }
+
+    private fun IrValueParameter.printAValueParameterWithNoIndent(data: IrDeclaration?) {
+        printAnnotationsWithNoIndent()
+
+        printParameterModifiersWithNoIndent(
+            isVararg = varargElementType != null,
+            isCrossinline,
+            isNoinline,
+            // TODO no test
+            isHidden,
+            // TODO no test
+            isAssignable
+        )
+
+        p.printWithNoIndent(name.asString())
+        p.printWithNoIndent(": ")
+        (varargElementType ?: type).printTypeWithNoIndent()
+        // TODO print it.type too for varargs?
+
+        defaultValue?.let { v ->
+            p.printWithNoIndent(" = ")
+            v.accept(this@KotlinLikeDumper, data)
+        }
     }
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: IrDeclaration?) {
@@ -800,14 +791,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
     }
 
-    private fun printVariable(isVar: Boolean, name: Name, type: IrType) {
-        p.printWithNoIndent(if (isVar) "var" else "val")
-        p.printWithNoIndent(" ")
-        p.printWithNoIndent(name.asString())
-        p.printWithNoIndent(": ")
-        type.printTypeWithNoIndent()
-    }
-
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: IrDeclaration?) {
         declaration.printlnAnnotations()
         p.printIndent()
@@ -826,6 +809,14 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         p.popIndent()
         p.printlnWithNoIndent()
+    }
+
+    private fun printVariable(isVar: Boolean, name: Name, type: IrType) {
+        p.printWithNoIndent(if (isVar) "var" else "val")
+        p.printWithNoIndent(" ")
+        p.printWithNoIndent(name.asString())
+        p.printWithNoIndent(": ")
+        type.printTypeWithNoIndent()
     }
 
     override fun visitExpressionBody(body: IrExpressionBody, data: IrDeclaration?) {
@@ -893,43 +884,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             expression.symbol.owner.valueParameters,
             superQualifierSymbol = null,
             omitAllBracketsIfNoArguments = clazz.isAnnotationClass,
-            data = data,
-        )
-    }
-
-    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: IrDeclaration?) {
-        // TODO skip call to Any?
-        expression.printConstructorCallWithNoIndent(data)
-    }
-
-    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: IrDeclaration?) {
-        // TODO skip call to Enum?
-        expression.printConstructorCallWithNoIndent(data)
-    }
-
-    private fun IrFunctionAccessExpression.printConstructorCallWithNoIndent(
-        data: IrDeclaration?
-    ) {
-        // TODO flag to omit comment block?
-        val delegatingClass = symbol.owner.parentAsClass
-        val currentClass = data?.parentAsClass
-        val delegatingClassName = delegatingClass.name.asString()
-
-        val name = if (data is IrConstructor) {
-            when (currentClass) {
-                null -> "delegating/*$delegatingClassName*/"
-                delegatingClass -> "this/*$delegatingClassName*/"
-                else -> "super/*$delegatingClassName*/"
-            }
-        } else {
-            delegatingClassName // required only for IrEnumConstructorCall
-        }
-
-        printMemberAccessExpressionWithNoIndent(
-            name,
-            symbol.owner.valueParameters,
-            superQualifierSymbol = null,
-            omitAllBracketsIfNoArguments = false,
             data = data,
         )
     }
@@ -1025,6 +979,43 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         p.printWithNoIndent(")")
         if (wrapArguments) p.printWithNoIndent("*/")
+    }
+
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: IrDeclaration?) {
+        // TODO skip call to Any?
+        expression.printConstructorCallWithNoIndent(data)
+    }
+
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: IrDeclaration?) {
+        // TODO skip call to Enum?
+        expression.printConstructorCallWithNoIndent(data)
+    }
+
+    private fun IrFunctionAccessExpression.printConstructorCallWithNoIndent(
+        data: IrDeclaration?
+    ) {
+        // TODO flag to omit comment block?
+        val delegatingClass = symbol.owner.parentAsClass
+        val currentClass = data?.parentAsClass
+        val delegatingClassName = delegatingClass.name.asString()
+
+        val name = if (data is IrConstructor) {
+            when (currentClass) {
+                null -> "delegating/*$delegatingClassName*/"
+                delegatingClass -> "this/*$delegatingClassName*/"
+                else -> "super/*$delegatingClassName*/"
+            }
+        } else {
+            delegatingClassName // required only for IrEnumConstructorCall
+        }
+
+        printMemberAccessExpressionWithNoIndent(
+            name,
+            symbol.owner.valueParameters,
+            superQualifierSymbol = null,
+            omitAllBracketsIfNoArguments = false,
+            data = data,
+        )
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: IrDeclaration?) {
@@ -1398,7 +1389,17 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         super.visitSuspensionPoint(expression, data)
     }
 
+    private fun p(condition: Boolean, s: String) {
+        if (condition) p.printWithNoIndent("$s ")
+    }
+
+    private fun <T : Any> p(value: T?, defaultValue: T? = null, getString: T.() -> String) {
+        if (value == null) return
+        p(value != defaultValue, value.getString())
+    }
+
     private fun commentBlock(text: String) = "/* $text */"
+
     private fun commentBlockH(text: String) = "/* $text */"
 
     private companion object {
