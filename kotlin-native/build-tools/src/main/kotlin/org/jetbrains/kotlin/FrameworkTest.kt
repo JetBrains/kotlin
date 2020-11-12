@@ -90,7 +90,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
 
     fun Language.filesFrom(dir: String): FileTree = project.fileTree(dir) {
         // include only files with the language extension
-        it.include("*${this.extension}")
+        include("*${this@filesFrom.extension}")
     }
 
     fun List<String>.toFiles(language: Language): List<File> =
@@ -221,8 +221,8 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
     private fun runTest(executorService: ExecutorService, testExecutable: Path, args: List<String> = emptyList()) {
         val (stdOut, stdErr, exitCode) = runProcess(
                 executor = { executorService.add(Action {
-                    it.environment = buildEnvironment()
-                    it.workingDir = Paths.get(testOutput).toFile()
+                    environment = buildEnvironment()
+                    workingDir = Paths.get(testOutput).toFile()
                 }).execute(it) },
                 executable = testExecutable.toString(),
                 args = args)

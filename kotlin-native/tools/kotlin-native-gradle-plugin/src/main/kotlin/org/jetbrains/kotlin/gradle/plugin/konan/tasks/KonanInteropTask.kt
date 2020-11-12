@@ -215,8 +215,8 @@ open class KonanInteropTask @Inject constructor(@Internal val workerExecutor: Wo
             val workQueue = workerExecutor.noIsolation()
             interchangeBox[this.path] = toolRunner
             workQueue.submit(RunTool::class.java) {
-                it.taskName = this.path
-                it.args = args
+                taskName = path
+                this.args = args
             }
         } else {
             toolRunner.run(args)

@@ -3,10 +3,7 @@
  * that can be found in the LICENSE file.
  */
 buildscript {
-    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$gradlePluginVersion"
-    }
+    apply from: "$rootDir/kotlin-native/gradle/kotlinGradlePlugin.gradle"
 
     ext.useCustomDist = project.hasProperty("org.jetbrains.kotlin.native.home") || project.hasProperty("konan.home")
     if (!useCustomDist) {
@@ -37,19 +34,13 @@ konanArtifacts {
     }
 }
 
-repositories {
-    maven {
-        url buildKotlinCompilerRepo
-    }
-}
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    implementation project(path: ':backend.native', configuration: 'cli_bc')
-    implementation project(":utilities:basic-utils")
+    implementation project(":kotlin-stdlib")
+    implementation project(path: ':kotlin-native:backend.native', configuration: 'cli_bc')
+    implementation project(":kotlin-native:utilities:basic-utils")
     testImplementation "junit:junit:4.12"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$buildKotlinVersion"
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$buildKotlinVersion"
+    testImplementation project(":kotlin-test:kotlin-test-junit")
 }
 
 test {

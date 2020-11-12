@@ -80,18 +80,35 @@ extra["intellijReleaseType"] = when {
 }
 
 extra["versions.androidDxSources"] = "5.0.0_r2"
-
+org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 extra["customDepsOrg"] = "kotlin.build"
 
 repositories {
     jcenter()
     maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
     maven("https://kotlin.bintray.com/kotlin-dependencies")
+    maven("https://kotlin.bintray.com/kotlinx")
+    maven("https://kotlin.bintray.com/kotlin-dev")
     gradlePluginPortal()
 
     extra["bootstrapKotlinRepo"]?.let {
         maven(url = it)
     }
+}
+
+sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
+    kotlin.srcDir("src/main/kotlin")
+    kotlin.srcDir("src/generated/kotlin")
+    kotlin.srcDir("src/to_bootstrap/kotlin")
+    kotlin.srcDir("../kotlin-native/shared/src/library/kotlin")
+    kotlin.srcDir("../kotlin-native/shared/src/main/kotlin")
+    kotlin.srcDir("../kotlin-native/build-tools/src/main/kotlin")
+    kotlin.srcDir("../kotlin-native/build-tools/src/tmp/kotlin")
+    kotlin.srcDir("../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
+}
+
+tasks.validatePlugins.configure {
+    enabled = false
 }
 
 dependencies {
@@ -112,6 +129,31 @@ dependencies {
     implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:0.5")
 
     implementation("org.gradle:test-retry-gradle-plugin:1.1.9")
+
+    compileOnly(gradleApi())
+
+    val kotlinVersion = project.bootstrapKotlinVersion
+    val ktorVersion  = "1.2.1"
+    val slackApiVersion = "1.2.0"
+    val shadowVersion = "5.1.0"
+    val metadataVersion = "0.0.1-dev-10"
+
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation("com.ullink.slack:simpleslackapi:$slackApiVersion")
+
+    implementation("io.ktor:ktor-client-auth:$ktorVersion")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+
+    api("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
+
+    // Located in <repo root>/shared and always provided by the composite build.
+    //api("org.jetbrains.kotlin:kotlin-native-shared:$konanVersion")
+    implementation("com.github.jengelman.gradle.plugins:shadow:$shadowVersion")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 }
 
 samWithReceiver {
@@ -127,11 +169,58 @@ java {
 }
 
 tasks["build"].dependsOn(":prepare-deps:build")
+sourceSets["main"].withConvention(org.gradle.api.tasks.GroovySourceSet::class) {
+    groovy.srcDir("../kotlin-native/build-tools/src/main/groovy")
+}
+
+tasks.named("compileGroovy", GroovyCompile::class.java) {
+    classpath += project.files(tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java))
+    dependsOn(tasks.named("compileKotlin"))
+}
 
 allprojects {
     tasks.register("checkBuild")
 
     afterEvaluate {
         apply(from = "$rootDir/../gradle/cacheRedirector.gradle.kts")
+    }
+}
+
+gradlePlugin {
+    plugins {
+        create("benchmarkPlugin") {
+            id = "benchmarking"
+            implementationClass = "org.jetbrains.kotlin.benchmark.KotlinNativeBenchmarkingPlugin"
+        }
+        create("compileBenchmarking") {
+            id = "compile-benchmarking"
+            implementationClass = "org.jetbrains.kotlin.benchmark.CompileBenchmarkingPlugin"
+        }
+        create("swiftBenchmarking") {
+            id = "swift-benchmarking"
+            implementationClass = "org.jetbrains.kotlin.benchmark.SwiftBenchmarkingPlugin"
+        }
+        create("compileToBitcode") {
+            id = "compile-to-bitcode"
+            implementationClass = "org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin"
+        }
+        create("runtimeTesting") {
+            id = "runtime-testing"
+            implementationClass = "org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin"
+        }
+        create("konan") {
+            id = "konan"
+            implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
+        }
+        // We bundle a shaded version of kotlinx-serialization plugin
+        create("kotlinx-serialization-native") {
+            id = "kotlinx-serialization-native"
+            implementationClass = "shadow.org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin"
+        }
+
+        create("org.jetbrains.kotlin.konan") {
+            id = "org.jetbrains.kotlin.konan"
+            implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
+        }
     }
 }

@@ -112,21 +112,21 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
     protected fun createTask(target: KonanTarget): T =
             project.tasks.create(generateTaskName(target), type) {
                 val outputDescription = determineOutputPlacement(target)
-                it.init(this, outputDescription.destinationDir, outputDescription.artifactName, target)
-                it.group = BasePlugin.BUILD_GROUP
-                it.description = generateTaskDescription(it)
+                init(this@KonanBuildingConfig, outputDescription.destinationDir, outputDescription.artifactName, target)
+                group = BasePlugin.BUILD_GROUP
+                description = generateTaskDescription(this)
             } ?: throw Exception("Cannot create task for target: ${target.visibleName}")
 
     protected fun createAggregateTask(): Task =
-            project.tasks.create(generateAggregateTaskName()) { task ->
-                task.group = BasePlugin.BUILD_GROUP
-                task.description = generateAggregateTaskDescription(task)
-                this.filter {
+            project.tasks.create(generateAggregateTaskName()) {
+                group = BasePlugin.BUILD_GROUP
+                description = generateAggregateTaskDescription(this)
+                this@KonanBuildingConfig.filter {
                     project.targetIsRequested(it.konanTarget)
                 }.forEach {
-                            task.dependsOn(it)
+                            this.dependsOn(it)
                         }
-                project.compileAllTask.dependsOn(task)
+                project.compileAllTask.dependsOn(this)
             }
 
     protected fun createTargetAliasTaskIfDeclared(targetName: String): Task? {
@@ -134,9 +134,9 @@ abstract class KonanBuildingConfig<T: KonanBuildingTask>(private val name_: Stri
 
         return this[canonicalTarget]?.let { canonicalBuild ->
             project.tasks.create(generateTargetAliasTaskName(targetName)) {
-                it.group = BasePlugin.BUILD_GROUP
-                it.description = generateTargetAliasTaskDescription(it, targetName)
-                it.dependsOn(canonicalBuild)
+                group = BasePlugin.BUILD_GROUP
+                description = generateTargetAliasTaskDescription(this, targetName)
+                dependsOn(canonicalBuild)
             }
         }
     }

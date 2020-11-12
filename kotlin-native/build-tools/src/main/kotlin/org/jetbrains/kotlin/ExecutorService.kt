@@ -56,32 +56,28 @@ fun create(project: Project): ExecutorService {
 
     return when (testTarget) {
         KonanTarget.WASM32 -> object : ExecutorService {
-            override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec { execSpec ->
-                action.execute(execSpec)
-                with(execSpec) {
-                    val exe = executable
-                    val d8 = "$absoluteTargetToolchain/bin/d8"
-                    val launcherJs = "$executable.js"
-                    executable = d8
-                    args = listOf("--expose-wasm", launcherJs, "--", exe) + args
-                }
+            override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec {
+                action.execute(this)
+                val exe = executable
+                val d8 = "$absoluteTargetToolchain/bin/d8"
+                val launcherJs = "$executable.js"
+                this.executable = d8
+                this.args = listOf("--expose-wasm", launcherJs, "--", exe) + args
             }
         }
 
         KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32 -> object : ExecutorService {
-            override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec { execSpec ->
-                action.execute(execSpec)
-                with(execSpec) {
-                    val qemu = if (platform.target === KonanTarget.LINUX_MIPS32) "qemu-mips" else "qemu-mipsel"
-                    val absoluteQemu = "$absoluteTargetToolchain/bin/$qemu"
-                    val exe = executable
-                    executable = absoluteQemu
-                    args = listOf("-L", absoluteTargetSysRoot,
-                            // This is to workaround an endianess issue.
-                            // See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=731082 for details.
-                            "$absoluteTargetSysRoot/lib/ld.so.1", "--inhibit-cache",
-                            exe) + args
-                }
+            override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec {
+                action.execute(this)
+                val qemu = if (platform.target === KonanTarget.LINUX_MIPS32) "qemu-mips" else "qemu-mipsel"
+                val absoluteQemu = "$absoluteTargetToolchain/bin/$qemu"
+                val exe = executable
+                this.executable = absoluteQemu
+                this.args = listOf("-L", absoluteTargetSysRoot,
+                        // This is to workaround an endianess issue.
+                        // See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=731082 for details.
+                        "$absoluteTargetSysRoot/lib/ld.so.1", "--inhibit-cache",
+                        exe) + args
             }
         }
 
@@ -115,11 +111,11 @@ fun runProcess(executor: (Action<in ExecSpec>) -> ExecResult?,
     val errStream = ByteArrayOutputStream()
 
     val execResult = executor(Action {
-        it.executable = executable
-        it.args = args.toList()
-        it.standardOutput = outStream
-        it.errorOutput = errStream
-        it.isIgnoreExitValue = true
+        this.executable = executable
+        this.args = args.toList()
+        this.standardOutput = outStream
+        this.errorOutput = errStream
+        this.isIgnoreExitValue = true
     })
 
     checkNotNull(execResult)
@@ -148,12 +144,12 @@ fun runProcessWithInput(executor: (Action<in ExecSpec>) -> ExecResult?,
     val inStream = ByteArrayInputStream(input.toByteArray())
 
     val execResult = executor(Action {
-        it.executable = executable
-        it.args = args.toList()
-        it.standardOutput = outStream
-        it.errorOutput = errStream
-        it.isIgnoreExitValue = true
-        it.standardInput = inStream
+        this.executable = executable
+        this.args = args.toList()
+        this.standardOutput = outStream
+        this.errorOutput = errStream
+        this.isIgnoreExitValue = true
+        this.standardInput = inStream
     })
 
     checkNotNull(execResult)
@@ -180,8 +176,8 @@ val Project.executor: ExecutorService
 fun ExecutorService.add(actionParameter: Action<in ExecSpec>) = object : ExecutorService {
     override fun execute(action: Action<in ExecSpec>): ExecResult? =
             this@add.execute(Action {
-                action.execute(it)
-                actionParameter.execute(it)
+                action.execute(this)
+                actionParameter.execute(this)
             })
 }
 
@@ -235,8 +231,8 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
         }
         val out = ByteArrayOutputStream()
         val result = project.exec {
-            it.commandLine("/usr/bin/xcrun", "--find", "simctl", "--sdk", sdk)
-            it.standardOutput = out
+            commandLine("/usr/bin/xcrun", "--find", "simctl", "--sdk", sdk)
+            standardOutput = out
         }
         result.assertNormalExitValue()
         out.toString("UTF-8").trim()
@@ -256,10 +252,10 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
         else -> error("${target.architecture} can't be used in simulator.")
     }.toTypedArray()
 
-    override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec { execSpec ->
-        action.execute(execSpec)
+    override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec {
+        action.execute(this)
         // Starting Xcode 11 `simctl spawn` requires explicit `--standalone` flag.
-        with(execSpec) { commandLine = listOf(simctl, "spawn", "--standalone", *archSpecification, device, executable) + args }
+        commandLine = listOf(simctl, "spawn", "--standalone", *archSpecification, device, executable) + args
     }
 }
 
@@ -286,14 +282,12 @@ private fun sshExecutor(project: Project): ExecutorService = object : ExecutorSe
         var execFile: String? = null
 
         createRemoteDir()
-        val execResult = project.exec { execSpec ->
-            action.execute(execSpec)
-            with(execSpec) {
-                upload(executable)
-                executable = "$remoteDir/${File(executable).name}"
-                execFile = executable
-                commandLine = arrayListOf("$sshHome/ssh") + sshArgs + remote + commandLine
-            }
+        val execResult = project.exec {
+            action.execute(this)
+            upload(executable)
+            this.executable = "$remoteDir/${File(executable).name}"
+            execFile = executable
+            commandLine = arrayListOf("$sshHome/ssh") + sshArgs + remote + commandLine
         }
         cleanup(execFile!!)
         return execResult
@@ -301,19 +295,19 @@ private fun sshExecutor(project: Project): ExecutorService = object : ExecutorSe
 
     private fun createRemoteDir() {
         project.exec {
-            it.commandLine = arrayListOf("$sshHome/ssh") + sshArgs + remote + "mkdir" + "-p" + remoteDir
+            commandLine = arrayListOf("$sshHome/ssh") + sshArgs + remote + "mkdir" + "-p" + remoteDir
         }
     }
 
     private fun upload(fileName: String) {
         project.exec {
-            it.commandLine = arrayListOf("$sshHome/scp") + sshArgs + fileName + "$remote:$remoteDir"
+            commandLine = arrayListOf("$sshHome/scp") + sshArgs + fileName + "$remote:$remoteDir"
         }
     }
 
     private fun cleanup(fileName: String) {
         project.exec {
-            it.commandLine = arrayListOf("$sshHome/ssh") + sshArgs + remote + "rm" + fileName
+            commandLine = arrayListOf("$sshHome/ssh") + sshArgs + remote + "rm" + fileName
         }
     }
 }
@@ -346,12 +340,12 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
 
             var savedOut: OutputStream? = null
             val out = ByteArrayOutputStream()
-            result = project.exec { execSpec: ExecSpec ->
-                action.execute(execSpec)
-                execSpec.executable = "lldb"
-                execSpec.args = commands + "-b" + "-o" + "command script import ${pythonScript()}" +
+            result = project.exec {
+                action.execute(this)
+                executable = "lldb"
+                args = commands + "-b" + "-o" + "command script import ${pythonScript()}" +
                         "-o" + ("process launch" +
-                        (execSpec.args.takeUnless { it.isEmpty() }
+                        (args.takeUnless { it.isEmpty() }
                                 ?.let { " -- ${it.joinToString(" ")}" }
                                 ?: "")) +
                         "-o" + "get_exit_code" +
@@ -360,8 +354,8 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
                 // A test task that uses project.exec { } sets the stdOut to parse the result,
                 // but the test executable is being run under debugger that has its own output mixed with the
                 // output from the test. Save the stdOut from the test to write the parsed output to it.
-                savedOut = execSpec.standardOutput
-                execSpec.standardOutput = out
+                savedOut = this.standardOutput
+                standardOutput = out
             }
             out.toString()
                     .also { if (project.verboseTest) println(it) }
@@ -412,7 +406,7 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
         absolutePath
     }
 
-    private fun kill() = project.exec { it.commandLine(idb, "kill") }
+    private fun kill() = project.exec { commandLine(idb, "kill") }
 
     private inline fun tryUntilTrue(times: Int = 3, f: () -> Boolean) {
         for (i in 1..times) {
@@ -427,8 +421,8 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
         // So relaunch `list-targets` again.
         tryUntilTrue {
             project.exec {
-                it.commandLine(idb, "list-targets", "--json")
-                it.standardOutput = out
+                commandLine(idb, "list-targets", "--json")
+                standardOutput = out
             }.assertNormalExitValue()
             out.toString().trim().isNotEmpty()
         }
@@ -451,11 +445,11 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
         lateinit var result: ExecResult
         tryUntilTrue {
             result = project.exec {
-                it.workingDir = xcProject.toFile()
-                it.commandLine = listOf(idb, "install", "--udid", udid, bundlePath)
-                it.standardOutput = out
-                it.errorOutput = out
-                it.isIgnoreExitValue = true
+                workingDir = xcProject.toFile()
+                commandLine = listOf(idb, "install", "--udid", udid, bundlePath)
+                standardOutput = out
+                errorOutput = out
+                isIgnoreExitValue = true
             }
             println(out.toString())
             result.exitValue == 0
@@ -467,11 +461,11 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
         val out = ByteArrayOutputStream()
 
         project.exec {
-            it.workingDir = xcProject.toFile()
-            it.commandLine = listOf(idb, "uninstall", "--udid", udid, bundleId)
-            it.standardOutput = out
-            it.errorOutput = out
-            it.isIgnoreExitValue = true
+            workingDir = xcProject.toFile()
+            commandLine = listOf(idb, "uninstall", "--udid", udid, bundleId)
+            standardOutput = out
+            errorOutput = out
+            isIgnoreExitValue = true
         }
         println(out.toString())
     }
@@ -480,11 +474,11 @@ private fun deviceLauncher(project: Project) = object : ExecutorService {
         val out = ByteArrayOutputStream()
 
         val result = project.exec {
-            it.workingDir = xcProject.toFile()
-            it.commandLine = listOf(idb, "debugserver", "start", "--udid", udid, bundleId)
-            it.standardOutput = out
-            it.errorOutput = out
-            it.isIgnoreExitValue = true
+            workingDir = xcProject.toFile()
+            commandLine = listOf(idb, "debugserver", "start", "--udid", udid, bundleId)
+            standardOutput = out
+            errorOutput = out
+            isIgnoreExitValue = true
         }
         check(result.exitValue == 0) { "Failed to start debug server: $out" }
         return out.toString()
@@ -552,9 +546,9 @@ fun KonanTestExecutable.configureXcodeBuild() {
             val xcode = listOf("/usr/bin/xcrun", "-sdk", sdk, "xcodebuild")
             val out = ByteArrayOutputStream()
             val result = project.exec {
-                it.workingDir = xcProject.toFile()
-                it.commandLine = xcode + elements.toList()
-                it.standardOutput = out
+                workingDir = xcProject.toFile()
+                commandLine = xcode + elements.toList()
+                standardOutput = out
             }
             println(out.toString("UTF-8"))
             result.assertNormalExitValue()

@@ -568,3 +568,21 @@ project(':kotlin-serialization-unshaded').projectDir = file("$rootDir/libraries/
 
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")
+include ':kotlin-native:dependencies'
+include ':kotlin-native:endorsedLibraries:kotlinx.cli'
+include ':kotlin-native:endorsedLibraries'
+include ':kotlin-native:Interop:StubGenerator'
+include ':kotlin-native:backend.native'
+include ':kotlin-native:Interop:Runtime'
+include ':kotlin-native:Interop:Indexer'
+include ':kotlin-native:Interop:JsRuntime'
+include ':kotlin-native:utilities:basic-utils'
+include ':kotlin-native:utilities:cli-runner'
+include ':kotlin-native:klib'
+include ':kotlin-native:common'
+include ':kotlin-native:runtime'
+include ':kotlin-native:llvmCoverageMappingC'
+include ':kotlin-native:llvmDebugInfoC'
+include ':kotlin-native:utilities'
+include ':kotlin-native:platformLibs'
+include ':kotlin-native:libclangext'

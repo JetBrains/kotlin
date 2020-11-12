@@ -59,22 +59,22 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
         val useCset = project.findProperty("useCset")?.toString()?.toBoolean() ?: false
         project.exec {
             if (useCset) {
-                it.executable = "cset"
-                it.args("shield", "--exec", "--", executable)
+                executable = "cset"
+                args("shield", "--exec", "--", executable)
             } else {
-                it.executable = executable
+                this.executable = executable
             }
 
-            it.args(argumentsList)
-            it.args("-f", benchmark)
+            args(argumentsList)
+            args("-f", benchmark)
             // Logging with application should be done only in case it controls running benchmarks itself.
             // Although it's a responsibility of gradle task.
             if (verbose && repeatingType == BenchmarkRepeatingType.INTERNAL) {
-                it.args("-v")
+                args("-v")
             }
-            it.args("-w", warmupCount.toString())
-            it.args("-r", repeatCount.toString())
-            it.standardOutput = output
+            args("-w", warmupCount.toString())
+            args("-r", repeatCount.toString())
+            standardOutput = output
         }
         return output.toString().substringAfter("[").removeSuffix("]")
     }
@@ -104,9 +104,9 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
     fun run() {
         val output = ByteArrayOutputStream()
         project.exec {
-            it.executable = executable
-            it.args("list")
-            it.standardOutput = output
+            executable = executable
+            args("list")
+            standardOutput = output
         }
         val benchmarks = output.toString().lines()
         val filterArgs = filter.splitCommaSeparatedOption("-f")

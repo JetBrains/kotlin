@@ -15,6 +15,6 @@
  */
 
 buildscript {
-    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+    apply from: "$rootDir/kotlin-native/gradle/kotlinGradlePlugin.gradle"
 }
 

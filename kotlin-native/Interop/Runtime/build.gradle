@@ -23,8 +23,7 @@ buildscript {
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-        classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+        classpath "org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}"
     }
 }
 import org.jetbrains.kotlin.konan.target.ClangArgs
@@ -38,9 +37,9 @@ model {
                 include '**/*.c'
             }
             binaries.all {
-                def host = rootProject.ext.hostName
+                def host = rootProject.project(":kotlin-native").ext.hostName
 
-                def hostLibffiDir = rootProject.ext.get("${host}LibffiDir")
+                def hostLibffiDir = rootProject.project(":kotlin-native").ext.get("${host}LibffiDir")
 
                 cCompiler.args hostPlatform.clang.hostCompilerArgsForJni
                 cCompiler.args "-I$hostLibffiDir/include"
@@ -59,16 +58,10 @@ model {
    }
 }
 
-repositories {
-    maven {
-        url buildKotlinCompilerRepo
-    }
-}
-
 dependencies {
-    compile project(":utilities:basic-utils")
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+    compile project(":kotlin-native:utilities:basic-utils")
+    compile project(":kotlin-stdlib")
+    compile project(":kotlin-reflect")
 }
 
 sourceSets.main.kotlin.srcDirs += "src/jvm/kotlin"

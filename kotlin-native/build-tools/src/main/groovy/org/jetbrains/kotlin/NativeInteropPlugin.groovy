@@ -164,7 +164,7 @@ class NamedNativeInteropConfig implements Named {
         this.project = project
         this.flavor = flavor
 
-        def platformManager = project.rootProject.ext.platformManager
+        def platformManager = project.project(":kotlin-native").ext.platformManager
         def targetManager = platformManager.targetManager(target)
         this.target = targetManager.targetName
 
@@ -188,7 +188,7 @@ class NamedNativeInteropConfig implements Named {
             interopStubs.kotlin.srcDirs generatedSrcDir
 
             project.dependencies {
-                add interopStubs.getCompileConfigurationName(), project(path: ':Interop:Runtime')
+                add interopStubs.getCompileConfigurationName(), project(path: ':kotlin-native:Interop:Runtime')
             }
 
             this.configuration.extendsFrom project.configurations[interopStubs.runtimeConfigurationName]
@@ -201,8 +201,8 @@ class NamedNativeInteropConfig implements Named {
             jvmArgs '-ea'
 
             systemProperties "java.library.path" : project.files(
-                    new File(project.findProject(":Interop:Indexer").buildDir, "nativelibs"),
-                    new File(project.findProject(":Interop:Runtime").buildDir, "nativelibs")
+                    new File(project.findProject(":kotlin-native:Interop:Indexer").buildDir, "nativelibs"),
+                    new File(project.findProject(":kotlin-native:Interop:Runtime").buildDir, "nativelibs")
             ).asPath
             // Set the konan.home property because we run the cinterop tool not from a distribution jar
             // so it will not be able to determine this path by itself.
@@ -297,7 +297,7 @@ class NativeInteropPlugin implements Plugin<Project> {
     void apply(Project prj) {
         prj.extensions.add("kotlinNativeInterop", new NativeInteropExtension(prj))
 
-        def runtimeNativeLibsDir = new File(prj.findProject(':Interop:Runtime').buildDir, 'nativelibs')
+        def runtimeNativeLibsDir = new File(prj.findProject(':kotlin-native:Interop:Runtime').buildDir, 'nativelibs')
 
         def nativeLibsDir = new File(prj.buildDir, "nativelibs")
 
@@ -306,8 +306,8 @@ class NativeInteropPlugin implements Plugin<Project> {
         }
 
         prj.dependencies {
-            interopStubGenerator project(path: ":Interop:StubGenerator")
-            interopStubGenerator project(path: ":endorsedLibraries:kotlinx.cli", configuration: "jvmRuntimeElements")
+            interopStubGenerator project(path: ":kotlin-native:Interop:StubGenerator")
+            interopStubGenerator project(path: ":kotlin-native:endorsedLibraries:kotlinx.cli", configuration: "jvmRuntimeElements")
         }
     }
 }

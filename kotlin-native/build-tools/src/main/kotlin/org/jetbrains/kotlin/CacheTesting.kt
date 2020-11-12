@@ -31,7 +31,7 @@ fun configureCacheTesting(project: Project): CacheTesting? {
     val compilerArgs = listOf("-Xcached-library=$stdlib,$cacheFile")
 
     val buildCacheTask = project.tasks.create("buildStdlibCache", Exec::class.java) {
-        it.doFirst {
+        doFirst {
             cacheDir.mkdirs()
         }
 
@@ -42,10 +42,10 @@ fun configureCacheTesting(project: Project): CacheTesting? {
                     "distCompiler"
             ).map { task -> project.rootProject.tasks.getByName(task) }
 
-            it.dependsOn(tasks)
+            dependsOn(tasks)
         }
 
-        it.commandLine(
+        commandLine(
                 "$dist/bin/konanc",
                 "-p", cacheKind.visibleName,
                 "-o", "$cacheDir/stdlib-cache",

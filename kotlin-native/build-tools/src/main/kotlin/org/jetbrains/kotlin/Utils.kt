@@ -332,16 +332,16 @@ fun Project.buildStaticLibrary(cSources: Collection<File>, output: File, objDir:
 
     objDir.mkdirs()
     exec {
-        it.commandLine(platform.clang.clangC(
+        commandLine(platform.clang.clangC(
                 "-c",
                 *cSources.map { it.absolutePath }.toTypedArray()
         ))
-        it.workingDir(objDir)
+        workingDir(objDir)
     }
 
     output.parentFile.mkdirs()
     exec {
-        it.commandLine(
+        commandLine(
                 "${platform.configurables.absoluteLlvmHome}/bin/llvm-ar",
                 "-rc",
                 output,

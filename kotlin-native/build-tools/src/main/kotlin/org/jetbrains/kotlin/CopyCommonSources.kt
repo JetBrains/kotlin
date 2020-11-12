@@ -67,12 +67,12 @@ open class CopyCommonSources : DefaultTask() {
         val fileTree = if (isFile) project.zipTree(this) else project.fileTree(this)
 
         project.copy {
-            it.from(fileTree)
-            it.includeEmptyDirs = false
-            it.include("generated/**/*.kt")
-            it.include("kotlin/**/*.kt")
-            it.include("kotlin.test/*.kt")
-            it.into(destinationDir)
+            from(fileTree)
+            includeEmptyDirs = false
+            include("generated/**/*.kt")
+            include("kotlin/**/*.kt")
+            include("kotlin.test/*.kt")
+            into(destinationDir)
         }
     }
 }

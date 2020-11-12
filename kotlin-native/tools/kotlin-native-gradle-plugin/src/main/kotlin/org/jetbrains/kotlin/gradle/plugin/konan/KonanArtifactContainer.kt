@@ -36,7 +36,7 @@ open class KonanArtifactContainer(val project: ProjectInternal)
 
         var targets: Iterable<String> = emptyList()
 
-        override fun create(name: String?): T =
+        override fun create(name: String): T =
                 instantiator.newInstance(configClass.java, name, project, targets)
     }
 

@@ -26,7 +26,7 @@ private class JoinedFragments(
         val classes: JoinResult<KmClass>,
         val functions: JoinResult<KmFunction>,
         val properties: JoinResult<KmProperty>,
-        val typeAliases: JoinResult<KmTypeAlias>,
+        val typeAliases: JoinResult<KmTypeAlias>
 )
 
 private fun processMissing(comparisonConfig: ComparisonConfig, joinResult: JoinResult<*>): MetadataCompareResult {
@@ -55,7 +55,7 @@ private fun processMissing(
         processMissing(comparisonConfig, joinedFragments.typeAliases)
                 .messageIfFail("Missing type aliases"),
         processMissing(comparisonConfig, joinedFragments.properties)
-                .messageIfFail("Missing properties"),
+                .messageIfFail("Missing properties")
 ).wrap()
 
 private data class JoinResult<T>(

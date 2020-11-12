@@ -440,19 +440,19 @@ open class KonanDynamicTest : KonanStandaloneTest() {
         val log = ByteArrayOutputStream()
         val plugin = project.convention.getPlugin(ExecClang::class.java)
         val execResult = plugin.execKonanClang(project.testTarget, Action<ExecSpec> {
-            it.workingDir = File(outputDirectory)
-            it.executable = clangTool
+            workingDir = File(outputDirectory)
+            executable = clangTool
             val artifactsDir = "$outputDirectory/${project.testTarget}"
-            it.args = listOf(processCSource(),
+            args = listOf(processCSource(),
                     "-o", executable,
                     "-I", artifactsDir,
                     "-L", artifactsDir,
                     "-l", name,
                     "-Wl,-rpath,$artifactsDir")
 
-            it.standardOutput = log
-            it.errorOutput = log
-            it.isIgnoreExitValue = true
+            standardOutput = log
+            errorOutput = log
+            isIgnoreExitValue = true
         })
         log.toString("UTF-8").also {
             project.file("$executable.compilation.log").writeText(it)

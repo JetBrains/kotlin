@@ -21,11 +21,11 @@ open class CopySamples: Copy() {
 
     private fun configureReplacements() {
         from(samplesDir) {
-            it.exclude("**/*.gradle")
+            exclude("**/*.gradle")
         }
         from(samplesDir) {
-            it.include("**/*.gradle")
-            it.filter { line ->
+            include("**/*.gradle")
+            filter { line ->
                 replacements.forEach { (repo, replacement) ->
                     if (line.contains(repo)) {
                         return@filter line.replace(repo, replacement)

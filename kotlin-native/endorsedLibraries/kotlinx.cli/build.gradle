@@ -8,13 +8,10 @@ buildscript {
         }
         jcenter()
         maven {
-            url kotlinCompilerRepo
+            url project.bootstrapKotlinRepo
         }
     }
 
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    }
 }
 
 apply plugin: 'kotlin-multiplatform'
@@ -24,40 +21,34 @@ repositories {
         url 'https://cache-redirector.jetbrains.com/jcenter'
     }
     jcenter()
-    maven {
-        url kotlinCompilerRepo
-    }
-    maven {
-        url buildKotlinCompilerRepo
-    }
 }
 
 kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+                implementation project(":kotlin-stdlib-common")
             }
             kotlin.srcDir 'src/main/kotlin'
 
         }
         commonTest {
             dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
-                implementation "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
+                implementation project(":kotlin-test:kotlin-test-common")
+                implementation project(":kotlin-test:kotlin-test-annotations-common")
             }
             kotlin.srcDir 'src/tests'
         }
         jvm().compilations.main.defaultSourceSet {
             dependencies {
-                implementation kotlin('stdlib-jdk8')
+                implementation project(":kotlin-stdlib-jdk8")
             }
             kotlin.srcDir 'src/main/kotlin-jvm'
         }
         // JVM-specific tests and their dependencies:
         jvm().compilations.test.defaultSourceSet {
             dependencies {
-                implementation kotlin('test-junit')
+                implementation project(":kotlin-test:kotlin-test-junit")
             }
         }
 
@@ -80,7 +71,7 @@ targetList.each { target ->
     if (target != "wasm32") defaultArgs += '-g'
     def konanArgs = [*defaultArgs,
                      '-target', target,
-                     "-Xruntime=${project(':runtime').file('build/bitcode/main/' + target + '/runtime.bc')}",
+                     "-Xruntime=${project(':kotlin-native:runtime').file('build/bitcode/main/' + target + '/runtime.bc')}",
                      *project.globalBuildArgs]
 
     task("${target}KotlinxCli", type: JavaExec) {
@@ -88,8 +79,8 @@ targetList.each { target ->
         // See :endorsedLibraries.ext for full endorsedLibraries list.
         def moduleName = endorsedLibraries[project].name
 
-        dependsOn ":distCompiler"
-        dependsOn ":${target}CrossDistRuntime"
+        dependsOn ":kotlin-native:distCompiler"
+        dependsOn ":kotlin-native:${target}CrossDistRuntime"
 
         main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
         // This task depends on distCompiler, so the compiler jar is already in the dist directory.

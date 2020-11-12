@@ -29,8 +29,8 @@ open class CompileNativeTest @Inject constructor(
     fun compile() {
         val plugin = project.convention.getPlugin(ExecClang::class.java)
         plugin.execBareClang {
-            it.executable = "clang++"
-            it.args = clangArgs + listOf(inputFile.absolutePath, "-o", outputFile.absolutePath)
+            executable = "clang++"
+            args = clangArgs + listOf(inputFile.absolutePath, "-o", outputFile.absolutePath)
         }
     }
 }
@@ -63,13 +63,13 @@ open class LlvmLinkNativeTest @Inject constructor(
         // except the one containing the entry point to a single *.bc without internalization. The second
         // run internalizes this big module and links it with a module containing the entry point.
         project.exec {
-            it.executable = "$llvmDir/bin/llvm-link"
-            it.args = listOf("-o", tmpOutput.absolutePath) + inputFiles.map { it.absolutePath }
+            executable = "$llvmDir/bin/llvm-link"
+            args = listOf("-o", tmpOutput.absolutePath) + inputFiles.map { it.absolutePath }
         }
 
         project.exec {
-            it.executable = "$llvmDir/bin/llvm-link"
-            it.args = listOf(
+            executable = "$llvmDir/bin/llvm-link"
+            args = listOf(
                     "-o", outputFile.absolutePath,
                     mainFile.absolutePath,
                     tmpOutput.absolutePath,
@@ -150,7 +150,7 @@ open class LinkNativeTest @Inject constructor(
     fun link() {
         for (command in commands) {
             project.exec {
-                it.commandLine(command)
+                commandLine(command)
             }
         }
     }
@@ -161,9 +161,9 @@ fun createTestTask(
         testName: String,
         testTaskName: String,
         testedTaskNames: List<String>,
-        configureCompileToBitcode: CompileToBitcode.() -> Unit = {},
+        configureCompileToBitcode: CompileToBitcode.() -> Unit = {}
 ): Task {
-    val platformManager = project.rootProject.findProperty("platformManager") as PlatformManager
+    val platformManager = project.project(":kotlin-native").findProperty("platformManager") as PlatformManager
     val googleTestExtension = project.extensions.getByName(RuntimeTestingPlugin.GOOGLE_TEST_EXTENSION_NAME) as GoogleTestExtension
     val testedTasks = testedTaskNames.map {
         project.tasks.getByName(it) as CompileToBitcode

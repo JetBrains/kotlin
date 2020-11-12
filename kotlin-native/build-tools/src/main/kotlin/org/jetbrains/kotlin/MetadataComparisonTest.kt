@@ -50,9 +50,9 @@ open class MetadataComparisonTest : DefaultTask() {
         val sourcecodeLibrary = cinterop(project.file(defFile), Mode.SOURCECODE)
         compareKlibMetadata(CInteropComparisonConfig(), sourcecodeLibrary.absolutePath, metadataLibrary.absolutePath).let { result ->
             if (result is MetadataCompareResult.Fail) {
-                val message = StringBuilder().also {
-                    expandFail(result, it::appendln)
-                }.toString()
+                val message = buildString {
+                    expandFail(result, {x:String -> appendln(x)})
+                }
                 throw TestFailedException(message)
             }
         }

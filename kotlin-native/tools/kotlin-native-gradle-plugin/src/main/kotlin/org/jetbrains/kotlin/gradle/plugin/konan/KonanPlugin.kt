@@ -325,7 +325,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
     }
 
 
-    override fun apply(project: ProjectInternal?) {
+    override fun apply(project: ProjectInternal) {
         if (project == null) {
             return
         }
@@ -382,7 +382,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                     val konanSoftwareComponent = buildingConfig.mainVariant
                     project.extensions.configure(PublishingExtension::class.java) {
                         val builtArtifact = buildingConfig.name
-                        val mavenPublication = it.publications.maybeCreate(builtArtifact, MavenPublication::class.java)
+                        val mavenPublication = publications.maybeCreate(builtArtifact, MavenPublication::class.java)
                         mavenPublication.apply {
                             artifactId = builtArtifact
                             groupId = project.group.toString()
@@ -395,22 +395,22 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                     }
 
                     project.extensions.configure(PublishingExtension::class.java) {
-                        val publishing = it
                         for (v in konanSoftwareComponent.variants) {
-                            publishing.publications.create(v.name, MavenPublication::class.java) { mavenPublication ->
+                            this@configure.publications.create(v.name, MavenPublication::class.java) {
                                 val coordinates = (v as NativeVariantIdentity).coordinates
                                 project.logger.info("variant with coordinates($coordinates) and module: ${coordinates.module}")
-                                mavenPublication.artifactId = coordinates.module.name
-                                mavenPublication.groupId = coordinates.group
-                                mavenPublication.version = coordinates.version
-                                mavenPublication.from(v)
-                                (mavenPublication as MavenPublicationInternal).publishWithOriginalFileName()
+                                artifactId = coordinates.module.name
+                                groupId = coordinates.group
+                                version = coordinates.version
+                                from(v)
+                                (this as MavenPublicationInternal).publishWithOriginalFileName()
                                 buildingConfig.pomActions.forEach {
-                                    mavenPublication.pom(it)
+                                    pom(it)
                                 }
                             }
                         }
                     }
+                    true
                 }
             }
         }

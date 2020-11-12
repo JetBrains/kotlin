@@ -37,10 +37,10 @@ open class KotlinNativeBenchmarkExtension @Inject constructor(project: Project) 
 open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
     override fun Project.configureJvmJsonTask(jvmRun: Task): Task {
         return tasks.create("jvmJsonReport") {
-            it.group = BENCHMARKING_GROUP
-            it.description = "Builds the benchmarking report for Kotlin/JVM."
+            group = BENCHMARKING_GROUP
+            description = "Builds the benchmarking report for Kotlin/JVM."
 
-            it.doLast {
+            doLast {
                 val applicationName = benchmark.applicationName
                 val jarPath = (tasks.getByName("jvmJar") as Jar).archiveFile.get().asFile
                 val jvmCompileTime = getJvmCompileTime(project, applicationName)
@@ -58,28 +58,28 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
                 buildDir.resolve(jvmJson).writeText(output)
             }
 
-            jvmRun.finalizedBy(it)
+            jvmRun.finalizedBy(this)
         }
     }
 
     override fun Project.configureJvmTask(): Task {
-        return tasks.create("jvmRun", RunJvmTask::class.java) { task ->
-            task.dependsOn("jvmJar")
+        return tasks.create("jvmRun", RunJvmTask::class.java) {
+            dependsOn("jvmJar")
             val mainCompilation = kotlin.jvm().compilations.getByName("main")
             val runtimeDependencies = configurations.getByName(mainCompilation.runtimeDependencyConfigurationName)
-            task.classpath(files(mainCompilation.output.allOutputs, runtimeDependencies))
-            task.main = "MainKt"
+            classpath(files(mainCompilation.output.allOutputs, runtimeDependencies))
+            main = "MainKt"
 
-            task.group = BENCHMARKING_GROUP
-            task.description = "Runs the benchmark for Kotlin/JVM."
+            group = BENCHMARKING_GROUP
+            description = "Runs the benchmark for Kotlin/JVM."
 
             // Specify settings configured by a user in the benchmark extension.
             afterEvaluate {
-                task.args("-p", "${benchmark.applicationName}::")
-                task.warmupCount = jvmWarmup
-                task.repeatCount = attempts
-                task.outputFileName = buildDir.resolve(jvmBenchResults).absolutePath
-                task.repeatingType = benchmark.repeatingType
+                args("-p", "${benchmark.applicationName}::")
+                warmupCount = jvmWarmup
+                repeatCount = attempts
+                outputFileName = buildDir.resolve(jvmBenchResults).absolutePath
+                repeatingType = benchmark.repeatingType
             }
         }
     }
@@ -131,7 +131,7 @@ open class KotlinNativeBenchmarkingPlugin: BenchmarkingPlugin() {
     private fun Project.configureJVMTarget() {
         kotlin.jvm {
             compilations.all {
-                it.compileKotlinTask.kotlinOptions {
+                compileKotlinTask.kotlinOptions {
                     jvmTarget = "1.8"
                     suppressWarnings = true
                     freeCompilerArgs = project.benchmark.compilerOpts + project.compilerArgs
