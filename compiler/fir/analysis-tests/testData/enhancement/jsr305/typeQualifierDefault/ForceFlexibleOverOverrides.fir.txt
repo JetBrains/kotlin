@@ -11,13 +11,13 @@
 
 }
 public abstract interface B : R|kotlin/Any| {
-    public abstract fun foo(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/Unit|
+    public abstract fun foo(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|): R|kotlin/Unit|
 
-    public abstract fun bar(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/Unit|
+    public abstract fun bar(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|): R|kotlin/Unit|
 
-    public abstract fun baz(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/Unit|
+    public abstract fun baz(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|): R|kotlin/Unit|
 
-    public abstract fun foobar(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/Unit|
+    public abstract fun foobar(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|): R|kotlin/Unit|
 
 }
 @R|java/lang/annotation/Retention|(R|java/lang/annotation/RetentionPolicy.RUNTIME|()) @R|java/lang/annotation/Documented|() @R|spr/UnknownNullability|() @R|javax/annotation/meta/TypeQualifierDefault|(<implicitArrayOf>(R|java/lang/annotation/ElementType.METHOD|(), R|java/lang/annotation/ElementType.PARAMETER|())) public abstract annotation class ForceFlexibility : R|kotlin/Annotation| {
