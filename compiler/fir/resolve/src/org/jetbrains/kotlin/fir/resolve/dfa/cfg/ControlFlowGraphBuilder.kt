@@ -1137,11 +1137,13 @@ class ControlFlowGraphBuilder {
 
         return createContractDescriptionEnterNode().also {
             lastNodes.push(it)
+            exitTargetsForTry.push(it)
         }
     }
 
     fun exitContractDescription() {
         lastNodes.pop()
+        exitTargetsForTry.pop()
         popGraph()
     }
 
