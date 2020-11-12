@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.isPure
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrElementBase
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.DeclarationCarrier
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.name.Name
@@ -42,14 +41,12 @@ class PropertyLazyInitLowering(
         get() = context.fileToInitialisationFuns
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val property = container.correspondingProperty ?: return
+        if (container !is IrSimpleFunction && container !is IrField && container !is IrProperty)
+            return
 
-        val topLevelProperty = property
-            .takeIf { it.isForLazyInit() }
-            ?.takeIf { it.backingField?.initializer != null }
-            ?: return
+        if (!container.isTopLevel) return
 
-        val file = topLevelProperty.parent as? IrFile
+        val file = container.parent as? IrFile
             ?: return
 
         val initFun = fileToInitialisationFuns[file]
@@ -65,10 +62,13 @@ class PropertyLazyInitLowering(
             is IrSimpleFunction ->
                 irBody.addInitialisation(initialisationCall, container)
             is IrField -> {
-                property
-                    .let { listOf(it.getter, it.setter) }
-                    .filterNotNull()
-                    .forEach {
+                container
+                    .correspondingProperty
+                    ?.takeIf { it.isForLazyInit() }
+                    ?.takeIf { it.backingField?.initializer != null }
+                    ?.let { listOf(it.getter, it.setter) }
+                    ?.filterNotNull()
+                    ?.forEach {
                         irBody.addInitialisation(initialisationCall, it)
                     }
             }
@@ -85,6 +85,8 @@ class PropertyLazyInitLowering(
         val fieldToInitializer = calculateFieldToExpression(
             declarations
         )
+
+        if (fieldToInitializer.isEmpty()) return null
 
 //        if (allFieldsInFilePure(fieldToInitializer.values)) {
 //            return null
