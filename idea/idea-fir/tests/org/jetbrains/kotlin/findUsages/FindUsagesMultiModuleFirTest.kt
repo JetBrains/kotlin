@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.findUsages
 
-import org.jetbrains.kotlin.doTestWithFIRFlags
+import java.nio.file.Paths
 
 class FindUsagesMultiModuleFirTest : FindUsagesMultiModuleTest() {
     override val isFirPlugin: Boolean = true
 
-    override fun doFindUsagesTest() = doTestWithFIRFlags(mainFile.text) {
+    override fun doFindUsagesTest() = doTestWithFIRFlags(Paths.get(mainFile.virtualFilePath)) {
         super.doFindUsagesTest()
     }
 }

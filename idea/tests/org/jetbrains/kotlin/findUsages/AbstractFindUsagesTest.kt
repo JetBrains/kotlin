@@ -38,7 +38,6 @@ import com.intellij.usages.impl.rules.UsageTypeProvider
 import com.intellij.usages.rules.UsageFilteringRule
 import com.intellij.usages.rules.UsageGroupingRule
 import com.intellij.util.CommonProcessors
-import org.jetbrains.kotlin.doTestWithFIRFlagsByPath
 import org.jetbrains.kotlin.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
@@ -59,21 +58,6 @@ import java.io.File
 import java.util.*
 import kotlin.collections.LinkedHashSet
 
-abstract class AbstractFindUsagesWithDisableComponentSearchFirTest : AbstractFindUsagesWithDisableComponentSearchTest() {
-    override fun isFirPlugin(): Boolean = true
-
-    override fun <T : PsiElement> doTest(path: String) = doTestWithFIRFlagsByPath(path) {
-        super.doTest<T>(path)
-    }
-}
-
-abstract class AbstractFindUsagesFirTest : AbstractFindUsagesTest() {
-    override fun isFirPlugin(): Boolean = true
-
-    override fun <T : PsiElement> doTest(path: String) = doTestWithFIRFlagsByPath(path) {
-        super.doTest<T>(path)
-    }
-}
 
 abstract class AbstractFindUsagesWithDisableComponentSearchTest : AbstractFindUsagesTest() {
 

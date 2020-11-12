@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.idea.completion.test.handlers
 
-import org.jetbrains.kotlin.idea.completion.FIR_COMPARISON
-import org.jetbrains.kotlin.idea.completion.runTestWithCustomEnableDirective
+import org.jetbrains.kotlin.test.uitls.IgnoreTests
 
 abstract class AbstractHighLevelBasicCompletionHandlerTest : AbstractBasicCompletionHandlerTest() {
     override val captureExceptions: Boolean = false
 
     override fun doTest(testPath: String) {
-        runTestWithCustomEnableDirective(FIR_COMPARISON, testDataFile()) { super.doTest(testPath) }
+        IgnoreTests.runTestIfEnabledByFileDirective(testDataFilePath(), IgnoreTests.DIRECTIVES.FIR_COMPARISON, ".after") {
+            super.doTest(testPath)
+        }
     }
 }

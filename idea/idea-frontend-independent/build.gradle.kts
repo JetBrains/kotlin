@@ -20,6 +20,8 @@ dependencies {
     compileOnly(intellijDep())
     compileOnly(project(":compiler:light-classes"))
     compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
+
+    testCompile(projectTests(":compiler:tests-common"))
 }
 
 sourceSets {

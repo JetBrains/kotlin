@@ -21,6 +21,7 @@ dependencies {
     testCompile(projectTests(":idea:idea-frontend-fir"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
+    testCompile(projectTests(":idea:idea-frontend-independent"))
 
     testCompileOnly(intellijDep())
     testRuntime(intellijDep())
