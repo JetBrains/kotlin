@@ -15,4 +15,5 @@ sealed class KtSymbolVisibility {
     object PROTECTED : KtSymbolVisibility()
     object INTERNAL : KtSymbolVisibility()
     object UNKNOWN : KtSymbolVisibility()
+    object LOCAL : KtSymbolVisibility()
 }
