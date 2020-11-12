@@ -932,7 +932,7 @@ class ControlFlowGraphBuilder {
         return node to unionNode
     }
 
-    fun exitConstExpresion(constExpression: FirConstExpression<*>): ConstExpressionNode {
+    fun exitConstExpression(constExpression: FirConstExpression<*>): ConstExpressionNode {
         return createConstExpressionNode(constExpression).also { addNewSimpleNode(it) }
     }
 
