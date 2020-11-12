@@ -142,7 +142,7 @@ object DefaultErrorMessagesParcelize : DefaultErrorMessages.Extension {
 
         MAP.put(
             ErrorsParcelize.DEPRECATED_ANNOTATION,
-            "Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlin.parcelize'"
+            "Parcelize annotations from package 'kotlinx.android.parcel' are deprecated. Change package to 'kotlinx.parcelize'"
         )
 
         MAP.put(
