@@ -1004,96 +1004,73 @@ class Fir2IrDeclarationStorage(
     }
 
     fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol): IrConstructorSymbol {
-        val firConstructor = firConstructorSymbol.fir
-        val irParent by lazy { findIrParent(firConstructor) }
-        getCachedIrConstructor(firConstructor) {
-            irParent
-            signatureComposer.composeSignature(firConstructor)
-        }?.let { return it.symbol }
-        val signature = signatureComposer.composeSignature(firConstructor)
-        val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
-        if (signature != null) {
-            assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
-                "Should not have reference to public API uncached constructor from source code"
-            }
-            val symbol = Fir2IrConstructorSymbol(signature)
-            val irConstructor = firConstructor.convertWithOffsets { startOffset, endOffset ->
-                symbolTable.declareConstructor(signature, { symbol }) {
-                    Fir2IrLazyConstructor(
-                        components, startOffset, endOffset, parentOrigin, firConstructor, symbol
-                    ).apply {
-                        parent = irParent!!
+        val fir = firConstructorSymbol.fir
+        return getIrCallableSymbol(
+            firConstructorSymbol,
+            getCachedIrDeclaration = ::getCachedIrConstructor,
+            createIrDeclaration = { parent, origin -> createIrConstructor(fir, parent as IrClass, origin = origin) },
+            createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
+                val symbol = Fir2IrConstructorSymbol(signature)
+                val irConstructor = fir.convertWithOffsets { startOffset, endOffset ->
+                    symbolTable.declareConstructor(signature, { symbol }) {
+                        Fir2IrLazyConstructor(
+                            components, startOffset, endOffset, declarationOrigin, fir, symbol
+                        ).apply {
+                            parent = lazyParent
+                        }
                     }
                 }
+                constructorCache[fir] = irConstructor
+                // NB: this is needed to prevent recursions in case of self bounds
+                (irConstructor as Fir2IrLazyConstructor).prepareTypeParameters()
+                irConstructor
             }
-            constructorCache[firConstructor] = irConstructor
-            // NB: this is needed to prevent recursions in case of self bounds
-            (irConstructor as Fir2IrLazyConstructor).prepareTypeParameters()
-            return symbol
-        }
-        val irDeclaration = createIrConstructor(firConstructor, irParent as IrClass, origin = parentOrigin).apply {
-            setAndModifyParent(irParent)
-        }
-        return irDeclaration.symbol
+        ) as IrConstructorSymbol
     }
 
     fun getIrFunctionSymbol(firFunctionSymbol: FirFunctionSymbol<*>): IrFunctionSymbol {
-        return when (val firDeclaration = firFunctionSymbol.fir) {
+        return when (val fir = firFunctionSymbol.fir) {
             is FirAnonymousFunction -> {
-                getCachedIrFunction(firDeclaration)?.let { return it.symbol }
-                val irParent = findIrParent(firDeclaration)
+                getCachedIrFunction(fir)?.let { return it.symbol }
+                val irParent = findIrParent(fir)
                 val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
                 val declarationOrigin = computeDeclarationOrigin(firFunctionSymbol, parentOrigin, irParent)
-                createIrFunction(firDeclaration, irParent, origin = declarationOrigin).apply {
+                createIrFunction(fir, irParent, origin = declarationOrigin).apply {
                     setAndModifyParent(irParent)
                 }.symbol
             }
             is FirSimpleFunction -> {
-                val irParent by lazy { findIrParent(firDeclaration) }
-                getCachedIrFunction(firDeclaration) {
-                    // Parent calculation provokes function calculation for some members from IrBuiltIns
-                    @Suppress("UNUSED_EXPRESSION") irParent
-                    signatureComposer.composeSignature(it)
-                }?.let { return it.symbol }
-                val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
-
-                // TODO: package fragment members (?)
-                val parent = irParent
-                if (parent is Fir2IrLazyClass) {
-                    assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
-                        "Should not have reference to public API uncached simple function from source code"
-                    }
-                    val signature = signatureComposer.composeSignature(firDeclaration)
-                    if (signature != null) {
-                        val symbol = Fir2IrSimpleFunctionSymbol(signature, firDeclaration.containerSource)
-                        val irFunction = firDeclaration.convertWithOffsets { startOffset, endOffset ->
+                return getIrCallableSymbol(
+                    firFunctionSymbol,
+                    getCachedIrDeclaration = ::getCachedIrFunction,
+                    createIrDeclaration = { parent, origin -> createIrFunction(fir, parent, origin = origin) },
+                    createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
+                        val symbol = Fir2IrSimpleFunctionSymbol(signature, fir.containerSource)
+                        val irFunction = fir.convertWithOffsets { startOffset, endOffset ->
                             symbolTable.declareSimpleFunction(signature, { symbol }) {
                                 val isFakeOverride =
-                                    firFunctionSymbol is FirNamedFunctionSymbol && firFunctionSymbol.fir.isSubstitutionOverride &&
+                                    firFunctionSymbol is FirNamedFunctionSymbol && fir.isSubstitutionOverride &&
                                             firFunctionSymbol.dispatchReceiverClassOrNull() !=
                                             firFunctionSymbol.originalForSubstitutionOverride?.dispatchReceiverClassOrNull()
                                 Fir2IrLazySimpleFunction(
-                                    components, startOffset, endOffset, parentOrigin, firDeclaration, parent.fir, symbol, isFakeOverride
+                                    components, startOffset, endOffset, declarationOrigin,
+                                    fir, lazyParent.fir, symbol, isFakeOverride
                                 ).apply {
-                                    this.parent = parent
+                                    this.parent = lazyParent
                                 }
                             }
                         }
-                        functionCache[firDeclaration] = irFunction
+                        functionCache[fir] = irFunction
                         // NB: this is needed to prevent recursions in case of self bounds
                         (irFunction as Fir2IrLazySimpleFunction).prepareTypeParameters()
-                        return symbol
+                        irFunction
                     }
-                }
-                val declarationOrigin = computeDeclarationOrigin(firFunctionSymbol, parentOrigin, irParent)
-                createIrFunction(firDeclaration, irParent, origin = declarationOrigin).apply {
-                    setAndModifyParent(irParent)
-                }.symbol
+                ) as IrFunctionSymbol
             }
             is FirConstructor -> {
-                getIrConstructorSymbol(firDeclaration.symbol)
+                getIrConstructorSymbol(fir.symbol)
             }
-            else -> error("Unknown kind of function: ${firDeclaration::class.java}: ${firDeclaration.render()}")
+            else -> error("Unknown kind of function: ${fir::class.java}: ${fir.render()}")
         }
     }
 
@@ -1102,41 +1079,63 @@ class Fir2IrDeclarationStorage(
         if (fir.isLocal) {
             return localStorage.getDelegatedProperty(fir)?.symbol ?: getIrVariableSymbol(fir)
         }
-        val irParent by lazy { findIrParent(fir) }
-        getCachedIrProperty(fir) {
-            // Parent calculation provokes property calculation for some members from IrBuiltIns
-            @Suppress("UNUSED_EXPRESSION") irParent
-            signatureComposer.composeSignature(it)
-        }?.let { return it.symbol }
-        val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
-        val declarationOrigin = computeDeclarationOrigin(firPropertySymbol, parentOrigin, irParent)
-        // TODO: package fragment members (?)
-        val parent = irParent
-        if (parent is Fir2IrLazyClass) {
-            assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
-                "Should not have reference to public API uncached property from source code"
-            }
-            val signature = signatureComposer.composeSignature(fir)
-            if (signature != null) {
+        return getIrCallableSymbol(
+            firPropertySymbol,
+            getCachedIrDeclaration = ::getCachedIrProperty,
+            createIrDeclaration = { parent, origin -> createIrProperty(fir, parent, origin = origin) },
+            createIrLazyDeclaration = { signature, lazyParent, declarationOrigin ->
                 val symbol = Fir2IrPropertySymbol(signature, fir.containerSource)
                 val irProperty = fir.convertWithOffsets { startOffset, endOffset ->
                     symbolTable.declareProperty(signature, { symbol }) {
                         val isFakeOverride =
-                            firPropertySymbol.fir.isSubstitutionOverride &&
-                                    firPropertySymbol.dispatchReceiverClassOrNull() != firPropertySymbol.originalForSubstitutionOverride?.dispatchReceiverClassOrNull()
+                            fir.isSubstitutionOverride &&
+                                    firPropertySymbol.dispatchReceiverClassOrNull() !=
+                                    firPropertySymbol.originalForSubstitutionOverride?.dispatchReceiverClassOrNull()
                         Fir2IrLazyProperty(
-                            components, startOffset, endOffset, declarationOrigin, fir, parent.fir, symbol, isFakeOverride
+                            components, startOffset, endOffset, declarationOrigin, fir, lazyParent.fir, symbol, isFakeOverride
                         ).apply {
-                            this.parent = parent
+                            this.parent = lazyParent
                         }
                     }
                 }
                 propertyCache[fir] = irProperty
                 return symbol
             }
+        )
+    }
+
+    private inline fun <
+            reified FS : FirCallableSymbol<*>,
+            reified F : FirCallableDeclaration<*>,
+            I : IrSymbolOwner,
+            > getIrCallableSymbol(
+        firSymbol: FS,
+        getCachedIrDeclaration: (F, (F) -> IdSignature?) -> I?,
+        createIrDeclaration: (IrDeclarationParent?, IrDeclarationOrigin) -> I,
+        createIrLazyDeclaration: (IdSignature, Fir2IrLazyClass, IrDeclarationOrigin) -> I,
+    ): IrSymbol {
+        val fir = firSymbol.fir as F
+        val irParent by lazy { findIrParent(fir) }
+        val signature by lazy { signatureComposer.composeSignature(fir) }
+        getCachedIrDeclaration(fir) {
+            // Parent calculation provokes declaration calculation for some members from IrBuiltIns
+            @Suppress("UNUSED_EXPRESSION") irParent
+            signature
+        }?.let { return it.symbol }
+        val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
+        val declarationOrigin = computeDeclarationOrigin(firSymbol, parentOrigin, irParent)
+        // TODO: package fragment members (?)
+        val parent = irParent
+        if (parent is Fir2IrLazyClass) {
+            assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
+                "Should not have reference to public API uncached property from source code"
+            }
+            signature?.let {
+                return createIrLazyDeclaration(it, parent, declarationOrigin).symbol
+            }
         }
-        return createIrProperty(fir, irParent, origin = declarationOrigin).apply {
-            setAndModifyParent(irParent)
+        return createIrDeclaration(irParent, declarationOrigin).apply {
+            (this as IrDeclaration).setAndModifyParent(irParent)
         }.symbol
     }
 
