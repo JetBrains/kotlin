@@ -313,23 +313,12 @@ fun IrCall.isSuperToAny() = superQualifierSymbol?.let { this.symbol.owner.isFake
 fun IrDeclaration.hasInterfaceParent() =
     parent.safeAs<IrClass>()?.isInterface == true
 
-fun IrDeclaration.isEffectivelyExternal(): Boolean {
 
-    fun IrFunction.effectiveParentDeclaration(): IrDeclaration? =
-        when (this) {
-            is IrSimpleFunction -> correspondingPropertySymbol?.owner ?: parent as? IrDeclaration
-            else -> parent as? IrDeclaration
-        }
+inline fun IrExternalDeclaration.isEffectivelyExternal(): Boolean =
+    this.isExternal
 
-    val parent = parent
-    return when (this) {
-        is IrFunction -> isExternal || (effectiveParentDeclaration()?.isEffectivelyExternal() ?: false)
-        is IrField -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
-        is IrProperty -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
-        is IrClass -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
-        else -> false
-    }
-}
+inline fun IrDeclaration.isEffectivelyExternal(): Boolean =
+    this is IrExternalDeclaration && this.isExternal
 
 fun IrFunction.isExternalOrInheritedFromExternal(): Boolean {
     fun isExternalOrInheritedFromExternalImpl(f: IrSimpleFunction): Boolean =

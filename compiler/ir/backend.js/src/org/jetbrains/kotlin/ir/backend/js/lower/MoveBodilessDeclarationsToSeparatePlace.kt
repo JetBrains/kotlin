@@ -69,6 +69,7 @@ private fun isBuiltInClass(declaration: IrDeclaration): Boolean =
 fun moveBodilessDeclarationsToSeparatePlace(context: JsIrBackendContext, moduleFragment: IrModuleFragment) {
     MoveBodilessDeclarationsToSeparatePlaceLowering(context).let { moveBodiless ->
         moduleFragment.files.forEach {
+            markExternalDeclarations(it)
             moveBodiless.lower(it)
         }
     }
@@ -133,3 +134,31 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
         }, null)
     }
 }
+
+fun markExternalDeclarations(packageFragment: IrPackageFragment) {
+    for (declaration in packageFragment.declarations) {
+        if (declaration is IrExternalDeclaration) {
+            if (declaration.isExternal) {
+                markNestedExternalDeclarations(declaration)
+            }
+        }
+    }
+}
+
+
+fun markNestedExternalDeclarations(declaration: IrDeclaration) {
+    if (declaration is IrExternalDeclaration) {
+        declaration.isExternal = true
+    }
+    if (declaration is IrProperty) {
+        declaration.getter?.isExternal = true
+        declaration.setter?.isExternal = true
+        declaration.backingField?.isExternal = true
+    }
+    if (declaration is IrClass) {
+        declaration.declarations.forEach {
+            markNestedExternalDeclarations(it)
+        }
+    }
+}
+
