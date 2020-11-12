@@ -19,5 +19,5 @@ public final class test/IC {
 @kotlin.Metadata
 public final class test/NewKt {
     // source: 'new.kt'
-    public final static method foo-WsYm_fY(p0: int, p1: int): void
+    public final static method foo-i2nDo8k(p0: int, p1: int): void
 }

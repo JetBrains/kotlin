@@ -66,7 +66,7 @@ public final class InlineMap {
     public static method isEmpty-impl(p0: java.util.Map): boolean
     public synthetic bridge method keySet(): java.util.Set
     public synthetic bridge method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
-    public method put-eSoqwEg(p0: int, p1: double): IV
+    public method put-t80dRTo(p0: int, p1: double): IV
     public method putAll(p0: java.util.Map): void
     public bridge final method remove(p0: java.lang.Object): IV
     public synthetic bridge method remove(p0: java.lang.Object): java.lang.Object

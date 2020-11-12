@@ -19,6 +19,6 @@ public final class IC {
 @kotlin.Metadata
 public final class NullableAndNotNullPrimitiveKt {
     // source: 'nullableAndNotNullPrimitive.kt'
-    public final static method foo-3XBUs8U(@org.jetbrains.annotations.Nullable p0: java.lang.Integer, p1: int): void
-    public final static method foo-3XBUs8U(p0: int, p1: int): void
+    public final static method foo--SqozA0(@org.jetbrains.annotations.Nullable p0: java.lang.Integer, p1: int): void
+    public final static method foo--SqozA0(p0: int, p1: int): void
 }

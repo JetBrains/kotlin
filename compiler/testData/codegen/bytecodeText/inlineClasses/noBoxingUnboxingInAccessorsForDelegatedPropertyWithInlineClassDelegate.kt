@@ -28,6 +28,6 @@ inline class Delegate(val default: Int) {
 // 0 DelegateFactory\.unbox
 // 0 Delegate\.box
 // 0 Delegate\.unbox
-// 1 INVOKESTATIC DelegateFactory\.provideDelegate-RDSKdTE \(ILjava/lang/Object;Ljava/lang/Object;\)I
+// 1 INVOKESTATIC DelegateFactory\.provideDelegate-fSJJ7ck \(ILjava/lang/Object;Ljava/lang/Object;\)I
 // 1 INVOKESTATIC Delegate\.getValue-impl \(ILjava/lang/Object;Ljava/lang/Object;\)I
 // 1 INVOKESTATIC Delegate\.setValue-impl \(ILjava/lang/Object;Ljava/lang/Object;I\)V

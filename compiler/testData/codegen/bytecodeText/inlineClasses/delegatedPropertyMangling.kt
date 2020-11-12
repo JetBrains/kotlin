@@ -18,6 +18,6 @@ class B : A {
     override val i by Delegate()
 }
 
-// 1 public final getValue-BwmXtik\(Ljava/lang/Object;Lkotlin/reflect/KProperty;\)I
+// 1 public final getValue-MJRKSbM\(Ljava/lang/Object;Lkotlin/reflect/KProperty;\)I
 // 1 public getI-lPtA-2M\(\)I
 // 1 public abstract getI-lPtA-2M\(\)I

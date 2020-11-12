@@ -21,8 +21,8 @@ public final class InlineList {
     private synthetic method <init>(p0: java.util.List): void
     public synthetic method add(p0: int, p1: java.lang.Object): void
     public synthetic method add(p0: java.lang.Object): boolean
+    public method add--AyYFnU(p0: int, p1: int): void
     public method add-jHY5zpA(p0: int): boolean
-    public method add-paNdoDA(p0: int, p1: int): void
     public method addAll(p0: int, p1: java.util.Collection): boolean
     public method addAll(p0: java.util.Collection): boolean
     public synthetic final static method box-impl(p0: java.util.List): InlineList
@@ -63,7 +63,7 @@ public final class InlineList {
     public method removeAll(p0: java.util.Collection): boolean
     public method retainAll(p0: java.util.Collection): boolean
     public synthetic method set(p0: int, p1: java.lang.Object): java.lang.Object
-    public method set-_wdf3hM(p0: int, p1: int): int
+    public method set-kAA0daY(p0: int, p1: int): int
     public bridge final method size(): int
     public method subList(p0: int, p1: int): java.util.List
     public static method subList-impl(p0: java.util.List, p1: int, p2: int): java.util.List

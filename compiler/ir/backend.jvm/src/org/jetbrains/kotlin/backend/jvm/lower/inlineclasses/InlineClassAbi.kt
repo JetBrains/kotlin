@@ -125,7 +125,7 @@ object InlineClassAbi {
             signatureElementsForMangling += if (useOldMangleRules) "Lkotlin.coroutines.Continuation;"
             else NOT_INLINE_CLASS_PARAMETER_PLACEHOLDER
         }
-        val signatureString = signatureElementsForMangling.joinToString() +
+        val signatureString = signatureElementsForMangling.joinToString(separator = if (useOldMangleRules) ", " else "") +
                 if (mangleReturnTypes && irFunction.hasMangledReturnType && !useOldMangleRules)
                     ":${irFunction.returnType.eraseToString(useOldMangleRules)}" else ""
         return md5base64(signatureString)

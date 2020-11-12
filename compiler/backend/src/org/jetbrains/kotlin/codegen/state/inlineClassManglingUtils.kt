@@ -76,7 +76,7 @@ fun getManglingSuffixBasedOnKotlinSignature(
 
 private fun collectSignatureForMangling(descriptor: CallableMemberDescriptor, useOldManglingRules: Boolean): String {
     val types = listOfNotNull(descriptor.extensionReceiverParameter?.type) + descriptor.valueParameters.map { it.type }
-    return types.joinToString { getSignatureElementForMangling(it, useOldManglingRules) }
+    return types.joinToString(separator = if (useOldManglingRules) ", " else "") { getSignatureElementForMangling(it, useOldManglingRules) }
 }
 
 private fun getSignatureElementForMangling(type: KotlinType, useOldManglingRules: Boolean): String = buildString {
