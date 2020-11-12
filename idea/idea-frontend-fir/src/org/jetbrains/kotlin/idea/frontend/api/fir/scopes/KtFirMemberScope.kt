@@ -13,9 +13,10 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymb
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtMemberScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtUnsubstitutedScope
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
 
 internal class KtFirMemberScope(
-    override val owner: KtFirClassOrObjectSymbol,
+    override val owner: KtSymbolWithDeclarations,
     firScope: FirTypeScope,
     token: ValidityToken,
     builder: KtSymbolByFirBuilder
