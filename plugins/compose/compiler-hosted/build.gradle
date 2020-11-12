@@ -43,7 +43,6 @@ androidx {
     // This is only published because that is required when exporting it to g3.
     // Nobody should ever get this artifact from maven; just from studio or from source
     type = LibraryType.COMPILER_PLUGIN
-    mavenVersion = LibraryVersions.COMPOSE
     mavenGroup = LibraryGroups.Compose.COMPILER
     inceptionYear = "2019"
     description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
