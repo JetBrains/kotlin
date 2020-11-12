@@ -1089,19 +1089,6 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun computeDeclarationOrigin(
-        symbol: FirCallableSymbol<*>,
-        parentOrigin: IrDeclarationOrigin,
-        irParent: IrDeclarationParent?
-    ): IrDeclarationOrigin {
-        return if (irParent.isSourceClass() && symbol.fir.isIntersectionOverride)
-            IrDeclarationOrigin.FAKE_OVERRIDE
-        else
-            parentOrigin
-    }
-
-    private fun IrDeclarationParent?.isSourceClass() = this is IrClass && this !is Fir2IrLazyClass && this !is IrLazyClass
-
     fun getIrPropertySymbol(firPropertySymbol: FirPropertySymbol): IrSymbol {
         val fir = firPropertySymbol.fir
         if (fir.isLocal) {
@@ -1144,6 +1131,19 @@ class Fir2IrDeclarationStorage(
             setAndModifyParent(irParent)
         }.symbol
     }
+
+    private fun computeDeclarationOrigin(
+        symbol: FirCallableSymbol<*>,
+        parentOrigin: IrDeclarationOrigin,
+        irParent: IrDeclarationParent?
+    ): IrDeclarationOrigin {
+        return if (irParent.isSourceClass() && symbol.fir.isIntersectionOverride)
+            IrDeclarationOrigin.FAKE_OVERRIDE
+        else
+            parentOrigin
+    }
+
+    private fun IrDeclarationParent?.isSourceClass() = this is IrClass && this !is Fir2IrLazyClass && this !is IrLazyClass
 
     fun getIrFieldSymbol(firFieldSymbol: FirFieldSymbol): IrSymbol {
         val fir = firFieldSymbol.fir
