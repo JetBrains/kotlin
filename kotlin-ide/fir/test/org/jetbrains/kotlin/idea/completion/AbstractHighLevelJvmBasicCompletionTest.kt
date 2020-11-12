@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.idea.completion
 
 import org.jetbrains.kotlin.idea.completion.test.AbstractJvmBasicCompletionTest
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.uitls.IgnoreTests
 
 abstract class AbstractHighLevelJvmBasicCompletionTest : AbstractJvmBasicCompletionTest() {
     override val captureExceptions: Boolean = false
 
     override fun executeTest(test: () -> Unit) {
-        runTestWithCustomEnableDirective(FIR_COMPARISON, testDataFile()) { super.executeTest(test) }
+        IgnoreTests.runTestIfEnabledByFileDirective(testDataFile().toPath(), IgnoreTests.DIRECTIVES.FIR_COMPARISON, ".after") {
+            super.executeTest(test)
+        }
     }
 }
