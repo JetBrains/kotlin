@@ -35,7 +35,8 @@ abstract class KtClassOrObjectSymbol : KtClassLikeSymbol(),
     KtSymbolWithTypeParameters,
     KtSymbolWithModality<KtSymbolModality>,
     KtSymbolWithVisibility,
-    KtAnnotatedSymbol {
+    KtAnnotatedSymbol,
+    KtSymbolWithDeclarations {
     abstract val classKind: KtClassKind
 
     abstract val isInner: Boolean
