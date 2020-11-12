@@ -139,7 +139,7 @@ class JavaClassCache() : Serializable {
             currentDirtyFiles = nextRound.filter { !allDirtyFiles.contains(it) }.toMutableSet()
         }
 
-        return SourcesToReprocess.Incremental(allDirtyFiles.map { File(it) }, allDirtyTypes)
+        return SourcesToReprocess.Incremental(allDirtyFiles.map { File(it) }, allDirtyTypes, emptyList())
     }
 
     /**
