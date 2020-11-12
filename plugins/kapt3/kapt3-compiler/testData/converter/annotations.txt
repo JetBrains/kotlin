@@ -14,23 +14,23 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno2 {
 
-    public abstract int i() default 5;
-
-    public abstract java.lang.String s() default "ABC";
-
-    public abstract int[] ii() default {1, 2, 3};
-
-    public abstract java.lang.String[] ss() default {"A", "B"};
-
     public abstract Anno1 a();
+
+    public abstract java.lang.Class<?>[] classes();
+
+    public abstract java.lang.Class<?> clazz();
 
     public abstract Colors color() default Colors.BLACK;
 
     public abstract Colors[] colors() default {Colors.BLACK, Colors.WHITE};
 
-    public abstract java.lang.Class<?> clazz();
+    public abstract int i() default 5;
 
-    public abstract java.lang.Class<?>[] classes();
+    public abstract int[] ii() default {1, 2, 3};
+
+    public abstract java.lang.String s() default "ABC";
+
+    public abstract java.lang.String[] ss() default {"A", "B"};
 }
 
 ////////////////////
@@ -103,15 +103,14 @@ public final class TestAnno2 {
     @Anno3(value = "field")
     private java.lang.String b = "property initializer";
 
+    public TestAnno2() {
+        super();
+    }
+
     @Anno1()
     public final void a(@org.jetbrains.annotations.NotNull()
     @Anno3(value = "param-pam-pam")
     java.lang.String param) {
-    }
-
-    @Anno3(value = "property")
-    @java.lang.Deprecated()
-    public static void getB$annotations() {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -120,13 +119,14 @@ public final class TestAnno2 {
         return null;
     }
 
+    @Anno3(value = "property")
+    @java.lang.Deprecated()
+    public static void getB$annotations() {
+    }
+
     @Anno3(value = "setter")
     public final void setB(@org.jetbrains.annotations.NotNull()
     @Anno3(value = "setparam")
     java.lang.String p0) {
-    }
-
-    public TestAnno2() {
-        super();
     }
 }

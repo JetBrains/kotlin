@@ -53,6 +53,11 @@ public final class Test<G extends java.lang.Object> {
     private final ABC b = null;
     @org.jetbrains.annotations.Nullable()
     private final java.util.List<ABC> c = null;
+    public ABC coocoo;
+    public ABC<java.lang.String> coocoo2;
+    public ABC<ABC> coocoo21;
+    public ABC<java.lang.String, java.lang.String> coocoo3;
+    public ABC<java.lang.String, ABC<ABC>> coocoo31;
     @org.jetbrains.annotations.Nullable()
     private final java.util.List<java.util.Map<BCD, ABC<java.util.List<BCD>>>> d = null;
     public java.util.List<java.util.Map<? extends ABC, BCD>> e;
@@ -63,205 +68,17 @@ public final class Test<G extends java.lang.Object> {
     public Function0<CDE> j;
     public Function2<ABC, java.util.List<BCD>, CDE> k;
     public ABC.BCD.EFG l;
-    public ABC coocoo;
-    public ABC<java.lang.String> coocoo2;
-    public ABC<ABC> coocoo21;
-    public ABC<java.lang.String, java.lang.String> coocoo3;
-    public ABC<java.lang.String, ABC<ABC>> coocoo31;
-    public ABC nested;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Object m = null;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String n = "";
-    public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> o11;
+    public ABC nested;
     public java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<ABC>>>>>>>>> o10;
+    public java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> o11;
     public java.util.Calendar.Builder p;
 
-    @org.jetbrains.annotations.NotNull()
-    public final ABC getA() {
-        return null;
-    }
-
-    public final void setA(@org.jetbrains.annotations.NotNull()
-    ABC p0) {
-    }
-
-    @org.jetbrains.annotations.Nullable()
-    public final ABC getB() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.Nullable()
-    public final java.util.List<ABC> getC() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.Nullable()
-    public final java.util.List<java.util.Map<BCD, ABC<java.util.List<BCD>>>> getD() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.util.List<java.util.Map<? extends ABC, BCD>> getE() {
-        return null;
-    }
-
-    public final void setE(@org.jetbrains.annotations.NotNull()
-    java.util.List<? extends java.util.Map<? extends ABC, ? extends BCD>> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABC<?> getF() {
-        return null;
-    }
-
-    public final void setF(@org.jetbrains.annotations.NotNull()
-    ABC<?> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.util.List<?> getG() {
-        return null;
-    }
-
-    public final void setG(@org.jetbrains.annotations.NotNull()
-    java.util.List<?> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABC<java.lang.Integer, java.lang.String> getH() {
-        return null;
-    }
-
-    public final void setH(@org.jetbrains.annotations.NotNull()
-    ABC<java.lang.Integer, java.lang.String> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final Function2<ABC, java.util.List<BCD>, CDE> getI() {
-        return null;
-    }
-
-    public final void setI(@org.jetbrains.annotations.NotNull()
-    Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final Function0<CDE> getJ() {
-        return null;
-    }
-
-    public final void setJ(@org.jetbrains.annotations.NotNull()
-    Function0<CDE> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final Function2<ABC, java.util.List<BCD>, CDE> getK() {
-        return null;
-    }
-
-    public final void setK(@org.jetbrains.annotations.NotNull()
-    Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABC.BCD.EFG getL() {
-        return null;
-    }
-
-    public final void setL(@org.jetbrains.annotations.NotNull()
-    ABC.BCD.EFG p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABC getCoocoo() {
-        return null;
-    }
-
-    public final void setCoocoo(@org.jetbrains.annotations.NotNull()
-    ABC p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABC<java.lang.String> getCoocoo2() {
-        return null;
-    }
-
-    public final void setCoocoo2(@org.jetbrains.annotations.NotNull()
-    ABC<java.lang.String> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABC<ABC> getCoocoo21() {
-        return null;
-    }
-
-    public final void setCoocoo21(@org.jetbrains.annotations.NotNull()
-    ABC<ABC> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABC<java.lang.String, java.lang.String> getCoocoo3() {
-        return null;
-    }
-
-    public final void setCoocoo3(@org.jetbrains.annotations.NotNull()
-    ABC<java.lang.String, java.lang.String> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABC<java.lang.String, ABC<ABC>> getCoocoo31() {
-        return null;
-    }
-
-    public final void setCoocoo31(@org.jetbrains.annotations.NotNull()
-    ABC<java.lang.String, ABC<ABC>> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABC getNested() {
-        return null;
-    }
-
-    public final void setNested(@org.jetbrains.annotations.NotNull()
-    ABC p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.Object getM() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getN() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<error.NonExistentClass>>>>>>>>>> getO11() {
-        return null;
-    }
-
-    public final void setO11(@org.jetbrains.annotations.NotNull()
-    java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<ABC>>>>>>>>> getO10() {
-        return null;
-    }
-
-    public final void setO10(@org.jetbrains.annotations.NotNull()
-    java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends ABC>>>>>>>>> p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.util.Calendar.Builder getP() {
-        return null;
-    }
-
-    public final void setP(@org.jetbrains.annotations.NotNull()
-    java.util.Calendar.Builder p0) {
+    public Test() {
+        super();
     }
 
     @org.jetbrains.annotations.Nullable()
@@ -290,8 +107,191 @@ public final class Test<G extends java.lang.Object> {
         return null;
     }
 
-    public Test() {
-        super();
+    @org.jetbrains.annotations.NotNull()
+    public final ABC getA() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final ABC getB() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.List<ABC> getC() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC getCoocoo() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC<java.lang.String> getCoocoo2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC<ABC> getCoocoo21() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC<java.lang.String, java.lang.String> getCoocoo3() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC<java.lang.String, ABC<ABC>> getCoocoo31() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public final java.util.List<java.util.Map<BCD, ABC<java.util.List<BCD>>>> getD() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.util.Map<? extends ABC, BCD>> getE() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC<?> getF() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<?> getG() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC<java.lang.Integer, java.lang.String> getH() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Function2<ABC, java.util.List<BCD>, CDE> getI() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Function0<CDE> getJ() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Function2<ABC, java.util.List<BCD>, CDE> getK() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC.BCD.EFG getL() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Object getM() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getN() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC getNested() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<ABC>>>>>>>>> getO10() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<error.NonExistentClass>>>>>>>>>> getO11() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.util.Calendar.Builder getP() {
+        return null;
+    }
+
+    public final void setA(@org.jetbrains.annotations.NotNull()
+    ABC p0) {
+    }
+
+    public final void setCoocoo(@org.jetbrains.annotations.NotNull()
+    ABC p0) {
+    }
+
+    public final void setCoocoo2(@org.jetbrains.annotations.NotNull()
+    ABC<java.lang.String> p0) {
+    }
+
+    public final void setCoocoo21(@org.jetbrains.annotations.NotNull()
+    ABC<ABC> p0) {
+    }
+
+    public final void setCoocoo3(@org.jetbrains.annotations.NotNull()
+    ABC<java.lang.String, java.lang.String> p0) {
+    }
+
+    public final void setCoocoo31(@org.jetbrains.annotations.NotNull()
+    ABC<java.lang.String, ABC<ABC>> p0) {
+    }
+
+    public final void setE(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends java.util.Map<? extends ABC, ? extends BCD>> p0) {
+    }
+
+    public final void setF(@org.jetbrains.annotations.NotNull()
+    ABC<?> p0) {
+    }
+
+    public final void setG(@org.jetbrains.annotations.NotNull()
+    java.util.List<?> p0) {
+    }
+
+    public final void setH(@org.jetbrains.annotations.NotNull()
+    ABC<java.lang.Integer, java.lang.String> p0) {
+    }
+
+    public final void setI(@org.jetbrains.annotations.NotNull()
+    Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
+    }
+
+    public final void setJ(@org.jetbrains.annotations.NotNull()
+    Function0<CDE> p0) {
+    }
+
+    public final void setK(@org.jetbrains.annotations.NotNull()
+    Function2<ABC, java.util.List<? extends BCD>, CDE> p0) {
+    }
+
+    public final void setL(@org.jetbrains.annotations.NotNull()
+    ABC.BCD.EFG p0) {
+    }
+
+    public final void setNested(@org.jetbrains.annotations.NotNull()
+    ABC p0) {
+    }
+
+    public final void setO10(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends ABC>>>>>>>>> p0) {
+    }
+
+    public final void setO11(@org.jetbrains.annotations.NotNull()
+    java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends java.util.List<? extends error.NonExistentClass>>>>>>>>>> p0) {
+    }
+
+    public final void setP(@org.jetbrains.annotations.NotNull()
+    java.util.Calendar.Builder p0) {
     }
 }
 

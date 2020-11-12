@@ -2,28 +2,11 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class User {
+    private final int age = 0;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String firstName = null;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String secondName = null;
-    private final int age = 0;
-
-    public final void procedure() {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getFirstName() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getSecondName() {
-        return null;
-    }
-
-    public final int getAge() {
-        return 0;
-    }
 
     public User(@org.jetbrains.annotations.NotNull()
     java.lang.String firstName, @org.jetbrains.annotations.NotNull()
@@ -52,9 +35,23 @@ public final class User {
         return null;
     }
 
-    @org.jetbrains.annotations.NotNull()
     @java.lang.Override()
-    public java.lang.String toString() {
+    public boolean equals(@org.jetbrains.annotations.Nullable()
+    java.lang.Object p0) {
+        return false;
+    }
+
+    public final int getAge() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getFirstName() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getSecondName() {
         return null;
     }
 
@@ -63,9 +60,12 @@ public final class User {
         return 0;
     }
 
+    public final void procedure() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
     @java.lang.Override()
-    public boolean equals(@org.jetbrains.annotations.Nullable()
-    java.lang.Object p0) {
-        return false;
+    public java.lang.String toString() {
+        return null;
     }
 }

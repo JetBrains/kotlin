@@ -3,11 +3,11 @@ import java.lang.System;
 @kotlin.Metadata()
 public abstract interface Foo {
 
+    public abstract void bar();
+
     public default void foo() {
     }
 
     public default void foo2(int a) {
     }
-
-    public abstract void bar();
 }

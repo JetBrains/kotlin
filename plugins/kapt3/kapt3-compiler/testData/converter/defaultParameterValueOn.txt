@@ -16,116 +16,36 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Foo {
-    private final boolean z = true;
     private final byte b = (byte)0;
     private final char c = 'c';
     private final char c2 = '\n';
-    private final short sh = (short)10;
-    private final int i = 10;
-    private final long l = -10L;
-    private final float f = 1.0F;
-    private final double d = -1.0;
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String s = "foo";
-    @org.jetbrains.annotations.NotNull()
-    private final int[] iarr = {1, 2, 3};
-    @org.jetbrains.annotations.NotNull()
-    private final long[] larr = {-1L, 0L, 1L};
-    @org.jetbrains.annotations.NotNull()
-    private final double[] darr = {7.3};
-    @org.jetbrains.annotations.NotNull()
-    private final java.lang.String[] sarr = {"a", "bc"};
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<?> cl = null;
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<?>[] clarr = null;
+    private final double d = -1.0;
+    @org.jetbrains.annotations.NotNull()
+    private final double[] darr = {7.3};
     @org.jetbrains.annotations.NotNull()
     private final Em em = Em.BAR;
     @org.jetbrains.annotations.NotNull()
     private final Em[] emarr = {Em.FOO, Em.BAR};
-
-    public final void foo(int a) {
-    }
-
-    public final boolean getZ() {
-        return false;
-    }
-
-    public final byte getB() {
-        return 0;
-    }
-
-    public final char getC() {
-        return '\u0000';
-    }
-
-    public final char getC2() {
-        return '\u0000';
-    }
-
-    public final short getSh() {
-        return 0;
-    }
-
-    public final int getI() {
-        return 0;
-    }
-
-    public final long getL() {
-        return 0L;
-    }
-
-    public final float getF() {
-        return 0.0F;
-    }
-
-    public final double getD() {
-        return 0.0;
-    }
-
+    private final float f = 1.0F;
+    private final int i = 10;
     @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getS() {
-        return null;
-    }
-
+    private final int[] iarr = {1, 2, 3};
+    private final long l = -10L;
     @org.jetbrains.annotations.NotNull()
-    public final int[] getIarr() {
-        return null;
-    }
-
+    private final long[] larr = {-1L, 0L, 1L};
     @org.jetbrains.annotations.NotNull()
-    public final long[] getLarr() {
-        return null;
-    }
-
+    private final java.lang.String s = "foo";
     @org.jetbrains.annotations.NotNull()
-    public final double[] getDarr() {
-        return null;
-    }
+    private final java.lang.String[] sarr = {"a", "bc"};
+    private final short sh = (short)10;
+    private final boolean z = true;
 
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String[] getSarr() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.Class<?> getCl() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.Class<?>[] getClarr() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final Em getEm() {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final Em[] getEmarr() {
-        return null;
+    public Foo() {
+        super();
     }
 
     public Foo(boolean z, byte b, char c, char c2, short sh, int i, long l, float f, double d, @org.jetbrains.annotations.NotNull()
@@ -141,7 +61,87 @@ public final class Foo {
         super();
     }
 
-    public Foo() {
-        super();
+    public final void foo(int a) {
+    }
+
+    public final byte getB() {
+        return 0;
+    }
+
+    public final char getC() {
+        return '\u0000';
+    }
+
+    public final char getC2() {
+        return '\u0000';
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Class<?> getCl() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Class<?>[] getClarr() {
+        return null;
+    }
+
+    public final double getD() {
+        return 0.0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final double[] getDarr() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Em getEm() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final Em[] getEmarr() {
+        return null;
+    }
+
+    public final float getF() {
+        return 0.0F;
+    }
+
+    public final int getI() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final int[] getIarr() {
+        return null;
+    }
+
+    public final long getL() {
+        return 0L;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final long[] getLarr() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getS() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String[] getSarr() {
+        return null;
+    }
+
+    public final short getSh() {
+        return 0;
+    }
+
+    public final boolean getZ() {
+        return false;
     }
 }
