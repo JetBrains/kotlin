@@ -91,20 +91,20 @@ internal abstract class KonanCliRunner(
                     "Please change it to the compiler root directory and rerun the build.")
         }
 
-        project.javaexec { spec ->
-            spec.main = mainClass
-            spec.classpath = classpath
-            spec.jvmArgs(jvmArgs)
-            spec.systemProperties(
+        project.javaexec {
+            main = this@KonanCliRunner.mainClass
+            classpath = classpath
+            jvmArgs(jvmArgs)
+            systemProperties(
                 System.getProperties().asSequence()
                     .map { (k, v) -> k.toString() to v.toString() }
                     .filter { (k, _) -> k !in blacklistProperties }
                     .escapeQuotesForWindows()
                     .toMap()
             )
-            spec.args(listOf(toolName) + transformArgs(args))
-            blacklistEnvironment.forEach { spec.environment.remove(it) }
-            spec.environment(environment)
+            args(listOf(toolName) + transformArgs(args))
+            blacklistEnvironment.forEach { environment.remove(it) }
+            environment(environment)
         }
     }
 }

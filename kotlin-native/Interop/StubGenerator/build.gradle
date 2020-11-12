@@ -15,7 +15,7 @@
  */
 
 buildscript {
-    apply from: "$rootDir/gradle/kotlinGradlePlugin.gradle"
+    apply from: "$rootDir/kotlin-native/gradle/kotlinGradlePlugin.gradle"
 }
 
 apply plugin: 'kotlin'
@@ -23,25 +23,19 @@ apply plugin: 'application'
 
 mainClassName = "org.jetbrains.kotlin.native.interop.gen.jvm.MainKt"
 
-repositories {
-    maven {
-        url buildKotlinCompilerRepo
-    }
-}
+
 
 dependencies {
-    implementation project(":Interop:Indexer")
-    implementation project(":utilities:basic-utils")
-    api project(path: ":endorsedLibraries:kotlinx.cli", configuration: "jvmRuntimeElements")
+    implementation project(":kotlin-native:Interop:Indexer")
+    implementation project(":kotlin-native:utilities:basic-utils")
+    api project(path: ":kotlin-native:endorsedLibraries:kotlinx.cli", configuration: "jvmRuntimeElements")
 
-    api "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-    api "org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion"
-    api "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
-    api "org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion"
+    api project(":kotlin-stdlib")
+    api project(":kotlin-compiler")
+    api project(":kotlinx-metadata-klib")
 
     testImplementation "junit:junit:4.12"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$buildKotlinVersion"
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$buildKotlinVersion"
+    testImplementation project(":kotlin-test:kotlin-test-junit")
 }
 
 compileKotlin {

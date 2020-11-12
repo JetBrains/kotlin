@@ -327,7 +327,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
     }
 
 
-    override fun apply(project: ProjectInternal?) {
+    override fun apply(project: ProjectInternal) {
         if (project == null) {
             return
         }
@@ -370,16 +370,16 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                     val isCrossCompile = (task.target != HostManager.host.visibleName)
                     if (!isCrossCompile && !project.hasProperty("konanNoRun"))
                     task.runTask = project.tasks.register("run${task.artifactName.capitalize()}", Exec::class.java) {
-                        it.group= "run"
-                        it.dependsOn(task)
+                        group= "run"
+                        dependsOn(task)
                         val artifactPathClosure = object : Closure<String>(this) {
                             override fun call() = task.artifactPath
                         }
                         // Use GString to evaluate a path to the artifact lazily thus allow changing it at configuration phase.
                         val lazyArtifactPath = GStringImpl(arrayOf(artifactPathClosure), arrayOf(""))
-                        it.executable(lazyArtifactPath)
+                        executable(lazyArtifactPath)
                         // Add values passed in the runArgs project property as arguments.
-                        it.argumentProviders.add(task.RunArgumentProvider())
+                        argumentProviders.add(task.RunArgumentProvider())
                     }
                 }
         }
@@ -390,7 +390,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                 .filterIsInstance(KonanProgram::class.java)
                 .forEach { program ->
                     program.tasks().forEach { compile ->
-                        compile.configure { it.runTask?.let { runTask.dependsOn(it) } }
+                        compile.configure { runTask?.let { runTask.dependsOn(it) } }
                     }
                 }
         }
@@ -403,7 +403,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                     val konanSoftwareComponent = buildingConfig.mainVariant
                     project.extensions.configure(PublishingExtension::class.java) {
                         val builtArtifact = buildingConfig.name
-                        val mavenPublication = it.publications.maybeCreate(builtArtifact, MavenPublication::class.java)
+                        val mavenPublication = publications.maybeCreate(builtArtifact, MavenPublication::class.java)
                         mavenPublication.apply {
                             artifactId = builtArtifact
                             groupId = project.group.toString()
@@ -416,22 +416,22 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
                     }
 
                     project.extensions.configure(PublishingExtension::class.java) {
-                        val publishing = it
                         for (v in konanSoftwareComponent.variants) {
-                            publishing.publications.create(v.name, MavenPublication::class.java) { mavenPublication ->
+                            this@configure.publications.create(v.name, MavenPublication::class.java) {
                                 val coordinates = (v as NativeVariantIdentity).coordinates
                                 project.logger.info("variant with coordinates($coordinates) and module: ${coordinates.module}")
-                                mavenPublication.artifactId = coordinates.module.name
-                                mavenPublication.groupId = coordinates.group
-                                mavenPublication.version = coordinates.version
-                                mavenPublication.from(v)
-                                (mavenPublication as MavenPublicationInternal).publishWithOriginalFileName()
+                                artifactId = coordinates.module.name
+                                groupId = coordinates.group
+                                version = coordinates.version
+                                from(v)
+                                (this as MavenPublicationInternal).publishWithOriginalFileName()
                                 buildingConfig.pomActions.forEach {
-                                    mavenPublication.pom(it)
+                                    pom(it)
                                 }
                             }
                         }
                     }
+                    true
                 }
             }
         }

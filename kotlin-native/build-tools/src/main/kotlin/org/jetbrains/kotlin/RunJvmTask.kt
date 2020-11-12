@@ -89,7 +89,7 @@ open class RunJvmTask: JavaExec() {
                     ).removePrefix("[").removeSuffix("]")
             ).jsonObject
             val modifiedBenchmarkReport = JsonObject(HashMap(benchmarkReport.content).apply {
-                put("repeat", JsonLiteral(i))
+                put("repeat", JsonLiteral(i) as JsonElement)
                 put("warmup", JsonLiteral(warmupCount))
             })
             result.add(modifiedBenchmarkReport.toString())

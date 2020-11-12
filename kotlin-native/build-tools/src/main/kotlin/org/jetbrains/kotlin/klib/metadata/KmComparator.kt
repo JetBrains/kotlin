@@ -19,7 +19,7 @@ internal class KmComparator(private val configuration: ComparisonConfig) {
             ::compareClassFlags to "Different flags for ${kmClass1.name}",
             compare(KmClass::constructors, compareLists(::compare)) to "Constructors mismatch for ${kmClass1.name}",
             compare(KmClass::properties, compareLists(::compare, KmProperty::mangle)) to "Properties mismatch for ${kmClass1.name}",
-            compare(KmClass::functions, compareLists(::compare, KmFunction::mangle)) to "Functions mismatch for ${kmClass1.name}",
+            compare(KmClass::functions, compareLists(::compare, KmFunction::mangle)) to "Functions mismatch for ${kmClass1.name}"
     )(kmClass1, kmClass2)
 
     fun compare(typealias1: KmTypeAlias, typealias2: KmTypeAlias): MetadataCompareResult = serialComparator(

@@ -38,7 +38,7 @@ open class CompileToBitcodePlugin: Plugin<Project> {
 open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
 
     private val targetList = with(project) {
-        provider { (rootProject.property("targetList") as? List<*>)?.filterIsInstance<String>() ?: emptyList() } // TODO: Can we make it better?
+        provider { (rootProject.project(":kotlin-native").property("targetList") as? List<*>)?.filterIsInstance<String>() ?: emptyList() } // TODO: Can we make it better?
     }
 
     fun create(
@@ -57,15 +57,15 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) {
                         CompileToBitcode::class.java,
                         srcDir, name, targetName, outputGroup
                 ).configure {
-                    it.sanitizer = sanitizer
-                    it.group = BasePlugin.BUILD_GROUP
+                    this.sanitizer = sanitizer
+                    group = BasePlugin.BUILD_GROUP
                     val sanitizerDescription = when (sanitizer) {
                         null -> ""
                         SanitizerKind.ADDRESS -> " with ASAN"
                         SanitizerKind.THREAD -> " with TSAN"
                     }
-                    it.description = "Compiles '$name' to bitcode for $targetName$sanitizerDescription"
-                    it.configurationBlock()
+                    description = "Compiles '$name' to bitcode for $targetName$sanitizerDescription"
+                    configurationBlock()
                 }
             }
         }

@@ -464,18 +464,18 @@ open class KonanDynamicTest : KonanStandaloneTest() {
         val isOpt = flagsContain("-opt")
         val isDebug = flagsContain("-g")
 
-        val execResult = plugin.execKonanClang(project.testTarget) {
-            it.workingDir = File(outputDirectory)
-            it.executable = clangTool
-            it.args = listOf(processCSource(),
+        val execResult = plugin.execKonanClang(project.testTarget, Action<ExecSpec> {
+            workingDir = File(outputDirectory)
+            executable = clangTool
+            args = listOf(processCSource(),
                     "-c",
-                    "-o", "$executable.o",
+                    "-o", "${this@KonanDynamicTest.executable}.o",
                     "-I", artifactsDir
             ) + clangFlags
-            it.standardOutput = log
-            it.errorOutput = log
-            it.isIgnoreExitValue = true
-        }
+            standardOutput = log
+            errorOutput = log
+            isIgnoreExitValue = true
+        })
         log.toString("UTF-8").also {
             project.file("$executable.compilation.log").writeText(it)
             println(it)
@@ -484,7 +484,7 @@ open class KonanDynamicTest : KonanStandaloneTest() {
 
         val linker = project.platformManager.platform(project.testTarget).linker
         val commands = linker.finalLinkCommands(
-                objectFiles = listOf("$executable.o"),
+                objectFiles = listOf("${this@KonanDynamicTest.executable}.o"),
                 executable = executable,
                 libraries = listOf("-l$name"),
                 linkerArgs = listOf("-L", artifactsDir, "-rpath", artifactsDir),
