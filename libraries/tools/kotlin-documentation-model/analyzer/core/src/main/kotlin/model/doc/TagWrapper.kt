@@ -22,6 +22,7 @@ data class Param(override val root: DocTag, override val name: String) : NamedTa
 data class Return(override val root: DocTag) : TagWrapper()
 data class Receiver(override val root: DocTag) : TagWrapper()
 data class Constructor(override val root: DocTag) : TagWrapper()
+//TODO this naming is confusing since kotlin has Throws annotation
 data class Throws(override val root: DocTag, override val name: String, val exceptionAddress: DRI?) : NamedTagWrapper()
 data class Sample(override val root: DocTag, override val name: String) : NamedTagWrapper()
 data class Deprecated(override val root: DocTag) : TagWrapper()
