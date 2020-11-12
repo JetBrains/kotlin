@@ -497,7 +497,18 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    fun getCachedIrConstructor(constructor: FirConstructor): IrConstructor? = constructorCache[constructor]
+    fun getCachedIrConstructor(
+        constructor: FirConstructor,
+        signatureCalculator: (FirConstructor) -> IdSignature? = { null }
+    ): IrConstructor? {
+        return constructorCache[constructor] ?: signatureCalculator(constructor)?.let { signature ->
+            symbolTable.referenceConstructorIfAny(signature)?.let { irConstructorSymbol ->
+                val irConstructor = irConstructorSymbol.owner
+                constructorCache[constructor] = irConstructor
+                irConstructor
+            }
+        }
+    }
 
     private fun declareIrConstructor(signature: IdSignature?, factory: (IrConstructorSymbol) -> IrConstructor): IrConstructor {
         if (signature == null) {
@@ -994,17 +1005,14 @@ class Fir2IrDeclarationStorage(
 
     fun getIrConstructorSymbol(firConstructorSymbol: FirConstructorSymbol): IrConstructorSymbol {
         val firConstructor = firConstructorSymbol.fir
-        getCachedIrConstructor(firConstructor)?.let { return it.symbol }
+        val irParent by lazy { findIrParent(firConstructor) }
+        getCachedIrConstructor(firConstructor) {
+            irParent
+            signatureComposer.composeSignature(firConstructor)
+        }?.let { return it.symbol }
         val signature = signatureComposer.composeSignature(firConstructor)
-        val irParent = findIrParent(firConstructor) as? IrClass
-            ?: error("sadsad")
-        val parentOrigin = irParent.origin
+        val parentOrigin = (irParent as? IrDeclaration)?.origin ?: IrDeclarationOrigin.DEFINED
         if (signature != null) {
-            symbolTable.referenceConstructorIfAny(signature)?.let { irConstructorSymbol ->
-                val irFunction = irConstructorSymbol.owner
-                constructorCache[firConstructor] = irFunction
-                return irConstructorSymbol
-            }
             assert(parentOrigin != IrDeclarationOrigin.DEFINED) {
                 "Should not have reference to public API uncached constructor from source code"
             }
@@ -1014,7 +1022,7 @@ class Fir2IrDeclarationStorage(
                     Fir2IrLazyConstructor(
                         components, startOffset, endOffset, parentOrigin, firConstructor, symbol
                     ).apply {
-                        parent = irParent
+                        parent = irParent!!
                     }
                 }
             }
@@ -1023,7 +1031,7 @@ class Fir2IrDeclarationStorage(
             (irConstructor as Fir2IrLazyConstructor).prepareTypeParameters()
             return symbol
         }
-        val irDeclaration = createIrConstructor(firConstructor, irParent, origin = parentOrigin).apply {
+        val irDeclaration = createIrConstructor(firConstructor, irParent as IrClass, origin = parentOrigin).apply {
             setAndModifyParent(irParent)
         }
         return irDeclaration.symbol
