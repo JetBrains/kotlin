@@ -1051,6 +1051,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-projectModel/intellij.cidr.projectModel.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-projectModel/intellij.cidr.projectModel.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-resources/intellij.cidr.resources.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-resources/intellij.cidr.resources.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/strings/intellij.cidr.strings.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/strings/intellij.cidr.strings.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR-appcode/strings/plugin/intellij.cidr.strings.plugin.iml" filepath="$PROJECT_DIR$/intellij/CIDR-appcode/strings/plugin/intellij.cidr.strings.plugin.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-boost/intellij.cidr.test.boost.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-boost/intellij.cidr.test.boost.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-catch/intellij.cidr.test.catch.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-catch/intellij.cidr.test.catch.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-doctest/intellij.cidr.test.doctest.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-doctest/intellij.cidr.test.doctest.iml" />
