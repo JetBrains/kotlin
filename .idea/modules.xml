@@ -1056,6 +1056,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-catch/intellij.cidr.test.catch.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-catch/intellij.cidr.test.catch.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-doctest/intellij.cidr.test.doctest.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-doctest/intellij.cidr.test.doctest.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-google/intellij.cidr.test.google.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-google/intellij.cidr.test.google.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-test-google/lang/intellij.cidr.test.google.lang.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-test-google/lang/intellij.cidr.test.google.lang.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-toolchains/intellij.cidr.toolchains.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-toolchains/intellij.cidr.toolchains.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-tools/intellij.cidr.tools.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-tools/intellij.cidr.tools.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/CIDR/cidr-util/intellij.cidr.util.iml" filepath="$PROJECT_DIR$/intellij/CIDR/cidr-util/intellij.cidr.util.iml" />
