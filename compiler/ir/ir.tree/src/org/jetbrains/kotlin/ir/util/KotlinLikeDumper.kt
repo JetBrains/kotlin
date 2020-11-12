@@ -110,6 +110,16 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         if (options.printRegionsPerFile) p.println("//endregion")
     }
 
+    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: IrDeclaration?) {
+        // TODO support
+        super.visitExternalPackageFragment(declaration, data)
+    }
+
+    override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
+        // TODO support
+        super.visitScript(declaration, data)
+    }
+
     override fun visitClass(declaration: IrClass, data: IrDeclaration?) {
         // TODO omit super class for enums, annotations?
         // TODO omit Companion name for companion objects?
@@ -526,6 +536,55 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
     }
 
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: IrDeclaration?) {
+        declaration.printlnAnnotations()
+        p.print("")
+
+        printVisibility(declaration.visibility)
+        p(declaration.isActual, "actual")
+
+        p.printWithNoIndent("typealias ")
+        p.printWithNoIndent(declaration.name.asString())
+        // TODO IrDump doesn't have typeparameters
+        declaration.printTypeParametersWithNoIndent()
+        p.printWithNoIndent(" = ")
+        declaration.expandedType.printTypeWithNoIndent()
+
+        p.printlnWithNoIndent()
+    }
+
+    override fun visitEnumEntry(declaration: IrEnumEntry, data: IrDeclaration?) {
+        // TODO better rendering for enum entries
+
+        declaration.correspondingClass?.let { p.println() }
+
+        declaration.printlnAnnotations()
+        p.print("")
+        p.printWithNoIndent(declaration.name)
+        declaration.initializerExpression?.let {
+            p.printWithNoIndent(" = ")
+            it.accept(this, declaration)
+        }
+        p.println()
+
+        declaration.correspondingClass?.accept(this, declaration)
+
+        p.println()
+    }
+
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: IrDeclaration?) {
+        // Looks like IrAnonymousInitializer has annotations accidentally. No tests.
+        declaration.printlnAnnotations()
+        p.print("")
+
+        // TODO looks like there are no irText tests for isStatic flag
+        p(declaration.isStatic, commentBlockH("static"))
+        p.printWithNoIndent("init ")
+        declaration.body.accept(this, declaration)
+
+        p.printlnWithNoIndent()
+    }
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclaration?) {
         declaration.printSimpleFunction(
             "fun ",
@@ -727,23 +786,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printlnWithNoIndent()
     }
 
-    override fun visitTypeAlias(declaration: IrTypeAlias, data: IrDeclaration?) {
-        declaration.printlnAnnotations()
-        p.print("")
-
-        printVisibility(declaration.visibility)
-        p(declaration.isActual, "actual")
-
-        p.printWithNoIndent("typealias ")
-        p.printWithNoIndent(declaration.name.asString())
-        // TODO IrDump doesn't have typeparameters
-        declaration.printTypeParametersWithNoIndent()
-        p.printWithNoIndent(" = ")
-        declaration.expandedType.printTypeWithNoIndent()
-
-        p.printlnWithNoIndent()
-    }
-
     override fun visitVariable(declaration: IrVariable, data: IrDeclaration?) {
         declaration.printlnAnnotations()
         p.print("")
@@ -764,38 +806,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printWithNoIndent(name.asString())
         p.printWithNoIndent(": ")
         type.printTypeWithNoIndent()
-    }
-
-    override fun visitEnumEntry(declaration: IrEnumEntry, data: IrDeclaration?) {
-        // TODO better rendering for enum entries
-
-        declaration.correspondingClass?.let { p.println() }
-
-        declaration.printlnAnnotations()
-        p.print("")
-        p.printWithNoIndent(declaration.name)
-        declaration.initializerExpression?.let {
-            p.printWithNoIndent(" = ")
-            it.accept(this, declaration)
-        }
-        p.println()
-
-        declaration.correspondingClass?.accept(this, declaration)
-
-        p.println()
-    }
-
-    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: IrDeclaration?) {
-        // Looks like IrAnonymousInitializer has annotations accidentally. No tests.
-        declaration.printlnAnnotations()
-        p.print("")
-
-        // TODO looks like there are no irText tests for isStatic flag
-        p(declaration.isStatic, commentBlockH("static"))
-        p.printWithNoIndent("init ")
-        declaration.body.accept(this, declaration)
-
-        p.printlnWithNoIndent()
     }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: IrDeclaration?) {
@@ -1066,6 +1076,34 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printWithNoIndent("#" + symbol.owner.name.asString())
     }
 
+    override fun visitGetValue(expression: IrGetValue, data: IrDeclaration?) {
+        p.printWithNoIndent(expression.symbol.owner.name.asString())
+    }
+
+    override fun visitSetValue(expression: IrSetValue, data: IrDeclaration?) {
+        p.printWithNoIndent(expression.symbol.owner.name.asString() + " = ")
+        expression.value.accept(this, data)
+    }
+
+    override fun visitGetObjectValue(expression: IrGetObjectValue, data: IrDeclaration?) {
+        // TODO what if symbol is unbound?
+        expression.symbol.defaultType.printTypeWithNoIndent()
+    }
+
+    override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrDeclaration?) {
+        val enumEntry = expression.symbol.owner
+        p.printWithNoIndent(enumEntry.parentAsClass.name.asString())
+        p.printWithNoIndent(".")
+        p.printWithNoIndent(enumEntry.name.asString())
+    }
+
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: IrDeclaration?) {
+        // TODO support
+        // TODO no test
+        p.printWithNoIndent("&")
+        super.visitRawFunctionReference(expression, data)
+    }
+
     override fun visitReturn(expression: IrReturn, data: IrDeclaration?) {
         // TODO label
         p.printWithNoIndent("return ")
@@ -1123,45 +1161,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         spread.expression.accept(this, data)
     }
 
-    override fun visitGetObjectValue(expression: IrGetObjectValue, data: IrDeclaration?) {
-        // TODO what if symbol is unbound?
-        expression.symbol.defaultType.printTypeWithNoIndent()
-    }
-
-    override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrDeclaration?) {
-        val enumEntry = expression.symbol.owner
-        p.printWithNoIndent(enumEntry.parentAsClass.name.asString())
-        p.printWithNoIndent(".")
-        p.printWithNoIndent(enumEntry.name.asString())
-    }
-
-    override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: IrDeclaration?) {
-        // TODO support
-        // TODO no test
-        p.printWithNoIndent("&")
-        super.visitRawFunctionReference(expression, data)
-    }
-
-    override fun visitGetValue(expression: IrGetValue, data: IrDeclaration?) {
-        p.printWithNoIndent(expression.symbol.owner.name.asString())
-    }
-
-    override fun visitSetValue(expression: IrSetValue, data: IrDeclaration?) {
-        p.printWithNoIndent(expression.symbol.owner.name.asString() + " = ")
-        expression.value.accept(this, data)
-    }
-
-    override fun visitGetClass(expression: IrGetClass, data: IrDeclaration?) {
-        expression.argument.accept(this, data)
-        p.printWithNoIndent("::class")
-    }
-
-    override fun visitClassReference(expression: IrClassReference, data: IrDeclaration?) {
-        // TODO use classType
-        p.printWithNoIndent((expression.symbol.owner as IrDeclarationWithName).name.asString())
-        p.printWithNoIndent("::class")
-    }
-
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: IrDeclaration?) {
         val (operator, after) = when (expression.operator) {
             IrTypeOperator.CAST -> "as" to ""
@@ -1195,6 +1194,22 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.print("}")
     }
 
+    override fun visitBranch(branch: IrBranch, data: IrDeclaration?) {
+        p.printIndent()
+        branch.condition.accept(this, data)
+        p.printWithNoIndent(" -> ")
+        branch.result.accept(this, data)
+        p.println()
+    }
+
+    override fun visitElseBranch(branch: IrElseBranch, data: IrDeclaration?) {
+        p.printIndent()
+        // TODO assert that condition is `true`
+        p.printWithNoIndent("else -> ")
+        branch.result.accept(this, data)
+        p.println()
+    }
+
     private fun IrLoop.printLabel() {
         label?.let {
             p.printWithNoIndent(it)
@@ -1225,6 +1240,15 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     }
 
+    override fun visitBreakContinue(jump: IrBreakContinue, data: IrDeclaration?) {
+        // TODO render loop reference
+        p.printWithNoIndent(if (jump is IrContinue) "continue" else "break")
+        jump.label?.let {
+            p.printWithNoIndent("@")
+            p.printWithNoIndent(it)
+        }
+    }
+
     override fun visitTry(aTry: IrTry, data: IrDeclaration?) {
         p.printWithNoIndent("try ")
         aTry.tryResult.accept(this, data)
@@ -1250,13 +1274,51 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printlnWithNoIndent()
     }
 
-    override fun visitBreakContinue(jump: IrBreakContinue, data: IrDeclaration?) {
-        // TODO render loop reference
-        p.printWithNoIndent(if (jump is IrContinue) "continue" else "break")
-        jump.label?.let {
-            p.printWithNoIndent("@")
-            p.printWithNoIndent(it)
+    override fun visitGetClass(expression: IrGetClass, data: IrDeclaration?) {
+        expression.argument.accept(this, data)
+        p.printWithNoIndent("::class")
+    }
+
+    override fun visitClassReference(expression: IrClassReference, data: IrDeclaration?) {
+        // TODO use classType
+        p.printWithNoIndent((expression.symbol.owner as IrDeclarationWithName).name.asString())
+        p.printWithNoIndent("::class")
+    }
+
+    override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclaration?) {
+        // TODO reflectionTarget
+        expression.printCallableReferenceWithNoIndent(expression.symbol.owner.valueParameters, data)
+    }
+
+    override fun visitPropertyReference(expression: IrPropertyReference, data: IrDeclaration?) {
+        // TODO do we need additional fields (field, getter, setter)?
+        expression.printCallableReferenceWithNoIndent(emptyList(), data)
+    }
+
+    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: IrDeclaration?) {
+        // TODO do we need additional fields (delegate, getter, setter)?
+        expression.printCallableReferenceWithNoIndent(emptyList(), data)
+    }
+
+    private fun IrCallableReference<*>.printCallableReferenceWithNoIndent(valueParameters: List<IrValueParameter>, data: IrDeclaration?) {
+        // TODO where from to get type arguments for a class?
+        // TODO rendering for references to constructors
+        if (dispatchReceiver == null && extensionReceiver == null) {
+            (symbol.owner as IrDeclaration).parentClassOrNull?.let {
+                p.printWithNoIndent(it.name.asString())
+            }
         }
+
+        printMemberAccessExpressionWithNoIndent(
+            referencedName.asString(), // effectively it's same as `symbol.owner.name.asString()`
+            valueParameters,
+            superQualifierSymbol = null,
+            omitAllBracketsIfNoArguments = true,
+            data = data,
+            accessOperator = "::",
+            omitAccessOperatorIfNoReceivers = false,
+            wrapArguments = true
+        )
     }
 
     override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: IrDeclaration?) {
@@ -1324,16 +1386,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
     }
 
-    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: IrDeclaration?) {
-        // TODO support
-        super.visitExternalPackageFragment(declaration, data)
-    }
-
-    override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
-        // TODO support
-        super.visitScript(declaration, data)
-    }
-
     override fun visitSuspendableExpression(expression: IrSuspendableExpression, data: IrDeclaration?) {
         // TODO support
         // TODO no test
@@ -1344,58 +1396,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO support
         // TODO no test
         super.visitSuspensionPoint(expression, data)
-    }
-
-    override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclaration?) {
-        // TODO reflectionTarget
-        expression.printCallableReferenceWithNoIndent(expression.symbol.owner.valueParameters, data)
-    }
-
-    override fun visitPropertyReference(expression: IrPropertyReference, data: IrDeclaration?) {
-        // TODO do we need additional fields (field, getter, setter)?
-        expression.printCallableReferenceWithNoIndent(emptyList(), data)
-    }
-
-    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: IrDeclaration?) {
-        // TODO do we need additional fields (delegate, getter, setter)?
-        expression.printCallableReferenceWithNoIndent(emptyList(), data)
-    }
-
-    private fun IrCallableReference<*>.printCallableReferenceWithNoIndent(valueParameters: List<IrValueParameter>, data: IrDeclaration?) {
-        // TODO where from to get type arguments for a class?
-        // TODO rendering for references to constructors
-        if (dispatchReceiver == null && extensionReceiver == null) {
-            (symbol.owner as IrDeclaration).parentClassOrNull?.let {
-                p.printWithNoIndent(it.name.asString())
-            }
-        }
-
-        printMemberAccessExpressionWithNoIndent(
-            referencedName.asString(), // effectively it's same as `symbol.owner.name.asString()`
-            valueParameters,
-            superQualifierSymbol = null,
-            omitAllBracketsIfNoArguments = true,
-            data = data,
-            accessOperator = "::",
-            omitAccessOperatorIfNoReceivers = false,
-            wrapArguments = true
-        )
-    }
-
-    override fun visitBranch(branch: IrBranch, data: IrDeclaration?) {
-        p.printIndent()
-        branch.condition.accept(this, data)
-        p.printWithNoIndent(" -> ")
-        branch.result.accept(this, data)
-        p.println()
-    }
-
-    override fun visitElseBranch(branch: IrElseBranch, data: IrDeclaration?) {
-        p.printIndent()
-        // TODO assert that condition is `true`
-        p.printWithNoIndent("else -> ")
-        branch.result.accept(this, data)
-        p.println()
     }
 
     private fun commentBlock(text: String) = "/* $text */"
