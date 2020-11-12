@@ -115,11 +115,10 @@ internal sealed class CheckReceivers : ResolutionStage() {
                 explicitReceiverKind.shouldBeCheckedAgainstExplicit() &&
                 !explicitReceiverExpression.isSuperReferenceExpression()
             ) {
-                candidate.resolveArgumentExpression(
+                candidate.resolvePlainExpressionArgument(
                     candidate.csBuilder,
                     argument = explicitReceiverExpression,
                     expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType),
-                    expectedTypeRef = explicitReceiverExpression.typeRef,
                     sink = sink,
                     context = context,
                     isReceiver = true,
