@@ -43,6 +43,7 @@ subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
         plugin("java")
+        plugin("signing")
         plugin("org.jetbrains.dokka")
     }
 
