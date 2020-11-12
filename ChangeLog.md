@@ -27,6 +27,7 @@
 - [`KT-21147`](https://youtrack.jetbrains.com/issue/KT-21147) JEP 280: Indify String Concatenation (StringConcatFactory)
 - [`KT-34178`](https://youtrack.jetbrains.com/issue/KT-34178) Scripts should be able to access imports objects
 - [`KT-35549`](https://youtrack.jetbrains.com/issue/KT-35549) Support kotlin-android-extensions in JVM IR backend (for use with Jetpack Compose projects)
+- [`KT-31567`](https://youtrack.jetbrains.com/issue/KT-31567) Support special semantics for underscore-named catch block parameters
 
 #### Performance Improvements
 
@@ -35,6 +36,9 @@
 - [`KT-33394`](https://youtrack.jetbrains.com/issue/KT-33394) UI freezes triggered by QualifiedExpressionResolver.resolveToPackageOrClassPrefix
 - [`KT-36814`](https://youtrack.jetbrains.com/issue/KT-36814) Support optimized delegated properties in JVM_IR
 - [`KT-36829`](https://youtrack.jetbrains.com/issue/KT-36829) Optimize 'in' expressions (operator fun contains) in JVM_IR
+- [`KT-41741`](https://youtrack.jetbrains.com/issue/KT-41741) NI: "AssertionError: Empty intersection for types" with generic Java collection
+- [`KT-42195`](https://youtrack.jetbrains.com/issue/KT-42195) NI: prohibitively long compilation time for values of nested data structures with type inference
+- [`KT-42221`](https://youtrack.jetbrains.com/issue/KT-42221) Native compiler never finishes frontend phase after migrating to Kotlin 1.4.10
 
 #### Fixes
 
@@ -107,6 +111,17 @@
 - [`KT-42523`](https://youtrack.jetbrains.com/issue/KT-42523) Missed DefaultImpls for interface in `-jvm-default=all` mode on inheriting it from interface compiled in old scheme
 - [`KT-42524`](https://youtrack.jetbrains.com/issue/KT-42524) Wrong specialization diagnostic is reported on inheriting from java interface with default with -Xjvm-default=all-compatibility
 - [`KT-42546`](https://youtrack.jetbrains.com/issue/KT-42546) HMPP: incorrect subtyping of nullable types & overload resolution ambiguity on using and expect-function declaration with nullable expect in a signature
+- [`KT-17691`](https://youtrack.jetbrains.com/issue/KT-17691) Wrong argument order in resolved call with varargs
+- [`KT-25114`](https://youtrack.jetbrains.com/issue/KT-25114) Prohibit @JvmStatic on functions in private companions
+- [`KT-33917`](https://youtrack.jetbrains.com/issue/KT-33917) Prohibit to expose anonymous types from private inline functions
+- [`KT-35870`](https://youtrack.jetbrains.com/issue/KT-35870) Forbid secondary enum class constructors which do not delegate to the primary constructor
+- [`KT-39098`](https://youtrack.jetbrains.com/issue/KT-39098) NI: parameter of anonymous function can be inferred to Any? if another parameter's type is specified
+- [`KT-41176`](https://youtrack.jetbrains.com/issue/KT-41176) NI with Gson: "ClassCastException: java.util.ArrayList cannot be cast to java.lang.Void"
+- [`KT-41194`](https://youtrack.jetbrains.com/issue/KT-41194) ClassCastException on returning Result.failure from lambda within suspend function
+- [`KT-42438`](https://youtrack.jetbrains.com/issue/KT-42438) NI: ClassCastException: cannot be cast to java.lang.Void caused by when statement in `run` function
+- [`KT-42699`](https://youtrack.jetbrains.com/issue/KT-42699) False positive NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT diagnostic in new jvm-default modes
+- [`KT-42706`](https://youtrack.jetbrains.com/issue/KT-42706) Kotlin 1.4 infers generic is Nothing instead of actual Foo class (Android project)
+
 
 ### Docs & Examples
 
@@ -154,6 +169,7 @@
 - [`KT-41290`](https://youtrack.jetbrains.com/issue/KT-41290) KotlinClassViaConstructorUSimpleReferenceExpression resolves to PsiMethod instead of PsiClass
 - [`KT-42029`](https://youtrack.jetbrains.com/issue/KT-42029) HMPP, IDE: NPE from `FacetSerializationKt.getFacetPlatformByConfigurationElement` on project opening
 - [`KT-43202`](https://youtrack.jetbrains.com/issue/KT-43202) On 1.4.20-RC version AS ask for xml compatibility update for EAP version of plugin
+- [`KT-42883`](https://youtrack.jetbrains.com/issue/KT-42883) No highlighting for elements marked as @Deprecated in stdlib
 
 ### IDE. Android
 
@@ -277,6 +293,7 @@
 - [`KT-40558`](https://youtrack.jetbrains.com/issue/KT-40558) False positive "Move to class body" intention on data class constructor property
 - [`KT-41338`](https://youtrack.jetbrains.com/issue/KT-41338) False positive "Redundant 'asSequence' call" when Map.Entry properties are used.
 - [`KT-41615`](https://youtrack.jetbrains.com/issue/KT-41615) "Unused equals expression" inspection: highlight whole expression with yellow background
+- [`KT-43037`](https://youtrack.jetbrains.com/issue/KT-43037) Disable "Incomplete destructuring declaration" in 1.4.20
 
 ### IDE. J2K
 
@@ -364,6 +381,8 @@
 - [`KT-39378`](https://youtrack.jetbrains.com/issue/KT-39378) KJS / IR: "IllegalStateException: Operation is unsupported" with binaries.executable() and external function inside `for` loop  with Iterator as return type
 - [`KT-41275`](https://youtrack.jetbrains.com/issue/KT-41275) KJS / IR: "IllegalStateException: Can't find name for declaration FUN" caused by default value in constructor parameter
 - [`KT-41627`](https://youtrack.jetbrains.com/issue/KT-41627) KJS / IR / Serialization: IllegalStateException: Serializable class must have single primary constructor
+- [`KT-37829`](https://youtrack.jetbrains.com/issue/KT-37829) Kotlin JS IR: "Properties without fields are not supported" for companion objects
+- [`KT-39740`](https://youtrack.jetbrains.com/issue/KT-39740) KJS / IR: Can't use Serializable and JsExport annotations at the same time
 
 ### KMM Plugin
 
