@@ -1807,6 +1807,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/putIfAbsent.kt");
         }
 
+        @TestMetadata("recursiveCapturedTypeInPropertyReference.kt")
+        public void testRecursiveCapturedTypeInPropertyReference() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/recursiveCapturedTypeInPropertyReference.kt");
+        }
+
         @TestMetadata("SameJavaFieldReferences.kt")
         public void testSameJavaFieldReferences() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/SameJavaFieldReferences.kt");

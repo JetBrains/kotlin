@@ -1806,6 +1806,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/putIfAbsent.kt");
         }
 
+        @TestMetadata("recursiveCapturedTypeInPropertyReference.kt")
+        public void testRecursiveCapturedTypeInPropertyReference() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/recursiveCapturedTypeInPropertyReference.kt");
+        }
+
         @TestMetadata("SameJavaFieldReferences.kt")
         public void testSameJavaFieldReferences() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/SameJavaFieldReferences.kt");
