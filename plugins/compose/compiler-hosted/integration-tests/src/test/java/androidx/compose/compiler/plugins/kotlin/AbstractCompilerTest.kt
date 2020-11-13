@@ -235,7 +235,7 @@ abstract class AbstractCompilerTest : TestCase() {
             File(System.getenv("OUT_DIR") ?: File(projectRoot, "out").absolutePath)
         }
         val composePluginJar by lazy {
-            File(outDir, "androidx/compose/compiler/compiler/build/jarjar/compiler.jar")
+            File(outDir, "androidx/compose/compiler/compiler/build/repackaged/embedded.jar")
         }
 
         fun kotlinRuntimeJar(module: String) = File(
