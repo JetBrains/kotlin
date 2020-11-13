@@ -366,8 +366,7 @@ if (buildProperties.includeCidrPlugins) {
 
     if (projectVersions.contains("versions.androidStudioRelease")) {
         logger.info("Including KMM modules in settings.gradle")
-        include ":kotlin-ultimate:ide:android-studio-native",
-                ":kotlin-ultimate:prepare:kmm-plugin"
+        include ":kotlin-ultimate:ide:kmm-as-plugin"
     } else {
         logger.info("NOT including KMM modules in settings.gradle")
     }
