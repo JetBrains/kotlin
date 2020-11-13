@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.PsiErrorBuilder
@@ -72,7 +71,7 @@ class JvmBackendContext(
     val methodSignatureMapper = MethodSignatureMapper(this)
 
     internal val innerClassesSupport = JvmInnerClassesSupport(irFactory)
-    internal val cachedDeclarations = JvmCachedDeclarations(this, methodSignatureMapper, state.languageVersionSettings)
+    internal val cachedDeclarations = JvmCachedDeclarations(this, state.languageVersionSettings)
 
     override val mapping: Mapping = DefaultMapping()
 

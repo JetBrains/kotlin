@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createStaticFunctionWithReceivers
-import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 class JvmCachedDeclarations(
     private val context: JvmBackendContext,
-    private val methodSignatureMapper: MethodSignatureMapper,
     private val languageVersionSettings: LanguageVersionSettings
 ) {
     private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
@@ -152,9 +150,8 @@ class JvmCachedDeclarations(
         return defaultImplsMethods.getOrPut(interfaceFun) {
             val defaultImpls = getDefaultImplsClass(interfaceFun.parentAsClass)
 
-            val name = Name.identifier(methodSignatureMapper.mapFunctionName(interfaceFun))
             context.irFactory.createStaticFunctionWithReceivers(
-                defaultImpls, name, interfaceFun,
+                defaultImpls, interfaceFun.name, interfaceFun,
                 dispatchReceiverType = parent.defaultType,
                 // If `interfaceFun` is not a real implementation, then we're generating stubs in a descendant
                 // interface's DefaultImpls. For example,
@@ -189,6 +186,7 @@ class JvmCachedDeclarations(
                 isFakeOverride = false,
                 typeParametersFromContext = parent.typeParameters
             ).also {
+                it.copyCorrespondingPropertyFrom(interfaceFun)
                 if (it.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY &&
                     !it.annotations.hasAnnotation(DeprecationResolver.JAVA_DEPRECATED)
                 ) {

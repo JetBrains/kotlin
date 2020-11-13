@@ -319,11 +319,12 @@ fun IrSimpleFunction.copyCorrespondingPropertyFrom(source: IrSimpleFunction) {
     val property = source.correspondingPropertySymbol?.owner ?: return
     val target = this
 
-    correspondingPropertySymbol = factory.buildProperty() {
+    correspondingPropertySymbol = factory.buildProperty {
         name = property.name
         updateFrom(property)
     }.apply {
         parent = target.parent
+        annotations = property.annotations
         when {
             source.isGetter -> getter = target
             source.isSetter -> setter = target
