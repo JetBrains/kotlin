@@ -378,6 +378,13 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var noKotlinNothingValueException: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xno-reset-jar-timestamps",
+        description = "Do not reset jar entry timestamps to a fixed date"
+    )
+    var noResetJarTimestamps: Boolean by FreezableVar(false)
+
+
+    @Argument(
         value = "-Xno-unified-null-checks",
         description = "Use pre-1.4 exception types in null checks instead of java.lang.NPE. See KT-22275 for more details"
     )

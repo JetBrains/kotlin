@@ -21,28 +21,27 @@ import java.io.FileInputStream
 import java.util.jar.JarInputStream
 import java.util.zip.ZipEntry
 import kotlin.test.assertEquals
+import kotlin.test.assertNotEquals
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil.DOS_EPOCH
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 
-class DeterministicOutputTest : KtUsefulTestCase() {
+class DeterministicOutputTest : TestCaseWithTmpdir() {
 
     fun testDeterministicOutput() {
-        val directory = KotlinTestUtils.getTestDataPathBase() + "/deterministicOutput"
-        val librarySource = File(directory, "A.kt").also {
-            it.writeText("class A")
+        val fooKt = tmpdir.resolve("foo.kt").also {
+            it.writeText("class Foo")
         }
 
-        val firstJar = File(directory, "first.jar")
+        val firstJar = tmpdir.resolve("first.jar")
         AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
-            listOf(librarySource.path, "-d", firstJar.path, "-include-runtime"))
+            listOf(fooKt.path, "-d", firstJar.path, "-include-runtime"))
 
-        val secondJar = File(directory, "second.jar")
+        val secondJar = tmpdir.resolve("second.jar")
         AbstractCliTest.executeCompilerGrabOutput(
             K2JVMCompiler(),
-            listOf(librarySource.path, "-d", secondJar.path, "-include-runtime"))
+            listOf(fooKt.path, "-d", secondJar.path, "-include-runtime"))
 
         assertEquals(
             firstJar.readBytes().toList(),
@@ -52,11 +51,32 @@ class DeterministicOutputTest : KtUsefulTestCase() {
         assertAllTimestampsAreReset(secondJar)
     }
 
+    fun testNoResetJarTimestamps() {
+        val fooKt = tmpdir.resolve("foo.kt").also {
+            it.writeText("class Foo")
+        }
+        val jar = tmpdir.resolve("jarWithTimestamps.jar")
+        AbstractCliTest.executeCompilerGrabOutput(
+            K2JVMCompiler(),
+            listOf(fooKt.path, "-d", jar.path, "-include-runtime", "-Xno-reset-jar-timestamps"))
+
+        assertNoTimestampsAreReset(jar)
+    }
+
     private fun assertAllTimestampsAreReset(jar: File) {
         val zis = JarInputStream(FileInputStream(jar))
         var entry: ZipEntry? = zis.nextEntry
         while (entry != null) {
             assertEquals(entry.time, DOS_EPOCH, "$entry timestamp should be reset")
+            entry = zis.nextEntry
+        }
+    }
+
+    private fun assertNoTimestampsAreReset(jar: File) {
+        val zis = JarInputStream(FileInputStream(jar))
+        var entry: ZipEntry? = zis.nextEntry
+        while (entry != null) {
+            assertNotEquals(entry.time, DOS_EPOCH, "$entry timestamp should not be reset")
             entry = zis.nextEntry
         }
     }
