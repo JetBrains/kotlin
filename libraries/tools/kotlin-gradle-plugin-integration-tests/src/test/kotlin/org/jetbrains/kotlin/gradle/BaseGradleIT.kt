@@ -153,13 +153,15 @@ abstract class BaseGradleIT {
             return wrapper
         }
 
-        fun mightUpdateSettingsScript(wrapperVersion: String, settingsScript: File) {
+        fun maybeUpdateSettingsScript(wrapperVersion: String, settingsScript: File) {
             // enableFeaturePreview("GRADLE_METADATA") is no longer needed when building with Gradle 5.4 or above
-            if (GradleVersion.version(wrapperVersion) > GradleVersion.version("5.3")) {
+            if (GradleVersion.version(wrapperVersion) >= GradleVersion.version("5.4")) {
                 settingsScript.apply {
                     if(exists()) {
                         modify {
                             it.replace("enableFeaturePreview('GRADLE_METADATA')", "//")
+                        }
+                        modify {
                             it.replace("enableFeaturePreview(\"GRADLE_METADATA\")", "//")
                         }
                     }
@@ -336,8 +338,6 @@ abstract class BaseGradleIT {
         val env = createEnvironmentVariablesMap(options)
         val wrapperDir = prepareWrapper(wrapperVersion, env)
 
-        mightUpdateSettingsScript(wrapperVersion, gradleSettingsScript())
-
         val cmd = createBuildCommand(wrapperDir, params, options)
 
         println("<=== Test build: ${this.projectName} $cmd ===>")
@@ -345,6 +345,8 @@ abstract class BaseGradleIT {
         if (!projectDir.exists()) {
             setupWorkingDir()
         }
+
+        maybeUpdateSettingsScript(wrapperVersion, gradleSettingsScript())
 
         val result = runProcess(cmd, projectDir, env, options)
         try {

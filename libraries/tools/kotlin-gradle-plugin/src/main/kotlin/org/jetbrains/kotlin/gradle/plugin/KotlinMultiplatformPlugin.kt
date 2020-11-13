@@ -55,7 +55,7 @@ const val IMPLEMENT_DEPRECATION_WARNING = "The '$IMPLEMENT_CONFIG_NAME' configur
 open class KotlinPlatformImplementationPluginBase(platformName: String) : KotlinPlatformPluginBase(platformName) {
     private val commonProjects = arrayListOf<Project>()
 
-    protected open fun configurationsForCommonModuleDependency(project: Project): List<Configuration> =
+    private fun configurationsForCommonModuleDependency(project: Project): List<Configuration> =
         listOf(project.configurations.getByName("api"))
 
     override fun apply(project: Project) {
