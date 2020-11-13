@@ -476,6 +476,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/emojipicker/intellij.emojipicker.iml" filepath="$PROJECT_DIR$/intellij/plugins/emojipicker/intellij.emojipicker.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/dependency-updater/intellij.externalSystem.dependencyUpdater.iml" filepath="$PROJECT_DIR$/intellij/plugins/dependency-updater/intellij.externalSystem.dependencyUpdater.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/dependency-updater/intellij.externalSystem.dependencyUpdater.tests.iml" filepath="$PROJECT_DIR$/intellij/plugins/dependency-updater/intellij.externalSystem.dependencyUpdater.tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/plugins/ide-features-trainer/intellij.featuresTrainer.iml" filepath="$PROJECT_DIR$/intellij/plugins/ide-features-trainer/intellij.featuresTrainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/filePrediction/intellij.filePrediction.iml" filepath="$PROJECT_DIR$/intellij/plugins/filePrediction/intellij.filePrediction.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/gradle/intellij.gradle.iml" filepath="$PROJECT_DIR$/intellij/plugins/gradle/intellij.gradle.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/gradle/intellij.gradle.common.iml" filepath="$PROJECT_DIR$/intellij/plugins/gradle/intellij.gradle.common.iml" />
@@ -534,6 +535,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/java-decompiler/engine/intellij.java.decompiler.engine.iml" filepath="$PROJECT_DIR$/intellij/plugins/java-decompiler/engine/intellij.java.decompiler.engine.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/java/execution/openapi/intellij.java.execution.iml" filepath="$PROJECT_DIR$/intellij/java/execution/openapi/intellij.java.execution.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/java/execution/impl/intellij.java.execution.impl.iml" filepath="$PROJECT_DIR$/intellij/java/execution/impl/intellij.java.execution.impl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/java/java-features-trainer/intellij.java.featuresTrainer.iml" filepath="$PROJECT_DIR$/intellij/java/java-features-trainer/intellij.java.featuresTrainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/google-app-engine/intellij.java.googleAppEngine.iml" filepath="$PROJECT_DIR$/intellij/plugins/google-app-engine/intellij.java.googleAppEngine.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/google-app-engine/jps-plugin/intellij.java.googleAppEngine.jps.iml" filepath="$PROJECT_DIR$/intellij/plugins/google-app-engine/jps-plugin/intellij.java.googleAppEngine.jps.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/plugins/google-app-engine/runtime/intellij.java.googleAppEngine.runtime.iml" filepath="$PROJECT_DIR$/intellij/plugins/google-app-engine/runtime/intellij.java.googleAppEngine.runtime.iml" />
@@ -772,6 +774,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/python/testSrc/intellij.python.community.tests.iml" filepath="$PROJECT_DIR$/intellij/python/testSrc/intellij.python.community.tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/conda/intellij.python.conda.iml" filepath="$PROJECT_DIR$/intellij/python/conda/intellij.python.conda.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/python-copyright/intellij.python.copyright.iml" filepath="$PROJECT_DIR$/intellij/python/python-copyright/intellij.python.copyright.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/python/python-features-trainer/intellij.python.featuresTrainer.iml" filepath="$PROJECT_DIR$/intellij/python/python-features-trainer/intellij.python.featuresTrainer.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/python-grazie/intellij.python.grazie.iml" filepath="$PROJECT_DIR$/intellij/python/python-grazie/intellij.python.grazie.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/intellij.python.helpers.iml" filepath="$PROJECT_DIR$/intellij/python/intellij.python.helpers.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/python/helpers/tests/intellij.python.helpers.tests.iml" filepath="$PROJECT_DIR$/intellij/python/helpers/tests/intellij.python.helpers.tests.iml" />
