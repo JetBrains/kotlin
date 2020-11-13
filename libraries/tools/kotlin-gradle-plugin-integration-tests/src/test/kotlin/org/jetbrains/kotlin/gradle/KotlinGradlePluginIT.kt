@@ -36,10 +36,6 @@ import kotlin.test.assertTrue
 
 class KotlinGradleIT : BaseGradleIT() {
 
-    override fun defaultBuildOptions(): BuildOptions {
-        return super.defaultBuildOptions().copy(warningMode = WarningMode.Summary)
-    }
-
     @Test
     fun testCrossCompile() {
         val project = Project("kotlinJavaProject")
@@ -395,7 +391,7 @@ class KotlinGradleIT : BaseGradleIT() {
             """.trimIndent()
         }
 
-        project.build("build", "install") {
+        project.build("build", "install", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
             assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
             val pomLines = File(project.projectDir, "build/poms/pom-default.xml").readLines()
@@ -934,7 +930,7 @@ class KotlinGradleIT : BaseGradleIT() {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
-        build("publish", "check", "runBenchmark") {
+        build("publish", "check", "runBenchmark", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
             assertTasksExecuted(":compileKotlin", ":compileTestKotlin", ":compileBenchmarkKotlin", ":test", ":runBenchmark")
 

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import kotlin.test.assertTrue
 
@@ -31,7 +32,7 @@ fun BaseGradleIT.Project.testResolveAllConfigurations(
         }
     }
 
-    build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME) {
+    build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME, options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
         assertSuccessful()
         assertTasksExecuted(":${subproject?.let { "$it:" }.orEmpty()}$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME")
         val unresolvedConfigurations = unresolvedConfigurationRegex.findAll(output).map { it.groupValues[1] }.toList()

@@ -19,8 +19,7 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
             androidHome = KotlinTestUtils.findAndroidSdk(),
             androidGradlePluginVersion = androidGradlePluginVersion,
             configurationCache = true,
-            configurationCacheProblems = ConfigurationCacheProblems.FAIL,
-            warningMode = WarningMode.Summary
+            configurationCacheProblems = ConfigurationCacheProblems.FAIL
         )
 
     @Test
@@ -39,7 +38,10 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
     @Test
     fun testKotlinAndroidProjectTests() = with(Project("AndroidIncrementalMultiModule")) {
         applyAndroid40Alpha4KotlinVersionWorkaround()
-        testConfigurationCacheOf(":app:compileDebugAndroidTestKotlin", ":app:compileDebugUnitTestKotlin")
+        testConfigurationCacheOf(
+            ":app:compileDebugAndroidTestKotlin", ":app:compileDebugUnitTestKotlin",
+            buildOptions = defaultBuildOptions().copy(warningMode = WarningMode.Summary)
+        )
     }
 
     /**
