@@ -45,7 +45,8 @@ class JsIrBackendContext(
     override val scriptMode: Boolean = false,
     override val es6mode: Boolean = false
 ) : JsCommonBackendContext {
-    val fileToInitialisationFuns: MutableMap<IrFile, IrSimpleFunction> = mutableMapOf()
+    val fileToInitialisationFuns: MutableMap<IrFile, IrSimpleFunction?> = mutableMapOf()
+    val fileToPurenessInitializers: MutableMap<IrFile, Boolean> = mutableMapOf()
 
     override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 

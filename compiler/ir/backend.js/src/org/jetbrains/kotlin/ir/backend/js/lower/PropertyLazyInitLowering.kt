@@ -12,14 +12,13 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.isPure
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.persistent.carriers.DeclarationCarrier
+import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrElementBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.component1
@@ -40,6 +39,9 @@ class PropertyLazyInitLowering(
     val fileToInitialisationFuns
         get() = context.fileToInitialisationFuns
 
+    val fileToPurenessInitializers
+        get() = context.fileToPurenessInitializers
+
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         if (container !is IrSimpleFunction && container !is IrField && container !is IrProperty)
             return
@@ -49,9 +51,13 @@ class PropertyLazyInitLowering(
         val file = container.parent as? IrFile
             ?: return
 
-        val initFun = fileToInitialisationFuns[file]
-            ?: createInitialisationFunction(file)?.also { fileToInitialisationFuns[file] = it }
-            ?: return
+        val initFun = (if (file in fileToInitialisationFuns) {
+            fileToInitialisationFuns[file]
+        } else {
+            createInitialisationFunction(file).also {
+                fileToInitialisationFuns[file] = it
+            }
+        }) ?: return
 
         val initialisationCall = JsIrBuilder.buildCall(
             target = initFun.symbol,
@@ -80,7 +86,7 @@ class PropertyLazyInitLowering(
     ): IrSimpleFunction? {
         val fileName = file.name
 
-        val declarations = ArrayList(file.declarations)
+        val declarations = file.declarations.toList()
 
         val fieldToInitializer = calculateFieldToExpression(
             declarations
@@ -88,9 +94,10 @@ class PropertyLazyInitLowering(
 
         if (fieldToInitializer.isEmpty()) return null
 
-//        if (allFieldsInFilePure(fieldToInitializer.values)) {
-//            return null
-//        }
+        val allFieldsInFilePure = allFieldsInFilePure(fieldToInitializer.values)
+        if (allFieldsInFilePure) {
+            return null
+        }
 
         val initialisedField = irFactory.createInitialisationField(fileName)
             .apply {
@@ -202,18 +209,22 @@ class RemoveInitializersForLazyProperties(
     private val context: JsIrBackendContext
 ) : DeclarationTransformer {
 
-    val fileToInitialisationFuns
-        get() = context.fileToInitialisationFuns
+    val fileToPurenessInitializers
+        get() = context.fileToPurenessInitializers
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-//        val file = declaration.parent as? IrFile ?: return null
-//        val declarations = ArrayList(file.declarations)
-//
-//        val fields = calculateFieldToExpression(declarations).values
-//
-//        if (allFieldsInFilePure(fields)) {
-//            return null
-//        }
+        if (declaration !is IrField) return null
+
+        val file = declaration.parent as? IrFile ?: return null
+
+        if (fileToPurenessInitializers[file] == true) return null
+
+        val allFieldsInFilePure = fileToPurenessInitializers[file]
+            ?: calculateFileFieldsPureness(file)
+
+        if (allFieldsInFilePure) {
+            return null
+        }
 
         declaration.correspondingProperty
             ?.takeIf { it.isForLazyInit() }
@@ -221,6 +232,16 @@ class RemoveInitializersForLazyProperties(
             ?.let { it.initializer = null }
 
         return null
+    }
+
+    private fun calculateFileFieldsPureness(file: IrFile): Boolean {
+        val declarations = file.declarations.toList()
+        val expressions = calculateFieldToExpression(declarations)
+            .values
+
+        val allFieldsInFilePure = allFieldsInFilePure(expressions)
+        fileToPurenessInitializers[file] = allFieldsInFilePure
+        return allFieldsInFilePure
     }
 }
 
@@ -243,11 +264,6 @@ private val IrDeclaration.correspondingProperty: IrProperty?
         if (this !is IrSimpleFunction && this !is IrField && this !is IrProperty)
             return null
 
-        // Objects are in fact fields and we need to ignore them
-        val originField = (this as? DeclarationCarrier)?.originField
-        if (originField == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION || originField == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE)
-            return null
-
         return when (this) {
             is IrProperty -> this
             is IrSimpleFunction -> propertyWithPersistentSafe {
@@ -261,4 +277,6 @@ private val IrDeclaration.correspondingProperty: IrProperty?
     }
 
 private fun IrDeclaration.propertyWithPersistentSafe(transform: IrDeclaration.() -> IrProperty?): IrProperty? =
-    transform()
+    if (((this as? PersistentIrElementBase<*>)?.createdOn ?: 0) <= stageController.currentStage) {
+        transform()
+    } else null
