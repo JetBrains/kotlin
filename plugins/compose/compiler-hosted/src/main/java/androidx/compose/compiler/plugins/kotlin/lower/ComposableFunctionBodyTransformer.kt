@@ -1468,6 +1468,7 @@ class ComposableFunctionBodyTransformer(
             bodyPreamble.statements.addAll(setDefaults.statements)
         } else if (setDefaults.statements.isNotEmpty()) {
             // otherwise, we wrap the whole thing in an if expression with a skip
+            scope.hasDefaultsGroup = true
             bodyPreamble.statements.add(
                 irIfThenElse(
                     // this prevents us from re-executing the defaults if this function is getting
@@ -2569,7 +2570,7 @@ class ComposableFunctionBodyTransformer(
         loop@ while (scope != null) {
             when (scope) {
                 is Scope.FunctionScope -> {
-                    return if (scope.hasComposableCallsWithGroups) {
+                    return if (scope.hasComposableCallsWithGroups || scope.hasDefaultsGroup) {
                         false
                     } else if (scope.isInlinedLambda) {
                         scope = scope.parent
@@ -3512,6 +3513,7 @@ class ComposableFunctionBodyTransformer(
                 }
             }
 
+            var hasDefaultsGroup = false
             var hasComposableCallsWithGroups = false
                 private set
             var hasComposableCalls = false

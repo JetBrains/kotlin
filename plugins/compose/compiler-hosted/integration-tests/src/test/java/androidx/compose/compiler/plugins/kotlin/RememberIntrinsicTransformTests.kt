@@ -685,4 +685,57 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             }
         """
     )
+
+    @Test
+    fun testOptimizationFailsIfDefaultsGroupIsUsed(): Unit = comparisonPropagation(
+        """
+            class Foo
+            fun someInt(): Int = 123
+        """,
+        """
+            @Composable
+            fun Test(a: Int = someInt()) {
+                val foo = remember { Foo() }
+                print(foo)
+                print(a)
+            }
+        """,
+        """
+            @Composable
+            fun Test(a: Int, %composer: Composer<*>?, %changed: Int, %default: Int) {
+              %composer.startRestartGroup(<>, "C(Test)<rememb...>:Test.kt")
+              val %dirty = %changed
+              val a = a
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(a)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
+                  %composer.startDefaults()
+                  if (%default and 0b0001 !== 0) {
+                    a = someInt()
+                    %dirty = %dirty and 0b1110.inv()
+                  }
+                  %composer.endDefaults()
+                } else {
+                  %composer.skipCurrentGroup()
+                  if (%default and 0b0001 !== 0) {
+                    %dirty = %dirty and 0b1110.inv()
+                  }
+                }
+                val foo = remember({
+                  val tmp0_return = Foo()
+                  tmp0_return
+                }, %composer, 0)
+                print(foo)
+                print(a)
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                Test(a, %composer, %changed or 0b0001, %default)
+              }
+            }
+        """
+    )
 }
