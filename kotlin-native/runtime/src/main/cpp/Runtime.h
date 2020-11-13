@@ -25,6 +25,14 @@ struct InitNode;
 extern "C" {
 #endif
 
+// Must match DestroyRuntimeMode in DestroyRuntimeMode.kt
+enum DestroyRuntimeMode {
+    DESTROY_RUNTIME_LEGACY = 0,
+    DESTROY_RUNTIME_ON_SHUTDOWN = 1,
+};
+
+DestroyRuntimeMode Kotlin_getDestroyRuntimeMode();
+
 void Kotlin_initRuntimeIfNeeded();
 void Kotlin_deinitRuntimeIfNeeded();
 
@@ -40,6 +48,8 @@ void AppendToInitializersTail(struct InitNode*);
 bool Kotlin_memoryLeakCheckerEnabled();
 
 bool Kotlin_cleanersLeakCheckerEnabled();
+
+bool Kotlin_forceCheckedShutdown();
 
 #ifdef __cplusplus
 }

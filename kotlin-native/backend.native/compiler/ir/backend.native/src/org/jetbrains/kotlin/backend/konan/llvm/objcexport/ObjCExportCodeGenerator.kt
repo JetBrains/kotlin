@@ -474,6 +474,7 @@ private fun ObjCExportCodeGenerator.replaceExternalWeakOrCommonGlobal(
         value: ConstValue,
         origin: CompiledKlibModuleOrigin
 ) {
+    // TODO: A similar mechanism is used in `IrToBitcode.overrideRuntimeGlobal`. Consider merging them.
     if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
         val global = codegen.importGlobal(name, value.llvmType, origin)
         externalGlobalInitializers[global] = value

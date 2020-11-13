@@ -576,7 +576,7 @@ private:
         if (atomicGet(&aliveMemoryStatesCount) == 0)
           return;
 
-        memoryState = InitMemory(); // Required by ReleaseHeapRef.
+        memoryState = InitMemory(false); // Required by ReleaseHeapRef.
       }
 
       processEnqueuedReleaseRefsWith([](ObjHeader* obj) {
@@ -585,7 +585,7 @@ private:
 
       if (hadNoStateInitialized) {
         // Discard the memory state.
-        DeinitMemory(memoryState);
+        DeinitMemory(memoryState, false);
       }
     }
   }
@@ -1978,7 +1978,7 @@ void deinitForeignRef(ObjHeader* object, ForeignRefManager* manager) {
   }
 }
 
-MemoryState* initMemory() {
+MemoryState* initMemory(bool firstRuntime) {
   RuntimeAssert(offsetof(ArrayHeader, typeInfoOrMeta_)
                 ==
                 offsetof(ObjHeader,   typeInfoOrMeta_),
@@ -2005,7 +2005,15 @@ MemoryState* initMemory() {
   memoryState->tlsMap = konanConstructInstance<KThreadLocalStorageMap>();
   memoryState->foreignRefManager = ForeignRefManager::create();
   bool firstMemoryState = atomicAdd(&aliveMemoryStatesCount, 1) == 1;
-  if (firstMemoryState) {
+  switch (Kotlin_getDestroyRuntimeMode()) {
+    case DESTROY_RUNTIME_LEGACY:
+      firstRuntime = firstMemoryState;
+      break;
+    case DESTROY_RUNTIME_ON_SHUTDOWN:
+      // Nothing to do.
+      break;
+  }
+  if (firstRuntime) {
 #if USE_CYCLIC_GC
     cyclicInit();
 #endif  // USE_CYCLIC_GC
@@ -2014,13 +2022,21 @@ MemoryState* initMemory() {
   return memoryState;
 }
 
-void deinitMemory(MemoryState* memoryState) {
+void deinitMemory(MemoryState* memoryState, bool destroyRuntime) {
   static int pendingDeinit = 0;
   atomicAdd(&pendingDeinit, 1);
 #if USE_GC
   bool lastMemoryState = atomicAdd(&aliveMemoryStatesCount, -1) == 0;
-  bool checkLeaks = Kotlin_memoryLeakCheckerEnabled() && lastMemoryState;
-  if (lastMemoryState) {
+  switch (Kotlin_getDestroyRuntimeMode()) {
+    case DESTROY_RUNTIME_LEGACY:
+      destroyRuntime = lastMemoryState;
+      break;
+    case DESTROY_RUNTIME_ON_SHUTDOWN:
+      // Nothing to do
+      break;
+  }
+  bool checkLeaks = Kotlin_memoryLeakCheckerEnabled() && destroyRuntime;
+  if (destroyRuntime) {
    garbageCollect(memoryState, true);
 #if USE_CYCLIC_GC
    // If there are other pending deinits (rare situation) - just skip the leak checker.
@@ -2051,7 +2067,7 @@ void deinitMemory(MemoryState* memoryState) {
   atomicAdd(&pendingDeinit, -1);
 
 #if TRACE_MEMORY
-  if (IsStrictMemoryModel && lastMemoryState && allocCount > 0) {
+  if (IsStrictMemoryModel && destroyRuntime && allocCount > 0) {
     MEMORY_LOG("*** Memory leaks, leaked %d containers ***\n", allocCount);
     dumpReachable("", memoryState->containers);
   }
@@ -3231,12 +3247,12 @@ void AdoptReferenceFromSharedVariable(ObjHeader* object) {
 }
 
 // Public memory interface.
-MemoryState* InitMemory() {
-  return initMemory();
+MemoryState* InitMemory(bool firstRuntime) {
+    return initMemory(firstRuntime);
 }
 
-void DeinitMemory(MemoryState* memoryState) {
-  deinitMemory(memoryState);
+void DeinitMemory(MemoryState* memoryState, bool destroyRuntime) {
+    deinitMemory(memoryState, destroyRuntime);
 }
 
 void RestoreMemory(MemoryState* memoryState) {

@@ -13,4 +13,10 @@ fun writeToA(i: Int) {
     globalA.i = i
 }
 
-fun readFromA() = globalA.i
+fun tryReadFromA(default: Int): Int {
+    return try {
+        globalA.i
+    } catch (e: IncorrectDereferenceException) {
+        default
+    }
+}

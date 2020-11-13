@@ -365,6 +365,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
             context.coverage.writeRegionInfo()
             appendDebugSelector()
+            overrideRuntimeGlobals()
             appendLlvmUsed("llvm.used", context.llvm.usedFunctions + context.llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
             if (context.isNativeLibrary) {
@@ -2380,6 +2381,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata")
     }
 
+    // TODO: Consider migrating `KonanNeedDebugInfo` to the `overrideRuntimeGlobal` mechanism from below.
     private fun appendDebugSelector() {
         if (!context.producedLlvmModuleContainsStdlib) return
         val llvmDebugSelector =
@@ -2387,6 +2389,39 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                         Int32(if (context.shouldContainDebugInfo()) 1 else 0))
         llvmDebugSelector.setConstant(true)
         llvmDebugSelector.setLinkage(LLVMLinkage.LLVMExternalLinkage)
+    }
+
+    private fun overrideRuntimeGlobal(name: String, value: ConstValue) {
+        // TODO: A similar mechanism is used in `ObjCExportCodeGenerator`. Consider merging them.
+        if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
+            // When some dynamic caches are used, we consider that stdlib is in the dynamic cache as well.
+            // Runtime is linked into stdlib module only, so import runtime global from it.
+            val global = codegen.importGlobal(name, value.llvmType, context.standardLlvmSymbolsOrigin)
+            val initializer = generateFunction(codegen, functionType(voidType, false), "") {
+                store(value.llvm, global)
+                ret(null)
+            }
+
+            LLVMSetLinkage(initializer, LLVMLinkage.LLVMPrivateLinkage)
+
+            context.llvm.otherStaticInitializers += initializer
+        } else {
+            context.llvmImports.add(context.standardLlvmSymbolsOrigin)
+            // Define a strong runtime global. It'll overrule a weak global defined in a statically linked runtime.
+            val global = context.llvm.staticData.placeGlobal(name, value, true)
+
+            if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
+                context.llvm.usedGlobals += global.llvmGlobal
+                LLVMSetVisibility(global.llvmGlobal, LLVMVisibility.LLVMHiddenVisibility)
+            }
+        }
+    }
+
+    private fun overrideRuntimeGlobals() {
+        if (!context.config.produce.isFinalBinary)
+            return
+
+        overrideRuntimeGlobal("Kotlin_destroyRuntimeMode", Int32(context.config.destroyRuntimeMode.value))
     }
 
     //-------------------------------------------------------------------------//

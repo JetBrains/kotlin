@@ -250,6 +250,14 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(DISABLE_FAKE_OVERRIDE_VALIDATOR, arguments.disableFakeOverrideValidator)
                 putIfNotNull(PRE_LINK_CACHES, parsePreLinkCachesValue(configuration, arguments.preLinkCaches))
                 putIfNotNull(OVERRIDE_KONAN_PROPERTIES, parseOverrideKonanProperties(arguments, configuration))
+                put(DESTROY_RUNTIME_MODE, when (arguments.destroyRuntimeMode) {
+                    "legacy" -> DestroyRuntimeMode.LEGACY
+                    "on-shutdown" -> DestroyRuntimeMode.ON_SHUTDOWN
+                    else -> {
+                        configuration.report(ERROR, "Unsupported destroy runtime mode ${arguments.destroyRuntimeMode}")
+                        DestroyRuntimeMode.ON_SHUTDOWN
+                    }
+                })
             }
         }
     }

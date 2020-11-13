@@ -122,8 +122,8 @@ extern "C" {
 
 struct MemoryState;
 
-MemoryState* InitMemory();
-void DeinitMemory(MemoryState*);
+MemoryState* InitMemory(bool firstRuntime);
+void DeinitMemory(MemoryState*, bool destroyRuntime);
 void RestoreMemory(MemoryState*);
 
 //

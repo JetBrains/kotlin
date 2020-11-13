@@ -31,6 +31,13 @@ struct InitNode {
   InitNode* next;
 };
 
+// This global is overriden by the compiler.
+RUNTIME_WEAK DestroyRuntimeMode Kotlin_destroyRuntimeMode = DESTROY_RUNTIME_ON_SHUTDOWN;
+
+DestroyRuntimeMode Kotlin_getDestroyRuntimeMode() {
+    return Kotlin_destroyRuntimeMode;
+}
+
 namespace {
 
 InitNode* initHeadNode = nullptr;
@@ -65,6 +72,7 @@ void InitOrDeinitGlobalVariables(int initialize, MemoryState* memory) {
 
 KBoolean g_checkLeaks = KonanNeedDebugInfo;
 KBoolean g_checkLeakedCleaners = KonanNeedDebugInfo;
+KBoolean g_forceCheckedShutdown = false;
 
 constexpr RuntimeState* kInvalidRuntime = nullptr;
 
@@ -91,11 +99,27 @@ RuntimeState* initRuntime() {
   RuntimeCheck(!isValidRuntime(), "No active runtimes allowed");
   ::runtimeState = result;
 
-  compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
+  bool firstRuntime = false;
+  switch (Kotlin_getDestroyRuntimeMode()) {
+      case DESTROY_RUNTIME_LEGACY:
+          compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
+          result->memoryState = InitMemory(false); // The argument will be ignored for legacy DestroyRuntimeMode
+          result->worker = WorkerInit(true);
+          firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
+          break;
+      case DESTROY_RUNTIME_ON_SHUTDOWN:
+          // First update `aliveRuntimesCount` and then update `globalRuntimeStatus`, for synchronization with
+          // runtime shutdown, which does it the other way around.
+          atomicAdd(&aliveRuntimesCount, 1);
+          auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeUninitialized, kGlobalRuntimeRunning);
+          if (Kotlin_forceCheckedShutdown()) {
+              RuntimeAssert(lastStatus != kGlobalRuntimeShutdown, "Kotlin runtime was shut down. Cannot create new runtimes.");
+          }
+          firstRuntime = lastStatus == kGlobalRuntimeUninitialized;
+          result->memoryState = InitMemory(firstRuntime);
+          result->worker = WorkerInit(true);
+  }
 
-  result->memoryState = InitMemory();
-  result->worker = WorkerInit(true);
-  bool firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
   // Keep global variables in state as well.
   if (firstRuntime) {
     konan::consoleInit();
@@ -110,25 +134,33 @@ RuntimeState* initRuntime() {
   return result;
 }
 
-void deinitRuntime(RuntimeState* state) {
+void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   RuntimeAssert(state->status == RuntimeStatus::kRunning, "Runtime must be in the running state");
   state->status = RuntimeStatus::kDestroying;
   // This may be called after TLS is zeroed out, so ::memoryState in Memory cannot be trusted.
   RestoreMemory(state->memoryState);
   bool lastRuntime = atomicAdd(&aliveRuntimesCount, -1) == 0;
+  switch (Kotlin_getDestroyRuntimeMode()) {
+    case DESTROY_RUNTIME_LEGACY:
+      destroyRuntime = lastRuntime;
+      break;
+    case DESTROY_RUNTIME_ON_SHUTDOWN:
+      // Nothing to do.
+      break;
+  }
   InitOrDeinitGlobalVariables(DEINIT_THREAD_LOCAL_GLOBALS, state->memoryState);
-  if (lastRuntime)
+  if (destroyRuntime)
     InitOrDeinitGlobalVariables(DEINIT_GLOBALS, state->memoryState);
   auto workerId = GetWorkerId(state->worker);
   WorkerDeinit(state->worker);
-  DeinitMemory(state->memoryState);
+  DeinitMemory(state->memoryState, destroyRuntime);
   konanDestructInstance(state);
   WorkerDestroyThreadDataIfNeeded(workerId);
 }
 
 void Kotlin_deinitRuntimeCallback(void* argument) {
   auto* state = reinterpret_cast<RuntimeState*>(argument);
-  deinitRuntime(state);
+  deinitRuntime(state, false);
 }
 
 }  // namespace
@@ -155,16 +187,30 @@ void Kotlin_initRuntimeIfNeeded() {
 
 void Kotlin_deinitRuntimeIfNeeded() {
   if (isValidRuntime()) {
-    deinitRuntime(::runtimeState);
+    deinitRuntime(::runtimeState, false);
     ::runtimeState = kInvalidRuntime;
   }
 }
 
 // TODO: Consider exporting it to interop API.
 void Kotlin_shutdownRuntime() {
-    // TODO: If checkers are disabled, we can set status to "shutdown" here, and return.
     auto* runtime = ::runtimeState;
     RuntimeAssert(runtime != kInvalidRuntime, "Current thread must have Kotlin runtime initialized on it");
+
+    bool needsFullShutdown = false;
+    switch (Kotlin_getDestroyRuntimeMode()) {
+        case DESTROY_RUNTIME_LEGACY:
+            needsFullShutdown = true;
+            break;
+        case DESTROY_RUNTIME_ON_SHUTDOWN:
+            needsFullShutdown = Kotlin_forceCheckedShutdown() || Kotlin_memoryLeakCheckerEnabled() || Kotlin_cleanersLeakCheckerEnabled();
+            break;
+    }
+    if (!needsFullShutdown) {
+        auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
+        RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
+        return;
+    }
 
     if (Kotlin_cleanersLeakCheckerEnabled()) {
         // Make sure to collect any lingering cleaners.
@@ -178,13 +224,23 @@ void Kotlin_shutdownRuntime() {
     auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
     RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
 
-    // TODO: If we add early return at the top, this if would be unneeded.
-    if (Kotlin_memoryLeakCheckerEnabled() || Kotlin_cleanersLeakCheckerEnabled()) {
+    // TODO: When legacy mode is gone, this `if` will become unnecessary.
+    if (Kotlin_forceCheckedShutdown() || Kotlin_memoryLeakCheckerEnabled() || Kotlin_cleanersLeakCheckerEnabled()) {
         // First make sure workers are gone.
         WaitNativeWorkersTermination();
+
+        if (Kotlin_forceCheckedShutdown()) {
+            // Now check for existence of any other runtimes.
+            auto otherRuntimesCount = atomicGet(&aliveRuntimesCount) - 1;
+            RuntimeAssert(otherRuntimesCount >= 0, "Cannot be negative");
+            if (otherRuntimesCount > 0) {
+                konan::consoleErrorf("Cannot run checkers when there are %d alive runtimes at the shutdown", otherRuntimesCount);
+                konan::abort();
+            }
+        }
     }
 
-    deinitRuntime(runtime);
+    deinitRuntime(runtime, true);
     ::runtimeState = kInvalidRuntime;
 }
 
@@ -278,6 +334,25 @@ KBoolean Konan_Platform_getCleanersLeakChecker() {
 
 void Konan_Platform_setCleanersLeakChecker(KBoolean value) {
     g_checkLeakedCleaners = value;
+}
+
+bool Kotlin_forceCheckedShutdown() {
+    return g_forceCheckedShutdown;
+}
+
+KBoolean Kotlin_Debugging_getForceCheckedShutdown() {
+    return g_forceCheckedShutdown;
+}
+
+void Kotlin_Debugging_setForceCheckedShutdown(KBoolean value) {
+    switch (Kotlin_getDestroyRuntimeMode()) {
+        case DESTROY_RUNTIME_LEGACY:
+            // Only applicable to ON_SHUTDOWN modes.
+            return;
+        case DESTROY_RUNTIME_ON_SHUTDOWN:
+            break;
+    }
+    g_forceCheckedShutdown = value;
 }
 
 }  // extern "C"

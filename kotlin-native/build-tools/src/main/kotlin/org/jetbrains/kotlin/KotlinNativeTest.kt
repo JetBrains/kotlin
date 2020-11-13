@@ -419,7 +419,11 @@ open class KonanDynamicTest : KonanStandaloneTest() {
     @Input
     lateinit var cSource: String
 
+    @Input
     var clangTool = "clang"
+
+    @Input
+    var clangFlags: List<String> = listOf()
 
     // Replace testlib_api.h and all occurrences of the testlib with the actual name of the test
     private fun processCSource(): String {
@@ -453,7 +457,7 @@ open class KonanDynamicTest : KonanStandaloneTest() {
                     "-c",
                     "-o", "$executable.o",
                     "-I", artifactsDir
-            )
+            ) + clangFlags
             it.standardOutput = log
             it.errorOutput = log
             it.isIgnoreExitValue = true

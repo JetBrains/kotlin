@@ -144,6 +144,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("perform compiler caches pre-link")
         val OVERRIDE_KONAN_PROPERTIES: CompilerConfigurationKey<Map<String, String>>
                 = CompilerConfigurationKey.create("override konan.properties values")
+        val DESTROY_RUNTIME_MODE: CompilerConfigurationKey<DestroyRuntimeMode>
+                = CompilerConfigurationKey.create("when to destroy runtime")
     }
 }
 

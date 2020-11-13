@@ -4361,9 +4361,19 @@ dynamicTest("interop_cleaners_leak") {
     flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
+dynamicTest("interop_migrating_main_thread_legacy") {
+    disabled = (project.target.name != project.hostName)
+    source = "interop/migrating_main_thread/lib.kt"
+    flags = ['-Xdestroy-runtime-mode=legacy']
+    clangFlags = ['-DIS_LEGACY']
+    cSource = "$projectDir/interop/migrating_main_thread/main.cpp"
+    clangTool = "clang++"
+}
+
 dynamicTest("interop_migrating_main_thread") {
     disabled = (project.target.name != project.hostName)
     source = "interop/migrating_main_thread/lib.kt"
+    flags = ['-Xdestroy-runtime-mode=on-shutdown']
     cSource = "$projectDir/interop/migrating_main_thread/main.cpp"
     clangTool = "clang++"
 }
@@ -4374,7 +4384,7 @@ dynamicTest("interop_memory_leaks") {
     source = "interop/memory_leaks/lib.kt"
     cSource = "$projectDir/interop/memory_leaks/main.cpp"
     clangTool = "clang++"
-    flags = ['-g']
+    flags = ['-g', '-Xdestroy-runtime-mode=legacy'] // Runtime cannot be destroyed with interop with on-shutdown.
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
 }

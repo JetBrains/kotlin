@@ -8,17 +8,26 @@
 #include <cassert>
 #include <thread>
 
+constexpr int kInitialValue = 0;
+constexpr int kNewValue = 1;
+constexpr int kErrorValue = 2;
+
 int main() {
     std::thread main1([]() {
-        assert(testlib_symbols()->kotlin.root.readFromA() == 0);
-        testlib_symbols()->kotlin.root.writeToA(1);
-        assert(testlib_symbols()->kotlin.root.readFromA() == 1);
+        assert(testlib_symbols()->kotlin.root.tryReadFromA(kErrorValue) == kInitialValue);
+        testlib_symbols()->kotlin.root.writeToA(kNewValue);
+        assert(testlib_symbols()->kotlin.root.tryReadFromA(kErrorValue) == kNewValue);
     });
     main1.join();
 
     std::thread main2([]() {
+#if defined(IS_LEGACY)
         // Globals were reinitialized.
-        assert(testlib_symbols()->kotlin.root.readFromA() == 0);
+        assert(testlib_symbols()->kotlin.root.tryReadFromA(kErrorValue) == kInitialValue);
+#else
+        // Globals are not accessible.
+        assert(testlib_symbols()->kotlin.root.tryReadFromA(kErrorValue) == kErrorValue);
+#endif
     });
     main2.join();
 
