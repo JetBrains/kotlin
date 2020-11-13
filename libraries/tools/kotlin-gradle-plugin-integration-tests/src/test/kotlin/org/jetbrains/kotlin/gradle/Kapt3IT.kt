@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assert
@@ -30,7 +31,7 @@ abstract class Kapt3BaseIT : BaseGradleIT() {
     }
 
     override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(kaptOptions = kaptOptions())
+        super.defaultBuildOptions().copy(kaptOptions = kaptOptions(), warningMode = WarningMode.Summary)
 
     protected open fun kaptOptions(): KaptOptions =
         KaptOptions(verbose = true, useWorkers = false)
