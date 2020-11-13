@@ -16,7 +16,7 @@ sealed class OrderingKind {
 
 sealed class OverrideKind {
     object None : OverrideKind()
-    class Present(val overriden: Extension<*, *, *>) : OverrideKind()
+    class Present(val overriden: List<Extension<*, *, *>>) : OverrideKind()
 }
 
 class Extension<T : Any, Ordering : OrderingKind, Override : OverrideKind> internal constructor(
@@ -68,8 +68,12 @@ class ExtendingDSL(private val pluginClass: String, private val extensionName: S
     ) = Extension(extensionPoint, pluginClass, extensionName, action, ordering, override, conditions + condition)
 
     infix fun <T : Any, Override : OverrideKind, Ordering: OrderingKind> Extension<T, Ordering, Override>.override(
-        overriden: Extension<T, *, *>
+        overriden: List<Extension<T, *, *>>
     ) = Extension(extensionPoint, pluginClass, extensionName, action, ordering, OverrideKind.Present(overriden), conditions)
+
+    infix fun <T : Any, Override : OverrideKind, Ordering: OrderingKind> Extension<T, Ordering, Override>.override(
+        overriden: Extension<T, *, *>
+    ) = this.override(listOf(overriden))
 }
 
 @ExtensionsDsl

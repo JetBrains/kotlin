@@ -20,6 +20,7 @@ include("plugins:all-module-page")
 
 include("plugins:mathjax")
 include("plugins:gfm")
+include("plugins:gfm:gfm-all-module-page")
 include("plugins:jekyll")
 include("plugins:kotlin-as-java")
 include("plugins:javadoc")
