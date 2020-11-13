@@ -20,7 +20,7 @@ class KotlinFirOutOfBlockModificationTrackerFactory(private val project: Project
 
     @TestOnly
     fun incrementModificationsCount() {
-        project.service<KotlinFirModificationTrackerService>().incrementModificationsCount()
+        project.service<KotlinFirModificationTrackerService>().increaseModificationCountForAllModules()
     }
 }
 

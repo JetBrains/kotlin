@@ -18,7 +18,6 @@ import com.intellij.pom.event.PomModelEvent
 import com.intellij.pom.event.PomModelListener
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.pom.tree.events.TreeChangeEvent
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingInBodyDeclarationWith
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileElementFactory
@@ -36,17 +35,12 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
     fun getOutOfBlockModificationCountForModules(module: Module): Long =
         moduleModificationsState.getModificationsCountForModule(module)
 
-    @TestOnly
-    fun incrementModificationsCount() {
-        increaseModificationCountForAllModules()
-    }
-
     private val moduleModificationsState = ModuleModificationsState()
     private val treeAspect = TreeAspect.getInstance(project)
 
     override fun dispose() {}
 
-    private fun increaseModificationCountForAllModules() {
+    fun increaseModificationCountForAllModules() {
         projectGlobalOutOfBlockInKotlinFilesModificationCount++
         moduleModificationsState.increaseModificationCountForAllModules()
     }
@@ -130,7 +124,7 @@ private class ModuleModificationsState {
         modificationCountForModule.compute(module) { _, modifications ->
             when (modifications) {
                 null -> ModuleModifications(0, state)
-                else -> ModuleModifications(ModuleModifications(0, state).modificationsCount + 1, state)
+                else -> ModuleModifications(modifications.modificationsCount + 1, state)
             }
         }
     }
