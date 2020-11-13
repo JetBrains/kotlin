@@ -31,8 +31,9 @@ FILE fqName:<root> fileName:/explicitEqualsAndCompareToCallsOnPlatformTypeReceiv
         CALL 'public open fun compareTo (other: kotlin.Double): kotlin.Int [operator] declared in kotlin.Double' type=kotlin.Int origin=null
           $this: CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null
             $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformCompareToPlatform' type=<root>.JavaClass origin=null
-          other: CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null
-            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformCompareToPlatform' type=<root>.JavaClass origin=null
+          other: TYPE_OP type=kotlin.Double origin=IMPLICIT_NOTNULL typeOperand=kotlin.Double
+            CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null
+              $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testPlatformCompareToPlatform' type=<root>.JavaClass origin=null
   FUN name:testPlatformCompareToKotlin visibility:public modality:FINAL <> ($receiver:<root>.JavaClass) returnType:kotlin.Int
     $receiver: VALUE_PARAMETER name:<this> type:<root>.JavaClass
     BLOCK_BODY
@@ -47,5 +48,6 @@ FILE fqName:<root> fileName:/explicitEqualsAndCompareToCallsOnPlatformTypeReceiv
       RETURN type=kotlin.Nothing from='public final fun testKotlinCompareToPlatform (): kotlin.Int declared in <root>'
         CALL 'public open fun compareTo (other: kotlin.Double): kotlin.Int [operator] declared in kotlin.Double' type=kotlin.Int origin=null
           $this: CONST Double type=kotlin.Double value=0.0
-          other: CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null
-            $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testKotlinCompareToPlatform' type=<root>.JavaClass origin=null
+          other: TYPE_OP type=kotlin.Double origin=IMPLICIT_NOTNULL typeOperand=kotlin.Double
+            CALL 'public open fun null0 (): kotlin.Double? declared in <root>.JavaClass' type=kotlin.Double? origin=null
+              $this: GET_VAR '<this>: <root>.JavaClass declared in <root>.testKotlinCompareToPlatform' type=<root>.JavaClass origin=null

@@ -25,7 +25,8 @@ FILE fqName:<root> fileName:/nullCheckOnLambdaReturn.kt
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any declared in <root>.test1'
-                  CALL 'public open fun foo (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+                  TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+                    CALL 'public open fun foo (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function0<kotlin.Any> visibility:private [final,static]
       EXPRESSION_BODY

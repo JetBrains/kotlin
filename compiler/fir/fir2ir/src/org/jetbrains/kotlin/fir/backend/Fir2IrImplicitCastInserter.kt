@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.removeAnnotations
+import org.jetbrains.kotlin.ir.types.withHasQuestionMark
 import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -209,6 +210,9 @@ class Fir2IrImplicitCastInserter(
             expectedType.isUnit -> {
                 coerceToUnitIfNeeded(type, irBuiltIns)
             }
+            valueType.isNullabilityFlexible() && valueType.canBeNull && !expectedType.acceptsNullValues() -> {
+                insertImplicitNotNullCastIfNeeded(expression)
+            }
             valueType.hasEnhancedNullability() && !expectedType.acceptsNullValues() -> {
                 insertImplicitNotNullCastIfNeeded(expression)
             }
@@ -218,8 +222,16 @@ class Fir2IrImplicitCastInserter(
         }
     }
 
+    private fun FirTypeRef.isNullabilityFlexible(): Boolean {
+        if (hasFlexibleNullability()) {
+            return true
+        }
+        val flexibility = coneTypeSafe<ConeFlexibleType>() ?: return false
+        return flexibility.lowerBound.isMarkedNullable != flexibility.upperBound.isMarkedNullable
+    }
+
     private fun FirTypeRef.acceptsNullValues(): Boolean =
-        isMarkedNullable == true || hasEnhancedNullability()
+        canBeNull || hasEnhancedNullability()
 
     private fun IrExpression.insertImplicitNotNullCastIfNeeded(expression: FirExpression): IrExpression {
         // [TypeOperatorLowering] will retrieve the source (from start offset to end offset) as an assertion message.
@@ -227,9 +239,11 @@ class Fir2IrImplicitCastInserter(
         if (expression.source == null) {
             return this
         }
+        // Cast type massage 1. Remove @EnhancedNullability
+        // Cast type massage 2. Convert it to a non-null variant (in case of @FlexibleNullability)
         val castType = type.removeAnnotations {
             it.symbol.owner.parentAsClass.classId == CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID
-        }
+        }.withHasQuestionMark(false)
         return IrTypeOperatorCallImpl(
             this.startOffset,
             this.endOffset,
