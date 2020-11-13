@@ -19,6 +19,11 @@ import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.concurrency.NonUrgentExecutor
+import org.jetbrains.kotlin.codegen.ClassBuilderFactories
+import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.filterClassFiles
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.core.KotlinCompilerIde
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
@@ -52,46 +57,43 @@ class KtScratchExecutionSession(
         if (!executor.checkForErrors(psiFile, expressions)) return
 
         val project = file.project
-        ReadAction.nonBlocking<KtScratchSourceFileProcessor.Result> {
-            KtScratchSourceFileProcessor().process(expressions)
-        }
-            .inSmartMode(project)
-            .expireWith(project)
-            .withDocumentsCommitted(project)
-            .finishOnUiThread(ModalityState.any()) { result ->
-                when (result) {
-                    is KtScratchSourceFileProcessor.Result.Error -> executor.errorOccurs(result.message, isFatal = true)
-                    is KtScratchSourceFileProcessor.Result.OK -> {
-                        LOG.printDebugMessage("After processing by KtScratchSourceFileProcessor:\n ${result.code}")
+        when (val result = runReadAction { KtScratchSourceFileProcessor().process(expressions) }) {
+            is KtScratchSourceFileProcessor.Result.Error -> return executor.errorOccurs(result.message, isFatal = true)
+            is KtScratchSourceFileProcessor.Result.OK -> {
+                LOG.printDebugMessage("After processing by KtScratchSourceFileProcessor:\n ${result.code}")
 
-                        object : Task.Backgroundable(psiFile.project, KotlinJvmBundle.message("running.kotlin.scratch"), true) {
-                            override fun run(indicator: ProgressIndicator) {
-                                backgroundProcessIndicator = indicator
+                object : Task.Backgroundable(psiFile.project, KotlinJvmBundle.message("running.kotlin.scratch"), true) {
+                    override fun run(indicator: ProgressIndicator) {
+                        backgroundProcessIndicator = indicator
 
-                                val modifiedScratchSourceFile = runReadAction {
-                                    KtPsiFactory(psiFile.project).createFileWithLightClassSupport("tmp.kt", result.code, psiFile)
-                                }
-
-                                try {
-                                    runCommandLine(project, modifiedScratchSourceFile, expressions, psiFile, result, indicator, callback)
-                                }
-                                catch (e: Throwable) {
-                                    if (e is ControlFlowException) throw e
-
-                                    LOG.printDebugMessage(result.code)
-                                    executor.errorOccurs(
-                                        e.message ?: KotlinJvmBundle.message("couldn.t.compile.0", psiFile.name),
-                                        e,
-                                        isFatal = true
-                                    )
-                                }
+                        ReadAction.nonBlocking {
+                            val modifiedScratchSourceFile = runReadAction {
+                                KtPsiFactory(psiFile.project).createFileWithLightClassSupport("tmp.kt", result.code, psiFile)
                             }
-                        }.queue()
-                    }
-                }
 
+                            try {
+                                runCommandLine(project, modifiedScratchSourceFile, expressions, psiFile, result, indicator, callback)
+                            } catch (e: Throwable) {
+                                if (e is ControlFlowException) throw e
+
+                                LOG.printDebugMessage(result.code)
+                                executor.errorOccurs(
+                                    e.message ?: KotlinJvmBundle.message("couldn.t.compile.0", psiFile.name),
+                                    e,
+                                    isFatal = true
+                                )
+                            }
+                        }
+                            .inSmartMode(project)
+                            .wrapProgress(indicator)
+                            .withDocumentsCommitted(project)
+                            .executeSynchronously()
+                    }
+                }.queue()
             }
-            .submit(AppExecutorUtil.getAppExecutorService())
+        }
+
+
     }
 
     private fun runCommandLine(
