@@ -57,5 +57,6 @@
     <orderEntry type="module" module-name="kotlin.fir.frontend-fir" />
     <orderEntry type="module" module-name="kotlin.fir.frontend-independent" />
     <orderEntry type="module" module-name="kotlin.line-indent-provider" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.parcelize" />
   </component>
 </module>

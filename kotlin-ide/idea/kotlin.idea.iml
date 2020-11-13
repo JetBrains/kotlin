@@ -83,6 +83,7 @@
     <orderEntry type="module" module-name="kotlin.compiler-plugins.noarg" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.compiler-plugins.kotlinx-serialization" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.compiler-plugins.allopen" scope="TEST" />
+    <orderEntry type="module" module-name="kotlin.compiler-plugins.parcelize" scope="TEST" />
     <orderEntry type="module" module-name="kotlin.j2k.services" scope="TEST" />
     <orderEntry type="module" module-name="intellij.platform.externalSystem" />
     <orderEntry type="module" module-name="intellij.platform.ide.impl" />
