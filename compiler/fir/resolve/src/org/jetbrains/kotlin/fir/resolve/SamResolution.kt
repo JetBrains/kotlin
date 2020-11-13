@@ -166,6 +166,7 @@ class FirSamResolverImpl(
 
         return buildSimpleFunction {
             session = firSession
+            source = firRegularClass.source
             name = classId.shortClassName
             origin = FirDeclarationOrigin.SamConstructor
             status = FirDeclarationStatusImpl(firRegularClass.visibility, Modality.FINAL).apply {
