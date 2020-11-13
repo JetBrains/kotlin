@@ -5,15 +5,26 @@
 
 package org.jetbrains.kotlin.pacelize.ide.test
 
+import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.OrderRootType
+import org.jetbrains.kotlin.idea.artifacts.AdditionalKotlinArtifacts
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
+import org.jetbrains.kotlin.idea.test.addRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import java.io.File
 
 fun addParcelizeLibraries(module: Module) {
-    val androidJar = KotlinTestUtils.findAndroidApiJar()
-    ConfigLibraryUtil.addLibrary(module, "androidJar", androidJar.parentFile.absolutePath, arrayOf(androidJar.name))
-    ConfigLibraryUtil.addLibrary(module, "parcelizeRuntime", "dist/kotlinc/lib", arrayOf("parcelize-runtime.jar"))
-    ConfigLibraryUtil.addLibrary(module, "androidExtensionsRuntime", "dist/kotlinc/lib", arrayOf("android-extensions-runtime.jar"))
+    ConfigLibraryUtil.addLibrary(module, "androidJar") {
+        addRoot(File(PathManager.getHomePath(), "community/android/android/testData/android.jar"), OrderRootType.CLASSES)
+    }
+    ConfigLibraryUtil.addLibrary(module, "parcelizeRuntime") {
+        addRoot(AdditionalKotlinArtifacts.parcelizeRuntime, OrderRootType.CLASSES)
+    }
+    ConfigLibraryUtil.addLibrary(module, "androidExtensionsRuntime") {
+        addRoot(AdditionalKotlinArtifacts.androidExtensionsRuntime, OrderRootType.CLASSES)
+    }
+
 }
 
 fun removeParcelizeLibraries(module: Module) {
