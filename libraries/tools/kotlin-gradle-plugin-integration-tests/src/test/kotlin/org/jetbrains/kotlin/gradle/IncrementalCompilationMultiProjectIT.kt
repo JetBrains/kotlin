@@ -71,8 +71,8 @@ class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiP
             apply plugin: 'kotlin'
 
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version"
-                compile 'org.codehaus.groovy:groovy-all:2.4.8'
+                implementation "org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version"
+                implementation 'org.codehaus.groovy:groovy-all:2.4.8'
             }
             """.trimIndent()
         }

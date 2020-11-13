@@ -44,10 +44,6 @@ class NewMultiplatformIT : BaseGradleIT() {
     private fun Project.targetClassesDir(targetName: String, sourceSetName: String = "main") =
         classesDir(sourceSet = "$targetName/$sourceSetName")
 
-    override fun defaultBuildOptions(): BuildOptions {
-        return super.defaultBuildOptions().copy(warningMode = WarningMode.Summary)
-    }
-
     @Test
     fun testLibAndApp() = doTestLibAndApp(
         "sample-lib",
@@ -1280,7 +1276,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testJsDceInMpp() = with(Project("new-mpp-js-dce", gradleVersion)) {
-        build("runRhino") {
+        build("runRhino", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
             assertTasksExecuted(":mainProject:runDceNodeJsKotlin")
 
@@ -1365,7 +1361,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testDependenciesDsl() = with(transformProjectWithPluginsDsl("newMppDependenciesDsl")) {
         val originalBuildscriptContent = gradleBuildScript("app").readText()
 
-        fun testDependencies() = testResolveAllConfigurations("app") {
+        fun testDependencies() = testResolveAllConfigurations("app", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.12.jar")
             assertEquals(
                 1,
@@ -1399,7 +1395,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testMultipleTargetsSamePlatform() = with(Project("newMppMultipleTargetsSamePlatform", gradleVersion)) {
-        testResolveAllConfigurations("app") {
+        testResolveAllConfigurations("app", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertContains(">> :app:junitCompileClasspath --> lib-junit.jar")
             assertContains(">> :app:junitCompileClasspath --> junit-4.12.jar")
 
@@ -1489,7 +1485,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         val groupDir = "build/repo/com/example/"
 
-        build(":mpp-lib:publish") {
+        build(":mpp-lib:publish", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
             assertFileExists(groupDir + "mpp-lib")
             assertFileExists(groupDir + "mpp-lib-myjvm")
@@ -1506,7 +1502,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     add("-Pkotlin.mpp.keepMppDependenciesIntactInPoms=true")
             }.toTypedArray()
 
-            build(*params) {
+            build(*params, options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
                 assertSuccessful()
                 if (legacyPublishing) {
                     assertTasksExecuted(":jvm-app:uploadArchives")

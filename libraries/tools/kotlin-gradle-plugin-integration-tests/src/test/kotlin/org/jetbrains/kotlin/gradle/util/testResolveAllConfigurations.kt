@@ -17,6 +17,7 @@ fun BaseGradleIT.Project.testResolveAllConfigurations(
     subproject: String? = null,
     skipSetup: Boolean = false,
     excludePredicate: String = "false",
+    options: BaseGradleIT.BuildOptions = testCase.defaultBuildOptions(),
     withUnresolvedConfigurationNames: BaseGradleIT.CompiledProject.(List<String>) -> Unit = { assertTrue("Unresolved configurations: $it") { it.isEmpty() } }
 ) = with(testCase) {
 
@@ -32,7 +33,7 @@ fun BaseGradleIT.Project.testResolveAllConfigurations(
         }
     }
 
-    build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME, options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
+    build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME, options = options) {
         assertSuccessful()
         assertTasksExecuted(":${subproject?.let { "$it:" }.orEmpty()}$RESOLVE_ALL_CONFIGURATIONS_TASK_NAME")
         val unresolvedConfigurations = unresolvedConfigurationRegex.findAll(output).map { it.groupValues[1] }.toList()

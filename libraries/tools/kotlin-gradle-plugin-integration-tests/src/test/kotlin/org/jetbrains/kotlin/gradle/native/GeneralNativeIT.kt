@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.testFramework.TestDataFile
-import org.gradle.api.logging.configuration.WarningMode
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
@@ -93,10 +92,6 @@ class GeneralNativeIT : BaseGradleIT() {
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.FOR_MPP_SUPPORT
-
-    override fun defaultBuildOptions(): BuildOptions {
-        return super.defaultBuildOptions().copy(warningMode = WarningMode.Summary)
-    }
 
     @Test
     fun testParallelExecutionSmoke(): Unit = with(transformNativeTestProjectWithPluginDsl("native-parallel")) {
