@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm") apply false
     id("java")
+    id("org.jetbrains.dokka") version "1.4.10.2"
 }
 
 val dokka_version: String by project
@@ -42,6 +43,7 @@ subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
         plugin("java")
+        plugin("org.jetbrains.dokka")
     }
 
     // Gradle metadata
@@ -49,6 +51,24 @@ subprojects {
         @Suppress("UnstableApiUsage")
         withSourcesJar()
         targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    tasks {
+        val dokkaOutputDir = "$buildDir/dokka"
+
+        dokkaHtml {
+            outputDirectory.set(file(dokkaOutputDir))
+        }
+
+        val deleteDokkaOutputDir by registering(Delete::class) {
+            delete(dokkaOutputDir)
+        }
+
+        register<Jar>("javadocJar") {
+            dependsOn(deleteDokkaOutputDir, dokkaHtml)
+            archiveClassifier.set("javadoc")
+            from(dokkaOutputDir)
+        }
     }
 }
 
