@@ -58,7 +58,11 @@ class Fir2IrTypeConverter(
         StandardClassIds.Char to irBuiltIns.charType
     )
 
+    private val capturedTypeCache = mutableMapOf<ConeCapturedType, IrType>()
+    private val capturedTypeStack = mutableSetOf<ConeCapturedType>()
+
     fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType {
+        capturedTypeStack.clear()
         return when (this) {
             !is FirResolvedTypeRef -> createErrorType()
             !is FirImplicitBuiltinTypeRef -> type.toIrType(typeContext, annotations)
@@ -106,7 +110,16 @@ class Fir2IrTypeConverter(
                 upperBound.toIrType(typeContext)
             }
             is ConeCapturedType -> {
-                lowerType?.toIrType(typeContext) ?: constructor.supertypes!!.first().toIrType(typeContext)
+                if (capturedTypeStack.add(this)) {
+                    val irType = lowerType?.toIrType(typeContext) ?: constructor.supertypes!!.first().toIrType(typeContext)
+                    capturedTypeCache[this] = irType
+                    irType
+                } else {
+                    // Potentially recursive captured type, e.g., Recursive<R> where R : Recursive<R>, ...
+                    // That should have been handled during type argument conversion, though.
+                    // Or, simply repeated captured type, e.g., FunctionN<..., *, ..., *>, literally same captured types.
+                    capturedTypeCache[this] ?: createErrorType()
+                }
             }
             is ConeDefinitelyNotNullType -> {
                 original.toIrType(typeContext.definitelyNotNull())
@@ -132,11 +145,47 @@ class Fir2IrTypeConverter(
                 makeTypeProjection(irType, Variance.OUT_VARIANCE)
             }
             is ConeKotlinType -> {
-                val irType = toIrType(typeContext)
-                makeTypeProjection(irType, Variance.INVARIANT)
+                if (this is ConeCapturedType && capturedTypeStack.contains(this) && this.isRecursive(mutableSetOf())) {
+                    // Recursive captured type, e.g., Recursive<R> where R : Recursive<R>, ...
+                    // We can return * early here to avoid recursive type conversions.
+                    IrStarProjectionImpl
+                } else {
+                    val irType = toIrType(typeContext)
+                    makeTypeProjection(irType, Variance.INVARIANT)
+                }
             }
         }
     }
+
+    private fun ConeKotlinType.isRecursive(visited: MutableSet<ConeCapturedType>): Boolean =
+        when (this) {
+            is ConeLookupTagBasedType -> {
+                typeArguments.any {
+                    when (it) {
+                        is ConeKotlinType -> it.isRecursive(visited)
+                        is ConeKotlinTypeProjectionIn -> it.type.isRecursive(visited)
+                        is ConeKotlinTypeProjectionOut -> it.type.isRecursive(visited)
+                        else -> false
+                    }
+                }
+            }
+            is ConeFlexibleType -> {
+                lowerBound.isRecursive(visited) || upperBound.isRecursive(visited)
+            }
+            is ConeCapturedType -> {
+                if (visited.add(this)) {
+                    constructor.supertypes?.any { it.isRecursive(visited) } == true
+                } else
+                    true
+            }
+            is ConeDefinitelyNotNullType -> {
+                original.isRecursive(visited)
+            }
+            is ConeIntersectionType -> {
+                intersectedTypes.any { it.isRecursive(visited) }
+            }
+            else -> false
+        }
 
     private fun getArrayClassSymbol(classId: ClassId?): IrClassSymbol? {
         val primitiveId = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: return null
