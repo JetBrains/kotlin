@@ -113,6 +113,7 @@ The Kotlin FIR plugin provides language support in IntelliJ IDEA and Android Stu
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirModificationTrackerService"/>
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory"/>
+    <psi.treeChangePreprocessor implementation="org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinOutOfBlockPsiTreeChangePreprocessor"/>
   </extensions>
 
   <!--  scripts  -->
