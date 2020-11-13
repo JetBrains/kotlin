@@ -219,7 +219,7 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
         returnType = function.returnType
     }.apply {
         parent = function.parent
-        annotations += function.annotations
+        annotations = function.annotations
         copyTypeParameters(function.allTypeParameters)
         if (function.metadata != null) {
             metadata = function.metadata
@@ -237,6 +237,7 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
                     }.apply {
                         parent = propertySymbol.owner.parent
                         copyAttributes(propertySymbol.owner)
+                        annotations = propertySymbol.owner.annotations
                     }
                 }
                 correspondingPropertySymbol = property.symbol

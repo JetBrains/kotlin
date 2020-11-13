@@ -752,6 +752,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         public void testHidden() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/deprecated/hidden.kt");
         }
+
+        @TestMetadata("inlineClassTypesInSignature.kt")
+        public void testInlineClassTypesInSignature() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/deprecated/inlineClassTypesInSignature.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeListing/inline")
