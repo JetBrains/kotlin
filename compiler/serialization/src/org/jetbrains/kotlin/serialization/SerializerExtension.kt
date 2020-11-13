@@ -94,4 +94,6 @@ abstract class SerializerExtension {
     }
 
     open fun releaseCoroutines(): Boolean = false
+
+    open fun useOldInlineClassesManglingScheme(): Boolean = false
 }

@@ -362,7 +362,7 @@ class DescriptorSerializer private constructor(
             }
 
             if (descriptor.hasInlineClassTypesInSignature()) {
-                if (descriptor.fqNameSafe.startsWith(Name.identifier("kotlin"))) {
+                if (extension.useOldInlineClassesManglingScheme()) {
                     builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
                 } else {
                     builder.addVersionRequirement(

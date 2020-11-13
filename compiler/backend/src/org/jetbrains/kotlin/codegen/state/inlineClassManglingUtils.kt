@@ -22,8 +22,6 @@ import java.util.*
 
 const val NOT_INLINE_CLASS_PARAMETER_PLACEHOLDER = "_"
 
-private fun FunctionDescriptor.isFunctionFromStdlib(): Boolean = fqNameSafe.startsWith(Name.identifier("kotlin"))
-
 class InfoForMangling(
     val fqName: FqNameUnsafe,
     val isInline: Boolean,
@@ -96,7 +94,7 @@ fun getManglingSuffixBasedOnKotlinSignature(
     val unwrappedDescriptor = descriptor.unwrapInitialDescriptorForSuspendFunction()
 
     val resultNew = collectFunctionSignatureForManglingSuffix(
-        useOldManglingRules = useOldManglingRules || descriptor.isFunctionFromStdlib(),
+        useOldManglingRules = useOldManglingRules,
         requiresFunctionNameManglingForParameterTypes = requiresFunctionNameManglingForParameterTypes(descriptor),
         fqNamesForMangling =
         (listOfNotNull(descriptor.extensionReceiverParameter?.type) + descriptor.valueParameters.map { it.type })

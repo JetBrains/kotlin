@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -60,6 +61,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
     override val metadataVersion = state.metadataVersion
     private val jvmDefaultMode = state.jvmDefaultMode
     private val approximator = state.typeApproximator
+    private val useOldManglingScheme = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
     override fun shouldSerializeFunction(descriptor: FunctionDescriptor): Boolean {
@@ -399,4 +401,6 @@ class JvmSerializerExtension @JvmOverloads constructor(
     override fun releaseCoroutines(): Boolean {
         return languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
     }
+
+    override fun useOldInlineClassesManglingScheme(): Boolean = useOldManglingScheme
 }

@@ -83,6 +83,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
     val classBuilderMode: ClassBuilderMode,
     private val moduleName: String,
     val languageVersionSettings: LanguageVersionSettings,
+    private val useOldInlineClassesManglingScheme: Boolean,
     private val incompatibleClassTracker: IncompatibleClassTracker = IncompatibleClassTracker.DoNothing,
     val jvmTarget: JvmTarget = JvmTarget.DEFAULT,
     private val isIrBackend: Boolean = false,
@@ -91,7 +92,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
 ) : KotlinTypeMapperBase() {
     private val isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
     val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
-    var useOldManglingRulesForFunctionAcceptingInlineClass: Boolean = false
+    var useOldManglingRulesForFunctionAcceptingInlineClass: Boolean = useOldInlineClassesManglingScheme
+        set(value) {
+            require(!useOldInlineClassesManglingScheme)
+            field = value
+        }
 
     private val typeMappingConfiguration = object : TypeMappingConfiguration<Type> {
         override fun commonSupertype(types: Collection<KotlinType>): KotlinType {

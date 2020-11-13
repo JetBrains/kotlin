@@ -61,8 +61,6 @@ object InlineClassAbi {
         return irClass.primaryConstructor!!.valueParameters[0].type
     }
 
-    private fun IrFunction.isFunctionFromStdlib(): Boolean = fqNameForIrSerialization.startsWith(Name.identifier("kotlin"))
-
     /**
      * Returns a mangled name for a function taking inline class arguments
      * to avoid clashes between overloaded methods.
@@ -99,7 +97,7 @@ object InlineClassAbi {
         alwaysMangleReturnType: Boolean = false
     ): String? {
         val signatureForMangling = collectFunctionSignatureForManglingSuffix(
-            useOldManglingRules = useOldMangleRules || irFunction.isFunctionFromStdlib(),
+            useOldManglingRules = useOldMangleRules,
             requiresFunctionNameManglingForParameterTypes = irFunction.fullValueParameterList.any { it.type.requiresMangling },
             fqNamesForMangling = irFunction.fullValueParameterList.map {
                 it.type.asInfoForMangling()

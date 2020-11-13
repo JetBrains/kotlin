@@ -137,4 +137,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> USE_OLD_SPILLED_VAR_TYPE_ANALYSIS =
             CompilerConfigurationKey.create("Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines");
+
+    public static final CompilerConfigurationKey<Boolean> USE_OLD_INLINE_CLASSES_MANGLING_SCHEME =
+            CompilerConfigurationKey.create("Use old, 1.4 version of inline classes mangling scheme");
 }

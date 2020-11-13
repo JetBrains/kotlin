@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.jvm.codegen.classFileContainsMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -221,8 +222,13 @@ class MemoizedInlineClassReplacements(
         if (noFakeOverride) {
             isFakeOverride = false
         }
-        name = mangledNameFor(function, mangleReturnTypes, false)
-        if (name.asString().contains("-") && classFileContainsMethod(function, context, name.asString()) == false) {
+        val useOldManglingScheme = context.state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
+        name = mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
+        if (
+            !useOldManglingScheme &&
+            name.asString().contains("-") &&
+            classFileContainsMethod(function, context, name.asString()) == false
+        ) {
             name = mangledNameFor(function, mangleReturnTypes, true)
         }
         returnType = function.returnType

@@ -55,7 +55,8 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
 
     private val mapAsmMethod: (FunctionDescriptor) -> Method = KotlinTypeMapper(
         // Avoid errors when some classes are not loaded for some reason
-        bindingContext, ClassBuilderMode.LIGHT_CLASSES, moduleName, languageVersionSettings, isIrBackend = false
+        bindingContext, ClassBuilderMode.LIGHT_CLASSES, moduleName, languageVersionSettings, isIrBackend = false,
+        useOldInlineClassesManglingScheme = false
     )::mapAsmMethod
 
     private val reportDiagnosticsTasks = ArrayList<() -> Unit>()

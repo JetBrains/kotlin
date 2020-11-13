@@ -145,25 +145,37 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
         doTest(
             VersionRequirement.Version(1, 3, 0), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,
             fqNamesWithRequirements = listOf(
-                "test.C.returnsInlineClassTypeJvmName",
-                "test.returnsInlineClassType",
                 "test.propertyOfInlineClassType"
             ),
             shouldBeSingleRequirement = true,
             customLanguageVersion = LanguageVersion.KOTLIN_1_4
         )
-        // In Kotlin 1.3, all functions and properties returning inline class values are NOT mangled,
-        // and have "since 1.3" version requirement for inline class in signature only.
         doTest(
             VersionRequirement.Version(1, 3, 0), DeprecationLevel.ERROR, null, LANGUAGE_VERSION, null,
             fqNamesWithRequirements = listOf(
-                "test.returnsInlineClassType",
-                "test.propertyOfInlineClassType",
-                "test.C.returnsInlineClassType",
                 "test.C.propertyOfInlineClassType"
             ),
             shouldBeSingleRequirement = true,
             customLanguageVersion = LanguageVersion.KOTLIN_1_3
+        )
+        // In Kotlin 1.3, all functions and properties returning inline class values are NOT mangled,
+        // and have "since 1.3" version requirement for inline class in signature only.
+        doTest(
+            VersionRequirement.Version(1, 4, 30), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
+            fqNamesWithRequirements = listOf(
+                "test.C.returnsInlineClassTypeJvmName",
+                "test.returnsInlineClassType"
+            ),
+            shouldBeSingleRequirement = true,
+            customLanguageVersion = LanguageVersion.KOTLIN_1_4
+        )
+        doTest(
+            VersionRequirement.Version(1, 4, 30), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
+            fqNamesWithRequirements = listOf(
+                "test.C.returnsInlineClassType"
+            ),
+            shouldBeSingleRequirement = false,
+            customLanguageVersion = LanguageVersion.KOTLIN_1_4
         )
     }
 

@@ -203,18 +203,26 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
         )
     }
 
-    fun testInlineClassesAndRelevantDeclarations() {
+    fun testInlineClassesAndRelevantDeclarations13() {
         doTest(
             VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
             fqNamesWithRequirements = listOf(
                 "test.IC",
                 "test.Ctor.<init>",
+                "test.Foo",
+                "test.Bar",
+                "test.simpleProp"
+            )
+        )
+    }
+
+    fun testInlineClassesAndRelevantDeclarations1430() {
+        doTest(
+            VersionRequirement.Version(1, 4, 30), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, null,
+            fqNamesWithRequirements = listOf(
                 "test.simpleFun",
                 "test.aliasedFun",
-                "test.simpleProp",
                 "test.result",
-                "test.Foo",
-                "test.Bar"
             )
         )
     }

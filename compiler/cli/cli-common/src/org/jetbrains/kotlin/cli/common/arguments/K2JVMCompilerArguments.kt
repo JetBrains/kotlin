@@ -412,6 +412,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var useOldSpilledVarTypeAnalysis: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xuse-14-inline-classes-mangling-scheme",
+        description = "Use 1.4 inline classes mangling scheme instead of 1.4.30 one"
+    )
+    var useOldInlineClassesManglingScheme: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics

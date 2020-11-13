@@ -231,6 +231,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
     put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
     put(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS, arguments.useOldSpilledVarTypeAnalysis)
+    put(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME, arguments.useOldInlineClassesManglingScheme)
 
     arguments.declarationsOutputPath?.let { put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
 }

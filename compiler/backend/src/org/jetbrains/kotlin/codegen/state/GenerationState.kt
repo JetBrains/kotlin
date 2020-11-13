@@ -214,6 +214,7 @@ class GenerationState private constructor(
         classBuilderMode,
         this.moduleName,
         languageVersionSettings,
+        configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME),
         IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
         target,
         isIrBackend
