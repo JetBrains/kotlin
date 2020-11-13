@@ -135,9 +135,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         val bridgeFunction = createBridgeDeclaration(
             function,
             when {
-                // If the original function has signature which need mangling we still need to replace
-                // it with a mangled version.
-                !function.isFakeOverride && function.signatureRequiresMangling() ->
+                // If the original function has signature which need mangling we still need to replace it with a mangled version.
+                (!function.isFakeOverride || function.findInterfaceImplementation(context.state.jvmDefaultMode) != null) &&
+                        function.signatureRequiresMangling() ->
                     replacement.name
                 // Since we remove the corresponding property symbol from the bridge we need to resolve getter/setter
                 // names at this point.
