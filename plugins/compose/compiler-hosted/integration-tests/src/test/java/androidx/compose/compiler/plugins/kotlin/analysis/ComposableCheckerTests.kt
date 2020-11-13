@@ -289,8 +289,8 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             """
             import androidx.compose.runtime.*;
 
-            fun foo(children: @Composable ()->Unit) {
-                <!SVC_INVOCATION!>children<!>()
+            fun foo(content: @Composable ()->Unit) {
+                <!SVC_INVOCATION!>content<!>()
             }
         """
         )
@@ -341,8 +341,8 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             @Composable fun Leaf() {}
 
             @Composable
-            fun Foo(children: ()->Unit) {
-                children()
+            fun Foo(content: ()->Unit) {
+                content()
             }
 
             @Composable
@@ -358,8 +358,8 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             @Composable fun Leaf() {}
 
             @Composable
-            fun Foo(children: ()->Unit) {
-                children()
+            fun Foo(content: ()->Unit) {
+                content()
             }
 
             @Composable
@@ -598,7 +598,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.runtime.*;
 
             @Composable
-            fun MyComposable(children: @Composable ()->Unit) { children() }
+            fun MyComposable(content: @Composable ()->Unit) { content() }
 
             @Composable
             fun Leaf() {}
@@ -617,14 +617,14 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.runtime.*;
 
             @Composable
-            fun MyComposable(children: @Composable ()->Unit) { children() }
+            fun MyComposable(content: @Composable ()->Unit) { content() }
 
             @Composable
             fun Leaf() {}
 
             @Composable
             fun foo() {
-                MyComposable(children={ Leaf() })
+                MyComposable(content={ Leaf() })
             }
         """
         )
@@ -702,14 +702,14 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             typealias COMPOSABLE_UNIT_LAMBDA = @Composable () -> Unit
 
             @Composable
-            fun ComposeWrapperComposable(children: COMPOSABLE_UNIT_LAMBDA) {
+            fun ComposeWrapperComposable(content: COMPOSABLE_UNIT_LAMBDA) {
                 MyComposeWrapper {
-                    children()
+                    content()
                 }
             }
 
-            @Composable fun MyComposeWrapper(children: COMPOSABLE_UNIT_LAMBDA) {
-                print(children.hashCode())
+            @Composable fun MyComposeWrapper(content: COMPOSABLE_UNIT_LAMBDA) {
+                print(content.hashCode())
             }
         """
         )

@@ -44,8 +44,8 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     fun testIfInLambda(): Unit = comparisonPropagation(
         """
             @Composable fun A(x: Int = 0, y: Int = 0) {}
-            @Composable fun Wrap(children: @Composable () -> Unit) {
-                children()
+            @Composable fun Wrap(content: @Composable () -> Unit) {
+                content()
             }
         """,
         """
@@ -113,8 +113,8 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     fun testUntrackedLambda(): Unit = comparisonPropagation(
         """
             @Composable fun A(x: Int = 0, y: Int = 0) {}
-            @Composable fun Wrap(children: @Composable () -> Unit) {
-                children()
+            @Composable fun Wrap(content: @Composable () -> Unit) {
+                content()
             }
         """,
         """
@@ -324,7 +324,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               arrangement: Arrangement.Vertical = Arrangement.Top,
               crossAxisAlignment: Alignment.Horizontal = Alignment.Start,
               crossAxisSize: SizeMode = SizeMode.Wrap,
-              children: @Composable() ()->Unit
+              content: @Composable() ()->Unit
             ) {
               println()
             }
@@ -334,7 +334,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 modifier: Modifier = Modifier,
                 verticalArrangement: Arrangement.Vertical = Arrangement.Top,
                 horizontalGravity: Alignment.Horizontal = Alignment.Start,
-                children: @Composable() ()->Unit
+                content: @Composable() ()->Unit
             ) {
               RowColumnImpl(
                 orientation = LayoutOrientation.Vertical,
@@ -342,13 +342,13 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 crossAxisAlignment = horizontalGravity,
                 crossAxisSize = SizeMode.Wrap,
                 modifier = modifier,
-                children = children
+                content = content
               )
             }
         """,
         """
             @Composable
-            fun RowColumnImpl(orientation: LayoutOrientation, modifier: Modifier?, arrangement: Vertical?, crossAxisAlignment: Horizontal?, crossAxisSize: SizeMode?, children: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun RowColumnImpl(orientation: LayoutOrientation, modifier: Modifier?, arrangement: Vertical?, crossAxisAlignment: Horizontal?, crossAxisSize: SizeMode?, content: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(RowColumnImpl)P(5,4!1,2,3):Test.kt")
               val %dirty = %changed
               val modifier = modifier
@@ -381,7 +381,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               if (%default and 0b00100000 !== 0) {
                 %dirty = %dirty or 0b00110000000000000000
               } else if (%changed and 0b01110000000000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(children)) 0b00100000000000000000 else 0b00010000000000000000
+                %dirty = %dirty or if (%composer.changed(content)) 0b00100000000000000000 else 0b00010000000000000000
               }
               if (%dirty and 0b01011011011011011011 xor 0b00010010010010010010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
@@ -411,11 +411,11 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
-                RowColumnImpl(orientation, modifier, arrangement, crossAxisAlignment, crossAxisSize, children, %composer, %changed or 0b0001, %default)
+                RowColumnImpl(orientation, modifier, arrangement, crossAxisAlignment, crossAxisSize, content, %composer, %changed or 0b0001, %default)
               }
             }
             @Composable
-            fun Column(modifier: Modifier?, verticalArrangement: Vertical?, horizontalGravity: Horizontal?, children: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Column(modifier: Modifier?, verticalArrangement: Vertical?, horizontalGravity: Horizontal?, content: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Column)P(2,3,1)<RowCol...>:Test.kt")
               val %dirty = %changed
               val modifier = modifier
@@ -437,7 +437,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               if (%default and 0b1000 !== 0) {
                 %dirty = %dirty or 0b110000000000
               } else if (%changed and 0b0001110000000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(children)) 0b100000000000 else 0b010000000000
+                %dirty = %dirty or if (%composer.changed(content)) 0b100000000000 else 0b010000000000
               }
               if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
@@ -461,12 +461,12 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 }
                 val tmp0_orientation = LayoutOrientation.Vertical
                 val tmp1_crossAxisSize = SizeMode.Wrap
-                RowColumnImpl(tmp0_orientation, modifier, verticalArrangement, horizontalGravity, tmp1_crossAxisSize, children, %composer, 0b0110000000000110 or 0b01110000 and %dirty shl 0b0011 or 0b001110000000 and %dirty shl 0b0011 or 0b0001110000000000 and %dirty shl 0b0011 or 0b01110000000000000000 and %dirty shl 0b0110, 0)
+                RowColumnImpl(tmp0_orientation, modifier, verticalArrangement, horizontalGravity, tmp1_crossAxisSize, content, %composer, 0b0110000000000110 or 0b01110000 and %dirty shl 0b0011 or 0b001110000000 and %dirty shl 0b0011 or 0b0001110000000000 and %dirty shl 0b0011 or 0b01110000000000000000 and %dirty shl 0b0110, 0)
               } else {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
-                Column(modifier, verticalArrangement, horizontalGravity, children, %composer, %changed or 0b0001, %default)
+                Column(modifier, verticalArrangement, horizontalGravity, content, %composer, %changed or 0b0001, %default)
               }
             }
         """
@@ -635,17 +635,17 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun SimpleBox(modifier: Modifier = Modifier, children: @Composable() () -> Unit = {}) {
+            fun SimpleBox(modifier: Modifier = Modifier, content: @Composable() () -> Unit = {}) {
                println()
             }
         """,
         """
             @Composable
-            fun SimpleBox(modifier: Modifier?, children: Function2<Composer<*>, Int, Unit>?, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun SimpleBox(modifier: Modifier?, content: Function2<Composer<*>, Int, Unit>?, %composer: Composer<*>?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(SimpleBox)P(1):Test.kt")
               val %dirty = %changed
               val modifier = modifier
-              val children = children
+              val content = content
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b1110 === 0) {
@@ -654,14 +654,14 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               if (%default and 0b0010 !== 0) {
                 %dirty = %dirty or 0b00110000
               } else if (%changed and 0b01110000 === 0) {
-                %dirty = %dirty or if (%composer.changed(children)) 0b00100000 else 0b00010000
+                %dirty = %dirty or if (%composer.changed(content)) 0b00100000 else 0b00010000
               }
               if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
                 if (%default and 0b0001 !== 0) {
                   modifier = Companion
                 }
                 if (%default and 0b0010 !== 0) {
-                  children = composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer<*>?, %changed: Int ->
+                  content = composableLambda(%composer, <>, true, "C:Test.kt") { %composer: Composer<*>?, %changed: Int ->
                     if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
                       Unit
                     } else {
@@ -674,7 +674,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
-                SimpleBox(modifier, children, %composer, %changed or 0b0001, %default)
+                SimpleBox(modifier, content, %composer, %changed or 0b0001, %default)
               }
             }
         """
@@ -740,7 +740,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """
         """,
         """
-            @Composable fun SomeThing(children: @Composable() () -> Unit) {}
+            @Composable fun SomeThing(content: @Composable() () -> Unit) {}
 
             @Composable
             fun Example() {
@@ -751,18 +751,18 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun SomeThing(children: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
+            fun SomeThing(content: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
               %composer.startRestartGroup(<>, "C(SomeThing):Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
-                %dirty = %dirty or if (%composer.changed(children)) 0b0100 else 0b0010
+                %dirty = %dirty or if (%composer.changed(content)) 0b0100 else 0b0010
               }
               if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
               } else {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
-                SomeThing(children, %composer, %changed or 0b0001)
+                SomeThing(content, %composer, %changed or 0b0001)
               }
             }
             @Composable
@@ -1003,8 +1003,8 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             @Composable fun A(x: Int = 0, y: Int = 0) {}
         """,
         """
-            @Composable fun Wrap(y: Int, children: @Composable (x: Int) -> Unit) {
-                children(y)
+            @Composable fun Wrap(y: Int, content: @Composable (x: Int) -> Unit) {
+                content(y)
             }
             @Composable
             fun Test(x: Int = 0, y: Int = 0) {
@@ -1015,22 +1015,22 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Wrap(y: Int, children: Function3<@[ParameterName(name = 'x')] Int, Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
-              %composer.startRestartGroup(<>, "C(Wrap)P(1)<childr...>:Test.kt")
+            fun Wrap(y: Int, content: Function3<@[ParameterName(name = 'x')] Int, Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(Wrap)P(1)<conten...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(y)) 0b0100 else 0b0010
               }
               if (%changed and 0b01110000 === 0) {
-                %dirty = %dirty or if (%composer.changed(children)) 0b00100000 else 0b00010000
+                %dirty = %dirty or if (%composer.changed(content)) 0b00100000 else 0b00010000
               }
               if (%dirty and 0b01011011 xor 0b00010010 !== 0 || !%composer.skipping) {
-                children(y, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
+                content(y, %composer, 0b1110 and %dirty or 0b01110000 and %dirty)
               } else {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
-                Wrap(y, children, %composer, %changed or 0b0001)
+                Wrap(y, content, %composer, %changed or 0b0001)
               }
             }
             @Composable
@@ -1895,7 +1895,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
     fun testNestedCalls(): Unit = comparisonPropagation(
         """
             @Composable fun B(a: Int = 0, b: Int = 0, c: Int = 0) {}
-            @Composable fun Provide(children: @Composable (Int) -> Unit) {}
+            @Composable fun Provide(content: @Composable (Int) -> Unit) {}
         """,
         """
             @Composable
@@ -2615,19 +2615,19 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
             fun Box2(
                 modifier: Modifier = Modifier,
                 paddingStart: Dp = Dp.Unspecified,
-                children: @Composable () -> Unit = emptyContent()
+                content: @Composable () -> Unit = emptyContent()
             ) {
 
             }
         """,
         """
             @Composable
-            fun Box2(modifier: Modifier?, paddingStart: Dp, children: Function2<Composer<*>, Int, Unit>?, %composer: Composer<*>?, %changed: Int, %default: Int) {
+            fun Box2(modifier: Modifier?, paddingStart: Dp, content: Function2<Composer<*>, Int, Unit>?, %composer: Composer<*>?, %changed: Int, %default: Int) {
               %composer.startRestartGroup(<>, "C(Box2)P(1,2:c#ui.unit.Dp):Test.kt")
               val %dirty = %changed
               val modifier = modifier
               val paddingStart = paddingStart
-              val children = children
+              val content = content
               if (%default and 0b0001 !== 0) {
                 %dirty = %dirty or 0b0110
               } else if (%changed and 0b1110 === 0) {
@@ -2639,7 +2639,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
               if (%default and 0b0100 !== 0) {
                 %dirty = %dirty or 0b000110000000
               } else if (%changed and 0b001110000000 === 0) {
-                %dirty = %dirty or if (%composer.changed(children)) 0b000100000000 else 0b10000000
+                %dirty = %dirty or if (%composer.changed(content)) 0b000100000000 else 0b10000000
               }
               if (%dirty and 0b001011011011 xor 0b10010010 !== 0 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
@@ -2652,7 +2652,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                     %dirty = %dirty and 0b01110000.inv()
                   }
                   if (%default and 0b0100 !== 0) {
-                    children = emptyContent()
+                    content = emptyContent()
                   }
                   %composer.endDefaults()
                 } else {
@@ -2665,7 +2665,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
                 %composer.skipToGroupEnd()
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
-                Box2(modifier, paddingStart, children, %composer, %changed or 0b0001, %default)
+                Box2(modifier, paddingStart, content, %composer, %changed or 0b0001, %default)
               }
             }
         """

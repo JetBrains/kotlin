@@ -245,8 +245,8 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
     @Test
     fun testInlineCall(): Unit = composerParam(
         """
-            @Composable inline fun Example(children: @Composable () -> Unit) {
-                children()
+            @Composable inline fun Example(content: @Composable () -> Unit) {
+                content()
             }
 
             @ComposableContract(restartable = false)
@@ -256,9 +256,9 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
-            fun Example(children: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
-              %composer.startReplaceableGroup(<>, "C(Example)<childr...>:Test.kt#2487m")
-              children(%composer, 0b1110 and %changed)
+            fun Example(content: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
+              %composer.startReplaceableGroup(<>, "C(Example)<conten...>:Test.kt#2487m")
+              content(%composer, 0b1110 and %changed)
               %composer.endReplaceableGroup()
             }
             @ComposableContract(restartable = false)

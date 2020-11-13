@@ -23,8 +23,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.runtime.*
 
             @Composable
-            fun Int.Foo(children: @Composable Int.() -> Unit) {
-                children()
+            fun Int.Foo(content: @Composable Int.() -> Unit) {
+                content()
             }
         """
     )
@@ -34,13 +34,13 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.runtime.*
 
             @Composable
-            fun Int.Foo(children: @Composable Int.(foo: String) -> Unit) {
-                children(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
+            fun Int.Foo(content: @Composable Int.(foo: String) -> Unit) {
+                content(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
             }
 
             @Composable
-            fun Bar(children: @Composable Int.() -> Unit) {
-                children(<!NO_VALUE_FOR_PARAMETER!>)<!>
+            fun Bar(content: @Composable Int.() -> Unit) {
+                content(<!NO_VALUE_FOR_PARAMETER!>)<!>
             }
         """
     )
@@ -102,10 +102,10 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
             }
 
             @Composable fun test(
-                children: @Composable () -> Unit,
+                content: @Composable () -> Unit,
                 value: Int,
                 x: Int,
-                children2: @Composable () -> Unit,
+                content2: @Composable () -> Unit,
                 value2: Int
             ) {
                 Foo(123) {
@@ -116,7 +116,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
                     Foo(x)
 
                     // tag
-                    children()
+                    content()
                 }
                 Foo(x=123, composeItem={
                     val abc = 123
@@ -128,7 +128,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
                     Foo(x=value2)
 
                     // tag
-                    children2()
+                    content2()
                 })
             }
         """
@@ -236,10 +236,10 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
         """
             import androidx.compose.runtime.*
 
-            @Composable fun A(children: @Composable () -> Unit) { children() }
+            @Composable fun A(content: @Composable () -> Unit) { content() }
 
             @Composable fun Test() {
-                A(children={}) <!TOO_MANY_ARGUMENTS!>{ }<!>
+                A(content={}) <!TOO_MANY_ARGUMENTS!>{ }<!>
             }
 
         """.trimIndent()
@@ -407,8 +407,8 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.runtime.*
 
             object MyNamespace {
-                @Composable fun Bar(children: @Composable () -> Unit = {}) { 
-                    children() 
+                @Composable fun Bar(content: @Composable () -> Unit = {}) { 
+                    content() 
                 }
 
                 var Baz = @Composable { }
@@ -466,9 +466,9 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
             import android.widget.Button
             import android.widget.LinearLayout
 
-            @Composable fun ChildrenRequired2(children: @Composable () -> Unit) { children() }
+            @Composable fun ChildrenRequired2(content: @Composable () -> Unit) { content() }
 
-            @Composable fun ChildrenOptional3(children: @Composable () -> Unit = {}){ children() }
+            @Composable fun ChildrenOptional3(content: @Composable () -> Unit = {}){ content() }
 
             @Composable fun NoChildren2() {}
 
