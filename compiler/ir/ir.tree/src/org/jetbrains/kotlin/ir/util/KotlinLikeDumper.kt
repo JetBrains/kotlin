@@ -16,28 +16,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
 
-// TODO look at
-//  IrSourcePrinter.kt -- androidx-master-dev/frameworks/support/compose/compiler/compiler-hosted/src/main/java/androidx/compose/compiler/plugins/kotlin/lower/IrSourcePrinter.kt
-//  DumpIrTree.kt -- compiler/ir/ir.tree/src/org/jetbrains/kotlin/ir/util/DumpIrTree.kt
-//  RenderIrElement.kt --
-
-/* TODO
-    * origin : class, function, property, ...
-    * don't print any members in interfaces? // or just print something like  /* Any members */
-    * @<init>(...) Function2<AStringUnit> // (...) -> ...
-    * IrEnumEntryImpl
-    * replace `if (cond) p.printWithNoIndent(something)` with `p(cond, something)`
-    * use FQNs?
-    * don't print coercion to Unit on top level? blocks?
-    * name & ordinal in enums
-    * special render for accessors?
-    * FlexibleNullability
-    * ExtensionFunctionType
-    * don't crash on unbound symbols
-    * unique ids for symbols, or SignatureID?
-    * "normalize" names for tmps?
- */
-
 fun IrElement.dumpKotlinLike(options: KotlinLikeDumpOptions = KotlinLikeDumpOptions()): String {
     val sb = StringBuilder()
     accept(KotlinLikeDumper(Printer(sb, 1, "  "), options), null)
@@ -49,14 +27,14 @@ class KotlinLikeDumpOptions(
     val printFileName: Boolean = true,
     val printFilePath: Boolean = true,
     val useNamedArguments: Boolean = false,
-    val labelStrategy: LabelPrintingStrategy = LabelPrintingStrategy.NEVER,
+    val labelPrintingStrategy: LabelPrintingStrategy = LabelPrintingStrategy.NEVER,
     val printFakeOverridesStrategy: FakeOverridesStrategy = FakeOverridesStrategy.ALL,
     /*
-     visibility?
-     modality
-     special names?
-     print fake overrides
+    TODO add more options:
+     always print visibility?
      omit local visibility?
+     always print modality
+     print special names as is, and other strategies?
      print body for default accessors
      print get/set for default accessors
      print type of expressions
@@ -77,11 +55,33 @@ enum class FakeOverridesStrategy {
     NONE
 }
 
+/* TODO:
+    * don't crash on unbound symbols
+    * origin : class, function, property, ...
+        * option?
+    * don't print members of kotlin.Any in interfaces? // or just print something like  /* Any members */
+        * option?
+    * use lambda syntax for FunctionN, including extension lambdas (@ExtensionFunctionType)
+        * option?
+    * use FQNs?
+        * option?
+    * don't print coercion to Unit on top level? and inside blocks?
+        * option?
+    * special render for call site of accessors?
+        * option?
+    * FlexibleNullability is it about `T!`?
+        * option?
+    * unique ids for symbols, or SignatureID?
+        * option?
+    * "normalize" names for tmps? ^^ Could unique ids help?
+    * wrap/escape invalid identifiers with "`", like "$$delegate"
+ */
+
 private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOptions) : IrElementVisitor<Unit, IrDeclaration?> {
     override fun visitElement(element: IrElement, data: IrDeclaration?) {
         val e = "/* ERROR: unsupported element type: " + element.javaClass.simpleName + " */"
         if (element is IrExpression) {
-            // TODO message?
+            // TODO move text to the message?
             // TODO better process expressions and statements
             p.printlnWithNoIndent("error(\"\") $e")
         } else {
@@ -123,9 +123,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitClass(declaration: IrClass, data: IrDeclaration?) {
         // TODO omit super class for enums, annotations?
         // TODO omit Companion name for companion objects?
-        // TODO thisReceiver
-        // TODO primary constructor?
-        // TODO special support for objects
+        // TODO do we need to print info about `thisReceiver`?
+        // TODO special support for objects?
 
         declaration.printlnAnnotations()
         p.printIndent()
@@ -158,16 +157,10 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         declaration.printTypeParametersWithNoIndent()
         if (declaration.superTypes.isNotEmpty()) {
-            var first = true
-            for (type in declaration.superTypes) {
+            for ((i, type) in declaration.superTypes.withIndex()) {
                 if (type.isAny()) continue
 
-                if (!first) {
-                    p.printWithNoIndent(", ")
-                } else {
-                    p.printWithNoIndent(" : ")
-                    first = false
-                }
+                p.printWithNoIndent(if (i > 0) ", " else " : ")
 
                 type.printTypeWithNoIndent()
             }
@@ -239,7 +232,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
         p(modality, defaultModality) { name.toLowerCase() }
         p(isExternal, "external")
-        p(isFakeOverride, "fake") // TODO
+        p(isFakeOverride, "fake")
         p(isOverride, "override")
         p(isLateinit, "lateinit")
         p(isTailrec, "tailrec")
@@ -284,16 +277,10 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         if (typeParameters.isEmpty()) return
 
         p.printWithNoIndent("<")
-        var first = true
-        // TODO no commas in some types
-        typeParameters.forEach {
-            if (!first) {
-                p.printWithNoIndent(", ")
-            } else {
-                first = false
-            }
+        typeParameters.forEachIndexed { i, typeParam ->
+            p(i > 0, ",")
 
-            it.printATypeParameterWithNoIndent()
+            typeParam.printATypeParameterWithNoIndent()
         }
         p.printWithNoIndent(">")
         p.printWithNoIndent(postfix)
@@ -301,7 +288,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private fun IrTypeParameter.printATypeParameterWithNoIndent() {
         variance.printVarianceWithNoIndent()
-        if (isReified) p.printWithNoIndent("reified ")
+        p(isReified, "reified")
 
         printAnnotationsWithNoIndent()
 
@@ -355,7 +342,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private fun IrTypeParameter.printWhereClauseTypesWithNoIndent(first: Boolean): Boolean {
         var myFirst = first
-        superTypes.forEachIndexed { i, superType ->
+        superTypes.forEach { type ->
             if (!myFirst) {
                 p.printWithNoIndent(", ")
             } else {
@@ -364,14 +351,14 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
             p.printWithNoIndent(name.asString())
             p.printWithNoIndent(" : ")
-            superType.printTypeWithNoIndent()
+            type.printTypeWithNoIndent()
         }
 
         return myFirst
     }
 
     private fun IrType.printTypeWithNoIndent() {
-        // TODO don't print `Any?` upper bound?
+        // TODO don't print `Any?` as upper bound?
         printAnnotationsWithNoIndent()
         when (this) {
             is IrSimpleType -> {
@@ -381,20 +368,15 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
                 if (arguments.isNotEmpty()) {
                     p.printWithNoIndent("<")
-                    var first = true
-                    arguments.forEach {
-                        if (!first) {
-                            p.printWithNoIndent(", ")
-                        } else {
-                            first = false
-                        }
+                    arguments.forEachIndexed { i, typeArg ->
+                        p(i > 0, ",")
 
-                        when (it) {
+                        when (typeArg) {
                             is IrStarProjection ->
                                 p.printWithNoIndent("*")
                             is IrTypeProjection -> {
-                                it.variance.printVarianceWithNoIndent()
-                                it.type.printTypeWithNoIndent()
+                                typeArg.variance.printVarianceWithNoIndent()
+                                typeArg.type.printTypeWithNoIndent()
                             }
                         }
                     }
@@ -421,7 +403,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         p.printWithNoIndent("typealias ")
         p.printWithNoIndent(declaration.name.asString())
-        // TODO IrDump doesn't have typeparameters
         declaration.printTypeParametersWithNoIndent()
         p.printWithNoIndent(" = ")
         declaration.expandedType.printTypeWithNoIndent()
@@ -449,11 +430,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: IrDeclaration?) {
-        // Looks like IrAnonymousInitializer has annotations accidentally. No tests.
+        // TODO no tests, looks like IrAnonymousInitializer has annotations accidentally.
         declaration.printlnAnnotations()
         p.printIndent()
 
-        // TODO looks like there are no irText tests for isStatic flag
+        // TODO no tests, looks like there are no irText tests for isStatic flag
         p(declaration.isStatic, commentBlockH("static"))
         p.printWithNoIndent("init ")
         declaration.body.accept(this, declaration)
@@ -472,7 +453,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitConstructor(declaration: IrConstructor, data: IrDeclaration?) {
-        // TODO primary!!!
         // TODO name?
         // TODO is it worth to merge code for IrConstructor and IrSimpleFunction?
         // TODO dispatchReceiverParameter -- outer `this` for inner classes
@@ -542,7 +522,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 isExpect,
                 modality,
                 isExternal,
-                isOverride = overriddenSymbols.isNotEmpty(), // TODO override
+                isOverride = overriddenSymbols.isNotEmpty(),
                 isFakeOverride,
                 isLateinit = INAPPLICABLE,
                 isTailrec,
@@ -593,15 +573,10 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private fun IrFunction.printValueParametersWithNoIndent() {
         p.printWithNoIndent("(")
-        var first = true
-        valueParameters.forEach {
-            if (!first) {
-                p.printWithNoIndent(", ")
-            } else {
-                first = false
-            }
+        valueParameters.forEachIndexed { i, param ->
+            p(i > 0, ",")
 
-            it.printAValueParameterWithNoIndent(this)
+            param.printAValueParameterWithNoIndent(this)
         }
         p.printWithNoIndent(")")
     }
@@ -647,7 +622,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printIndent()
 
         // TODO better rendering for modifiers on property and accessors
-        // modifiers that could be different between accessors and property have a comment
+        //  modifiers that could be different between accessors and property have a comment
         declaration.run {
             printModifiersWithNoIndent(
                 // accessors by default have same visibility, but the can define own value
@@ -675,7 +650,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             )
         }
 
-        // TODO don't print borrowed flags and assert that they are same with setter(???) or don't borrow?
+        // TODO don't print borrowed flags and assert that they are same with a setter or don't borrow?
         // TODO we can omit type for set parameter
 
         p(declaration.isConst, "const")
@@ -877,7 +852,6 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: IrDeclaration?) {
-        // TODO could constructors have receiver?
         val clazz = expression.symbol.owner.parentAsClass
         expression.printMemberAccessExpressionWithNoIndent(
             clazz.name.asString(),
@@ -917,9 +891,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             if (superQualifierSymbol == null) it.accept(this@KotlinLikeDumper, data)
             // else assert dispatchReceiver === this
         }
-        if (twoReceivers) {
-            p.printWithNoIndent(", ")
-        }
+        p(twoReceivers, ",")
         extensionReceiver?.accept(this@KotlinLikeDumper, data)
         if (twoReceivers) {
             p.printWithNoIndent(")")
@@ -948,9 +920,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         if (typeArgumentsCount > 0) {
             p.printWithNoIndent("<")
             repeat(typeArgumentsCount) {
-                if (it > 0) {
-                    p.printWithNoIndent(", ")
-                }
+                p(it > 0, ",")
                 // TODO flag to print type param name?
                 getTypeArgument(it)!!.printTypeWithNoIndent()
             }
@@ -970,7 +940,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         repeat(valueArgumentsCount) { i ->
             // TODO should we print something for omitted arguments (== null)?
             getValueArgument(i)?.let {
-                if (i > 0) p.printWithNoIndent(", ")
+                p(i > 0, ",")
                 // TODO flag to print param name
                 p.printWithNoIndent(valueParameters[i].name.asString() + " = ")
                 it.accept(this@KotlinLikeDumper, data)
@@ -1097,6 +1067,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitReturn(expression: IrReturn, data: IrDeclaration?) {
         // TODO label
+        // TODO optionally don't print Unit when return type of returnTargetSymbol is Unit
         p.printWithNoIndent("return ")
         expression.value.accept(this, data)
     }
@@ -1107,12 +1078,10 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: IrDeclaration?) {
-        // TODO escape? see IrTextTestCaseGenerated.Expressions#testStringTemplates
+        // TODO escape char symbols, use triple quotes when possible, see IrTextTestCaseGenerated.Expressions#testStringTemplates
         // TODO optionally each argument at a separate line, another option add a wrapping
         expression.arguments.forEachIndexed { i, e ->
-            if (i > 0) {
-                p.printWithNoIndent(" + ")
-            }
+            p(i > 0, " +")
             e.accept(this, data)
         }
     }
@@ -1137,11 +1106,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitVararg(expression: IrVararg, data: IrDeclaration?) {
-        // TODO ???
+        // TODO better rendering?
         // TODO varargElementType
         p.printWithNoIndent("[")
         expression.elements.forEachIndexed { i, e ->
-            if (i > 0) p.printWithNoIndent(", ")
+            p(i > 0, ",")
             e.accept(this, data)
         }
         p.printWithNoIndent("]")
@@ -1341,7 +1310,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         expression.receiver.accept(this, data)
         p.printWithNoIndent(s.first)
         expression.arguments.forEachIndexed { i, e ->
-            if (i > 0) p.printWithNoIndent(", ")
+            p(i > 0, ",")
             e.accept(this, data)
         }
         p.printWithNoIndent(s.second)
