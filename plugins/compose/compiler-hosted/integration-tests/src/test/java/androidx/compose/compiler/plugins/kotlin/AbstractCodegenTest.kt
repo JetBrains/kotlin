@@ -200,7 +200,7 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
             id: Int = 0,
             orientation: Int = LinearLayout.VERTICAL,
             onClickListener: View.OnClickListener? = null,
-            children: @Composable () -> Unit
+            content: @Composable () -> Unit
         ) {
             emitView(
                 ::LinearLayout,
@@ -209,7 +209,7 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
                     if (onClickListener != null) it.setOnClickListener(onClickListener)
                     it.orientation = orientation
                 },
-                children
+                content
             )
         }
     """.trimIndent()

@@ -106,8 +106,8 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
             import androidx.compose.runtime.*
 
             @Composable
-            fun test(children: @Composable () -> Unit) {
-                <call>children()
+            fun test(content: @Composable () -> Unit) {
+                <call>content()
             }
         """
     )
@@ -192,7 +192,7 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
     )
 
-    fun testInlineChildren() = assertInterceptions(
+    fun testInlineContent() = assertInterceptions(
         """
             import androidx.compose.runtime.*
             import android.widget.LinearLayout
@@ -201,11 +201,11 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
 
             @Composable
             inline fun PointerInputWrapper(
-                crossinline children: @Composable () -> Unit
+                crossinline content: @Composable () -> Unit
             ) {
                 // Hide the internals of PointerInputNode
                 <call>Group {
-                    <call>children()
+                    <call>content()
                 }
             }
         """

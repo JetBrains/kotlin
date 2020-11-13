@@ -248,11 +248,11 @@ class KtxTransformationTest : AbstractCodegenTest() {
         testCompileWithViewStubs(
             """
         @Composable fun HelperComponent(
-            children: @Composable (title: String, rating: Int) -> Unit
+            content: @Composable (title: String, rating: Int) -> Unit
         ) {
-            children("Hello World!", 5)
-            children("Kompose is awesome!", 5)
-            children("Bitcoin!", 4)
+            content("Hello World!", 5)
+            content("Kompose is awesome!", 5)
+            content("Bitcoin!", 4)
         }
 
         class MainComponent {
@@ -271,7 +271,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testChildrenCaptureVariables() = ensureSetup {
         testCompileWithViewStubs(
             """
-        @Composable fun HelperComponent(children: @Composable () -> Unit) {
+        @Composable fun HelperComponent(content: @Composable () -> Unit) {
         }
 
         class MainComponent {
@@ -294,12 +294,12 @@ class KtxTransformationTest : AbstractCodegenTest() {
         import android.widget.*
         import androidx.compose.runtime.*
 
-        @Composable fun A(children: @Composable () -> Unit) {
-            children()
+        @Composable fun A(content: @Composable () -> Unit) {
+            content()
         }
 
-        @Composable fun B(children: @Composable () -> Unit) {
-            children()
+        @Composable fun B(content: @Composable () -> Unit) {
+            content()
         }
 
         class MainComponent {
@@ -324,12 +324,12 @@ class KtxTransformationTest : AbstractCodegenTest() {
         import android.widget.*
         import androidx.compose.runtime.*
 
-        @Composable fun A(children: @Composable (x: String) -> Unit) {
-            children("")
+        @Composable fun A(content: @Composable (x: String) -> Unit) {
+            content("")
         }
 
-        @Composable fun B(children: @Composable (y: String) -> Unit) {
-            children("")
+        @Composable fun B(content: @Composable (y: String) -> Unit) {
+            content("")
         }
 
         class MainComponent {
@@ -367,7 +367,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
     fun testIrSpecial() = ensureSetup {
         testCompileWithViewStubs(
             """
-        @Composable fun HelperComponent(children: @Composable () -> Unit) {}
+        @Composable fun HelperComponent(content: @Composable () -> Unit) {}
 
         class MainComponent {
             @Composable
@@ -491,10 +491,10 @@ class KtxTransformationTest : AbstractCodegenTest() {
             """
         import androidx.compose.runtime.*
 
-        class Test(var children: @Composable () () -> Unit) {
+        class Test(var content: @Composable () () -> Unit) {
             @Composable
             operator fun invoke() {
-                children()
+                content()
             }
         }
         """
@@ -506,10 +506,10 @@ class KtxTransformationTest : AbstractCodegenTest() {
             """
         import androidx.compose.runtime.*
 
-        class Test(var children: @Composable (x: Int) -> Unit) {
+        class Test(var content: @Composable (x: Int) -> Unit) {
             @Composable
             operator fun invoke() {
-                children(x=123)
+                content(x=123)
             }
         }
         """
@@ -540,7 +540,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         import android.widget.*
         import android.content.*
 
-        @Composable fun Example(children: @Composable () -> Unit) {
+        @Composable fun Example(content: @Composable () -> Unit) {
 
         }
 
@@ -560,7 +560,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         import androidx.compose.runtime.*
 
         @Composable
-        fun Example(children: @Composable () -> Unit) {}
+        fun Example(content: @Composable () -> Unit) {}
 
         @Composable
         fun run(text: String) {
@@ -578,7 +578,7 @@ class KtxTransformationTest : AbstractCodegenTest() {
         import androidx.compose.runtime.*
 
         @Composable
-        fun Example(children: @Composable (String) -> Unit) {}
+        fun Example(content: @Composable (String) -> Unit) {}
 
         @Composable
         fun run(text: String) {
@@ -632,11 +632,11 @@ class KtxTransformationTest : AbstractCodegenTest() {
         import androidx.compose.androidview.adapters.*
         import androidx.compose.runtime.*
 
-        @Composable fun Foo(children: @Composable (sub: @Composable () -> Unit) -> Unit) {
+        @Composable fun Foo(content: @Composable (sub: @Composable () -> Unit) -> Unit) {
 
         }
 
-        @Composable fun Boo(children: @Composable () -> Unit) {
+        @Composable fun Boo(content: @Composable () -> Unit) {
 
         }
 
