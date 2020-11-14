@@ -248,7 +248,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 parseShortModuleName(arguments, configuration, outputKind)?.let {
                     put(SHORT_MODULE_NAME, it)
                 }
-                put(DISABLE_FAKE_OVERRIDE_VALIDATOR, arguments.disableFakeOverrideValidator)
+                put(FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
                 putIfNotNull(PRE_LINK_CACHES, parsePreLinkCachesValue(configuration, arguments.preLinkCaches))
                 putIfNotNull(OVERRIDE_KONAN_PROPERTIES, parseOverrideKonanProperties(arguments, configuration))
                 put(DESTROY_RUNTIME_MODE, when (arguments.destroyRuntimeMode) {

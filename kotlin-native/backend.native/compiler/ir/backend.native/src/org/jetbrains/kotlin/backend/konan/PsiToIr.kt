@@ -175,7 +175,7 @@ internal fun Context.psiToIr(
 
     val modules = if (isProducingLibrary) emptyMap() else (irDeserializer as KonanIrLinker).modules
 
-    if (!config.configuration.getBoolean(KonanConfigKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR)) {
+    if (config.configuration.getBoolean(KonanConfigKeys.FAKE_OVERRIDE_VALIDATOR)) {
         val fakeOverrideChecker = FakeOverrideChecker(KonanManglerIr, KonanManglerDesc)
         modules.values.forEach { fakeOverrideChecker.check(it) }
     }

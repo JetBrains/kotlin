@@ -16,8 +16,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("check dependencies and download the missing ones")
         val DEBUG: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("add debug information")
-        val DISABLE_FAKE_OVERRIDE_VALIDATOR: CompilerConfigurationKey<Boolean>
-                = CompilerConfigurationKey.create("disable fake override validator")
+        val FAKE_OVERRIDE_VALIDATOR: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("fake override validator")
         val DISABLED_PHASES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("disable backend phases")
         val BITCODE_EMBEDDING_MODE: CompilerConfigurationKey<BitcodeEmbedding.Mode>
