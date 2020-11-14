@@ -33,13 +33,15 @@ class TeamCityErrorPlugin {
     apply(compiler) {
         compiler.hooks.done.tap('TeamCityErrorPlugin', (stats) => {
 
-            const warningsFilters = this.warningsFilter(stats.compilation.options.stats.warningsFilter);
+            const warningsFilters = this.warningsFilter(stats.compilation.options.ignoreWarnings);
 
             stats.compilation.errors.forEach(error => {
                 const type = 'error';
                 if (error instanceof ModuleNotFoundError) {
-                    error.dependencies.forEach(dependency => {
-                        console[type](formatMessage(TYPED_MESSAGE, `Module '${dependency.request}' not found`, type));
+                    const module = error.module;
+                    module.dependencies.forEach(dependency => {
+                        console[type](
+                            formatMessage(TYPED_MESSAGE, `Module '${dependency.request}' not found in '${module.resource}'`, type));
                     });
                     return
                 }

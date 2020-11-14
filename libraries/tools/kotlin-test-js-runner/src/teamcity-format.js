@@ -26,7 +26,7 @@ export const TYPED_MESSAGE = `##teamcity[message text='%s' type='%s']`
  * @see https://confluence.jetbrains.com/display/TCD65/Build+Script+Interaction+with+TeamCity#BuildScriptInteractionwithTeamCity-servMsgsServiceMessages
  */
 
-const util = require('util');
+const format = require('format-util');
 
 export function tcEscape(str) {
     if (!str) {
@@ -56,5 +56,5 @@ export function formatMessage() {
         formattedArguments.push(tcEscape(param));
     });
     formattedArguments.unshift(tcMessage);
-    return util.format.apply(util, formattedArguments);
+    return format(formattedArguments);
 }

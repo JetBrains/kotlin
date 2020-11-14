@@ -268,10 +268,7 @@ data class KotlinWebpackConfig(
                         enforce: "pre"
                 });
                 config.devtool = ${devtool?.let { "'$it'" } ?: false};
-                config.stats = config.stats || {}
-                Object.assign(config.stats, config.stats, {
-                    warningsFilter: [/Failed to parse source map/]
-                })
+                config.ignoreWarnings = [/Failed to parse source map/]
                 
             """.trimIndent()
         )
