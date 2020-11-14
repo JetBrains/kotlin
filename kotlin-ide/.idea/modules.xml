@@ -652,6 +652,7 @@
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/editor-ui-ex/intellij.platform.editor.ex.iml" filepath="$PROJECT_DIR$/intellij/platform/editor-ui-ex/intellij.platform.editor.ex.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/elevation/intellij.platform.elevation.iml" filepath="$PROJECT_DIR$/intellij/platform/elevation/intellij.platform.elevation.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/elevation/client/intellij.platform.elevation.client.iml" filepath="$PROJECT_DIR$/intellij/platform/elevation/client/intellij.platform.elevation.client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/intellij/platform/elevation/common/intellij.platform.elevation.common.iml" filepath="$PROJECT_DIR$/intellij/platform/elevation/common/intellij.platform.elevation.common.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/elevation/daemon/intellij.platform.elevation.daemon.iml" filepath="$PROJECT_DIR$/intellij/platform/elevation/daemon/intellij.platform.elevation.daemon.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/elevation/rpc/intellij.platform.elevation.rpc.iml" filepath="$PROJECT_DIR$/intellij/platform/elevation/rpc/intellij.platform.elevation.rpc.iml" />
       <module fileurl="file://$PROJECT_DIR$/intellij/platform/execution-impl/intellij.platform.execution.impl.iml" filepath="$PROJECT_DIR$/intellij/platform/execution-impl/intellij.platform.execution.impl.iml" />
