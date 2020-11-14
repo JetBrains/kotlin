@@ -21,15 +21,19 @@ class VersionFetcher : AutoCloseable {
     suspend fun fetch(): List<PackageInformation> {
         return coroutineScope {
             npmPackages
-                .map { async { fetchPackageInformationAsync(it) } }
-                .map { fetched ->
-                    val (packageName, value) = fetched.await()
-                    val fetchedPackageInformation = Gson().fromJson(value, FetchedPackageInformation::class.java)
-                    PackageInformation(
-                        packageName,
-                        fetchedPackageInformation.versions.keys
-                    )
-                }
+                .filter { it.version != null }
+                .map { HardcodedPackageInformation(it.name, it.version!!) } +
+                    npmPackages
+                        .filter { it.version == null }
+                        .map { async { fetchPackageInformationAsync(it.name) } }
+                        .map { fetched ->
+                            val (packageName, value) = fetched.await()
+                            val fetchedPackageInformation = Gson().fromJson(value, FetchedPackageInformation::class.java)
+                            RealPackageInformation(
+                                packageName,
+                                fetchedPackageInformation.versions.keys
+                            )
+                        }
         }
     }
 
