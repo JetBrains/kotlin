@@ -172,8 +172,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xenable-js-scripting", description = "Enable experimental support of .kts files using K/JS (with -Xir only)")
     var enableJsScripting: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xdisable-fake-override-validator", description = "Disable IR fake override validator")
+    @Argument(value = "-Xdisable-fake-override-validator", description = "This option is deprecated")
     var disableFakeOverrideValidator: Boolean by FreezableVar(false)
+
+    @Argument(value = "-Xfake-override-validator", description = "Enable IR fake override validator")
+    var fakeOverrideValidator: Boolean by FreezableVar(false)
+
 
     @Argument(value = "-Xerror-tolerance-policy", description = "Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)")
     var errorTolerancePolicy: String? by NullableStringFreezableVar(null)

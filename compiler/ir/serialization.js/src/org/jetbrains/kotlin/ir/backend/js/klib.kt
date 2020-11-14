@@ -170,7 +170,7 @@ fun generateKLib(
     val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, expectDescriptorToSymbol)
 
     moduleFragment.acceptVoid(ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc)))
-    if (!configuration.getBoolean(JSConfigurationKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR)) {
+    if (configuration.getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
         val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
         irLinker.modules.forEach { fakeOverrideChecker.check(it) }
     }
@@ -249,7 +249,7 @@ fun loadIr(
             val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
             moduleFragment.acceptVoid(mangleChecker)
 
-            if (!configuration.getBoolean(JSConfigurationKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR)) {
+            if (configuration.getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
                 val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
                 irLinker.modules.forEach { fakeOverrideChecker.check(it) }
             }

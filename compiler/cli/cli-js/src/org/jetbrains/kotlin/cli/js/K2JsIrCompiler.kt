@@ -364,7 +364,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         configuration.put(JSConfigurationKeys.PRINT_REACHABILITY_INFO, arguments.irDcePrintReachabilityInfo)
-        configuration.put(JSConfigurationKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR, arguments.disableFakeOverrideValidator)
+        configuration.put(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
     }
 
     override fun executableScriptFileName(): String {
