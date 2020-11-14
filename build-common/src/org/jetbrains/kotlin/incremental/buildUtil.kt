@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
+import java.nio.file.Files
 import java.util.*
 import kotlin.collections.HashSet
 import kotlin.collections.LinkedHashSet
@@ -66,7 +67,7 @@ fun makeModuleFile(
         friendDirs
     )
 
-    val scriptFile = File.createTempFile("kjps", sanitizeJavaIdentifier(name) + ".script.xml")
+    val scriptFile = Files.createTempFile("kjps", sanitizeJavaIdentifier(name) + ".script.xml").toFile()
     scriptFile.writeText(builder.asText().toString())
     return scriptFile
 }

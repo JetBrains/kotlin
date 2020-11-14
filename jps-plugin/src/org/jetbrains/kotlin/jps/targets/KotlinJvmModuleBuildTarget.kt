@@ -46,6 +46,9 @@ import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 private const val JVM_BUILD_META_INFO_FILE_NAME = "jvm-build-meta-info.txt"
 
@@ -242,14 +245,18 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 append("-test")
             }
         }
-        val dir = System.getProperty("kotlin.jps.dir.for.module.files")?.let { File(it) }?.takeIf { it.isDirectory }
+
+        fun createTempFile(dir: Path?, prefix: String?, suffix: String?): Path =
+            if (dir != null) Files.createTempFile(dir, prefix, suffix) else Files.createTempFile(prefix, suffix)
+
+        val dir = System.getProperty("kotlin.jps.dir.for.module.files")?.let { Paths.get(it) }?.takeIf { Files.isDirectory(it) }
         return try {
-            File.createTempFile("kjps", readableSuffix + ".script.xml", dir)
+            createTempFile(dir, "kjps", readableSuffix + ".script.xml")
         } catch (e: IOException) {
             // sometimes files cannot be created, because file name is too long (Windows, Mac OS)
             // see https://bugs.openjdk.java.net/browse/JDK-8148023
             try {
-                File.createTempFile("kjps", ".script.xml", dir)
+                createTempFile(dir, "kjps", ".script.xml")
             } catch (e: IOException) {
                 val message = buildString {
                     append("Could not create module file when building chunk $chunk")
@@ -259,7 +266,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 }
                 throw RuntimeException(message, e)
             }
-        }
+        }.toFile()
     }
 
     private fun findClassPathRoots(): Collection<File> {
