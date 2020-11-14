@@ -5,7 +5,7 @@
 
 import {KotlinTestRunner} from "./KotlinTestRunner";
 import {TeamCityMessageData, TeamCityMessagesFlow} from "./TeamCityMessagesFlow";
-import {format} from "util";
+const format = require("format-util");
 
 // don't use enum as it is not minified by uglify
 export type IgnoredTestSuitesReporting

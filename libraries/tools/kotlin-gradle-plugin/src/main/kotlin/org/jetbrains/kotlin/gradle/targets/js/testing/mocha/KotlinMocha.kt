@@ -34,7 +34,8 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) :
         get() = setOf(
             versions.kotlinJsTestRunner,
             versions.mocha,
-            versions.sourceMapSupport
+            versions.sourceMapSupport,
+            versions.formatUtil
         )
 
     // https://mochajs.org/#-timeout-ms-t-ms

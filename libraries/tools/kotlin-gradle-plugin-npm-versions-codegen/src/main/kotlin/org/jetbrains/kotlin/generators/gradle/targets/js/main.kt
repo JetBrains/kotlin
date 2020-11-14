@@ -53,10 +53,15 @@ fun main() {
 fun findLastVersions(packages: List<PackageInformation>): List<Package> {
     return packages
         .map { packageInformation ->
-            val maximumVersion = packageInformation.versions
-                .map { SemVer.from(it) }
-                .filter { it.preRelease == null && it.build == null }
-                .maxOrNull() ?: throw error("There is no applicable version for ${packageInformation.name}")
+            val maximumVersion = when (packageInformation) {
+                is RealPackageInformation -> packageInformation.versions
+                    .map { SemVer.from(it) }
+                    .filter { it.preRelease == null && it.build == null }
+                    .maxOrNull()
+                    ?.toString()
+                    ?: throw error("There is no applicable version for ${packageInformation.name}")
+                is HardcodedPackageInformation -> packageInformation.version
+            }
 
             Package(
                 packageInformation.name,

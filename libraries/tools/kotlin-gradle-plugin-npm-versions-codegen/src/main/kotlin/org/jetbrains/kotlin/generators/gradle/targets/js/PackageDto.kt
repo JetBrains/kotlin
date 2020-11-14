@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.generators.gradle.targets.js
 
 data class Package(
     val name: String,
-    val version: SemVer
+    val version: String
 ) {
     // Used in velocity template
     @Suppress("unused")
@@ -18,7 +18,19 @@ data class Package(
             .joinToString("")
 }
 
-data class PackageInformation(
-    val name: String,
-    val versions: Set<String>
-)
+sealed class PackageInformation {
+    abstract val name: String
+    abstract val versions: Set<String>
+}
+
+data class RealPackageInformation(
+    override val name: String,
+    override val versions: Set<String>
+) : PackageInformation()
+
+data class HardcodedPackageInformation(
+    override val name: String,
+    val version: String
+) : PackageInformation() {
+    override val versions: Set<String> = setOf(version)
+}

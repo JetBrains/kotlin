@@ -27,7 +27,10 @@ export type CliArgDescription = {
 }
 
 export class CliArgsParser {
-    constructor(private description: CliDescription) {
+    constructor(
+        private description: CliDescription,
+        private onFail: (n: number) => never
+    ) {
     }
 
     printUsage() {
@@ -59,7 +62,7 @@ export class CliArgsParser {
         println(message);
         println();
         this.printUsage();
-        process.exit(1)
+        this.onFail(1)
     }
 
     parse(args: string[]): CliArgValues {
