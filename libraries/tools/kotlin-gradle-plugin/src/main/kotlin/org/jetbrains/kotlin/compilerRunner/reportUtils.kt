@@ -31,6 +31,7 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
+import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.zip.ZipFile
@@ -126,7 +127,7 @@ internal fun runToolInSeparateProcess(
 
 private fun writeArgumentsToFile(directory: File, argsArray: Array<String>): File {
     val compilerOptions =
-        File.createTempFile(LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_", ".compiler.options", directory)
+        Files.createTempFile(directory.toPath(), LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_", ".compiler.options").toFile()
     compilerOptions.deleteOnExit()
     compilerOptions.writeText(argsArray.joinToString(" ") { "\"${StringEscapeUtils.escapeJava(it)}\"" })
     return compilerOptions
