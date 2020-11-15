@@ -579,10 +579,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +booleanField("isSuspend")
         }
 
-        composedSuperTypeRef.configure {
-            +fieldList("superTypeRefs", resolvedTypeRef)
-        }
-
         thisReceiverExpression.configure {
             +field("calleeReference", thisReference)
         }

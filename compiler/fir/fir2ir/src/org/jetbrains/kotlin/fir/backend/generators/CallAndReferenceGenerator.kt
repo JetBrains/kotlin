@@ -171,17 +171,10 @@ class CallAndReferenceGenerator(
             return null
         }
         val superTypeRef = dispatchReceiverReference.superTypeRef
-        val coneSuperType = superTypeRef.coneTypeSafe<ConeClassLikeType>()
-        if (coneSuperType != null) {
-            val firClassSymbol = coneSuperType.fullyExpandedType(session).lookupTag.toSymbol(session) as? FirClassSymbol<*>
-            if (firClassSymbol != null) {
-                return classifierStorage.getIrClassSymbol(firClassSymbol)
-            }
-        } else if (superTypeRef is FirComposedSuperTypeRef) {
-            val owner = callSymbol?.owner
-            if (owner != null && owner is IrDeclaration) {
-                return owner.parentClassOrNull?.symbol
-            }
+        val coneSuperType = superTypeRef.coneTypeSafe<ConeClassLikeType>() ?: return null
+        val firClassSymbol = coneSuperType.fullyExpandedType(session).lookupTag.toSymbol(session) as? FirClassSymbol<*>
+        if (firClassSymbol != null) {
+            return classifierStorage.getIrClassSymbol(firClassSymbol)
         }
         return null
     }
