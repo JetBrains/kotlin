@@ -186,7 +186,7 @@ fun main() {
     // Should be error as `A3::foo1` is `KFunction2`, but the remaining arguments are `KFuncion1` or `Function1`
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo1<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> })<!>
     // It's OK because `A3::foo2` is from companion of `A3`
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Any>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction1<kotlin.Int, kotlin.Unit>")!>A3::foo2<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> })<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function<kotlin.Any>")!>select(A3(), <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.reflect.KFunction2<A3, kotlin.Int, kotlin.Unit>")!>A3::foo2<!>, { a -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>a<!> }, { it -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<kotlin.Int, kotlin.Comparable<*> & java.io.Serializable>")!>select(A4(), { x: Number -> "" })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Comparable<*> & java.io.Serializable>")!>select(A5<Int, Int>(), { x: Number, y: Int -> "" })<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function3<kotlin.Int, kotlin.String, kotlin.Float, kotlin.Float>")!>select(A2(), id { a, b, c -> <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a<!>; <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>b<!>; <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>c<!> })<!>

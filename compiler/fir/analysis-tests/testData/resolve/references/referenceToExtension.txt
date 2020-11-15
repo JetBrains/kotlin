@@ -81,8 +81,8 @@ FILE: referenceToExtension.kt
         }
 
         public final fun test_1(): R|kotlin/Unit| {
-            lval extensionValRef: <ERROR TYPE REF: No result type for initializer> = Q|NoGenericTest.B|::<Unresolved name: extensionVal>#
-            lval extensionFunRef: <ERROR TYPE REF: No result type for initializer> = Q|NoGenericTest.B|::<Unresolved name: extensionFun>#
+            lval extensionValRef: R|kotlin/reflect/KProperty1<NoGenericTest.B, NoGenericTest.A>| = Q|NoGenericTest.B|::R|/NoGenericTest.extensionVal|
+            lval extensionFunRef: R|kotlin/reflect/KFunction1<NoGenericTest.B, NoGenericTest.A>| = Q|NoGenericTest.B|::R|/NoGenericTest.extensionFun|
         }
 
         public final fun test_2(): R|kotlin/Unit| {

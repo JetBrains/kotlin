@@ -180,16 +180,15 @@ internal open class FirTowerResolveTask(
 
         if (resolvedQualifier.symbol != null) {
             val typeRef = resolvedQualifier.typeRef
-            // NB: yet built-in Unit is used for "no-value" type
-            if (info.callKind == CallKind.CallableReference) {
-                if (info.stubReceiver != null || typeRef !is FirImplicitBuiltinTypeRef) {
-                    runResolverForExpressionReceiver(info, resolvedQualifier, parentGroup = TowerGroup.QualifierValue)
-                }
-            } else {
-                if (typeRef !is FirImplicitBuiltinTypeRef) {
-                    runResolverForExpressionReceiver(info, resolvedQualifier, parentGroup = TowerGroup.QualifierValue)
-                }
+            if (info.callKind == CallKind.CallableReference && info.stubReceiver != null ) {
+                runResolverForExpressionReceiver(info, info.stubReceiver, parentGroup = TowerGroup.QualifierValue)
             }
+
+            // NB: yet built-in Unit is used for "no-value" type
+            if (typeRef !is FirImplicitBuiltinTypeRef) {
+                runResolverForExpressionReceiver(info, resolvedQualifier, parentGroup = TowerGroup.QualifierValue)
+            }
+
         }
     }
 
