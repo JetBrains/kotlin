@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.asReversedFrozen
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.scope
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
-import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.types.*
@@ -284,20 +282,12 @@ internal open class FirTowerResolveTask(
 
     suspend fun runResolverForSuperReceiver(
         info: CallInfo,
-        superTypeRef: FirTypeRef
+        superCall: FirQualifiedAccessExpression,
     ) {
-        val scope = when (superTypeRef) {
-            is FirResolvedTypeRef -> superTypeRef.type.scope(session, components.scopeSession, FakeOverrideTypeCalculator.DoNothing)
-            is FirComposedSuperTypeRef -> FirCompositeScope(
-                superTypeRef.superTypeRefs.mapNotNull {
-                    it.type.scope(session, components.scopeSession, FakeOverrideTypeCalculator.DoNothing)
-                }
-            )
-            else -> null
-        } ?: return
+        val receiverValue = ExpressionReceiverValue(superCall)
         processLevel(
-            scope.toScopeTowerLevel(),
-            info, TowerGroup.Member, explicitReceiverKind = ExplicitReceiverKind.DISPATCH_RECEIVER
+            receiverValue.toMemberScopeTowerLevel(),
+            info, TowerGroup.Member, explicitReceiverKind = ExplicitReceiverKind.DISPATCH_RECEIVER,
         )
     }
 
