@@ -19,7 +19,54 @@ object GenerateSteppedRangesCodegenTestData {
     private val KT_34166_AFFECTED_FILENAMES = setOf("illegalStepZero.kt", "illegalStepNegative.kt", "illegalStepNonConst.kt")
 
     private val JVM_IR_FAILING_FOR_UNSIGNED_FILENAMES = setOf<String>()
-    private val FIR_FAILING_FOR_UNSIGNED_FILENAMES = setOf("minValueToMaxValueStepMaxValue.kt", "zeroToMaxValueStepMaxValue.kt")
+    private val USE_OLD_MANGLING_SCHEME = setOf(
+        "minValueToMaxValueStepMaxValue.kt",
+        "zeroToMaxValueStepMaxValue.kt",
+        "emptyDownto.kt",
+        "emptyProgression.kt",
+        "emptyProgressionToMinValue.kt",
+        "illegalStepNegative.kt",
+        "illegalStepNonConst.kt",
+        "illegalStepThenLegalStep.kt",
+        "illegalStepZero.kt",
+        "inexactSteppedDownTo.kt",
+        "legalStepThenIllegalStep.kt",
+        "maxValueToMinValueStepMaxValue.kt",
+        "maxValueToOneStepMaxValue.kt",
+        "maxValueToZeroStepMaxValue.kt",
+        "mixedTypeStep.kt",
+        "oneElementDownTo.kt",
+        "openRange.kt",
+        "overflowZeroDownToMaxValue.kt",
+        "overflowZeroToMinValue.kt",
+        "progressionToNonConst.kt",
+        "reversedBackSequence.kt",
+        "reversedEmptyBackSequence.kt",
+        "reversedInexactSteppedDownTo.kt",
+        "reversedThenStep.kt",
+        "reversedThenStepThenReversed.kt",
+        "reversedThenStepThenReversedThenStep.kt",
+        "simpleDownTo.kt",
+        "simpleSteppedDownTo.kt",
+        "singleElementStepTwo.kt",
+        "stepNonConst.kt",
+        "stepOne.kt",
+        "stepOneThenStepOne.kt",
+        "stepThenReversed.kt",
+        "stepThenReversedThenStep.kt",
+        "stepThenReversedThenStepThenReversed.kt",
+        "stepThenSameStep.kt",
+        "stepToOutsideRange.kt",
+        "stepToSameLast.kt",
+        "stepToSameLastThenStepOne.kt",
+        "stepToSameLastThenStepToSameLast.kt",
+        "stepToSameLastThenStepToSmallerLast.kt",
+        "stepToSmallerLast.kt",
+        "stepToSmallerLastThenStepOne.kt",
+        "stepToSmallerLastThenStepToSameLast.kt",
+        "stepToSmallerLastThenStepToSmallerLast.kt",
+        "unsignedRangeIterator.kt",
+    )
 
     private enum class Type(val type: String, val isLong: Boolean = false, val isUnsigned: Boolean = false) {
         INT("Int"),
@@ -165,14 +212,14 @@ object GenerateSteppedRangesCodegenTestData {
         fullSubdir: File,
         asLiteral: Boolean,
         shouldIgnoreForJvmIR: Boolean = false,
-        shouldIgnoreForFir: Boolean = false,
+        shouldUseOldManglingScheme: Boolean = false,
     ) {
         fullSubdir.mkdirs()
         PrintWriter(File(fullSubdir, fileName)).use {
             with(it) {
                 println("// $PREAMBLE_MESSAGE")
-                if (shouldIgnoreForFir) {
-                    println("// IGNORE_BACKEND_FIR: JVM_IR")
+                if (shouldUseOldManglingScheme) {
+                    println("// KOTLIN_CONFIGURATION_FLAGS: +JVM.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME")
                 }
                 if (shouldIgnoreForJvmIR) {
                     println("// IGNORE_BACKEND: JVM_IR")
@@ -225,7 +272,7 @@ object GenerateSteppedRangesCodegenTestData {
                 File(UNSIGNED_TEST_DATA_DIR, fullSubdirPath),
                 asLiteral,
                 shouldIgnoreForJvmIR = fileName in JVM_IR_FAILING_FOR_UNSIGNED_FILENAMES,
-                shouldIgnoreForFir = fileName in FIR_FAILING_FOR_UNSIGNED_FILENAMES,
+                shouldUseOldManglingScheme = fileName in USE_OLD_MANGLING_SCHEME,
             )
         }
         if (signedTests.isNotEmpty()) {
