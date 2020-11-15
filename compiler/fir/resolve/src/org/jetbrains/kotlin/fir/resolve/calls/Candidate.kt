@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
@@ -81,7 +80,7 @@ data class CallInfo(
 class Candidate(
     val symbol: AbstractFirBasedSymbol<*>,
     val dispatchReceiverValue: ReceiverValue?,
-    val implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
+    val extensionReceiverValue: ReceiverValue?,
     val explicitReceiverKind: ExplicitReceiverKind,
     val constraintSystemFactory: InferenceComponents.ConstraintSystemFactory,
     private val baseSystem: ConstraintStorage,
@@ -128,18 +127,11 @@ class Candidate(
 
     var passedStages: Int = 0
 
-    fun dispatchReceiverExpression(): FirExpression = when (explicitReceiverKind) {
-        ExplicitReceiverKind.DISPATCH_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS ->
-            callInfo.explicitReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
-        else -> dispatchReceiverValue?.receiverExpression ?: FirNoReceiverExpression
-    }
+    fun dispatchReceiverExpression(): FirExpression =
+        dispatchReceiverValue?.receiverExpression?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
 
-    fun extensionReceiverExpression(): FirExpression = when (explicitReceiverKind) {
-        ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS ->
-            callInfo.explicitReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
-        else ->
-            implicitExtensionReceiverValue?.receiverExpression ?: FirNoReceiverExpression
-    }
+    fun extensionReceiverExpression(): FirExpression =
+        extensionReceiverValue?.receiverExpression?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

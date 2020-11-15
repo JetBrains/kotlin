@@ -14,14 +14,14 @@ class A<T> {
 
 fun foo2(a: A<out CharSequence>, b: A<in CharSequence>) {
     a.<!INAPPLICABLE_CANDIDATE!>foo1<!>(Out<CharSequence>())
-    a.foo1<<!UPPER_BOUND_VIOLATED!>Out<CharSequence><!>>(Out())
+    a.<!INAPPLICABLE_CANDIDATE!>foo1<!><Out<CharSequence>>(Out())
 
     a.foo1(Out())
     a.foo1(Out<Nothing>())
 
     a.foo2(Inv())
     a.<!INAPPLICABLE_CANDIDATE!>foo2<!>(Inv<CharSequence>())
-    a.foo2<<!UPPER_BOUND_VIOLATED!>Inv<CharSequence><!>>(Inv())
+    a.<!INAPPLICABLE_CANDIDATE!>foo2<!><Inv<CharSequence>>(Inv())
 
     a.foo3(In())
     a.foo3(In<CharSequence>())
@@ -33,11 +33,11 @@ fun foo2(a: A<out CharSequence>, b: A<in CharSequence>) {
 
     b.foo2(Inv())
     b.<!INAPPLICABLE_CANDIDATE!>foo2<!>(Inv<CharSequence>())
-    b.foo2<<!UPPER_BOUND_VIOLATED!>Inv<CharSequence><!>>(Inv())
+    b.<!INAPPLICABLE_CANDIDATE!>foo2<!><Inv<CharSequence>>(Inv())
 
 
     b.<!INAPPLICABLE_CANDIDATE!>foo3<!>(In<CharSequence>())
-    b.foo3<<!UPPER_BOUND_VIOLATED!>In<CharSequence><!>>(In())
+    b.<!INAPPLICABLE_CANDIDATE!>foo3<!><In<CharSequence>>(In())
 
     b.foo3(In<Any?>())
     b.foo3(In())

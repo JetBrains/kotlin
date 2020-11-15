@@ -17,7 +17,7 @@ fun CharSequence?.isNullOrEmpty(): Boolean {
 fun smartcastOnReceiver(s: String?) {
     with(s) {
         if (isNullOrEmpty()) {
-            length
+            <!INAPPLICABLE_CANDIDATE!>length<!>
         }
         else {
             length
@@ -32,7 +32,7 @@ fun mixedReceiver(s: String?) {
         }
     } else {
         with(s) {
-            length
+            <!INAPPLICABLE_CANDIDATE!>length<!>
         }
     }
 }

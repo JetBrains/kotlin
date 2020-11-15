@@ -65,9 +65,8 @@ class FirTowerResolver(
             }
             else -> {
                 if (receiver is FirQualifiedAccessExpression) {
-                    val calleeReference = receiver.calleeReference
-                    if (calleeReference is FirSuperReference) {
-                        manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver.typeRef) }
+                    if (receiver.calleeReference is FirSuperReference) {
+                        manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver) }
                         return
                     }
                 }
@@ -108,7 +107,7 @@ class FirTowerResolver(
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
                     scope,
                     dispatchReceiver,
-                    implicitExtensionReceiverValue = null,
+                    extensionReceiverValue = null,
                     builtInExtensionFunctionReceiverValue = null
                 ),
                 context

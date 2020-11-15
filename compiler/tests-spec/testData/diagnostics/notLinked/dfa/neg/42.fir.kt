@@ -75,7 +75,7 @@ fun <T> case_6(x: T) {
 fun <T> case_7(x: T) {
     if (x is Int? || x is Float?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T & T")!>x<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
     }
 }
 
@@ -86,7 +86,7 @@ fun <T> case_7(x: T) {
 inline fun <reified T> case_8(x: T) {
     if (x is Int? || x is Float?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T & T")!>x<!>.toByte()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Comparable<kotlin.Int & kotlin.Float>? & T & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
     }
 }
 

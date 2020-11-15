@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
+import org.jetbrains.kotlin.types.AbstractNullabilityChecker
 
 abstract class ResolutionStage {
     abstract suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext)
@@ -57,52 +57,44 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
     }
 }
 
-internal sealed class CheckReceivers : ResolutionStage() {
-    object Dispatch : CheckReceivers() {
-        override fun ExplicitReceiverKind.shouldBeCheckedAgainstImplicit(): Boolean {
-            return this == EXTENSION_RECEIVER // For NO_EXPLICIT_RECEIVER we can check extension receiver only
-        }
-
-        override fun ExplicitReceiverKind.shouldBeCheckedAgainstExplicit(): Boolean {
-            return this == DISPATCH_RECEIVER || this == BOTH_RECEIVERS
-        }
-
-        override fun Candidate.getReceiverType(context: ResolutionContext): ConeKotlinType? {
-            return dispatchReceiverValue?.type
-        }
-    }
-
-    object Extension : CheckReceivers() {
-        override fun ExplicitReceiverKind.shouldBeCheckedAgainstImplicit(): Boolean {
-            return this == DISPATCH_RECEIVER || this == NO_EXPLICIT_RECEIVER
-        }
-
-        override fun ExplicitReceiverKind.shouldBeCheckedAgainstExplicit(): Boolean {
-            return this == EXTENSION_RECEIVER || this == BOTH_RECEIVERS
-        }
-
-        override fun Candidate.getReceiverType(context: ResolutionContext): ConeKotlinType? {
-            val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
-            val callable = callableSymbol.fir
-            val receiverType = callable.receiverTypeRef?.coneType
-            if (receiverType != null) return receiverType
-            val returnTypeRef = callable.returnTypeRef as? FirResolvedTypeRef ?: return null
-            if (!returnTypeRef.type.isExtensionFunctionType(context.session)) return null
-            return (returnTypeRef.type.typeArguments.firstOrNull() as? ConeKotlinTypeProjection)?.type
-        }
-    }
-
-    abstract fun Candidate.getReceiverType(context: ResolutionContext): ConeKotlinType?
-
-    abstract fun ExplicitReceiverKind.shouldBeCheckedAgainstExplicit(): Boolean
-
-    abstract fun ExplicitReceiverKind.shouldBeCheckedAgainstImplicit(): Boolean
-
+object CheckExtensionReceiver : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
-        val expectedReceiverType = candidate.getReceiverType(context)
-        val explicitReceiverExpression = callInfo.explicitReceiver
-        val explicitReceiverKind = candidate.explicitReceiverKind
+        val expectedReceiverType = candidate.getReceiverType(context) ?: return
 
+        val argumentExtensionReceiverValue = candidate.extensionReceiverValue ?: return
+        val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type)
+        val argumentType = captureFromTypeParameterUpperBoundIfNeeded(
+            argumentType = argumentExtensionReceiverValue.type,
+            expectedType = expectedType,
+            session = context.session
+        )
+        candidate.resolvePlainArgumentType(
+            candidate.csBuilder,
+            argumentType = argumentType,
+            expectedType = expectedType,
+            sink = sink,
+            context = context,
+            isReceiver = true,
+            isDispatch = false,
+        )
+
+        sink.yieldIfNeed()
+    }
+
+    private fun Candidate.getReceiverType(context: ResolutionContext): ConeKotlinType? {
+        val callableSymbol = symbol as? FirCallableSymbol<*> ?: return null
+        val callable = callableSymbol.fir
+        val receiverType = callable.receiverTypeRef?.coneType
+        if (receiverType != null) return receiverType
+        val returnTypeRef = callable.returnTypeRef as? FirResolvedTypeRef ?: return null
+        if (!returnTypeRef.type.isExtensionFunctionType(context.session)) return null
+        return (returnTypeRef.type.typeArguments.firstOrNull() as? ConeKotlinTypeProjection)?.type
+    }
+}
+
+object CheckDispatchReceiver : ResolutionStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        val explicitReceiverExpression = callInfo.explicitReceiver
         if (explicitReceiverExpression.isSuperCall()) {
             val status = candidate.symbol.fir as? FirMemberDeclaration
             if (status?.modality == Modality.ABSTRACT) {
@@ -110,49 +102,17 @@ internal sealed class CheckReceivers : ResolutionStage() {
             }
         }
 
-        if (expectedReceiverType != null) {
-            if (explicitReceiverExpression != null &&
-                explicitReceiverKind.shouldBeCheckedAgainstExplicit() &&
-                !explicitReceiverExpression.isSuperReferenceExpression()
-            ) {
-                candidate.resolvePlainExpressionArgument(
-                    candidate.csBuilder,
-                    argument = explicitReceiverExpression,
-                    expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType),
-                    sink = sink,
-                    context = context,
-                    isReceiver = true,
-                    isDispatch = this is Dispatch
-                )
-                sink.yieldIfNeed()
-            } else {
-                val argumentExtensionReceiverValue = candidate.implicitExtensionReceiverValue
-                if (argumentExtensionReceiverValue != null && explicitReceiverKind.shouldBeCheckedAgainstImplicit()) {
-                    val expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverType.type)
-                    val argumentType = captureFromTypeParameterUpperBoundIfNeeded(
-                        argumentType = argumentExtensionReceiverValue.type,
-                        expectedType = expectedType,
-                        session = context.session
-                    )
-                    candidate.resolvePlainArgumentType(
-                        candidate.csBuilder,
-                        argumentType = argumentType,
-                        expectedType = expectedType,
-                        sink = sink,
-                        context = context,
-                        isReceiver = true,
-                        isDispatch = this is Dispatch
-                    )
-                    sink.yieldIfNeed()
-                }
-            }
+        val dispatchReceiverValueType = candidate.dispatchReceiverValue?.type ?: return
+
+        if (!AbstractNullabilityChecker.isSubtypeOfAny(context.session.typeContext, dispatchReceiverValueType)) {
+            sink.yieldDiagnostic(InapplicableWrongReceiver)
         }
     }
+}
 
-    private fun FirExpression?.isSuperCall(): Boolean {
-        if (this !is FirQualifiedAccessExpression) return false
-        return calleeReference is FirSuperReference
-    }
+private fun FirExpression?.isSuperCall(): Boolean {
+    if (this !is FirQualifiedAccessExpression) return false
+    return calleeReference is FirSuperReference
 }
 
 private fun FirExpression.isSuperReferenceExpression(): Boolean {

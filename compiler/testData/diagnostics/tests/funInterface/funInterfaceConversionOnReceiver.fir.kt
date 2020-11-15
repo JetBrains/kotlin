@@ -5,5 +5,5 @@ fun interface Bar {
 operator fun Bar.plus(b: Bar): String = invoke() + b.invoke()
 
 fun box(): String {
-    return { "O" } + { "K" }
+    return { "O" } <!INAPPLICABLE_CANDIDATE!>+<!> { "K" }
 }

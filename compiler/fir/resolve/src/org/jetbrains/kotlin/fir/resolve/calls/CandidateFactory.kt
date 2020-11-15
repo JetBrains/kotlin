@@ -52,11 +52,11 @@ class CandidateFactory private constructor(
         explicitReceiverKind: ExplicitReceiverKind,
         scope: FirScope?,
         dispatchReceiverValue: ReceiverValue? = null,
-        implicitExtensionReceiverValue: ImplicitReceiverValue<*>? = null,
+        extensionReceiverValue: ReceiverValue? = null,
         builtInExtensionFunctionReceiverValue: ReceiverValue? = null
     ): Candidate {
         return Candidate(
-            symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
+            symbol, dispatchReceiverValue, extensionReceiverValue,
             explicitReceiverKind, context.inferenceComponents.constraintSystemFactory, baseSystem,
             builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
                 callInfo.withReceiverAsArgument(it)
@@ -78,7 +78,7 @@ class CandidateFactory private constructor(
         return Candidate(
             symbol,
             dispatchReceiverValue = null,
-            implicitExtensionReceiverValue = null,
+            extensionReceiverValue = null,
             explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             context.inferenceComponents.constraintSystemFactory,
             baseSystem,

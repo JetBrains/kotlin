@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.constructClassType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -68,19 +71,13 @@ internal class TowerLevelHandler {
             CallKind.CallableReference -> {
                 val stubReceiver = info.stubReceiver
                 if (stubReceiver != null) {
-                    val stubReceiverValue = ExpressionReceiverValue(stubReceiver)
                     val stubProcessor = TowerScopeLevelProcessor(
                         info.explicitReceiver,
-                        if (towerLevel is MemberScopeTowerLevel && towerLevel.dispatchReceiver is AbstractExplicitReceiver<*>) {
-                            ExplicitReceiverKind.DISPATCH_RECEIVER
-                        } else {
-                            ExplicitReceiverKind.EXTENSION_RECEIVER
-                        },
+                        explicitReceiverKind,
                         collector,
                         stubReceiverCandidateFactory!!, group
                     )
-                    val towerLevelWithStubReceiver = towerLevel.replaceReceiverValue(stubReceiverValue)
-                    towerLevelWithStubReceiver.processFunctionsAndProperties(info.name, stubProcessor)
+                    towerLevel.processFunctionsAndProperties(info.name, stubProcessor)
                     // NB: we don't perform this for implicit Unit
                     if (!collector.isSuccess() && info.explicitReceiver?.typeRef !is FirImplicitBuiltinTypeRef) {
                         towerLevel.processFunctionsAndProperties(info.name, processor)
@@ -147,18 +144,17 @@ private class TowerScopeLevelProcessor(
     override fun consumeCandidate(
         symbol: AbstractFirBasedSymbol<*>,
         dispatchReceiverValue: ReceiverValue?,
-        implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
+        extensionReceiverValue: ReceiverValue?,
         scope: FirScope,
         builtInExtensionFunctionReceiverValue: ReceiverValue?
     ) {
         // Check explicit extension receiver for default package members
         if (symbol is FirNamedFunctionSymbol && dispatchReceiverValue == null &&
-            (implicitExtensionReceiverValue == null) != (explicitReceiver == null) &&
+            extensionReceiverValue != null &&
             explicitReceiver !is FirResolvedQualifier &&
             symbol.callableId.packageName.startsWith(defaultPackage)
         ) {
-            val extensionReceiverType = explicitReceiver?.typeRef?.coneTypeSafe()
-                ?: implicitExtensionReceiverValue?.type as? ConeClassLikeType
+            val extensionReceiverType = extensionReceiverValue.type as? ConeClassLikeType
             if (extensionReceiverType != null) {
                 val declarationReceiverType = (symbol as? FirCallableSymbol<*>)?.fir?.receiverTypeRef?.coneType
                 if (declarationReceiverType is ConeClassLikeType) {
@@ -183,7 +179,7 @@ private class TowerScopeLevelProcessor(
                 explicitReceiverKind,
                 scope,
                 dispatchReceiverValue,
-                implicitExtensionReceiverValue,
+                extensionReceiverValue,
                 builtInExtensionFunctionReceiverValue
             ), candidateFactory.context
         )

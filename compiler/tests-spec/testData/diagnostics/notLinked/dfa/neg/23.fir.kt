@@ -20,7 +20,7 @@ inline fun <reified T, reified K> case_1(x: T) {
 inline fun <reified T, reified K> case_2(x: T) {
     x as K
     <!DEBUG_INFO_EXPRESSION_TYPE("K & T & T")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("K & T & T")!>x<!>.equals(x)
+    <!DEBUG_INFO_EXPRESSION_TYPE("K & T & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(x)
 }
 
 /*
@@ -49,7 +49,7 @@ inline fun <reified T, reified K> case_4(x: T?) {
 inline fun <reified T, reified K> case_5(x: T) {
     if (x is K?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("K? & T & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("K? & T & T")!>x<!>.equals(x)
+        <!DEBUG_INFO_EXPRESSION_TYPE("K? & T & T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(x)
     }
 }
 
