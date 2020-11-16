@@ -1,5 +1,6 @@
 // !JVM_DEFAULT_MODE: disable
 // JVM_TARGET: 1.8
+// TARGET_BACKEND: JVM
 // FILE: JBase.java
 
 public interface JBase extends Base {
