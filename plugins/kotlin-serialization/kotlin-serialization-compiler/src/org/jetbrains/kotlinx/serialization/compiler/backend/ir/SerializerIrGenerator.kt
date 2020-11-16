@@ -65,11 +65,11 @@ open class SerializerIrGenerator(
 
         // how to (auto)create backing field and getter/setter?
         compilerContext.symbolTable.withReferenceScope(irClass.descriptor) {
-            prop = generateSimplePropertyWithBackingField(desc, irClass, false)
+            prop = generateSimplePropertyWithBackingField(desc, irClass)
 
             // TODO: Do not use descriptors here
-            localSerializersFieldsDescriptors.forEach {
-                generateSimplePropertyWithBackingField(it, irClass, true)
+            localSerializersFieldsDescriptors = findLocalSerializersFieldDescriptors().map { it ->
+                it to generateSimplePropertyWithBackingField(it, irClass)
             }
         }
 
@@ -195,11 +195,11 @@ open class SerializerIrGenerator(
             // store type arguments serializers in fields
             val thisAsReceiverParameter = irClass.thisReceiver!!
             ctor.valueParameters.forEachIndexed { index, param ->
-                val localSerial = compilerContext.symbolTable.referenceField(localSerializersFieldsDescriptors[index])
+                val localSerial = localSerializersFieldsDescriptors[index].second.backingField!!
                 +irSetField(generateReceiverExpressionForFieldAccess(
                     thisAsReceiverParameter.symbol,
-                    localSerializersFieldsDescriptors[index]
-                ), localSerial.owner, irGet(param))
+                    localSerializersFieldsDescriptors[index].first
+                ), localSerial, irGet(param))
             }
 
 
@@ -221,7 +221,7 @@ open class SerializerIrGenerator(
         val typeParams = serializableDescriptor.declaredTypeParameters.mapIndexed { idx, _ ->
             irGetField(
                 irGet(irFun.dispatchReceiverParameter!!),
-                compilerContext.symbolTable.referenceField(localSerializersFieldsDescriptors[idx]).owner
+                localSerializersFieldsDescriptors[idx].second.backingField!!
             )
         }
         val kSerType = ((irFun.returnType as IrSimpleType).arguments.first() as IrTypeProjection).type

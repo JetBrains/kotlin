@@ -65,7 +65,7 @@ class SerialInfoImplJvmIrGenerator(
         ctor.body = ctorBody
 
         for (property in properties) {
-            generateSimplePropertyWithBackingField(property.descriptor, irClass, true, Name.identifier("_" + property.name.asString()))
+            generateSimplePropertyWithBackingField(property.descriptor, irClass, Name.identifier("_" + property.name.asString()))
 
             val getter = property.getter!!
             getter.origin = SERIALIZABLE_SYNTHETIC_ORIGIN
