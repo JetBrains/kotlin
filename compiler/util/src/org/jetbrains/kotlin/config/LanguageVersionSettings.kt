@@ -144,6 +144,7 @@ enum class LanguageFeature(
     JvmRecordSupport(KOTLIN_1_5),
 
     FreedomForSealedClasses(KOTLIN_1_5),
+    SealedInterfaces(KOTLIN_1_5),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),

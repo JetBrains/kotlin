@@ -270,7 +270,7 @@ public class DescriptorUtils {
     }
 
     public static boolean isSealedClass(@Nullable DeclarationDescriptor descriptor) {
-        return isKindOf(descriptor, ClassKind.CLASS) && ((ClassDescriptor) descriptor).getModality() == Modality.SEALED;
+        return (isKindOf(descriptor, ClassKind.CLASS) || isKindOf(descriptor, ClassKind.INTERFACE)) && ((ClassDescriptor) descriptor).getModality() == Modality.SEALED;
     }
 
     public static boolean isAnonymousObject(@NotNull DeclarationDescriptor descriptor) {

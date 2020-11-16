@@ -20897,6 +20897,29 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
         public void testWithInterface() throws Exception {
             runTest("compiler/testData/diagnostics/tests/sealed/WithInterface.kt");
         }
+
+        @TestMetadata("compiler/testData/diagnostics/tests/sealed/interfaces")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Interfaces extends AbstractFirOldFrontendDiagnosticsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInInterfaces() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/sealed/interfaces"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("sealedInterfacesDisabled.kt")
+            public void testSealedInterfacesDisabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/interfaces/sealedInterfacesDisabled.kt");
+            }
+
+            @TestMetadata("simpleSealedInterface.kt")
+            public void testSimpleSealedInterface() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/interfaces/simpleSealedInterface.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/diagnostics/tests/secondaryConstructors")
