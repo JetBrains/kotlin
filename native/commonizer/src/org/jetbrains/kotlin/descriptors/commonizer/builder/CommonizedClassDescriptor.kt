@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
@@ -51,7 +52,10 @@ class CommonizedClassDescriptor(
         MemberScope.Empty
 
     private val typeConstructor = CommonizedClassTypeConstructor(targetComponents, cirSupertypes)
-    private val sealedSubclasses = targetComponents.storageManager.createLazyValue { computeSealedSubclasses(this) }
+    private val sealedSubclasses = targetComponents.storageManager.createLazyValue {
+        // TODO: pass proper language version settings
+        computeSealedSubclasses(this, freedomForSealedInterfacesSupported = false)
+    }
 
     private val declaredTypeParametersAndTypeParameterResolver = targetComponents.storageManager.createLazyValue {
         val parent = if (isInner) (containingDeclaration as? ClassDescriptor)?.getTypeParameterResolver() else null

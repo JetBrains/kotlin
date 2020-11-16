@@ -20738,6 +20738,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/sealed/ExhaustiveWhenWithElse.kt");
         }
 
+        @TestMetadata("ExhaustiveWithFreedom.kt")
+        public void testExhaustiveWithFreedom() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/sealed/ExhaustiveWithFreedom.kt");
+        }
+
         @TestMetadata("Local.kt")
         public void testLocal() throws Exception {
             runTest("compiler/testData/diagnostics/tests/sealed/Local.kt");
@@ -20756,6 +20761,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
         @TestMetadata("NestedSealed.kt")
         public void testNestedSealed() throws Exception {
             runTest("compiler/testData/diagnostics/tests/sealed/NestedSealed.kt");
+        }
+
+        @TestMetadata("NestedSealedWithoutRestrictions.kt")
+        public void testNestedSealedWithoutRestrictions() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/sealed/NestedSealedWithoutRestrictions.kt");
         }
 
         @TestMetadata("NeverConstructed.kt")

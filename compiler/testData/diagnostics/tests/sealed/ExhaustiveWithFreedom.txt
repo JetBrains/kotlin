@@ -1,5 +1,11 @@
 package
 
+public fun test_OK(/*0*/ base: Base): kotlin.Unit
+public fun test_error_1(/*0*/ base: Base): kotlin.Unit
+public fun test_error_2(/*0*/ base: Base): kotlin.Unit
+public fun test_error_3(/*0*/ base: Base): kotlin.Unit
+public fun test_error_4(/*0*/ base: Base): kotlin.Unit
+
 public final class B : Base {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -21,12 +27,10 @@ public sealed class Base {
     }
 }
 
-public final class Container {
-    public constructor Container()
-    public final val anon: Base
+public final class Containter {
+    public constructor Containter()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun someFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public final class C : Base {

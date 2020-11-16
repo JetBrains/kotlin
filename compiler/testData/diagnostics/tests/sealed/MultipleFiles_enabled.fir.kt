@@ -1,5 +1,4 @@
 // ISSUE: KT-13495
-// !DIAGNOSTICS: -UNUSED_VARIABLE
 // !LANGUAGE: +FreedomForSealedClasses
 
 // FILE: a.kt
@@ -23,16 +22,5 @@ class Container {
 
     fun someFun() {
         class LocalClass : <!HIDDEN, SEALED_SUPERTYPE_IN_LOCAL_CLASS!>Base<!>() {} // Should be an error
-    }
-}
-
-// FILE: d.kt
-
-fun test(base: Base) {
-    val x = when (base) {
-        is Base.A -> 1
-        is B -> 2
-        is Container.C -> 3
-        is Container.D -> 4
     }
 }
