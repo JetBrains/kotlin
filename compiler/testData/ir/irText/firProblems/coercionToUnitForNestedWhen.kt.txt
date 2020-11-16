@@ -1,5 +1,5 @@
 private const val BACKSLASH: Char
-  field = '\'
+  field = '\\'
   private get
 
 private fun Reader.nextChar(): Char? {

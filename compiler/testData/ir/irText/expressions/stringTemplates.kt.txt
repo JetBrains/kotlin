@@ -23,9 +23,7 @@ val test4: String
   get
 
 val test5: String
-  field = "
-abc
-"
+  field = "\nabc\n"
   get
 
 val test6: String
