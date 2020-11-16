@@ -37,7 +37,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-if (rootProject.findProperty("idea.fir.plugin") == "true") {
+if (kotlinBuildProperties.useFirIdeaPlugin) {
     projectTest(parallel = true) {
         dependsOn(":dist")
         workingDir = rootDir
