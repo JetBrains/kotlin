@@ -65,14 +65,15 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             KotlinBuildStatsService.getInstance()?.report(BooleanMetrics.ENABLED_HMPP, true)
 
             target.compilations.withType(KotlinCommonCompilation::class.java).getByName(KotlinCompilation.MAIN_COMPILATION_NAME).run {
-                if (target.project.isCompatibilityMetadataVariantEnabled) {
+                val isCompatibilityMetadataVariantEnabled = target.project.isCompatibilityMetadataVariantEnabled
+                if (isCompatibilityMetadataVariantEnabled) {
                     // Force the default 'main' compilation to produce *.kotlin_metadata regardless of the klib feature flag.
                     forceCompilationToKotlinMetadata = true
                 } else {
                     // Clear the dependencies of the compilation so that they don't take time resolving during task graph construction:
                     compileDependencyFiles = target.project.files()
                 }
-                compileKotlinTaskProvider.configure { it.onlyIf { target.project.isCompatibilityMetadataVariantEnabled } }
+                compileKotlinTaskProvider.configure { it.onlyIf { isCompatibilityMetadataVariantEnabled } }
             }
 
             createMergedAllSourceSetsConfigurations(target)
