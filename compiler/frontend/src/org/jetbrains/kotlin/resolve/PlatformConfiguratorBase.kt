@@ -41,6 +41,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     ContractDescriptionBlockChecker,
     PrivateInlineFunctionsReturningAnonymousObjectsChecker,
     SealedInheritorInSamePackageChecker,
+    SealedInterfaceAllowedChecker,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
