@@ -10,11 +10,14 @@ import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAM
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.sure
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: LookupLocation): ClassDescriptor? {
     if (fqName.isRoot) return null
@@ -56,3 +59,21 @@ fun DeclarationDescriptor.isTopLevelInPackage(name: String, packageName: String)
 }
 
 fun CallableDescriptor.isSupportedForCallableReference() = this is PropertyDescriptor || this is FunctionDescriptor
+
+@OptIn(ExperimentalContracts::class)
+fun DeclarationDescriptor.isSealed(): Boolean {
+    contract {
+        returns(true) implies (this@isSealed is ClassDescriptor)
+    }
+    return DescriptorUtils.isSealedClass(this)
+}
+
+fun DeclarationDescriptor.containingPackage(): FqName? {
+    var container = containingDeclaration
+    while (true) {
+        if (container == null || container is PackageFragmentDescriptor) break
+        container = container.containingDeclaration
+    }
+    require(container is PackageFragmentDescriptor?)
+    return container?.fqName
+}
