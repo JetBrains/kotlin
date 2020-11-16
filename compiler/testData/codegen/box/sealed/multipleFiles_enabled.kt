@@ -2,23 +2,40 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // !LANGUAGE: +FreedomForSealedClasses
 
-// FILE: a.kt
+// FILE: Base.kt
 
 sealed class Base {
     class A : Base()
 }
 
-// FILE: b.kt
+// FILE: B.kt
 
 class B : Base()
 
-// FILE: c.kt
+// FILE: Container.kt
 
-fun getLetter(base: Base): String = when (base) {
-    is Base.A -> "O"
-    is B -> "K"
+class Containter {
+    class C : Base()
+
+    inner class D : Base()
+
+    val d = D()
+}
+
+// FILE: main.kt
+
+fun getValue(base: Base): Int = when (base) {
+    is Base.A -> 1
+    is B -> 2
+    is Containter.C -> 3
+    is Containter.D -> 4
 }
 
 fun box(): String {
-    return getLetter(Base.A()) + getLetter(B())
+    var res = 0
+    res += getValue(Base.A())
+    res += getValue(B())
+    res += getValue(Containter.C())
+    res += getValue(Containter().d)
+    return if (res == 10) "OK" else "Fail"
 }
