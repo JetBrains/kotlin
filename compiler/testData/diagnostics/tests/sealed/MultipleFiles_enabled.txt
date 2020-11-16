@@ -25,8 +25,10 @@ public sealed class Base {
 
 public final class Container {
     public constructor Container()
+    public final val anon: Base
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun someFun(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public final class C : Base {
