@@ -50,13 +50,14 @@ class BuilderFactoryForDuplicateSignatureDiagnostics(
     private val diagnostics: DiagnosticSink,
     moduleName: String,
     languageVersionSettings: LanguageVersionSettings,
+    useOldInlineClassesManglingScheme: Boolean,
     shouldGenerate: (JvmDeclarationOrigin) -> Boolean,
 ) : SignatureCollectingClassBuilderFactory(builderFactory, shouldGenerate) {
 
     private val mapAsmMethod: (FunctionDescriptor) -> Method = KotlinTypeMapper(
         // Avoid errors when some classes are not loaded for some reason
         bindingContext, ClassBuilderMode.LIGHT_CLASSES, moduleName, languageVersionSettings, isIrBackend = false,
-        useOldInlineClassesManglingScheme = false
+        useOldInlineClassesManglingScheme = useOldInlineClassesManglingScheme
     )::mapAsmMethod
 
     private val reportDiagnosticsTasks = ArrayList<() -> Unit>()

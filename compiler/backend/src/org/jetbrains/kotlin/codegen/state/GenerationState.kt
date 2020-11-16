@@ -322,6 +322,7 @@ class GenerationState private constructor(
                     else
                         BuilderFactoryForDuplicateSignatureDiagnostics(
                             it, bindingContext, diagnostics, this.moduleName, languageVersionSettings,
+                            useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
                             shouldGenerate = { origin -> !shouldOnlyCollectSignatures(origin) },
                         ).apply { duplicateSignatureFactory = this }
                 },
