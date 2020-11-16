@@ -14,14 +14,14 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -86,8 +86,17 @@ class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatur
         typeContext.hasNothingInNonContravariantPosition(type)
     }
 
+    private fun FirClassLikeSymbol<*>.toRegularClassSymbol(): FirRegularClassSymbol? = when (this) {
+        is FirRegularClassSymbol -> this
+        is FirTypeAliasSymbol -> {
+            val expandedType = fir.expandedTypeRef.coneType.fullyExpandedType(session) as? ConeClassLikeType
+            expandedType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol
+        }
+        else -> null
+    }
+
     private fun ConeClassLikeType.buildPossiblyInnerType(): PossiblyInnerConeType? =
-        buildPossiblyInnerType(lookupTag.toSymbol(session) as? FirRegularClassSymbol?, 0)
+        buildPossiblyInnerType(lookupTag.toSymbol(session)?.toRegularClassSymbol(), 0)
 
     private fun ConeClassLikeType.parentClassOrNull(): FirRegularClassSymbol? {
         val parentClassId = classId?.outerClassId ?: return null
