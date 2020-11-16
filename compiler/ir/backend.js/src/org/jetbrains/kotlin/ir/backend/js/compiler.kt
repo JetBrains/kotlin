@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
+import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -47,7 +48,8 @@ fun compile(
     dceDriven: Boolean = false,
     es6mode: Boolean = false,
     multiModule: Boolean = false,
-    relativeRequirePath: Boolean = false
+    relativeRequirePath: Boolean = false,
+    useStdlibCache: Boolean = false,
 ): CompilerResult {
     val irFactory = PersistentIrFactory()
 
@@ -69,6 +71,18 @@ fun compile(
 
     deserializer.postProcess()
     symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
+
+    if (useStdlibCache) {
+        // TODO maybe populate caches here? e.g. load fully, lower, save IC caches, and then load again?
+        // Try load stdlib lowered IR
+        prepareIcCaches(project, analyzer, configuration, allDependencies)
+
+        // Inject carriers, new declarations and mappings into the stdlib IrModule
+        //loadIrForIc()
+
+        // Remove stdlib from allModules
+//        allModules = allModules.subList(1, allModules.size)
+    }
 
     // This won't work incrementally
     allModules.forEach { module ->
@@ -99,9 +113,8 @@ fun compile(
         )
         return transformer.generateModule(allModules)
     } else {
-        // TODO need to use a special StageController here
+        lowerPreservingIcData(allModules, irFactory, context)
 
-        jsPhases.invokeToplevel(phaseConfig, context, allModules)
         val transformer = IrModuleToJsTransformer(
             context,
             mainArguments,
@@ -111,10 +124,7 @@ fun compile(
             relativeRequirePath = relativeRequirePath
         )
 
-        // TODO serialize the data
-        // All the declarations
-        // Mappings
-
+        // TODO stdlib code?
         return transformer.generateModule(allModules)
     }
 }
@@ -129,4 +139,39 @@ fun generateJsCode(
 
     val transformer = IrModuleToJsTransformer(context, null, true, nameTables)
     return transformer.generateModule(listOf(moduleFragment)).jsCode!!.mainModule
+}
+
+// Only allows to apply a lowering to the whole world and save the result
+class WholeWorldStageController : StageController() {
+    override var currentStage: Int = 0
+
+    // TODO assert lowered
+}
+
+fun lowerPreservingIcData(allModules: Iterable<IrModuleFragment>, irFactory: PersistentIrFactory, context: JsIrBackendContext) {
+    val controller = WholeWorldStageController()
+
+    irFactory.stageController = controller
+
+    // TODO what about other lowering?
+    val lowerings = loweringList.filter { it is DeclarationLowering || it is BodyLowering }
+
+    // TODO skip stdlib in lowerings
+    // Lower all the things
+    lowerings.forEachIndexed { i, lowering ->
+        controller.currentStage = i + 1
+        when (lowering) {
+            is DeclarationLowering ->
+                lowering.declarationTransformer(context).let { declarationTransformer ->
+                    allModules.forEach { declarationTransformer.lower(it) }
+                }
+            is BodyLowering ->
+                lowering.bodyLowering(context).let { bodyLoweringPass ->
+                    allModules.forEach { bodyLoweringPass.lower(it) }
+                }
+            // else -> TODO what about other lowerings?
+        }
+    }
+
+    controller.currentStage++
 }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.EnumEntryCarrier
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.name.Name
 
@@ -49,13 +50,13 @@ internal class PersistentIrEnumEntry(
     override val descriptor: ClassDescriptor
         get() = symbol.descriptor
 
-    override var correspondingClassField: IrClass? = null
+    override var correspondingClassField: IrClassSymbol? = null
 
     override var correspondingClass: IrClass?
-        get() = getCarrier().correspondingClassField
+        get() = getCarrier().correspondingClassField?.owner
         set(v) {
             if (correspondingClass !== v) {
-                setCarrier().correspondingClassField = v
+                setCarrier().correspondingClassField = v?.symbol
             }
         }
 
