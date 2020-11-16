@@ -16,7 +16,7 @@ open class HostManager(
 
     constructor(
             distribution: Distribution,
-            experimental: Boolean = false,
+            experimental: Boolean = false
     ) : this(distribution.subTargetProvider, experimental || distribution.experimentalEnabled)
 
     fun targetManager(userRequest: String? = null): TargetManager = TargetManagerImpl(userRequest, this)

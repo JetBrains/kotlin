@@ -466,7 +466,7 @@ open class KonanDynamicTest : KonanStandaloneTest() {
 
         val execResult = plugin.execKonanClang(project.testTarget, Action<ExecSpec> {
             workingDir = File(outputDirectory)
-            executable = clangTool
+            this@Action.executable = clangTool
             args = listOf(processCSource(),
                     "-c",
                     "-o", "${this@KonanDynamicTest.executable}.o",

@@ -21,5 +21,6 @@ tasks.named<KotlinCompile>("compileKotlin") {
 
 dependencies {
     api(project(":kotlin-stdlib"))
-    implementation(project(":kotlin-compiler"))
+    implementation(project(project.project(":kotlin-native").extra["kotlinCompilerModule"] as Map<String, *>))
+    implementation(project(":compiler:util"))
 }

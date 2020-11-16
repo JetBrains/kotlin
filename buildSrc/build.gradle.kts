@@ -106,6 +106,10 @@ sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourc
     kotlin.srcDir("../kotlin-native/build-tools/src/main/kotlin")
     kotlin.srcDir("../kotlin-native/build-tools/src/tmp/kotlin")
     kotlin.srcDir("../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
+    kotlin.srcDir("../compiler/util-klib/src")
+    kotlin.srcDir(project.kotlinNativeVersionSrc())
+    kotlin.srcDir("../native/utils/src")
+    kotlin.exclude("**/benchmark/SwiftBenchmarkingPlugin.kt")
 }
 
 tasks.validatePlugins.configure {
@@ -148,8 +152,6 @@ dependencies {
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
-    api("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
-
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 }
 
@@ -167,7 +169,10 @@ java {
 
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf(
-        "-Xopt-in=kotlin.RequiresOptIn", "-Xskip-runtime-version-check", "-Xsuppress-version-warnings"
+        "-Xopt-in=kotlin.RequiresOptIn",
+        "-Xskip-runtime-version-check",
+        "-Xsuppress-version-warnings",
+        "-Xopt-in=kotlin.ExperimentalStdlibApi"
     )
 }
 
