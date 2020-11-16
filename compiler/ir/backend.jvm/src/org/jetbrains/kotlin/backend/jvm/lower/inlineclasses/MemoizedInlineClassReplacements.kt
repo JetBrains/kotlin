@@ -222,7 +222,7 @@ class MemoizedInlineClassReplacements(
         if (noFakeOverride) {
             isFakeOverride = false
         }
-        val useOldManglingScheme = context.state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
+        val useOldManglingScheme = context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
         name = mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
         if (
             !useOldManglingScheme &&

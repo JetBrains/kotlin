@@ -362,17 +362,7 @@ class DescriptorSerializer private constructor(
             }
 
             if (descriptor.hasInlineClassTypesInSignature()) {
-                if (extension.useOldInlineClassesManglingScheme()) {
-                    builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
-                } else {
-                    builder.addVersionRequirement(
-                        writeVersionRequirement(
-                            1, 4, 30,
-                            ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION,
-                            this
-                        )
-                    )
-                }
+                builder.addVersionRequirement(writeVersionRequirement(LanguageFeature.InlineClasses))
             }
         }
 

@@ -211,18 +211,8 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
                 "test.Ctor.<init>",
                 "test.Foo",
                 "test.Bar",
-                "test.simpleProp"
-            )
-        )
-    }
-
-    fun testInlineClassesAndRelevantDeclarations1430() {
-        doTest(
-            VersionRequirement.Version(1, 4, 30), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, null,
-            fqNamesWithRequirements = listOf(
-                "test.simpleFun",
-                "test.aliasedFun",
                 "test.result",
+                "test.simpleProp"
             )
         )
     }

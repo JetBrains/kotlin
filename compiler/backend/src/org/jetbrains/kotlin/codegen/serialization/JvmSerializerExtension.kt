@@ -61,7 +61,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
     override val metadataVersion = state.metadataVersion
     private val jvmDefaultMode = state.jvmDefaultMode
     private val approximator = state.typeApproximator
-    private val useOldManglingScheme = state.configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
+    private val useOldManglingScheme = state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
     override fun shouldSerializeFunction(descriptor: FunctionDescriptor): Boolean {
@@ -217,6 +217,13 @@ class JvmSerializerExtension @JvmOverloads constructor(
         ) {
             versionRequirementTable?.writeFunctionNameManglingForReturnTypeRequirement(proto::addVersionRequirement)
         }
+
+        if ((requiresFunctionNameManglingForReturnType(descriptor) ||
+                    requiresFunctionNameManglingForParameterTypes(descriptor)) &&
+            !DescriptorUtils.hasJvmNameAnnotation(descriptor) && !useOldManglingScheme
+        ) {
+            versionRequirementTable?.writeNewFunctionNameManglingRequirement(proto::addVersionRequirement)
+        }
     }
 
     private fun MutableVersionRequirementTable.writeInlineParameterNullCheckRequirement(add: (Int) -> Unit) {
@@ -230,6 +237,12 @@ class JvmSerializerExtension @JvmOverloads constructor(
     private fun MutableVersionRequirementTable.writeFunctionNameManglingForReturnTypeRequirement(add: (Int) -> Unit) {
         if (functionsWithInlineClassReturnTypesMangled) {
             add(writeVersionRequirement(1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, this))
+        }
+    }
+
+    private fun MutableVersionRequirementTable.writeNewFunctionNameManglingRequirement(add: (Int) -> Unit) {
+        if (languageVersionSettings.languageVersion.major == 1 && languageVersionSettings.languageVersion.minor >= 4) {
+            add(writeVersionRequirement(1, 4, 30, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this))
         }
     }
 
@@ -280,6 +293,9 @@ class JvmSerializerExtension @JvmOverloads constructor(
         }
 
         if (!DescriptorUtils.hasJvmNameAnnotation(descriptor) && requiresFunctionNameManglingForReturnType(descriptor)) {
+            if (!useOldManglingScheme) {
+                versionRequirementTable?.writeNewFunctionNameManglingRequirement(proto::addVersionRequirement)
+            }
             versionRequirementTable?.writeFunctionNameManglingForReturnTypeRequirement(proto::addVersionRequirement)
         }
     }
@@ -401,6 +417,4 @@ class JvmSerializerExtension @JvmOverloads constructor(
     override fun releaseCoroutines(): Boolean {
         return languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
     }
-
-    override fun useOldInlineClassesManglingScheme(): Boolean = useOldManglingScheme
 }

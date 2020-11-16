@@ -195,6 +195,9 @@ class GenerationState private constructor(
 
     val languageVersionSettings = configuration.languageVersionSettings
 
+    val useOldManglingSchemeForFunctionsWithInlineClassesInSignatures =
+        configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
+
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     val runtimeStringConcat =
         if (target.bytecodeVersion >= JvmTarget.JVM_9.bytecodeVersion)
@@ -214,7 +217,7 @@ class GenerationState private constructor(
         classBuilderMode,
         this.moduleName,
         languageVersionSettings,
-        configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME),
+        useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
         IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
         target,
         isIrBackend
