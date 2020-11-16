@@ -792,12 +792,20 @@ task compdb(type: Copy) {
 
 if (project.hasProperty("anotherDistro")) {
     targetList.each { targetName ->
-        task "${targetName}CheckAbiCompatibility"(type: CompareDistributionSignatures) {
+        task "${targetName}CheckPlatformAbiCompatibility"(type: CompareDistributionSignatures) {
             dependsOn "${targetName}PlatformLibs"
 
-            target = targetName
+            libraries = new CompareDistributionSignatures.Libraries.Platform(targetName)
             oldDistribution = project.findProperty("anotherDistro")
             onMismatchMode = CompareDistributionSignatures.OnMismatchMode.FAIL
         }
+    }
+
+    task "checkStdlibAbiCompatibility"(type: CompareDistributionSignatures) {
+        dependsOn "distRuntime"
+
+        libraries = CompareDistributionSignatures.Libraries.Standard.INSTANCE
+        oldDistribution = project.findProperty("anotherDistro")
+        onMismatchMode = CompareDistributionSignatures.OnMismatchMode.FAIL
     }
 }

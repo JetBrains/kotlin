@@ -13,9 +13,6 @@ import java.io.File
 open class CompareDistributionSignatures : DefaultTask() {
 
     @Input
-    lateinit var target: String
-
-    @Input
     lateinit var oldDistribution: String
 
     private val newDistribution: String =
@@ -31,22 +28,52 @@ open class CompareDistributionSignatures : DefaultTask() {
     @Input
     var onMismatchMode: OnMismatchMode = OnMismatchMode.NOTIFY
 
+    sealed class Libraries {
+        object Standard : Libraries()
+
+        class Platform(val target: String) : Libraries()
+    }
+
+    @Input
+    lateinit var libraries: Libraries
+
+    private fun computeDiff(): KlibDiff = when (val libraries = libraries) {
+        Libraries.Standard -> KlibDiff(
+                emptyList(),
+                emptyList(),
+                listOf(RemainingLibrary(newDistribution.stdlib(), oldDistribution.stdlib()))
+        )
+        is Libraries.Platform -> {
+            val oldPlatformLibs = oldDistribution.platformLibs(libraries.target)
+            val oldPlatformLibsNames = oldPlatformLibs.list().toSet()
+            val newPlatformLibs = newDistribution.platformLibs(libraries.target)
+            val newPlatformLibsNames = newPlatformLibs.list().toSet()
+            KlibDiff(
+                    (newPlatformLibsNames - oldPlatformLibsNames).map(newPlatformLibs::resolve),
+                    (oldPlatformLibsNames - newPlatformLibsNames).map(oldPlatformLibs::resolve),
+                    oldPlatformLibsNames.intersect(newPlatformLibsNames).map {
+                        RemainingLibrary(newPlatformLibs.resolve(it), oldPlatformLibs.resolve(it))
+                    }
+            )
+        }
+    }
+
     @TaskAction
     fun run() {
-        val klibs = getKlibs(oldDistribution, newDistribution)
-        if (klibs.missingLibs.isNotEmpty()) {
+        val platformLibsDiff = computeDiff()
+        if (platformLibsDiff.missingLibs.isNotEmpty()) {
             messageBuilder.apply {
-                appendln("Following libraries are missing in the new distro:")
-                klibs.missingLibs.forEach { appendln(it) }
+                appendln("Following platform libraries are missing in the new distro:")
+                platformLibsDiff.missingLibs.forEach { appendln(it) }
             }
         }
-        if (klibs.newLibs.isNotEmpty()) {
+        if (platformLibsDiff.newLibs.isNotEmpty()) {
             messageBuilder.apply {
-                appendln("Following libraries were added:")
-                klibs.newLibs.forEach { appendln(it) }
+                appendln("Following platform libraries were added:")
+                platformLibsDiff.newLibs.forEach { appendln(it) }
             }
         }
-        for ((new, old) in klibs.remainingLibs) {
+        for ((new, old) in platformLibsDiff.remainingLibs) {
             val result = compareSignatures(new, old)
             if (result.run { newKlibOnly.isNotEmpty() || oldKlibOnly.isNotEmpty() }) {
                 reportMismatch(result, new.name)
@@ -92,19 +119,6 @@ open class CompareDistributionSignatures : DefaultTask() {
     private fun String.platformLibs(target: String): File =
             File("$this/klib/platform/$target")
 
-    private fun getKlibs(oldDistribution: String, newDistribution: String): KlibDiff {
-        val oldPlatformLibs = oldDistribution.platformLibs(target)
-        val oldPlatformLibsNames = oldPlatformLibs.list().toSet()
-        val newPlatformLibs = newDistribution.platformLibs(target)
-        val newPlatformLibsNames = newPlatformLibs.list().toSet()
-        return KlibDiff(
-                (newPlatformLibsNames - oldPlatformLibsNames).map(newPlatformLibs::resolve),
-                (oldPlatformLibsNames - newPlatformLibsNames).map(oldPlatformLibs::resolve),
-                oldPlatformLibsNames.intersect(newPlatformLibsNames).map {
-                    RemainingLibrary(newPlatformLibs.resolve(it), oldPlatformLibs.resolve(it))
-                } + RemainingLibrary(newDistribution.stdlib(), oldDistribution.stdlib())
-        )
-    }
 
     private fun getKlibSignatures(klib: File): List<String> {
         val tool = if (HostManager.hostIsMingw) "klib.bat" else "klib"
