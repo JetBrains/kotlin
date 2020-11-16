@@ -9,12 +9,15 @@ import org.jetbrains.kotlin.fir.asReversedFrozen
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -53,8 +56,7 @@ internal abstract class FirBaseTowerResolveTask(
     private val manager: TowerResolveManager,
     protected val towerDataElementsForName: TowerDataElementsForName,
     private val collector: CandidateCollector,
-    private val candidateFactory: CandidateFactory,
-    private val stubReceiverCandidateFactory: CandidateFactory? = null
+    private val candidateFactory: CandidateFactory
 ) {
     protected val session get() = components.session
 
@@ -131,7 +133,6 @@ internal abstract class FirBaseTowerResolveTask(
         val result = handler.handleLevel(
             collector,
             candidateFactory,
-            stubReceiverCandidateFactory,
             callInfo,
             explicitReceiverKind,
             finalGroup,
@@ -149,14 +150,12 @@ internal open class FirTowerResolveTask(
     towerDataElementsForName: TowerDataElementsForName,
     collector: CandidateCollector,
     candidateFactory: CandidateFactory,
-    stubReceiverCandidateFactory: CandidateFactory? = null
 ) : FirBaseTowerResolveTask(
     components,
     manager,
     towerDataElementsForName,
     collector,
     candidateFactory,
-    stubReceiverCandidateFactory
 ) {
 
     suspend fun runResolverForQualifierReceiver(
@@ -178,8 +177,17 @@ internal open class FirTowerResolveTask(
 
         if (resolvedQualifier.symbol != null) {
             val typeRef = resolvedQualifier.typeRef
-            if (info.callKind == CallKind.CallableReference && info.stubReceiver != null ) {
-                runResolverForExpressionReceiver(info, info.stubReceiver, parentGroup = TowerGroup.QualifierValue)
+            if (info.callKind == CallKind.CallableReference && info.lhs is DoubleColonLHS.Type) {
+                val stubReceiver = buildExpressionStub {
+                    source = info.explicitReceiver?.source
+                    this.typeRef = buildResolvedTypeRef {
+                        type = info.lhs.type
+                    }
+                }
+
+                val stubReceiverInfo = info.replaceExplicitReceiver(stubReceiver)
+
+                runResolverForExpressionReceiver(stubReceiverInfo, stubReceiver, parentGroup = TowerGroup.QualifierValue)
             }
 
             // NB: yet built-in Unit is used for "no-value" type
@@ -197,7 +205,7 @@ internal open class FirTowerResolveTask(
         val callableScope = qualifierReceiver.callableScope() ?: return
         processLevel(
             callableScope.toScopeTowerLevel(includeInnerConstructors = false),
-            info.noStubReceiver(), TowerGroup.Qualifier
+            info, TowerGroup.Qualifier
         )
     }
 
@@ -212,7 +220,7 @@ internal open class FirTowerResolveTask(
         val scope = qualifierReceiver.classifierScope() ?: return
         val group = if (prioritized) TowerGroup.ClassifierPrioritized else TowerGroup.Classifier
         processLevel(
-            scope.toScopeTowerLevel(includeInnerConstructors = false), info.noStubReceiver(),
+            scope.toScopeTowerLevel(includeInnerConstructors = false), info,
             group
         )
     }

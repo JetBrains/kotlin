@@ -52,15 +52,11 @@ data class CallInfo(
     // Four properties for callable references only
     val expectedType: ConeKotlinType? = null,
     val outerCSBuilder: ConstraintSystemBuilder? = null,
-    val lhs: DoubleColonLHS? = null,
-    val stubReceiver: FirExpression? = null
+    val lhs: DoubleColonLHS? = null
 ) {
     val arguments: List<FirExpression> get() = argumentList.arguments
 
     val argumentCount get() = arguments.size
-
-    fun noStubReceiver(): CallInfo =
-        if (stubReceiver == null) this else copy(stubReceiver = null)
 
     fun replaceWithVariableAccess(): CallInfo =
         copy(callKind = CallKind.VariableAccess, typeArguments = emptyList(), argumentList = FirEmptyArgumentList)

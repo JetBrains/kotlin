@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.constructClassType
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -27,9 +25,6 @@ internal class CandidateFactoriesAndCollectors(
     // Common calls
     val candidateFactory: CandidateFactory,
     val resultCollector: CandidateCollector,
-
-    // Callable references
-    val stubReceiverCandidateFactory: CandidateFactory?,
 )
 
 
@@ -41,7 +36,6 @@ internal class TowerLevelHandler {
     fun handleLevel(
         collector: CandidateCollector,
         candidateFactory: CandidateFactory,
-        stubReceiverCandidateFactory: CandidateFactory? = null,
         info: CallInfo,
         explicitReceiverKind: ExplicitReceiverKind,
         group: TowerGroup,
@@ -50,7 +44,7 @@ internal class TowerLevelHandler {
         processResult = ProcessorAction.NONE
         val processor =
             TowerScopeLevelProcessor(
-                info.explicitReceiver,
+                info,
                 explicitReceiverKind,
                 collector,
                 candidateFactory,
@@ -69,22 +63,7 @@ internal class TowerLevelHandler {
                 towerLevel.processFunctions(info.name, processor)
             }
             CallKind.CallableReference -> {
-                val stubReceiver = info.stubReceiver
-                if (stubReceiver != null) {
-                    val stubProcessor = TowerScopeLevelProcessor(
-                        info.explicitReceiver,
-                        explicitReceiverKind,
-                        collector,
-                        stubReceiverCandidateFactory!!, group
-                    )
-                    towerLevel.processFunctionsAndProperties(info.name, stubProcessor)
-                    // NB: we don't perform this for implicit Unit
-                    if (!collector.isSuccess() && info.explicitReceiver?.typeRef !is FirImplicitBuiltinTypeRef) {
-                        towerLevel.processFunctionsAndProperties(info.name, processor)
-                    }
-                } else {
-                    towerLevel.processFunctionsAndProperties(info.name, processor)
-                }
+                towerLevel.processFunctionsAndProperties(info.name, processor)
             }
             else -> {
                 throw AssertionError("Unsupported call kind in tower resolver: ${info.callKind}")
@@ -135,7 +114,7 @@ internal class TowerLevelHandler {
 }
 
 private class TowerScopeLevelProcessor(
-    val explicitReceiver: FirExpression?,
+    val callInfo: CallInfo,
     val explicitReceiverKind: ExplicitReceiverKind,
     val resultCollector: CandidateCollector,
     val candidateFactory: CandidateFactory,
@@ -151,7 +130,7 @@ private class TowerScopeLevelProcessor(
         // Check explicit extension receiver for default package members
         if (symbol is FirNamedFunctionSymbol && dispatchReceiverValue == null &&
             extensionReceiverValue != null &&
-            explicitReceiver !is FirResolvedQualifier &&
+            callInfo.explicitReceiver !is FirResolvedQualifier &&
             symbol.callableId.packageName.startsWith(defaultPackage)
         ) {
             val extensionReceiverType = extensionReceiverValue.type as? ConeClassLikeType
@@ -175,6 +154,7 @@ private class TowerScopeLevelProcessor(
         // ---
         resultCollector.consumeCandidate(
             group, candidateFactory.createCandidate(
+                callInfo,
                 symbol,
                 explicitReceiverKind,
                 scope,

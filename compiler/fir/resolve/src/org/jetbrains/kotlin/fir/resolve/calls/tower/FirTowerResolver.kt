@@ -52,7 +52,6 @@ class FirTowerResolver(
             TowerDataElementsForName(info.name, components.towerDataContext),
             candidateFactoriesAndCollectors.resultCollector,
             candidateFactoriesAndCollectors.candidateFactory,
-            candidateFactoriesAndCollectors.stubReceiverCandidateFactory
         )
         when (val receiver = info.explicitReceiver) {
             is FirResolvedQualifier -> {
@@ -103,6 +102,7 @@ class FirTowerResolver(
             resultCollector.consumeCandidate(
                 TowerGroup.Member,
                 candidateFactory.createCandidate(
+                    info,
                     it,
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
                     scope,
@@ -123,16 +123,10 @@ class FirTowerResolver(
         context: ResolutionContext
     ): CandidateFactoriesAndCollectors {
         val candidateFactory = CandidateFactory(context, info)
-        val stubReceiverCandidateFactory =
-            if (info.callKind == CallKind.CallableReference && info.stubReceiver != null)
-                candidateFactory.replaceCallInfo(info.replaceExplicitReceiver(info.stubReceiver))
-            else
-                null
 
         return CandidateFactoriesAndCollectors(
             candidateFactory,
-            collector,
-            stubReceiverCandidateFactory
+            collector
         )
     }
 

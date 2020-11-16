@@ -27,7 +27,7 @@ fun testA(a: A) {
 
 fun testB(b: B) {
     val call1 = call(B::foo)
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>call1<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>call1<!>
 
     val call2 = call(B()::foo)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>call2<!>

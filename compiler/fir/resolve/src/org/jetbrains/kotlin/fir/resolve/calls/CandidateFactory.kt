@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
 class CandidateFactory private constructor(
     val context: ResolutionContext,
-    val callInfo: CallInfo,
     private val baseSystem: ConstraintStorage
 ) {
 
@@ -37,17 +36,10 @@ class CandidateFactory private constructor(
         }
     }
 
-    constructor(context: ResolutionContext, callInfo: CallInfo) :
-            this(context, callInfo, buildBaseSystem(context, callInfo))
-
-    fun replaceCallInfo(callInfo: CallInfo): CandidateFactory {
-        if (this.callInfo.arguments.size != callInfo.arguments.size) {
-            throw AssertionError("Incorrect replacement of call info in CandidateFactory")
-        }
-        return CandidateFactory(context, callInfo, baseSystem)
-    }
+    constructor(context: ResolutionContext, callInfo: CallInfo) : this(context, buildBaseSystem(context, callInfo))
 
     fun createCandidate(
+        callInfo: CallInfo,
         symbol: AbstractFirBasedSymbol<*>,
         explicitReceiverKind: ExplicitReceiverKind,
         scope: FirScope?,
@@ -65,7 +57,7 @@ class CandidateFactory private constructor(
         )
     }
 
-    fun createErrorCandidate(diagnostic: ConeDiagnostic): Candidate {
+    fun createErrorCandidate(callInfo: CallInfo, diagnostic: ConeDiagnostic): Candidate {
         val symbol: AbstractFirBasedSymbol<*> = when (callInfo.callKind) {
             is CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic)
             is CallKind.Function,

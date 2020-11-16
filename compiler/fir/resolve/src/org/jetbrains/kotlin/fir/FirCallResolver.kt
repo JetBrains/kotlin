@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
@@ -400,7 +399,9 @@ class FirCallResolver(
             }
         }
         if (constructorSymbol == null) return null
-        val candidate = CandidateFactory(transformer.resolutionContext, callInfo).createCandidate(
+        val candidateFactory = CandidateFactory(transformer.resolutionContext, callInfo)
+        val candidate = candidateFactory.createCandidate(
+            callInfo,
             constructorSymbol!!,
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             scope = null
@@ -471,12 +472,6 @@ class FirCallResolver(
             expectedType,
             outerConstraintSystemBuilder,
             lhs,
-            stubReceiver = if (lhs !is DoubleColonLHS.Type) null else buildExpressionStub {
-                source = callableReferenceAccess.source
-                typeRef = buildResolvedTypeRef {
-                    type = lhs.type
-                }
-            },
         )
     }
 
@@ -547,7 +542,7 @@ class FirCallResolver(
         source: FirSourceElement?,
         name: Name
     ): FirErrorReferenceWithCandidate {
-        val candidate = CandidateFactory(transformer.resolutionContext, callInfo).createErrorCandidate(diagnostic)
+        val candidate = CandidateFactory(transformer.resolutionContext, callInfo).createErrorCandidate(callInfo, diagnostic)
         components.resolutionStageRunner.processCandidate(candidate, transformer.resolutionContext, stopOnFirstError = false)
         return FirErrorReferenceWithCandidate(source, name, candidate, diagnostic)
     }
