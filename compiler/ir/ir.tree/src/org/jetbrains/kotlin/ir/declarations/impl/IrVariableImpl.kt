@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.ir.IrFlags
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -58,16 +57,16 @@ class IrVariableImpl(
         symbol.bind(this)
     }
 
-    private val flags = isVar.toFlag(IrFlags.IS_VAR) or isConst.toFlag(IrFlags.IS_CONST) or isLateinit.toFlag(IrFlags.IS_LATEINIT)
+    private val flags = (isVar.toFlag(IS_VAR_BIT) or isConst.toFlag(IS_CONST_BIT) or isLateinit.toFlag(IS_LATEINIT_BIT)).toByte()
 
     override val isVar: Boolean
-        get() = flags.getFlag(IrFlags.IS_VAR)
+        get() = flags.toInt().getFlag(IS_VAR_BIT)
 
     override val isConst: Boolean
-        get() = flags.getFlag(IrFlags.IS_CONST)
+        get() = flags.toInt().getFlag(IS_CONST_BIT)
 
     override val isLateinit: Boolean
-        get() = flags.getFlag(IrFlags.IS_LATEINIT)
+        get() = flags.toInt().getFlag(IS_LATEINIT_BIT)
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: VariableDescriptor
@@ -93,5 +92,11 @@ class IrVariableImpl(
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         initializer = initializer?.transform(transformer, data)
+    }
+
+    private companion object {
+        const val IS_VAR_BIT = 1 shl 0
+        const val IS_CONST_BIT = 1 shl 1
+        const val IS_LATEINIT_BIT = 1 shl 2
     }
 }

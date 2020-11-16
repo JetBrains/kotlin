@@ -46,40 +46,40 @@ class IrClassImpl(
         symbol.bind(this)
     }
 
-    private var flags: Int = modality.toFlags() or
-            isCompanion.toFlag(IrFlags.IS_COMPANION) or isInner.toFlag(IrFlags.IS_INNER) or isData.toFlag(IrFlags.IS_DATA) or
-            isExternal.toFlag(IrFlags.IS_EXTERNAL) or isInline.toFlag(IrFlags.IS_INLINE) or isExpect.toFlag(IrFlags.IS_EXPECT) or
-            isFun.toFlag(IrFlags.IS_FUN)
+    private var flags = (modality.toFlags() or
+            isCompanion.toFlag(IS_COMPANION_BIT) or isInner.toFlag(IS_INNER_BIT) or isData.toFlag(IS_DATA_BIT) or
+            isExternal.toFlag(IS_EXTERNAL_BIT) or isInline.toFlag(IS_INLINE_BIT) or isExpect.toFlag(IS_EXPECT_BIT) or
+            isFun.toFlag(IS_FUN_BIT)).toShort()
 
     override val factory: IrFactory
         get() = IrFactoryImpl
 
     override var modality: Modality
-        get() = flags.toModality()
+        get() = flags.toInt().toModality()
         set(value) {
-            flags = flags.setModality(value)
+            flags = flags.toInt().setModality(value).toShort()
         }
 
     override val isCompanion: Boolean
-        get() = flags.getFlag(IrFlags.IS_COMPANION)
+        get() = flags.toInt().getFlag(IS_COMPANION_BIT)
 
     override val isInner: Boolean
-        get() = flags.getFlag(IrFlags.IS_INNER)
+        get() = flags.toInt().getFlag(IS_INNER_BIT)
 
     override val isData: Boolean
-        get() = flags.getFlag(IrFlags.IS_DATA)
+        get() = flags.toInt().getFlag(IS_DATA_BIT)
 
     override val isExternal: Boolean
-        get() = flags.getFlag(IrFlags.IS_EXTERNAL)
+        get() = flags.toInt().getFlag(IS_EXTERNAL_BIT)
 
     override val isInline: Boolean
-        get() = flags.getFlag(IrFlags.IS_INLINE)
+        get() = flags.toInt().getFlag(IS_INLINE_BIT)
 
     override val isExpect: Boolean
-        get() = flags.getFlag(IrFlags.IS_EXPECT)
+        get() = flags.toInt().getFlag(IS_EXPECT_BIT)
 
     override val isFun: Boolean
-        get() = flags.getFlag(IrFlags.IS_FUN)
+        get() = flags.toInt().getFlag(IS_FUN_BIT)
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
@@ -99,4 +99,14 @@ class IrClassImpl(
     override var metadata: MetadataSource? = null
 
     override var attributeOwnerId: IrAttributeContainer = this
+
+    private companion object {
+        const val IS_COMPANION_BIT = 1 shl (IrFlags.MODALITY_BITS + 0)
+        const val IS_INNER_BIT = 1 shl (IrFlags.MODALITY_BITS + 1)
+        const val IS_DATA_BIT = 1 shl (IrFlags.MODALITY_BITS + 2)
+        const val IS_EXTERNAL_BIT = 1 shl (IrFlags.MODALITY_BITS + 3)
+        const val IS_INLINE_BIT = 1 shl (IrFlags.MODALITY_BITS + 4)
+        const val IS_EXPECT_BIT = 1 shl (IrFlags.MODALITY_BITS + 5)
+        const val IS_FUN_BIT = 1 shl (IrFlags.MODALITY_BITS + 6)
+    }
 }

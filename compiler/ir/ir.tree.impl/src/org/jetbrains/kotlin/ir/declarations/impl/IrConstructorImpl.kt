@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.ir.IrFlags
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -50,20 +49,20 @@ class IrConstructorImpl(
         symbol.bind(this)
     }
 
-    val flags: Int = isInline.toFlag(IrFlags.IS_INLINE) or isExternal.toFlag(IrFlags.IS_EXTERNAL) or
-            isPrimary.toFlag(IrFlags.IS_PRIMARY) or isExpect.toFlag(IrFlags.IS_EXPECT)
+    val flags = (isInline.toFlag(IS_INLINE_BIT) or isExternal.toFlag(IS_EXTERNAL_BIT) or
+            isPrimary.toFlag(IS_PRIMARY_BIT) or isExpect.toFlag(IS_EXPECT_BIT)).toByte()
 
     override val isInline: Boolean
-        get() = flags.getFlag(IrFlags.IS_INLINE)
+        get() = flags.toInt().getFlag(IS_INLINE_BIT)
 
     override val isExternal: Boolean
-        get() = flags.getFlag(IrFlags.IS_EXTERNAL)
+        get() = flags.toInt().getFlag(IS_EXTERNAL_BIT)
 
     override val isPrimary: Boolean
-        get() = flags.getFlag(IrFlags.IS_PRIMARY)
+        get() = flags.toInt().getFlag(IS_PRIMARY_BIT)
 
     override val isExpect: Boolean
-        get() = flags.getFlag(IrFlags.IS_EXPECT)
+        get() = flags.toInt().getFlag(IS_EXPECT_BIT)
 
     override val factory: IrFactory
         get() = IrFactoryImpl
@@ -91,4 +90,11 @@ class IrConstructorImpl(
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassConstructorDescriptor
         get() = symbol.descriptor
+
+    private companion object {
+        const val IS_INLINE_BIT = 1 shl 0
+        const val IS_EXTERNAL_BIT = 1 shl 1
+        const val IS_PRIMARY_BIT = 1 shl 2
+        const val IS_EXPECT_BIT = 1 shl 3
+    }
 }

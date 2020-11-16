@@ -33,35 +33,35 @@ abstract class IrPropertyCommonImpl(
     override var origin: IrDeclarationOrigin,
     override val name: Name,
     override var visibility: DescriptorVisibility,
-    protected var flags: Int,
+    protected var flags: Short,
     override val containerSource: DeserializedContainerSource?,
 ) : IrProperty() {
     override val factory: IrFactory
         get() = IrFactoryImpl
 
     override var modality: Modality
-        get() = flags.toModality()
+        get() = flags.toInt().toModality()
         set(value) {
-            flags = flags.setModality(value)
+            flags = flags.toInt().setModality(value).toShort()
         }
 
     override val isVar: Boolean
-        get() = flags.getFlag(IrFlags.IS_VAR)
+        get() = flags.toInt().getFlag(IS_VAR_BIT)
 
     override val isConst: Boolean
-        get() = flags.getFlag(IrFlags.IS_CONST)
+        get() = flags.toInt().getFlag(IS_CONST_BIT)
 
     override val isLateinit: Boolean
-        get() = flags.getFlag(IrFlags.IS_LATEINIT)
+        get() = flags.toInt().getFlag(IS_LATEINIT_BIT)
 
     override val isDelegated: Boolean
-        get() = flags.getFlag(IrFlags.IS_DELEGATED)
+        get() = flags.toInt().getFlag(IS_DELEGATED_BIT)
 
     override val isExternal: Boolean
-        get() = flags.getFlag(IrFlags.IS_EXTERNAL)
+        get() = flags.toInt().getFlag(IS_EXTERNAL_BIT)
 
     override val isExpect: Boolean
-        get() = flags.getFlag(IrFlags.IS_EXPECT)
+        get() = flags.toInt().getFlag(IS_EXPECT_BIT)
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
@@ -75,6 +75,16 @@ abstract class IrPropertyCommonImpl(
     override var metadata: MetadataSource? = null
 
     override var attributeOwnerId: IrAttributeContainer = this
+
+    protected companion object {
+        const val IS_VAR_BIT = 1 shl (IrFlags.MODALITY_BITS + 0)
+        const val IS_CONST_BIT = 1 shl (IrFlags.MODALITY_BITS + 1)
+        const val IS_LATEINIT_BIT = 1 shl (IrFlags.MODALITY_BITS + 2)
+        const val IS_DELEGATED_BIT = 1 shl (IrFlags.MODALITY_BITS + 3)
+        const val IS_EXTERNAL_BIT = 1 shl (IrFlags.MODALITY_BITS + 4)
+        const val IS_EXPECT_BIT = 1 shl (IrFlags.MODALITY_BITS + 5)
+        const val IS_FAKE_OVERRIDE_BIT = 1 shl (IrFlags.MODALITY_BITS + 6)
+    }
 }
 
 class IrPropertyImpl(
@@ -95,10 +105,10 @@ class IrPropertyImpl(
     containerSource: DeserializedContainerSource? = null,
 ) : IrPropertyCommonImpl(
     startOffset, endOffset, origin, name, visibility,
-    modality.toFlags() or
-            isVar.toFlag(IrFlags.IS_VAR) or isConst.toFlag(IrFlags.IS_CONST) or isLateinit.toFlag(IrFlags.IS_LATEINIT) or
-            isDelegated.toFlag(IrFlags.IS_DELEGATED) or isExternal.toFlag(IrFlags.IS_EXTERNAL) or isExpect.toFlag(IrFlags.IS_EXPECT) or
-            isFakeOverride.toFlag(IrFlags.IS_FAKE_OVERRIDE),
+    (modality.toFlags() or
+            isVar.toFlag(IS_VAR_BIT) or isConst.toFlag(IS_CONST_BIT) or isLateinit.toFlag(IS_LATEINIT_BIT) or
+            isDelegated.toFlag(IS_DELEGATED_BIT) or isExternal.toFlag(IS_EXTERNAL_BIT) or isExpect.toFlag(IS_EXPECT_BIT) or
+            isFakeOverride.toFlag(IS_FAKE_OVERRIDE_BIT)).toShort(),
     containerSource
 ) {
     init {
@@ -106,7 +116,7 @@ class IrPropertyImpl(
     }
 
     override val isFakeOverride: Boolean
-        get() = flags.getFlag(IrFlags.IS_FAKE_OVERRIDE)
+        get() = flags.toInt().getFlag(IS_FAKE_OVERRIDE_BIT)
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor
@@ -128,9 +138,9 @@ class IrFakeOverridePropertyImpl(
     isExpect: Boolean,
 ) : IrPropertyCommonImpl(
     startOffset, endOffset, origin, name, visibility,
-    modality.toFlags() or
-            isVar.toFlag(IrFlags.IS_VAR) or isConst.toFlag(IrFlags.IS_CONST) or isLateinit.toFlag(IrFlags.IS_LATEINIT) or
-            isDelegated.toFlag(IrFlags.IS_DELEGATED) or isExternal.toFlag(IrFlags.IS_EXTERNAL) or isExpect.toFlag(IrFlags.IS_EXPECT),
+    (modality.toFlags() or
+            isVar.toFlag(IS_VAR_BIT) or isConst.toFlag(IS_CONST_BIT) or isLateinit.toFlag(IS_LATEINIT_BIT) or
+            isDelegated.toFlag(IS_DELEGATED_BIT) or isExternal.toFlag(IS_EXTERNAL_BIT) or isExpect.toFlag(IS_EXPECT_BIT)).toShort(),
     containerSource = null,
 ), IrFakeOverrideProperty {
     override val isFakeOverride: Boolean

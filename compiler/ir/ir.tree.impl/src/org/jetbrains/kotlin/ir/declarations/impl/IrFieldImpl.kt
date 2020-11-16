@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.ir.IrFlags
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -46,19 +45,19 @@ class IrFieldImpl(
         symbol.bind(this)
     }
 
-    private val flags = isFinal.toFlag(IrFlags.IS_FINAL) or isExternal.toFlag(IrFlags.IS_EXTERNAL) or isStatic.toFlag(IrFlags.IS_STATIC)
+    private val flags = (isFinal.toFlag(IS_FINAL_BIT) or isExternal.toFlag(IS_EXTERNAL_BIT) or isStatic.toFlag(IS_STATIC_BIT)).toByte()
 
     override val factory: IrFactory
         get() = IrFactoryImpl
 
     override val isFinal: Boolean
-        get() = flags.getFlag(IrFlags.IS_FINAL)
+        get() = flags.toInt().getFlag(IS_FINAL_BIT)
 
     override val isExternal: Boolean
-        get() = flags.getFlag(IrFlags.IS_EXTERNAL)
+        get() = flags.toInt().getFlag(IS_EXTERNAL_BIT)
 
     override val isStatic: Boolean
-        get() = flags.getFlag(IrFlags.IS_STATIC)
+        get() = flags.toInt().getFlag(IS_STATIC_BIT)
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
@@ -72,4 +71,10 @@ class IrFieldImpl(
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 
     override var metadata: MetadataSource? = null
+
+    private companion object {
+        const val IS_FINAL_BIT = 1 shl 0
+        const val IS_EXTERNAL_BIT = 1 shl 1
+        const val IS_STATIC_BIT = 1 shl 2
+    }
 }

@@ -28,7 +28,7 @@ abstract class IrFunctionCommonImpl(
     override val name: Name,
     override var visibility: DescriptorVisibility,
     returnType: IrType,
-    protected var flags: Int,
+    protected var flags: Short,
     override val containerSource: DeserializedContainerSource?,
 ) : IrSimpleFunction() {
     override val factory: IrFactory
@@ -45,31 +45,31 @@ abstract class IrFunctionCommonImpl(
         }
 
     override var modality: Modality
-        get() = flags.toModality()
+        get() = flags.toInt().toModality()
         set(value) {
-            flags = flags.setModality(value)
+            flags = flags.toInt().setModality(value).toShort()
         }
 
     override val isInline
-        get() = flags.getFlag(IrFlags.IS_INLINE)
+        get() = flags.toInt().getFlag(IS_INLINE_BIT)
 
     override val isExternal
-        get() = flags.getFlag(IrFlags.IS_EXTERNAL)
+        get() = flags.toInt().getFlag(IS_EXTERNAL_BIT)
 
     override val isTailrec
-        get() = flags.getFlag(IrFlags.IS_TAILREC)
+        get() = flags.toInt().getFlag(IS_TAILREC_BIT)
 
     override val isSuspend
-        get() = flags.getFlag(IrFlags.IS_SUSPEND)
+        get() = flags.toInt().getFlag(IS_SUSPEND_BIT)
 
     override val isOperator
-        get() = flags.getFlag(IrFlags.IS_OPERATOR)
+        get() = flags.toInt().getFlag(IS_OPERATOR_BIT)
 
     override val isInfix
-        get() = flags.getFlag(IrFlags.IS_INFIX)
+        get() = flags.toInt().getFlag(IS_INFIX_BIT)
 
     override val isExpect
-        get() = flags.getFlag(IrFlags.IS_EXPECT)
+        get() = flags.toInt().getFlag(IS_EXPECT_BIT)
 
     override var typeParameters: List<IrTypeParameter> = emptyList()
 
@@ -87,6 +87,17 @@ abstract class IrFunctionCommonImpl(
     override var attributeOwnerId: IrAttributeContainer = this
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
+
+    protected companion object {
+        const val IS_INLINE_BIT = 1 shl (IrFlags.MODALITY_BITS + 0)
+        const val IS_EXTERNAL_BIT = 1 shl (IrFlags.MODALITY_BITS + 1)
+        const val IS_TAILREC_BIT = 1 shl (IrFlags.MODALITY_BITS + 2)
+        const val IS_SUSPEND_BIT = 1 shl (IrFlags.MODALITY_BITS + 3)
+        const val IS_OPERATOR_BIT = 1 shl (IrFlags.MODALITY_BITS + 4)
+        const val IS_INFIX_BIT = 1 shl (IrFlags.MODALITY_BITS + 5)
+        const val IS_EXPECT_BIT = 1 shl (IrFlags.MODALITY_BITS + 6)
+        const val IS_FAKE_OVERRIDE_BIT = 1 shl (IrFlags.MODALITY_BITS + 7)
+    }
 }
 
 class IrFunctionImpl(
@@ -105,18 +116,21 @@ class IrFunctionImpl(
     isOperator: Boolean,
     isInfix: Boolean,
     isExpect: Boolean,
-    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     containerSource: DeserializedContainerSource? = null,
 ) : IrFunctionCommonImpl(
     startOffset, endOffset, origin, name, visibility, returnType,
-    modality.toFlags() or isInline.toFlag(IrFlags.IS_INLINE) or isExternal.toFlag(IrFlags.IS_EXTERNAL) or
-            isTailrec.toFlag(IrFlags.IS_TAILREC) or isSuspend.toFlag(IrFlags.IS_SUSPEND) or isOperator.toFlag(IrFlags.IS_OPERATOR) or
-            isInfix.toFlag(IrFlags.IS_INFIX) or isExpect.toFlag(IrFlags.IS_EXPECT),
+    (modality.toFlags() or isInline.toFlag(IS_INLINE_BIT) or isExternal.toFlag(IS_EXTERNAL_BIT) or
+            isTailrec.toFlag(IS_TAILREC_BIT) or isSuspend.toFlag(IS_SUSPEND_BIT) or isOperator.toFlag(IS_OPERATOR_BIT) or
+            isInfix.toFlag(IS_INFIX_BIT) or isExpect.toFlag(IS_EXPECT_BIT) or isFakeOverride.toFlag(IS_FAKE_OVERRIDE_BIT)).toShort(),
     containerSource,
 ) {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
         get() = symbol.descriptor
+
+    override val isFakeOverride: Boolean
+        get() = flags.toInt().getFlag(IS_FAKE_OVERRIDE_BIT)
 
     init {
         symbol.bind(this)
@@ -140,9 +154,9 @@ class IrFakeOverrideFunctionImpl(
     isExpect: Boolean,
 ) : IrFunctionCommonImpl(
     startOffset, endOffset, origin, name, visibility, returnType,
-    modality.toFlags() or isInline.toFlag(IrFlags.IS_INLINE) or isExternal.toFlag(IrFlags.IS_EXTERNAL) or
-            isTailrec.toFlag(IrFlags.IS_TAILREC) or isSuspend.toFlag(IrFlags.IS_SUSPEND) or isOperator.toFlag(IrFlags.IS_OPERATOR) or
-            isInfix.toFlag(IrFlags.IS_INFIX) or isExpect.toFlag(IrFlags.IS_EXPECT),
+    (modality.toFlags() or isInline.toFlag(IS_INLINE_BIT) or isExternal.toFlag(IS_EXTERNAL_BIT) or
+            isTailrec.toFlag(IS_TAILREC_BIT) or isSuspend.toFlag(IS_SUSPEND_BIT) or isOperator.toFlag(IS_OPERATOR_BIT) or
+            isInfix.toFlag(IS_INFIX_BIT) or isExpect.toFlag(IS_EXPECT_BIT)).toShort(),
     containerSource = null,
 ), IrFakeOverrideFunction {
     override val isFakeOverride: Boolean
