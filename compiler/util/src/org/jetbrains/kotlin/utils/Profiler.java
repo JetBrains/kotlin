@@ -29,7 +29,7 @@ public class Profiler {
     private static final ThreadLocal<Stack<Profiler>> PROFILERS = new ThreadLocal<Stack<Profiler>>() {
         @Override
         protected Stack<Profiler> initialValue() {
-            return new Stack<>();
+            return new Stack<Profiler>();
         }
     };
 
