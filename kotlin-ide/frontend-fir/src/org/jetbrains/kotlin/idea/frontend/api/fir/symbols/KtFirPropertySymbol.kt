@@ -75,7 +75,7 @@ internal class KtFirPropertySymbol(
     }
 
     override val setter: KtPropertySetterSymbol? by firRef.withFirAndCache(FirResolvePhase.RAW_FIR) { property ->
-        property.getter?.let { builder.buildPropertyAccessorSymbol(it) } as? KtPropertySetterSymbol
+        property.setter?.let { builder.buildPropertyAccessorSymbol(it) } as? KtPropertySetterSymbol
     }
 
     override val hasBackingField: Boolean get() = firRef.withFir { it.hasBackingField }
