@@ -126,7 +126,7 @@ public class CompileEnvironmentUtil {
                     break;
                 }
                 if (resetJarTimestamps) {
-                  e.setTime(DOS_EPOCH);
+                    e.setTime(DOS_EPOCH);
                 }
                 if (FileUtilRt.extensionEquals(e.getName(), "class")) {
                     stream.putNextEntry(e);
