@@ -1,4 +1,5 @@
 // FILE: kt43217.kt
+// JVM_TARGET: 1.8
 class A {
     private val b =
         object : DoubleExpression() {
@@ -43,4 +44,3 @@ public interface ObservableDouble extends ObservableValue<Double> {
     @NotNull
     Object isEqualTo(double value);
 }
-
