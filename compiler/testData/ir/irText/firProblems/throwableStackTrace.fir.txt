@@ -1,0 +1,5 @@
+FILE fqName:<root> fileName:/throwableStackTrace.kt
+  FUN name:foo visibility:public modality:FINAL <> (t:kotlin.Throwable) returnType:kotlin.Unit
+    VALUE_PARAMETER name:t index:0 type:kotlin.Throwable
+    BLOCK_BODY
+      ERROR_CALL 'Unresolved reference: R|kotlin/stackTrace|' type=IrErrorType

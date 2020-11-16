@@ -1821,6 +1821,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/SignatureClash.kt");
         }
 
+        @TestMetadata("throwableStackTrace.kt")
+        public void testThrowableStackTrace() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/throwableStackTrace.kt");
+        }
+
         @TestMetadata("V8ArrayToList.kt")
         public void testV8ArrayToList() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/V8ArrayToList.kt");
