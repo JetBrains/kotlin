@@ -119,6 +119,11 @@ class DefaultInternalDependencyExpansion(
     }
 }
 
+/**
+ * This implementation matches the variants of the module by checking
+ * their [KotlinModuleFragment.declaredContainingModuleFragmentDependencies], similar to how associate compilations work in MPP.
+ * If more than one such dependency is declared, the result is deemed ambiguous.
+ */
 class AssociateVariants : DefaultInternalDependencyExpansion.ContainingModuleVariantResolver {
     override fun getChosenVariant(
         dependingVariant: KotlinModuleVariant,
