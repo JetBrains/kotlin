@@ -111,7 +111,7 @@ internal class SourceSetVisibilityProvider(
 
                 someVariantByHostSpecificSourceSet.entries.mapNotNull { (sourceSetName, variantName) ->
                     val configuration = firstConfigurationByVariant.getValue(variantName)
-                    resolvedVariantsProvider.getMetadataArtifactByRootModule(mppModuleIdentifier, configuration)
+                    resolvedVariantsProvider.getHostSpecificMetadataArtifactByRootModule(mppModuleIdentifier, configuration)
                         ?.let { sourceSetName to it }
                 }.toMap()
             }

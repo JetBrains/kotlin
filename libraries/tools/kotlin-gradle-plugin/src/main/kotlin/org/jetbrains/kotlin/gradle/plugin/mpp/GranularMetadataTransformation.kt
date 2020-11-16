@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
+import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -224,23 +225,12 @@ internal class GranularMetadataTransformation(
         parentResolutionsForModule: Iterable<MetadataDependencyResolution>,
         parent: ResolvedComponentResult?
     ): MetadataDependencyResolution {
-        val resolvedMppVariantsProvider = ResolvedMppVariantsProvider.get(project)
-        val metadataArtifact = resolvedMppVariantsProvider.getPlatformArtifactByPlatformModule(
-            ModuleIds.fromComponent(project, module),
-            configurationToResolve
+        val mppDependencyMetadataExtractor = getMetadataExtractor(
+            project,
+            module,
+            configurationToResolve,
+            resolveViaAvailableAt = false // we will process this dependency later in the queue
         )
-        val moduleId = module.id
-        val mppDependencyMetadataExtractor: MppDependencyMetadataExtractor? = when {
-            moduleId is ProjectComponentIdentifier -> when {
-                moduleId.build.isCurrentBuild ->
-                    ProjectMppDependencyMetadataExtractor(project, module, project.project(moduleId.projectPath))
-                metadataArtifact != null ->
-                    IncludedBuildMetadataExtractor(project, module, metadataArtifact)
-                else -> null
-            }
-            metadataArtifact != null -> JarArtifactMppDependencyMetadataExtractor(project, module, metadataArtifact)
-            else -> null
-        }
 
         val resolvedToProject: Project? = (mppDependencyMetadataExtractor as? ProjectMppDependencyMetadataExtractor)?.dependencyProject
 
@@ -466,6 +456,46 @@ private open class JarArtifactMppDependencyMetadataExtractor(
             return resultFiles
         }
     }
+}
+
+private fun getMetadataExtractor(
+    project: Project,
+    module: ResolvedComponentResult,
+    configuration: Configuration,
+    resolveViaAvailableAt: Boolean
+): MppDependencyMetadataExtractor? {
+    val resolvedMppVariantsProvider = ResolvedMppVariantsProvider.get(project)
+    val moduleIdentifier = ModuleIds.fromComponent(project, module)
+    val metadataArtifact = resolvedMppVariantsProvider.getResolvedArtifactByPlatformModule(
+        moduleIdentifier,
+        configuration
+    ) ?: if (resolveViaAvailableAt) resolvedMppVariantsProvider.getHostSpecificMetadataArtifactByRootModule(
+        moduleIdentifier,
+        configuration
+    ) else null
+
+    val moduleId = module.id
+    return when {
+        moduleId is ProjectComponentIdentifier -> when {
+            moduleId.build.isCurrentBuild ->
+                ProjectMppDependencyMetadataExtractor(project, module, project.project(moduleId.projectPath))
+            metadataArtifact != null ->
+                IncludedBuildMetadataExtractor(project, module, metadataArtifact)
+            else -> null
+        }
+        metadataArtifact != null -> JarArtifactMppDependencyMetadataExtractor(project, module, metadataArtifact)
+        else -> null
+    }
+}
+
+internal fun getProjectStructureMetadata(
+    project: Project,
+    module: ResolvedComponentResult,
+    configuration: Configuration
+): KotlinProjectStructureMetadata? {
+    // FIXME test dependencies won't work
+    val extractor = getMetadataExtractor(project, module, configuration, resolveViaAvailableAt = true)
+    return extractor?.getProjectStructureMetadata()
 }
 
 // This class is needed to encapsulate how we extract the files and point to them in a way that doesn't capture the Gradle project state

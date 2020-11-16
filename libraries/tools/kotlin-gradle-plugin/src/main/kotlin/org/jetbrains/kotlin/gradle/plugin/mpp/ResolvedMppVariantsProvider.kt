@@ -45,13 +45,14 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
      * module of a multiplatform project, not one of its platform-specific modules, as seen in the given [configuration].
      * If the [configuration] requests platform artifacts and not the common code metadata, then this function will resolve its
      * dependencies to metadata separately. */
-    fun getMetadataArtifactByRootModule(rootModuleIdentifier: ModuleDependencyIdentifier, configuration: Configuration): File? {
+    fun getHostSpecificMetadataArtifactByRootModule(rootModuleIdentifier: ModuleDependencyIdentifier, configuration: Configuration): File? {
         val rootModuleEntry = getEntryForModule(rootModuleIdentifier)
 
         val platformModuleEntry = rootModuleEntry.run {
             if (configuration !in chosenPlatformModuleByConfiguration) {
                 resolveConfigurationAndSaveVariants(configuration, artifactResolutionMode = ArtifactResolutionMode.METADATA)
             }
+            // At this point the map should contain the result if calculation above succeeded. If not, put null to avoid recalculation.
             chosenPlatformModuleByConfiguration.getOrPut(configuration) { null }
         }
 
@@ -66,7 +67,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
     }
 
     /** Gets the artifact of a particular MPP platform-specific [moduleIdentifier] as resolved in the [configuration]. */
-    fun getPlatformArtifactByPlatformModule(moduleIdentifier: ModuleDependencyIdentifier, configuration: Configuration): File? =
+    fun getResolvedArtifactByPlatformModule(moduleIdentifier: ModuleDependencyIdentifier, configuration: Configuration): File? =
         getEntryForModule(moduleIdentifier).run {
             if (configuration !in resolvedArtifactByConfiguration) {
                 resolveConfigurationAndSaveVariants(configuration, artifactResolutionMode = ArtifactResolutionMode.NORMAL)
@@ -170,7 +171,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
                     moduleEntry.resolvedMetadataArtifactByConfiguration[configuration] = null
                 }
 
-                // We found the host-specific artifact for a platform variant of some MPP:
+                // We found a requested artifact of the MPP; it is one of: platform artifact, root metadata, host-specific metadata
                 artifact != null -> {
                     val resolvedArtifactMap = when (artifactResolutionMode) {
                         ArtifactResolutionMode.NORMAL -> moduleEntry.resolvedArtifactByConfiguration
