@@ -53,7 +53,7 @@ object FirAnnotationClassDeclarationChecker : FirBasicDeclarationChecker() {
                             }
                             is FirLightSourceElement -> {
                                 val kidsRef = Ref<Array<LighterASTNode?>>()
-                                parameterSourceElement.tree.getChildren(parameterSourceElement.lighterASTNode, kidsRef)
+                                parameterSourceElement.treeStructure.getChildren(parameterSourceElement.lighterASTNode, kidsRef)
 
                                 if (kidsRef.get().any { it?.tokenType == VAR_KEYWORD })
                                     reporter.report(parameterSourceElement, FirErrors.VAR_ANNOTATION_PARAMETER)

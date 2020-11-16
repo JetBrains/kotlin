@@ -40,7 +40,7 @@ object FirConstructorInInterfaceChecker : FirBasicDeclarationChecker() {
         if (localPsi != null && localPsi !is PsiErrorElement) {
             return localPsi.hasPrimaryConstructor()
         } else if (this is FirLightSourceElement) {
-            return localLightNode.hasPrimaryConstructor(tree)
+            return localLightNode.hasPrimaryConstructor(treeStructure)
         }
 
         return false

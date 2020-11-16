@@ -71,7 +71,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVari
         source: FirLightSourceElement,
         prevOperator: LighterASTNode? = null
     ): Boolean {
-        val tree = source.tree
+        val tree = source.treeStructure
         val childrenNullable = Ref<Array<LighterASTNode?>>()
         tree.getChildren(expression, childrenNullable)
         val children = childrenNullable.get().filterNotNull()

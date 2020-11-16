@@ -40,7 +40,7 @@ object FirDelegationInInterfaceChecker : FirMemberDeclarationChecker() {
         if (localPsi != null && localPsi !is PsiErrorElement) {
             return localPsi.findSuperTypeDelegation()
         } else if (this is FirLightSourceElement) {
-            return localLightNode.findSuperTypeDelegation(tree)
+            return localLightNode.findSuperTypeDelegation(treeStructure)
         }
 
         return -1

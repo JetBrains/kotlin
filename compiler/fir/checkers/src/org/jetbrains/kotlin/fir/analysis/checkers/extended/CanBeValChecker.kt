@@ -102,7 +102,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         is FirPsiSourceElement<*> -> fir.psi?.children?.size?.minus(1) // -1 cuz we don't need expression node after equals operator
         is FirLightSourceElement -> {
             val source = fir.source as FirLightSourceElement
-            val tree = (fir.source as FirLightSourceElement).tree
+            val tree = (fir.source as FirLightSourceElement).treeStructure
             val children = Ref<Array<LighterASTNode?>>()
             tree.getChildren(source.lighterASTNode, children)
             children.get().filterNotNull().filter { it.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY }.size

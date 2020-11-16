@@ -28,9 +28,9 @@ fun FirSourceElement?.getModifierList(): FirModifierList? {
         is FirPsiSourceElement<*> -> (psi as? KtModifierListOwner)?.modifierList?.let { FirPsiModifierList(it) }
         is FirLightSourceElement -> {
             val kidsRef = Ref<Array<LighterASTNode?>>()
-            tree.getChildren(lighterASTNode, kidsRef)
+            treeStructure.getChildren(lighterASTNode, kidsRef)
             val modifierListNode = kidsRef.get().find { it?.tokenType == KtNodeTypes.MODIFIER_LIST } ?: return null
-            FirLightModifierList(modifierListNode, tree)
+            FirLightModifierList(modifierListNode, treeStructure)
         }
     }
 }

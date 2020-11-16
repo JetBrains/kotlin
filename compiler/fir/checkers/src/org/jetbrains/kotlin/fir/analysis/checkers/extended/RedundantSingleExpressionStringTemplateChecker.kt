@@ -54,10 +54,10 @@ object RedundantSingleExpressionStringTemplateChecker : FirBasicExpressionChecke
     }
 
     private fun LighterASTNode.stringParentChildrenCount(source: FirLightSourceElement): Int? {
-        val parent = source.tree.getParent(this)
+        val parent = source.treeStructure.getParent(this)
         return if (parent?.tokenType == KtNodeTypes.STRING_TEMPLATE) {
             val childrenOfParent = Ref<Array<LighterASTNode>>()
-            source.tree.getChildren(parent!!, childrenOfParent)
+            source.treeStructure.getChildren(parent!!, childrenOfParent)
             childrenOfParent.get().filter { it is PsiBuilder.Marker }.size
         } else {
             parent?.stringParentChildrenCount(source)

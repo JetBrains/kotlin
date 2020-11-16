@@ -46,7 +46,7 @@ class ValueParameter(
             val parameterSource = firValueParameter.source as? FirLightSourceElement
             val parameterNode = parameterSource?.lighterASTNode
             source = parameterNode?.toFirLightSourceElement(
-                parameterSource.startOffset, parameterSource.endOffset, parameterSource.tree,
+                parameterSource.startOffset, parameterSource.endOffset, parameterSource.treeStructure,
                 FirFakeSourceElementKind.PropertyFromParameter
             )
             this.session = session

@@ -241,9 +241,9 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
             is FirPsiSourceElement<*> ->
                 source.psi.parent.toFirPsiSourceElement()
             is FirLightSourceElement -> {
-                val elementOfParent = source.tree.getParent(source.lighterASTNode) ?: source.lighterASTNode
+                val elementOfParent = source.treeStructure.getParent(source.lighterASTNode) ?: source.lighterASTNode
 
-                elementOfParent.toFirLightSourceElement(elementOfParent.startOffset, elementOfParent.endOffset, source.tree)
+                elementOfParent.toFirLightSourceElement(elementOfParent.startOffset, elementOfParent.endOffset, source.treeStructure)
             }
             else ->
                 source

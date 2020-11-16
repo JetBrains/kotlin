@@ -40,7 +40,7 @@ object FirSupertypeInitializedInInterfaceChecker : FirMemberDeclarationChecker()
         if (localPsi != null && localPsi !is PsiErrorElement) {
             return localPsi.findSuperTypeCall()
         } else if (this is FirLightSourceElement) {
-            return localLightNode.findSuperTypeCall(tree)
+            return localLightNode.findSuperTypeCall(treeStructure)
         }
 
         return -1

@@ -44,7 +44,7 @@ object FirSupertypeInitializedWithoutPrimaryConstructor : FirMemberDeclarationCh
         if (localPsi != null && localPsi !is PsiErrorElement) {
             return localPsi.anySupertypeHasConstructorParentheses()
         } else if (this is FirLightSourceElement) {
-            return localLightNode.anySupertypeHasConstructorParentheses(tree)
+            return localLightNode.anySupertypeHasConstructorParentheses(treeStructure)
         }
 
         return false

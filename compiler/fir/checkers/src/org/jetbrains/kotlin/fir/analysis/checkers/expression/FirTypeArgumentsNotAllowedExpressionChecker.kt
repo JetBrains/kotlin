@@ -42,7 +42,7 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessChecker()
         if (localPsi != null && localPsi !is PsiErrorElement) {
             return localPsi.hasAnyArguments()
         } else if (this is FirLightSourceElement) {
-            return localLight.hasAnyArguments(this.tree)
+            return localLight.hasAnyArguments(this.treeStructure)
         }
 
         return false
