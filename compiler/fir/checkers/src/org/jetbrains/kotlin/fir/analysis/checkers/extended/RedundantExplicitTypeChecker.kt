@@ -98,7 +98,7 @@ object RedundantExplicitTypeChecker : FirMemberDeclarationChecker() {
                     source.psi?.text
                 }
                 is FirLightSourceElement -> {
-                    (source as FirLightSourceElement).element.toString()
+                    source?.lighterASTNode?.toString()
                 }
                 else -> null
             }

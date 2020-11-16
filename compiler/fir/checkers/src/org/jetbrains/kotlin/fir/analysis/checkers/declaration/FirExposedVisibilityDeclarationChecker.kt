@@ -234,7 +234,7 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
         is FirPsiSourceElement<*> -> (this.psi as? PsiNameIdentifierOwner)?.nameIdentifier?.toFirPsiSourceElement()
         is FirLightSourceElement -> {
             val kidsRef = Ref<Array<LighterASTNode?>>()
-            this.tree.getChildren(this.element, kidsRef)
+            this.tree.getChildren(lighterASTNode, kidsRef)
             val identifier = kidsRef.get().find { it?.tokenType == KtTokens.IDENTIFIER }
             identifier?.toFirLightSourceElement(this.tree.getStartOffset(identifier), this.tree.getEndOffset(identifier), this.tree)
         }

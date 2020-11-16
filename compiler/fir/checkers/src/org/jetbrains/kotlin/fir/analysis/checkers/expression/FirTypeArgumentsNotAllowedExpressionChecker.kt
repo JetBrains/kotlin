@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
-import org.jetbrains.kotlin.fir.lightNode
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtTypeArgumentList
 
@@ -38,11 +37,11 @@ object FirTypeArgumentsNotAllowedExpressionChecker : FirQualifiedAccessChecker()
 
     private fun FirSourceElement.hasAnyArguments(): Boolean {
         val localPsi = this.psi
-        val localLight = this.lightNode
+        val localLight = this.lighterASTNode
 
         if (localPsi != null && localPsi !is PsiErrorElement) {
             return localPsi.hasAnyArguments()
-        } else if (localLight != null && this is FirLightSourceElement) {
+        } else if (this is FirLightSourceElement) {
             return localLight.hasAnyArguments(this.tree)
         }
 

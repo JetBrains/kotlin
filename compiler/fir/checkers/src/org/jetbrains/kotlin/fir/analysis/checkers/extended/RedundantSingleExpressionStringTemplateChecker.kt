@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
@@ -38,12 +37,12 @@ object RedundantSingleExpressionStringTemplateChecker : FirBasicExpressionChecke
     }
 
     private fun FirStatement.stringParentChildrenCount(): Int? {
-        return when (source) {
+        return when (val source = source) {
             is FirPsiSourceElement<*> -> {
-                source.psi?.stringParentChildrenCount()
+                source.psi.stringParentChildrenCount()
             }
             is FirLightSourceElement -> {
-                (source as FirLightSourceElement).element.stringParentChildrenCount(source as FirLightSourceElement)
+                source.lighterASTNode.stringParentChildrenCount(source)
             }
             else -> null
         }

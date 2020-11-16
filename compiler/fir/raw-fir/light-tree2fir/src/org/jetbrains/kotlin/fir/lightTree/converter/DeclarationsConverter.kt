@@ -486,7 +486,7 @@ class DeclarationsConverter(
 
                     //parse data class
                     if (modifiers.isDataClass() && firPrimaryConstructor != null) {
-                        val zippedParameters = properties.map { it.source?.lightNode!! to it }
+                        val zippedParameters = properties.map { it.source!!.lighterASTNode to it }
                         DataClassMembersGenerator(
                             baseSession,
                             classNode,

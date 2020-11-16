@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.lightNode
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 
@@ -36,11 +35,11 @@ object FirConstructorInInterfaceChecker : FirBasicDeclarationChecker() {
 
     private fun FirSourceElement.hasPrimaryConstructor(): Boolean {
         val localPsi = psi
-        val localLightNode = lightNode
+        val localLightNode = lighterASTNode
 
         if (localPsi != null && localPsi !is PsiErrorElement) {
             return localPsi.hasPrimaryConstructor()
-        } else if (localLightNode != null && this is FirLightSourceElement) {
+        } else if (this is FirLightSourceElement) {
             return localLightNode.hasPrimaryConstructor(tree)
         }
 

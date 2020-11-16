@@ -51,8 +51,8 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVari
                 needToReport = true
             }
         } else if (assignmentSource is FirLightSourceElement) {
-            val lValueLightTree = (lValue.source as FirLightSourceElement).element
-            val rValueLightTree = (rValue.source as FirLightSourceElement).element
+            val lValueLightTree = lValue.source!!.lighterASTNode
+            val rValueLightTree = rValue.source!!.lighterASTNode
             if (lightTreeMatcher(lValueLightTree, rValueLightTree, assignmentSource)) {
                 needToReport = true
             }

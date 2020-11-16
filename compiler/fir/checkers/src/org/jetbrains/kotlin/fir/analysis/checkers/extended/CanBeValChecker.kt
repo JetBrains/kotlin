@@ -104,7 +104,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
             val source = fir.source as FirLightSourceElement
             val tree = (fir.source as FirLightSourceElement).tree
             val children = Ref<Array<LighterASTNode?>>()
-            tree.getChildren(source.element, children)
+            tree.getChildren(source.lighterASTNode, children)
             children.get().filterNotNull().filter { it.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY }.size
         }
         else -> null

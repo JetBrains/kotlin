@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.lang.LighterASTNode
+import com.intellij.lang.TreeBackedLighterAST
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
@@ -152,9 +153,11 @@ sealed class FirSourceElement {
     abstract val startOffset: Int
     abstract val endOffset: Int
     abstract val kind: FirSourceElementKind
+    abstract val lighterASTNode: LighterASTNode
 }
 
-
+// NB: in certain situations, psi.node could be null
+// Potentially exceptions can be provoked by elementType / lighterASTNode
 sealed class FirPsiSourceElement<out P : PsiElement>(val psi: P) : FirSourceElement() {
     override val elementType: IElementType
         get() = psi.node.elementType
@@ -164,6 +167,8 @@ sealed class FirPsiSourceElement<out P : PsiElement>(val psi: P) : FirSourceElem
 
     override val endOffset: Int
         get() = psi.textRange.endOffset
+
+    override val lighterASTNode by lazy { TreeBackedLighterAST.wrap(psi.node) }
 }
 
 class FirRealPsiSourceElement<out P : PsiElement>(psi: P) : FirPsiSourceElement<P>(psi) {
@@ -174,20 +179,20 @@ class FirFakeSourceElement<out P : PsiElement>(psi: P, override val kind: FirFak
 
 fun FirSourceElement.fakeElement(newKind: FirFakeSourceElementKind): FirSourceElement {
     return when (this) {
-        is FirLightSourceElement -> FirLightSourceElement(element, startOffset, endOffset, tree, newKind)
+        is FirLightSourceElement -> FirLightSourceElement(lighterASTNode, startOffset, endOffset, tree, newKind)
         is FirPsiSourceElement<*> -> FirFakeSourceElement(psi, newKind)
     }
 }
 
 class FirLightSourceElement(
-    val element: LighterASTNode,
+    override val lighterASTNode: LighterASTNode,
     override val startOffset: Int,
     override val endOffset: Int,
     val tree: FlyweightCapableTreeStructure<LighterASTNode>,
     override val kind: FirSourceElementKind = FirRealSourceElementKind,
 ) : FirSourceElement() {
     override val elementType: IElementType
-        get() = element.tokenType
+        get() = lighterASTNode.tokenType
 }
 
 val FirSourceElement?.psi: PsiElement? get() = (this as? FirPsiSourceElement<*>)?.psi
@@ -207,5 +212,3 @@ inline fun LighterASTNode.toFirLightSourceElement(
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     kind: FirSourceElementKind = FirRealSourceElementKind
 ): FirLightSourceElement = FirLightSourceElement(this, startOffset, endOffset, tree, kind)
-
-val FirSourceElement?.lightNode: LighterASTNode? get() = (this as? FirLightSourceElement)?.element

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.lightNode
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 
@@ -40,11 +39,11 @@ object FirSupertypeInitializedWithoutPrimaryConstructor : FirMemberDeclarationCh
 
     private fun FirSourceElement.anySupertypeHasConstructorParentheses(): Boolean {
         val localPsi = psi
-        val localLightNode = lightNode
+        val localLightNode = lighterASTNode
 
         if (localPsi != null && localPsi !is PsiErrorElement) {
             return localPsi.anySupertypeHasConstructorParentheses()
-        } else if (localLightNode != null && this is FirLightSourceElement) {
+        } else if (this is FirLightSourceElement) {
             return localLightNode.anySupertypeHasConstructorParentheses(tree)
         }
 
