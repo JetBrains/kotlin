@@ -59,10 +59,10 @@ class Fir2IrTypeConverter(
     )
 
     private val capturedTypeCache = mutableMapOf<ConeCapturedType, IrType>()
-    private val capturedTypeStack = mutableSetOf<ConeCapturedType>()
+    private val errorTypeForCapturedTypeStub by lazy { createErrorType() }
 
     fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType {
-        capturedTypeStack.clear()
+        capturedTypeCache.clear()
         return when (this) {
             !is FirResolvedTypeRef -> createErrorType()
             !is FirImplicitBuiltinTypeRef -> type.toIrType(typeContext, annotations)
@@ -110,15 +110,19 @@ class Fir2IrTypeConverter(
                 upperBound.toIrType(typeContext)
             }
             is ConeCapturedType -> {
-                if (capturedTypeStack.add(this)) {
-                    val irType = lowerType?.toIrType(typeContext) ?: constructor.supertypes!!.first().toIrType(typeContext)
+                val cached = capturedTypeCache[this]
+                if (cached == null) {
+                    val irType = lowerType?.toIrType(typeContext) ?: run {
+                        capturedTypeCache[this] = errorTypeForCapturedTypeStub
+                        constructor.supertypes!!.first().toIrType(typeContext)
+                    }
                     capturedTypeCache[this] = irType
                     irType
                 } else {
                     // Potentially recursive captured type, e.g., Recursive<R> where R : Recursive<R>, ...
                     // That should have been handled during type argument conversion, though.
                     // Or, simply repeated captured type, e.g., FunctionN<..., *, ..., *>, literally same captured types.
-                    capturedTypeCache[this] ?: createErrorType()
+                    cached
                 }
             }
             is ConeDefinitelyNotNullType -> {
@@ -145,7 +149,7 @@ class Fir2IrTypeConverter(
                 makeTypeProjection(irType, Variance.OUT_VARIANCE)
             }
             is ConeKotlinType -> {
-                if (this is ConeCapturedType && capturedTypeStack.contains(this) && this.isRecursive(mutableSetOf())) {
+                if (this is ConeCapturedType && this in capturedTypeCache && this.isRecursive(mutableSetOf())) {
                     // Recursive captured type, e.g., Recursive<R> where R : Recursive<R>, ...
                     // We can return * early here to avoid recursive type conversions.
                     IrStarProjectionImpl
