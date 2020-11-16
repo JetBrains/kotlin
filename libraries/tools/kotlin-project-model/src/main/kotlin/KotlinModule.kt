@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.project.model
 
-sealed class ModuleSource {
-    class LocalBuild(val buildId: String) : ModuleSource()
-    class ExternalDependency(val dependencyId: String) : ModuleSource()
-}
+sealed class ModuleOrigin
+data class LocalBuild(val buildId: String) : ModuleOrigin() // TODO add project ID?
+data class ExternalOrigin(val dependencyIdParts: List<String>) : ModuleOrigin()
 
 interface KotlinModule {
     val moduleName: String
-    val moduleSource: ModuleSource
+    val moduleOrigin: ModuleOrigin
 
     val fragments: Iterable<KotlinModuleFragment>
 
@@ -22,7 +21,7 @@ interface KotlinModule {
 
 class BasicKotlinModule(
     override val moduleName: String,
-    override val moduleSource: ModuleSource
+    override val moduleOrigin: ModuleOrigin
 ) : KotlinModule {
     override val fragments = mutableListOf<BasicKotlinModuleFragment>()
 

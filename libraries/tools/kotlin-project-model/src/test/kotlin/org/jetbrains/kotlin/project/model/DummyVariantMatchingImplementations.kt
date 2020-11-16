@@ -5,24 +5,14 @@
 
 package org.jetbrains.kotlin.project.model
 
-class MatchVariantsByExactAttributes : KotlinModuleVariantResolver {
-    override fun getChosenVariant(dependingVariant: KotlinModuleVariant, dependencyModule: KotlinModule): KotlinVariantMatchingResult {
+class MatchVariantsByExactAttributes : ModuleVariantResolver {
+    override fun getChosenVariant(requestingVariant: KotlinModuleVariant, dependencyModule: KotlinModule): VariantResolution {
         val candidates = dependencyModule.variants
         return candidates.filter { candidate ->
             candidate.isExported && candidate.variantAttributes.all { (attributeKey, candidateValue) ->
-                attributeKey !in dependingVariant.variantAttributes.keys ||
-                        candidateValue == dependingVariant.variantAttributes.getValue(attributeKey)
+                attributeKey !in requestingVariant.variantAttributes.keys ||
+                        candidateValue == requestingVariant.variantAttributes.getValue(attributeKey)
             }
-        }.let { KotlinVariantMatchingResult.fromMatchingVariants(dependingVariant, dependencyModule, it) }
-    }
-}
-
-class AssociateVariants : DefaultInternalDependencyExpansion.ContainingModuleVariantResolver {
-    override fun getChosenVariant(
-        dependingVariant: KotlinModuleVariant,
-        candidateVariants: Iterable<KotlinModuleVariant>
-    ): KotlinVariantMatchingResult {
-        val result = candidateVariants.filter { it in dependingVariant.declaredContainingModuleFragmentDependencies }
-        return KotlinVariantMatchingResult.fromMatchingVariants(dependingVariant, dependingVariant.containingModule, result)
+        }.let { VariantResolution.fromMatchingVariants(requestingVariant, dependencyModule, it) }
     }
 }

@@ -14,11 +14,11 @@ interface KotlinModuleFragmentResolver {
 class KotlinChosenFragments(
     val module: KotlinModule,
     val chosenFragments: Iterable<KotlinModuleFragment>,
-    val variantMatchingResults: Iterable<KotlinVariantMatchingResult>
+    val variantMatchingResults: Iterable<VariantResolution>
 )
 
 class DefaultKotlinModuleFragmentResolver(
-    private val variantResolver: KotlinModuleVariantResolver
+    private val variantResolver: ModuleVariantResolver
 ) : KotlinModuleFragmentResolver {
     override fun getChosenFragments(dependingFragment: KotlinModuleFragment, dependencyModule: KotlinModule): KotlinChosenFragments {
         val dependingModule = dependingFragment.containingModule
@@ -28,7 +28,7 @@ class DefaultKotlinModuleFragmentResolver(
 
         val chosenFragments = chosenVariants.map { variantResolution ->
             when (variantResolution) {
-                is VariantMatch -> variantResolution.chosenVariant.refinesClosure
+                is VariantResolution.VariantMatch -> variantResolution.chosenVariant.refinesClosure
                 else -> emptySet()
             }
         }

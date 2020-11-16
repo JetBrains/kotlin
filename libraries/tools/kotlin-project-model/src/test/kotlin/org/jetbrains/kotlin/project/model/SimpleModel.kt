@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.project.model
 
-fun module(name: String) = BasicKotlinModule(name, ModuleSource.LocalBuild("current"))
+fun module(name: String) = BasicKotlinModule(name, LocalBuild("current"))
 
 fun BasicKotlinModule.fragment(vararg nameParts: String): BasicKotlinModuleFragment =
     fragment(nameParts.drop(1).joinToString("", nameParts.first()) { it.capitalize() })
@@ -13,13 +13,13 @@ fun BasicKotlinModule.fragment(vararg nameParts: String): BasicKotlinModuleFragm
 fun BasicKotlinModule.fragment(name: String): BasicKotlinModuleFragment =
     fragments.firstOrNull { it.fragmentName == name } ?: BasicKotlinModuleFragment(this, name).also { fragments.add(it) }
 
-fun BasicKotlinModule.variant(vararg nameParts: String): BasicKotlinVariant =
+fun BasicKotlinModule.variant(vararg nameParts: String): BasicKotlinModuleVariant =
     variant(nameParts.drop(1).joinToString("", nameParts.first()) { it.capitalize() })
 
-fun BasicKotlinModule.variant(name: String): BasicKotlinVariant =
+fun BasicKotlinModule.variant(name: String): BasicKotlinModuleVariant =
     fragments.firstOrNull { it.fragmentName == name }
-        ?.let { it as? BasicKotlinVariant ?: error("$name is not a variant") }
-        ?: BasicKotlinVariant(this, name).also { fragments.add(it) }
+        ?.let { it as? BasicKotlinModuleVariant ?: error("$name is not a variant") }
+        ?: BasicKotlinModuleVariant(this, name).also { fragments.add(it) }
 
 
 fun BasicKotlinModuleFragment.depends(fragment: BasicKotlinModuleFragment) {
@@ -61,12 +61,12 @@ fun simpleModule(name: String) = module(name).apply {
             }
         }
 
-        val jvmAndJs = fragment("jvmAndJs", purpose).apply {
+        fragment("jvmAndJs", purpose).apply {
             refines(common)
             refinedBy(jvm)
             refinedBy(js)
         }
-        val jsAndLinux = fragment("jsAndLinux", purpose).apply {
+        fragment("jsAndLinux", purpose).apply {
             refines(common)
             refinedBy(js)
             refinedBy(linux)

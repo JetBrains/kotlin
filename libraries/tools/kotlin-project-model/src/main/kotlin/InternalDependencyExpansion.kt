@@ -15,15 +15,15 @@ interface InternalDependencyExpansion {
 class InternalDependencyExpansionResult(
     val entries: Iterable<Entry>
 ) {
-    sealed class ExpansionOutcome(val variantMatchingResults: Iterable<KotlinVariantMatchingResult>) {
+    sealed class ExpansionOutcome(val variantMatchingResults: Iterable<VariantResolution>) {
         class VisibleFragments(
             val fragments: Iterable<KotlinModuleFragment>,
-            variantMatchingResults: Iterable<KotlinVariantMatchingResult>
+            variantMatchingResults: Iterable<VariantResolution>
         ) : ExpansionOutcome(
             variantMatchingResults
         )
 
-        class Failure(variantMatchingResults: Iterable<KotlinVariantMatchingResult>) : ExpansionOutcome(variantMatchingResults)
+        class Failure(variantMatchingResults: Iterable<VariantResolution>) : ExpansionOutcome(variantMatchingResults)
     }
 
     class Entry(
@@ -48,7 +48,7 @@ class DefaultInternalDependencyExpansion(
         fun getChosenVariant(
             dependingVariant: KotlinModuleVariant,
             candidateVariants: Iterable<KotlinModuleVariant>
-        ): KotlinVariantMatchingResult
+        ): VariantResolution
     }
 
     override fun expandInternalFragmentDependencies(consumingFragment: KotlinModuleFragment): InternalDependencyExpansionResult {
@@ -97,22 +97,34 @@ class DefaultInternalDependencyExpansion(
 
         val chosenVariants = consumingVariants.map { consumingVariant ->
             if (consumingVariant in producingVariants)
-                VariantMatch(consumingVariant, consumingVariant.containingModule, consumingVariant)
+                VariantResolution.VariantMatch(consumingVariant, consumingVariant.containingModule, consumingVariant)
             else
                 variantResolver.getChosenVariant(consumingVariant, producingVariants)
         }
 
-        val mismatchedConsumingVariants = chosenVariants.filter { it !is VariantMatch }
+        val mismatchedConsumingVariants = chosenVariants.filter { it !is VariantResolution.VariantMatch }
 
         val outcome =
             if (mismatchedConsumingVariants.isNotEmpty())
                 InternalDependencyExpansionResult.ExpansionOutcome.Failure(chosenVariants)
             else
                 InternalDependencyExpansionResult.ExpansionOutcome.VisibleFragments(
-                    chosenVariants.map { (it as VariantMatch).chosenVariant.refinesClosure }.reduce { acc, it -> acc.intersect(it) },
+                    chosenVariants
+                        .map { (it as VariantResolution.VariantMatch).chosenVariant.refinesClosure }
+                        .reduce { acc, it -> acc.intersect(it) },
                     chosenVariants
                 )
 
         return InternalDependencyExpansionResult.Entry(declaredDependencySource, declaredDependency, outcome)
+    }
+}
+
+class AssociateVariants : DefaultInternalDependencyExpansion.ContainingModuleVariantResolver {
+    override fun getChosenVariant(
+        dependingVariant: KotlinModuleVariant,
+        candidateVariants: Iterable<KotlinModuleVariant>
+    ): VariantResolution {
+        val result = candidateVariants.filter { it in dependingVariant.declaredContainingModuleFragmentDependencies }
+        return VariantResolution.fromMatchingVariants(dependingVariant, dependingVariant.containingModule, result)
     }
 }

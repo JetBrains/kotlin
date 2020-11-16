@@ -16,6 +16,9 @@ interface KotlinModuleFragment {
 
     val declaredContainingModuleFragmentDependencies: Iterable<KotlinModuleFragment>
 
+    // TODO: scopes
+    val declaredModuleDependencies: Iterable<ModuleDependency>
+
     val kotlinSourceRoots: Iterable<File>
 }
 
@@ -28,7 +31,7 @@ interface KotlinModuleVariant : KotlinModuleFragment {
 val KotlinModuleFragment.fragmentAttributeSets: Map<KotlinAttributeKey, Set<String>>
     get() = mutableMapOf<KotlinAttributeKey, MutableSet<String>>().apply {
         containingModule.variantsContainingFragment(this@fragmentAttributeSets).forEach { variant ->
-            variant.variantAttributes.forEach { attribute, value ->
+            variant.variantAttributes.forEach { (attribute, value) ->
                 getOrPut(attribute) { mutableSetOf() }.add(value)
             }
         }
@@ -49,14 +52,16 @@ open class BasicKotlinModuleFragment(
     override val fragmentName: String
 ) : KotlinModuleFragment {
 
-    override val directRefinesDependencies: MutableList<BasicKotlinModuleFragment> = mutableListOf()
+    override val directRefinesDependencies: MutableSet<BasicKotlinModuleFragment> = mutableSetOf()
 
-    override val declaredContainingModuleFragmentDependencies: MutableList<BasicKotlinModuleFragment> = mutableListOf()
-    override val kotlinSourceRoots: Iterable<File> = emptyList()
+    override val declaredContainingModuleFragmentDependencies: MutableSet<BasicKotlinModuleFragment> = mutableSetOf()
+    override val declaredModuleDependencies: MutableSet<ModuleDependency> = mutableSetOf()
+
+    override var kotlinSourceRoots: Iterable<File> = emptyList()
     override fun toString(): String = "fragment $fragmentName"
 }
 
-class BasicKotlinVariant(
+class BasicKotlinModuleVariant(
     containingModule: KotlinModule,
     fragmentName: String
 ) : BasicKotlinModuleFragment (
