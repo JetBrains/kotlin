@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
@@ -64,6 +63,7 @@ fun CallableDescriptor.isGetterOfUnderlyingPropertyOfInlineClass() =
     this is PropertyGetterDescriptor && correspondingProperty.isUnderlyingPropertyOfInlineClass()
 
 fun VariableDescriptor.isUnderlyingPropertyOfInlineClass(): Boolean {
+    if (extensionReceiverParameter != null) return false
     val containingDeclaration = this.containingDeclaration
     if (!containingDeclaration.isInlineClass()) return false
 

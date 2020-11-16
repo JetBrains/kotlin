@@ -927,6 +927,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassWithManyKindsOfMembers.kt");
         }
 
+        @TestMetadata("memberExtensionProperty.kt")
+        public void testMemberExtensionProperty() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/memberExtensionProperty.kt");
+        }
+
         @TestMetadata("noArgConstructorForInlineClassParameter.kt")
         public void testNoArgConstructorForInlineClassParameter() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/noArgConstructorForInlineClassParameter.kt");
