@@ -114,6 +114,7 @@ private fun JsCommonBackendContext.getOrCreateGetInstanceFunction(obj: IrClass) 
             name = Name.identifier(obj.name.asString() + "_getInstance")
             returnType = obj.defaultType
             origin = JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
+            visibility = obj.visibility
         }.apply {
             parent = obj.parent
         }
