@@ -1,4 +1,5 @@
 // KOTLIN_CONFIGURATION_FLAGS: +JVM.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME
+// !LANGUAGE: -MangleClassMembersReturningInlineClasses
 // FILE: 1.kt
 package test
 
