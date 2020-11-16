@@ -28,19 +28,24 @@ class CachedLibraries(
         }
     }
 
+    private val cacheDirsContents = mutableMapOf<String, Set<String>>()
+
     private fun selectCache(library: KotlinLibrary, cacheDir: File): Cache? {
         // See Linker.renameOutput why is it ok to have an empty cache directory.
-        if (cacheDir.listFilesOrEmpty.isEmpty()) return null
+        val cacheDirContents = cacheDirsContents.getOrPut(cacheDir.absolutePath) {
+            cacheDir.listFilesOrEmpty.map { it.absolutePath }.toSet()
+        }
+        if (cacheDirContents.isEmpty()) return null
         val baseName = getCachedLibraryName(library)
         val dynamicFile = cacheDir.child(getArtifactName(baseName, CompilerOutputKind.DYNAMIC_CACHE))
         val staticFile = cacheDir.child(getArtifactName(baseName, CompilerOutputKind.STATIC_CACHE))
 
-        if (dynamicFile.exists && staticFile.exists)
+        if (dynamicFile.absolutePath in cacheDirContents && staticFile.absolutePath in cacheDirContents)
             error("Both dynamic and static caches files cannot be in the same directory." +
                     " Library: ${library.libraryName}, path to cache: ${cacheDir.absolutePath}")
         return when {
-            dynamicFile.exists -> Cache(Cache.Kind.DYNAMIC, dynamicFile.absolutePath)
-            staticFile.exists -> Cache(Cache.Kind.STATIC, staticFile.absolutePath)
+            dynamicFile.absolutePath in cacheDirContents -> Cache(Cache.Kind.DYNAMIC, dynamicFile.absolutePath)
+            staticFile.absolutePath in cacheDirContents -> Cache(Cache.Kind.STATIC, staticFile.absolutePath)
             else -> error("No cache found for library ${library.libraryName} at ${cacheDir.absolutePath}")
         }
     }
