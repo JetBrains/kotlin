@@ -35,10 +35,14 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getB
 
 public class DescriptorFactory {
     private static class DefaultClassConstructorDescriptor extends ClassConstructorDescriptorImpl {
-        public DefaultClassConstructorDescriptor(@NotNull ClassDescriptor containingClass, @NotNull SourceElement source) {
+        public DefaultClassConstructorDescriptor(
+                @NotNull ClassDescriptor containingClass,
+                @NotNull SourceElement source,
+                boolean freedomForSealedInterfacesSupported
+        ) {
             super(containingClass, null, Annotations.Companion.getEMPTY(), true, Kind.DECLARATION, source);
             initialize(Collections.<ValueParameterDescriptor>emptyList(),
-                       getDefaultConstructorVisibility(containingClass));
+                       getDefaultConstructorVisibility(containingClass, freedomForSealedInterfacesSupported));
         }
     }
 
@@ -130,7 +134,11 @@ public class DescriptorFactory {
             @NotNull ClassDescriptor containingClass,
             @NotNull SourceElement source
     ) {
-        return new DefaultClassConstructorDescriptor(containingClass, source);
+        /*
+         * Language version settings are needed here only for computing default visibility of constructors of sealed classes
+         *   Since object can not be sealed class it's OK to pass default settings here
+         */
+        return new DefaultClassConstructorDescriptor(containingClass, source, false);
     }
 
     @NotNull

@@ -380,10 +380,20 @@ public class DescriptorUtils {
     }
 
     @NotNull
-    public static DescriptorVisibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
+    public static DescriptorVisibility getDefaultConstructorVisibility(
+            @NotNull ClassDescriptor classDescriptor,
+            boolean freedomForSealedInterfacesSupported
+    ) {
         ClassKind classKind = classDescriptor.getKind();
-        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton() || isSealedClass(classDescriptor)) {
+        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton()) {
             return DescriptorVisibilities.PRIVATE;
+        }
+        if (isSealedClass(classDescriptor)) {
+            if (freedomForSealedInterfacesSupported) {
+                return DescriptorVisibilities.INTERNAL;
+            } else {
+                return DescriptorVisibilities.PRIVATE;
+            }
         }
         if (isAnonymousObject(classDescriptor)) {
             return DescriptorVisibilities.DEFAULT_VISIBILITY;

@@ -323,7 +323,8 @@ class FunctionDescriptorResolver(
         scope: LexicalScope,
         classDescriptor: ClassDescriptor,
         classElement: KtPureClassOrObject,
-        trace: BindingTrace
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
     ): ClassConstructorDescriptorImpl? {
         if (classDescriptor.kind == ClassKind.ENUM_ENTRY || !classElement.hasPrimaryConstructor()) return null
         return createConstructorDescriptor(
@@ -333,7 +334,8 @@ class FunctionDescriptorResolver(
             classElement.primaryConstructorModifierList,
             classElement.primaryConstructor ?: classElement,
             classElement.primaryConstructorParameters,
-            trace
+            trace,
+            languageVersionSettings
         )
     }
 
@@ -341,7 +343,8 @@ class FunctionDescriptorResolver(
         scope: LexicalScope,
         classDescriptor: ClassDescriptor,
         constructor: KtSecondaryConstructor,
-        trace: BindingTrace
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
     ): ClassConstructorDescriptorImpl {
         return createConstructorDescriptor(
             scope,
@@ -350,7 +353,8 @@ class FunctionDescriptorResolver(
             constructor.modifierList,
             constructor,
             constructor.valueParameters,
-            trace
+            trace,
+            languageVersionSettings
         )
     }
 
@@ -361,7 +365,8 @@ class FunctionDescriptorResolver(
         modifierList: KtModifierList?,
         declarationToTrace: KtPureElement,
         valueParameters: List<KtParameter>,
-        trace: BindingTrace
+        trace: BindingTrace,
+        languageVersionSettings: LanguageVersionSettings
     ): ClassConstructorDescriptorImpl {
         val constructorDescriptor = ClassConstructorDescriptorImpl.create(
             classDescriptor,
@@ -387,7 +392,7 @@ class FunctionDescriptorResolver(
             resolveValueParameters(constructorDescriptor, parameterScope, valueParameters, trace, null),
             resolveVisibilityFromModifiers(
                 modifierList,
-                DescriptorUtils.getDefaultConstructorVisibility(classDescriptor)
+                DescriptorUtils.getDefaultConstructorVisibility(classDescriptor, languageVersionSettings.supportsFeature(LanguageFeature.FreedomForSealedClasses))
             )
         )
         constructor.returnType = classDescriptor.defaultType
