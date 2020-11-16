@@ -378,7 +378,7 @@ private val propertyLazyInitLoweringPhase = makeBodyLoweringPhase(
 private val removeInitializersForLazyProperties = makeDeclarationTransformerPhase(
     ::RemoveInitializersForLazyProperties,
     name = "RemoveInitializersForLazyProperties",
-    description = "Make property init as lazy"
+    description = "Remove property initializers if they was initialised lazily"
 )
 
 private val propertyAccessorInlinerLoweringPhase = makeBodyLoweringPhase(

@@ -89,4 +89,7 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<ErrorTolerancePolicy> ERROR_TOLERANCE_POLICY =
             CompilerConfigurationKey.create("set up policy to ignore compilation errors");
+
+    public static final CompilerConfigurationKey<Boolean> PROPERTY_LAZY_INITIALISATION =
+            CompilerConfigurationKey.create("enable property lazy initialisation");
 }

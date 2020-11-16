@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrElementBase
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys.PROPERTY_LAZY_INITIALISATION
 import org.jetbrains.kotlin.name.Name
 import kotlin.collections.component1
 import kotlin.collections.component2
@@ -43,6 +44,10 @@ class PropertyLazyInitLowering(
         get() = context.fileToPurenessInitializers
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
+        if (context.configuration[PROPERTY_LAZY_INITIALISATION] != true) {
+            return
+        }
+
         if (container !is IrSimpleFunction && container !is IrField && container !is IrProperty)
             return
 
@@ -216,6 +221,10 @@ class RemoveInitializersForLazyProperties(
         get() = context.fileToPurenessInitializers
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        if (context.configuration[PROPERTY_LAZY_INITIALISATION] != true) {
+            return null
+        }
+
         if (declaration !is IrField) return null
 
         val file = declaration.parent as? IrFile ?: return null
