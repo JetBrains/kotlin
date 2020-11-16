@@ -67,8 +67,8 @@ targetList.each { target ->
                 compilerDistributionPath.set(distDir)
 
                 dependsOn "${target}EndorsedLibraries"
-                dependsOn ":${target}CrossDistRuntime"
-                dependsOn ":${target}StdlibCache"
+                dependsOn ":kotlin-native:${target}CrossDistRuntime"
+                dependsOn ":kotlin-native:${target}StdlibCache"
 
                 cacheTask.dependsOn it
             }

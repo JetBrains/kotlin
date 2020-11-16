@@ -29,7 +29,7 @@ open class KlibInstall: Exec() {
     override fun configure(config: Closure<*>): Task {
         val result = super.configure(config)
         val konanHomePath = project.findProperty("org.jetbrains.kotlin.native.home") ?: "dist"
-        val konanHome = project.rootProject.file(konanHomePath)
+        val konanHome = project.project(":kotlin-native").file(konanHomePath)
         val suffix = if (HostManager.host == KonanTarget.MINGW_X64) ".bat" else  ""
         val klibProgram = "$konanHome/bin/klib$suffix"
 

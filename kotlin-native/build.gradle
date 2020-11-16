@@ -63,7 +63,7 @@ if (isMac()) {
 }
 
 ext {
-    distDir = file('dist')
+    distDir = rootProject.file('dist')
     dependenciesDir = DependencyProcessor.defaultDependenciesRoot
     experimentalEnabled = project.hasProperty("org.jetbrains.kotlin.native.experimentalTargets")
     platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath),
@@ -83,7 +83,7 @@ ext {
             KonanTarget.LINUX_MIPSEL32.INSTANCE
     ]
 
-    kotlinCompilerModule= project(":kotlin-compiler")
+    kotlinCompilerModule= [path: ":kotlin-compiler", configuration: "runtimeElements"]
     kotlinStdLibModule= project(":kotlin-stdlib")
     kotlinCommonStdlibModule= project(":kotlin-stdlib-common")
     kotlinTestCommonModule= project(":kotlin-test:kotlin-test-common")
@@ -212,7 +212,7 @@ dependencies {
     distPack project(':kotlin-native:Interop:Runtime')
     distPack project(':kotlin-native:Interop:Indexer')
     distPack project(':kotlin-native:Interop:StubGenerator')
-    //distPack project(':kotlin-native:backend.native')
+    distPack project(':kotlin-native:backend.native')
     distPack project(':kotlin-native:utilities:cli-runner')
     distPack project(':kotlin-native:utilities:basic-utils')
     distPack project(':kotlin-native:klib')
@@ -332,7 +332,7 @@ task detectJarCollision(type: CollisionDetector) {
 }
 
 task shadowJar(type: ShadowJar) {
-    dependsOn ':detectJarCollision'
+    //dependsOn ':kotlin-native:detectJarCollision'
     mergeServiceFiles()
     destinationDirectory.set(file("$distDir/konan/lib"))
     archiveBaseName.set("kotlin-native")
@@ -347,7 +347,7 @@ task shadowJar(type: ShadowJar) {
 }
 
 task distCompiler(type: Copy) {
-    dependsOn ':shadowJar'
+    dependsOn ':kotlin-native:shadowJar'
 
     destinationDir distDir
 

@@ -206,7 +206,7 @@ class NamedNativeInteropConfig implements Named {
             ).asPath
             // Set the konan.home property because we run the cinterop tool not from a distribution jar
             // so it will not be able to determine this path by itself.
-            systemProperties "konan.home": project.rootProject.projectDir
+            systemProperties "konan.home": project.project(":kotlin-native").projectDir
             environment "LIBCLANG_DISABLE_CRASH_RECOVERY": "1"
 
             outputs.dir generatedSrcDir

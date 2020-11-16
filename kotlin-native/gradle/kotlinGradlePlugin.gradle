@@ -16,5 +16,5 @@ configurations {
 }
 
 project.dependencies {
-    kotlinCompilerClasspath(project(":kotlin-compiler-embeddable"))
+    kotlinCompilerClasspath(project(path: ":kotlin-compiler-embeddable", configuration: "runtimeJar"))
 }

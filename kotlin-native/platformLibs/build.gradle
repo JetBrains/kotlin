@@ -59,7 +59,7 @@ rootProject.project("kotlin-native").ext.platformManager.enabled.each { target -
             originalKlib = file("$konanHome/klib/common/stdlib")
             cacheRoot = file("$konanHome/klib/cache")
 
-            dependsOn ":${targetName}CrossDistRuntime"
+            dependsOn ":kotlin-native:${targetName}CrossDistRuntime"
         }
     }
 
@@ -85,7 +85,7 @@ rootProject.project("kotlin-native").ext.platformManager.enabled.each { target -
 
         def libTask = konanArtifacts."$libName"."$targetName"
         libTask.dependsOn df.config.depends.collect{ defFileToLibName(targetName, it) }
-        libTask.dependsOn ":${targetName}CrossDist"
+        libTask.dependsOn ":kotlin-native:${targetName}CrossDist"
         libTask.enableParallel = true
 
         task "$libName"(type: KlibInstall) {
@@ -103,7 +103,7 @@ rootProject.project("kotlin-native").ext.platformManager.enabled.each { target -
                 originalKlib = tasks[libName].installDir
                 cacheRoot = file("$konanHome/klib/cache")
 
-                dependsOn ":${targetName}StdlibCache"
+                dependsOn ":kotlin-native:${targetName}StdlibCache"
                 dependsOn tasks[libName]
                 dependsOn df.config.depends.collect {
                     def depName = defFileToLibName(targetName, it)

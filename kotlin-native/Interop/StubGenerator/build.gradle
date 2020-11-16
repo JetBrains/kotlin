@@ -31,8 +31,11 @@ dependencies {
     api project(path: ":kotlin-native:endorsedLibraries:kotlinx.cli", configuration: "jvmRuntimeElements")
 
     api project(":kotlin-stdlib")
-    api project(":kotlin-compiler")
+    api project(kotlinCompilerModule)
     api project(":kotlinx-metadata-klib")
+    api project(":native:kotlin-native-utils")
+    implementation(project(":compiler:util"))
+    implementation(project(":compiler:ir.serialization.common"))
 
     testImplementation "junit:junit:4.12"
     testImplementation project(":kotlin-test:kotlin-test-junit")
@@ -42,5 +45,15 @@ compileKotlin {
     kotlinOptions {
         freeCompilerArgs = ['-Xopt-in=kotlin.ExperimentalUnsignedTypes', '-Xskip-metadata-version-check']
         allWarningsAsErrors=true
+    }
+}
+
+sourceSets{
+    main {
+        kotlin {
+            srcDir("../../shared/src/library/kotlin")
+            srcDir("../../shared/src/main/kotlin")
+            srcDir("../../../buildSrc/src/generated/kotlin")
+        }
     }
 }

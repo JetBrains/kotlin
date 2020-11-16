@@ -26,7 +26,7 @@ val targetList: List<String> by project
 bitcode {
     create("runtime", file("src/main")) {
         dependsOn(
-            ":common:${target}Hash",
+            ":kotlin-native:common:${target}Hash",
             "${target}StdAlloc",
             "${target}OptAlloc",
             "${target}Mimalloc",
