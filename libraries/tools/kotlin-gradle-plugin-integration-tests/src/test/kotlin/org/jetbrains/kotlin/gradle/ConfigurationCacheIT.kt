@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.findFileByName
+import org.jetbrains.kotlin.gradle.util.createTempDir
 import org.junit.Test
 import java.io.File
 import java.net.URI
@@ -123,7 +124,7 @@ abstract class AbstractConfigurationCacheIT : BaseGradleIT() {
      * directory.
      */
     private fun copyReportToTempDir(htmlReportFile: File): File =
-        createTempDir().let { tempDir ->
+        createTempDir("report").let { tempDir ->
             htmlReportFile.parentFile.copyRecursively(tempDir)
             tempDir.resolve(htmlReportFile.name)
         }

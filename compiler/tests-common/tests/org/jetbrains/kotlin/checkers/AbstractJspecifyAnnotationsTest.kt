@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.MockLibraryUtil
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.io.path.*
 
 const val JSPECIFY_NULLNESS_MISMATCH_MARK = "jspecify_nullness_mismatch"
 
@@ -30,6 +31,7 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
         )
     }
 
+    @OptIn(ExperimentalPathApi::class)
     override fun doTest(filePath: String) {
         val ktSourceCode = File(filePath).readText()
         val javaSourcesFilename = javaSourcesPathRegex.matcher(ktSourceCode).also { it.find() }.group(1)
@@ -51,7 +53,7 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
             appendLine("// FILE: main.kt\n$ktSourceCode")
         }
 
-        super.doTest(createTempFile().apply { writeText(mergedSourceCode) }.path)
+        super.doTest(createTempFile().apply { writeText(mergedSourceCode) }.toString())
     }
 
     private fun makeJavaClassesPublicAndSeparatedByFiles(javaCode: String): String {
