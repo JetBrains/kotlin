@@ -51,11 +51,13 @@ class PropertyLazyInitLowering(
         val file = container.parent as? IrFile
             ?: return
 
-        val initFun = (if (file in fileToInitialisationFuns) {
-            fileToInitialisationFuns[file]
-        } else {
-            createInitialisationFunction(file).also {
-                fileToInitialisationFuns[file] = it
+        val initFun = (when {
+            file in fileToInitialisationFuns -> fileToInitialisationFuns[file]
+            fileToPurenessInitializers[file] == true -> null
+            else -> {
+                createInitialisationFunction(file).also {
+                    fileToInitialisationFuns[file] = it
+                }
             }
         }) ?: return
 
@@ -95,6 +97,7 @@ class PropertyLazyInitLowering(
         if (fieldToInitializer.isEmpty()) return null
 
         val allFieldsInFilePure = allFieldsInFilePure(fieldToInitializer.values)
+        fileToPurenessInitializers[file] = allFieldsInFilePure
         if (allFieldsInFilePure) {
             return null
         }

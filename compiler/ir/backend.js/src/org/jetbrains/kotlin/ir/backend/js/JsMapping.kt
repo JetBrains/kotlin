@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
 class JsMapping : DefaultMapping() {
     val outerThisFieldSymbols = newMapping<IrClass, IrField>()
@@ -31,8 +29,6 @@ class JsMapping : DefaultMapping() {
     val enumConstructorOldToNewValueParameters = newMapping<IrValueDeclaration, IrValueParameter>()
     val enumEntryToCorrespondingField = newMapping<IrEnumEntry, IrField>()
     val enumClassToInitEntryInstancesFun = newMapping<IrClass, IrSimpleFunction>()
-
-    val lazyInitialisedFields = newMapping<IrField, IrExpression>()
 
     // Triggers `StageController.lazyLower` on access
     override fun <K : IrDeclaration, V> newMapping(): Mapping.Delegate<K, V> = object : Mapping.Delegate<K, V>() {
