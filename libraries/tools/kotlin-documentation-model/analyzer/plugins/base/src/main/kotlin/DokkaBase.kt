@@ -32,7 +32,8 @@ import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 import org.jetbrains.dokka.transformers.pages.PageTransformer
 
-class DokkaBase : DokkaPlugin() {
+class
+DokkaBase : DokkaPlugin() {
 
     val preMergeDocumentableTransformer by extensionPoint<PreMergeDocumentableTransformer>()
     val pageMergerStrategy by extensionPoint<PageMergerStrategy>()
