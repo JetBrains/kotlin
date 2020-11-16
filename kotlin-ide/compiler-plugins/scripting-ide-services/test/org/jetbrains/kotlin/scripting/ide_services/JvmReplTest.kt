@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.scripting.ide_services.test_util.*
 import java.io.File
+import kotlin.io.path.*
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
@@ -318,14 +319,15 @@ class JvmIdeServicesTest : TestCase() {
             }
     }
 
+    @OptIn(ExperimentalPathApi::class)
     companion object {
         private const val MODULE_PATH = "plugins/scripting/scripting-ide-services-test"
-        private val outputJarDir = createTempDir("temp-ide-services").toPath()
+        private val outputJarDir = createTempDirectory("temp-ide-services")
 
         private data class CliCompilationResult(val exitCode: ExitCode, val outputJarPath: String)
 
         private fun compileFile(inputKtFileName: String, outputJarName: String): CliCompilationResult {
-            val jarPath = outputJarDir.resolve(outputJarName).toAbsolutePath().toString().replace('\\', '/')
+            val jarPath = outputJarDir.resolve(outputJarName).toAbsolutePath().invariantSeparatorsPath
 
             val compilerArgs = arrayOf(
                 "$MODULE_PATH/testData/$inputKtFileName",
