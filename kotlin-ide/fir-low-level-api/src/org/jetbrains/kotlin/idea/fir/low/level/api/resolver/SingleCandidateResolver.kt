@@ -65,6 +65,7 @@ class SingleCandidateResolver(
         val resolutionContext = stubBodyResolveTransformer.resolutionContext
 
         val candidate = CandidateFactory(resolutionContext, callInfo).createCandidate(
+            callInfo,
             resolutionParameters.callableSymbol,
             explicitReceiverKind = explicitReceiverKind,
             dispatchReceiverValue = dispatchReceiverValue,
