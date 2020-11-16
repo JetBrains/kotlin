@@ -20855,6 +20855,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/sealed/LocalSealed.kt");
             }
 
+            @TestMetadata("MultipleFiles_enabled.kt")
+            public void testMultipleFiles_enabled() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/MultipleFiles_enabled.kt");
+            }
+
             @TestMetadata("NestedSealed.kt")
             public void testNestedSealed() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/NestedSealed.kt");
