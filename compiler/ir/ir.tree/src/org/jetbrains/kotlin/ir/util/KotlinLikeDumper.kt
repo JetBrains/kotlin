@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -1078,7 +1079,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: IrDeclaration?) {
-        // TODO escape char symbols, use triple quotes when possible, see IrTextTestCaseGenerated.Expressions#testStringTemplates
+        // TODO use triple quotes when possible?
         // TODO optionally each argument at a separate line, another option add a wrapping
         expression.arguments.forEachIndexed { i, e ->
             p(i > 0, " +")
@@ -1102,7 +1103,15 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             is IrConstKind.Double -> "" to "D"
         }
 
-        p.printWithNoIndent(prefix, expression.value ?: "null", postfix)
+        val value = expression.value.toString()
+        val safeValue = when (kind) {
+            // TODO no tests for escaping quotes (',")
+            is IrConstKind.Char -> StringUtil.escapeCharCharacters(value)
+            is IrConstKind.String -> StringUtil.escapeStringCharacters(value)
+            else -> value
+        }
+
+        p.printWithNoIndent(prefix, safeValue, postfix)
     }
 
     override fun visitVararg(expression: IrVararg, data: IrDeclaration?) {
