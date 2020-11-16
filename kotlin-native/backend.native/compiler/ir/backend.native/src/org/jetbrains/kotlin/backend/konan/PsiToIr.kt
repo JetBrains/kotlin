@@ -72,8 +72,6 @@ internal fun Context.psiToIr(
         val irProviderForCEnumsAndCStructs =
                 IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
 
-        val deserializeFakeOverrides = config.configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
-
         val translationContext = object : TranslationPluginContext {
             override val moduleDescriptor: ModuleDescriptor
                 get() = generatorContext.moduleDescriptor
@@ -98,7 +96,6 @@ internal fun Context.psiToIr(
                 stubGenerator,
                 irProviderForCEnumsAndCStructs,
                 exportedDependencies,
-                deserializeFakeOverrides,
                 config.cachedLibraries
         ).also { linker ->
 
