@@ -1173,8 +1173,13 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitElseBranch(branch: IrElseBranch, data: IrDeclaration?) {
         p.printIndent()
-        // TODO assert that condition is `true`
-        p.printWithNoIndent("else -> ")
+        if ((branch.condition as? IrConst<*>)?.value == true) {
+            p.printWithNoIndent("else")
+        } else {
+            p.printWithNoIndent("/* else */ ")
+            branch.condition.accept(this, data)
+        }
+        p.printWithNoIndent(" -> ")
         branch.result.accept(this, data)
         p.println()
     }
