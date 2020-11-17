@@ -6,7 +6,7 @@ plugins {
 dependencies {
     testCompile(projectTests(":compiler"))
     testCompileOnly(intellijDep()) {
-        includeJars("groovy-all", rootProject = rootProject)
+        includeJars("groovy", "groovy-xml", rootProject = rootProject)
     }
     testCompile(intellijDep()) {
         includeJars("gson", rootProject = rootProject)
