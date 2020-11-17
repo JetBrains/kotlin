@@ -725,6 +725,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             runTest("compiler/testData/psi/validKotlinFunInterface.kt");
         }
 
+        @TestMetadata("valueClass.kt")
+        public void testValueClass() throws Exception {
+            runTest("compiler/testData/psi/valueClass.kt");
+        }
+
         @TestMetadata("When.kt")
         public void testWhen() throws Exception {
             runTest("compiler/testData/psi/When.kt");
