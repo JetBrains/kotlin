@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.idea.util.module
 
 internal abstract class FirLightMethod(
@@ -83,11 +85,16 @@ internal abstract class FirLightMethod(
 
     protected fun <T> T.computeJvmMethodName(
         defaultName: String,
+        containingClass: FirLightClassBase,
         annotationUseSiteTarget: AnnotationUseSiteTarget? = null
-    ): String where T : KtAnnotatedSymbol, T : KtSymbolWithVisibility {
+    ): String where T : KtAnnotatedSymbol, T : KtSymbolWithVisibility, T : KtCallableSymbol {
         getJvmNameFromAnnotation(annotationUseSiteTarget)?.let { return it }
 
-        if (visibility != KtSymbolVisibility.INTERNAL) return defaultName
+        val effectiveVisibilityIfNotInternal = (visibility != KtSymbolVisibility.INTERNAL).ifTrue {
+            (containingClass as? FirLightClassForSymbol)?.tryGetEffectiveVisibility(this)
+        } ?: this.visibility
+
+        if (effectiveVisibilityIfNotInternal != KtSymbolVisibility.INTERNAL) return defaultName
 
         val moduleName = module?.name ?: return defaultName
 

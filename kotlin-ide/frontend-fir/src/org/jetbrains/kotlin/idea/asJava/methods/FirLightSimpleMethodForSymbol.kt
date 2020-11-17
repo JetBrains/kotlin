@@ -34,14 +34,16 @@ internal class FirLightSimpleMethodForSymbol(
 ) {
 
     private val _name: String by lazyPub {
-        functionSymbol.computeJvmMethodName(functionSymbol.name.asString())
+        functionSymbol.computeJvmMethodName(functionSymbol.name.asString(), containingClass)
     }
 
     override fun getName(): String = _name
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
 
-        val nullability = if (functionSymbol.type.isUnit) NullabilityType.Unknown else functionSymbol.type.getTypeNullability(
+        val needUnknownNullability = functionSymbol.type.isUnit || (_visibility == PsiModifier.PRIVATE)
+
+        val nullability = if (needUnknownNullability) NullabilityType.Unknown else functionSymbol.type.getTypeNullability(
             functionSymbol,
             FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
         )
@@ -53,29 +55,24 @@ internal class FirLightSimpleMethodForSymbol(
         )
     }
 
-    open class X {
-        open val x: Int = 2
-        open fun u() = 2
+    private val _visibility: String by lazyPub {
+        functionSymbol.isOverride.ifTrue {
+            (containingClass as? FirLightClassForSymbol)
+                ?.tryGetEffectiveVisibility(functionSymbol)
+                ?.toPsiVisibility(isTopLevel)
+        } ?: functionSymbol.computeVisibility(isTopLevel = isTopLevel)
     }
 
     private val _modifiers: Set<String> by lazyPub {
 
         if (functionSymbol.hasInlineOnlyAnnotation()) return@lazyPub setOf(PsiModifier.FINAL, PsiModifier.PRIVATE)
 
-        val isOverrideMethod = functionSymbol.isOverride
-
-        val visibility = isOverrideMethod.ifTrue {
-            (containingClass as? FirLightClassForSymbol)
-                ?.tryGetEffectiveVisibility(functionSymbol)
-                ?.toPsiVisibility(isTopLevel)
-        } ?: functionSymbol.computeVisibility(isTopLevel = isTopLevel)
-
         val finalModifier = kotlinOrigin?.hasModifier(KtTokens.FINAL_KEYWORD) == true
 
         val modifiers = functionSymbol.computeModalityForMethod(
             isTopLevel = isTopLevel,
-            suppressFinal = !finalModifier && isOverrideMethod
-        ) + visibility
+            suppressFinal = !finalModifier && functionSymbol.isOverride
+        ) + _visibility
 
         modifiers.add(
             what = PsiModifier.STATIC,

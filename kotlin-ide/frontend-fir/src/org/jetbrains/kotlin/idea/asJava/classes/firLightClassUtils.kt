@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -147,11 +148,17 @@ internal fun FirLightClassBase.createMethods(
             is KtPropertySymbol -> {
 
                 if (declaration.hasJvmFieldAnnotation()) continue
+                if (declaration.visibility == KtSymbolVisibility.PRIVATE) continue
+
+                fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
+                    if (isInline) return false
+                    if (!hasBody && visibility == KtSymbolVisibility.PRIVATE) return false
+                    return !declaration.hasJvmSyntheticAnnotation(siteTarget)
+                            && !declaration.isHiddenByDeprecation(siteTarget)
+                }
 
                 val getter = declaration.getter?.takeIf {
-                    !declaration.hasJvmSyntheticAnnotation(AnnotationUseSiteTarget.PROPERTY_GETTER) &&
-                            !it.isInline &&
-                            !declaration.isHiddenByDeprecation(AnnotationUseSiteTarget.PROPERTY_GETTER)
+                    it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_GETTER)
                 }
 
                 if (getter != null) {
@@ -167,10 +174,7 @@ internal fun FirLightClassBase.createMethods(
                 }
 
                 val setter = declaration.setter?.takeIf {
-                    !isAnnotationType &&
-                            !declaration.hasJvmSyntheticAnnotation(AnnotationUseSiteTarget.PROPERTY_SETTER) &&
-                            !it.isInline &&
-                            !declaration.isHiddenByDeprecation(AnnotationUseSiteTarget.PROPERTY_GETTER)
+                    !isAnnotationType && it.needToCreateAccessor(AnnotationUseSiteTarget.PROPERTY_SETTER)
                 }
 
                 if (setter != null) {
@@ -194,13 +198,19 @@ internal fun FirLightClassBase.createFields(
     isTopLevel: Boolean,
     result: MutableList<KtLightField>
 ) {
+    fun hasBackingField(property: KtPropertySymbol): Boolean {
+        if (property.modality == KtCommonSymbolModality.ABSTRACT) return false
+        if (property.isLateInit) return true
+        //IS PARAMETER -> true
+        if (property.getter == null && property.setter == null) return true
+        if (property.hasJvmSyntheticAnnotation(AnnotationUseSiteTarget.FIELD)) return false
+        return property.hasBackingField
+    }
+
     //TODO isHiddenByDeprecation
     for (declaration in declarations) {
         if (declaration !is KtPropertySymbol) continue
-
-        if (!declaration.hasBackingField) continue
-        if (declaration.hasJvmSyntheticAnnotation(AnnotationUseSiteTarget.FIELD)) continue
-        if (declaration.modality == KtCommonSymbolModality.ABSTRACT) continue
+        if (!hasBackingField(declaration)) continue
 
         result.add(
             FirLightFieldForPropertySymbol(
