@@ -82,7 +82,7 @@ open class DiagnosticCodeMetaInfoRenderConfiguration(
     }
 
     fun getTag(codeMetaInfo: DiagnosticCodeMetaInfo): String {
-        return codeMetaInfo.diagnostic.factory.name
+        return codeMetaInfo.diagnostic.factory.name!!
     }
 }
 

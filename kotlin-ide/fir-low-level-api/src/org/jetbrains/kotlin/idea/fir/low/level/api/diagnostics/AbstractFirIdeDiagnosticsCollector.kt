@@ -42,7 +42,7 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
         override fun report(diagnostic: FirDiagnostic<*>?) {
             if (diagnostic !is FirPsiDiagnostic<*>) return
             if (diagnostic.element.psi !is KtElement) return
-            onDiagnostic(diagnostic.asPsiBasedDiagnostic())
+            onDiagnostic(diagnostic)
         }
     }
 
