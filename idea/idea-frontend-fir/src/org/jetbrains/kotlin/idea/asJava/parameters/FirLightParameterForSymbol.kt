@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class FirLightParameterForSymbol(
@@ -26,10 +29,15 @@ internal class FirLightParameterForSymbol(
     override val kotlinOrigin: KtParameter? = parameterSymbol.psi as? KtParameter
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
+        val annotationSite = (containingMethod.isConstructor && parameterSymbol.symbolKind == KtSymbolKind.MEMBER).ifTrue {
+            AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
+        }
+
         parameterSymbol.computeAnnotations(
             parent = this,
             nullability = parameterSymbol.type.getTypeNullability(parameterSymbol, FirResolvePhase.TYPES),
-            annotationUseSiteTarget = null,
+            annotationUseSiteTarget = annotationSite,
+            includeAnnotationsWithoutSite = false
         )
     }
 
@@ -50,9 +58,7 @@ internal class FirLightParameterForSymbol(
 
     override fun equals(other: Any?): Boolean =
         this === other ||
-                (other is FirLightParameterForSymbol &&
-                 kotlinOrigin == other.kotlinOrigin &&
-                 parameterSymbol == other.parameterSymbol)
+                (other is FirLightParameterForSymbol && parameterSymbol == other.parameterSymbol)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 }

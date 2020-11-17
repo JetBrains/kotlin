@@ -39,6 +39,7 @@ internal class KtFirPropertyGetterSymbol(
     override val isDefault: Boolean get() = firRef.withFir { it is FirDefaultPropertyAccessor }
     override val isInline: Boolean get() = firRef.withFir { it.isInline }
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
+    override val hasBody: Boolean get() = firRef.withFir { it.body != null }
 
     override val symbolKind: KtSymbolKind
         get() = firRef.withFir { fir ->

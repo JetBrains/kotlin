@@ -42,7 +42,7 @@ internal class FirLightFieldForPropertySymbol(
     private val _modifierList: PsiModifierList by lazyPub {
 
         val isJvmField = propertySymbol.hasJvmFieldAnnotation()
-        val suppressFinal = !isJvmField && !propertySymbol.isVal
+        val suppressFinal = !propertySymbol.isVal
 
         val modifiersFromSymbol = propertySymbol.computeModalityForMethod(
             isTopLevel = isTopLevel,
@@ -64,9 +64,13 @@ internal class FirLightFieldForPropertySymbol(
             `if` = !suppressFinal
         )
 
+        val nullability = if (visibility != PsiModifier.PRIVATE)
+            propertySymbol.type.getTypeNullability(propertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        else NullabilityType.Unknown
+
         val annotations = propertySymbol.computeAnnotations(
             parent = this,
-            nullability = propertySymbol.type.getTypeNullability(propertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE),
+            nullability = nullability,
             annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
         )
 

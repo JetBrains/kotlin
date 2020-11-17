@@ -87,7 +87,8 @@ internal fun KtAnnotatedSymbol.hasAnnotation(classIdString: String, annotationUs
 internal fun KtAnnotatedSymbol.computeAnnotations(
     parent: PsiElement,
     nullability: NullabilityType,
-    annotationUseSiteTarget: AnnotationUseSiteTarget?
+    annotationUseSiteTarget: AnnotationUseSiteTarget?,
+    includeAnnotationsWithoutSite: Boolean = true
 ): List<PsiAnnotation> {
 
     if (nullability == NullabilityType.Unknown && annotations.isEmpty()) return emptyList()
@@ -108,7 +109,10 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
     for (annotation in annotations) {
 
         val siteTarget = annotation.useSiteTarget
-        if (siteTarget == null || siteTarget == annotationUseSiteTarget) {
+
+        if ((includeAnnotationsWithoutSite && siteTarget == null) ||
+            siteTarget == annotationUseSiteTarget
+        ) {
             result.add(FirLightAnnotationForAnnotationCall(annotation, parent))
         }
     }

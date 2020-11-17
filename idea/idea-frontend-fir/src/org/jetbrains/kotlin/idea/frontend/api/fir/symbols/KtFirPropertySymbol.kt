@@ -80,6 +80,8 @@ internal class KtFirPropertySymbol(
 
     override val hasBackingField: Boolean get() = firRef.withFir { it.hasBackingField }
 
+    override val isLateInit: Boolean get() = firRef.withFir { it.isLateInit }
+
     override val isConst: Boolean get() = firRef.withFir { it.isConst }
 
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }

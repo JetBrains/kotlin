@@ -151,12 +151,10 @@ fun findClass(fqName: String, ktFile: KtFile?, project: Project): PsiClass? {
         return it.toLightClass()
     }
 
-    return JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project)) ?: PsiTreeUtil.findChildrenOfType(
-            ktFile,
-            KtClassOrObject::class.java
-        )
-        .find { fqName.endsWith(it.nameAsName!!.asString()) }
-        ?.let { KtLightClassForSourceDeclaration.create(it) }
+    return JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project))
+        ?: PsiTreeUtil.findChildrenOfType(ktFile, KtClassOrObject::class.java)
+            .find { fqName.endsWith(it.nameAsName!!.asString()) }
+            ?.toLightClass()
 }
 
 object LightClassLazinessChecker {
@@ -276,11 +274,13 @@ object LightClassLazinessChecker {
                 // see KtLightNullabilityAnnotation
                 assertTrue(
                     lightAnnotations.isNotEmpty(),
-                    "Missing $fqName annotation in '${modifierListOwner}' have only ${annotations?.joinToString(
-                        ", ",
-                        "[",
-                        "]"
-                    ) { it.toString() }}"
+                    "Missing $fqName annotation in '${modifierListOwner}' have only ${
+                        annotations?.joinToString(
+                            ", ",
+                            "[",
+                            "]"
+                        ) { it.toString() }
+                    }"
                 )
             }
             clsAnnotations.zip(lightAnnotations).forEach { (clsAnnotation, lightAnnotation) ->

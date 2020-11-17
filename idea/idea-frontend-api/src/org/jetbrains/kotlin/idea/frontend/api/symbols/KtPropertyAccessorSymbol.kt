@@ -14,6 +14,7 @@ sealed class KtPropertyAccessorSymbol : KtCallableSymbol(),
     abstract val isDefault: Boolean
     abstract val isInline: Boolean
     abstract val isOverride: Boolean
+    abstract val hasBody: Boolean
 
     abstract val symbolKind: KtSymbolKind
 
