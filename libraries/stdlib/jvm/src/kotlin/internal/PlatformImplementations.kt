@@ -15,6 +15,7 @@ internal open class PlatformImplementations {
     private object ReflectThrowable {
         @JvmField
         public val addSuppressed: Method?
+
         @JvmField
         public val getSuppressed: Method?
 
@@ -42,7 +43,7 @@ internal open class PlatformImplementations {
         throw UnsupportedOperationException("Retrieving groups by name is not supported on this platform.")
     }
 
-    public open fun defaultPlatformRandom(): Random = FallbackThreadLocalRandom()
+    public open fun defaultPlatformRandom(): Random = FallbackThreadLocalRandom
 }
 
 
@@ -51,20 +52,28 @@ internal val IMPLEMENTATIONS: PlatformImplementations = run {
     val version = getJavaVersion()
     if (version >= 0x10008) {
         try {
-            return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.jdk8.JDK8PlatformImplementations").newInstance())
-        } catch (e: ClassNotFoundException) { }
+            return@run castToBaseType<PlatformImplementations>(
+                Class.forName("kotlin.internal.jdk8.JDK8PlatformImplementations").newInstance()
+            )
+        } catch (e: ClassNotFoundException) {
+        }
         try {
             return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.JRE8PlatformImplementations").newInstance())
-        } catch (e: ClassNotFoundException) { }
+        } catch (e: ClassNotFoundException) {
+        }
     }
 
     if (version >= 0x10007) {
         try {
-            return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.jdk7.JDK7PlatformImplementations").newInstance())
-        } catch (e: ClassNotFoundException) { }
+            return@run castToBaseType<PlatformImplementations>(
+                Class.forName("kotlin.internal.jdk7.JDK7PlatformImplementations").newInstance()
+            )
+        } catch (e: ClassNotFoundException) {
+        }
         try {
             return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.JRE7PlatformImplementations").newInstance())
-        } catch (e: ClassNotFoundException) { }
+        } catch (e: ClassNotFoundException) {
+        }
     }
 
     PlatformImplementations()
@@ -86,7 +95,11 @@ private fun getJavaVersion(): Int {
     val version = System.getProperty("java.specification.version") ?: return default
     val firstDot = version.indexOf('.')
     if (firstDot < 0)
-        return try { version.toInt() * 0x10000 } catch (e: NumberFormatException) { default }
+        return try {
+            version.toInt() * 0x10000
+        } catch (e: NumberFormatException) {
+            default
+        }
 
     var secondDot = version.indexOf('.', firstDot + 1)
     if (secondDot < 0) secondDot = version.length
