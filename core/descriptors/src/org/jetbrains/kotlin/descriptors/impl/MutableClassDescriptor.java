@@ -105,6 +105,11 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
     }
 
     @Override
+    public boolean isValue() {
+        return false;
+    }
+
+    @Override
     public boolean isCompanionObject() {
         return false;
     }

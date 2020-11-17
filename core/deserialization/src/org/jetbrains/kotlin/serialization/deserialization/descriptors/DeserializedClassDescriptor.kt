@@ -98,7 +98,7 @@ class DeserializedClassDescriptor(
 
     override fun isData() = Flags.IS_DATA.get(classProto.flags)
 
-    override fun isInline() = Flags.IS_INLINE_CLASS.get(classProto.flags)
+    override fun isInline() = Flags.IS_INLINE_CLASS.get(classProto.flags) && metadataVersion.isAtMost(1, 4, 1)
 
     override fun isExpect() = Flags.IS_EXPECT_CLASS.get(classProto.flags)
 
@@ -107,6 +107,8 @@ class DeserializedClassDescriptor(
     override fun isExternal() = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
 
     override fun isFun() = Flags.IS_FUN_INTERFACE.get(classProto.flags)
+
+    override fun isValue() = Flags.IS_INLINE_CLASS.get(classProto.flags) && metadataVersion.isAtLeast(1, 4, 2)
 
     override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner): MemberScope =
         memberScopeHolder.getScope(kotlinTypeRefiner)

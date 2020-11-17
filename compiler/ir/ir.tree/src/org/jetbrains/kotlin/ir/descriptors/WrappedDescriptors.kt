@@ -583,6 +583,8 @@ open class WrappedClassDescriptor : ClassDescriptor, WrappedDeclarationDescripto
 
     override fun isFun() = owner.isFun
 
+    override fun isValue() = owner.isInline
+
     override fun getThisAsReceiverParameter() = owner.thisReceiver?.descriptor as ReceiverParameterDescriptor
 
     override fun getUnsubstitutedPrimaryConstructor() =
@@ -681,6 +683,8 @@ open class WrappedScriptDescriptor : ScriptDescriptor, WrappedDeclarationDescrip
     override fun isInline() = false
 
     override fun isFun() = false
+
+    override fun isValue() = false
 
     override fun getThisAsReceiverParameter() = owner.thisReceiver.descriptor as ReceiverParameterDescriptor
 
@@ -821,6 +825,8 @@ open class WrappedEnumEntryDescriptor : ClassDescriptor, WrappedDeclarationDescr
     override fun isInline() = false
 
     override fun isFun() = false
+
+    override fun isValue() = false
 
     override fun getThisAsReceiverParameter() = (owner.parent as IrClass).descriptor.thisAsReceiverParameter
 
