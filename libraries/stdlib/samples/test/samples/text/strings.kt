@@ -421,4 +421,11 @@ class Strings {
         assertPrints(emptyString.lastOrNull(), "null")
         assertFails { emptyString.last() }
     }
+
+    @Sample
+    fun sarcastic() {
+        val string = "Programmers should remain professional."
+        val seededRandom = Random(2)
+        assertPrints(string.sarcastic(seededRandom), "pROgRamMERS ShOuLD rEMAin ProFEssioNAL.")
+    }
 }

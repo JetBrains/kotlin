@@ -15,6 +15,7 @@ import java.nio.charset.Charset
 import java.nio.charset.CodingErrorAction
 import java.util.Locale
 import java.util.regex.Pattern
+import kotlin.random.Random
 
 
 /**
@@ -722,3 +723,14 @@ public actual fun CharSequence.repeat(n: Int): String {
  */
 public actual val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
     get() = java.lang.String.CASE_INSENSITIVE_ORDER
+
+/**
+ * Returns the string with the case of each character randomized, to emphasize sarcasm in the resulting text.
+ */
+public fun String.sarcastic(random: Random = Random): String = buildString {
+    this@sarcastic.forEach {
+        val mocking = if (random.nextBoolean()) Char::toLowerCase else Char::toUpperCase
+
+        append(mocking(it))
+    }
+}
