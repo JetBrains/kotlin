@@ -16,6 +16,25 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 
 object LightTreePositioningStrategies {
+    internal val DEFAULT = object : LightTreePositioningStrategy() {
+        override fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
+            when (node.tokenType) {
+                KtNodeTypes.OBJECT_DECLARATION -> {
+                    val objectKeyword = tree.findChildByType(node, KtTokens.OBJECT_KEYWORD)!!
+                    return markRange(
+                        from = objectKeyword,
+                        to = tree.findChildByType(node, KtTokens.IDENTIFIER) ?: objectKeyword,
+                        tree
+                    )
+                }
+                KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL -> {
+                    return SECONDARY_CONSTRUCTOR_DELEGATION_CALL.mark(node, tree)
+                }
+            }
+            return super.mark(node, tree)
+        }
+    }
+
     val VAL_OR_VAR_NODE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
             val target = tree.findChildByType(node, VAL_VAR_TOKEN_SET) ?: node

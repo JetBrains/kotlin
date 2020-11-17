@@ -21,16 +21,7 @@ open class LightTreePositioningStrategy {
     }
 
     companion object {
-        val DEFAULT = object : LightTreePositioningStrategy() {
-            override fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
-                when (node.tokenType) {
-                    KtNodeTypes.CONSTRUCTOR_DELEGATION_CALL -> {
-                        return LightTreePositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL.mark(node, tree)
-                    }
-                }
-                return super.mark(node, tree)
-            }
-        }
+        val DEFAULT = LightTreePositioningStrategies.DEFAULT
     }
 }
 
