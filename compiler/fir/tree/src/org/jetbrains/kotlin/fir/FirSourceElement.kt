@@ -188,7 +188,13 @@ sealed class FirPsiSourceElement<out P : PsiElement>(val psi: P) : FirSourceElem
             node.unwrap().psi.parent?.node?.let { TreeBackedLighterAST.wrap(it) }
 
         override fun getChildren(node: LighterASTNode, nodesRef: Ref<Array<LighterASTNode>>): Int {
-            val children = node.unwrap().psi.children
+            val psi = node.unwrap().psi
+            val children = mutableListOf<PsiElement>()
+            var child = psi.firstChild
+            while (child != null) {
+                children += child
+                child = child.nextSibling
+            }
             if (children.isEmpty()) {
                 nodesRef.set(LighterASTNode.EMPTY_ARRAY)
             } else {

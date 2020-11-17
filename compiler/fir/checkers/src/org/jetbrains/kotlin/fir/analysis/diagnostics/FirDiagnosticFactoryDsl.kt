@@ -11,36 +11,52 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-fun <E : FirSourceElement, P : PsiElement> warning0(): DiagnosticFactory0DelegateProvider<E, P> {
-    return DiagnosticFactory0DelegateProvider(Severity.WARNING)
+fun <E : FirSourceElement, P : PsiElement> warning0(
+    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT
+): DiagnosticFactory0DelegateProvider<E, P> {
+    return DiagnosticFactory0DelegateProvider(Severity.WARNING, positioningStrategy)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A : Any> warning1(): DiagnosticFactory1DelegateProvider<E, P, A> {
-    return DiagnosticFactory1DelegateProvider(Severity.WARNING)
+fun <E : FirSourceElement, P : PsiElement, A : Any> warning1(
+    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT
+): DiagnosticFactory1DelegateProvider<E, P, A> {
+    return DiagnosticFactory1DelegateProvider(Severity.WARNING, positioningStrategy)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any> warning2(): DiagnosticFactory2DelegateProvider<E, P, A, B> {
-    return DiagnosticFactory2DelegateProvider(Severity.WARNING)
+fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any> warning2(
+    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT
+): DiagnosticFactory2DelegateProvider<E, P, A, B> {
+    return DiagnosticFactory2DelegateProvider(Severity.WARNING, positioningStrategy)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> warning3(): DiagnosticFactory3DelegateProvider<E, P, A, B, C> {
-    return DiagnosticFactory3DelegateProvider(Severity.WARNING)
+fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> warning3(
+    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT
+): DiagnosticFactory3DelegateProvider<E, P, A, B, C> {
+    return DiagnosticFactory3DelegateProvider(Severity.WARNING, positioningStrategy)
 }
 
-fun <E : FirSourceElement, P : PsiElement> error0(): DiagnosticFactory0DelegateProvider<E, P> {
-    return DiagnosticFactory0DelegateProvider(Severity.ERROR)
+fun <E : FirSourceElement, P : PsiElement> error0(
+    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT
+): DiagnosticFactory0DelegateProvider<E, P> {
+    return DiagnosticFactory0DelegateProvider(Severity.ERROR, positioningStrategy)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A : Any> error1(): DiagnosticFactory1DelegateProvider<E, P, A> {
-    return DiagnosticFactory1DelegateProvider(Severity.ERROR)
+fun <E : FirSourceElement, P : PsiElement, A : Any> error1(
+    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT
+): DiagnosticFactory1DelegateProvider<E, P, A> {
+    return DiagnosticFactory1DelegateProvider(Severity.ERROR, positioningStrategy)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any> error2(): DiagnosticFactory2DelegateProvider<E, P, A, B> {
-    return DiagnosticFactory2DelegateProvider(Severity.ERROR)
+fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any> error2(
+    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT
+): DiagnosticFactory2DelegateProvider<E, P, A, B> {
+    return DiagnosticFactory2DelegateProvider(Severity.ERROR, positioningStrategy)
 }
 
-fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> error3(): DiagnosticFactory3DelegateProvider<E, P, A, B, C> {
-    return DiagnosticFactory3DelegateProvider(Severity.ERROR)
+fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> error3(
+    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT
+): DiagnosticFactory3DelegateProvider<E, P, A, B, C> {
+    return DiagnosticFactory3DelegateProvider(Severity.ERROR, positioningStrategy)
 }
 
 /**
@@ -48,52 +64,56 @@ fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> error3(): 
  *   that takes `PsiElement` as first type parameter
  */
 fun <E : FirSourceElement, P : PsiElement> existing0(): DiagnosticFactory0DelegateProvider<E, P> {
-    return DiagnosticFactory0DelegateProvider(Severity.ERROR)
+    return DiagnosticFactory0DelegateProvider(Severity.ERROR, LightTreePositioningStrategy.DEFAULT)
 }
 
 fun <E : FirSourceElement, P : PsiElement, A : Any> existing1(): DiagnosticFactory1DelegateProvider<E, P, A> {
-    return DiagnosticFactory1DelegateProvider(Severity.ERROR)
+    return DiagnosticFactory1DelegateProvider(Severity.ERROR, LightTreePositioningStrategy.DEFAULT)
 }
 
 fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any> existing2(): DiagnosticFactory2DelegateProvider<E, P, A, B> {
-    return DiagnosticFactory2DelegateProvider(Severity.ERROR)
+    return DiagnosticFactory2DelegateProvider(Severity.ERROR, LightTreePositioningStrategy.DEFAULT)
 }
 
 fun <E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any> existing3(): DiagnosticFactory3DelegateProvider<E, P, A, B, C> {
-    return DiagnosticFactory3DelegateProvider(Severity.ERROR)
+    return DiagnosticFactory3DelegateProvider(Severity.ERROR, LightTreePositioningStrategy.DEFAULT)
 }
 
 // ------------------------------ Providers ------------------------------
 
 class DiagnosticFactory0DelegateProvider<E : FirSourceElement, P : PsiElement>(
-    private val severity: Severity
+    private val severity: Severity,
+    private val positioningStrategy: LightTreePositioningStrategy
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory0<E, P>> {
-        return DummyDelegate(FirDiagnosticFactory0(prop.name, severity))
+        return DummyDelegate(FirDiagnosticFactory0(prop.name, severity, positioningStrategy))
     }
 }
 
 class DiagnosticFactory1DelegateProvider<E : FirSourceElement, P : PsiElement, A : Any>(
-    private val severity: Severity
+    private val severity: Severity,
+    private val positioningStrategy: LightTreePositioningStrategy
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory1<E, P, A>> {
-        return DummyDelegate(FirDiagnosticFactory1(prop.name, severity))
+        return DummyDelegate(FirDiagnosticFactory1(prop.name, severity, positioningStrategy))
     }
 }
 
 class DiagnosticFactory2DelegateProvider<E : FirSourceElement, P : PsiElement, A : Any, B : Any>(
-    private val severity: Severity
+    private val severity: Severity,
+    private val positioningStrategy: LightTreePositioningStrategy
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory2<E, P, A, B>> {
-        return DummyDelegate(FirDiagnosticFactory2(prop.name, severity))
+        return DummyDelegate(FirDiagnosticFactory2(prop.name, severity, positioningStrategy))
     }
 }
 
 class DiagnosticFactory3DelegateProvider<E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any>(
-    private val severity: Severity
+    private val severity: Severity,
+    private val positioningStrategy: LightTreePositioningStrategy
 ) {
     operator fun provideDelegate(thisRef: Any?, prop: KProperty<*>): ReadOnlyProperty<Any?, FirDiagnosticFactory3<E, P, A, B, C>> {
-        return DummyDelegate(FirDiagnosticFactory3(prop.name, severity))
+        return DummyDelegate(FirDiagnosticFactory3(prop.name, severity, positioningStrategy))
     }
 }
 

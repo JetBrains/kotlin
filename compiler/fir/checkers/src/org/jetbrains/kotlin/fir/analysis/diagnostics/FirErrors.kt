@@ -91,7 +91,7 @@ object FirErrors {
     val NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION by existing0<FirSourceElement, KtExpression>()
     val NOT_AN_ANNOTATION_CLASS by error1<FirSourceElement, PsiElement, String>()
     val NULLABLE_TYPE_OF_ANNOTATION_MEMBER by existing0<FirSourceElement, KtTypeReference>()
-    val VAR_ANNOTATION_PARAMETER by existing0<FirSourceElement, KtParameter>()
+    val VAR_ANNOTATION_PARAMETER by error0<FirSourceElement, KtParameter>(LightTreePositioningStrategies.VAL_OR_VAR_NODE)
 
     // Exposed visibility group
     val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
