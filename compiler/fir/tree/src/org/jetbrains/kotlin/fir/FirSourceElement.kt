@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.fir
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.TreeBackedLighterAST
 import com.intellij.openapi.util.Ref
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 
@@ -206,9 +208,39 @@ sealed class FirPsiSourceElement<out P : PsiElement>(val psi: P) : FirSourceElem
         override fun disposeChildren(p0: Array<out LighterASTNode>?, p1: Int) {
         }
 
-        override fun getStartOffset(node: LighterASTNode): Int = node.unwrap().startOffset
+        override fun getStartOffset(node: LighterASTNode): Int {
+            return getStartOffset(node.unwrap().psi)
+        }
 
-        override fun getEndOffset(node: LighterASTNode): Int = node.unwrap().let { it.startOffset + it.textLength }
+        private fun getStartOffset(element: PsiElement): Int {
+            var child = element.firstChild
+            if (child != null) {
+                while (child is PsiComment || child is PsiWhiteSpace) {
+                    child = child.nextSibling
+                }
+                if (child != null) {
+                    return getStartOffset(child)
+                }
+            }
+            return element.textRange.startOffset
+        }
+
+        override fun getEndOffset(node: LighterASTNode): Int {
+            return getEndOffset(node.unwrap().psi)
+        }
+
+        private fun getEndOffset(element: PsiElement): Int {
+            var child = element.lastChild
+            if (child != null) {
+                while (child is PsiComment || child is PsiWhiteSpace) {
+                    child = child.prevSibling
+                }
+                if (child != null) {
+                    return getEndOffset(child)
+                }
+            }
+            return element.textRange.endOffset
+        }
     }
 }
 
