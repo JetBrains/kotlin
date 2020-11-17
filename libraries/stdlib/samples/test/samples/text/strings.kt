@@ -2,6 +2,7 @@ package samples.text
 
 import samples.*
 import kotlin.test.*
+import kotlin.random.Random
 
 class Strings {
 
