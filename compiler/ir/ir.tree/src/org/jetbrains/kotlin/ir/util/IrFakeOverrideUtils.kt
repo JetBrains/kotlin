@@ -85,13 +85,12 @@ fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(toSkip: (IrOve
 
 // TODO: use this implementation instead of any other
 fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false, toSkip: (IrSimpleFunction) -> Boolean = { false }): IrSimpleFunction? {
-    val reals = collectRealOverrides(toSkip)
     return if (allowAbstract) {
+        val reals = collectRealOverrides(toSkip)
         if (reals.isEmpty()) error("No real overrides for ${this.render()}")
         reals.first()
     } else {
-        reals
-            .filter { it.modality != Modality.ABSTRACT }
+        collectRealOverrides { function -> toSkip(function) || function.modality == Modality.ABSTRACT }
             .let { realOverrides ->
                 // Kotlin forbids conflicts between overrides, but they may trickle down from Java.
                 realOverrides.singleOrNull { it.parent.safeAs<IrClass>()?.isInterface != true }
