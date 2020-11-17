@@ -10,9 +10,10 @@
 #include "gtest/gtest.h"
 
 #include "Types.h"
+#include "Utils.hpp"
 
 template <class F>
-class ScopedStrictMockFunction {
+class ScopedStrictMockFunction : private kotlin::MoveOnly {
 public:
     using Mock = testing::StrictMock<testing::MockFunction<F>>;
 
@@ -23,9 +24,6 @@ public:
         mock_ = std::unique_ptr<Mock>(new Mock());
         *globalMockLocation_ = mock_.get();
     }
-
-    ScopedStrictMockFunction(const ScopedStrictMockFunction&) = delete;
-    ScopedStrictMockFunction& operator=(const ScopedStrictMockFunction&) = delete;
 
     ScopedStrictMockFunction(ScopedStrictMockFunction&& rhs) : globalMockLocation_(rhs.globalMockLocation_), mock_(std::move(rhs.mock_)) {
         rhs.globalMockLocation_ = nullptr;

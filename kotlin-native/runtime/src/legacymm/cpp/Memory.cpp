@@ -41,10 +41,11 @@
 #include "KString.h"
 #include "Memory.h"
 #include "MemoryPrivate.hpp"
+#include "Mutex.hpp"
 #include "Natives.h"
 #include "Porting.h"
 #include "Runtime.h"
-#include "Utils.h"
+#include "Utils.hpp"
 #include "WorkerBoundReference.h"
 #include "Weak.h"
 
@@ -150,19 +151,15 @@ KBoolean g_hasCyclicCollector = true;
 #endif  // USE_CYCLIC_GC
 
 // TODO: Consider using ObjHolder.
-class ScopedRefHolder {
+class ScopedRefHolder : private kotlin::MoveOnly {
  public:
   ScopedRefHolder() = default;
 
   explicit ScopedRefHolder(KRef obj);
 
-  ScopedRefHolder(const ScopedRefHolder&) = delete;
-
   ScopedRefHolder(ScopedRefHolder&& other) noexcept: obj_(other.obj_) {
     other.obj_ = nullptr;
   }
-
-  ScopedRefHolder& operator=(const ScopedRefHolder&) = delete;
 
   ScopedRefHolder& operator=(ScopedRefHolder&& other) noexcept {
     ScopedRefHolder tmp(std::move(other));
@@ -191,7 +188,7 @@ struct CycleDetectorRootset {
   KStdVector<ScopedRefHolder> heldRefs;
 };
 
-class CycleDetector {
+class CycleDetector : private kotlin::Pinned {
  public:
   static void insertCandidateIfNeeded(KRef object) {
     if (canBeACandidate(object))
@@ -208,10 +205,6 @@ class CycleDetector {
  private:
   CycleDetector() = default;
   ~CycleDetector() = default;
-  CycleDetector(const CycleDetector&) = delete;
-  CycleDetector(CycleDetector&&) = delete;
-  CycleDetector& operator=(const CycleDetector&) = delete;
-  CycleDetector& operator=(CycleDetector&&) = delete;
 
   static CycleDetector& instance() {
     // Only store a pointer to CycleDetector in .bss

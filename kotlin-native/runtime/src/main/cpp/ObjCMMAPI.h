@@ -7,21 +7,17 @@
 #define RUNTIME_OBJCMMAPI_H
 
 #include "Common.h"
+#include "Utils.hpp"
 
 #if KONAN_OBJC_INTEROP
 
 extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
 
 namespace konan {
-class AutoreleasePool {
+class AutoreleasePool : private kotlin::Pinned {
  public:
   AutoreleasePool();
   ~AutoreleasePool();
-
-  AutoreleasePool(const AutoreleasePool&) = delete;
-  AutoreleasePool(AutoreleasePool&&) = delete;
-  AutoreleasePool& operator=(const AutoreleasePool&) = delete;
-  AutoreleasePool& operator=(AutoreleasePool&&) = delete;
 
  private:
   void* handle;

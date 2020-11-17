@@ -39,7 +39,7 @@
 #import "ObjCExportPrivate.h"
 #import "ObjCMMAPI.h"
 #import "Runtime.h"
-#import "Utils.h"
+#import "Mutex.hpp"
 #import "Exceptions.h"
 
 struct ObjCToKotlinMethodAdapter {

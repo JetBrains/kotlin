@@ -33,7 +33,7 @@
 #include "ObjCExportPrivate.h"
 #include "ObjCMMAPI.h"
 #include "Types.h"
-#include "Utils.h"
+#include "Mutex.hpp"
 
 // Replaced in ObjCExportCodeGenerator.
 __attribute__((weak)) const char* Kotlin_ObjCInterop_uniquePrefix = nullptr;

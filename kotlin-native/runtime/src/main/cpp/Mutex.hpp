@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
+#ifndef RUNTIME_MUTEX_H
+#define RUNTIME_MUTEX_H
+
 #include <cstdint>
 #include "KAssert.h"
+#include "Utils.hpp"
 
 class SimpleMutex {
  private:
@@ -37,7 +41,7 @@ class SimpleMutex {
 
 // TODO: use std::lock_guard instead?
 template <class Mutex>
-class LockGuard {
+class LockGuard : private kotlin::Pinned {
  public:
   explicit LockGuard(Mutex& mutex_) : mutex(mutex_) {
     mutex.lock();
@@ -49,7 +53,6 @@ class LockGuard {
 
  private:
   Mutex& mutex;
-
-  LockGuard(const LockGuard&) = delete;
-  LockGuard& operator=(const LockGuard&) = delete;
 };
+
+#endif // RUNTIME_MUTEX_H

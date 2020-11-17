@@ -6,6 +6,8 @@
 
 * Headers should live in the same folder with it's implementation counterpart (if there's one) **TODO**: This does not work with multiple implementations of a single header.
 * Headers should use header guards
+* Headers that are designed to be included into both `.cpp`/`.mm` and `.c`/`.m` should have extension `.h`
+* Headers that are designed to be included into `.cpp`/`.mm` only should have extension `.hpp`
 
 ## Namespace usage
 
