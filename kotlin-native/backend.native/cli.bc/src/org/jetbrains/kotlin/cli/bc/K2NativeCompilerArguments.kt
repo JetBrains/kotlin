@@ -142,9 +142,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var exportedLibraries: Array<String>? = null
 
-    @Argument(value="-Xdisable-fake-override-validator", description = "This option is deprecated")
-    var disableFakeOverrideValidator: Boolean = false
-
     @Argument(value="-Xfake-override-validator", description = "Enable IR fake override validator")
     var fakeOverrideValidator: Boolean = false
 
