@@ -203,6 +203,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         argument: () -> String,
     ): FirDiagnosticWithParameters1<FirSourceElement, String>? {
         val sourceElement = element.source ?: return null
+        if (sourceElement.kind != FirRealSourceElementKind) return null
         val name = name ?: return null
         if (diagnosedRangesToDiagnosticNames[sourceElement.startOffset..sourceElement.endOffset]?.contains(name) != true) return null
 

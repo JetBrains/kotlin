@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 
 import org.jetbrains.kotlin.diagnostics.rendering.*
 import org.jetbrains.kotlin.fir.FirSourceElement
-import java.text.MessageFormat
 
-sealed class FirDiagnosticRenderer<D : FirDiagnostic<*>> : DiagnosticRenderer<D> {
-    abstract override fun render(diagnostic: D): String
+interface FirDiagnosticRenderer<D : FirDiagnostic<*>> : DiagnosticRenderer<D> {
+    override fun render(diagnostic: D): String
 }
 
-class SimpleFirDiagnosticRenderer<E : FirSourceElement>(private val message: String) : FirDiagnosticRenderer<FirSimpleDiagnostic<E>>() {
+class SimpleFirDiagnosticRenderer<E : FirSourceElement>(private val message: String) : FirDiagnosticRenderer<FirSimpleDiagnostic<E>> {
     override fun render(diagnostic: FirSimpleDiagnostic<E>): String {
         return message
     }
@@ -21,15 +20,7 @@ class SimpleFirDiagnosticRenderer<E : FirSourceElement>(private val message: Str
 
 sealed class AbstractFirDiagnosticWithParametersRenderer<D : FirDiagnostic<*>>(
     protected val message: String
-) : FirDiagnosticRenderer<D>() {
-    private val messageFormat = MessageFormat(message)
-
-    override fun render(diagnostic: D): String {
-        return messageFormat.format(renderParameters(diagnostic))
-    }
-
-    abstract fun renderParameters(diagnostic: D): Array<out Any>
-}
+) : FirDiagnosticRenderer<D>, AbstractDiagnosticWithParametersRenderer<D>(message)
 
 class FirDiagnosticWithParameters1Renderer<E : FirSourceElement, A : Any>(
     message: String,
