@@ -354,7 +354,17 @@ val IrFunction.isSyntheticMethodForProperty: Boolean
 
 val IrFunction.isDeprecatedFunction: Boolean
     get() = isSyntheticMethodForProperty || isDeprecatedCallable ||
-            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.isDeprecatedCallable == true
+            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.isDeprecatedCallable == true ||
+            isAccessorForDeprecatedPropertyImplementedByDelegation
+
+private val IrFunction.isAccessorForDeprecatedPropertyImplementedByDelegation: Boolean
+    get() =
+        origin == IrDeclarationOrigin.DELEGATED_MEMBER &&
+                this is IrSimpleFunction &&
+                correspondingPropertySymbol != null &&
+                overriddenSymbols.any {
+                    it.owner.correspondingPropertySymbol?.owner?.isDeprecatedCallable == true
+                }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrDeclaration.psiElement: PsiElement?

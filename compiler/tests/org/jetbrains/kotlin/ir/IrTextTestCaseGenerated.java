@@ -485,6 +485,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
                 runTest("compiler/testData/ir/irText/declarations/annotations/functionsWithAnnotations.kt");
             }
 
+            @TestMetadata("inheritingDeprecation.kt")
+            public void testInheritingDeprecation() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/inheritingDeprecation.kt");
+            }
+
             @TestMetadata("javaAnnotation.kt")
             public void testJavaAnnotation() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/javaAnnotation.kt");
