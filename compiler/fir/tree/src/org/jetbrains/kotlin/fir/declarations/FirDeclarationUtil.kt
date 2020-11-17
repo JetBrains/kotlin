@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.name.ClassId
 
 fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = false) {
     if (bounds.isEmpty()) {
@@ -85,9 +84,6 @@ fun FirRegularClassBuilder.addDeclarations(declarations: Collection<FirDeclarati
 val FirTypeAlias.expandedConeType: ConeClassLikeType? get() = expandedTypeRef.coneTypeSafe()
 
 val FirClass<*>.classId get() = symbol.classId
-
-inline val FirDeclaration.ownerClassId: ClassId?
-    get() = (this as? FirCallableMemberDeclaration<*>)?.symbol?.callableId?.classId
 
 val FirClassSymbol<*>.superConeTypes
     get() = when (this) {

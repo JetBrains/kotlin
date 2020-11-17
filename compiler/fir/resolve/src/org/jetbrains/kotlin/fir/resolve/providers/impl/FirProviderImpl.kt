@@ -121,7 +121,10 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
             state.classifierContainerFileMap[classId] = file
         }
 
-        override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<F>, data: Pair<State, FirFile>) {
+        override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(
+            callableDeclaration: FirCallableDeclaration<F>,
+            data: Pair<State, FirFile>
+        ) {
             val symbol = callableDeclaration.symbol
             val callableId = symbol.callableId
             val (state, file) = data
@@ -139,6 +142,8 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
 
         override fun visitProperty(property: FirProperty, data: Pair<State, FirFile>) {
             visitCallableDeclaration(property, data)
+            property.getter?.let { visitCallableDeclaration(it, data) }
+            property.setter?.let { visitCallableDeclaration(it, data) }
         }
 
         override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Pair<State, FirFile>) {
