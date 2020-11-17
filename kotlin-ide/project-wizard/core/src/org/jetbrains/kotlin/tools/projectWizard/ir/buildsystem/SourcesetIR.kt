@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Sourceset
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import java.nio.file.Path
+import java.util.*
 
 
 sealed class SourcesetIR : BuildSystemIR {
@@ -55,4 +56,4 @@ data class MultiplatformSourcesetIR(
 }
 
 val MultiplatformSourcesetIR.sourcesetName
-    get() = targetName + sourcesetType.name.capitalize()
+    get() = targetName + sourcesetType.name.capitalize(Locale.US)

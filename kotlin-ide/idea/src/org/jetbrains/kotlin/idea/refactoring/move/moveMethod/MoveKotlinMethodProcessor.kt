@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAncestorOf
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 
 class MoveKotlinMethodProcessor(
@@ -197,7 +198,7 @@ class MoveKotlinMethodProcessor(
                             argumentExpression
                         } else return
                     } else {
-                        val getterName = "get${targetVariable.nameAsSafeName.identifier.capitalize()}"
+                        val getterName = "get${targetVariable.nameAsSafeName.identifier.capitalizeAsciiOnly()}"
                         JavaPsiFacade.getElementFactory(myProject).createExpressionFromText("${oldReceiver.text}.$getterName()", null)
                     }
 

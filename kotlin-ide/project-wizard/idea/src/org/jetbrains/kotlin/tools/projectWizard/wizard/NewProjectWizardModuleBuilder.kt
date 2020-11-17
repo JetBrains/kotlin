@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep.FirstWizardS
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.runWithProgressBar
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.secondStep.SecondStepWizardComponent
 import java.io.File
+import java.util.*
 import javax.swing.JButton
 import javax.swing.JComponent
 import com.intellij.openapi.module.Module as IdeaModule
@@ -218,7 +219,7 @@ class ModuleNewWizardFirstStep(wizard: IdeWizard) : WizardStep(wizard, Generatio
     private fun suggestGroupId(): String {
         val username = SystemProperties.getUserName() ?: return DEFAULT_GROUP_ID
         if (!username.matches("[\\w\\s]+".toRegex())) return DEFAULT_GROUP_ID
-        val usernameAsGroupId = username.trim().toLowerCase().split("\\s+".toRegex()).joinToString(separator = ".")
+        val usernameAsGroupId = username.trim().toLowerCase(Locale.US).split("\\s+".toRegex()).joinToString(separator = ".")
         return "me.$usernameAsGroupId"
     }
 

@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.PluginSetti
 import org.jetbrains.kotlin.tools.projectWizard.core.service.TemplateEngineService
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfiguratorWithTests
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.MppModuleConfigurator.runArbitraryTask
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.isPresent
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.settingValue
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.*
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.TemplateInterceptionApplicationState
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.applyAll
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.settingValue
 import java.nio.file.Path
+import java.util.*
 
 class TemplatesPlugin(context: Context) : Plugin(context) {
     override val path = pluginPath
@@ -174,7 +174,7 @@ class TemplatesPlugin(context: Context) : Plugin(context) {
                         is SrcFilePath -> moduleConfigurator.kotlinDirectoryName
                         is ResourcesFilePath -> moduleConfigurator.resourcesDirectoryName
                     }
-                    SRC_DIR / "${module.name}${filePath.sourcesetType.name.capitalize()}" / directory
+                    SRC_DIR / "${module.name}${filePath.sourcesetType.name.capitalize(Locale.US)}" / directory
                 }
                 is FakeMultiplatformModuleIR -> error("Not supported for FakeMultiplatformModuleIR")
             }

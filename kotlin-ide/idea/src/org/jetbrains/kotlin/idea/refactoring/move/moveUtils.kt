@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.lang.System.currentTimeMillis
@@ -408,7 +409,7 @@ fun guessNewFileName(declarationsToMove: Collection<KtNamedDeclaration>): String
     val newFileName = representative?.run {
         if (containingKtFile.isScript()) "$name.kts" else "$name.${KotlinFileType.EXTENSION}"
     } ?: declarationsToMove.first().containingFile.name
-    return newFileName.capitalize()
+    return newFileName.capitalizeAsciiOnly()
 }
 
 // returns true if successful

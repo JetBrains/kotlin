@@ -67,7 +67,7 @@ class VariableOrParameterNameWithTypeCompletion(
             prefixWords.indices.map { index -> if (index == 0) prefix else prefixWords.drop(index).joinToString("") }
 
         userPrefixes = nameSuggestionPrefixes.indices.map { prefixWords.take(it).joinToString("") }
-        classNamePrefixMatchers = nameSuggestionPrefixes.map { CamelHumpMatcher(it.capitalize(), false) }
+        classNamePrefixMatchers = nameSuggestionPrefixes.map { CamelHumpMatcher(it.capitalize(Locale.US), false) }
     }
 
     private val suggestionsByTypesAdded = HashSet<Type>()
