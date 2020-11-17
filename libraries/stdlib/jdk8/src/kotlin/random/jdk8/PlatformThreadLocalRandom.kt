@@ -8,7 +8,7 @@ package kotlin.random.jdk8
 import java.util.concurrent.ThreadLocalRandom
 
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
-internal object PlatformThreadLocalRandom : kotlin.random.AbstractPlatformRandom(), java.io.Serializable {
+internal object PlatformThreadLocalRandom : kotlin.random.AbstractPlatformRandom(), Serializable {
     private const val serialVersionUID = -8182665159126504406L
 
     // TODO no bridge generated for covariant override
@@ -22,6 +22,5 @@ internal object PlatformThreadLocalRandom : kotlin.random.AbstractPlatformRandom
     //     do not delegate this, as it's buggy in JDK8+ (up to 11 at the moment of writing)
     //     override fun nextDouble(from: Double, until: Double): Double = ThreadLocalRandom.current().nextDouble(from, until)
 
-    @Throws(java.io.ObjectStreamException::class)
     fun readResolve(): Any = PlatformThreadLocalRandom
 }
