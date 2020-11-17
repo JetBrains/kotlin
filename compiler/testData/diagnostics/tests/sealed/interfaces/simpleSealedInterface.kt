@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-20423
 // !LANGUAGE: +FreedomForSealedClasses +SealedInterfaces
 // !DIAGNOSTICS: -UNUSED_VARIABLE
@@ -27,7 +28,7 @@ fun test_1(base: Base) {
 }
 
 fun test_2(base: Base) {
-    val x = <!NO_ELSE_IN_WHEN!>when<!> (base) {
+    val x = when (base) {
         is A -> 1
         is B.First -> 2
         is B.Second -> 3
