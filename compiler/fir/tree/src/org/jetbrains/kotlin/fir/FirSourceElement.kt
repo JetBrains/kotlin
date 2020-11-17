@@ -150,6 +150,10 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
     // super.foo() --> super<Supertype>.foo()
     // where `Supertype` has a fake source
     object SuperCallImplicitType : FirFakeSourceElementKind()
+
+    // fun foo(vararg args: Int) {}
+    // fun bar(1, 2, 3) --> [resolved] fun bar(VarargArgument(1, 2, 3))
+    object VarargArgument : FirFakeSourceElementKind()
 }
 
 sealed class FirSourceElement {
