@@ -365,6 +365,9 @@ public class KotlinTestUtils {
         else if (jdkKind == TestJdkKind.FULL_JDK_9) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, getJdk9Home());
         }
+        else if (jdkKind == TestJdkKind.FULL_JDK_15) {
+            configuration.put(JVMConfigurationKeys.JDK_HOME, getJdk15Home());
+        }
         else if (SystemInfo.IS_AT_LEAST_JAVA9) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
         }
@@ -401,11 +404,21 @@ public class KotlinTestUtils {
 
     @Nullable
     public static File getJdk11Home() {
-        String jdk11 = System.getenv("JDK_11");
-        if (jdk11 == null) {
+        return getCustomJdkHome("JDK_11");
+    }
+
+    @Nullable
+    public static File getJdk15Home() {
+        return getCustomJdkHome("JDK_15");
+    }
+
+    @Nullable
+    private static File getCustomJdkHome(String version) {
+        String jdk = System.getenv(version);
+        if (jdk == null) {
             return null;
         }
-        return new File(jdk11);
+        return new File(jdk);
     }
 
     public static void resolveAllKotlinFiles(KotlinCoreEnvironment environment) throws IOException {
