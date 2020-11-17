@@ -322,9 +322,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
-        ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
-            runWriteAction { file.delete(this) }
-        }
+        myFixture.file.virtualFile.delete(this)
     }
 
     companion object {

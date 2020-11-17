@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
-import com.intellij.lang.Language
-import com.intellij.lang.PerFileMappingsEx
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.module.Module
@@ -26,6 +24,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
+import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
@@ -323,9 +322,9 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
 
-//        (ScratchFileService.getInstance().scratchesMapping as PerFileMappingsEx<Language>).mappings.forEach { (file, _) ->
-//            runWriteAction { file.delete(this) }
-//        }
+        ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
+            runWriteAction { file.delete(this) }
+        }
     }
 
     companion object {

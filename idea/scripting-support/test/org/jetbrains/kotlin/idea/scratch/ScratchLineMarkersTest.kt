@@ -54,14 +54,7 @@ abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
         val markers = doAndCheckHighlighting(document, data, File(path))
 
         AbstractLineMarkersTest.assertNavigationElements(myFixture.project, myFixture.file as KtFile, markers)
-    }
-
-    override fun tearDown() {
-        super.tearDown()
-
-        ScratchFileService.getInstance().scratchesMapping.mappings.forEach { file, _ ->
-            runWriteAction { file.delete(this) }
-        }
+        scratchVirtualFile.delete(this)
     }
 
     private fun doAndCheckHighlighting(
