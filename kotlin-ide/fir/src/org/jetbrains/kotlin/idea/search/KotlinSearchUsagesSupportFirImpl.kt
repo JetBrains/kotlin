@@ -70,9 +70,14 @@ class KotlinSearchUsagesSupportFirImpl : KotlinSearchUsagesSupport {
         ktClass: KtClass,
         members: List<KtNamedDeclaration>,
         scope: SearchScope,
+        searchDeeply: Boolean,
         processor: (superMember: PsiElement, overridingMember: PsiElement) -> Boolean
     ): Boolean {
         return false
+    }
+
+    override fun findSuperMethodsNoWrapping(method: PsiElement): List<PsiElement> {
+        return emptyList()
     }
 
     override fun forEachOverridingMethod(method: PsiMethod, scope: SearchScope, processor: (PsiMethod) -> Boolean): Boolean {
