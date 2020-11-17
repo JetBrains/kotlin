@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
 import org.jetbrains.kotlin.js.backend.ast.metadata.specialFunction
 import org.jetbrains.kotlin.js.dce.Context.Node
+import java.util.*
 
 fun Context.isObjectDefineProperty(function: JsExpression) = isObjectFunction(function, "defineProperty")
 
@@ -46,7 +47,7 @@ fun Context.isObjectFunction(function: JsExpression, functionName: String): Bool
 fun Context.isKotlinFunction(function: JsExpression, name: String): Boolean {
     if (function !is JsNameRef || function.ident != name) return false
     val receiver = (function.qualifier as? JsNameRef)?.name ?: return false
-    return receiver in nodes && receiver.ident.toLowerCase() == "kotlin"
+    return receiver in nodes && receiver.ident.toLowerCase(Locale.US) == "kotlin"
 }
 
 fun isSpecialFunction(expr: JsExpression, specialFunction: SpecialFunction): Boolean =

@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.lang.Deprecated
 import java.lang.annotation.Documented
@@ -140,7 +141,7 @@ internal fun JavaType?.toConeKotlinTypeWithoutEnhancement(
             val primitiveType = type
             val kotlinPrimitiveName = when (val javaName = primitiveType?.typeName?.asString()) {
                 null -> "Unit"
-                else -> javaName.capitalize()
+                else -> javaName.capitalizeAsciiOnly()
             }
 
             val classId = StandardClassIds.byName(kotlinPrimitiveName)
@@ -194,7 +195,7 @@ private fun JavaArrayType.toConeKotlinTypeWithoutEnhancement(
             )
         }
     } else {
-        val javaComponentName = componentType.type?.typeName?.asString()?.capitalize() ?: error("Array of voids")
+        val javaComponentName = componentType.type?.typeName?.asString()?.capitalizeAsciiOnly() ?: error("Array of voids")
         val classId = StandardClassIds.byName(javaComponentName + "Array")
 
         if (forAnnotationValueParameter) {

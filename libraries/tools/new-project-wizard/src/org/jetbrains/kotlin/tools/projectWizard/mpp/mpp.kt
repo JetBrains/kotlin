@@ -7,12 +7,9 @@ package org.jetbrains.kotlin.tools.projectWizard.mpp
 
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.core.*
-import org.jetbrains.kotlin.tools.projectWizard.core.safeAs
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.SimpleTargetConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.inContextOfModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
-import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.projectPath
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.JavaPackage
@@ -22,6 +19,7 @@ import org.jetbrains.kotlin.tools.projectWizard.templates.FileDescriptor
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTextDescriptor
 import java.nio.file.Path
+import java.util.*
 
 @DslMarker
 annotation class ExpectFileDSL
@@ -321,7 +319,7 @@ private fun pathForFileInTarget(
     sourcesetType: SourcesetType,
 ) = mppModulePath /
         Defaults.SRC_DIR /
-        "${target.name}${sourcesetType.name.capitalize()}" /
+        "${target.name}${sourcesetType.name.capitalize(Locale.US)}" /
         mppModule.configurator.kotlinDirectoryName /
         javaPackage?.asPath() /
         filename

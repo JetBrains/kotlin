@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 
 @NoMutableState
@@ -91,7 +92,7 @@ object FirJavaSyntheticNamesProvider : FirSyntheticNamesProvider() {
             else -> return emptyList()
         }
         val withoutPrefix = identifier.removePrefix(prefix)
-        val withoutPrefixName = Name.identifier(withoutPrefix.decapitalize())
+        val withoutPrefixName = Name.identifier(withoutPrefix.decapitalizeAsciiOnly())
         return if (prefix == SETTER_PREFIX) {
             listOf(withoutPrefixName, Name.identifier(IS_PREFIX + withoutPrefix))
         } else {
@@ -99,4 +100,3 @@ object FirJavaSyntheticNamesProvider : FirSyntheticNamesProvider() {
         }
     }
 }
-

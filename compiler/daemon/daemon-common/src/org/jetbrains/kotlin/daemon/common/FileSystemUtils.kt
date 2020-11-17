@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.daemon.common
 
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
 enum class OSKind {
@@ -25,7 +26,7 @@ enum class OSKind {
     Unknown;
 
     companion object {
-        val current: OSKind = System.getProperty("os.name").toLowerCase().let {
+        val current: OSKind = System.getProperty("os.name").toLowerCaseAsciiOnly().let {
             when {
                 // partly taken from http://www.code4copy.com/java/post/detecting-os-type-in-java
                 it.startsWith("windows") -> Windows

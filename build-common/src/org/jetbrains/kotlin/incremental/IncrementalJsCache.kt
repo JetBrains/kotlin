@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
@@ -326,7 +327,7 @@ private class ProtoDataProvider(private val serializerProtocol: SerializerExtens
         proto.`package`.apply {
             val packageNameId = getExtensionOrNull(serializerProtocol.packageFqName)
             val packageFqName = packageNameId?.let { FqName(nameResolver.getPackageFqName(it)) } ?: FqName.ROOT
-            val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalize() + "Kt"))
+            val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalizeAsciiOnly() + "Kt"))
             classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
         }
 
@@ -347,7 +348,7 @@ fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData>
 
     proto.`package`.apply {
         val packageFqName = getExtensionOrNull(JsProtoBuf.packageFqName)?.let(nameResolver::getPackageFqName)?.let(::FqName) ?: FqName.ROOT
-        val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalize() + "Kt"))
+        val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalizeAsciiOnly() + "Kt"))
         classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
     }
 

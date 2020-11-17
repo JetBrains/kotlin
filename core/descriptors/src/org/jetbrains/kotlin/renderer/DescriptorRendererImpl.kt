@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValu
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 
 internal class DescriptorRendererImpl(
@@ -494,7 +495,7 @@ internal class DescriptorRendererImpl(
 
     private fun renderModality(modality: Modality, builder: StringBuilder, defaultModality: Modality) {
         if (!renderDefaultModality && modality == defaultModality) return
-        renderModifier(builder, DescriptorRendererModifier.MODALITY in modifiers, modality.name.toLowerCase())
+        renderModifier(builder, DescriptorRendererModifier.MODALITY in modifiers, modality.name.toLowerCaseAsciiOnly())
     }
 
     private fun MemberDescriptor.implicitModalityWithoutExtensions(): Modality {
@@ -538,7 +539,7 @@ internal class DescriptorRendererImpl(
     private fun renderMemberKind(callableMember: CallableMemberDescriptor, builder: StringBuilder) {
         if (DescriptorRendererModifier.MEMBER_KIND !in modifiers) return
         if (verbose && callableMember.kind != CallableMemberDescriptor.Kind.DECLARATION) {
-            builder.append("/*").append(callableMember.kind.name.toLowerCase()).append("*/ ")
+            builder.append("/*").append(callableMember.kind.name.toLowerCaseAsciiOnly()).append("*/ ")
         }
     }
 
