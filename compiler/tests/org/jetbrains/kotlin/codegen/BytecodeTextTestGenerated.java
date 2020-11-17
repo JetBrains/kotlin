@@ -4386,11 +4386,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
-        @TestMetadata("samWrapperConstructorNonSynthetic.kt")
-        public void testSamWrapperConstructorNonSynthetic() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperConstructorNonSynthetic.kt");
-        }
-
         @TestMetadata("samWrapperForNullInitialization.kt")
         public void testSamWrapperForNullInitialization() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperForNullInitialization.kt");
@@ -4416,24 +4411,9 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperOfReference.kt");
         }
 
-        @TestMetadata("samWrapperPrivateFinalSyntheticField.kt")
-        public void testSamWrapperPrivateFinalSyntheticField() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperPrivateFinalSyntheticField.kt");
-        }
-
         @TestMetadata("samWrapperRawTypes.kt")
         public void testSamWrapperRawTypes() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperRawTypes.kt");
-        }
-
-        @TestMetadata("samWrapperSyntheticFlags.kt")
-        public void testSamWrapperSyntheticFlags() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperSyntheticFlags.kt");
-        }
-
-        @TestMetadata("samWrapperSyntheticImplementationMethod.kt")
-        public void testSamWrapperSyntheticImplementationMethod() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperSyntheticImplementationMethod.kt");
         }
     }
 
