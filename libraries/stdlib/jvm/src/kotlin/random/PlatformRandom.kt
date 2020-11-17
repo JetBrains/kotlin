@@ -59,7 +59,7 @@ internal object FallbackThreadLocalRandom : AbstractPlatformRandom(), Serializab
     override val impl: java.util.Random
         get() = implStorage.get()
 
-    fun readResolve(): Any = FallbackThreadLocalRandom
+    private fun readResolve(): Any = FallbackThreadLocalRandom
 }
 
 private class PlatformRandom(override val impl: java.util.Random) : AbstractPlatformRandom(), Serializable {

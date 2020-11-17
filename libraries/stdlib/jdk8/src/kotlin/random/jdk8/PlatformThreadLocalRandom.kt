@@ -12,7 +12,8 @@ internal object PlatformThreadLocalRandom : kotlin.random.AbstractPlatformRandom
     private const val serialVersionUID = -8182665159126504406L
 
     // TODO no bridge generated for covariant override
-    override val impl: java.util.Random get() = ThreadLocalRandom.current()
+    override val impl: java.util.Random
+        get() = ThreadLocalRandom.current()
 
     override fun nextInt(from: Int, until: Int): Int = ThreadLocalRandom.current().nextInt(from, until)
     override fun nextLong(until: Long): Long = ThreadLocalRandom.current().nextLong(until)
@@ -22,5 +23,5 @@ internal object PlatformThreadLocalRandom : kotlin.random.AbstractPlatformRandom
     //     do not delegate this, as it's buggy in JDK8+ (up to 11 at the moment of writing)
     //     override fun nextDouble(from: Double, until: Double): Double = ThreadLocalRandom.current().nextDouble(from, until)
 
-    fun readResolve(): Any = PlatformThreadLocalRandom
+    private fun readResolve(): Any = PlatformThreadLocalRandom
 }
