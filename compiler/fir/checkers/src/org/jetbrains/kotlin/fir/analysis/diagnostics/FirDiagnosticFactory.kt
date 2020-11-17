@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.fir.FirLightSourceElement
@@ -16,10 +17,14 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 sealed class AbstractFirDiagnosticFactory<out E : FirSourceElement, D : FirDiagnostic<E>>(
     val name: String,
     val severity: Severity,
+    val positioningStrategy: LightTreePositioningStrategy,
 ) {
     abstract val psiDiagnosticFactory: DiagnosticFactoryWithPsiElement<*, *>
 
     abstract val defaultRenderer: FirDiagnosticRenderer<*>
+
+    fun getTextRanges(diagnostic: FirDiagnostic<*>): List<TextRange> =
+        positioningStrategy.markDiagnostic(diagnostic)
 
     override fun toString(): String {
         return name
@@ -27,8 +32,11 @@ sealed class AbstractFirDiagnosticFactory<out E : FirSourceElement, D : FirDiagn
 }
 
 class FirDiagnosticFactory0<E : FirSourceElement, P : PsiElement>(
-    name: String, severity: Severity, override val psiDiagnosticFactory: DiagnosticFactory0<P>
-) : AbstractFirDiagnosticFactory<E, FirSimpleDiagnostic<E>>(name, severity) {
+    name: String,
+    severity: Severity,
+    override val psiDiagnosticFactory: DiagnosticFactory0<P>,
+    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT,
+) : AbstractFirDiagnosticFactory<E, FirSimpleDiagnostic<E>>(name, severity, positioningStrategy) {
     companion object {
         private val DefaultRenderer = SimpleFirDiagnosticRenderer("")
     }
@@ -48,8 +56,11 @@ class FirDiagnosticFactory0<E : FirSourceElement, P : PsiElement>(
 }
 
 class FirDiagnosticFactory1<E : FirSourceElement, P : PsiElement, A : Any>(
-    name: String, severity: Severity, override val psiDiagnosticFactory: DiagnosticFactory1<P, A>
-) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters1<E, A>>(name, severity) {
+    name: String,
+    severity: Severity,
+    override val psiDiagnosticFactory: DiagnosticFactory1<P, A>,
+    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT,
+) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters1<E, A>>(name, severity, positioningStrategy) {
     companion object {
         private val DefaultRenderer = FirDiagnosticWithParameters1Renderer(
             "{0}",
@@ -72,8 +83,11 @@ class FirDiagnosticFactory1<E : FirSourceElement, P : PsiElement, A : Any>(
 }
 
 class FirDiagnosticFactory2<E : FirSourceElement, P : PsiElement, A : Any, B : Any>(
-    name: String, severity: Severity, override val psiDiagnosticFactory: DiagnosticFactory2<P, A, B>
-) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters2<E, A, B>>(name, severity) {
+    name: String,
+    severity: Severity,
+    override val psiDiagnosticFactory: DiagnosticFactory2<P, A, B>,
+    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT,
+) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters2<E, A, B>>(name, severity, positioningStrategy) {
     companion object {
         private val DefaultRenderer = FirDiagnosticWithParameters2Renderer(
             "{0}, {1}",
@@ -97,8 +111,11 @@ class FirDiagnosticFactory2<E : FirSourceElement, P : PsiElement, A : Any, B : A
 }
 
 class FirDiagnosticFactory3<E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any>(
-    name: String, severity: Severity, override val psiDiagnosticFactory: DiagnosticFactory3<P, A, B, C>
-) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters3<E, A, B, C>>(name, severity) {
+    name: String,
+    severity: Severity,
+    override val psiDiagnosticFactory: DiagnosticFactory3<P, A, B, C>,
+    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT,
+) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters3<E, A, B, C>>(name, severity, positioningStrategy) {
     companion object {
         private val DefaultRenderer = FirDiagnosticWithParameters3Renderer(
             "{0}, {1}, {2}",
