@@ -1,7 +1,5 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
-  -Xdisable-fake-override-validator
-                             This option is deprecated
   -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
   -Xerror-tolerance-policy   Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)
   -Xfake-override-validator  Enable IR fake override validator
