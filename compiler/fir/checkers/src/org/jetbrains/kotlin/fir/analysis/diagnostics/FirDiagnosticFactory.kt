@@ -29,6 +29,11 @@ sealed class AbstractFirDiagnosticFactory<out E : FirSourceElement, D : FirDiagn
 
     fun getTextRanges(diagnostic: FirDiagnostic<*>): List<TextRange> =
         positioningStrategy.markDiagnostic(diagnostic)
+
+    fun isValid(diagnostic: FirDiagnostic<*>): Boolean {
+        val element = diagnostic.element
+        return positioningStrategy.isValid(element.lighterASTNode, element.treeStructure)
+    }
 }
 
 class FirDiagnosticFactory0<E : FirSourceElement, P : PsiElement>(

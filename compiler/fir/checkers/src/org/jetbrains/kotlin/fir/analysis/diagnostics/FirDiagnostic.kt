@@ -25,7 +25,7 @@ sealed class FirDiagnostic<out E : FirSourceElement> : Diagnostic {
         get() = factory.getTextRanges(this)
 
     override val isValid: Boolean
-        get() = true
+        get() = factory.isValid(this)
 }
 
 sealed class FirSimpleDiagnostic<out E : FirSourceElement> : FirDiagnostic<E>() {
