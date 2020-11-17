@@ -66,8 +66,8 @@ object FirErrors {
     val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error0<FirSourceElement, PsiElement>()
 
     // Constructor problems
-    val CONSTRUCTOR_IN_OBJECT by existing0<FirSourceElement, KtDeclaration>()
-    val CONSTRUCTOR_IN_INTERFACE by existing0<FirSourceElement, KtDeclaration>()
+    val CONSTRUCTOR_IN_OBJECT by error0<FirSourceElement, KtDeclaration>(LightTreePositioningStrategies.DECLARATION_SIGNATURE)
+    val CONSTRUCTOR_IN_INTERFACE by error0<FirSourceElement, KtDeclaration>(LightTreePositioningStrategies.DECLARATION_SIGNATURE)
     val NON_PRIVATE_CONSTRUCTOR_IN_ENUM by existing0<FirSourceElement, PsiElement>()
     val NON_PRIVATE_CONSTRUCTOR_IN_SEALED by existing0<FirSourceElement, PsiElement>()
     val CYCLIC_CONSTRUCTOR_DELEGATION_CALL by warning0<FirSourceElement, PsiElement>()
@@ -144,11 +144,11 @@ object FirErrors {
     val ANY_METHOD_IMPLEMENTED_IN_INTERFACE by error0<FirSourceElement, PsiElement>()
 
     // Invalid local declarations
-    val LOCAL_OBJECT_NOT_ALLOWED by error1<FirSourceElement, PsiElement, Name>()
-    val LOCAL_INTERFACE_NOT_ALLOWED by error1<FirSourceElement, PsiElement, Name>()
+    val LOCAL_OBJECT_NOT_ALLOWED by error1<FirSourceElement, PsiElement, Name>(LightTreePositioningStrategies.DECLARATION_NAME)
+    val LOCAL_INTERFACE_NOT_ALLOWED by error1<FirSourceElement, PsiElement, Name>(LightTreePositioningStrategies.DECLARATION_NAME)
 
     // Control flow diagnostics
-    val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>()
+    val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>(LightTreePositioningStrategies.DECLARATION_SIGNATURE)
     val WRONG_INVOCATION_KIND by warning3<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange>()
     val LEAKED_IN_PLACE_LAMBDA by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>()
     val WRONG_IMPLIES_CONDITION by error0<FirSourceElement, PsiElement>()
