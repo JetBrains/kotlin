@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.visitors.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
@@ -612,7 +611,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             else
                 callableReferenceAccess
 
-        if (data !is ResolutionMode.ContextDependent) {
+        if (data !is ResolutionMode.ContextDependent /* ContextDependentDelegate is Ok here */) {
             val resolvedReference =
                 components.syntheticCallGenerator.resolveCallableReferenceWithSyntheticOuterCall(
                     callableReferenceAccess, data.expectedType, resolutionContext,
