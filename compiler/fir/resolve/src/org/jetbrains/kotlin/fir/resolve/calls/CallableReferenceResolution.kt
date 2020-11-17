@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -22,19 +19,14 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableRefer
 import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.fir.resolve.inference.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.typeCheckerContext
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.components.SuspendConversionStrategy
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 
 
@@ -51,7 +43,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
 
         val fir: FirCallableDeclaration<*> = candidate.symbol.fir
 
-        val (rawResultingType, callableReferenceAdaptation) = buildReflectionType(fir, resultingReceiverType, callInfo, context)
+        val (rawResultingType, callableReferenceAdaptation) = buildReflectionType(fir, resultingReceiverType, candidate, context)
         val resultingType = candidate.substitutor.substituteOrSelf(rawResultingType)
 
         if (callableReferenceAdaptation.needCompatibilityResolveForCallableReference()) {
@@ -98,7 +90,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
 private fun buildReflectionType(
     fir: FirCallableDeclaration<*>,
     receiverType: ConeKotlinType?,
-    callInfo: CallInfo,
+    candidate: Candidate,
     context: ResolutionContext
 ): Pair<ConeKotlinType, CallableReferenceAdaptation?> {
     val returnTypeRef = context.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(fir)
@@ -107,7 +99,7 @@ private fun buildReflectionType(
             val unboundReferenceTarget = if (receiverType != null) 1 else 0
             val callableReferenceAdaptation =
                 context.bodyResolveComponents
-                    .getCallableReferenceAdaptation(context.session, fir, callInfo.expectedType, unboundReferenceTarget)
+                    .getCallableReferenceAdaptation(context.session, fir, candidate.callInfo.expectedType, unboundReferenceTarget)
 
             val parameters = mutableListOf<ConeKotlinType>()
 
@@ -132,7 +124,7 @@ private fun buildReflectionType(
                 isSuspend = isSuspend
             ) to callableReferenceAdaptation
         }
-        is FirVariable -> createKPropertyType(fir, receiverType, returnTypeRef, callInfo) to null
+        is FirVariable -> createKPropertyType(fir, receiverType, returnTypeRef, candidate) to null
         else -> ConeClassErrorType(ConeUnsupportedCallableReferenceTarget(fir)) to null
     }
 }
@@ -396,66 +388,19 @@ private fun createKPropertyType(
     propertyOrField: FirVariable<*>,
     receiverType: ConeKotlinType?,
     returnTypeRef: FirResolvedTypeRef,
-    callInfo: CallInfo,
+    candidate: Candidate,
 ): ConeKotlinType {
     val propertyType = returnTypeRef.type
     return org.jetbrains.kotlin.fir.resolve.createKPropertyType(
         receiverType,
         propertyType,
-        isMutable = propertyOrField.canBeMutableReference(callInfo)
+        isMutable = propertyOrField.canBeMutableReference(candidate)
     )
 }
 
-private fun FirVariable<*>.canBeMutableReference(callInfo: CallInfo): Boolean {
+private fun FirVariable<*>.canBeMutableReference(candidate: Candidate): Boolean {
     if (!isVar) return false
     if (this is FirField) return true
-    if (this is FirProperty && this.hasJvmFieldAnnotation) return true
-    return setter == null || setter!!.isVisible(this, callInfo)
-}
-
-private fun FirPropertyAccessor.isVisible(variable: FirVariable<*>, callInfo: CallInfo): Boolean {
-    if (visibility == Visibilities.Public) {
-        return true
-    }
-    val variableOwnerClassId = variable.ownerClassId
-    var containingDeclarationOwnerClassId = callInfo.containingDeclarations.last().ownerClassId
-    // For a (nested) local class, find a declaration, which contains that local class
-    while (containingDeclarationOwnerClassId?.isLocal == true) {
-        var last: FirDeclaration? = null
-        var localContainer: FirDeclaration? = null
-        for (containingDeclaration in callInfo.containingDeclarations.asReversed()) {
-            if (last != null && last is FirClass<*> && last.classId == containingDeclarationOwnerClassId) {
-                localContainer = containingDeclaration
-                break
-            }
-            last = containingDeclaration
-        }
-        if (localContainer == null || last == callInfo.containingDeclarations.first()) {
-            break
-        }
-        containingDeclarationOwnerClassId = localContainer.ownerClassId
-    }
-    return when (visibility) {
-        is Visibilities.Protected -> {
-            // Check if containing declaration's owner class is a subtype of this accessor's owner class
-            fun ClassId.toClassLikeType() = ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(this), emptyArray(), isNullable = false)
-            val variableOwner = variableOwnerClassId?.toClassLikeType() ?: return false
-            val containingDeclarationOwner = containingDeclarationOwnerClassId?.toClassLikeType() ?: return false
-            AbstractTypeChecker.isSubtypeOf(
-                session.typeCheckerContext, containingDeclarationOwner, variableOwner, isFromNullabilityConstraint = false
-            )
-        }
-        is Visibilities.Internal -> {
-            // TODO: Check if containing declaration's owner class is in the same module of this accessor's owner class
-            true
-        }
-        is Visibilities.Private, is Visibilities.PrivateToThis -> {
-            // Check if containing declaration's owner class is...
-            // 1) ...same as the owner class of this variable
-            // 2) ...inner class of the owner class of this variable
-            variableOwnerClassId == containingDeclarationOwnerClassId ||
-                    variableOwnerClassId == containingDeclarationOwnerClassId?.outerClassId
-        }
-        else -> false
-    }
+    return source?.kind == FirFakeSourceElementKind.PropertyFromParameter ||
+            (setter is FirMemberDeclaration && candidate.callInfo.session.visibilityChecker.isVisible(setter!!, candidate))
 }

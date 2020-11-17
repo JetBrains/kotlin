@@ -999,11 +999,23 @@ class DeclarationsConverter(
 
                     val convertedAccessors = accessors.map { convertGetterOrSetter(it, returnType, propertyVisibility, modifiers) }
                     this.getter = convertedAccessors.find { it.isGetter }
-                        ?: FirDefaultPropertyGetter(null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility)
+                        ?: FirDefaultPropertyGetter(
+                            null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility
+                        ).also {
+                            currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
+                                it.containingClassAttr = lookupTag
+                            }
+                        }
                     this.setter =
                         if (isVar) {
                             convertedAccessors.find { it.isSetter }
-                                ?: FirDefaultPropertySetter(null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility)
+                                ?: FirDefaultPropertySetter(
+                                    null, session, FirDeclarationOrigin.Source, returnType, propertyVisibility
+                                ).also {
+                                    currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
+                                        it.containingClassAttr = lookupTag
+                                    }
+                                }
                         } else null
 
                     // Upward propagation of `inline` and `external` modifiers (from accessors to property)
@@ -1173,6 +1185,9 @@ class DeclarationsConverter(
             context.firFunctionTargets.removeLast()
         }.also {
             target.bind(it)
+            currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
+                it.containingClassAttr = lookupTag
+            }
         }
     }
 
