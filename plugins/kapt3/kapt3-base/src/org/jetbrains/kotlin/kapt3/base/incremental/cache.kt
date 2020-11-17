@@ -46,8 +46,9 @@ class JavaClassCacheManager(val file: File) : Closeable {
             is SourcesToReprocess.Incremental -> {
                 val toReprocess = filesToReprocess.toReprocess.toMutableSet()
 
-                val isolatingGenerated = aptCache.invalidateIsolatingGenerated(toReprocess)
-                val generatedDirtyTypes = javaCache.invalidateGeneratedTypes(isolatingGenerated).toMutableSet()
+                val (invalidatedIsolatingGenerated, invalidatedIsolatingId) = aptCache.invalidateIsolatingGenerated(toReprocess)
+                val generatedDirtyTypes = javaCache.invalidateGeneratedTypes(invalidatedIsolatingGenerated).toMutableSet() /*+*/
+
                 val aggregatedTypes = mutableListOf<String>()
                 if (!toReprocess.isEmpty()) {
                     // only if there are some files to reprocess we should invalidate the aggregating ones
@@ -66,6 +67,7 @@ class JavaClassCacheManager(val file: File) : Closeable {
                     aggregatedTypes.also {
                         it.removeAll(filesToReprocess.dirtyTypes)
                         it.removeAll(generatedDirtyTypes)
+                        it.removeAll(invalidatedIsolatingId)
                     })
             }
         }
