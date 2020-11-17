@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.isUnit
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
+import org.jetbrains.kotlin.load.java.structure.JavaPrimitiveType
 import org.jetbrains.kotlin.load.java.structure.impl.JavaPrimitiveTypeImpl
 import org.jetbrains.kotlin.name.Name
 
@@ -107,11 +108,19 @@ class JavaClassUseSiteMemberScope(
                             if (!function.isStatic && function.valueParameters.size == 1) {
                                 val returnTypeRef = function.returnTypeRef
                                 if (returnTypeRef.isUnit) {
+                                    // Unit return type
                                     setterSymbol = functionSymbol
                                 } else if (returnTypeRef is FirJavaTypeRef) {
-                                    val primitiveType = returnTypeRef.type as? JavaPrimitiveTypeImpl
-                                    if (primitiveType?.psi?.kind == JvmPrimitiveTypeKind.VOID) {
-                                        setterSymbol = functionSymbol
+                                    // Void/void return type
+                                    when (val returnType = returnTypeRef.type) {
+                                        is JavaPrimitiveTypeImpl ->
+                                            if (returnType.psi.kind == JvmPrimitiveTypeKind.VOID) {
+                                                setterSymbol = functionSymbol
+                                            }
+                                        is JavaPrimitiveType ->
+                                            if (returnType.type == null) {
+                                                setterSymbol = functionSymbol
+                                            }
                                     }
                                 }
                             }
