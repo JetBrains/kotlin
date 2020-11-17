@@ -59,7 +59,7 @@ class Fir2IrDeclarationStorage(
     private val moduleDescriptor: FirModuleDescriptor
 ) : Fir2IrComponents by components {
 
-    internal var annotationGenerator: AnnotationGenerator? = null
+    private val annotationGenerator = AnnotationGenerator(this)
 
     private val firSymbolProvider = session.firSymbolProvider
 

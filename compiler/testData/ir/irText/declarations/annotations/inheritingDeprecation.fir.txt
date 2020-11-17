@@ -44,6 +44,8 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
           receiver: GET_VAR '<this>: <root>.Delegated declared in <root>.Delegated' type=<root>.Delegated origin=null
           value: GET_VAR 'foo: <root>.IFoo declared in <root>.Delegated.<init>' type=<root>.IFoo origin=null
     PROPERTY DELEGATED_MEMBER name:prop visibility:public modality:OPEN [val]
+      annotations:
+        Deprecated(message = '', replaceWith = <null>, level = <null>)
       FUN DELEGATED_MEMBER name:<get-prop> visibility:public modality:OPEN <> ($this:<root>.Delegated) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:prop visibility:public modality:OPEN [val]
         overridden:
@@ -55,6 +57,8 @@ FILE fqName:<root> fileName:/inheritingDeprecation.kt
               $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IFoo visibility:local [final]' type=<root>.IFoo origin=null
                 receiver: GET_VAR '<this>: <root>.Delegated declared in <root>.Delegated.<get-prop>' type=<root>.Delegated origin=null
     PROPERTY DELEGATED_MEMBER name:extProp visibility:public modality:OPEN [val]
+      annotations:
+        Deprecated(message = '', replaceWith = <null>, level = <null>)
       FUN DELEGATED_MEMBER name:<get-extProp> visibility:public modality:OPEN <> ($this:<root>.Delegated, $receiver:kotlin.String) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:extProp visibility:public modality:OPEN [val]
         overridden:
