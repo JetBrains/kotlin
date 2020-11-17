@@ -223,6 +223,9 @@ tasks.named<Copy>("processResources") {
 }
 
 projectTest(parallel = true) {
+    if (Ide.AS42.orHigher()) {
+        executable = "${rootProject.extra["JDK_11"]}/bin/java"
+    }
     dependsOn(":dist")
     workingDir = rootDir
 }
