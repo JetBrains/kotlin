@@ -138,6 +138,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             )
             TypeResolutionInterceptor.registerExtension(
                 project,
+                @Suppress("IllegalExperimentalApiUsage")
                 ComposeTypeResolutionInterceptorExtension()
             )
             IrGenerationExtension.registerExtension(
