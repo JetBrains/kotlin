@@ -21,7 +21,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.startup.StartupManager
-import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.testFramework.ExtensionTestUtil
@@ -70,7 +69,7 @@ fun dispatchAllInvocationEvents() {
 }
 
 fun loadProjectWithName(path: String, name: String): Project? =
-    PlatformProjectOpenProcessor.openExistingProject(Paths.get(path), Paths.get(path), OpenProjectTask(projectName = name))
+    ProjectManagerEx.getInstanceEx().openProject(Paths.get(path), OpenProjectTask(projectName = name))
 
 fun TestApplicationManager.closeProject(project: Project) {
     val name = project.name
