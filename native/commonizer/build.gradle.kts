@@ -47,3 +47,5 @@ projectTest(parallel = true) {
 }
 
 runtimeJar()
+sourcesJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public sources
+javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public javadocs
