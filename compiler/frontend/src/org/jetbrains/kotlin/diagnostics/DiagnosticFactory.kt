@@ -13,82 +13,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.diagnostics
 
-package org.jetbrains.kotlin.diagnostics;
+import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer
+import java.lang.IllegalArgumentException
+import java.lang.SafeVarargs
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer;
+abstract class DiagnosticFactory<D : Diagnostic> protected constructor(
+    open var name: String?,
+    open val severity: Severity
+) {
 
-import java.util.Arrays;
-import java.util.Collection;
+    open var defaultRenderer: DiagnosticRenderer<D>? = null
 
-public abstract class DiagnosticFactory<D extends Diagnostic> {
+    protected constructor(severity: Severity) : this(null, severity)
 
-    private String name = null;
-    private final Severity severity;
-
-    private DiagnosticRenderer<D> defaultRenderer;
-
-    protected DiagnosticFactory(@NotNull Severity severity) {
-        this.severity = severity;
+    fun cast(diagnostic: Diagnostic): D {
+        require(!(diagnostic.factory !== this)) { "Factory mismatch: expected " + this + " but was " + diagnostic.factory }
+        @Suppress("UNCHECKED_CAST")
+        return diagnostic as D
     }
 
-    protected DiagnosticFactory(@NotNull String name, @NotNull Severity severity) {
-        this.name = name;
-        this.severity = severity;
+    override fun toString(): String {
+        return name ?: "<Anonymous DiagnosticFactory>"
     }
 
-    /*package*/ void setName(@NotNull String name) {
-        this.name = name;
-    }
-
-    @NotNull
-    public String getName() {
-        return name;
-    }
-
-    @NotNull
-    public Severity getSeverity() {
-        return severity;
-    }
-
-    @Nullable
-    public DiagnosticRenderer<D> getDefaultRenderer() {
-        return defaultRenderer;
-    }
-
-    void setDefaultRenderer(@Nullable DiagnosticRenderer<D> defaultRenderer) {
-        this.defaultRenderer = defaultRenderer;
-    }
-
-    @NotNull
-    @SuppressWarnings("unchecked")
-    public D cast(@NotNull Diagnostic diagnostic) {
-        if (diagnostic.getFactory() != this) {
-            throw new IllegalArgumentException("Factory mismatch: expected " + this + " but was " + diagnostic.getFactory());
+    companion object {
+        @SafeVarargs
+        fun <D : Diagnostic> cast(diagnostic: Diagnostic, vararg factories: DiagnosticFactory<out D>): D {
+            return cast(diagnostic, listOf(*factories))
         }
 
-        return (D) diagnostic;
-    }
-
-    @NotNull
-    @SafeVarargs
-    public static <D extends Diagnostic> D cast(@NotNull Diagnostic diagnostic, @NotNull DiagnosticFactory<? extends D>... factories) {
-        return cast(diagnostic, Arrays.asList(factories));
-    }
-
-    @NotNull
-    public static <D extends Diagnostic> D cast(@NotNull Diagnostic diagnostic, @NotNull Collection<? extends DiagnosticFactory<? extends D>> factories) {
-        for (DiagnosticFactory<? extends D> factory : factories) {
-            if (diagnostic.getFactory() == factory) return factory.cast(diagnostic);
+        fun <D : Diagnostic> cast(diagnostic: Diagnostic, factories: Collection<DiagnosticFactory<out D>>): D {
+            for (factory in factories) {
+                if (diagnostic.factory === factory) return factory.cast(diagnostic)
+            }
+            throw IllegalArgumentException("Factory mismatch: expected one of " + factories + " but was " + diagnostic.factory)
         }
-
-        throw new IllegalArgumentException("Factory mismatch: expected one of " + factories + " but was " + diagnostic.getFactory());
-    }
-
-    @Override
-    public String toString() {
-        return getName();
     }
 }
