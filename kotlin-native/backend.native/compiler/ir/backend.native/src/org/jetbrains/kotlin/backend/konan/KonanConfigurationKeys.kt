@@ -126,6 +126,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("directory for temporary files")
         val VERIFY_BITCODE: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("verify bitcode")
+        val VERIFY_IR: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("verify IR")
         val VERIFY_COMPILER: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("verify compiler")
         val DEBUG_INFO_VERSION: CompilerConfigurationKey<Int>

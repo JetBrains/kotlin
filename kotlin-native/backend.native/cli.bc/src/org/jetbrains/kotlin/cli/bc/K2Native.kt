@@ -183,6 +183,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 if (arguments.verifyCompiler != null)
                     put(VERIFY_COMPILER, arguments.verifyCompiler == "true")
+                put(VERIFY_IR, arguments.verifyIr)
                 put(VERIFY_BITCODE, arguments.verifyBitCode)
 
                 put(ENABLED_PHASES,

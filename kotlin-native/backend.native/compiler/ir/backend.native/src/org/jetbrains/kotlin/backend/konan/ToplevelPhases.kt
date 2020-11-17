@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: Context) {
-    if (!context.config.needCompilerVerification) return
+    if (!context.config.needVerifyIr) return
 
     val validatorConfig = IrValidatorConfig(
         abortOnError = false,

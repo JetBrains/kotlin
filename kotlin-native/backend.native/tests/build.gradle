@@ -4872,6 +4872,7 @@ KotlinNativeTestKt.createTest(project, 'stdlibTest', KonanGTest) { task ->
             baseDir "$testOutputStdlib/stdlibTest"
             enableMultiplatform true
             extraOpts '-tr',
+                    '-Xverify-ir',
                     '-Xopt-in=kotlin.RequiresOptIn,kotlin.ExperimentalStdlibApi',
                     "-friend-modules", project.rootProject.file("${project.properties['konan.home']}/klib/common/stdlib").absolutePath
             extraOpts project.globalTestArgs
@@ -4911,6 +4912,7 @@ task buildKonanTests { t ->
             srcFiles sources
             baseDir testOutputLocal
             extraOpts '-tr'
+            extraOpts '-Xverify-ir'
             extraOpts project.globalTestArgs
         }
     }

@@ -333,11 +333,21 @@ open class KonanStandaloneTest : KonanLocalTest() {
     @Input @Optional
     var enableKonanAssertions = true
 
+    @Input @Optional
+    var verifyIr = true
+
     /**
      * Compiler flags used to build a test.
      */
     var flags: List<String> = listOf()
-        get() = if (enableKonanAssertions) field + "-ea" else field
+        get() {
+            val result = field.toMutableList()
+            if (enableKonanAssertions)
+                result += "-ea"
+            if (verifyIr)
+                result += "-Xverify-ir"
+            return result
+        }
 
     fun getSources(): Provider<List<String>> = project.provider {
         val sources = buildCompileList(project.file(source).toPath(), outputDirectory)
