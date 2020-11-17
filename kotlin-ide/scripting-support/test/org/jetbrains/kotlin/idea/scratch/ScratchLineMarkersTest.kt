@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.scratch
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
+import com.intellij.openapi.application.Application
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.util.io.FileUtil
