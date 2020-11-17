@@ -61,8 +61,8 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
             }
         } else {
             messageCollector.report(
-                ERROR, "Unknown `string-concat` mode: ${arguments.jvmTarget}\n" +
-                        "Supported versions: ${JvmStringConcat.values().joinToString { it.name.toLowerCase() }}"
+                ERROR, "Unknown -Xstring-concat mode: ${arguments.jvmTarget}\n" +
+                        "Supported versions: ${JvmStringConcat.values().joinToString { it.description }}"
             )
         }
     }
