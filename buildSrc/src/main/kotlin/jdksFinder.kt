@@ -102,7 +102,8 @@ fun MutableCollection<JdkId>.discoverJdks(project: Project) {
 }
 
 private val macOsJavaHomeOutRegexes = listOf(Regex("""\s+(\S+),\s+(\S+):\s+".*?"\s+(.+)"""),
-                                             Regex("""\s+(\S+)\s+\((.*?)\):\s+(.+)"""))
+                                             Regex("""\s+(\S+)\s+\((.*?)\):\s+(.+)"""),
+                                             Regex("""\s+(\S+)\s+\((.+)\)\s+".+"\s+-\s+".+"\s+(.+)"""))
 
 fun MutableCollection<JdkId>.discoverJdksOnMacOS(project: Project) {
     val procBuilder = ProcessBuilder("/usr/libexec/java_home", "-V").redirectErrorStream(true)
