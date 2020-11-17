@@ -184,7 +184,8 @@ sealed class FirPsiSourceElement<out P : PsiElement>(val psi: P) : FirSourceElem
 
         override fun getRoot(): LighterASTNode = lighterAST.root
 
-        override fun getParent(node: LighterASTNode): LighterASTNode? = node.unwrap().psi.parent?.node?.let { TreeBackedLighterAST.wrap(it) }
+        override fun getParent(node: LighterASTNode): LighterASTNode? =
+            node.unwrap().psi.parent?.node?.let { TreeBackedLighterAST.wrap(it) }
 
         override fun getChildren(node: LighterASTNode, nodesRef: Ref<Array<LighterASTNode>>): Int {
             val children = node.unwrap().psi.children
@@ -201,7 +202,7 @@ sealed class FirPsiSourceElement<out P : PsiElement>(val psi: P) : FirSourceElem
 
         override fun getStartOffset(node: LighterASTNode): Int = node.unwrap().startOffset
 
-        override fun getEndOffset(node: LighterASTNode): Int = node.unwrap().let { it.startOffset + it.textLength - 1 }
+        override fun getEndOffset(node: LighterASTNode): Int = node.unwrap().let { it.startOffset + it.textLength }
     }
 }
 

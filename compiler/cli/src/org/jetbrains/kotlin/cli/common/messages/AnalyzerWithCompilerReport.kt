@@ -128,7 +128,7 @@ class AnalyzerWithCompilerReport(
         psiElement: E, factory: DiagnosticFactory0<E>, val message: String
     ) : SimpleDiagnostic<E>(psiElement, factory, Severity.ERROR) {
 
-        override fun isValid(): Boolean = true
+        override val isValid: Boolean = true
     }
 
     companion object {

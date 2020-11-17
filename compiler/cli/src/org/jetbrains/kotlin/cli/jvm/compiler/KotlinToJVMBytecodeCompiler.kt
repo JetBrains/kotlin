@@ -343,9 +343,7 @@ object KotlinToJVMBytecodeCompiler {
             firAnalyzerFacade.runResolution()
             val firDiagnostics = firAnalyzerFacade.runCheckers().values.flatten()
             AnalyzerWithCompilerReport.reportDiagnostics(
-                SimpleDiagnostics(
-                    firDiagnostics.map { it.toRegularDiagnostic() }
-                ),
+                SimpleDiagnostics(firDiagnostics),
                 environment.messageCollector
             )
             performanceManager?.notifyAnalysisFinished()
@@ -427,30 +425,6 @@ object KotlinToJVMBytecodeCompiler {
             else null
 
         return writeOutputs(environment, projectConfiguration, chunk, outputs, mainClassFqName)
-    }
-
-    private fun FirDiagnostic<*>.toRegularDiagnostic(): Diagnostic {
-        val psiSource = element as FirPsiSourceElement<*>
-        @Suppress("UNCHECKED_CAST")
-        when (this) {
-            is FirSimpleDiagnostic ->
-                return SimpleDiagnostic(
-                    psiSource.psi, factory.psiDiagnosticFactory as DiagnosticFactory0<PsiElement>, severity
-                )
-            is FirDiagnosticWithParameters1<*, *> ->
-                return DiagnosticWithParameters1(
-                    psiSource.psi, this.a, factory.psiDiagnosticFactory as DiagnosticFactory1<PsiElement, Any>, severity
-                )
-            is FirDiagnosticWithParameters2<*, *, *> ->
-                return DiagnosticWithParameters2(
-                    psiSource.psi, this.a, this.b, factory.psiDiagnosticFactory as DiagnosticFactory2<PsiElement, Any, Any>, severity
-                )
-            is FirDiagnosticWithParameters3<*, *, *, *> ->
-                return DiagnosticWithParameters3(
-                    psiSource.psi, this.a, this.b, this.c,
-                    factory.psiDiagnosticFactory as DiagnosticFactory3<PsiElement, Any, Any, Any>, severity
-                )
-        }
     }
 
     private fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<String> =

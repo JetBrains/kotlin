@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiTypeElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -67,10 +66,10 @@ object FirErrors {
     val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error0<FirSourceElement, PsiElement>()
 
     // Constructor problems
-    val CONSTRUCTOR_IN_OBJECT by existing<FirSourceElement, KtDeclaration>(Errors.CONSTRUCTOR_IN_OBJECT)
-    val CONSTRUCTOR_IN_INTERFACE by existing<FirSourceElement, KtDeclaration>(Errors.CONSTRUCTOR_IN_INTERFACE)
-    val NON_PRIVATE_CONSTRUCTOR_IN_ENUM by existing<FirSourceElement, PsiElement>(Errors.NON_PRIVATE_CONSTRUCTOR_IN_ENUM)
-    val NON_PRIVATE_CONSTRUCTOR_IN_SEALED by existing<FirSourceElement, PsiElement>(Errors.NON_PRIVATE_CONSTRUCTOR_IN_SEALED)
+    val CONSTRUCTOR_IN_OBJECT by existing0<FirSourceElement, KtDeclaration>()
+    val CONSTRUCTOR_IN_INTERFACE by existing0<FirSourceElement, KtDeclaration>()
+    val NON_PRIVATE_CONSTRUCTOR_IN_ENUM by existing0<FirSourceElement, PsiElement>()
+    val NON_PRIVATE_CONSTRUCTOR_IN_SEALED by existing0<FirSourceElement, PsiElement>()
     val CYCLIC_CONSTRUCTOR_DELEGATION_CALL by warning0<FirSourceElement, PsiElement>()
     val PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED by warning0<FirSourceElement, PsiElement>()
     val SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR by warning0<FirSourceElement, PsiElement>()
@@ -80,19 +79,19 @@ object FirErrors {
     val SEALED_CLASS_CONSTRUCTOR_CALL by error0<FirSourceElement, PsiElement>()
 
     // Annotations
-    val ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR by existing<FirSourceElement, KtExpression>(Errors.ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR)
-    val ANNOTATION_ARGUMENT_MUST_BE_CONST by existing<FirSourceElement, KtExpression>(Errors.ANNOTATION_ARGUMENT_MUST_BE_CONST)
-    val ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST by existing<FirSourceElement, KtExpression>(Errors.ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST)
-    val ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL by existing<FirSourceElement, KtExpression>(Errors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL)
-    val ANNOTATION_CLASS_MEMBER by existing<FirSourceElement, PsiElement>(Errors.ANNOTATION_CLASS_MEMBER)
-    val ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT by existing<FirSourceElement, KtExpression>(Errors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT)
-    val INVALID_TYPE_OF_ANNOTATION_MEMBER by existing<FirSourceElement, KtTypeReference>(Errors.INVALID_TYPE_OF_ANNOTATION_MEMBER)
-    val LOCAL_ANNOTATION_CLASS_ERROR by existing<FirSourceElement, KtClassOrObject>(Errors.LOCAL_ANNOTATION_CLASS_ERROR)
-    val MISSING_VAL_ON_ANNOTATION_PARAMETER by existing<FirSourceElement, KtParameter>(Errors.MISSING_VAL_ON_ANNOTATION_PARAMETER)
-    val NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION by existing<FirSourceElement, KtExpression>(Errors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION)
+    val ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR by existing0<FirSourceElement, KtExpression>()
+    val ANNOTATION_ARGUMENT_MUST_BE_CONST by existing0<FirSourceElement, KtExpression>()
+    val ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST by existing0<FirSourceElement, KtExpression>()
+    val ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL by existing0<FirSourceElement, KtExpression>()
+    val ANNOTATION_CLASS_MEMBER by existing0<FirSourceElement, PsiElement>()
+    val ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT by existing0<FirSourceElement, KtExpression>()
+    val INVALID_TYPE_OF_ANNOTATION_MEMBER by existing0<FirSourceElement, KtTypeReference>()
+    val LOCAL_ANNOTATION_CLASS_ERROR by existing0<FirSourceElement, KtClassOrObject>()
+    val MISSING_VAL_ON_ANNOTATION_PARAMETER by existing0<FirSourceElement, KtParameter>()
+    val NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION by existing0<FirSourceElement, KtExpression>()
     val NOT_AN_ANNOTATION_CLASS by error1<FirSourceElement, PsiElement, String>()
-    val NULLABLE_TYPE_OF_ANNOTATION_MEMBER by existing<FirSourceElement, KtTypeReference>(Errors.NULLABLE_TYPE_OF_ANNOTATION_MEMBER)
-    val VAR_ANNOTATION_PARAMETER by existing<FirSourceElement, KtParameter>(Errors.VAR_ANNOTATION_PARAMETER)
+    val NULLABLE_TYPE_OF_ANNOTATION_MEMBER by existing0<FirSourceElement, KtTypeReference>()
+    val VAR_ANNOTATION_PARAMETER by existing0<FirSourceElement, KtParameter>()
 
     // Exposed visibility group
     val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
@@ -105,7 +104,7 @@ object FirErrors {
     val EXPOSED_TYPE_PARAMETER_BOUND by error3<FirSourceElement, KtTypeParameter, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
 
     // Modifiers
-    val INAPPLICABLE_INFIX_MODIFIER by existing<FirSourceElement, PsiElement, String>(Errors.INAPPLICABLE_INFIX_MODIFIER)
+    val INAPPLICABLE_INFIX_MODIFIER by existing1<FirSourceElement, PsiElement, String>()
     val REPEATED_MODIFIER by error1<FirSourceElement, PsiElement, KtModifierKeywordToken>()
     val REDUNDANT_MODIFIER by error2<FirSourceElement, PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()
     val DEPRECATED_MODIFIER_PAIR by error2<FirSourceElement, PsiElement, KtModifierKeywordToken, KtModifierKeywordToken>()

@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
@@ -63,8 +62,8 @@ import java.io.File
  */
 abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     companion object {
-        val DUMP_CFG_DIRECTIVE = "DUMP_CFG"
-        val COMMON_COROUTINES_DIRECTIVE ="COMMON_COROUTINES_TEST"
+        const val DUMP_CFG_DIRECTIVE = "DUMP_CFG"
+        const val COMMON_COROUTINES_DIRECTIVE = "COMMON_COROUTINES_TEST"
 
         val TestFile.withDumpCfgDirective: Boolean
             get() = DUMP_CFG_DIRECTIVE in directives
@@ -204,7 +203,8 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         argument: () -> String,
     ): FirDiagnosticWithParameters1<FirSourceElement, String>? {
         val sourceElement = element.source ?: return null
-        if (diagnosedRangesToDiagnosticNames[sourceElement.startOffset..sourceElement.endOffset]?.contains(this.name) != true) return null
+        val name = name ?: return null
+        if (diagnosedRangesToDiagnosticNames[sourceElement.startOffset..sourceElement.endOffset]?.contains(name) != true) return null
 
         val argumentText = argument()
         return when (sourceElement) {
@@ -212,21 +212,13 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
                 sourceElement,
                 argumentText,
                 severity,
-                FirDiagnosticFactory1(
-                    name,
-                    severity,
-                    this
-                )
+                FirDiagnosticFactory1(name, severity)
             )
             is FirLightSourceElement -> FirLightDiagnosticWithParameters1(
                 sourceElement,
                 argumentText,
                 severity,
-                FirDiagnosticFactory1<FirSourceElement, PsiElement, String>(
-                    name,
-                    severity,
-                    this
-                )
+                FirDiagnosticFactory1<FirSourceElement, PsiElement, String>(name, severity)
             )
         }
     }
@@ -324,13 +316,13 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         private val cfgKinds = listOf(EdgeKind.DeadForward, EdgeKind.CfgForward, EdgeKind.DeadBackward, EdgeKind.CfgBackward)
 
         private fun checkEdge(from: CFGNode<*>, to: CFGNode<*>) {
-            KtUsefulTestCase.assertContainsElements(from.followingNodes, to)
-            KtUsefulTestCase.assertContainsElements(to.previousNodes, from)
+            assertContainsElements(from.followingNodes, to)
+            assertContainsElements(to.previousNodes, from)
             val fromKind = from.outgoingEdges.getValue(to).kind
             val toKind = to.incomingEdges.getValue(from).kind
             TestCase.assertEquals(fromKind, toKind)
             if (from.isDead && to.isDead) {
-                KtUsefulTestCase.assertContainsElements(cfgKinds, toKind)
+                assertContainsElements(cfgKinds, toKind)
             }
         }
 

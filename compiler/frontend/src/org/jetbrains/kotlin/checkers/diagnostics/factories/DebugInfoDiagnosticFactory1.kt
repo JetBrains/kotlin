@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 
 class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
     DebugInfoDiagnosticFactory {
-    private val name: String
+    private val privateName: String
 
-    override fun getName(): String {
-        return "DEBUG_INFO_$name"
-    }
+    override var name: String?
+        get() = "DEBUG_INFO_$privateName"
+        set(_) {}
 
     override val withExplicitDefinitionOnly: Boolean
 
@@ -33,8 +33,8 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
         dataFlowValueFactory: DataFlowValueFactory?,
         languageVersionSettings: LanguageVersionSettings?,
         moduleDescriptor: ModuleDescriptorImpl?
-    ) = when (name) {
-        EXPRESSION_TYPE.name -> {
+    ) = when (privateName) {
+        EXPRESSION_TYPE.privateName -> {
             val (type, dataFlowTypes) = CheckerTestUtil.getTypeInfo(
                 expression,
                 bindingContext,
@@ -45,23 +45,23 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
 
             this.on(expression, Renderers.renderExpressionType(type, dataFlowTypes))
         }
-        CALL.name -> {
+        CALL.privateName -> {
             val (fqName, typeCall) = CheckerTestUtil.getCallDebugInfo(expression, bindingContext)
             this.on(expression, Renderers.renderCallInfo(fqName, typeCall))
         }
         else -> throw NotImplementedError("Creation diagnostic '$name' isn't supported.")
     }
 
-    protected constructor(name: String, severity: Severity) : super(severity, PositioningStrategies.DEFAULT) {
-        this.name = name
+    private constructor(name: String, severity: Severity) : super(severity, PositioningStrategies.DEFAULT) {
+        this.privateName = name
         this.withExplicitDefinitionOnly = false
     }
 
-    protected constructor(name: String, severity: Severity, withExplicitDefinitionOnly: Boolean) : super(
+    private constructor(name: String, severity: Severity, withExplicitDefinitionOnly: Boolean) : super(
         severity,
         PositioningStrategies.DEFAULT
     ) {
-        this.name = name
+        this.privateName = name
         this.withExplicitDefinitionOnly = withExplicitDefinitionOnly
     }
 

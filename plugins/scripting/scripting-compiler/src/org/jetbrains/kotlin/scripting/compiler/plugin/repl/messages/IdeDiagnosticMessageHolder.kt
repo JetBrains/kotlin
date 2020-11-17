@@ -15,7 +15,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 class IdeDiagnosticMessageHolder : DiagnosticMessageHolder {
     private val diagnostics = arrayListOf<Pair<Diagnostic, String>>()
 
-    override fun report(diagnostic: Diagnostic, file: PsiFile, render: String) {
+    override fun report(diagnostic: Diagnostic, file: PsiFile?, render: String) {
         diagnostics.add(Pair(diagnostic, render))
     }
 

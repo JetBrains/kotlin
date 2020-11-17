@@ -261,7 +261,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 answer.append("// ================\n")
                 for (diagnostic in diagnostics) {
                     answer.append("// Error at ")
-                        .append(diagnostic.psiFile.name)
+                        .append(diagnostic.psiFile?.name)
                         .append(join(diagnostic.textRanges, ","))
                         .append(": ")
                         .append(DefaultErrorMessages.render(diagnostic))

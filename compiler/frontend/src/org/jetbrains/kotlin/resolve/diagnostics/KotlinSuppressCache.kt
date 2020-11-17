@@ -164,7 +164,7 @@ abstract class KotlinSuppressCache {
 
     companion object {
         private fun getDiagnosticSuppressKey(diagnostic: Diagnostic): String =
-            diagnostic.factory.name.toLowerCase()
+            diagnostic.factory.name!!.toLowerCase()
 
         private fun isSuppressedByStrings(key: String, strings: Set<String>, severity: Severity): Boolean =
             severity == Severity.WARNING && "warnings" in strings || key in strings

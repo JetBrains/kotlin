@@ -24,6 +24,6 @@ interface Diagnostic {
     val severity: Severity
     val psiElement: PsiElement
     val textRanges: List<TextRange>
-    val psiFile: PsiFile
+    val psiFile: PsiFile?
     val isValid: Boolean
 }
