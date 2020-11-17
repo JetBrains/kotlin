@@ -314,7 +314,7 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
     def get_child_index(self, name):
         log(lambda: "KonanObjectSyntheticProvider::get_child_index({:#x}, {})".format(self._valobj.unsigned, name))
         index = self._children.index(name)
-        return self._read_value(index)
+        return index
 
     def get_child_at_index(self, index):
         log(lambda: "KonanObjectSyntheticProvider::get_child_at_index({:#x}, {})".format(self._valobj.unsigned, index))
