@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ReadActionConfinementValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
-import org.jetbrains.kotlin.idea.frontend.api.components.KtCallResolver
-import org.jetbrains.kotlin.idea.frontend.api.components.KtDiagnosticProvider
-import org.jetbrains.kotlin.idea.frontend.api.components.KtSmartCastProvider
-import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeProvider
+import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.components.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbolProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.threadLocal

@@ -49,7 +49,8 @@ internal class KtFirSymbolDeclarationOverridesProvider(
 
                 val firTypeScope = containingDeclaration.unsubstitutedScope(
                     containingDeclaration.session,
-                    ScopeSession()
+                    ScopeSession(),
+                    withForcedTypeCalculator = true,
                 )
 
                 val overriddenElement = mutableSetOf<KtCallableSymbol>()

@@ -117,16 +117,11 @@ internal class KtFirScopeProvider(
     override fun getTypeScope(type: KtType): KtScope? {
         check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
         val firSession = firResolveState.rootModuleSession
-<<<<<<< HEAD
         val firTypeScope = type.coneType.scope(
             firSession,
             firResolveState.firTransformerProvider.getScopeSession(firSession),
             FakeOverrideTypeCalculator.Forced
         ) ?: return null
-=======
-        val firTypeScope = type.coneType.scope(firSession, firResolveState.firTransformerProvider.getScopeSession(firSession))
-            ?: return null
->>>>>>> 1323a6ca02c... FIR IDE: do not resolve symbols by transitive module dependencies
         return convertToKtScope(firTypeScope)
     }
 
