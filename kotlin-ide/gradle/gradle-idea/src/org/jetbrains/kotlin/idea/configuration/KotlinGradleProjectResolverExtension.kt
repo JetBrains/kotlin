@@ -213,9 +213,11 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
             LOG.debug("Start populate module dependencies. Gradle module: [$gradleModule], Ide module: [$ideModule], Ide project: [$ideProject]")
         }
         val mppModel = resolverCtx.getMppModel(gradleModule)
+        val project = resolverCtx.externalSystemTaskId.findProject()
         if (mppModel != null) {
             mppModel.targets.forEach { target ->
                 KotlinIDEGradleActionsFUSCollector.logImport(
+                    project,
                     "MPP.${target.platform.id + (target.presetName?.let { ".$it" } ?: "")}")
             }
             return super.populateModuleDependencies(gradleModule, ideModule, ideProject)
@@ -238,7 +240,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule.platformPluginId = gradleModel.platformPluginId
 
         if (gradleModel.hasKotlinPlugin) {
-            KotlinIDEGradleActionsFUSCollector.logImport(gradleModel.kotlinTarget ?: "unknown")
+            KotlinIDEGradleActionsFUSCollector.logImport(project, gradleModel.kotlinTarget ?: "unknown")
         }
 
         addImplementedModuleNames(gradleModule, ideModule, ideProject, gradleModel)

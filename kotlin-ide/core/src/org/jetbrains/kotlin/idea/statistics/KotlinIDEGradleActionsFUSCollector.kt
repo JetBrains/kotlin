@@ -4,6 +4,7 @@ import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.internal.statistic.utils.getPluginInfoById
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 
 class KotlinIDEGradleActionsFUSCollector : CounterUsagesCollector() {
@@ -53,6 +54,6 @@ class KotlinIDEGradleActionsFUSCollector : CounterUsagesCollector() {
             EventFields.PluginInfo
         )
 
-        fun logImport(target: String) = importEvent.log(target, pluginInfo)
+        fun logImport(project: Project?, target: String) = importEvent.log(project, target, pluginInfo)
     }
 }
