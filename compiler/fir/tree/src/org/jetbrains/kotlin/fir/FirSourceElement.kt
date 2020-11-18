@@ -154,6 +154,9 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
     // fun foo(vararg args: Int) {}
     // fun bar(1, 2, 3) --> [resolved] fun bar(VarargArgument(1, 2, 3))
     object VarargArgument : FirFakeSourceElementKind()
+
+    // Part of desugared x?.y
+    object CheckedSafeCallSubject : FirFakeSourceElementKind()
 }
 
 sealed class FirSourceElement {

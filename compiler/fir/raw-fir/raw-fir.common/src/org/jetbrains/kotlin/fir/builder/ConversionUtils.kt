@@ -499,7 +499,7 @@ fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExp
         this.originalReceiverRef = FirExpressionRef<FirExpression>().apply {
             bind(receiver)
         }
-        this.source = receiver.source
+        this.source = receiver.source?.fakeElement(FirFakeSourceElementKind.CheckedSafeCallSubject)
     }
 
     replaceExplicitReceiver(checkedSafeCallSubject)
