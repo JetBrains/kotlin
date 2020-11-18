@@ -6,10 +6,10 @@
 {
   "note": "May https://vega.github.io/vega/docs/ be with you",
   "$schema": "https://vega.github.io/schema/vega/v4.3.0.json",
-  "description": "TestData highlight - warmUp",
-  "title": "TestData highlight - warmUp",
+  "description": "The Kotlin sources: highlight",
+  "title": "The Kotlin sources: highlight",
   "width": 800,
-  "height": 400,
+  "height": 500,
   "padding": 5,
   "autosize": {"type": "pad", "resize": true},
   "signals": [
@@ -107,19 +107,34 @@
           "query": {
             "bool": {
               "must": [
-                {
-                  "bool": {
-                    "must_not": [
-                       {"exists": {"field": "synthetic"}}
-                     ]
-                   }
-                },
-                {"exists": {"field": "warmUp"}},
-                {"term": {"benchmark.keyword": "highlight"}},
-                {"range": {"buildTimestamp": {"%timefilter%": true}}}
-              ]
-            }
-          },
+                {"range": {"buildTimestamp": {"%timefilter%": true}}},
+                    {
+                      "bool": {
+                        "must_not": [
+                           {"exists": {"field": "synthetic"}},
+                           {"term": {"name.keyword": "open project kotlin"}}
+                         ]
+                       }
+                    },
+                    {
+                      "bool": {
+                        "should": [
+                          {"term": {"benchmark.keyword": "kotlin project"}}
+                        ]
+                      }
+                    }],
+                  "filter": [
+                    {"prefix": {"name": {"value": "highlighting"}}}
+                  ],
+                  "must_not": [
+                    {"prefix": {
+                      "name.keyword": {
+                        "value": "highlighting empty profile"
+                      }
+                    }}
+                ]
+              }
+            },
           "aggs": {
             "benchmark": {
               "terms": {
@@ -135,7 +150,7 @@
                   "aggs": {
                     "values": {
                       "auto_date_histogram": {
-                          "buckets": 50,
+                          "buckets": 500,
                           "field": "buildTimestamp",
                           "minimum_interval": "hour"
                       },
@@ -165,7 +180,7 @@
           }
         }
       },
-      "format": {"property": "aggregations"},
+            "format": {"property": "aggregations"},
       "comment": "we need to have follow data: \"buildId\", \"metricName\", \"metricValue\" and \"metricError\"",
       "comment": "so it has to be array of {\"buildId\": \"...\", \"metricName\": \"...\", \"metricValue\": ..., \"metricError\": ...}",
       "transform": [
@@ -193,6 +208,7 @@
         },
         {"type": "collect","sort": {"field": "timestamp"}}
       ]
+
     },
     {
       "name": "selected",
@@ -261,7 +277,7 @@
       "nice": false,
       "zero": true,
       "domain": {"data": "table", "field": "metricError"},
-      "range": [1, 100]
+      "range": [0, 100]
     }
   ],
   "legends": [
