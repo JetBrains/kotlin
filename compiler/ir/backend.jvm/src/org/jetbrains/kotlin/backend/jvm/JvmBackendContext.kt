@@ -59,15 +59,11 @@ class JvmBackendContext(
     val classNameOverride: MutableMap<IrClass, JvmClassName>
         get() = generatorExtensions.classNameOverride
 
-    override val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
-        get() = TODO("not implemented")
-
     override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
     override val irFactory: IrFactory = IrFactoryImpl
 
     override val scriptMode: Boolean = false
-    override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
 
     override val builtIns = state.module.builtIns
     val typeMapper = IrTypeMapper(this)

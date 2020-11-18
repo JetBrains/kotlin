@@ -45,12 +45,6 @@ class JsIrBackendContext(
     override val scriptMode: Boolean = false,
     override val es6mode: Boolean = false
 ) : JsCommonBackendContext {
-    override val transformedFunction
-        get() = error("Use Mapping.inlineClassMemberToStatic instead")
-
-    override val lateinitNullableFields
-        get() = error("Use Mapping.lateInitFieldToNullableField instead")
-
     override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
     override val builtIns = module.builtIns
