@@ -115,7 +115,7 @@ abstract class AbstractKotlinInlineNamedDeclarationProcessor<TDeclaration : KtNa
     }
 
     private fun postActions() {
-        if (deleteAfter) {
+        if (deleteAfter && isWritable) {
             declaration.deleteWithCompanion()
             postDeleteAction()
         }

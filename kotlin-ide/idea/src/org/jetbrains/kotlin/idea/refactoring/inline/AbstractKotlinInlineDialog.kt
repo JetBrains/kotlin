@@ -9,6 +9,8 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.ElementDescriptionUtil
 import com.intellij.psi.PsiReference
+import com.intellij.refactoring.BaseRefactoringProcessor
+import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.inline.InlineOptionsDialog
 import com.intellij.usageView.UsageViewTypeLocation
 import org.jetbrains.annotations.Nls
@@ -48,7 +50,7 @@ abstract class AbstractKotlinInlineDialog<TDeclaration : KtNamedDeclaration>(
 
     // If this is false, "inline all & remove" is disabled
     // If this is true, it can be enabled if 'canInlineThisOnly' is false (see above)
-    override fun allowInlineAll() = declaration.isWritable
+    override fun allowInlineAll() = true
 
     override fun getBorderTitle() = refactoringName
 
@@ -65,7 +67,11 @@ abstract class AbstractKotlinInlineDialog<TDeclaration : KtNamedDeclaration>(
         (occurrencesString?.let { "($it)" } ?: "")
     )
 
-    override fun getInlineAllText() = getInlineText(KotlinBundle.message("text.remove"))
+    override fun getInlineAllText(): String =
+        if (declaration.isWritable)
+            getInlineText(KotlinBundle.message("text.remove"))
+        else
+            RefactoringBundle.message("all.invocations.in.project")
 
     override fun getKeepTheDeclarationText(): String? =
         // With non-writable callable refactoring does not work anyway (for both property or function)
