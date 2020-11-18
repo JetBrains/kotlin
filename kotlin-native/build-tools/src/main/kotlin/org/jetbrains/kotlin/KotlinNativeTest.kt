@@ -441,10 +441,10 @@ open class KonanDynamicTest : KonanStandaloneTest() {
         val plugin = project.convention.getPlugin(ExecClang::class.java)
         val execResult = plugin.execKonanClang(project.testTarget, Action<ExecSpec> {
             workingDir = File(outputDirectory)
-            executable = clangTool
+            this@Action.executable = clangTool
             val artifactsDir = "$outputDirectory/${project.testTarget}"
             args = listOf(processCSource(),
-                    "-o", executable,
+                    "-o", this@KonanDynamicTest.executable,
                     "-I", artifactsDir,
                     "-L", artifactsDir,
                     "-l", name,

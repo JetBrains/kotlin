@@ -21,13 +21,6 @@ apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 apply plugin: "maven-publish"
 
-// (gets applied to this project and all its subprojects)
-allprojects {
-    repositories {
-        maven { url project.bootstrapKotlinRepo }
-    }
-}
-
 sourceSets {
     compiler {
         proto.srcDir 'compiler/ir/backend.native/src/'
@@ -190,10 +183,8 @@ dependencies {
                 type = "jar"
                 //extention = "jar"
             }
-        } //{ includeIntellijCoreJarDependencies(project) }
+        }
         compileOnly(jpsStandalone())
-        //compileOnly(commonDep("org.jetbrains.intellij.deps"))
-
     }
 
     compilerCompile kotlinNativeInterop['llvm'].configuration
