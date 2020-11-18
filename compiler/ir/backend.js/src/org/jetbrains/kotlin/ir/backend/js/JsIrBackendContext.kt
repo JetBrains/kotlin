@@ -76,9 +76,6 @@ class JsIrBackendContext(
     val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
 
     private val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.js.internal"))
-    val implicitDeclarationFile = run {
-        syntheticFile("implicitDeclarations", irModuleFragment)
-    }
 
     private fun syntheticFile(name: String, module: IrModuleFragment): IrFile {
         return IrFileImpl(object : SourceManager.FileEntry {
