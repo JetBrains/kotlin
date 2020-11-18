@@ -104,11 +104,13 @@ class DeprecationFilterTest : AbstractCoreTest() {
                     sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
                     skipDeprecated = false
                     perPackageOptions = mutableListOf(
-                        PackageOptionsImpl("example",
+                        PackageOptionsImpl(
+                            "example.*",
                             true,
                             false,
                             true,
-                            false)
+                            false
+                        )
                     )
                 }
             }

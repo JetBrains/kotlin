@@ -16,8 +16,8 @@ class SuppressedDocumentableFilterTransformerTest : AbstractCoreTest() {
                 sourceSet {
                     sourceRoots = listOf("src")
                     perPackageOptions = listOf(
-                        packageOptions(prefix = "suppressed", suppress = true),
-                        packageOptions(prefix = "default", suppress = false)
+                        packageOptions(matchingRegex = "suppressed.*", suppress = true),
+                        packageOptions(matchingRegex = "default.*", suppress = false)
                     )
                 }
             }
@@ -57,11 +57,11 @@ class SuppressedDocumentableFilterTransformerTest : AbstractCoreTest() {
                 sourceSet {
                     sourceRoots = listOf("src")
                     perPackageOptions = listOf(
-                        packageOptions(prefix = "parent.some", suppress = false),
-                        packageOptions(prefix = "parent.some.suppressed", suppress = true),
+                        packageOptions(matchingRegex = "parent.some.*", suppress = false),
+                        packageOptions(matchingRegex = "parent.some.suppressed.*", suppress = true),
 
-                        packageOptions(prefix = "parent.other", suppress = true),
-                        packageOptions(prefix = "parent.other.default", suppress = false)
+                        packageOptions(matchingRegex = "parent.other.*", suppress = true),
+                        packageOptions(matchingRegex = "parent.other.default.*", suppress = false)
                     )
                 }
             }
@@ -175,10 +175,10 @@ class SuppressedDocumentableFilterTransformerTest : AbstractCoreTest() {
     }
 
     private fun packageOptions(
-        prefix: String,
+        matchingRegex: String,
         suppress: Boolean
     ) = PackageOptionsImpl(
-        prefix = prefix,
+        matchingRegex = matchingRegex,
         suppress = suppress,
         includeNonPublic = true,
         reportUndocumented = false,
