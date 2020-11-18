@@ -8,7 +8,7 @@ KtFirJavaFieldSymbol:
   name: value
   origin: JAVA
   symbolKind: MEMBER
-  type: ft<kotlin/CharArray, kotlin/CharArray?>!
+  type: ft<@FlexibleNullability kotlin/CharArray, kotlin/CharArray?>!
   visibility: PRIVATE
 
 KtFirJavaFieldSymbol:
@@ -937,7 +937,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: ft<@EnhancedNullability kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>>
+  type: ft<@EnhancedNullability kotlin/Array<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, @EnhancedNullability kotlin/Array<out ft<@FlexibleNullability kotlin/String, kotlin/String?>!>>
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(regex), KtFirFunctionValueParameterSymbol(limit)]
   visibility: PUBLIC
@@ -956,7 +956,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: ft<@EnhancedNullability kotlin/Array<ft<kotlin/String, kotlin/String?>!>, kotlin/Array<out ft<kotlin/String, kotlin/String?>!>>
+  type: ft<@EnhancedNullability kotlin/Array<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, @EnhancedNullability kotlin/Array<out ft<@FlexibleNullability kotlin/String, kotlin/String?>!>>
   typeParameters: []
   valueParameters: [KtFirFunctionValueParameterSymbol(regex)]
   visibility: PUBLIC
@@ -1070,7 +1070,7 @@ KtFirFunctionSymbol:
   origin: JAVA
   receiverType: null
   symbolKind: MEMBER
-  type: kotlin/String
+  type: @FlexibleNullability kotlin/String
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
@@ -1142,7 +1142,7 @@ KtFirClassOrObjectSymbol:
   name: CaseInsensitiveComparator
   origin: JAVA
   primaryConstructor: null
-  superTypes: [kotlin/Any, java/util/Comparator<ft<kotlin/String, kotlin/String?>!>, java/io/Serializable]
+  superTypes: [kotlin/Any, java/util/Comparator<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, java/io/Serializable]
   symbolKind: MEMBER
   typeParameters: []
   visibility: PRIVATE
