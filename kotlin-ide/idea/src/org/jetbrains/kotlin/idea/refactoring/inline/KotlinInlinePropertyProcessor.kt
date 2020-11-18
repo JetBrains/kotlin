@@ -53,7 +53,7 @@ class KotlinInlinePropertyProcessor(
     }
 
     override fun postAction() {
-        if (deleteAfter && isWhenSubjectVariable) {
+        if (deleteAfter && isWhenSubjectVariable && declaration.isWritable) {
             declaration.initializer?.let { declaration.replace(it) }
         }
     }

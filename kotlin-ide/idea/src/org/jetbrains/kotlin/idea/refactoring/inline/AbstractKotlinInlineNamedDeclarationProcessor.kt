@@ -64,7 +64,7 @@ abstract class AbstractKotlinInlineNamedDeclarationProcessor<TDeclaration : KtNa
             usages += UsageInfo(usage)
         }
 
-        if (deleteAfter) {
+        if (shouldDeleteAfter) {
             declaration.forEachOverridingElement(scope = myRefactoringScope) { _, overridingMember ->
                 val superMethods = findSuperMethodsNoWrapping(overridingMember)
                 if (superMethods.singleOrNull()?.unwrapped == declaration) {
@@ -82,11 +82,12 @@ abstract class AbstractKotlinInlineNamedDeclarationProcessor<TDeclaration : KtNa
     open fun additionalPreprocessUsages(usages: Array<out UsageInfo>, conflicts: MultiMap<PsiElement, String>) = Unit
 
     final override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
-        if (deleteAfter && isWritable) {
-            if (!CommonRefactoringUtil.checkReadOnlyStatus(myProject, declaration)) return false
+        val usagesInfo = refUsages.get()
+        if (inlineThisOnly) {
+            val element = usagesInfo.firstOrNull()?.element
+            if (element != null && !CommonRefactoringUtil.checkReadOnlyStatus(myProject, element)) return false
         }
 
-        val usagesInfo = refUsages.get()
         val conflicts = MultiMap<PsiElement, String>()
         additionalPreprocessUsages(usagesInfo, conflicts)
         for (usage in usagesInfo) {
@@ -95,7 +96,7 @@ abstract class AbstractKotlinInlineNamedDeclarationProcessor<TDeclaration : KtNa
             conflicts.putValue(element, callableConflict)
         }
 
-        if (deleteAfter) {
+        if (shouldDeleteAfter) {
             for (superDeclaration in findSuperMethodsNoWrapping(declaration)) {
                 val fqName = superDeclaration.getKotlinFqName()?.asString() ?: KotlinBundle.message("fix.change.signature.error")
                 val message = KotlinBundle.message("text.inlined.0.overrides.0.1", kind, fqName)
@@ -114,8 +115,10 @@ abstract class AbstractKotlinInlineNamedDeclarationProcessor<TDeclaration : KtNa
         return showConflicts(conflicts, usagesInfo)
     }
 
+    private val shouldDeleteAfter: Boolean get() = deleteAfter && isWritable
+
     private fun postActions() {
-        if (deleteAfter && isWritable) {
+        if (shouldDeleteAfter) {
             declaration.deleteWithCompanion()
             postDeleteAction()
         }
@@ -125,7 +128,7 @@ abstract class AbstractKotlinInlineNamedDeclarationProcessor<TDeclaration : KtNa
 
     override fun performRefactoring(usages: Array<out UsageInfo>) {
         if (usages.isEmpty()) {
-            if (!deleteAfter) {
+            if (!shouldDeleteAfter) {
                 val message = KotlinBundle.message("0.1.is.never.used", kind.capitalize(), declaration.name.toString())
                 CommonRefactoringUtil.showErrorHint(myProject, editor, message, commandName, null)
             } else {
