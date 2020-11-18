@@ -3283,6 +3283,10 @@ task deserialized_listof0(type: KonanLocalTest) {
     source = "serialization/deserialized_listof0.kt"
 }
 
+task deserialized_fields(type: KonanLocalTest) {
+    source = "serialization/deserialized_fields.kt"
+}
+
 task genKt39548 {
     doFirst {
         GenTestKT39548Kt.genTestKT39548(file("$buildDir/kt39548/kt39548.kt"))
