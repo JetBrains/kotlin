@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
@@ -58,8 +57,6 @@ class Fir2IrDeclarationStorage(
     private val visitor: Fir2IrVisitor,
     private val moduleDescriptor: FirModuleDescriptor
 ) : Fir2IrComponents by components {
-
-    private val annotationGenerator = AnnotationGenerator(this)
 
     private val firSymbolProvider = session.firSymbolProvider
 

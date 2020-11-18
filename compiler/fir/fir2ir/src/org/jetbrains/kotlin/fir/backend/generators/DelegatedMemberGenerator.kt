@@ -36,8 +36,6 @@ internal class DelegatedMemberGenerator(
     private val components: Fir2IrComponents
 ) : Fir2IrComponents by components {
 
-    private val annotationGenerator = AnnotationGenerator(this)
-
     // Generate delegated members for [subClass]. The synthetic field [irField] has the super interface type.
     fun generate(irField: IrField, firField: FirField, firSubClass: FirClass<*>, subClass: IrClass) {
         val subClassLookupTag = firSubClass.symbol.toLookupTag()
