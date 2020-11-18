@@ -100,6 +100,8 @@ To update the blackbox compiler tests set TeamCity build number in `gradle.prope
 and then a final native binary is produced from this klibrary using the -Xinclude compiler flag.
 
         ./gradlew -Ptest_two_stage backend.native:tests:array0
+        
+* **-Ptest_with_cache_kind=static|dynamic** enables using caches during testing. 
        
  ### Runtime unit tests
  
