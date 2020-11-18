@@ -367,37 +367,45 @@ class KonanArraySyntheticProvider(KonanHelperProvider):
         log(lambda: "to_string:{self._valobj.unsigned:#x}")
         return super().to_string(lambda index: "{}".format(self._deref_or_obj_summary(index)))
 
-class KonanNullSyntheticProvider(lldb.SBSyntheticValueProvider):
+class KonanZerroSyntheticProvider(lldb.SBSyntheticValueProvider):
     def __init__(self, valobj):
-        log(lambda: "KonanNullSyntheticProvider::__init__ {}".format(valobj.name))
+        log(lambda: "KonanZerroSyntheticProvider::__init__ {}".format(valobj.name))
 
 
     def num_children(self):
-        log(lambda: "KonanNullSyntheticProvider::num_children")
+        log(lambda: "KonanZerroSyntheticProvider::num_children")
         return 0
 
     def has_children(self):
-        log(lambda: "KonanNullSyntheticProvider::has_children")
+        log(lambda: "KonanZerroSyntheticProvider::has_children")
         return False
 
     def get_child_index(self, name):
-        log(lambda: "KonanNullSyntheticProvider::get_child_index")
+        log(lambda: "KonanZerroSyntheticProvider::get_child_index")
         return 0
 
     def get_child_at_index(self, index):
-        log(lambda: "KonanNullSyntheticProvider::get_child_at_index")
+        log(lambda: "KonanZerroSyntheticProvider::get_child_at_index")
         return None
 
     def to_string(self):
-        log(lambda: "KonanNullSyntheticProvider::to_string")
+        log(lambda: "KonanZerroSyntheticProvider::to_string")
         return NULL
 
     def to_short_string(self):
-        log(lambda: "KonanNullSyntheticProvider::to_short_string")
+        log(lambda: "KonanZerroSyntheticProvider::to_short_string")
         return NULL
 
     def __getattr__(self, item):
         pass
+
+class KonanNullSyntheticProvider(KonanZerroSyntheticProvider):
+    def __init__(self, valobj):
+        super(KonanNullSyntheticProvider, self).__init__(valobj)
+
+class KonanNotInitializedObjectSyntheticProvider(KonanZerroSyntheticProvider):
+    def __init__(self, valobj):
+        super(KonanNotInitializedObjectSyntheticProvider, self).__init__(valobj)
 
 
 class KonanProxyTypeProvider:
@@ -412,7 +420,10 @@ class KonanProxyTypeProvider:
 
         tip = type_info(valobj)
         if not tip:
-            return
+           log(lambda : "KonanProxyTypeProvider:{:#x}, name: {} not initialized syntectic {}".format(valobj.unsigned, valobj.name, valobj.IsValid()))
+           bench(start, lambda: "KonanProxyTypeProvider({:#x})".format(valobj.unsigned))
+           self._proxy = KonanNotInitializedObjectSyntheticProvider(valobj)
+           return
         log(lambda : "KonanProxyTypeProvider:{:#x} tip: {:#x}".format(valobj.unsigned, tip))
         self._proxy = select_provider(valobj, tip, internal_dict)
         bench(start, lambda: "KonanProxyTypeProvider({:#x})".format(valobj.unsigned))
