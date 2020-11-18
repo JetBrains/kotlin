@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.util.isSetter
  * whose targets may vary. After all the necessary pieces of IR elements, e.g., backing field, are ready, this generator splits those
  * annotations to the specified targets.
  */
-internal class AnnotationGenerator(private val components: Fir2IrComponents) : Fir2IrComponents by components {
+class AnnotationGenerator(private val components: Fir2IrComponents) : Fir2IrComponents by components {
 
     fun List<FirAnnotationCall>.toIrAnnotations(): List<IrConstructorCall> =
         mapNotNull {
