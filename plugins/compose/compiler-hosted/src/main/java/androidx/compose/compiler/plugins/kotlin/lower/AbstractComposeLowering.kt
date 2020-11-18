@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -109,7 +110,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.isNullable
@@ -120,12 +120,12 @@ import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.TypeTranslator
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.endOffset
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.getArguments
 import org.jetbrains.kotlin.ir.util.getPrimitiveArrayElementType
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.startOffset
@@ -176,8 +176,15 @@ abstract class AbstractComposeLowering(
         hasStableAnnotation()
     }
 
-    protected val composerIrClass = context.referenceClass(ComposeFqNames.Composer)?.owner
-        ?: error("Cannot find the Composer class in the classpath")
+    private val _composerIrClass =
+        context.referenceClass(ComposeFqNames.Composer)?.owner
+            ?: error("Cannot find the Composer class in the classpath")
+
+    // this ensures that composer always references up-to-date composer class symbol
+    // otherwise, after remapping of symbols in DeepCopyTransformer, it results in duplicated
+    // references
+    protected val composerIrClass: IrClass
+        get() = symbolRemapper.getReferencedClass(_composerIrClass.symbol).owner
 
     fun referenceFunction(symbol: IrFunctionSymbol): IrFunctionSymbol {
         return symbolRemapper.getReferencedFunction(symbol)
@@ -424,7 +431,8 @@ abstract class AbstractComposeLowering(
     ): IrExpression {
         val symbol = IrSimpleFunctionSymbolImpl(descriptor)
 
-        val returnType = descriptor.returnType!!.toIrType()
+        require(type.isFunction()) { "Function references should always have function type" }
+        val returnType = (type as IrSimpleTypeImpl).arguments.last() as IrType
 
         val lambda = IrFunctionImpl(
             startOffset, endOffset,
@@ -777,20 +785,19 @@ abstract class AbstractComposeLowering(
             throw AssertionError("Should be IrConstructorCall: ${getIteratorFunction.descriptor}")
         }
 
-        val nextSymbol = iteratorSymbol.owner.defaultType.classOrNull!!.owner.functions
+        val iteratorType = iteratorSymbol.typeWith(elementType)
+        val nextSymbol = iteratorSymbol.owner.functions
             .single { it.descriptor.name.asString() == "next" }
-        val hasNextSymbol = iteratorSymbol.owner.defaultType.classOrNull!!.owner.functions
+        val hasNextSymbol = iteratorSymbol.owner.functions
             .single { it.descriptor.name.asString() == "hasNext" }
 
         val call = IrCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            iteratorSymbol.typeWith(elementType),
+            iteratorType,
             getIteratorFunction.symbol,
             IrStatementOrigin.FOR_LOOP_ITERATOR
-        )
-
-        call.also {
+        ).also {
             it.dispatchReceiver = subject
         }
 
@@ -799,7 +806,7 @@ abstract class AbstractComposeLowering(
             value = call,
             isVar = false,
             name = "tmp0_iterator",
-            irType = iteratorSymbol.defaultType,
+            irType = iteratorType,
             origin = IrDeclarationOrigin.FOR_LOOP_ITERATOR
         )
         return irBlock(
@@ -815,11 +822,15 @@ abstract class AbstractComposeLowering(
                 ).apply {
                     val loopVar = irTemporary(
                         containingDeclaration = scope,
-                        value = irCall(
+                        value = IrCallImpl(
                             symbol = nextSymbol.symbol,
                             origin = IrStatementOrigin.FOR_LOOP_NEXT,
-                            dispatchReceiver = irGet(iteratorVar)
-                        ),
+                            startOffset = UNDEFINED_OFFSET,
+                            endOffset = UNDEFINED_OFFSET,
+                            type = elementType
+                        ).also {
+                            it.dispatchReceiver = irGet(iteratorVar)
+                        },
                         origin = IrDeclarationOrigin.FOR_LOOP_VARIABLE,
                         isVar = false,
                         name = "value",

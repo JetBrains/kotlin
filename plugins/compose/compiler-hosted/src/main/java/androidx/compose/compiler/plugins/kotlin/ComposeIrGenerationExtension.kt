@@ -17,9 +17,9 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityTransformer
+import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunInterfaceLowering
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerIntrinsicTransformer
-import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunInterfaceLowering
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerLambdaMemoization
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerParamTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.DurableKeyVisitor
@@ -84,8 +84,6 @@ class ComposeIrGenerationExtension(
             symbolRemapper,
             bindingTrace
         ).lower(moduleFragment)
-
-        generateSymbols(pluginContext)
 
         // transform calls to the currentComposer to just use the local parameter from the
         // previous transform
