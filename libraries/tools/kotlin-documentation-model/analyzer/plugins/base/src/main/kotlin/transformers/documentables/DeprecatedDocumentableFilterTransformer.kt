@@ -24,7 +24,7 @@ class DeprecatedDocumentableFilterTransformer(val context: DokkaContext) : PreMe
         fun <T> T.isAllowedInPackage(): Boolean where T : WithExtraProperties<T>, T : Documentable {
             val packageName = this.dri.packageName
             val condition = packageName != null && packageOptions.firstOrNull {
-                packageName.startsWith(it.prefix)
+                Regex(it.matchingRegex).matches(packageName)
             }?.skipDeprecated
                     ?: globalOptions.skipDeprecated
 

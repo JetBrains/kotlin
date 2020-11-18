@@ -144,7 +144,7 @@ interface DokkaConfiguration : Serializable {
     }
 
     interface PackageOptions : Serializable {
-        val prefix: String
+        val matchingRegex: String
         val includeNonPublic: Boolean
         val reportUndocumented: Boolean?
         val skipDeprecated: Boolean
