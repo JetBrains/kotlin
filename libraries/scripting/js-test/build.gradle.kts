@@ -23,6 +23,9 @@ dependencies {
         includeJars("idea", "idea_rt", "log4j", "guava", "jdom", rootProject = rootProject)
     }
     testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    // change to intellij-deps-fastutil-8.3.1-3 when switching to 203 platform
+    testRuntimeOnly(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
+
 }
 
 sourceSets {
