@@ -4245,16 +4245,16 @@ dynamicTest("produce_dynamic") {
                 "getVector128 = (1, 2, 3, 4)\n" +
                 "Error handler: kotlin.Error: Expected error\n"
 }
-
-dynamicTest("interop_concurrentRuntime") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName)
-    source = "interop/concurrentTerminate/reverseInterop.kt"
-    cSource = "$projectDir/interop/concurrentTerminate/main.cpp"
-    clangTool = "clang++"
-    goldValue = "Uncaught Kotlin exception: kotlin.RuntimeException: Example"
-    outputChecker = { str -> str.startsWith(goldValue) }
-    expectedExitStatus = 99
-}
+// unstable
+//dynamicTest("interop_concurrentRuntime") {
+//    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+//    source = "interop/concurrentTerminate/reverseInterop.kt"
+//    cSource = "$projectDir/interop/concurrentTerminate/main.cpp"
+//    clangTool = "clang++"
+//    goldValue = "Uncaught Kotlin exception: kotlin.RuntimeException: Example"
+//    outputChecker = { str -> str.startsWith(goldValue) }
+//    expectedExitStatus = 99
+//}
 
 dynamicTest("interop_kt42397") {
     disabled = (project.testTarget != null && project.testTarget != project.hostName) ||
