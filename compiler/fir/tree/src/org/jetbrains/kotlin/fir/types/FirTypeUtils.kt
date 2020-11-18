@@ -140,7 +140,8 @@ private fun ConeTypeParameterType.hasNotNullUpperBound(): Boolean {
 }
 
 val FirTypeRef.canBeNull: Boolean
-    get() = coneType.canBeNull
+    // TODO: replace with coneType (for some reason, implicit type still can arise here)
+    get() = coneTypeSafe<ConeKotlinType>()?.canBeNull == true
 
 val ConeKotlinType.canBeNull: Boolean
     get() {
