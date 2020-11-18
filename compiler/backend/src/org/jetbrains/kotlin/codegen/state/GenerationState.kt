@@ -196,7 +196,8 @@ class GenerationState private constructor(
     val languageVersionSettings = configuration.languageVersionSettings
 
     val useOldManglingSchemeForFunctionsWithInlineClassesInSignatures =
-        configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
+        configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME) ||
+                languageVersionSettings.languageVersion.run { major == 1 && minor < 4 }
 
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     val runtimeStringConcat =

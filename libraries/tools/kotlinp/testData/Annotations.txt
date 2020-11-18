@@ -79,48 +79,56 @@ public final annotation class A : kotlin/Annotation {
     public final get
 
   // requires language version 1.3.0 (level=ERROR)
+  // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: ub()B
   public final val ub: kotlin/UByte
     public final get
 
   // requires language version 1.3.0 (level=ERROR)
+  // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: ub_max()B
   public final val ub_max: kotlin/UByte
     public final get
 
   // requires language version 1.3.0 (level=ERROR)
+  // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: ui()I
   public final val ui: kotlin/UInt
     public final get
 
   // requires language version 1.3.0 (level=ERROR)
+  // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: ui_max()I
   public final val ui_max: kotlin/UInt
     public final get
 
   // requires language version 1.3.0 (level=ERROR)
+  // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: ul()J
   public final val ul: kotlin/ULong
     public final get
 
   // requires language version 1.3.0 (level=ERROR)
+  // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: ul_max()J
   public final val ul_max: kotlin/ULong
     public final get
 
   // requires language version 1.3.0 (level=ERROR)
+  // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: us()S
   public final val us: kotlin/UShort
     public final get
 
   // requires language version 1.3.0 (level=ERROR)
+  // requires compiler version 1.4.30 (level=ERROR)
   // requires language version 1.4.0 (level=ERROR)
   // getter: us_max()S
   public final val us_max: kotlin/UShort

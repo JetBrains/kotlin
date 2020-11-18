@@ -241,9 +241,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
     }
 
     private fun MutableVersionRequirementTable.writeNewFunctionNameManglingRequirement(add: (Int) -> Unit) {
-        if (languageVersionSettings.languageVersion.major == 1 && languageVersionSettings.languageVersion.minor >= 4) {
-            add(writeVersionRequirement(1, 4, 30, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this))
-        }
+        add(writeVersionRequirement(1, 4, 30, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this))
     }
 
     private fun FunctionDescriptor.needsInlineParameterNullCheckRequirement(): Boolean =

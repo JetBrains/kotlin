@@ -209,11 +209,14 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
             fqNamesWithRequirements = listOf(
                 "test.IC",
                 "test.Ctor.<init>",
-                "test.Foo",
-                "test.Bar",
+                "test.simpleFun",
+                "test.aliasedFun",
+                "test.simpleProp",
                 "test.result",
-                "test.simpleProp"
-            )
+                "test.Foo",
+                "test.Bar"
+            ),
+            shouldBeSingleRequirement = false
         )
     }
 }
