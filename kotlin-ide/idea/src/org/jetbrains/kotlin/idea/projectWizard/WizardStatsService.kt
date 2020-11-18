@@ -116,8 +116,9 @@ class WizardStatsService : CounterUsagesCollector() {
         )
 
         // Log functions
-        fun logDataOnProjectGenerated(projectCreationStats: ProjectCreationStats) {
+        fun logDataOnProjectGenerated(project: Project?, projectCreationStats: ProjectCreationStats) {
             projectCreatedEvent.log(
+                project,
                 *projectCreationStats.toPairs().toTypedArray(),
                 pluginInfoField
             )

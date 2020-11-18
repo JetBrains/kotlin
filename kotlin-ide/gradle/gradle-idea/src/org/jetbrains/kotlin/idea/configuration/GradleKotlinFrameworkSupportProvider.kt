@@ -144,7 +144,8 @@ abstract class GradleKotlinFrameworkSupportProvider(
         }
         //KotlinCreateActionsFUSCollector.logProjectTemplate("Gradle", this.presentableName)
         val projectCreationStats = ProjectCreationStats("Gradle", this.presentableName, "gradleGroovy")
-        WizardStatsService.logDataOnProjectGenerated(projectCreationStats)
+
+        WizardStatsService.logDataOnProjectGenerated(module.project, projectCreationStats)
     }
 
     protected open fun updateSettingsScript(settingsBuilder: SettingsScriptBuilder<out PsiFile>, specifyPluginVersionIfNeeded: Boolean) {}
@@ -310,7 +311,7 @@ open class GradleKotlinMPPSourceSetsFrameworkSupportProvider : GradleKotlinMPPFr
         super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
 
         val projectCreationStats = ProjectCreationStats("Gradle", this.presentableName + " as framework", "gradleGroovy")
-        WizardStatsService.logDataOnProjectGenerated(projectCreationStats)
+        WizardStatsService.logDataOnProjectGenerated(module.project, projectCreationStats)
 
         buildScriptData.addOther(
             """kotlin {

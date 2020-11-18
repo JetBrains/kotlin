@@ -1,10 +1,16 @@
 package org.jetbrains.kotlin.idea.statistics
 
+import com.intellij.internal.statistic.eventLog.EventLogConfiguration
+import com.intellij.internal.statistic.eventLog.EventLogConfiguration.anonymize
 import com.intellij.internal.statistic.eventLog.EventLogGroup
 import com.intellij.internal.statistic.eventLog.events.EventFields
 import com.intellij.internal.statistic.service.fus.collectors.CounterUsagesCollector
 import com.intellij.internal.statistic.utils.getPluginInfoById
+import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectManager
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 
 class KotlinIDEGradleActionsFUSCollector : CounterUsagesCollector() {
     override fun getGroup(): EventLogGroup = GROUP
@@ -52,6 +58,9 @@ class KotlinIDEGradleActionsFUSCollector : CounterUsagesCollector() {
             EventFields.String("target", allowedTargets),
             EventFields.PluginInfo
         )
+
+        //private val project_id: Project = ProjectManager.getInstance()
+        //val id = EventLogConfiguration.anonymize(project_id.getB)
 
         fun logImport(target: String) = importEvent.log(target, pluginInfo)
     }

@@ -60,7 +60,7 @@ class JavaFrameworkSupportProvider : FrameworkSupportInModuleProvider() {
                     ProjectCodeStyleImporter.apply(module.project, KotlinStyleGuideCodeStyle.INSTANCE)
                 }
                 val projectCreationStats = ProjectCreationStats("Java", "Kotlin/JVM", "jps")
-                WizardStatsService.logDataOnProjectGenerated(projectCreationStats)
+                WizardStatsService.logDataOnProjectGenerated(module.project, projectCreationStats)
             }
 
             override fun onFrameworkSelectionChanged(selected: Boolean) {

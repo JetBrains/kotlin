@@ -53,7 +53,7 @@ class KotlinModuleBuilder(
 
     override fun setupRootModel(rootModel: ModifiableRootModel) {
         val projectCreationStats = ProjectCreationStats("Kotlin", this.builderName, "jps")
-        logDataOnProjectGenerated(projectCreationStats)
+        logDataOnProjectGenerated(project = null, projectCreationStats)
         super.setupRootModel(rootModel)
         if (!targetPlatform.isJvm()) {
             migrateNonJvmSourceFolders(rootModel)
