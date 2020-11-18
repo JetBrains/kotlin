@@ -1,5 +1,4 @@
 // WITH_RUNTIME
-// The difference of JVM and JVM_IR in generating privateFunction here is reported at KT-41841.
 // FILE: test.kt
 
 @file:JvmMultifileClass

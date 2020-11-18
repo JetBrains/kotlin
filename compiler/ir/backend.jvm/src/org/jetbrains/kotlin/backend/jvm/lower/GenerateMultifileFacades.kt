@@ -214,7 +214,9 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
 ): IrSimpleFunction? {
     val target = this
 
-    if (DescriptorVisibilities.isPrivate(visibility) ||
+    val originalVisibility = context.mapping.defaultArgumentsOriginalFunction[this]?.visibility ?: visibility
+
+    if (DescriptorVisibilities.isPrivate(originalVisibility) ||
         name == StaticInitializersLowering.clinitName ||
         origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
         // $annotations methods in the facade are only needed for const properties.
