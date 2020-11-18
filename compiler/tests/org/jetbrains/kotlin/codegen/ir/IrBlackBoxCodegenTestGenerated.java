@@ -14182,6 +14182,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/inlineClasses/UIntArraySortExample.kt");
         }
 
+        @TestMetadata("UIntSafeAsInt.kt")
+        public void testUIntSafeAsInt() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/UIntSafeAsInt.kt");
+        }
+
         @TestMetadata("unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt")
         public void testUnboxNullableValueOfInlineClassWithNonNullUnderlyingType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt");

@@ -6702,6 +6702,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/inlineClasses/typeChecksForInlineClasses.kt");
         }
 
+        @TestMetadata("UIntSafeAsInt.kt")
+        public void testUIntSafeAsInt() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/UIntSafeAsInt.kt");
+        }
+
         @TestMetadata("unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt")
         public void testUnboxNullableValueOfInlineClassWithNonNullUnderlyingType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt");
