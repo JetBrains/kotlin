@@ -183,11 +183,9 @@ class KotlinMultiplatformPlugin(
 
             // Note: modifying these sets should also be reflected in the DSL code generator, see 'presetEntries.kt'
             val nativeTargetsWithHostTests = setOf(LINUX_X64, MACOS_X64, MINGW_X64)
-            val nativeTargetsWithSimulatorTests = setOf(IOS_X64, WATCHOS_X86, TVOS_X64)
-            val disabledNativeTargets = setOf(WATCHOS_X64)
+            val nativeTargetsWithSimulatorTests = setOf(IOS_X64, WATCHOS_X86, WATCHOS_X64, TVOS_X64)
 
             HostManager().targets
-                .filter { (_, konanTarget) -> konanTarget !in disabledNativeTargets }
                 .forEach { (_, konanTarget) ->
                     val targetToAdd = when (konanTarget) {
                         in nativeTargetsWithHostTests ->
