@@ -106,7 +106,7 @@ class JavaClassMembersEnhancementScope(
                             if (valueParameter.returnTypeRef.coneType is ConeFlexibleType) {
                                 ConeFlexibleType(
                                     type.withAttributes(
-                                        type.attributes.intersectUnless(ConeAttributes.WithFlexibleNullability) {
+                                        type.attributes.withFlexibleUnless {
                                             it.hasEnhancedNullability
                                         }
                                     ),

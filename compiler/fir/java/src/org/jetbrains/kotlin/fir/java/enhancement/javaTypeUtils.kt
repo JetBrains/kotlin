@@ -92,7 +92,7 @@ private fun ConeKotlinType.enhanceConeKotlinType(
             val lowerResult = lowerBound.enhanceInflexibleType(
                 session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index,
                 attributes = if (needsFlexibleNullabilityAttribute)
-                    lowerBound.attributes.intersect(ConeAttributes.WithFlexibleNullability)
+                    lowerBound.attributes.withFlexible()
                 else
                     lowerBound.attributes
             )

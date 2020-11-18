@@ -200,7 +200,7 @@ private fun ClassId.toConeFlexibleType(
     toConeKotlinType(
         typeArguments,
         isNullable = false,
-        attributes.intersectUnless(ConeAttributes.WithFlexibleNullability) { it.hasEnhancedNullability }
+        attributes.withFlexibleUnless { it.hasEnhancedNullability }
     ),
     toConeKotlinType(typeArgumentsForUpper, isNullable = true, attributes)
 )
@@ -242,7 +242,7 @@ private fun JavaClassifierType.toConeKotlinTypeWithoutEnhancement(
     else
         ConeFlexibleType(
             lowerBound.withAttributes(
-                lowerBound.attributes.intersectUnless(ConeAttributes.WithFlexibleNullability) { it.hasEnhancedNullability }
+                lowerBound.attributes.withFlexibleUnless { it.hasEnhancedNullability }
             ),
             upperBound
         )
@@ -316,7 +316,7 @@ private fun getErasedVersionOfFirstUpperBound(
                 // Avoid exponential complexity
                 ConeFlexibleType(
                     lowerBound.withAttributes(
-                        lowerBound.attributes.intersectUnless(ConeAttributes.WithFlexibleNullability) { it.hasEnhancedNullability }
+                        lowerBound.attributes.withFlexibleUnless { it.hasEnhancedNullability }
                     ),
                     lowerBound.withNullability(ConeNullability.NULLABLE)
                 )
