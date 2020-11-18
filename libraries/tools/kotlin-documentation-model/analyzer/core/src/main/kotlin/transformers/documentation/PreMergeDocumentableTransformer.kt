@@ -28,8 +28,8 @@ fun PreMergeDocumentableTransformer.sourceSet(documentable: Documentable): Dokka
 fun PreMergeDocumentableTransformer.perPackageOptions(documentable: Documentable): PackageOptions? {
     val packageName = documentable.dri.packageName ?: return null
     return sourceSet(documentable).perPackageOptions
-        .sortedByDescending { packageOptions -> packageOptions.prefix.length }
-        .firstOrNull { packageOptions -> packageName.startsWith(packageOptions.prefix) }
+        .sortedByDescending { packageOptions -> packageOptions.matchingRegex.length }
+        .firstOrNull { packageOptions -> Regex(packageOptions.matchingRegex).matches(packageName) }
 }
 
 fun <T> PreMergeDocumentableTransformer.source(documentable: T) where T : Documentable, T : WithSources =
