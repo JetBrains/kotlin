@@ -23,7 +23,7 @@ class DocumentableVisibilityFilterTransformer(val context: DokkaContext) : PreMe
             is JavaVisibility.Default,
             is KotlinVisibility.Public -> true
             else -> packageName != null
-                    && packageOptions.firstOrNull { packageName.startsWith(it.prefix) }?.includeNonPublic
+                    && packageOptions.firstOrNull { Regex(it.matchingRegex).matches(packageName) }?.includeNonPublic
                     ?: globalOptions.includeNonPublic
         }
 
