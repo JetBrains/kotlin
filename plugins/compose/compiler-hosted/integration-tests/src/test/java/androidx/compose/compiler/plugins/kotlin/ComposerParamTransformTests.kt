@@ -330,4 +330,66 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             }
         """
     )
+
+    @Test
+    fun testComposableNestedCall() {
+        composerParam(
+            """
+                @Composable
+                fun composeVector(
+                    composable: @Composable () -> Unit
+                ) {
+                    emit {
+                        emit {
+                            composable()
+                        }
+                    }
+                }
+                @Composable
+                inline fun emit(composable: @Composable () -> Unit) {
+                    composable()
+                }
+            """,
+            """
+                @Composable
+                fun composeVector(composable: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
+                  %composer.startRestartGroup(<>, "C(composeVector)<emit>:Test.kt#2487m")
+                  val %dirty = %changed
+                  if (%changed and 0b1110 === 0) {
+                    %dirty = %dirty or if (%composer.changed(composable)) 0b0100 else 0b0010
+                  }
+                  if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                    emit({ %composer: Composer<*>?, %changed: Int ->
+                      %composer.startReplaceableGroup(<>, "C<emit>:Test.kt#2487m")
+                      if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                        emit({ %composer: Composer<*>?, %changed: Int ->
+                          %composer.startReplaceableGroup(<>, "C<compos...>:Test.kt#2487m")
+                          if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                            composable(%composer, 0b1110 and %dirty)
+                          } else {
+                            %composer.skipToGroupEnd()
+                          }
+                          %composer.endReplaceableGroup()
+                        }, %composer, 0)
+                      } else {
+                        %composer.skipToGroupEnd()
+                      }
+                      %composer.endReplaceableGroup()
+                    }, %composer, 0)
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                    composeVector(composable, %composer, %changed or 0b0001)
+                  }
+                }
+                @Composable
+                fun emit(composable: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
+                  %composer.startReplaceableGroup(<>, "C(emit)<compos...>:Test.kt#2487m")
+                  composable(%composer, 0b1110 and %changed)
+                  %composer.endReplaceableGroup()
+                }
+            """.trimIndent()
+        )
+    }
 }
