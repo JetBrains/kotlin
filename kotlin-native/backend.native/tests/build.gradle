@@ -4491,25 +4491,25 @@ dynamicTest("produce_dynamic") {
     source = "produce_dynamic/simple/hello.kt"
     cSource = "$projectDir/produce_dynamic/simple/main.c"
     goldValue = "Hello, dynamic!\n" +
-                "Base.foo\n" +
-                "Base.fooParam: a 1 q\n" +
-                "Child.fooParam: b 2 null\n" +
-                "Child.fooParam: c 3 null\n" +
-                "Impl1.I: d 4 Impl1\n" +
-                "Impl2.I: e 5 Impl2\n" +
-                "String is Kotlin/Native nullable is Hi null is OK\n" +
-                "RO property is 42\n" +
-                "RW property is 239\n" +
-                "enum100 = 100\n" +
-                "enum42 = 42\n" +
-                "object = 42\n" +
-                "singleton = I am single\n" +
-                "mutable = foo\n" +
-                "topLevel = 777 3\n" +
-                "IsInstance1 = PASS\n" +
-                "IsInstance2 = PASS\n" +
-                "getVector128 = (1, 2, 3, 4)\n" +
-                "Error handler: kotlin.Error: Expected error\n"
+            "Base.foo\n" +
+            "Base.fooParam: a 1 q\n" +
+            "Child.fooParam: b 2 null\n" +
+            "Child.fooParam: c 3 null\n" +
+            "Impl1.I: d 4 Impl1\n" +
+            "Impl2.I: e 5 Impl2\n" +
+            "String is Kotlin/Native nullable is Hi null is OK\n" +
+            "RO property is 42\n" +
+            "RW property is 239\n" +
+            "enum100 = 100\n" +
+            "enum42 = 42\n" +
+            "object = 42\n" +
+            "singleton = I am single\n" +
+            "mutable = foo\n" +
+            "topLevel = 777 3\n" +
+            "IsInstance1 = PASS\n" +
+            "IsInstance2 = PASS\n" +
+            "getVector128 = (1, 2, 3, 4)\n" +
+            "Error handler: kotlin.Error: Expected error\n"
 }
 
 dynamicTest("kt36639") {
