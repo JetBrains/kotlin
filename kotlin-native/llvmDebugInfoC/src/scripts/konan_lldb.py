@@ -511,17 +511,6 @@ def konan_globals_command(debugger, command, result, internal_dict):
        str_value = extractor(value)
        result.AppendMessage('{} {}: {}'.format(type, name, str_value))
 
-def _excepthook(et, ev, tr):
-    log(lambda: traceback.format_exception(et, ev, tr))
-    sys.__excepthook__(et, ev, tr)
-
-
-def _trace_calls(frame, event, arg):
-    if event != 'call':
-        return
-    code = frame.f_code
-    log(lambda: "{}:{} {code.co_name}({})".format(code.co_filename, frame.f_lineno, str(arg)))
-
 def __lldb_init_module(debugger, _):
     log(lambda: "init start")
     __FACTORY['object'] = lambda x, y, z: KonanObjectSyntheticProvider(x, y, z)
@@ -545,6 +534,4 @@ def __lldb_init_module(debugger, _):
     debugger.HandleCommand('command script add -f {}.type_name_command type_name'.format(__name__))
     debugger.HandleCommand('command script add -f {}.type_by_address_command type_by_address'.format(__name__))
     debugger.HandleCommand('command script add -f {}.symbol_by_name_command symbol_by_name'.format(__name__))
-    sys.excepthook = _excepthook
-    #sys.settrace(_trace_calls)
     log(lambda: "init end")
