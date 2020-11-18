@@ -115,6 +115,26 @@ object CirTypeFactory {
         )
     }
 
+    fun makeNullable(classOrTypeAliasType: CirClassOrTypeAliasType): CirClassOrTypeAliasType =
+        if (classOrTypeAliasType.isMarkedNullable)
+            classOrTypeAliasType
+        else
+            when (classOrTypeAliasType) {
+                is CirClassType -> createClassType(
+                    classId = classOrTypeAliasType.classifierId,
+                    outerType = classOrTypeAliasType.outerType,
+                    visibility = classOrTypeAliasType.visibility,
+                    arguments = classOrTypeAliasType.arguments,
+                    isMarkedNullable = true
+                )
+                is CirTypeAliasType -> createTypeAliasType(
+                    typeAliasId = classOrTypeAliasType.classifierId,
+                    underlyingType = makeNullable(classOrTypeAliasType.underlyingType),
+                    arguments = classOrTypeAliasType.arguments,
+                    isMarkedNullable = true
+                )
+            }
+
     private fun createClassTypeWithAllOuterTypes(
         classDescriptor: ClassDescriptor,
         arguments: List<CirTypeProjection>,
