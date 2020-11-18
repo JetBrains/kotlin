@@ -3,5 +3,6 @@ language = Objective-C
 package = platform.IOBluetoothUI
 modules = IOBluetoothUI
 
-compilerOpts = -framework IOBluetoothUI
+# -DAPI_UNAVAILABLE_BEGIN workarounds bug in IOBluetoothUI headers which use this macro before importing it.
+compilerOpts = -framework IOBluetoothUI -DAPI_UNAVAILABLE_BEGIN=__API_UNAVAILABLE_BEGIN
 linkerOpts = -framework IOBluetoothUI
