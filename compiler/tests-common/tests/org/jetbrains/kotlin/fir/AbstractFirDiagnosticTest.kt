@@ -66,6 +66,11 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         const val DUMP_CFG_DIRECTIVE = "DUMP_CFG"
         const val COMMON_COROUTINES_DIRECTIVE = "COMMON_COROUTINES_TEST"
 
+        private val allowedKindsForDebugInfo = setOf(
+            FirRealSourceElementKind,
+            FirFakeSourceElementKind.DesugaredCompoundAssignment,
+        )
+
         val TestFile.withDumpCfgDirective: Boolean
             get() = DUMP_CFG_DIRECTIVE in directives
 
@@ -204,7 +209,12 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         argument: () -> String,
     ): FirDiagnosticWithParameters1<FirSourceElement, String>? {
         val sourceElement = element.source ?: return null
-        if (sourceElement.kind != FirRealSourceElementKind) return null
+        val sourceKind = sourceElement.kind
+        if (sourceKind !in allowedKindsForDebugInfo) {
+            if (sourceKind != FirFakeSourceElementKind.ImplicitReturn || sourceElement.elementType != KtNodeTypes.RETURN) {
+                return null
+            }
+        }
         // Lambda argument is always (?) duplicated by function literal
         // Block expression is always (?) duplicated by single block expression
         if (sourceElement.elementType == KtNodeTypes.LAMBDA_ARGUMENT || sourceElement.elementType == KtNodeTypes.BLOCK) return null
