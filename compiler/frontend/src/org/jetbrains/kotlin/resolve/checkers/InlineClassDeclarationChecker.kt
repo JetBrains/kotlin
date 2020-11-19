@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.resolve.*
@@ -87,10 +86,6 @@ object InlineClassDeclarationChecker : DeclarationChecker {
                     return
                 }
             }
-        }
-
-        if (descriptor.isValue && !descriptor.annotations.hasAnnotation(JVM_INLINE_ANNOTATION)) {
-            trace.report(Errors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION.on(inlineOrValueKeyword))
         }
     }
 

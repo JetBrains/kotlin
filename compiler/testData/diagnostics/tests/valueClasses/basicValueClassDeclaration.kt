@@ -7,7 +7,7 @@ annotation class JvmInline
 @JvmInline
 value class Foo(val x: Int)
 
-<!WRONG_MODIFIER_TARGET!>value<!> interface InlineInterface
-<!WRONG_MODIFIER_TARGET!>value<!> annotation class InlineAnn
-<!WRONG_MODIFIER_TARGET!>value<!> object InlineObject
-<!WRONG_MODIFIER_TARGET!>value<!> enum class InlineEnum
+<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, WRONG_MODIFIER_TARGET!>value<!> interface InlineInterface
+<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, WRONG_MODIFIER_TARGET!>value<!> annotation class InlineAnn
+<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, WRONG_MODIFIER_TARGET!>value<!> object InlineObject
+<!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, WRONG_MODIFIER_TARGET!>value<!> enum class InlineEnum

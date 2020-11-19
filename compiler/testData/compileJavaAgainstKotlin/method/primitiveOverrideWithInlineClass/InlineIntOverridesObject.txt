@@ -14,7 +14,7 @@ public open class KFooZ : test.IFoo<test.Z> {
     public open fun foo(): test.Z
 }
 
-public final inline class Z {
+public final value class Z {
     public constructor Z(/*0*/ kotlin.Int)
     public final val value: kotlin.Int
 }
