@@ -158,19 +158,9 @@ class JvmCachedDeclarations(
             // is supposed to allow using `I2.DefaultImpls.f` as if it was inherited from `I1.DefaultImpls`.
             // The classes are not actually related and `I2.DefaultImpls.f` is not a fake override but a bridge.
             val defaultImplsOrigin = when {
-                !forCompatibilityMode && !interfaceFun.isFakeOverride ->
-                    when {
-                        interfaceFun.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER ->
-                            interfaceFun.origin
-                        interfaceFun.origin.isSynthetic ->
-                            JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_WITH_MOVED_RECEIVERS_SYNTHETIC
-                        else ->
-                            JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_WITH_MOVED_RECEIVERS
-                    }
-                interfaceFun.resolveFakeOverride()!!.origin.isSynthetic ->
-                    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC
-                else ->
-                    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE
+                !forCompatibilityMode && !interfaceFun.isFakeOverride -> interfaceFun.origin
+                interfaceFun.resolveFakeOverride()!!.origin.isSynthetic -> JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC
+                else -> JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE
             }
 
             // Interface functions are public or private, with one exception: clone in Cloneable, which is protected.

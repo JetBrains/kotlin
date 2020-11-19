@@ -341,7 +341,7 @@ internal fun IrFunction.suspendFunctionOriginal(): IrFunction =
     if (this is IrSimpleFunction && isSuspend &&
         !isStaticInlineClassReplacement &&
         !isOrOverridesDefaultParameterStub() &&
-        !isDefaultImplsFunction
+        parentAsClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS
     )
         attributeOwnerId as IrFunction
     else this
@@ -353,17 +353,6 @@ private fun IrSimpleFunction.isOrOverridesDefaultParameterStub(): Boolean =
         { it.overriddenSymbols.map { it.owner } },
         { it.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER }
     )
-
-private val defaultImplsOrigins = setOf(
-    IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
-    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_WITH_MOVED_RECEIVERS,
-    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_WITH_MOVED_RECEIVERS_SYNTHETIC,
-    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
-    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC,
-)
-
-private val IrSimpleFunction.isDefaultImplsFunction: Boolean
-    get() = origin in defaultImplsOrigins
 
 private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): IrFunction {
     require(this.isSuspend && this is IrSimpleFunction)
