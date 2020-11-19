@@ -17,40 +17,31 @@
 import androidx.build.LibraryGroups
 import androidx.build.LibraryType
 import androidx.build.LibraryVersions
-
-buildscript {
-    dependencies {
-        classpath 'org.anarres.jarjar:jarjar-gradle:1.0.1'
-    }
-}
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id("java")
     id("AndroidXPlugin")
 }
 
-apply plugin: 'org.anarres.jarjar'
-
 dependencies {
     compileOnly(project(":compose:compiler:compiler-hosted"))
 }
 
-jarjar.repackage('embeddedPlugin') {
-    destinationName "compiler.jar"
-    from configurations.compileClasspath
-    classRename 'com.intellij.**', 'org.jetbrains.kotlin.com.intellij.@1'
+TaskProvider<ShadowJar> shadowJar = tasks.register("embeddedPlugin", ShadowJar) {
+    configurations = [project.configurations.compileClasspath]
+    relocate("com.intellij", "org.jetbrains.kotlin.com.intellij")
+    archiveBaseName.set("embedded")
+    archiveVersion.set("")
+    destinationDirectory.set(new File(buildDir, "repackaged"))
 }
 
 configurations {
-    // replace the standard jar with the one built by 'jarjar.repackage' in both api and runtime variants
+    // replace the standard jar with the one built by 'shadowJar' in both api and runtime variants
     apiElements.outgoing.artifacts.clear()
-    apiElements.outgoing.artifact(embeddedPlugin.destinationPath) {
-        builtBy embeddedPlugin
-    }
+    apiElements.outgoing.artifact(shadowJar.flatMap {it.archiveFile})
     runtimeElements.outgoing.artifacts.clear()
-    runtimeElements.outgoing.artifact(embeddedPlugin.destinationPath) {
-        builtBy embeddedPlugin
-    }
+    runtimeElements.outgoing.artifact(shadowJar.flatMap {it.archiveFile})
 }
 
 androidx {
