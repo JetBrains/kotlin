@@ -150,6 +150,9 @@ fun FirSourceElement.hasValOrVar(): Boolean =
 fun FirSourceElement.hasVar(): Boolean =
     treeStructure.findChildByType(lighterASTNode, KtTokens.VAR_KEYWORD) != null
 
+fun FirSourceElement.hasPrimaryConstructor(): Boolean =
+    treeStructure.primaryConstructor(lighterASTNode) != null
+
 private fun FlyweightCapableTreeStructure<LighterASTNode>.constructorKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.CONSTRUCTOR_KEYWORD)
 
