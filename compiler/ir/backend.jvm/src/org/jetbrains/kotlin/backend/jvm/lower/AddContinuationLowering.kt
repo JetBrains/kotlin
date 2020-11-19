@@ -372,7 +372,7 @@ private fun IrFunction.createSuspendFunctionStub(context: JvmBackendContext): Ir
         val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
         function.copyReceiverParametersFrom(this, substitutionMap)
 
-        if (origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE) {
+        if (origin != JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE) {
             function.overriddenSymbols +=
                 overriddenSymbols.map { it.owner.suspendFunctionViewOrStub(context).symbol as IrSimpleFunctionSymbol }
         }
