@@ -68,6 +68,11 @@ class FakeSymbolBasedClass(
     override val isRecord: Boolean get() = false
 
     override val recordComponents: Collection<JavaRecordComponent> get() = emptyList()
+
+    override val isSealed: Boolean get() = false
+
+    override val permittedTypes: Collection<JavaClassifierType> get() = emptyList()
+
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     override val methods: Collection<JavaMethod> get() = emptyList()

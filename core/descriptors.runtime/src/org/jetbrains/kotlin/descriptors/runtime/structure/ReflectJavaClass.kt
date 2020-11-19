@@ -122,6 +122,12 @@ class ReflectJavaClass(
     override val isRecord: Boolean
         get() = false
 
+    override val isSealed: Boolean
+        get() = false
+
+    override val permittedTypes: Collection<JavaClassifierType>
+        get() = emptyList()
+
     override fun equals(other: Any?) = other is ReflectJavaClass && klass == other.klass
 
     override fun hashCode() = klass.hashCode()
