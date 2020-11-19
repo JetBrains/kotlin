@@ -66,7 +66,9 @@ class DescriptorSerializer private constructor(
         val builder = ProtoBuf.Class.newBuilder()
 
         val flags = Flags.getClassFlags(
-            hasAnnotations(classDescriptor),
+            // Since 1.4.30 isInline & isValue are the same flag. To distinguish them we generate @JvmInline annotation.
+            // See ClassDescriptor.isInlineClass() function.
+            hasAnnotations(classDescriptor) || classDescriptor.isInline,
             ProtoEnumFlags.descriptorVisibility(normalizeVisibility(classDescriptor)),
             ProtoEnumFlags.modality(classDescriptor.modality),
             ProtoEnumFlags.classKind(classDescriptor.kind, classDescriptor.isCompanionObject),

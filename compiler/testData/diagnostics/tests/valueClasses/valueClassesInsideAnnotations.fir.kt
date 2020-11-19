@@ -1,6 +1,6 @@
 // !LANGUAGE: +InlineClasses
 
-package kotlin
+package kotlin.jvm
 
 import kotlin.reflect.KClass
 

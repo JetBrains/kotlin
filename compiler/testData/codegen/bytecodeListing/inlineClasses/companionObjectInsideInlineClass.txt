@@ -7,6 +7,7 @@ public final class Foo$Companion {
     public final inner class Foo$Companion
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Foo {
     // source: 'companionObjectInsideInlineClass.kt'

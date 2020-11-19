@@ -1,7 +1,7 @@
 // !LANGUAGE: +InlineClasses
 // FIR_IDENTICAL
 
-package kotlin
+package kotlin.jvm
 
 annotation class JvmInline
 

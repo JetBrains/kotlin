@@ -2,90 +2,93 @@ package
 
 package kotlin {
 
-    @kotlin.JvmInline public final value class Bar {
-        public constructor Bar(/*0*/ u: kotlin.Unit)
-        public final val u: kotlin.Unit
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+    package kotlin.jvm {
 
-    @kotlin.JvmInline public final value class BarNullable {
-        public constructor BarNullable(/*0*/ u: kotlin.Unit?)
-        public final val u: kotlin.Unit?
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class Bar {
+            public constructor Bar(/*0*/ u: kotlin.Unit)
+            public final val u: kotlin.Unit
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class Baz {
-        public constructor Baz(/*0*/ u: kotlin.Nothing)
-        public final val u: kotlin.Nothing
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class BarNullable {
+            public constructor BarNullable(/*0*/ u: kotlin.Unit?)
+            public final val u: kotlin.Unit?
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class BazNullable {
-        public constructor BazNullable(/*0*/ u: kotlin.Nothing?)
-        public final val u: kotlin.Nothing?
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class Baz {
+            public constructor Baz(/*0*/ u: kotlin.Nothing)
+            public final val u: kotlin.Nothing
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class Foo</*0*/ T> {
-        public constructor Foo</*0*/ T>(/*0*/ x: T)
-        public final val x: T
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class BazNullable {
+            public constructor BazNullable(/*0*/ u: kotlin.Nothing?)
+            public final val u: kotlin.Nothing?
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class FooGenericArray</*0*/ T> {
-        public constructor FooGenericArray</*0*/ T>(/*0*/ x: kotlin.Array<T>)
-        public final val x: kotlin.Array<T>
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class Foo</*0*/ T> {
+            public constructor Foo</*0*/ T>(/*0*/ x: T)
+            public final val x: T
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class FooGenericArray2</*0*/ T> {
-        public constructor FooGenericArray2</*0*/ T>(/*0*/ x: kotlin.Array<kotlin.Array<T>>)
-        public final val x: kotlin.Array<kotlin.Array<T>>
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class FooGenericArray</*0*/ T> {
+            public constructor FooGenericArray</*0*/ T>(/*0*/ x: kotlin.Array<T>)
+            public final val x: kotlin.Array<T>
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class FooNullable</*0*/ T> {
-        public constructor FooNullable</*0*/ T>(/*0*/ x: T?)
-        public final val x: T?
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class FooGenericArray2</*0*/ T> {
+            public constructor FooGenericArray2</*0*/ T>(/*0*/ x: kotlin.Array<kotlin.Array<T>>)
+            public final val x: kotlin.Array<kotlin.Array<T>>
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class FooStarProjectedArray {
-        public constructor FooStarProjectedArray(/*0*/ x: kotlin.Array<*>)
-        public final val x: kotlin.Array<*>
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class FooNullable</*0*/ T> {
+            public constructor FooNullable</*0*/ T>(/*0*/ x: T?)
+            public final val x: T?
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class FooStarProjectedArray2 {
-        public constructor FooStarProjectedArray2(/*0*/ x: kotlin.Array<kotlin.Array<*>>)
-        public final val x: kotlin.Array<kotlin.Array<*>>
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class FooStarProjectedArray {
+            public constructor FooStarProjectedArray(/*0*/ x: kotlin.Array<*>)
+            public final val x: kotlin.Array<*>
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    public final annotation class JvmInline : kotlin.Annotation {
-        public constructor JvmInline()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        @kotlin.jvm.JvmInline public final value class FooStarProjectedArray2 {
+            public constructor FooStarProjectedArray2(/*0*/ x: kotlin.Array<kotlin.Array<*>>)
+            public final val x: kotlin.Array<kotlin.Array<*>>
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
+
+        public final annotation class JvmInline : kotlin.Annotation {
+            public constructor JvmInline()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
     }
 }

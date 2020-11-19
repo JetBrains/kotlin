@@ -1,6 +1,6 @@
 package test
 
-public final value class Z {
+@kotlin.jvm.JvmInline public final value class Z {
     /*primary*/ internal constructor Z(/*0*/ kotlin.Int)
     public final val value: kotlin.Int
         public final fun <get-value>(): kotlin.Int
