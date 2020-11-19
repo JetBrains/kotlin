@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory3
@@ -20,7 +18,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // TODO: check why coneTypeSafe is necessary at some points inside
@@ -97,7 +94,7 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
                 restricting,
                 typeAliasVisibility,
                 restricting.getEffectiveVisibility(context),
-                declaration.source?.getIdentifierSource() ?: declaration.source
+                declaration.source
             )
         }
     }
@@ -115,7 +112,7 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
                     restricting,
                     functionVisibility,
                     restricting.getEffectiveVisibility(context),
-                    declaration.source?.getIdentifierSource() ?: declaration.source
+                    declaration.source
                 )
             }
         }
@@ -151,7 +148,7 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
                 restricting,
                 propertyVisibility,
                 restricting.getEffectiveVisibility(context),
-                declaration.source?.getIdentifierSource() ?: declaration.source
+                declaration.source
             )
         }
         checkMemberReceiver(declaration.receiverTypeRef, declaration, reporter, context)
@@ -226,14 +223,6 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
                     restrictingVisibility
                 )
             )
-        }
-    }
-
-    private fun FirSourceElement.getIdentifierSource() = when (this) {
-        is FirPsiSourceElement<*> -> (this.psi as? PsiNameIdentifierOwner)?.nameIdentifier?.toFirPsiSourceElement()
-        is FirLightSourceElement -> {
-            val identifier = lighterASTNode.getChildren(treeStructure).find { it?.tokenType == KtTokens.IDENTIFIER }
-            identifier?.toFirLightSourceElement(treeStructure)
         }
     }
 

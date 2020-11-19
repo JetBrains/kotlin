@@ -94,14 +94,14 @@ object FirErrors {
     val VAR_ANNOTATION_PARAMETER by error0<FirSourceElement, KtParameter>(LightTreePositioningStrategies.VAL_OR_VAR_NODE)
 
     // Exposed visibility group
-    val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
-    val EXPOSED_FUNCTION_RETURN_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
-    val EXPOSED_RECEIVER_TYPE by error3<FirSourceElement, KtTypeReference, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
-    val EXPOSED_PROPERTY_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
-    val EXPOSED_PARAMETER_TYPE by error3<FirSourceElement, KtParameter, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
-    val EXPOSED_SUPER_INTERFACE by error3<FirSourceElement, KtSuperTypeListEntry, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
-    val EXPOSED_SUPER_CLASS by error3<FirSourceElement, KtSuperTypeListEntry, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
-    val EXPOSED_TYPE_PARAMETER_BOUND by error3<FirSourceElement, KtTypeParameter, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
+    val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_FUNCTION_RETURN_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_RECEIVER_TYPE by error3<FirSourceElement, KtTypeReference, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_PROPERTY_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_PARAMETER_TYPE by error3<FirSourceElement, KtParameter, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(/* // NB: for parameter FE 1.0 reports not on a name for some reason */)
+    val EXPOSED_SUPER_INTERFACE by error3<FirSourceElement, KtSuperTypeListEntry, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_SUPER_CLASS by error3<FirSourceElement, KtSuperTypeListEntry, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_TYPE_PARAMETER_BOUND by error3<FirSourceElement, KtTypeParameter, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
 
     // Modifiers
     val INAPPLICABLE_INFIX_MODIFIER by existing1<FirSourceElement, PsiElement, String>()
