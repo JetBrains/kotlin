@@ -267,7 +267,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         if (classDescriptor.kind != ClassKind.CLASS) return false
 
         if (classOrObject.isLocal) return false
-        if (classDescriptor.isInline) return false
+        if (classDescriptor.isInlineClass()) return false
         if (shouldHideConstructorDueToInlineClassTypeValueParameters(constructorDescriptor)) return false
 
         if (CodegenBinding.canHaveOuter(state.bindingContext, classDescriptor)) return false

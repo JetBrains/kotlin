@@ -24968,6 +24968,129 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
         }
     }
 
+    @TestMetadata("compiler/testData/diagnostics/tests/valueClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ValueClasses extends AbstractFirOldFrontendDiagnosticsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInValueClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/valueClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+        }
+
+        @TestMetadata("basicValueClassDeclaration.kt")
+        public void testBasicValueClassDeclaration() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/basicValueClassDeclaration.kt");
+        }
+
+        @TestMetadata("basicValueClassDeclarationDisabled.kt")
+        public void testBasicValueClassDeclarationDisabled() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/basicValueClassDeclarationDisabled.kt");
+        }
+
+        @TestMetadata("constructorsJvmSignaturesClash.kt")
+        public void testConstructorsJvmSignaturesClash() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/constructorsJvmSignaturesClash.kt");
+        }
+
+        @TestMetadata("delegatedPropertyInValueClass.kt")
+        public void testDelegatedPropertyInValueClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/delegatedPropertyInValueClass.kt");
+        }
+
+        @TestMetadata("functionsJvmSignaturesClash.kt")
+        public void testFunctionsJvmSignaturesClash() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/functionsJvmSignaturesClash.kt");
+        }
+
+        @TestMetadata("functionsJvmSignaturesConflictOnInheritance.kt")
+        public void testFunctionsJvmSignaturesConflictOnInheritance() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/functionsJvmSignaturesConflictOnInheritance.kt");
+        }
+
+        @TestMetadata("identityComparisonWithValueClasses.kt")
+        public void testIdentityComparisonWithValueClasses() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/identityComparisonWithValueClasses.kt");
+        }
+
+        @TestMetadata("lateinitValueClasses.kt")
+        public void testLateinitValueClasses() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/lateinitValueClasses.kt");
+        }
+
+        @TestMetadata("presenceOfInitializerBlockInsideValueClass.kt")
+        public void testPresenceOfInitializerBlockInsideValueClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/presenceOfInitializerBlockInsideValueClass.kt");
+        }
+
+        @TestMetadata("presenceOfPublicPrimaryConstructorForValueClass.kt")
+        public void testPresenceOfPublicPrimaryConstructorForValueClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/presenceOfPublicPrimaryConstructorForValueClass.kt");
+        }
+
+        @TestMetadata("propertiesWithBackingFieldsInsideValueClass.kt")
+        public void testPropertiesWithBackingFieldsInsideValueClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/propertiesWithBackingFieldsInsideValueClass.kt");
+        }
+
+        @TestMetadata("recursiveValueClasses.kt")
+        public void testRecursiveValueClasses() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/recursiveValueClasses.kt");
+        }
+
+        @TestMetadata("reservedMembersAndConstructsInsideValueClass.kt")
+        public void testReservedMembersAndConstructsInsideValueClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/reservedMembersAndConstructsInsideValueClass.kt");
+        }
+
+        @TestMetadata("unsignedLiteralsWithoutArtifactOnClasspath.kt")
+        public void testUnsignedLiteralsWithoutArtifactOnClasspath() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/unsignedLiteralsWithoutArtifactOnClasspath.kt");
+        }
+
+        @TestMetadata("valueClassCanOnlyImplementInterfaces.kt")
+        public void testValueClassCanOnlyImplementInterfaces() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassCanOnlyImplementInterfaces.kt");
+        }
+
+        @TestMetadata("valueClassCannotImplementInterfaceByDelegation.kt")
+        public void testValueClassCannotImplementInterfaceByDelegation() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassCannotImplementInterfaceByDelegation.kt");
+        }
+
+        @TestMetadata("valueClassConstructorParameterWithDefaultValue.kt")
+        public void testValueClassConstructorParameterWithDefaultValue() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassConstructorParameterWithDefaultValue.kt");
+        }
+
+        @TestMetadata("valueClassDeclarationCheck.kt")
+        public void testValueClassDeclarationCheck() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassDeclarationCheck.kt");
+        }
+
+        @TestMetadata("valueClassImplementsCollection.kt")
+        public void testValueClassImplementsCollection() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassImplementsCollection.kt");
+        }
+
+        @TestMetadata("valueClassWithForbiddenUnderlyingType.kt")
+        public void testValueClassWithForbiddenUnderlyingType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassWithForbiddenUnderlyingType.kt");
+        }
+
+        @TestMetadata("valueClassesInsideAnnotations.kt")
+        public void testValueClassesInsideAnnotations() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassesInsideAnnotations.kt");
+        }
+
+        @TestMetadata("varargsOnParametersOfValueClassType.kt")
+        public void testVarargsOnParametersOfValueClassType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/valueClasses/varargsOnParametersOfValueClassType.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/diagnostics/tests/varargs")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

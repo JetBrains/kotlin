@@ -84,7 +84,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         String toStringMethodDesc = getToStringDesc();
         MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), toStringMethodName, toStringMethodDesc, null, null);
 
-        if (!isInErasedInlineClass && classDescriptor.isInline()) {
+        if (!isInErasedInlineClass && InlineClassesUtilsKt.isInlineClass(classDescriptor)) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
             return;
         }
@@ -161,7 +161,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         String hashCodeMethodDesc = getHashCodeDesc();
         MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), hashCodeMethodName, hashCodeMethodDesc, null, null);
 
-        if (!isInErasedInlineClass && classDescriptor.isInline()) {
+        if (!isInErasedInlineClass && InlineClassesUtilsKt.isInlineClass(classDescriptor)) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
             return;
         }
@@ -233,7 +233,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         String equalsMethodDesc = getEqualsDesc();
         MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), equalsMethodName, equalsMethodDesc, null, null);
 
-        if (!isInErasedInlineClass && classDescriptor.isInline()) {
+        if (!isInErasedInlineClass && InlineClassesUtilsKt.isInlineClass(classDescriptor)) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
             return;
         }

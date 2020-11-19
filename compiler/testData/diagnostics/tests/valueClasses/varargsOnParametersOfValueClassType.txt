@@ -1,0 +1,46 @@
+package
+
+package kotlin {
+    public fun f1(/*0*/ vararg a: kotlin.Foo /*kotlin.Array<out kotlin.Foo>*/): kotlin.Unit
+    public fun f2(/*0*/ vararg a: kotlin.Foo? /*kotlin.Array<out kotlin.Foo?>*/): kotlin.Unit
+
+    public final class A {
+        public constructor A()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public final fun f3(/*0*/ a0: kotlin.Int, /*1*/ vararg a1: kotlin.Foo /*kotlin.Array<out kotlin.Foo>*/): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final annotation class Ann : kotlin.Annotation {
+        public constructor Ann(/*0*/ vararg f: kotlin.Foo /*kotlin.Array<out kotlin.Foo>*/)
+        public final val f: kotlin.Array<out kotlin.Foo>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class B {
+        public constructor B(/*0*/ vararg s: kotlin.Foo /*kotlin.Array<out kotlin.Foo>*/)
+        public constructor B(/*0*/ a: kotlin.Int, /*1*/ vararg s: kotlin.Foo /*kotlin.Array<out kotlin.Foo>*/)
+        public final val s: kotlin.Array<out kotlin.Foo>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.JvmInline public final value class Foo {
+        public constructor Foo(/*0*/ x: kotlin.Int)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    public final annotation class JvmInline : kotlin.Annotation {
+        public constructor JvmInline()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

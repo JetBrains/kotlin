@@ -445,7 +445,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                     }
                 }
             } else {
-                val toInlinedErasedClass = functionParent.isInline &&
+                val toInlinedErasedClass = functionParent.isInlineClass() &&
                         (!isAccessor(functionDescriptor) || isInlineClassConstructorAccessor(functionDescriptor))
 
                 if (toInlinedErasedClass) {

@@ -260,7 +260,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Override
     protected void generateErasedInlineClassIfNeeded() {
         if (!(myClass instanceof KtClass)) return;
-        if (!descriptor.isInline()) return;
+        if (!InlineClassesUtilsKt.isInlineClass(descriptor)) return;
 
         ClassContext erasedInlineClassContext = context.intoWrapperForErasedInlineClass(descriptor, state);
         new ErasedInlineClassBodyCodegen((KtClass) myClass, erasedInlineClassContext, v, state, this).generate();
@@ -269,7 +269,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Override
     protected void generateUnboxMethodForInlineClass() {
         if (!(myClass instanceof KtClass)) return;
-        if (!descriptor.isInline()) return;
+        if (!InlineClassesUtilsKt.isInlineClass(descriptor)) return;
 
         Type ownerType = typeMapper.mapClass(descriptor);
         ValueParameterDescriptor inlinedValue = InlineClassesUtilsKt.underlyingRepresentation(this.descriptor);
@@ -450,7 +450,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         try {
             lookupConstructorExpressionsInClosureIfPresent();
             constructorCodegen.generatePrimaryConstructor(delegationFieldsInfo, superClassAsmType);
-            if (!descriptor.isInline() && !(descriptor instanceof SyntheticClassOrObjectDescriptor)) {
+            if (!InlineClassesUtilsKt.isInlineClass(descriptor) && !(descriptor instanceof SyntheticClassOrObjectDescriptor)) {
                 // Synthetic classes does not have declarations for secondary constructors
                 for (ClassConstructorDescriptor secondaryConstructor : DescriptorUtilsKt.getSecondaryConstructors(descriptor)) {
                     constructorCodegen.generateSecondaryConstructor(secondaryConstructor, superClassAsmType);
@@ -552,7 +552,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFunctionsFromAnyForInlineClasses() {
-        if (!descriptor.isInline()) return;
+        if (!InlineClassesUtilsKt.isInlineClass(descriptor)) return;
         if (!(myClass instanceof KtClassOrObject)) return;
         new FunctionsFromAnyGeneratorImpl(
                 (KtClassOrObject) myClass, bindingContext, descriptor, classAsmType, context, v, state

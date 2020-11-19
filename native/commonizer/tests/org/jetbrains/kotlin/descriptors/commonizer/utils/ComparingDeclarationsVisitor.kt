@@ -229,6 +229,7 @@ internal class ComparingDeclarationsVisitor(
         context.assertFieldsEqual(expected::isCompanionObject, actual::isCompanionObject)
         context.assertFieldsEqual(expected::isData, actual::isData)
         context.assertFieldsEqual(expected::isInline, actual::isInline)
+        context.assertFieldsEqual(expected::isValue, actual::isValue)
         context.assertFieldsEqual(expected::isInner, actual::isInner)
         context.assertFieldsEqual(expected::isExternal, actual::isExternal)
         context.assertFieldsEqual(expected::isExpect, actual::isExpect)

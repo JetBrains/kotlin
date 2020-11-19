@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -22,15 +22,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 object InlineClassDeclarationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtClass) return
-        if (descriptor !is ClassDescriptor || !descriptor.isInline) return
+        if (descriptor !is ClassDescriptor || !descriptor.isInline && !descriptor.isValue) return
         if (descriptor.kind != ClassKind.CLASS) return
 
-        val inlineKeyword = declaration.modifierList?.getModifier(KtTokens.INLINE_KEYWORD)
-        require(inlineKeyword != null) { "Declaration of inline class must have 'inline' keyword" }
+        val inlineOrValueKeyword = declaration.modifierList?.getModifier(KtTokens.INLINE_KEYWORD)
+            ?: declaration.modifierList?.getModifier(KtTokens.VALUE_KEYWORD)
+        require(inlineOrValueKeyword != null) { "Declaration of inline class must have 'inline' keyword" }
 
         val trace = context.trace
         if (!DescriptorUtils.isTopLevelDeclaration(descriptor)) {
-            trace.report(Errors.INLINE_CLASS_NOT_TOP_LEVEL.on(inlineKeyword))
+            trace.report(Errors.INLINE_CLASS_NOT_TOP_LEVEL.on(inlineOrValueKeyword))
             return
         }
 
@@ -42,7 +43,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
 
         val primaryConstructor = declaration.primaryConstructor
         if (primaryConstructor == null) {
-            trace.report(Errors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS.on(inlineKeyword))
+            trace.report(Errors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS.on(inlineOrValueKeyword))
             return
         }
 
@@ -86,6 +87,10 @@ object InlineClassDeclarationChecker : DeclarationChecker {
                     return
                 }
             }
+        }
+
+        if (descriptor.isValue && !descriptor.annotations.hasAnnotation(JVM_INLINE_ANNOTATION)) {
+            trace.report(Errors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION.on(inlineOrValueKeyword))
         }
     }
 

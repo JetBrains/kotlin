@@ -1,0 +1,77 @@
+package
+
+package kotlin {
+    public fun testFunVsExt(/*0*/ x: kotlin.X): kotlin.Unit
+    public fun testMixed(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int): kotlin.Unit
+    public fun testMixed(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.X): kotlin.Unit
+    public fun testMixed(/*0*/ x: kotlin.X, /*1*/ y: kotlin.Int): kotlin.Unit
+    public fun testMixed(/*0*/ x: kotlin.X, /*1*/ y: kotlin.X): kotlin.Unit
+    public fun testNewType(/*0*/ name: kotlin.Name): kotlin.Unit
+    public fun testNewType(/*0*/ s: kotlin.Str): kotlin.Unit
+    public fun </*0*/ T : kotlin.Number> testNonGenericVsGeneric(/*0*/ x: kotlin.X, /*1*/ y: T): kotlin.Unit
+    public fun testNonGenericVsGeneric(/*0*/ x: kotlin.X, /*1*/ y: kotlin.Number): kotlin.Unit
+    public fun testNullableVsNonNull1(/*0*/ s: kotlin.Str): kotlin.Unit
+    public fun testNullableVsNonNull1(/*0*/ s: kotlin.Str?): kotlin.Unit
+    public fun testNullableVsNonNull2(/*0*/ ns: kotlin.NStr): kotlin.Unit
+    public fun testNullableVsNonNull2(/*0*/ ns: kotlin.NStr?): kotlin.Unit
+    public fun testSimple(/*0*/ x: kotlin.X): kotlin.Unit
+    public fun testSimple(/*0*/ z: kotlin.Z): kotlin.Unit
+    public fun kotlin.X.testFunVsExt(): kotlin.Unit
+
+    public final class C</*0*/ TC : kotlin.Number> {
+        public constructor C</*0*/ TC : kotlin.Number>()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun </*0*/ T : kotlin.Number> testNonGenericVsGeneric(/*0*/ x: kotlin.X, /*1*/ y: T): kotlin.Unit
+        public final fun testNonGenericVsGeneric(/*0*/ x: kotlin.X, /*1*/ y: TC): kotlin.Unit
+        public final fun testNonGenericVsGeneric(/*0*/ x: kotlin.X, /*1*/ y: kotlin.Number): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final annotation class JvmInline : kotlin.Annotation {
+        public constructor JvmInline()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.JvmInline public final value class NStr {
+        public constructor NStr(/*0*/ str: kotlin.String?)
+        public final val str: kotlin.String?
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.JvmInline public final value class Name {
+        public constructor Name(/*0*/ name: kotlin.String)
+        public final val name: kotlin.String
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.JvmInline public final value class Str {
+        public constructor Str(/*0*/ str: kotlin.String)
+        public final val str: kotlin.String
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.JvmInline public final value class X {
+        public constructor X(/*0*/ x: kotlin.Int)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.JvmInline public final value class Z {
+        public constructor Z(/*0*/ x: kotlin.Int)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+}

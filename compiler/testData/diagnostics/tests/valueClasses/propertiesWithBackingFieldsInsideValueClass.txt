@@ -1,0 +1,40 @@
+package
+
+package kotlin {
+
+    public interface A {
+        public abstract val goodSize: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface B {
+        public abstract val badSize: kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.JvmInline public final value class Foo : kotlin.A, kotlin.B {
+        public constructor Foo(/*0*/ x: kotlin.Int)
+        public final val a0: kotlin.Int
+        public final val a1: kotlin.Int = 0
+        public final var a2: kotlin.Int
+        public final var a3: kotlin.Int
+        public open override /*1*/ val badSize: kotlin.Int = 0
+        public open override /*1*/ val goodSize: kotlin.Int
+        public final lateinit var lateinitProperty: kotlin.String
+        public final val x: kotlin.Int
+        public open override /*2*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*2*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*2*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    public final annotation class JvmInline : kotlin.Annotation {
+        public constructor JvmInline()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

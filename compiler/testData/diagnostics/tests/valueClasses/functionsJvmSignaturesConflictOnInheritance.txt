@@ -1,0 +1,49 @@
+package
+
+package kotlin {
+
+    public final annotation class JvmInline : kotlin.Annotation {
+        public constructor JvmInline()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @kotlin.JvmInline public final value class Name {
+        public constructor Name(/*0*/ name: kotlin.String)
+        public final val name: kotlin.String
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    public interface NameAndPasswordVerifier : kotlin.NameVerifier, kotlin.PasswordVerifier {
+        public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+        public abstract override /*1*/ /*fake_override*/ fun verify(/*0*/ name: kotlin.Name): kotlin.Unit
+        public abstract override /*1*/ /*fake_override*/ fun verify(/*0*/ password: kotlin.Password): kotlin.Unit
+    }
+
+    public interface NameVerifier {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public abstract fun verify(/*0*/ name: kotlin.Name): kotlin.Unit
+    }
+
+    @kotlin.JvmInline public final value class Password {
+        public constructor Password(/*0*/ password: kotlin.String)
+        public final val password: kotlin.String
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    public interface PasswordVerifier {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public abstract fun verify(/*0*/ password: kotlin.Password): kotlin.Unit
+    }
+}
