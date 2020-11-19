@@ -33,11 +33,13 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.ZipHandler
+import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.JavaClassSupersImpl
@@ -249,6 +251,8 @@ class KotlinCoreEnvironment private constructor(
         project.putUserData(APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY, fun(roots: List<File>) {
             updateClasspath(roots.map { JavaSourceRoot(it, null) })
         })
+
+        LanguageLevelProjectExtension.getInstance(project).languageLevel = LanguageLevel.JDK_15_PREVIEW
     }
 
     private fun collectAdditionalSources(project: MockProject) {
