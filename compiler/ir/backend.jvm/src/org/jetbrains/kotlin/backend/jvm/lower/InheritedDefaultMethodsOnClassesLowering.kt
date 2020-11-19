@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -260,22 +259,18 @@ private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrE
  * interface implementation should be generated into the class containing the fake override; or null if the given function is not a fake
  * override of any interface implementation or such method was already generated into the superclass or is a method from Any.
  */
-private fun isDefaultImplsBridge(f: IrSimpleFunction) =
-    f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
-            f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC
-
 internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDefaultMode): IrSimpleFunction? {
     if (!isFakeOverride) return null
     parent.let { if (it is IrClass && it.isJvmInterface) return null }
 
-    val implementation = resolveFakeOverride(toSkip = ::isDefaultImplsBridge) ?: return null
+    val implementation = resolveFakeOverride() ?: return null
 
     // Only generate interface delegation for functions immediately inherited from an interface.
     // (Otherwise, delegation will be present in the parent class)
     if (overriddenSymbols.any {
             !it.owner.parentAsClass.isInterface &&
                     it.owner.modality != Modality.ABSTRACT &&
-                    it.owner.resolveFakeOverride(toSkip = ::isDefaultImplsBridge) == implementation
+                    it.owner.resolveFakeOverride() == implementation
         }) {
         return null
     }
