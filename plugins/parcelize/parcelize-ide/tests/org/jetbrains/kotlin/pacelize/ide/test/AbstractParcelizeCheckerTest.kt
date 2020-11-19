@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.pacelize.ide.test
 
-import org.jetbrains.kotlin.checkers.AbstractPsiCheckerTest
-import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.checkers.AbstractKotlinHighlightingPassTest
 
-abstract class AbstractParcelizeCheckerTest : AbstractPsiCheckerTest() {
+abstract class AbstractParcelizeCheckerTest : AbstractKotlinHighlightingPassTest() {
     override fun setUp() {
         super.setUp()
         addParcelizeLibraries(module)

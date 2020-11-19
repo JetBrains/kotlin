@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.idea.inspections
 import com.google.common.collect.Lists
 import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeHighlighting.Pass
+import com.intellij.codeHighlighting.TextEditorHighlightingPass
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
+import com.intellij.codeInsight.daemon.impl.TextEditorHighlightingPassRegistrarEx
 import com.intellij.codeInsight.intention.EmptyIntentionAction
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.util.SystemInfo
@@ -19,6 +21,7 @@ import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jdom.Element
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
+import org.jetbrains.kotlin.idea.highlighter.AbstractHighlightingPassBase
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
@@ -28,6 +31,7 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Assert
 import java.io.File
+
 
 abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCase() {
     private val inspectionFileName: String
@@ -145,16 +149,23 @@ abstract class AbstractLocalInspectionTest : KotlinLightCodeInsightFixtureTestCa
             state.tool.tool.readSettings(inspectionSettings)
         }
 
+        val passIdsToIgnore = mutableListOf(
+            Pass.LINE_MARKERS,
+            Pass.EXTERNAL_TOOLS,
+            Pass.POPUP_HINTS,
+            Pass.UPDATE_ALL,
+            Pass.UPDATE_FOLDING,
+            Pass.WOLF
+        )
+        val passRegistrar = TextEditorHighlightingPassRegistrarEx.getInstanceEx(myFixture.project)
+        // to exclude AbstractHighlightingPassBase instances based on their ids
+        passRegistrar.instantiatePasses(
+            file, editor, passIdsToIgnore.toIntArray()
+        ).filterIsInstance<AbstractHighlightingPassBase>().map(TextEditorHighlightingPass::getId).forEach(passIdsToIgnore::add)
+
         val caretOffset = myFixture.caretOffset
         val highlightInfos = CodeInsightTestFixtureImpl.instantiateAndRun(
-            file, editor, intArrayOf(
-                Pass.LINE_MARKERS,
-                Pass.EXTERNAL_TOOLS,
-                Pass.POPUP_HINTS,
-                Pass.UPDATE_ALL,
-                Pass.UPDATE_FOLDING,
-                Pass.WOLF
-            ), (file as? KtFile)?.isScript() == true
+            file, editor, passIdsToIgnore.toIntArray(), (file as? KtFile)?.isScript() == true
         ).filter { it.description != null && caretOffset in it.startOffset..it.endOffset }
 
         Assert.assertTrue(

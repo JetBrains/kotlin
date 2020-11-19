@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.lang.annotation.Annotation
 import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.editor.colors.TextAttributesKey
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
@@ -17,29 +18,34 @@ abstract class HighlightingVisitor protected constructor(
     private val holder: AnnotationHolder
 ) : KtVisitorVoid() {
 
-    protected fun createInfoAnnotation(element: PsiElement, textAttributes: TextAttributesKey, message: String? = null) {
-        createInfoAnnotation(element.textRange, textAttributes, message)
+    protected fun createInfoAnnotation(element: PsiElement, message: String? = null, textAttributes: TextAttributesKey) {
+        createInfoAnnotation(element.textRange, message, textAttributes)
     }
 
-    protected fun createInfoAnnotation(range: TextRange, textAttributes: TextAttributesKey, message: String? = null) {
-        createInfoAnnotation(range, message).textAttributes = textAttributes
-    }
-
-    protected fun createInfoAnnotation(element: PsiElement, message: String? = null): Annotation =
+    protected fun createInfoAnnotation(element: PsiElement, message: String? = null) =
         createInfoAnnotation(element.textRange, message)
 
-    protected fun createInfoAnnotation(textRange: TextRange, message: String? = null): Annotation =
-        holder.createInfoAnnotation(textRange, message)
+    protected open fun createInfoAnnotation(textRange: TextRange, message: String? = null, textAttributes: TextAttributesKey? = null) {
+        (message?.let { holder.newAnnotation(HighlightSeverity.INFORMATION, it) }
+            ?: holder.newSilentAnnotation(HighlightSeverity.INFORMATION))
+            .range(textRange)
+            .also { builder ->
+                textAttributes?.let {
+                    builder.textAttributes(it)
+                }
+            }
+            .create()
+    }
 
     protected fun highlightName(element: PsiElement, attributesKey: TextAttributesKey, message: String? = null) {
         if (NameHighlighter.namesHighlightingEnabled && !element.textRange.isEmpty) {
-            createInfoAnnotation(element, attributesKey, message)
+            createInfoAnnotation(element, message, attributesKey)
         }
     }
 
     protected fun highlightName(textRange: TextRange, attributesKey: TextAttributesKey, message: String? = null) {
         if (NameHighlighter.namesHighlightingEnabled) {
-            createInfoAnnotation(textRange, attributesKey, message)
+            createInfoAnnotation(textRange, message, attributesKey)
         }
     }
 
