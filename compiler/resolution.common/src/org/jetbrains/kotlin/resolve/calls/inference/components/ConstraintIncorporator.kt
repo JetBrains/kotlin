@@ -40,24 +40,12 @@ class ConstraintIncorporator(
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
     }
 
-    fun incorporateEqualityConstraint(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) = with(c) {
-        // we shouldn't incorporate recursive constraint -- It is too dangerous
-        if (c.areThereRecursiveConstraints(typeVariable, constraint)) return
-
-        c.directWithVariable(typeVariable, constraint)
-        if (constraint.type.contains { it is TypeVariableTypeConstructorMarker }) {
-            c.otherInsideMyConstraint(typeVariable, constraint)
-        }
-        c.insideOtherConstraint(typeVariable, constraint)
-    }
-
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
-    fun incorporateSubtypeConstraint(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
+    fun incorporate(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
         // we shouldn't incorporate recursive constraint -- It is too dangerous
         if (c.areThereRecursiveConstraints(typeVariable, constraint)) return
 
         c.directWithVariable(typeVariable, constraint)
-        c.otherInsideMyConstraint(typeVariable, constraint)
         c.insideOtherConstraint(typeVariable, constraint)
     }
 
@@ -94,26 +82,6 @@ class ConstraintIncorporator(
                         isFromDeclaredUpperBound = isFromDeclaredUpperBound
                     )
                 }
-            }
-        }
-    }
-
-    // \alpha <: Inv<\beta>, \beta <: Number => \alpha <: Inv<out Number>
-    private fun Context.otherInsideMyConstraint(
-        typeVariable: TypeVariableMarker,
-        constraint: Constraint
-    ) {
-        val otherInMyConstraint = SmartSet.create<TypeVariableMarker>()
-        constraint.type.contains {
-            otherInMyConstraint.addIfNotNull(this.getTypeVariable(it.typeConstructor()))
-            false
-        }
-
-        for (otherTypeVariable in otherInMyConstraint) {
-            // to avoid ConcurrentModificationException
-            val otherConstraints = SmartList(this.getConstraintsForVariable(otherTypeVariable))
-            for (otherConstraint in otherConstraints) {
-                generateNewConstraint(typeVariable, constraint, otherTypeVariable, otherConstraint)
             }
         }
     }

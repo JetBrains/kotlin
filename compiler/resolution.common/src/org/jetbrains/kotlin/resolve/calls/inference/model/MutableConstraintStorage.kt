@@ -47,8 +47,9 @@ class MutableVariableWithConstraints private constructor(
 
     private var simplifiedConstraints: SmartList<Constraint>? = mutableConstraints
 
-    // return new actual constraint, if this constraint is new
-    fun addConstraint(constraint: Constraint): Constraint? {
+    // return new actual constraint, if this constraint is new, otherwise return already existed not redundant constraint
+    // the second element of pair is a flag whether a constraint was added in fact
+    fun addConstraint(constraint: Constraint): Pair<Constraint, Boolean> {
         val isLowerAndFlexibleTypeWithDefNotNullLowerBound = constraint.isLowerAndFlexibleTypeWithDefNotNullLowerBound()
 
         for (previousConstraint in constraints) {
@@ -56,7 +57,10 @@ class MutableVariableWithConstraints private constructor(
                 && previousConstraint.type == constraint.type
                 && previousConstraint.isNullabilityConstraint == constraint.isNullabilityConstraint
             ) {
-                if (newConstraintIsUseless(previousConstraint, constraint)) return null
+                if (newConstraintIsUseless(previousConstraint, constraint)) {
+                    return previousConstraint to false
+                }
+
                 val isMatchingForSimplification = when (previousConstraint.kind) {
                     ConstraintKind.LOWER -> constraint.kind.isUpper()
                     ConstraintKind.UPPER -> constraint.kind.isLower()
@@ -75,14 +79,14 @@ class MutableVariableWithConstraints private constructor(
                     } else constraint
                     mutableConstraints.add(actualConstraint)
                     simplifiedConstraints = null
-                    return actualConstraint
+                    return actualConstraint to true
                 }
             }
 
             if (isLowerAndFlexibleTypeWithDefNotNullLowerBound &&
                 previousConstraint.isStrongerThanLowerAndFlexibleTypeWithDefNotNullLowerBound(constraint)
             ) {
-                return null
+                return previousConstraint to false
             }
         }
 
@@ -95,7 +99,7 @@ class MutableVariableWithConstraints private constructor(
             simplifiedConstraints = null
         }
 
-        return constraint
+        return constraint to true
     }
 
     // This method should be used only for transaction in constraint system

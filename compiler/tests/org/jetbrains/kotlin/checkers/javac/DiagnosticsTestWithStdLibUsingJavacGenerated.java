@@ -3188,29 +3188,6 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/recursiveFlexibleAssertions.kt");
         }
 
-        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/addEqualityConstraintsWithoutSubtyping")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class AddEqualityConstraintsWithoutSubtyping extends AbstractDiagnosticsTestWithStdLibUsingJavac {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInAddEqualityConstraintsWithoutSubtyping() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/addEqualityConstraintsWithoutSubtyping"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-            }
-
-            @TestMetadata("kt41741.kt")
-            public void testKt41741() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/addEqualityConstraintsWithoutSubtyping/kt41741.kt");
-            }
-
-            @TestMetadata("kt42195.kt")
-            public void testKt42195() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/addEqualityConstraintsWithoutSubtyping/kt42195.kt");
-            }
-        }
-
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -3521,6 +3498,34 @@ public class DiagnosticsTestWithStdLibUsingJavacGenerated extends AbstractDiagno
             @TestMetadata("dontSpreadWarningToNotReturningNothingSubResolvedAtoms.kt")
             public void testDontSpreadWarningToNotReturningNothingSubResolvedAtoms() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/nothingType/dontSpreadWarningToNotReturningNothingSubResolvedAtoms.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/performance")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Performance extends AbstractDiagnosticsTestWithStdLibUsingJavac {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInPerformance() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/performance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("kt41644.kt")
+            public void testKt41644() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/performance/kt41644.kt");
+            }
+
+            @TestMetadata("kt41741.kt")
+            public void testKt41741() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/performance/kt41741.kt");
+            }
+
+            @TestMetadata("kt42195.kt")
+            public void testKt42195() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/performance/kt42195.kt");
             }
         }
     }

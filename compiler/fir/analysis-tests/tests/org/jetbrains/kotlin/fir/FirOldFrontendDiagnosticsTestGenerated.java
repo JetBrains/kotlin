@@ -12234,6 +12234,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/upperBounds/flexibilityInCommonSuperTypeCalculation.ni.kt");
             }
 
+            @TestMetadata("inferringVariableByMaterializeAndUpperBound.kt")
+            public void testInferringVariableByMaterializeAndUpperBound() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/upperBounds/inferringVariableByMaterializeAndUpperBound.kt");
+            }
+
             @TestMetadata("intersectUpperBounds.kt")
             public void testIntersectUpperBounds() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/upperBounds/intersectUpperBounds.kt");

@@ -85,7 +85,7 @@ class ConstraintInjector(
         typeCheckerContext.setConstrainingTypesToPrintDebugInfo(lowerType, upperType)
         typeCheckerContext.runIsSubtypeOf(lowerType, upperType)
 
-        processConstraints(c, typeCheckerContext, constraintIncorporator::incorporateSubtypeConstraint)
+        processConstraints(c, typeCheckerContext)
     }
 
     private fun addEqualityConstraintAndIncorporateIt(
@@ -97,14 +97,10 @@ class ConstraintInjector(
         typeCheckerContext.setConstrainingTypesToPrintDebugInfo(typeVariable, equalType)
         typeCheckerContext.addEqualityConstraint(typeVariable.typeConstructor(c), equalType)
 
-        processConstraints(c, typeCheckerContext, constraintIncorporator::incorporateEqualityConstraint)
+        processConstraints(c, typeCheckerContext)
     }
 
-    private fun processConstraints(
-        c: Context,
-        typeCheckerContext: TypeCheckerContext,
-        incorporate: (c: TypeCheckerContext, typeVariable: TypeVariableMarker, constraint: Constraint) -> Unit
-    ) {
+    private fun processConstraints(c: Context, typeCheckerContext: TypeCheckerContext) {
         while (typeCheckerContext.hasConstraintsToProcess()) {
             for ((typeVariable, constraint) in typeCheckerContext.extractAllConstraints()!!) {
                 if (c.shouldWeSkipConstraint(typeVariable, constraint)) continue
@@ -113,10 +109,17 @@ class ConstraintInjector(
                     c.notFixedTypeVariables[typeVariable.freshTypeConstructor(c)] ?: typeCheckerContext.fixedTypeVariable(typeVariable)
 
                 // it is important, that we add constraint here(not inside TypeCheckerContext), because inside incorporation we read constraints
-                constraints.addConstraint(constraint)?.let {
-                    if (!constraint.isNullabilityConstraint) {
-                        incorporate(typeCheckerContext, typeVariable, it)
-                    }
+                val (addedOrNonRedundantExistedConstraint, wasAdded) = constraints.addConstraint(constraint)
+                val positionFrom = constraint.position.from
+                val constraintToIncorporate = when {
+                    wasAdded && !constraint.isNullabilityConstraint -> addedOrNonRedundantExistedConstraint
+                    positionFrom is FixVariableConstraintPosition<*> && positionFrom.variable == typeVariable && constraint.kind == EQUALITY ->
+                        addedOrNonRedundantExistedConstraint
+                    else -> null
+                }
+
+                if (constraintToIncorporate != null) {
+                    constraintIncorporator.incorporate(typeCheckerContext, typeVariable, constraintToIncorporate)
                 }
             }
 
@@ -255,9 +258,8 @@ class ConstraintInjector(
             isFromNullabilityConstraint: Boolean
         ) = addConstraint(typeVariable, subType, LOWER, isFromNullabilityConstraint)
 
-        override fun addEqualityConstraint(typeVariable: TypeConstructorMarker, type: KotlinTypeMarker) {
+        override fun addEqualityConstraint(typeVariable: TypeConstructorMarker, type: KotlinTypeMarker) =
             addConstraint(typeVariable, type, EQUALITY, false)
-        }
 
         private fun isCapturedTypeFromSubtyping(type: KotlinTypeMarker) =
             when ((type as? CapturedTypeMarker)?.captureStatus()) {
