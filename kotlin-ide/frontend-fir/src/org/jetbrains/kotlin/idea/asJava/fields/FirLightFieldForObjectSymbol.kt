@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.idea.asJava
 
-import com.intellij.psi.PsiExpression
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiModifierList
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -33,11 +32,24 @@ internal class FirLightFieldForObjectSymbol(
         FirLightClassModifierList(this, modifiers, listOf(notNullAnnotation))
     }
 
+    private val _isDeprecated: Boolean by lazyPub {
+        objectSymbol.hasDeprecatedAnnotation()
+    }
+
+    override fun isDeprecated(): Boolean = _isDeprecated
+
     override fun getModifierList(): PsiModifierList? = _modifierList
 
     private val _type: PsiType by lazyPub {
         objectSymbol.typeForClassSymbol(this@FirLightFieldForObjectSymbol)
     }
+
+    private val _identifier: PsiIdentifier by lazyPub {
+        FirLightIdentifier(this, objectSymbol)
+    }
+
+    override fun getNameIdentifier(): PsiIdentifier = _identifier
+
 
     override fun getType(): PsiType = _type
 

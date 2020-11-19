@@ -16,18 +16,19 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.idea.asJava.classes.getOrCreateFirLightClass
+import org.jetbrains.kotlin.idea.asJava.elements.FirLightTypeParameterListForSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.util.ifFalse
+import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.debugText.getDebugText
@@ -41,21 +42,52 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
 
     private val isTopLevel: Boolean = classOrObjectSymbol.symbolKind == KtSymbolKind.TOP_LEVEL
 
+    private val _isDeprecated: Boolean by lazyPub {
+        classOrObjectSymbol.hasDeprecatedAnnotation()
+    }
+
+    override fun isDeprecated(): Boolean = _isDeprecated
+
     abstract override fun getModifierList(): PsiModifierList?
     abstract override fun getOwnFields(): List<KtLightField>
     abstract override fun getOwnMethods(): List<PsiMethod>
-    override fun isDeprecated(): Boolean = false //TODO()
-    override fun getNameIdentifier(): KtLightIdentifier? = null //TODO()
+
+    private val _identifier: PsiIdentifier by lazyPub {
+        FirLightIdentifier(this, classOrObjectSymbol)
+    }
+
+    override fun getNameIdentifier(): PsiIdentifier? = _identifier
+
     abstract override fun getExtendsList(): PsiReferenceList?
     abstract override fun getImplementsList(): PsiReferenceList?
-    override fun getTypeParameterList(): PsiTypeParameterList? = null //TODO()
-    override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray() //TODO()
+
+
+    private val _typeParameterList: PsiTypeParameterList? by lazyPub {
+        hasTypeParameters().ifTrue {
+            val shiftCount = classOrObjectSymbol.isInner.ifTrue {
+                (parent as? FirLightClassForClassOrObjectSymbol)?.classOrObjectSymbol?.typeParameters?.count()
+            } ?: 0
+
+            FirLightTypeParameterListForSymbol(
+                owner = this,
+                symbolWithTypeParameterList = classOrObjectSymbol,
+                innerShiftCount = shiftCount
+            )
+        }
+    }
+
+    override fun hasTypeParameters(): Boolean =
+        classOrObjectSymbol.typeParameters.isNotEmpty()
+
+    override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
+    override fun getTypeParameters(): Array<PsiTypeParameter> =
+        _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
     abstract override fun getOwnInnerClasses(): List<PsiClass>
 
     override fun getTextOffset(): Int = kotlinOrigin?.textOffset ?: 0
     override fun getStartOffsetInParent(): Int = kotlinOrigin?.startOffsetInParent ?: 0
-    override fun isWritable() = kotlinOrigin?.isWritable ?: false
+    override fun isWritable() = false
     override val kotlinOrigin: KtClassOrObject? = classOrObjectSymbol.psi as? KtClassOrObject
 
     protected fun createInheritanceList(forExtendsList: Boolean): PsiReferenceList {
@@ -130,9 +162,6 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
     abstract override fun isAnnotationType(): Boolean
 
     abstract override fun isEnum(): Boolean
-
-    override fun hasTypeParameters(): Boolean =
-        classOrObjectSymbol is KtClass && classOrObjectSymbol.typeParameters.isNotEmpty()
 
     override fun isValid(): Boolean = kotlinOrigin?.isValid ?: true
 

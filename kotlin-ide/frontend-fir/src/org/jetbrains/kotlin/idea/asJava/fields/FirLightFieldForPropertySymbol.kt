@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.idea.asJava
 
-import com.intellij.psi.PsiExpression
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiModifierList
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
@@ -33,6 +31,18 @@ internal class FirLightFieldForPropertySymbol(
             FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
         )
     }
+
+    private val _isDeprecated: Boolean by lazyPub {
+        propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD)
+    }
+
+    override fun isDeprecated(): Boolean = _isDeprecated
+
+    private val _identifier: PsiIdentifier by lazyPub {
+        FirLightIdentifier(this, propertySymbol)
+    }
+
+    override fun getNameIdentifier(): PsiIdentifier = _identifier
 
     override fun getType(): PsiType = _returnedType
 
