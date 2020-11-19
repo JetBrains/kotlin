@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea
 
 import com.intellij.openapi.application.PathMacroContributor
+import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.utils.PathUtil
 
 /**
@@ -15,7 +16,9 @@ import org.jetbrains.kotlin.utils.PathUtil
  */
 class KotlinPluginMacros : PathMacroContributor {
     override fun registerPathMacros(macros: MutableMap<String, String>, legacyMacros: MutableMap<String, String>) {
-        macros[KOTLIN_BUNDLED_PATH_VARIABLE] = PathUtil.kotlinPathsForIdeaPlugin.homePath.path
+        if (!isUnitTestMode()) {
+            macros[KOTLIN_BUNDLED_PATH_VARIABLE] = PathUtil.kotlinPathsForIdeaPlugin.homePath.path
+        }
     }
 
     companion object {
