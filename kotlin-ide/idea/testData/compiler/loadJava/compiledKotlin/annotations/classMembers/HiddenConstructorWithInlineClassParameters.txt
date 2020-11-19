@@ -24,7 +24,7 @@ public final class Test {
         public final fun <get-z>(): test.Z
 }
 
-public final inline class Z {
+public final value class Z {
     /*primary*/ public constructor Z(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
         public final fun <get-x>(): kotlin.Int
