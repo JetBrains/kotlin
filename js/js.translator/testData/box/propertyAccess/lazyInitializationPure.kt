@@ -1,5 +1,5 @@
-// TARGET_BACKEND: JS_IR
-// PROPERTY_LAZY_INITIALISATION
+// IGNORE_BACKEND: JS
+// PROPERTY_LAZY_INITIALIZATION
 
 // FILE: A.kt
 
@@ -18,7 +18,7 @@ val e = d
 // FILE: main.kt
 
 fun box(): String {
-    d
+    // Get only e to initialize all properties in file
     e
     return if (
         js("a") === "A" &&

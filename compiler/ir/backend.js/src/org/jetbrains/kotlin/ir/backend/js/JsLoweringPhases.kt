@@ -109,16 +109,6 @@ class ModuleLowering(
     override val modulePhase: NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>
 ) : Lowering(name)
 
-class FileLowering(
-    name: String,
-    description: String,
-    prerequisite: Set<NamedCompilerPhase<JsIrBackendContext, *>> = emptySet(),
-    private val factory: (JsIrBackendContext) -> FileLoweringPass
-) : Lowering(name) {
-    override val modulePhase: NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>> =
-        makeJsModulePhase(factory, name, description, prerequisite)
-}
-
 private fun makeDeclarationTransformerPhase(
     lowering: (JsIrBackendContext) -> DeclarationTransformer,
     name: String,
@@ -132,13 +122,6 @@ private fun makeBodyLoweringPhase(
     description: String,
     prerequisite: Set<Lowering> = emptySet()
 ) = BodyLowering(name, description, prerequisite.map { it.modulePhase }.toSet(), lowering)
-
-private fun makeFileLoweringPhase(
-    lowering: (JsIrBackendContext) -> FileLoweringPass,
-    name: String,
-    description: String,
-    prerequisite: Set<Lowering> = emptySet()
-) = FileLowering(name, description, prerequisite.map { it.modulePhase }.toSet(), lowering)
 
 fun NamedCompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>>.toModuleLowering() = ModuleLowering(this.name, this)
 
@@ -378,7 +361,7 @@ private val propertyLazyInitLoweringPhase = makeBodyLoweringPhase(
 private val removeInitializersForLazyProperties = makeDeclarationTransformerPhase(
     ::RemoveInitializersForLazyProperties,
     name = "RemoveInitializersForLazyProperties",
-    description = "Remove property initializers if they was initialised lazily"
+    description = "Remove property initializers if they was initialized lazily"
 )
 
 private val propertyAccessorInlinerLoweringPhase = makeBodyLoweringPhase(

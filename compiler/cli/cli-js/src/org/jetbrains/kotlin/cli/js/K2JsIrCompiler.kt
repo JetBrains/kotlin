@@ -159,11 +159,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             arguments.irModuleName ?: FileUtil.getNameWithoutExtension(outputFile)
         )
 
-        configurationJs.put(
-            JSConfigurationKeys.PROPERTY_LAZY_INITIALISATION,
-            arguments.irPropertyLazyInitialisation
-        )
-
         // TODO: in this method at least 3 different compiler configurations are used (original, env.configuration, jsConfig.configuration)
         // Such situation seems a bit buggy...
         val config = JsConfig(projectJs, configurationJs)
@@ -269,7 +264,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     generateDceJs = arguments.irDce,
                     dceDriven = arguments.irDceDriven,
                     multiModule = arguments.irPerModule,
-                    relativeRequirePath = true
+                    relativeRequirePath = true,
+                    propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                 )
             } catch (e: JsIrCompilationError) {
                 return COMPILATION_ERROR

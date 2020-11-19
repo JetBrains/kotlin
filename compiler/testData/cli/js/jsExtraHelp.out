@@ -18,8 +18,8 @@ where advanced options include:
   -Xir-produce-klib-dir      Generate unpacked KLIB into parent directory of output JS file.
                              In combination with -meta-info generates both IR and pre-IR versions of library.
   -Xir-produce-klib-file     Generate packed klib into file specified by -output. Disables pre-IR backend
-  -Xir-property-lazy-initialisation
-                             Perform lazy initialisation for properties
+  -Xir-property-lazy-initialization
+                             Perform lazy initialization for properties
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xwasm                     Use experimental WebAssembly compiler backend

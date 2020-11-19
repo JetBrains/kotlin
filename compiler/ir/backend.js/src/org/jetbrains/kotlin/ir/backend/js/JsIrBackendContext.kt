@@ -43,10 +43,11 @@ class JsIrBackendContext(
     val additionalExportedDeclarationNames: Set<FqName>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
     override val scriptMode: Boolean = false,
-    override val es6mode: Boolean = false
+    override val es6mode: Boolean = false,
+    val propertyLazyInitialization: Boolean = false,
 ) : JsCommonBackendContext {
-    val fileToInitialisationFuns: MutableMap<IrFile, IrSimpleFunction?> = mutableMapOf()
-    val fileToPurenessInitializers: MutableMap<IrFile, Boolean> = mutableMapOf()
+    val fileToInitializationFuns: MutableMap<IrFile, IrSimpleFunction?> = mutableMapOf()
+    val fileToInitializerPureness: MutableMap<IrFile, Boolean> = mutableMapOf()
 
     override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
