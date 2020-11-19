@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
@@ -42,6 +39,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val jvmInlineClassPhase = makeIrFilePhase(
@@ -98,9 +96,19 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             buildBoxFunction(declaration)
             buildUnboxFunction(declaration)
             buildSpecializedEqualsMethod(declaration)
+            addJvmInlineAnnotation(declaration)
         }
 
         return declaration
+    }
+
+    private fun addJvmInlineAnnotation(declaration: IrClass) {
+        if (declaration.hasAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME)) return
+        val constructor = context.ir.symbols.jvmInlineAnnotation.constructors.first()
+        declaration.annotations = declaration.annotations + IrConstructorCallImpl.fromSymbolOwner(
+            constructor.owner.returnType,
+            constructor
+        )
     }
 
     private fun transformFunctionFlat(function: IrFunction): List<IrDeclaration>? {

@@ -1,3 +1,4 @@
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Foo {
     // source: 'computablePropertiesInsideInlineClass.kt'

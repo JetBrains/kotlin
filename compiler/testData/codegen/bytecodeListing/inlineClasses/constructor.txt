@@ -1,3 +1,4 @@
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class IC1 {
     // source: 'constructor.kt'
@@ -16,6 +17,7 @@ public final class IC1 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class IC11 {
     // source: 'constructor.kt'
@@ -34,6 +36,7 @@ public final class IC11 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class IC2 {
     // source: 'constructor.kt'
@@ -52,6 +55,7 @@ public final class IC2 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class IC4 {
     // source: 'constructor.kt'
@@ -70,6 +74,7 @@ public final class IC4 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 final class PIC1 {
     // source: 'constructor.kt'
@@ -88,6 +93,7 @@ final class PIC1 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 final class PIC11 {
     // source: 'constructor.kt'
@@ -106,6 +112,7 @@ final class PIC11 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 final class PIC2 {
     // source: 'constructor.kt'
@@ -124,6 +131,7 @@ final class PIC2 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 final class PIC4 {
     // source: 'constructor.kt'

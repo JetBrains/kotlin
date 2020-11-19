@@ -4,6 +4,7 @@ public interface A {
     public abstract method foo(): java.lang.Object
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Foo {
     // source: 'overridingGenericMethodWithInlineClassReturnType.kt'

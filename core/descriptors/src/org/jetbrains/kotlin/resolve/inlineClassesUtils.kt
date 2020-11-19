@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-val JVM_INLINE_ANNOTATION_FQ_NAME = FqName("kotlin.JvmInline")
+val JVM_INLINE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmInline")
 
 fun ClassDescriptor.underlyingRepresentation(): ValueParameterDescriptor? {
     if (!isInlineClass()) return null

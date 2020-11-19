@@ -1,7 +1,7 @@
 // !LANGUAGE: +InlineClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
-package kotlin
+package kotlin.jvm
 
 annotation class JvmInline
 

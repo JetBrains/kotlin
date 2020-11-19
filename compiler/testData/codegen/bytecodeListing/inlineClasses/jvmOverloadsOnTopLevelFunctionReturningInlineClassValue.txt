@@ -6,6 +6,7 @@ public final class JvmOverloadsOnTopLevelFunctionReturningInlineClassValueKt {
     public final static @kotlin.jvm.JvmOverloads method testTopLevelFunction(p0: int): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z {
     // source: 'jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt'

@@ -2,7 +2,7 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // FIR_IDENTICAL
 
-package kotlin
+package kotlin.jvm
 
 annotation class JvmInline
 

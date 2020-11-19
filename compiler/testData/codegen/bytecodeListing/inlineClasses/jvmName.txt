@@ -6,6 +6,7 @@ public final class C {
     public final @kotlin.jvm.JvmName @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Foo {
     // source: 'jvmName.kt'

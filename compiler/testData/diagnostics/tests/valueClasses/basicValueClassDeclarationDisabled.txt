@@ -2,56 +2,59 @@ package
 
 package kotlin {
 
-    public final value class Foo {
-        public constructor Foo(/*0*/ x: kotlin.Int)
-        public final val x: kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+    package kotlin.jvm {
 
-    public final value annotation class InlineAnn : kotlin.Annotation {
-        public constructor InlineAnn()
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        public final value class Foo {
+            public constructor Foo(/*0*/ x: kotlin.Int)
+            public final val x: kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    public final value enum class InlineEnum : kotlin.Enum<kotlin.InlineEnum> {
-        private constructor InlineEnum()
-        public final override /*1*/ /*fake_override*/ val name: kotlin.String
-        public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
-        protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.InlineEnum): kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
-        public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<kotlin.InlineEnum!>!
-        public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        public final value annotation class InlineAnn : kotlin.Annotation {
+            public constructor InlineAnn()
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-        // Static members
-        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.InlineEnum
-        public final /*synthesized*/ fun values(): kotlin.Array<kotlin.InlineEnum>
-    }
+        public final value enum class InlineEnum : kotlin.Enum<kotlin.jvm.InlineEnum> {
+            private constructor InlineEnum()
+            public final override /*1*/ /*fake_override*/ val name: kotlin.String
+            public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+            protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+            public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.jvm.InlineEnum): kotlin.Int
+            public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+            public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<kotlin.jvm.InlineEnum!>!
+            public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 
-    public value object InlineObject {
-        private constructor InlineObject()
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+            // Static members
+            public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kotlin.jvm.InlineEnum
+            public final /*synthesized*/ fun values(): kotlin.Array<kotlin.jvm.InlineEnum>
+        }
 
-    public final annotation class JvmInline : kotlin.Annotation {
-        public constructor JvmInline()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+        public value object InlineObject {
+            private constructor InlineObject()
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class NotVal {
-        public constructor NotVal(/*0*/ x: kotlin.Int)
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        public final annotation class JvmInline : kotlin.Annotation {
+            public constructor JvmInline()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.jvm.JvmInline public final value class NotVal {
+            public constructor NotVal(/*0*/ x: kotlin.Int)
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
     }
 }

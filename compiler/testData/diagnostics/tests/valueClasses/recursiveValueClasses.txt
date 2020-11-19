@@ -2,106 +2,109 @@ package
 
 package kotlin {
 
-    @kotlin.JvmInline public final value class Id</*0*/ T> {
-        public constructor Id</*0*/ T>(/*0*/ x: T)
-        public final val x: T
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+    package kotlin.jvm {
 
-    public final annotation class JvmInline : kotlin.Annotation {
-        public constructor JvmInline()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class Id</*0*/ T> {
+            public constructor Id</*0*/ T>(/*0*/ x: T)
+            public final val x: T
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class Test1 {
-        public constructor Test1(/*0*/ x: kotlin.Test1)
-        public final val x: kotlin.Test1
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        public final annotation class JvmInline : kotlin.Annotation {
+            public constructor JvmInline()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class Test2A {
-        public constructor Test2A(/*0*/ x: kotlin.Test2B)
-        public final val x: kotlin.Test2B
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class Test1 {
+            public constructor Test1(/*0*/ x: kotlin.jvm.Test1)
+            public final val x: kotlin.jvm.Test1
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class Test2B {
-        public constructor Test2B(/*0*/ x: kotlin.Test2A)
-        public final val x: kotlin.Test2A
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class Test2A {
+            public constructor Test2A(/*0*/ x: kotlin.jvm.Test2B)
+            public final val x: kotlin.jvm.Test2B
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class Test3A {
-        public constructor Test3A(/*0*/ x: kotlin.Test3B)
-        public final val x: kotlin.Test3B
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class Test2B {
+            public constructor Test2B(/*0*/ x: kotlin.jvm.Test2A)
+            public final val x: kotlin.jvm.Test2A
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class Test3B {
-        public constructor Test3B(/*0*/ x: kotlin.Test3C)
-        public final val x: kotlin.Test3C
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class Test3A {
+            public constructor Test3A(/*0*/ x: kotlin.jvm.Test3B)
+            public final val x: kotlin.jvm.Test3B
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class Test3C {
-        public constructor Test3C(/*0*/ x: kotlin.Test3A)
-        public final val x: kotlin.Test3A
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class Test3B {
+            public constructor Test3B(/*0*/ x: kotlin.jvm.Test3C)
+            public final val x: kotlin.jvm.Test3C
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class TestNullable {
-        public constructor TestNullable(/*0*/ x: kotlin.TestNullable?)
-        public final val x: kotlin.TestNullable?
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class Test3C {
+            public constructor Test3C(/*0*/ x: kotlin.jvm.Test3A)
+            public final val x: kotlin.jvm.Test3A
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class TestRecursionInArray {
-        public constructor TestRecursionInArray(/*0*/ x: kotlin.Array<kotlin.TestRecursionInArray>)
-        public final val x: kotlin.Array<kotlin.TestRecursionInArray>
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class TestNullable {
+            public constructor TestNullable(/*0*/ x: kotlin.jvm.TestNullable?)
+            public final val x: kotlin.jvm.TestNullable?
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class TestRecursionInTypeArguments {
-        public constructor TestRecursionInTypeArguments(/*0*/ x: kotlin.collections.List<kotlin.TestRecursionInTypeArguments>)
-        public final val x: kotlin.collections.List<kotlin.TestRecursionInTypeArguments>
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class TestRecursionInArray {
+            public constructor TestRecursionInArray(/*0*/ x: kotlin.Array<kotlin.jvm.TestRecursionInArray>)
+            public final val x: kotlin.Array<kotlin.jvm.TestRecursionInArray>
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class TestRecursionInUpperBounds</*0*/ T : kotlin.TestRecursionInUpperBounds<T>> {
-        public constructor TestRecursionInUpperBounds</*0*/ T : kotlin.TestRecursionInUpperBounds<T>>(/*0*/ x: T)
-        public final val x: T
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        @kotlin.jvm.JvmInline public final value class TestRecursionInTypeArguments {
+            public constructor TestRecursionInTypeArguments(/*0*/ x: kotlin.collections.List<kotlin.jvm.TestRecursionInTypeArguments>)
+            public final val x: kotlin.collections.List<kotlin.jvm.TestRecursionInTypeArguments>
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class TestRecursionThroughId {
-        public constructor TestRecursionThroughId(/*0*/ x: kotlin.Id<kotlin.TestRecursionThroughId>)
-        public final val x: kotlin.Id<kotlin.TestRecursionThroughId>
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        @kotlin.jvm.JvmInline public final value class TestRecursionInUpperBounds</*0*/ T : kotlin.jvm.TestRecursionInUpperBounds<T>> {
+            public constructor TestRecursionInUpperBounds</*0*/ T : kotlin.jvm.TestRecursionInUpperBounds<T>>(/*0*/ x: T)
+            public final val x: T
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.jvm.JvmInline public final value class TestRecursionThroughId {
+            public constructor TestRecursionThroughId(/*0*/ x: kotlin.jvm.Id<kotlin.jvm.TestRecursionThroughId>)
+            public final val x: kotlin.jvm.Id<kotlin.jvm.TestRecursionThroughId>
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
     }
 }

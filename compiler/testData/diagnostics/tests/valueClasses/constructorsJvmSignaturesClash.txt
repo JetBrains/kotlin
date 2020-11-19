@@ -2,56 +2,59 @@ package
 
 package kotlin {
 
-    public final annotation class JvmInline : kotlin.Annotation {
-        public constructor JvmInline()
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+    package kotlin.jvm {
 
-    public final class TestErr1 {
-        public constructor TestErr1(/*0*/ a: kotlin.Int)
-        public constructor TestErr1(/*0*/ x: kotlin.X)
-        public final val a: kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+        public final annotation class JvmInline : kotlin.Annotation {
+            public constructor JvmInline()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
 
-    public final class TestErr2 {
-        public constructor TestErr2(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int)
-        public constructor TestErr2(/*0*/ x: kotlin.X)
-        public constructor TestErr2(/*0*/ z: kotlin.Z)
-        public final val a: kotlin.Int
-        public final val b: kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+        public final class TestErr1 {
+            public constructor TestErr1(/*0*/ a: kotlin.Int)
+            public constructor TestErr1(/*0*/ x: kotlin.jvm.X)
+            public final val a: kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
 
-    public final class TestOk1 {
-        public constructor TestOk1(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int)
-        public constructor TestOk1(/*0*/ x: kotlin.X)
-        public final val a: kotlin.Int
-        public final val b: kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
-    }
+        public final class TestErr2 {
+            public constructor TestErr2(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int)
+            public constructor TestErr2(/*0*/ x: kotlin.jvm.X)
+            public constructor TestErr2(/*0*/ z: kotlin.jvm.Z)
+            public final val a: kotlin.Int
+            public final val b: kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class X {
-        public constructor X(/*0*/ x: kotlin.Int)
-        public final val x: kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
-    }
+        public final class TestOk1 {
+            public constructor TestOk1(/*0*/ a: kotlin.Int, /*1*/ b: kotlin.Int)
+            public constructor TestOk1(/*0*/ x: kotlin.jvm.X)
+            public final val a: kotlin.Int
+            public final val b: kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
 
-    @kotlin.JvmInline public final value class Z {
-        public constructor Z(/*0*/ x: kotlin.Int)
-        public final val x: kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
-        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        @kotlin.jvm.JvmInline public final value class X {
+            public constructor X(/*0*/ x: kotlin.Int)
+            public final val x: kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
+
+        @kotlin.jvm.JvmInline public final value class Z {
+            public constructor Z(/*0*/ x: kotlin.Int)
+            public final val x: kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
     }
 }
