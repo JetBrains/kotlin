@@ -15,15 +15,10 @@
  */
 package org.jetbrains.kotlin.diagnostics
 
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 
-interface Diagnostic {
-    val factory: DiagnosticFactory<*>
-    val severity: Severity
+interface Diagnostic : UnboundDiagnostic {
     val psiElement: PsiElement
-    val textRanges: List<TextRange>
     val psiFile: PsiFile?
-    val isValid: Boolean
 }
