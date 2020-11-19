@@ -102,7 +102,7 @@ class AddPropertyToSupertypeFix private constructor(
             val descriptors = generatePropertiesToAdd(property)
             if (descriptors.isEmpty()) return null
 
-            val project = diagnostic.psiFile!!.project
+            val project = diagnostic.psiFile.project
             val propertyData = descriptors.mapNotNull { createPropertyData(it, property.initializer, project) }
             if (propertyData.isEmpty()) return null
 
