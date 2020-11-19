@@ -502,6 +502,8 @@
 - [`KT-39981`](https://youtrack.jetbrains.com/issue/KT-39981) Android parcel 'java.lang.VerifyError: Bad return type'
 - [`KT-42267`](https://youtrack.jetbrains.com/issue/KT-42267) `Platform declaration clash` error in IDE when using `kotlinx.android.parcel.Parcelize`
 - [`KT-42958`](https://youtrack.jetbrains.com/issue/KT-42958) False positive IDE error on classes with kotlinx.parcelize.Parcelize on project initial import
+- [`KT-43290`](https://youtrack.jetbrains.com/issue/KT-43290) Typo in error message for `ErrorsParcelize.DEPRECATED_ANNOTATION` - kotlin.parcelize instead of kotlinx.parcelize
+- [`KT-43291`](https://youtrack.jetbrains.com/issue/KT-43291) Diagnostic deprecation messages should not be shown in case `kotlin-android-extensions` plugin is applied
 
 ### Tools. Scripts
 
