@@ -82,7 +82,10 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
         setUp()
         val tmpdir = tmpDir(getTestName(true))
 
-        assert(composePluginJar.exists())
+        assert(
+            composePluginJar.exists(),
+            { "Compiler plugin jar does not exist: $composePluginJar" }
+        )
 
         val optionalArgs = arrayOf(
             "-cp",
