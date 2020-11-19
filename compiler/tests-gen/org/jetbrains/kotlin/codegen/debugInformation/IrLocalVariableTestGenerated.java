@@ -178,5 +178,55 @@ public class IrLocalVariableTestGenerated extends AbstractIrLocalVariableTest {
         public void testUnderscoreNames() throws Exception {
             runTest("compiler/testData/debug/localVariables/suspend/underscoreNames.kt");
         }
+
+        @TestMetadata("compiler/testData/debug/localVariables/suspend/completion")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(BlockJUnit4ClassRunner.class)
+        public static class Completion extends AbstractIrLocalVariableTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            @Test
+            public void testAllFilesPresentInCompletion() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/suspend/completion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("nonStaticSimple.kt")
+            public void testNonStaticSimple() throws Exception {
+                runTest("compiler/testData/debug/localVariables/suspend/completion/nonStaticSimple.kt");
+            }
+
+            @Test
+            @TestMetadata("nonStaticStateMachine.kt")
+            public void testNonStaticStateMachine() throws Exception {
+                runTest("compiler/testData/debug/localVariables/suspend/completion/nonStaticStateMachine.kt");
+            }
+
+            @Test
+            @TestMetadata("staticSimple.kt")
+            public void testStaticSimple() throws Exception {
+                runTest("compiler/testData/debug/localVariables/suspend/completion/staticSimple.kt");
+            }
+
+            @Test
+            @TestMetadata("staticSimpleReceiver.kt")
+            public void testStaticSimpleReceiver() throws Exception {
+                runTest("compiler/testData/debug/localVariables/suspend/completion/staticSimpleReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("staticStateMachine.kt")
+            public void testStaticStateMachine() throws Exception {
+                runTest("compiler/testData/debug/localVariables/suspend/completion/staticStateMachine.kt");
+            }
+
+            @Test
+            @TestMetadata("staticStateMachineReceiver.kt")
+            public void testStaticStateMachineReceiver() throws Exception {
+                runTest("compiler/testData/debug/localVariables/suspend/completion/staticStateMachineReceiver.kt");
+            }
+        }
     }
 }
