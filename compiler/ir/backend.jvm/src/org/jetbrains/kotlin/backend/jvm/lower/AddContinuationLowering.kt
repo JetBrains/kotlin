@@ -359,9 +359,7 @@ private val defaultImplsOrigins = setOf(
     JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_WITH_MOVED_RECEIVERS,
     JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_WITH_MOVED_RECEIVERS_SYNTHETIC,
     JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
-    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY,
     JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC,
-    JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC
 )
 
 private val IrSimpleFunction.isDefaultImplsFunction: Boolean

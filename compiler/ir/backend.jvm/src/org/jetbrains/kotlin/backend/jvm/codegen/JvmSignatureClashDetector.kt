@@ -188,9 +188,7 @@ class JvmSignatureClashDetector(
             IrDeclarationOrigin.IR_BUILTINS_STUB,
             JvmLoweredDeclarationOrigin.TO_ARRAY,
             JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE,
-            JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY,
             JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC,
-            JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC
         )
 
         val PREDEFINED_SIGNATURES = listOf(

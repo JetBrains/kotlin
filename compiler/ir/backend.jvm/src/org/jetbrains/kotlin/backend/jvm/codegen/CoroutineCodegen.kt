@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
@@ -147,9 +146,7 @@ internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspen
         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR &&
         origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY &&
         origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC &&
         origin != IrDeclarationOrigin.BRIDGE &&
         origin != IrDeclarationOrigin.BRIDGE_SPECIAL &&
         origin != IrDeclarationOrigin.DELEGATED_MEMBER &&

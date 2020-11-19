@@ -14,14 +14,13 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.FrameMapBase
-import org.jetbrains.kotlin.codegen.OwnerKind
-import org.jetbrains.kotlin.codegen.SourceInfo
-import org.jetbrains.kotlin.codegen.classFileContainsMethod
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -346,8 +345,9 @@ fun IrClass.isOptionalAnnotationClass(): Boolean =
 val IrDeclaration.isAnnotatedWithDeprecated: Boolean
     get() = annotations.hasAnnotation(FqNames.deprecated)
 
-val IrDeclaration.isDeprecatedCallable: Boolean
-    get() = isAnnotatedWithDeprecated || origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY
+internal fun IrDeclaration.isDeprecatedCallable(context: JvmBackendContext): Boolean =
+    isAnnotatedWithDeprecated ||
+            annotations.any { it.symbol == context.ir.symbols.javaLangDeprecatedConstructorWithDeprecatedFlag }
 
 // We can't check for JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS because for interface methods
 // moved to DefaultImpls, origin is changed to DEFAULT_IMPLS
@@ -355,11 +355,11 @@ val IrDeclaration.isDeprecatedCallable: Boolean
 val IrFunction.isSyntheticMethodForProperty: Boolean
     get() = name.asString().endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)
 
-val IrFunction.isDeprecatedFunction: Boolean
-    get() = isSyntheticMethodForProperty || isDeprecatedCallable ||
-            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.isDeprecatedCallable == true ||
+internal fun IrFunction.isDeprecatedFunction(context: JvmBackendContext): Boolean =
+    isSyntheticMethodForProperty || isDeprecatedCallable(context) ||
+            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.isDeprecatedCallable(context) == true ||
             isAccessorForDeprecatedPropertyImplementedByDelegation ||
-            isAccessorForDeprecatedJvmStaticProperty
+            isAccessorForDeprecatedJvmStaticProperty(context)
 
 private val IrFunction.isAccessorForDeprecatedPropertyImplementedByDelegation: Boolean
     get() =
@@ -367,20 +367,19 @@ private val IrFunction.isAccessorForDeprecatedPropertyImplementedByDelegation: B
                 this is IrSimpleFunction &&
                 correspondingPropertySymbol != null &&
                 overriddenSymbols.any {
-                    it.owner.correspondingPropertySymbol?.owner?.isDeprecatedCallable == true
+                    it.owner.correspondingPropertySymbol?.owner?.isAnnotatedWithDeprecated == true
                 }
 
-private val IrFunction.isAccessorForDeprecatedJvmStaticProperty: Boolean
-    get() {
-        if (origin != JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER) return false
-        val irExpressionBody = this.body as? IrExpressionBody
-            ?: throw AssertionError("IrExpressionBody expected for JvmStatic wrapper:\n${this.dump()}")
-        val irCall = irExpressionBody.expression as? IrCall
-            ?: throw AssertionError("IrCall expected inside JvmStatic wrapper:\n${this.dump()}")
-        val callee = irCall.symbol.owner
-        val property = callee.correspondingPropertySymbol?.owner ?: return false
-        return property.isDeprecatedCallable
-    }
+private fun IrFunction.isAccessorForDeprecatedJvmStaticProperty(context: JvmBackendContext): Boolean {
+    if (origin != JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER) return false
+    val irExpressionBody = this.body as? IrExpressionBody
+        ?: throw AssertionError("IrExpressionBody expected for JvmStatic wrapper:\n${this.dump()}")
+    val irCall = irExpressionBody.expression as? IrCall
+        ?: throw AssertionError("IrCall expected inside JvmStatic wrapper:\n${this.dump()}")
+    val callee = irCall.symbol.owner
+    val property = callee.correspondingPropertySymbol?.owner ?: return false
+    return property.isDeprecatedCallable(context)
+}
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 val IrDeclaration.psiElement: PsiElement?

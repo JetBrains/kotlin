@@ -262,9 +262,7 @@ private class InterfaceObjectCallsLowering(val context: JvmBackendContext) : IrE
  */
 private fun isDefaultImplsBridge(f: IrSimpleFunction) =
     f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
-            f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY ||
-            f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC ||
-            f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC
+            f.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC
 
 internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDefaultMode): IrSimpleFunction? {
     if (!isFakeOverride) return null
