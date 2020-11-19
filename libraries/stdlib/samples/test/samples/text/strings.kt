@@ -445,4 +445,13 @@ class Strings {
         assertPrints(emptyString.lastOrNull(), "null")
         assertFails { emptyString.last() }
     }
+
+    @Sample
+    fun replace() {
+        val inputString0 = "Mississippi"
+        val inputString1 = "Insufficient data for meaningful answer."
+
+        assertPrints(inputString0.replace('s', 'z'), "Mizzizzippi")
+        assertPrints(inputString1.replace("data", "information"), "Insufficient information for meaningful answer.")
+    }
 }
