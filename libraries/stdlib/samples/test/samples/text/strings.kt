@@ -411,10 +411,10 @@ class Strings {
 
 	@Sample
 	fun replace() {
-		val inputString0 = "Mississippi"
-		val inputString1 = "How can the net amount of entropy of the universe be massively decreased?"
+        val inputString0 = "Mississippi"
+        val inputString1 = "How can the net amount of entropy of the universe be massively decreased?"
 
-		assertPrints(inputString0.replace('s', 'z'), "Mizzizzippi")
-		assertPrints(inputString1.replace("decreased", "increased"), "How can the net amount of entropy of the universe be massively increased?")
+        assertPrints(inputString0.replace('s', 'z'), "Mizzizzippi")
+        assertPrints(inputString1.replace("decreased", "increased"), "How can the net amount of entropy of the universe be massively increased?")
 	}
 }
