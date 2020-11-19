@@ -183,7 +183,7 @@ pluginBundle {
     create(
         name = "kotlinAndroidPlugin",
         id = "org.jetbrains.kotlin.android",
-        display = "Android"
+        display = "Kotlin Android plugin"
     )
     create(
         name = "kotlinAndroidExtensionsPlugin",
