@@ -43,7 +43,7 @@ gradleEnterprise {
         if (buildProperties.buildScanServer != null) {
             server = buildProperties.buildScanServer
             allowUntrustedServer = true
-            captureTaskInputFiles = false
+            captureTaskInputFiles = true
             publishAlways()
         } else {
             setTermsOfServiceUrl("https://gradle.com/terms-of-service")
