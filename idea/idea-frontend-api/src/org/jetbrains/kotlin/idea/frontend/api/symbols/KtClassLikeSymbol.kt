@@ -15,6 +15,8 @@ sealed class KtClassifierSymbol : KtSymbol, KtNamedSymbol
 
 abstract class KtTypeParameterSymbol : KtClassifierSymbol(), KtNamedSymbol {
     abstract override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol>
+
+    abstract val bounds: List<KtType>
 }
 
 sealed class KtClassLikeSymbol : KtClassifierSymbol(), KtNamedSymbol, KtSymbolWithKind {

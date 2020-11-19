@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.idea.asJava.fields
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.idea.asJava.*
 import org.jetbrains.kotlin.idea.asJava.FirLightClassForSymbol
 import org.jetbrains.kotlin.idea.asJava.FirLightClassModifierList
 import org.jetbrains.kotlin.idea.asJava.FirLightField
@@ -34,6 +36,8 @@ internal class FirLightFieldForEnumEntry(
     override fun getModifierList(): PsiModifierList? = _modifierList
 
     override val kotlinOrigin: KtEnumEntry? = enumEntrySymbol.psi as? KtEnumEntry
+
+    override fun isDeprecated(): Boolean = false
 
     //TODO Make with KtSymbols
     private val hasBody: Boolean get() = kotlinOrigin?.let { it.body != null } ?: true
@@ -72,6 +76,13 @@ internal class FirLightFieldForEnumEntry(
     override fun getInitializer(): PsiExpression? = null
 
     override fun hashCode(): Int = enumEntrySymbol.hashCode()
+
+    private val _identifier: PsiIdentifier by lazyPub {
+        FirLightIdentifier(this, enumEntrySymbol)
+    }
+
+    override fun getNameIdentifier(): PsiIdentifier = _identifier
+
 
     override fun equals(other: Any?): Boolean =
         other is FirLightFieldForEnumEntry &&

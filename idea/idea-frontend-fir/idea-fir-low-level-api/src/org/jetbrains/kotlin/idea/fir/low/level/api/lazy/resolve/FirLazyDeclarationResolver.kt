@@ -40,11 +40,11 @@ internal class FirLazyDeclarationResolver(
     ) {
         if (declaration.resolvePhase >= toPhase) return
 
-        if (declaration is FirPropertyAccessor) {
+        if (declaration is FirPropertyAccessor || declaration is FirTypeParameter) {
             val ktContainingProperty = when (val ktDeclaration = declaration.ktDeclaration) {
                 is KtPropertyAccessor -> ktDeclaration.property
                 is KtProperty -> ktDeclaration
-                is KtParameter -> ktDeclaration.getNonLocalContainingOrThisDeclaration()
+                is KtParameter, is KtTypeParameter -> ktDeclaration.getNonLocalContainingOrThisDeclaration()
                     ?: error("Cannot find containing declaration for KtParameter")
                 else -> error("Invalid source of property accessor ${ktDeclaration::class}")
             }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -52,6 +53,8 @@ internal class FirLightParameterForReceiver private constructor(
     private val _name: String by lazyPub {
         AsmUtil.getLabeledThisName(methodName, AsmUtil.LABELED_THIS_PARAMETER, AsmUtil.RECEIVER_PARAMETER_NAME)
     }
+
+    override fun getNameIdentifier(): PsiIdentifier? = null
 
     override fun getName(): String = _name
 

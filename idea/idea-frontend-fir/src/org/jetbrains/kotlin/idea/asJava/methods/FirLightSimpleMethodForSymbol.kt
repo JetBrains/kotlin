@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.idea.asJava
 
-import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiModifier
-import com.intellij.psi.PsiModifierList
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.idea.asJava.elements.FirLightTypeParameterListForSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.isUnit
 import org.jetbrains.kotlin.idea.util.ifTrue
@@ -39,13 +37,32 @@ internal class FirLightSimpleMethodForSymbol(
 
     override fun getName(): String = _name
 
+    private val _typeParameterList: PsiTypeParameterList? by lazyPub {
+        hasTypeParameters().ifTrue {
+            FirLightTypeParameterListForSymbol(
+                owner = this,
+                symbolWithTypeParameterList = functionSymbol,
+                innerShiftCount = 0
+            )
+        }
+    }
+
+    override fun hasTypeParameters(): Boolean =
+        functionSymbol.typeParameters.isNotEmpty()
+
+    override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
+    override fun getTypeParameters(): Array<PsiTypeParameter> =
+        _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
+
     private val _annotations: List<PsiAnnotation> by lazyPub {
+        val needUnknownNullability =
+            isVoidReturnType || (_visibility == PsiModifier.PRIVATE)
 
-        val needUnknownNullability = functionSymbol.type.isUnit || (_visibility == PsiModifier.PRIVATE)
-
-        val nullability = if (needUnknownNullability) NullabilityType.Unknown else functionSymbol.type.getTypeNullability(
-            functionSymbol,
-            FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
+        val nullability = if (needUnknownNullability)
+            NullabilityType.Unknown
+        else functionSymbol.type.getTypeNullability(
+            context = functionSymbol,
+            phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
         )
 
         functionSymbol.computeAnnotations(
@@ -80,6 +97,12 @@ internal class FirLightSimpleMethodForSymbol(
         )
     }
 
+    private val _isDeprecated: Boolean by lazyPub {
+        functionSymbol.hasDeprecatedAnnotation()
+    }
+
+    override fun isDeprecated(): Boolean = _isDeprecated
+
     private val _modifierList: PsiModifierList by lazyPub {
         FirLightClassModifierList(this, _modifiers, _annotations)
     }
@@ -88,8 +111,13 @@ internal class FirLightSimpleMethodForSymbol(
 
     override fun isConstructor(): Boolean = false
 
+    private val isVoidReturnType: Boolean
+        get() = functionSymbol.type.run {
+            isUnit && nullabilityType != NullabilityType.Nullable
+        }
+
     private val _returnedType: PsiType by lazyPub {
-        if (functionSymbol.type.isUnit) return@lazyPub PsiType.VOID
+        if (isVoidReturnType) return@lazyPub PsiType.VOID
         functionSymbol.asPsiType(this@FirLightSimpleMethodForSymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
     }
 

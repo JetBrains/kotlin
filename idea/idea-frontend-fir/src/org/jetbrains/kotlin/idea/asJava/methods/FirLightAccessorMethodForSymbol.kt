@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
@@ -49,6 +50,10 @@ internal class FirLightAccessorMethodForSymbol(
     }
 
     override fun getName(): String = _name
+
+    override fun hasTypeParameters(): Boolean = false
+    override fun getTypeParameterList(): PsiTypeParameterList? = null
+    override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
     override fun isVarArgs(): Boolean = false
 
@@ -102,6 +107,18 @@ internal class FirLightAccessorMethodForSymbol(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     override fun isConstructor(): Boolean = false
+
+    private val _isDeprecated: Boolean by lazyPub {
+        containingPropertySymbol.hasDeprecatedAnnotation(accessorSite)
+    }
+
+    override fun isDeprecated(): Boolean = _isDeprecated
+
+    private val _identifier: PsiIdentifier by lazyPub {
+        FirLightIdentifier(this, containingPropertySymbol)
+    }
+
+    override fun getNameIdentifier(): PsiIdentifier = _identifier
 
     private val _returnedType: PsiType? by lazyPub {
         if (propertyAccessorSymbol !is KtPropertyGetterSymbol) return@lazyPub PsiType.VOID

@@ -26,7 +26,8 @@ internal abstract class FirLightParameter(containingDeclaration: FirLightMethod)
     override fun getInitializer(): PsiExpression? = null
     override fun hasInitializer(): Boolean = false
     override fun computeConstantValue(): Any? = null
-    override fun getNameIdentifier(): PsiIdentifier? = null
+
+    abstract override fun getNameIdentifier(): PsiIdentifier?
 
     abstract override fun getName(): String
 

@@ -15,10 +15,13 @@ import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.asJava.*
 import org.jetbrains.kotlin.idea.asJava.FirLightClassForSymbol
 import org.jetbrains.kotlin.idea.asJava.fields.FirLightFieldForEnumEntry
 import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
@@ -27,7 +30,9 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibi
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.isLambdaOutsideParentheses
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
+import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 import java.util.*
 
 fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightClass? =
@@ -53,10 +58,19 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? {
         return null
     }
 
+    if (classOrObject.isLocal) {
+        val nonLocalDeclaration = classOrObject.containingNonLocalDeclaration() ?: return null
+        analyze(nonLocalDeclaration) {
+            (nonLocalDeclaration.getSymbol() as? KtFirSymbol<*>)?.run {
+                this.firRef.withFir(FirResolvePhase.BODY_RESOLVE) {  }
+            }
+        } ?: return null
+    }
+
     return when {
         classOrObject is KtEnumEntry -> lightClassForEnumEntry(classOrObject)
         classOrObject.isObjectLiteral() -> return null //TODO
-        classOrObject.safeIsLocal() -> return null //TODO
+        //classOrObject.safeIsLocal() -> return null //TODO
         classOrObject.hasModifier(KtTokens.INLINE_KEYWORD) -> return null //TODO
         else -> {
             analyze(classOrObject) {

@@ -93,10 +93,6 @@ internal class FirLightClassForSymbol(
         return result
     }
 
-    override fun getTextOffset(): Int = kotlinOrigin?.textOffset ?: 0
-    override fun getStartOffsetInParent(): Int = kotlinOrigin?.startOffsetInParent ?: 0
-    override fun isWritable() = kotlinOrigin?.isWritable ?: false
-
     private val _extendsList by lazyPub { createInheritanceList(forExtendsList = true) }
     private val _implementsList by lazyPub { createInheritanceList(forExtendsList = false) }
 
@@ -163,7 +159,7 @@ internal class FirLightClassForSymbol(
             val propertySymbols = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
                 .filterIsInstance<KtPropertySymbol>()
                 .applyIf(classOrObjectSymbol.classKind == KtClassKind.COMPANION_OBJECT) {
-                    filter { it.hasJvmFieldAnnotation() || it.isConst }
+                    filterNot { it.hasJvmFieldAnnotation() || it.isConst }
                 }
             createFields(propertySymbols, isTopLevel = false, result)
 

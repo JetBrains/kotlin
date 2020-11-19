@@ -72,11 +72,9 @@ internal abstract class FirLightMethod(
 
     override val isMangled: Boolean = false
 
-    override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray() //TODO
-
-    override fun hasTypeParameters(): Boolean = false //TODO
-
-    override fun getTypeParameterList(): PsiTypeParameterList? = null //TODO
+    abstract override fun getTypeParameters(): Array<PsiTypeParameter>
+    abstract override fun hasTypeParameters(): Boolean
+    abstract override fun getTypeParameterList(): PsiTypeParameterList?
 
     override fun getThrowsList(): PsiReferenceList =
         KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST) //TODO()

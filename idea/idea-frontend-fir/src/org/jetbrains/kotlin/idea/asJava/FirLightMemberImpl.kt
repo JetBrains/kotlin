@@ -27,21 +27,19 @@ internal abstract class FirLightMemberImpl<T : PsiMember>(
     override val clsDelegate: T
         get() = invalidAccess()
 
-    private val lightIdentifier by lazyPub { KtLightIdentifier(this, kotlinOrigin as? KtNamedDeclaration) }
-
     override fun hasModifierProperty(name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
     override fun toString(): String = "${this::class.java.simpleName}:$name"
 
     override fun getContainingClass() = containingClass
 
-    override fun getNameIdentifier(): PsiIdentifier = lightIdentifier
+    abstract override fun getNameIdentifier(): PsiIdentifier?
 
     override val kotlinOrigin: KtDeclaration? get() = lightMemberOrigin?.originalElement
 
     override fun getDocComment(): PsiDocComment? = null //TODO()
 
-    override fun isDeprecated(): Boolean = false //TODO()
+    abstract override fun isDeprecated(): Boolean
 
     abstract override fun getName(): String
 

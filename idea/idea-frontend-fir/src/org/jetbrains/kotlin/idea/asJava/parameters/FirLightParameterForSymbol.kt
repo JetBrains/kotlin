@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
@@ -45,6 +46,12 @@ internal class FirLightParameterForSymbol(
     private val _modifierList: PsiModifierList by lazyPub {
         FirLightClassModifierList(this, emptySet(), _annotations)
     }
+
+    private val _identifier: PsiIdentifier by lazyPub {
+        FirLightIdentifier(this, parameterSymbol)
+    }
+
+    override fun getNameIdentifier(): PsiIdentifier = _identifier
 
     private val _type by lazyPub {
         val convertedType = parameterSymbol.asPsiType(this, FirResolvePhase.TYPES)
