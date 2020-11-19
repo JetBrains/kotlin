@@ -6,22 +6,17 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.findChildByType
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 
 object FirSupertypeInitializedWithoutPrimaryConstructor : FirMemberDeclarationChecker() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -38,28 +33,12 @@ object FirSupertypeInitializedWithoutPrimaryConstructor : FirMemberDeclarationCh
     }
 
     private fun FirSourceElement.anySupertypeHasConstructorParentheses(): Boolean {
-        val localPsi = psi
-        val localLightNode = lighterASTNode
-
-        if (localPsi != null && localPsi !is PsiErrorElement) {
-            return localPsi.anySupertypeHasConstructorParentheses()
-        } else if (this is FirLightSourceElement) {
-            return localLightNode.anySupertypeHasConstructorParentheses(treeStructure)
-        }
-
-        return false
-    }
-
-    private fun PsiElement.anySupertypeHasConstructorParentheses(): Boolean {
-        val children = this.children // this is a method call and it collects children
-        return children.isNotEmpty() && children[0] !is PsiErrorElement && children[0].children.any { it is KtSuperTypeCallEntry }
+        return lighterASTNode.anySupertypeHasConstructorParentheses(treeStructure)
     }
 
     private fun LighterASTNode.anySupertypeHasConstructorParentheses(tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
-        val superTypes = getChildren(tree).find { it?.tokenType == KtNodeTypes.SUPER_TYPE_LIST }
-            ?: return false
-
-        return superTypes.getChildren(tree).any { it?.tokenType == KtNodeTypes.SUPER_TYPE_CALL_ENTRY }
+        val superTypes = tree.findChildByType(this, KtNodeTypes.SUPER_TYPE_LIST) ?: return false
+        return tree.findChildByType(superTypes, KtNodeTypes.SUPER_TYPE_CALL_ENTRY) != null
     }
 
     private fun DiagnosticReporter.report(source: FirSourceElement?) {
