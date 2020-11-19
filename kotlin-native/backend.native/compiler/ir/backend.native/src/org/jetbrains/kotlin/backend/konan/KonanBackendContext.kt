@@ -36,8 +36,6 @@ internal abstract class KonanBackendContext(val config: KonanConfig) : CommonBac
 
     abstract override val ir: KonanIr
 
-    override val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
-        get() = TODO("not implemented")
     override val scriptMode: Boolean = false
 
     override val sharedVariablesManager by lazy {
