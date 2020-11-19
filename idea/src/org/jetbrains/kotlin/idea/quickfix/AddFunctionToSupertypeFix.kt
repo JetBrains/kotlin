@@ -128,7 +128,7 @@ class AddFunctionToSupertypeFix private constructor(
             val descriptors = generateFunctionsToAdd(function)
             if (descriptors.isEmpty()) return null
 
-            val project = diagnostic.psiFile!!.project
+            val project = diagnostic.psiFile.project
             val functionData = descriptors.mapNotNull { createFunctionData(it, project) }
             if (functionData.isEmpty()) return null
 

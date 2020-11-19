@@ -20,5 +20,5 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 
 interface DiagnosticMessageReporter {
-    fun report(diagnostic: Diagnostic, file: PsiFile?, render: String)
+    fun report(diagnostic: Diagnostic, file: PsiFile, render: String)
 }

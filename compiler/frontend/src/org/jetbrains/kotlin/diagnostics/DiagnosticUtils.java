@@ -74,9 +74,6 @@ public class DiagnosticUtils {
         List<TextRange> textRanges = diagnostic.getTextRanges();
         if (textRanges.isEmpty()) return PsiDiagnosticUtils.LineAndColumn.NONE;
         TextRange firstRange = firstRange(textRanges);
-        if (file == null) {
-            return PsiDiagnosticUtils.LineAndColumn.NONE;
-        }
         return getLineAndColumnInPsiFile(file, firstRange);
     }
 
@@ -92,9 +89,6 @@ public class DiagnosticUtils {
         List<TextRange> textRanges = diagnostic.getTextRanges();
         if (textRanges.isEmpty()) return PsiDiagnosticUtils.LineAndColumnRange.NONE;
         TextRange firstRange = firstRange(textRanges);
-        if (file == null) {
-            return PsiDiagnosticUtils.LineAndColumnRange.NONE;
-        }
         return getLineAndColumnRangeInPsiFile(file, firstRange);
     }
 
@@ -131,11 +125,9 @@ public class DiagnosticUtils {
         result.sort((d1, d2) -> {
             PsiFile file1 = d1.getPsiFile();
             PsiFile file2 = d2.getPsiFile();
-            if (file1 != null && file2 != null) {
-                String path1 = file1.getViewProvider().getVirtualFile().getPath();
-                String path2 = file2.getViewProvider().getVirtualFile().getPath();
-                if (!path1.equals(path2)) return path1.compareTo(path2);
-            }
+            String path1 = file1.getViewProvider().getVirtualFile().getPath();
+            String path2 = file2.getViewProvider().getVirtualFile().getPath();
+            if (!path1.equals(path2)) return path1.compareTo(path2);
 
             TextRange range1 = firstRange(d1.getTextRanges());
             TextRange range2 = firstRange(d2.getTextRanges());

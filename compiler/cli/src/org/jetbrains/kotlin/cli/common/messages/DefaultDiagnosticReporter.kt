@@ -28,9 +28,9 @@ class DefaultDiagnosticReporter(override val messageCollector: MessageCollector)
 interface MessageCollectorBasedReporter : DiagnosticMessageReporter {
     val messageCollector: MessageCollector
 
-    override fun report(diagnostic: Diagnostic, file: PsiFile?, render: String) = messageCollector.report(
+    override fun report(diagnostic: Diagnostic, file: PsiFile, render: String) = messageCollector.report(
         AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity),
         render,
-        MessageUtil.psiFileToMessageLocation(file!!, file.name, DiagnosticUtils.getLineAndColumnRange(diagnostic))
+        MessageUtil.psiFileToMessageLocation(file, file.name, DiagnosticUtils.getLineAndColumnRange(diagnostic))
     )
 }

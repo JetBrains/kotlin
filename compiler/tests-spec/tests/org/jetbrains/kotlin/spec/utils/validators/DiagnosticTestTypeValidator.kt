@@ -28,7 +28,7 @@ class DiagnosticTestTypeValidator(
 
     private fun findTestCases(diagnostic: Diagnostic): TestCasesByNumbers {
         val ranges = diagnostic.textRanges
-        val filename = diagnostic.psiFile!!.name
+        val filename = diagnostic.psiFile.name
         val foundTestCases = testInfo.cases.byRanges[filename]!!.floorEntry(ranges[0].startOffset)
 
         if (foundTestCases != null)

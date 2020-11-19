@@ -20,7 +20,7 @@ class ActualDiagnostic constructor(val diagnostic: Diagnostic, override val plat
         get() = diagnostic.factory.name!!
 
     val file: PsiFile
-        get() = diagnostic.psiFile!!
+        get() = diagnostic.psiFile
 
     override fun compareTo(other: AbstractTestDiagnostic): Int {
         return if (this.diagnostic is DiagnosticWithParameters1<*, *> && other is ActualDiagnostic && other.diagnostic is DiagnosticWithParameters1<*, *>) {

@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
@@ -154,16 +153,16 @@ class AnalyzerWithCompilerReport(
             return diagnostic.severity == Severity.ERROR
         }
 
-        fun reportDiagnostics(unsortedDiagnostics: Diagnostics, reporter: DiagnosticMessageReporter): Boolean {
+        fun reportDiagnostics(unsortedDiagnostics: GenericDiagnostics<*>, reporter: DiagnosticMessageReporter): Boolean {
             var hasErrors = false
-            val diagnostics = sortedDiagnostics(unsortedDiagnostics.all())
+            val diagnostics = sortedDiagnostics(unsortedDiagnostics.all().filterIsInstance<Diagnostic>())
             for (diagnostic in diagnostics) {
                 hasErrors = hasErrors or reportDiagnostic(diagnostic, reporter)
             }
             return hasErrors
         }
 
-        fun reportDiagnostics(diagnostics: Diagnostics, messageCollector: MessageCollector): Boolean {
+        fun reportDiagnostics(diagnostics: GenericDiagnostics<*>, messageCollector: MessageCollector): Boolean {
             val hasErrors = reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector))
 
             if (diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS }) {

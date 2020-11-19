@@ -10,13 +10,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.UnboundDiagnostic
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 
 // ------------------------------ diagnostics ------------------------------
 
-sealed class FirDiagnostic<out E : FirSourceElement> : Diagnostic {
+sealed class FirDiagnostic<out E : FirSourceElement> : UnboundDiagnostic {
     abstract val element: E
     abstract override val severity: Severity
     abstract override val factory: AbstractFirDiagnosticFactory<*, *>
@@ -94,16 +95,8 @@ data class FirPsiDiagnosticWithParameters3<P : PsiElement, A : Any, B : Any, C :
 
 // ------------------------------ light tree diagnostics ------------------------------
 
-interface FirLightDiagnostic : Diagnostic {
+interface FirLightDiagnostic : UnboundDiagnostic {
     val element: FirLightSourceElement
-
-    override val psiElement: PsiElement
-        get() {
-            throw UnsupportedOperationException("Light diagnostic does not hold PSI element")
-        }
-
-    override val psiFile: PsiFile?
-        get() = null
 }
 
 data class FirLightSimpleDiagnostic(

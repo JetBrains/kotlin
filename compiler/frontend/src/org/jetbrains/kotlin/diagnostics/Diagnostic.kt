@@ -20,5 +20,5 @@ import com.intellij.psi.PsiFile
 
 interface Diagnostic : UnboundDiagnostic {
     val psiElement: PsiElement
-    val psiFile: PsiFile?
+    val psiFile: PsiFile
 }

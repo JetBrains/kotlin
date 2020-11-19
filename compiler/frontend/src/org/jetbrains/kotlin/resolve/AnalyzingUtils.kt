@@ -13,81 +13,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.resolve
 
-package org.jetbrains.kotlin.resolve;
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticSink
+import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
+import org.jetbrains.kotlin.psi.debugText.getDebugText
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import java.lang.IllegalArgumentException
+import java.lang.StringBuilder
+import java.util.ArrayList
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiErrorElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticSink;
-import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils;
-import org.jetbrains.kotlin.psi.KtElement;
-import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
-import org.jetbrains.kotlin.psi.debugText.DebugTextUtilKt;
-import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics;
+object AnalyzingUtils {
+    private const val WRITE_DEBUG_TRACE_NAMES = false
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class AnalyzingUtils {
-    private static final boolean WRITE_DEBUG_TRACE_NAMES = false;
-
-    public abstract static class PsiErrorElementVisitor extends KtTreeVisitorVoid {
-        @Override
-        public abstract void visitErrorElement(@NotNull PsiErrorElement element);
-    }
-
-    public static void checkForSyntacticErrors(@NotNull PsiElement root) {
-        root.acceptChildren(new PsiErrorElementVisitor() {
-            @Override
-            public void visitErrorElement(@NotNull PsiErrorElement element) {
-                throw new IllegalArgumentException(element.getErrorDescription() + "; looking at " +
-                                                   element.getNode().getElementType() + " '" +
-                                                   element.getText() + PsiDiagnosticUtils.atLocation(element));
+    @JvmStatic
+    fun checkForSyntacticErrors(root: PsiElement) {
+        root.acceptChildren(object : PsiErrorElementVisitor() {
+            override fun visitErrorElement(element: PsiErrorElement) {
+                throw IllegalArgumentException(
+                    element.errorDescription + "; looking at " +
+                            element.node.elementType + " '" +
+                            element.text + PsiDiagnosticUtils.atLocation(element)
+                )
             }
-        });
+        })
     }
-    
-    public static List<PsiErrorElement> getSyntaxErrorRanges(@NotNull PsiElement root) {
-        List<PsiErrorElement> r = new ArrayList<>();
-        root.acceptChildren(new PsiErrorElementVisitor() {
-            @Override
-            public void visitErrorElement(@NotNull PsiErrorElement element) {
-                r.add(element);
+
+    @JvmStatic
+    fun getSyntaxErrorRanges(root: PsiElement): List<PsiErrorElement> {
+        val r: MutableList<PsiErrorElement> = ArrayList()
+        root.acceptChildren(object : PsiErrorElementVisitor() {
+            override fun visitErrorElement(element: PsiErrorElement) {
+                r.add(element)
             }
-        });
-        return r;
+        })
+        return r
     }
 
-    public static void throwExceptionOnErrors(BindingContext bindingContext) {
-        throwExceptionOnErrors(bindingContext.getDiagnostics());
+    fun throwExceptionOnErrors(bindingContext: BindingContext) {
+        throwExceptionOnErrors(bindingContext.diagnostics)
     }
 
-    public static void throwExceptionOnErrors(Diagnostics diagnostics) {
-        for (Diagnostic diagnostic : diagnostics) {
-            DiagnosticSink.THROW_EXCEPTION.report(diagnostic);
+    fun throwExceptionOnErrors(diagnostics: Diagnostics) {
+        for (diagnostic in diagnostics) {
+            DiagnosticSink.THROW_EXCEPTION.report(diagnostic)
         }
     }
 
     // --------------------------------------------------------------------------------------------------------------------------
-    public static String formDebugNameForBindingTrace(@NotNull String debugName, @Nullable Object resolutionSubjectForMessage) {
+    @JvmStatic
+    fun formDebugNameForBindingTrace(debugName: String, resolutionSubjectForMessage: Any?): String {
         if (WRITE_DEBUG_TRACE_NAMES) {
-            StringBuilder debugInfo = new StringBuilder(debugName);
-            if (resolutionSubjectForMessage instanceof KtElement) {
-                KtElement element = (KtElement) resolutionSubjectForMessage;
-                debugInfo.append(" ").append(DebugTextUtilKt.getDebugText(element));
+            val debugInfo = StringBuilder(debugName)
+            if (resolutionSubjectForMessage is KtElement) {
+                debugInfo.append(" ").append(resolutionSubjectForMessage.getDebugText())
                 //debugInfo.append(" in ").append(element.getContainingFile().getName());
-                debugInfo.append(" in ").append(element.getContainingKtFile().getName()).append(" ").append(element.getTextOffset());
+                debugInfo.append(" in ").append(resolutionSubjectForMessage.containingKtFile.name).append(" ").append(
+                    resolutionSubjectForMessage.textOffset
+                )
+            } else if (resolutionSubjectForMessage != null) {
+                debugInfo.append(" ").append(resolutionSubjectForMessage)
             }
-            else if (resolutionSubjectForMessage != null) {
-                debugInfo.append(" ").append(resolutionSubjectForMessage);
-            }
-
-            return debugInfo.toString();
+            return debugInfo.toString()
         }
+        return ""
+    }
 
-        return "";
+    abstract class PsiErrorElementVisitor : KtTreeVisitorVoid() {
+        abstract override fun visitErrorElement(element: PsiErrorElement)
     }
 }

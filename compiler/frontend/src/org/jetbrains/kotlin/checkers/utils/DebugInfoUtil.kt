@@ -2,222 +2,216 @@
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.checkers.utils
 
-package org.jetbrains.kotlin.checkers.utils;
+import com.intellij.psi.PsiElement
+import com.intellij.psi.tree.IElementType
+import com.intellij.psi.tree.TokenSet
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
+import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.util.slicedMap.WritableSlice
+import java.util.HashMap
 
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.descriptors.CallableDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
-import org.jetbrains.kotlin.descriptors.VariableDescriptor;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
-import org.jetbrains.kotlin.diagnostics.Errors;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingContextUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
-import org.jetbrains.kotlin.resolve.calls.tasks.DynamicCallsKt;
-import org.jetbrains.kotlin.types.ErrorUtils;
-import org.jetbrains.kotlin.types.KotlinType;
-import org.jetbrains.kotlin.util.slicedMap.WritableSlice;
+object DebugInfoUtil {
+    private val MAY_BE_UNRESOLVED = TokenSet.create(KtTokens.IN_KEYWORD, KtTokens.NOT_IN)
+    private val EXCLUDED = TokenSet.create(
+        KtTokens.COLON,
+        KtTokens.AS_KEYWORD,
+        KtTokens.`AS_SAFE`,
+        KtTokens.IS_KEYWORD,
+        KtTokens.NOT_IS,
+        KtTokens.OROR,
+        KtTokens.ANDAND,
+        KtTokens.EQ,
+        KtTokens.EQEQEQ,
+        KtTokens.EXCLEQEQEQ,
+        KtTokens.ELVIS,
+        KtTokens.EXCLEXCL
+    )
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.jetbrains.kotlin.lexer.KtTokens.*;
-import static org.jetbrains.kotlin.resolve.BindingContext.*;
-
-public class DebugInfoUtil {
-    private static final TokenSet MAY_BE_UNRESOLVED = TokenSet.create(IN_KEYWORD, NOT_IN);
-    private static final TokenSet EXCLUDED = TokenSet.create(
-            COLON, AS_KEYWORD, AS_SAFE, IS_KEYWORD, NOT_IS, OROR, ANDAND, EQ, EQEQEQ, EXCLEQEQEQ, ELVIS, EXCLEXCL);
-
-    public abstract static class DebugInfoReporter {
-
-        public void preProcessReference(@NotNull KtReferenceExpression expression) {
-            // do nothing
-        }
-
-        public abstract void reportElementWithErrorType(@NotNull KtReferenceExpression expression);
-
-        public abstract void reportMissingUnresolved(@NotNull KtReferenceExpression expression);
-
-        public abstract void reportUnresolvedWithTarget(@NotNull KtReferenceExpression expression, @NotNull String target);
-
-        public void reportDynamicCall(@NotNull KtElement element, DeclarationDescriptor declarationDescriptor) { }
-    }
-
-    public static void markDebugAnnotations(
-            @NotNull PsiElement root,
-            @NotNull BindingContext bindingContext,
-            @NotNull DebugInfoReporter debugInfoReporter
+    fun markDebugAnnotations(
+        root: PsiElement,
+        bindingContext: BindingContext,
+        debugInfoReporter: DebugInfoReporter
     ) {
-        Map<KtReferenceExpression, DiagnosticFactory<?>> markedWithErrorElements = new HashMap<>();
-        for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
-            DiagnosticFactory<?> factory = diagnostic.getFactory();
-            if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
-                markedWithErrorElements.put((KtReferenceExpression) diagnostic.getPsiElement(), factory);
-            }
-            else if (factory == Errors.SUPER_IS_NOT_AN_EXPRESSION
-                    || factory == Errors.SUPER_NOT_AVAILABLE) {
-                KtSuperExpression superExpression = (KtSuperExpression) diagnostic.getPsiElement();
-                markedWithErrorElements.put(superExpression.getInstanceReference(), factory);
-            }
-            else if (factory == Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND) {
-                markedWithErrorElements.put((KtSimpleNameExpression) diagnostic.getPsiElement(), factory);
-            }
-            else if (factory == Errors.UNSUPPORTED) {
-                for (KtReferenceExpression reference : PsiTreeUtil.findChildrenOfType(diagnostic.getPsiElement(),
-                                                                                      KtReferenceExpression.class)) {
-                    markedWithErrorElements.put(reference, factory);
+        val markedWithErrorElements: MutableMap<KtReferenceExpression, DiagnosticFactory<*>?> = HashMap()
+        for (diagnostic in bindingContext.diagnostics) {
+            val factory = diagnostic.factory
+            if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.factory)) {
+                markedWithErrorElements[diagnostic.psiElement as KtReferenceExpression] = factory
+            } else if (factory === Errors.SUPER_IS_NOT_AN_EXPRESSION
+                || factory === Errors.SUPER_NOT_AVAILABLE
+            ) {
+                val superExpression = diagnostic.psiElement as KtSuperExpression
+                markedWithErrorElements[superExpression.instanceReference] = factory
+            } else if (factory === Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND) {
+                markedWithErrorElements[diagnostic.psiElement as KtSimpleNameExpression] = factory
+            } else if (factory === Errors.UNSUPPORTED) {
+                for (reference in PsiTreeUtil.findChildrenOfType(
+                    diagnostic.psiElement,
+                    KtReferenceExpression::class.java
+                )) {
+                    markedWithErrorElements[reference] = factory
                 }
             }
         }
-
-        root.acceptChildren(new KtTreeVisitorVoid() {
-
-            @Override
-            public void visitForExpression(@NotNull KtForExpression expression) {
-                KtExpression range = expression.getLoopRange();
-                reportIfDynamicCall(range, range, LOOP_RANGE_ITERATOR_RESOLVED_CALL);
-                reportIfDynamicCall(range, range, LOOP_RANGE_HAS_NEXT_RESOLVED_CALL);
-                reportIfDynamicCall(range, range, LOOP_RANGE_NEXT_RESOLVED_CALL);
-                super.visitForExpression(expression);
-            }
-
-            @Override
-            public void visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration destructuringDeclaration) {
-                for (KtDestructuringDeclarationEntry entry : destructuringDeclaration.getEntries()) {
-                    reportIfDynamicCall(entry, entry, COMPONENT_RESOLVED_CALL);
+        root.acceptChildren(object : KtTreeVisitorVoid() {
+            override fun visitForExpression(expression: KtForExpression) {
+                val range = expression.loopRange
+                if (range != null) {
+                    reportIfDynamicCall(range, range, BindingContext.LOOP_RANGE_ITERATOR_RESOLVED_CALL)
+                    reportIfDynamicCall(range, range, BindingContext.LOOP_RANGE_HAS_NEXT_RESOLVED_CALL)
+                    reportIfDynamicCall(range, range, BindingContext.LOOP_RANGE_NEXT_RESOLVED_CALL)
                 }
-                super.visitDestructuringDeclaration(destructuringDeclaration);
+                super.visitForExpression(expression)
             }
 
-            @Override
-            public void visitProperty(@NotNull KtProperty property) {
-                VariableDescriptor descriptor = bindingContext.get(VARIABLE, property);
-                if (descriptor instanceof PropertyDescriptor && property.getDelegate() != null) {
-                    PropertyDescriptor propertyDescriptor = (PropertyDescriptor) descriptor;
-                    reportIfDynamicCall(property.getDelegate(), propertyDescriptor, PROVIDE_DELEGATE_RESOLVED_CALL);
-                    reportIfDynamicCall(property.getDelegate(), propertyDescriptor.getGetter(), DELEGATED_PROPERTY_RESOLVED_CALL);
-                    reportIfDynamicCall(property.getDelegate(), propertyDescriptor.getSetter(), DELEGATED_PROPERTY_RESOLVED_CALL);
+            override fun visitDestructuringDeclaration(destructuringDeclaration: KtDestructuringDeclaration) {
+                for (entry in destructuringDeclaration.entries) {
+                    reportIfDynamicCall(entry, entry, BindingContext.COMPONENT_RESOLVED_CALL)
                 }
-                super.visitProperty(property);
+                super.visitDestructuringDeclaration(destructuringDeclaration)
             }
 
-            @Override
-            public void visitThisExpression(@NotNull KtThisExpression expression) {
-                ResolvedCall<? extends CallableDescriptor> resolvedCall = CallUtilKt.getResolvedCall(expression, bindingContext);
+            override fun visitProperty(property: KtProperty) {
+                val descriptor = bindingContext.get(BindingContext.VARIABLE, property)
+                val delegate = property.delegate
+                if (descriptor is PropertyDescriptor && delegate != null) {
+                    reportIfDynamicCall(delegate, descriptor, BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL)
+                    reportIfDynamicCall(delegate, descriptor.getter, BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL)
+                    reportIfDynamicCall(delegate, descriptor.setter, BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL)
+                }
+                super.visitProperty(property)
+            }
+
+            override fun visitThisExpression(expression: KtThisExpression) {
+                val resolvedCall = expression.getResolvedCall(bindingContext)
                 if (resolvedCall != null) {
-                    reportIfDynamic(expression, resolvedCall.getResultingDescriptor(), debugInfoReporter);
+                    reportIfDynamic(expression, resolvedCall.resultingDescriptor, debugInfoReporter)
                 }
-                super.visitThisExpression(expression);
+                super.visitThisExpression(expression)
             }
 
-            @Override
-            public void visitReferenceExpression(@NotNull KtReferenceExpression expression) {
-                super.visitReferenceExpression(expression);
-                if (!BindingContextUtils.isExpressionWithValidReference(expression, bindingContext)){
-                    return;
+            override fun visitReferenceExpression(expression: KtReferenceExpression) {
+                super.visitReferenceExpression(expression)
+                if (!BindingContextUtils.isExpressionWithValidReference(expression, bindingContext)) {
+                    return
                 }
-                IElementType referencedNameElementType = null;
-                if (expression instanceof KtSimpleNameExpression) {
-                    KtSimpleNameExpression nameExpression = (KtSimpleNameExpression) expression;
-                    IElementType elementType = expression.getNode().getElementType();
-                    if (elementType == KtNodeTypes.OPERATION_REFERENCE) {
-                        referencedNameElementType = nameExpression.getReferencedNameElementType();
+                var referencedNameElementType: IElementType? = null
+                if (expression is KtSimpleNameExpression) {
+                    val elementType = expression.getNode().elementType
+                    if (elementType === KtNodeTypes.OPERATION_REFERENCE) {
+                        referencedNameElementType = expression.getReferencedNameElementType()
                         if (EXCLUDED.contains(referencedNameElementType)) {
-                            return;
+                            return
                         }
                     }
-                    if (elementType == KtNodeTypes.LABEL ||
-                        nameExpression.getReferencedNameElementType() == KtTokens.THIS_KEYWORD) {
-                        return;
+                    if (elementType === KtNodeTypes.LABEL ||
+                        expression.getReferencedNameElementType() === KtTokens.THIS_KEYWORD
+                    ) {
+                        return
                     }
                 }
-
-                debugInfoReporter.preProcessReference(expression);
-
-                String target = null;
-                DeclarationDescriptor declarationDescriptor = bindingContext.get(REFERENCE_TARGET, expression);
+                debugInfoReporter.preProcessReference(expression)
+                var target: String? = null
+                val declarationDescriptor = bindingContext.get(BindingContext.REFERENCE_TARGET, expression)
                 if (declarationDescriptor != null) {
-                    target = declarationDescriptor.toString();
-
-                    reportIfDynamic(expression, declarationDescriptor, debugInfoReporter);
+                    target = declarationDescriptor.toString()
+                    reportIfDynamic(expression, declarationDescriptor, debugInfoReporter)
                 }
                 if (target == null) {
-                    PsiElement labelTarget = bindingContext.get(LABEL_TARGET, expression);
+                    val labelTarget = bindingContext.get(BindingContext.LABEL_TARGET, expression)
                     if (labelTarget != null) {
-                        target = labelTarget.getText();
+                        target = labelTarget.text
                     }
                 }
                 if (target == null) {
-                    Collection<? extends DeclarationDescriptor> declarationDescriptors =
-                            bindingContext.get(AMBIGUOUS_REFERENCE_TARGET, expression);
+                    val declarationDescriptors = bindingContext.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression)
                     if (declarationDescriptors != null) {
-                        target = "[" + declarationDescriptors.size() + " descriptors]";
+                        target = "[" + declarationDescriptors.size + " descriptors]"
                     }
                 }
                 if (target == null) {
-                    Collection<? extends PsiElement> labelTargets = bindingContext.get(AMBIGUOUS_LABEL_TARGET, expression);
+                    val labelTargets = bindingContext.get(BindingContext.AMBIGUOUS_LABEL_TARGET, expression)
                     if (labelTargets != null) {
-                        target = "[" + labelTargets.size() + " elements]";
+                        target = "[" + labelTargets.size + " elements]"
                     }
                 }
-
                 if (MAY_BE_UNRESOLVED.contains(referencedNameElementType)) {
-                    return;
+                    return
                 }
-
-                boolean resolved = target != null;
-                boolean markedWithError = markedWithErrorElements.containsKey(expression);
-                if (expression instanceof KtArrayAccessExpression &&
-                    markedWithErrorElements.containsKey(((KtArrayAccessExpression) expression).getArrayExpression())) {
+                val resolved = target != null
+                var markedWithError = markedWithErrorElements.containsKey(expression)
+                if (expression is KtArrayAccessExpression &&
+                    markedWithErrorElements.containsKey(expression.arrayExpression)
+                ) {
                     // if 'foo' in 'foo[i]' is unresolved it means 'foo[i]' is unresolved (otherwise 'foo[i]' is marked as 'missing unresolved')
-                    markedWithError = true;
+                    markedWithError = true
                 }
-                KotlinType expressionType = bindingContext.getType(expression);
-                DiagnosticFactory<?> factory = markedWithErrorElements.get(expression);
+                val expressionType = bindingContext.getType(expression)
+                val factory = markedWithErrorElements[expression]
                 if (declarationDescriptor != null &&
-                    (ErrorUtils.isError(declarationDescriptor) || ErrorUtils.containsErrorType(expressionType))) {
-                    if (factory != Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND) {
-                        debugInfoReporter.reportElementWithErrorType(expression);
+                    (ErrorUtils.isError(declarationDescriptor) || ErrorUtils.containsErrorType(expressionType))
+                ) {
+                    if (factory !== Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND) {
+                        debugInfoReporter.reportElementWithErrorType(expression)
                     }
                 }
                 if (resolved && markedWithError) {
                     if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(factory)) {
-                        debugInfoReporter.reportUnresolvedWithTarget(expression, target);
+                        debugInfoReporter.reportUnresolvedWithTarget(expression, target!!)
                     }
-                }
-                else if (!resolved && !markedWithError) {
-                    debugInfoReporter.reportMissingUnresolved(expression);
+                } else if (!resolved && !markedWithError) {
+                    debugInfoReporter.reportMissingUnresolved(expression)
                 }
             }
 
-            private <E extends KtElement, K, D extends CallableDescriptor> boolean reportIfDynamicCall(E element, K key, WritableSlice<K, ResolvedCall<D>> slice) {
-                ResolvedCall<D> resolvedCall = bindingContext.get(slice, key);
-                if (resolvedCall != null) {
-                    return reportIfDynamic(element, resolvedCall.getResultingDescriptor(), debugInfoReporter);
-                }
-                return false;
+            private fun <E : KtElement, K, D : CallableDescriptor?> reportIfDynamicCall(
+                element: E,
+                key: K,
+                slice: WritableSlice<K, ResolvedCall<D>>
+            ): Boolean {
+                val resolvedCall = bindingContext[slice, key]
+                return if (resolvedCall != null) {
+                    reportIfDynamic(element, resolvedCall.resultingDescriptor, debugInfoReporter)
+                } else false
             }
-        });
+        })
     }
 
-    private static boolean reportIfDynamic(KtElement element, DeclarationDescriptor declarationDescriptor, DebugInfoReporter debugInfoReporter) {
-        if (declarationDescriptor != null && DynamicCallsKt.isDynamic(declarationDescriptor)) {
-            debugInfoReporter.reportDynamicCall(element, declarationDescriptor);
-            return true;
+    private fun reportIfDynamic(
+        element: KtElement,
+        declarationDescriptor: DeclarationDescriptor?,
+        debugInfoReporter: DebugInfoReporter
+    ): Boolean {
+        if (declarationDescriptor != null && declarationDescriptor.isDynamic()) {
+            debugInfoReporter.reportDynamicCall(element, declarationDescriptor)
+            return true
         }
-        return false;
+        return false
+    }
+
+    abstract class DebugInfoReporter {
+        fun preProcessReference(expression: KtReferenceExpression) {
+            // do nothing
+        }
+
+        abstract fun reportElementWithErrorType(expression: KtReferenceExpression)
+        abstract fun reportMissingUnresolved(expression: KtReferenceExpression)
+        abstract fun reportUnresolvedWithTarget(expression: KtReferenceExpression, target: String)
+        open fun reportDynamicCall(element: KtElement, declarationDescriptor: DeclarationDescriptor) {}
     }
 }
