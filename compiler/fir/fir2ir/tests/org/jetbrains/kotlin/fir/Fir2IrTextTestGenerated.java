@@ -1192,6 +1192,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/objectAsCallable.kt");
         }
 
+        @TestMetadata("objectByNameInsideObject.kt")
+        public void testObjectByNameInsideObject() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/objectByNameInsideObject.kt");
+        }
+
         @TestMetadata("objectClassReference.kt")
         public void testObjectClassReference() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/objectClassReference.kt");
