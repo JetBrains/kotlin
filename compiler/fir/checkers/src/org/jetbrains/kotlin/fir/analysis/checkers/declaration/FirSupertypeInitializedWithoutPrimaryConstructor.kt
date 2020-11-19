@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.util.diff.FlyweightCapableTreeStructure
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
@@ -56,16 +56,10 @@ object FirSupertypeInitializedWithoutPrimaryConstructor : FirMemberDeclarationCh
     }
 
     private fun LighterASTNode.anySupertypeHasConstructorParentheses(tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
-        val superTypes = getChildren(tree).find { it.tokenType == KtNodeTypes.SUPER_TYPE_LIST }
+        val superTypes = getChildren(tree).find { it?.tokenType == KtNodeTypes.SUPER_TYPE_LIST }
             ?: return false
 
-        return superTypes.getChildren(tree).any { it.tokenType == KtNodeTypes.SUPER_TYPE_CALL_ENTRY }
-    }
-
-    private fun LighterASTNode.getChildren(tree: FlyweightCapableTreeStructure<LighterASTNode>): List<LighterASTNode> {
-        val children = Ref<Array<LighterASTNode?>>()
-        val count = tree.getChildren(this, children)
-        return if (count > 0) children.get().filterNotNull() else emptyList()
+        return superTypes.getChildren(tree).any { it?.tokenType == KtNodeTypes.SUPER_TYPE_CALL_ENTRY }
     }
 
     private fun DiagnosticReporter.report(source: FirSourceElement?) {

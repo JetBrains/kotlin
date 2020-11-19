@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
-import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.cfa.*
+import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
@@ -103,9 +102,8 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         is FirLightSourceElement -> {
             val source = fir.source as FirLightSourceElement
             val tree = (fir.source as FirLightSourceElement).treeStructure
-            val children = Ref<Array<LighterASTNode?>>()
-            tree.getChildren(source.lighterASTNode, children)
-            children.get().filterNotNull().filter { it.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY }.size
+            val children = source.lighterASTNode.getChildren(tree)
+            children.filter { it?.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY }.size
         }
         else -> null
     }

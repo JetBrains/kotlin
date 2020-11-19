@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameIdentifierOwner
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClass
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory3
@@ -233,10 +232,8 @@ object FirExposedVisibilityDeclarationChecker : FirMemberDeclarationChecker() {
     private fun FirSourceElement.getIdentifierSource() = when (this) {
         is FirPsiSourceElement<*> -> (this.psi as? PsiNameIdentifierOwner)?.nameIdentifier?.toFirPsiSourceElement()
         is FirLightSourceElement -> {
-            val kidsRef = Ref<Array<LighterASTNode?>>()
-            this.treeStructure.getChildren(lighterASTNode, kidsRef)
-            val identifier = kidsRef.get().find { it?.tokenType == KtTokens.IDENTIFIER }
-            identifier?.toFirLightSourceElement(this.treeStructure)
+            val identifier = lighterASTNode.getChildren(treeStructure).find { it?.tokenType == KtTokens.IDENTIFIER }
+            identifier?.toFirLightSourceElement(treeStructure)
         }
     }
 

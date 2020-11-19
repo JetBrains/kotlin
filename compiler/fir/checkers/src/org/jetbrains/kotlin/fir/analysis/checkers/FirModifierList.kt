@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import com.intellij.lang.ASTNode
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
@@ -27,9 +26,8 @@ fun FirSourceElement?.getModifierList(): FirModifierList? {
         null -> null
         is FirPsiSourceElement<*> -> (psi as? KtModifierListOwner)?.modifierList?.let { FirPsiModifierList(it) }
         is FirLightSourceElement -> {
-            val kidsRef = Ref<Array<LighterASTNode?>>()
-            treeStructure.getChildren(lighterASTNode, kidsRef)
-            val modifierListNode = kidsRef.get().find { it?.tokenType == KtNodeTypes.MODIFIER_LIST } ?: return null
+            val modifierListNode = lighterASTNode.getChildren(treeStructure).find { it?.tokenType == KtNodeTypes.MODIFIER_LIST }
+                ?: return null
             FirLightModifierList(modifierListNode, treeStructure)
         }
     }
@@ -48,9 +46,7 @@ class FirPsiModifierList(val modifierList: KtModifierList) : FirModifierList() {
 class FirLightModifierList(val modifierList: LighterASTNode, val tree: FlyweightCapableTreeStructure<LighterASTNode>) : FirModifierList() {
     override val modifiers: List<FirLightModifier>
         get() {
-            val kidsRef = Ref<Array<LighterASTNode?>>()
-            tree.getChildren(modifierList, kidsRef)
-            val modifierNodes = kidsRef.get()
+            val modifierNodes = modifierList.getChildren(tree)
             return modifierNodes.filterNotNull()
                 .filter { it.tokenType is KtModifierKeywordToken }
                 .map { FirLightModifier(it, it.tokenType as KtModifierKeywordToken, tree) }
