@@ -70,4 +70,37 @@ public class DiagnosticsWithJdk15TestGenerated extends AbstractDiagnosticsWithJd
             runTest("compiler/testData/diagnostics/testsWithJava15/jvmRecord/supertypesCheck.kt");
         }
     }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithJava15/sealedClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SealedClasses extends AbstractDiagnosticsWithJdk15Test {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSealedClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava15/sealedClasses"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("javaSealedClassExhaustiveness.kt")
+        public void testJavaSealedClassExhaustiveness() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJava15/sealedClasses/javaSealedClassExhaustiveness.kt");
+        }
+
+        @TestMetadata("javaSealedInterfaceExhaustiveness.kt")
+        public void testJavaSealedInterfaceExhaustiveness() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJava15/sealedClasses/javaSealedInterfaceExhaustiveness.kt");
+        }
+
+        @TestMetadata("kotlinInheritsJavaClass.kt")
+        public void testKotlinInheritsJavaClass() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJava15/sealedClasses/kotlinInheritsJavaClass.kt");
+        }
+
+        @TestMetadata("kotlinInheritsJavaInterface.kt")
+        public void testKotlinInheritsJavaInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJava15/sealedClasses/kotlinInheritsJavaInterface.kt");
+        }
+    }
 }

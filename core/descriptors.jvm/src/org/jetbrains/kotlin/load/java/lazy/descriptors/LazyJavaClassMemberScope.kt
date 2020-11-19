@@ -515,7 +515,7 @@ class LazyJavaClassMemberScope(
             returnType,
             // Those functions are generated as open in bytecode
             // Actually, it should not be important because the class is final anyway, but leaving them open is convenient for consistency
-            Modality.convertFromFlags(abstract = false, open = true),
+            Modality.convertFromFlags(sealed = false, abstract = false, open = true),
             DescriptorVisibilities.PUBLIC,
             null,
         )
