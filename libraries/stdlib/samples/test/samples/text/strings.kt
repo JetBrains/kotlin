@@ -408,4 +408,13 @@ class Strings {
         assertPrints(matchDetails(inputString, toFind, 2), "Searching for 'ever' in 'Never ever give up' starting at position 2: Found at 6")
         assertPrints(matchDetails(inputString, toFind, 10), "Searching for 'ever' in 'Never ever give up' starting at position 10: Not found")
     }
+
+	@Sample
+	fun replace() {
+		val inputString0 = "Mississippi"
+		val inputString1 = "How can the net amount of entropy of the universe be massively decreased?"
+
+		assertPrints(inputString0.replace('s', 'z'), "Mizzizzippi")
+		assertPrints(inputString1.replace("decreased", "increased"), "How can the net amount of entropy of the universe be massively increased?")
+	}
 }
