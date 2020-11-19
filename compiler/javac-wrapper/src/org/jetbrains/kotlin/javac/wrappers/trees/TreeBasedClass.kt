@@ -118,6 +118,13 @@ class TreeBasedClass(
     override val isRecord: Boolean
         get() = false
 
+    // TODO
+    override val isSealed: Boolean
+        get() = false
+
+    override val permittedTypes: Collection<JavaClassifierType>
+        get() = emptyList()
+
     override val lightClassOriginKind: LightClassOriginKind?
         get() = null
 
