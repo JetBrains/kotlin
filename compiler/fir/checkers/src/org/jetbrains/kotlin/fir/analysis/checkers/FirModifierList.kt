@@ -76,11 +76,6 @@ val FirModifier<*>.lightNode: LighterASTNode? get() = (this as? FirLightModifier
 
 val FirModifier<*>.source: FirSourceElement?
     get() = when (this) {
-        is FirPsiModifier -> this.psi?.toFirPsiSourceElement()
-        is FirLightModifier -> {
-            // TODO pretty sure I got offsets wrong here
-            val startOffset = tree.getStartOffset(node)
-            val endOffset = tree.getEndOffset(node)
-            node.toFirLightSourceElement(startOffset, endOffset, tree)
-        }
+        is FirPsiModifier -> psi?.toFirPsiSourceElement()
+        is FirLightModifier -> node.toFirLightSourceElement(tree)
     }

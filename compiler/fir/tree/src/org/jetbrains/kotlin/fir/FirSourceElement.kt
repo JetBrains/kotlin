@@ -288,7 +288,8 @@ inline fun PsiElement.toFirPsiSourceElement(kind: FirSourceElementKind = FirReal
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun LighterASTNode.toFirLightSourceElement(
-    startOffset: Int, endOffset: Int,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
-    kind: FirSourceElementKind = FirRealSourceElementKind
+    kind: FirSourceElementKind = FirRealSourceElementKind,
+    startOffset: Int = this.startOffset,
+    endOffset: Int = this.endOffset
 ): FirLightSourceElement = FirLightSourceElement(this, startOffset, endOffset, tree, kind)
