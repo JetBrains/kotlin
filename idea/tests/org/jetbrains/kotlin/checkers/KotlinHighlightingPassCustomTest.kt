@@ -13,7 +13,7 @@ import org.junit.runner.RunWith
 
 @TestMetadata("idea/testData/checker/custom")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class PsiCheckerCustomTest : AbstractPsiCheckerTest() {
+class KotlinHighlightingPassCustomTest : AbstractKotlinHighlightingPassTest() {
 
     @TestMetadata("noUnusedParameterWhenCustom.kt")
     fun testNoUnusedParameterWhenCustom() {

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.fir.highlighter.visitors
 
 import com.intellij.lang.annotation.AnnotationHolder
+import com.intellij.openapi.editor.colors.TextAttributesKey
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.highlighter.HighlightingVisitor
 
@@ -13,6 +15,12 @@ abstract class FirAfterResolveHighlightingVisitor(
     protected val analysisSession: KtAnalysisSession,
     protected val holder: AnnotationHolder
 ) : HighlightingVisitor(holder) {
+
+    override fun createInfoAnnotation(textRange: TextRange, message: String?, textAttributes: TextAttributesKey?) {
+        // TODO: Temporary use deprecated for FIR plugin as it is supposes to be rewritten fully
+        holder.createInfoAnnotation(textRange, message)
+            .also { annotation -> textAttributes?.let { annotation.textAttributes = textAttributes } }
+    }
 
     companion object {
         fun createListOfVisitors(

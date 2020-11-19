@@ -239,7 +239,7 @@ fun main(args: Array<String>) {
                 model("resolve/partialBodyResolve")
             }
 
-            testClass<AbstractPsiCheckerTest> {
+            testClass<AbstractKotlinHighlightingPassTest> {
                 model("checker", recursive = false)
                 model("checker/regression")
                 model("checker/recovery")

@@ -10,6 +10,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ImplicitReceiverSmartcastKind
+import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors
 import org.jetbrains.kotlin.psi.*
 
 internal class ExpressionsSmartcastHighlightingVisitor(
@@ -30,8 +31,9 @@ internal class ExpressionsSmartcastHighlightingVisitor(
                         "0.smart.cast.to.1",
                         receiverName,
                         type.asStringForDebugging()
-                    )
-                ).textAttributes = org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.SMART_CAST_RECEIVER
+                    ),
+                    KotlinHighlightingColors.SMART_CAST_RECEIVER
+                )
             }
         }
         expression.getSmartCasts()?.forEach { type ->
@@ -40,8 +42,9 @@ internal class ExpressionsSmartcastHighlightingVisitor(
                 KotlinIdeaAnalysisBundle.message(
                     "smart.cast.to.0",
                     type.asStringForDebugging()
-                )
-            ).textAttributes = org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.SMART_CAST_VALUE
+                ),
+                KotlinHighlightingColors.SMART_CAST_VALUE
+            )
         }
 
         //todo smartcast to null

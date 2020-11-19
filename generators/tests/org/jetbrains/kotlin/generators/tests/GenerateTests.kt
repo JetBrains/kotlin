@@ -312,7 +312,7 @@ fun main(args: Array<String>) {
                 model("resolve/resolveModeComparison")
             }
 
-            testClass<AbstractPsiCheckerTest> {
+            testClass<AbstractKotlinHighlightingPassTest> {
                 model("checker", recursive = false)
                 model("checker/regression")
                 model("checker/recovery")
@@ -1092,7 +1092,7 @@ fun main(args: Array<String>) {
                 model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
 
-            testClass<AbstractFirPsiCheckerTest> {
+            testClass<AbstractFirKotlinHighlightingPassTest> {
                 model("checker", recursive = false)
                 model("checker/regression")
                 model("checker/recovery")

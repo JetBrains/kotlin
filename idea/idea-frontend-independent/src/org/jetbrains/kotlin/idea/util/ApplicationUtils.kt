@@ -58,6 +58,8 @@ inline fun invokeLater(expired: Condition<*>, crossinline action: () -> Unit) =
 
 inline fun isUnitTestMode(): Boolean = ApplicationManager.getApplication().isUnitTestMode
 
+inline fun isApplicationInternalMode(): Boolean = ApplicationManager.getApplication().isInternal
+
 inline fun <reified T : Any> ComponentManager.getServiceSafe(): T =
     this.getService(T::class.java) ?: error("Unable to locate service ${T::class.java.name}")
 
