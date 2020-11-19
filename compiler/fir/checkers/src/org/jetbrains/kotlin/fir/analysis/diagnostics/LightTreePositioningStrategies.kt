@@ -12,6 +12,7 @@ import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 
@@ -37,7 +38,7 @@ object LightTreePositioningStrategies {
 
     val VAL_OR_VAR_NODE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
-            val target = tree.findChildByType(node, VAL_VAR_TOKEN_SET) ?: node
+            val target = tree.valOrVarKeyword(node) ?: node
             return markElement(target, tree)
         }
     }
@@ -143,6 +144,12 @@ object LightTreePositioningStrategies {
     }
 }
 
+fun FirSourceElement.hasValOrVar(): Boolean =
+    treeStructure.valOrVarKeyword(lighterASTNode) != null
+
+fun FirSourceElement.hasVar(): Boolean =
+    treeStructure.findChildByType(lighterASTNode, KtTokens.VAR_KEYWORD) != null
+
 private fun FlyweightCapableTreeStructure<LighterASTNode>.constructorKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.CONSTRUCTOR_KEYWORD)
 
@@ -157,6 +164,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.rightParenthesis(node:
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.objectKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.OBJECT_KEYWORD)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.valOrVarKeyword(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, VAL_VAR_TOKEN_SET)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.accessorNamePlaceholder(node: LighterASTNode): LighterASTNode =
     findChildByType(node, KtTokens.GET_KEYWORD) ?: findChildByType(node, KtTokens.SET_KEYWORD)!!
@@ -186,15 +196,15 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.receiverTypeReference(
 }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: IElementType): LighterASTNode? {
-    val childrenRef = Ref<Array<LighterASTNode>>()
+    val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
-    return childrenRef.get()?.firstOrNull { it.tokenType == type }
+    return childrenRef.get()?.firstOrNull { it?.tokenType == type }
 }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.findChildByType(node: LighterASTNode, type: TokenSet): LighterASTNode? {
-    val childrenRef = Ref<Array<LighterASTNode>>()
+    val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
-    return childrenRef.get()?.firstOrNull { it.tokenType in type }
+    return childrenRef.get()?.firstOrNull { it?.tokenType in type }
 }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.findParentOfType(node: LighterASTNode, type: IElementType): LighterASTNode? {

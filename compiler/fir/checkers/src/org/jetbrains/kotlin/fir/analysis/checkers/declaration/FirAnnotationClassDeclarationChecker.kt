@@ -5,18 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind.ANNOTATION_CLASS
 import org.jetbrains.kotlin.descriptors.ClassKind.ENUM_CLASS
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticFactory0
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.FirLightSourceElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -27,10 +20,8 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds.unsignedTypes
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.KtNodeTypes.FUN
 import org.jetbrains.kotlin.KtNodeTypes.VALUE_PARAMETER
-import org.jetbrains.kotlin.lexer.KtTokens.VAL_KEYWORD
-import org.jetbrains.kotlin.lexer.KtTokens.VAR_KEYWORD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtParameter
 
 object FirAnnotationClassDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -42,24 +33,11 @@ object FirAnnotationClassDeclarationChecker : FirBasicDeclarationChecker() {
             when {
                 it is FirConstructor && it.isPrimary -> {
                     for (parameter in it.valueParameters) {
-                        when (val parameterSourceElement = parameter.source) {
-                            is FirPsiSourceElement<*> -> {
-                                val parameterPsiElement = parameterSourceElement.psi as KtParameter
-
-                                if (!parameterPsiElement.hasValOrVar())
-                                    reporter.report(parameterSourceElement, FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER)
-                                else if (parameterPsiElement.isMutable)
-                                    reporter.report(parameterSourceElement, FirErrors.VAR_ANNOTATION_PARAMETER)
-                            }
-                            is FirLightSourceElement -> {
-                                val kidsRef = Ref<Array<LighterASTNode?>>()
-                                parameterSourceElement.treeStructure.getChildren(parameterSourceElement.lighterASTNode, kidsRef)
-
-                                if (kidsRef.get().any { it?.tokenType == VAR_KEYWORD })
-                                    reporter.report(parameterSourceElement, FirErrors.VAR_ANNOTATION_PARAMETER)
-                                else if (kidsRef.get().all { it?.tokenType != VAL_KEYWORD })
-                                    reporter.report(parameterSourceElement, FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER)
-                            }
+                        val source = parameter.source ?: continue
+                        if (!source.hasValOrVar()) {
+                            reporter.report(source, FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER)
+                        } else if (source.hasVar()) {
+                            reporter.report(source, FirErrors.VAR_ANNOTATION_PARAMETER)
                         }
 
                         val typeRef = parameter.returnTypeRef
