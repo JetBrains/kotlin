@@ -76,6 +76,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
@@ -513,7 +514,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
         return when {
             descriptor is ConstructorDescriptor -> {
                 val classDescriptor = descriptor.constructedClass
-                !classDescriptor.isInline && classDescriptor.visibility != DescriptorVisibilities.LOCAL
+                !classDescriptor.isInlineClass() && classDescriptor.visibility != DescriptorVisibilities.LOCAL
             }
             hasModifier(KtTokens.INTERNAL_KEYWORD) -> false
             descriptor !is FunctionDescriptor -> true
