@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
 
 @TestMetadata("idea/testData/checker/sealed")
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class PsiCheckerSealedTest : AbstractPsiCheckerTest() {
+class KotlinHighlightingPassSealedTest : AbstractKotlinHighlightingPassTest() {
 
     fun testOutsideOfPackageInheritors() {
         doTest(

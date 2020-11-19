@@ -35,8 +35,8 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
         if (target is ValueParameterDescriptor && bindingContext.get(AUTO_CREATED_IT, target) == true) {
             createInfoAnnotation(
                 expression,
-                FUNCTION_LITERAL_DEFAULT_PARAMETER,
-                KotlinIdeaAnalysisBundle.message("automatically.declared.based.on.the.expected.type")
+                KotlinIdeaAnalysisBundle.message("automatically.declared.based.on.the.expected.type"),
+                FUNCTION_LITERAL_DEFAULT_PARAMETER
             )
         } else if (expression.parent !is KtValueArgumentName) { // highlighted separately
             highlightVariable(expression, target)
@@ -91,14 +91,15 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
                         "0.smart.cast.to.1",
                         receiverName,
                         DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
-                    )
-                ).textAttributes = SMART_CAST_RECEIVER
+                    ),
+                    SMART_CAST_RECEIVER
+                )
             }
         }
 
         val nullSmartCast = bindingContext.get(SMARTCAST_NULL, expression) == true
         if (nullSmartCast) {
-            createInfoAnnotation(expression, KotlinIdeaAnalysisBundle.message("always.null")).textAttributes = SMART_CONSTANT
+            createInfoAnnotation(expression, KotlinIdeaAnalysisBundle.message("always.null"), SMART_CONSTANT)
         }
 
         val smartCast = bindingContext.get(SMARTCAST, expression)
@@ -107,8 +108,9 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
             if (defaultType != null) {
                 createInfoAnnotation(
                     getSmartCastTarget(expression),
-                    KotlinIdeaAnalysisBundle.message("smart.cast.to.0", DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(defaultType))
-                ).textAttributes = SMART_CAST_VALUE
+                    KotlinIdeaAnalysisBundle.message("smart.cast.to.0", DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(defaultType)),
+                    SMART_CAST_VALUE
+                )
             } else if (smartCast is MultipleSmartCasts) {
                 for ((call, type) in smartCast.map) {
                     createInfoAnnotation(
@@ -117,8 +119,9 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
                             "smart.cast.to.0.for.1.call",
                             DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type),
                             call.toString()
-                        )
-                    ).textAttributes = SMART_CAST_VALUE
+                        ),
+                        SMART_CAST_VALUE
+                    )
                 }
             }
         }
@@ -154,7 +157,7 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
 
                 val parent = elementToHighlight.parent
                 if (!(parent is PsiNameIdentifierOwner && parent.nameIdentifier == elementToHighlight)) {
-                    createInfoAnnotation(elementToHighlight, WRAPPED_INTO_REF, msg)
+                    createInfoAnnotation(elementToHighlight, msg, WRAPPED_INTO_REF)
                     return
                 }
             }

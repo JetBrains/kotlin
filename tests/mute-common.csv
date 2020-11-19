@@ -79,7 +79,7 @@ org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.Facades.test
 org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.CompilationErrors.testActualTypeAliasCustomJvmPackageName, Invalid behavior of old lightclasses in common tests,,
 org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.CompilationErrors.testJvmPackageName, Invalid behavior of old lightclasses in common tests,,
 org.jetbrains.uast.test.kotlin.SimpleKotlinRenderLogTest.testReceiverFun, Analysing of facade annotation with receiver site is broken (connected with KT-40403),,
-org.jetbrains.kotlin.checkers.FirPsiCheckerTestGenerated.Regression.testJet53,,, FLAKY
+org.jetbrains.kotlin.checkers.FirKotlinHighlightingPassTestGenerated.Regression.testJet53,,, FLAKY
 org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testLanguageVersionsViaFacets,,, FLAKY
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Jvm.testCircular, Temporary muted due to problems with IC and JVM IR backend,,
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.Jvm.testCircularDependencyClasses, Temporary muted due to problems with IC and JVM IR backend,,
