@@ -123,6 +123,10 @@ fun main(args: Array<String>) {
                 model("diagnostics/testsWithJava9")
             }
 
+            testClass<AbstractDiagnosticsWithJdk15Test> {
+                model("diagnostics/testsWithJava15")
+            }
+
             testClass<AbstractDiagnosticsWithUnsignedTypes> {
                 model("diagnostics/testsWithUnsignedTypes")
             }

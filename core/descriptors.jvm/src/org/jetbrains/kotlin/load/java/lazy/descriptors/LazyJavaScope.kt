@@ -174,7 +174,7 @@ abstract class LazyJavaScope(
             effectiveSignature.typeParameters,
             effectiveSignature.valueParameters,
             effectiveSignature.returnType,
-            Modality.convertFromFlags(method.isAbstract, !method.isFinal),
+            Modality.convertFromFlags(sealed = false, method.isAbstract, !method.isFinal),
             method.visibility.toDescriptorVisibility(),
             if (effectiveSignature.receiverType != null)
                 mapOf(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER to valueParameters.descriptors.first())
