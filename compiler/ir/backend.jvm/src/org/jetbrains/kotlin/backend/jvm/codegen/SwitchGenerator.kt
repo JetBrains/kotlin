@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isTrueConst
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
 // TODO: eliminate the temporary variable
@@ -367,7 +368,8 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
             // information for the subject as the `when` line number has already been
             // emitted.
             codegen.noLineNumberScope {
-                subject.accept(codegen, data).materialize()
+                val subjectValue = subject.accept(codegen, data)
+                subjectValue.materializeAt(Type.INT_TYPE, subjectValue.irType)
             }
             genIntSwitch(cases)
         }
