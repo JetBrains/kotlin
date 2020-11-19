@@ -33,6 +33,7 @@ import kotlin.reflect.KClass
     minSdk = 23,
     maxSdk = 23
 )
+@Ignore("b/173733968")
 class ComposeCallLoweringTests : AbstractLoweringTests() {
 
     @Test
