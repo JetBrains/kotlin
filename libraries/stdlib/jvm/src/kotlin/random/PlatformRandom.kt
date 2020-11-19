@@ -47,9 +47,7 @@ internal abstract class AbstractPlatformRandom : Random() {
     override fun nextBytes(array: ByteArray): ByteArray = array.also { impl.nextBytes(it) }
 }
 
-internal object FallbackThreadLocalRandom : AbstractPlatformRandom(), Serializable {
-    private const val serialVersionUID = -727456608900724668L
-
+internal object FallbackThreadLocalRandom : AbstractPlatformRandom() {
     private val implStorage = object : ThreadLocal<java.util.Random>() {
         override fun initialValue(): java.util.Random {
             return java.util.Random()
@@ -58,12 +56,10 @@ internal object FallbackThreadLocalRandom : AbstractPlatformRandom(), Serializab
 
     override val impl: java.util.Random
         get() = implStorage.get()
-
-    private fun readResolve(): Any = FallbackThreadLocalRandom
 }
 
 private class PlatformRandom(override val impl: java.util.Random) : AbstractPlatformRandom(), Serializable {
-    companion object {
+    private companion object {
         private const val serialVersionUID = -6515078090931313608L
     }
 }
@@ -92,7 +88,7 @@ private class KotlinRandom(val impl: Random) : java.util.Random() {
         }
     }
 
-    companion object {
+    private companion object {
         private const val serialVersionUID = 1188431230196828587L
     }
 }
