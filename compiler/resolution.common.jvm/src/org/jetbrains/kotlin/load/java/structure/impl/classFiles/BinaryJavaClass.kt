@@ -65,6 +65,9 @@ class BinaryJavaClass(
     override val isEnum get() = isSet(Opcodes.ACC_ENUM)
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
+    override val isSealed: Boolean get() = permittedTypes.isNotEmpty()
+    override val permittedTypes = arrayListOf<JavaClassifierType>()
+
     override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = false
 
     override fun visitEnd() {
@@ -217,5 +220,9 @@ class BinaryJavaClass(
                 classFileContent
             )
         }
+    }
+
+    override fun visitPermittedSubtypeExperimental(permittedSubtype: String?) {
+        permittedTypes.addIfNotNull(permittedSubtype?.convertInternalNameToClassifierType())
     }
 }

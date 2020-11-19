@@ -114,6 +114,13 @@ class TreeBasedClass(
     override val isEnum: Boolean
         get() = tree.modifiers.flags and Flags.ENUM.toLong() != 0L
 
+    // TODO
+    override val isSealed: Boolean
+        get() = false
+
+    override val permittedTypes: Collection<JavaClassifierType>
+        get() = emptyList()
+
     override val lightClassOriginKind: LightClassOriginKind?
         get() = null
 

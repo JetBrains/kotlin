@@ -59,6 +59,12 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
     override val isEnum: Boolean
         get() = psi.isEnum
 
+    override val isSealed: Boolean
+        get() = JavaElementUtil.isSealed(this)
+
+    override val permittedTypes: Collection<JavaClassifierType>
+        get() = classifierTypes(psi.permitsListTypes)
+
     override val outerClass: JavaClassImpl?
         get() {
             val outer = psi.containingClass

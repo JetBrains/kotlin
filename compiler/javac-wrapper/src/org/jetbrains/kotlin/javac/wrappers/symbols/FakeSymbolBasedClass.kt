@@ -65,6 +65,10 @@ class FakeSymbolBasedClass(
 
     override val isEnum: Boolean get() = false
 
+    override val isSealed: Boolean get() = false
+
+    override val permittedTypes: Collection<JavaClassifierType> get() = emptyList()
+
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     override val methods: Collection<JavaMethod> get() = emptyList()

@@ -114,6 +114,12 @@ class ReflectJavaClass(
     override val isEnum: Boolean
         get() = klass.isEnum
 
+    override val isSealed: Boolean
+        get() = false
+
+    override val permittedTypes: Collection<JavaClassifierType>
+        get() = emptyList()
+
     override fun equals(other: Any?) = other is ReflectJavaClass && klass == other.klass
 
     override fun hashCode() = klass.hashCode()
