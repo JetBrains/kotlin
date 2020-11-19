@@ -34,8 +34,8 @@ internal class VariableReferenceHighlightingVisitor(
         if (expression.isAutoCreatedItParameter()) {
             createInfoAnnotation(
                 expression,
-                Colors.FUNCTION_LITERAL_DEFAULT_PARAMETER,
-                KotlinIdeaAnalysisBundle.message("automatically.declared.based.on.the.expected.type")
+                KotlinIdeaAnalysisBundle.message("automatically.declared.based.on.the.expected.type"),
+                Colors.FUNCTION_LITERAL_DEFAULT_PARAMETER
             )
             return
         }

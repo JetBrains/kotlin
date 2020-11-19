@@ -6,51 +6,29 @@
 package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.codeHighlighting.*
-import com.intellij.codeInsight.daemon.impl.AnnotationHolderImpl
-import com.intellij.codeInsight.daemon.impl.HighlightInfo
-import com.intellij.codeInsight.daemon.impl.UpdateHighlightersUtil
 import com.intellij.lang.annotation.AnnotationHolder
-import com.intellij.lang.annotation.AnnotationSession
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.progress.ProgressIndicator
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiRecursiveElementVisitor
 import org.jetbrains.kotlin.psi.KtFile
 
-class KotlinBeforeResolveHighlightingPass(
-    private val file: KtFile,
-    document: Document
-) : TextEditorHighlightingPass(file.project, document), DumbAware {
+class KotlinBeforeResolveHighlightingPass(file: KtFile, document: Document) : AbstractHighlightingPassBase(file, document) {
 
-    @Volatile
-    private var annotationHolder: AnnotationHolderImpl? = null
+    override fun runAnnotatorWithContext(element: PsiElement, holder: AnnotationHolder) {
+        val visitor = BeforeResolveHighlightingVisitor(holder)
+        val extensions = EP_NAME.extensionList.map { it.createVisitor(holder) }
 
-    override fun doCollectInformation(progress: ProgressIndicator) {
-        val annotationHolder = AnnotationHolderImpl(AnnotationSession(file))
-        val visitor = BeforeResolveHighlightingVisitor(annotationHolder)
-        val extensions = EP_NAME.extensionList.map { it.createVisitor(annotationHolder) }
-        file.accept(object : PsiRecursiveElementVisitor() {
+        element.accept(object : PsiRecursiveElementVisitor() {
             override fun visitElement(element: PsiElement) {
-                super.visitElement(element)
                 element.accept(visitor)
                 extensions.forEach(element::accept)
+                super.visitElement(element)
             }
         })
-        this.annotationHolder = annotationHolder
-    }
-
-    override fun doApplyInformationToEditor() {
-        if (annotationHolder == null) return
-
-        val infos = annotationHolder!!.map { HighlightInfo.fromAnnotation(it) }
-
-        UpdateHighlightersUtil.setHighlightersToEditor(myProject, myDocument!!, 0, file.textLength, infos, colorsScheme, id)
-        annotationHolder = null
     }
 
     class Factory : TextEditorHighlightingPassFactory {
@@ -64,10 +42,10 @@ class KotlinBeforeResolveHighlightingPass(
         override fun registerHighlightingPassFactory(registrar: TextEditorHighlightingPassRegistrar, project: Project) {
             registrar.registerTextEditorHighlightingPass(
                 Factory(),
-                TextEditorHighlightingPassRegistrar.Anchor.BEFORE,
-                Pass.UPDATE_FOLDING,
-                false,
-                false
+                /* anchor = */ TextEditorHighlightingPassRegistrar.Anchor.BEFORE,
+                /* anchorPassId = */ Pass.UPDATE_FOLDING,
+                /* needAdditionalIntentionsPass = */ false,
+                /* inPostHighlightingPass = */ false
             )
         }
     }

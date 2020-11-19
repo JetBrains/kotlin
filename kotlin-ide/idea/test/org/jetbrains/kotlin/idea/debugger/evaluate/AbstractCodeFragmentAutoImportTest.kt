@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.idea.debugger.evaluate
 
-import org.jetbrains.kotlin.checkers.AbstractPsiCheckerTest
+import org.jetbrains.kotlin.checkers.AbstractKotlinHighlightingPassTest
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import kotlin.test.assertNull
 
-abstract class AbstractCodeFragmentAutoImportTest : AbstractPsiCheckerTest() {
+abstract class AbstractCodeFragmentAutoImportTest : AbstractKotlinHighlightingPassTest() {
     override fun doTest(filePath: String) {
         myFixture.configureByCodeFragment(filePath)
         myFixture.doHighlighting()
