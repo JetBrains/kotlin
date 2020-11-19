@@ -76,7 +76,7 @@ class LazyJavaClassDescriptor(
 
     private val modality =
         if (jClass.isAnnotationType || jClass.isEnum) Modality.FINAL
-        else Modality.convertFromFlags(jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
+        else Modality.convertFromFlags(jClass.isSealed, jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
 
     private val visibility = jClass.visibility
     private val isInner = jClass.outerClass != null && !jClass.isStatic
@@ -180,7 +180,14 @@ class LazyJavaClassDescriptor(
     fun wasScopeContentRequested() =
         getUnsubstitutedMemberScope().wasContentRequested() || staticScope.wasContentRequested()
 
-    override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
+    override fun getSealedSubclasses(): Collection<ClassDescriptor> = if (modality == Modality.SEALED) {
+        val attributes = TypeUsage.COMMON.toAttributes()
+        jClass.permittedTypes.mapNotNull {
+            c.typeResolver.transformJavaType(it, attributes).constructor.declarationDescriptor as? ClassDescriptor
+        }
+    } else {
+        emptyList()
+    }
 
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 
