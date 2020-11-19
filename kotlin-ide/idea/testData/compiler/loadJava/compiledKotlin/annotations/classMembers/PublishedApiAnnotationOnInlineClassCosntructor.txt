@@ -1,6 +1,6 @@
 package test
 
-public final value class Z {
+@kotlin.jvm.JvmInline /* annotation class not found */ public final value class Z {
     /*primary*/ @kotlin.PublishedApi internal constructor Z(/*0*/ value: kotlin.Int)
     public final val value: kotlin.Int
         public final fun <get-value>(): kotlin.Int
