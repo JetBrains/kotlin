@@ -63,14 +63,16 @@ class MutableVariableWithConstraints private constructor(
                     ConstraintKind.EQUALITY -> true
                 }
                 if (isMatchingForSimplification) {
-                    val actualConstraint = Constraint(
-                        ConstraintKind.EQUALITY,
-                        constraint.type,
-                        constraint.position,
-                        constraint.typeHashCode,
-                        derivedFrom = constraint.derivedFrom,
-                        isNullabilityConstraint = false
-                    )
+                    val actualConstraint = if (constraint.kind != ConstraintKind.EQUALITY) {
+                        Constraint(
+                            ConstraintKind.EQUALITY,
+                            constraint.type,
+                            constraint.position,
+                            constraint.typeHashCode,
+                            derivedFrom = constraint.derivedFrom,
+                            isNullabilityConstraint = false
+                        )
+                    } else constraint
                     mutableConstraints.add(actualConstraint)
                     simplifiedConstraints = null
                     return actualConstraint
