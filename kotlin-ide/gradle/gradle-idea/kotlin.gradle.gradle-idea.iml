@@ -74,6 +74,5 @@
     <orderEntry type="module" module-name="intellij.platform.core.ui" />
     <orderEntry type="module" module-name="kotlin.resources-descriptors" scope="TEST" />
     <orderEntry type="module" module-name="intellij.idea.ultimate.main.android" scope="TEST" />
-    <orderEntry type="module" module-name="intellij.gradle.dsl.kotlin.impl" scope="TEST" />
   </component>
 </module>
