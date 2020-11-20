@@ -1,5 +1,5 @@
 interface A {
-    fun foo(): String = "OK"
+    fun foo(): String = "Fail"
 }
 
 abstract class B : A {
@@ -8,4 +8,8 @@ abstract class B : A {
 
 abstract class C : B()
 
-fun box() = "OK"
+class D : C() {
+    override fun foo(): String = "OK"
+}
+
+fun box() = D().foo()
