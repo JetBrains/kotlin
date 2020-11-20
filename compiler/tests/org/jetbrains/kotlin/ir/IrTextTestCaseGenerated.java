@@ -1836,6 +1836,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/throwableStackTrace.kt");
         }
 
+        @TestMetadata("typeVariableAfterBuildMap.kt")
+        public void testTypeVariableAfterBuildMap() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/typeVariableAfterBuildMap.kt");
+        }
+
         @TestMetadata("V8ArrayToList.kt")
         public void testV8ArrayToList() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/V8ArrayToList.kt");
