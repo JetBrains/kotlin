@@ -50,7 +50,7 @@ fun case_4(x: Interface1?) {
     y as Interface2
     y = null
     fun foo() {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1?")!>y<!>.<!UNRESOLVED_REFERENCE!>itest2<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface1?")!>y<!>.<!UNRESOLVED_REFERENCE!>itest2<!>()
     }
     y = x
     foo()
@@ -62,7 +62,7 @@ fun case_5(x: Interface1?) {
     y as Interface2
     y = null
     fun foo() {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1?")!>y<!>.<!UNRESOLVED_REFERENCE!>itest2<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("Interface1? & Interface1?")!>y<!>.<!UNRESOLVED_REFERENCE!>itest2<!>()
     }
     y = x
     foo()

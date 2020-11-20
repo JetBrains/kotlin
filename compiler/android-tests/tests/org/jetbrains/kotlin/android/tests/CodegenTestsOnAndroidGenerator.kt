@@ -27,6 +27,9 @@ import org.junit.Assert
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.Path
+import kotlin.io.path.createTempDirectory
 import kotlin.test.assertTrue
 
 data class ConfigurationKey(val kind: ConfigurationKind, val jdkKind: TestJdkKind, val configuration: String)
@@ -345,14 +348,15 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             FileWriter(file).use { fw -> fw.write("sdk.dir=$sdkRoot") }
         }
 
+        @OptIn(ExperimentalPathApi::class)
         @JvmStatic
         fun main(args: Array<String>) {
-            val tmpFolder = createTempDir()
-            println("Created temporary folder for android tests: " + tmpFolder.absolutePath)
-            val rootFolder = File("")
-            val pathManager = PathManager(rootFolder.absolutePath, tmpFolder.absolutePath)
+            val tmpFolder = createTempDirectory().toAbsolutePath().toString()
+            println("Created temporary folder for android tests: $tmpFolder")
+            val rootFolder = Path("").toAbsolutePath().toString()
+            val pathManager = PathManager(rootFolder, tmpFolder)
             generate(pathManager, true)
-            println("Android test project is generated into " + tmpFolder.absolutePath + " folder")
+            println("Android test project is generated into $tmpFolder folder")
         }
     }
 }

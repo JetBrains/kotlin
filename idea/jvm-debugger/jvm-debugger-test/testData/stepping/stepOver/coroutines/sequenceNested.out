@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 LineBreakpoint created at sequenceNested.kt:6
 Run Java
 Connected to the target VM

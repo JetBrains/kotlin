@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // FILE: JavaClass2.java
 
 class JavaClass1 {

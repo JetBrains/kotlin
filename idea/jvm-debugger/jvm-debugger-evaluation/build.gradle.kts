@@ -11,9 +11,7 @@ dependencies {
     compile(project(":idea:jvm-debugger:jvm-debugger-util"))
 
     compileOnly(toolsJarApi())
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-    }
+    compileOnly(intellijPluginDep("java"))
 
     compileOnly(intellijDep())
 

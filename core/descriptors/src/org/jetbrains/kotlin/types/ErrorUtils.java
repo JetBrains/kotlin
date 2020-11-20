@@ -107,6 +107,12 @@ public class ErrorUtils {
                 return emptyList();
             }
 
+            @NotNull
+            @Override
+            public Set<ModuleDescriptor> getAllExpectedByModules() {
+                return emptySet();
+            }
+
             @Override
             public <R, D> R accept(@NotNull DeclarationDescriptorVisitor<R, D> visitor, D data) {
                 return null;

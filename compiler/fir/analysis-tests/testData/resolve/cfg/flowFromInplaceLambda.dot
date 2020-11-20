@@ -25,8 +25,8 @@ digraph flowFromInplaceLambda_kt {
             5 [label="Enter block"];
             6 [label="Access variable R|<local>/x|"];
             7 [label="Const: Int(0)"];
-            8 [label="Function call: R|<local>/x|.R|FakeOverride<kotlin/Array.get: R|CapturedType(out K)|>|(...)"];
-            9 [label="Jump: ^select R|<local>/x|.R|FakeOverride<kotlin/Array.get: R|CapturedType(out K)|>|(Int(0))"];
+            8 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out K)|>|(...)"];
+            9 [label="Jump: ^select R|<local>/x|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out K)|>|(Int(0))"];
             10 [label="Stub" style="filled" fillcolor=gray];
             11 [label="Exit block" style="filled" fillcolor=gray];
         }
@@ -92,8 +92,8 @@ digraph flowFromInplaceLambda_kt {
         subgraph cluster_9 {
             color=blue
             29 [label="Enter block"];
-            30 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()"];
-            31 [label="Jump: ^myRun R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()"];
+            30 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
+            31 [label="Jump: ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
             32 [label="Stub" style="filled" fillcolor=gray];
             33 [label="Exit block" style="filled" fillcolor=gray];
         }

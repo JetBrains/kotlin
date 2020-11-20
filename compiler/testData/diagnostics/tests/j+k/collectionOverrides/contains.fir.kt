@@ -35,9 +35,9 @@ fun foo(
         al: java.util.ArrayList<String>
 ) {
     a.contains("")
-    a.contains(1)
+    a.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
     "" in a
-    1 in a
+    1 <!INAPPLICABLE_CANDIDATE!>in<!> a
 
     b.contains("")
     b.contains(1)
@@ -50,9 +50,9 @@ fun foo(
     1 in ic
 
     ka.contains("")
-    ka.contains(1)
+    ka.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
     "" in ka
-    1 in ka
+    1 <!INAPPLICABLE_CANDIDATE!>in<!> ka
 
     kb.contains("")
     kb.contains(1)
@@ -60,7 +60,7 @@ fun foo(
     1 in kb
 
     al.contains("")
-    al.contains(1)
+    al.<!INAPPLICABLE_CANDIDATE!>contains<!>(1)
     "" in al
-    1 in al
+    1 <!INAPPLICABLE_CANDIDATE!>in<!> al
 }

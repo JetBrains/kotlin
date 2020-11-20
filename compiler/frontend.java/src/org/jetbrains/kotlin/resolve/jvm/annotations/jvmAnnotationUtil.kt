@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.util.findImplementationFromInterface
 val JVM_DEFAULT_FQ_NAME = FqName("kotlin.jvm.JvmDefault")
 val JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME = FqName("kotlin.jvm.JvmDefaultWithoutCompatibility")
 val JVM_OVERLOADS_FQ_NAME = FqName("kotlin.jvm.JvmOverloads")
+
+@JvmField
 val JVM_SYNTHETIC_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmSynthetic")
 
 @JvmField
@@ -61,7 +63,7 @@ fun CallableMemberDescriptor.isCompiledToJvmDefault(jvmDefault: JvmDefaultMode):
     return JvmProtoBufUtil.isNewPlaceForBodyGeneration(clazz.classProto)
 }
 
-fun FunctionDescriptor.checkIsImplementationCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
+fun CallableMemberDescriptor.checkIsImplementationCompiledToJvmDefault(jvmDefaultMode: JvmDefaultMode): Boolean {
     val actualImplementation =
         (if (kind.isReal) this else findImplementationFromInterface(this))
             ?: error("Can't find actual implementation for $this")

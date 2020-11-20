@@ -117,10 +117,6 @@ class BlockDecomposerTransformer(
         function = declaration
 
         with(declaration) {
-            val transformedDeclarations = declarations.map { it.transform(statementTransformer, null) as IrDeclaration }
-            declarations.clear()
-            declarations.addAll(transformedDeclarations)
-
             val transformedStatements = mutableListOf<IrStatement>()
             statements.forEach {
                 val transformer = if (it === statements.last()) expressionTransformer else statementTransformer
@@ -271,13 +267,13 @@ class BlockDecomposerTransformer(
             }
         }
 
-        override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+        override fun visitSetValue(expression: IrSetValue): IrExpression {
             expression.transformChildrenVoid(expressionTransformer)
 
             val composite = expression.value as? IrComposite ?: return expression
 
             return materializeLastExpression(composite) {
-                expression.run { IrSetVariableImpl(startOffset, endOffset, type, symbol, it, origin) }
+                expression.run { IrSetValueImpl(startOffset, endOffset, type, symbol, it, origin) }
             }
         }
 
@@ -474,7 +470,7 @@ class BlockDecomposerTransformer(
 
         override fun visitLoop(loop: IrLoop) = loop.asExpression(unitValue)
 
-        override fun visitSetVariable(expression: IrSetVariable) = expression.asExpression(unitValue)
+        override fun visitSetValue(expression: IrSetValue) = expression.asExpression(unitValue)
 
         override fun visitSetField(expression: IrSetField) = expression.asExpression(unitValue)
 

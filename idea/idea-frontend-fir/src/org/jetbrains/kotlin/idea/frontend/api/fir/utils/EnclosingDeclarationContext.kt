@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCompletion
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalDeclaration
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
@@ -22,7 +21,7 @@ internal sealed class EnclosingDeclarationContext {
             if (fakeFunction != null) {
                 val originalFunction = originalFile.findDeclarationOfTypeAt<KtNamedFunction>(fakeFunction.textOffset)
                     ?: error("Cannot find original function matching to ${fakeFunction.getElementTextInContext()} in $originalFile")
-                fakeFunction.originalDeclaration = originalFunction
+                recordOriginalDeclaration(originalFunction, fakeFunction)
                 return FunctionContext(fakeFunction, originalFunction)
             }
 
@@ -30,12 +29,22 @@ internal sealed class EnclosingDeclarationContext {
             if (fakeProperty != null) {
                 val originalProperty = originalFile.findDeclarationOfTypeAt<KtProperty>(fakeProperty.textOffset)
                     ?: error("Cannot find original property matching to ${fakeProperty.getElementTextInContext()} in $originalFile")
-                fakeProperty.originalDeclaration = originalProperty
-
+                recordOriginalDeclaration(originalProperty, fakeProperty)
                 return PropertyContext(fakeProperty, originalProperty)
             }
 
             error("Cannot find enclosing declaration for ${positionInFakeFile.getElementTextInContext()}")
+        }
+
+        private fun recordOriginalDeclaration(originalDeclaration: KtNamedDeclaration, fakeDeclaration: KtNamedDeclaration) {
+            require(!fakeDeclaration.isPhysical)
+            require(originalDeclaration.containingKtFile !== fakeDeclaration.containingKtFile)
+            val originalDeclrationParents = originalDeclaration.parentsOfType<KtDeclaration>().toList()
+            val fakeDeclarationParents = fakeDeclaration.parentsOfType<KtDeclaration>().toList()
+
+            originalDeclrationParents.zip(fakeDeclarationParents) { original, fake ->
+                fake.originalDeclaration = original
+            }
         }
     }
 }

@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
-class FirContractResolveTransformer(
+open class FirContractResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     outerBodyResolveContext: BodyResolveContext? = null

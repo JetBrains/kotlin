@@ -1,5 +1,6 @@
 // ERROR_POLICY: SYNTAX
 
+// MODULE: lib
 // FILE: t.kt
 
 
@@ -18,6 +19,7 @@ fun foo() { 124gga() }
 fun bar() { return 481gu }
 fun qux() { 981llj) = 481 }
 
+// MODULE: main(lib)
 // FILE: b.kt
 
 fun box(): String {

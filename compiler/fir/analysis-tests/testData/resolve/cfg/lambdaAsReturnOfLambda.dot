@@ -94,8 +94,8 @@ digraph lambdaAsReturnOfLambda_kt {
         subgraph cluster_10 {
             color=blue
             28 [label="Enter block"];
-            29 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()"];
-            30 [label="Jump: ^run R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()"];
+            29 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
+            30 [label="Jump: ^run R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()"];
             31 [label="Stub" style="filled" fillcolor=gray];
             32 [label="Exit block" style="filled" fillcolor=gray];
         }

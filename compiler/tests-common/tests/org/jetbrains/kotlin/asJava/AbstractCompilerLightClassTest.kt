@@ -36,12 +36,12 @@ abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Kotl
         val expectedFile = KotlinTestUtils.replaceExtension(wholeFile, "java")
         val allowFrontendExceptions = InTextDirectivesUtils.isDirectiveDefined(wholeFile.readText(), "// ALLOW_FRONTEND_EXCEPTION")
 
-        LightClassTestCommon.testLightClass(
-            expectedFile,
+        val actual = LightClassTestCommon.getActualLightClassText(
             wholeFile,
             { fqname -> findLightClass(allowFrontendExceptions, environment, fqname) },
             LightClassTestCommon::removeEmptyDefaultImpls
         )
+        KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
     }
 
     override fun createTestModule(

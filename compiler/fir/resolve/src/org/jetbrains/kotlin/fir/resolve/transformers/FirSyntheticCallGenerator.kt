@@ -172,12 +172,15 @@ class FirSyntheticCallGenerator(
         return FirNamedReferenceWithCandidate(null, name, candidate)
     }
 
-    private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunction, context: ResolutionContext): Candidate =
-        CandidateFactory(context, callInfo).createCandidate(
+    private fun generateCandidate(callInfo: CallInfo, function: FirSimpleFunction, context: ResolutionContext): Candidate {
+        val candidateFactory = CandidateFactory(context, callInfo)
+        return candidateFactory.createCandidate(
+            callInfo,
             symbol = function.symbol,
             explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             scope = null
         )
+    }
 
     private fun generateCallInfo(name: Name, argumentList: FirArgumentList, callKind: CallKind) = CallInfo(
         callKind = callKind,

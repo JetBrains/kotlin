@@ -1,0 +1,30 @@
+FILE: callableReferences.kt
+    public? final? class A : R|kotlin/Any| {
+        public? constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? final? val bar: <implicit> = LAZY_EXPRESSION
+            public? get(): <implicit>
+
+    }
+    public? final? fun A.qux(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun baz(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? val test1: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? val test2: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? val test3: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? val test4: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? val test5: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? val test6: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? val test7: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>
+    public? final? val test8: <implicit> = LAZY_EXPRESSION
+        public? get(): <implicit>

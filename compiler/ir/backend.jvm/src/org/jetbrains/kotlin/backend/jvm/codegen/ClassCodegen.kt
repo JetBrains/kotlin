@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.buildAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
+import org.jetbrains.kotlin.codegen.writeKotlinMetadata
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -28,11 +28,9 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -91,9 +89,12 @@ class ClassCodegen private constructor(
         )
     }
 
+    // TODO: the order of entries in this set depends on the order in which methods are generated; this means it is unstable
+    //       under incremental compilation, as calls to `inline fun`s declared in this class cause them to be generated out of order.
     private val innerClasses = linkedSetOf<IrClass>()
 
-    private var regeneratedObjectNameGenerators = mutableMapOf<String, NameGenerator>()
+    // TODO: the names produced by generators in this map depend on the order in which methods are generated; see above.
+    private val regeneratedObjectNameGenerators = mutableMapOf<String, NameGenerator>()
 
     fun getRegeneratedObjectNameGenerator(function: IrFunction): NameGenerator {
         val name = if (function.name.isSpecial) "special" else function.name.asString()
@@ -104,19 +105,15 @@ class ClassCodegen private constructor(
 
     private var generated = false
 
-    fun generate(parentDelegatedPropertyTracker: DelegatedPropertyOptimizer? = null) {
+    fun generate() {
         // TODO: reject repeated generate() calls; currently, these can happen for objects in finally
         //       blocks since they are `accept`ed once per each CFG edge out of the try-finally.
         if (generated) return
         generated = true
 
-        // We remove unused cached KProperties.
-        val classDelegatedPropertiesArray = irClass.fields.singleOrNull {
-            it.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
-        }
-        val delegatedPropertyTracker =
-            if (classDelegatedPropertiesArray != null) DelegatedPropertyOptimizer() else parentDelegatedPropertyTracker
-
+        // We remove reads of `$$delegatedProperties` (and the field itself) if they are not in fact used for anything.
+        val delegatedProperties = irClass.fields.singleOrNull { it.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE }
+        val delegatedPropertyOptimizer = if (delegatedProperties != null) DelegatedPropertyOptimizer() else null
         // Generating a method node may cause the addition of a field with an initializer if an inline function
         // call uses `assert` and the JVM assertions mode is enabled. To avoid concurrent modification errors,
         // there is a very specific generation order.
@@ -124,14 +121,14 @@ class ClassCodegen private constructor(
         // 1. Any method other than `<clinit>` can add a field and a `<clinit>` statement:
         for (method in irClass.declarations.filterIsInstance<IrFunction>()) {
             if (method.name.asString() != "<clinit>") {
-                generateMethod(method, smap, delegatedPropertyTracker)
+                generateMethod(method, smap, delegatedPropertyOptimizer)
             }
         }
         // 2. `<clinit>` itself can add a field, but the statement is generated via the `return init` hack:
-        irClass.functions.find { it.name.asString() == "<clinit>" }?.let { generateMethod(it, smap, delegatedPropertyTracker) }
+        irClass.functions.find { it.name.asString() == "<clinit>" }?.let { generateMethod(it, smap, delegatedPropertyOptimizer) }
         // 3. Now we have all the fields (`$$delegatedProperties` might be redundant if all reads were optimized out):
         for (field in irClass.fields) {
-            if (field !== classDelegatedPropertiesArray || delegatedPropertyTracker?.needsDelegatedProperties == true) {
+            if (field !== delegatedProperties || delegatedPropertyOptimizer?.needsDelegatedProperties == true) {
                 generateField(field)
             }
         }
@@ -139,7 +136,7 @@ class ClassCodegen private constructor(
         //    everything moved to the outer class has already been recorded in `globalSerializationBindings`.
         for (declaration in irClass.declarations) {
             if (declaration is IrClass) {
-                getOrCreate(declaration, context).generate(delegatedPropertyTracker)
+                getOrCreate(declaration, context).generate()
             }
         }
 
@@ -283,7 +280,7 @@ class ClassCodegen private constructor(
             if (field.origin == IrDeclarationOrigin.PROPERTY_DELEGATE) null
             else context.methodSignatureMapper.mapFieldSignature(field)
         val fieldName = field.name.asString()
-        val flags = field.computeFieldFlags(state.languageVersionSettings)
+        val flags = field.computeFieldFlags(context, state.languageVersionSettings)
         val fv = visitor.newField(
             field.descriptorOrigin, flags, fieldName, fieldType.descriptor,
             fieldSignature, (field.initializer?.expression as? IrConst<*>)?.value
@@ -313,14 +310,16 @@ class ClassCodegen private constructor(
 
     private val generatedInlineMethods = mutableMapOf<IrFunction, SMAPAndMethodNode>()
 
-    fun generateMethodNode(method: IrFunction, delegatedPropertyOptimizer: DelegatedPropertyOptimizer?): SMAPAndMethodNode {
-        if (!method.isInline && !method.isSuspend) {
+    fun generateMethodNode(method: IrFunction): SMAPAndMethodNode {
+        if (!method.isInline && !method.isSuspendCapturingCrossinline()) {
             // Inline methods can be used multiple times by `IrSourceCompilerForInline`, suspend methods
-            // could be used twice if they capture crossinline lambdas, and everything else is only
-            // generated by `generateMethod` below so does not need caching.
-            return FunctionCodegen(method, this).generate(delegatedPropertyOptimizer)
+            // are used twice (`f` and `f$$forInline`) if they capture crossinline lambdas, and everything
+            // else is only generated by `generateMethod` below so does not need caching.
+            // TODO: inline lambdas are not marked `isInline`, and are generally used once, but may be needed
+            //       multiple times if declared in a `finally` block - should they be cached?
+            return FunctionCodegen(method, this).generate()
         }
-        val (node, smap) = generatedInlineMethods.getOrPut(method) { FunctionCodegen(method, this).generate(delegatedPropertyOptimizer) }
+        val (node, smap) = generatedInlineMethods.getOrPut(method) { FunctionCodegen(method, this).generate() }
         val copy = with(node) { MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions.toTypedArray()) }
         node.instructions.resetLabels()
         node.accept(copy)
@@ -333,7 +332,7 @@ class ClassCodegen private constructor(
             return
         }
 
-        val (node, smap) = generateMethodNode(method, delegatedPropertyOptimizer)
+        val (node, smap) = generateMethodNode(method)
         if (delegatedPropertyOptimizer != null) {
             delegatedPropertyOptimizer.transform(node)
             if (method.name.asString() == "<clinit>") {
@@ -350,15 +349,14 @@ class ClassCodegen private constructor(
             override fun visitLineNumber(line: Int, start: Label) =
                 super.visitLineNumber(smapCopier.mapLineNumber(line), start)
         }
-        if (method.hasContinuation() || method.isInvokeSuspendOfLambda()) {
+        if (method.hasContinuation()) {
             // Generate a state machine within this method. The continuation class for it should be generated
             // lazily so that if tail call optimization kicks in, the unused class will not be written to the output.
-            val continuationClassCodegen = lazy { getOrCreate(method.continuationClass()!!, context, method) }
-            node.acceptWithStateMachine(method, this, smapCopyingVisitor) {
-                if (method.isSuspend) continuationClassCodegen.value.visitor else visitor
-            }
-            if (continuationClassCodegen.isInitialized() || method.alwaysNeedsContinuation()) {
-                continuationClassCodegen.value.generate(delegatedPropertyOptimizer)
+            val continuationClass = method.continuationClass() // null if `SuspendLambda.invokeSuspend` - `this` is continuation itself
+            val continuationClassCodegen = lazy { if (continuationClass != null) getOrCreate(continuationClass, context, method) else this }
+            node.acceptWithStateMachine(method, this, smapCopyingVisitor) { continuationClassCodegen.value.visitor }
+            if (continuationClass != null && (continuationClassCodegen.isInitialized() || method.isSuspendCapturingCrossinline())) {
+                continuationClassCodegen.value.generate()
             }
         } else {
             node.accept(smapCopyingVisitor)
@@ -367,10 +365,9 @@ class ClassCodegen private constructor(
 
         when (val metadata = method.metadata) {
             is MetadataSource.Property -> {
-                // We can't check for JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS because for interface methods
-                // moved to DefaultImpls, origin is changed to DEFAULT_IMPLS
-                // TODO: fix origin somehow, because otherwise $annotations methods in interfaces also don't have ACC_SYNTHETIC
-                assert(method.name.asString().endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)) { method.dump() }
+                assert(method.isSyntheticMethodForProperty) {
+                    "MetadataSource.Property on IrFunction should only be used for synthetic \$annotations methods: ${method.render()}"
+                }
                 metadataSerializer.bindMethodMetadata(metadata, Method(node.name, node.desc))
             }
             is MetadataSource.Function -> metadataSerializer.bindMethodMetadata(metadata, Method(node.name, node.desc))
@@ -449,7 +446,8 @@ class ClassCodegen private constructor(
 
 private val IrClass.flags: Int
     get() = origin.flags or getVisibilityAccessFlagForClass() or
-            (if (annotations.hasAnnotation(StandardNames.FqNames.deprecated)) Opcodes.ACC_DEPRECATED else 0) or
+            (if (isAnnotatedWithDeprecated) Opcodes.ACC_DEPRECATED else 0) or
+            (if (hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) Opcodes.ACC_SYNTHETIC else 0) or
             when {
                 isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
@@ -457,11 +455,12 @@ private val IrClass.flags: Int
                 else -> Opcodes.ACC_SUPER or modality.flags
             }
 
-private fun IrField.computeFieldFlags(languageVersionSettings: LanguageVersionSettings): Int =
+private fun IrField.computeFieldFlags(context: JvmBackendContext, languageVersionSettings: LanguageVersionSettings): Int =
     origin.flags or visibility.flags or
-            (correspondingPropertySymbol?.owner?.callableDeprecationFlags ?: 0) or
-            (if (shouldHaveSpecialDeprecationFlag()) Opcodes.ACC_DEPRECATED else 0) or
-            (if (annotations.hasAnnotation(KOTLIN_DEPRECATED)) Opcodes.ACC_DEPRECATED else 0) or
+            (if (isDeprecatedCallable ||
+                correspondingPropertySymbol?.owner?.isDeprecatedCallable == true ||
+                shouldHaveSpecialDeprecationFlag(context)
+            ) Opcodes.ACC_DEPRECATED else 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
             (if (isStatic) Opcodes.ACC_STATIC else 0) or
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
@@ -476,12 +475,8 @@ private fun IrField.isPrivateCompanionFieldInInterface(languageVersionSettings: 
             parentAsClass.isJvmInterface &&
             DescriptorVisibilities.isPrivate(parentAsClass.companionObject()!!.visibility)
 
-private val JAVA_LANG_DEPRECATED = FqName("java.lang.Deprecated")
-private val KOTLIN_DEPRECATED = FqName("kotlin.Deprecated")
-
-fun IrField.shouldHaveSpecialDeprecationFlag(): Boolean {
-    return origin == IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE &&
-            annotations.hasAnnotation(JAVA_LANG_DEPRECATED)
+fun IrField.shouldHaveSpecialDeprecationFlag(context: JvmBackendContext): Boolean {
+    return annotations.any { it.symbol == context.ir.symbols.javaLangDeprecatedConstructorWithDeprecatedFlag }
 }
 
 private val IrDeclarationOrigin.flags: Int

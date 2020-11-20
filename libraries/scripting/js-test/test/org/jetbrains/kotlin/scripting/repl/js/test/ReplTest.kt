@@ -143,7 +143,10 @@ abstract class AbstractReplTestRunner : TestCase() {
                 var t = 2 * 2
                 class A(val value: Int = 5) {
                     fun bar(): Int {
-                        var q = 4
+                        class B(val value: Int = 4) {
+                            fun baz(): Int = value
+                        }
+                        var q = B().baz()
                         var w = 1
                         return q + w
                     }
@@ -221,9 +224,11 @@ abstract class AbstractReplTestRunner : TestCase() {
                 if (compileResult !is ReplCompileResult.CompiledClasses) return compileResult.toString()
 
                 val evalResult = tester.evaluate(compileResult)
-                if (evalResult !is ReplEvalResult.ValueResult) return evalResult.toString()
-
-                result = evalResult.value
+                when (evalResult) {
+                    is ReplEvalResult.Error.Runtime -> return evalResult.cause.toString()
+                    !is ReplEvalResult.ValueResult -> return evalResult.toString()
+                    else -> result = evalResult.value
+                }
             }
         }
         return result

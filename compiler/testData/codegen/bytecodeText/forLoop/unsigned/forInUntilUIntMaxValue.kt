@@ -28,6 +28,6 @@ fun f(a: UInt): Int {
 
 // JVM_IR_TEMPLATES
 // 2 INVOKESTATIC kotlin/UnsignedKt.uintCompare
-// 1 IFGT
-// 1 IFLE
+// 1 IFGE
+// 1 IFLT
 // 2 IF

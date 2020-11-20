@@ -83,31 +83,31 @@ FILE: conflictingProjection.kt
 
     }
     public final fun test1(): R|Outer.Intermediate.Inner<kotlin/Char, kotlin/String, kotlin/Int>| {
-        ^test1 R|/Outer.Outer|<R|kotlin/Int|>().R|/Outer.Intermediate.Intermediate|<R|kotlin/String|>().R|/Outer.Intermediate.Inner.Inner|<R|kotlin/Char|>()
+        ^test1 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
     }
     public final fun test2(): R|Outer.Intermediate.Inner<kotlin/Char, kotlin/String, in kotlin/Int>| {
-        ^test2 R|/Outer.Outer|<R|kotlin/Int|>().R|/Outer.Intermediate.Intermediate|<R|kotlin/String|>().R|/Outer.Intermediate.Inner.Inner|<R|kotlin/Char|>()
+        ^test2 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
     }
     public final fun test3(): R|Outer.Intermediate.Inner<kotlin/Char, kotlin/String, out kotlin/Int>| {
-        ^test3 R|/Outer.Outer|<R|kotlin/Int|>().R|/Outer.Intermediate.Intermediate|<R|kotlin/String|>().R|/Outer.Intermediate.Inner.Inner|<R|kotlin/Char|>()
+        ^test3 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
     }
     public final fun test4(): R|Outer.Intermediate.Inner<kotlin/Char, in kotlin/String, kotlin/Int>| {
-        ^test4 R|/Outer.Outer|<R|kotlin/Int|>().R|/Outer.Intermediate.Intermediate|<R|kotlin/String|>().R|/Outer.Intermediate.Inner.Inner|<R|kotlin/Char|>()
+        ^test4 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
     }
     public final fun test5(): R|Outer.Intermediate.Inner<kotlin/Char, out kotlin/String, kotlin/Int>| {
-        ^test5 R|/Outer.Outer|<R|kotlin/Int|>().R|/Outer.Intermediate.Intermediate|<R|kotlin/String|>().R|/Outer.Intermediate.Inner.Inner|<R|kotlin/Char|>()
+        ^test5 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
     }
     public final fun test6(): R|Outer.Intermediate.Inner<in kotlin/Char, kotlin/String, kotlin/Int>| {
-        ^test6 R|/Outer.Outer|<R|kotlin/Int|>().R|/Outer.Intermediate.Intermediate|<R|kotlin/String|>().R|/Outer.Intermediate.Inner.Inner|<R|kotlin/Char|>()
+        ^test6 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
     }
     public final fun test7(): R|Outer.Intermediate.Inner<out kotlin/Char, kotlin/String, kotlin/Int>| {
-        ^test7 R|/Outer.Outer|<R|kotlin/Int|>().R|/Outer.Intermediate.Intermediate|<R|kotlin/String|>().R|/Outer.Intermediate.Inner.Inner|<R|kotlin/Char|>()
+        ^test7 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
     }
     public final fun test8(): R|Outer.Intermediate.Inner<kotlin/Char, out kotlin/String, in kotlin/Int>| {
-        ^test8 R|/Outer.Outer|<R|kotlin/Int|>().R|/Outer.Intermediate.Intermediate|<R|kotlin/String|>().R|/Outer.Intermediate.Inner.Inner|<R|kotlin/Char|>()
+        ^test8 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
     }
     public final fun test9(): R|Outer.Intermediate.Inner<out kotlin/Char, in kotlin/String, kotlin/Int>| {
-        ^test9 R|/Outer.Outer|<R|kotlin/Int|>().R|/Outer.Intermediate.Intermediate|<R|kotlin/String|>().R|/Outer.Intermediate.Inner.Inner|<R|kotlin/Char|>()
+        ^test9 R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Intermediate.Intermediate>|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Intermediate.Inner.Inner>|<R|kotlin/Char|>()
     }
     public final class InOuter<in T> : R|kotlin/Any| {
         public constructor<in T>(): R|InOuter<T>| {
@@ -130,29 +130,29 @@ FILE: conflictingProjection.kt
 
     }
     public final fun test10(): R|InOuter.OutIntermediate.InInner<kotlin/Char, kotlin/String, kotlin/Int>| {
-        ^test10 R|/InOuter.InOuter|<R|kotlin/Int|>().R|/InOuter.OutIntermediate.OutIntermediate|<R|kotlin/String|>().R|/InOuter.OutIntermediate.InInner.InInner|<R|kotlin/Char|>()
+        ^test10 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
     }
     public final fun test11(): R|InOuter.OutIntermediate.InInner<kotlin/Char, kotlin/String, in kotlin/Int>| {
-        ^test11 R|/InOuter.InOuter|<R|kotlin/Int|>().R|/InOuter.OutIntermediate.OutIntermediate|<R|kotlin/String|>().R|/InOuter.OutIntermediate.InInner.InInner|<R|kotlin/Char|>()
+        ^test11 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
     }
     public final fun test12(): R|InOuter.OutIntermediate.InInner<kotlin/Char, kotlin/String, out kotlin/Int>| {
-        ^test12 R|/InOuter.InOuter|<R|kotlin/Int|>().R|/InOuter.OutIntermediate.OutIntermediate|<R|kotlin/String|>().R|/InOuter.OutIntermediate.InInner.InInner|<R|kotlin/Char|>()
+        ^test12 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
     }
     public final fun test13(): R|InOuter.OutIntermediate.InInner<kotlin/Char, in kotlin/String, kotlin/Int>| {
-        ^test13 R|/InOuter.InOuter|<R|kotlin/Int|>().R|/InOuter.OutIntermediate.OutIntermediate|<R|kotlin/String|>().R|/InOuter.OutIntermediate.InInner.InInner|<R|kotlin/Char|>()
+        ^test13 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
     }
     public final fun test14(): R|InOuter.OutIntermediate.InInner<kotlin/Char, out kotlin/String, kotlin/Int>| {
-        ^test14 R|/InOuter.InOuter|<R|kotlin/Int|>().R|/InOuter.OutIntermediate.OutIntermediate|<R|kotlin/String|>().R|/InOuter.OutIntermediate.InInner.InInner|<R|kotlin/Char|>()
+        ^test14 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
     }
     public final fun test15(): R|InOuter.OutIntermediate.InInner<in kotlin/Char, kotlin/String, kotlin/Int>| {
-        ^test15 R|/InOuter.InOuter|<R|kotlin/Int|>().R|/InOuter.OutIntermediate.OutIntermediate|<R|kotlin/String|>().R|/InOuter.OutIntermediate.InInner.InInner|<R|kotlin/Char|>()
+        ^test15 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
     }
     public final fun test16(): R|InOuter.OutIntermediate.InInner<out kotlin/Char, kotlin/String, kotlin/Int>| {
-        ^test16 R|/InOuter.InOuter|<R|kotlin/Int|>().R|/InOuter.OutIntermediate.OutIntermediate|<R|kotlin/String|>().R|/InOuter.OutIntermediate.InInner.InInner|<R|kotlin/Any?|>()
+        ^test16 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Any?|>()
     }
     public final fun test17(): R|InOuter.OutIntermediate.InInner<kotlin/Char, out kotlin/String, in kotlin/Int>| {
-        ^test17 R|/InOuter.InOuter|<R|kotlin/Int|>().R|/InOuter.OutIntermediate.OutIntermediate|<R|kotlin/String|>().R|/InOuter.OutIntermediate.InInner.InInner|<R|kotlin/Char|>()
+        ^test17 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
     }
     public final fun test18(): R|InOuter.OutIntermediate.InInner<out kotlin/Char, in kotlin/String, kotlin/Int>| {
-        ^test18 R|/InOuter.InOuter|<R|kotlin/Int|>().R|/InOuter.OutIntermediate.OutIntermediate|<R|kotlin/String|>().R|/InOuter.OutIntermediate.InInner.InInner|<R|kotlin/Any?|>()
+        ^test18 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Any?|>()
     }

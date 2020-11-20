@@ -29,7 +29,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         val classBuilder by builder {
             parents += annotationContainerBuilder
-            fields from klass without listOf("symbol", "resolvePhase", "attributes")
+            fields from klass without listOf("symbol", "resolvePhase")
         }
 
         builder(regularClass) {
@@ -53,7 +53,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         val functionBuilder by builder {
             parents += annotationContainerBuilder
-            fields from function without listOf("symbol", "resolvePhase", "controlFlowGraphReference", "receiverTypeRef", "typeParameters", "attributes")
+            fields from function without listOf("symbol", "resolvePhase", "controlFlowGraphReference", "receiverTypeRef", "typeParameters")
         }
 
         val loopJumpBuilder by builder {
@@ -62,7 +62,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         val abstractConstructorBuilder by builder {
             parents += functionBuilder
-            fields from constructor without listOf("isPrimary", "attributes")
+            fields from constructor without listOf("isPrimary")
         }
 
         val abstractFunctionCallBuilder by builder {
@@ -81,6 +81,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(constructor, "FirConstructorImpl") {
             openBuilder()
+            withCopy()
         }
 
         builder(field) {
@@ -240,10 +241,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
-        builder(composedSuperTypeRef) {
-            withCopy()
-        }
-
         builder(breakExpression) {
             parents += loopJumpBuilder
         }
@@ -375,12 +372,12 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             defaultNull(it)
         }
 
-//        configureFieldInAllIntermediateBuilders(
-//            field = "attributes",
-//            fieldPredicate = { it.type == declarationAttributesType.type }
-//        ) {
-//
-//        }
+        configureFieldInAllLeafBuilders(
+            field = "attributes",
+            fieldPredicate = { it.type == declarationAttributesType.type }
+        ) {
+            default(it, "${declarationAttributesType.type}()")
+        }
     }
 
     private inline fun findImplementationsWithElementInParents(

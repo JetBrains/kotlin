@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
@@ -151,11 +152,6 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                                 type = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
                             }
                         }
-                        val superKind: FunctionClassKind? = when (kind) {
-                            FunctionClassKind.KFunction -> FunctionClassKind.Function
-                            FunctionClassKind.KSuspendFunction -> FunctionClassKind.SuspendFunction
-                            else -> null
-                        }
 
                         fun createSuperType(
                             kind: FunctionClassKind,
@@ -205,9 +201,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                                 this.name = name
                                 status = functionStatus
                                 symbol = FirNamedFunctionSymbol(
-                                    CallableId(packageFqName, relativeClassName, name),
-                                    // set overriddenSymbol for "invoke" of KFunction/KSuspendFunction
-                                    superKind != null, superKind?.getInvoke(arity)
+                                    CallableId(packageFqName, relativeClassName, name)
                                 )
                                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                 valueParameters += typeArguments.dropLast(1).mapIndexed { index, typeArgument ->
@@ -225,6 +219,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
                                         isVararg = false
                                     }
                                 }
+                                dispatchReceiverType = classId.defaultType(typeParameters.map { it.symbol })
                             }
                         )
                     }

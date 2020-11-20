@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.SPECIAL_FUNCTION_NAMES
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.components.stableType
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.tower.psiExpression
@@ -96,6 +97,11 @@ object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
             }
 
             val resolvedCallAtom = resolvedAtom.getResolvedCallAtom(context.trace.bindingContext) ?: continue
+            val atom = resolvedAtom.atom
+
+            if (atom is SimpleKotlinCallArgument && !atom.receiver.stableType.isNothingOrNullableNothing())
+                continue
+
             val candidateDescriptor = resolvedCallAtom.candidateDescriptor
             val isReturnTypeOwnTypeParameter = candidateDescriptor.typeParameters.any {
                 it.typeConstructor == candidateDescriptor.returnType?.constructor

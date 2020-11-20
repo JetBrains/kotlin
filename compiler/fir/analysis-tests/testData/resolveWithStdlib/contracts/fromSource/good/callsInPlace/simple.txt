@@ -6,7 +6,7 @@ FILE: simple.kt
         >
      {
         [StubStatement]
-        R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     @R|kotlin/contracts/ExperimentalContracts|() public final fun foo(x: R|() -> kotlin/Unit|, y: R|() -> kotlin/Unit|, z: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
@@ -17,10 +17,10 @@ FILE: simple.kt
         >
      {
         [StubStatement]
-        R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         when () {
             Boolean(true) ->  {
-                R|<local>/y|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
             }
         }
 

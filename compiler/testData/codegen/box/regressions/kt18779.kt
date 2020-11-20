@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
 
 sealed class Result {
     class Failure(val exception: Exception) : Result()

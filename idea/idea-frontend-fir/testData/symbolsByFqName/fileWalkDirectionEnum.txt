@@ -2,9 +2,13 @@ callable: kotlin/collections/listOf
 
 // SYMBOLS:
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.listOf
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: FINAL
   name: listOf
@@ -14,11 +18,16 @@ KtFirFunctionSymbol:
   type: kotlin/collections/List<T>
   typeParameters: [KtFirTypeParameterSymbol(T)]
   valueParameters: [KtFirFunctionValueParameterSymbol(element)]
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: [kotlin/internal/InlineOnly()]
   callableIdIfNonLocal: kotlin.collections.listOf
   isExtension: false
+  isExternal: false
+  isInline: true
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: FINAL
   name: listOf
@@ -28,11 +37,16 @@ KtFirFunctionSymbol:
   type: kotlin/collections/List<T>
   typeParameters: [KtFirTypeParameterSymbol(T)]
   valueParameters: []
+  visibility: PUBLIC
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: kotlin.collections.listOf
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: FINAL
   name: listOf
@@ -42,3 +56,4 @@ KtFirFunctionSymbol:
   type: kotlin/collections/List<T>
   typeParameters: [KtFirTypeParameterSymbol(T)]
   valueParameters: [KtFirFunctionValueParameterSymbol(elements)]
+  visibility: PUBLIC

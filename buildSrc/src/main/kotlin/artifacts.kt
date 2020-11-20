@@ -71,18 +71,6 @@ fun Project.noDefaultJar() {
     }
 }
 
-fun <T : Task> Project.runtimeJarArtifactBy(
-    task: TaskProvider<T>,
-    artifactRef: Any,
-    body: ConfigurablePublishArtifact.() -> Unit = {}
-) {
-    addArtifact("archives", task, artifactRef, body)
-    addArtifact("runtimeJar", task, artifactRef, body)
-    configurations.findByName("runtime")?.let {
-        addArtifact(it.name, task, artifactRef, body)
-    }
-}
-
 fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> = runtimeJar(getOrCreateTask("jar", body)) { }
 
 fun <T : Jar> Project.runtimeJar(task: TaskProvider<T>, body: T.() -> Unit = {}): TaskProvider<T> {
@@ -103,7 +91,11 @@ fun <T : Jar> Project.runtimeJar(task: TaskProvider<T>, body: T.() -> Unit = {})
         body()
     }
 
-    project.runtimeJarArtifactBy(task, task)
+    project.addArtifact("archives", task, task)
+    project.addArtifact("runtimeJar", task, task)
+    project.configurations.findByName("runtime")?.let {
+        project.addArtifact(it.name, task, task)
+    }
 
     val runtimeJar = configurations.maybeCreate("runtimeJar").apply {
         isCanBeConsumed = true

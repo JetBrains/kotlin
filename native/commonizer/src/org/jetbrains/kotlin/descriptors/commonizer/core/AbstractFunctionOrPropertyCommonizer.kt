@@ -29,8 +29,7 @@ abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
     }
 
     override fun doCommonizeWith(next: T): Boolean =
-        !next.isNonAbstractMemberInInterface() // non-abstract callable members declared in interface can't be commonized
-                && next.kind != DELEGATION // delegated members should not be commonized
+        next.kind != DELEGATION // delegated members should not be commonized
                 && (next.kind != SYNTHESIZED || next.containingClassDetails?.isData != true) // synthesized members of data classes should not be commonized
                 && kind == next.kind
                 && modality.commonizeWith(next.modality)

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 class ConeCompositeConflictResolver(
-    private vararg val conflictResolvers: AbstractConeCallConflictResolver
+    private vararg val conflictResolvers: ConeCallConflictResolver
 ) : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,

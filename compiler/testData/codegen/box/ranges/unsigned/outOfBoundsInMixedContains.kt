@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun testIn(x: ULong) =
     x in UInt.MIN_VALUE..UInt.MAX_VALUE

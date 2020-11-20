@@ -5,7 +5,6 @@
 
 package kotlin.coroutines.cancellation
 
-@ExperimentalStdlibApi
 @SinceKotlin("1.4")
 public actual open class CancellationException : IllegalStateException {
     actual constructor() : super()

@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: SPREAD_OPERATOR
 var result = "fail"
 
 fun foo(vararg xs: Int, s1: String = "", s2: String = "OK") {

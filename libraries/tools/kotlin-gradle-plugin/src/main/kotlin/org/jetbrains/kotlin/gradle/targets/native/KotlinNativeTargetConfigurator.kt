@@ -10,6 +10,9 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPI
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
@@ -243,8 +247,23 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
             createKlibCompilationTask(it)
         }
 
-        with(configurations.getByName(target.apiElementsConfigurationName)) {
-            outgoing.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, NativeArtifactFormat.KLIB)
+        val apiElements = configurations.getByName(target.apiElementsConfigurationName)
+
+        apiElements.outgoing.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, NativeArtifactFormat.KLIB)
+
+        if (project.isKotlinGranularMetadataEnabled) {
+            project.configurations.create(target.hostSpecificMetadataElementsConfigurationName) { configuration ->
+                configuration.isCanBeConsumed = true
+                configuration.isCanBeResolved = false
+
+                configuration.extendsFrom(*apiElements.extendsFrom.toTypedArray())
+
+                fun <T> copyAttribute(from: AttributeContainer, to: AttributeContainer, attribute: Attribute<T>) {
+                    to.attribute(attribute, from.getAttribute(attribute)!!)
+                }
+                with(apiElements.attributes) { keySet().forEach { copyAttribute(this, configuration.attributes, it) } }
+                configuration.attributes.attribute(USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_METADATA))
+            }
         }
     }
 

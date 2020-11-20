@@ -44,7 +44,8 @@ class RemoveExplicitTypeArgumentsIntention : SelfTargetingOffsetIndependentInten
     companion object {
         fun isApplicableTo(element: KtTypeArgumentList, approximateFlexible: Boolean): Boolean {
             val callExpression = element.parent as? KtCallExpression ?: return false
-            if (callExpression.typeArguments.isEmpty()) return false
+            val typeArguments = callExpression.typeArguments
+            if (typeArguments.isEmpty() || typeArguments.any { it.typeReference?.annotationEntries?.isNotEmpty() == true }) return false
 
             val resolutionFacade = callExpression.getResolutionFacade()
             val bindingContext = resolutionFacade.analyze(callExpression, BodyResolveMode.PARTIAL_WITH_CFA)

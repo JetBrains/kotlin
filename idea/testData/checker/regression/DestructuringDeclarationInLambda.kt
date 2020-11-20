@@ -1,5 +1,3 @@
-// FIR_COMPARISON
-
 data class XY(val x: Int, val y: Int)
 
 fun convert(xy: XY, f: (XY) -> Int) = f(xy)

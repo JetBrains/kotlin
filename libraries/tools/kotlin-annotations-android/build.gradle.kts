@@ -16,10 +16,8 @@ jvmTarget = "1.6"
 javaHome = rootProject.extra["JDK_16"] as String
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions.freeCompilerArgs += listOf(
-            "-Xallow-kotlin-package",
-            "-module-name", project.name
-    )
+    kotlinOptions.freeCompilerArgs += listOf("-Xallow-kotlin-package")
+    kotlinOptions.moduleName = project.name
 }
 
 sourceSets {

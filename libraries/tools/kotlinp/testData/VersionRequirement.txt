@@ -4,7 +4,7 @@
 public final class test/Klass : kotlin/Any {
 
   // signature: <init>()V
-  public /* primary */ constructor()
+  public constructor()
 
   // module name: test-module
 }
@@ -14,7 +14,7 @@ public final class test/Konstructor : kotlin/Any {
 
   // requires language version 42.0.0 (level=WARNING, errorCode=42, message="Konstructor must not be used!")
   // signature: <init>()V
-  public /* primary */ constructor()
+  public constructor()
 
   // module name: test-module
 }

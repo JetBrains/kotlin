@@ -5,6 +5,8 @@
 
 package a
 
+import checkSubtype
+
 interface MyType {}
 class MyClass<T> : MyType {}
 

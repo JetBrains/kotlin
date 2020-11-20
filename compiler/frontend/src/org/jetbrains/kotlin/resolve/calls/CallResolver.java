@@ -446,15 +446,15 @@ public class CallResolver {
 
         if (constructorDescriptor.getConstructedClass().getKind() == ClassKind.ENUM_CLASS && call.isImplicit()) {
             if (currentClassDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
-                DiagnosticFactory0<KtConstructorDelegationCall> warningOrError;
+                DiagnosticFactory0<PsiElement> warningOrError;
 
                 if (languageVersionSettings.supportsFeature(LanguageFeature.RequiredPrimaryConstructorDelegationCallInEnums)) {
                     warningOrError = PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED; // error
                 } else {
                     warningOrError = PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED_IN_ENUM; // warning
                 }
-
-                context.trace.report(warningOrError.on((KtConstructorDelegationCall) calleeExpression.getParent()));
+                PsiElement reportOn = calcReportOn(calleeExpression);
+                context.trace.report(warningOrError.on(reportOn));
             }
             return null;
         }
@@ -484,9 +484,8 @@ public class CallResolver {
         if (!isThisCall && currentClassDescriptor.getUnsubstitutedPrimaryConstructor() != null) {
             if (DescriptorUtils.canHaveDeclaredConstructors(currentClassDescriptor)) {
                 // Diagnostic is meaningless when reporting on interfaces and object
-                context.trace.report(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.on(
-                        (KtConstructorDelegationCall) calleeExpression.getParent()
-                ));
+                PsiElement reportOn = calcReportOn(calleeExpression);
+                context.trace.report(PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED.on(reportOn));
             }
             if (call.isImplicit()) return OverloadResolutionResultsImpl.nameNotFound();
         }
@@ -518,6 +517,13 @@ public class CallResolver {
         }
 
         return computeTasksFromCandidatesAndResolvedCall(context, candidates, tracing);
+    }
+
+    @Nullable
+    private PsiElement calcReportOn(@NotNull KtConstructorDelegationReferenceExpression calleeExpression) {
+        PsiElement delegationCall = calleeExpression.getParent();
+        return delegationCall instanceof KtConstructorDelegationCall
+               ? CallResolverUtilKt.reportOnElement((KtConstructorDelegationCall) delegationCall) : delegationCall;
     }
 
     @NotNull

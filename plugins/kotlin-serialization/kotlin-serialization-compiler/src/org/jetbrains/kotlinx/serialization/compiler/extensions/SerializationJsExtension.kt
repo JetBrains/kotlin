@@ -25,9 +25,9 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializableCompa
 import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializableJsTranslator
 import org.jetbrains.kotlinx.serialization.compiler.backend.js.SerializerJsTranslator
 
-open class SerializationJsExtension: JsSyntheticTranslateExtension {
+open class SerializationJsExtension @JvmOverloads constructor(val metadataPlugin: SerializationDescriptorSerializerPlugin? = null): JsSyntheticTranslateExtension {
     override fun generateClassSyntheticParts(declaration: KtPureClassOrObject, descriptor: ClassDescriptor, translator: DeclarationBodyVisitor, context: TranslationContext) {
-        SerializerJsTranslator.translate(descriptor, translator, context)
+        SerializerJsTranslator.translate(descriptor, translator, context, metadataPlugin)
         SerializableJsTranslator.translate(declaration, descriptor, context)
         SerializableCompanionJsTranslator.translate(descriptor, translator, context)
     }

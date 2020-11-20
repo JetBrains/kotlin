@@ -22,7 +22,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
     override fun analyze(
         graph: ControlFlowGraph,
         reporter: DiagnosticReporter,
-        data: Map<CFGNode<*>, PropertyInitializationInfo>,
+        data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
         properties: Set<FirPropertySymbol>
     ) {
         val localData = data.filter {
@@ -37,7 +37,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
     }
 
     private class UninitializedPropertyReporter(
-        val data: Map<CFGNode<*>, PropertyInitializationInfo>,
+        val data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
         val localProperties: Set<FirPropertySymbol>,
         val reporter: DiagnosticReporter
     ) : ControlFlowGraphVisitorVoid() {
@@ -48,12 +48,24 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
             val symbol = reference.resolvedSymbol as? FirPropertySymbol ?: return
             if (symbol !in localProperties) return
             if (symbol.fir.isLateInit) return
-            val kind = data.getValue(node)[symbol] ?: EventOccurrencesRange.ZERO
+            val pathAwareInfo = data.getValue(node)
+            for (label in pathAwareInfo.keys) {
+                if (investigate(pathAwareInfo[label]!!, symbol, node)) {
+                    // To avoid duplicate reports, stop investigating remaining paths if the property is not initialized at any path.
+                    break
+                }
+            }
+        }
+
+        private fun investigate(info: PropertyInitializationInfo, symbol: FirPropertySymbol, node: QualifiedAccessNode): Boolean {
+            val kind = info[symbol] ?: EventOccurrencesRange.ZERO
             if (!kind.isDefinitelyVisited()) {
                 node.fir.source?.let {
                     reporter.report(FirErrors.UNINITIALIZED_VARIABLE.on(it, symbol))
+                    return true
                 }
             }
+            return false
         }
     }
 }

@@ -410,6 +410,19 @@ class Strings {
     }
 
     @Sample
+    fun last() {
+        val string = "Kotlin 1.4.0"
+        assertPrints(string.last(), "0")
+        assertPrints(string.last { it.isLetter() }, "n")
+        assertPrints(string.lastOrNull { it > 'z' }, "null")
+        assertFails { string.last { it > 'z' } }
+
+        val emptyString = ""
+        assertPrints(emptyString.lastOrNull(), "null")
+        assertFails { emptyString.last() }
+    }
+  
+    @Sample
     fun replace() {
         val inputString0 = "Mississippi"
         val inputString1 = "How can the net amount of entropy of the universe be massively decreased?"

@@ -43,33 +43,35 @@ class IrCallImpl(
         }
     }
 
-    @ObsoleteDescriptorBasedAPI
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        symbol: IrSimpleFunctionSymbol,
-        origin: IrStatementOrigin? = null,
-        superQualifierSymbol: IrClassSymbol? = null
-    ) : this(
-        startOffset, endOffset, type, symbol, symbol.descriptor.typeParametersCount, symbol.descriptor.valueParameters.size,
-        origin, superQualifierSymbol
-    )
-
-    @ObsoleteDescriptorBasedAPI
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        symbol: IrSimpleFunctionSymbol,
-        typeArgumentsCount: Int,
-        origin: IrStatementOrigin? = null,
-        superQualifierSymbol: IrClassSymbol? = null
-    ) : this(
-        startOffset, endOffset, type, symbol, typeArgumentsCount, symbol.descriptor.valueParameters.size,
-        origin, superQualifierSymbol
-    )
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitCall(this, data)
+
+    companion object {
+        @ObsoleteDescriptorBasedAPI
+        fun fromSymbolDescriptor(
+            startOffset: Int,
+            endOffset: Int,
+            type: IrType,
+            symbol: IrSimpleFunctionSymbol,
+            typeArgumentsCount: Int = symbol.descriptor.typeParametersCount,
+            valueArgumentsCount: Int = symbol.descriptor.valueParameters.size,
+            origin: IrStatementOrigin? = null,
+            superQualifierSymbol: IrClassSymbol? = null,
+        ) = IrCallImpl(
+            startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol
+        )
+
+        fun fromSymbolOwner(
+            startOffset: Int,
+            endOffset: Int,
+            type: IrType,
+            symbol: IrSimpleFunctionSymbol,
+            typeArgumentsCount: Int = symbol.owner.typeParameters.size,
+            valueArgumentsCount: Int = symbol.owner.valueParameters.size,
+            origin: IrStatementOrigin? = null,
+            superQualifierSymbol: IrClassSymbol? = null,
+        ) = IrCallImpl(
+            startOffset, endOffset, type, symbol, typeArgumentsCount, valueArgumentsCount, origin, superQualifierSymbol
+        )
+    }
 }

@@ -45,11 +45,11 @@ FILE: arraySet.kt
 
     }
     public final fun test_1(a: R|A<B>|): R|kotlin/Unit| {
-        R|<local>/a|.R|FakeOverride</A.set: R|kotlin/Unit|>|(Int(0), R|/B.B|())
+        R|<local>/a|.R|SubstitutionOverride</A.set: R|kotlin/Unit|>|(Int(0), R|/B.B|())
     }
     public final fun test_2(a: R|A<C>|): R|kotlin/Unit| {
-        R|<local>/a|.R|FakeOverride</A.set: R|kotlin/Unit|>|(Int(0), R|/C.C|())
+        R|<local>/a|.R|SubstitutionOverride</A.set: R|kotlin/Unit|>|(Int(0), R|/C.C|())
     }
     public final fun test_3(a: R|A<D>|): R|kotlin/Unit| {
-        R|<local>/a|.R|FakeOverride</A.set: R|kotlin/Unit|>|(Int(0), R|/D.D|())
+        R|<local>/a|.R|SubstitutionOverride</A.set: R|kotlin/Unit|>|(Int(0), R|/D.D|())
     }

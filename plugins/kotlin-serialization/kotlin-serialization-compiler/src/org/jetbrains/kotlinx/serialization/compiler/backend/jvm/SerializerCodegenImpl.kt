@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
 import org.jetbrains.org.objectweb.asm.Label
@@ -21,8 +22,9 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 open class SerializerCodegenImpl(
     protected val codegen: ImplementationBodyCodegen,
-    serializableClass: ClassDescriptor
-) : SerializerCodegen(codegen.descriptor, codegen.bindingContext) {
+    serializableClass: ClassDescriptor,
+    metadataPlugin: SerializationDescriptorSerializerPlugin?
+) : SerializerCodegen(codegen.descriptor, codegen.bindingContext, metadataPlugin) {
 
 
     private val serialDescField = "\$\$serialDesc"
@@ -34,12 +36,12 @@ open class SerializerCodegenImpl(
     private val staticDescriptor = serializableDescriptor.declaredTypeParameters.isEmpty()
 
     companion object {
-        fun generateSerializerExtensions(codegen: ImplementationBodyCodegen) {
+        fun generateSerializerExtensions(codegen: ImplementationBodyCodegen, metadataPlugin: SerializationDescriptorSerializerPlugin?) {
             val serializableClass = getSerializableClassDescriptorBySerializer(codegen.descriptor) ?: return
             val serializerCodegen = if (serializableClass.isSerializableEnum()) {
                 SerializerForEnumsCodegen(codegen, serializableClass)
             } else {
-                SerializerCodegenImpl(codegen, serializableClass)
+                SerializerCodegenImpl(codegen, serializableClass, metadataPlugin)
             }
             serializerCodegen.generate()
         }
@@ -334,7 +336,7 @@ open class SerializerCodegenImpl(
             propVar = propsStartVar
             for ((index, property) in serializableProperties.withIndex()) {
                 val propertyType = codegen.typeMapper.mapType(property.type)
-                callReadProperty(property, propertyType, index, inputVar, descVar, -1, propVar)
+                callReadProperty(property, propertyType, index, inputVar, descVar, propVar)
                 propVar += propertyType.size
             }
             // set all bit masks to true
@@ -370,10 +372,9 @@ open class SerializerCodegenImpl(
             for ((index, property) in serializableProperties.withIndex()) {
                 val propertyType = codegen.typeMapper.mapType(property.type)
                 if (!property.transient) {
-                    val propertyAddressInBitMask = bitMaskOff(index)
                     // labelI:
                     visitLabel(labels[labelNum + 1])
-                    callReadProperty(property, propertyType, index, inputVar, descVar, propertyAddressInBitMask, propVar)
+                    callReadProperty(property, propertyType, index, inputVar, descVar, propVar)
 
                     // mark read bit in mask
                     // bitMask = bitMask | 1 << index
@@ -454,7 +455,6 @@ open class SerializerCodegenImpl(
         index: Int,
         inputVar: Int,
         descriptorVar: Int,
-        propertyAddressInBitMask: Int,
         propertyVar: Int
     ) {
         // propX := input.readXxxValue(value)
@@ -482,12 +482,12 @@ open class SerializerCodegenImpl(
             )
         }
 
-        val isUpdatable = useSerializer && propertyAddressInBitMask != -1
-        if (isUpdatable) {
+        if (useSerializer) {
+            // then it is not a primitive and can be updated via `oldValue` parameter in decodeSerializableElement
             load(propertyVar, propertyType)
             StackValue.coerce(propertyType, sti.type, this)
         }
-        produceCall(isUpdatable)
+        produceCall(useSerializer)
 
         StackValue.coerce(sti.type, propertyType, this)
         store(propertyVar, propertyType)

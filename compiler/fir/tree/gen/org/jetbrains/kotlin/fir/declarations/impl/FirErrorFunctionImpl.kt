@@ -32,13 +32,13 @@ internal class FirErrorFunctionImpl(
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
     override val annotations: MutableList<FirAnnotationCall>,
     override val valueParameters: MutableList<FirValueParameter>,
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorFunctionSymbol,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirErrorFunction() {
-    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, diagnostic)
     override val receiverTypeRef: FirTypeRef? get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
@@ -111,4 +111,6 @@ internal class FirErrorFunctionImpl(
         valueParameters.clear()
         valueParameters.addAll(newValueParameters)
     }
+
+    override fun replaceBody(newBody: FirBlock?) {}
 }

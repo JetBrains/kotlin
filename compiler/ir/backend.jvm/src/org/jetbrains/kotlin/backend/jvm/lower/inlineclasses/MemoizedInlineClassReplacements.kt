@@ -9,12 +9,15 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.codegen.classFileContainsMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
@@ -32,9 +36,15 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 /**
  * Keeps track of replacement functions and inline class box/unbox functions.
  */
-class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, private val irFactory: IrFactory) {
+class MemoizedInlineClassReplacements(
+    private val mangleReturnTypes: Boolean,
+    private val irFactory: IrFactory,
+    private val context: JvmBackendContext
+) {
     private val storageManager = LockBasedStorageManager("inline-class-replacements")
     private val propertyMap = mutableMapOf<IrPropertySymbol, IrProperty>()
+
+    internal val originalFunctionForStaticReplacement: MutableMap<IrFunction, IrFunction> = HashMap()
 
     /**
      * Get a replacement for a function or a constructor.
@@ -46,7 +56,8 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
                 it.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA ||
                         (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
                         it.isStaticInlineClassReplacement ||
-                        it.origin.isSynthetic -> null
+                        it.origin.isSynthetic ->
+                    null
 
                 it.isInlineClassFieldGetter ->
                     if (it.hasMangledReturnType)
@@ -56,16 +67,32 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
 
                 // Mangle all functions in the body of an inline class
                 it.parent.safeAs<IrClass>()?.isInline == true ->
-                    createStaticReplacement(it)
+                    when {
+                        it.isRemoveAtSpecialBuiltinStub() ->
+                            null
+                        it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
+                            createMethodReplacement(it)
+                        else ->
+                            createStaticReplacement(it)
+                    }
 
                 // Otherwise, mangle functions with mangled parameters, ignoring constructors
                 it is IrSimpleFunction && (it.hasMangledParameters || mangleReturnTypes && it.hasMangledReturnType) ->
-                    if (it.dispatchReceiverParameter != null) createMethodReplacement(it) else createStaticReplacement(it)
+                    if (it.dispatchReceiverParameter != null)
+                        createMethodReplacement(it)
+                    else
+                        createStaticReplacement(it)
 
                 else ->
                     null
             }
         }
+
+    private fun IrFunction.isRemoveAtSpecialBuiltinStub() =
+        origin == IrDeclarationOrigin.IR_BUILTINS_STUB &&
+                name.asString() == "remove" &&
+                valueParameters.size == 1 &&
+                valueParameters[0].type.isInt()
 
     /**
      * Get the box function for an inline class. Concretely, this is a synthetic
@@ -135,45 +162,39 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
     private fun createMethodReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, function.origin) {
             require(function.dispatchReceiverParameter != null && function is IrSimpleFunction)
-            val newValueParameters = ArrayList<IrValueParameter>()
-            for ((index, parameter) in function.explicitParameters.withIndex()) {
-                val name = if (parameter == function.extensionReceiverParameter) Name.identifier("\$receiver") else parameter.name
-                val newParameter: IrValueParameter
-                if (parameter == function.dispatchReceiverParameter) {
-                    newParameter = parameter.copyTo(this, index = -1, name = name, defaultValue = null)
-                    dispatchReceiverParameter = newParameter
-                } else {
-                    newParameter = parameter.copyTo(this, index = index - 1, name = name, defaultValue = null)
-                    newValueParameters += newParameter
+            dispatchReceiverParameter = function.dispatchReceiverParameter?.copyTo(this, index = -1)
+            extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(this, index = -1, name = Name.identifier("\$receiver"))
+            valueParameters = function.valueParameters.mapIndexed { index, parameter ->
+                parameter.copyTo(this, index = index, defaultValue = null).also {
+                    // Assuming that constructors and non-override functions are always replaced with the unboxed
+                    // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
+                    it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 }
-                // Assuming that constructors and non-override functions are always replaced with the unboxed
-                // equivalent, deep-copying the value here is unnecessary. See `JvmInlineClassLowering`.
-                newParameter.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
             }
-            valueParameters = newValueParameters
         }
 
     private fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true) {
-            val newValueParameters = ArrayList<IrValueParameter>()
-            for ((index, parameter) in function.explicitParameters.withIndex()) {
-                newValueParameters += when (parameter) {
-                    // FAKE_OVERRIDEs have broken dispatch receivers
-                    function.dispatchReceiverParameter ->
-                        function.parentAsClass.thisReceiver!!.copyTo(
-                            this, index = index, name = Name.identifier("arg$index"),
-                            type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
-                        )
-                    function.extensionReceiverParameter ->
-                        parameter.copyTo(
-                            this, index = index, name = Name.identifier("\$this\$${function.name}"),
-                            origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
-                        )
-                    else ->
-                        parameter.copyTo(this, index = index, defaultValue = null).also {
-                            // See comment next to a similar line above.
-                            it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
-                        }
+            originalFunctionForStaticReplacement[this] = function
+
+            val newValueParameters = mutableListOf<IrValueParameter>()
+            if (function.dispatchReceiverParameter != null) {
+                // FAKE_OVERRIDEs have broken dispatch receivers
+                newValueParameters += function.parentAsClass.thisReceiver!!.copyTo(
+                    this, index = newValueParameters.size, name = Name.identifier("arg${newValueParameters.size}"),
+                    type = function.parentAsClass.defaultType, origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+                )
+            }
+            function.extensionReceiverParameter?.let {
+                newValueParameters += it.copyTo(
+                    this, index = newValueParameters.size, name = Name.identifier("\$this\$${function.name}"),
+                    origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER
+                )
+            }
+            for (parameter in function.valueParameters) {
+                newValueParameters += parameter.copyTo(this, index = newValueParameters.size, defaultValue = null).also {
+                    // See comment next to a similar line above.
+                    it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 }
             }
             valueParameters = newValueParameters
@@ -201,11 +222,19 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
         if (noFakeOverride) {
             isFakeOverride = false
         }
-        name = mangledNameFor(function, mangleReturnTypes)
+        val useOldManglingScheme = context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
+        name = mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
+        if (
+            !useOldManglingScheme &&
+            name.asString().contains("-") &&
+            classFileContainsMethod(function, context, name.asString()) == false
+        ) {
+            name = mangledNameFor(function, mangleReturnTypes, true)
+        }
         returnType = function.returnType
     }.apply {
         parent = function.parent
-        annotations += function.annotations
+        annotations = function.annotations
         copyTypeParameters(function.allTypeParameters)
         if (function.metadata != null) {
             metadata = function.metadata
@@ -217,12 +246,13 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
             val propertySymbol = function.correspondingPropertySymbol
             if (propertySymbol != null) {
                 val property = propertyMap.getOrPut(propertySymbol) {
-                    irFactory.buildProperty() {
+                    irFactory.buildProperty {
                         name = propertySymbol.owner.name
                         updateFrom(propertySymbol.owner)
                     }.apply {
                         parent = propertySymbol.owner.parent
                         copyAttributes(propertySymbol.owner)
+                        annotations = propertySymbol.owner.annotations
                     }
                 }
                 correspondingPropertySymbol = property.symbol

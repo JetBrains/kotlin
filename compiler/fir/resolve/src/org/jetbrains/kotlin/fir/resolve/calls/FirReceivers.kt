@@ -17,12 +17,16 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
 interface Receiver
 
@@ -32,7 +36,7 @@ interface ReceiverValue : Receiver {
     val receiverExpression: FirExpression
 
     fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? =
-        type.scope(useSiteSession, scopeSession)
+        type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
 }
 
 // TODO: should inherit just Receiver, not ReceiverValue
@@ -50,7 +54,7 @@ abstract class AbstractExplicitReceiverValue<E : FirExpression> : AbstractExplic
         get() = explicitReceiver
 }
 
-internal class ExpressionReceiverValue(
+class ExpressionReceiverValue(
     override val explicitReceiver: FirExpression
 ) : AbstractExplicitReceiverValue<FirExpression>(), ReceiverValue
 
@@ -63,7 +67,7 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
     final override var type: ConeKotlinType = type
         private set
 
-    var implicitScope: FirTypeScope? = type.scope(useSiteSession, scopeSession)
+    var implicitScope: FirTypeScope? = type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
         private set
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
@@ -87,12 +91,15 @@ sealed class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
                 typesFromSmartCast = listOf(type)
             }
         }
-        implicitScope = type.scope(useSiteSession, scopeSession)
+        implicitScope = type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
     }
 }
 
 private fun receiverExpression(symbol: AbstractFirBasedSymbol<*>, type: ConeKotlinType): FirThisReceiverExpression =
     buildThisReceiverExpression {
+        // NB: we can't use `symbol.fir.source` as the source of `this` receiver. For instance, if this is an implicit receiver for a class,
+        // the entire class itself will be set as a source. If combined with an implicit type operation, a certain assertion, like null
+        // check assertion, will retrieve source as an assertion message, which is literally the entire class (!).
         calleeReference = buildImplicitThisReference {
             boundSymbol = symbol
         }

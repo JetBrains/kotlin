@@ -20,7 +20,7 @@ class SerializerForEnumsTranslator(
     descriptor: ClassDescriptor,
     translator: DeclarationBodyVisitor,
     context: TranslationContext
-) : SerializerJsTranslator(descriptor, translator, context) {
+) : SerializerJsTranslator(descriptor, translator, context, null) {
     override fun generateSave(function: FunctionDescriptor) = generateFunction(function) { jsFun, ctx ->
         val encoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.ENCODER_CLASS)
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(anySerialDescProperty!!), JsThisRef())

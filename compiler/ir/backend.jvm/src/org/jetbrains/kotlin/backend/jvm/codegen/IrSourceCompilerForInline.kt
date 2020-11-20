@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.incremental.components.LocationInfo
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.Position
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
@@ -94,16 +95,15 @@ class IrSourceCompilerForInline(
         get() = codegen.smap
 
     override fun generateLambdaBody(lambdaInfo: ExpressionLambda): SMAPAndMethodNode =
-        FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate(codegen.delegatedPropertyOptimizer)
+        FunctionCodegen((lambdaInfo as IrExpressionLambdaImpl).function, codegen.classCodegen, codegen).generate()
 
     override fun doCreateMethodNodeFromSource(
         callableDescriptor: FunctionDescriptor,
         jvmSignature: JvmMethodSignature,
         callDefault: Boolean,
         asmMethod: Method
-    ): SMAPAndMethodNode {
-        return ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee, null)
-    }
+    ): SMAPAndMethodNode =
+        ClassCodegen.getOrCreate(callee.parentAsClass, codegen.context).generateMethodNode(callee)
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
 
@@ -115,11 +115,12 @@ class IrSourceCompilerForInline(
     override fun createCodegenForExternalFinallyBlockGenerationOnNonLocalReturn(finallyNode: MethodNode, curFinallyDepth: Int) =
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
-            codegen.inlinedInto, codegen.smap, codegen.delegatedPropertyOptimizer
+            codegen.inlinedInto, codegen.smap
         ).also {
             it.finallyDepth = curFinallyDepth
         }
 
+    @ObsoleteDescriptorBasedAPI
     override fun isCallInsideSameModuleAsDeclared(functionDescriptor: FunctionDescriptor): Boolean {
         require(functionDescriptor is IrBasedSimpleFunctionDescriptor) {
             "expected an IrBasedSimpleFunctionDescriptor, got $functionDescriptor"

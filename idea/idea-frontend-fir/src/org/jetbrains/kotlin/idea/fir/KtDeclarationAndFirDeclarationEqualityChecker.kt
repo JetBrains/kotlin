@@ -9,6 +9,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -116,7 +117,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
 
     private fun KtTypeReference.toKotlinTypReference(session: FirSession): FirTypeRef {
         // Maybe resolve all types here to not to work with FirTypeRef directly
-        return RawFirBuilder(session, DummyScopeProvider, stubMode = true).buildTypeReference(this)
+        return RawFirBuilder(session, DummyScopeProvider, RawFirBuilderMode.STUBS).buildTypeReference(this)
     }
 
     private fun ConeKotlinType.renderTypeAsKotlinType(): String {

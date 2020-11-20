@@ -4,6 +4,7 @@ package a
 
 //+JDK
 import java.util.*
+import checkSubtype
 
 fun foo() {
     val v = array(1, 2, 3)

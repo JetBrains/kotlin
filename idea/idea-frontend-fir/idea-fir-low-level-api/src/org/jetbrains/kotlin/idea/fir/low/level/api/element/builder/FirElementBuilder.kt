@@ -73,6 +73,7 @@ fun KtElement.getNonLocalContainingOrThisDeclaration(): KtNamedDeclaration? {
     while (container != null && container !is KtFile) {
         if (container is KtNamedDeclaration
             && (container is KtClassOrObject || container is KtDeclarationWithBody || container is KtProperty || container is KtTypeAlias)
+            && container !is KtPrimaryConstructor
             && !KtPsiUtil.isLocal(container)
             && container !is KtEnumEntry
             && container.containingClassOrObject !is KtEnumEntry

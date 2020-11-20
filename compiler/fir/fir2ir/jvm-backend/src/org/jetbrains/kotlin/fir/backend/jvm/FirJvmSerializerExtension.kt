@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firProvider
@@ -279,7 +279,7 @@ class FirJvmSerializerExtension(
         if (!hasJvmFieldAnnotation) return false
 
         val container =
-            symbol.callableId.classId?.let {
+            dispatchReceiverType?.classId?.let {
                 session.firProvider.getFirClassifierByFqName(it) as? FirRegularClass
             }
         if (container == null || !container.isCompanion) {

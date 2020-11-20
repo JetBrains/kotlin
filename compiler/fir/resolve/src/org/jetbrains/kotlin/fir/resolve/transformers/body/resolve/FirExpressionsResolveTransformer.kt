@@ -389,7 +389,12 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                         calleeReference = when {
                             lhsIsVar -> lhsReference!!
                             else -> buildErrorNamedReference {
-                                source = assignmentOperatorStatement.leftArgument.source
+                                source = when (leftArgument) {
+                                    is FirFunctionCall -> leftArgument.source
+                                    is FirQualifiedAccess ->
+                                        leftArgument.calleeReference.source
+                                    else -> leftArgument.source
+                                }
                                 diagnostic = ConeVariableExpectedError()
                             }
                         }
@@ -622,7 +627,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
     override fun transformGetClassCall(getClassCall: FirGetClassCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
         val arg = getClassCall.argument
         val dataWithExpectedType = if (arg is FirConstExpression<*>) {
-            withExpectedType(arg.typeRef.resolvedTypeFromPrototype(arg.kind.expectedConeType()))
+            withExpectedType(arg.typeRef.resolvedTypeFromPrototype(arg.kind.expectedConeType(session)))
         } else {
             data
         }
@@ -665,34 +670,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         return transformedGetClassCall.compose()
     }
 
-    private fun FirConstKind<*>.expectedConeType(): ConeKotlinType {
-        fun constructLiteralType(classId: ClassId, isNullable: Boolean = false): ConeKotlinType {
-            val symbol = symbolProvider.getClassLikeSymbolByFqName(classId)
-                ?: return ConeClassErrorType(ConeSimpleDiagnostic("Missing stdlib class: $classId", DiagnosticKind.MissingStdlibClass))
-            return symbol.toLookupTag().constructClassType(emptyArray(), isNullable)
-        }
-        return when (this) {
-            FirConstKind.Null -> session.builtinTypes.nullableNothingType.type
-            FirConstKind.Boolean -> session.builtinTypes.booleanType.type
-            FirConstKind.Char -> constructLiteralType(StandardClassIds.Char)
-            FirConstKind.Byte -> constructLiteralType(StandardClassIds.Byte)
-            FirConstKind.Short -> constructLiteralType(StandardClassIds.Short)
-            FirConstKind.Int -> constructLiteralType(StandardClassIds.Int)
-            FirConstKind.Long -> constructLiteralType(StandardClassIds.Long)
-            FirConstKind.String -> constructLiteralType(StandardClassIds.String)
-            FirConstKind.Float -> constructLiteralType(StandardClassIds.Float)
-            FirConstKind.Double -> constructLiteralType(StandardClassIds.Double)
-
-            FirConstKind.UnsignedByte -> constructLiteralType(StandardClassIds.UByte)
-            FirConstKind.UnsignedShort -> constructLiteralType(StandardClassIds.UShort)
-            FirConstKind.UnsignedInt -> constructLiteralType(StandardClassIds.UInt)
-            FirConstKind.UnsignedLong -> constructLiteralType(StandardClassIds.ULong)
-
-            FirConstKind.IntegerLiteral -> constructLiteralType(StandardClassIds.Int)
-            FirConstKind.UnsignedIntegerLiteral -> constructLiteralType(StandardClassIds.UInt)
-        }
-    }
-
     override fun <T> transformConstExpression(
         constExpression: FirConstExpression<T>,
         data: ResolutionMode,
@@ -713,7 +690,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     integerLiteralType
                 }
             }
-            else -> kind.expectedConeType()
+            else -> kind.expectedConeType(session)
         }
 
         dataFlowAnalyzer.exitConstExpression(constExpression as FirConstExpression<*>)
@@ -783,7 +760,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             context.withTowerDataCleanup {
                 if ((context.containerIfAny as? FirConstructor)?.isPrimary == true) {
                     context.replaceTowerDataContext(context.getTowerDataContextForConstructorResolution())
-                    context.getPrimaryConstructorParametersScope()?.let(context::addLocalScope)
+                    context.getPrimaryConstructorAllParametersScope()?.let(context::addLocalScope)
                 }
 
                 // it's just a constructor parameters scope created in

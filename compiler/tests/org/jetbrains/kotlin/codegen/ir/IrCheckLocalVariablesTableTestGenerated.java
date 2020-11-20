@@ -29,11 +29,6 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @TestMetadata("catchClause.kt")
-    public void testCatchClause() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/catchClause.kt");
-    }
-
     @TestMetadata("copyFunction.kt")
     public void testCopyFunction() throws Exception {
         runTest("compiler/testData/checkLocalVariablesTable/copyFunction.kt");
@@ -64,11 +59,6 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
         runTest("compiler/testData/checkLocalVariablesTable/inlineLambdaWithParam.kt");
     }
 
-    @TestMetadata("inlineProperty.kt")
-    public void testInlineProperty() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/inlineProperty.kt");
-    }
-
     @TestMetadata("inlineSimple.kt")
     public void testInlineSimple() throws Exception {
         runTest("compiler/testData/checkLocalVariablesTable/inlineSimple.kt");
@@ -89,11 +79,6 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
         runTest("compiler/testData/checkLocalVariablesTable/itInReturnedLambda.kt");
     }
 
-    @TestMetadata("jvmOverloads.kt")
-    public void testJvmOverloads() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/jvmOverloads.kt");
-    }
-
     @TestMetadata("kt11117.kt")
     public void testKt11117() throws Exception {
         runTest("compiler/testData/checkLocalVariablesTable/kt11117.kt");
@@ -109,9 +94,9 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
         runTest("compiler/testData/checkLocalVariablesTable/localFun.kt");
     }
 
-    @TestMetadata("receiverParameter.kt")
-    public void testReceiverParameter() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/receiverParameter.kt");
+    @TestMetadata("objectInLocalPropertyDelegate.kt")
+    public void testObjectInLocalPropertyDelegate() throws Exception {
+        runTest("compiler/testData/checkLocalVariablesTable/objectInLocalPropertyDelegate.kt");
     }
 
     @TestMetadata("underscoreNames.kt")

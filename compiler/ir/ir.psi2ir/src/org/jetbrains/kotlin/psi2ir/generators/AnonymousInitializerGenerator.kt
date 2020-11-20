@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
 import org.jetbrains.kotlin.psi.KtBlockExpression
@@ -31,7 +31,7 @@ class AnonymousInitializerGenerator(
     fun generateAnonymousInitializerDeclaration(
         ktAnonymousInitializer: KtAnonymousInitializer,
         irClass: IrClass
-    ): IrDeclaration =
+    ): IrAnonymousInitializer =
         context.symbolTable.declareAnonymousInitializer(
             ktAnonymousInitializer.startOffsetSkippingComments, ktAnonymousInitializer.endOffset,
             IrDeclarationOrigin.DEFINED, irClass.descriptor

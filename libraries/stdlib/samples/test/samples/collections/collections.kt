@@ -800,6 +800,19 @@ class Collections {
             val emptyList = emptyList<Int>()
             assertPrints(emptyList.getOrNull(0), "null")
         }
+
+        @Sample
+        fun last() {
+            val list = listOf(1, 2, 3, 4)
+            assertPrints(list.last(), "4")
+            assertPrints(list.last { it % 2 == 1 }, "3")
+            assertPrints(list.lastOrNull { it < 0 }, "null")
+            assertFails { list.last { it < 0 } }
+
+            val emptyList = emptyList<Int>()
+            assertPrints(emptyList.lastOrNull(), "null")
+            assertFails { emptyList.last() }
+        }
     }
 
     class Sorting {

@@ -16,6 +16,7 @@ enum class MangleConstant(val prefix: Char, val separator: Char, val suffix: Cha
         const val VAR_ARG_MARK = "..."
         const val STAR_MARK = '*'
         const val Q_MARK = '?'
+        const val ENHANCED_NULLABILITY_MARK = "{EnhancedNullability}"
         const val EXPECT_MARK = "#expect"
         const val UNKNOWN_MARK = "<unknown>"
         const val DYNAMIC_MARK = "<dynamic>"

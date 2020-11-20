@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.psi2ir.generators
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -30,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.properties
@@ -75,7 +75,7 @@ class ClassGenerator(
 
         fun <T : DeclarationDescriptor> List<T>.sortedByRenderer(): List<T> {
             val rendered = map(DESCRIPTOR_RENDERER::render)
-            val sortedIndices = (0 until size).sortedWith(Comparator { i, j -> rendered[i].compareTo(rendered[j]) })
+            val sortedIndices = (0 until size).sortedWith { i, j -> rendered[i].compareTo(rendered[j]) }
             return sortedIndices.map { this[it] }
         }
     }
@@ -306,7 +306,7 @@ class ClassGenerator(
         delegateToDescriptor: FunctionDescriptor
     ): IrSimpleFunction =
         context.symbolTable.declareSimpleFunctionWithOverrides(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
             IrDeclarationOrigin.DELEGATED_MEMBER,
             delegatedDescriptor
         ).buildWithScope { irFunction ->
@@ -324,8 +324,8 @@ class ClassGenerator(
         delegateToDescriptor: FunctionDescriptor,
         irDelegatedFunction: IrSimpleFunction
     ): IrBlockBody {
-        val startOffset = UNDEFINED_OFFSET
-        val endOffset = UNDEFINED_OFFSET
+        val startOffset = SYNTHETIC_OFFSET
+        val endOffset = SYNTHETIC_OFFSET
 
         val irBlockBody = context.irFactory.createBlockBody(startOffset, endOffset)
 
@@ -334,7 +334,7 @@ class ClassGenerator(
 
         val delegateToSymbol = context.symbolTable.referenceSimpleFunction(delegateToDescriptor.original)
 
-        val irCall = IrCallImpl(
+        val irCall = IrCallImpl.fromSymbolDescriptor(
             startOffset, endOffset,
             returnType.toIrType(),
             delegateToSymbol,

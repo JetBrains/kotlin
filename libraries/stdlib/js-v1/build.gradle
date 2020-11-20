@@ -274,11 +274,13 @@ task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
 jar.dependsOn(libraryJarWithIr)
 
 task sourcesJar(type: Jar, dependsOn: compileJs) {
-    classifier = 'sources'
+    archiveClassifier.set('sources')
     includeEmptyDirs false
     duplicatesStrategy = DuplicatesStrategy.FAIL
-    from(sourceSets.builtins.allSource) {
+    from("${builtinsDir}/native/kotlin") {
         into 'kotlin'
+        include 'Comparable.kt'
+        include 'Enum.kt'
     }
     from(sourceSets.main.allSource) {
         into 'kotlin'
@@ -294,7 +296,7 @@ task sourcesJar(type: Jar, dependsOn: compileJs) {
 task distSourcesJar(type: Jar) {
     dependsOn(sourcesJar, configurations.commonSources)
     destinationDirectory = file("$buildDir/lib/dist")
-    archiveClassifier = 'sources'
+    archiveClassifier.set('sources')
     duplicatesStrategy = DuplicatesStrategy.FAIL
     from zipTree(sourcesJar.outputs.files.singleFile)
 

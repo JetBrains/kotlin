@@ -13,9 +13,8 @@ import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
-import org.jetbrains.kotlin.gradle.report.configureBuildReporter
+import org.jetbrains.kotlin.gradle.report.configureReporting
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
-
 
 //Support Gradle 6 and less. Move to
 internal class KotlinGradleBuildServices private constructor(
@@ -99,7 +98,7 @@ internal class KotlinGradleBuildServices private constructor(
         TaskLoggers.clear()
         TaskExecutionResults.clear()
 
-        configureBuildReporter(gradle, log)
+        configureReporting(gradle)
     }
 
     override fun buildFinished(result: BuildResult) {

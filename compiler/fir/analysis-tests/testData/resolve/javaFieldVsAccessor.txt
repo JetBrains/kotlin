@@ -1,5 +1,5 @@
 FILE: main.kt
     public final fun test(a: R|A|): R|kotlin/Unit| {
         lval int: R|kotlin/Int| = R|<local>/a|.R|/A.x|
-        lval string: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/a|.R|/A.getX|()
+        lval string: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = R|<local>/a|.R|/A.getX|()
     }

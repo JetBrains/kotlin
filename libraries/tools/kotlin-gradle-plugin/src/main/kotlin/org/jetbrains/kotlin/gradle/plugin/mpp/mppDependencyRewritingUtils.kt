@@ -14,82 +14,103 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.utils.getValue
 
-internal fun Project.rewritePomMppDependenciesToActualTargetModules(
-    pomXml: XmlProvider,
-    component: KotlinTargetComponent,
-    filterDependencies: (groupNameVersion: Triple<String?, String, String?>) -> Boolean = { true }
+internal data class ModuleCoordinates(
+    val group: String?,
+    val name: String,
+    val version: String?
+)
+
+internal class PomDependenciesRewriter(
+    project: Project,
+
+    @field:Transient
+    private val component: KotlinTargetComponent
 ) {
-    if (component !is SoftwareComponentInternal)
-        return
-
-    val dependenciesNode = (pomXml.asNode().get("dependencies") as NodeList).filterIsInstance<Node>().singleOrNull() ?: return
-
-    val dependencyNodes = (dependenciesNode.get("dependency") as? NodeList).orEmpty().filterIsInstance<Node>()
-
-    val dependencyByNode = mutableMapOf<Node, ModuleDependency>()
-
-    // Collect all the dependencies from the nodes:
-    val dependencies = dependencyNodes.map { dependencyNode ->
-        fun Node.getSingleChildValueOrNull(childName: String): String? =
-            ((get(childName) as NodeList?)?.singleOrNull() as Node?)?.text()
-
-        val groupId = dependencyNode.getSingleChildValueOrNull("groupId")
-        val artifactId = dependencyNode.getSingleChildValueOrNull("artifactId")
-        val version = dependencyNode.getSingleChildValueOrNull("version")
-        (project.dependencies.module("$groupId:$artifactId:$version") as ModuleDependency)
-            .also { dependencyByNode[dependencyNode] = it }
-    }.toSet()
 
     // Get the dependencies mapping according to the component's UsageContexts:
-    val resultDependenciesForEachUsageContext =
-        component.usages.mapNotNull { usage ->
+    private val dependenciesMappingForEachUsageContext by project.provider {
+        (component as SoftwareComponentInternal).usages.mapNotNull { usage ->
             if (usage is KotlinUsageContext)
-                associateDependenciesWithActualModuleDependencies(usage, dependencies)
+                associateDependenciesWithActualModuleDependencies(usage)
                     // We are only interested in dependencies that are mapped to some other dependencies:
                     .filter { (from, to) -> Triple(from.group, from.name, from.version) != Triple(to.group, to.name, to.version) }
             else null
         }
+    }
 
-    // Rewrite the dependency nodes according to the mapping:
-    dependencyNodes.forEach { dependencyNode ->
-        val moduleDependency = dependencyByNode[dependencyNode]
+    fun rewritePomMppDependenciesToActualTargetModules(
+        pomXml: XmlProvider,
+        includeOnlySpecifiedDependencies: Provider<Set<ModuleCoordinates>>? = null
+    ) {
+        if (component !is SoftwareComponentInternal)
+            return
 
-        if (moduleDependency != null) {
-            val groupNameVersion = Triple(moduleDependency.group, moduleDependency.name, moduleDependency.version)
-            if (!filterDependencies(groupNameVersion)) {
-                dependenciesNode.remove(dependencyNode)
-                return@forEach
-            }
+        val dependenciesNode = (pomXml.asNode().get("dependencies") as NodeList).filterIsInstance<Node>().singleOrNull() ?: return
+
+        val dependencyNodes = (dependenciesNode.get("dependency") as? NodeList).orEmpty().filterIsInstance<Node>()
+
+        val dependencyByNode = mutableMapOf<Node, ModuleCoordinates>()
+
+        // Collect all the dependencies from the nodes:
+        val dependencies = dependencyNodes.map { dependencyNode ->
+            fun Node.getSingleChildValueOrNull(childName: String): String? =
+                ((get(childName) as NodeList?)?.singleOrNull() as Node?)?.text()
+
+            val groupId = dependencyNode.getSingleChildValueOrNull("groupId")
+            val artifactId = dependencyNode.getSingleChildValueOrNull("artifactId")
+                ?: error("unexpected dependency in POM with no artifact ID: $dependenciesNode")
+            val version = dependencyNode.getSingleChildValueOrNull("version")
+            (ModuleCoordinates(groupId, artifactId, version)).also { dependencyByNode[dependencyNode] = it }
+        }.toSet()
+
+        val resultDependenciesForEachUsageContext = dependencies.associate { key ->
+            val map = dependenciesMappingForEachUsageContext.find { key in it }
+            val value = map?.get(key) ?: key
+            key to value
         }
 
-        val mapDependencyTo = resultDependenciesForEachUsageContext.find { moduleDependency in it }?.get(moduleDependency)
+        val includeOnlySpecifiedDependenciesSet = includeOnlySpecifiedDependencies?.get()
 
-        if (mapDependencyTo != null) {
+        // Rewrite the dependency nodes according to the mapping:
+        dependencyNodes.forEach { dependencyNode ->
+            val moduleDependency = dependencyByNode[dependencyNode]
 
-            fun Node.setChildNodeByName(name: String, value: String?) {
-                val childNode: Node? = (get(name) as NodeList?)?.firstOrNull() as Node?
-                if (value != null) {
-                    (childNode ?: appendNode(name)).setValue(value)
-                } else {
-                    childNode?.let { remove(it) }
+            if (moduleDependency != null) {
+                if (includeOnlySpecifiedDependenciesSet != null && moduleDependency !in includeOnlySpecifiedDependenciesSet) {
+                    dependenciesNode.remove(dependencyNode)
+                    return@forEach
                 }
             }
 
-            dependencyNode.setChildNodeByName("groupId", mapDependencyTo.group)
-            dependencyNode.setChildNodeByName("artifactId", mapDependencyTo.name)
-            dependencyNode.setChildNodeByName("version", mapDependencyTo.version)
+            val mapDependencyTo = resultDependenciesForEachUsageContext.get(moduleDependency)
+
+            if (mapDependencyTo != null) {
+                fun Node.setChildNodeByName(name: String, value: String?) {
+                    val childNode: Node? = (get(name) as NodeList?)?.firstOrNull() as Node?
+                    if (value != null) {
+                        (childNode ?: appendNode(name)).setValue(value)
+                    } else {
+                        childNode?.let { remove(it) }
+                    }
+                }
+
+                dependencyNode.setChildNodeByName("groupId", mapDependencyTo.group)
+                dependencyNode.setChildNodeByName("artifactId", mapDependencyTo.name)
+                dependencyNode.setChildNodeByName("version", mapDependencyTo.version)
+            }
         }
     }
 }
 
 private fun associateDependenciesWithActualModuleDependencies(
-    usageContext: KotlinUsageContext,
-    moduleDependencies: Set<ModuleDependency>
-): Map<ModuleDependency, ModuleDependency> {
+    usageContext: KotlinUsageContext
+): Map<ModuleCoordinates, ModuleCoordinates> {
     val compilation = usageContext.compilation
     val project = compilation.target.project
 
@@ -119,17 +140,19 @@ private fun associateDependenciesWithActualModuleDependencies(
         }
     }
 
-    val resolvedModulesByRootModuleCoordinates = targetDependenciesConfiguration
+    return targetDependenciesConfiguration
         .allDependencies.withType(ModuleDependency::class.java)
         .associate { dependency ->
+            val coordinates = ModuleCoordinates(dependency.group, dependency.name, dependency.version)
+            val noMapping = coordinates to coordinates
             when (dependency) {
                 is ProjectDependency -> {
                     val dependencyProject = dependency.dependencyProject
                     val dependencyProjectKotlinExtension = dependencyProject.multiplatformExtensionOrNull
-                        ?: return@associate dependency to dependency
+                        ?: return@associate noMapping
 
                     val resolved = resolvedDependencies[Triple(dependency.group, dependency.name, dependency.version)]
-                        ?: return@associate dependency to dependency
+                        ?: return@associate noMapping
 
                     val resolvedToConfiguration = resolved.configuration
                     val dependencyTargetComponent: KotlinTargetComponent = run {
@@ -140,7 +163,7 @@ private fun associateDependenciesWithActualModuleDependencies(
                             }
                         }
                         // Failed to find a matching component:
-                        return@associate dependency to dependency
+                        return@associate noMapping
                     }
 
                     val targetModulePublication = (dependencyTargetComponent as? KotlinTargetComponentWithPublication)?.publicationDelegate
@@ -149,49 +172,37 @@ private fun associateDependenciesWithActualModuleDependencies(
                     // During Gradle POM generation, a project dependency is already written as the root module's coordinates. In the
                     // dependencies mapping, map the root module to the target's module:
 
-                    val rootModule = project.dependencies.module(
-                        listOf(
-                            rootModulePublication?.groupId ?: dependency.group,
-                            rootModulePublication?.artifactId ?: dependencyProject.name,
-                            rootModulePublication?.version ?: dependency.version
-                        ).joinToString(":")
-                    ) as ModuleDependency
+                    val rootModule = ModuleCoordinates(
+                        rootModulePublication?.groupId ?: dependency.group,
+                        rootModulePublication?.artifactId ?: dependencyProject.name,
+                        rootModulePublication?.version ?: dependency.version
+                    )
 
-                    rootModule to project.dependencies.module(
-                        listOf(
-                            targetModulePublication?.groupId ?: dependency.group,
-                            targetModulePublication?.artifactId ?: dependencyTargetComponent.defaultArtifactId,
-                            targetModulePublication?.version ?: dependency.version
-                        ).joinToString(":")
-                    ) as ModuleDependency
+                    rootModule to ModuleCoordinates(
+                        targetModulePublication?.groupId ?: dependency.group,
+                        targetModulePublication?.artifactId ?: dependencyTargetComponent.defaultArtifactId,
+                        targetModulePublication?.version ?: dependency.version
+                    )
                 }
                 else -> {
                     val resolvedDependency = resolvedDependencies[Triple(dependency.group, dependency.name, dependency.version)]
-                        ?: return@associate dependency to dependency
+                        ?: return@associate noMapping
 
                     if (resolvedDependency.moduleArtifacts.isEmpty() && resolvedDependency.children.size == 1) {
                         // This is a dependency on a module that resolved to another module; map the original dependency to the target module
                         val targetModule = resolvedDependency.children.single()
-                        dependency to project.dependencies.module(
-                            listOf(
-                                targetModule.moduleGroup,
-                                targetModule.moduleName,
-                                targetModule.moduleVersion
-                            ).joinToString(":")
-                        ) as ModuleDependency
+                        coordinates to ModuleCoordinates(
+                            targetModule.moduleGroup,
+                            targetModule.moduleName,
+                            targetModule.moduleVersion
+                        )
 
                     } else {
-                        dependency to dependency
+                        noMapping
                     }
                 }
             }
-        }.mapKeys { (key, _) -> Triple(key.group, key.name, key.version) }
-
-    return moduleDependencies.associate { dependency ->
-        val key = Triple(dependency.group, dependency.name, dependency.version)
-        val value = resolvedModulesByRootModuleCoordinates[key] ?: dependency
-        dependency to value
-    }
+        }
 }
 
 private fun KotlinTargetComponent.findUsageContext(configurationName: String): UsageContext? {

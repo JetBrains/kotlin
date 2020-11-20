@@ -1,0 +1,24 @@
+@kotlin.Metadata
+public final class<null>  C {
+    // source: 'delegationToJavaInterfaceWithWildcardType.kt'
+    public <()Ljava/util/Collection<+Ljava/lang/CharSequence;>;> method jf1(): java.util.Collection
+    public <()Ljava/util/Collection<Ljava/lang/CharSequence;>;> method jf2(): java.util.Collection
+    public @org.jetbrains.annotations.NotNull <()Ljava/util/Collection<Ljava/lang/CharSequence;>;> method kf1(): java.util.Collection
+    public @org.jetbrains.annotations.NotNull <()Ljava/util/Collection<Ljava/lang/CharSequence;>;> method kf2(): java.util.Collection
+    public <(Ljava/util/Collection<+Ljava/lang/CharSequence;>;)V> method jg1(p0: java.util.Collection): void
+    public <(Ljava/util/Collection<+Ljava/lang/CharSequence;>;)V> method kg1(@org.jetbrains.annotations.NotNull p0: java.util.Collection): void
+    public <(Ljava/util/Collection<+Ljava/lang/CharSequence;>;)V> method kg2(@org.jetbrains.annotations.NotNull p0: java.util.Collection): void
+    public <(Ljava/util/Collection<Ljava/lang/CharSequence;>;)V> method jg2(p0: java.util.Collection): void
+    public <null> method <init>(@org.jetbrains.annotations.NotNull p0: J, @org.jetbrains.annotations.NotNull p1: K): void
+    private synthetic final field <null> $$delegate_0: J
+    private synthetic final field <null> $$delegate_1: K
+}
+
+@kotlin.Metadata
+public interface<null>  K {
+    // source: 'delegationToJavaInterfaceWithWildcardType.kt'
+    public abstract @org.jetbrains.annotations.NotNull <()Ljava/util/Collection<Ljava/lang/CharSequence;>;> method kf1(): java.util.Collection
+    public abstract @org.jetbrains.annotations.NotNull <()Ljava/util/Collection<Ljava/lang/CharSequence;>;> method kf2(): java.util.Collection
+    public abstract <(Ljava/util/Collection<+Ljava/lang/CharSequence;>;)V> method kg1(@org.jetbrains.annotations.NotNull p0: java.util.Collection): void
+    public abstract <(Ljava/util/Collection<+Ljava/lang/CharSequence;>;)V> method kg2(@org.jetbrains.annotations.NotNull p0: java.util.Collection): void
+}

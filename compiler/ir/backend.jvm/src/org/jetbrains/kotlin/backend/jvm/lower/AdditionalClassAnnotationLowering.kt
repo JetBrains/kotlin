@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.lang.annotation.ElementType
 
 internal val additionalClassAnnotationPhase = makeIrFilePhase(
     ::AdditionalClassAnnotationLowering,
@@ -81,14 +82,17 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         returnType = annotationClass.defaultType
     }
 
-    private fun buildEnumEntry(enumClass: IrClass, entryName: String): IrEnumEntry = IrEnumEntryImpl(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
-        IrEnumEntrySymbolImpl(WrappedEnumEntryDescriptor()),
-        Name.identifier(entryName)
-    ).apply {
-        (descriptor as WrappedEnumEntryDescriptor).bind(this)
-        parent = enumClass
-        enumClass.addChild(this)
+    private fun buildEnumEntry(enumClass: IrClass, entryName: String): IrEnumEntry {
+        val descriptor = WrappedEnumEntryDescriptor()
+        return IrEnumEntryImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
+            IrEnumEntrySymbolImpl(descriptor),
+            Name.identifier(entryName)
+        ).apply {
+            descriptor.bind(this)
+            parent = enumClass
+            enumClass.addChild(this)
+        }
     }
 
     private val documentedConstructor = buildAnnotationConstructor(buildAnnotationClass("Documented"))
@@ -192,7 +196,9 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
             ?: throw AssertionError("No annotation target map for JVM target $jvmTarget")
 
         val targets = irClass.applicableTargetSet() ?: return
-        val javaTargets = targets.mapNotNull { annotationTargetMap[it] }.toSet()
+        val javaTargets = targets.mapNotNullTo(HashSet()) { annotationTargetMap[it] }.sortedBy {
+            ElementType.valueOf(it.symbol.owner.name.asString())
+        }
 
         val vararg = IrVarargImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,

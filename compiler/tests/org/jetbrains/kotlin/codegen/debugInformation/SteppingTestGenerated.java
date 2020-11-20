@@ -110,6 +110,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("dataClass.kt")
+    public void testDataClass() throws Exception {
+        runTest("compiler/testData/debug/stepping/dataClass.kt");
+    }
+
+    @Test
     @TestMetadata("defaultParameter.kt")
     public void testDefaultParameter() throws Exception {
         runTest("compiler/testData/debug/stepping/defaultParameter.kt");
@@ -371,6 +377,18 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     @TestMetadata("stringSwitchesSmall.kt")
     public void testStringSwitchesSmall() throws Exception {
         runTest("compiler/testData/debug/stepping/stringSwitchesSmall.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFunWithLambdaParameter.kt")
+    public void testSuspendFunWithLambdaParameter() throws Exception {
+        runTest("compiler/testData/debug/stepping/suspendFunWithLambdaParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFunWithSuspendLambdaParameter.kt")
+    public void testSuspendFunWithSuspendLambdaParameter() throws Exception {
+        runTest("compiler/testData/debug/stepping/suspendFunWithSuspendLambdaParameter.kt");
     }
 
     @Test

@@ -887,7 +887,9 @@ class ControlFlowInformationProvider private constructor(
             }
 
             instruction.next?.let { dfs(it) }
-        } else if (instruction.element is KtNameReferenceExpression) {
+        } else if (instruction.element is KtNameReferenceExpression || instruction.element is KtBinaryExpression ||
+            instruction.element is KtUnaryExpression
+        ) {
             val call = instruction.element.getResolvedCall(trace.bindingContext)
             if (call is VariableAsFunctionResolvedCall) {
                 (call.variableCall.dispatchReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }

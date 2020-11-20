@@ -6,8 +6,8 @@ FILE: kotlinComparatorAlias.kt
         )
     }
     public final fun test_3(comparator: R|java/util/Comparator<kotlin/Int>|): R|kotlin/Unit| {
-        R|<local>/comparator|.R|FakeOverride<java/util/Comparator.compare: R|kotlin/Int|>|(Int(1), Int(2))
+        R|<local>/comparator|.R|SubstitutionOverride<java/util/Comparator.compare: R|kotlin/Int|>|(Int(1), Int(2))
     }
     public final fun test_4(comparator: R|kotlin/Comparator<kotlin/Int>|): R|kotlin/Unit| {
-        R|<local>/comparator|.R|FakeOverride<java/util/Comparator.compare: R|kotlin/Int|>|(Int(1), Int(2))
+        R|<local>/comparator|.R|SubstitutionOverride<java/util/Comparator.compare: R|kotlin/Int|>|(Int(1), Int(2))
     }

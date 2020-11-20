@@ -16,7 +16,7 @@ object DummyNameChecker : FirMemberDeclarationChecker() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirSimpleFunction) return
         if (declaration.name.asString() == "dummy") {
-            declaration.source?.let { reporter.report(FirErrors.SYNTAX_ERROR.on(it)) }
+            declaration.source?.let { reporter.report(FirErrors.SYNTAX.on(it)) }
         }
     }
 }

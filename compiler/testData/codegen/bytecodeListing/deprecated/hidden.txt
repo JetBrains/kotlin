@@ -1,0 +1,19 @@
+@kotlin.Metadata
+public class Base {
+    // source: 'hidden.kt'
+    public method <init>(): void
+    public synthetic deprecated @kotlin.Deprecated method f(): void
+}
+
+@kotlin.Metadata
+public final class Derived {
+    // source: 'hidden.kt'
+    public synthetic deprecated @kotlin.Deprecated method <init>(): void
+    public synthetic method f(): void
+}
+
+@kotlin.Metadata
+public final class HiddenKt {
+    // source: 'hidden.kt'
+    public synthetic deprecated final static @kotlin.Deprecated @kotlin.DeprecatedSinceKotlin method hidden(): void
+}

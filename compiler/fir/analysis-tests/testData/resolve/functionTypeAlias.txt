@@ -1,7 +1,7 @@
 FILE: functionTypeAlias.kt
     private final typealias A = R|kotlin/String.(kotlin/Int) -> kotlin/Int|
     private final fun b(a: R|A|): R|kotlin/Unit| {
-        R|<local>/a|.R|FakeOverride<kotlin/Function2.invoke: R|kotlin/Int|>|(String(b), Int(1))
+        R|<local>/a|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Int|>|(String(b), Int(1))
     }
     public final fun main(): R|kotlin/Unit| {
         R|/b|(<L> = b@fun R|kotlin/String|.<anonymous>(it: R|kotlin/Int|): R|kotlin/Int| {

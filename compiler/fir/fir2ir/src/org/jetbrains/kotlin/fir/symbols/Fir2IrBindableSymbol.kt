@@ -32,8 +32,6 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
         }
     }
 
-    override val isPublicApi: Boolean = true
-
     override val isBound: Boolean
         get() = _owner != null
 

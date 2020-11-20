@@ -6527,11 +6527,6 @@ public class FirDiagnosticsTestSpecGenerated extends AbstractFirDiagnosticsTestS
                                 runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/5.kt");
                             }
 
-                            @TestMetadata("6.kt")
-                            public void test6() throws Exception {
-                                runTest("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg/6.kt");
-                            }
-
                             public void testAllFilesPresentInNeg() throws Exception {
                                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/analysis/controlFlow/initialization/neg"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                             }

@@ -8,9 +8,9 @@ val concurrentHash: ConcurrentHashMap<String, Int> = null!!
 
 fun foo() {
     concurrent.remove("", 1)
-    concurrent.remove("", "")
+    concurrent.<!INAPPLICABLE_CANDIDATE!>remove<!>("", "")
     concurrentHash.remove("", 1)
-    concurrentHash.remove("", "")
+    concurrentHash.<!INAPPLICABLE_CANDIDATE!>remove<!>("", "")
 
     // Flexible types
     concurrent.remove(null, 1)

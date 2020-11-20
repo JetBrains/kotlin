@@ -1,14 +1,14 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaUsage|.R|/JavaUsage.foo1|(<L> = foo1@fun <anonymous>(x: R|ft<kotlin/Int, kotlin/Int?>!|): R|ft<kotlin/String, kotlin/String?>!| {
+        Q|JavaUsage|.R|/JavaUsage.foo1|(<L> = foo1@fun <anonymous>(x: R|ft<@FlexibleNullability kotlin/Int, @FlexibleNullability kotlin/Int?>!|): R|ft<@FlexibleNullability kotlin/String, @FlexibleNullability kotlin/String?>!| {
             ^ R|<local>/x|.R|kotlin/Int.toInt|().R|kotlin/Any.toString|()
         }
         )
-        Q|JavaUsage|.R|/JavaUsage.foo2|(<L> = foo2@fun <anonymous>(x: R|ft<kotlin/Number, kotlin/Number?>!|): R|ft<kotlin/CharSequence, kotlin/CharSequence?>!| {
+        Q|JavaUsage|.R|/JavaUsage.foo2|(<L> = foo2@fun <anonymous>(x: R|ft<@FlexibleNullability kotlin/Number, @FlexibleNullability kotlin/Number?>!|): R|ft<@FlexibleNullability kotlin/CharSequence, @FlexibleNullability kotlin/CharSequence?>!| {
             ^ R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Any.toString|()
         }
         )
-        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): /JavaUsage.foo2>#(<L> = foo2@fun <anonymous>(x: R|kotlin/Int|): R|ft<kotlin/CharSequence, kotlin/CharSequence?>!| {
+        Q|JavaUsage|.<Inapplicable(INAPPLICABLE): /JavaUsage.foo2>#(<L> = foo2@fun <anonymous>(x: R|kotlin/Int|): R|ft<@FlexibleNullability kotlin/CharSequence, @FlexibleNullability kotlin/CharSequence?>!| {
             ^ R|<local>/x|.R|kotlin/Any.toString|()
         }
         )

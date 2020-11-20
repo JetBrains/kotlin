@@ -190,7 +190,7 @@ fun FirExpression.generateComparisonExpression(
 
     val compareToCall = createConventionCall(
         operationReferenceSource,
-        baseSource?.fakeElement(FirFakeSourceElementKind.GeneratedCompararisonExpression),
+        baseSource?.fakeElement(FirFakeSourceElementKind.GeneratedComparisonExpression),
         argument,
         OperatorNameConventions.COMPARE_TO
     )
@@ -227,11 +227,15 @@ private fun FirExpression.createConventionCall(
     }
 }
 
-fun generateAccessExpression(source: FirSourceElement?, name: Name): FirQualifiedAccessExpression =
+fun generateAccessExpression(
+    qualifiedSource: FirSourceElement?,
+    calleeReferenceSource: FirSourceElement?,
+    name: Name
+): FirQualifiedAccessExpression =
     buildQualifiedAccessExpression {
-        this.source = source
+        this.source = qualifiedSource
         calleeReference = buildSimpleNamedReference {
-            this.source = source
+            this.source = calleeReferenceSource
             this.name = name
         }
     }
@@ -375,6 +379,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
         val annotations = getter?.annotations
         val returnTarget = FirFunctionTarget(null, isLambda = false)
         getter = buildPropertyAccessor {
+            this.source = delegateBuilder.source
             this.session = session
             origin = FirDeclarationOrigin.Source
             returnTypeRef = buildImplicitTypeRef()
@@ -406,12 +411,14 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
     if (isVar && (setter == null || setter is FirDefaultPropertyAccessor)) {
         val annotations = setter?.annotations
         setter = buildPropertyAccessor {
+            this.source = delegateBuilder.source
             this.session = session
             origin = FirDeclarationOrigin.Source
             returnTypeRef = session.builtinTypes.unitType
             isGetter = false
             status = FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL)
             val parameter = buildValueParameter {
+                source = delegateBuilder.source
                 this.session = session
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = buildImplicitTypeRef()
@@ -425,6 +432,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
             symbol = FirPropertyAccessorSymbol()
             body = FirSingleExpressionBlock(
                 buildFunctionCall {
+                    source = delegateBuilder.source
                     explicitReceiver = delegateAccess()
                     calleeReference = buildSimpleNamedReference {
                         name = SET_VALUE
@@ -434,6 +442,7 @@ fun FirPropertyBuilder.generateAccessorsByDelegate(
                         arguments += propertyRef()
                         arguments += buildQualifiedAccessExpression {
                             calleeReference = buildResolvedNamedReference {
+                                source = delegateBuilder.source
                                 name = DELEGATED_SETTER_PARAM
                                 resolvedSymbol = parameter.symbol
                             }
@@ -489,6 +498,7 @@ fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression): FirSafeCallExp
         this.originalReceiverRef = FirExpressionRef<FirExpression>().apply {
             bind(receiver)
         }
+        this.source = receiver.source
     }
 
     replaceExplicitReceiver(checkedSafeCallSubject)

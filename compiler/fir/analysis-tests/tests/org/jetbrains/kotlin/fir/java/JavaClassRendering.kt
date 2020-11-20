@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 fun renderJavaClass(renderer: FirRenderer, javaClass: FirJavaClass, session: FirSession) {
-    val memberScope = javaClass.unsubstitutedScope(session, ScopeSession())
+    val memberScope = javaClass.unsubstitutedScope(session, ScopeSession(), withForcedTypeCalculator = true)
 
     val staticScope = javaClass.scopeProvider.getStaticScope(javaClass, session, ScopeSession())
 

@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.load.java.descriptors.StringDefaultValue
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FirSignatureEnhancement(
@@ -47,7 +47,7 @@ class FirSignatureEnhancement(
     private val javaTypeParameterStack: JavaTypeParameterStack =
         if (owner is FirJavaClass) owner.javaTypeParameterStack else JavaTypeParameterStack.EMPTY
 
-    private val jsr305State: Jsr305State = session.jsr305StateContainer.jsr305State
+    private val jsr305State: JavaTypeEnhancementState = session.javaTypeEnhancementState ?: JavaTypeEnhancementState.DEFAULT
 
     private val typeQualifierResolver = FirAnnotationTypeQualifierResolver(session, jsr305State)
 
@@ -95,32 +95,45 @@ class FirSignatureEnhancement(
                     session = this@FirSignatureEnhancement.session
                     this.symbol = symbol
                     this.name = name
+                    returnTypeRef = newReturnTypeRef
+
+                    // TODO: Use some kind of copy mechanism
                     visibility = firElement.visibility
                     modality = firElement.modality
-                    returnTypeRef = newReturnTypeRef
                     isVar = firElement.isVar
                     isStatic = firElement.isStatic
                     annotations += firElement.annotations
                     status = firElement.status
                     initializer = firElement.initializer
+                    dispatchReceiverType = firElement.dispatchReceiverType
+                    attributes = firElement.attributes.copy()
                 }
                 return symbol
             }
             is FirSyntheticProperty -> {
                 val accessorSymbol = firElement.symbol
                 val getterDelegate = firElement.getter.delegate
-                val enhancedFunctionSymbol = if (getterDelegate is FirJavaMethod) {
+                val enhancedGetterSymbol = if (getterDelegate is FirJavaMethod) {
                     enhanceMethod(
                         getterDelegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
                     )
                 } else {
                     getterDelegate.symbol
                 }
+                val setterDelegate = firElement.setter?.delegate
+                val enhancedSetterSymbol = if (setterDelegate is FirJavaMethod) {
+                    enhanceMethod(
+                        setterDelegate, accessorSymbol.accessorId, accessorSymbol.accessorId.callableName
+                    )
+                } else {
+                    setterDelegate?.symbol
+                }
                 return buildSyntheticProperty {
                     session = this@FirSignatureEnhancement.session
                     this.name = name
                     symbol = FirAccessorSymbol(accessorSymbol.callableId, accessorSymbol.accessorId)
-                    delegateGetter = enhancedFunctionSymbol.fir as FirSimpleFunction
+                    delegateGetter = enhancedGetterSymbol.fir as FirSimpleFunction
+                    delegateSetter = enhancedSetterSymbol?.fir as FirSimpleFunction?
                 }.symbol
             }
             else -> {
@@ -221,12 +234,16 @@ class FirSignatureEnhancement(
                             isInner = firMethod.isInner
                         }
                         this.symbol = symbol
+                        dispatchReceiverType = firMethod.dispatchReceiverType
+                        attributes = firMethod.attributes.copy()
                     }
                 } else {
                     FirConstructorBuilder().apply {
                         returnTypeRef = newReturnTypeRef
                         status = firMethod.status
                         this.symbol = symbol
+                        dispatchReceiverType = firMethod.dispatchReceiverType
+                        attributes = firMethod.attributes.copy()
                     }
                 }.apply {
                     source = firMethod.source
@@ -250,6 +267,8 @@ class FirSignatureEnhancement(
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                     valueParameters += newValueParameters
                     typeParameters += firMethod.typeParameters
+                    dispatchReceiverType = firMethod.dispatchReceiverType
+                    attributes = firMethod.attributes.copy()
                 }
             }
             else -> throw AssertionError("Unknown Java method to enhance: ${firMethod.render()}")

@@ -37,10 +37,8 @@ dependencies {
     implementation("org.openjdk.jmh", "jmh-generator-bytecode", jmhVersion)
     implementation("org.openjdk.jmh", "jmh-generator-annprocess", jmhVersion)
 
-    Platform[192].orHigher {
-        testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-        testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {

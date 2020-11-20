@@ -65,6 +65,61 @@ class ResolvablePropertiesTests {
         props.resolvablePropertyString("k1")
     }
 
+    @Test
+    fun `trivial relative path`() {
+        val props = propertiesOf(
+            "k1" to "v1",
+            "k2" to "\$k1/sysroot"
+        )
+        assertEquals("v1/sysroot", props.resolvablePropertyString("k2"))
+    }
+
+    @Test
+    fun `two-fold relative path`() {
+        val props = propertiesOf(
+            "k1" to "v1",
+            "k2" to "\$k1/toolchain",
+            "k3" to "\$k2/sysroot"
+        )
+        assertEquals("v1/toolchain/sysroot", props.resolvablePropertyString("k3"))
+    }
+
+    @Test
+    fun `absolute path`() {
+        val props = propertiesOf(
+            "k1" to "/",
+            "k2" to "\$k1/bin"
+        )
+        assertEquals("/bin", props.resolvablePropertyString("k2"))
+    }
+
+    @Test(expected = java.lang.IllegalStateException::class)
+    fun `incorrect relative path`() {
+        val props = propertiesOf(
+            "k1" to "v1 v2",
+            "k2" to "\$k1/sysroot"
+        )
+        props.resolvablePropertyString("k2")
+    }
+
+    @Test
+    fun `simple prefix`() {
+        val props = propertiesOf(
+            "k1" to "v1",
+            "k2" to "--key=\$k1"
+        )
+        assertEquals("--key=v1", props.resolvablePropertyString("k2"))
+    }
+
+    @Test
+    fun `with prefix and relative`() {
+        val props = propertiesOf(
+            "absoluteTargetSysRoot" to "/",
+            "include" to "-I\$absoluteTargetSysRoot/usr/include/c++/4.9.4"
+        )
+        assertEquals("-I/usr/include/c++/4.9.4", props.resolvablePropertyString("include"))
+    }
+
     companion object {
         private fun propertiesOf(vararg pairs: Pair<String, Any>): Properties =
             Properties().also {

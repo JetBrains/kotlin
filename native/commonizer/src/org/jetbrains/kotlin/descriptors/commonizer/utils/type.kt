@@ -12,14 +12,23 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.types.AbbreviatedType
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 internal inline val KotlinType.declarationDescriptor: ClassifierDescriptor
     get() = (constructor.declarationDescriptor ?: error("No declaration descriptor found for $constructor"))
+
+// eliminate unnecessary repeated abbreviations
+internal fun extractExpandedType(abbreviated: AbbreviatedType): SimpleType {
+    var expanded = abbreviated.expandedType
+    while (expanded is AbbreviatedType) {
+        if (expanded.abbreviation.declarationDescriptor !== abbreviated.abbreviation.declarationDescriptor)
+            break
+        else
+            expanded = expanded.expandedType
+    }
+    return expanded
+}
 
 internal val ClassifierDescriptorWithTypeParameters.internedClassId: ClassId
     get() = when (val owner = containingDeclaration) {

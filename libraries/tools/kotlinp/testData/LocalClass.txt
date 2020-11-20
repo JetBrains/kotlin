@@ -3,7 +3,7 @@
 public final class A : kotlin/Any {
 
   // signature: <init>()V
-  public /* primary */ constructor()
+  public constructor()
 
   // module name: test-module
 }
@@ -12,7 +12,7 @@ public final class A : kotlin/Any {
 local final class .A$L<T#0 /* T */> : kotlin/Any {
 
   // signature: <init>()V
-  public /* primary */ constructor()
+  public constructor()
 
   // signature: x(LA$L;)V
   public final fun x(l: .A$L<.A$L<T#0>.I>): kotlin/Unit
@@ -26,7 +26,7 @@ local final class .A$L<T#0 /* T */> : kotlin/Any {
 local final inner class .A$L.I : kotlin/Any {
 
   // signature: <init>(LA$L;)V
-  public /* primary */ constructor()
+  public constructor()
 
   // module name: test-module
 }

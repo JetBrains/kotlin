@@ -5,7 +5,7 @@ fun foo() {
     val b = object {
         <!LOCAL_OBJECT_NOT_ALLOWED!>object c<!> {}
     }
-    b.c
+    b.<!UNRESOLVED_REFERENCE!>c<!>
     class A {
         <!LOCAL_OBJECT_NOT_ALLOWED!>object d<!> {}
     }

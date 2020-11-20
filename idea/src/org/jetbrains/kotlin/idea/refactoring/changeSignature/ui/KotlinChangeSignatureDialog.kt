@@ -332,12 +332,15 @@ class KotlinChangeSignatureDialog(
         if (myMethod.canChangeReturnType() == MethodDescriptor.ReadWriteOption.ReadWrite &&
             myReturnTypeCodeFragment.getTypeInfo(isCovariant = true, forPreview = false, reanalyse = true).type == null
         ) {
-            if (showOkCancelDialog(
+            if (Messages.showOkCancelDialog(
                     myProject,
-                    KotlinBundle.message("message.text.return.type.cannot.be.resolved",
-                        myReturnTypeCodeFragment?.text.toString()
-                    ),
+                    KotlinBundle.message(
+                        "message.text.return.type.cannot.be.resolved",
+                                myReturnTypeCodeFragment?.text.toString()
+                            ),
                     RefactoringBundle.message("changeSignature.refactoring.name"),
+                    Messages.getOkButton(),
+                    Messages.getCancelButton(),
                     Messages.getWarningIcon()
                 ) != Messages.OK
             ) {
@@ -351,13 +354,16 @@ class KotlinChangeSignatureDialog(
                     KotlinBundle.message("text.parameter.0", item.parameter.name)
                 else
                     KotlinBundle.message("text.receiver")
-                if (showOkCancelDialog(
+                if (Messages.showOkCancelDialog(
                         myProject,
-                        KotlinBundle.message("message.type.for.cannot.be.resolved",
-                            item.typeCodeFragment.text,
-                            paramText
-                        ),
+                        KotlinBundle.message(
+                            "message.type.for.cannot.be.resolved",
+                                        item.typeCodeFragment.text,
+                                        paramText
+                                    ),
                         RefactoringBundle.message("changeSignature.refactoring.name"),
+                        Messages.getOkButton(),
+                        Messages.getCancelButton(),
                         Messages.getWarningIcon()
                     ) != Messages.OK
                 ) {

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.*
 
 object FirErrors {
     // Miscellaneous
-    val SYNTAX_ERROR by error0<FirSourceElement, PsiElement>()
+    val SYNTAX by error0<FirSourceElement, PsiElement>()
     val OTHER_ERROR by error0<FirSourceElement, PsiElement>()
 
     // General syntax

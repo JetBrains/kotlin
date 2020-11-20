@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun test(s: String) = s?.length
 
 // 0 IFNULL

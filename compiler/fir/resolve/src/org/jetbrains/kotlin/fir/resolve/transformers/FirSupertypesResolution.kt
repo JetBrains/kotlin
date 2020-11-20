@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -103,8 +102,8 @@ private class FirApplySupertypesTransformer(
 
             // TODO: Replace with an immutable version or transformer
             firClass.replaceSuperTypeRefs(supertypeRefs)
-            firClass.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
         }
+        firClass.replaceResolvePhase(FirResolvePhase.SUPER_TYPES)
     }
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Nothing?): CompositeTransformResult<FirStatement> {
@@ -228,7 +227,7 @@ private class FirSupertypeResolverVisitor(
 
                 // Local classes should be treated specially and supplied with localClassesNavigationInfo, normally
                 // But it seems to be too strict to add an assertion here
-                val navigationInfo = localClassesNavigationInfo ?: return persistentListOf()
+                if (localClassesNavigationInfo == null) return persistentListOf()
 
                 val parent = localClassesNavigationInfo.parentForClass[classLikeDeclaration]
 

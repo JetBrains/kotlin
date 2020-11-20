@@ -1,5 +1,6 @@
 // ERROR_POLICY: SYNTAX
 
+// MODULE: lib
 // FILE: t.kt
 
 
@@ -22,6 +23,7 @@ fun f(): Any { storage += "FAIL"; return storage }
 
 var storage = ""
 
+// MODULE: main(lib)
 // FILE: b.kt
 
 fun box(): String {

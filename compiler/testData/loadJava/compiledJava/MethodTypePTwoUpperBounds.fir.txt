@@ -1,5 +1,5 @@
 public open class MethodTypePTwoUpperBounds : R|kotlin/Any| {
-    public open fun <T : R|ft<kotlin/Cloneable, kotlin/Cloneable?>!|, R|ft<java/lang/Runnable, java/lang/Runnable?>!|> foo(): R|kotlin/Unit|
+    public open fun <T : R|ft<@FlexibleNullability kotlin/Cloneable, kotlin/Cloneable?>!|, R|ft<@FlexibleNullability java/lang/Runnable, java/lang/Runnable?>!|> foo(): R|kotlin/Unit|
 
     public constructor(): R|test/MethodTypePTwoUpperBounds|
 

@@ -46,7 +46,7 @@ class AllOpenMemberGenerator(session: FirSession) : FirDeclarationGenerationExte
             returnTypeRef = annotatedDeclaration.returnTypeRef
             status = annotatedDeclaration.status
             name = Name.identifier("hello${propertyName.capitalize()}")
-            symbol = FirNamedFunctionSymbol(CallableId(owner.classId, name), isFakeOverride = false)
+            symbol = FirNamedFunctionSymbol(CallableId(owner.classId, name))
         }
         return listOf(GeneratedDeclaration(function, owner))
     }

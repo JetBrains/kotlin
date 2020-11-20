@@ -1,7 +1,7 @@
 public final class UnboundWildcard : R|kotlin/Any| {
-    public final fun foo(): R|ft<test/UnboundWildcard.MyClass<*>, test/UnboundWildcard.MyClass<*>?>!|
+    public final fun foo(): R|ft<@FlexibleNullability test/UnboundWildcard.MyClass<*>, test/UnboundWildcard.MyClass<*>?>!|
 
-    public final fun collection(): R|ft<kotlin/collections/MutableCollection<*>, kotlin/collections/Collection<*>?>!|
+    public final fun collection(): R|ft<@FlexibleNullability kotlin/collections/MutableCollection<*>, kotlin/collections/Collection<*>?>!|
 
     public constructor(): R|test/UnboundWildcard|
 

@@ -1421,6 +1421,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/effectivelyInlineOnly.kt");
         }
 
+        @TestMetadata("mergeLvt.kt")
+        public void testMergeLvt() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/mergeLvt.kt");
+        }
+
         @TestMetadata("nonLocalReturn.kt")
         public void testNonLocalReturn() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/nonLocalReturn.kt");
@@ -1805,6 +1810,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         public void testSimpleConstructorNotRedundantNotOptimizable() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/deadCodeElimination/simpleConstructorNotRedundantNotOptimizable.kt");
         }
+
+        @TestMetadata("unusedPrimitiveAndObjectEquals.kt")
+        public void testUnusedPrimitiveAndObjectEquals() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/deadCodeElimination/unusedPrimitiveAndObjectEquals.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeText/defaultArguments")
@@ -2150,6 +2160,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("forIntInDownTo.kt")
         public void testForIntInDownTo() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/forLoop/forIntInDownTo.kt");
+        }
+
+        @TestMetadata("iincGeneration.kt")
+        public void testIincGeneration() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/forLoop/iincGeneration.kt");
         }
 
         @TestMetadata("intrinsicArrayConstructorsUseCounterLoop.kt")
@@ -3095,6 +3110,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("noAssertionsForInlineClassesBasedOnNullableTypes.kt")
         public void testNoAssertionsForInlineClassesBasedOnNullableTypes() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noAssertionsForInlineClassesBasedOnNullableTypes.kt");
+        }
+
+        @TestMetadata("noBoxingInMethod.kt")
+        public void testNoBoxingInMethod() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noBoxingInMethod.kt");
         }
 
         @TestMetadata("noBoxingOnCastOperations.kt")
@@ -4376,6 +4396,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperForNullableInitialization.kt");
         }
 
+        @TestMetadata("samWrapperInInlineLambda.kt")
+        public void testSamWrapperInInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperInInlineLambda.kt");
+        }
+
         @TestMetadata("samWrapperOfLambda.kt")
         public void testSamWrapperOfLambda() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperOfLambda.kt");
@@ -4384,6 +4409,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("samWrapperOfReference.kt")
         public void testSamWrapperOfReference() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperOfReference.kt");
+        }
+
+        @TestMetadata("samWrapperRawTypes.kt")
+        public void testSamWrapperRawTypes() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperRawTypes.kt");
         }
     }
 
@@ -4538,6 +4568,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicConstants.kt");
         }
 
+        @TestMetadata("concatDynamicDataClass.kt")
+        public void testConcatDynamicDataClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicDataClass.kt");
+        }
+
         @TestMetadata("concatDynamicIndy.kt")
         public void testConcatDynamicIndy() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicIndy.kt");
@@ -4546,6 +4581,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("concatDynamicIndy201.kt")
         public void testConcatDynamicIndy201() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicIndy201.kt");
+        }
+
+        @TestMetadata("concatDynamicIndyDataClass.kt")
+        public void testConcatDynamicIndyDataClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicIndyDataClass.kt");
         }
 
         @TestMetadata("concatNotDynamic.kt")
@@ -4581,6 +4621,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("kt19037.kt")
         public void testKt19037() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/kt19037.kt");
+        }
+
+        @TestMetadata("kt42457_old.kt")
+        public void testKt42457_old() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/kt42457_old.kt");
         }
 
         @TestMetadata("multipleNestedConcat.kt")
@@ -4788,6 +4833,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("exhaustiveWhenReturn.kt")
         public void testExhaustiveWhenReturn() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenReturn.kt");
+        }
+
+        @TestMetadata("exhaustiveWhenSpecialCases.kt")
+        public void testExhaustiveWhenSpecialCases() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenSpecialCases.kt");
         }
 
         @TestMetadata("exhaustiveWhenUnit.kt")

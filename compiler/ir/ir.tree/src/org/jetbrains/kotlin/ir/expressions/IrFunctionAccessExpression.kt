@@ -21,14 +21,14 @@ abstract class IrFunctionAccessExpression(
 
     override fun getValueArgument(index: Int): IrExpression? {
         if (index >= valueArgumentsCount) {
-            throw AssertionError("$this: No such value argument slot: $index")
+            throwNoSuchArgumentSlotException("value", index, valueArgumentsCount)
         }
         return argumentsByParameterIndex[index]
     }
 
     override fun putValueArgument(index: Int, valueArgument: IrExpression?) {
         if (index >= valueArgumentsCount) {
-            throw AssertionError("$this: No such value argument slot: $index")
+            throwNoSuchArgumentSlotException("value", index, valueArgumentsCount)
         }
         argumentsByParameterIndex[index] = valueArgument
     }

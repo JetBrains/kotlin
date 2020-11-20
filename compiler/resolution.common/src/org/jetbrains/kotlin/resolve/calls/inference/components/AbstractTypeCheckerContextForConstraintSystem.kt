@@ -34,6 +34,8 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
         isFromNullabilityConstraint: Boolean = false
     )
 
+    abstract fun addEqualityConstraint(typeVariable: TypeConstructorMarker, type: KotlinTypeMarker)
+
     override fun getLowerCapturedTypePolicy(subType: SimpleTypeMarker, superType: CapturedTypeMarker): LowerCapturedTypePolicy {
         return when {
             isMyTypeVariable(subType) -> {

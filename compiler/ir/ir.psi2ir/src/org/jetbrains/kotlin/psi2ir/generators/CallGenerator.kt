@@ -122,8 +122,8 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         if (descriptor is LocalVariableDescriptor && descriptor.isDelegated) {
             val getterDescriptor = descriptor.getter!!
             val getterSymbol = context.symbolTable.referenceSimpleFunction(getterDescriptor.original)
-            IrCallImpl(
-                startOffset, endOffset, descriptor.type.toIrType(), getterSymbol, origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY
+            IrCallImpl.fromSymbolDescriptor(
+                startOffset, endOffset, descriptor.type.toIrType(), getterSymbol, origin = origin ?: IrStatementOrigin.GET_LOCAL_PROPERTY
             ).apply {
                 context.callToSubstitutedDescriptorMap[this] = getterDescriptor
                 putTypeArguments(typeArguments) { it.toIrType() }
@@ -136,7 +136,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
             val descriptor = call.descriptor as? ClassConstructorDescriptor
                 ?: throw AssertionError("Class constructor expected: ${call.descriptor}")
             val constructorSymbol = context.symbolTable.referenceConstructor(descriptor.original)
-            val irCall = IrDelegatingConstructorCallImpl(
+            val irCall = IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                 startOffset, endOffset,
                 context.irBuiltIns.unitType,
                 constructorSymbol
@@ -333,12 +333,12 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
                 }
             } else {
                 val originalSymbol = context.symbolTable.referenceSimpleFunction(functionDescriptor.original)
-                IrCallImpl(
+                IrCallImpl.fromSymbolDescriptor(
                     startOffset, endOffset,
                     irType,
                     originalSymbol,
-                    origin,
-                    call.superQualifier?.let { context.symbolTable.referenceClass(it) }
+                    origin = origin,
+                    superQualifierSymbol = call.superQualifier?.let { context.symbolTable.referenceClass(it) }
                 ).run {
                     context.callToSubstitutedDescriptorMap[this] = functionDescriptor
                     putTypeArguments(call.typeArguments) { it.toIrType() }

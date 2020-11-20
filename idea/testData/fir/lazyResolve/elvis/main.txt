@@ -1,13 +1,13 @@
 FILE: main.kt
-    public final class WithElvis : R|kotlin/Any| {
+    public final [BODY_RESOLVE] class WithElvis : R|kotlin/Any| {
         public constructor(value: R|kotlin/String?|): R|elvis/WithElvis| {
             super<R|kotlin/Any|>()
         }
 
-        public final val value: R|kotlin/String?| = R|<local>/value|
+        public final [CONTRACTS] val value: R|kotlin/String?| = R|<local>/value|
             public get(): R|kotlin/String?|
 
-        public final fun foo(): R|kotlin/String| {
+        public final [BODY_RESOLVE] fun foo(): R|kotlin/String| {
             ^foo this@R|elvis/WithElvis|.R|elvis/WithElvis.value| ?: String()
         }
 

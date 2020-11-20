@@ -9,3 +9,5 @@ class Synthetic {
 
     private fun foo() {}
 }
+
+// FIR_COMPARISON

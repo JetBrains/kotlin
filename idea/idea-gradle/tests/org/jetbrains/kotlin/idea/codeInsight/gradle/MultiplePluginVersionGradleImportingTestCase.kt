@@ -35,6 +35,10 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
         )
     }
 
+    override fun importProject() {
+        super.importProject(skipIndexing = true)
+    }
+
     @JvmField
     @Parameterized.Parameter(1)
     var gradleKotlinPluginVersionType: String = MINIMAL_SUPPORTED_VERSION

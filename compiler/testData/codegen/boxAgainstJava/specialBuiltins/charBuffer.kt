@@ -1,4 +1,5 @@
 // FILE: CharBuffer.java
+// IGNORE_BACKEND_FIR: JVM_IR
 
 public abstract class CharBuffer implements CharSequence {
     public final int length() {

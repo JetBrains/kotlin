@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: STDLIB_COLLECTIONS
 // KJS_WITH_FULL_RUNTIME
 operator fun Long.component1() = this + 1
 operator fun Long.component2() = this + 2

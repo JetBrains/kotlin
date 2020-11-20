@@ -10,12 +10,13 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.toKotlinType
+import org.jetbrains.kotlin.ir.types.typeConstructorParameters
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.*
@@ -303,7 +304,7 @@ open class WrappedTypeParameterDescriptor : TypeParameterDescriptor, WrappedDecl
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class WrappedVariableDescriptor : VariableDescriptor, WrappedCallableDescriptor<IrVariable>() {
 
-    override fun getContainingDeclaration() = (owner.parent as IrFunction).descriptor
+    override fun getContainingDeclaration() = (owner.parent as IrDeclaration).descriptor
     override fun getType() = owner.type.toKotlinType()
     override fun getReturnType() = getType()
     override fun getName() = owner.name
@@ -612,13 +613,7 @@ open class WrappedClassDescriptor : ClassDescriptor, WrappedDeclarationDescripto
     }
 
     private fun collectTypeParameters(): List<TypeParameterDescriptor> =
-        generateSequence(owner as IrTypeParametersContainer,
-                         { current ->
-                             val parent = current.parent as? IrTypeParametersContainer
-                             if (parent is IrClass && current is IrClass && !current.isInner) null
-                             else parent
-                         })
-            .flatMap { it.typeParameters }
+        owner.typeConstructorParameters
             .map { it.descriptor }
             .toList()
 
@@ -641,6 +636,122 @@ open class WrappedClassDescriptor : ClassDescriptor, WrappedDeclarationDescripto
 
     override fun isDefinitelyNotSamInterface(): Boolean {
         return owner.descriptor.isDefinitelyNotSamInterface
+    }
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+open class WrappedScriptDescriptor : ScriptDescriptor, WrappedDeclarationDescriptor<IrScript>() {
+    override fun getName() = owner.name
+
+    override fun getMemberScope(typeArguments: MutableList<out TypeProjection>) = MemberScope.Empty
+
+    override fun getMemberScope(typeSubstitution: TypeSubstitution) = MemberScope.Empty
+
+    override fun getUnsubstitutedMemberScope() = MemberScope.Empty
+
+    override fun getUnsubstitutedInnerClassesScope() = MemberScope.Empty
+
+    override fun getStaticScope() = MemberScope.Empty
+
+    override fun getSource(): SourceElement = SourceElement.NO_SOURCE
+
+    override fun getConstructors() =
+        owner.statements.filterIsInstance<IrConstructor>().filter { !it.origin.isSynthetic }.map { it.descriptor }.toList()
+
+    override fun getContainingDeclaration() = (owner.parent as IrSymbolOwner).symbol.descriptor
+
+    private val _defaultType: SimpleType by lazy {
+        TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope, KotlinTypeFactory.EMPTY_REFINED_TYPE_FACTORY)
+    }
+
+    override fun getDefaultType(): SimpleType = _defaultType
+
+    override fun getKind() = TODO()
+
+    override fun getModality() = TODO()
+
+    override fun getCompanionObjectDescriptor() = owner.statements.filterIsInstance<IrClass>().firstOrNull { it.isCompanion }?.descriptor
+
+    override fun getVisibility() = TODO()
+
+    override fun isCompanionObject() = false
+
+    override fun isData() = false
+
+    override fun isInline() = false
+
+    override fun isFun() = false
+
+    override fun getThisAsReceiverParameter() = owner.thisReceiver.descriptor as ReceiverParameterDescriptor
+
+    override fun getUnsubstitutedPrimaryConstructor() = TODO()
+
+    override fun getDeclaredTypeParameters() = TODO()
+
+    override fun getSealedSubclasses(): Collection<ClassDescriptor> {
+        TODO("not implemented")
+    }
+
+    override fun getOriginal() = this
+
+    override fun isExpect() = false
+
+    override fun substitute(substitutor: TypeSubstitutor): ClassifierDescriptorWithTypeParameters =
+        throw UnsupportedOperationException("Wrapped descriptors SHOULD NOT be substituted")
+
+    override fun isInner(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun isActual() = false
+
+    override fun isExternal(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun getTypeConstructor(): TypeConstructor = TODO()
+
+    override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R =
+        visitor!!.visitClassDescriptor(this, data)
+
+    override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
+        visitor!!.visitClassDescriptor(this, null)
+    }
+
+    override fun getDefaultFunctionTypeForSamInterface(): SimpleType? {
+        TODO("not yet implemented")
+    }
+
+    override fun isDefinitelyNotSamInterface(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun getPriority(): Int {
+        TODO("Not yet implemented")
+    }
+
+    override fun getExplicitConstructorParameters(): MutableList<ValueParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getImplicitReceiversParameters(): MutableList<ValueParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getScriptProvidedPropertiesParameters(): MutableList<ValueParameterDescriptor> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getImplicitReceivers(): MutableList<ClassDescriptor> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getScriptProvidedProperties(): MutableList<PropertyDescriptor> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getResultValue(): PropertyDescriptor? {
+        TODO("Not yet implemented")
     }
 }
 
@@ -1047,6 +1158,24 @@ open class WrappedFieldDescriptor : PropertyDescriptor, WrappedDeclarationDescri
     override fun getDelegateField(): FieldDescriptor? = null // TODO
 
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
+}
+
+class WrappedErrorDescriptor : WrappedDeclarationDescriptor<IrErrorDeclaration>() {
+    override fun getName(): Name = error("WrappedErrorDescriptor.getName: Should not be reached")
+
+    override fun getOriginal(): DeclarationDescriptorWithSource =
+        error("WrappedErrorDescriptor.getOriginal: Should not be reached")
+
+    override fun getContainingDeclaration(): DeclarationDescriptor? =
+        error("WrappedErrorDescriptor.getContainingDeclaration: Should not be reached")
+
+    override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
+        error("WrappedErrorDescriptor.accept: Should not be reached")
+    }
+
+    override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
+    }
+
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)

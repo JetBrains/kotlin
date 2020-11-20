@@ -5,16 +5,14 @@ plugins {
 
 dependencies {
     testCompile(projectTests(":compiler"))
-    Platform[192].orHigher {
-        testCompileOnly(intellijDep()) {
-            includeJars("groovy-all", rootProject = rootProject)
-        }
-        testCompile(intellijDep()) {
-            includeJars("gson", rootProject = rootProject)
-        }
-        testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-        testRuntimeOnly(intellijPluginDep("java"))
+    testCompileOnly(intellijDep()) {
+        includeJars("groovy-all", rootProject = rootProject)
     }
+    testCompile(intellijDep()) {
+        includeJars("gson", rootProject = rootProject)
+    }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(intellijPluginDep("java"))
     compile("org.jsoup:jsoup:1.10.3")
     if (System.getProperty("idea.active") != null) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
     testRuntime(project(":kotlin-reflect"))

@@ -1,6 +1,6 @@
 FILE: localClassesWithImplicit.kt
     public final inline fun <T> myRun(block: R|() -> T|): R|T| {
-        ^myRun R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()
+        ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
     }
     public final fun test(a: R|kotlin/Any|, b: R|kotlin/Any|): R|kotlin/Unit| {
         when () {

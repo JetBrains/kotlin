@@ -17,7 +17,7 @@ module {
   public final expect annotation class test/A : kotlin/Annotation {
 
     // signature: <init>(I)V
-    public /* primary */ constructor(x: kotlin/Int)
+    public constructor(x: kotlin/Int)
 
     public final expect val x: kotlin/Int
       public final get
@@ -27,7 +27,7 @@ module {
   public final expect annotation class test/B : kotlin/Annotation {
 
     // signature: <init>(Lkotlin/Array;)V
-    public /* primary */ constructor(a: kotlin/Array<kotlin/String>)
+    public constructor(a: kotlin/Array<kotlin/String>)
 
     public final expect val a: kotlin/Array<kotlin/String>
       public final get
@@ -37,7 +37,7 @@ module {
   public final expect annotation class test/C : kotlin/Annotation {
 
     // signature: <init>()V
-    public /* primary */ constructor()
+    public constructor()
 
     // module name: main
   }

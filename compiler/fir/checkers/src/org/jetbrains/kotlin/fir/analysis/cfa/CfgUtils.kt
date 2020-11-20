@@ -26,7 +26,7 @@ fun CFGNode<*>.isEnterNode(direction: TraverseDirection): Boolean = when (direct
 
 val CFGNode<*>.previousCfgNodes: List<CFGNode<*>>
     get() = previousNodes.filter {
-        val kind = incomingEdges.getValue(it)
+        val kind = incomingEdges.getValue(it).kind
         if (this.isDead) {
             kind.usedInCfa
         } else {
@@ -39,7 +39,7 @@ val CFGNode<*>.followingCfgNodes: List<CFGNode<*>>
         val nodes = mutableListOf<CFGNode<*>>()
 
         followingNodes.filterTo(nodes) {
-            val kind = outgoingEdges.getValue(it)
+            val kind = outgoingEdges.getValue(it).kind
             kind.usedInCfa && !kind.isDead
         }
         (this as? CFGNodeWithCfgOwner<*>)?.subGraphs?.mapTo(nodes) { it.enterNode }

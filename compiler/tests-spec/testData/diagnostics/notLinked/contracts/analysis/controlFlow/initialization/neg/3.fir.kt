@@ -95,7 +95,7 @@ fun case_6() {
         println(<!UNINITIALIZED_VARIABLE!>value_2<!>.inc())
     }
 
-    <!UNINITIALIZED_VARIABLE!>value_2<!>++
+    value_2++
 }
 
 // TESTCASE NUMBER: 7

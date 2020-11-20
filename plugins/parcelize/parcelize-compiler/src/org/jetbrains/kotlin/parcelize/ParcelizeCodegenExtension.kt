@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.parcelize.ParcelizeAnnotationChecker.Companion.TYPE_PARCELER_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeResolveExtension.Companion.createMethod
 import org.jetbrains.kotlin.parcelize.ParcelizeSyntheticComponent.ComponentKind.*
 import org.jetbrains.kotlin.parcelize.serializers.*

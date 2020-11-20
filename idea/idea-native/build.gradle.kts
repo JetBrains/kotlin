@@ -12,9 +12,7 @@ dependencies {
     compile(project(":native:frontend.native"))
 
     compileOnly(intellijDep())
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-    }
+    compileOnly(intellijPluginDep("java"))
 
     testCompileOnly(intellijDep())
     testRuntimeOnly(intellijDep())

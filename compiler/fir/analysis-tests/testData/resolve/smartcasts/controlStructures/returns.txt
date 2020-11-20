@@ -66,7 +66,7 @@ FILE: returns.kt
         R|<local>/x|.<Unresolved name: baz>#()
     }
     public final fun <T> runHigherOrder(f: R|() -> T|): R|T| {
-        ^runHigherOrder R|<local>/f|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()
+        ^runHigherOrder R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
     }
     public final val R|kotlin/String|.ext: R|kotlin/Int|
         public get(): R|kotlin/Int| {

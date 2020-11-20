@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.fir.PrivateForInline
 class ScopeSession {
     private val scopes = hashMapOf<Any, HashMap<ScopeSessionKey<*, *>, Any>>()
 
-    var returnTypeCalculator: Any? = null
-
     @PrivateForInline
     fun scopes() = scopes
 

@@ -39,6 +39,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     override var source: FirSourceElement? = null
     override lateinit var session: FirSession
     override lateinit var origin: FirDeclarationOrigin
+    override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override lateinit var returnTypeRef: FirTypeRef
     var receiverTypeRef: FirTypeRef? = null
@@ -57,6 +58,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
             source,
             session,
             origin,
+            attributes,
             annotations,
             returnTypeRef,
             receiverTypeRef,

@@ -1,4 +1,5 @@
 // FILE: AbstractSpecializedMap.java
+// IGNORE_BACKEND_FIR: JVM_IR
 public abstract class AbstractSpecializedMap implements java.util.Map<Integer, Double> {
     public abstract double put(int x, double y);
     public abstract double remove(int k);

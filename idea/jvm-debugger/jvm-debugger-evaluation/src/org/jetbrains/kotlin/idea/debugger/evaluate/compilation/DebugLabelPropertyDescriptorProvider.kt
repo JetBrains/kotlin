@@ -189,6 +189,9 @@ private object DebugLabelModuleDescriptor : DeclarationDescriptorImpl(Annotation
     override val expectedByModules: List<ModuleDescriptor>
         get() = emptyList()
 
+    override val allExpectedByModules: Set<ModuleDescriptor>
+        get() = emptySet()
+
     override fun <T> getCapability(capability: ModuleCapability<T>): T? = null
 
     override val isValid: Boolean

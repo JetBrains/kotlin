@@ -244,7 +244,7 @@ fun <T>case_18(x: T, f: Boolean) {
     while (f) {
         if (false || false || false || x == nullableNothingProperty) break
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableT
@@ -261,7 +261,7 @@ fun <K, V>case_19(map: MutableMap<K, V>, y: Nothing?) {
     for ((k, v) in map) {
         if (k !== implicitNullableNothingProperty && true && v != y) else { break }
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.propNullableT
@@ -271,7 +271,7 @@ fun <K, V>case_19(map: MutableMap<K, V>, y: Nothing?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("K")!>k<!>.funNullableAny()
         <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("V")!>v<!>.propNullableT

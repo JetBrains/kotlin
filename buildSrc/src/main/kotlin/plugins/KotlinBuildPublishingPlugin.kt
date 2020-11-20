@@ -8,7 +8,6 @@ package plugins
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
-import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
@@ -17,12 +16,11 @@ import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
+import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
-import java.net.URI
 import java.util.*
 import javax.inject.Inject
-
 
 class KotlinBuildPublishingPlugin @Inject constructor(
     private val componentFactory: SoftwareComponentFactory
@@ -47,7 +45,7 @@ class KotlinBuildPublishingPlugin @Inject constructor(
             }
         }
 
-        val kotlinLibraryComponent = componentFactory.adhoc(ADHOC_COMPONENT_NAME) as AdhocComponentWithVariants
+        val kotlinLibraryComponent = componentFactory.adhoc(ADHOC_COMPONENT_NAME)
         components.add(kotlinLibraryComponent)
         kotlinLibraryComponent.addVariantsFromConfiguration(publishedCompile) { mapToMavenScope("compile") }
         kotlinLibraryComponent.addVariantsFromConfiguration(publishedRuntime) { mapToMavenScope("runtime") }
@@ -108,13 +106,19 @@ class KotlinBuildPublishingPlugin @Inject constructor(
             }
         }
 
-        configure<SigningExtension> {
-            setRequired(provider {
-                project.findProperty("signingRequired")?.toString()?.toBoolean()
-                    ?: project.property("isSonatypeRelease") as Boolean
-            })
+        val signingRequired = provider {
+            project.findProperty("signingRequired")?.toString()?.toBoolean()
+                ?: project.property("isSonatypeRelease") as Boolean
+        }
 
+        configure<SigningExtension> {
+            setRequired(signingRequired)
             sign(extensions.getByType<PublishingExtension>().publications[PUBLICATION_NAME])
+            useGpgCmd()
+        }
+
+        tasks.withType<Sign>().configureEach {
+            setOnlyIf { signingRequired.get() }
         }
 
         tasks.register("install") {
@@ -133,7 +137,7 @@ class KotlinBuildPublishingPlugin @Inject constructor(
         const val COMPILE_CONFIGURATION = "publishedCompile"
         const val RUNTIME_CONFIGURATION = "publishedRuntime"
 
-        @UseExperimental(ExperimentalStdlibApi::class)
+        @OptIn(ExperimentalStdlibApi::class)
         fun humanReadableName(project: Project) =
             project.name.split("-").joinToString(separator = " ") { it.capitalize(Locale.ROOT) }
     }

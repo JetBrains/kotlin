@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.build.isModuleMappingFile
+import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.io.File
+import java.nio.file.Files
 import java.util.*
 import kotlin.collections.HashSet
 import kotlin.collections.LinkedHashSet
@@ -66,7 +68,7 @@ fun makeModuleFile(
         friendDirs
     )
 
-    val scriptFile = File.createTempFile("kjps", sanitizeJavaIdentifier(name) + ".script.xml")
+    val scriptFile = Files.createTempFile("kjps", sanitizeJavaIdentifier(name) + ".script.xml").toFile()
     scriptFile.writeText(builder.asText().toString())
     return scriptFile
 }

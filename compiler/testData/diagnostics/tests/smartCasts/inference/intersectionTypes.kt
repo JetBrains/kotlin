@@ -3,6 +3,8 @@
 
 package a
 
+import checkSubtype
+
 fun <T> id(t: T): T = t
 
 fun <T> two(u: T, <!UNUSED_PARAMETER!>v<!>: T): T = u

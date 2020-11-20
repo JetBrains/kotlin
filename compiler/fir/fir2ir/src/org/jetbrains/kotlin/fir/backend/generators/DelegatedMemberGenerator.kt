@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.baseForIntersectionOverride
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.isIntersectionOverride
+import org.jetbrains.kotlin.fir.isSubstitutionOverride
+import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -36,7 +40,7 @@ internal class DelegatedMemberGenerator(
     fun generate(irField: IrField, firField: FirField, firSubClass: FirClass<*>, subClass: IrClass) {
         val subClassLookupTag = firSubClass.symbol.toLookupTag()
 
-        val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession)
+        val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
         subClassScope.processAllFunctions { functionSymbol ->
             if (functionSymbol !is FirNamedFunctionSymbol) return@processAllFunctions
 
@@ -49,7 +53,9 @@ internal class DelegatedMemberGenerator(
                 declarationStorage.getIrFunctionSymbol(unwrapped.symbol).owner as? IrSimpleFunction
                     ?: return@processAllFunctions
 
-            if (isJavaDefault(unwrapped)) return@processAllFunctions
+            if (isJavaDefault(unwrapped)) {
+                return@processAllFunctions
+            }
 
             val irSubFunction = generateDelegatedFunction(
                 subClass, firSubClass, irField, member, functionSymbol.fir
@@ -78,12 +84,12 @@ internal class DelegatedMemberGenerator(
         }
     }
 
-    private inline fun <reified S, reified D : FirCallableDeclaration<D>> S.unwrapDelegateTarget(
+    private inline fun <reified S : FirCallableSymbol<D>, reified D : FirCallableMemberDeclaration<D>> S.unwrapDelegateTarget(
         subClassLookupTag: ConeClassLikeLookupTag,
         noinline directOverridden: S.() -> List<S>,
         firField: FirField,
         firSubClass: FirClass<*>,
-    ): D? where S : FirCallableSymbol<D>, S : PossiblyFirFakeOverrideSymbol<D, S> {
+    ): D? {
         val unwrappedIntersectionSymbol =
             this.unwrapIntersectionOverride(directOverridden) ?: return null
 
@@ -97,20 +103,20 @@ internal class DelegatedMemberGenerator(
         val wrappedSymbol = wrapped.symbol as? S ?: return null
 
         return when {
-            wrappedSymbol.isFakeOverride && wrappedSymbol.callableId.classId == firSubClass.classId ->
-                wrapped.symbol.overriddenSymbol!!.fir
+            wrappedSymbol.fir.isSubstitutionOverride &&
+                    (wrappedSymbol.fir.dispatchReceiverType as? ConeClassLikeType)?.lookupTag == firSubClass.symbol.toLookupTag() ->
+                wrapped.originalForSubstitutionOverride
             else -> wrapped
         }
     }
 
     private fun isJavaDefault(function: FirSimpleFunction): Boolean {
-        if (function.symbol.isIntersectionOverride) return isJavaDefault(function.symbol.overriddenSymbol!!.fir)
+        if (function.isIntersectionOverride) return isJavaDefault(function.baseForIntersectionOverride!!)
         return function.origin == FirDeclarationOrigin.Enhancement && function.modality == Modality.OPEN
     }
 
     private fun <S : FirCallableSymbol<*>> S.unwrapIntersectionOverride(directOverridden: S.() -> List<S>): S? {
-        if (this !is PossiblyFirFakeOverrideSymbol<*, *>) return this
-        if (this.isIntersectionOverride) return directOverridden().firstOrNull { it.fir.delegatedWrapperData != null }
+        if (this.fir.isIntersectionOverride) return directOverridden().firstOrNull { it.fir.delegatedWrapperData != null }
         return this
     }
 

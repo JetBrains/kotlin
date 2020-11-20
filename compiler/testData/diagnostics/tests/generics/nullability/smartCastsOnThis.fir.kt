@@ -23,7 +23,7 @@ fun <T : String?> T.foo() {
         this?.bar1()
     }
 
-    length
+    <!INAPPLICABLE_CANDIDATE!>length<!>
 
     if (this is String) {
         length

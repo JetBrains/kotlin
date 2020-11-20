@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.refineTypes
@@ -105,7 +107,8 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
                 )
             }
 
-            supertypes.supertypesWithoutCycles = (resultWithoutCycles as? List<KotlinType>) ?: resultWithoutCycles.toList()
+            supertypes.supertypesWithoutCycles =
+                processSupertypesWithoutCycles(resultWithoutCycles as? List<KotlinType> ?: resultWithoutCycles.toList())
         })
 
     private fun TypeConstructor.computeNeighbours(useCompanions: Boolean): Collection<KotlinType> =
@@ -117,6 +120,8 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
     protected abstract fun computeSupertypes(): Collection<KotlinType>
     protected abstract val supertypeLoopChecker: SupertypeLoopChecker
     protected open fun reportSupertypeLoopError(type: KotlinType) {}
+
+    protected open fun processSupertypesWithoutCycles(supertypes: List<@JvmSuppressWildcards KotlinType>): List<KotlinType> = supertypes
 
     // TODO: overload in AbstractTypeParameterDescriptor?
     protected open fun reportScopesLoopError(type: KotlinType) {}

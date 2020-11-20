@@ -13,14 +13,7 @@ dependencies {
     compileOnly(project(":compiler:psi"))
     compileOnly(intellijCoreDep())
     compileOnly(intellijDep())
-
-    Platform[191].orLower {
-        compileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
-    }
-
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
-    }
+    compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
 }
 
 sourceSets {

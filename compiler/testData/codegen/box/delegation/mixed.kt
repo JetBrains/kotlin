@@ -1,4 +1,3 @@
-// SKIP_JDK6
 // TARGET_BACKEND: JVM
 // FILE: Base.java
 
@@ -11,6 +10,8 @@ public interface Base extends KBase {
 }
 
 // FILE: main.kt
+// JVM_TARGET: 1.8
+
 interface KBase {
     fun getValue(): String
 

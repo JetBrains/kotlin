@@ -1,3 +1,4 @@
+// CHECK_BY_JAVA_FILE
 inline class UInt(private val value: Int) { }
 
 inline enum class Foo(val x: Int) {

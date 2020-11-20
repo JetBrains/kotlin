@@ -9,3 +9,5 @@ class C {
         inline get() = toString()
         inline set(value) {}
 }
+
+// FIR_COMPARISON

@@ -1,6 +1,5 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
 // OPTIONS: usages
-// FIR_IGNORE
 
 data class A(val <caret>a: Int, val b: Int) {
     fun f() {}
@@ -25,3 +24,5 @@ fun foo(x: X) {
 
     val (a4, b4) = A::class.java.newInstance()
 }
+
+// FIR_IGNORE

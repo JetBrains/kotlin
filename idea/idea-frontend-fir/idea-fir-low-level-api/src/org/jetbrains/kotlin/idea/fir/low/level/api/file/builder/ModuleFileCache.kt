@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -50,12 +51,13 @@ internal abstract class ModuleFileCache {
 
     abstract fun getCachedFirFile(ktFile: KtFile): FirFile?
 
-    // todo make it ReadWriteLock and allow access fir elements only under read lock
-    // for now locks only held for resolve
-    // but there can be a situation when we are accessing some fir element in one thread without lock
-    // in the same time other thread performs resolve of it
-    // which can cause weird errors on user side
-    abstract val firFileLockProvider: LockProvider<FirFile, ReentrantLock>
+    abstract val firFileLockProvider: LockProvider<FirFile, ReentrantReadWriteLock>
+
+    inline fun <D : FirDeclaration, R> withReadLockOn(declaration: D, action: (D) -> R): R {
+        val file = getContainerFirFile(declaration)
+            ?: error("No fir file found for\n${declaration.render()}")
+        return firFileLockProvider.withReadLock(file) { action(declaration) }
+    }
 }
 
 internal class ModuleFileCacheImpl(override val session: FirSession) : ModuleFileCache() {
@@ -74,5 +76,5 @@ internal class ModuleFileCacheImpl(override val session: FirSession) : ModuleFil
         return getCachedFirFile(ktFile)
     }
 
-    override val firFileLockProvider: LockProvider<FirFile, ReentrantLock> = LockProvider { ReentrantLock() }
+    override val firFileLockProvider: LockProvider<FirFile, ReentrantReadWriteLock> = LockProvider { ReentrantReadWriteLock() }
 }

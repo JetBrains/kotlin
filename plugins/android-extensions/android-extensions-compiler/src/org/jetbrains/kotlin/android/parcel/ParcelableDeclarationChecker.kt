@@ -195,7 +195,8 @@ class ParcelableDeclarationChecker : DeclarationChecker {
             bindingContext,
             ClassBuilderMode.FULL,
             descriptor.module.name.asString(),
-            languageVersionSettings
+            languageVersionSettings,
+            useOldInlineClassesManglingScheme = false
         )
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty<KtParameter>()) {

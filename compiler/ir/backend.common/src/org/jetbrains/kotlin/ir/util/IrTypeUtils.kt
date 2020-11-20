@@ -80,7 +80,7 @@ fun IrType.substitute(params: List<IrTypeParameter>, arguments: List<IrType>): I
     substitute(params.map { it.symbol }.zip(arguments).toMap())
 
 fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrType {
-    if (this !is IrSimpleType) return this
+    if (this !is IrSimpleType || substitutionMap.isEmpty()) return this
 
     val newAnnotations = annotations.map { it.deepCopyWithSymbols() }
 

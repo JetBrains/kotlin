@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
+import java.nio.file.Files
+import kotlin.io.path.*
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -160,7 +162,7 @@ object CompileTimeFibonacciConfiguration : ScriptCompilationConfiguration(
                     .mapIndexed { index, number -> "val FIB_${index + 1} = $number" }
                     .joinToString("\n")
 
-                val file = createTempFile("CompileTimeFibonacci", ".fib.kts")
+                val file = Files.createTempFile("CompileTimeFibonacci", ".fib.kts").toFile()
                     .apply {
                         deleteOnExit()
                         writeText(sourceCode)

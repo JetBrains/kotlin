@@ -85,12 +85,12 @@ FILE: constantValues.kt
         }
 
         public final fun getArgumentType(): R|KotlinType| {
-            when (this@R|/KClassValue|.R|FakeOverride</KClassValue.value: R|KClassValue.Value|>|) {
+            when (this@R|/KClassValue|.R|SubstitutionOverride</KClassValue.value: R|KClassValue.Value|>|) {
                 ($subj$ is R|KClassValue.Value.LocalClass|) ->  {
-                    ^getArgumentType this@R|/KClassValue|.R|FakeOverride</KClassValue.value: R|KClassValue.Value|>|.R|/KClassValue.Value.LocalClass.type|
+                    ^getArgumentType this@R|/KClassValue|.R|SubstitutionOverride</KClassValue.value: R|KClassValue.Value|>|.R|/KClassValue.Value.LocalClass.type|
                 }
                 ($subj$ is R|KClassValue.Value.NormalClass|) ->  {
-                    lval <destruct>: R|ClassLiteralValue| = this@R|/KClassValue|.R|FakeOverride</KClassValue.value: R|KClassValue.Value|>|.R|/KClassValue.Value.NormalClass.value|
+                    lval <destruct>: R|ClassLiteralValue| = this@R|/KClassValue|.R|SubstitutionOverride</KClassValue.value: R|KClassValue.Value|>|.R|/KClassValue.Value.NormalClass.value|
                     lval classId: R|ClassId| = R|<local>/<destruct>|.R|/ClassLiteralValue.component1|()
                     lval arrayDimensions: R|kotlin/Int| = R|<local>/<destruct>|.R|/ClassLiteralValue.component2|()
                 }

@@ -8,7 +8,7 @@ fun foo() {
 
     }
     // TODO: this testdata fixates undesired behavior (it should be an unsafe call)
-    x.length // 'x' is unsoundly smartcasted here
+    x.<!INAPPLICABLE_CANDIDATE!>length<!> // 'x' is unsoundly smartcasted here
 }
 
 fun bar() {
@@ -19,5 +19,5 @@ fun bar() {
 
     }
     // TODO: this testdata fixates undesired behavior (it should be an unsafe call)
-    x.size // 'x' is unsoundly smartcasted here
+    x.<!INAPPLICABLE_CANDIDATE!>size<!> // 'x' is unsoundly smartcasted here
 }

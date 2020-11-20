@@ -242,8 +242,8 @@ digraph callsInPlace_kt {
         subgraph cluster_21 {
             color=blue
             80 [label="Enter block"];
-            81 [label="Function call: R|<local>/block1|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
-            82 [label="Function call: R|<local>/block2|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            81 [label="Function call: R|<local>/block1|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            82 [label="Function call: R|<local>/block2|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             83 [label="Exit block"];
         }
         84 [label="Exit function myRun" style="filled" fillcolor=red];
@@ -384,7 +384,7 @@ digraph callsInPlace_kt {
         subgraph cluster_35 {
             color=blue
             124 [label="Enter block"];
-            125 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            125 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             126 [label="Exit block"];
         }
         127 [label="Exit function myDummyRun" style="filled" fillcolor=red];

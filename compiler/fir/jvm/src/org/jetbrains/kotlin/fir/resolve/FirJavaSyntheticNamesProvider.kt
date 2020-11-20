@@ -51,16 +51,22 @@ object FirJavaSyntheticNamesProvider : FirSyntheticNamesProvider() {
         return Name.identifier(GETTER_PREFIX + identifier.removePrefix(prefix))
     }
 
-    override fun propertyNameByAccessorName(name: Name): Name? {
-        if (name.isSpecial) return null
+    override fun possiblePropertyNamesByAccessorName(name: Name): List<Name> {
+        if (name.isSpecial) return emptyList()
         val identifier = name.identifier
         val prefix = when {
             identifier.startsWith(GETTER_PREFIX) -> GETTER_PREFIX
             identifier.startsWith(IS_PREFIX) -> ""
             identifier.startsWith(SETTER_PREFIX) -> SETTER_PREFIX
-            else -> return null
+            else -> return emptyList()
         }
-        return Name.identifier(identifier.removePrefix(prefix).decapitalize())
+        val withoutPrefix = identifier.removePrefix(prefix)
+        val withoutPrefixName = Name.identifier(withoutPrefix.decapitalize())
+        return if (prefix == SETTER_PREFIX) {
+            listOf(withoutPrefixName, Name.identifier(IS_PREFIX + withoutPrefix))
+        } else {
+            listOf(withoutPrefixName)
+        }
     }
 }
 

@@ -18,7 +18,7 @@ import java.util.*
 
 internal const val PLUGIN_MARKER_SUFFIX = ".gradle.plugin"
 
-@UseExperimental(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalStdlibApi::class)
 fun Project.publishPluginMarkers(withEmptyJars: Boolean = true) {
     val pluginDevelopment = extensions.getByType<PluginBundleExtension>()
     val publishingExtension = extensions.getByType<PublishingExtension>()

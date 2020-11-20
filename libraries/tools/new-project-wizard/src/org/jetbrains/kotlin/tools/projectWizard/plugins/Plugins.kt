@@ -32,7 +32,9 @@ object Plugins {
             JsTemplatesPlugin(context),
             ReactJsTemplatesPlugin(context),
             SimpleNodeJsTemplatesPlugin(context),
-            NativeConsoleApplicationTemplatePlugin(context)
+            NativeConsoleApplicationTemplatePlugin(context),
+            ComposeTemplatesPlugin(context),
+            MobileMppTemplatePlugin(context),
         )
     }
 }

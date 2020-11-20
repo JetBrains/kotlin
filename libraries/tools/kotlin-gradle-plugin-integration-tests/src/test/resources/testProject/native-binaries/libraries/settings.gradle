@@ -1,0 +1,13 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        jcenter()
+        gradlePluginPortal()
+    }
+}
+
+enableFeaturePreview('GRADLE_METADATA')
+
+rootProject.name = "native-library"
+
+include ':exported'

@@ -6,5 +6,5 @@ FILE: doubleBrackets.kt
 
     }
     public final fun test(): R|kotlin/String| {
-        ^test String(hello).R|/k|().R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+        ^test String(hello).R|/k|().R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
     }

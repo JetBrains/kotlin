@@ -4,7 +4,6 @@
 // FILE: main.kt
 // WITH_RUNTIME
 // FULL_JDK
-// IGNORE_BACKEND_FIR: JVM_IR
 var result = ""
 
 interface A<K, V> : MutableMap<K, V>

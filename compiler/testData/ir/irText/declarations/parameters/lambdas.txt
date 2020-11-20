@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/lambdas.kt
       EXPRESSION_BODY
         FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Int> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.Any, it:kotlin.Any) returnType:kotlin.Int
-            $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
+            $receiver: VALUE_PARAMETER name:$this$null type:kotlin.Any
             VALUE_PARAMETER name:it index:0 type:kotlin.Any
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Any): kotlin.Int declared in <root>.test2'

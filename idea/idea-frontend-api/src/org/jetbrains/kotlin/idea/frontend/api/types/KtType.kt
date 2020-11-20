@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.types
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.idea.frontend.api.KtTypeArgument
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassLikeSymbol

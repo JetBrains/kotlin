@@ -30,12 +30,17 @@ class AnnotationGenerator(context: GeneratorContext) : IrElementVisitorVoid {
     }
 
     private fun generateAnnotationsForDeclaration(declaration: IrDeclaration) {
+        // For interface functions implemented by delegation,
+        // front-end (incorrectly) copies annotations from corresponding interface members.
+        if (declaration is IrProperty && declaration.origin == IrDeclarationOrigin.DELEGATED_MEMBER) return
+
         // Delegate field is mapped to a new property descriptor with annotations of the original property delegate
         // (see IrPropertyDelegateDescriptorImpl), but annotations on backing fields should be processed manually here
         val annotatedDescriptor =
             if (declaration is IrField && declaration.origin != IrDeclarationOrigin.PROPERTY_DELEGATE)
                 declaration.descriptor.backingField
-            else declaration.descriptor
+            else
+                declaration.descriptor
 
         if (annotatedDescriptor != null) {
             declaration.annotations += annotatedDescriptor.annotations.mapNotNull {

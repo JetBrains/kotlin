@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 
 object UnusedChecker : FirControlFlowChecker() {
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, checkerContext: CheckerContext) {
-        if ((graph.declaration as? FirSymbolOwner<*>)?.getContainingClass(checkerContext) != null) return
+        if ((graph.declaration as? FirSymbolOwner<*>)?.getContainingClass(checkerContext)?.takeIf { !it.symbol.classId.isLocal }!= null) return
         val properties = LocalPropertyCollector.collect(graph)
         if (properties.isEmpty()) return
 

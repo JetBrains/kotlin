@@ -1,6 +1,6 @@
 FILE: mapMerge.kt
     public final fun foo(x: R|kotlin/collections/MutableMap<kotlin/String, kotlin/collections/List<kotlin/String>>|): R|kotlin/Unit| {
-        R|<local>/x|.R|FakeOverride<kotlin/collections/MutableMap.merge: R|kotlin/collections/List<kotlin/String>?|>|(String(), R|kotlin/collections/listOf|<R|kotlin/String|>(String()), <L> = merge@fun <anonymous>(a: R|ft<kotlin/collections/List<kotlin/String>, kotlin/collections/List<kotlin/String>?>!|, b: R|ft<kotlin/collections/List<kotlin/String>, kotlin/collections/List<kotlin/String>?>!|): R|ft<kotlin/collections/List<kotlin/String>, kotlin/collections/List<kotlin/String>?>!| {
+        R|<local>/x|.R|SubstitutionOverride<kotlin/collections/MutableMap.merge: R|kotlin/collections/List<kotlin/String>?|>|(String(), R|kotlin/collections/listOf|<R|kotlin/String|>(String()), <L> = merge@fun <anonymous>(a: R|ft<kotlin/collections/List<kotlin/String>, kotlin/collections/List<kotlin/String>?>!|, b: R|ft<kotlin/collections/List<kotlin/String>, kotlin/collections/List<kotlin/String>?>!|): R|ft<kotlin/collections/List<kotlin/String>, kotlin/collections/List<kotlin/String>?>!| {
             ^ R|<local>/a|.R|kotlin/collections/plus|<R|kotlin/String|>(R|<local>/b|)
         }
         )

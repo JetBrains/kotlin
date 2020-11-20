@@ -23,5 +23,5 @@ internal class KtFirDiagnosticProvider(
     }
 
     override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic> =
-        LowLevelFirApiFacade.getDiagnosticsFor(ktFile, firResolveState)
+        LowLevelFirApiFacade.collectDiagnosticsForFile(ktFile, firResolveState)
 }

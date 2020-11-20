@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -26,7 +24,6 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 class Fir2IrLazyClass(
     components: Fir2IrComponents,
@@ -123,7 +120,7 @@ class Fir2IrLazyClass(
         val processedNames = mutableSetOf<Name>()
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
-        val scope = fir.unsubstitutedScope(session, scopeSession)
+        val scope = fir.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
         scope.processDeclaredConstructors {
             result += declarationStorage.getIrConstructorSymbol(it).owner
         }
@@ -140,7 +137,7 @@ class Fir2IrLazyClass(
                             result += declarationStorage.getIrFunctionSymbol(declaration.symbol).owner
                         } else {
                             scope.processFunctionsByName(declaration.name) {
-                                if (it is FirNamedFunctionSymbol && it.callableId.classId == fir.symbol.classId) {
+                                if (it is FirNamedFunctionSymbol && it.dispatchReceiverClassOrNull() == fir.symbol.toLookupTag()) {
                                     if (it.isAbstractMethodOfAny()) {
                                         return@processFunctionsByName
                                     }

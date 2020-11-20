@@ -1,22 +1,30 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: IGNORED_IN_JS
 // IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-var global = 0;
+var global = "A"
 
 class C {
+  init {
+      global += "D"
+  }
+
   companion object {
       init {
-        global = 1;
+        global += "B"
+      }
+
+      init {
+          global += "C"
       }
   }
 }
 
 fun box(): String {
-  if (global != 0) {
+  if (global != "A") {
     return "fail1: global = $global"
   }
 
   val c = C()
-  if (global == 1) return "OK" else return "fail2: global = $global"
+  if (global == "ABCD") return "OK" else return "fail2: global = $global"
 }
 

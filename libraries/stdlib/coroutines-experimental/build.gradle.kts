@@ -51,9 +51,9 @@ tasks {
                 "-Xopt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xcoroutines=enable",
                 "-XXLanguage:-ReleaseCoroutines",
-                "-Xno-use-ir",
-                "-module-name", "kotlin-coroutines-experimental-compat"
+                "-Xno-use-ir"
             )
+            moduleName = "kotlin-coroutines-experimental-compat"
         }
     }
     val compileTestKotlin by existing(KotlinCompile::class) {

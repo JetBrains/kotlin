@@ -14,3 +14,5 @@ open class B: A<String>("") {
             println("set:" + value)
         }
 }
+
+// FIR_IGNORE

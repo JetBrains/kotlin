@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.tools.projectWizard.cli
 
+import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.service.EapVersionDownloader
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionKind
 import org.jetbrains.kotlin.tools.projectWizard.core.service.KotlinVersionProviderService
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.BintrayRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
@@ -18,8 +20,13 @@ class KotlinVersionProviderTestWizardService() : KotlinVersionProviderService(),
         get() = System.getProperty("cacheRedirectorEnabled")?.toBoolean() == true
 
 
-    override fun getKotlinVersion(): WizardKotlinVersion =
-        kotlinVersionWithDefaultValues(TEST_KOTLIN_VERSION)
+    override fun getKotlinVersion(projectKind: ProjectKind): WizardKotlinVersion =
+        kotlinVersionWithDefaultValues(
+            when (projectKind) {
+                ProjectKind.COMPOSE -> Versions.KOTLIN_VERSION_FOR_COMPOSE
+                else -> TEST_KOTLIN_VERSION
+            }
+        )
 
     override fun getKotlinVersionRepository(versionKind: KotlinVersionKind): Repository = if (useCacheRedirector) {
         getKotlinVersionRepositoryWithCacheRedirector(versionKind)

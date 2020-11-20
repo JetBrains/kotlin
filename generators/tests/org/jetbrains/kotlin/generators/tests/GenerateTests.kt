@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassLoadingTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassSanityTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightFacadeClassTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightScriptLoadingTest
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.copyright.AbstractUpdateKotlinCopyrightTest
 import org.jetbrains.kotlin.findUsages.*
@@ -84,6 +81,7 @@ import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
+import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
@@ -1035,12 +1033,27 @@ fun main(args: Array<String>) {
             testClass<AbstractFirMultiModuleLazyResolveTest> {
                 model("multiModuleLazyResolve", recursive = false, extension = null)
             }
+            testClass<AbstractFirLazyDeclarationResolveTest> {
+                model("lazyResolve")
+            }
         }
 
         testGroup("idea/idea-fir/tests", "idea") {
             testClass<AbstractFirHighlightingTest> {
                 model("testData/highlighter")
                 model("idea-fir/testData/highlighterFir", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+        }
+
+        testGroup("idea/idea-fir-performance-tests/tests", "idea") {
+            testClass<AbstractFirHighlightingPerformanceTest> {
+                model("testData/highlighter")
+            }
+        }
+
+        testGroup("idea/idea-fir-performance-tests/tests", "idea/idea-completion/testData") {
+            testClass<AbstractHighLevelPerformanceBasicCompletionHandlerTest> {
+                model("handlers/basic", testMethod = "doPerfTest", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
         }
 
@@ -1203,6 +1216,20 @@ fun main(args: Array<String>) {
                     excludeDirs = listOf("local", "compilationErrors", "ideRegression"),
                     pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME
                 )
+            }
+        }
+
+        testGroup("idea/idea-fir/tests", "compiler/testData") {
+            testClass<AbstractFirLightClassTest> {
+                model("asJava/lightClasses", excludeDirs = listOf("delegation", "script"), pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+
+            testClass<AbstractFirClassLoadingTest> {
+                model("asJava/ultraLightClasses", pattern = KT_OR_KTS)
+            }
+
+            testClass<AbstractFirLightFacadeClassTest> {
+                model("asJava/ultraLightFacades", pattern = KT_OR_KTS)
             }
         }
 

@@ -1,0 +1,7 @@
+FILE: typeOperators.kt
+    public? final? interface IThing : R|kotlin/Any| {
+    }
+    public? final? fun test1(x: Any): <implicit> { LAZY_BLOCK }
+    public? final? fun test2(x: Any): <implicit> { LAZY_BLOCK }
+    public? final? fun test3(x: Any): <implicit> { LAZY_BLOCK }
+    public? final? fun test4(x: Any): <implicit> { LAZY_BLOCK }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.checkers
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import junit.framework.AssertionFailedError
@@ -15,6 +16,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
+import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -242,9 +244,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             )
         }
 
-        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText.cleanupInferenceDiagnostics()) { s ->
-            s.replace("COROUTINES_PACKAGE", coroutinesPackage)
-        }
+        checkDiagnostics(actualText.cleanupInferenceDiagnostics(), testDataFile)
 
         assertTrue("Diagnostics mismatch. See the output above", ok)
 
@@ -258,6 +258,12 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         )
         if (shouldValidateFirTestData(testDataFile)) {
             checkFirTestdata(testDataFile, files)
+        }
+    }
+
+    protected open fun checkDiagnostics(actualText: String, testDataFile: File) {
+        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText) { s ->
+            s.replace("COROUTINES_PACKAGE", coroutinesPackage)
         }
     }
 
@@ -288,6 +294,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         }
         if (testDataFile.readText().contains("// FIR_IDENTICAL")) {
             try {
+                PsiElementFinder.EP.getPoint(environment.project).unregisterExtension(JavaElementFinder::class.java)
                 testRunner.analyzeAndCheckUnhandled(testDataFile, files)
             } catch (e: FileComparisonFailure) {
                 println("Old FE & FIR produces different diagnostics for this file. Please remove FIR_IDENTICAL line manually")
@@ -618,6 +625,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                         getTopLevelPackagesFromFileList(getKtFiles(testFiles, false))
                 ).toSet()
 
+        val checkTypeEnabled = testFiles.any { it.declareCheckType }
         val stepIntoFilter = Predicate<DeclarationDescriptor> { descriptor ->
             val module = DescriptorUtils.getContainingModuleOrNull(descriptor)
             if (module !in modules) return@Predicate false
@@ -626,6 +634,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 val fqName = descriptor.fqName
                 return@Predicate fqName.isRoot || fqName.pathSegments().first() in packagesNames
             }
+
+            if (checkTypeEnabled && descriptor.name in NAMES_OF_CHECK_TYPE_HELPER) return@Predicate false
 
             true
         }
@@ -761,5 +771,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         private val HASH_SANITIZER = fun(s: String): String = s.replace("@(\\d)+".toRegex(), "")
 
         private val MODULE_FILES = ModuleCapability<List<KtFile>>("")
+
+        private val NAMES_OF_CHECK_TYPE_HELPER = listOf("checkSubtype", "CheckTypeInv", "_", "checkType").map { Name.identifier(it) }
     }
 }

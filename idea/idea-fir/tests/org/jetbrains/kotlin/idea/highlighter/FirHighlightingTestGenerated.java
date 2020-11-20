@@ -40,6 +40,11 @@ public class FirHighlightingTestGenerated extends AbstractFirHighlightingTest {
             runTest("idea/testData/highlighter/AutoCreatedItParameter.kt");
         }
 
+        @TestMetadata("DelegatingCtor.kt")
+        public void testDelegatingCtor() throws Exception {
+            runTest("idea/testData/highlighter/DelegatingCtor.kt");
+        }
+
         @TestMetadata("Destructuring.kt")
         public void testDestructuring() throws Exception {
             runTest("idea/testData/highlighter/Destructuring.kt");
@@ -108,6 +113,11 @@ public class FirHighlightingTestGenerated extends AbstractFirHighlightingTest {
         @TestMetadata("PropertiesWithPropertyDeclarations.kt")
         public void testPropertiesWithPropertyDeclarations() throws Exception {
             runTest("idea/testData/highlighter/PropertiesWithPropertyDeclarations.kt");
+        }
+
+        @TestMetadata("RecursiveTypes.kt")
+        public void testRecursiveTypes() throws Exception {
+            runTest("idea/testData/highlighter/RecursiveTypes.kt");
         }
 
         @TestMetadata("SmartCast.kt")

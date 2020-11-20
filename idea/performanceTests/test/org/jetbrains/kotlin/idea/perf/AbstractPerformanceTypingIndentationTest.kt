@@ -29,9 +29,18 @@ abstract class AbstractPerformanceTypingIndentationTest : KotlinLightCodeInsight
 
     override fun tearDown() {
         RunAll(
-            ThrowableRunnable { super.tearDown() },
-            ThrowableRunnable { stats.flush() }
+            ThrowableRunnable { super.tearDown() }
         ).run()
+    }
+
+    private fun testName(): String {
+        val javaClass = this.javaClass
+        val testName = getTestName(false)
+        return if (javaClass.isMemberClass) {
+            "${javaClass.simpleName} - $testName"
+        } else {
+            testName
+        }
     }
 
     protected fun doPerfTest(unused: String) {
@@ -50,7 +59,7 @@ abstract class AbstractPerformanceTypingIndentationTest : KotlinLightCodeInsight
             configurator.configureSettings()
 
             performanceTest<Unit, Unit> {
-                name(testName)
+                name(testName())
                 stats(stats)
                 warmUpIterations(20)
                 iterations(30)

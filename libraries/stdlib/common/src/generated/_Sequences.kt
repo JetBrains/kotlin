@@ -196,9 +196,12 @@ public inline fun <T> Sequence<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the sequence is empty.
  *
  * The operation is _terminal_.
+ * 
+ * @throws NoSuchElementException if the sequence is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> Sequence<T>.last(): T {
     val iterator = iterator()
@@ -212,9 +215,12 @@ public fun <T> Sequence<T>.last(): T {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
  *
  * The operation is _terminal_.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> Sequence<T>.last(predicate: (T) -> Boolean): T {
     var last: T? = null
@@ -251,6 +257,8 @@ public fun <@kotlin.internal.OnlyInputTypes T> Sequence<T>.lastIndexOf(element: 
  * Returns the last element, or `null` if the sequence is empty.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> Sequence<T>.lastOrNull(): T? {
     val iterator = iterator()
@@ -266,6 +274,8 @@ public fun <T> Sequence<T>.lastOrNull(): T? {
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> Sequence<T>.lastOrNull(predicate: (T) -> Boolean): T? {
     var last: T? = null
@@ -1258,27 +1268,27 @@ public inline fun <T> Sequence<T>.forEachIndexed(action: (index: Int, T) -> Unit
     for (item in this) action(checkIndexOverflow(index++), item)
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Sequence<Double>.max(): Double? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Sequence<Float>.max(): Float? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T : Comparable<T>> Sequence<T>.max(): T? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <T, R : Comparable<R>> Sequence<T>.maxBy(selector: (T) -> R): T? {
     return maxByOrNull(selector)
@@ -1556,7 +1566,7 @@ public fun <T : Comparable<T>> Sequence<T>.maxOrNull(): T? {
     return max
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T> Sequence<T>.maxWith(comparator: Comparator<in T>): T? {
     return maxWithOrNull(comparator)
@@ -1579,27 +1589,27 @@ public fun <T> Sequence<T>.maxWithOrNull(comparator: Comparator<in T>): T? {
     return max
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Sequence<Double>.min(): Double? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Sequence<Float>.min(): Float? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T : Comparable<T>> Sequence<T>.min(): T? {
     return minOrNull()
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <T, R : Comparable<R>> Sequence<T>.minBy(selector: (T) -> R): T? {
     return minByOrNull(selector)
@@ -1877,7 +1887,7 @@ public fun <T : Comparable<T>> Sequence<T>.minOrNull(): T? {
     return min
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T> Sequence<T>.minWith(comparator: Comparator<in T>): T? {
     return minWithOrNull(comparator)
@@ -2352,7 +2362,7 @@ public fun <T : Any> Sequence<T?>.requireNoNulls(): Sequence<T> {
 /**
  * Splits this sequence into a sequence of lists each not exceeding the given [size].
  * 
- * The last list in the resulting sequence may have less elements than the given [size].
+ * The last list in the resulting sequence may have fewer elements than the given [size].
  * 
  * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this sequence.
  *
@@ -2373,7 +2383,7 @@ public fun <T> Sequence<T>.chunked(size: Int): Sequence<List<T>> {
  * 
  * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * The last list may have less elements than the given [size].
+ * The last list may have fewer elements than the given [size].
  * 
  * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this sequence.
  *
@@ -2559,7 +2569,7 @@ public inline fun <T> Sequence<T>.plusElement(element: T): Sequence<T> {
  * sliding along this sequence with the given [step], where each
  * snapshot is a list.
  * 
- * Several last lists may have less elements than the given [size].
+ * Several last lists may have fewer elements than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this sequence.
  * @param size the number of elements to take in each window
@@ -2581,7 +2591,7 @@ public fun <T> Sequence<T>.windowed(size: Int, step: Int = 1, partialWindows: Bo
  * 
  * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * Several last lists may have less elements than the given [size].
+ * Several last lists may have fewer elements than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this sequence.
  * @param size the number of elements to take in each window

@@ -283,7 +283,7 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
 
         fun compileSingleFile(
             ktFile: KtFile,
-            configuration: CompilerConfiguration
+            initialConfiguration: CompilerConfiguration
         ): GenerationState? {
             val platform = ktFile.platform
             if (!platform.isCommon() && !platform.isJvm()) return null
@@ -293,6 +293,10 @@ class KotlinBytecodeToolWindow(private val myProject: Project, private val toolW
                 ?: return null
 
             val bindingContextForFile = resolutionFacade.analyzeWithAllCompilerChecks(listOf(ktFile)).bindingContext
+
+            val configuration = initialConfiguration.copy().apply {
+                put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
+            }
 
             val (bindingContext, toProcess) = DebuggerUtils.analyzeInlinedFunctions(
                 resolutionFacade, ktFile, configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE),

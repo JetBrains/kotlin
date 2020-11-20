@@ -39,7 +39,7 @@ private class TailCallOptimizationLowering(private val context: JvmBackendContex
             override fun visitCall(expression: IrCall, data: TailCallOptimizationData?): IrExpression {
                 val transformed = super.visitCall(expression, data) as IrExpression
                 return if (data == null || expression !in data.tailCalls) transformed else IrReturnImpl(
-                    expression.startOffset, expression.endOffset, context.irBuiltIns.nothingType, data.function.symbol,
+                    data.function.endOffset, data.function.endOffset, context.irBuiltIns.nothingType, data.function.symbol,
                     if (data.returnsUnit) transformed.coerceToUnit() else transformed
                 )
             }

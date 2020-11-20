@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtProperty
 
 object LowLevelFirApiFacadeForCompletion {
-    fun getResolveStateForCompletion(element: KtElement, originalState: FirModuleResolveState): FirModuleResolveState {
+    fun getResolveStateForCompletion(originalState: FirModuleResolveState): FirModuleResolveState {
         check(originalState is FirModuleResolveStateImpl)
-        return FirModuleResolveStateForCompletion(originalState)
+        return FirModuleResolveStateForCompletion(originalState.project, originalState)
     }
 
     class FirCompletionContext internal constructor(

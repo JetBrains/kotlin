@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
@@ -102,13 +103,8 @@ internal class ProjectResolutionFacade(
     private val resolverForProjectDependencies = dependencies + listOf(globalContext.exceptionTracker)
 
     private fun computeModuleResolverProvider(): ResolverForProject<IdeaModuleInfo> {
-        val delegateResolverForProject: ResolverForProject<IdeaModuleInfo>
-
-        if (reuseDataFrom != null) {
-            delegateResolverForProject = reuseDataFrom.cachedResolverForProject
-        } else {
-            delegateResolverForProject = EmptyResolverForProject()
-        }
+        val delegateResolverForProject: ResolverForProject<IdeaModuleInfo> =
+            reuseDataFrom?.cachedResolverForProject ?: EmptyResolverForProject()
 
         val allModuleInfos = (allModules ?: getModuleInfosFromIdeaModel(project, (settings as? PlatformAnalysisSettingsImpl)?.platform))
             .toMutableSet()
@@ -154,13 +150,29 @@ internal class ProjectResolutionFacade(
     internal fun getAnalysisResultsForElements(elements: Collection<KtElement>): AnalysisResult {
         assert(elements.isNotEmpty()) { "elements collection should not be empty" }
 
-        val slruCache = analysisResultsSimpleLock.guarded {
+        val cache = analysisResultsSimpleLock.guarded {
             analysisResults.value!!
         }
-        val results = elements.map {
-            val perFileCache = slruCache[it.containingKtFile]
-            perFileCache.getAnalysisResults(it)
-        }
+        val results =
+            elements.map {
+                val containingKtFile = it.containingKtFile
+                val perFileCache = cache[containingKtFile]
+                try {
+                    perFileCache.getAnalysisResults(it)
+                } catch (e: Throwable) {
+                    if (e is ControlFlowException) {
+                        throw e
+                    }
+                    val actualCache = analysisResultsSimpleLock.guarded {
+                        analysisResults.upToDateOrNull?.get()
+                    }
+                    if (cache !== actualCache) {
+                        throw IllegalStateException("Cache has been invalidated during performing analysis for $containingKtFile", e)
+                    }
+                    throw e
+                }
+            }
+
         val withError = results.firstOrNull { it.isError() }
         val bindingContext = CompositeBindingContext.create(results.map { it.bindingContext })
         if (withError != null) {

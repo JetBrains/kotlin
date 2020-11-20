@@ -3,6 +3,7 @@
 
 //KT-2200 array(array()) breaks compiler
 package n
+import checkSubtype
 
 fun main() {
     val a = array(array())

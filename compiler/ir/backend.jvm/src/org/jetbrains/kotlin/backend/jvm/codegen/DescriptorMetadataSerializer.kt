@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
+import org.jetbrains.kotlin.codegen.createFreeFakeLambdaDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
+import org.jetbrains.kotlin.ir.util.getPackageFragment
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -29,7 +32,7 @@ class DescriptorMetadataSerializer(
     private val serializer: DescriptorSerializer? =
         when (val metadata = irClass.metadata) {
             is DescriptorMetadataSource.Class -> DescriptorSerializer.create(
-                metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer
+                metadata.descriptor, serializerExtension, (parent as? DescriptorMetadataSerializer)?.serializer, context.state.project
             )
             is DescriptorMetadataSource.File -> DescriptorSerializer.createTopLevel(serializerExtension)
             is DescriptorMetadataSource.Function -> DescriptorSerializer.createForLambda(serializerExtension)
@@ -37,7 +40,7 @@ class DescriptorMetadataSerializer(
         }
 
     override fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>? {
-        val localDelegatedProperties = (irClass.attributeOwnerId as? IrClass)?.let(context.localDelegatedProperties::get)
+        val localDelegatedProperties = context.localDelegatedProperties[irClass.attributeOwnerId]
         if (localDelegatedProperties != null && localDelegatedProperties.isNotEmpty()) {
             context.state.bindingTrace.record(
                 CodegenBinding.DELEGATED_PROPERTIES_WITH_METADATA,

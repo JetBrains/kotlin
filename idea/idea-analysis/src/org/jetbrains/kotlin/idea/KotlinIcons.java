@@ -79,5 +79,6 @@ public interface KotlinIcons {
         Icon WINDOWS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/windows.svg");
         Icon NODE_JS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/nodejs.svg");
         Icon REACT_JS = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/react.svg");
+        Icon COMPOSE = IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/wizard/compose.svg");
     }
 }

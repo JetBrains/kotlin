@@ -1,7 +1,7 @@
 package test
 
-expect enum class <lineMarker>Enum</lineMarker> {
-    <lineMarker>A</lineMarker>,
-    <lineMarker>B</lineMarker>,
-    <lineMarker>C</lineMarker>
+expect enum class <!LINE_MARKER("descr='Has actuals in JVM'")!>Enum<!> {
+    <!LINE_MARKER("descr='Has actuals in JVM'")!>A<!>,
+    <!LINE_MARKER("descr='Has actuals in JVM'")!>B<!>,
+    <!LINE_MARKER("descr='Has actuals in JVM'")!>C<!>
 }

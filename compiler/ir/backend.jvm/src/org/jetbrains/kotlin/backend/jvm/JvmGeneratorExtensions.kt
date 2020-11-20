@@ -65,11 +65,10 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
             IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 
     override fun generateFacadeClass(irFactory: IrFactory, source: DeserializedContainerSource): IrClass? {
-        if (!generateFacades) return null
-        val jvmPackagePartSource = source as? JvmPackagePartSource ?: return null
-        val facadeName = jvmPackagePartSource.facadeClassName ?: jvmPackagePartSource.className
+        if (!generateFacades || source !is JvmPackagePartSource) return null
+        val facadeName = source.facadeClassName ?: source.className
         return irFactory.buildClass {
-            origin = IrDeclarationOrigin.FILE_CLASS
+            origin = if (source.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS
             name = facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName()
         }.also {
             it.createParameterDeclarations()

@@ -1,10 +1,10 @@
 FILE: main.kt
-    public final class My : R|kotlin/Any| {
+    public final [STATUS] class My : R|kotlin/Any| {
         public constructor(): R|My| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final fun foo(): R|My| {
+    public final [BODY_RESOLVE] fun foo(): R|My| {
         ^foo R|/My.My|()
     }

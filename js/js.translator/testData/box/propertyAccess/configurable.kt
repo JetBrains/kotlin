@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1325
+// EXPECTED_REACHABLE_NODES: 1345
 // KJS_WITH_FULL_RUNTIME
 package foo
 
@@ -15,11 +15,18 @@ class P : EP {
         get() = true
 }
 
+class PD : EP by P()
+
 fun usages() {
     val p = P()
     assertEquals(13, p.simpleProp)
     assertEquals("42", p.anotherProp)
     assertEquals(true, p.propWithGetter)
+
+    val pd = PD()
+    assertEquals(13, pd.simpleProp)
+    assertEquals("42", pd.anotherProp)
+    assertEquals(true, pd.propWithGetter)
 }
 
 fun box(): String {
@@ -30,6 +37,12 @@ fun box(): String {
     assertTrue(isConfigurable(prototype, "simpleProp"))
     assertTrue(isConfigurable(prototype, "anotherProp"))
     assertTrue(isConfigurable(prototype, "propWithGetter"))
+
+    val delegatePrototype = PD::class.js.asDynamic().prototype
+
+    assertTrue(isConfigurable(delegatePrototype, "simpleProp"))
+    assertTrue(isConfigurable(delegatePrototype, "anotherProp"))
+    assertTrue(isConfigurable(delegatePrototype, "propWithGetter"))
 
     return "OK"
 }

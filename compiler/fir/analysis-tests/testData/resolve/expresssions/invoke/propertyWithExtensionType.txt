@@ -15,10 +15,10 @@ FILE: propertyWithExtensionType.kt
         when () {
             !=(R|<local>/a|.R|/A.x|, Null(null)) ->  {
                 lval b: R|kotlin/String.() -> kotlin/Unit| = R|<local>/a|.R|/A.x|
-                R|<local>/b|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(String())
+                R|<local>/b|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(String())
             }
         }
 
         lval c: R|kotlin/String.() -> kotlin/Int| = R|<local>/a|.R|/A.y|
-        lval d: R|kotlin/Int| = R|<local>/c|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(String())
+        lval d: R|kotlin/Int| = R|<local>/c|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(String())
     }

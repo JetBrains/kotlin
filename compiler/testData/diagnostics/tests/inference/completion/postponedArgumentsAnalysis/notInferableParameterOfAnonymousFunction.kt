@@ -7,7 +7,7 @@ fun main() {
     val x1 = select<Any?>(id { <!CANNOT_INFER_PARAMETER_TYPE!>x<!>, <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>y<!> -> }, { x: Int, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> })
     val x2 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!> { x, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> }, { x: Int, <!CANNOT_INFER_PARAMETER_TYPE!>y<!> -> })
 
-    val x3 = select(id(fun (x, y) {}), fun (x: Int, y) {})
+    val x3 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>select<!>(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>id<!>(fun (x, <!CANNOT_INFER_PARAMETER_TYPE!>y<!>) {}), fun (x: Int, <!CANNOT_INFER_PARAMETER_TYPE!>y<!>) {})
 
     val x4 = select<Any?>((fun (<!CANNOT_INFER_PARAMETER_TYPE!>x<!>, <!CANNOT_INFER_PARAMETER_TYPE!>y<!>) {}), fun (x: Int, <!CANNOT_INFER_PARAMETER_TYPE!>y<!>) {})
     val x5 = select<Any?>(id(fun (<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>x<!>, <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>y<!>) {}), fun (x: Int, <!CANNOT_INFER_PARAMETER_TYPE!>y<!>) {})

@@ -342,7 +342,8 @@ abstract class FileRankingCalculator(private val checkClassFqName: Boolean = tru
             bindingContext,
             ClassBuilderMode.LIGHT_CLASSES,
             "debugger",
-            KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT // TODO use proper LanguageVersionSettings
+            KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
+            useOldInlineClassesManglingScheme = false
         )
     }
 

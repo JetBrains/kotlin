@@ -1,0 +1,21 @@
+FILE: lambdaAsReceiver.kt
+    public final fun R|() -> kotlin/String|.foo(): R|kotlin/Unit| {
+    }
+    public final fun R|kotlin/String|.foo(): R|kotlin/Unit| {
+    }
+    public final fun R|kotlin/String|.bar(): R|kotlin/Unit| {
+    }
+    public final fun main1(): R|kotlin/Unit| {
+        fun <anonymous>(): R|kotlin/String| {
+            ^ String()
+        }
+        .R|/foo|()
+        String().R|/foo|()
+    }
+    public final fun main2(): R|kotlin/Unit| {
+        fun <anonymous>(): R|kotlin/String| {
+            ^ String()
+        }
+        .<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /bar>#()
+        String().R|/bar|()
+    }

@@ -37,10 +37,18 @@ data class BintrayRepository(val repository: String, val base: String = "https:/
         get() = "bintray." + repository.replace('/', '.')
 }
 
+data class JetBrainsSpace(val repository: String) : CustomMavenRepository {
+    override val url: String = "https://maven.pkg.jetbrains.space/public/p/$repository"
+
+    override val idForMaven: String
+        get() = "jetbrains." + repository.replace('/', '.')
+}
+
 object Repositories {
     val KTOR_BINTRAY = BintrayRepository("kotlin/ktor")
     val KOTLINX = BintrayRepository("kotlin/kotlinx")
     val KOTLIN_JS_WRAPPERS_BINTRAY = BintrayRepository("kotlin/kotlin-js-wrappers")
     val KOTLIN_EAP_BINTRAY = BintrayRepository("kotlin/kotlin-eap")
     val KOTLIN_DEV_BINTRAY = BintrayRepository("kotlin/kotlin-dev")
+    val JETBRAINS_COMPOSE_DEV = JetBrainsSpace("compose/dev")
 }

@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.ir.createStaticFunctionWithReceivers
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.jvm.codegen.MethodSignatureMapper
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping
 import org.jetbrains.kotlin.builtins.isMappedIntrinsicCompanionObjectClassId
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 class JvmCachedDeclarations(
     private val context: JvmBackendContext,
-    private val methodSignatureMapper: MethodSignatureMapper,
     private val languageVersionSettings: LanguageVersionSettings
 ) {
     private val singletonFieldDeclarations = HashMap<IrSymbolOwner, IrField>()
@@ -122,11 +120,21 @@ class JvmCachedDeclarations(
                 // It is an error to annotate only some of the fields of an interface companion with
                 // @JvmField, so checking the current field only should be enough.
                 val hasJvmField = oldField.hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
-                parent = if (oldParent.isCompanion && (!oldParent.parentAsClass.isJvmInterface || hasJvmField))
-                    oldParent.parentAsClass
-                else
-                    oldParent
-                annotations += oldField.annotations
+                if (oldParent.isCompanion && (!oldParent.parentAsClass.isJvmInterface || hasJvmField)) {
+                    parent = oldParent.parentAsClass
+                    annotations = if (DescriptorVisibilities.isPrivate(oldParent.visibility)) {
+                        context.createJvmIrBuilder(this.symbol).run {
+                            filterOutAnnotations(
+                                DeprecationResolver.JAVA_DEPRECATED,
+                                oldField.annotations
+                            ) + irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+                        }
+                    } else oldField.annotations
+                } else {
+                    parent = oldParent
+                    annotations = oldField.annotations
+                }
+
                 initializer = oldField.initializer
                     ?.replaceThisByStaticReference(this@JvmCachedDeclarations, oldParent, oldParent.thisReceiver!!)
                     ?.patchDeclarationParents(this) as IrExpressionBody?
@@ -142,9 +150,8 @@ class JvmCachedDeclarations(
         return defaultImplsMethods.getOrPut(interfaceFun) {
             val defaultImpls = getDefaultImplsClass(interfaceFun.parentAsClass)
 
-            val name = Name.identifier(methodSignatureMapper.mapFunctionName(interfaceFun))
             context.irFactory.createStaticFunctionWithReceivers(
-                defaultImpls, name, interfaceFun,
+                defaultImpls, interfaceFun.name, interfaceFun,
                 dispatchReceiverType = parent.defaultType,
                 // If `interfaceFun` is not a real implementation, then we're generating stubs in a descendant
                 // interface's DefaultImpls. For example,
@@ -179,11 +186,12 @@ class JvmCachedDeclarations(
                 isFakeOverride = false,
                 typeParametersFromContext = parent.typeParameters
             ).also {
+                it.copyCorrespondingPropertyFrom(interfaceFun)
                 if (it.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY &&
                     !it.annotations.hasAnnotation(DeprecationResolver.JAVA_DEPRECATED)
                 ) {
-                    this@JvmCachedDeclarations.context.createIrBuilder(it.symbol).run {
-                        it.annotations += irCall(this@JvmCachedDeclarations.context.ir.symbols.javaLangDeprecatedConstructor)
+                    context.createJvmIrBuilder(it.symbol).run {
+                        it.annotations += irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
                     }
                 }
 

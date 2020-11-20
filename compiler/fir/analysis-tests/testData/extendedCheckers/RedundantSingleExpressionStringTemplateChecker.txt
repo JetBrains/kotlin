@@ -20,11 +20,11 @@ FILE: RedundantSingleExpressionStringTemplateChecker.kt
             public get(): R|ProductGroup?|
 
         public final val name: R|kotlin/String| = when () {
-            ==(R|<local>/parent|, Null(null)) ->  {
-                R|<local>/short_name|
+            ==(this@R|/ProductGroup|.R|/ProductGroup.parent|, Null(null)) ->  {
+                this@R|/ProductGroup|.R|/ProductGroup.short_name|
             }
             else ->  {
-                <strcat>(R|<local>/parent|.R|/ProductGroup.name|.R|kotlin/Any.toString|(), String( ), R|<local>/short_name|.R|kotlin/Any.toString|())
+                <strcat>(this@R|/ProductGroup|.R|/ProductGroup.parent|.R|/ProductGroup.name|.R|kotlin/Any.toString|(), String( ), this@R|/ProductGroup|.R|/ProductGroup.short_name|.R|kotlin/Any.toString|())
             }
         }
 

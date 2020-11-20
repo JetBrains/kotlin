@@ -43,7 +43,9 @@ open class KotlinAndroidTarget(
      * all library variants will be published, but not test or application variants. */
     var publishLibraryVariants: List<String>? = listOf()
         // Workaround for Groovy GString items in a list:
-        set(value) { field = value?.map(Any::toString) }
+        set(value) {
+            field = value?.map(Any::toString)
+        }
 
     /** Add Android library variant names to [publishLibraryVariants]. */
     fun publishLibraryVariants(vararg names: String) {
@@ -91,11 +93,16 @@ open class KotlinAndroidTarget(
         KotlinAndroidPlugin.androidTargetHandler(project.getKotlinPluginVersion()!!, this).doCreateComponents()
     }
 
+    private fun isVariantPublished(variant: BaseVariant): Boolean {
+        return publishLibraryVariants?.contains(getVariantName(variant)) ?: true
+    }
+
     private fun AbstractAndroidProjectHandler.doCreateComponents(): Set<KotlinTargetComponent> {
+
         val publishableVariants = mutableListOf<BaseVariant>()
             .apply { project.forEachVariant { add(it) } }
             .toList() // Defensive copy against unlikely modification by the lambda that captures the list above in forEachVariant { }
-            .filter { getLibraryOutputTask(it) != null && publishLibraryVariants?.contains(getVariantName(it)) ?: true }
+            .filter { getLibraryOutputTask(it) != null }
 
         val publishableVariantGroups = publishableVariants.groupBy { variant ->
             val flavorNames = getFlavorNames(variant)
@@ -118,12 +125,12 @@ open class KotlinAndroidTarget(
 
                 val artifactClassifier = buildTypeName.takeIf { it != "release" && publishLibraryVariantsGroupedByFlavor }
 
-                val usageContexts = createAndroidUsageContexts(androidVariant, compilation, artifactClassifier)
                 createKotlinVariant(
                     lowerCamelCaseName(compilation.target.name, *flavorGroupNameParts.toTypedArray()),
                     compilation,
-                    usageContexts
+                    createAndroidUsageContexts(androidVariant, compilation, artifactClassifier)
                 ).apply {
+                    publishable = isVariantPublished(androidVariant)
                     sourcesArtifacts = setOf(
                         sourcesJarArtifact(
                             compilation, compilation.disambiguateName(""),
@@ -148,10 +155,10 @@ open class KotlinAndroidTarget(
 
             if (publishLibraryVariantsGroupedByFlavor) {
                 JointAndroidKotlinTargetComponent(
-                    this@KotlinAndroidTarget,
-                    nestedVariants,
-                    flavorGroupNameParts,
-                    nestedVariants.flatMap { it.sourcesArtifacts }.toSet()
+                    target = this@KotlinAndroidTarget,
+                    nestedVariants = nestedVariants.filter { it.publishable }.toSet(),
+                    flavorNames = flavorGroupNameParts,
+                    sourcesArtifacts = nestedVariants.filter { it.publishable }.flatMap { it.sourcesArtifacts }.toSet()
                 )
             } else {
                 nestedVariants.single()

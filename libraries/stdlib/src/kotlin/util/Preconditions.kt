@@ -54,7 +54,7 @@ public inline fun <T : Any> requireNotNull(value: T?): T {
  * Throws an [IllegalArgumentException] with the result of calling [lazyMessage] if the [value] is null. Otherwise
  * returns the not null value.
  *
- * @sample samples.misc.Preconditions.failRequireWithLazyMessage
+ * @sample samples.misc.Preconditions.failRequireNotNullWithLazyMessage
  */
 @kotlin.internal.InlineOnly
 public inline fun <T : Any> requireNotNull(value: T?, lazyMessage: () -> Any): T {

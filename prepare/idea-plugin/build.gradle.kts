@@ -107,6 +107,7 @@ val projectsToShadow by extra(listOf(
         ":idea:idea-frontend-fir",
         ":idea:idea-frontend-api",
         ":idea:idea-frontend-fir:idea-fir-low-level-api",
+        ":idea:idea-fir-performance-tests",
         ":idea:idea-fir",
         *if (Ide.IJ())
             arrayOf(
@@ -182,9 +183,7 @@ dependencies {
 
     libraries(kotlinStdlib("jdk8"))
 
-    Platform[193].orHigher {
-        libraries(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
-    }
+    libraries(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
 
     libraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
@@ -198,12 +197,7 @@ dependencies {
     gradleToolingModel(project(":noarg-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":allopen-ide-plugin")) { isTransitive = false }
 
-    Platform[193].orLower {
-        gradleToolingModel(project(":idea:idea-gradle-tooling-api")) { isTransitive = false }
-    }
-
     jpsPlugin(project(":kotlin-jps-plugin")) { isTransitive = false }
-
 
     (libraries.dependencies + gradleToolingModel.dependencies)
         .map { if (it is ProjectDependency) it.dependencyProject else it }

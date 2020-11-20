@@ -102,10 +102,12 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             getExpressionTypeWithCoercionToUnitOrFail(expression).toIrType(), IrStatementOrigin.WHEN
         )
 
+        var hasExplicitElseBranch = false
         for (ktEntry in expression.entries) {
             if (ktEntry.isElse) {
                 val irElseResult = ktEntry.expression!!.genExpr()
                 irWhen.branches.add(elseBranch(irElseResult))
+                hasExplicitElseBranch = true
                 break
             }
 
@@ -113,7 +115,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             for (ktCondition in ktEntry.conditions) {
                 val irCondition =
                     if (irSubject != null)
-                        generateWhenConditionWithSubject(ktCondition, irSubject)
+                        generateWhenConditionWithSubject(ktCondition, irSubject, expression.subjectExpression)
                     else
                         generateWhenConditionNoSubject(ktCondition)
                 irBranchCondition = irBranchCondition?.let { context.whenComma(it, irCondition) } ?: irCondition
@@ -122,7 +124,9 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             val irBranchResult = ktEntry.expression!!.genExpr()
             irWhen.branches.add(IrBranchImpl(irBranchCondition!!, irBranchResult))
         }
-        addElseBranchForExhaustiveWhenIfNeeded(irWhen, expression)
+        if (!hasExplicitElseBranch) {
+            addElseBranchForExhaustiveWhenIfNeeded(irWhen, expression)
+        }
 
         return generateWhenBody(expression, irSubject, irWhen)
     }
@@ -138,25 +142,21 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     }
 
     private fun addElseBranchForExhaustiveWhenIfNeeded(irWhen: IrWhen, whenExpression: KtWhenExpression) {
-        if (irWhen.branches.filterIsInstance<IrElseBranch>().isEmpty()) {
-            //TODO: check condition: seems it's safe to always generate exception
-            val isExhaustive = whenExpression.isExhaustiveWhen()
-
-            if (isExhaustive) {
-                val call = IrCallImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    context.irBuiltIns.nothingType,
-                    context.irBuiltIns.noWhenBranchMatchedExceptionSymbol
-                )
-                irWhen.branches.add(elseBranch(call))
-            }
+        val isUsedAsExpression = true == get(BindingContext.USED_AS_EXPRESSION, whenExpression)
+        val isImplicitElseRequired =
+            if (isUsedAsExpression)
+                true == get(BindingContext.EXHAUSTIVE_WHEN, whenExpression)
+            else
+                true == get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, whenExpression)
+        if (isImplicitElseRequired) {
+            val call = IrCallImpl.fromSymbolDescriptor(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                context.irBuiltIns.nothingType,
+                context.irBuiltIns.noWhenBranchMatchedExceptionSymbol
+            )
+            irWhen.branches.add(elseBranch(call))
         }
     }
-
-    private fun KtWhenExpression.isExhaustiveWhen(): Boolean =
-        elseExpression != null // TODO front-end should provide correct exhaustiveness information
-                || true == get(BindingContext.EXHAUSTIVE_WHEN, this)
-                || true == get(BindingContext.IMPLICIT_EXHAUSTIVE_WHEN, this)
 
     private fun generateWhenBody(expression: KtWhenExpression, irSubject: IrVariable?, irWhen: IrWhen): IrExpression =
         if (irSubject == null) {
@@ -190,12 +190,14 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     private fun generateWhenConditionNoSubject(ktCondition: KtWhenCondition): IrExpression =
         (ktCondition as KtWhenConditionWithExpression).expression!!.genExpr()
 
-    private fun generateWhenConditionWithSubject(ktCondition: KtWhenCondition, irSubject: IrVariable): IrExpression {
+    private fun generateWhenConditionWithSubject(
+        ktCondition: KtWhenCondition, irSubject: IrVariable, ktSubject: KtExpression?
+    ): IrExpression {
         return when (ktCondition) {
             is KtWhenConditionWithExpression ->
                 generateEqualsCondition(irSubject, ktCondition)
             is KtWhenConditionInRange ->
-                generateInRangeCondition(irSubject, ktCondition)
+                generateInCondition(irSubject, ktCondition, ktSubject)
             is KtWhenConditionIsPattern ->
                 generateIsPatternCondition(irSubject, ktCondition)
             else ->
@@ -227,11 +229,13 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             irInstanceOf
     }
 
-    private fun generateInRangeCondition(irSubject: IrVariable, ktCondition: KtWhenConditionInRange): IrExpression {
-        val inCall = statementGenerator.pregenerateCall(getResolvedCall(ktCondition.operationReference)!!)
+    private fun generateInCondition(irSubject: IrVariable, ktCondition: KtWhenConditionInRange, ktSubject: KtExpression?): IrExpression {
         val startOffset = ktCondition.startOffsetSkippingComments
         val endOffset = ktCondition.endOffset
-        inCall.irValueArgumentsByIndex[0] = irSubject.loadAt(startOffset, startOffset)
+        val inCall = statementGenerator.pregenerateCallUsing(getResolvedCall(ktCondition.operationReference)!!) {
+            // In a `when` with a subject, `in x` is represented as `x.contains(<reference to subject expression>)`.
+            if (it === ktSubject) irSubject.loadAt(startOffset, startOffset) else statementGenerator.generateExpression(it)
+        }
         val inOperator = getInfixOperator(ktCondition.operationReference.getReferencedNameElementType())
         val irInCall = CallGenerator(statementGenerator).generateCall(ktCondition, inCall, inOperator)
         return when (inOperator) {

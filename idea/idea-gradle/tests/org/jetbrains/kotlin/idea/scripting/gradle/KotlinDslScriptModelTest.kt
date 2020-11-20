@@ -10,27 +10,24 @@ import org.gradle.internal.exceptions.LocationAwareException
 import org.gradle.internal.resource.UriTextResource
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.parsePositionFromException
 import org.junit.Test
-import java.io.File
-import java.io.PrintWriter
-import java.io.StringWriter
-import java.lang.RuntimeException
+import kotlin.io.path.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class KotlinDslScriptModelTest {
+    @OptIn(ExperimentalPathApi::class)
     @Test
     fun testExceptionPositionParsing() {
-        val file = File(createTempDir("kotlinDslTest"), "build.gradle.kts")
+        val file = createTempDirectory("kotlinDslTest") / "build.gradle.kts"
         val line = 10
 
-        val mockScriptSource = TextResourceScriptSource(UriTextResource("build file", file))
+        val mockScriptSource = TextResourceScriptSource(UriTextResource("build file", file.toFile()))
         val mockException = LocationAwareException(RuntimeException(), mockScriptSource, line)
-        val stringWriter = StringWriter()
-        mockException.printStackTrace(PrintWriter(stringWriter))
-
-        val fromException = parsePositionFromException(stringWriter.toString())
+        val fromException = parsePositionFromException(mockException.stackTraceToString())
         assertNotNull(fromException, "Position should be parsed")
-        assertEquals(fromException.first, file.absolutePath, "Wrong file name parsed")
+        assertEquals(fromException.first, file.toAbsolutePath().toString(), "Wrong file name parsed")
         assertEquals(fromException.second.line, line, "Wrong line number parsed")
+
+        file.parent.deleteExisting()
     }
 }

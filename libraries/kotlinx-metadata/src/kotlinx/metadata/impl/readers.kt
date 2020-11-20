@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.deserialization.Flags as F
 
 /**
- * Allows to populate [BasicReadContext] with additional data
+ * Allows to populate [ReadContext] with additional data
  * that can be used when reading metadata in [MetadataExtensions].
  */
 interface ReadContextExtension
@@ -337,7 +337,7 @@ private fun ProtoBuf.Type.accept(v: KmTypeVisitor, c: ReadContext) {
         hasTypeParameter() -> v.visitTypeParameter(typeParameter)
         hasTypeParameterName() -> {
             val id = c.getTypeParameterId(typeParameterName)
-                    ?: throw InconsistentKotlinMetadataException("No type parameter id for ${c[typeParameterName]}")
+                ?: throw InconsistentKotlinMetadataException("No type parameter id for ${c[typeParameterName]}")
             v.visitTypeParameter(id)
         }
         else -> {
@@ -355,7 +355,7 @@ private fun ProtoBuf.Type.accept(v: KmTypeVisitor, c: ReadContext) {
 
         if (variance != null) {
             val argumentType = argument.type(c.types)
-                    ?: throw InconsistentKotlinMetadataException("No type argument for non-STAR projection in Type")
+                ?: throw InconsistentKotlinMetadataException("No type argument for non-STAR projection in Type")
             v.visitArgument(argumentType.typeFlags, variance)?.let { argumentType.accept(it, c) }
         } else {
             v.visitStarProjection()
