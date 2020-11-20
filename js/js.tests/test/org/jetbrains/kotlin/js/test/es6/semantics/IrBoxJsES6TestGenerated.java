@@ -1025,6 +1025,16 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             runTest("js/js.translator/testData/box/defaultArguments/extensionFunWithDefArgs.kt");
         }
 
+        @TestMetadata("externalTailArgsClass.kt")
+        public void testExternalTailArgsClass() throws Exception {
+            runTest("js/js.translator/testData/box/defaultArguments/externalTailArgsClass.kt");
+        }
+
+        @TestMetadata("externalTailArgsFun.kt")
+        public void testExternalTailArgsFun() throws Exception {
+            runTest("js/js.translator/testData/box/defaultArguments/externalTailArgsFun.kt");
+        }
+
         @TestMetadata("funInAbstractClassWithDefArg.kt")
         public void testFunInAbstractClassWithDefArg() throws Exception {
             runTest("js/js.translator/testData/box/defaultArguments/funInAbstractClassWithDefArg.kt");

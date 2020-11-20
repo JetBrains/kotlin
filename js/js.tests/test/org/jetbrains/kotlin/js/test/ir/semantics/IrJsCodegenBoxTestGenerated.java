@@ -10077,11 +10077,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         public void testAllFilesPresentInExternal() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/external"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
         }
-
-        @TestMetadata("jsWithDefaultArg.kt")
-        public void testJsWithDefaultArg() throws Exception {
-            runTest("compiler/testData/codegen/box/external/jsWithDefaultArg.kt");
-        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/fakeOverride")
