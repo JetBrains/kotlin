@@ -30,16 +30,18 @@ import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -50,6 +52,7 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -74,6 +77,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrDoWhileLoop
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -94,16 +98,15 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrContainerExpressionBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrLoopBase
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSpreadElementImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrWhenImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -115,6 +118,7 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.types.isByte
 import org.jetbrains.kotlin.ir.types.isChar
+import org.jetbrains.kotlin.ir.types.isClassWithFqName
 import org.jetbrains.kotlin.ir.types.isDouble
 import org.jetbrains.kotlin.ir.types.isFloat
 import org.jetbrains.kotlin.ir.types.isInt
@@ -123,7 +127,6 @@ import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.isShort
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.types.isUnitOrNullableUnit
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
@@ -140,6 +143,7 @@ import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -616,6 +620,7 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun visitFunctionInScope(declaration: IrFunction): IrStatement {
         val scope = currentFunctionScope
         // if the function isn't composable, there's nothing to do
@@ -660,6 +665,7 @@ class ComposableFunctionBodyTransformer(
     // 2. They have a return value (may get relaxed in the future)
     // 3. They are a lambda (we use ComposableLambda<...> class for this instead)
     // 4. They are annotated as @ComposableContract(restartable = false)
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.shouldBeRestartable(): Boolean {
         // Only insert observe scopes in non-empty composable function
         if (body == null)
@@ -709,6 +715,7 @@ class ComposableFunctionBodyTransformer(
         return false
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.shouldElideGroups(): Boolean {
         var readOnly = descriptor.composableReadonlyContract()
         if (readOnly == null && this is IrSimpleFunction) {
@@ -725,6 +732,7 @@ class ComposableFunctionBodyTransformer(
     // 2. never calls `$composer.changed(...)` with its parameters
     // 3. can have default parameters, so needs to add the defaults preamble if defaults present
     // 4. proper groups around control flow structures in the body
+    @ObsoleteDescriptorBasedAPI
     private fun visitNonRestartableComposableFunction(
         declaration: IrFunction,
         scope: Scope.FunctionScope,
@@ -763,7 +771,7 @@ class ComposableFunctionBodyTransformer(
 
         var (transformed, returnVar) = body.asBodyAndResultVar()
 
-        transformed = transformed.transformChildren()
+        transformed = transformed.apply { transformChildrenVoid() }
 
         if (!elideGroups) scope.realizeGroup(::irEndReplaceableGroup)
 
@@ -796,6 +804,7 @@ class ComposableFunctionBodyTransformer(
     // 2. cannot have default parameters, so have no default handling
     // 3. they cannot be skipped since we do not know their capture scope, so no skipping logic
     // 4. proper groups around control flow structures in the body
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun visitComposableLambda(
         declaration: IrFunction,
         scope: Scope.FunctionScope,
@@ -858,7 +867,7 @@ class ComposableFunctionBodyTransformer(
 
         // we must transform the body first, since that will allow us to see whether or not we
         // are using the dispatchReceiverParameter or the extensionReceiverParameter
-        val transformed = nonReturningBody.transformChildren()
+        val transformed = nonReturningBody.apply { transformChildrenVoid() }
 
         if (declaration.extensionReceiverParameter != null) {
             canSkipExecution = buildStatementsForSkippingThisParameter(
@@ -929,6 +938,7 @@ class ComposableFunctionBodyTransformer(
     // 3. generate handling of default parameters if necessary
     // 4. generate skipping logic based on parameters passed into the function
     // 5. generate groups around control flow structures in the body
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun visitRestartableComposableFunction(
         declaration: IrFunction,
         scope: Scope.FunctionScope,
@@ -1021,7 +1031,7 @@ class ComposableFunctionBodyTransformer(
 
         // we must transform the body first, since that will allow us to see whether or not we
         // are using the dispatchReceiverParameter or the extensionReceiverParameter
-        val transformed = nonReturningBody.transformChildren()
+        val transformed = nonReturningBody.apply { transformChildrenVoid() }
 
         var slotIndex = scope.realValueParamCount
 
@@ -1136,6 +1146,7 @@ class ComposableFunctionBodyTransformer(
         sourceFixups.clear()
     }
 
+    @ObsoleteDescriptorBasedAPI
     private fun buildStatementsForSkippingThisParameter(
         thisParam: IrValueParameter,
         isUsed: Boolean,
@@ -1192,6 +1203,7 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
+    @ObsoleteDescriptorBasedAPI
     private fun buildStatementsForSkippingAndDefaults(
         sourceElement: IrElement,
         skipPreamble: IrStatementContainer,
@@ -1499,6 +1511,7 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun irEndRestartGroupAndUpdateScope(
         scope: Scope.FunctionScope,
         changedParam: IrChangedBitMaskValue,
@@ -1562,7 +1575,7 @@ class ComposableFunctionBodyTransformer(
                 listOf(passedInComposerParameter, ignoredChangedParameter),
                 updateScopeBlockType.toKotlinType(),
                 Modality.FINAL,
-                Visibilities.LOCAL
+                DescriptorVisibilities.LOCAL
             )
         }
 
@@ -1592,7 +1605,8 @@ class ComposableFunctionBodyTransformer(
             isTailrec = lambdaDescriptor.isTailrec,
             isSuspend = lambdaDescriptor.isSuspend,
             isOperator = lambdaDescriptor.isOperator,
-            isExpect = lambdaDescriptor.isExpect
+            isExpect = lambdaDescriptor.isExpect,
+            isInfix = lambdaDescriptor.isInfix,
         ).also { fn ->
             fn.parent = function
             val localIrBuilder = DeclarationIrBuilder(context, fn.symbol)
@@ -1711,7 +1725,7 @@ class ComposableFunctionBodyTransformer(
         return false
     }
 
-    private fun IrBody.asBodyAndResultVar(): Pair<IrContainerExpressionBase, IrVariable?> {
+    private fun IrBody.asBodyAndResultVar(): Pair<IrContainerExpression, IrVariable?> {
         val original = IrCompositeImpl(
             startOffset,
             endOffset,
@@ -1756,7 +1770,7 @@ class ComposableFunctionBodyTransformer(
             super.visitFile(declaration)
         }
 
-    override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
         when (declaration) {
             is IrField,
             is IrProperty,
@@ -1790,6 +1804,7 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrElement.sourceKey(): Int {
         var hash = currentFunctionScope
             .function
@@ -1867,6 +1882,7 @@ class ComposableFunctionBodyTransformer(
         return irMethodCall(irCurrentComposer(), endRestartGroupFunction)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun irCache(
         startOffset: Int,
         endOffset: Int,
@@ -1879,7 +1895,7 @@ class ComposableFunctionBodyTransformer(
             startOffset,
             endOffset,
             returnType,
-            symbol
+            symbol as IrSimpleFunctionSymbol
         ).apply {
             dispatchReceiver = irCurrentComposer()
             putValueArgument(0, invalid)
@@ -1985,6 +2001,7 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun irCall(
         function: IrFunction,
         startOffset: Int = UNDEFINED_OFFSET,
@@ -1996,7 +2013,7 @@ class ComposableFunctionBodyTransformer(
             startOffset,
             endOffset,
             type,
-            symbol
+            symbol as IrSimpleFunctionSymbol
         )
     }
 
@@ -2011,6 +2028,7 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun irTemporary(
         value: IrExpression,
         nameHint: String? = null,
@@ -2133,7 +2151,7 @@ class ComposableFunctionBodyTransformer(
         )
     }
 
-    private fun mutableStatementContainer(): IrContainerExpressionBase {
+    private fun mutableStatementContainer(): IrContainerExpression {
         // NOTE(lmr): It's important to use IrComposite here so that we don't introduce any new
         // scopes
         return IrCompositeImpl(
@@ -2379,7 +2397,7 @@ class ComposableFunctionBodyTransformer(
                 require(oldVar.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR) {
                     "Expected FOR_LOOP_ITERATOR origin for iterator variable"
                 }
-                val newVar = oldVar.transform(this, null)
+                val newVar = oldVar.transform(this, null) as IrVariable
 
                 val oldLoop = statements[1] as IrWhileLoop
                 require(oldLoop.origin == IrStatementOrigin.FOR_LOOP_INNER_WHILE) {
@@ -2392,9 +2410,9 @@ class ComposableFunctionBodyTransformer(
                     expression
                 else if (newLoop is IrBlock) {
                     require(newLoop.statements.size == 3)
-                    val before = newLoop.statements[0] as IrContainerExpressionBase
+                    val before = newLoop.statements[0] as IrContainerExpression
                     val loop = newLoop.statements[1] as IrWhileLoop
-                    val after = newLoop.statements[2] as IrContainerExpressionBase
+                    val after = newLoop.statements[2] as IrContainerExpression
 
                     val result = mutableStatementContainer()
                     result.statements.addAll(
@@ -2420,6 +2438,7 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitCall(expression: IrCall): IrExpression {
         if (expression.isTransformedComposableCall() || expression.isSyntheticComposableCall()) {
             return visitComposableCall(expression)
@@ -2455,6 +2474,7 @@ class ComposableFunctionBodyTransformer(
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun visitComposableCall(expression: IrCall): IrExpression {
         return when (expression.symbol.descriptor.fqNameSafe) {
             ComposeFqNames.remember -> {
@@ -2974,7 +2994,7 @@ class ComposableFunctionBodyTransformer(
 
     override fun visitReturn(expression: IrReturn): IrExpression {
         if (!isInComposableScope) return super.visitReturn(expression)
-        expression.transformChildren()
+        expression.transformChildrenVoid()
         val endBlock = mutableStatementContainer()
         encounteredReturn(expression.returnTargetSymbol) { endBlock.statements.add(it) }
         return if (expression.value.type
@@ -3009,17 +3029,17 @@ class ComposableFunctionBodyTransformer(
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrExpression {
         if (!isInComposableScope) return super.visitDoWhileLoop(loop)
-        return handleLoop(loop as IrLoopBase)
+        return handleLoop(loop)
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop): IrExpression {
         if (!isInComposableScope) return super.visitWhileLoop(loop)
-        return handleLoop(loop as IrLoopBase)
+        return handleLoop(loop)
     }
 
-    private fun handleLoop(loop: IrLoopBase): IrExpression {
+    private fun handleLoop(loop: IrLoop): IrExpression {
         val loopScope = withScope(Scope.LoopScope(loop)) {
-            loop.transformChildren()
+            loop.transformChildrenVoid()
         }
         return if (loopScope.hasComposableCalls) {
             loop.asCoalescableGroup(loopScope)
@@ -3820,6 +3840,7 @@ class ComposableFunctionBodyTransformer(
 private fun String.replacePrefix(prefix: String, replacement: String) =
     if (startsWith(prefix)) replacement + substring(prefix.length) else this
 
+@OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun IrFunction.isLambda(): Boolean {
     // There is probably a better way to determine this, but if there is, it isn't obvious
     return descriptor.name.asString() == "<anonymous>"
@@ -3830,3 +3851,15 @@ inline fun <A, B, C> forEachWith(a: List<A>, b: List<B>, c: List<C>, fn: (A, B, 
         fn(a[i], b[i], c[i])
     }
 }
+
+private fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean? = null): Boolean {
+    if (this !is IrSimpleType) return false
+    if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
+    return classifier.isClassWithFqName(fqName)
+}
+private fun IrType.isNotNullClassType(fqName: FqNameUnsafe) =
+    isClassType(fqName, hasQuestionMark = false)
+private fun IrType.isNullableClassType(fqName: FqNameUnsafe) =
+    isClassType(fqName, hasQuestionMark = true)
+fun IrType.isNullableUnit() = isNullableClassType(StandardNames.FqNames.unit)
+fun IrType.isUnitOrNullableUnit() = this.isUnit() || this.isNullableUnit()
