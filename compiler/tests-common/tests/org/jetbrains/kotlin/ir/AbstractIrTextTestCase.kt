@@ -113,6 +113,12 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             KotlinTestUtils.assertEqualsToFile(irTreeFileLabel.expectedTextFile, actualTrees)
             verify(irFile)
 
+            // Check that deep copy produces an equivalent result
+            val irFileCopy = irFile.deepCopyWithSymbols()
+            val copiedTrees = irFileCopy.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber, normalizeNames = true)
+            TestCase.assertEquals("IR dump mismatch after deep copy with symbols", actualTrees, copiedTrees)
+            verify(irFileCopy)
+
             val kotlinLikeDump = irFile.dumpKotlinLike(
                 KotlinLikeDumpOptions(
                     printFileName = false,
@@ -121,17 +127,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
                 )
             )
             val kotlinLikeDumpExpectedFile = irTreeFileLabel.expectedTextFile.withReplacedExtensionOrNull(".txt", ".kt.txt")!!
-//            KotlinTestUtils.assertEqualsToFile(kotlinLikeDumpExpectedFile, kotlinLikeDump)
-
-            val kotlinLikeDumpExpectedText = if (kotlinLikeDumpExpectedFile.exists()) kotlinLikeDumpExpectedFile.readText() else ""
-            kotlinLikeDumpExpectedFile.writeText(kotlinLikeDump)
-            assertEquals(kotlinLikeDumpExpectedText, kotlinLikeDump)
-
-            // Check that deep copy produces an equivalent result
-            val irFileCopy = irFile.deepCopyWithSymbols()
-            val copiedTrees = irFileCopy.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber, normalizeNames = true)
-            TestCase.assertEquals("IR dump mismatch after deep copy with symbols", actualTrees, copiedTrees)
-            verify(irFileCopy)
+            KotlinTestUtils.assertEqualsToFile(kotlinLikeDumpExpectedFile, kotlinLikeDump)
         }
 
         try {
