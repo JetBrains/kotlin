@@ -23,7 +23,6 @@ import androidx.compose.compiler.plugins.kotlin.irTrace
 import androidx.compose.compiler.plugins.kotlin.isComposableCallable
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -146,11 +145,11 @@ class ComposerParamTransformer(
             return this
         val ownerFn = when {
             isComposableLambda -> {
-                (symbol.owner as IrSimpleFunction).lambdaInvokeWithComposerParamIfNeeded()
+                (symbol.owner as IrSimpleFunction).lambdaInvokeWithComposerParam()
             }
             else -> (symbol.owner as IrSimpleFunction).withComposerParamIfNeeded()
         }
-        if (!transformedFunctionSet.contains(ownerFn))
+        if (!isComposableLambda && !transformedFunctionSet.contains(ownerFn))
             return this
         if (symbol.owner == ownerFn)
             return this
@@ -292,13 +291,6 @@ class ComposerParamTransformer(
         return transformedFunctions[this] ?: copyWithComposerParam()
     }
 
-    private fun IrFunction.lambdaInvokeWithComposerParamIfNeeded(): IrFunction {
-        if (transformedFunctionSet.contains(this)) return this
-        return transformedFunctions.getOrPut(this) {
-            lambdaInvokeWithComposerParam().also { transformedFunctionSet.add(it) }
-        }
-    }
-
     private fun IrFunction.lambdaInvokeWithComposerParam(): IrFunction {
         val descriptor = descriptor
         val argCount = descriptor.valueParameters.size
@@ -307,24 +299,7 @@ class ComposerParamTransformer(
         val newInvoke = newFnClass.functions.first {
             it.name == OperatorNameConventions.INVOKE
         }
-
-        return IrFunctionImpl(
-            startOffset,
-            endOffset,
-            origin,
-            newInvoke.descriptor,
-            returnType
-        ).also { fn ->
-            fn.parent = newFnClass
-
-            fn.copyTypeParametersFrom(this)
-            fn.dispatchReceiverParameter = dispatchReceiverParameter?.copyTo(fn)
-            fn.extensionReceiverParameter = extensionReceiverParameter?.copyTo(fn)
-            newInvoke.valueParameters.forEach { p ->
-                fn.addValueParameter(p.name.identifier, p.type)
-            }
-            assert(fn.body == null) { "expected body to be null" }
-        }
+        return newInvoke
     }
 
     private fun wrapDescriptor(descriptor: FunctionDescriptor): WrappedSimpleFunctionDescriptor {
@@ -578,7 +553,8 @@ class ComposerParamTransformer(
                     try {
                         // we don't want to pass the composer parameter in to composable calls
                         // inside of nested scopes.... *unless* the scope was inlined.
-                        isNestedScope = if (declaration.isInlinedLambda()) wasNested else true
+                        isNestedScope =
+                            if (declaration.isNonComposableInlinedLambda()) wasNested else true
                         return super.visitFunction(declaration)
                     } finally {
                         isNestedScope = wasNested
