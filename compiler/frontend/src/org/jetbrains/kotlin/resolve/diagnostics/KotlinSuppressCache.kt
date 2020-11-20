@@ -115,7 +115,7 @@ abstract class KotlinSuppressCache {
         val suppressor = getOrCreateSuppressor(annotated)
         if (suppressor.isSuppressed(suppressionKey, severity)) return true
 
-        val annotatedAbove = KtStubbedPsiUtil.getPsiOrStubParent(annotated, KtAnnotated::class.java, true) ?: return false
+        val annotatedAbove = KtStubbedPsiUtil.getPsiOrStubParent(suppressor.annotatedElement, KtAnnotated::class.java, true) ?: return false
 
         val suppressed = isSuppressedByAnnotated(suppressionKey, severity, annotatedAbove, debugDepth + 1)
         val suppressorAbove = suppressors[annotatedAbove]
@@ -130,9 +130,9 @@ abstract class KotlinSuppressCache {
         suppressors.getOrPut(annotated) {
             val strings = getSuppressingStrings(annotated)
             when (strings.size) {
-                0 -> EmptySuppressor
-                1 -> SingularSuppressor(strings.first())
-                else -> MultiSuppressor(strings)
+                0 -> EmptySuppressor(annotated)
+                1 -> SingularSuppressor(annotated, strings.first())
+                else -> MultiSuppressor(annotated, strings)
             }
         }
 
@@ -170,7 +170,7 @@ abstract class KotlinSuppressCache {
             severity == Severity.WARNING && "warnings" in strings || key in strings
     }
 
-    private abstract class Suppressor {
+    private abstract class Suppressor(val annotatedElement: KtAnnotated) {
         open fun isSuppressed(diagnostic: Diagnostic): Boolean =
             isSuppressed(getDiagnosticSuppressKey(diagnostic), diagnostic.severity)
 
@@ -180,13 +180,13 @@ abstract class KotlinSuppressCache {
         abstract fun dominates(other: Suppressor): Boolean
     }
 
-    private object EmptySuppressor : Suppressor() {
+    private class EmptySuppressor(annotated: KtAnnotated) : Suppressor(annotated) {
         override fun isSuppressed(diagnostic: Diagnostic): Boolean = false
         override fun isSuppressed(suppressionKey: String, severity: Severity): Boolean = false
-        override fun dominates(other: Suppressor): Boolean = this === other
+        override fun dominates(other: Suppressor): Boolean = other is EmptySuppressor
     }
 
-    private class SingularSuppressor(private val string: String) : Suppressor() {
+    private class SingularSuppressor(annotated: KtAnnotated, private val string: String) : Suppressor(annotated) {
         override fun isSuppressed(suppressionKey: String, severity: Severity): Boolean {
             return isSuppressedByStrings(suppressionKey, ImmutableSet.of(string), severity)
         }
@@ -196,7 +196,7 @@ abstract class KotlinSuppressCache {
         }
     }
 
-    private class MultiSuppressor(private val strings: Set<String>) : Suppressor() {
+    private class MultiSuppressor(annotated: KtAnnotated, private val strings: Set<String>) : Suppressor(annotated) {
         override fun isSuppressed(suppressionKey: String, severity: Severity): Boolean {
             return isSuppressedByStrings(suppressionKey, strings, severity)
         }
