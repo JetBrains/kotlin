@@ -38,10 +38,10 @@ class PathExtensionsTest : AbstractPathTest() {
     @Test
     fun invariantSeparators() {
         val path = Path("base") / "nested" / "leaf"
-        assertEquals("base/nested/leaf", path.invariantSeparatorsPath)
+        assertEquals("base/nested/leaf", path.invariantSeparatorsPathString)
 
-        val path2 = Path("base", "nested", "leaf")
-        assertEquals("base/nested/leaf", path2.invariantSeparatorsPath)
+        val path2 = Path("base", "nested", "terminal")
+        assertEquals("base/nested/terminal", path2.invariantSeparatorsPathString)
     }
 
     @Test
@@ -149,7 +149,7 @@ class PathExtensionsTest : AbstractPathTest() {
 
     @Test
     fun copyToNameWithoutParent() {
-        val currentDir = Path("").toAbsolutePath()
+        val currentDir = Path("").absolute()
         val srcFile = createTempFile().cleanup()
         val dstFile = createTempFile(directory = currentDir).cleanup()
 
@@ -579,5 +579,12 @@ class PathExtensionsTest : AbstractPathTest() {
         testRelativeTo("../../test", "test", "dir/dir")
         testRelativeTo("foo/bar", "../../foo/bar", "../../sub/../.")
         testRelativeTo(null, "../../foo/bar", "../../sub/../..")
+    }
+
+    @Test
+    fun absolutePaths() {
+        val relative = Path("./example")
+        assertTrue(relative.absolute().isAbsolute)
+        assertEquals(relative.absolute().pathString, relative.absolutePathString())
     }
 }
