@@ -105,7 +105,7 @@ private fun syncKotlinAndAndroidResources(
     androidSourceSet.resources.srcDirs(*kotlinSourceSet.resources.toList().toTypedArray())
     if (androidSourceSet.resources.srcDirs.isNotEmpty()) {
         androidSourceSet.resources.srcDir(kotlinSourceSet.sourceFolderFor(project, "resources"))
-        kotlinSourceSet.resources.srcDirs(androidSourceSet.resources.srcDirs - kotlinSourceSet.resources.srcDirs)
+        kotlinSourceSet.resources.srcDirs(androidSourceSet.resources.srcDirs)
     }
 
     if (androidSourceSet.assets.srcDirs.isNotEmpty()) {

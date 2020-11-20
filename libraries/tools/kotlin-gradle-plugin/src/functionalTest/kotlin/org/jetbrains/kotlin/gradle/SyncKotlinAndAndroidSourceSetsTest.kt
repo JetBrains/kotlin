@@ -2,7 +2,7 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-@file:Suppress("invisible_reference", "invisible_member", "FunctionName")
+@file:Suppress("invisible_reference", "invisible_member", "FunctionName", "DuplicatedCode")
 
 package org.jetbrains.kotlin.gradle
 
@@ -90,7 +90,46 @@ class SyncKotlinAndAndroidSourceSetsTest {
     }
 
     @Test
+    fun `two product flavor dimensions`() {
+        android.flavorDimensions("pricing", "releaseType")
+        android.productFlavors {
+            it.create("beta").dimension = "releaseType"
+            it.create("production").dimension = "releaseType"
+            it.create("free").dimension = "pricing"
+            it.create("paid").dimension = "pricing"
+        }
+        kotlin.android()
+        project.evaluate()
+
+        fun assertSourceSetsExist(androidName: String, kotlinName: String) {
+            val androidSourceSet = assertNotNull(android.sourceSets.findByName(androidName), "Expected Android source set '$androidName'")
+            val kotlinSourceSet = assertNotNull(kotlin.sourceSets.findByName(kotlinName), "Expected Kotlin source set '$kotlinName'")
+            assertSame(kotlinSourceSet, androidSourceSet.kotlinSourceSet)
+        }
+
+        assertSourceSetsExist("freeBetaDebug", "androidFreeBetaDebug")
+        assertSourceSetsExist("freeBetaRelease", "androidFreeBetaRelease")
+
+        assertSourceSetsExist("freeProductionDebug", "androidFreeProductionDebug")
+        assertSourceSetsExist("freeProductionRelease", "androidFreeProductionRelease")
+
+
+        assertSourceSetsExist("paidBetaDebug", "androidPaidBetaDebug")
+        assertSourceSetsExist("paidBetaRelease", "androidPaidBetaRelease")
+
+        assertSourceSetsExist("paidProductionDebug", "androidPaidProductionDebug")
+        assertSourceSetsExist("paidProductionRelease", "androidPaidProductionRelease")
+    }
+
+    @Test
     fun `all source directories are disjoint in source sets`() {
+        android.flavorDimensions("pricing", "releaseType")
+        android.productFlavors {
+            it.create("beta").dimension = "releaseType"
+            it.create("production").dimension = "releaseType"
+            it.create("free").dimension = "pricing"
+            it.create("paid").dimension = "pricing"
+        }
         kotlin.android()
         project.evaluate()
 
