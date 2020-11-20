@@ -8,6 +8,8 @@ import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.DokkaException
 import org.jetbrains.dokka.Timer
 import org.jetbrains.dokka.base.DokkaBase
+import org.jetbrains.dokka.generation.Generation
+import org.jetbrains.dokka.generation.exitGenerationGracefully
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.pages.RootPageNode
 import org.jetbrains.dokka.plugability.DokkaContext

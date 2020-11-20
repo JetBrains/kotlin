@@ -104,7 +104,7 @@ class BaseTestBuilder : TestBuilder<BaseTestMethods>() {
     )
 }
 
-open class BaseAbstractTest(logger: TestLogger = TestLogger(DokkaConsoleLogger)) : AbstractTest<BaseTestMethods, BaseTestBuilder, BaseDokkaTestGenerator>(
+abstract class BaseAbstractTest(logger: TestLogger = TestLogger(DokkaConsoleLogger)) : AbstractTest<BaseTestMethods, BaseTestBuilder, BaseDokkaTestGenerator>(
     ::BaseTestBuilder,
     ::BaseDokkaTestGenerator,
     logger,

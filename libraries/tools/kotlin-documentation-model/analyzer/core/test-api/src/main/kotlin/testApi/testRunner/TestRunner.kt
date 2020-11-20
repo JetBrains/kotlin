@@ -20,7 +20,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 // TODO: take dokka configuration from file
-open class AbstractTest< M: TestMethods, T : TestBuilder<M>, D: DokkaTestGenerator<M> >(
+abstract class AbstractTest< M: TestMethods, T : TestBuilder<M>, D: DokkaTestGenerator<M> >(
     protected val testBuilder: () -> T,
     protected val dokkaTestGenerator: (DokkaConfiguration, DokkaLogger, M, List<DokkaPlugin>) -> D,
     protected val logger: TestLogger,
