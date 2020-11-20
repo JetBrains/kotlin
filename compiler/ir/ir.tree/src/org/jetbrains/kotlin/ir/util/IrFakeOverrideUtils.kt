@@ -38,15 +38,21 @@ fun IrSimpleFunction.collectRealOverrides(
 
     return this.overriddenSymbols
         .map { it.owner }
-        .collectAndFilterRealOverrides {
-            require(it is IrSimpleFunction) { "Expected IrSimpleFunction: ${it.render()}" }
-            toSkip(it) || filter(it)
-        }
+        .collectAndFilterRealOverrides(
+            {
+                require(it is IrSimpleFunction) { "Expected IrSimpleFunction: ${it.render()}" }
+                toSkip(it)
+            },
+            filter
+        )
         .map { it as IrSimpleFunction }
         .toSet()
 }
 
-fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(toSkip: (IrOverridableMember) -> Boolean = { false }): Set<IrOverridableMember> {
+fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(
+    toSkip: (IrOverridableMember) -> Boolean = { false },
+    filter: (IrOverridableMember) -> Boolean = { false }
+): Set<IrOverridableMember> {
 
     val visited = mutableSetOf<IrOverridableMember>()
     val realOverrides = mutableSetOf<IrOverridableMember>()
@@ -60,7 +66,7 @@ fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(toSkip: (IrOve
     }
 
     fun collectRealOverrides(member: IrOverridableMember) {
-        if (!visited.add(member)) return
+        if (!visited.add(member) || filter(member)) return
 
         if (member.isReal && !toSkip(member)) {
             realOverrides += member
