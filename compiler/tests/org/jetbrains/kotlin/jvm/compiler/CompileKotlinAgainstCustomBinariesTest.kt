@@ -694,6 +694,12 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xallow-jvm-ir-dependencies"))
     }
 
+    fun testSealedClassesAndInterfaces() {
+        val features = listOf("-XXLanguage:+FreedomForSealedClasses", "-XXLanguage:+SealedInterfaces")
+        val library = compileLibrary("library", additionalOptions = features, checkKotlinOutput = {})
+        compileKotlin("main.kt", tmpdir, listOf(library), additionalOptions = features)
+    }
+
     // If this test fails, then bootstrap compiler most likely should be advanced
     fun testPreReleaseFlagIsConsistentBetweenBootstrapAndCurrentCompiler() {
         val bootstrapCompiler = JarFile(PathUtil.kotlinPathsForCompiler.compilerPath)
