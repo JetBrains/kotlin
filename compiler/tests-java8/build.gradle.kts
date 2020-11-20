@@ -43,6 +43,7 @@ task<Exec>("downloadJspecifyTests") {
     }
     doLast {
         copy {
+            exclude { it.file.extension != "java" }
             from("$tmpDirPath/samples")
             into("${project.rootDir}/compiler/testData/foreignAnnotationsJava8/tests/jspecify/java")
         }
