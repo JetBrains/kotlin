@@ -239,7 +239,7 @@ internal object CheckLowPriorityInOverloadResolution : CheckerStage() {
 }
 
 internal object PostponedVariablesInitializerResolutionStage : ResolutionStage() {
-    val BUILDER_INFERENCE_CLASS_ID: ClassId = ClassId.fromString("kotlin/BuilderInference")
+    private val BUILDER_INFERENCE_CLASS_ID: ClassId = ClassId.fromString("kotlin/BuilderInference")
 
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val argumentMapping = candidate.argumentMapping ?: return
@@ -251,7 +251,6 @@ internal object PostponedVariablesInitializerResolutionStage : ResolutionStage()
             val receiverType = type.receiverType(callInfo.session) ?: continue
 
             for (freshVariable in candidate.freshVariables) {
-                candidate.typeArgumentMapping
                 if (candidate.csBuilder.isPostponedTypeVariable(freshVariable)) continue
                 if (freshVariable !is TypeParameterBasedTypeVariable) continue
                 val typeParameterSymbol = freshVariable.typeParameterSymbol
