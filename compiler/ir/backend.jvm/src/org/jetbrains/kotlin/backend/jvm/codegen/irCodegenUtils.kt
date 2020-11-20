@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
-import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -349,14 +348,9 @@ internal fun IrDeclaration.isDeprecatedCallable(context: JvmBackendContext): Boo
     isAnnotatedWithDeprecated ||
             annotations.any { it.symbol == context.ir.symbols.javaLangDeprecatedConstructorWithDeprecatedFlag }
 
-// We can't check for JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS because for interface methods
-// moved to DefaultImpls, origin is changed to DEFAULT_IMPLS
-// TODO: Fix origin somehow
-val IrFunction.isSyntheticMethodForProperty: Boolean
-    get() = name.asString().endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)
-
 internal fun IrFunction.isDeprecatedFunction(context: JvmBackendContext): Boolean =
-    isSyntheticMethodForProperty || isDeprecatedCallable(context) ||
+    origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ||
+            isDeprecatedCallable(context) ||
             (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.isDeprecatedCallable(context) == true ||
             isAccessorForDeprecatedPropertyImplementedByDelegation ||
             isAccessorForDeprecatedJvmStaticProperty(context)

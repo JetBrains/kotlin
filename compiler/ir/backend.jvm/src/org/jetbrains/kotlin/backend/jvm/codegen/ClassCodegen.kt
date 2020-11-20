@@ -365,7 +365,7 @@ class ClassCodegen private constructor(
 
         when (val metadata = method.metadata) {
             is MetadataSource.Property -> {
-                assert(method.isSyntheticMethodForProperty) {
+                assert(method.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS) {
                     "MetadataSource.Property on IrFunction should only be used for synthetic \$annotations methods: ${method.render()}"
                 }
                 metadataSerializer.bindMethodMetadata(metadata, Method(node.name, node.desc))

@@ -118,7 +118,7 @@ class FunctionCodegen(
 
     private fun shouldGenerateAnnotationsOnValueParameters(): Boolean =
         when {
-            irFunction.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS ->
+            irFunction.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ->
                 false
             irFunction is IrConstructor && irFunction.parentAsClass.shouldNotGenerateConstructorParameterAnnotations() ->
                 // Not generating parameter annotations for default stubs fixes KT-7892, though

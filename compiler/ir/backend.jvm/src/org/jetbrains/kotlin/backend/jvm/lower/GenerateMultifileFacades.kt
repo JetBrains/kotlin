@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.common.phaser.makeCustomPhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
-import org.jetbrains.kotlin.backend.jvm.codegen.isSyntheticMethodForProperty
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -223,7 +222,8 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
         name == StaticInitializersLowering.clinitName ||
         origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
         // $annotations methods in the facade are only needed for const properties.
-        (isSyntheticMethodForProperty && (metadata as? MetadataSource.Property)?.isConst != true)
+        (origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
+                (metadata as? MetadataSource.Property)?.isConst != true)
     ) return null
 
     val function = context.irFactory.buildFun {
