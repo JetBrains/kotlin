@@ -14,6 +14,5 @@ internal actual fun defaultPlatformRandom(): Random = RANDOM
 
 private val INV_2_26: Double = 2.0.pow(-26)
 private val INV_2_53: Double = 2.0.pow(-53)
-
 internal actual fun doubleFromParts(hi26: Int, low27: Int): Double =
     hi26 * INV_2_26 + low27 * INV_2_53
