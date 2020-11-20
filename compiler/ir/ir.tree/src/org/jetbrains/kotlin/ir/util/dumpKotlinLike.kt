@@ -923,7 +923,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             repeat(typeArgumentsCount) {
                 p(it > 0, ",")
                 // TODO flag to print type param name?
-                getTypeArgument(it)!!.printTypeWithNoIndent()
+                getTypeArgument(it)?.printTypeWithNoIndent() ?: p.printWithNoIndent(commentBlock("null"))
             }
             p.printWithNoIndent(">")
         }
