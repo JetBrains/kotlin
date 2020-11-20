@@ -81,10 +81,10 @@ class MainKtsIT {
 
             // run generated jar with java
             val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
-            val args = listOf(javaExecutable.absolutePath, "-jar", cacheFile!!.toString())
+            val args = listOf(javaExecutable.absolutePath, "-jar", cacheFile!!.pathString)
             runAndCheckResults(
                 args, OUT_FROM_IMPORT_TEST,
-                additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to cache.toAbsolutePath().toString())
+                additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to cache.absolutePathString())
             )
 
             // this run should use the cached script

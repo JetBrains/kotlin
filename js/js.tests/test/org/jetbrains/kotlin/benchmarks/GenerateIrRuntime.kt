@@ -477,7 +477,7 @@ class GenerateIrRuntime {
 
     @OptIn(ExperimentalPathApi::class)
     private fun doSerializeModule(moduleFragment: IrModuleFragment, bindingContext: BindingContext, files: List<KtFile>, perFile: Boolean = false): String {
-        val tmpKlibDir = createTempDirectory().also { it.toFile().deleteOnExit() }.toString()
+        val tmpKlibDir = createTempDirectory().also { it.toFile().deleteOnExit() }.pathString
         serializeModuleIntoKlib(
             moduleName,
             project,

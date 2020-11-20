@@ -42,7 +42,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 import kotlin.io.path.ExperimentalPathApi
-import kotlin.io.path.invariantSeparatorsPath
+import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.experimental.dependencies.DependenciesResolver
@@ -1004,7 +1004,7 @@ internal val File.loggerCompatiblePath: String
 
 @OptIn(ExperimentalPathApi::class)
 internal val Path.loggerCompatiblePath: String
-    get() = invariantSeparatorsPath
+    get() = invariantSeparatorsPathString
 
 
 open class TestKotlinScriptDummyDependenciesResolver : DependenciesResolver {

@@ -53,7 +53,7 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
             appendLine("// FILE: main.kt\n$ktSourceCode")
         }
 
-        super.doTest(createTempFile().apply { writeText(mergedSourceCode) }.toString())
+        super.doTest(createTempFile().apply { writeText(mergedSourceCode) }.pathString)
     }
 
     private fun makeJavaClassesPublicAndSeparatedByFiles(javaCode: String): String {

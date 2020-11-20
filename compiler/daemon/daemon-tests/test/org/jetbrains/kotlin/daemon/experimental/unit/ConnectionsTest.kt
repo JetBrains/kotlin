@@ -254,7 +254,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
     private fun generateClient(): String {
         val file = createTempFile(getTestName(true), ".alive")
         clientFiles.add(file)
-        return file.toAbsolutePath().toString()
+        return file.absolutePathString()
     }
 
     private fun deleteClients() {

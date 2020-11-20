@@ -35,7 +35,7 @@ object GeneratorsFileUtil {
         val tempFile =
             if (useTempFile) createTempDirectory(targetFile.name) / "${targetFile.name}.tmp" else targetFile
         tempFile.writeText(newText, Charsets.UTF_8)
-        println("File written: ${tempFile.toAbsolutePath()}")
+        println("File written: ${tempFile.absolute()}")
         if (useTempFile) {
             tempFile.moveTo(targetFile, overwrite = true)
             println("Renamed $tempFile to $targetFile")
