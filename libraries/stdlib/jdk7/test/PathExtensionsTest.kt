@@ -60,6 +60,24 @@ class PathExtensionsTest : AbstractPathTest() {
     }
 
     @Test
+    fun createTempFileDefaultDir() {
+        val file1 = createTempFile().cleanup()
+        val file2 = createTempFile(directory = null).cleanup()
+
+        assertEquals(file1.parent, file2.parent)
+    }
+
+    @Test
+    fun createTempDirectoryDefaultDir() {
+        val dir1 = createTempDirectory().cleanup()
+        val dir2 = createTempDirectory(directory = null).cleanupRecursively()
+        val dir3 = createTempDirectory(dir2)
+
+        assertEquals(dir1.parent, dir2.parent)
+        assertNotEquals(dir2.parent, dir3.parent)
+    }
+
+    @Test
     fun copyTo() {
         val root = createTempDirectory("copyTo-root").cleanupRecursively()
         val srcFile = createTempFile(root, "src")

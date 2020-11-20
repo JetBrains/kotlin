@@ -785,7 +785,7 @@ public inline fun Path.createFile(vararg attributes: FileAttribute<*>): Path =
  * @param attributes an optional list of file attributes to set atomically when creating the file.
  * @return the path to the newly created file that did not exist before.
  *
- * @throws  UnsupportedOperationException if the array contains an attribute that cannot be set atomically
+ * @throws UnsupportedOperationException if the array contains an attribute that cannot be set atomically
  *   when creating the file.
  *
  * @see Files.createTempFile
@@ -800,19 +800,23 @@ public inline fun createTempFile(prefix: String? = null, suffix: String? = null,
  * Creates an empty file in the specified [directory], using
  * the given [prefix] and [suffix] to generate its name.
  *
+ * @param directory the parent directory in which to create a new file.
+ *   It can be `null`, in that case the new file is created in the default temp directory.
  * @param attributes an optional list of file attributes to set atomically when creating the file.
  * @return the path to the newly created file that did not exist before.
  *
- * @throws  UnsupportedOperationException if the array contains an attribute that cannot be set atomically
+ * @throws UnsupportedOperationException if the array contains an attribute that cannot be set atomically
  *   when creating the file.
  *
  * @see Files.createTempFile
  */
 @SinceKotlin("1.4")
 @ExperimentalPathApi
-@kotlin.internal.InlineOnly
-public inline fun createTempFile(directory: Path, prefix: String? = null, suffix: String? = null, vararg attributes: FileAttribute<*>): Path =
-    Files.createTempFile(directory, prefix, suffix, *attributes)
+public fun createTempFile(directory: Path?, prefix: String? = null, suffix: String? = null, vararg attributes: FileAttribute<*>): Path =
+    if (directory != null)
+        Files.createTempFile(directory, prefix, suffix, *attributes)
+    else
+        Files.createTempFile(prefix, suffix, *attributes)
 
 /**
  * Creates a new directory in the default temp directory, using the given [prefix] to generate its name.
@@ -820,7 +824,7 @@ public inline fun createTempFile(directory: Path, prefix: String? = null, suffix
  * @param attributes an optional list of file attributes to set atomically when creating the directory.
  * @return the path to the newly created directory that did not exist before.
  *
- * @throws  UnsupportedOperationException if the array contains an attribute that cannot be set atomically
+ * @throws UnsupportedOperationException if the array contains an attribute that cannot be set atomically
  *   when creating the directory.
  *
  * @see Files.createTempDirectory
@@ -834,19 +838,23 @@ public inline fun createTempDirectory(prefix: String? = null, vararg attributes:
 /**
  * Creates a new directory in the specified [directory], using the given [prefix] to generate its name.
  *
+ * @param directory the parent directory in which to create a new directory.
+ *   It can be `null`, in that case the new directory is created in the default temp directory.
  * @param attributes an optional list of file attributes to set atomically when creating the directory.
  * @return the path to the newly created directory that did not exist before.
  *
- * @throws  UnsupportedOperationException if the array contains an attribute that cannot be set atomically
+ * @throws UnsupportedOperationException if the array contains an attribute that cannot be set atomically
  *   when creating the directory.
  *
  * @see Files.createTempDirectory
  */
 @SinceKotlin("1.4")
 @ExperimentalPathApi
-@kotlin.internal.InlineOnly
-public inline fun createTempDirectory(directory: Path, prefix: String? = null, vararg attributes: FileAttribute<*>): Path =
-    Files.createTempDirectory(directory, prefix, *attributes)
+public fun createTempDirectory(directory: Path?, prefix: String? = null, vararg attributes: FileAttribute<*>): Path =
+    if (directory != null)
+        Files.createTempDirectory(directory, prefix, *attributes)
+    else
+        Files.createTempDirectory(prefix, *attributes)
 
 /**
  * Resolves the given [other] path against this path.
