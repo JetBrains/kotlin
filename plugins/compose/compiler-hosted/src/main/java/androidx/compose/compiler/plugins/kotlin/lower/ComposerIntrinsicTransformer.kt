@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -41,6 +42,7 @@ class ComposerIntrinsicTransformer(val context: IrPluginContext) :
         irFile.transformChildrenVoid(this)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitCall(expression: IrCall): IrExpression {
         @Suppress("DEPRECATION")
         if (expression.symbol.descriptor.fqNameSafe == ComposeFqNames.CurrentComposerIntrinsic) {
