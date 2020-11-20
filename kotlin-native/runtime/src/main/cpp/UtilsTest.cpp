@@ -48,3 +48,27 @@ TEST(UtilsTest, PinnedImpl) {
     static_assert(!std_support::is_move_assignable_v<PinnedImpl>, "Must not be move assignable");
     static_assert(sizeof(PinnedImpl) == sizeof(A), "Must not increase size");
 }
+
+namespace {
+
+struct Wrapper {
+    A wrapped;
+};
+
+struct WrapperOverPinned {
+    PinnedImpl wrapped;
+};
+
+} // namespace
+
+TEST(UtilsTest, WrapperCast) {
+    A value;
+    Wrapper* wrapper = wrapper_cast(Wrapper, &value, wrapped);
+    EXPECT_EQ(&value, &wrapper->wrapped);
+}
+
+TEST(UtilsTest, WrapperOverPinnedCast) {
+    PinnedImpl value;
+    WrapperOverPinned* wrapper = wrapper_cast(WrapperOverPinned, &value, wrapped);
+    EXPECT_EQ(&value, &wrapper->wrapped);
+}
