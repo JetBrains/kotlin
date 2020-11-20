@@ -7870,4 +7870,27 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/trait/traitExtendsTwoTraits.kt");
         }
     }
+
+    @TestMetadata("js/js.translator/testData/box/vararg")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Vararg extends AbstractBoxJsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInVararg() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/vararg"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @TestMetadata("jsExternalVarargCtor.kt")
+        public void testJsExternalVarargCtor() throws Exception {
+            runTest("js/js.translator/testData/box/vararg/jsExternalVarargCtor.kt");
+        }
+
+        @TestMetadata("jsExternalVarargFun.kt")
+        public void testJsExternalVarargFun() throws Exception {
+            runTest("js/js.translator/testData/box/vararg/jsExternalVarargFun.kt");
+        }
+    }
 }

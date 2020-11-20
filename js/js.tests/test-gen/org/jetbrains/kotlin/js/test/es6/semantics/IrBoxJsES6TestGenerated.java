@@ -7840,4 +7840,27 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             runTest("js/js.translator/testData/box/trait/traitExtendsTwoTraits.kt");
         }
     }
+
+    @TestMetadata("js/js.translator/testData/box/vararg")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Vararg extends AbstractIrBoxJsES6Test {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInVararg() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/vararg"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+        }
+
+        @TestMetadata("jsExternalVarargCtor.kt")
+        public void testJsExternalVarargCtor() throws Exception {
+            runTest("js/js.translator/testData/box/vararg/jsExternalVarargCtor.kt");
+        }
+
+        @TestMetadata("jsExternalVarargFun.kt")
+        public void testJsExternalVarargFun() throws Exception {
+            runTest("js/js.translator/testData/box/vararg/jsExternalVarargFun.kt");
+        }
+    }
 }
