@@ -1,0 +1,39 @@
+object A {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+enum class En : Enum<En> {
+  private constructor() /* primary */ {
+    super/*Enum*/<En>()
+    /* <init>() */
+
+  }
+
+  X = En()
+
+  fun values(): Array<En> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+operator fun A.invoke(i: Int): Int {
+  return i
+}
+
+operator fun En.invoke(i: Int): Int {
+  return i
+}
+
+val test1: Int
+  field = A.invoke(i = 42)
+  get
+
+val test2: Int
+  field = En.X.invoke(i = 42)
+  get

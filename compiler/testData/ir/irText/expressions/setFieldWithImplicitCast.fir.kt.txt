@@ -1,0 +1,16 @@
+class Derived : Base {
+  constructor() /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+  fun setValue(v: Any) {
+    when {
+      v is String -> { // BLOCK
+        <this>.#value = v /*as String */
+      }
+    }
+  }
+
+}

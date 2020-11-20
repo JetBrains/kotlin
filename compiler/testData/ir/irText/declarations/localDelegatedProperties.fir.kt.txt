@@ -1,0 +1,29 @@
+fun test1() {
+  val x: Int
+    val x$delegate: Lazy<Int> = lazy<Int>(initializer = local fun <anonymous>(): Int {
+      return 42
+    }
+)
+    local get(): Int {
+      return x$delegate.getValue<Int>(thisRef = null, property = ::x)
+    }
+
+  println(message = <get-x>())
+}
+
+fun test2() {
+  var x: Int?
+    val x$delegate: HashMap<String, Int> = hashMapOf<String, Int>()
+    local get(): Int? {
+      return x$delegate.getValue<Int?, Int?>(thisRef = null, property = ::x)
+    }
+    local set(<set-?>: Int?) {
+      x$delegate.setValue<Int?>(thisRef = null, property = ::x, value = <set-?>)
+    }
+
+  <set-x>(<set-?> = 0)
+  val <unary>: Int = <get-x>() /*as Int */
+  <set-x>(<set-?> = <unary>.inc())
+  <unary> /*~> Unit */
+  <set-x>(<set-?> = <get-x>() /*as Int */.plus(other = 1))
+}

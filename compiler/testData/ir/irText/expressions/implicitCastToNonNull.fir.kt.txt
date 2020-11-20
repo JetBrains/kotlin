@@ -1,0 +1,33 @@
+fun test1(x: String?): Int {
+  return when {
+    EQEQ(arg0 = x, arg1 = null) -> 0
+    else -> x /*as String */.<get-length>()
+  }
+}
+
+fun <T : CharSequence?> test2(x: T): Int {
+  return when {
+    EQEQ(arg0 = x, arg1 = null) -> 0
+    else -> x.<get-length>()
+  }
+}
+
+inline fun <reified T : CharSequence?> test3(x: Any): Int {
+  return when {
+    x !is T -> 0
+    else -> x /*as T */.<get-length>()
+  }
+}
+
+inline fun <reified T : CharSequence> test4(x: Any?): Int {
+  return when {
+    x !is T -> 0
+    else -> x /*as T */.<get-length>()
+  }
+}
+
+fun <T : S?, S : Any?> test5(x: T, fn: Function1<S, Unit>) {
+  when {
+    EQEQ(arg0 = x, arg1 = null).not() -> fn.invoke(p1 = x)
+  }
+}

@@ -1,0 +1,47 @@
+fun checkAny(fn: Function0<Any>): Any {
+  return fn.invoke()
+}
+
+fun checkAnyN(fn: Function0<Any?>): Any? {
+  return fn.invoke()
+}
+
+fun <T : Any?> checkT(fn: Function0<T>): T {
+  return fn.invoke()
+}
+
+fun <T : Any> checkTAny(fn: Function0<T>): T {
+  return fn.invoke()
+}
+
+fun <T : Any?> id(x: T): T {
+  return x
+}
+
+fun test1(): String? {
+  return checkT<String?>(fn = local fun <anonymous>(): String? {
+    return foo()
+  }
+)
+}
+
+fun test2(): String {
+  return checkT<@EnhancedNullability String>(fn = local fun <anonymous>(): @EnhancedNullability String {
+    return nnFoo()
+  }
+) /*!! String */
+}
+
+fun test3(): String? {
+  return checkTAny<String?>(fn = local fun <anonymous>(): String? {
+    return foo()
+  }
+)
+}
+
+fun test4(): String {
+  return checkTAny<@EnhancedNullability String>(fn = local fun <anonymous>(): @EnhancedNullability String {
+    return nnFoo()
+  }
+) /*!! String */
+}

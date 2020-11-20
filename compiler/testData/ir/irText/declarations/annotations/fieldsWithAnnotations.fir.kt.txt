@@ -1,0 +1,16 @@
+annotation class TestAnn : Annotation {
+  constructor(x: String) /* primary */
+  val x: String
+    field = x
+    get
+
+}
+
+val testVal: String
+  field = "a val"
+  get
+
+var testVar: String
+  field = "a var"
+  get
+  set

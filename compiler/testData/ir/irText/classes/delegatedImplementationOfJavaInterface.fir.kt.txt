@@ -1,0 +1,39 @@
+class Test : J {
+  constructor(j: J) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+    <this>.#<$$delegate_0> = j
+  }
+
+  private val j: J
+    field = j
+    private get
+
+  override fun takeNotNull(x: @EnhancedNullability String) {
+    <this>.#<$$delegate_0>.takeNotNull(x = x)
+  }
+
+  override fun takeNullable(x: @FlexibleNullability String?) {
+    <this>.#<$$delegate_0>.takeNullable(x = x)
+  }
+
+  override fun takeFlexible(x: String?) {
+    <this>.#<$$delegate_0>.takeFlexible(x = x)
+  }
+
+  override fun returnNotNull(): @EnhancedNullability String {
+    return <this>.#<$$delegate_0>.returnNotNull()
+  }
+
+  override fun returnNullable(): @FlexibleNullability String? {
+    return <this>.#<$$delegate_0>.returnNullable()
+  }
+
+  override fun returnsFlexible(): String? {
+    return <this>.#<$$delegate_0>.returnsFlexible()
+  }
+
+  local /*final field*/ val <$$delegate_0>: J
+
+}

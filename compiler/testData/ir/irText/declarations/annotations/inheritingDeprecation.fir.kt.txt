@@ -1,0 +1,64 @@
+interface IFoo {
+  @Deprecated(message = "")
+  val prop: String
+    get(): String {
+      return ""
+    }
+
+  @Deprecated(message = "")
+  val String.extProp: String
+    get(): String {
+      return ""
+    }
+
+}
+
+class Delegated : IFoo {
+  constructor(foo: IFoo) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+    <this>.#<$$delegate_0> = foo
+  }
+
+  override val prop: String
+    override get(): String {
+      return <this>.#<$$delegate_0>.<get-prop>()
+    }
+
+  override val String.extProp: String
+    override get(): String {
+      return (<this>.#<$$delegate_0>, <this>).<get-extProp>()
+    }
+
+  local /*final field*/ val <$$delegate_0>: IFoo
+
+}
+
+class DefaultImpl : IFoo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class ExplicitOverride : IFoo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override val prop: String
+    override get(): String {
+      return ""
+    }
+
+  override val String.extProp: String
+    override get(): String {
+      return ""
+    }
+
+}

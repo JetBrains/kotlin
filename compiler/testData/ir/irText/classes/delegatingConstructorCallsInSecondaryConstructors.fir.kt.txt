@@ -1,0 +1,27 @@
+open class Base {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Test : Base {
+  constructor() {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+  constructor(xx: Int) {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+  constructor(xx: Short) {
+    this/*Test*/()
+  }
+
+}

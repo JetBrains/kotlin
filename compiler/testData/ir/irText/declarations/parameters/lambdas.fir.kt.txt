@@ -1,0 +1,26 @@
+val test1: Function1<String, String>
+  field = local fun <anonymous>(it: String): String {
+    return it
+  }
+
+  get
+
+val test2: @ExtensionFunctionType @ExtensionFunctionType Function2<Any, Any, Any>
+  field = local fun Any.<anonymous>(it: Any): Int {
+    return it.hashCode()
+  }
+
+  get
+
+val test3: Function2<Int, Int, Unit>
+  field = local fun <anonymous>(i: Int, j: Int) {
+    return Unit
+  }
+
+  get
+
+val test4: Function2<Int, Int, Unit>
+  field = local fun <no name provided>(i: Int, j: Int) {
+  }
+
+  get

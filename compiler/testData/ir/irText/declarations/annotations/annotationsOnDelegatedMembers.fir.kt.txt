@@ -1,0 +1,50 @@
+annotation class Ann : Annotation {
+  constructor() /* primary */
+
+}
+
+interface IFoo {
+  @Ann
+  abstract val testVal: String
+    abstract get
+
+  @Ann
+  abstract fun testFun()
+  @Ann
+  abstract val String.testExtVal: String
+    abstract get
+
+  @Ann
+  abstract fun String.testExtFun()
+
+}
+
+class DFoo : IFoo {
+  constructor(d: IFoo) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+    <this>.#<$$delegate_0> = d
+  }
+
+  override fun testFun() {
+    <this>.#<$$delegate_0>.testFun()
+  }
+
+  override fun String.testExtFun() {
+    (<this>.#<$$delegate_0>, <this>).testExtFun()
+  }
+
+  override val testVal: String
+    override get(): String {
+      return <this>.#<$$delegate_0>.<get-testVal>()
+    }
+
+  override val String.testExtVal: String
+    override get(): String {
+      return (<this>.#<$$delegate_0>, <this>).<get-testExtVal>()
+    }
+
+  local /*final field*/ val <$$delegate_0>: IFoo
+
+}

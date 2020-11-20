@@ -1,0 +1,40 @@
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  private val b: <no name provided>
+    field = { // BLOCK
+      local class <no name provided> : DoubleExpression {
+        private constructor() /* primary */ {
+          super/*DoubleExpression*/()
+          /* <init>() */
+
+        }
+
+        override operator fun get(): Double {
+          return 0.0D
+        }
+
+      }
+
+      <no name provided>()
+    }
+    private get
+
+}
+
+class C : DoubleExpression {
+  constructor() /* primary */ {
+    super/*DoubleExpression*/()
+    /* <init>() */
+
+  }
+
+  override operator fun get(): Double {
+    return 0.0D
+  }
+
+}

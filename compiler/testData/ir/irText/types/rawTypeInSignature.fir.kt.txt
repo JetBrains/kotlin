@@ -1,0 +1,82 @@
+class GenericInv<T : Number> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class GenericIn<in T : Number> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class GenericOut<out T : Number> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun testReturnsRawGenericInv(j: JRaw): GenericInv<*>? {
+  return j.returnsRawGenericInv()
+}
+
+fun testReturnsRawGenericIn(j: JRaw): GenericIn<Nothing>? {
+  return j.returnsRawGenericIn()
+}
+
+fun testReturnsRawGenericOut(j: JRaw): GenericOut<*>? {
+  return j.returnsRawGenericOut()
+}
+
+class KRaw : JRaw {
+  constructor(j: JRaw) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+    <this>.#<$$delegate_0> = j
+  }
+
+  override fun takesRawList(list: List<*>?) {
+    <this>.#<$$delegate_0>.takesRawList(list = list)
+  }
+
+  override fun returnsRawList(): List<*>? {
+    return <this>.#<$$delegate_0>.returnsRawList()
+  }
+
+  override fun takesRawGenericInv(g: GenericInv<*>?) {
+    <this>.#<$$delegate_0>.takesRawGenericInv(g = g)
+  }
+
+  override fun returnsRawGenericInv(): GenericInv<*>? {
+    return <this>.#<$$delegate_0>.returnsRawGenericInv()
+  }
+
+  override fun takesRawGenericIn(g: GenericIn<Nothing>?) {
+    <this>.#<$$delegate_0>.takesRawGenericIn(g = g)
+  }
+
+  override fun returnsRawGenericIn(): GenericIn<Nothing>? {
+    return <this>.#<$$delegate_0>.returnsRawGenericIn()
+  }
+
+  override fun takesRawGenericOut(g: GenericOut<*>?) {
+    <this>.#<$$delegate_0>.takesRawGenericOut(g = g)
+  }
+
+  override fun returnsRawGenericOut(): GenericOut<*>? {
+    return <this>.#<$$delegate_0>.returnsRawGenericOut()
+  }
+
+  local /*final field*/ val <$$delegate_0>: JRaw
+
+}

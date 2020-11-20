@@ -1,0 +1,67 @@
+data class Some<T : Any?> {
+  constructor(value: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val value: T
+    field = value
+    get
+
+  fun component1(): T {
+    return <this>.#value
+  }
+
+  fun copy(value: T = <this>.#value): Some<T> {
+    return Some<Any>(value = value)
+  }
+
+  override fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Some<T> -> return false
+    }
+    val tmp0_other_with_cast: Some<T> = other as Some<T>
+    when {
+      EQEQ(arg0 = <this>.#value, arg1 = tmp0_other_with_cast.#value).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    return when {
+      EQEQ(arg0 = <this>.#value, arg1 = null) -> 0
+      else -> <this>.#value.hashCode()
+    }
+  }
+
+  override fun toString(): String {
+    return "Some(" + "value=" + <this>.#value + ")"
+  }
+
+}
+
+interface MyList<T : Any?> : List<Some<T>> {
+
+}
+
+open class SomeList<T : Any?> : MyList<T>, ArrayList<Some<T>> {
+  constructor() /* primary */ {
+    super/*ArrayList*/<Some<T>>()
+    /* <init>() */
+
+  }
+
+}
+
+class FinalList : SomeList<String> {
+  constructor() /* primary */ {
+    super/*SomeList*/<String>()
+    /* <init>() */
+
+  }
+
+}

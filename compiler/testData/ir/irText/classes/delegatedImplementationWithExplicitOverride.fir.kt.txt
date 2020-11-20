@@ -1,0 +1,39 @@
+interface IFooBar {
+  abstract fun foo()
+  abstract fun bar()
+
+}
+
+object FooBarImpl : IFooBar {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun foo() {
+  }
+
+  override fun bar() {
+  }
+
+}
+
+class C : IFooBar {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+    <this>.#<$$delegate_0> = FooBarImpl
+  }
+
+  override fun bar() {
+  }
+
+  override fun foo() {
+    <this>.#<$$delegate_0>.foo()
+  }
+
+  local /*final field*/ val <$$delegate_0>: IFooBar
+
+}

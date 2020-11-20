@@ -1,0 +1,35 @@
+inline fun <reified T : Any> Any.test1(): T? {
+  return when {
+    <this> is T -> <this>
+    else -> null
+  }
+}
+
+interface Foo<T : Any?> {
+
+}
+
+val <reified T : Any> Foo<T>.asT: T?
+  inline get(): T? {
+    return when {
+      <this> is T -> <this> /*as T */
+      else -> null
+    }
+  }
+
+class Bar<T : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun test(arg: Any) {
+    arg as T /*~> Unit */
+    <this>.useT(t = arg /*as T */)
+  }
+
+  fun useT(t: T) {
+  }
+
+}

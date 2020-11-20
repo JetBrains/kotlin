@@ -1,0 +1,28 @@
+fun test1() {
+  error("") /* ERROR EXPRESSION */
+  error("") /* ERROR EXPRESSION */
+}
+
+fun test2() {
+  L1@ while (true) { // BLOCK
+    error("") /* ERROR EXPRESSION */
+    error("") /* ERROR EXPRESSION */
+  }
+}
+
+fun test3() {
+  L1@ while (true) { // BLOCK
+    val lambda: Function0<Nothing> = local fun <anonymous>(): Nothing {
+      break@L1
+      continue@L1
+    }
+
+  }
+}
+
+fun test4() {
+  while (error("") /* ERROR EXPRESSION */) { // BLOCK
+  }
+  while (error("") /* ERROR EXPRESSION */) { // BLOCK
+  }
+}

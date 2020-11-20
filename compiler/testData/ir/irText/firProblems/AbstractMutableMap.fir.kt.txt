@@ -1,0 +1,17 @@
+class MyMap<K : Any, V : Any> : AbstractMutableMap<K, V> {
+  constructor() /* primary */ {
+    super/*AbstractMutableMap*/<K, V>()
+    /* <init>() */
+
+  }
+
+  override fun put(key: K, value: V): V? {
+    return null
+  }
+
+  override val entries: MutableSet<MutableEntry<K, V>>
+    override get(): MutableSet<MutableEntry<K, V>> {
+      return mutableSetOf<MutableEntry<K, V>>()
+    }
+
+}
