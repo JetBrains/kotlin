@@ -44,17 +44,66 @@ public val Path.extension: String
     get() = fileName?.toString()?.substringAfterLast('.', "") ?: ""
 
 /**
- * Returns this path as a [String] using the invariant separator '/' to
- * separate the names in the name sequence.
+ * Returns the string representation of this path.
+ *
+ * The returned path string uses the default name [separator][FileSystem.getSeparator]
+ * to separate names in the path.
+ *
+ * This property is a synonym to [Path.toString] function.
  */
 @SinceKotlin("1.4")
 @ExperimentalPathApi
-public val Path.invariantSeparatorsPath: String
+@kotlin.internal.InlineOnly
+public inline val Path.pathString: String
+    get() = toString()
+
+/**
+ * Returns the string representation of this path using the invariant separator '/'
+ * to separate names in the path.
+ */
+@SinceKotlin("1.4")
+@ExperimentalPathApi
+public val Path.invariantSeparatorsPathString: String
     get() {
         val separator = fileSystem.separator
         return if (separator != "/") toString().replace(separator, "/") else toString()
     }
 
+// TODO: raise deprecation level and make inline-only
+@SinceKotlin("1.4")
+@ExperimentalPathApi
+@Deprecated("Use invariantSeparatorsPathString property instead.", ReplaceWith("invariantSeparatorsPathString"))
+public inline val Path.invariantSeparatorsPath: String
+    get() = invariantSeparatorsPathString
+
+/**
+ * Converts this possibly relative path to an absolute path.
+ *
+ * If this path is already [absolute][Path.isAbsolute], returns this path unchanged.
+ * Otherwise, resolves this path, usually against the default directory of the file system.
+ *
+ * May throw an exception if the file system is inaccessible or getting the default directory path is prohibited.
+ *
+ * See [Path.toAbsolutePath] for further details about the function contract and possible exceptions.
+ */
+@SinceKotlin("1.4")
+@ExperimentalPathApi
+@kotlin.internal.InlineOnly
+public inline fun Path.absolute(): Path = toAbsolutePath()
+
+/**
+ * Converts this possibly relative path to an absolute path and returns its string representation.
+ *
+ * Basically, this method is a combination of calling [absolute] and [pathString].
+ *
+ * May throw an exception if the file system is inaccessible or getting the default directory path is prohibited.
+ *
+ * See [Path.toAbsolutePath] for further details about the function contract and possible exceptions.
+ */
+@SinceKotlin("1.4")
+@ExperimentalPathApi
+@kotlin.internal.InlineOnly
+public inline fun Path.absolutePathString(): String = toAbsolutePath().toString()
 
 /**
  * Calculates the relative path for this path from a [base] path.
