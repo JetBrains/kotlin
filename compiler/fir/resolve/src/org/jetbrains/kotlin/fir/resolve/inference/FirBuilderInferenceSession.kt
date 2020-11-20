@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeStubType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariable
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
@@ -203,11 +201,33 @@ class FirBuilderInferenceSession(
         val commonSystemSubstitutor = commonSystem.buildCurrentSubstitutor() as ConeSubstitutor
         val nonFixedTypesToResultSubstitutor = ConeComposedSubstitutor(commonSystemSubstitutor, nonFixedToVariablesSubstitutor)
         val completionResultsWriter = components.callCompleter.createCompletionResultsWriter(nonFixedTypesToResultSubstitutor)
+
+        for ((completedCall, _) in commonCalls) {
+            // TODO: Only update return type? Should we need to visit all appearances of unsubstituted postponed variables in types?
+            //  [transformSingle] bails out very early since the completed call is literally completed, and not a named reference.
+            (completedCall as? FirFunctionCall)?.let { call ->
+                val resultType = call.typeRef.substituteTypeRef(nonFixedTypesToResultSubstitutor)
+                if (resultType != call.typeRef) {
+                    call.replaceTypeRef(resultType)
+                }
+            }
+            // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
+        }
+
         for ((call, _) in partiallyResolvedCalls) {
             call.transformSingle(completionResultsWriter, null)
-            // TODO: support diagnostics, see CoroutineInferenceSession.kt:286
+            // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
         }
     }
+
+    private fun FirTypeRef.substituteTypeRef(
+        substitutor: ConeSubstitutor,
+    ): FirTypeRef =
+        (this as? FirResolvedTypeRef)?.let {
+            substitutor.substituteOrNull(this.type)?.let {
+                this.withReplacedConeType(it)
+            }
+        } ?: this
 }
 
 class ConeComposedSubstitutor(val left: ConeSubstitutor, val right: ConeSubstitutor) : ConeSubstitutor() {
