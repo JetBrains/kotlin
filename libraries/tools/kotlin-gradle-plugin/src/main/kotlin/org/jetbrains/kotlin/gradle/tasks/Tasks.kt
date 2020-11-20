@@ -323,6 +323,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
+    /** Keep lazy to avoid computing before all projects are evaluated. */
     @get:Internal
     internal val compilerRunner by lazy { compilerRunner() }
 
@@ -593,10 +594,7 @@ internal open class KotlinCompileWithWorkers @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : KotlinCompile() {
 
-    @get:Internal
-    val compilerRunnerValue = GradleCompilerRunnerWithWorkers(GradleCompileTaskProvider(this), workerExecutor)
-
-    override fun compilerRunner() = compilerRunnerValue
+    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(GradleCompileTaskProvider(this), workerExecutor)
 }
 
 @CacheableTask
