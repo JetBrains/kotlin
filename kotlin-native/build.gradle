@@ -713,8 +713,10 @@ configure([samplesZip, samplesTar]) {
     exclude '**/*.kt.bc-build/'
 }
 
-task copy_samples(dependsOn: 'copySamples')
-task copySamples(type: CopySamples) {
+project.tasks.register("copy_samples") {
+    dependsOn 'copySamples'
+}
+project.tasks.register("copySamples", CopySamples) {
     destinationDir file('build/samples-under-test')
 }
 
