@@ -84,7 +84,7 @@ abstract class AbstractKotlinInlineNamedDeclarationProcessor<TDeclaration : KtNa
     final override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
         val usagesInfo = refUsages.get()
         if (inlineThisOnly) {
-            val element = usagesInfo.firstOrNull()?.element
+            val element = usagesInfo.singleOrNull()?.element
             if (element != null && !CommonRefactoringUtil.checkReadOnlyStatus(myProject, element)) return false
         }
 
