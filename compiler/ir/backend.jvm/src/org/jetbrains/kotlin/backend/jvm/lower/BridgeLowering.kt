@@ -350,9 +350,12 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         //
         // This can still break binary compatibility, but it matches the behavior of the JVM backend.
         if (irFunction.isFakeOverride) {
-            irFunction.overriddenSymbols.asSequence().map { it.owner }.filter { !it.isJvmAbstract(context.state.jvmDefaultMode) }
+            irFunction.overriddenSymbols.asSequence()
+                .map { it.owner }.filter { !it.isJvmAbstract(context.state.jvmDefaultMode) }
                 .forEach { override ->
-                    override.allOverridden().mapTo(blacklist) { it.jvmMethod }
+                    override.allOverridden()
+                        .filter { !it.isFakeOverride }
+                        .mapTo(blacklist) { it.jvmMethod }
                 }
         }
 
