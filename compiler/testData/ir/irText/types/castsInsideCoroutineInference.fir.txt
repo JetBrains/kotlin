@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
               $receiver: VALUE_PARAMETER name:<this> type:<root>.FlowCollector<T of <root>.onCompletion>
               BLOCK_BODY
                 VAR name:safeCollector type:<root>.SafeCollector<IrErrorType> [val]
-                  CONSTRUCTOR_CALL 'public constructor <init> (collector: <root>.FlowCollector<T of <root>.SafeCollector>) [primary] declared in <root>.SafeCollector' type=<root>.SafeCollector<IrErrorType> origin=null
+                  CONSTRUCTOR_CALL 'public constructor <init> (collector: <root>.FlowCollector<T of <root>.SafeCollector>) [primary] declared in <root>.SafeCollector' type=<root>.SafeCollector<T of <root>.onCompletion> origin=null
                     <class: T>: IrErrorType
                     collector: GET_VAR '<this>: <root>.FlowCollector<T of <root>.onCompletion> declared in <root>.onCompletion.<anonymous>' type=<root>.FlowCollector<IrErrorType> origin=null
                 CALL 'public final fun invokeSafely <T> (action: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction2<<root>.FlowCollector<T of <root>.invokeSafely>, kotlin.Throwable?, kotlin.Unit>): kotlin.Unit [suspend] declared in <root>' type=kotlin.Unit origin=null
