@@ -13828,6 +13828,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
         }
 
+        @TestMetadata("abstractClassWithFakeOverride.kt")
+        public void testAbstractClassWithFakeOverride() throws Exception {
+            runTest("compiler/testData/codegen/box/traits/abstractClassWithFakeOverride.kt");
+        }
+
         public void testAllFilesPresentInTraits() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/traits"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
