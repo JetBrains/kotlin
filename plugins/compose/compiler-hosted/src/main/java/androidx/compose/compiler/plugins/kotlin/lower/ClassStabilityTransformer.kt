@@ -22,7 +22,7 @@ import androidx.compose.compiler.plugins.kotlin.analysis.normalize
 import androidx.compose.compiler.plugins.kotlin.analysis.forEach
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -84,7 +84,7 @@ class ClassStabilityTransformer(
             ?: return result
 
         if (
-            cls.visibility != Visibilities.PUBLIC ||
+            cls.visibility != DescriptorVisibilities.PUBLIC ||
             cls.isEnumClass ||
             cls.isEnumEntry ||
             cls.isInterface ||

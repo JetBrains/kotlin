@@ -40,7 +40,7 @@ class WeakBindingTrace {
         if (prev != null) {
             holder = holder.minus(slice.key)
         }
-        holder = holder.plus(slice.key, value)
+        holder = holder.plus(slice.key, value!!)
         map[key.attributeOwnerId] = holder
     }
 
