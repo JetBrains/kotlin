@@ -43,7 +43,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     fun testInlineFunctionDefaultArgument(): Unit = ensureSetup {
         compile(
             mapOf(
-                "library module" to mapOf (
+                "library module" to mapOf(
                     "x/library.kt" to """
                     package x
 
@@ -79,7 +79,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     fun testInlineFunctionDefaultArgument2(): Unit = ensureSetup {
         compile(
             mapOf(
-                "library module" to mapOf (
+                "library module" to mapOf(
                     "x/library.kt" to """
                     package x
 
@@ -838,7 +838,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     fun testCrossModule_ComposableInterfaceFunctionWithInlineClasses(): Unit = ensureSetup {
         compile(
             mapOf(
-                "library module" to mapOf (
+                "library module" to mapOf(
                     "x/Library.kt" to """
                     package x
 
