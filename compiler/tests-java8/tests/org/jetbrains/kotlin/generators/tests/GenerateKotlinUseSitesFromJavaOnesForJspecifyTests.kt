@@ -46,7 +46,7 @@ class GenerateKotlinUseSitesFromJavaOnesForJspecifyTests {
         private const val OVERRIDE_ANNOTATION = "@Override"
         private const val JSPECIFY_ANNOTATIONS = """(?:$JSPECIFY_NULLABLE_ANNOTATION|$JSPECIFY_NULLNESS_UNSPECIFIED_ANNOTATION)"""
         private const val JSPECIFY_MARK =
-            """(?:\/\/ (?:$JSPECIFY_NULLNESS_MISMATCH_MARK|$JSPECIFY_NULLNESS_NOT_ENOUGH_INFORMATION_MARK))\n\s*"""
+            """(?:\/\/ (?:$JSPECIFY_NULLNESS_MISMATCH_MARK|$JSPECIFY_NULLNESS_NOT_ENOUGH_INFORMATION_MARK|$JSPECIFY_NULLNESS_INTRINSICALLY_NOT_NULLABLE))\n\s*"""
         private const val TYPE_COMPONENT = """(?:$JSPECIFY_ANNOTATIONS )?(?:\w+)(?:\.\w+)*"""
         private const val TYPE_ARGUMENT = """$TYPE_COMPONENT|(?:\? (?:extends|super) $TYPE_COMPONENT)|\?"""
         private const val TYPE_ARGUMENTS = """<(?:$TYPE_ARGUMENT)(?:\s*,\s*$TYPE_ARGUMENT)*>"""

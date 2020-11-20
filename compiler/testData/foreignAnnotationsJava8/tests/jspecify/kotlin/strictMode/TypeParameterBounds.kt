@@ -1,7 +1,12 @@
 // JAVA_SOURCES: TypeParameterBounds.java
 // JSPECIFY_STATE strict
 
-fun <T : Test> main(a1: A<<!UPPER_BOUND_VIOLATED!>Any?<!>>, a2: A<Test>, b1: B<<!UPPER_BOUND_VIOLATED!>Any?<!>>, b2: B<Test>, x: T): Unit {
+fun <T : Test> main(
+    // jspecify_nullness_mismatch
+    a1: A<<!UPPER_BOUND_VIOLATED!>Any?<!>>,
+    // jspecify_nullness_mismatch
+    a2: A<Test>, b1: B<<!UPPER_BOUND_VIOLATED!>Any?<!>>,
+    b2: B<Test>, x: T): Unit {
     a1.foo(null)
     // jspecify_nullness_mismatch
     a1.bar<<!UPPER_BOUND_VIOLATED!>T?<!>>(<!NULL_FOR_NONNULL_TYPE!>null<!>)

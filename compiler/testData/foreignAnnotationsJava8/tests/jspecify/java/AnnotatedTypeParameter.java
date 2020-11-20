@@ -34,8 +34,8 @@ static class Checker {
           // jspecify_nullness_mismatch
           AnnotatedTypeParameter.Lib1<@Nullable String> x1,
           // jspecify_nullness_mismatch
-          AnnotatedTypeParameter.Lib1<@Nullable String> x2,
-          AnnotatedTypeParameter.Lib1<@Nullable String> x3
+          AnnotatedTypeParameter.Lib2<@Nullable String> x2,
+          AnnotatedTypeParameter.Lib3<@Nullable String> x3
   ) {
 
   }

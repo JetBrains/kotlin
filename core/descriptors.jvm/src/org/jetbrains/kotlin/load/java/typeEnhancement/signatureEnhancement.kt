@@ -325,7 +325,7 @@ class SignatureEnhancement(
             isFromStarProjection: Boolean
         ): JavaTypeQualifiers {
             val composedAnnotation =
-                if (isHeadTypeConstructor && typeContainer != null)
+                if (isHeadTypeConstructor && typeContainer != null && !typeParameterBounds)
                     composeAnnotations(typeContainer.annotations, annotations)
                 else
                     annotations

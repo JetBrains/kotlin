@@ -2,11 +2,11 @@
 // JSPECIFY_STATE strict
 
 fun main(o: AnnotatedWildcard): Unit {
-    o.takeLibNotNull(<!TYPE_MISMATCH!>o.x1<!>)
-    o.takeLibNotNull(<!TYPE_MISMATCH!>o.x2<!>)
-    o.takeLibNotNull(<!TYPE_MISMATCH!>o.x3<!>)
+    o.takeLibExtendsNotNull(o.x1)
+    o.takeLibExtendsNotNull(o.x2)
     // jspecify_nullness_mismatch
-    o.takeLibNotNull(<!TYPE_MISMATCH!>o.x4<!>)
+    o.takeLibSuperNullable(<!TYPE_MISMATCH!>o.x3<!>)
     // jspecify_nullness_mismatch
-    o.takeLibNotNull(<!TYPE_MISMATCH!>o.x5<!>)
+    o.takeLibExtendsNotNull(<!TYPE_MISMATCH!>o.x4<!>)
+    o.takeLibSuperNullable(o.x5)
 }

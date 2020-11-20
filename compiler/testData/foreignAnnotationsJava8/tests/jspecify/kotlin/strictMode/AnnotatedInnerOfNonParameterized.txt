@@ -1,22 +1,13 @@
 package
 
-public fun main(/*0*/ o: AnnotatedInnerOfNonParameterized): kotlin.Unit
+public fun <no name provided>(): kotlin.Unit
+public fun foo(/*0*/ x4: [ERROR : Nested]?, /*1*/ x5: AnnotatedInnerOfNonParameterized?.() -> kotlin.Unit, /*2*/ Nested: [ERROR : Type annotation was missing for parameter Nested], /*3*/ x6: AnnotatedInnerOfNonParameterized.Nested?, /*4*/ x7: AnnotatedInnerOfNonParameterized?.() -> kotlin.Unit, /*5*/ Nested: [ERROR : Type annotation was missing for parameter Nested]): kotlin.Unit
 
 @org.jspecify.annotations.DefaultNonNull public open class AnnotatedInnerOfNonParameterized {
     public constructor AnnotatedInnerOfNonParameterized()
-    public/*package*/ final var l1: AnnotatedInnerOfNonParameterized.Lib<@org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested.DoublyNested?>
-    public/*package*/ final var l2: AnnotatedInnerOfNonParameterized.Lib<AnnotatedInnerOfNonParameterized.Nested.DoublyNested>
-    public/*package*/ final var l3: AnnotatedInnerOfNonParameterized.Lib<AnnotatedInnerOfNonParameterized.Nested.DoublyNested>
-    @org.jspecify.annotations.Nullable public/*package*/ final var x4: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested?
-    @org.jspecify.annotations.Nullable public/*package*/ final var x5: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested?
-    public/*package*/ final var x6: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested?
-    @org.jspecify.annotations.Nullable public/*package*/ final var x7: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested.DoublyNested?
-    public/*package*/ final var x8: AnnotatedInnerOfNonParameterized.Nested.DoublyNested
-    public/*package*/ final var x9: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested.DoublyNested?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public/*package*/ open fun foo(/*0*/ @org.jspecify.annotations.Nullable x4: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested?, /*1*/ @org.jspecify.annotations.Nullable x5: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested?, /*2*/ x6: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested?, /*3*/ @org.jspecify.annotations.Nullable x7: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested.DoublyNested?, /*4*/ x8: AnnotatedInnerOfNonParameterized.Nested.DoublyNested, /*5*/ x9: @org.jspecify.annotations.Nullable AnnotatedInnerOfNonParameterized.Nested.DoublyNested?): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public/*package*/ open fun takeLibNotNull(/*0*/ l: AnnotatedInnerOfNonParameterized.Lib<kotlin.Any>): kotlin.Unit
-    public/*package*/ open fun takeNotNull(/*0*/ o: kotlin.Any): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public interface Lib</*0*/ T> {
@@ -38,12 +29,4 @@ public fun main(/*0*/ o: AnnotatedInnerOfNonParameterized): kotlin.Unit
             public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         }
     }
-}
-
-public open class Use {
-    public constructor Use()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public/*package*/ open fun main(/*0*/ o: AnnotatedInnerOfNonParameterized!): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

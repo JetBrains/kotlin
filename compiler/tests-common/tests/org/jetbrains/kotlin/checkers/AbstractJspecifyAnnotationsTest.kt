@@ -20,6 +20,7 @@ import java.util.regex.Pattern
 
 const val JSPECIFY_NULLNESS_MISMATCH_MARK = "jspecify_nullness_mismatch"
 const val JSPECIFY_NULLNESS_NOT_ENOUGH_INFORMATION_MARK = "jspecify_nullness_not_enough_information"
+const val JSPECIFY_NULLNESS_INTRINSICALLY_NOT_NULLABLE = "jspecify_nullness_intrinsically_not_nullable"
 
 const val JSPECIFY_NULLABLE_ANNOTATION = "@Nullable"
 const val JSPECIFY_NULLNESS_UNSPECIFIED_ANNOTATION = "@NullnessUnspecified"
@@ -238,6 +239,7 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
             NULL_FOR_NONNULL_TYPE.name to "jspecify_nullness_mismatch",
             NOTHING_TO_OVERRIDE.name to "jspecify_nullness_mismatch",
             RETURN_TYPE_MISMATCH_ON_OVERRIDE.name to "jspecify_nullness_mismatch",
+            UPPER_BOUND_VIOLATED.name to "jspecify_nullness_mismatch",
         )
 
         val jspecifyMarksToPossibleDiagnosticsForStrictMode =

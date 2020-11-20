@@ -11,7 +11,8 @@ public fun main(/*0*/ o: AnnotatedWildcardUnspec): kotlin.Unit
     public/*package*/ final var x5: AnnotatedWildcardUnspec.Lib<in @org.jspecify.annotations.Nullable kotlin.Any?>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public/*package*/ open fun takeLibNotNull(/*0*/ l: AnnotatedWildcardUnspec.Lib<kotlin.Any>): kotlin.Unit
+    public/*package*/ open fun takeLibExtendsNotNull(/*0*/ l: AnnotatedWildcardUnspec.Lib<out kotlin.Any>): kotlin.Unit
+    public/*package*/ open fun takeLibSuperNullable(/*0*/ l: AnnotatedWildcardUnspec.Lib<in @org.jspecify.annotations.Nullable kotlin.Any?>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     public interface Lib</*0*/ T> {
@@ -19,12 +20,4 @@ public fun main(/*0*/ o: AnnotatedWildcardUnspec): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-}
-
-public open class Use {
-    public constructor Use()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public/*package*/ open fun main(/*0*/ o: AnnotatedWildcardUnspec!): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

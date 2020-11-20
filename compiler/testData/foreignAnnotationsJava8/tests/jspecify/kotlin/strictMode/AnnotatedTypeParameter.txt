@@ -1,6 +1,6 @@
 package
 
-public fun main(/*0*/ x1: AnnotatedTypeParameter.Lib1<kotlin.String?>, /*1*/ x2: AnnotatedTypeParameter.Lib1<kotlin.String?>, /*2*/ x3: AnnotatedTypeParameter.Lib1<kotlin.String?>): kotlin.Unit
+public fun main(/*0*/ x1: AnnotatedTypeParameter.Lib1<kotlin.String?>, /*1*/ x2: AnnotatedTypeParameter.Lib2<kotlin.String?>, /*2*/ x3: AnnotatedTypeParameter.Lib3<kotlin.String?>): kotlin.Unit
 
 @org.jspecify.annotations.DefaultNonNull public open class AnnotatedTypeParameter {
     public constructor AnnotatedTypeParameter()
@@ -8,13 +8,13 @@ public fun main(/*0*/ x1: AnnotatedTypeParameter.Lib1<kotlin.String?>, /*1*/ x2:
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public interface Lib1</*0*/ @org.jspecify.annotations.Nullable T> {
+    public interface Lib1</*0*/ @org.jspecify.annotations.Nullable T : kotlin.Any> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public interface Lib2</*0*/ @org.jspecify.annotations.Nullable T> {
+    public interface Lib2</*0*/ @org.jspecify.annotations.Nullable T : kotlin.Any> {
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -25,12 +25,4 @@ public fun main(/*0*/ x1: AnnotatedTypeParameter.Lib1<kotlin.String?>, /*1*/ x2:
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
-}
-
-public open class Use {
-    public constructor Use()
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public/*package*/ open fun main(/*0*/ x1: AnnotatedTypeParameter.Lib1<@org.jspecify.annotations.Nullable kotlin.String?>!, /*1*/ x2: AnnotatedTypeParameter.Lib1<@org.jspecify.annotations.Nullable kotlin.String?>!, /*2*/ x3: AnnotatedTypeParameter.Lib1<@org.jspecify.annotations.Nullable kotlin.String?>!): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
