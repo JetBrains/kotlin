@@ -5,6 +5,7 @@
 
 package random
 
+import test.io.deserializeFromHex
 import test.io.serializeAndDeserialize
 import kotlin.random.Random
 import kotlin.random.asJavaRandom
@@ -13,32 +14,38 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
-class RandomJvmSerializationTest {
+class RandomSerializationTest {
     @Test
-    fun default() {
+    fun defaultIsSerializable() {
         val instance = Random
-        val deserialized = serializeAndDeserialize(instance)
-        assertSame(instance, deserialized)
+        assertSame(instance, serializeAndDeserialize(instance))
     }
 
+    private fun testPersistedDeserialization(hexValue: String, expected: Any) =
+        assertEquals(expected = expected, actual = deserializeFromHex(hexValue))
+
     @Test
-    fun xorwow() {
+    fun deserializeDefault() = testPersistedDeserialization(
+        "ac ed 00 05 73 72 00 1c 6b 6f 74 6c 69 6e 2e 72 61 6e 64 6f 6d 2e 52 61 6e 64 6f 6d 24 44 65 66 61 75 6c 74 59 81 49 e9 14 4e a8 28 02 00 00 78 70",
+        Random
+    )
+
+    @Test
+    fun xorwowIsSerializable() {
         val instance = Random(0)
-        // Discard some values
-        repeat(1000) { instance.nextInt() }
         val deserialized = serializeAndDeserialize(instance)
         assertEquals(instance.nextInt(), deserialized.nextInt())
     }
 
     @Test
-    fun kotlinRandomWrappedAsJava() {
+    fun wrapperOfKotlinRandomIsSerializable() {
         val java = Random(0).asJavaRandom()
         val deserialized = serializeAndDeserialize(java)
         assertEquals(java.nextInt(), deserialized.nextInt())
     }
 
     @Test
-    fun javaRandomWrappedAsKotlin() {
+    fun wrapperOfJavaRandomIsSerializable() {
         val kotlin = java.util.Random(0).asKotlinRandom()
         val deserialized = serializeAndDeserialize(kotlin)
         assertEquals(kotlin.nextInt(), deserialized.nextInt())
