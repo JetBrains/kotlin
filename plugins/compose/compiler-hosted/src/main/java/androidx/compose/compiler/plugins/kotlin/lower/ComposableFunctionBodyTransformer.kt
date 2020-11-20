@@ -137,6 +137,7 @@ import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.statements
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.Name
@@ -2743,6 +2744,23 @@ class ComposableFunctionBodyTransformer(
         val scope = withScope(Scope.BranchScope()) {
             transformed = transformed.transform(this, null)
         }
+
+        // now after the inner block is extracted, the $composer parameter used in the block needs
+        // to be remapped to the outer composer instead.
+        block.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitGetValue(expression: IrGetValue): IrExpression {
+                super.visitGetValue(expression)
+
+                val value = expression.symbol.owner
+                if (
+                    value is IrValueParameter && value.name == KtxNameConventions.COMPOSER_PARAMETER
+                ) {
+                    return irCurrentComposer()
+                } else {
+                    return expression
+                }
+            }
+        })
 
         return irBlock(
             type = expression.type,
