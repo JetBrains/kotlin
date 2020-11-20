@@ -308,10 +308,10 @@ fun firstSuperMethodFromKotlin(
     override: IrSimpleFunction,
     implementation: IrSimpleFunction
 ): IrSimpleFunctionSymbol {
-    return override.overriddenSymbols.first {
+    return override.overriddenSymbols.firstOrNull {
         val owner = it.owner
         owner.modality != Modality.ABSTRACT && owner.overrides(implementation)
-    }
+    } ?: error("No super method found for: ${override.render()}")
 }
 
 // MethodSignatureMapper uses the corresponding property of a function to determine correct names
