@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.backend.common.peek
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBoolean
@@ -37,7 +38,7 @@ import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.builders.irTemporary
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -168,7 +170,7 @@ class ComposerLambdaMemoization(
 
     override fun lower(module: IrModuleFragment) = module.transformChildrenVoid(this)
 
-    override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
         if (declaration is IrFunction)
             return super.visitDeclaration(declaration)
         val symbolOwner = declaration as? IrSymbolOwner
@@ -184,6 +186,7 @@ class ComposerLambdaMemoization(
         return result
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun irCurrentComposer(): IrExpression {
         val currentComposerSymbol = getTopLevelPropertyGetter(
             ComposeFqNames.fqNameFor("currentComposer")
@@ -193,11 +196,12 @@ class ComposerLambdaMemoization(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
             composerIrClass.defaultType.replaceArgumentsWithStarProjections(),
-            currentComposerSymbol,
-            IrStatementOrigin.FOR_LOOP_ITERATOR
+            currentComposerSymbol as IrSimpleFunctionSymbol,
+            IrStatementOrigin.FOR_LOOP_ITERATOR,
         )
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitFunction(declaration: IrFunction): IrStatement {
         val descriptor = declaration.descriptor
         val composable = descriptor.allowsComposableCalls()
@@ -224,6 +228,7 @@ class ComposerLambdaMemoization(
         return super.visitValueAccess(expression)
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         // Memoize the instance created by using the :: operator
         val result = super.visitFunctionReference(expression)
@@ -327,6 +332,7 @@ class ComposerLambdaMemoization(
         )
     }
 
+    @ObsoleteDescriptorBasedAPI
     private fun visitComposableFunctionExpression(
         expression: IrFunctionExpression,
         declarationContext: DeclarationContext
@@ -347,6 +353,7 @@ class ComposerLambdaMemoization(
         return wrapFunctionExpression(declarationContext, functionExpression)
     }
 
+    @ObsoleteDescriptorBasedAPI
     override fun visitFunctionExpression(expression: IrFunctionExpression): IrExpression {
         val declarationContext = declarationContextStack.peek()
             ?: return super.visitFunctionExpression(expression)
@@ -368,6 +375,7 @@ class ComposerLambdaMemoization(
         }
     }
 
+    @ObsoleteDescriptorBasedAPI
     private fun wrapFunctionExpression(
         declarationContext: DeclarationContext,
         expression: IrFunctionExpression
@@ -439,6 +447,7 @@ class ComposerLambdaMemoization(
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun rememberExpression(
         functionContext: FunctionContext,
         expression: IrExpression,
@@ -539,6 +548,7 @@ class ComposerLambdaMemoization(
         return this
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunctionExpression.isInlineArgument(): Boolean {
         function.descriptor.findPsi()?.let { psi ->
             (psi as? KtFunctionLiteral)?.let {
@@ -554,7 +564,10 @@ class ComposerLambdaMemoization(
         return false
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrExpression?.isNullOrStable() = this == null || stabilityOf(this).knownStable()
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunctionExpression.isTracked() =
         function.descriptor.composableTrackedContract() != false
 }

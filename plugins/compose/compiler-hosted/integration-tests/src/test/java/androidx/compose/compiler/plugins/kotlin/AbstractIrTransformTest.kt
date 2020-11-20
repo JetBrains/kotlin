@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
+import org.jetbrains.kotlin.backend.jvm.JvmNameProvider
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -30,19 +31,26 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.EmptyLoggingContext
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
+import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
+import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.psi.KtFile
@@ -50,6 +58,7 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
@@ -337,12 +346,15 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         ).also { setupEnvironment(it) }
 
         val mangler = JvmManglerDesc(null)
-        val signaturer = JvmIdSignatureDescriptor(mangler)
 
         val psi2ir = Psi2IrTranslator(
             environment.configuration.languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors = false),
-            signaturer
+            Psi2IrConfiguration(ignoreErrors = false)
+        )
+        val symbolTable = SymbolTable(
+            JvmIdSignatureDescriptor(mangler),
+            IrFactoryImpl,
+            JvmNameProvider
         )
 
         val analysisResult = JvmResolveUtil.analyze(files, environment)
@@ -354,6 +366,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         val generatorContext = psi2ir.createGeneratorContext(
             analysisResult.moduleDescriptor,
             analysisResult.bindingContext,
+            symbolTable,
             extensions = extensions
         )
         val stubGenerator = DeclarationStubGenerator(
@@ -366,6 +379,18 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
             generatorContext.irBuiltIns,
             generatorContext.symbolTable
         )
+        val frontEndContext = object : TranslationPluginContext {
+            override val moduleDescriptor: ModuleDescriptor
+                get() = generatorContext.moduleDescriptor
+            override val bindingContext: BindingContext
+                get() = generatorContext.bindingContext
+            override val symbolTable: ReferenceSymbolTable
+                get() = symbolTable
+            override val typeTranslator: TypeTranslator
+                get() = generatorContext.typeTranslator
+            override val irBuiltIns: IrBuiltIns
+                get() = generatorContext.irBuiltIns
+        }
         generatorContext.irBuiltIns.functionFactory = functionFactory
         val irLinker = JvmIrLinker(
             generatorContext.moduleDescriptor,
@@ -373,6 +398,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
             generatorContext.irBuiltIns,
             generatorContext.symbolTable,
             functionFactory,
+            frontEndContext,
             stubGenerator,
             mangler
         )
@@ -384,8 +410,6 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         }
 
         val irProviders = listOf(irLinker)
-
-        stubGenerator.setIrProviders(irProviders)
 
         val symbols = BuiltinSymbolsBase(
             generatorContext.irBuiltIns,
@@ -420,10 +444,13 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         return irModuleFragment
     }
 
-    fun facadeClassGenerator(source: DeserializedContainerSource): IrClass? {
+    fun facadeClassGenerator(
+        generatorContext: GeneratorContext,
+        source: DeserializedContainerSource
+    ): IrClass? {
         val jvmPackagePartSource = source.safeAs<JvmPackagePartSource>() ?: return null
         val facadeName = jvmPackagePartSource.facadeClassName ?: jvmPackagePartSource.className
-        return buildClass {
+        return generatorContext.irFactory.buildClass {
             origin = IrDeclarationOrigin.FILE_CLASS
             name = facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName()
         }.also {

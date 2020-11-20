@@ -18,7 +18,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags.HAS_ANNOTATIONS
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
@@ -46,7 +46,7 @@ class ClassStabilityFieldSerializationPlugin : DescriptorSerializerPlugin {
         extension: SerializerExtension
     ) {
         if (
-            descriptor.visibility != Visibilities.PUBLIC ||
+            descriptor.visibility != DescriptorVisibilities.PUBLIC ||
             descriptor.kind == ClassKind.ENUM_CLASS ||
             descriptor.kind == ClassKind.ENUM_ENTRY ||
             descriptor.kind == ClassKind.INTERFACE ||

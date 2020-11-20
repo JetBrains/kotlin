@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclaration
 import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -66,9 +66,9 @@ class FunctionReferenceBuilder(
     private val superMethod =
         functionSuperClass.functions.single { it.owner.modality == Modality.ABSTRACT }
 
-    private val functionReferenceClass = buildClass {
+    private val functionReferenceClass = generatorContext.irFactory.buildClass {
         setSourceRange(irFunctionExpression)
-        visibility = Visibilities.LOCAL
+        visibility = DescriptorVisibilities.LOCAL
         origin = JvmLoweredDeclarationOrigin.LAMBDA_IMPL
         name = SpecialNames.NO_NAME_PROVIDED
     }.apply {

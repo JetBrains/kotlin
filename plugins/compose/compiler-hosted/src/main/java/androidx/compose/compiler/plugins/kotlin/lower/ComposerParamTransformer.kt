@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.PropertySetterDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -98,6 +100,7 @@ class ComposerParamTransformer(
     AbstractComposeLowering(context, symbolRemapper, bindingTrace),
     ModuleLoweringPass {
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun lower(module: IrModuleFragment) {
         module.transformChildrenVoid(this)
 
@@ -127,7 +130,8 @@ class ComposerParamTransformer(
         module.patchDeclarationParents()
     }
 
-    private val transformedFunctions: MutableMap<IrFunction, IrFunction> = mutableMapOf()
+    private val transformedFunctions: MutableMap<IrSimpleFunction, IrSimpleFunction> =
+        mutableMapOf()
 
     private val transformedFunctionSet = mutableSetOf<IrFunction>()
 
@@ -139,15 +143,16 @@ class ComposerParamTransformer(
         return v2
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun IrCall.withComposerParamIfNeeded(composerParam: IrValueParameter): IrCall {
         val isComposableLambda = isComposableLambdaInvoke()
         if (!symbol.descriptor.isComposableCallable() && !isComposableLambda)
             return this
         val ownerFn = when {
             isComposableLambda -> {
-                (symbol.owner as IrSimpleFunction).lambdaInvokeWithComposerParam()
+                symbol.owner.lambdaInvokeWithComposerParam()
             }
-            else -> (symbol.owner as IrSimpleFunction).withComposerParamIfNeeded()
+            else -> (symbol.owner).withComposerParamIfNeeded()
         }
         if (!isComposableLambda && !transformedFunctionSet.contains(ownerFn))
             return this
@@ -157,7 +162,7 @@ class ComposerParamTransformer(
             startOffset,
             endOffset,
             type,
-            ownerFn.symbol,
+            ownerFn.symbol as IrSimpleFunctionSymbol,
             typeArgumentsCount,
             ownerFn.valueParameters.size,
             origin,
@@ -263,6 +268,7 @@ class ComposerParamTransformer(
     }
 
     // Transform `@Composable fun foo(params): RetType` into `fun foo(params, $composer: Composer): RetType`
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.withComposerParamIfNeeded(): IrFunction {
         // don't transform functions that themselves were produced by this function. (ie, if we
         // call this with a function that has the synthetic composer parameter, we don't want to
@@ -291,6 +297,7 @@ class ComposerParamTransformer(
         return transformedFunctions[this] ?: copyWithComposerParam()
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.lambdaInvokeWithComposerParam(): IrFunction {
         val descriptor = descriptor
         val argCount = descriptor.valueParameters.size
@@ -305,22 +312,21 @@ class ComposerParamTransformer(
     private fun wrapDescriptor(descriptor: FunctionDescriptor): WrappedSimpleFunctionDescriptor {
         return when (descriptor) {
             is PropertyGetterDescriptor ->
-                WrappedPropertyGetterDescriptor(
-                    descriptor.annotations,
-                    descriptor.source
-                )
+                WrappedPropertyGetterDescriptor()
             is PropertySetterDescriptor ->
-                WrappedPropertySetterDescriptor(
-                    descriptor.annotations,
-                    descriptor.source
-                )
+                WrappedPropertySetterDescriptor()
             is DescriptorWithContainerSource ->
-                WrappedFunctionDescriptorWithContainerSource(descriptor.containerSource)
+                WrappedFunctionDescriptorWithContainerSource()
             else ->
-                WrappedSimpleFunctionDescriptor(sourceElement = descriptor.source)
+                object : WrappedSimpleFunctionDescriptor() {
+                    override fun getSource(): SourceElement {
+                        return descriptor.source
+                    }
+                }
         }
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.copy(
         isInline: Boolean = this.isInline,
         modality: Modality = descriptor.modality
@@ -343,8 +349,10 @@ class ComposerParamTransformer(
             descriptor.isTailrec,
             descriptor.isSuspend,
             descriptor.isOperator,
+            descriptor.isInfix,
             isExpect,
-            isFakeOverride
+            isFakeOverride,
+            containerSource
         ).also { fn ->
             newDescriptor.bind(fn)
             if (this is IrSimpleFunction) {
@@ -419,7 +427,8 @@ class ComposerParamTransformer(
             )
     }
 
-    private fun IrFunction.copyWithComposerParam(): IrFunction {
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    private fun IrFunction.copyWithComposerParam(): IrSimpleFunction {
         assert(explicitParameters.lastOrNull()?.name != KtxNameConventions.COMPOSER_PARAMETER) {
             "Attempted to add composer param to $this, but it has already been added."
         }
@@ -429,7 +438,7 @@ class ComposerParamTransformer(
             // NOTE: it's important to add these here before we recurse into the body in
             // order to avoid an infinite loop on circular/recursive calls
             transformedFunctionSet.add(fn)
-            transformedFunctions[oldFn] = fn
+            transformedFunctions[oldFn as IrSimpleFunction] = fn
 
             // The overridden symbols might also be composable functions, so we want to make sure
             // and transform them as well
@@ -593,6 +602,7 @@ class ComposerParamTransformer(
         return isInvoke() && dispatchReceiver?.type?.hasComposableAnnotation() == true
     }
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.isNonComposableInlinedLambda(): Boolean {
         descriptor.findPsi()?.let { psi ->
             (psi as? KtFunctionLiteral)?.let {
