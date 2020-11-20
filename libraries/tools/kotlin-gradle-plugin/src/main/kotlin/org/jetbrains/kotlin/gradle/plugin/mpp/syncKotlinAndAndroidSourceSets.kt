@@ -22,16 +22,23 @@ internal fun syncKotlinAndAndroidSourceSets(target: KotlinAndroidTarget) {
     android.sourceSets.all { androidSourceSet ->
         val kotlinSourceSetName = kotlinSourceSetNameForAndroidSourceSet(target, androidSourceSet.name)
         val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinSourceSetName)
+        androidSourceSet.kotlinSourceSet = kotlinSourceSet
+
         createDefaultDependsOnEdges(target, kotlinSourceSet, androidSourceSet)
         syncKotlinAndAndroidSourceDirs(target, kotlinSourceSet, androidSourceSet)
         syncKotlinAndAndroidResources(target, kotlinSourceSet, androidSourceSet)
-        androidSourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
 
         ifKaptEnabled(project) {
             Kapt3GradleSubplugin.createAptConfigurationIfNeeded(project, androidSourceSet.name)
         }
     }
 }
+
+internal var AndroidSourceSet.kotlinSourceSet: KotlinSourceSet
+    get() = getConvention(KOTLIN_DSL_NAME) as KotlinSourceSet
+    private set(value) {
+        addConvention(KOTLIN_DSL_NAME, value)
+    }
 
 private fun createDefaultDependsOnEdges(
     target: KotlinAndroidTarget,
@@ -85,6 +92,14 @@ private fun syncKotlinAndAndroidResources(
     kotlinSourceSet: KotlinSourceSet,
     androidSourceSet: AndroidSourceSet
 ) {
+    /*
+    Non-MPP projects will not have a different name for kotlin source sets vs Android source sets
+    Registering resource folders is unnecessary therefore.
+     */
+    if (kotlinSourceSet.name == androidSourceSet.name) {
+        return
+    }
+
     val project = target.project
 
     androidSourceSet.resources.srcDirs(*kotlinSourceSet.resources.toList().toTypedArray())
@@ -115,6 +130,10 @@ private fun syncKotlinAndAndroidResources(
 
     if (androidSourceSet.jniLibs.srcDirs.isNotEmpty()) {
         androidSourceSet.jniLibs.srcDir(kotlinSourceSet.sourceFolderFor(project, "jniLibs"))
+    }
+
+    if (androidSourceSet.shaders.srcDirs.isNotEmpty()) {
+        androidSourceSet.shaders.srcDir(kotlinSourceSet.sourceFolderFor(project, "shaders"))
     }
 }
 
