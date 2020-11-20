@@ -99,6 +99,44 @@ class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiP
             assertCompiledKotlinSources(relativePaths)
         }
     }
+
+    /** Regression test for KT-43489. Make sure build history mapping is not initialized too early. */
+    @Test
+    fun testBuildHistoryMappingLazilyComputedWithWorkers() {
+        val project = defaultProject()
+        project.setupWorkingDir()
+        project.projectDir.resolve("app/build.gradle").appendText(
+            """
+                // added to force eager configuration
+                tasks.withType(JavaCompile) {
+                    options.encoding = 'UTF-8'
+                }
+            """.trimIndent()
+        )
+        val options = defaultBuildOptions().copy(parallelTasksInProject = true)
+        project.build(options = options, params = arrayOf("build")) {
+            assertSuccessful()
+        }
+
+        val aKt = project.projectDir.getFileByName("A.kt")
+        aKt.writeText(
+            """
+package bar
+
+open class A {
+    fun a() {}
+    fun newA() {}
+}
+"""
+        )
+
+        project.build(options = options, params = arrayOf("build")) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("A.kt", "B.kt", "AA.kt", "AAA.kt", "BB.kt")
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths)
+        }
+    }
 }
 
 abstract class BaseIncrementalCompilationMultiProjectIT : BaseGradleIT() {
