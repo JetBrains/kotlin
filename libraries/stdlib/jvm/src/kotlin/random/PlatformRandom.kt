@@ -26,7 +26,7 @@ public fun java.util.Random.asKotlinRandom(): Random =
 
 @InlineOnly
 internal actual inline fun defaultPlatformRandom(): Random =
-    IMPLEMENTATIONS.defaultPlatformRandom()
+    IMPLEMENTATIONS.defaultPlatformRandom
 
 internal actual fun doubleFromParts(hi26: Int, low27: Int): Double =
     (hi26.toLong().shl(27) + low27) / (1L shl 53).toDouble()
@@ -49,9 +49,7 @@ internal abstract class AbstractPlatformRandom : Random() {
 
 internal object FallbackThreadLocalRandom : AbstractPlatformRandom() {
     private val implStorage = object : ThreadLocal<java.util.Random>() {
-        override fun initialValue(): java.util.Random {
-            return java.util.Random()
-        }
+        override fun initialValue(): java.util.Random = java.util.Random()
     }
 
     override val impl: java.util.Random

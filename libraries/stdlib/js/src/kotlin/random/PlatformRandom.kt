@@ -7,8 +7,9 @@ package kotlin.random
 
 import kotlin.math.pow
 
-internal actual fun defaultPlatformRandom(): Random =
-    Random(js("(Math.random() * Math.pow(2, 32)) | 0").unsafeCast<Int>())
+internal val RANDOM = Random(js("(Math.random() * Math.pow(2, 32)) | 0").unsafeCast<Int>())
+
+internal actual fun defaultPlatformRandom(): Random = RANDOM
 
 
 private val INV_2_26: Double = 2.0.pow(-26)

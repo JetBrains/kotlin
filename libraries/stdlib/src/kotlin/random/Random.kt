@@ -269,7 +269,9 @@ public abstract class Random {
      */
     companion object Default : Random(), Serializable {
         private const val serialVersionUID = 6449517406788167720L
-        private val defaultRandom: Random = defaultPlatformRandom()
+
+        private val defaultRandom: Random
+            get() = defaultPlatformRandom()
 
         private fun readResolve(): Any = Default
 
