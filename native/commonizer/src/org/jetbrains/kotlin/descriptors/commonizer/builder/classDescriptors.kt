@@ -105,8 +105,7 @@ private fun CirClassConstructor.buildDescriptor(
     val constructorDescriptor = CommonizedClassConstructorDescriptor(
         containingDeclaration = containingDeclaration,
         annotations = annotations.buildDescriptors(targetComponents),
-        isPrimary = isPrimary,
-        kind = kind
+        isPrimary = isPrimary
     )
 
     constructorDescriptor.isExpect = isExpect

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
 import java.lang.reflect.Constructor
@@ -84,7 +85,7 @@ class DefaultKotlinSourceSet(
         // Fail-fast approach: check on each new added edge and report a circular dependency at once when the edge is added.
         checkForCircularDependencies()
 
-        project.afterEvaluate { defaultSourceSetLanguageSettingsChecker.runAllChecks(this, other) }
+        project.whenEvaluated { defaultSourceSetLanguageSettingsChecker.runAllChecks(this@DefaultKotlinSourceSet, other) }
     }
 
     private val dependsOnSourceSetsImpl = mutableSetOf<KotlinSourceSet>()
@@ -155,7 +156,8 @@ class DefaultKotlinSourceSet(
                 ?.associateBy { ModuleIds.fromComponent(project, it.dependency) }
                 ?: emptyMap()
 
-        val baseDir = project.buildDir.resolve("tmp/kotlinMetadata/$name/${scope.scopeName}")
+        val baseDir = SourceSetMetadataStorageForIde.sourceSetStorage(project, this@DefaultKotlinSourceSet.name)
+
         if (metadataDependencyResolutionByModule.values.any { it is MetadataDependencyResolution.ChooseVisibleSourceSets }) {
             if (baseDir.isDirectory) {
                 baseDir.deleteRecursively()
@@ -177,6 +179,7 @@ class DefaultKotlinSourceSet(
                         baseDir,
                         doProcessFiles = true
                     )
+
                     MetadataDependencyTransformation(
                         group, name, projectPath,
                         resolution.projectStructureMetadata,

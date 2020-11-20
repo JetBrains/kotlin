@@ -121,7 +121,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         myFixture.testHighlighting("Autowired.java", "AnnotatedClass.kt")
 
         val annotations = myFixture.findClass("AnnotatedClass").fields.single()
-            .expectAnnotations(2).single { it.qualifiedName == "Autowired" }
+            .expectAnnotations(1).single { it.qualifiedName == "Autowired" }
         val annotationAttributeVal = annotations.findAttributeValue("required") as PsiElement
         assertTextRangeAndValue("true", true, annotationAttributeVal)
     }

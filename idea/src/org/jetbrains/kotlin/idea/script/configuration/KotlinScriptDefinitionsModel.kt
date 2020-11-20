@@ -59,7 +59,7 @@ class KotlinScriptDefinitionsModel private constructor(definitions: MutableList<
         override fun valueOf(item: ModelDescriptor): String {
             val definition = item.definition
             return definition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>()?.scriptFilePattern?.pattern
-                ?: (definition as? ScriptDefinition.FromConfigurations)?.filePathPattern
+                ?: (definition as? ScriptDefinition.FromConfigurationsBase)?.filePathPattern
                 ?: "." + definition.fileExtension
         }
     }

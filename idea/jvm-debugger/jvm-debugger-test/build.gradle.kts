@@ -20,10 +20,8 @@ dependencies {
 
     testCompile(intellijPluginDep("stream-debugger"))
 
-    Platform[192].orHigher {
-        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl", "aether-dependency-resolver") }
-        testRuntime(intellijPluginDep("java"))
-    }
+    testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl", "aether-dependency-resolver") }
+    testRuntime(intellijPluginDep("java"))
 
     testRuntime(project(":nj2k:nj2k-services")) { isTransitive = false }
     testRuntime(project(":idea:idea-jvm"))
@@ -37,6 +35,7 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide"))
 
     testRuntime(intellijDep())
     testRuntime(intellijRuntimeAnnotations())

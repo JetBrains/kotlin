@@ -26,17 +26,17 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.impl.search.IndexPatternBuilder
 import com.intellij.psi.impl.source.resolve.reference.ReferenceProvidersRegistry
 import com.intellij.psi.xml.XmlFileNSInfoProvider
+import com.intellij.testFramework.TestApplicationManager
 import com.intellij.xml.XmlSchemaProvider
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.perf.util.TeamCity
-import org.jetbrains.kotlin.idea.testFramework.TestApplicationManager
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
 import java.io.File
 
 abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProjectFileProvider {
 
     private val rootProjectFile: File = File("../perfTestProject").absoluteFile
-    private val perfStats: Stats = Stats(name = "whole", header = arrayOf("File", "ProcessID", "Time"))
+    private val perfStats: Stats = Stats(name = "whole")
     private val tmp = rootProjectFile
 
     override fun isStressTest(): Boolean = false
@@ -101,7 +101,7 @@ abstract class WholeProjectPerformanceTest : DaemonAnalyzerTestCase(), WholeProj
             fun appendInspectionResult(file: String, id: String, nanoTime: Long) {
                 totals.merge(id, nanoTime) { a, b -> a + b }
 
-                perfStats.append(file, id, nanoTime)
+                //perfStats.append(file, id, nanoTime)
             }
 
             TeamCity.suite("TotalPerFile") {

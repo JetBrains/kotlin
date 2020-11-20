@@ -26,5 +26,5 @@ fun test() {
 
     <!UNRESOLVED_REFERENCE!>B::bas<!>
 
-    ::fas
+    <!UNRESOLVED_REFERENCE!>::fas<!>
 }

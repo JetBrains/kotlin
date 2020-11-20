@@ -35,6 +35,8 @@ abstract class KtClassOrObject :
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinClassOrObjectStub<out KtClassOrObject>, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
+    fun getColon(): PsiElement? = findChildByType(KtTokens.COLON)
+
     fun getSuperTypeList(): KtSuperTypeList? = getStubOrPsiChild(KtStubElementTypes.SUPER_TYPE_LIST)
 
     override fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = getSuperTypeList()?.entries.orEmpty()
@@ -61,7 +63,7 @@ abstract class KtClassOrObject :
         if (specifierList.entries.size > 1) {
             EditCommaSeparatedListHelper.removeItem<KtElement>(superTypeListEntry)
         } else {
-            deleteChildRange(findChildByType<PsiElement>(KtTokens.COLON) ?: specifierList, specifierList)
+            deleteChildRange(getColon() ?: specifierList, specifierList)
         }
     }
 

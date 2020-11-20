@@ -75,7 +75,7 @@ open class IncrementalJsCache(
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         removedAndCompiledSources.forEach { sourceFile ->
             // The common prefix of all FQN parents has to be the file package
-            sourceToClassesMap[sourceFile].map { it.parentOrNull()?.asString() ?: "" }.minBy { it.length }?.let {
+            sourceToClassesMap[sourceFile].map { it.parentOrNull()?.asString() ?: "" }.minByOrNull { it.length }?.let {
                 packageMetadata.remove(it)
             }
         }

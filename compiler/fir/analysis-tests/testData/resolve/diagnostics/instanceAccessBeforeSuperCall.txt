@@ -1,0 +1,106 @@
+FILE: instanceAccessBeforeSuperCall.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int| = <Unresolved name: getSomeInt>#(), other: R|A| = this@R|/A|, header: R|kotlin/String| = <Unresolved name: keker>#): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun getSomeInt(): R|kotlin/Int| {
+            ^getSomeInt Int(10)
+        }
+
+        public final var keker: R|kotlin/String| = String(test)
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(other: R|B| = this#): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(x: R|kotlin/Int|): R|C| {
+            this<R|C|>(fun <anonymous>(): R|ERROR CLASS: Cannot access ''<this>'' before superclass constructor has been called| {
+                lval a: R|kotlin/Int| = Int(10)
+                ^ this@R|/C|
+            }
+            )
+        }
+
+    }
+    public final class D : R|kotlin/Any| {
+        public final var a: R|kotlin/Int| = Int(20)
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public constructor(): R|D| {
+            super<R|kotlin/Any|>()
+            this@R|/D|.R|/D.a| = Int(10)
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        lval x1: R|kotlin/String.() -> kotlin/String| = when () {
+            Boolean(true) ->  {
+                fun R|kotlin/String|.<anonymous>(): R|kotlin/String| {
+                    ^ this@R|special/anonymous|
+                }
+
+            }
+            else ->  {
+                fun R|kotlin/String|.<anonymous>(): R|kotlin/String| {
+                    ^ this@R|special/anonymous|
+                }
+
+            }
+        }
+
+    }
+    public final fun test(f: R|F|): R|kotlin/Unit| {
+    }
+    public final val a: R|ERROR CLASS: 'this' is not defined in this context| = this#
+        public get(): R|ERROR CLASS: 'this' is not defined in this context|
+    public final class F : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|, b: R|kotlin/Int|, closure: R|() -> kotlin/Unit|, instance: R|F?|): R|F| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public constructor(x: R|kotlin/Int|): R|F| {
+            this<R|F|>(R|<local>/x|, R|<local>/x|, fun <anonymous>(): R|kotlin/Unit| {
+                lval a: R|kotlin/Int| = Int(10)
+                this@R|/F|
+                R|/test|(this@R|/F|)
+                this@R|/F|.<Unresolved name: a># = Int(20)
+            }
+            , this@R|/F|)
+            this@R|/F|.R|/F.a| = Int(30)
+        }
+
+    }
+    public open class Base : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>(this#.<Unresolved name: y>#)
+        }
+
+        public final val y: R|kotlin/Int| = Int(42)
+            public get(): R|kotlin/Int|
+
+    }

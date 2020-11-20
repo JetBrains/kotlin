@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.PluginSettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
+import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.templates.NativeConsoleApplicationTemplate
 
 class NativeConsoleApplicationTemplatePlugin(context: Context) : TemplatePlugin(context) {
@@ -21,6 +22,10 @@ class NativeConsoleApplicationTemplatePlugin(context: Context) : TemplatePlugin(
     companion object : PluginSettingsOwner() {
         override val pluginPath = "template.nativeConsoleApplicationTemplate"
 
-        val addTemplate by addTemplateTask( NativeConsoleApplicationTemplate())
+        val addTemplate by pipelineTask(GenerationPhase.PREPARE) {
+            withAction {
+                TemplatesPlugin.addTemplate.execute(NativeConsoleApplicationTemplate())
+            }
+        }
     }
 }

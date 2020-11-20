@@ -2,12 +2,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-  compileSdkVersion 29
-  buildToolsVersion "29.0.2"
+  compileSdkVersion 26
+  buildToolsVersion "28.0.3"
 
   defaultConfig {
-    minSdkVersion 21
-    targetSdkVersion 29
+    minSdkVersion 26
+    targetSdkVersion 26
   }
 }
 

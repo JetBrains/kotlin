@@ -31,10 +31,11 @@ internal class FirAnonymousFunctionImpl(
     override val source: FirSourceElement?,
     override val session: FirSession,
     override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
     override val annotations: MutableList<FirAnnotationCall>,
     override var returnTypeRef: FirTypeRef,
     override var receiverTypeRef: FirTypeRef?,
-    override var controlFlowGraphReference: FirControlFlowGraphReference,
+    override var controlFlowGraphReference: FirControlFlowGraphReference?,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
     override var typeRef: FirTypeRef,
@@ -45,7 +46,6 @@ internal class FirAnonymousFunctionImpl(
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirAnonymousFunction() {
     override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
-    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
     init {
         symbol.bind(this)
@@ -55,7 +55,7 @@ internal class FirAnonymousFunctionImpl(
         annotations.forEach { it.accept(visitor, data) }
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
-        controlFlowGraphReference.accept(visitor, data)
+        controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
         typeRef.accept(visitor, data)
@@ -67,7 +67,7 @@ internal class FirAnonymousFunctionImpl(
         transformAnnotations(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
-        transformControlFlowGraphReference(transformer, data)
+        controlFlowGraphReference = controlFlowGraphReference?.transformSingle(transformer, data)
         transformValueParameters(transformer, data)
         transformBody(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
@@ -88,11 +88,6 @@ internal class FirAnonymousFunctionImpl(
 
     override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
         receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
-        return this
-    }
-
-    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this
     }
 
@@ -123,9 +118,17 @@ internal class FirAnonymousFunctionImpl(
         receiverTypeRef = newReceiverTypeRef
     }
 
+    override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
+        controlFlowGraphReference = newControlFlowGraphReference
+    }
+
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
         valueParameters.clear()
         valueParameters.addAll(newValueParameters)
+    }
+
+    override fun replaceBody(newBody: FirBlock?) {
+        body = newBody
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

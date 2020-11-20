@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.util.SmartList
-import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.resolve.scopes.utils.findFirstFromMeAndParent
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.toSourceElement
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.typeUtil.containsTypeAliasParameters
@@ -70,7 +69,7 @@ class TypeResolver(
     private val dynamicTypesSettings: DynamicTypesSettings,
     private val dynamicCallableDescriptors: DynamicCallableDescriptors,
     private val identifierChecker: IdentifierChecker,
-    private val platformToKotlinClassMap: PlatformToKotlinClassMap,
+    private val platformToKotlinClassMapper: PlatformToKotlinClassMapper,
     private val languageVersionSettings: LanguageVersionSettings
 ) {
     private val isNonParenthesizedAnnotationsOnFunctionalTypesEnabled =
@@ -325,7 +324,7 @@ class TypeResolver(
                     type: KotlinType,
                     source: SourceElement
                 ) : VariableDescriptorImpl(containingDeclaration, annotations, name, type, source) {
-                    override fun getVisibility() = Visibilities.LOCAL
+                    override fun getVisibility() = DescriptorVisibilities.LOCAL
 
                     override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? {
                         throw UnsupportedOperationException("Should not be called for descriptor of type ${this::class.java}")
@@ -932,7 +931,7 @@ class TypeResolver(
         return qualifiedExpressionResolver.resolveDescriptorForType(userType, scope, trace, isDebuggerContext).apply {
             if (classifierDescriptor != null) {
                 PlatformClassesMappedToKotlinChecker.reportPlatformClassMappedToKotlin(
-                    platformToKotlinClassMap, trace, userType, classifierDescriptor
+                    platformToKotlinClassMapper, trace, userType, classifierDescriptor
                 )
             }
         }

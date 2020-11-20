@@ -27,24 +27,19 @@ import org.jetbrains.kotlin.fir.visitors.*
 @FirBuilderDsl
 class FirArrayOfCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
+    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override lateinit var argumentList: FirArgumentList
 
     override fun build(): FirArrayOfCall {
         return FirArrayOfCallImpl(
             source,
+            typeRef,
             annotations,
             argumentList,
         )
     }
 
-
-    @Deprecated("Modification of 'typeRef' has no impact for FirArrayOfCallBuilder", level = DeprecationLevel.HIDDEN)
-    override var typeRef: FirTypeRef
-        get() = throw IllegalStateException()
-        set(value) {
-            throw IllegalStateException()
-        }
 }
 
 @OptIn(ExperimentalContracts::class)

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
 import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
@@ -223,7 +224,7 @@ internal fun Type.boxReceiverForBoundReference() =
     AsmUtil.boxType(this)
 
 internal fun Type.boxReceiverForBoundReference(kotlinType: KotlinType, typeMapper: KotlinTypeMapper) =
-    AsmUtil.boxType(this, kotlinType, typeMapper)
+    DescriptorAsmUtil.boxType(this, kotlinType, typeMapper)
 
 abstract class ExpressionLambda(isCrossInline: Boolean) : LambdaInfo(isCrossInline) {
     override fun generateLambdaBody(sourceCompiler: SourceCompilerForInline, reifiedTypeInliner: ReifiedTypeInliner<*>) {

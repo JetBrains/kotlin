@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterRefsOwnerBu
 import org.jetbrains.kotlin.fir.declarations.impl.FirRegularClassImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -41,6 +40,7 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
     override lateinit var session: FirSession
     open var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
+    override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     open lateinit var status: FirDeclarationStatus
@@ -58,6 +58,7 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
             session,
             resolvePhase,
             origin,
+            attributes,
             annotations,
             typeParameters,
             status,

@@ -101,12 +101,12 @@ private fun loadClass(classLoader: ClassLoader, packageName: String, className: 
     return classLoader.tryLoadClass(fqName)
 }
 
-internal fun Visibility.toKVisibility(): KVisibility? =
+internal fun DescriptorVisibility.toKVisibility(): KVisibility? =
     when (this) {
-        Visibilities.PUBLIC -> KVisibility.PUBLIC
-        Visibilities.PROTECTED -> KVisibility.PROTECTED
-        Visibilities.INTERNAL -> KVisibility.INTERNAL
-        Visibilities.PRIVATE, Visibilities.PRIVATE_TO_THIS -> KVisibility.PRIVATE
+        DescriptorVisibilities.PUBLIC -> KVisibility.PUBLIC
+        DescriptorVisibilities.PROTECTED -> KVisibility.PROTECTED
+        DescriptorVisibilities.INTERNAL -> KVisibility.INTERNAL
+        DescriptorVisibilities.PRIVATE, DescriptorVisibilities.PRIVATE_TO_THIS -> KVisibility.PRIVATE
         else -> null
     }
 

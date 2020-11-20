@@ -66,7 +66,7 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
         }
     }
 
-    override fun transformFunctionAccess(call: IrFunctionAccessExpression): IrExpression {
+    override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean): IrExpression {
         val symbol = call.symbol
         nameToTransformer[symbol.owner.name]?.let {
             return it(call)

@@ -127,10 +127,10 @@ object Main {
             classpath.addPath(".")
         }
 
-        classpath.addPath(KOTLIN_HOME.toString() + "/lib/kotlin-stdlib.jar")
+        classpath.addPath("$KOTLIN_HOME/lib/kotlin-stdlib.jar")
 
         if (!noReflect) {
-            classpath.addPath(KOTLIN_HOME.toString() + "/lib/kotlin-reflect.jar")
+            classpath.addPath("$KOTLIN_HOME/lib/kotlin-reflect.jar")
         }
 
         if (expression != null) {

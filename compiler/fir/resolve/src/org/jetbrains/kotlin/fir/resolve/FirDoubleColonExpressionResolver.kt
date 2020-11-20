@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralTypeApproximationTransformer
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.Variance
@@ -41,10 +40,7 @@ sealed class DoubleColonLHS(val type: ConeKotlinType) {
 internal val FirFunctionCall.hasExplicitValueArguments: Boolean
     get() = true // TODO: hasExplicitArgumentList || hasExplicitLambdaArguments
 
-class FirDoubleColonExpressionResolver(
-    private val session: FirSession,
-    private val integerLiteralTypeApproximator: IntegerLiteralTypeApproximationTransformer
-) {
+class FirDoubleColonExpressionResolver(private val session: FirSession) {
 
     // Returns true if the expression is not a call expression without value arguments (such as "A<B>") or a qualified expression
     // which contains such call expression as one of its parts.
@@ -80,9 +76,6 @@ class FirDoubleColonExpressionResolver(
     }
 
     internal fun resolveDoubleColonLHS(doubleColonExpression: FirCallableReferenceAccess): DoubleColonLHS? {
-        if (doubleColonExpression.explicitReceiver is FirConstExpression<*>) {
-            doubleColonExpression.transformExplicitReceiver(integerLiteralTypeApproximator, null)
-        }
         val resultForExpr = tryResolveLHS(doubleColonExpression, this::shouldTryResolveLHSAsExpression, this::resolveExpressionOnLHS)
         if (resultForExpr != null && !resultForExpr.isObjectQualifier) {
             return resultForExpr

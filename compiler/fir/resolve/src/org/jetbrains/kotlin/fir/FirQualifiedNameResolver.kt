@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.resolve.typeForQualifier
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveComponents by components {
+class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
+    private val session = components.session
     private var qualifierStack = mutableListOf<Name>()
     private var qualifierPartsToDrop = 0
 
@@ -80,7 +81,7 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
                 relativeClassFqName = resolved.relativeClassFqName
                 symbol = resolved.classSymbol
             }.apply {
-                resultType = typeForQualifier(this)
+                resultType = components.typeForQualifier(this)
             }
         }
 

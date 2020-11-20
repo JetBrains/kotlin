@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,14 +23,10 @@ sealed class FirFunctionSymbol<D : FirFunction<D>>(
 
 open class FirNamedFunctionSymbol(
     callableId: CallableId,
-    val isFakeOverride: Boolean = false,
-    // Actual for fake override only
-    override val overriddenSymbol: FirNamedFunctionSymbol? = null
 ) : FirFunctionSymbol<FirSimpleFunction>(callableId)
 
 class FirConstructorSymbol(
-    callableId: CallableId,
-    override val overriddenSymbol: FirConstructorSymbol? = null
+    callableId: CallableId
 ) : FirFunctionSymbol<FirConstructor>(callableId)
 
 open class FirAccessorSymbol(

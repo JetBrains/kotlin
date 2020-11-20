@@ -102,7 +102,7 @@ abstract class AbstractNoArgExpressionCodegenExtension(val invokeInitializers: B
                     emptyList(),
                     containingClass.builtIns.unitType,
                     Modality.OPEN,
-                    Visibilities.PUBLIC
+                    DescriptorVisibilities.PUBLIC
                 )
             }
     }

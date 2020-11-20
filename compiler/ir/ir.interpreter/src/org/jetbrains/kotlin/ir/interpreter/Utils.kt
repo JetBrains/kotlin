@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.interpreter.builtins.evaluateIntrinsicAnnotation
 import org.jetbrains.kotlin.ir.interpreter.stack.Variable
@@ -207,7 +207,7 @@ internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt",
 internal fun IrType.isUnsigned() = this.isUByte() || this.isUShort() || this.isUInt() || this.isULong()
 
 internal fun IrType.isPrimitiveArray(): Boolean {
-    return this.getClass()?.fqNameWhenAvailable?.toUnsafe()?.let { KotlinBuiltIns.isPrimitiveArray(it) } ?: false
+    return this.getClass()?.fqNameWhenAvailable?.toUnsafe()?.let { StandardNames.isPrimitiveArray(it) } ?: false
 }
 
 internal fun IrType.isFunction() = this.getClass()?.fqNameWhenAvailable?.asString()?.startsWith("kotlin.Function") ?: false

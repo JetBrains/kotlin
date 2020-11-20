@@ -26,16 +26,18 @@ internal abstract class AbstractNodeModulesCache(val nodeJs: NodeJsRootExtension
 
     @Synchronized
     fun get(
-        dependency: ResolvedDependency,
+        name: String,
+        version: String,
         file: File
     ): GradleNodeModule? = cache.getOrCompute(file) {
-        buildImportedPackage(dependency, file)
+        buildImportedPackage(name, version, file)
     }?.let {
         GradleNodeModule(it)
     }
 
     abstract fun buildImportedPackage(
-        dependency: ResolvedDependency,
+        name: String,
+        version: String,
         file: File
     ): File?
 
@@ -60,6 +62,7 @@ fun makeNodeModule(
 
     val gson = GsonBuilder()
         .setPrettyPrinting()
+        .disableHtmlEscaping()
         .create()
 
     files(dir)

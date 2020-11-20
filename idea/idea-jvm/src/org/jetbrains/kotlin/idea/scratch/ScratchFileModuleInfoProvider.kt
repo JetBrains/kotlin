@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_SUFFIX
 import org.jetbrains.kotlin.psi.KtFile
 
-// FIX ME WHEN BUNCH 192 REMOVED
+
 class ScratchFileModuleInfoProvider : StartupActivity {
     private val LOG = Logger.getInstance(this.javaClass)
 

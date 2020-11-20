@@ -31,7 +31,7 @@ UFile (package = ) [public final class MyColor {...]
                         UReturnExpression [return <init>(18, 2, 3)] = Nothing
                             UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 3)) [<init>(18, 2, 3)] = external <init>(18, 2, 3)(18, 2, 3)
                                 UIdentifier (Identifier (MyColor)) [UIdentifier (Identifier (MyColor))]
-                                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = MyColor) [<init>] = external <init>(18, 2, 3)(18, 2, 3)
+                                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: MyColor) [<init>] = external <init>(18, 2, 3)(18, 2, 3)
                                 ULiteralExpression (value = 18) [18] = 18
                                 ULiteralExpression (value = 2) [2] = 2
                                 ULiteralExpression (value = 3) [3] = 3
@@ -49,7 +49,7 @@ UFile (package = ) [public final class MyColor {...]
                         UReturnExpression [return <init>(1, 2, 3)] = Nothing
                             UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 3)) [<init>(1, 2, 3)] = external <init>(1, 2, 3)(1, 2, 3)
                                 UIdentifier (Identifier (MyColor)) [UIdentifier (Identifier (MyColor))]
-                                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = MyColor) [<init>] = external <init>(1, 2, 3)(1, 2, 3)
+                                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: MyColor) [<init>] = external <init>(1, 2, 3)(1, 2, 3)
                                 ULiteralExpression (value = 1) [1] = 1
                                 ULiteralExpression (value = 2) [2] = 2
                                 ULiteralExpression (value = 3) [3] = 3
@@ -57,7 +57,7 @@ UFile (package = ) [public final class MyColor {...]
             UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
             UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 3)) [<init>(1, 2, 3)] = external <init>(1, 2, 3)(1, 2, 3)
                 UIdentifier (Identifier (MyColor)) [UIdentifier (Identifier (MyColor))]
-                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = MyColor) [<init>] = external <init>(1, 2, 3)(1, 2, 3)
+                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: MyColor) [<init>] = external <init>(1, 2, 3)(1, 2, 3)
                 ULiteralExpression (value = 1) [1] = 1
                 ULiteralExpression (value = 2) [2] = 2
                 ULiteralExpression (value = 3) [3] = 3

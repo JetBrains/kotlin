@@ -10,20 +10,17 @@ import org.gradle.BuildResult
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
-import org.jetbrains.kotlin.compilerRunner.DELETED_SESSION_FILE_PREFIX
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
-import org.jetbrains.kotlin.gradle.report.configureBuildReporter
-import org.jetbrains.kotlin.gradle.utils.relativeToRoot
-import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
-import java.lang.management.ManagementFactory
-import kotlin.math.max
+import org.jetbrains.kotlin.gradle.report.configureReporting
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 
+//Support Gradle 6 and less. Move to
 internal class KotlinGradleBuildServices private constructor(
     private val gradle: Gradle
 ) : BuildAdapter() {
+
     companion object {
         private val CLASS_NAME = KotlinGradleBuildServices::class.java.simpleName
         const val FORCE_SYSTEM_GC_MESSAGE = "Forcing System.gc()"
@@ -34,95 +31,82 @@ internal class KotlinGradleBuildServices private constructor(
         val ALREADY_INITIALIZED_MESSAGE = "$CLASS_NAME is already initialized"
 
         @field:Volatile
-        private var instance: KotlinGradleBuildServices? = null
+        internal var instance: KotlinGradleBuildServices? = null
+
+//        @JvmStatic
+//        @Synchronized
+//        fun getInstance(gradle: Gradle): KotlinGradleBuildServices {
+//            val log = Logging.getLogger(KotlinGradleBuildServices::class.java)
+//
+//            if (instance != null) {
+//                log.kotlinDebug(ALREADY_INITIALIZED_MESSAGE)
+//                return instance!!
+//            }
+//
+//            val services = KotlinGradleBuildServices(gradle)
+//            instance = services
+//            if (!isGradleVersionAtLeast(6,1)) {
+//                gradle.addBuildListener(services)
+//                log.kotlinDebug(INIT_MESSAGE)
+//            } else {
+//                BuildEventsListenerRegistry.
+//            }
+//
+//            services.buildStarted()
+//            return services
+//        }
+
 
         @JvmStatic
         @Synchronized
-        fun getInstance(gradle: Gradle): KotlinGradleBuildServices {
+        fun getInstance(project: Project, listenerRegistryHolder: BuildEventsListenerRegistryHolder): KotlinGradleBuildServices {
             val log = Logging.getLogger(KotlinGradleBuildServices::class.java)
+            val kotlinGradleListenerProvider: org.gradle.api.provider.Provider<KotlinGradleBuildListener> = project.provider {
+                KotlinGradleBuildListener(KotlinGradleFinishBuildHandler())
+            }
 
             if (instance != null) {
                 log.kotlinDebug(ALREADY_INITIALIZED_MESSAGE)
                 return instance!!
             }
 
+            val gradle = project.gradle
             val services = KotlinGradleBuildServices(gradle)
-            gradle.addBuildListener(services)
+            if (isConfigurationCacheAvailable(gradle)) {
+                listenerRegistryHolder.listenerRegistry!!.onTaskCompletion(kotlinGradleListenerProvider)
+            } else {
+                gradle.addBuildListener(services)
+                log.kotlinDebug(INIT_MESSAGE)
+            }
             instance = services
-            log.kotlinDebug(INIT_MESSAGE)
 
             services.buildStarted()
             return services
         }
     }
 
+
     private val log = Logging.getLogger(this.javaClass)
-    private var startMemory: Long? = null
-    private val shouldReportMemoryUsage = System.getProperty(SHOULD_REPORT_MEMORY_USAGE_PROPERTY) != null
+    private var buildHandler: KotlinGradleFinishBuildHandler? = null
 
     // There is function with the same name in BuildAdapter,
     // but it is called before any plugin can attach build listener
     fun buildStarted() {
-        startMemory = getUsedMemoryKb()
+        buildHandler = KotlinGradleFinishBuildHandler()
+        buildHandler!!.buildStart()
 
         TaskLoggers.clear()
         TaskExecutionResults.clear()
 
-        configureBuildReporter(gradle, log)
+        configureReporting(gradle)
     }
 
     override fun buildFinished(result: BuildResult) {
-        TaskLoggers.clear()
-        TaskExecutionResults.clear()
-
-        val gradle = result.gradle!!
-        GradleCompilerRunner.clearBuildModulesInfo()
-
-        val rootProject = gradle.rootProject
-        val sessionsDir = GradleCompilerRunner.sessionsDir(rootProject)
-        if (sessionsDir.exists()) {
-            val sessionFiles = sessionsDir.listFiles()
-
-            // it is expected that only one session file per build exists
-            // afaik is is not possible to run multiple gradle builds in one project since gradle locks some dirs
-            if (sessionFiles.size > 1) {
-                log.warn("w: Detected multiple Kotlin daemon sessions at ${sessionsDir.relativeToRoot(rootProject)}")
-            }
-            for (file in sessionFiles) {
-                file.delete()
-                log.kotlinDebug { DELETED_SESSION_FILE_PREFIX + file.relativeToRoot(rootProject) }
-            }
-        }
-
-        if (shouldReportMemoryUsage) {
-            val startMem = startMemory!!
-            val endMem = getUsedMemoryKb()!!
-
-            // the value reported here is not necessarily a leak, since it is calculated before collecting the plugin classes
-            // but on subsequent runs in the daemon it should be rather small, then the classes are actually reused by the daemon (see above)
-            log.lifecycle("[KOTLIN][PERF] Used memory after build: $endMem kb (difference since build start: ${"%+d".format(endMem - startMem)} kb)")
-        }
-
-        gradle.removeListener(this)
+        buildHandler!!.buildFinished(result.gradle!!)
         instance = null
         log.kotlinDebug(DISPOSE_MESSAGE)
     }
 
-    private fun getUsedMemoryKb(): Long? {
-        if (!shouldReportMemoryUsage) return null
-
-        log.lifecycle(FORCE_SYSTEM_GC_MESSAGE)
-        val gcCountBefore = getGcCount()
-        System.gc()
-        while (getGcCount() == gcCountBefore) {
-        }
-
-        val rt = Runtime.getRuntime()
-        return (rt.totalMemory() - rt.freeMemory()) / 1024
-    }
-
-    private fun getGcCount(): Long =
-        ManagementFactory.getGarbageCollectorMXBeans().sumByLong { max(0, it.collectionCount) }
 
     private val multipleProjectsHolder = KotlinPluginInMultipleProjectsHolder(
         trackPluginVersionsSeparately = true

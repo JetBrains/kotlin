@@ -7,23 +7,26 @@ package org.jetbrains.kotlin.findUsages
 
 import com.intellij.codeInsight.TargetElementUtil
 import com.intellij.testFramework.UsefulTestCase
+import org.jetbrains.kotlin.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 
 abstract class AbstractFindUsagesMultiModuleTest : AbstractMultiModuleTest() {
 
+    protected open val isFirPlugin: Boolean = false
+
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleFindUsages/"
 
-    protected fun doFindUsagesTest() {
-        val allFilesInProject = project.allKotlinFiles()
-        val mainFile = allFilesInProject.single { file ->
+    protected val mainFile: KtFile
+        get() = project.allKotlinFiles().single { file ->
             file.text.contains("// ")
         }
 
-
+    protected open fun doFindUsagesTest() {
         val virtualFile = mainFile.virtualFile!!
         configureByExistingFile(virtualFile)
 
@@ -40,10 +43,12 @@ abstract class AbstractFindUsagesMultiModuleTest : AbstractMultiModuleTest() {
 
         val rootPath = virtualFile.path.substringBeforeLast("/") + "/"
 
-        val caretElement = TargetElementUtil.findTargetElement(myEditor, TargetElementUtil.ELEMENT_NAME_ACCEPTED)
+        val caretElement = executeOnPooledThreadInReadAction {
+            TargetElementUtil.findTargetElement(myEditor, TargetElementUtil.ELEMENT_NAME_ACCEPTED)
+        }
         UsefulTestCase.assertInstanceOf(caretElement!!, caretElementClass)
 
         val options = parser?.parse(mainFileText, project)
-        findUsagesAndCheckResults(mainFileText, prefix, rootPath, caretElement, options, project, alwaysAppendFileName = true)
+        findUsagesAndCheckResults(mainFileText, prefix, rootPath, caretElement, options, project, alwaysAppendFileName = true, isFirPlugin = isFirPlugin)
     }
 }

@@ -6,18 +6,19 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.copyAnnotationsFrom
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
 
 internal val jvmDefaultConstructorPhase = makeIrFilePhase(
@@ -35,11 +36,14 @@ internal val jvmDefaultConstructorPhase = makeIrFilePhase(
 private class JvmDefaultConstructorLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
-        if (irClass.kind != ClassKind.CLASS || irClass.visibility == Visibilities.LOCAL || irClass.isInline || irClass.isInner)
+        if (irClass.kind != ClassKind.CLASS || irClass.visibility == DescriptorVisibilities.LOCAL || irClass.isInline || irClass.isInner)
             return
 
         val primaryConstructor = irClass.constructors.firstOrNull { it.isPrimary } ?: return
-        if (Visibilities.isPrivate(primaryConstructor.visibility))
+        if (DescriptorVisibilities.isPrivate(primaryConstructor.visibility))
+            return
+
+        if (primaryConstructor.hasMangledParameters)
             return
 
         if (primaryConstructor.valueParameters.isEmpty() || !primaryConstructor.valueParameters.all { it.hasDefaultValue() })
@@ -53,7 +57,7 @@ private class JvmDefaultConstructorLowering(val context: JvmBackendContext) : Cl
             visibility = primaryConstructor.visibility
         }.apply {
             val irBuilder = context.createIrBuilder(this.symbol, startOffset, endOffset)
-            annotations += primaryConstructor.annotations.map { it.deepCopyWithSymbols(this) }
+            copyAnnotationsFrom(primaryConstructor)
             body = irBuilder.irBlockBody {
                 +irDelegatingConstructorCall(primaryConstructor).apply {
                     passTypeArgumentsFrom(irClass)

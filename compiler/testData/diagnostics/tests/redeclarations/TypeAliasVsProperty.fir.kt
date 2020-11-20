@@ -1,13 +1,13 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 // FILE: file1.kt
-typealias Test = String
+<!REDECLARATION!>typealias Test = String<!>
 
-val Test = 42
+<!REDECLARATION!>val Test = 42<!>
 
 class Outer {
-    typealias Test = String
+    <!REDECLARATION!>typealias Test = String<!>
 
-    val Test = 42
+    <!REDECLARATION!>val Test = 42<!>
 }
 
 typealias Test2 = String

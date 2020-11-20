@@ -7,5 +7,5 @@ FILE: main.kt
     }
     public final fun main(): R|kotlin/Unit| {
         R|/K.K|<R|kotlin/Int|>(Int(0))
-        R|/JavaClass.JavaClass|<R|ft<ILT: 0, ILT: 0?>!|>(Int(0))
+        R|/JavaClass.JavaClass|<R|ft<kotlin/Int, kotlin/Int?>!|>(Int(0))
     }

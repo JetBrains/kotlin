@@ -189,7 +189,9 @@ abstract class ScriptClassRootsUpdater(
                 }
             }
 
-            lastSeen = updates.cache
+            val scriptClassRootsCache = updates.cache
+            ScriptCacheDependencies(scriptClassRootsCache).save(project)
+            lastSeen = scriptClassRootsCache
         } finally {
             synchronized(this) {
                 scheduledUpdate = null
@@ -203,7 +205,7 @@ abstract class ScriptClassRootsUpdater(
             val new = recreateRootsCache()
             if (cache.compareAndSet(old, new)) {
                 afterUpdate()
-                return new.diff(lastSeen)
+                return new.diff(project, lastSeen)
             }
         }
     }
@@ -237,7 +239,7 @@ abstract class ScriptClassRootsUpdater(
         if (!project.isOpen) return
 
         val openFiles = FileEditorManager.getInstance(project).allEditors.mapNotNull { it.file }
-        val openedScripts = openFiles.filter { filter(it) }
+        val openedScripts = openFiles.filter(filter)
 
         if (openedScripts.isEmpty()) return
 
@@ -245,6 +247,8 @@ abstract class ScriptClassRootsUpdater(
             if (project.isDisposed) return@launch
 
             openedScripts.forEach {
+                if (!it.isValid) return@forEach
+
                 PsiManager.getInstance(project).findFile(it)?.let { psiFile ->
                     if (psiFile is KtFile) {
                         DaemonCodeAnalyzer.getInstance(project).restart(psiFile)

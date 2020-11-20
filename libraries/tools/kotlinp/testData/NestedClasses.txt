@@ -29,7 +29,7 @@ public abstract interface A.B.C : kotlin/Any {
 public final companion object A.D : kotlin/Any {
 
   // signature: <init>()V
-  private /* primary */ constructor()
+  private constructor()
 
   // nested class: E
 
@@ -42,7 +42,7 @@ public final companion object A.D : kotlin/Any {
 public final enum class A.D.E : kotlin/Enum<A.D.E> {
 
   // signature: <init>(Ljava/lang/String;I)V
-  private /* primary */ constructor()
+  private constructor()
 
   E1,
 
@@ -55,7 +55,7 @@ public final enum class A.D.E : kotlin/Enum<A.D.E> {
 public sealed class A.D.F : kotlin/Any {
 
   // signature: <init>()V
-  private /* primary */ constructor()
+  private constructor()
 
   // nested class: G
 
@@ -68,7 +68,7 @@ public sealed class A.D.F : kotlin/Any {
 public final class A.D.F.G : A.D.F {
 
   // signature: <init>()V
-  public /* primary */ constructor()
+  public constructor()
 
   // module name: test-module
 }

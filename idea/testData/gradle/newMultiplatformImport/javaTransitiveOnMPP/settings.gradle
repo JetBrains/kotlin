@@ -2,5 +2,3 @@
 include('mpp-base')
 include('mpp')
 include('jvm')
-
-enableFeaturePreview('STABLE_PUBLISHING')

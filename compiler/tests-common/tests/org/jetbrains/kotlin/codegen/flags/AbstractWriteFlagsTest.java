@@ -21,12 +21,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.codegen.CodegenTestCase;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findListWithPrefixes;
 import static org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes;
@@ -56,7 +57,9 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
 
     @Override
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<? extends TestFile> files) throws Exception {
-        compile((List<TestFile>)files);
+        @SuppressWarnings("unchecked")
+        List<TestFile> testFiles = (List<TestFile>) files;
+        compile(testFiles);
 
         String fileText = FileUtil.loadFile(wholeFile, true);
 
@@ -89,8 +92,14 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
             assertEquals("Wrong object existence state: " + testedObject, isObjectExists, classVisitor.isExists());
 
             if (isObjectExists) {
-                assertEquals("Wrong access flag for " + testedObject + " \n" + outputFile.asText(),
-                             getExpectedFlags(testedObject.textData), classVisitor.getAccess());
+                int expected = getExpectedFlags(testedObject.textData);
+                int actual = classVisitor.getAccess();
+                if (expected != actual) {
+                    assertEquals(
+                            "Wrong access flag for " + testedObject + " \n" + outputFile.asText(),
+                            flagsToText(expected), flagsToText(actual)
+                    );
+                }
             }
         }
     }
@@ -178,20 +187,50 @@ public abstract class AbstractWriteFlagsTest extends CodegenTestCase {
         }
     }
 
+    private static String flagsToText(int flags) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(flags).append(" = ").append(String.format("0x%04x", flags)).append("\n");
+        for (int flag = 1; flag > 0; flag <<= 1) {
+            if ((flags & flag) != 0) {
+                String string = FLAG_TO_STRING.get(flag);
+                sb.append(string == null ? "unknown (" + flag + ")" : string).append("\n");
+            }
+        }
+        return sb.toString();
+    }
+
     private static int getExpectedFlags(String text) {
         int expectedAccess = 0;
-        Class<?> klass = Opcodes.class;
         List<String> flags = findListWithPrefixes(text, "// FLAGS: ");
         for (String flag : flags) {
             try {
-                Field field = klass.getDeclaredField(flag);
-                expectedAccess |= field.getInt(klass);
+                Field field = Opcodes.class.getDeclaredField(flag);
+                expectedAccess |= field.getInt(null);
             }
             catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new IllegalArgumentException("Cannot find " + flag + " field in Opcodes class", e);
             }
         }
         return expectedAccess;
+    }
+
+    private static final Map<Integer, String> FLAG_TO_STRING;
+
+    static {
+        Map<Integer, String> flagToString = new HashMap<>();
+        try {
+            for (Field field : Opcodes.class.getDeclaredFields()) {
+                String name = field.getName();
+                if (Modifier.isStatic(field.getModifiers()) && name.startsWith("ACC_")) {
+                    int value = field.getInt(null);
+                    String previous = flagToString.get(value);
+                    flagToString.put(value, previous == null ? name : previous + "/" + name);
+                }
+            }
+        } catch (IllegalAccessException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+        FLAG_TO_STRING = Collections.unmodifiableMap(flagToString);
     }
 
     private static class ClassFlagsVisitor extends TestClassVisitor {

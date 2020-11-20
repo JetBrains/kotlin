@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
+import org.jetbrains.kotlin.load.java.toDescriptorVisibility
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.*
@@ -174,7 +175,7 @@ abstract class LazyJavaScope(
             effectiveSignature.valueParameters,
             effectiveSignature.returnType,
             Modality.convertFromFlags(method.isAbstract, !method.isFinal),
-            method.visibility,
+            method.visibility.toDescriptorVisibility(),
             if (effectiveSignature.receiverType != null)
                 mapOf(JavaMethodDescriptor.ORIGINAL_VALUE_PARAMETER_FOR_EXTENSION_RECEIVER to valueParameters.descriptors.first())
             else
@@ -321,7 +322,7 @@ abstract class LazyJavaScope(
         val annotations = c.resolveAnnotations(field)
 
         return JavaPropertyDescriptor.create(
-            ownerDescriptor, annotations, Modality.FINAL, field.visibility, isVar, field.name,
+            ownerDescriptor, annotations, Modality.FINAL, field.visibility.toDescriptorVisibility(), isVar, field.name,
             c.components.sourceElementFactory.source(field), /* isConst = */ field.isFinalStatic
         )
     }

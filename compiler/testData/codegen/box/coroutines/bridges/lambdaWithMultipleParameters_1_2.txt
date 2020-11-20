@@ -1,12 +1,13 @@
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1$1 {
     // source: 'lambdaWithMultipleParameters.kt'
-    private synthetic field p$0: java.lang.String
-    private synthetic field p$1: long
-    private synthetic field p$2: long
-    private synthetic field p$3: long
-    private synthetic field p$4: long
-    private synthetic field p$5: long
+    enclosing method LambdaWithMultipleParametersKt$box$1.doResume(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;
+    private synthetic field J$0: long
+    private synthetic field J$1: long
+    private synthetic field J$2: long
+    private synthetic field J$3: long
+    private synthetic field J$4: long
+    private synthetic field L$0: java.lang.Object
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1$1
     method <init>(p0: kotlin.coroutines.experimental.Continuation): void
@@ -18,6 +19,7 @@ final class LambdaWithMultipleParametersKt$box$1$1 {
 @kotlin.Metadata
 final class LambdaWithMultipleParametersKt$box$1 {
     // source: 'lambdaWithMultipleParameters.kt'
+    enclosing method LambdaWithMultipleParametersKt.box()Ljava/lang/String;
     synthetic final field $res: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     inner (anonymous) class LambdaWithMultipleParametersKt$box$1

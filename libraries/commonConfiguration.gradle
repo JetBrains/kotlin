@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 ext.configureJavaOnlyJvm6Project = { Project project ->
     project.tasks.withType(JavaCompile) {
         sourceCompatibility = 1.6
@@ -53,7 +55,8 @@ ext.compileJava9Sources = { Project project, String moduleName, Collection<FileC
 
             options.compilerArgs = [
                     '--module-path', modulePath.asPath,
-                    '--patch-module', "$moduleName=${moduleFiles.asPath}"
+                    '--patch-module', "$moduleName=${moduleFiles.asPath}",
+                    '-Xlint:-requires-transitive-automatic' // suppress automatic module transitive dependencies in kotlin.test
             ]
 
             classpath = files()
@@ -136,6 +139,7 @@ ext.configureLegacyPublishing = { Project project ->
             signing {
                 required { (project.properties["signingRequired"] ?: project.isSonatypeRelease) }
                 sign configurations.archives
+                useGpgCmd()
             }
 
             signArchives {
@@ -188,6 +192,19 @@ ext.configureLegacyPublishing = { Project project ->
         }
 
         task publish(dependsOn: uploadArchives)
+    }
+}
+
+ext.configureJvmIrBackend = { Project project ->
+    project.tasks.withType(KotlinCompile.class) { task ->
+        task.kotlinOptions {
+            if (project.kotlinBuildProperties.useIRForLibraries) {
+                useIR = true
+                freeCompilerArgs += ["-Xir-binary-with-stable-abi"]
+            } else {
+                useIR = false
+            }
+        }
     }
 }
 

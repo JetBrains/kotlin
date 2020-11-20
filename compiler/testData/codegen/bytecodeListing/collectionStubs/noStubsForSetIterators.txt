@@ -1,0 +1,33 @@
+@kotlin.Metadata
+public final class MySet$MySetIterator {
+    // source: 'noStubsForSetIterators.kt'
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.util.List): void
+    public method hasNext(): boolean
+    public method next(): java.lang.Object
+    public method remove(): void
+    public final inner class MySet$MySetIterator
+}
+
+@kotlin.Metadata
+public final class MySet {
+    // source: 'noStubsForSetIterators.kt'
+    private final @org.jetbrains.annotations.NotNull field elements: java.util.ArrayList
+    public method <init>(): void
+    public method add(p0: java.lang.Object): boolean
+    public method addAll(p0: java.util.Collection): boolean
+    public method clear(): void
+    public method contains(p0: java.lang.Object): boolean
+    public method containsAll(@org.jetbrains.annotations.NotNull p0: java.util.Collection): boolean
+    public final @org.jetbrains.annotations.NotNull method getElements(): java.util.ArrayList
+    public method getSize(): int
+    public method isEmpty(): boolean
+    public @org.jetbrains.annotations.NotNull method iterator(): MySet$MySetIterator
+    public synthetic bridge method iterator(): java.util.Iterator
+    public method remove(p0: java.lang.Object): boolean
+    public method removeAll(p0: java.util.Collection): boolean
+    public method retainAll(p0: java.util.Collection): boolean
+    public bridge final method size(): int
+    public method toArray(): java.lang.Object[]
+    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
+    public final inner class MySet$MySetIterator
+}

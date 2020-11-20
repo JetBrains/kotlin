@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: SPREAD_OPERATOR
 // !LANGUAGE: +NewInference
 
 fun sum(vararg args: Int): Int {

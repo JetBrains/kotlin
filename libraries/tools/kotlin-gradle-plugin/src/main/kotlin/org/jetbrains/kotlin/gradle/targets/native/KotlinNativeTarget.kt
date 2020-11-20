@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeHostTestRun
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeSimulatorTestRun
 import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
@@ -43,7 +44,7 @@ open class KotlinNativeTarget @Inject constructor(
 
     private val hostSpecificMetadataJarTaskName get() = disambiguateName("MetadataJar")
 
-    private val hostSpecificMetadataElementsConfigurationName get() = disambiguateName("MetadataElements")
+    internal val hostSpecificMetadataElementsConfigurationName get() = disambiguateName("MetadataElements")
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         if (!project.isKotlinGranularMetadataEnabled)
@@ -59,14 +60,12 @@ open class KotlinNativeTarget @Inject constructor(
                 .intersect(mainCompilation.allKotlinSourceSets)
 
             if (hostSpecificSourceSets.isNotEmpty()) {
-                val hostSpecificMetadataJar = project.locateOrRegisterTask<Jar>(hostSpecificMetadataJarTaskName) {
-                    it.archiveAppendix.set(project.provider { disambiguationClassifier.orEmpty().toLowerCase() })
-                    it.archiveClassifier.set("metadata")
-                }
-                project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, hostSpecificMetadataJar)
+                val hostSpecificMetadataJar = project.locateOrRegisterTask<Jar>(hostSpecificMetadataJarTaskName) { metadataJar ->
+                    metadataJar.archiveAppendix.set(project.provider { disambiguationClassifier.orEmpty().toLowerCase() })
+                    metadataJar.archiveClassifier.set("metadata")
 
-                hostSpecificMetadataJar.configure { metadataJar ->
-                    metadataJar.onlyIf { this@KotlinNativeTarget.publishable }
+                    val publishable = this@KotlinNativeTarget.publishable
+                    metadataJar.onlyIf { publishable }
 
                     val metadataCompilations = hostSpecificSourceSets.mapNotNull {
                         project.getMetadataCompilationForSourceSet(it)
@@ -79,34 +78,31 @@ open class KotlinNativeTarget @Inject constructor(
                         metadataJar.dependsOn(it.output.classesDirs)
                     }
                 }
+                project.artifacts.add(Dependency.ARCHIVES_CONFIGURATION, hostSpecificMetadataJar)
 
-                val metadataConfiguration = project.configurations.findByName(hostSpecificMetadataElementsConfigurationName)
-                    ?: project.configurations.create(hostSpecificMetadataElementsConfigurationName) { configuration ->
-                        configuration.isCanBeConsumed = false
-                        configuration.isCanBeResolved = false
-                        project.artifacts.add(configuration.name, hostSpecificMetadataJar) { artifact ->
-                            artifact.classifier = "metadata"
-                        }
-                    }
-
-                val metadataAttributes =
-                    HierarchyAttributeContainer(project.configurations.getByName(apiElementsConfigurationName).attributes).apply {
-                        attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-                    }
+                val metadataConfiguration = project.configurations.getByName(hostSpecificMetadataElementsConfigurationName)
+                project.artifacts.add(metadataConfiguration.name, hostSpecificMetadataJar) { artifact ->
+                    artifact.classifier = "metadata"
+                }
 
                 mutableUsageContexts.add(
                     DefaultKotlinUsageContext(
                         mainCompilation,
                         project.usageByName(javaApiUsageForMavenScoping()),
                         metadataConfiguration.name,
-                        overrideConfigurationAttributes = metadataAttributes,
                         includeIntoProjectStructureMetadata = false
                     )
                 )
             }
         }
 
-        setOf(createKotlinVariant(targetName, mainCompilation, mutableUsageContexts))
+        val result = createKotlinVariant(targetName, mainCompilation, mutableUsageContexts)
+
+        result.sourcesArtifacts = setOf(
+            sourcesJarArtifact(mainCompilation, targetName, dashSeparatedName(targetName.toLowerCase()))
+        )
+
+        setOf(result)
     }
 
     override val binaries =

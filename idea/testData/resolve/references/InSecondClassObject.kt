@@ -1,3 +1,4 @@
+// IGNORE_FIR
 package test
 
 class A

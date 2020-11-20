@@ -1,6 +1,7 @@
 @kotlin.Metadata
 final class OomInReturnUnitKt$test$1 {
     // source: 'oomInReturnUnit.kt'
+    enclosing method OomInReturnUnitKt.test(Lkotlin/coroutines/experimental/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
     synthetic field data: java.lang.Object
     synthetic field exception: java.lang.Throwable

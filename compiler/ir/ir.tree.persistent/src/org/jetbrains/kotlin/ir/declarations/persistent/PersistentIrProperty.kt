@@ -18,29 +18,43 @@ package org.jetbrains.kotlin.ir.declarations.persistent
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.PropertyCarrier
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 internal abstract class PersistentIrPropertyCommon(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     origin: IrDeclarationOrigin,
     override val name: Name,
-    override var visibility: Visibility,
+    override var visibility: DescriptorVisibility,
     override val isVar: Boolean,
     override val isConst: Boolean,
     override val isLateinit: Boolean,
     override val isDelegated: Boolean,
     override val isExternal: Boolean,
     override val isExpect: Boolean,
-) : PersistentIrDeclarationBase<PropertyCarrier>(startOffset, endOffset, origin),
-    IrProperty,
+    override val containerSource: DeserializedContainerSource?,
+) : IrProperty(),
+    PersistentIrDeclarationBase<PropertyCarrier>,
     PropertyCarrier {
+
+    override var lastModified: Int = stageController.currentStage
+    override var loweredUpTo: Int = stageController.currentStage
+    override var values: Array<Carrier>? = null
+    override val createdOn: Int = stageController.currentStage
+
+    override var parentField: IrDeclarationParent? = null
+    override var originField: IrDeclarationOrigin = origin
+    override var removedOn: Int = Int.MAX_VALUE
+    override var annotationsField: List<IrConstructorCall> = emptyList()
 
     override var backingFieldField: IrField? = null
 
@@ -81,6 +95,17 @@ internal abstract class PersistentIrPropertyCommon(
                 setCarrier().metadataField = v
             }
         }
+
+    @Suppress("LeakingThis")
+    override var attributeOwnerIdField: IrAttributeContainer = this
+
+    override var attributeOwnerId: IrAttributeContainer
+        get() = getCarrier().attributeOwnerIdField
+        set(v) {
+            if (attributeOwnerId !== v) {
+                setCarrier().attributeOwnerIdField = v
+            }
+        }
 }
 
 internal class PersistentIrProperty(
@@ -89,7 +114,7 @@ internal class PersistentIrProperty(
     origin: IrDeclarationOrigin,
     override val symbol: IrPropertySymbol,
     name: Name,
-    visibility: Visibility,
+    visibility: DescriptorVisibility,
     override val modality: Modality,
     isVar: Boolean,
     isConst: Boolean,
@@ -98,8 +123,10 @@ internal class PersistentIrProperty(
     isExternal: Boolean,
     isExpect: Boolean = false,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    containerSource: DeserializedContainerSource?,
 ) : PersistentIrPropertyCommon(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
+    containerSource,
 ) {
     init {
         symbol.bind(this)
@@ -115,7 +142,7 @@ internal class PersistentIrFakeOverrideProperty(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     name: Name,
-    visibility: Visibility,
+    visibility: DescriptorVisibility,
     override var modality: Modality,
     isVar: Boolean,
     isConst: Boolean,
@@ -125,7 +152,8 @@ internal class PersistentIrFakeOverrideProperty(
     isExpect: Boolean,
 ) : PersistentIrPropertyCommon(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit,
-    isDelegated, isExternal, isExpect
+    isDelegated, isExternal, isExpect,
+    containerSource = null,
 ), IrFakeOverrideProperty {
     override val isFakeOverride: Boolean
         get() = true

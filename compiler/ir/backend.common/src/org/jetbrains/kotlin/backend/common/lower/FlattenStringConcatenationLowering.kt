@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -72,8 +72,8 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
         // The version for nullable strings has FqName kotlin.plus, the version for non-nullable strings
         // is a member function of kotlin.String (with FqName kotlin.String.plus)
         private val PARENT_NAMES = setOf(
-            KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
-            KotlinBuiltIns.FQ_NAMES.string.toSafe()
+            StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
+            StandardNames.FqNames.string.toSafe()
         )
 
         /** @return true if the given expression is a call to [String.plus] */
@@ -108,7 +108,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
 
                 return dispatchReceiverParameter == null
                         && extensionReceiverParameter?.type?.isNullableAny() == true
-                        && fqNameWhenAvailable?.parent() == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+                        && fqNameWhenAvailable?.parent() == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
             }
 
         /** @return true if the given expression is a call to [toString] */

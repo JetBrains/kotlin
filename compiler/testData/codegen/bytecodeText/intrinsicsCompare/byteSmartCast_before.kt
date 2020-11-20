@@ -1,4 +1,5 @@
 // !LANGUAGE: -ProperIeee754Comparisons
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun equals3(a: Byte?, b: Byte?) = a != null && b != null && a == b
 

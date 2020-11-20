@@ -16,26 +16,24 @@
 
 package org.jetbrains.kotlin.resolve.diagnostics
 
-import org.jetbrains.kotlin.diagnostics.Diagnostic
-import java.util.ArrayList
 import com.intellij.openapi.util.CompositeModificationTracker
-import com.intellij.util.CachedValueImpl
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.util.CachedValueImpl
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 
-class MutableDiagnosticsWithSuppression @JvmOverloads constructor(
-    private val bindingContext: BindingContext,
-    private val delegateDiagnostics: Diagnostics = Diagnostics.EMPTY
+class MutableDiagnosticsWithSuppression(
+    private val suppressCache: KotlinSuppressCache,
+    private val delegateDiagnostics: Diagnostics,
 ) : Diagnostics {
     private val diagnosticList = ArrayList<Diagnostic>()
 
     //NOTE: CachedValuesManager is not used because it requires Project passed to this object
-    private val cache = CachedValueImpl(CachedValueProvider {
+    private val cache = CachedValueImpl {
         val allDiagnostics = delegateDiagnostics.noSuppression().all() + diagnosticList
-        CachedValueProvider.Result(DiagnosticsWithSuppression(bindingContext, allDiagnostics), modificationTracker)
-    })
+        CachedValueProvider.Result(DiagnosticsWithSuppression(suppressCache, allDiagnostics), modificationTracker)
+    }
 
     private fun readonlyView(): DiagnosticsWithSuppression = cache.value!!
 

@@ -598,12 +598,30 @@ public class Int private constructor() : Number(), Comparable<Int> {
      /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Long): LongRange
 
-    /** Shifts this value left by the [bitCount] number of bits. */
+    /**
+     * Shifts this value left by the [bitCount] number of bits.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     public infix fun shl(bitCount: Int): Int
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit. */
+
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     public infix fun shr(bitCount: Int): Int
-    /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
+
+    /**
+     * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
+     *
+     * Note that only the five lowest-order bits of the [bitCount] are used as the shift distance.
+     * The shift distance actually used is therefore always in the range `0..31`.
+     */
     public infix fun ushr(bitCount: Int): Int
+
     /** Performs a bitwise AND operation between the two values. */
     public infix fun and(other: Int): Int
     /** Performs a bitwise OR operation between the two values. */
@@ -676,6 +694,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `float`.
  */
 public class Float private constructor() : Number(), Comparable<Float> {
+    @Suppress("DIVISION_BY_ZERO")
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
@@ -893,6 +912,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `double`.
  */
 public class Double private constructor() : Number(), Comparable<Double> {
+    @Suppress("DIVISION_BY_ZERO")
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.

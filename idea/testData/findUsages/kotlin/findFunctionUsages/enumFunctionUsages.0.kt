@@ -23,3 +23,6 @@ enum class E {
 
     open fun <caret>foo(n: Int): Int = n
 }
+
+// DISABLE-ERRORS
+// FIR_IGNORE

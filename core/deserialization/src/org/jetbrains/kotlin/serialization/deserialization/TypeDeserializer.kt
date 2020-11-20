@@ -92,8 +92,12 @@ class TypeDeserializer(
         val declarationDescriptor = constructor.declarationDescriptor
 
         val simpleType = when {
-            expandTypeAliases && declarationDescriptor is TypeAliasDescriptor ->
-                with(KotlinTypeFactory) { declarationDescriptor.computeExpandedType(arguments) }
+            expandTypeAliases && declarationDescriptor is TypeAliasDescriptor -> {
+                val expandedType = with(KotlinTypeFactory) { declarationDescriptor.computeExpandedType(arguments) }
+                expandedType
+                    .makeNullableAsSpecified(expandedType.isNullable() || proto.nullable)
+                    .replaceAnnotations(Annotations.create(annotations + expandedType.annotations))
+            }
             Flags.SUSPEND_TYPE.get(proto.flags) ->
                 createSuspendFunctionType(annotations, constructor, arguments, proto.nullable)
             else ->

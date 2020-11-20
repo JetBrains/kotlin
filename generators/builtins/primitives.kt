@@ -31,6 +31,19 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             "and" to "Performs a bitwise AND operation between the two values.",
             "or" to "Performs a bitwise OR operation between the two values.",
             "xor" to "Performs a bitwise XOR operation between the two values.")
+
+
+        internal fun shiftOperatorsDocDetail(kind: PrimitiveType): String {
+            val bitsUsed = when (kind) {
+                PrimitiveType.INT -> "five"
+                PrimitiveType.LONG -> "six"
+                else -> throw IllegalArgumentException("Bit shift operation is not implemented for $kind")
+            }
+            return """ 
+                * Note that only the $bitsUsed lowest-order bits of the [bitCount] are used as the shift distance.
+                * The shift distance actually used is therefore always in the range `0..${kind.bitSize - 1}`.
+                """
+        }
     }
     private val typeDescriptions: Map<PrimitiveType, String> = mapOf(
             PrimitiveType.DOUBLE to "double-precision 64-bit IEEE 754 floating point number",
@@ -124,7 +137,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             generateRangeTo(kind)
 
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG) {
-                generateBitShiftOperators(className)
+                generateBitShiftOperators(kind)
             }
             if (kind == PrimitiveType.INT || kind == PrimitiveType.LONG /* || kind == PrimitiveType.BYTE || kind == PrimitiveType.SHORT */) {
                 generateBitwiseOperators(className, since = if (kind == PrimitiveType.BYTE || kind == PrimitiveType.SHORT) "1.1" else null)
@@ -202,10 +215,17 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
         out.println()
     }
 
-    private fun generateBitShiftOperators(className: String) {
+    private fun generateBitShiftOperators(kind: PrimitiveType) {
+        val className = kind.capitalized
+        val detail = shiftOperatorsDocDetail(kind)
         for ((name, doc) in shiftOperators) {
-            out.println("    /** $doc */")
+            out.println("    /**")
+            out.println("     * $doc")
+            out.println("     *")
+            out.println(detail.replaceIndent("     "))
+            out.println("     */")
             out.println("    public infix fun $name(bitCount: Int): $className")
+            out.println()
         }
     }
     private fun generateBitwiseOperators(className: String, since: String?) {

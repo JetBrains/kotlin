@@ -1,0 +1,9 @@
+// "Create class 'Bar'" "true"
+// DISABLE-ERRORS
+class Foo
+
+val bar = Bar(Foo())
+
+class Bar(foo: Foo) {
+
+}

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.name.Name
 
@@ -35,7 +36,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
     private fun lower(irScript: IrScript): List<IrDeclaration> {
         val (startOffset, endOffset) = getFunctionBodyOffsets(irScript)
 
-        val initializeStatements = irScript.declarations
+        val initializeStatements = irScript.statements
             .filterIsInstance<IrProperty>()
             .mapNotNull { it.backingField }
             .filter { it.initializer != null }
@@ -47,7 +48,10 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
             it.body = it.factory.createBlockBody(
                 startOffset,
                 endOffset,
-                initializeStatements.map { (field, expression) -> createIrSetField(field, expression) }
+                initializeStatements.let {
+                    if (irScript.resultProperty == null || initializeStatements.lastOrNull()?.first?.correspondingPropertySymbol != irScript.resultProperty) it
+                    else it.dropLast(1)
+                }.map { (field, expression) -> createIrSetField(field, expression) }
             )
         }
 
@@ -55,14 +59,25 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
             it.body = it.factory.createBlockBody(
                 startOffset,
                 endOffset,
-                irScript.statements.prepareForEvaluateScriptFunction(it)
+                irScript.statements.filter { it !is IrDeclaration }
+                    .let {
+                        val lastInitializer = initializeStatements.lastOrNull()
+                        if (lastInitializer == null || irScript.resultProperty == null
+                            || lastInitializer.first.correspondingPropertySymbol != irScript.resultProperty) {
+                            it
+                        } else {
+                            it + lastInitializer.second
+                        }
+                    }.prepareForEvaluateScriptFunction(it)
             )
         }
 
         with(irScript) {
-            declarations += initializeScriptFunction
-            declarations += evaluateScriptFunction
-            statements.clear()
+            statements.removeIf { it !is IrDeclaration }
+            statements += initializeScriptFunction
+            initializeScriptFunction.patchDeclarationParents(this)
+            statements += evaluateScriptFunction
+            evaluateScriptFunction.patchDeclarationParents(this)
             statements += createCall(initializeScriptFunction)
             statements += createCall(evaluateScriptFunction)
         }
@@ -91,7 +106,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
             this.endOffset = endOffset
             this.origin = SCRIPT_FUNCTION
             this.name = Name.identifier(name)
-            this.visibility = Visibilities.PRIVATE
+            this.visibility = DescriptorVisibilities.PRIVATE
             this.returnType = returnType
         }.also {
             it.parent = irScript
@@ -121,7 +136,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
         )
     }
 
-    private fun createCall(function: IrFunction): IrCall {
+    private fun createCall(function: IrSimpleFunction): IrCall {
         return IrCallImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, function.returnType,
             function.symbol,

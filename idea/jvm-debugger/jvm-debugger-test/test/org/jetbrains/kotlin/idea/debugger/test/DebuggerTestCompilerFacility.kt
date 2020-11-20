@@ -10,7 +10,6 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
-import com.intellij.openapi.roots.libraries.ui.OrderRoot
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -21,21 +20,25 @@ import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.findMainClass
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenTestUtil
-import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
+import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinBaseTest.TestFile
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 
-class DebuggerTestCompilerFacility(files: List<TestFile>, private val jvmTarget: JvmTarget) {
+class DebuggerTestCompilerFacility(
+    files: List<TestFile>,
+    private val jvmTarget: JvmTarget,
+    private val useIrBackend: Boolean
+) {
     private val kotlinStdlibPath = ForTestCompileRuntime.runtimeJarForTests().absolutePath
 
     private val mainFiles: TestFilesByLanguage
@@ -86,11 +89,17 @@ class DebuggerTestCompilerFacility(files: List<TestFile>, private val jvmTarget:
         if (kotlinStdlibInMavenArtifacts() == null)
             mavenArtifacts.add(kotlinStdlibPath)
 
+        val options = mutableListOf("-jvm-target", jvmTarget.description)
+
+        if (useIrBackend) {
+            options.add("-Xuse-ir")
+        }
+
         if (kotlin.isNotEmpty()) {
             MockLibraryUtil.compileKotlin(
                 srcDir.absolutePath,
                 classesDir,
-                listOf("-jvm-target", jvmTarget.description),
+                options,
                 *(mavenArtifacts.toTypedArray())
             )
         }
@@ -157,18 +166,14 @@ class DebuggerTestCompilerFacility(files: List<TestFile>, private val jvmTarget:
         val analysisResult = resolutionFacade.analyzeWithAllCompilerChecks(files)
         analysisResult.throwIfError()
 
-        val moduleDescriptor = resolutionFacade.moduleDescriptor
-        val bindingContext = analysisResult.bindingContext
-
         val configuration = CompilerConfiguration()
         configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
+        configuration.put(JVMConfigurationKeys.IR, useIrBackend)
+        configuration.put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, true)
 
-        val state = GenerationState.Builder(project, ClassBuilderFactories.BINARIES, moduleDescriptor, bindingContext, files, configuration)
-            .generateDeclaredClassFilter(GenerationState.GenerateClassFilter.GENERATE_ALL)
-            .codegenFactory(DefaultCodegenFactory)
-            .build()
-
-        KotlinCodegenFacade.compileCorrectFiles(state)
+        val state = GenerationUtils.generateFiles(project, files, configuration, ClassBuilderFactories.BINARIES, analysisResult) {
+            generateDeclaredClassFilter(GenerationState.GenerateClassFilter.GENERATE_ALL)
+        }
 
         val extraDiagnostics = state.collectedExtraJvmDiagnostics
         if (!extraDiagnostics.isEmpty()) {
@@ -178,7 +183,8 @@ class DebuggerTestCompilerFacility(files: List<TestFile>, private val jvmTarget:
 
         state.factory.writeAllTo(classesDir)
 
-        return findMainClass(state, files)?.asString() ?: error("Cannot find main class name")
+        return findMainClass(analysisResult.bindingContext, resolutionFacade.getLanguageVersionSettings(), files)?.asString()
+            ?: error("Cannot find main class name")
     }
 
     private fun getClasspath(module: Module): List<String> {

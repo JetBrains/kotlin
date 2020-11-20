@@ -8,10 +8,8 @@ buildscript {
         val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
         if (cacheRedirectorEnabled) {
             maven("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlinx")
-            maven("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-dev")
         } else {
             maven("https://dl.bintray.com/kotlin/kotlinx")
-            maven("https://dl.bintray.com/kotlin/kotlin-dev")
         }
     }
     dependencies {
@@ -30,10 +28,8 @@ repositories {
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
     if (cacheRedirectorEnabled) {
         maven("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlinx")
-        maven("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-dev")
-    } else {
+   } else {
         maven("https://dl.bintray.com/kotlin/kotlinx")
-        maven("https://dl.bintray.com/kotlin/kotlin-dev")
     }
 }
 
@@ -44,9 +40,7 @@ dependencies {
     compile(project(":compiler:cli"))
     compile(intellijCoreDep()) { includeJars("intellij-core") }
     compile(jpsStandalone()) { includeJars("jps-model") }
-    Platform[192].orHigher {
-        compile(intellijPluginDep("java"))
-    }
+    compile(intellijPluginDep("java"))
     compile(intellijDep()) { includeIntellijCoreJarDependencies(project) }
     compile("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:$benchmarks_version")
 }

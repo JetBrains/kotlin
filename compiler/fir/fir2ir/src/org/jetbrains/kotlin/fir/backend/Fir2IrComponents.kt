@@ -18,6 +18,7 @@ interface Fir2IrComponents {
     val scopeSession: ScopeSession
     val symbolTable: SymbolTable
     val irBuiltIns: IrBuiltIns
+    val builtIns: Fir2IrBuiltIns
     val irFactory: IrFactory
     val classifierStorage: Fir2IrClassifierStorage
     val declarationStorage: Fir2IrDeclarationStorage
@@ -25,4 +26,5 @@ interface Fir2IrComponents {
     val signatureComposer: Fir2IrSignatureComposer
     val callGenerator: CallAndReferenceGenerator
     val fakeOverrideGenerator: FakeOverrideGenerator
+    val visibilityConverter: Fir2IrVisibilityConverter
 }

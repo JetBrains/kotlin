@@ -17,13 +17,15 @@ import java.nio.file.Path
 
 interface FileIR : BuildSystemIR, IrsOwner
 
-data class BuildFileIR(
+data class BuildFileIR constructor(
     val name: String,
     val directoryPath: Path,
     val modules: ModulesStructureIR,
     val fromModules: List<Module>,
     val pom: PomIR,
-    override val irs: PersistentList<BuildSystemIR>
+    val isRoot: Boolean,
+    val renderPomIr: Boolean,
+    override val irs: PersistentList<BuildSystemIR>,
 ) : FileIR {
     override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): BuildFileIR = copy(irs = irs)
 
@@ -46,8 +48,7 @@ data class BuildFileIR(
         is GradlePrinter -> {
             distinctImportsOrNull()?.let { imports ->
                 imports.listNl()
-                nl()
-                nl()
+                nl(lineBreaks = 2)
             }
             irsOfTypeOrNull<BuildScriptIR>()?.let { buildScriptIrs ->
                 sectionCall("buildscript", needIndent = true) {
@@ -56,15 +57,20 @@ data class BuildFileIR(
                     sectionCall("dependencies", buildScriptIrs.filterIsInstance<BuildScriptDependencyIR>())
                 }
             }
-            sectionCall("plugins", irsOfType<BuildSystemPluginIR>()); nlIndented()
-            pom.render(this); nl()
-
-            sectionCall("repositories", distinctRepositories())
-            nl()
+            sectionCall("plugins", irsOfType<BuildSystemPluginIR>()); nl(lineBreaks = 1)
+            if (renderPomIr) {
+                nl()
+                pom.render(this)
+            }
+            distinctRepositories().takeIf { it.isNotEmpty() }?.let { repositories ->
+                nl()
+                sectionCall("repositories", repositories)
+                nl()
+            }
             modules.render(this)
             irsOfTypeOrNull<FreeIR>()?.let { freeIrs ->
                 nl()
-                freeIrs.listNl()
+                freeIrs.listNl(lineBreaks = 2)
             }.ignore()
         }
         is MavenPrinter -> pom {
@@ -132,6 +138,7 @@ sealed class ModulesStructureIR : BuildSystemIR, IrsOwner {
 
 data class MultiplatformModulesStructureIR(
     val targets: List<BuildSystemIR>,
+    val multiplatformModule: FakeMultiplatformModuleIR,
     override val modules: List<MultiplatformModuleIR>,
     override val irs: PersistentList<BuildSystemIR>
 ) : GradleIR, ModulesStructureIR() {
@@ -141,6 +148,7 @@ data class MultiplatformModulesStructureIR(
     override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): MultiplatformModulesStructureIR = copy(irs = irs)
 
     override fun GradlePrinter.renderGradle() {
+        nl()
         sectionCall("kotlin") {
             targets.filterNot {
                 it.safeAs<DefaultTargetConfigurationIR>()?.targetAccess?.type == ModuleSubType.common
@@ -150,6 +158,7 @@ data class MultiplatformModulesStructureIR(
                 modules.listNl()
             }
         }
+        nl()
     }
 }
 
@@ -165,6 +174,13 @@ fun MultiplatformModulesStructureIR.updateTargets(
     return copy(targets = newTargets)
 }
 
+fun MultiplatformModulesStructureIR.updateSourceSets(
+    updater: (ModuleIR) -> ModuleIR
+): MultiplatformModulesStructureIR {
+    val newModules = modules.map { updater(it) as MultiplatformModuleIR }
+    return copy(modules = newModules)
+}
+
 data class SingleplatformModulesStructureWithSingleModuleIR(
     val module: SingleplatformModuleIR,
     override val irs: PersistentList<BuildSystemIR>
@@ -178,7 +194,9 @@ data class SingleplatformModulesStructureWithSingleModuleIR(
         copy(module = modules.single() as SingleplatformModuleIR)
 
     override fun BuildFilePrinter.render() {
+        nl()
         module.render(this)
+        nl()
     }
 }
 

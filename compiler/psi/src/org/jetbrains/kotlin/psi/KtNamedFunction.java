@@ -26,6 +26,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.util.AstLoadingFilter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.KtNodeTypes;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub;
@@ -243,6 +244,11 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public boolean shouldChangeModificationCount(PsiElement place) {
         // Suppress Java check for out-of-block
         return false;
+    }
+
+    @Override
+    public KtContractEffectList getContractDescription() {
+        return findChildByType(KtNodeTypes.CONTRACT_EFFECT_LIST);
     }
 
     public boolean mayHaveContract() {

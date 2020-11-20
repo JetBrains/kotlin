@@ -1,0 +1,298 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.deserialization
+
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
+import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.ProtoBuf.Annotation.Argument.Value.Type.*
+import org.jetbrains.kotlin.metadata.deserialization.Flags
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.metadata.deserialization.TypeTable
+import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
+import org.jetbrains.kotlin.serialization.deserialization.getName
+
+abstract class AbstractAnnotationDeserializer(
+    private val session: FirSession
+) {
+    protected val protocol = BuiltInSerializerProtocol
+
+    open fun inheritAnnotationInfo(parent: AbstractAnnotationDeserializer) {
+    }
+
+    enum class CallableKind {
+        PROPERTY,
+        PROPERTY_GETTER,
+        PROPERTY_SETTER,
+        OTHERS
+    }
+
+    fun loadClassAnnotations(classProto: ProtoBuf.Class, nameResolver: NameResolver): List<FirAnnotationCall> {
+        if (!Flags.HAS_ANNOTATIONS.get(classProto.flags)) return emptyList()
+        val annotations = classProto.getExtension(protocol.classAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
+    }
+
+    fun loadTypeAliasAnnotations(aliasProto: ProtoBuf.TypeAlias, nameResolver: NameResolver): List<FirAnnotationCall> {
+        if (!Flags.HAS_ANNOTATIONS.get(aliasProto.flags)) return emptyList()
+        return aliasProto.annotationList.map { deserializeAnnotation(it, nameResolver) }
+    }
+
+    open fun loadFunctionAnnotations(
+        containerSource: DeserializedContainerSource?,
+        functionProto: ProtoBuf.Function,
+        nameResolver: NameResolver,
+        typeTable: TypeTable
+    ): List<FirAnnotationCall> {
+        if (!Flags.HAS_ANNOTATIONS.get(functionProto.flags)) return emptyList()
+        val annotations = functionProto.getExtension(protocol.functionAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
+    }
+
+    open fun loadPropertyAnnotations(
+        containerSource: DeserializedContainerSource?,
+        propertyProto: ProtoBuf.Property,
+        nameResolver: NameResolver,
+        typeTable: TypeTable
+    ): List<FirAnnotationCall> {
+        if (!Flags.HAS_ANNOTATIONS.get(propertyProto.flags)) return emptyList()
+        val annotations = propertyProto.getExtension(protocol.propertyAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(it, nameResolver, AnnotationUseSiteTarget.PROPERTY) }
+    }
+
+    open fun loadPropertyBackingFieldAnnotations(
+        containerSource: DeserializedContainerSource?,
+        propertyProto: ProtoBuf.Property,
+        nameResolver: NameResolver,
+        typeTable: TypeTable
+    ): List<FirAnnotationCall> {
+        return emptyList()
+    }
+
+    open fun loadPropertyDelegatedFieldAnnotations(
+        containerSource: DeserializedContainerSource?,
+        propertyProto: ProtoBuf.Property,
+        nameResolver: NameResolver,
+        typeTable: TypeTable
+    ): List<FirAnnotationCall> {
+        return emptyList()
+    }
+
+    open fun loadPropertyGetterAnnotations(
+        containerSource: DeserializedContainerSource?,
+        propertyProto: ProtoBuf.Property,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        getterFlags: Int
+    ): List<FirAnnotationCall> {
+        if (!Flags.HAS_ANNOTATIONS.get(getterFlags)) return emptyList()
+        val annotations = propertyProto.getExtension(protocol.propertyGetterAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(it, nameResolver, AnnotationUseSiteTarget.PROPERTY_GETTER) }
+    }
+
+    open fun loadPropertySetterAnnotations(
+        containerSource: DeserializedContainerSource?,
+        propertyProto: ProtoBuf.Property,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        setterFlags: Int
+    ): List<FirAnnotationCall> {
+        if (!Flags.HAS_ANNOTATIONS.get(setterFlags)) return emptyList()
+        val annotations = propertyProto.getExtension(protocol.propertySetterAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(it, nameResolver, AnnotationUseSiteTarget.PROPERTY_SETTER) }
+    }
+
+    open fun loadConstructorAnnotations(
+        containerSource: DeserializedContainerSource?,
+        constructorProto: ProtoBuf.Constructor,
+        nameResolver: NameResolver,
+        typeTable: TypeTable
+    ): List<FirAnnotationCall> {
+        if (!Flags.HAS_ANNOTATIONS.get(constructorProto.flags)) return emptyList()
+        val annotations = constructorProto.getExtension(protocol.constructorAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
+    }
+
+    open fun loadValueParameterAnnotations(
+        containerSource: DeserializedContainerSource?,
+        callableProto: MessageLite,
+        valueParameterProto: ProtoBuf.ValueParameter,
+        classProto: ProtoBuf.Class?,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        kind: CallableKind,
+        parameterIndex: Int
+    ): List<FirAnnotationCall> {
+        if (!Flags.HAS_ANNOTATIONS.get(valueParameterProto.flags)) return emptyList()
+        val annotations = valueParameterProto.getExtension(protocol.parameterAnnotation).orEmpty()
+        return annotations.map { deserializeAnnotation(it, nameResolver) }
+    }
+
+    open fun loadExtensionReceiverParameterAnnotations(
+        containerSource: DeserializedContainerSource?,
+        callableProto: MessageLite,
+        nameResolver: NameResolver,
+        typeTable: TypeTable,
+        kind: CallableKind
+    ): List<FirAnnotationCall> {
+        return emptyList()
+    }
+
+    abstract fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotationCall>
+
+    fun deserializeAnnotation(
+        proto: ProtoBuf.Annotation,
+        nameResolver: NameResolver,
+        useSiteTarget: AnnotationUseSiteTarget? = null
+    ): FirAnnotationCall {
+        val classId = nameResolver.getClassId(proto.id)
+        val lookupTag = ConeClassLikeLookupTagImpl(classId)
+        val symbol = lookupTag.toSymbol(session)
+        val firAnnotationClass = (symbol as? FirRegularClassSymbol)?.fir
+
+        var arguments = emptyList<FirExpression>()
+        if (proto.argumentCount != 0 && firAnnotationClass?.classKind == ClassKind.ANNOTATION_CLASS) {
+            val classScope = firAnnotationClass.defaultType()
+                .scope(session, ScopeSession(), FakeOverrideTypeCalculator.DoNothing)
+                ?: error("Null scope for $classId")
+
+            val constructor =
+                classScope.getDeclaredConstructors().singleOrNull()?.fir ?: error("No single constructor found for $classId")
+
+
+            val parameterByName = constructor.valueParameters.associateBy { it.name }
+
+            arguments = proto.argumentList.mapNotNull {
+                val name = nameResolver.getName(it.nameId)
+                val parameter = parameterByName[name] ?: return@mapNotNull null
+                val value = resolveValue(parameter.returnTypeRef.coneType, it.value, nameResolver)
+                buildNamedArgumentExpression {
+                    expression = value
+                    isSpread = false
+                    this.name = name
+                }
+            }
+        }
+
+        return buildAnnotationCall {
+            annotationTypeRef = symbol?.let {
+                buildResolvedTypeRef {
+                    type = it.constructType(emptyArray(), isNullable = false)
+                }
+            } ?: buildErrorTypeRef { diagnostic = ConeUnresolvedSymbolError(classId) }
+            argumentList = buildArgumentList {
+                this.arguments += arguments
+            }
+            useSiteTarget?.let {
+                this.useSiteTarget = it
+            }
+            calleeReference = FirReferencePlaceholderForResolvedAnnotations
+        }
+    }
+
+    fun resolveValue(
+        expectedType: ConeKotlinType, value: ProtoBuf.Annotation.Argument.Value, nameResolver: NameResolver
+    ): FirExpression {
+        val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
+
+        return when (value.type) {
+            BYTE -> {
+                val kind = if (isUnsigned) FirConstKind.UnsignedByte else FirConstKind.Byte
+                const(kind, value.intValue.toByte())
+            }
+
+            SHORT -> {
+                val kind = if (isUnsigned) FirConstKind.UnsignedShort else FirConstKind.Short
+                const(kind, value.intValue.toShort())
+            }
+
+            INT -> {
+                val kind = if (isUnsigned) FirConstKind.UnsignedInt else FirConstKind.Int
+                const(kind, value.intValue.toInt())
+            }
+
+            LONG -> {
+                val kind = if (isUnsigned) FirConstKind.UnsignedLong else FirConstKind.Long
+                const(kind, value.intValue)
+            }
+
+            CHAR -> const(FirConstKind.Char, value.intValue.toChar())
+            FLOAT -> const(FirConstKind.Float, value.floatValue)
+            DOUBLE -> const(FirConstKind.Double, value.doubleValue)
+            BOOLEAN -> const(FirConstKind.Boolean, (value.intValue != 0L))
+            STRING -> const(FirConstKind.String, nameResolver.getString(value.stringValue))
+            ANNOTATION -> deserializeAnnotation(value.annotation, nameResolver)
+            CLASS -> buildGetClassCall {
+                val classId = nameResolver.getClassId(value.classId)
+                val lookupTag = ConeClassLikeLookupTagImpl(classId)
+                val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
+                argumentList = buildUnaryArgumentList(
+                    buildClassReferenceExpression {
+                        classTypeRef = buildResolvedTypeRef {
+                            type = referencedType
+                        }
+                    }
+                )
+            }
+            ENUM -> buildFunctionCall {
+                val classId = nameResolver.getClassId(value.classId)
+                val entryName = nameResolver.getName(value.enumValueId)
+
+                val enumLookupTag = ConeClassLikeLookupTagImpl(classId)
+                val enumSymbol = enumLookupTag.toSymbol(session)
+                val firClass = enumSymbol?.fir as? FirRegularClass
+                val enumEntries = firClass?.collectEnumEntries() ?: emptyList()
+                val enumEntrySymbol = enumEntries.find { it.name == entryName }
+                calleeReference = enumEntrySymbol?.let {
+                    buildResolvedNamedReference {
+                        name = entryName
+                        resolvedSymbol = it.symbol
+                    }
+                } ?: buildErrorNamedReference {
+                    diagnostic =
+                        ConeSimpleDiagnostic("Strange deserialized enum value: $classId.$entryName", DiagnosticKind.DeserializationError)
+                }
+            }
+            ARRAY -> {
+                val expectedArrayElementType = expectedType.arrayElementType() ?: session.builtinTypes.anyType.type
+                buildArrayOfCall {
+                    argumentList = buildArgumentList {
+                        value.arrayElementList.mapTo(arguments) { resolveValue(expectedArrayElementType, it, nameResolver) }
+                    }
+                    typeRef = buildResolvedTypeRef {
+                        type = expectedArrayElementType.createArrayType()
+                    }
+                }
+            }
+
+            else -> error("Unsupported annotation argument type: ${value.type} (expected $expectedType)")
+        }
+    }
+
+    private fun <T> const(kind: FirConstKind<T>, value: T) = buildConstExpression(null, kind, value)
+}

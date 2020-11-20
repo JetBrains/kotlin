@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 class Foo(val a: Int, b: Int) {
     val e: Int
         get() = <caret>

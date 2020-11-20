@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.completion.smart.ExpectedInfoMatch
 import org.jetbrains.kotlin.idea.completion.smart.SmartCompletionItemPriority
@@ -86,6 +87,8 @@ object KeywordValues {
         if (callTypeAndReceiver is CallTypeAndReceiver.CALLABLE_REFERENCE && callTypeAndReceiver.receiver != null) {
             val qualifierType = bindingContext.get(BindingContext.DOUBLE_COLON_LHS, callTypeAndReceiver.receiver!!)?.type
             if (qualifierType != null) {
+
+                @OptIn(FrontendInternals::class)
                 val kClassDescriptor = resolutionFacade.getFrontendService(ReflectionTypes::class.java).kClass
                 val classLiteralType =
                     KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kClassDescriptor, listOf(TypeProjectionImpl(qualifierType)))

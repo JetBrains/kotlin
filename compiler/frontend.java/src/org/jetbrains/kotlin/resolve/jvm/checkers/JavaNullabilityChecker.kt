@@ -55,7 +55,6 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
         if (isWrongTypeParameterNullabilityForSubtyping(expressionType, c) { dataFlowValue }) {
             c.trace.report(ErrorsJvm.NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER.on(expression, c.expectedType, expressionType))
         }
-
         doCheckType(
             expressionType,
             c.expectedType,
@@ -156,7 +155,13 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
     private fun isNullableTypeAgainstNotNullTypeParameter(
         subType: KotlinType,
         superType: KotlinType
-    ) = superType is NotNullTypeVariable && subType.isNullable()
+    ): Boolean {
+        if (superType !is NotNullTypeVariable) return false
+        return !AbstractNullabilityChecker.isSubtypeOfAny(
+            ClassicTypeCheckerContext(errorTypeEqualsToAnything = true) as AbstractTypeCheckerContext,
+            subType
+        )
+    }
 
     override fun checkReceiver(
         receiverParameter: ReceiverParameterDescriptor,

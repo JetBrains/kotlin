@@ -20,11 +20,6 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
     fun isProvidedByDefault(unresolved: UnresolvedLibrary): Boolean = false
 }
 
-interface SearchPathResolverWithAttributes<L : KotlinLibrary> : SearchPathResolver<L> {
-    val knownAbiVersions: List<KotlinAbiVersion>?
-    val knownCompilerVersions: List<CompilerVersion>?
-}
-
 // This is a simple library resolver that only cares for file names.
 abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     repositories: List<String>,
@@ -132,22 +127,28 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         }
     }
 
-    override fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean): L {
-        val givenPath = unresolved.path
-        try {
-            val fileSequence = resolutionSequence(givenPath)
-            val matching = fileSequence
-                .filterOutPre_1_4_libraries()
-                .flatMap { libraryComponentBuilder(it, isDefaultLink).asSequence() }
-                .map { it.takeIf { libraryMatch(it, unresolved) } }
-                .filterNotNull()
+    // Default libraries could be resolved several times during findLibraries and resolveDependencies.
+    // Store already resolved libraries.
+    private val resolvedLibraries = HashMap<UnresolvedLibrary, L>()
 
-            return matching.firstOrNull() ?: run {
-                logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+    override fun resolve(unresolved: UnresolvedLibrary, isDefaultLink: Boolean): L {
+        return resolvedLibraries.getOrPut(unresolved) {
+            val givenPath = unresolved.path
+            try {
+                val fileSequence = resolutionSequence(givenPath)
+                val matching = fileSequence
+                        .filterOutPre_1_4_libraries()
+                        .flatMap { libraryComponentBuilder(it, isDefaultLink).asSequence() }
+                        .map { it.takeIf { libraryMatch(it, unresolved) } }
+                        .filterNotNull()
+
+                matching.firstOrNull() ?: run {
+                    logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+                }
+            } catch (e: Throwable) {
+                logger.error("Failed to resolve Kotlin library: $givenPath")
+                throw e
             }
-        } catch (e: Throwable) {
-            logger.error("Failed to resolve Kotlin library: $givenPath")
-            throw e
         }
     }
 
@@ -209,15 +210,13 @@ fun CompilerVersion.compatible(other: CompilerVersion) =
 abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
     repositories: List<String>,
     directLibs: List<String>,
-    override val knownAbiVersions: List<KotlinAbiVersion>?,
-    override val knownCompilerVersions: List<CompilerVersion>?,
     distributionKlib: String?,
     localKotlinDir: String?,
     skipCurrentDir: Boolean,
     override val logger: Logger,
     private val knownIrProviders: List<String>
 ) : KotlinLibrarySearchPathResolver<L>(repositories, directLibs, distributionKlib, localKotlinDir, skipCurrentDir, logger),
-    SearchPathResolverWithAttributes<L> {
+    SearchPathResolver<L> {
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean {
         val candidatePath = candidate.libraryFile.absolutePath
 
@@ -225,13 +224,8 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
         val candidateAbiVersion = candidate.versions.abiVersion
         val candidateLibraryVersion = candidate.versions.libraryVersion
 
-
-        val abiVersionMatch = candidateAbiVersion != null &&
-                knownAbiVersions != null &&
-                knownAbiVersions!!.contains(candidateAbiVersion)
-
-        if (!abiVersionMatch) {
-            logger.warning("skipping $candidatePath. The abi versions don't match. Expected '${knownAbiVersions}', found '${candidateAbiVersion}'. The library produced by ${candidateCompilerVersion} compiler")
+        if (candidateAbiVersion?.isCompatible() != true) {
+            logger.warning("skipping $candidatePath. Incompatible abi version. The current default is '${KotlinAbiVersion.CURRENT}', found '${candidateAbiVersion}'. The library produced by ${candidateCompilerVersion} compiler")
             return false
         }
 
@@ -256,11 +250,10 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
 
 class SingleKlibComponentResolver(
     klibFile: String,
-    knownAbiVersions: List<KotlinAbiVersion>?,
     logger: Logger,
     knownIrProviders: List<String>
 ) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
-    emptyList(), listOf(klibFile), knownAbiVersions, emptyList(),
+    emptyList(), listOf(klibFile),
     null, null, false, logger, knownIrProviders
 ) {
     override fun libraryComponentBuilder(file: File, isDefault: Boolean) = createKotlinLibraryComponents(file, isDefault)
@@ -281,7 +274,7 @@ class SingleKlibComponentResolver(
 object CompilerSingleFileKlibResolveStrategy : SingleFileKlibResolveStrategy {
     override fun resolve(libraryFile: File, logger: Logger) =
         SingleKlibComponentResolver(
-            libraryFile.absolutePath, listOf(KotlinAbiVersion.CURRENT), logger, emptyList()
+            libraryFile.absolutePath, logger, emptyList()
         ).resolve(libraryFile.absolutePath)
 }
 
@@ -297,6 +290,6 @@ class CompilerSingleFileKlibResolveAllowingIrProvidersStrategy(
 ) : SingleFileKlibResolveStrategy {
     override fun resolve(libraryFile: File, logger: Logger) =
         SingleKlibComponentResolver(
-            libraryFile.absolutePath, listOf(KotlinAbiVersion.CURRENT), logger, knownIrProviders
+            libraryFile.absolutePath, logger, knownIrProviders
         ).resolve(libraryFile.absolutePath)
 }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
 import kotlin.Pair;
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -49,6 +49,7 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<? extends TestFile> files) {
         boolean isIgnored = InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
         doTwoFileTest((List<TestFile>) files, !isIgnored);
@@ -100,10 +101,21 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     }
 
     @NotNull
+    protected TargetBackend getBackendA() {
+        return getBackend();
+    }
+
+    @NotNull
+    protected TargetBackend getBackendB() {
+        return getBackend();
+    }
+
+    @NotNull
     private ClassFileFactory compileA(@NotNull TestFile testFile, List<TestFile> files) {
         Disposable compileDisposable = createDisposable("compileA");
         CompilerConfiguration configuration = createConfiguration(
-                ConfigurationKind.ALL, getTestJdkKind(files), Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
+                ConfigurationKind.ALL, getTestJdkKind(files), getBackendA(),
+                Collections.singletonList(KotlinTestUtils.getAnnotationsJar()),
                 Collections.emptyList(), Collections.singletonList(testFile)
         );
 
@@ -125,8 +137,9 @@ public abstract class AbstractCompileKotlinAgainstKotlinTest extends CodegenTest
     private ClassFileFactory compileB(@NotNull TestFile testFile, List<TestFile> files) {
         String commonHeader = StringsKt.substringBefore(files.get(0).content, "FILE:", "");
         CompilerConfiguration configuration = createConfiguration(
-                ConfigurationKind.ALL, getTestJdkKind(files), Lists.newArrayList(KotlinTestUtils.getAnnotationsJar(), aDir),
-                Collections.emptyList(), Lists.newArrayList(testFile, new TestFile("header", commonHeader))
+                ConfigurationKind.ALL, getTestJdkKind(files), getBackendB(),
+                Arrays.asList(KotlinTestUtils.getAnnotationsJar(), aDir),
+                Collections.emptyList(), Arrays.asList(testFile, new TestFile("header", commonHeader))
         );
 
         configuration.put(CommonConfigurationKeys.MODULE_NAME, "b");

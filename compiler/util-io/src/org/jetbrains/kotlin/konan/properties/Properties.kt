@@ -69,3 +69,71 @@ fun Properties.keepOnlyDefaultProfiles() {
     // TODO: it actually affects only resolution made in :dependencies,
     // that's why we assume that 'default' profile comes first (and check this above).
 }
+
+
+/**
+ * Wraps [propertyList] with resolving mechanism. See [String.resolveValue].
+ */
+fun Properties.resolvablePropertyList(
+    key: String, suffix: String? = null, escapeInQuotes: Boolean = false,
+    visitedProperties: MutableSet<String> = mutableSetOf()
+): List<String> = propertyList(key, suffix, escapeInQuotes).flatMap {
+    // We need to create a copy of a visitedProperties to avoid collisions
+    // between different elements of the list.
+    it.resolveValue(this, visitedProperties.toMutableSet())
+}
+
+/**
+ * Wraps [propertyString] with resolving mechanism. See [String.resolveValue].
+ */
+fun Properties.resolvablePropertyString(
+    key: String, suffix: String? = null,
+    visitedProperties: MutableSet<String> = mutableSetOf()
+): String? = propertyString(key, suffix)
+    ?.split(' ')
+    ?.flatMap { it.resolveValue(this, visitedProperties) }
+    ?.joinToString(" ")
+
+/**
+ * Adds trivial symbol resolving mechanism to properties files.
+ *
+ * Given the following properties file:
+ *
+ *      key0 = value1 value2
+ *      key1 = value3 $key0
+ *      key2 = $key1
+ *
+ * "$key1".resolveValue(properties) will return List("value3", "value1", "value2")
+ */
+private fun String.resolveValue(properties: Properties, visitedProperties: MutableSet<String> = mutableSetOf()): List<String> =
+    when {
+        contains("$") -> {
+            val prefix = this.substringBefore('$', missingDelimiterValue = "")
+            val withoutSigil = this.substringAfter('$')
+            val property = withoutSigil.substringBefore('/')
+            val relative = withoutSigil.substringAfter('/', missingDelimiterValue = "")
+            // Keep track of visited properties to avoid running in circles.
+            if (!visitedProperties.add(property)) {
+                error("Circular dependency: ${visitedProperties.joinToString()}")
+            }
+            val substitutionResult = properties.resolvablePropertyList(property, visitedProperties = visitedProperties)
+            when {
+                substitutionResult.size > 1 -> when {
+                    relative.isNotEmpty() ->
+                        error("Cannot append `/$relative` to multiple values: ${substitutionResult.joinToString()}")
+                    prefix.isNotEmpty() ->
+                        error("Cannot add prefix `$prefix` to multiple values: ${substitutionResult.joinToString()}")
+                    else -> substitutionResult
+                }
+                else -> substitutionResult.map {
+                    // Avoid repeated '/' at the end.
+                    if (relative.isNotEmpty()) {
+                        "$prefix${it.dropLastWhile { it == '/' }}/$relative"
+                    } else {
+                        "$prefix$it"
+                    }
+                }
+            }
+        }
+        else -> listOf(this)
+    }

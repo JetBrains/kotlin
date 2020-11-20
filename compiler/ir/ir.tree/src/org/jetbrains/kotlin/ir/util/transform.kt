@@ -17,13 +17,22 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-inline fun <reified T : IrElement> MutableList<T>.transform(transformation: (T) -> IrElement) {
-    forEachIndexed { i, item ->
-        set(i, transformation(item) as T)
+inline fun <reified T : IrElement> MutableList<T>.transformInPlace(transformation: (T) -> IrElement) {
+    for (i in 0 until size) {
+        set(i, transformation(get(i)) as T)
+    }
+}
+
+fun <T : IrElement, D> MutableList<T>.transformInPlace(transformer: IrElementTransformer<D>, data: D) {
+    for (i in 0 until size) {
+        // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
+        @Suppress("UNCHECKED_CAST")
+        set(i, (get(i) as IrElementBase).transform(transformer, data) as T)
     }
 }
 
@@ -37,19 +46,42 @@ inline fun <T> MutableList<T>.transformFlat(transformation: (T) -> List<T>?) {
     while (i < size) {
         val item = get(i)
 
-        val transformed = transformation(item)
+        i = replaceInPlace(transformation(item), i)
+    }
+}
 
-        when (transformed?.size) {
-            null -> i++
-            0 -> removeAt(i)
-            1 -> set(i++, transformed.first())
-            else -> {
-                addAll(i, transformed)
-                i += transformed.size
-                removeAt(i)
-            }
+/**
+ * Transforms a subset of a mutable list in place.
+ * Each element `it` that has a type S is replaced with a result of `transformation(it)`,
+ * `null` means "keep existing element" (to avoid creating excessive singleton lists).
+ */
+inline fun <T, reified S : T> MutableList<T>.transformSubsetFlat(transformation: (S) -> List<S>?) {
+    var i = 0
+    while (i < size) {
+        val item = get(i)
+
+        if (item !is S) {
+            i++
+            continue
+        }
+
+        i = replaceInPlace(transformation(item), i)
+    }
+}
+
+@PublishedApi internal fun <T> MutableList<T>.replaceInPlace(transformed: List<T>?, atIndex: Int): Int {
+    var i = atIndex
+    when (transformed?.size) {
+        null -> i++
+        0 -> removeAt(i)
+        1 -> set(i++, transformed.first())
+        else -> {
+            addAll(i, transformed)
+            i += transformed.size
+            removeAt(i)
         }
     }
+    return i
 }
 
 /**

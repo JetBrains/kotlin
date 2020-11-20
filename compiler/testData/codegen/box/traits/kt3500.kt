@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 interface BK {
     fun foo(): String = 10.toString()
 }

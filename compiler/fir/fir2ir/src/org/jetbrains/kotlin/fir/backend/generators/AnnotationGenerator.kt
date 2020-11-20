@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.Fir2IrVisitor
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.hasMetaAnnotationUseSiteTargets
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.isPropertyField
@@ -26,32 +27,39 @@ import org.jetbrains.kotlin.ir.util.isSetter
  */
 internal class AnnotationGenerator(private val components: Fir2IrComponents) : Fir2IrComponents by components {
 
-    fun generate(irContainer: IrMutableAnnotationContainer, firContainer: FirAnnotationContainer) {
-        irContainer.annotations = firContainer.annotations.mapNotNull {
+    fun List<FirAnnotationCall>.toIrAnnotations(): List<IrConstructorCall> =
+        mapNotNull {
             callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
         }
+
+    fun generate(irContainer: IrMutableAnnotationContainer, firContainer: FirAnnotationContainer) {
+        irContainer.annotations = firContainer.annotations.toIrAnnotations()
     }
 
     fun generate(irValueParameter: IrValueParameter, firValueParameter: FirValueParameter, isInConstructor: Boolean) {
         irValueParameter.annotations +=
             firValueParameter.annotations
                 .filter {
+                    // TODO: for `null` use-site, refer to targets on the meta annotation
                     it.useSiteTarget == null || !isInConstructor || it.useSiteTarget == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
                 }
-                .mapNotNull {
-                    callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
-                }
+                .toIrAnnotations()
     }
+
+    private fun FirAnnotationCall.targetsField(): Boolean =
+        // Check if the annotation has a field-targeting meta annotation, e.g., @Target(FIELD)
+        hasMetaAnnotationUseSiteTargets(session, AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD)
 
     fun generate(irProperty: IrProperty, property: FirProperty) {
         irProperty.annotations +=
             property.annotations
                 .filter {
-                    it.useSiteTarget == null || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY
+                    it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY ||
+                            // NB: annotation with null use-site should be landed on the property (ahead of field),
+                            //   unless it has FIELD target on the meta annotation, like @Target(FIELD)
+                            (it.useSiteTarget == null && !it.targetsField())
                 }
-                .mapNotNull {
-                    callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
-                }
+                .toIrAnnotations()
     }
 
     fun generate(irField: IrField, property: FirProperty) {
@@ -62,11 +70,10 @@ internal class AnnotationGenerator(private val components: Fir2IrComponents) : F
             property.annotations
                 .filter {
                     it.useSiteTarget == AnnotationUseSiteTarget.FIELD ||
-                            it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD
+                            it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD ||
+                            (it.useSiteTarget == null && it.targetsField())
                 }
-                .mapNotNull {
-                    callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
-                }
+                .toIrAnnotations()
     }
 
     fun generate(propertyAccessor: IrFunction, property: FirProperty) {
@@ -79,18 +86,14 @@ internal class AnnotationGenerator(private val components: Fir2IrComponents) : F
                     .filter {
                         it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER
                     }
-                    .mapNotNull {
-                        callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
-                    }
+                    .toIrAnnotations()
             propertyAccessor.valueParameters.singleOrNull()?.annotations =
                 propertyAccessor.valueParameters.singleOrNull()?.annotations?.plus(
                     property.annotations
                         .filter {
                             it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER
                         }
-                        .mapNotNull {
-                            callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
-                        }
+                        .toIrAnnotations()
                 )!!
         } else {
             propertyAccessor.annotations +=
@@ -98,9 +101,7 @@ internal class AnnotationGenerator(private val components: Fir2IrComponents) : F
                     .filter {
                         it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER
                     }
-                    .mapNotNull {
-                        callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
-                    }
+                    .toIrAnnotations()
         }
         propertyAccessor.extensionReceiverParameter?.annotations =
             propertyAccessor.extensionReceiverParameter?.annotations?.plus(
@@ -108,9 +109,7 @@ internal class AnnotationGenerator(private val components: Fir2IrComponents) : F
                     .filter {
                         it.useSiteTarget == AnnotationUseSiteTarget.RECEIVER
                     }
-                    .mapNotNull {
-                        callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
-                    }
+                    .toIrAnnotations()
             )!!
     }
 }

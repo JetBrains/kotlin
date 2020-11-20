@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.ir.symbols
 
 import org.jetbrains.kotlin.descriptors.*
@@ -13,10 +18,8 @@ abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner,
     override val descriptor: D get() = delegate.descriptor
 
     override val isBound: Boolean get() = delegate.isBound
-    override val isPublicApi: Boolean
-        get() = delegate.isPublicApi
 
-    override val signature: IdSignature
+    override val signature: IdSignature?
         get() = delegate.signature
 
     override fun bind(owner: B) = delegate.bind(owner)

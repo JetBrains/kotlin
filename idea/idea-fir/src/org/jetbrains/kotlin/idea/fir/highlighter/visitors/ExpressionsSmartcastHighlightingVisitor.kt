@@ -16,8 +16,8 @@ internal class ExpressionsSmartcastHighlightingVisitor(
     analysisSession: KtAnalysisSession,
     holder: AnnotationHolder
 ) : FirAfterResolveHighlightingVisitor(analysisSession, holder) {
-    override fun visitExpression(expression: KtExpression) {
-        analysisSession.getImplicitReceiverSmartCasts(expression).forEach { (types, kind) ->
+    override fun visitExpression(expression: KtExpression) = with(analysisSession) {
+        expression.getImplicitReceiverSmartCasts().forEach { (types, kind) ->
             val receiverName = when (kind) {
                 ImplicitReceiverSmartcastKind.EXTENSION -> KotlinIdeaAnalysisBundle.message("extension.implicit.receiver")
                 ImplicitReceiverSmartcastKind.DISPATCH -> KotlinIdeaAnalysisBundle.message("implicit.receiver")
@@ -34,7 +34,7 @@ internal class ExpressionsSmartcastHighlightingVisitor(
                 ).textAttributes = org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingColors.SMART_CAST_RECEIVER
             }
         }
-        analysisSession.getSmartCastedToTypes(expression)?.forEach { type ->
+        expression.getSmartCasts()?.forEach { type ->
             createInfoAnnotation(
                 getSmartCastTarget(expression),
                 KotlinIdeaAnalysisBundle.message(

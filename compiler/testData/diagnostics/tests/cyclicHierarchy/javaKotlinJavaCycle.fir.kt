@@ -6,7 +6,7 @@ interface A extends C {
 
 // FILE: B.kt
 
-interface B : A {
+interface B : <!EXPOSED_SUPER_INTERFACE!>A<!> {
     fun bar()
 }
 

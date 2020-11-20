@@ -89,8 +89,10 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
                 performanceManager.notifyCompilationFinished()
                 if (arguments.reportPerf) {
-                    performanceManager.getMeasurementResults()
-                        .forEach { it -> configuration.get(MESSAGE_COLLECTOR_KEY)!!.report(INFO, "PERF: " + it.render(), null) }
+                    collector.report(INFO, "PERF: " + performanceManager.getTargetInfo())
+                    for (measurement in performanceManager.getMeasurementResults()) {
+                        collector.report(INFO, "PERF: " + measurement.render(), null)
+                    }
                 }
 
                 if (arguments.dumpPerf != null) {

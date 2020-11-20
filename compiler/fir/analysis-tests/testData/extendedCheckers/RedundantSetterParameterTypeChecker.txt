@@ -1,0 +1,40 @@
+FILE: RedundantSetterParameterTypeChecker.kt
+    @R|kotlin/annotation/Target|(vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)) public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final var x: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(1)
+        }
+        public set(@R|Ann|() x: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+    public final var x: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+        public set(param: R|kotlin/String|): R|kotlin/Unit| {
+            F|/x| = <strcat>(R|<local>/param|.R|kotlin/Any.toString|(), String( ))
+        }
+    public final class My : R|kotlin/Any| {
+        public constructor(): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var y: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+            public set(param: R|kotlin/Int|): R|kotlin/Unit| {
+                this@R|/My|.F|/My.y| = R|<local>/param|.R|kotlin/Int.minus|(Int(1))
+            }
+
+        public final var z: R|kotlin/Double| = Double(3.14)
+            public get(): R|kotlin/Double|
+            private set(value: R|kotlin/Double|): R|kotlin/Unit|
+
+        public final var w: R|kotlin/Boolean| = Boolean(true)
+            public get(): R|kotlin/Boolean|
+            public set(param: R|kotlin/Boolean|): R|kotlin/Unit| {
+                this@R|/My|.F|/My.w| = R|<local>/param|.R|kotlin/Boolean.not|()
+            }
+
+    }

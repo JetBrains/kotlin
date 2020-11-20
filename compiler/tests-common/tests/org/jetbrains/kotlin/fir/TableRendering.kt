@@ -140,6 +140,7 @@ inline class TableTimeUnitConversion(val value: Double) {
 infix fun Long.from(from: TableTimeUnit) = TableTimeUnitConversion(this / from.nsMultiplier)
 
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun RTableContext.RTableRowContext.timeCell(
     time: Long,
     outputUnit: TableTimeUnit = TableTimeUnit.MS,

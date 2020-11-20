@@ -6,22 +6,22 @@ FILE fqName:<root> fileName:/enhancedNullability.kt
     BLOCK_BODY
       CALL 'public final fun use (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         s: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public open fun notNullString (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+          CALL 'public open fun notNullString (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
   FUN name:testLocalVal visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:local type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public open fun notNullString (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+          CALL 'public open fun notNullString (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
   FUN name:testReturnValue visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testReturnValue (): kotlin.String declared in <root>'
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public open fun notNullString (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+          CALL 'public open fun notNullString (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
   PROPERTY name:testGlobalVal visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:testGlobalVal type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public open fun notNullString (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+          CALL 'public open fun notNullString (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testGlobalVal> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:testGlobalVal visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -33,21 +33,21 @@ FILE fqName:<root> fileName:/enhancedNullability.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testGlobalValGetter> (): kotlin.String declared in <root>'
           TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-            CALL 'public open fun notNullString (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+            CALL 'public open fun notNullString (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
   FUN name:testJUse visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      CALL 'public open fun use (s: kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-        s: CALL 'public open fun nullString (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
-      CALL 'public open fun use (s: kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-        s: CALL 'public open fun notNullString (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+      CALL 'public open fun use (s: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+        s: CALL 'public open fun nullString (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
+      CALL 'public open fun use (s: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+        s: CALL 'public open fun notNullString (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
   FUN name:testLocalVarUse visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR name:ns type:kotlin.String? [val]
-        CALL 'public open fun nullString (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
-      CALL 'public open fun use (s: kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
-        s: GET_VAR 'val ns: kotlin.String? [val] declared in <root>.testLocalVarUse' type=kotlin.String? origin=null
+      VAR name:ns type:@[FlexibleNullability] kotlin.String? [val]
+        CALL 'public open fun nullString (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
+      CALL 'public open fun use (s: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+        s: GET_VAR 'val ns: @[FlexibleNullability] kotlin.String? [val] declared in <root>.testLocalVarUse' type=@[FlexibleNullability] kotlin.String? origin=null
       VAR name:nns type:kotlin.String [val]
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public open fun notNullString (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
-      CALL 'public open fun use (s: kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+          CALL 'public open fun notNullString (): @[EnhancedNullability] kotlin.String declared in <root>.J' type=@[EnhancedNullability] kotlin.String origin=null
+      CALL 'public open fun use (s: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
         s: GET_VAR 'val nns: kotlin.String [val] declared in <root>.testLocalVarUse' type=kotlin.String origin=null

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -145,6 +145,9 @@ abstract class KotlinNativeTest : KotlinTest() {
             testNegativeGradleFilter: Set<String>,
             userArgs: List<String>
         ): List<String> = mutableListOf<String>().also {
+            // during debug from IDE executable is switched and special arguments are added
+            // via Gradle task manipulation; these arguments are expected to precede test settings
+            it.addAll(userArgs)
 
             if (checkExitCode) {
                 // Avoid returning a non-zero exit code in case of failed tests.
@@ -162,8 +165,6 @@ abstract class KotlinNativeTest : KotlinTest() {
             if (testNegativeGradleFilter.isNotEmpty()) {
                 it.add("--ktest_negative_gradle_filter=${testNegativeGradleFilter.joinToString(",")}")
             }
-
-            it.addAll(userArgs)
         }
     }
 }

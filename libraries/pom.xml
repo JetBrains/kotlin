@@ -42,7 +42,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project-root>../../..</project-root>
 
-        <junit-version>4.11</junit-version>
+        <junit-version>4.13.1</junit-version>
         <pegdown.version>1.1.0</pegdown.version>
         <surefire-version>2.16</surefire-version>
         <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
@@ -243,7 +243,7 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.4</version>
+                        <version>1.6</version>
                         <configuration>
                             <passphrase>${kotlin.key.passphrase}</passphrase>
                             <keyname>${kotlin.key.name}</keyname>
@@ -256,6 +256,12 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <gpgArguments>
+                                        <arg>--pinentry-mode</arg>
+                                        <arg>loopback</arg>
+                                    </gpgArguments>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

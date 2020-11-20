@@ -1,0 +1,45 @@
+FILE: explicitDelegationCallRequired.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(z: R|kotlin/String|): R|A| {
+            this<R|A|>(Int(10))
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public constructor(z: R|kotlin/String|): R|B| {
+            this<R|B|>()
+        }
+
+    }
+    public final class C : R|A| {
+        public constructor(): R|C| {
+            super<R|A|>()
+        }
+
+        public constructor(z: R|kotlin/String|): R|C| {
+            this<R|C|>()
+        }
+
+    }
+    public final class D : R|A| {
+        public constructor(): R|D| {
+            super<R|A|>(Int(20))
+        }
+
+        public constructor(x: R|kotlin/Int|): R|D| {
+            super<R|A|>()
+        }
+
+        public constructor(z: R|kotlin/String|): R|D| {
+            this<R|D|>()
+        }
+
+    }

@@ -16,7 +16,7 @@
 
 package kotlin.reflect.jvm.internal
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.jvm.CloneableClassScope
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -115,13 +115,13 @@ internal sealed class JvmPropertySignature {
 
         private fun getManglingSuffix(): String {
             val containingDeclaration = descriptor.containingDeclaration
-            if (descriptor.visibility == Visibilities.INTERNAL && containingDeclaration is DeserializedClassDescriptor) {
+            if (descriptor.visibility == DescriptorVisibilities.INTERNAL && containingDeclaration is DeserializedClassDescriptor) {
                 val classProto = containingDeclaration.classProto
                 val moduleName = classProto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(nameResolver::getString)
                     ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
                 return "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
             }
-            if (descriptor.visibility == Visibilities.PRIVATE && containingDeclaration is PackageFragmentDescriptor) {
+            if (descriptor.visibility == DescriptorVisibilities.PRIVATE && containingDeclaration is PackageFragmentDescriptor) {
                 val packagePartSource = (descriptor as DeserializedPropertyDescriptor).containerSource
                 if (packagePartSource is JvmPackagePartSource && packagePartSource.facadeClassName != null) {
                     return "$" + packagePartSource.simpleName.asString()
@@ -259,15 +259,15 @@ internal object RuntimeTypeMapper {
     fun mapJvmClassToKotlinClassId(klass: Class<*>): ClassId {
         if (klass.isArray) {
             klass.componentType.primitiveType?.let {
-                return ClassId(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, it.arrayTypeName)
+                return ClassId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.arrayTypeName)
             }
-            return ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.array.toSafe())
+            return ClassId.topLevel(StandardNames.FqNames.array.toSafe())
         }
 
         if (klass == Void.TYPE) return JAVA_LANG_VOID
 
         klass.primitiveType?.let {
-            return ClassId(KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME, it.typeName)
+            return ClassId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName)
         }
 
         val classId = klass.classId

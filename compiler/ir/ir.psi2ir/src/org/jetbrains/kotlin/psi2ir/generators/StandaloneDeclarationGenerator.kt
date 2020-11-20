@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.psi2ir.endOffsetOrUndefined
 import org.jetbrains.kotlin.psi2ir.startOffsetOrUndefined
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.types.KotlinType
 
 class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
@@ -69,7 +70,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         }
 
         for (irTypeParameter in irTypeParametersOwner.typeParameters) {
-            irTypeParameter.descriptor.upperBounds.mapTo(irTypeParameter.superTypes) {
+            irTypeParameter.superTypes = irTypeParameter.descriptor.upperBounds.map {
                 it.toIrType()
             }
         }
@@ -79,7 +80,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         val irClass = irFactory.createIrClassFromDescriptor(startOffset, endOffset, origin, symbol, descriptor)
 
         symbolTable.withScope(irClass) {
-            irClass.metadata = MetadataSource.Class(descriptor)
+            irClass.metadata = DescriptorMetadataSource.Class(descriptor)
 
             generateGlobalTypeParametersDeclarations(irClass, descriptor.declaredTypeParameters)
             irClass.superTypes = descriptor.typeConstructor.supertypes.map {
@@ -165,7 +166,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
                 isEffectivelyExternal(), isPrimary, isExpect
             )
         }
-        irConstructor.metadata = MetadataSource.Function(descriptor)
+        irConstructor.metadata = DescriptorMetadataSource.Function(descriptor)
 
         symbolTable.withScope(irConstructor) {
             val ctorTypeParameters = descriptor.typeParameters.filter { it.containingDeclaration === descriptor }
@@ -191,11 +192,11 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
                 isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
             )
         }
-        irFunction.metadata = MetadataSource.Function(descriptor)
+        irFunction.metadata = DescriptorMetadataSource.Function(descriptor)
 
         symbolTable.withScope(descriptor) {
             generateOverridenSymbols(irFunction, descriptor.overriddenDescriptors)
-            generateScopedTypeParameterDeclarations(irFunction, descriptor.typeParameters)
+            generateScopedTypeParameterDeclarations(irFunction, descriptor.propertyIfAccessor.typeParameters)
             generateValueParameterDeclarations(irFunction, descriptor, defaultArgumentFactory)
             irFunction.returnType = descriptor.returnType?.toIrType() ?: error("Expected return type $descriptor")
         }
@@ -219,7 +220,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
             isExpect = descriptor.isExpect
         )
 
-        irProperty.metadata = MetadataSource.Property(descriptor)
+        irProperty.metadata = DescriptorMetadataSource.Property(descriptor)
 
         return irProperty
     }

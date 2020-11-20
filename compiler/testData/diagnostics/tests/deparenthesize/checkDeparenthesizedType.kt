@@ -3,6 +3,8 @@
 
 package m
 
+import checkSubtype
+
 fun test(i: Int?) {
     if (i != null) {
         foo(<!REDUNDANT_LABEL_WARNING!>l1@<!> <!DEBUG_INFO_SMARTCAST!>i<!>)

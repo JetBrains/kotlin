@@ -1,6 +1,6 @@
 class A {
     companion object B {
-        class G
-        val G = 1
+        <!REDECLARATION!>class G<!>
+        <!REDECLARATION!>val G = 1<!>
     }
 }

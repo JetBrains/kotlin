@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities.*
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionOrProperty
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirContainingClassDetailsFactory
@@ -17,7 +17,7 @@ import org.junit.Test
 
 abstract class LoweringVisibilityCommonizerTest(
     private val areMembersVirtual: Boolean
-) : AbstractCommonizerTest<CirHasVisibility, Visibility>() {
+) : AbstractCommonizerTest<CirHasVisibility, DescriptorVisibility>() {
 
     @Test
     fun publicOnly() = doTestSuccess(
@@ -44,7 +44,7 @@ abstract class LoweringVisibilityCommonizerTest(
 
     final override fun createCommonizer() = VisibilityCommonizer.lowering()
 
-    protected fun Visibility.toMock() = object : CirFunctionOrProperty {
+    protected fun DescriptorVisibility.toMock() = object : CirFunctionOrProperty {
         override val annotations get() = unsupported()
         override val name get() = unsupported()
         override val typeParameters get() = unsupported()

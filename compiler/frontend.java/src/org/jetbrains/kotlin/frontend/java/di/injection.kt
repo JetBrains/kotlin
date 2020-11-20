@@ -93,7 +93,7 @@ fun createContainerForLazyResolveWithJava(
 }
 
 fun StorageComponentContainer.initializeJavaSpecificComponents(bindingTrace: BindingTrace) {
-    get<AbstractJavaClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>())
+    get<AbstractJavaClassFinder>().initialize(bindingTrace, get<KotlinCodeAnalyzer>(), get<LanguageVersionSettings>())
 }
 
 fun StorageComponentContainer.configureJavaSpecificComponents(
@@ -121,7 +121,7 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
         useImpl<JavaSourceElementFactoryImpl>()
     }
 
-    useInstance(languageVersionSettings.getFlag(JvmAnalysisFlags.jsr305))
+    useInstance(languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState))
 
     if (useBuiltInsProvider) {
         useInstance((moduleContext.module.builtIns as JvmBuiltIns).settings)

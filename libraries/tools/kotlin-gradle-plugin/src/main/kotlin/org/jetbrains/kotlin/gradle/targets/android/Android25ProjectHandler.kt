@@ -11,9 +11,11 @@ import com.android.build.gradle.*
 import com.android.build.gradle.api.*
 import com.android.build.gradle.tasks.MergeResources
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ArtifactCollection
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileCollection
+import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
@@ -26,6 +28,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.thisTaskProvider
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import java.io.File
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.io.Serializable
 import java.util.concurrent.Callable
 
 class Android25ProjectHandler(
@@ -65,20 +70,16 @@ class Android25ProjectHandler(
         }
 
         // Find the classpath entries that come from the tested variant and register them as the friend paths, lazily
+        val originalArtifactCollection = variantData.getCompileClasspathArtifacts(preJavaClasspathKey)
+        val testedVariantDataIsNotNull = getTestedVariantData(variantData) != null
+        val projectPath = project.path
         compilation.testedVariantArtifacts.set(
-            project.files(
-                project.provider {
-                    variantData.getCompileClasspathArtifacts(preJavaClasspathKey)
-                        .filter {
-                            it.id.componentIdentifier is TestedComponentIdentifier ||
-                                    // If tests depend on the main classes transitively, through a test dependency on another module which
-                                    // depends on this module, then there's no artifact with a TestedComponentIdentifier, so consider the artifact of the
-                                    // current module a friend path, too:
-                                    getTestedVariantData(variantData) != null &&
-                                    (it.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == project.path
-                        }
-                        .map { it.file }
-                }
+            originalArtifactCollection.artifactFiles.filter(
+                AndroidTestedVariantArtifactsFilter(
+                    originalArtifactCollection,
+                    testedVariantDataIsNotNull,
+                    projectPath
+                )
             )
         )
 
@@ -212,5 +213,44 @@ private fun MergeResources.computeResourceSetList0(): List<File>? {
 
     } finally {
         computeResourceSetListMethod.isAccessible = oldIsAccessible
+    }
+}
+
+/** Filter for the AGP test variant classpath artifacts. */
+class AndroidTestedVariantArtifactsFilter(
+    private val artifactCollection: ArtifactCollection,
+    private val testedVariantDataIsNotNull: Boolean,
+    private val projectPath: String
+) : Serializable, Spec<File> {
+
+    /** Make transient as it should be derived from the [artifactCollection] property which may change in configuration cached runs. */
+    @Transient
+    private var filteredFiles = initFilteredFiles()
+
+    private fun initFilteredFiles(): Lazy<Set<File>> {
+        return lazy {
+            artifactCollection.filter {
+                it.id.componentIdentifier is TestedComponentIdentifier ||
+                        // If tests depend on the main classes transitively, through a test dependency on another module which
+                        // depends on this module, then there's no artifact with a TestedComponentIdentifier, so consider the artifact of the
+                        // current module a friend path, too:
+                        testedVariantDataIsNotNull &&
+                        (it.id.componentIdentifier as? ProjectComponentIdentifier)?.projectPath == projectPath
+            }
+                .mapTo(mutableSetOf()) { it.file }
+        }
+    }
+
+    private fun writeObject(objectOutputStream: ObjectOutputStream) {
+        objectOutputStream.defaultWriteObject()
+    }
+
+    private fun readObject(objectInputStream: ObjectInputStream) {
+        objectInputStream.defaultReadObject()
+        filteredFiles = initFilteredFiles()
+    }
+
+    override fun isSatisfiedBy(element: File): Boolean {
+        return element in filteredFiles.value
     }
 }

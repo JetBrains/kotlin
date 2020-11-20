@@ -1,1 +1,4 @@
+public final var <P, Q> R|kotlin/collections/Map<P, Q>|.asas: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+    public set(i: R|kotlin/Int|): R|kotlin/Unit|
 

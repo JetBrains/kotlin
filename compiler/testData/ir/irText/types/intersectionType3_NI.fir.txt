@@ -26,8 +26,9 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.In<T of <root>.asT>
     BLOCK_BODY
-      TYPE_OP type=T of <root>.asT origin=CAST typeOperand=T of <root>.asT
-        GET_VAR '<this>: <root>.In<T of <root>.asT> declared in <root>.asT' type=<root>.In<T of <root>.asT> origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=T of <root>.asT origin=CAST typeOperand=T of <root>.asT
+          GET_VAR '<this>: <root>.In<T of <root>.asT> declared in <root>.asT' type=<root>.In<T of <root>.asT> origin=null
   FUN name:sel visibility:public modality:FINAL <S> (x:S of <root>.sel, y:S of <root>.sel) returnType:S of <root>.sel
     TYPE_PARAMETER name:S index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:x index:0 type:S of <root>.sel
@@ -131,7 +132,7 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInIs1 (x: <root>.In<<root>.A>, y: <root>.In<<root>.B>): kotlin.Boolean declared in <root>'
         CALL 'public final fun isT <T> (): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
-          <T>: <root>.A
+          <T>: kotlin.Any
           $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<<root>.A> origin=null
             <S>: <root>.In<<root>.A>
             x: GET_VAR 'x: <root>.In<<root>.A> declared in <root>.testInIs1' type=<root>.In<<root>.A> origin=null
@@ -142,7 +143,7 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInIs2 (x: <root>.In<<root>.Z1>, y: <root>.In<<root>.Z2>): kotlin.Boolean declared in <root>'
         CALL 'public final fun isT <T> (): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
-          <T>: <root>.Z1
+          <T>: kotlin.Any
           $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<<root>.Z1> origin=null
             <S>: <root>.In<<root>.Z1>
             x: GET_VAR 'x: <root>.In<<root>.Z1> declared in <root>.testInIs2' type=<root>.In<<root>.Z1> origin=null
@@ -153,7 +154,7 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInIs3 (x: <root>.In<<root>.A1>, y: <root>.In<<root>.A2>): kotlin.Boolean declared in <root>'
         CALL 'public final fun isT <T> (): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
-          <T>: <root>.A1
+          <T>: <root>.A
           $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<<root>.A1> origin=null
             <S>: <root>.In<<root>.A1>
             x: GET_VAR 'x: <root>.In<<root>.A1> declared in <root>.testInIs3' type=<root>.In<<root>.A1> origin=null
@@ -164,7 +165,7 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInAs1 (x: <root>.In<<root>.A>, y: <root>.In<<root>.B>): kotlin.Unit declared in <root>'
         CALL 'public final fun asT <T> (): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
-          <T>: <root>.A
+          <T>: kotlin.Any
           $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<<root>.A> origin=null
             <S>: <root>.In<<root>.A>
             x: GET_VAR 'x: <root>.In<<root>.A> declared in <root>.testInAs1' type=<root>.In<<root>.A> origin=null
@@ -175,7 +176,7 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInAs2 (x: <root>.In<<root>.Z1>, y: <root>.In<<root>.Z2>): kotlin.Unit declared in <root>'
         CALL 'public final fun asT <T> (): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
-          <T>: <root>.Z1
+          <T>: kotlin.Any
           $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<<root>.Z1> origin=null
             <S>: <root>.In<<root>.Z1>
             x: GET_VAR 'x: <root>.In<<root>.Z1> declared in <root>.testInAs2' type=<root>.In<<root>.Z1> origin=null
@@ -186,7 +187,7 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInAs3 (x: <root>.In<<root>.A1>, y: <root>.In<<root>.A2>): kotlin.Unit declared in <root>'
         CALL 'public final fun asT <T> (): kotlin.Unit [inline] declared in <root>' type=kotlin.Unit origin=null
-          <T>: <root>.A1
+          <T>: <root>.A
           $receiver: CALL 'public final fun sel <S> (x: S of <root>.sel, y: S of <root>.sel): S of <root>.sel declared in <root>' type=<root>.In<<root>.A1> origin=null
             <S>: <root>.In<<root>.A1>
             x: GET_VAR 'x: <root>.In<<root>.A1> declared in <root>.testInAs3' type=<root>.In<<root>.A1> origin=null

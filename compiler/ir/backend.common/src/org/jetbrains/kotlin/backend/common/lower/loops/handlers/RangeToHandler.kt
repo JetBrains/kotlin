@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower.loops.handlers
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.backend.common.lower.loops.ProgressionDirection
 import org.jetbrains.kotlin.backend.common.lower.loops.ProgressionHandler
 import org.jetbrains.kotlin.backend.common.lower.loops.ProgressionHeaderInfo
@@ -19,8 +20,10 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for progressions built using the `rangeTo` function. */
-internal class RangeToHandler(private val context: CommonBackendContext, private val progressionElementTypes: Collection<IrType>) :
+internal class RangeToHandler(private val context: CommonBackendContext) :
     ProgressionHandler {
+
+    private val progressionElementTypes = context.ir.symbols.progressionElementTypes
 
     override val matcher = SimpleCalleeMatcher {
         dispatchReceiver { it != null && it.type in progressionElementTypes }

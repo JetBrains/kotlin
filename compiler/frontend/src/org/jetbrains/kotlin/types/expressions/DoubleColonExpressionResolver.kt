@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.types.expressions
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
@@ -79,21 +79,6 @@ private fun KotlinTypeRefiner.refineBareType(type: PossiblyBareType): PossiblyBa
     if (type.isBare) return type
     val newType = type.actualType.let { refineType(it) }
     return PossiblyBareType.type(newType)
-}
-
-@OptIn(TypeRefinement::class)
-private fun <T : DoubleColonLHS> KotlinTypeRefiner.refineLHS(lhs: T): T = when (lhs) {
-    is DoubleColonLHS.Expression -> {
-        val newType = lhs.typeInfo.type?.let { refineType(it) }
-        DoubleColonLHS.Expression(
-            lhs.typeInfo.replaceType(newType),
-            lhs.isObjectQualifier
-        ) as T
-    }
-    is DoubleColonLHS.Type -> {
-        DoubleColonLHS.Type(refineType(lhs.type), refineBareType(lhs.possiblyBareType)) as T
-    }
-    else -> throw IllegalStateException()
 }
 
 // Returns true if this expression has the form "A<B>" which means it's a type on the LHS of a double colon expression
@@ -643,12 +628,12 @@ class DoubleColonExpressionResolver(
             createValueParametersForInvokeInFunctionType(functionDescriptor, type.arguments.dropLast(1)),
             type.arguments.last().type,
             Modality.FINAL,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
 
         context.trace.record(BindingContext.FUNCTION, expression, functionDescriptor)
 
-        if (functionDescriptor.valueParameters.size >= FunctionInvokeDescriptor.BIG_ARITY &&
+        if (functionDescriptor.valueParameters.size >= BuiltInFunctionArity.BIG_ARITY &&
             bigAritySupport.shouldCheckLanguageVersionSettings &&
             !languageVersionSettings.supportsFeature(LanguageFeature.FunctionTypesWithBigArity)
         ) {
@@ -841,7 +826,7 @@ class DoubleColonExpressionResolver(
         ): Boolean {
             val receiver = receiverTypeFor(descriptor, lhs)?.let(::TransientReceiver)
             val setter = descriptor.setter
-            return descriptor.isVar && (setter == null || Visibilities.isVisible(receiver, setter, scopeOwnerDescriptor))
+            return descriptor.isVar && (setter == null || DescriptorVisibilities.isVisible(receiver, setter, scopeOwnerDescriptor))
         }
 
         fun createKCallableTypeForReference(

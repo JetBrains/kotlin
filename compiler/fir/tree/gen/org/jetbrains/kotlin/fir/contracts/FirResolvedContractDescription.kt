@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.contracts
 
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirResolvedContractDescription : FirContractDescription() {
     abstract override val source: FirSourceElement?
-    abstract val effects: List<ConeEffectDeclaration>
+    abstract val effects: List<FirEffectDeclaration>
     abstract val unresolvedEffects: List<FirStatement>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedContractDescription(this, data)

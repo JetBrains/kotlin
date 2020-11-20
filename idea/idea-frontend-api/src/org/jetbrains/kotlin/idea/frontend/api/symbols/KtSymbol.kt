@@ -6,15 +6,25 @@
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
+import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 
-interface KtSymbol : ValidityOwner {
+interface KtSymbol : ValidityTokenOwner {
     val origin: KtSymbolOrigin
     val psi: PsiElement?
 
-    fun createPointer(): KtSymbolPointer<KtSymbol> = NonRestorableKtSymbolPointer
+    fun createPointer(): KtSymbolPointer<KtSymbol>
 }
 
 enum class KtSymbolOrigin {
-    SOURCE, LIBRARY, JAVA, SAM_CONSTRUCTOR
+    SOURCE,
+
+    /**
+     * Declaration which do not have it's PSI source and was generated, they are:
+     * For data classes the `copy`, `component{N}`, `toString`, `equals`, `hashCode` functions are generated
+     * For enum classes the `valueOf` & `values` functions are generated
+     */
+    SOURCE_MEMBER_GENERATED,
+    LIBRARY,
+    JAVA, SAM_CONSTRUCTOR
 }

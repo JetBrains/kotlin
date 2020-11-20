@@ -7,7 +7,7 @@ fun test(i: IntArray) {
     myLet(::foo)
     <!INAPPLICABLE_CANDIDATE!>myLet<!><Int>(<!UNRESOLVED_REFERENCE!>::foo<!>)
     myLet<IntArray>(::foo)
-    <!INAPPLICABLE_CANDIDATE!>myLetExplicit1<!>(<!UNRESOLVED_REFERENCE!>::foo<!>)
+    myLetExplicit1(::foo)
     myLetExplicit2(::foo)
 }
 

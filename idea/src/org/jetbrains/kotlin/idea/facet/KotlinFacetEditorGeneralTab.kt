@@ -368,7 +368,7 @@ class KotlinFacetEditorGeneralTab(
         if (chosenPlatform != configuration.settings.targetPlatform) return true
 
         // work-around for hacked equals in JvmPlatform
-        if (!configuration?.settings?.isHmppEnabled) {
+        if (!configuration.settings.isHmppEnabled) {
             if (configuration.settings.targetPlatform?.let { TargetPlatformWrapper(it) } != editor.targetPlatformSelectSingleCombobox
                     .selectedItemTyped) {
                 return true

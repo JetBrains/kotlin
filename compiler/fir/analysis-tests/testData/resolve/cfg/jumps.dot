@@ -127,7 +127,7 @@ digraph jumps_kt {
             }
             51 [label="Variable declaration: lval y: R|kotlin/Int?|"];
             52 [label="Access variable R|<local>/y|"];
-            53 [label="Function call: R|<local>/y|.<Inapplicable(WRONG_RECEIVER): kotlin/Int.inc>#()"];
+            53 [label="Function call: R|<local>/y|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): kotlin/Int.inc>#()"];
             54 [label="Exit block"];
         }
         55 [label="Exit function test_2" style="filled" fillcolor=red];
@@ -358,7 +358,7 @@ digraph jumps_kt {
         subgraph cluster_36 {
             color=blue
             120 [label="Enter block"];
-            121 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            121 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             122 [label="Exit block"];
         }
         123 [label="Exit function run" style="filled" fillcolor=red];
@@ -397,6 +397,7 @@ digraph jumps_kt {
     125 -> {126};
     126 -> {131};
     126 -> {127} [color=red];
+    126 -> {131} [style=dashed];
     127 -> {128};
     128 -> {129};
     129 -> {130};

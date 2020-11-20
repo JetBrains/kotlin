@@ -17,6 +17,7 @@ import kotlinx.dom.removeClass as newRemoveClass
     message = "This API is moved to another package, use 'kotlinx.dom.hasClass' instead.",
     replaceWith = ReplaceWith("this.hasClass(cssClass)", "kotlinx.dom.hasClass")
 )
+@DeprecatedSinceKotlin(warningSince = "1.4")
 inline fun Element.hasClass(cssClass: String): Boolean = this.newHasClass(cssClass)
 
 /**
@@ -29,6 +30,7 @@ inline fun Element.hasClass(cssClass: String): Boolean = this.newHasClass(cssCla
     message = "This API is moved to another package, use 'kotlinx.dom.addClass' instead.",
     replaceWith = ReplaceWith("this.addClass(cssClasses)", "kotlinx.dom.addClass")
 )
+@DeprecatedSinceKotlin(warningSince = "1.4")
 inline fun Element.addClass(vararg cssClasses: String): Boolean = this.newAddClass(*cssClasses)
 
 /**
@@ -41,4 +43,5 @@ inline fun Element.addClass(vararg cssClasses: String): Boolean = this.newAddCla
     message = "This API is moved to another package, use 'kotlinx.dom.removeClass' instead.",
     replaceWith = ReplaceWith("this.removeClass(cssClasses)", "kotlinx.dom.removeClass")
 )
+@DeprecatedSinceKotlin(warningSince = "1.4")
 inline fun Element.removeClass(vararg cssClasses: String): Boolean = this.newRemoveClass(*cssClasses)

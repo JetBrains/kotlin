@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.declarations.persistent.carriers
 
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -49,7 +49,7 @@ internal class FunctionCarrierImpl(
     override var extensionReceiverParameterField: IrValueParameter?,
     override var bodyField: IrBody?,
     override var metadataField: MetadataSource?,
-    override var visibilityField: Visibility,
+    override var visibilityField: DescriptorVisibility,
     override var typeParametersField: List<IrTypeParameter>,
     override var valueParametersField: List<IrValueParameter>,
     override var correspondingPropertySymbolField: IrPropertySymbol?,

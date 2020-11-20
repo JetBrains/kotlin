@@ -17,10 +17,14 @@ import kotlin.reflect.KClass
  *   from components in [ComponentArrayOwner]
  */
 @OptIn(Protected::class)
-abstract class AttributeArrayOwner<K : Any, T : Any> : AbstractArrayMapOwner<K, T>() {
-    @Suppress("UNCHECKED_CAST")
-    final override var arrayMap: ArrayMap<T> = EmptyArrayMap as ArrayMap<T>
+abstract class AttributeArrayOwner<K : Any, T : Any> protected constructor(
+    arrayMap: ArrayMap<T>
+) : AbstractArrayMapOwner<K, T>() {
+    final override var arrayMap: ArrayMap<T> = arrayMap
         private set
+
+    @Suppress("UNCHECKED_CAST")
+    constructor() : this(EmptyArrayMap as ArrayMap<T>)
 
     final override fun registerComponent(tClass: KClass<out K>, value: T) {
         val id = typeRegistry.getId(tClass)
@@ -31,9 +35,13 @@ abstract class AttributeArrayOwner<K : Any, T : Any> : AbstractArrayMapOwner<K, 
             }
 
             1 -> {
-                arrayMap = ArrayMapImpl<T>().apply {
-                    val map = arrayMap as OneElementArrayMap<T>
-                    this[map.index] = map.value
+                val map = arrayMap as OneElementArrayMap<T>
+                if (map.index == id) {
+                    arrayMap = OneElementArrayMap(value, id)
+                    return
+                } else {
+                    arrayMap = ArrayMapImpl()
+                    arrayMap[map.index] = map.value
                 }
             }
         }

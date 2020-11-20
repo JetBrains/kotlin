@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.coroutines
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
 import org.jetbrains.kotlin.backend.common.ir.isSuspend
 import org.jetbrains.kotlin.backend.common.peek
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.isPure
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -24,9 +24,11 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrDynamicType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.getInlinedClass
 import org.jetbrains.kotlin.ir.visitors.*
 
 class SuspendState(type: IrType) {
@@ -39,7 +41,16 @@ data class LoopBounds(val headState: SuspendState, val exitState: SuspendState)
 
 data class TryState(val tryState: SuspendState, val catchState: SuspendState)
 
-class IrDispatchPoint(val target: SuspendState) : IrExpressionBase(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.entryBlock.type) {
+class IrDispatchPoint(val target: SuspendState) : IrExpression() {
+    override val startOffset: Int get() = UNDEFINED_OFFSET
+    override val endOffset: Int get() = UNDEFINED_OFFSET
+
+    override var type: IrType
+        get() = target.entryBlock.type
+        set(value) {
+            target.entryBlock.type = value
+        }
+
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) = visitor.visitExpression(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {}
@@ -57,7 +68,7 @@ class DispatchPointTransformer(val action: (SuspendState) -> IrExpression) : IrE
 
 class StateMachineBuilder(
     private val suspendableNodes: MutableSet<IrElement>,
-    val context: CommonBackendContext,
+    val context: JsCommonBackendContext,
     val function: IrFunctionSymbol,
     private val rootLoop: IrLoop,
     private val exceptionSymbolGetter: IrSimpleFunction,
@@ -267,7 +278,7 @@ class StateMachineBuilder(
         if (expression.isSuspend) {
             val result = lastExpression()
             val expectedType = expression.symbol.owner.returnType
-            val isInlineClassExpected = expectedType.getInlinedClass() != null
+            val isInlineClassExpected = context.inlineClassesUtils.getInlinedClass(expectedType) != null
             val continueState = SuspendState(unit)
             val unboxState = if (isInlineClassExpected) SuspendState(unit) else null
 
@@ -447,7 +458,7 @@ class StateMachineBuilder(
         }
     }
 
-    override fun visitSetVariable(expression: IrSetVariable) {
+    override fun visitSetValue(expression: IrSetValue) {
         if (expression !in suspendableNodes) return addStatement(expression)
         expression.acceptChildrenVoid(this)
         transformLastExpression { expression.apply { value = it } }

@@ -1,4 +1,4 @@
 fun foo() {
     var x = 0
-    x = x / 1 + 1
+    <!ASSIGNED_VALUE_IS_NEVER_READ!>x<!> = x / 1 + 1
 }

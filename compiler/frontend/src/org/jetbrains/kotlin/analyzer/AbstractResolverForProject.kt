@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.analyzer
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -238,13 +236,21 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
     private val module: ModuleDescriptor,
     moduleContent: ModuleContent<M>,
     private val packageOracle: PackageOracle
-) : PackageFragmentProvider {
+) : PackageFragmentProviderOptimized {
     private val syntheticFilePackages = moduleContent.syntheticFiles.map { it.packageFqName }.toSet()
 
+    @Suppress("OverridingDeprecatedMember")
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
         if (certainlyDoesNotExist(fqName)) return emptyList()
 
+        @Suppress("DEPRECATION")
         return resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.getPackageFragments(fqName)
+    }
+
+    override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {
+        if (certainlyDoesNotExist(fqName)) return
+
+        resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.collectPackageFragmentsOptimizedIfPossible(fqName, packageFragments)
     }
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {

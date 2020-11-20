@@ -78,7 +78,7 @@ class DelegationResolver<T : CallableMemberDescriptor> private constructor(
                 .setOwner(ownerDescriptor)
                 .setDispatchReceiverParameter(ownerDescriptor.thisAsReceiverParameter)
                 .setModality(newModality)
-                .setVisibility(Visibilities.INHERITED)
+                .setVisibility(DescriptorVisibilities.INHERITED)
                 .setKind(DELEGATION)
                 .setCopyOverrides(false)
                 .build() as T

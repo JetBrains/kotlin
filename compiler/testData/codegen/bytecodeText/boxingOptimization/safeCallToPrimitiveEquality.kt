@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM_IR
 // TODO KT-36646 Don't box primitive values in equality comparison with nullable primitive values in JVM_IR
 

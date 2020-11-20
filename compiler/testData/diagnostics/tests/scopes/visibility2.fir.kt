@@ -30,7 +30,7 @@ fun test() {
     val u : A = <!HIDDEN!>A<!>()
     val a : java.util.Arrays.ArrayList<Int>;
 
-    val po = PO
+    val po = <!HIDDEN!>PO<!>
 }
 
 class B : <!EXPOSED_SUPER_CLASS, HIDDEN!>A<!>() {}

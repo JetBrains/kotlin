@@ -18,26 +18,35 @@ package org.jetbrains.kotlin.ir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class IrPropertyCommonImpl(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var origin: IrDeclarationOrigin,
     override val name: Name,
-    override var visibility: Visibility,
+    override var visibility: DescriptorVisibility,
     override val isVar: Boolean,
     override val isConst: Boolean,
     override val isLateinit: Boolean,
     override val isDelegated: Boolean,
     override val isExternal: Boolean,
     override val isExpect: Boolean,
-) : IrDeclarationBase(startOffset, endOffset, origin), IrProperty {
+    override val containerSource: DeserializedContainerSource?,
+) : IrProperty() {
+    override val factory: IrFactory
+        get() = IrFactoryImpl
+
+    override lateinit var parent: IrDeclarationParent
+    override var annotations: List<IrConstructorCall> = emptyList()
+
     override var backingField: IrField? = null
 
     override var getter: IrSimpleFunction? = null
@@ -45,6 +54,8 @@ abstract class IrPropertyCommonImpl(
     override var setter: IrSimpleFunction? = null
 
     override var metadata: MetadataSource? = null
+
+    override var attributeOwnerId: IrAttributeContainer = this
 }
 
 class IrPropertyImpl(
@@ -53,7 +64,7 @@ class IrPropertyImpl(
     origin: IrDeclarationOrigin,
     override val symbol: IrPropertySymbol,
     name: Name,
-    visibility: Visibility,
+    visibility: DescriptorVisibility,
     override val modality: Modality,
     isVar: Boolean,
     isConst: Boolean,
@@ -62,8 +73,10 @@ class IrPropertyImpl(
     isExternal: Boolean,
     isExpect: Boolean = false,
     override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    containerSource: DeserializedContainerSource? = null,
 ) : IrPropertyCommonImpl(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
+    containerSource
 ) {
     init {
         symbol.bind(this)
@@ -79,7 +92,7 @@ class IrFakeOverridePropertyImpl(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     name: Name,
-    visibility: Visibility,
+    visibility: DescriptorVisibility,
     override var modality: Modality,
     isVar: Boolean,
     isConst: Boolean,
@@ -89,6 +102,7 @@ class IrFakeOverridePropertyImpl(
     isExpect: Boolean,
 ) : IrPropertyCommonImpl(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,
+    containerSource = null,
 ), IrFakeOverrideProperty {
     override val isFakeOverride: Boolean
         get() = true

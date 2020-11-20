@@ -38,6 +38,13 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
         addAndroidExtensionsRuntime(project)
         registry.register(KotlinAndroidExtensionModelBuilder())
         project.plugins.apply(AndroidSubplugin::class.java)
+
+        project.logger.warn(
+            "Warning: The 'kotlin-android-extensions' Gradle plugin is deprecated. " +
+                    "Please use this migration guide (https://goo.gle/kotlin-android-extensions-deprecation) to start " +
+                    "working with View Binding (https://developer.android.com/topic/libraries/view-binding) " +
+                    "and the 'kotlin-parcelize' plugin."
+        )
     }
 
     private fun addAndroidExtensionsRuntime(project: Project) {

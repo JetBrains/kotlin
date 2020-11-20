@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.formatter.NodeIndentStrategy.Companion.strategy
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper.trailingCommaExistsOrCanExist
 import org.jetbrains.kotlin.idea.formatter.trailingComma.addTrailingCommaIsAllowedFor
-import org.jetbrains.kotlin.idea.util.containsLineBreakInThis
+import org.jetbrains.kotlin.idea.util.containsLineBreakInChild
 import org.jetbrains.kotlin.idea.util.isMultiline
 import org.jetbrains.kotlin.idea.util.requireNode
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
@@ -328,14 +328,9 @@ abstract class KotlinCommonBlock(
         }
 
         if (newChildIndex > 0) {
-            val prevNode = mySubBlocks?.get(newChildIndex - 1)?.node
-            if (prevNode?.elementType == MODIFIER_LIST) {
+            val prevBlock = mySubBlocks?.get(newChildIndex - 1)
+            if (prevBlock?.node?.elementType == MODIFIER_LIST) {
                 return ChildAttributes(Indent.getNoneIndent(), null)
-            }
-            val property = prevNode?.psi as? KtProperty
-            if (property?.receiverTypeReference != null && property.accessors.isNotEmpty()) {
-                val indent = if (type in CODE_BLOCKS) Indent.getContinuationIndent() else Indent.getNormalIndent()
-                return ChildAttributes(indent, null)
             }
         }
 
@@ -757,7 +752,7 @@ abstract class KotlinCommonBlock(
             ?: psi.startOffset
         val endOffset = childElement.notDelimiterSiblingNodeInSequence(true, delimiterType, typeOfLastElement)?.psi?.endOffset
             ?: psi.endOffset
-        return psi.parent.containsLineBreakInThis(startOffset, endOffset)
+        return psi.parent.containsLineBreakInChild(startOffset, endOffset)
     }
 
     private fun trailingCommaWrappingStrategyWithMultiLineCheck(

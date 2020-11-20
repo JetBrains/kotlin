@@ -12,6 +12,9 @@ import kotlin.reflect.KProperty
 inline infix fun <A, B, C> ((A) -> B).andThen(crossinline then: (B) -> C): (A) -> C =
     { then(this(it)) }
 
+inline fun <A, B, C> compose(crossinline function: (A) -> B, crossinline then: (B) -> C): (A) -> C =
+    { then(function(it)) }
+
 
 /**
  * Composes two function together like normal composition if first function returns non-null value;
@@ -44,6 +47,8 @@ operator fun @receiver:NonNls String.div(@NonNls other: String): Path =
     Paths.get(this).resolve(other)
 
 fun @receiver:NonNls String.asPath(): Path = Paths.get(this)
+
+fun Path.asStringWithUnixSlashes() = toString().replace('\\', '/')
 
 fun <T : Any> safe(operation: () -> T): TaskResult<T> =
     try {

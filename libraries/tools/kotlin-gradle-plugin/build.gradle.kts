@@ -1,4 +1,3 @@
-
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.pill.PillExtension
@@ -10,6 +9,9 @@ plugins {
     id("org.jetbrains.dokka")
     id("jps-compatible")
 }
+
+apply(from = "functionalTest.gradle.kts")
+val functionalTestImplementation by configurations
 
 configure<GradlePluginDevelopmentExtension> {
     isAutomatedPublishing = false
@@ -50,11 +52,13 @@ dependencies {
     compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(project(":kotlin-gradle-statistics"))
     embedded(project(":kotlin-gradle-statistics"))
+    compileOnly(project(":kotlin-gradle-build-metrics"))
+    embedded(project(":kotlin-gradle-build-metrics"))
 
     compile("com.google.code.gson:gson:${rootProject.extra["versions.jar.gson"]}")
     compile("de.undercouch:gradle-download-task:4.0.2")
     implementation("com.github.gundy:semver4j:0.16.4")
-    
+
     compileOnly("com.android.tools.build:gradle:2.0.0")
     compileOnly("com.android.tools.build:gradle-core:2.0.0")
     compileOnly("com.android.tools.build:builder:2.0.0")
@@ -80,8 +84,11 @@ dependencies {
     compileOnly("com.android.tools.build:gradle:3.0.0") { isTransitive = false }
     compileOnly("com.android.tools.build:gradle-core:3.0.0") { isTransitive = false }
     compileOnly("com.android.tools.build:builder-model:3.0.0") { isTransitive = false }
+    functionalTestImplementation("com.android.tools.build:gradle:4.0.1") {
+        because("Functional tests are using APIs from Android. Latest Version is used to avoid NoClassDefFoundError")
+    }
 
-    testCompile(intellijDep()) { includeJars( "junit", "serviceMessages", rootProject = rootProject) }
+    testCompile(intellijDep()) { includeJars("junit", "serviceMessages", rootProject = rootProject) }
 
     testCompileOnly(project(":compiler"))
     testCompile(projectTests(":kotlin-build-common"))
@@ -104,7 +111,7 @@ runtimeJar(rewriteDefaultJarDepsToShadedCompiler()).configure {
 
     from {
         jarContents.asFileTree.map {
-            if (it.endsWith(".jar")) zipTree(it) 
+            if (it.endsWith(".jar")) zipTree(it)
             else it
         }
     }
@@ -113,9 +120,9 @@ runtimeJar(rewriteDefaultJarDepsToShadedCompiler()).configure {
 tasks {
     withType<KotlinCompile> {
         kotlinOptions.jdkHome = rootProject.extra["JDK_18"] as String
-        kotlinOptions.languageVersion = "1.2"
-        kotlinOptions.apiVersion = "1.2"
-        kotlinOptions.freeCompilerArgs += listOf("-Xskip-metadata-version-check")
+        kotlinOptions.languageVersion = "1.3"
+        kotlinOptions.apiVersion = "1.3"
+        kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check")
     }
 
     named<ProcessResources>("processResources") {
@@ -189,6 +196,11 @@ pluginBundle {
         name = "kotlinAndroidExtensionsPlugin",
         id = "org.jetbrains.kotlin.android.extensions",
         display = "Kotlin Android Extensions plugin"
+    )
+    create(
+        name = "kotlinParcelizePlugin",
+        id = "org.jetbrains.kotlin.plugin.parcelize",
+        display = "Kotlin Parcelize plugin"
     )
     create(
         name = "kotlinKaptPlugin",

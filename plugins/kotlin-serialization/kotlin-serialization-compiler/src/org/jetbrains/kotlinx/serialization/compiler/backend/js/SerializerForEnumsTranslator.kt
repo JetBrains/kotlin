@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.js
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -19,7 +20,7 @@ class SerializerForEnumsTranslator(
     descriptor: ClassDescriptor,
     translator: DeclarationBodyVisitor,
     context: TranslationContext
-) : SerializerJsTranslator(descriptor, translator, context) {
+) : SerializerJsTranslator(descriptor, translator, context, null) {
     override fun generateSave(function: FunctionDescriptor) = generateFunction(function) { jsFun, ctx ->
         val encoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.ENCODER_CLASS)
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(anySerialDescProperty!!), JsThisRef())
@@ -37,7 +38,7 @@ class SerializerForEnumsTranslator(
         val decoderClass = serializerDescriptor.getClassFromSerializationPackage(SerialEntityNames.DECODER_CLASS)
         val serialClassDescRef = JsNameRef(context.getNameForDescriptor(anySerialDescProperty!!), JsThisRef())
         val decodeEnumF = ctx.getNameForDescriptor(decoderClass.getFuncDesc(CallingConventions.decodeEnum).single())
-        val valuesFunc = DescriptorUtils.getFunctionByName(serializableDescriptor.staticScope, DescriptorUtils.ENUM_VALUES)
+        val valuesFunc = DescriptorUtils.getFunctionByName(serializableDescriptor.staticScope, StandardNames.ENUM_VALUES)
         val decodeEnumCall = JsInvocation(JsNameRef(decodeEnumF, JsNameRef(jsFun.parameters[0].name)), serialClassDescRef)
         val resultCall = JsArrayAccess(JsInvocation(ctx.getInnerNameForDescriptor(valuesFunc).makeRef()), decodeEnumCall)
         +JsReturn(resultCall)

@@ -6,16 +6,19 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.isCallableReference
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -33,13 +36,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val COROUTINE_CONTEXT_1_2_20_FQ_NAME =
-    DescriptorUtils.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("coroutineContext"))
+    StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("coroutineContext"))
 
 val COROUTINE_CONTEXT_1_2_30_FQ_NAME =
-    DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("coroutineContext"))
+    StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("coroutineContext"))
 
 val COROUTINE_CONTEXT_1_3_FQ_NAME =
-    DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("coroutineContext"))
+    StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("coroutineContext"))
 
 fun FunctionDescriptor.isBuiltInCoroutineContext(languageVersionSettings: LanguageVersionSettings) =
     (this as? PropertyGetterDescriptor)?.correspondingProperty?.fqNameSafe?.isBuiltInCoroutineContext(languageVersionSettings) == true

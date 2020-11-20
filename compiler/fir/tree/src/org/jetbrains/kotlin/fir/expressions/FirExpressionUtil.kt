@@ -40,11 +40,11 @@ inline val FirCall.arguments: List<FirExpression> get() = argumentList.arguments
 
 inline val FirCall.argument: FirExpression get() = argumentList.arguments.first()
 
-inline val FirCall.argumentMapping: Map<FirExpression, FirValueParameter>?
+inline val FirCall.argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
     get() = (argumentList as? FirResolvedArgumentList)?.mapping
 
 fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
-    return (this as? FirQualifiedAccess)?.calleeReference as? FirResolvedNamedReference
+    return (this as? FirResolvable)?.calleeReference as? FirResolvedNamedReference
 }
 
 fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {

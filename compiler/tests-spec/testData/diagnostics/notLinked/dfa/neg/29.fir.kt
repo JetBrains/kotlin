@@ -22,8 +22,8 @@ fun case_2(a: Any?) {
         }
     })()
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>a<!>.equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(10)
 }
 
 // TESTCASE NUMBER: 3

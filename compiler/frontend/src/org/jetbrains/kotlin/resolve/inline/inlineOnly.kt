@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.resolve.inline
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
@@ -31,7 +31,7 @@ fun MemberDescriptor.isInlineOnly(): Boolean =
             (hasInlineOnlyAnnotation() || DescriptorUtils.getDirectMember(this).hasInlineOnlyAnnotation())
 
 private fun MemberDescriptor.isPrivateInlineSuspend(): Boolean =
-    this is FunctionDescriptor && isSuspend && isInline && visibility == Visibilities.PRIVATE
+    this is FunctionDescriptor && isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
 
 fun MemberDescriptor.isInlineWithReified(): Boolean =
     this is CallableMemberDescriptor && (hasReifiedParameters() || DescriptorUtils.getDirectMember(this).hasReifiedParameters())

@@ -7,35 +7,40 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
+import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
-import org.jetbrains.kotlin.load.kotlin.computeExpandedTypeForInlineClass
-import org.jetbrains.kotlin.load.kotlin.mapBuiltInType
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.AbstractTypeMapper
+import org.jetbrains.kotlin.types.TypeMappingContext
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContextForTypeMapping
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.kotlin.backend.jvm.codegen.isRawType as isRawTypeImpl
+import org.jetbrains.kotlin.ir.types.isKClass as isKClassImpl
+import org.jetbrains.kotlin.ir.util.isSuspendFunction as isSuspendFunctionImpl
 
-class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBase() {
+class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBase(), TypeMappingContext<JvmSignatureWriter> {
     internal val typeSystem = IrTypeCheckerContext(context.irBuiltIns)
-
-    private val IrTypeArgument.adjustedType
-        get() = (this as? IrTypeProjection)?.type ?: context.irBuiltIns.anyNType
+    override val typeContext: TypeSystemCommonBackendContextForTypeMapping = IrTypeCheckerContextForTypeMapping(typeSystem, context)
 
     override fun mapClass(classifier: ClassifierDescriptor): Type =
         when (classifier) {
@@ -47,40 +52,51 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
                 error("Unknown descriptor: $classifier")
         }
 
-    fun classInternalName(irClass: IrClass): String {
-        fun report(): Nothing {
-            error(
-                "Local class should have its name computed in InventNamesForLocalClasses: ${irClass.fqNameWhenAvailable}\n" +
-                        "Ensure that any lowering that transforms elements with local class info (classes, function references) " +
-                        "invokes `copyAttributes` on the transformed element."
-            )
+    private fun computeClassInternalName(irClass: IrClass): StringBuilder {
+        val shortName = SpecialNames.safeIdentifier(irClass.name).identifier
+
+        when (val parent = irClass.parent) {
+            is IrPackageFragment ->
+                return StringBuilder().apply {
+                    val fqName = parent.fqName
+                    if (!fqName.isRoot) {
+                        append(fqName.asString().replace('.', '/')).append("/")
+                    }
+                    append(shortName)
+                }
+            is IrClass ->
+                return computeClassInternalName(parent).append("$").append(shortName)
+            is IrFunction ->
+                if (parent.isSuspend && parent.parentAsClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
+                    return computeClassInternalName(parent.parentAsClass.parentAsClass)
+                        .append("$").append(parent.name.asString())
+                }
         }
 
-        context.getLocalClassType(irClass)?.internalName?.let { return it }
+        val localClassType = context.getLocalClassType(irClass)
+        if (localClassType != null) {
+            return StringBuilder(localClassType.internalName)
+        }
 
+        error(
+            "Local class should have its name computed in InventNamesForLocalClasses: ${irClass.fqNameWhenAvailable}\n" +
+                    "Ensure that any lowering that transforms elements with local class info (classes, function references) " +
+                    "invokes `copyAttributes` on the transformed element."
+        )
+    }
+
+    fun classInternalName(irClass: IrClass): String {
+        context.getLocalClassType(irClass)?.internalName?.let { return it }
         context.classNameOverride[irClass]?.let { return it.internalName }
 
-        val className = SpecialNames.safeIdentifier(irClass.name).identifier
-
-        val internalName = when (val parent = irClass.parent) {
-            is IrPackageFragment -> {
-                val fqName = parent.fqName
-                val prefix = if (fqName.isRoot) "" else fqName.asString().replace('.', '/') + "/"
-                prefix + className
-            }
-            is IrClass -> {
-                classInternalName(parent) + "$" + className
-            }
-            is IrFunction -> {
-                if (parent.isSuspend && parent.parentAsClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
-                    val interfaceClass = parent.parentAsClass.parent as IrClass
-                    classInternalName(interfaceClass) + "$" + parent.name.asString()
-                } else report()
-            }
-            else -> report()
-        }
-        return JvmCodegenUtil.sanitizeNameIfNeeded(internalName, context.state.languageVersionSettings)
+        return JvmCodegenUtil.sanitizeNameIfNeeded(
+            computeClassInternalName(irClass).toString(),
+            context.state.languageVersionSettings
+        )
     }
+
+    override fun getClassInternalName(typeConstructor: TypeConstructorMarker): String =
+        classInternalName((typeConstructor as IrClassSymbol).owner)
 
     fun writeFormalTypeParameters(irParameters: List<IrTypeParameter>, sw: JvmSignatureWriter) {
         if (sw.skipGenericSignature()) return
@@ -98,7 +114,7 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
         if (irClass != null && irClass.isInline) {
             return mapTypeAsDeclaration(irType)
         }
-        val type = mapType(irType)
+        val type = AbstractTypeMapper.mapType(this, irType)
         return AsmUtil.boxPrimitiveType(type) ?: type
     }
 
@@ -106,83 +122,11 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
         type: IrType,
         mode: TypeMappingMode = TypeMappingMode.DEFAULT,
         sw: JvmSignatureWriter? = null
-    ): Type {
-        if (type !is IrSimpleType) {
-            val kotlinType = type.originalKotlinType
-            error("Unexpected type: $type (original Kotlin type=$kotlinType of ${kotlinType?.let { it::class }})")
-        }
+    ): Type = AbstractTypeMapper.mapType(this, type, mode, sw)
 
-        if (type.isSuspendFunction()) {
-            val arguments =
-                type.arguments.dropLast(1).map { it.adjustedType } +
-                        context.ir.symbols.continuationClass.typeWith(type.arguments.last().adjustedType) +
-                        context.irBuiltIns.anyNType
-            val runtimeFunctionType = context.referenceClass(context.builtIns.getFunction(arguments.size - 1)).typeWith(arguments)
-            return mapType(runtimeFunctionType, mode, sw)
-        }
-
-        with(typeSystem) {
-            mapBuiltInType(type, AsmTypeFactory, mode)
-        }?.let { builtInType ->
-            return boxTypeIfNeeded(builtInType, mode.needPrimitiveBoxing).also { asmType ->
-                sw?.writeGenericType(type, asmType, mode)
-            }
-        }
-
-        val classifier = type.classifierOrNull?.owner
-
-        when {
-            type.isArray() || type.isNullableArray() -> {
-                val typeArgument = type.arguments.single()
-                val (variance, memberType) = when (typeArgument) {
-                    is IrTypeProjection -> Pair(typeArgument.variance, typeArgument.type)
-                    is IrStarProjection -> Pair(Variance.OUT_VARIANCE, context.irBuiltIns.anyNType)
-                    else -> error("Unsupported type argument: $typeArgument")
-                }
-
-                val arrayElementType: Type
-                sw?.writeArrayType()
-                if (variance == Variance.IN_VARIANCE) {
-                    arrayElementType = AsmTypes.OBJECT_TYPE
-                    sw?.writeClass(arrayElementType)
-                } else {
-                    arrayElementType = mapType(memberType, mode.toGenericArgumentMode(variance, ofArray = true), sw)
-                }
-                sw?.writeArrayEnd()
-
-                return AsmUtil.getArrayType(arrayElementType)
-            }
-
-            classifier is IrClass -> {
-                if (classifier.isInline && !mode.needInlineClassWrapping) {
-                    val expandedType = typeSystem.computeExpandedTypeForInlineClass(type) as IrType?
-                    if (expandedType != null) {
-                        return mapType(expandedType, mode.wrapInlineClassesMode(), sw)
-                    }
-                }
-
-                val asmType =
-                    if (mode.isForAnnotationParameter && type.isKClass()) AsmTypes.JAVA_CLASS_TYPE
-                    else Type.getObjectType(classInternalName(classifier))
-
-                sw?.writeGenericType(type, asmType, mode)
-
-                return asmType
-            }
-
-            classifier is IrTypeParameter -> {
-                return mapType(classifier.representativeUpperBound, mode, null).also { asmType ->
-                    sw?.writeTypeVariable(classifier.name, asmType)
-                }
-            }
-
-            else -> throw UnsupportedOperationException("Unknown type $type")
-        }
-    }
-
-    // Copied from KotlinTypeMapper.writeGenericType.
-    private fun JvmSignatureWriter.writeGenericType(type: IrSimpleType, asmType: Type, mode: TypeMappingMode) {
-        if (skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.arguments.isEmpty()) {
+    override fun JvmSignatureWriter.writeGenericType(type: SimpleTypeMarker, asmType: Type, mode: TypeMappingMode) {
+        require(type is IrSimpleType)
+        if (skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.arguments.isEmpty() || type.isRawTypeImpl()) {
             writeAsmType(asmType)
             return
         }
@@ -238,7 +182,7 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
         val parameters = classifier.typeParameters.map(IrTypeParameter::symbol)
         val arguments = type.arguments
 
-        if ((classifier.symbol.isFunction() && arguments.size > FunctionInvokeDescriptor.BIG_ARITY)
+        if ((classifier.symbol.isFunction() && arguments.size > BuiltInFunctionArity.BIG_ARITY)
             || classifier.symbol.isKFunction() || classifier.symbol.isKSuspendFunction()
         ) {
             writeGenericArguments(sw, listOf(arguments.last()), listOf(parameters.last()), mode)
@@ -253,12 +197,66 @@ class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapperBas
         arguments: List<IrTypeArgument>,
         parameters: List<IrTypeParameterSymbol>,
         mode: TypeMappingMode
-    ) = with(KotlinTypeMapper) {
-        typeSystem.writeGenericArguments(sw, arguments, parameters, mode) { type, sw, mode ->
-            mapType(type as IrType, mode, sw)
+    ) {
+        with(KotlinTypeMapper) {
+            typeSystem.writeGenericArguments(sw, arguments, parameters, mode) { type, sw, mode ->
+                mapType(type as IrType, mode, sw)
+            }
+        }
+    }
+}
+
+private class IrTypeCheckerContextForTypeMapping(
+    private val baseContext: IrTypeSystemContext,
+    private val backendContext: JvmBackendContext
+) : IrTypeSystemContext by baseContext, TypeSystemCommonBackendContextForTypeMapping {
+    override fun TypeConstructorMarker.isTypeParameter(): Boolean {
+        return this is IrTypeParameterSymbol
+    }
+
+    override fun TypeConstructorMarker.defaultType(): IrType {
+        return when (this) {
+            is IrClassSymbol -> owner.defaultType
+            is IrTypeParameterSymbol -> owner.defaultType
+            else -> error("Unsupported type constructor: $this")
         }
     }
 
-    private fun boxTypeIfNeeded(possiblyPrimitiveType: Type, needBoxedType: Boolean): Type =
-        if (needBoxedType) AsmUtil.boxType(possiblyPrimitiveType) else possiblyPrimitiveType
+    override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
+        require(this is IrSimpleType)
+        return isSuspendFunctionImpl()
+    }
+
+    override fun SimpleTypeMarker.isKClass(): Boolean {
+        require(this is IrSimpleType)
+        return isKClassImpl()
+    }
+
+    override fun KotlinTypeMarker.isRawType(): Boolean {
+        require(this is IrType)
+        if (this !is IrSimpleType) return false
+        return isRawTypeImpl()
+    }
+
+    override fun TypeConstructorMarker.typeWithArguments(arguments: List<KotlinTypeMarker>): IrSimpleType {
+        require(this is IrClassSymbol)
+        arguments.forEach {
+            require(it is IrType)
+        }
+        @Suppress("UNCHECKED_CAST")
+        return typeWith(arguments as List<IrType>)
+    }
+
+    override fun TypeParameterMarker.representativeUpperBound(): IrType {
+        require(this is IrTypeParameterSymbol)
+        return owner.representativeUpperBound
+    }
+
+    override fun continuationTypeConstructor(): IrClassSymbol {
+        return backendContext.ir.symbols.continuationClass
+    }
+
+    override fun functionNTypeConstructor(n: Int): IrClassSymbol {
+        return backendContext.referenceClass(backendContext.builtIns.getFunction(n))
+    }
 }

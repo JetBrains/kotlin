@@ -34,9 +34,6 @@ sealed class FirImplicitBuiltinTypeRef(
     override val delegatedTypeRef: FirTypeRef?
         get() = null
 
-    override val isSuspend: Boolean
-        get() = false
-
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
@@ -72,9 +69,29 @@ class FirImplicitBooleanTypeRef(
     source: FirSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Boolean)
 
+class FirImplicitByteTypeRef(
+    source: FirSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Byte)
+
+class FirImplicitShortTypeRef(
+    source: FirSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Short)
+
 class FirImplicitIntTypeRef(
     source: FirSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Int)
+
+class FirImplicitLongTypeRef(
+    source: FirSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Long)
+
+class FirImplicitDoubleTypeRef(
+    source: FirSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Double)
+
+class FirImplicitFloatTypeRef(
+    source: FirSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Float)
 
 class FirImplicitNothingTypeRef(
     source: FirSourceElement?
@@ -83,6 +100,10 @@ class FirImplicitNothingTypeRef(
 class FirImplicitNullableNothingTypeRef(
     source: FirSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Nothing, isNullable = true)
+
+class FirImplicitCharTypeRef(
+    source: FirSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Char)
 
 class FirImplicitStringTypeRef(
     source: FirSourceElement?
@@ -146,9 +167,15 @@ fun FirImplicitBuiltinTypeRef.withFakeSource(kind: FirFakeSourceElementKind): Fi
         is FirImplicitEnumTypeRef -> FirImplicitEnumTypeRef(newSource)
         is FirImplicitAnnotationTypeRef -> FirImplicitAnnotationTypeRef(newSource)
         is FirImplicitBooleanTypeRef -> FirImplicitBooleanTypeRef(newSource)
+        is FirImplicitByteTypeRef -> FirImplicitByteTypeRef(newSource)
+        is FirImplicitShortTypeRef -> FirImplicitShortTypeRef(newSource)
         is FirImplicitIntTypeRef -> FirImplicitIntTypeRef(newSource)
+        is FirImplicitLongTypeRef -> FirImplicitLongTypeRef(newSource)
+        is FirImplicitDoubleTypeRef -> FirImplicitDoubleTypeRef(newSource)
+        is FirImplicitFloatTypeRef -> FirImplicitFloatTypeRef(newSource)
         is FirImplicitNothingTypeRef -> FirImplicitNothingTypeRef(newSource)
         is FirImplicitNullableNothingTypeRef -> FirImplicitNullableNothingTypeRef(newSource)
+        is FirImplicitCharTypeRef -> FirImplicitCharTypeRef(newSource)
         is FirImplicitStringTypeRef -> FirImplicitStringTypeRef(newSource)
         is FirImplicitKPropertyTypeRef -> FirImplicitKPropertyTypeRef(
             newSource,

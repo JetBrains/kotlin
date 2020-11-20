@@ -35,6 +35,7 @@ class TCServiceMessagesTestExecutor(
     val execHandleFactory: ExecHandleFactory,
     val buildOperationExecutor: BuildOperationExecutor,
     val runListeners: MutableList<KotlinTestRunnerListener>,
+    val ignoreTcsmOverflow: Boolean,
     val ignoreRunFailures: Boolean
 ) : TestExecuter<TCServiceMessagesTestExecutionSpec> {
     private lateinit var execHandle: ExecHandle
@@ -43,7 +44,7 @@ class TCServiceMessagesTestExecutor(
 
     override fun execute(spec: TCServiceMessagesTestExecutionSpec, testResultProcessor: TestResultProcessor) {
         spec.wrapExecute {
-            val rootOperation = buildOperationExecutor.currentOperation.parentId
+            val rootOperation = buildOperationExecutor.currentOperation.parentId!!
 
             val client = spec.createClient(testResultProcessor, log)
 
@@ -51,8 +52,18 @@ class TCServiceMessagesTestExecutor(
                 val exec = execHandleFactory.newExec()
                 spec.forkOptions.copyTo(exec)
                 exec.args = spec.args
-                exec.standardOutput = TCServiceMessageOutputStreamHandler(client, { spec.showSuppressedOutput() }, log)
-                exec.errorOutput = TCServiceMessageOutputStreamHandler(client, { spec.showSuppressedOutput() }, log)
+                exec.standardOutput = TCServiceMessageOutputStreamHandler(
+                    client,
+                    { spec.showSuppressedOutput() },
+                    log,
+                    ignoreTcsmOverflow
+                )
+                exec.errorOutput = TCServiceMessageOutputStreamHandler(
+                    client,
+                    { spec.showSuppressedOutput() },
+                    log,
+                    ignoreTcsmOverflow
+                )
                 execHandle = exec.build()
 
                 lateinit var result: ExecResult

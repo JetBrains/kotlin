@@ -145,6 +145,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
             ExternalSystemApiUtil.findAll(ideModule, GradleSourceSetData.KEY)
         } else listOf(ideModule)
 
+        val ideaModulesByGradlePaths = gradleModule.project.modules.groupBy { it.gradleProject.path }
         var dirtyDependencies = true
         for (currentModuleNode in moduleNodesToProcess) {
             val toProcess = ArrayDeque<DataNode<out ModuleData>>().apply { add(currentModuleNode) }
@@ -158,7 +159,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                 } else moduleNode
 
                 val ideaModule = if (moduleNodeForGradleModel != ideModule) {
-                    gradleModule.project.modules.firstOrNull { it.gradleProject.path == moduleNodeForGradleModel?.data?.id }
+                    moduleNodeForGradleModel?.data?.id?.let { ideaModulesByGradlePaths[it]?.firstOrNull() }
                 } else gradleModule
 
                 val implementsModuleIds = resolverCtx.getExtraProject(ideaModule, KotlinGradleModel::class.java)?.implements

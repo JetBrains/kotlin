@@ -34,11 +34,13 @@ dependencies {
     testCompile(kotlinStdlib("jdk8"))
     testCompile(project(":kotlin-reflect"))
     testCompile(project(":kotlin-android-extensions"))
+    testCompile(project(":kotlin-parcelize-compiler"))
     testCompile(commonDep("org.jetbrains.intellij.deps", "trove4j"))
 
     testCompile(gradleApi())
 
     testRuntime(projectRuntimeJar(":kotlin-android-extensions"))
+    testRuntime(project(":compiler:tests-mutes"))
 
     // Workaround for missing transitive import of the common(project `kotlin-test-common`
     // for `kotlin-test-jvm` into the IDE:
@@ -48,16 +50,77 @@ dependencies {
 // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
 val shortenTempRootName = System.getProperty("os.name")!!.contains("Windows")
 
-// additional configuration in tasks.withType<Test> below
-projectTest("test", shortenTempRootName = shortenTempRootName) {}
+val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild ||
+        try {
+            project.properties["gradle.integration.tests.split.tasks"]?.toString()?.toBoolean() ?: false
+        } catch (_: Exception) { false }
 
-projectTest("testAdvanceGradleVersion", shortenTempRootName = shortenTempRootName) {
+fun Test.includeMppAndAndroid(include: Boolean) {
+    if (isTeamcityBuild) {
+        val mppAndAndroidTestPatterns = listOf("*Multiplatform*", "*Mpp*", "*Android*")
+        val filter = if (include)
+            filter.includePatterns
+        else
+            filter.excludePatterns
+        filter.addAll(mppAndAndroidTestPatterns)
+    }
+}
+
+fun Test.includeNative(include: Boolean) {
+    if (isTeamcityBuild) {
+        val filter = if (include)
+            filter.includePatterns
+        else
+            filter.excludePatterns
+        filter.add("org.jetbrains.kotlin.gradle.native.*")
+    }
+}
+
+fun Test.advanceGradleVersion() {
     val gradleVersionForTests = "6.3"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
 }
 
+// additional configuration in tasks.withType<Test> below
+projectTest("test", shortenTempRootName = shortenTempRootName) {
+    includeMppAndAndroid(false)
+    includeNative(false)
+}
+
+projectTest("testAdvanceGradleVersion", shortenTempRootName = shortenTempRootName) {
+    advanceGradleVersion()
+    includeMppAndAndroid(false)
+    includeNative(false)
+}
+
+if (isTeamcityBuild) {
+    projectTest("testNative", shortenTempRootName = shortenTempRootName) {
+        includeNative(true)
+    }
+
+    projectTest("testAdvanceGradleVersionNative", shortenTempRootName = shortenTempRootName) {
+        advanceGradleVersion()
+        includeNative(true)
+    }
+
+    projectTest("testMppAndAndroid", shortenTempRootName = shortenTempRootName) {
+        includeMppAndAndroid(true)
+    }
+
+    projectTest("testAdvanceGradleVersionMppAndAndroid", shortenTempRootName = shortenTempRootName) {
+        advanceGradleVersion()
+        includeMppAndAndroid(true)
+    }
+}
+
 tasks.named<Task>("check") {
     dependsOn("testAdvanceGradleVersion")
+    if (isTeamcityBuild) {
+        dependsOn("testAdvanceGradleVersionMppAndAndroid")
+        dependsOn("testMppAndAndroid")
+        dependsOn("testNative")
+        dependsOn("testAdvanceGradleVersionNative")
+    }
 }
 
 gradle.taskGraph.whenReady {

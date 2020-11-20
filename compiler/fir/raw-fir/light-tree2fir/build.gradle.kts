@@ -15,30 +15,30 @@ repositories {
 }
 
 dependencies {
-    compile(project(":compiler:fir:raw-fir:fir-common"))
+    api(project(":compiler:fir:raw-fir:raw-fir.common"))
+    implementation(project(":compiler:psi"))
+    implementation(kotlinxCollectionsImmutable())
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    testCompile(intellijDep())
+    testImplementation(intellijDep())
+    testImplementation(commonDep("junit:junit"))
+    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(projectTests(":compiler:fir:raw-fir:psi2fir"))
 
-    testCompile(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:fir:raw-fir:psi2fir"))
-
     testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntime(project(":kotlin-reflect"))
-    testRuntime(project(":core:descriptors.runtime"))
 
-    compile("org.openjdk.jmh", "jmh-core", jmhVersion)
-    compile("org.openjdk.jmh", "jmh-generator-bytecode", jmhVersion)
-    compile("org.openjdk.jmh", "jmh-generator-annprocess", jmhVersion)
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
 
-    Platform[192].orHigher {
-        testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-        testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    }
+    implementation("org.openjdk.jmh", "jmh-core", jmhVersion)
+    implementation("org.openjdk.jmh", "jmh-generator-bytecode", jmhVersion)
+    implementation("org.openjdk.jmh", "jmh-generator-annprocess", jmhVersion)
+
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {

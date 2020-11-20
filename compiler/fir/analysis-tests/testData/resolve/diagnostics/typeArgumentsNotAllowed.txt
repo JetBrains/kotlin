@@ -1,0 +1,49 @@
+FILE: typeArgumentsNotAllowed.kt
+    public abstract class Foo<T> : R|kotlin/Any| {
+        public constructor<T>(): R|rest/Foo<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val x: <ERROR TYPE REF: Type arguments not allowed>
+            public get(): <ERROR TYPE REF: Type arguments not allowed>
+
+        public abstract fun foo(): <ERROR TYPE REF: Type arguments not allowed>
+
+    }
+    public final fun <T> foo(): R|kotlin/Unit| {
+        R|rest/bar|<<ERROR TYPE REF: Type arguments not allowed>>()
+        R|rest/bar|<<ERROR TYPE REF: Type arguments not allowed>>()
+    }
+    public final fun <T> bar(): R|kotlin/Unit| {
+    }
+    public final object Best : R|kotlin/Any| {
+        private constructor(): R|rest/Best| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val a: R|ERROR CLASS: Unresolved name: MyClass| = Q|rest|.<Unresolved name: MyClass>#
+        public get(): R|ERROR CLASS: Unresolved name: MyClass|
+    public final val b: R|ERROR CLASS: Unresolved name: MyClass| = Q|rest/Best|.<Unresolved name: MyClass>#
+        public get(): R|ERROR CLASS: Unresolved name: MyClass|
+    public final class B<E> : R|kotlin/Any| {
+        public constructor<E>(): R|rest/B<E>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C<F> : R|kotlin/Any| {
+        public constructor<F>(): R|rest/C<F>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <G> gest(): R|kotlin/Unit| {
+    }
+    public final fun <T> fest(): R|kotlin/Unit| {
+        lval b: <ERROR TYPE REF: Type arguments not allowed>
+        R|rest/gest|<<ERROR TYPE REF: Type arguments not allowed>>()
+        R|rest/gest|<R|T|>()
+        lval c: <ERROR TYPE REF: Type arguments not allowed>
+        R|rest/gest|<<ERROR TYPE REF: Type arguments not allowed>>()
+    }

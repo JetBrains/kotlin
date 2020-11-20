@@ -5,9 +5,9 @@
 import kotlin.contracts.*
 
 fun safeIsString(x: Any?): Boolean? {
-    contract {
+    <!WRONG_IMPLIES_CONDITION!>contract {
         returns(true) implies (x is String)
-    }
+    }<!>
     return x?.let { it is String }
 }
 

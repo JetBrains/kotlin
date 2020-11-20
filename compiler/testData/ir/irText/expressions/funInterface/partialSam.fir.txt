@@ -56,7 +56,7 @@ FILE fqName:<root> fileName:/partialSam.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:fsi visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:fsi type:<root>.fsi.<no name provided> visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:fsi type:<root>.Fn<kotlin.String, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
         BLOCK type=<root>.fsi.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.String, kotlin.Int>]
@@ -89,13 +89,13 @@ FILE fqName:<root> fileName:/partialSam.kt
                 public open fun toString (): kotlin.String declared in kotlin.Any
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any
           CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.fsi.<no name provided>' type=<root>.fsi.<no name provided> origin=OBJECT_LITERAL
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fsi> visibility:public modality:FINAL <> () returnType:<root>.fsi.<no name provided>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fsi> visibility:public modality:FINAL <> () returnType:<root>.Fn<kotlin.String, kotlin.Int>
       correspondingProperty: PROPERTY name:fsi visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-fsi> (): <root>.fsi.<no name provided> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fsi type:<root>.fsi.<no name provided> visibility:private [final,static]' type=<root>.fsi.<no name provided> origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-fsi> (): <root>.Fn<kotlin.String, kotlin.Int> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fsi type:<root>.Fn<kotlin.String, kotlin.Int> visibility:private [final,static]' type=<root>.Fn<kotlin.String, kotlin.Int> origin=null
   PROPERTY name:fis visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:fis type:<root>.fis.<no name provided> visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:fis type:<root>.Fn<kotlin.Int, kotlin.String> visibility:private [final,static]
       EXPRESSION_BODY
         BLOCK type=<root>.fis.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.Fn<kotlin.Int, kotlin.String>]
@@ -128,35 +128,37 @@ FILE fqName:<root> fileName:/partialSam.kt
                 public open fun toString (): kotlin.String declared in kotlin.Any
               $this: VALUE_PARAMETER name:<this> type:kotlin.Any
           CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.fis.<no name provided>' type=<root>.fis.<no name provided> origin=OBJECT_LITERAL
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fis> visibility:public modality:FINAL <> () returnType:<root>.fis.<no name provided>
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fis> visibility:public modality:FINAL <> () returnType:<root>.Fn<kotlin.Int, kotlin.String>
       correspondingProperty: PROPERTY name:fis visibility:public modality:FINAL [val]
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-fis> (): <root>.fis.<no name provided> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fis type:<root>.fis.<no name provided> visibility:private [final,static]' type=<root>.fis.<no name provided> origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-fis> (): <root>.Fn<kotlin.Int, kotlin.String> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:fis type:<root>.Fn<kotlin.Int, kotlin.String> visibility:private [final,static]' type=<root>.Fn<kotlin.Int, kotlin.String> origin=null
   FUN name:test visibility:public modality:FINAL <> (j:<root>.J) returnType:kotlin.Unit
     VALUE_PARAMETER name:j index:0 type:<root>.J
     BLOCK_BODY
-      CALL 'public final fun runConversion (f1: <root>.Fn<kotlin.String, kotlin.Int>, f2: <root>.Fn<kotlin.Int, kotlin.String>): kotlin.Int declared in <root>.J' type=kotlin.Int origin=null
-        $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
-        f1: CALL 'public final fun <get-fsi> (): <root>.fsi.<no name provided> declared in <root>' type=<root>.fsi.<no name provided> origin=GET_PROPERTY
-        f2: TYPE_OP type=<root>.Fn<kotlin.Int, kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.Fn<kotlin.Int, kotlin.String>
-          FUN_EXPR type=kotlin.Function3<kotlin.String, kotlin.Int, kotlin.Int, kotlin.String> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (s:kotlin.String, i:kotlin.Int, ti:kotlin.Int) returnType:kotlin.String
-              VALUE_PARAMETER name:s index:0 type:kotlin.String
-              VALUE_PARAMETER name:i index:1 type:kotlin.Int
-              VALUE_PARAMETER name:ti index:2 type:kotlin.Int
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (s: kotlin.String, i: kotlin.Int, ti: kotlin.Int): kotlin.String declared in <root>.test'
-                  CONST String type=kotlin.String value=""
-      CALL 'public final fun runConversion (f1: <root>.Fn<kotlin.String, kotlin.Int>, f2: <root>.Fn<kotlin.Int, kotlin.String>): kotlin.Int declared in <root>.J' type=kotlin.Int origin=null
-        $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
-        f1: TYPE_OP type=<root>.Fn<kotlin.String, kotlin.Int> origin=SAM_CONVERSION typeOperand=<root>.Fn<kotlin.String, kotlin.Int>
-          FUN_EXPR type=kotlin.Function3<kotlin.String, kotlin.Int, kotlin.String, kotlin.Int> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (s:kotlin.String, i:kotlin.Int, ts:kotlin.String) returnType:kotlin.Int
-              VALUE_PARAMETER name:s index:0 type:kotlin.String
-              VALUE_PARAMETER name:i index:1 type:kotlin.Int
-              VALUE_PARAMETER name:ts index:2 type:kotlin.String
-              BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <anonymous> (s: kotlin.String, i: kotlin.Int, ts: kotlin.String): kotlin.Int declared in <root>.test'
-                  CONST Int type=kotlin.Int value=1
-        f2: CALL 'public final fun <get-fis> (): <root>.fis.<no name provided> declared in <root>' type=<root>.fis.<no name provided> origin=GET_PROPERTY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun runConversion (f1: <root>.Fn<kotlin.String, kotlin.Int>, f2: <root>.Fn<kotlin.Int, kotlin.String>): kotlin.Int declared in <root>.J' type=kotlin.Int origin=null
+          $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
+          f1: CALL 'public final fun <get-fsi> (): <root>.Fn<kotlin.String, kotlin.Int> declared in <root>' type=<root>.Fn<kotlin.String, kotlin.Int> origin=GET_PROPERTY
+          f2: TYPE_OP type=<root>.Fn<kotlin.Int, kotlin.String> origin=SAM_CONVERSION typeOperand=<root>.Fn<kotlin.Int, kotlin.String>
+            FUN_EXPR type=kotlin.Function3<kotlin.String, kotlin.Int, kotlin.Int, kotlin.String> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (s:kotlin.String, i:kotlin.Int, ti:kotlin.Int) returnType:kotlin.String
+                VALUE_PARAMETER name:s index:0 type:kotlin.String
+                VALUE_PARAMETER name:i index:1 type:kotlin.Int
+                VALUE_PARAMETER name:ti index:2 type:kotlin.Int
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (s: kotlin.String, i: kotlin.Int, ti: kotlin.Int): kotlin.String declared in <root>.test'
+                    CONST String type=kotlin.String value=""
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun runConversion (f1: <root>.Fn<kotlin.String, kotlin.Int>, f2: <root>.Fn<kotlin.Int, kotlin.String>): kotlin.Int declared in <root>.J' type=kotlin.Int origin=null
+          $this: GET_VAR 'j: <root>.J declared in <root>.test' type=<root>.J origin=null
+          f1: TYPE_OP type=<root>.Fn<kotlin.String, kotlin.Int> origin=SAM_CONVERSION typeOperand=<root>.Fn<kotlin.String, kotlin.Int>
+            FUN_EXPR type=kotlin.Function3<kotlin.String, kotlin.Int, kotlin.String, kotlin.Int> origin=LAMBDA
+              FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (s:kotlin.String, i:kotlin.Int, ts:kotlin.String) returnType:kotlin.Int
+                VALUE_PARAMETER name:s index:0 type:kotlin.String
+                VALUE_PARAMETER name:i index:1 type:kotlin.Int
+                VALUE_PARAMETER name:ts index:2 type:kotlin.String
+                BLOCK_BODY
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (s: kotlin.String, i: kotlin.Int, ts: kotlin.String): kotlin.Int declared in <root>.test'
+                    CONST Int type=kotlin.Int value=1
+          f2: CALL 'public final fun <get-fis> (): <root>.Fn<kotlin.Int, kotlin.String> declared in <root>' type=<root>.Fn<kotlin.Int, kotlin.String> origin=GET_PROPERTY

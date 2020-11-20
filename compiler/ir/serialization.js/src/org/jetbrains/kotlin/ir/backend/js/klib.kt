@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
+import org.jetbrains.kotlin.backend.common.serialization.ICData
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.knownBuiltins
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -32,7 +34,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -42,7 +43,9 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.*
@@ -106,6 +109,7 @@ fun generateKLib(
     nopack: Boolean
 ) {
     val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
+    val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
 
     val icData: List<KotlinFileSerializedData>
     val serializedIrFiles: List<SerializedIrFile>?
@@ -140,32 +144,33 @@ fun generateKLib(
     val depsDescriptors =
         ModulesStructure(project, MainModule.SourceFiles(files), analyzer, configuration, allDependencies, friendDependencies)
 
-    val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory)
+    val (psi2IrContext, hasErrors) = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
     val irBuiltIns = psi2IrContext.irBuiltIns
     val functionFactory = IrFunctionFactory(irBuiltIns, psi2IrContext.symbolTable)
     irBuiltIns.functionFactory = functionFactory
 
     val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-    val deserializeFakeOverrides = configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
-
+    val feContext = psi2IrContext.run {
+        JsIrLinker.JsFePluginContext(moduleDescriptor, bindingContext, symbolTable, typeTranslator, irBuiltIns)
+    }
     val irLinker = JsIrLinker(
         psi2IrContext.moduleDescriptor,
         emptyLoggingContext,
         psi2IrContext.irBuiltIns,
         psi2IrContext.symbolTable,
         functionFactory,
-        serializedIrFiles,
-        deserializeFakeOverrides
+        feContext,
+        serializedIrFiles?.let { ICData(it, errorPolicy.allowErrors) }
     )
 
-    val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
+    sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
         irLinker.deserializeOnlyHeaderModule(depsDescriptors.getModuleDescriptor(it), it)
     }
 
     val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, expectDescriptorToSymbol)
 
     moduleFragment.acceptVoid(ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc)))
-    if (!configuration.getBoolean(JSConfigurationKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR)) {
+    if (configuration.getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
         val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
         irLinker.modules.forEach { fakeOverrideChecker.check(it) }
     }
@@ -178,6 +183,7 @@ fun generateKLib(
 
     serializeModuleIntoKlib(
         moduleName,
+        project,
         configuration,
         psi2IrContext.bindingContext,
         files,
@@ -187,7 +193,8 @@ fun generateKLib(
         expectDescriptorToSymbol,
         icData,
         nopack,
-        false
+        perFile = false,
+        hasErrors
     )
 }
 
@@ -218,16 +225,19 @@ fun loadIr(
     irFactory: IrFactory,
 ): IrModuleInfo {
     val depsDescriptors = ModulesStructure(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
-    val deserializeFakeOverrides = configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
+    val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
 
     when (mainModule) {
         is MainModule.SourceFiles -> {
-            val psi2IrContext: GeneratorContext = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory)
+            val (psi2IrContext, _) = runAnalysisAndPreparePsi2Ir(depsDescriptors, irFactory, errorPolicy)
             val irBuiltIns = psi2IrContext.irBuiltIns
             val symbolTable = psi2IrContext.symbolTable
             val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
             irBuiltIns.functionFactory = functionFactory
-            val irLinker = JsIrLinker(psi2IrContext.moduleDescriptor, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, null, deserializeFakeOverrides)
+            val feContext = psi2IrContext.run {
+                JsIrLinker.JsFePluginContext(moduleDescriptor, bindingContext, symbolTable, typeTranslator, irBuiltIns)
+            }
+            val irLinker = JsIrLinker(psi2IrContext.moduleDescriptor, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, feContext, null)
             val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
                 irLinker.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(it), it)
             }
@@ -239,7 +249,7 @@ fun loadIr(
             val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
             moduleFragment.acceptVoid(mangleChecker)
 
-            if (!configuration.getBoolean(JSConfigurationKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR)) {
+            if (configuration.getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
                 val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
                 irLinker.modules.forEach { fakeOverrideChecker.check(it) }
             }
@@ -263,7 +273,8 @@ fun loadIr(
             constantValueGenerator.typeTranslator = typeTranslator
             val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
-            val irLinker = JsIrLinker(null, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, null, deserializeFakeOverrides)
+            val irLinker =
+                JsIrLinker(null, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, null, null)
 
             val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
                 val strategy =
@@ -287,11 +298,18 @@ fun loadIr(
     }
 }
 
-private fun runAnalysisAndPreparePsi2Ir(depsDescriptors: ModulesStructure, irFactory: IrFactory): GeneratorContext {
-    val (bindingContext, moduleDescriptor) = depsDescriptors.runAnalysis()
-    val psi2Ir = Psi2IrTranslator(depsDescriptors.compilerConfiguration.languageVersionSettings, Psi2IrConfiguration())
+private fun runAnalysisAndPreparePsi2Ir(
+    depsDescriptors: ModulesStructure,
+    irFactory: IrFactory,
+    errorIgnorancePolicy: ErrorTolerancePolicy
+): Pair<GeneratorContext, Boolean> {
+    val analysisResult = depsDescriptors.runAnalysis(errorIgnorancePolicy)
+    val psi2Ir = Psi2IrTranslator(
+        depsDescriptors.compilerConfiguration.languageVersionSettings,
+        Psi2IrConfiguration(errorIgnorancePolicy.allowErrors)
+    )
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
-    return psi2Ir.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
+    return psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable) to analysisResult.hasErrors
 }
 
 fun GeneratorContext.generateModuleFragmentWithPlugins(
@@ -304,20 +322,22 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
 
     val extensions = IrGenerationExtension.getInstances(project)
 
-    for (extension in extensions) {
-        psi2Ir.addPostprocessingStep { module ->
-            extension.generate(
-                module,
-                IrPluginContextImpl(
-                    moduleDescriptor,
-                    bindingContext,
-                    languageVersionSettings,
-                    symbolTable,
-                    typeTranslator,
-                    irBuiltIns,
-                    linker = irLinker
-                )
-            )
+    if (extensions.isNotEmpty()) {
+        // plugin context should be instantiated before postprocessing steps
+        val pluginContext = IrPluginContextImpl(
+            moduleDescriptor,
+            bindingContext,
+            languageVersionSettings,
+            symbolTable,
+            typeTranslator,
+            irBuiltIns,
+            linker = irLinker
+        )
+
+        for (extension in extensions) {
+            psi2Ir.addPostprocessingStep { module ->
+                extension.generate(module, pluginContext)
+            }
         }
     }
 
@@ -373,7 +393,9 @@ private class ModulesStructure(
 
     val builtInsDep = allDependencies.getFullList().find { it.isBuiltIns }
 
-    fun runAnalysis(): JsAnalysisResult {
+    class JsFrontEndResult(val moduleDescriptor: ModuleDescriptor, val bindingContext: BindingContext, val hasErrors: Boolean)
+
+    fun runAnalysis(errorPolicy: ErrorTolerancePolicy): JsFrontEndResult {
         require(mainModule is MainModule.SourceFiles)
         val files = mainModule.files
 
@@ -394,14 +416,19 @@ private class ModulesStructure(
         val analysisResult = analyzer.analysisResult
         if (IncrementalCompilation.isEnabledForJs()) {
             /** can throw [IncrementalNextRoundException] */
-            compareMetadataAndGoToNextICRoundIfNeeded(analysisResult, compilerConfiguration, files)
+            compareMetadataAndGoToNextICRoundIfNeeded(analysisResult, compilerConfiguration, project, files, errorPolicy.allowErrors)
         }
-        if (analyzer.hasErrors() || analysisResult !is JsAnalysisResult)
-            throw JsIrCompilationError
 
-        TopDownAnalyzerFacadeForJSIR.checkForErrors(files, analysisResult.bindingContext)
+        var hasErrors = false
+        if (analyzer.hasErrors() || analysisResult !is JsAnalysisResult) {
+            if (!errorPolicy.allowErrors)
+                throw JsIrCompilationError
+            else hasErrors = true
+        }
 
-        return analysisResult
+        hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(files, analysisResult.bindingContext, errorPolicy) || hasErrors
+
+        return JsFrontEndResult(analysisResult.moduleDescriptor, analysisResult.bindingContext, hasErrors)
     }
 
     private val languageVersionSettings: LanguageVersionSettings = compilerConfiguration.languageVersionSettings
@@ -445,6 +472,7 @@ private fun getDescriptorForElement(
 
 fun serializeModuleIntoKlib(
     moduleName: String,
+    project: Project,
     configuration: CompilerConfiguration,
     bindingContext: BindingContext,
     files: List<KtFile>,
@@ -454,7 +482,8 @@ fun serializeModuleIntoKlib(
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     cleanFiles: List<KotlinFileSerializedData>,
     nopack: Boolean,
-    perFile: Boolean
+    perFile: Boolean,
+    containsErrorCode: Boolean = false
 ) {
     assert(files.size == moduleFragment.files.size)
 
@@ -467,7 +496,7 @@ fun serializeModuleIntoKlib(
         ).serializedIrModule(moduleFragment)
 
     val moduleDescriptor = moduleFragment.descriptor
-    val metadataSerializer = KlibMetadataIncrementalSerializer(configuration)
+    val metadataSerializer = KlibMetadataIncrementalSerializer(configuration, project, containsErrorCode)
 
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
     val empty = ByteArray(0)
@@ -524,12 +553,18 @@ fun serializeModuleIntoKlib(
         irVersion = KlibIrVersion.INSTANCE.toString()
     )
 
+    val properties = if (containsErrorCode) {
+        Properties().also {
+            it.setProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE, "true")
+        }
+    } else null
+
     buildKotlinLibrary(
         linkDependencies = dependencies,
         ir = fullSerializedIr,
         metadata = serializedMetadata,
         dataFlowGraph = null,
-        manifestProperties = null,
+        manifestProperties = properties,
         moduleName = moduleName,
         nopack = nopack,
         perFile = perFile,
@@ -551,11 +586,13 @@ private fun KlibMetadataIncrementalSerializer.serializeScope(
 private fun compareMetadataAndGoToNextICRoundIfNeeded(
     analysisResult: AnalysisResult,
     config: CompilerConfiguration,
-    files: List<KtFile>
+    project: Project,
+    files: List<KtFile>,
+    allowErrors: Boolean
 ) {
     val nextRoundChecker = config.get(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER) ?: return
     val bindingContext = analysisResult.bindingContext
-    val serializer = KlibMetadataIncrementalSerializer(config)
+    val serializer = KlibMetadataIncrementalSerializer(config, project, allowErrors)
     for (ktFile in files) {
         val packageFragment = serializer.serializeScope(ktFile, bindingContext, analysisResult.moduleDescriptor)
         // to minimize a number of IC rounds, we should inspect all proto for changes first,
@@ -566,8 +603,10 @@ private fun compareMetadataAndGoToNextICRoundIfNeeded(
     if (nextRoundChecker.shouldGoToNextRound()) throw IncrementalNextRoundException()
 }
 
-private fun KlibMetadataIncrementalSerializer(configuration: CompilerConfiguration) = KlibMetadataIncrementalSerializer(
+private fun KlibMetadataIncrementalSerializer(configuration: CompilerConfiguration, project: Project, allowErrors: Boolean) = KlibMetadataIncrementalSerializer(
     languageVersionSettings = configuration.languageVersionSettings,
     metadataVersion = configuration.metadataVersion,
-    skipExpects = !configuration.expectActualLinker
+    project = project,
+    skipExpects = !configuration.expectActualLinker,
+    allowErrorTypes = allowErrors
 )

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen.inline
 import org.jetbrains.kotlin.backend.common.isBuiltInIntercepted
 import org.jetbrains.kotlin.backend.common.isBuiltInSuspendCoroutineUninterceptedOrReturn
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForCoroutineContext
 import org.jetbrains.kotlin.codegen.coroutines.createMethodNodeForIntercepted
@@ -54,7 +55,7 @@ internal fun generateInlineIntrinsic(
 
 private fun isSpecialEnumMethod(descriptor: FunctionDescriptor): Boolean {
     val containingDeclaration = descriptor.containingDeclaration as? PackageFragmentDescriptor ?: return false
-    if (containingDeclaration.fqName != KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) {
+    if (containingDeclaration.fqName != StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
         return false
     }
     if (descriptor.typeParameters.size != 1) {

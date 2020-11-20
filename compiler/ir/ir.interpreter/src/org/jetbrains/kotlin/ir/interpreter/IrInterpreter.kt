@@ -115,7 +115,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
                 is IrEnumEntry -> interpretEnumEntry(this)
                 is IrConst<*> -> interpretConst(this)
                 is IrVariable -> interpretVariable(this)
-                is IrSetVariable -> interpretSetVariable(this)
+                is IrSetValue -> interpretSetVariable(this)
                 is IrTypeOperatorCall -> interpretTypeOperatorCall(this)
                 is IrBranch -> interpretBranch(this)
                 is IrWhileLoop -> interpretWhile(this)
@@ -323,8 +323,8 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     }
 
     private fun IrFunction.trySubstituteFunctionBody(): ExecutionResult? {
-        if (!this.symbol.isPublicApi) return null
-        val body = bodyMap[this.symbol.signature]
+        val signature = this.symbol.signature ?: return null
+        val body = bodyMap[signature]
 
         return body?.let {
             try {
@@ -533,6 +533,10 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         val field = expression.symbol.owner
         // for java static variables
         if (field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic) {
+            val initializerExpression = field.initializer?.expression
+            if (initializerExpression is IrConst<*>) {
+                return interpretConst(initializerExpression)
+            }
             stack.pushReturnValue(Wrapper.getStaticGetter(field)!!.invokeWithArguments().toState(field.type))
             return Next
         }
@@ -557,7 +561,7 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
         return Next
     }
 
-    private fun interpretSetVariable(expression: IrSetVariable): ExecutionResult {
+    private fun interpretSetVariable(expression: IrSetValue): ExecutionResult {
         expression.value.interpret().check { return it }
 
         if (stack.contains(expression.symbol)) {

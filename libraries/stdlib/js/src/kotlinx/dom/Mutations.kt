@@ -8,6 +8,7 @@ package kotlinx.dom
 import org.w3c.dom.*
 
 /** Removes all the children from this node. */
+@SinceKotlin("1.4")
 public fun Node.clear() {
     while (hasChildNodes()) {
         removeChild(firstChild!!)
@@ -19,6 +20,7 @@ public fun Node.clear() {
  *
  * @return this element
  */
+@SinceKotlin("1.4")
 fun Element.appendText(text: String): Element {
     appendChild(ownerDocument!!.createTextNode(text))
     return this

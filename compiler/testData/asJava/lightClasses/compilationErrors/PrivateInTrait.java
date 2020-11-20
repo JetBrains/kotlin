@@ -1,9 +1,10 @@
-public interface PrivateInTrait {
-    static final class DefaultImpls {
-        private static java.lang.String getNn(PrivateInTrait $this) { /* compiled code */ }
+public abstract interface PrivateInTrait /* PrivateInTrait*/ {
 
-        private static void setNn(PrivateInTrait $this, java.lang.String value) { /* compiled code */ }
+public static final class DefaultImpls /* PrivateInTrait.DefaultImpls*/ {
+  private static java.lang.String getN(PrivateInTrait);//  getN(PrivateInTrait)
 
-        private static java.lang.String getN(PrivateInTrait $this) { /* compiled code */ }
-    }
-}
+  private static java.lang.String getNn(PrivateInTrait);//  getNn(PrivateInTrait)
+
+  private static void setNn(PrivateInTrait, java.lang.String);//  setNn(PrivateInTrait, java.lang.String)
+
+}}

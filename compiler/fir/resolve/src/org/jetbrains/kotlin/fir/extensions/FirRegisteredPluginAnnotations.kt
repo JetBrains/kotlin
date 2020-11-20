@@ -10,6 +10,7 @@ import com.google.common.collect.Multimap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 
@@ -32,6 +33,7 @@ abstract class FirRegisteredPluginAnnotations(val session: FirSession) : FirSess
     abstract fun initialize()
 }
 
+@NoMutableState
 private class FirRegisteredPluginAnnotationsImpl(session: FirSession) : FirRegisteredPluginAnnotations(session) {
     override val annotations: MutableSet<AnnotationFqn> = mutableSetOf()
     override val metaAnnotations: MutableSet<AnnotationFqn> = mutableSetOf()

@@ -1,5 +1,7 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtProperty
 // OPTIONS: usages
+// FIR_COMPARISON
+
 class Outer {
     val x = Outer.t
 

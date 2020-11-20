@@ -14,6 +14,6 @@ fun test() {
 }
 
 fun <T> bar() {
-    val typeParameter_as_val = <!OTHER_ERROR, OTHER_ERROR!>T<!>
+    val typeParameter_as_val = <!OTHER_ERROR!>T<!>
     val typeParameter_as_fun = <!UNRESOLVED_REFERENCE!>T<!>()
 }

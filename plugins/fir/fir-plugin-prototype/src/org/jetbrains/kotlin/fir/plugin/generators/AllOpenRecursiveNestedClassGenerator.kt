@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.fir.plugin.generators
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirEffectiveVisibilityImpl
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -18,6 +17,7 @@ import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.has
 import org.jetbrains.kotlin.fir.plugin.fqn
+import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClass
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -38,8 +38,7 @@ class AllOpenRecursiveNestedClassGenerator(session: FirSession) : FirDeclaration
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
-                Visibilities.PUBLIC,
-                FirEffectiveVisibilityImpl.Public,
+                Visibilities.Public,
                 Modality.FINAL
             )
             classKind = ClassKind.CLASS
@@ -54,6 +53,7 @@ class AllOpenRecursiveNestedClassGenerator(session: FirSession) : FirDeclaration
                         isNullable = false
                     )
                 }
+                calleeReference = FirReferencePlaceholderForResolvedAnnotations
             }
         }
         return listOf(GeneratedDeclaration(newClass, owner))

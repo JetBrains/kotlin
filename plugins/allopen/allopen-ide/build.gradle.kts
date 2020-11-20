@@ -44,11 +44,9 @@ dependencies {
     testCompileOnly(intellijDep())
     testRuntimeOnly(intellijDep())
 
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-        testCompileOnly(intellijPluginDep("java"))
-        testRuntimeOnly(intellijPluginDep("java"))
-    }
+    compileOnly(intellijPluginDep("java"))
+    testCompileOnly(intellijPluginDep("java"))
+    testRuntimeOnly(intellijPluginDep("java"))
 }
 
 sourceSets {

@@ -16,7 +16,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.idea.KotlinIconProvider
+import org.jetbrains.kotlin.idea.KotlinIconProviderBase
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -28,8 +28,8 @@ class KotlinExpandNodeProjectViewProvider : TreeStructureProvider, DumbAware {
 
     // should be called after ClassesTreeStructureProvider
     override fun modify(
-        parent: AbstractTreeNodeAny,
-        children: Collection<AbstractTreeNodeAny>,
+        parent: AbstractTreeNode<*>,
+        children: Collection<AbstractTreeNode<*>>,
         settings: ViewSettings
     ): Collection<AbstractTreeNode<out Any>> {
         val result = ArrayList<AbstractTreeNode<out Any>>()
@@ -38,7 +38,7 @@ class KotlinExpandNodeProjectViewProvider : TreeStructureProvider, DumbAware {
             val childValue = child.value?.asKtFile()
 
             if (childValue != null) {
-                val mainClass = KotlinIconProvider.getSingleClass(childValue)
+                val mainClass = KotlinIconProviderBase.getSingleClass(childValue)
                 if (mainClass != null) {
                     result.add(KtClassOrObjectTreeNode(childValue.project, mainClass, settings))
                 } else {
@@ -60,16 +60,16 @@ class KotlinExpandNodeProjectViewProvider : TreeStructureProvider, DumbAware {
         else -> null
     }
 
-    override fun getData(selected: Collection<AbstractTreeNodeAny>, dataName: String): Any? = null
+    override fun getData(selected: Collection<AbstractTreeNode<*>>, dataName: String): Any? = null
 }
 
 
 class KotlinSelectInProjectViewProvider(private val project: Project) : SelectableTreeStructureProvider, DumbAware {
-    override fun getData(selected: Collection<AbstractTreeNodeAny>, dataName: String): Any? = null
+    override fun getData(selected: Collection<AbstractTreeNode<*>>, dataName: String): Any? = null
 
     override fun modify(
-        parent: AbstractTreeNodeAny,
-        children: Collection<AbstractTreeNodeAny>,
+        parent: AbstractTreeNode<*>,
+        children: Collection<AbstractTreeNode<*>>,
         settings: ViewSettings
     ): Collection<AbstractTreeNode<out Any>> {
         return ArrayList(children)

@@ -22,7 +22,18 @@
             <id>mavenCentral</id>
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
+        <repository>
+            <id>bintray.kotlin.kotlin-eap</id>
+            <url>KOTLIN_REPO</url>
+        </repository>
     </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>bintray.kotlin.kotlin-eap</id>
+            <url>KOTLIN_REPO</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <sourceDirectory>src/main/kotlin</sourceDirectory>
@@ -49,8 +60,17 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.2</version>
+            </plugin>
         </plugins>
     </build>
+
     <dependencies>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -64,4 +84,5 @@
             <version>KOTLIN_VERSION</version>
         </dependency>
     </dependencies>
+
 </project>

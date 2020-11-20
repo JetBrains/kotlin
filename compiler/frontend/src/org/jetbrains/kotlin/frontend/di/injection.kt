@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
+import org.jetbrains.kotlin.resolve.calls.inference.components.ClassicConstraintSystemUtilContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionStatelessCallbacksImpl
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
@@ -100,6 +101,7 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<CompilerDeserializationConfiguration>()
 
     useImpl<ClassicTypeSystemContextForCS>()
+    useImpl<ClassicConstraintSystemUtilContext>()
     useInstance(ProgressManagerBasedCancellationChecker)
 }
 

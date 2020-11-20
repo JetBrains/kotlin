@@ -115,7 +115,7 @@ enum class LanguageFeature(
     ProperFinally(KOTLIN_1_4, kind = BUG_FIX),
     AllowAssigningArrayElementsToVarargsInNamedFormForFunctions(KOTLIN_1_4),
     AllowNullOperatorsForResult(KOTLIN_1_4),
-    AllowResultInReturnType(KOTLIN_1_4),
+    AllowResultInReturnType(KOTLIN_1_4, defaultState = State.DISABLED),
     PreferJavaFieldOverload(KOTLIN_1_4),
     AllowContractsForNonOverridableMembers(KOTLIN_1_4),
     AllowReifiedGenericsInContracts(KOTLIN_1_4),
@@ -125,6 +125,7 @@ enum class LanguageFeature(
     FunctionalInterfaceConversion(KOTLIN_1_4, kind = UNSTABLE_FEATURE),
     GenerateJvmOverloadsAsFinal(KOTLIN_1_4),
     MangleClassMembersReturningInlineClasses(KOTLIN_1_4),
+    ImproveReportingDiagnosticsOnProtectedMembersOfBaseClass(KOTLIN_1_4, kind = BUG_FIX, defaultState = State.ENABLED),
 
     ProhibitSpreadOnSignaturePolymorphicCall(KOTLIN_1_5, kind = BUG_FIX),
     ProhibitInvisibleAbstractMethodsInSuperclasses(KOTLIN_1_5, kind = BUG_FIX),
@@ -135,6 +136,11 @@ enum class LanguageFeature(
     DisableCompatibilityModeForNewInference(KOTLIN_1_5, defaultState = LanguageFeature.State.DISABLED),
     AdaptedCallableReferenceAgainstReflectiveType(KOTLIN_1_5, defaultState = LanguageFeature.State.DISABLED),
     ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(KOTLIN_1_5, kind = BUG_FIX),
+    InferenceCompatibility(KOTLIN_1_5, kind = BUG_FIX),
+    RequiredPrimaryConstructorDelegationCallInEnums(KOTLIN_1_5, kind = BUG_FIX),
+    ForbidAnonymousReturnTypesInPrivateInlineFunctions(KOTLIN_1_5, kind = BUG_FIX),
+    ForbidReferencingToUnderscoreNamedParameterOfCatchBlock(KOTLIN_1_5, kind = BUG_FIX),
+    UseCorrectExecutionOrderForVarargArguments(KOTLIN_1_5, kind = BUG_FIX),
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 interface Expr {
     public fun testThis() {
         if (this is Num) {

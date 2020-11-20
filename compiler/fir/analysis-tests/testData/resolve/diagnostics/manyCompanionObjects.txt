@@ -1,0 +1,41 @@
+FILE: manyCompanionObjects.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|A.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object A : R|kotlin/Any| {
+            private constructor(): R|B.A| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final companion object B : R|kotlin/Any| {
+            private constructor(): R|B.B| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

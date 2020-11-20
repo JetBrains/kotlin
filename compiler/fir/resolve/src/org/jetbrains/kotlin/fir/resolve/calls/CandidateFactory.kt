@@ -11,82 +11,78 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildErrorFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.returnExpressions
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorPropertySymbol
-import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 
 class CandidateFactory private constructor(
-    val bodyResolveComponents: BodyResolveComponents,
-    val callInfo: CallInfo,
+    val context: ResolutionContext,
     private val baseSystem: ConstraintStorage
 ) {
 
     companion object {
-        private fun buildBaseSystem(bodyResolveComponents: BodyResolveComponents, callInfo: CallInfo): ConstraintStorage {
-            val system = bodyResolveComponents.inferenceComponents.createConstraintSystem()
+        private fun buildBaseSystem(context: ResolutionContext, callInfo: CallInfo): ConstraintStorage {
+            val system = context.inferenceComponents.createConstraintSystem()
             callInfo.arguments.forEach {
                 system.addSubsystemFromExpression(it)
             }
-            system.addOtherSystem(bodyResolveComponents.inferenceComponents.inferenceSession.currentConstraintSystem)
+            system.addOtherSystem(context.bodyResolveContext.inferenceSession.currentConstraintSystem)
             return system.asReadOnlyStorage()
         }
     }
 
-    constructor(bodyResolveComponents: BodyResolveComponents, callInfo: CallInfo) :
-            this(bodyResolveComponents, callInfo, buildBaseSystem(bodyResolveComponents, callInfo))
-
-    fun replaceCallInfo(callInfo: CallInfo): CandidateFactory {
-        if (this.callInfo.arguments.size != callInfo.arguments.size) {
-            throw AssertionError("Incorrect replacement of call info in CandidateFactory")
-        }
-        return CandidateFactory(bodyResolveComponents, callInfo, baseSystem)
-    }
+    constructor(context: ResolutionContext, callInfo: CallInfo) : this(context, buildBaseSystem(context, callInfo))
 
     fun createCandidate(
+        callInfo: CallInfo,
         symbol: AbstractFirBasedSymbol<*>,
         explicitReceiverKind: ExplicitReceiverKind,
+        scope: FirScope?,
         dispatchReceiverValue: ReceiverValue? = null,
-        implicitExtensionReceiverValue: ImplicitReceiverValue<*>? = null,
+        extensionReceiverValue: ReceiverValue? = null,
         builtInExtensionFunctionReceiverValue: ReceiverValue? = null
     ): Candidate {
         return Candidate(
-            symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
-            explicitReceiverKind, bodyResolveComponents, baseSystem,
+            symbol, dispatchReceiverValue, extensionReceiverValue,
+            explicitReceiverKind, context.inferenceComponents.constraintSystemFactory, baseSystem,
             builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
                 callInfo.withReceiverAsArgument(it)
-            } ?: callInfo
+            } ?: callInfo,
+            scope,
         )
     }
 
-    fun createErrorCandidate(diagnostic: ConeDiagnostic): Candidate {
+    fun createErrorCandidate(callInfo: CallInfo, diagnostic: ConeDiagnostic): Candidate {
         val symbol: AbstractFirBasedSymbol<*> = when (callInfo.callKind) {
-            CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic)
-            CallKind.Function,
-            CallKind.DelegatingConstructorCall,
-            CallKind.CallableReference -> createErrorFunctionSymbol(diagnostic)
-            CallKind.SyntheticSelect -> throw IllegalStateException()
-            CallKind.SyntheticIdForCallableReferencesResolution -> throw IllegalStateException()
+            is CallKind.VariableAccess -> createErrorPropertySymbol(diagnostic)
+            is CallKind.Function,
+            is CallKind.DelegatingConstructorCall,
+            is CallKind.CallableReference -> createErrorFunctionSymbol(diagnostic)
+            is CallKind.SyntheticSelect -> throw IllegalStateException()
+            is CallKind.SyntheticIdForCallableReferencesResolution -> throw IllegalStateException()
+            is CallKind.CustomForIde -> throw IllegalStateException()
         }
         return Candidate(
             symbol,
             dispatchReceiverValue = null,
-            implicitExtensionReceiverValue = null,
+            extensionReceiverValue = null,
             explicitReceiverKind = ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
-            bodyResolveComponents,
+            context.inferenceComponents.constraintSystemFactory,
             baseSystem,
-            callInfo
+            callInfo,
+            originScope = null,
         )
     }
 
     private fun createErrorFunctionSymbol(diagnostic: ConeDiagnostic): FirErrorFunctionSymbol {
         return FirErrorFunctionSymbol().also {
             buildErrorFunction {
-                session = this@CandidateFactory.bodyResolveComponents.session
+                session = context.session
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 origin = FirDeclarationOrigin.Synthetic
                 this.diagnostic = diagnostic
@@ -98,7 +94,7 @@ class CandidateFactory private constructor(
     private fun createErrorPropertySymbol(diagnostic: ConeDiagnostic): FirErrorPropertySymbol {
         return FirErrorPropertySymbol(diagnostic).also {
             buildErrorProperty {
-                session = this@CandidateFactory.bodyResolveComponents.session
+                session = context.session
                 resolvePhase = FirResolvePhase.BODY_RESOLVE
                 origin = FirDeclarationOrigin.Synthetic
                 name = FirErrorPropertySymbol.NAME
@@ -109,7 +105,7 @@ class CandidateFactory private constructor(
     }
 }
 
-fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(statement: FirStatement) {
+fun PostponedArgumentsAnalyzerContext.addSubsystemFromExpression(statement: FirStatement) {
     when (statement) {
         is FirFunctionCall,
         is FirQualifiedAccessExpression,

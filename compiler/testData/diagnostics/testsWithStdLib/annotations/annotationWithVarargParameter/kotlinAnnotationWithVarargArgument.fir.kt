@@ -2,6 +2,6 @@
 
 annotation class B(vararg val args: String)
 
-@B(*arrayOf(1, "b"))
+<!INAPPLICABLE_CANDIDATE!>@B(*arrayOf(1, "b"))<!>
 fun test() {
 }

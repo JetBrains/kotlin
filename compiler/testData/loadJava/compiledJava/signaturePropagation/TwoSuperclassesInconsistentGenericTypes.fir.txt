@@ -1,5 +1,5 @@
 public abstract interface TwoSuperclassesInconsistentGenericTypes : R|kotlin/Any| {
-    public abstract fun foo(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>!>, kotlin/collections/List<ft<kotlin/String, kotlin/String?>!>?>!|
+    public abstract fun foo(): R|ft<@FlexibleNullability kotlin/collections/MutableList<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, kotlin/collections/List<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>?>!|
 
     public abstract fun dummy(): R|kotlin/Unit|
 

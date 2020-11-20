@@ -153,6 +153,7 @@ internal class ClashResolutionDescriptor<E : PlatformSpecificExtension<E>>(
 
     override fun createInstance(context: ValueResolveContext): Any {
         state = ComponentState.Initializing
+        @Suppress("UNCHECKED_CAST")
         val extensions = computeArguments(clashedComponents) as List<E>
         val resolution = resolver.resolveExtensionsClash(extensions)
         state = ComponentState.Initialized

@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM_IR
 // WITH_RUNTIME
 fun box(): String {
-    val uintProgression = 1u..7u
+    val uintProgression = 1u..7u step 3  // `step` ensures type is UIntProgression, NOT UIntRange
     for (i in uintProgression step 2) {
     }
 
@@ -16,10 +16,9 @@ fun box(): String {
 // Expected lowered form of loop:
 //
 //   // Additional statements:
-//   val progression = intProgression
-//   val nestedFirst = progression.first
-//   val nestedLast = progression.last
-//   val nestedStep = progression.step
+//   val nestedFirst = uintProgression.first
+//   val nestedLast = uintProgression.last
+//   val nestedStep = uintProgression.step
 //   val maybeNegatedStep = if (nestedStep <= 0) -2 else 2
 //
 //   // Standard form of loop over progression

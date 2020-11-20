@@ -4,11 +4,13 @@ import com.intellij.ui.components.JBCheckBox
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.SettingValidator
-import java.awt.Font
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.componentWithCommentAtBottom
+import javax.swing.JComponent
 
 class CheckboxComponent(
     context: Context,
     labelText: String? = null,
+    description: String? = null,
     initialValue: Boolean? = null,
     validator: SettingValidator<Boolean>? = null,
     onValueUpdate: (Boolean) -> Unit = {}
@@ -18,16 +20,20 @@ class CheckboxComponent(
     validator = validator,
     onValueUpdate = onValueUpdate
 ) {
-    override val uiComponent: JBCheckBox = JBCheckBox(labelText, initialValue ?: false).apply {
+    private val checkbox = JBCheckBox(labelText, initialValue ?: false).apply {
         font = UIUtil.getButtonFont()
         addChangeListener {
             fireValueUpdated(this@apply.isSelected)
         }
     }
 
+    override val alignTarget: JComponent? get() = checkbox
+
+    override val uiComponent = componentWithCommentAtBottom(checkbox, description, gap = 2)
+
     override fun updateUiValue(newValue: Boolean) = safeUpdateUi {
-        uiComponent.isSelected = newValue
+        checkbox.isSelected = newValue
     }
 
-    override fun getUiValue(): Boolean = uiComponent.isSelected
+    override fun getUiValue(): Boolean = checkbox.isSelected
 }

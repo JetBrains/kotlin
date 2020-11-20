@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -73,9 +72,7 @@ class PrimitiveCompanionLowering(val context: JsIrBackendContext) : BodyLowering
             override fun visitCall(expression: IrCall): IrExpression {
                 val newCall = super.visitCall(expression) as IrCall
 
-                val function = expression.symbol.owner as IrSimpleFunction
-
-                val actualFunction = getActualPrimitiveCompanionPropertyAccessor(function)
+                val actualFunction = getActualPrimitiveCompanionPropertyAccessor(expression.symbol.owner)
                     ?: return newCall
 
                 return irCall(newCall, actualFunction)

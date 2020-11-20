@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeAliasFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.CirClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildTypeAliasNode
@@ -274,13 +275,18 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     @Test
     // why success: expect class/actual TAs
     fun taTypesInUserPackageWithDifferentClasses() = doTestSuccess(
-        expected = mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
+        expected = mockClassType("org.sample.FooAlias"),
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo") },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Bar") }
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass1() = doTestFailure(
+    @Test
+    // why success: short-circuiting & lifting up
+    fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass1() = doTestSuccess(
+        expected = mockTAType("org.sample.FooAlias") {
+            mockClassType("org.sample.Foo")
+        },
+
         mockTAType("org.sample.FooAlias") {
             mockClassType("org.sample.Foo")
         },
@@ -289,13 +295,16 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
             mockTAType("org.sample.FooAliasL2") {
                 mockClassType("org.sample.Foo")
             }
-        },
-
-        shouldFailOnFirstVariant = true
+        }
     )
 
-    @Test(expected = IllegalCommonizerStateException::class)
-    fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass2() = doTestFailure(
+    @Test
+    // why success: short-circuiting & lifting up
+    fun multilevelTATypesInUserPackageWithSameNameAndRightHandSideClass2() = doTestSuccess(
+        expected = mockTAType("org.sample.FooAlias") {
+            mockClassType("org.sample.Foo")
+        },
+
         mockTAType("org.sample.FooAlias") {
             mockTAType("org.sample.FooAliasL2") {
                 mockClassType("org.sample.Foo")
@@ -304,9 +313,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
         mockTAType("org.sample.FooAlias") {
             mockClassType("org.sample.Foo")
-        },
-
-        shouldFailOnFirstVariant = true
+        }
     )
 
     @Test
@@ -438,7 +445,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     @Test
     // why success: nullability of underlying type does not matter if expect class/actual TAs created
     fun taTypesInUserPackageWithDifferentNullability3() = doTestSuccess(
-        expected = mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) },
+        expected = mockClassType("org.sample.FooAlias"),
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) }
     )
@@ -446,7 +453,7 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     @Test
     // why success: nullability of underlying type does not matter if expect class/actual TAs created
     fun taTypesInUserPackageWithDifferentNullability4() = doTestSuccess(
-        expected = mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) },
+        expected = mockClassType("org.sample.FooAlias"),
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = true) },
         mockTAType("org.sample.FooAlias") { mockClassType("org.sample.Foo", nullable = false) }
     )
@@ -514,5 +521,10 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
     override fun createCommonizer() = TypeCommonizer(cache)
 
-    override fun isEqual(a: CirType?, b: CirType?) = (a === b) || (a != null && b != null && areTypesEqual(cache, a, b))
+    override fun isEqual(a: CirType?, b: CirType?) = (a === b) || (a != null && b != null && areEqual(cache, a, b))
+
+    companion object {
+        fun areEqual(cache: CirClassifiersCache, a: CirType, b: CirType): Boolean =
+            TypeCommonizer(cache).run { commonizeWith(a) && commonizeWith(b) }
+    }
 }

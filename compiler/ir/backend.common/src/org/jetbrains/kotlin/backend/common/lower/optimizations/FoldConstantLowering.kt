@@ -222,6 +222,7 @@ class FoldConstantLowering(
         }
 
         if (const.type.isUnsigned()) {
+            @OptIn(ExperimentalUnsignedTypes::class)
             when (val kind = const.kind) {
                 is IrConstKind.Byte ->
                     return kind.valueOf(const).toUByte().toString()

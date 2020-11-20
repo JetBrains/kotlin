@@ -55,7 +55,7 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
     Kind getKind();
 
     @NotNull
-    CallableMemberDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides);
+    CallableMemberDescriptor copy(DeclarationDescriptor newOwner, Modality modality, DescriptorVisibility visibility, Kind kind, boolean copyOverrides);
 
     @NotNull
     CopyBuilder<? extends CallableMemberDescriptor> newCopyBuilder();
@@ -68,7 +68,7 @@ public interface CallableMemberDescriptor extends CallableDescriptor, MemberDesc
         CopyBuilder<D> setModality(@NotNull Modality modality);
 
         @NotNull
-        CopyBuilder<D> setVisibility(@NotNull Visibility visibility);
+        CopyBuilder<D> setVisibility(@NotNull DescriptorVisibility visibility);
 
         @NotNull
         CopyBuilder<D> setKind(@NotNull Kind kind);

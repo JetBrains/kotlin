@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.idea.fir
 
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -60,8 +61,8 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
                 val renderedQualifier = qualifier.joinToString(separator = ".") { part ->
                     buildString {
                         append(part.name)
-                        if (part.typeArguments.isNotEmpty()) {
-                            part.typeArguments.joinTo(this, prefix = "<", postfix = ">") { it.renderTypeAsKotlinType() }
+                        if (part.typeArgumentList.typeArguments.isNotEmpty()) {
+                            part.typeArgumentList.typeArguments.joinTo(this, prefix = "<", postfix = ">") { it.renderTypeAsKotlinType() }
                         }
                     }
                 }
@@ -69,9 +70,9 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             }
             is FirFunctionTypeRef -> {
                 val classId = if (isSuspend) {
-                    KotlinBuiltIns.getSuspendFunctionClassId(parametersCount)
+                    StandardNames.getSuspendFunctionClassId(parametersCount)
                 } else {
-                    KotlinBuiltIns.getFunctionClassId(parametersCount)
+                    StandardNames.getFunctionClassId(parametersCount)
                 }
                 buildString {
                     append(classId.asSingleFqName().toString())
@@ -116,7 +117,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
 
     private fun KtTypeReference.toKotlinTypReference(session: FirSession): FirTypeRef {
         // Maybe resolve all types here to not to work with FirTypeRef directly
-        return RawFirBuilder(session, DummyScopeProvider, stubMode = true).buildTypeReference(this)
+        return RawFirBuilder(session, DummyScopeProvider, RawFirBuilderMode.STUBS).buildTypeReference(this)
     }
 
     private fun ConeKotlinType.renderTypeAsKotlinType(): String {

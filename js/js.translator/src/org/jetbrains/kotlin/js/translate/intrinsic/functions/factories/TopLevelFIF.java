@@ -49,7 +49,7 @@ import org.jetbrains.kotlin.types.KotlinType;
 import java.util.List;
 import java.util.Map;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES;
+import static org.jetbrains.kotlin.builtins.StandardNames.FqNames;
 import static org.jetbrains.kotlin.js.patterns.PatternBuilder.pattern;
 
 public final class TopLevelFIF extends CompositeFIF {
@@ -220,14 +220,14 @@ public final class TopLevelFIF extends CompositeFIF {
     private TopLevelFIF() {
         add(EQUALS_IN_ANY, KOTLIN_ANY_EQUALS);
         add(pattern("Char.toString"), CHAR_TO_STRING);
-        add(pattern("kotlin", "toString").isExtensionOf(FQ_NAMES.any.asString()), TO_STRING);
-        add(pattern("kotlin", "equals").isExtensionOf(FQ_NAMES.any.asString()), KOTLIN_EQUALS);
+        add(pattern("kotlin", "toString").isExtensionOf(FqNames.any.asString()), TO_STRING);
+        add(pattern("kotlin", "equals").isExtensionOf(FqNames.any.asString()), KOTLIN_EQUALS);
         add(HASH_CODE_IN_ANY, KOTLIN_HASH_CODE);
         add(pattern(NamePredicate.PRIMITIVE_NUMBERS, "equals"), KOTLIN_EQUALS);
         add(pattern("String|Boolean|Char|Number.equals"), KOTLIN_EQUALS);
         add(pattern("String.subSequence"), STRING_SUBSTRING);
         add(pattern("CharSequence.subSequence"), KOTLIN_SUBSEQUENCE);
-        add(pattern("kotlin", "iterator").isExtensionOf(FQ_NAMES.iterator.asString()), RETURN_RECEIVER_INTRINSIC);
+        add(pattern("kotlin", "iterator").isExtensionOf(FqNames.iterator.asString()), RETURN_RECEIVER_INTRINSIC);
 
         add(pattern("kotlin.js", "Json", "get"), ArrayFIF.GET_INTRINSIC);
         add(pattern("kotlin.js", "Json", "set"), ArrayFIF.SET_INTRINSIC);

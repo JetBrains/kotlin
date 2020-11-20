@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.psi2ir.intermediate.safeCallOnDispatchReceiver
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
+import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -413,8 +413,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         functionDescriptor: FunctionDescriptor,
         receiver: IrExpression
     ): IrExpression {
-        val originalSymbol = context.symbolTable.referenceFunction(functionDescriptor.original)
-        return IrCallImpl(
+        val originalSymbol = context.symbolTable.referenceSimpleFunction(functionDescriptor.original)
+        return IrCallImpl.fromSymbolDescriptor(
             startOffset,
             endOffset,
             functionDescriptor.returnType!!.toIrType(),
@@ -508,11 +508,11 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
             ) ?: throw AssertionError("Substitution failed for $checkNotNull: T=$argumentType")
 
         val checkNotNullSymbol = context.irBuiltIns.checkNotNullSymbol
-        return IrCallImpl(
+        return IrCallImpl.fromSymbolDescriptor(
             ktOperator.startOffsetSkippingComments, ktOperator.endOffset,
             expressionType.toIrType(),
             checkNotNullSymbol,
-            origin
+            origin = origin
         ).apply {
             context.callToSubstitutedDescriptorMap[this] = checkNotNullSubstituted
             putTypeArgument(0, argumentType.toIrType().makeNotNull())

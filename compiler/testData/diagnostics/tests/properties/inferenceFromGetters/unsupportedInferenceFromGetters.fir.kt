@@ -21,7 +21,7 @@ val z2 get(): List<Int> {
     return bar()
 }
 
-val u get(): String = field
+val u get(): String = <!UNRESOLVED_REFERENCE!>field<!>
 
 // members.kt
 class A {

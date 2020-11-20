@@ -10,7 +10,7 @@ fun test1() {
     }
 }
 
-fun bar(f: (A)->Unit) {}
+fun bar(f: (<!UNRESOLVED_REFERENCE!>A<!>)->Unit) {}
 
 fun test2() {
     bar { a -> } // here we don't have 'cannot infer parameter type' error

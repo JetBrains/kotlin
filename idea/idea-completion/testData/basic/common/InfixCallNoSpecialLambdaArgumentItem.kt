@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 // checks that no special item "ext1 { String, Int -> ... }" created for infix call
 infix fun Int.ext1(handler: (String, Int) -> Unit){}
 infix fun Int.ext2(c: Char){}

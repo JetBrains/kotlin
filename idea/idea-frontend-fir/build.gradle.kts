@@ -9,6 +9,7 @@ dependencies {
     compile(project(":idea:idea-frontend-api"))
     compile(project(":idea:idea-core"))
     compile(project(":compiler:fir:fir2ir"))
+    compile(project(":compiler:ir.tree"))
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:checkers"))
     compile(project(":compiler:fir:java"))
@@ -21,6 +22,7 @@ dependencies {
     compile(project(":idea:idea-core"))
 // </temp>
 
+    testCompile(project(":idea:idea-fir"))
     testCompile(intellijDep())
     testCompile(intellijCoreDep())
     testCompile(toolsJar())
@@ -31,9 +33,7 @@ dependencies {
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
 
-    Platform[192].orHigher {
-        compile(intellijPluginDep("java"))
-    }
+    compile(intellijPluginDep("java"))
 }
 
 sourceSets {
@@ -41,7 +41,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-if (rootProject.findProperty("idea.fir.plugin") == "true")  {
+if (kotlinBuildProperties.useFirIdeaPlugin)  {
     projectTest {
         dependsOn(":dist")
         workingDir = rootDir

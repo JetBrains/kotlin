@@ -62,7 +62,7 @@ public interface ClassDescriptor extends ClassifierDescriptorWithTypeParameters,
 
     @Override
     @NotNull
-    Visibility getVisibility();
+    DescriptorVisibility getVisibility();
 
     boolean isCompanionObject();
 

@@ -7,14 +7,19 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.PackageFragmentProviderOptimized
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class CommonizedPackageFragmentProvider : PackageFragmentProvider {
+internal class CommonizedPackageFragmentProvider : PackageFragmentProviderOptimized {
     private val packageFragments = ArrayList<PackageFragmentDescriptor>()
 
     operator fun plusAssign(packageFragment: PackageFragmentDescriptor) {
         this.packageFragments += packageFragment
+    }
+
+    override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {
+        this.packageFragments.filterTo(packageFragments) { it.fqName == fqName }
     }
 
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> =

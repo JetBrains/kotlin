@@ -15,6 +15,7 @@ const val KLIB_PROPERTY_SHORT_NAME = "short_name"
 const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
 const val KLIB_PROPERTY_BUILTINS_PLATFORM = "builtins_platform"
+const val KLIB_PROPERTY_CONTAINS_ERROR_CODE = "contains_error_code"
 
 // Native-specific:
 const val KLIB_PROPERTY_INTEROP = "interop"
@@ -77,3 +78,6 @@ val KotlinLibrary.exportForwardDeclarations: List<String>
 
 val BaseKotlinLibrary.nativeTargets: List<String>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_NATIVE_TARGETS)
+
+val KotlinLibrary.containsErrorCode: Boolean
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE) == "true"

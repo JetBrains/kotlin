@@ -13,49 +13,43 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.getLastLambdaExpression
 import org.jetbrains.kotlin.idea.inspections.collections.isMap
-import org.jetbrains.kotlin.idea.intentions.callExpression
-import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
+import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.synthetic.isResolvedWithSamConversions
 
-class JavaMapForEachInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(
-    KtDotQualifiedExpression::class.java
+class JavaMapForEachInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(
+    KtCallExpression::class.java
 ) {
-    override fun isApplicable(element: KtDotQualifiedExpression): Boolean {
-        val callExpression = element.callExpression ?: return false
-        val calleeExpression = callExpression.calleeExpression ?: return false
+    override fun isApplicable(element: KtCallExpression): Boolean {
+        val calleeExpression = element.calleeExpression ?: return false
         if (calleeExpression.text != "forEach") return false
-        if (callExpression.valueArguments.size != 1) return false
+        if (element.valueArguments.size != 1) return false
 
-        val lambda = callExpression.lambda() ?: return false
+        val lambda = element.lambda() ?: return false
         val lambdaParameters = lambda.valueParameters
         if (lambdaParameters.size != 2 || lambdaParameters.any { it.destructuringDeclaration != null }) return false
 
         val context = element.analyze(BodyResolveMode.PARTIAL)
-        if (!element.receiverExpression.getType(context).isMap(DefaultBuiltIns.Instance)) return false
-        val resolvedCall = callExpression.getResolvedCall(context) ?: return false
-        return resolvedCall.isResolvedWithSamConversions()
+        val resolvedCall = element.getResolvedCall(context) ?: return false
+        return resolvedCall.dispatchReceiver?.type?.isMap(DefaultBuiltIns.Instance) == true && resolvedCall.isResolvedWithSamConversions()
     }
 
-    override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression): TextRange? = element.calleeTextRangeInThis()
+    override fun inspectionHighlightRangeInElement(element: KtCallExpression): TextRange? = element.calleeExpression?.textRangeIn(element)
 
-    override fun inspectionText(element: KtDotQualifiedExpression) =
+    override fun inspectionText(element: KtCallExpression) =
         KotlinBundle.message("java.map.foreach.method.call.should.be.replaced.with.kotlin.s.foreach")
 
     override val defaultFixText get() = KotlinBundle.message("replace.with.kotlin.s.foreach")
 
-    override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
-        val call = element.callExpression ?: return
-        val lambda = call.lambda() ?: return
+    override fun applyTo(element: KtCallExpression, project: Project, editor: Editor?) {
+        val lambda = element.lambda() ?: return
         val valueParameters = lambda.valueParameters
         lambda.functionLiteral.valueParameterList?.replace(
-            KtPsiFactory(call).createLambdaParameterList("(${valueParameters[0].text}, ${valueParameters[1].text})")
+            KtPsiFactory(element).createLambdaParameterList("(${valueParameters[0].text}, ${valueParameters[1].text})")
         )
     }
 

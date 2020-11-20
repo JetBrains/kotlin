@@ -9,11 +9,14 @@ import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
+import com.intellij.testFramework.RunAll
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiCheckerAndHighlightingUpdater
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.TEST_KEY
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.runAndMeasure
+import org.jetbrains.kotlin.idea.perf.util.Metric
 import org.jetbrains.kotlin.idea.perf.util.TeamCity.suite
 import org.jetbrains.kotlin.idea.testFramework.Fixture
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.cleanupCaches
@@ -35,11 +38,6 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         @JvmStatic
         val timer: AtomicLong = AtomicLong()
 
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread { hwStats.close() })
-        }
-
         fun resetTimestamp() {
             timer.set(0)
         }
@@ -52,6 +50,12 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     override fun setUp() {
         super.setUp()
         warmUp.warmUp(this)
+    }
+
+    override fun tearDown() {
+        RunAll(
+            ThrowableRunnable { super.tearDown() }
+        ).run()
     }
 
     fun testHelloWorldProject() {
@@ -337,14 +341,18 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                 profilerConfig.enabled = true
             }
 
+            val metricChildren = mutableListOf<Metric>()
+
             extraStats.printWarmUpTimings(
                 "annotator",
-                extraTimingsNs.take(warmUpIterations).toTypedArray()
+                extraTimingsNs.take(warmUpIterations).toTypedArray(),
+                metricChildren
             )
 
-            extraStats.appendTimings(
+            extraStats.processTimings(
                 "annotator",
-                extraTimingsNs.drop(warmUpIterations).toTypedArray()
+                extraTimingsNs.drop(warmUpIterations).toTypedArray(),
+                metricChildren
             )
         }
     }

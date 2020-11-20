@@ -82,10 +82,6 @@ fun ValueParameterDescriptor.getParameterNameAnnotation(): AnnotationDescriptor?
     return annotation
 }
 
-sealed class AnnotationDefaultValue
-class StringDefaultValue(val value: String) : AnnotationDefaultValue()
-object NullDefaultValue : AnnotationDefaultValue()
-
 fun ValueParameterDescriptor.getDefaultValueFromAnnotation(): AnnotationDefaultValue? {
     annotations.findAnnotation(JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME)
         ?.firstArgument()

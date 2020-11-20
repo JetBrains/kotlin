@@ -5,37 +5,31 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.properties
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 class SerializerForEnumsGenerator(
     irClass: IrClass,
     compilerContext: SerializationPluginContext,
-    bindingContext: BindingContext
-) :
-    SerializerIrGenerator(irClass, compilerContext, bindingContext) {
-
+    bindingContext: BindingContext,
+    serialInfoJvmGenerator: SerialInfoImplJvmIrGenerator,
+) : SerializerIrGenerator(irClass, compilerContext, bindingContext, null, serialInfoJvmGenerator) {
     override fun generateSave(function: FunctionDescriptor) = irClass.contributeFunction(function) { saveFunc ->
         fun irThis(): IrExpression =
             IrGetValueImpl(startOffset, endOffset, saveFunc.dispatchReceiverParameter!!.symbol)
@@ -62,7 +56,7 @@ class SerializerForEnumsGenerator(
         val serialDescGetter = irGet(descriptorGetterSymbol.owner.returnType, irThis(), descriptorGetterSymbol)
 
         val serializableIrClass = requireNotNull(serializableIrClass) { "Enums do not support external serialization" }
-        val valuesF = serializableIrClass.functions.single { it.name == DescriptorUtils.ENUM_VALUES }
+        val valuesF = serializableIrClass.functions.single { it.name == StandardNames.ENUM_VALUES }
         val getValues = irInvoke(dispatchReceiver = null, callee = valuesF.symbol)
 
 
@@ -79,18 +73,18 @@ class SerializerForEnumsGenerator(
         +irReturn(getValueByOrdinal)
     }
 
+    override val serialDescImplClass: ClassDescriptor = serializerDescriptor
+        .getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_DESCRIPTOR_FOR_ENUM)
+
     override fun IrBlockBodyBuilder.instantiateNewDescriptor(
         serialDescImplClass: ClassDescriptor,
         correctThis: IrExpression
     ): IrExpression {
-        val serialDescForEnums = serializerDescriptor
-            .getClassFromInternalSerializationPackage(SerialEntityNames.SERIAL_DESCRIPTOR_FOR_ENUM)
-        val ctor = compilerContext.referenceConstructors(serialDescForEnums.fqNameSafe).single { it.owner.isPrimary }
+        val ctor = compilerContext.referenceConstructors(serialDescImplClass.fqNameSafe).single { it.owner.isPrimary }
         return irInvoke(
             null, ctor,
             irString(serialName),
-            irInt(serializableDescriptor.enumEntries().size),
-            typeHint = ctor.descriptor.returnType.toIrType()
+            irInt(serializableDescriptor.enumEntries().size)
         )
     }
 

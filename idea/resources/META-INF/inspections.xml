@@ -586,6 +586,11 @@
     </intentionAction>
 
     <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.ConvertVariableAssignmentToExpressionIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
+
+    <intentionAction>
       <className>org.jetbrains.kotlin.idea.intentions.MergeIfsIntention</className>
       <category>Kotlin</category>
     </intentionAction>
@@ -830,6 +835,10 @@
       <category>Kotlin</category>
     </intentionAction>
 
+    <intentionAction>
+      <className>org.jetbrains.kotlin.idea.intentions.EvaluateCompileTimeExpressionIntention</className>
+      <category>Kotlin</category>
+    </intentionAction>
 
     <lang.inspectionSuppressor language="kotlin" implementationClass="org.jetbrains.kotlin.idea.inspections.KotlinInspectionSuppressor"/>
 
@@ -1449,7 +1458,7 @@
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedEqualsInspection"
                      groupPath="Kotlin"
-                     groupName="Redundant constructs"
+                     groupName="Probable bugs"
                      enabledByDefault="true"
                      level="WARNING"
                      language="kotlin"
@@ -2299,7 +2308,7 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="INFO"
+                     level="INFORMATION"
                      language="kotlin"
                      key="inspection.map.get.with.not.null.assertion.operator.display.name" bundle="messages.KotlinBundle"/>
 
@@ -2501,7 +2510,7 @@
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.IncompleteDestructuringInspection"
                      groupPath="Kotlin"
                      groupName="Probable bugs"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="WARNING"
                      language="kotlin"
                      key="inspection.incomplete.destructuring.declaration.display.name" bundle="messages.KotlinBundle"/>
@@ -2509,7 +2518,7 @@
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantInnerClassModifierInspection"
                      groupPath="Kotlin"
                      groupName="Redundant constructs"
-                     enabledByDefault="true"
+                     enabledByDefault="false"
                      level="WARNING"
                      language="kotlin"
                      key="inspection.redundant.inner.class.modifier.display.name" bundle="messages.KotlinBundle"/>
@@ -2537,6 +2546,31 @@
                      level="WEAK WARNING"
                      language="kotlin"
                      key="inspection.replace.with.ignore.case.equals.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantNullableReturnTypeInspection"
+                     groupPath="Kotlin"
+                     groupName="Redundant constructs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+                     key="inspection.redundant.nullable.return.type.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.SimplifyNestedEachInScopeFunctionInspection"
+                     groupPath="Kotlin"
+                     groupName="Style issues"
+                     enabledByDefault="true"
+                     level="WEAK WARNING"
+                     language="kotlin"
+                     key="inspection.simplifiable.scope.function.display.name" bundle="messages.KotlinBundle"/>
+
+    <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.UnusedDataClassCopyResultInspection"
+                     groupPath="Kotlin"
+                     groupName="Probable bugs"
+                     enabledByDefault="true"
+                     level="WARNING"
+                     language="kotlin"
+                     key="inspection.unused.result.of.data.class.copy" bundle="messages.KotlinBundle"/>
+
   </extensions>
 
 </idea-plugin>

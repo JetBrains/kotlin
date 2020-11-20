@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("NOTHING_TO_INLINE")
+
 package org.jetbrains.kotlin.daemon.common
 
 import java.lang.management.ManagementFactory
@@ -101,7 +103,7 @@ inline fun endMeasureWallTime(perfCounters: PerfCounters, startState: List<Long>
 }
 
 
-inline fun beginMeasureWallAndThreadTimes(perfCounters: PerfCounters, threadMXBean: ThreadMXBean): List<Long> {
+inline fun beginMeasureWallAndThreadTimes(threadMXBean: ThreadMXBean): List<Long> {
     val startTime = System.nanoTime()
     val startThreadTime = threadMXBean.threadCpuTime()
     val startThreadUserTime = threadMXBean.threadUserTime()
@@ -117,12 +119,7 @@ inline fun endMeasureWallAndThreadTimes(perfCounters: PerfCounters, threadMXBean
                                 threadUser = threadMXBean.threadUserTime() - startThreadUserTime)
 }
 
-inline fun beginMeasureWallAndThreadTimes(perfCounters: PerfCounters) =
-    beginMeasureWallAndThreadTimes(perfCounters, ManagementFactory.getThreadMXBean())
-inline fun endMeasureWallAndThreadTimes(perfCounters: PerfCounters, startState: List<Long>) =
-    endMeasureWallAndThreadTimes(perfCounters, ManagementFactory.getThreadMXBean(), startState)
-
-inline fun beginMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean = false, threadMXBean: ThreadMXBean): List<Long> {
+inline fun beginMeasureWallAndThreadTimesAndMemory(withGC: Boolean = false, threadMXBean: ThreadMXBean): List<Long> {
     val startMem = usedMemory(withGC)
     val startTime = System.nanoTime()
     val startThreadTime = threadMXBean.threadCpuTime()
@@ -140,13 +137,6 @@ inline fun endMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, wit
                                 threadUser = threadMXBean.threadUserTime() - startThreadUserTime,
                                 memory = usedMemory(withGC) - startMem)
 }
-
-inline fun<R> beginMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean) =
-    beginMeasureWallAndThreadTimesAndMemory(perfCounters, withGC, ManagementFactory.getThreadMXBean())
-
-inline fun<R> endMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean, startState: List<Long>) =
-    endMeasureWallAndThreadTimesAndMemory(perfCounters, withGC, ManagementFactory.getThreadMXBean(), startState)
-
 
 class DummyProfiler : Profiler {
     override fun getCounters(): Map<Any?, PerfCounters> = mapOf(null to SimplePerfCounters())
@@ -174,7 +164,7 @@ class WallTotalProfiler : TotalProfiler() {
 
 class WallAndThreadTotalProfiler : TotalProfiler() {
     @Suppress("OVERRIDE_BY_INLINE")
-    override inline fun beginMeasure(obj: Any?) = beginMeasureWallAndThreadTimes(total, threadMXBean)
+    override inline fun beginMeasure(obj: Any?) = beginMeasureWallAndThreadTimes(threadMXBean)
     @Suppress("OVERRIDE_BY_INLINE")
     override inline fun endMeasure(obj: Any?, startState: List<Long>) = endMeasureWallAndThreadTimes(total, threadMXBean, startState)
 }
@@ -183,7 +173,7 @@ class WallAndThreadTotalProfiler : TotalProfiler() {
 class WallAndThreadAndMemoryTotalProfiler(val withGC: Boolean) : TotalProfiler() {
     @Suppress("OVERRIDE_BY_INLINE")
     override inline fun beginMeasure(obj: Any?) =
-        beginMeasureWallAndThreadTimesAndMemory(total, withGC, threadMXBean)
+        beginMeasureWallAndThreadTimesAndMemory(withGC, threadMXBean)
     @Suppress("OVERRIDE_BY_INLINE")
     override inline fun endMeasure(obj: Any?, startState: List<Long>) =
         endMeasureWallAndThreadTimesAndMemory(total, withGC, threadMXBean, startState)
@@ -198,7 +188,7 @@ class WallAndThreadByClassProfiler() : TotalProfiler() {
 
     @Suppress("OVERRIDE_BY_INLINE")
     override inline fun beginMeasure(obj: Any?) =
-        beginMeasureWallAndThreadTimes(counters.getOrPut(obj?.javaClass?.name, { SimplePerfCountersWithTotal(total) }), threadMXBean)
+        beginMeasureWallAndThreadTimes(threadMXBean)
     @Suppress("OVERRIDE_BY_INLINE")
     override inline fun endMeasure(obj: Any?, startState: List<Long>) =
         endMeasureWallAndThreadTimes(counters.getOrPut(obj?.javaClass?.name, { SimplePerfCountersWithTotal(total) }), threadMXBean, startState)

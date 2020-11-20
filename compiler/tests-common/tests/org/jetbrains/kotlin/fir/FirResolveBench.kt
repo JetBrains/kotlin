@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
-import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
@@ -221,7 +221,7 @@ class FirResolveBench(val withProgress: Boolean) {
     ) {
         fileCount += firFiles.size
         try {
-            for ((stage, processor) in processors.withIndex()) {
+            for ((_, processor) in processors.withIndex()) {
                 //println("Starting stage #$stage. $transformer")
                 val firFileSequence = if (withProgress) firFiles.progress("   ~ ") else firFiles.asSequence()
                 runStage(processor, firFileSequence)
@@ -306,8 +306,6 @@ class FirResolveBench(val withProgress: Boolean) {
                     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {
                         visitTypeRef(implicitTypeRef)
                     }
-
-                    override fun visitComposedSuperTypeRef(composedSuperTypeRef: FirComposedSuperTypeRef) {}
 
                     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
                         resolvedTypes++

@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.fir.plugin.generators
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirEffectiveVisibilityImpl
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
@@ -41,8 +40,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
-                Visibilities.PRIVATE,
-                FirEffectiveVisibilityImpl.Private,
+                Visibilities.Private,
                 Modality.FINAL
             ).apply {
                 isInner = true
@@ -67,8 +65,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
                 type = ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), isNullable = false)
             }
             status = FirResolvedDeclarationStatusImpl(
-                Visibilities.PUBLIC,
-                FirEffectiveVisibilityImpl.Public,
+                Visibilities.Public,
                 Modality.FINAL
             )
             symbol = FirConstructorSymbol(CallableId(classId, classId.shortClassName))
@@ -80,12 +77,11 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = session.builtinTypes.intType
             status = FirResolvedDeclarationStatusImpl(
-                Visibilities.PUBLIC,
-                FirEffectiveVisibilityImpl.Public,
+                Visibilities.Public,
                 Modality.FINAL
             )
             name = Name.identifier("hello")
-            symbol = FirNamedFunctionSymbol(CallableId(classId, name), isFakeOverride = false)
+            symbol = FirNamedFunctionSymbol(CallableId(classId, name))
         }
         return listOf(constructor, function)
     }

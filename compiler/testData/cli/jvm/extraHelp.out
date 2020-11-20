@@ -19,6 +19,8 @@ where advanced options include:
                              'enable' since language version 1.3
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
   -Xdisable-standard-script  Disable standard kotlin script support
+  -Xir-do-not-clear-binding-context
+                             When using the IR backend, do not clear BindingContext between psi2ir and lowerings
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode
   -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
@@ -29,6 +31,9 @@ where advanced options include:
   -Xjava-package-prefix      Package prefix for Java files
   -Xjava-source-roots=<path> Paths to directories with Java source files
   -Xjavac-arguments=<option[,]> Java compiler arguments
+  -Xjspecify-annotations=ignore|strict|warn
+                             Specify behavior for jspecify annotations.
+                             Default value is 'warn'
   -Xjsr305={ignore/strict/warn}|under-migration:{ignore/strict/warn}|@<fq.name>:{ignore/strict/warn}
                              Specify behavior for JSR-305 nullability annotations:
                              -Xjsr305={ignore/strict/warn}                   globally (all non-@UnderMigration annotations)
@@ -73,6 +78,8 @@ where advanced options include:
                              Do not use optimized callable reference superclasses available from 1.4
   -Xno-param-assertions      Don't generate not-null assertions on parameters of methods accessible from Java
   -Xno-receiver-assertions   Don't generate not-null assertion for extension receiver arguments of platform types
+  -Xno-reset-jar-timestamps  Do not reset jar entry timestamps to a fixed date
+  -Xno-unified-null-checks   Use pre-1.4 exception types in null checks instead of java.lang.NPE. See KT-22275 for more details
   -Xno-use-ir                Do not use the IR backend. Useful for a custom-built compiler where IR backend is enabled by default
   -Xprofile=<profilerPath:command:outputDir>
                              Debug option: Run compiler with async profiler, save snapshots to outputDir, command is passed to async-profiler on start
@@ -91,6 +98,11 @@ where advanced options include:
                              Generate nullability assertions for non-null Java expressions
   -Xgenerate-strict-metadata-version
                              Generate metadata with strict version semantics (see kdoc on Metadata.extraInt)
+  -Xstring-concat={indy-with-constants|indy|inline}
+                             Switch a way in which string concatenation is performed.
+                             -Xstring-concat=indy-with-constants   Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater
+                             -Xstring-concat=indy                Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater
+                             -Xstring-concat=inline              Performs string concatenation via `StringBuilder`
   -Xsupport-compatqual-checker-framework-annotations=enable|disable
                              Specify behavior for Checker Framework compatqual annotations (NullableDecl/NonNullDecl).
                              Default value is 'enable'
@@ -100,6 +112,8 @@ where advanced options include:
   -Xuse-javac                Use javac for Java source and class files analysis
   -Xuse-old-class-files-reading Use old class files reading implementation. This may slow down the build and cause problems with Groovy interop.
                              Should be used in case of problems with the new implementation
+  -Xuse-14-inline-classes-mangling-scheme
+                             Use 1.4 inline classes mangling scheme instead of 1.4.30 one
   -Xuse-old-spilled-var-type-analysis
                              Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines
   -Xuse-type-table           Use type table in metadata serialization
@@ -112,10 +126,10 @@ where advanced options include:
                              Should be a subset of sources passed as free arguments
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
-  -Xdeserialize-fake-overrides Fallback to deserializing fake overrides
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
   -Xdisable-phases           Disable backend phases
+  -Xdisable-ultra-light-classes Do not use the ultra light classes implementation
   -Xdump-directory           Dump backend state into directory
   -Xdump-fqname              FqName of declaration that should be dumped
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file
@@ -125,6 +139,7 @@ where advanced options include:
   -Xexplicit-api={strict|warning|disable}
                              Force compiler to report errors on all public API declarations without explicit visibility or return type.
                              Use 'warning' level to issue warnings instead of errors.
+  -Xinference-compatibility  Enable compatibility changes for generic type inference algorithm
   -Xinline-classes           Enable experimental inline classes
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
   -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block
@@ -153,6 +168,7 @@ where advanced options include:
   -Xskip-prerelease-check    Allow to load pre-release classes
   -Xuse-experimental=<fq.name> Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name
   -Xuse-fir                  Compile using Front-end IR. Warning: this feature is far from being production-ready
+  -Xuse-fir-extended-checkers Use extended analysis mode based on Front-end IR. Warning: this feature is far from being production-ready
   -Xuse-mixed-named-arguments Enable Support named arguments in their own position even if the result appears as mixed
   -Xverbose-phases           Be verbose while performing these backend phases
 

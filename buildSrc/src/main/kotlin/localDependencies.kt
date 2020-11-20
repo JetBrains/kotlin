@@ -80,6 +80,8 @@ fun Project.androidDxJar() = "org.jetbrains.kotlin:android-dx:${rootProject.extr
 
 fun Project.jpsBuildTest() = "com.jetbrains.intellij.idea:jps-build-test:${rootProject.extra["versions.intellijSdk"]}"
 
+fun Project.kotlinxCollectionsImmutable() = "org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${rootProject.extra["versions.kotlinx-collections-immutable"]}"
+
 /**
  * Runtime version of annotations that are already in Kotlin stdlib (historically Kotlin has older version of this one).
  *
@@ -130,12 +132,10 @@ object IntellijRootUtils {
     }
 }
 
-fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project) =
-    includeJars(*(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).toTypedArray(), rootProject = project.rootProject)
-
-fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFilterPredicate: (String) -> Boolean) =
+@Suppress("UNCHECKED_CAST")
+fun ModuleDependency.includeIntellijCoreJarDependencies(project: Project, jarsFilterPredicate: (String) -> Boolean = { true }): Unit =
     includeJars(
-        *(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).filter { jarsFilterPredicate(it) }.toTypedArray(),
+        *(project.rootProject.extra["IntellijCoreDependencies"] as List<String>).filter(jarsFilterPredicate).toTypedArray(),
         rootProject = project.rootProject
     )
 
@@ -178,6 +178,7 @@ fun Project.runIdeTask(name: String, ideaPluginDir: File, ideaSandboxDir: File, 
             "-Didea.system.path=$ideaSandboxDir",
             "-Didea.config.path=$ideaSandboxConfigDir",
             "-Didea.tooling.debug=true",
+            "-Dfus.internal.test.mode=true",
             "-Dapple.laf.useScreenMenuBar=true",
             "-Dapple.awt.graphics.UseQuartz=true",
             "-Dsun.io.useCanonCaches=false",

@@ -44,6 +44,8 @@ public inline fun CharSequence.elementAtOrNull(index: Int): Char? {
 
 /**
  * Returns the first character matching the given [predicate], or `null` if no such character was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.find(predicate: (Char) -> Boolean): Char? {
@@ -52,6 +54,8 @@ public inline fun CharSequence.find(predicate: (Char) -> Boolean): Char? {
 
 /**
  * Returns the last character matching the given [predicate], or `null` if no such character was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.findLast(predicate: (Char) -> Boolean): Char? {
@@ -102,6 +106,8 @@ public inline fun CharSequence.getOrElse(index: Int, defaultValue: (Int) -> Char
 
 /**
  * Returns a character at the given [index] or `null` if the [index] is out of bounds of this char sequence.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun CharSequence.getOrNull(index: Int): Char? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -133,7 +139,10 @@ public inline fun CharSequence.indexOfLast(predicate: (Char) -> Boolean): Int {
 
 /**
  * Returns the last character.
- * @throws [NoSuchElementException] if the char sequence is empty.
+ * 
+ * @throws NoSuchElementException if the char sequence is empty.
+ * 
+ * @sample samples.text.Strings.last
  */
 public fun CharSequence.last(): Char {
     if (isEmpty())
@@ -143,7 +152,10 @@ public fun CharSequence.last(): Char {
 
 /**
  * Returns the last character matching the given [predicate].
- * @throws [NoSuchElementException] if no such character is found.
+ * 
+ * @throws NoSuchElementException if no such character is found.
+ * 
+ * @sample samples.text.Strings.last
  */
 public inline fun CharSequence.last(predicate: (Char) -> Boolean): Char {
     for (index in this.indices.reversed()) {
@@ -155,6 +167,8 @@ public inline fun CharSequence.last(predicate: (Char) -> Boolean): Char {
 
 /**
  * Returns the last character, or `null` if the char sequence is empty.
+ * 
+ * @sample samples.text.Strings.last
  */
 public fun CharSequence.lastOrNull(): Char? {
     return if (isEmpty()) null else this[length - 1]
@@ -162,6 +176,8 @@ public fun CharSequence.lastOrNull(): Char? {
 
 /**
  * Returns the last character matching the given [predicate], or `null` if no such character was found.
+ * 
+ * @sample samples.text.Strings.last
  */
 public inline fun CharSequence.lastOrNull(predicate: (Char) -> Boolean): Char? {
     for (index in this.indices.reversed()) {
@@ -386,6 +402,8 @@ public inline fun String.filter(predicate: (Char) -> Boolean): String {
  * Returns a char sequence containing only those characters from the original char sequence that match the given [predicate].
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public inline fun CharSequence.filterIndexed(predicate: (index: Int, Char) -> Boolean): CharSequence {
     return filterIndexedTo(StringBuilder(), predicate)
@@ -395,6 +413,8 @@ public inline fun CharSequence.filterIndexed(predicate: (index: Int, Char) -> Bo
  * Returns a string containing only those characters from the original string that match the given [predicate].
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public inline fun String.filterIndexed(predicate: (index: Int, Char) -> Boolean): String {
     return filterIndexedTo(StringBuilder(), predicate).toString()
@@ -404,6 +424,8 @@ public inline fun String.filterIndexed(predicate: (index: Int, Char) -> Boolean)
  * Appends all characters matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of a character and the character itself
  * and returns the result of predicate evaluation on the character.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 public inline fun <C : Appendable> CharSequence.filterIndexedTo(destination: C, predicate: (index: Int, Char) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -432,6 +454,8 @@ public inline fun String.filterNot(predicate: (Char) -> Boolean): String {
 
 /**
  * Appends all characters not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : Appendable> CharSequence.filterNotTo(destination: C, predicate: (Char) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.append(element)
@@ -440,6 +464,8 @@ public inline fun <C : Appendable> CharSequence.filterNotTo(destination: C, pred
 
 /**
  * Appends all characters matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : Appendable> CharSequence.filterTo(destination: C, predicate: (Char) -> Boolean): C {
     for (index in 0 until length) {
@@ -960,6 +986,8 @@ public inline fun <R, C : MutableCollection<in R>> CharSequence.mapIndexedTo(des
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each character in the original char sequence.
+ * 
+ * @sample samples.collections.Collections.Transformations.mapNotNull
  */
 public inline fun <R : Any> CharSequence.mapNotNull(transform: (Char) -> R?): List<R> {
     return mapNotNullTo(ArrayList<R>(), transform)
@@ -1121,13 +1149,13 @@ public inline fun CharSequence.forEachIndexed(action: (index: Int, Char) -> Unit
     for (item in this) action(index++, item)
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharSequence.max(): Char? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> CharSequence.maxBy(selector: (Char) -> R): Char? {
     return maxByOrNull(selector)
@@ -1338,7 +1366,7 @@ public fun CharSequence.maxOrNull(): Char? {
     return max
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharSequence.maxWith(comparator: Comparator<in Char>): Char? {
     return maxWithOrNull(comparator)
@@ -1358,13 +1386,13 @@ public fun CharSequence.maxWithOrNull(comparator: Comparator<in Char>): Char? {
     return max
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharSequence.min(): Char? {
     return minOrNull()
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> CharSequence.minBy(selector: (Char) -> R): Char? {
     return minByOrNull(selector)
@@ -1575,7 +1603,7 @@ public fun CharSequence.minOrNull(): Char? {
     return min
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharSequence.minWith(comparator: Comparator<in Char>): Char? {
     return minWithOrNull(comparator)
@@ -2063,7 +2091,7 @@ public inline fun CharSequence.sumOf(selector: (Char) -> ULong): ULong {
 /**
  * Splits this char sequence into a list of strings each not exceeding the given [size].
  * 
- * The last string in the resulting list may have less characters than the given [size].
+ * The last string in the resulting list may have fewer characters than the given [size].
  * 
  * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
  * 
@@ -2082,7 +2110,7 @@ public fun CharSequence.chunked(size: Int): List<String> {
  * 
  * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * The last char sequence may have less characters than the given [size].
+ * The last char sequence may have fewer characters than the given [size].
  * 
  * @param size the number of elements to take in each char sequence, must be positive and can be greater than the number of elements in this char sequence.
  * 
@@ -2096,7 +2124,7 @@ public fun <R> CharSequence.chunked(size: Int, transform: (CharSequence) -> R): 
 /**
  * Splits this char sequence into a sequence of strings each not exceeding the given [size].
  * 
- * The last string in the resulting sequence may have less characters than the given [size].
+ * The last string in the resulting sequence may have fewer characters than the given [size].
  * 
  * @param size the number of elements to take in each string, must be positive and can be greater than the number of elements in this char sequence.
  * 
@@ -2115,7 +2143,7 @@ public fun CharSequence.chunkedSequence(size: Int): Sequence<String> {
  * 
  * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * The last char sequence may have less characters than the given [size].
+ * The last char sequence may have fewer characters than the given [size].
  * 
  * @param size the number of elements to take in each char sequence, must be positive and can be greater than the number of elements in this char sequence.
  * 
@@ -2171,7 +2199,7 @@ public inline fun String.partition(predicate: (Char) -> Boolean): Pair<String, S
  * sliding along this char sequence with the given [step], where each
  * snapshot is a string.
  * 
- * Several last strings may have less characters than the given [size].
+ * Several last strings may have fewer characters than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
@@ -2193,7 +2221,7 @@ public fun CharSequence.windowed(size: Int, step: Int = 1, partialWindows: Boole
  * 
  * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * Several last char sequences may have less characters than the given [size].
+ * Several last char sequences may have fewer characters than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
@@ -2224,7 +2252,7 @@ public fun <R> CharSequence.windowed(size: Int, step: Int = 1, partialWindows: B
  * sliding along this char sequence with the given [step], where each
  * snapshot is a string.
  * 
- * Several last strings may have less characters than the given [size].
+ * Several last strings may have fewer characters than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window
@@ -2246,7 +2274,7 @@ public fun CharSequence.windowedSequence(size: Int, step: Int = 1, partialWindow
  * 
  * Note that the char sequence passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * Several last char sequences may have less characters than the given [size].
+ * Several last char sequences may have fewer characters than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this char sequence.
  * @param size the number of elements to take in each window

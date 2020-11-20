@@ -6,5 +6,5 @@ interface Tr<T> {
 
 fun test(t: Tr<*>) {
     t.v = t
-    t.v checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Tr<*>>() }
+    t.v checkType { _<Tr<*>>() }
 }

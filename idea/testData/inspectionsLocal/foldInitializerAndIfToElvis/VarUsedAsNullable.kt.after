@@ -1,0 +1,4 @@
+fun test(foo: Int?, bar: Int): Int? {
+    var i: Int? = foo ?: return bar
+    return i
+}

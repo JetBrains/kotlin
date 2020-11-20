@@ -1,0 +1,16 @@
+FILE: main.kt
+    public? final? fun Y.test(): String? {
+        lval a: <implicit> = when (this#) {
+            ($subj$ is F) ->  {
+                IntegerLiteral(1)
+            }
+            ($subj$ is G) ->  {
+                IntegerLiteral(2)
+            }
+            else ->  {
+                ^test Null(null)
+            }
+        }
+
+        ^test Null(null)
+    }

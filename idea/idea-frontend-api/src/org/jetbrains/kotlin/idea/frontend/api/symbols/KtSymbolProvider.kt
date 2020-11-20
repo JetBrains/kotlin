@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.symbols
 
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
+import org.jetbrains.kotlin.idea.frontend.api.components.KtAnalysisSessionComponent
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-abstract class KtSymbolProvider : ValidityOwner {
+abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     open fun getSymbol(psi: KtDeclaration): KtSymbol = when (psi) {
         is KtParameter -> getParameterSymbol(psi)
         is KtNamedFunction -> getFunctionSymbol(psi)
@@ -22,6 +22,7 @@ abstract class KtSymbolProvider : ValidityOwner {
         is KtLambdaExpression -> getAnonymousFunctionSymbol(psi)
         is KtProperty -> getVariableSymbol(psi)
         is KtClassOrObject -> getClassOrObjectSymbol(psi)
+        is KtPropertyAccessor -> getPropertyAccessorSymbol(psi)
         else -> error("Cannot build symbol for ${psi::class}")
     }
 
@@ -35,6 +36,7 @@ abstract class KtSymbolProvider : ValidityOwner {
     abstract fun getAnonymousFunctionSymbol(psi: KtLambdaExpression): KtAnonymousFunctionSymbol
     abstract fun getVariableSymbol(psi: KtProperty): KtVariableSymbol
     abstract fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol
+    abstract fun getPropertyAccessorSymbol(psi: KtPropertyAccessor): KtPropertyAccessorSymbol
 
     /**
      * @return symbol with specified [classId] or `null` in case such symbol is not found

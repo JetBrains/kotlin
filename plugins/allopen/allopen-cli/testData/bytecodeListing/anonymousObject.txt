@@ -7,6 +7,7 @@ public annotation class AllOpen {
 @kotlin.Metadata
 public final class Test$a$1 {
     // source: 'anonymousObject.kt'
+    enclosing method Test.<init>()V
     inner (anonymous) class Test$a$1
     method <init>(): void
     public method run(): void
@@ -15,6 +16,7 @@ public final class Test$a$1 {
 @kotlin.Metadata
 public final class Test$b$1 {
     // source: 'anonymousObject.kt'
+    enclosing method Test.b()V
     inner (anonymous) class Test$b$1
     method <init>(): void
     public method run(): void
@@ -23,6 +25,7 @@ public final class Test$b$1 {
 @kotlin.Metadata
 final class Test$b$2 {
     // source: 'anonymousObject.kt'
+    enclosing method Test.b()V
     public final static field INSTANCE: Test$b$2
     inner (anonymous) class Test$b$2
     static method <clinit>(): void

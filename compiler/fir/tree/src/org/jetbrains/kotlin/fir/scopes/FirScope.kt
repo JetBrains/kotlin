@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,7 +33,22 @@ abstract class FirScope {
     ) {}
 
     open fun mayContainName(name: Name) = true
+}
 
+fun FirScope.getSingleClassifier(name: Name): FirClassifierSymbol<*>? = mutableListOf<FirClassifierSymbol<*>>().apply {
+    processClassifiersByName(name, this::add)
+}.singleOrNull()
+
+fun FirScope.getFunctions(name: Name): List<FirFunctionSymbol<*>> = mutableListOf<FirFunctionSymbol<*>>().apply {
+    processFunctionsByName(name, this::add)
+}
+
+fun FirScope.getProperties(name: Name): List<FirVariableSymbol<*>> = mutableListOf<FirVariableSymbol<*>>().apply {
+    processPropertiesByName(name, this::add)
+}
+
+fun FirScope.getDeclaredConstructors(): List<FirConstructorSymbol> = mutableListOf<FirConstructorSymbol>().apply {
+    processDeclaredConstructors(this::add)
 }
 
 fun FirTypeScope.processOverriddenFunctionsAndSelf(
@@ -67,7 +82,7 @@ enum class ProcessorAction {
     }
 }
 
-
+@Suppress("NOTHING_TO_INLINE")
 inline fun FirScope.processClassifiersByName(
     name: Name,
     noinline processor: (FirClassifierSymbol<*>) -> Unit

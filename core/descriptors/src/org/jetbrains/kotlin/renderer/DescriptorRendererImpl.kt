@@ -36,7 +36,7 @@ internal class DescriptorRendererImpl(
 
     private val functionTypeAnnotationsRenderer: DescriptorRendererImpl by lazy {
         withOptions {
-            excludedTypeAnnotationClasses += listOf(KotlinBuiltIns.FQ_NAMES.extensionFunctionType)
+            excludedTypeAnnotationClasses += listOf(StandardNames.FqNames.extensionFunctionType)
             annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.ALWAYS_PARENTHESIZED
         } as DescriptorRendererImpl
     }
@@ -424,7 +424,7 @@ internal class DescriptorRendererImpl(
     }
 
     private fun AnnotationDescriptor.isParameterName(): Boolean {
-        return fqName == KotlinBuiltIns.FQ_NAMES.parameterName
+        return fqName == StandardNames.FqNames.parameterName
     }
 
     override fun renderAnnotation(annotation: AnnotationDescriptor, target: AnnotationUseSiteTarget?): String {
@@ -480,14 +480,14 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    private fun renderVisibility(visibility: Visibility, builder: StringBuilder): Boolean {
+    private fun renderVisibility(visibility: DescriptorVisibility, builder: StringBuilder): Boolean {
         @Suppress("NAME_SHADOWING")
         var visibility = visibility
         if (DescriptorRendererModifier.VISIBILITY !in modifiers) return false
         if (normalizedVisibilities) {
             visibility = visibility.normalize()
         }
-        if (!renderDefaultVisibility && visibility == Visibilities.DEFAULT_VISIBILITY) return false
+        if (!renderDefaultVisibility && visibility == DescriptorVisibilities.DEFAULT_VISIBILITY) return false
         builder.append(renderKeyword(visibility.internalDisplayName)).append(" ")
         return true
     }
@@ -506,7 +506,7 @@ internal class DescriptorRendererImpl(
         if (this.overriddenDescriptors.isNotEmpty()) {
             if (containingClassDescriptor.modality != Modality.FINAL) return Modality.OPEN
         }
-        return if (containingClassDescriptor.kind == ClassKind.INTERFACE && this.visibility != Visibilities.PRIVATE) {
+        return if (containingClassDescriptor.kind == ClassKind.INTERFACE && this.visibility != DescriptorVisibilities.PRIVATE) {
             if (this.modality == Modality.ABSTRACT) Modality.ABSTRACT else Modality.OPEN
         } else
             Modality.FINAL

@@ -1,1 +1,1 @@
-fun testing(a: Any) = a is UnresolvedType<Int>
+fun testing(a: Any) = a is <!UNRESOLVED_REFERENCE!>UnresolvedType<Int><!>

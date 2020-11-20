@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirAbstractSuperCallChecker : FirQualifiedAccessChecker() {
-    override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
         // require the receiver to be the super reference
-        functionCall.explicitReceiver.safeAs<FirQualifiedAccessExpression>()
+        expression.explicitReceiver.safeAs<FirQualifiedAccessExpression>()
             ?.calleeReference.safeAs<FirSuperReference>()
             ?: return
 
@@ -32,7 +32,7 @@ object FirAbstractSuperCallChecker : FirQualifiedAccessChecker() {
 
         if (closestClass.classKind == ClassKind.CLASS) {
             // handles all the FirSimpleFunction/FirProperty/etc.
-            val item = functionCall.getDeclaration<FirCallableMemberDeclaration<*>>()
+            val item = expression.getDeclaration<FirCallableMemberDeclaration<*>>()
                 ?: return
 
             val declaration = item.getContainingClass(context).safeAs<FirRegularClass>()
@@ -42,7 +42,7 @@ object FirAbstractSuperCallChecker : FirQualifiedAccessChecker() {
                 declaration.modality == Modality.ABSTRACT &&
                 item.modality == Modality.ABSTRACT
             ) {
-                reporter.report(functionCall.calleeReference.source)
+                reporter.report(expression.calleeReference.source)
             }
         }
     }

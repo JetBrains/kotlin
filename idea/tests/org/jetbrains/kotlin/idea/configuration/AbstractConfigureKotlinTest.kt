@@ -10,6 +10,7 @@ import com.intellij.openapi.application.PathMacros
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
@@ -110,7 +111,7 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     }
 
     override fun doCreateProject(projectFile: Path): Project {
-        return loadProjectCompat(projectFile)
+        return (ProjectManagerEx.getInstanceEx()).loadProject(projectFile)
     }
 
     private val projectName: String

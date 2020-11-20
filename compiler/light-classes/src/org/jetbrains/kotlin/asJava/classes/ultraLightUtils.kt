@@ -14,8 +14,10 @@ import com.intellij.psi.impl.cache.ModifierFlags
 import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
-import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import com.intellij.psi.impl.light.*
+import com.intellij.psi.impl.compiled.StubBuildingVisitor.GUESSING_MAPPER
+import com.intellij.psi.impl.light.LightMethodBuilder
+import com.intellij.psi.impl.light.LightModifierList
+import com.intellij.psi.impl.light.LightParameterListBuilder
 import com.intellij.psi.util.TypeConversionUtil
 import com.intellij.util.BitUtil.isSet
 import com.intellij.util.IncorrectOperationException
@@ -23,20 +25,21 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
-import org.jetbrains.kotlin.asJava.elements.KotlinLightTypeParameterListBuilder
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.elements.psiType
+import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
@@ -49,6 +52,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.replace
@@ -71,7 +75,7 @@ private val supportForDescriptor = object : TypeParametersSupport<CallableMember
 
     override fun hasNonTrivialBounds(
         declaration: CallableMemberDescriptor,
-        typeParameter: TypeParameterDescriptor
+        typeParameter: TypeParameterDescriptor,
     ) = typeParameter.upperBounds.any { !KotlinBuiltIns.isDefaultBound(it) }
 
     override fun asDescriptor(typeParameter: TypeParameterDescriptor) = typeParameter
@@ -85,7 +89,7 @@ private val supportForSourceDeclaration = object : TypeParametersSupport<KtTypeP
 
     override fun hasNonTrivialBounds(
         declaration: KtTypeParameterListOwner,
-        typeParameter: KtTypeParameter
+        typeParameter: KtTypeParameter,
     ) = typeParameter.extendsBound != null || declaration.typeConstraints.isNotEmpty()
 
     override fun asDescriptor(typeParameter: KtTypeParameter) = typeParameter.resolve() as? TypeParameterDescriptor
@@ -94,21 +98,21 @@ private val supportForSourceDeclaration = object : TypeParametersSupport<KtTypeP
 internal fun buildTypeParameterListForDescriptor(
     declaration: CallableMemberDescriptor,
     owner: PsiTypeParameterListOwner,
-    support: KtUltraLightSupport
+    support: KtUltraLightSupport,
 ): PsiTypeParameterList = buildTypeParameterList(declaration, owner, support, supportForDescriptor)
 
 
 internal fun buildTypeParameterListForSourceDeclaration(
     declaration: KtTypeParameterListOwner,
     owner: PsiTypeParameterListOwner,
-    support: KtUltraLightSupport
+    support: KtUltraLightSupport,
 ): PsiTypeParameterList = buildTypeParameterList(declaration, owner, support, supportForSourceDeclaration)
 
 private fun <D, T> buildTypeParameterList(
     declaration: D,
     owner: PsiTypeParameterListOwner,
     support: KtUltraLightSupport,
-    typeParametersSupport: TypeParametersSupport<D, T>
+    typeParametersSupport: TypeParametersSupport<D, T>,
 ): PsiTypeParameterList {
 
     val tpList = KotlinLightTypeParameterListBuilder(owner)
@@ -151,37 +155,102 @@ internal fun KtDeclaration.getKotlinType(): KotlinType? {
 
 internal fun KtDeclaration.resolve() = LightClassGenerationSupport.getInstance(project).resolveToDescriptor(this)
 internal fun KtElement.analyze() = LightClassGenerationSupport.getInstance(project).analyze(this)
+internal fun KtAnnotationEntry.analyzeAnnotation() = LightClassGenerationSupport.getInstance(project).analyzeAnnotation(this)
 
 // copy-pasted from kotlinInternalUastUtils.kt and post-processed
 internal fun KotlinType.asPsiType(
     support: KtUltraLightSupport,
     mode: TypeMappingMode,
-    psiContext: PsiElement
-): PsiType = support.mapType(psiContext) { typeMapper, signatureWriter ->
+    psiContext: PsiElement,
+): PsiType = support.mapType(this, psiContext) { typeMapper, signatureWriter ->
     typeMapper.mapType(this, signatureWriter, mode)
 }
 
+// There is no other known way found to make PSI types annotated for now.
+// It seems we need for platform changes to do it more convenient way (KTIJ-141).
+private val setPsiTypeAnnotationProvider: (PsiType, TypeAnnotationProvider) -> Unit by lazyPub {
+    val klass = PsiType::class.java
+    val providerField = try {
+        klass.getDeclaredField("myAnnotationProvider")
+            .also { it.isAccessible = true }
+    } catch (e: NoSuchFieldException) {
+        if (ApplicationManager.getApplication().isInternal) throw e
+        null
+    } catch (e: SecurityException) {
+        if (ApplicationManager.getApplication().isInternal) throw e
+        null
+    }
+
+    { psiType, provider ->
+        providerField?.set(psiType, provider)
+    }
+}
+
+private fun annotateByKotlinType(
+    psiType: PsiType,
+    kotlinType: KotlinType,
+    psiContext: PsiElement,
+    ultraLightSupport: KtUltraLightSupport
+) {
+    fun KotlinType.getAnnotationsSequence(): Sequence<List<PsiAnnotation>> =
+        sequence {
+            yield(annotations.mapNotNull { it.toLightAnnotation(ultraLightSupport, psiContext) })
+            for (argument in arguments) {
+                yieldAll(argument.type.getAnnotationsSequence())
+            }
+        }
+
+    val annotationsIterator = kotlinType.getAnnotationsSequence().iterator()
+
+    fun recursiveAnnotator(psiType: PsiType) {
+        if (!annotationsIterator.hasNext()) return
+        val typeAnnotations = annotationsIterator.next()
+
+        if (psiType is PsiClassType) {
+            for (parameterType in psiType.parameters) {
+                recursiveAnnotator(parameterType)
+            }
+        } else if (psiType is PsiArrayType) {
+            recursiveAnnotator(psiType.componentType)
+        }
+
+        if (typeAnnotations.isEmpty()) return
+
+        val provider = TypeAnnotationProvider.Static.create(typeAnnotations.toTypedArray())
+
+        setPsiTypeAnnotationProvider(psiType, provider)
+    }
+
+    recursiveAnnotator(psiType)
+}
+
 internal fun KtUltraLightSupport.mapType(
+    kotlinType: KotlinType?,
     psiContext: PsiElement,
     mapTypeToSignatureWriter: (KotlinTypeMapper, JvmSignatureWriter) -> Unit
 ): PsiType {
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
     mapTypeToSignatureWriter(typeMapper, signatureWriter)
     val canonicalSignature = signatureWriter.toString()
-    return createTypeFromCanonicalText(canonicalSignature, psiContext)
+    return createTypeFromCanonicalText(kotlinType, canonicalSignature, psiContext)
 }
 
-fun createTypeFromCanonicalText(
+private fun KtUltraLightSupport.createTypeFromCanonicalText(
+    kotlinType: KotlinType?,
     canonicalSignature: String,
-    psiContext: PsiElement
+    psiContext: PsiElement,
 ): PsiType {
     val signature = StringCharacterIterator(canonicalSignature)
-
-    val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
+    val javaType = SignatureParsing.parseTypeString(signature, GUESSING_MAPPER)
     val typeInfo = TypeInfo.fromString(javaType, false)
     val typeText = TypeInfo.createTypeText(typeInfo) ?: return PsiType.NULL
 
-    val type = ClsTypeElementImpl(psiContext, typeText, '\u0000').type
+    val typeElement = ClsTypeElementImpl(psiContext, typeText, '\u0000')
+    val type = typeElement.type
+    if (kotlinType != null) {
+        annotateByKotlinType(type, kotlinType, typeElement, this)
+    }
+
     if (type is PsiArrayType && psiContext is KtUltraLightParameter && psiContext.isVarArgs) {
         return PsiEllipsisType(type.componentType, type.annotationProvider)
     }
@@ -230,6 +299,7 @@ fun KotlinType.cleanFromAnonymousTypes(): KotlinType? {
 
 fun KtUltraLightClass.createGeneratedMethodFromDescriptor(
     descriptor: FunctionDescriptor,
+    declarationOriginKindForOrigin: JvmDeclarationOriginKind = JvmDeclarationOriginKind.OTHER,
     declarationForOrigin: KtDeclaration? = null
 ): KtLightMethod {
 
@@ -238,18 +308,18 @@ fun KtUltraLightClass.createGeneratedMethodFromDescriptor(
             ?: DescriptorToSourceUtils.descriptorToDeclaration(descriptor) as? KtDeclaration
             ?: kotlinOrigin
 
-    val lightMemberOrigin = LightMemberOriginForDeclaration(kotlinOrigin, JvmDeclarationOriginKind.OTHER)
+    val lightMemberOrigin = LightMemberOriginForDeclaration(kotlinOrigin, declarationOriginKindForOrigin)
 
     return KtUltraLightMethodForDescriptor(descriptor, lightMethod(descriptor), lightMemberOrigin, support, this)
 }
 
 private fun KtUltraLightClass.lightMethod(
-    descriptor: FunctionDescriptor
+    descriptor: FunctionDescriptor,
 ): LightMethodBuilder {
     val name = if (descriptor is ConstructorDescriptor) name else support.typeMapper.mapFunctionName(descriptor, OwnerKind.IMPLEMENTATION)
 
     val accessFlags: Int by lazyPub {
-        val asmFlags = AsmUtil.getMethodAsmFlags(
+        val asmFlags = DescriptorAsmUtil.getMethodAsmFlags(
             descriptor,
             OwnerKind.IMPLEMENTATION,
             support.deprecationResolver,
@@ -263,7 +333,7 @@ private fun KtUltraLightClass.lightMethod(
         LightParameterListBuilder(manager, language),
         object : LightModifierList(manager, language) {
             override fun hasModifierProperty(name: String) = ModifierFlags.hasModifierProperty(name, accessFlags)
-        }
+        },
     )
 }
 
@@ -316,7 +386,7 @@ internal fun KtModifierListOwner.isHiddenByDeprecation(support: KtUltraLightSupp
         annotation.looksLikeDeprecated()
     }
     if (annotations.isNotEmpty()) { // some candidates found
-        val deprecated = support.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated)?.second
+        val deprecated = support.findAnnotation(this, StandardNames.FqNames.deprecated)?.second
         return (deprecated?.argumentValue("level") as? EnumValue)?.enumEntryName?.asString() == "HIDDEN"
     } else {
         return false
@@ -361,7 +431,7 @@ internal fun KtModifierListOwner.isDeprecated(support: KtUltraLightSupport? = nu
     val modifierList = this.modifierList ?: return false
     if (modifierList.annotationEntries.isEmpty()) return false
 
-    val deprecatedFqName = KotlinBuiltIns.FQ_NAMES.deprecated
+    val deprecatedFqName = StandardNames.FqNames.deprecated
     val deprecatedName = deprecatedFqName.shortName().asString()
 
     for (annotationEntry in modifierList.annotationEntries) {
@@ -374,7 +444,7 @@ internal fun KtModifierListOwner.isDeprecated(support: KtUltraLightSupport? = nu
         if (fqName.asString() == deprecatedName) return true
     }
 
-    return support?.findAnnotation(this, KotlinBuiltIns.FQ_NAMES.deprecated) !== null
+    return support?.findAnnotation(this, StandardNames.FqNames.deprecated) !== null
 }
 
 private fun toQualifiedName(userType: KtUserType): FqName? {
@@ -424,7 +494,7 @@ private fun ConstantValue<*>.asStringForPsiLiteral(parent: PsiElement): String =
             val arrayPart = "[]".repeat(value.arrayNestedness)
             val fqName = value.classId.asSingleFqName()
             val canonicalText = psiType(
-                fqName.asString(), parent, boxPrimitiveType = value.arrayNestedness > 0
+                fqName.asString(), parent, boxPrimitiveType = value.arrayNestedness > 0,
             ).let(TypeConversionUtil::erasure).getCanonicalText(false)
 
             "$canonicalText$arrayPart.class"
@@ -470,8 +540,61 @@ inline fun <T> runReadAction(crossinline runnable: () -> T): T {
     return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
 }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun KtClassOrObject.safeIsLocal(): Boolean = runReadAction { this.isLocal }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun KtFile.safeIsScript() = runReadAction { this.isScript() }
 
+@Suppress("NOTHING_TO_INLINE")
 inline fun KtFile.safeScript() = runReadAction { this.script }
+
+internal fun KtUltraLightSupport.findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>? {
+
+    val candidates = owner.annotationEntries
+        .filter {
+            it.shortName?.let { name ->
+                name == fqName.shortName() || possiblyHasAlias(owner.containingKtFile, name)
+            } ?: false
+        }
+
+    for (entry in candidates) {
+        val descriptor = entry.analyzeAnnotation()
+        if (descriptor?.fqName == fqName) {
+            return Pair(entry, descriptor)
+        }
+    }
+
+    if (owner is KtPropertyAccessor) {
+        // We might have from the beginning just resolve the descriptor of the accessor
+        // But we trying to avoid analysis in case property doesn't have any relevant annotations at all
+        // (in case of `findAnnotation` returns null)
+        if (findAnnotation(owner.property, fqName) == null) return null
+
+        val accessorDescriptor = owner.resolve() ?: return null
+
+        // Just reuse the logic of use-site targeted annotation from the compiler
+        val annotationDescriptor = accessorDescriptor.annotations.findAnnotation(fqName) ?: return null
+        val entry = annotationDescriptor.source.getPsi() as? KtAnnotationEntry ?: return null
+
+        return entry to annotationDescriptor
+    }
+
+    return null
+}
+
+internal fun List<KtAnnotationEntry>.toLightAnnotations(
+    parent: PsiElement,
+    site: AnnotationUseSiteTarget?
+): List<KtLightAnnotationForSourceEntry> =
+    filter {
+        it.useSiteTarget?.getAnnotationUseSiteTarget() == site
+    }.map { entry ->
+        KtLightAnnotationForSourceEntry(
+            name = entry.shortName?.identifier,
+            lazyQualifiedName = { entry.analyzeAnnotation()?.fqName?.asString() },
+            kotlinOrigin = entry,
+            parent = parent,
+            lazyClsDelegate = null
+        )
+    }

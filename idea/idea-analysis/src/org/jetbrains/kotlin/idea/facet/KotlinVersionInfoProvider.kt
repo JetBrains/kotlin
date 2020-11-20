@@ -47,7 +47,7 @@ fun getLibraryLanguageLevel(
 ): LanguageVersion {
     val minVersion = getRuntimeLibraryVersions(module, rootModel, platformKind.orDefault())
         .addReleaseVersionIfNecessary(coerceRuntimeLibraryVersionToReleased)
-        .minWith(VersionComparatorUtil.COMPARATOR)
+        .minWithOrNull(VersionComparatorUtil.COMPARATOR)
     return getDefaultLanguageLevel(module, minVersion, coerceRuntimeLibraryVersionToReleased)
 }
 
@@ -60,7 +60,7 @@ fun getDefaultLanguageLevel(
         ?: KotlinVersionInfoProvider.EP_NAME.extensions
             .mapNotNull { it.getCompilerVersion(module) }
             .addReleaseVersionIfNecessary(coerceRuntimeLibraryVersionToReleased)
-            .minWith(VersionComparatorUtil.COMPARATOR)
+            .minWithOrNull(VersionComparatorUtil.COMPARATOR)
         ?: return VersionView.RELEASED_VERSION
     return libVersion.toLanguageVersion()
 }

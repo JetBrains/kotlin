@@ -11,6 +11,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.TypeConversionUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -849,7 +850,7 @@ private class ConstantExpressionEvaluatorVisitor(
         val compileTimeConstant = evaluate(argumentExpression, underlyingType)
         val evaluatedArgument = compileTimeConstant?.toConstantValue(underlyingType) ?: return null
 
-        val unsignedValue = ConstantValueFactory.createUnsignedValue(evaluatedArgument, classDescriptor.defaultType) ?: return null
+        val unsignedValue = ConstantValueFactory.createUnsignedValue(evaluatedArgument) ?: return null
         return unsignedValue.wrap(compileTimeConstant.parameters)
     }
 
@@ -1017,7 +1018,7 @@ private class ConstantExpressionEvaluatorVisitor(
     }
 
     private fun checkAccessibilityOfUnsignedTypes(): Boolean {
-        val uInt = constantExpressionEvaluator.module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.uInt) ?: return false
+        val uInt = constantExpressionEvaluator.module.findClassAcrossModuleDependencies(StandardNames.FqNames.uInt) ?: return false
         val accessibility = uInt.checkSinceKotlinVersionAccessibility(languageVersionSettings)
         // Case `NotAccessibleButWasExperimental` will be checked later in `checkExperimentalityOfConstantLiteral`
         return accessibility is SinceKotlinAccessibility.Accessible
@@ -1168,7 +1169,7 @@ private fun typeStrToCompileTimeType(str: String) = when (str) {
     else -> throw IllegalArgumentException("Unsupported type: $str")
 }
 
-fun evaluateUnary(name: String, typeStr: String, value: Any, tracer: () -> Unit = {}): Any? {
+fun evaluateUnary(name: String, typeStr: String, value: Any): Any? {
     return evaluateUnaryAndCheck(name, typeStrToCompileTimeType(typeStr), value)
 }
 

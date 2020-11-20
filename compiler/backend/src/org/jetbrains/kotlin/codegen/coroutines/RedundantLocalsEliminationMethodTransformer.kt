@@ -136,7 +136,11 @@ private class UnitSourceInterpreter(private val localVariables: Set<Int>) : Basi
 
     override fun merge(value1: BasicValue?, value2: BasicValue?): BasicValue? =
         if (value1 is UnitValue && value2 is UnitValue) {
-            UnitValue(value1.insns.union(value2.insns))
+            val newValue = UnitValue(value1.insns.union(value2.insns))
+            if (newValue.insns.any { it in unspillableUnitValues }) {
+                markUnspillable(newValue)
+            }
+            newValue
         } else {
             // Mark unit values as unspillable if we merge them with non-unit values here.
             // This is conservative since the value could turn out to be unused.

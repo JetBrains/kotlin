@@ -69,11 +69,12 @@ FILE fqName:<root> fileName:/typeParameterBoundedBySubclass.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base2'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived2 modality:FINAL visibility:public superTypes:[<root>.Base2]'
-    FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <> ($this:<root>.Base2, x:T of <root>.Base2.foo) returnType:kotlin.Unit [fake_override]
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:FINAL <T> ($this:<root>.Base2, x:T of <root>.Derived2.foo) returnType:kotlin.Unit [fake_override]
       overridden:
         public final fun foo <T> (x: T of <root>.Base2.foo): kotlin.Unit declared in <root>.Base2
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[<root>.Derived2]
       $this: VALUE_PARAMETER name:<this> type:<root>.Base2
-      VALUE_PARAMETER name:x index:0 type:T of <root>.Base2.foo
+      VALUE_PARAMETER name:x index:0 type:T of <root>.Derived2.foo
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any

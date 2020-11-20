@@ -5,25 +5,23 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.moveUpDown
 
-import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementLeftAction
 import com.intellij.codeInsight.editorActions.moveLeftRight.MoveElementRightAction
 import com.intellij.codeInsight.editorActions.moveUpDown.LineMover
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementDownAction
 import com.intellij.codeInsight.editorActions.moveUpDown.MoveStatementUpAction
 import com.intellij.codeInsight.editorActions.moveUpDown.StatementUpDownMover
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.actionSystem.EditorAction
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.LightCodeInsightTestCase
 import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.formatter.FormatSettingsUtil
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinDeclarationMover
 import org.jetbrains.kotlin.idea.codeInsight.upDownMover.KotlinExpressionMover
 import org.jetbrains.kotlin.idea.formatter.kotlinCustomSettings
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.test.configureCodeStyleAndRun
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -67,7 +65,7 @@ abstract class AbstractMoveLeftRightTest : AbstractCodeMoverTest() {
 }
 
 @Suppress("DEPRECATION")
-abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
+abstract class AbstractCodeMoverTest : LightCodeInsightTestCase() {
     protected fun doTest(
         path: String,
         trailingComma: Boolean = false,
@@ -103,8 +101,8 @@ abstract class AbstractCodeMoverTest : KotlinLightCodeInsightTestCase() {
     }
 
     private fun invokeAndCheck(path: String, action: EditorAction, isApplicableExpected: Boolean) {
-        val editor = editor_
-        val dataContext = currentEditorDataContext_
+        val editor = editor
+        val dataContext = currentEditorDataContext
 
         val before = editor.document.text
         runWriteAction { action.actionPerformed(editor, dataContext) }

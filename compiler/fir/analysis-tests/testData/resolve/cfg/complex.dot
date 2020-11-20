@@ -153,13 +153,14 @@ digraph complex_kt {
     22 -> {23};
     23 -> {24};
     24 -> {25};
-    25 -> {26};
-    26 -> {54 31 27};
+    25 -> {26 31};
+    26 -> {27};
     27 -> {28};
     28 -> {29};
     29 -> {30};
-    30 -> {38};
-    31 -> {54 32};
+    30 -> {38 31};
+    31 -> {32};
+    31 -> {54}    [label=onUncaughtException];
     32 -> {33};
     33 -> {34};
     34 -> {35};
@@ -191,7 +192,7 @@ digraph complex_kt {
             color=blue
             56 [label="Enter block"];
             57 [label="Access variable this@R|/firstIsInstanceOrNull|"];
-            58 [label="Function call: this@R|/firstIsInstanceOrNull|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Any?>|>|()"];
+            58 [label="Function call: this@R|/firstIsInstanceOrNull|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<CapturedType(*)>|>|()"];
             59 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<kotlin/Any?>|"];
             subgraph cluster_20 {
                 color=blue
@@ -210,7 +211,7 @@ digraph complex_kt {
                         color=blue
                         66 [label="Enter block"];
                         67 [label="Access variable R|<local>/<iterator>|"];
-                        68 [label="Function call: R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|kotlin/Any?|>|()"];
+                        68 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Any?|>|()"];
                         69 [label="Variable declaration: lval element: R|kotlin/Any?|"];
                         subgraph cluster_24 {
                             color=blue

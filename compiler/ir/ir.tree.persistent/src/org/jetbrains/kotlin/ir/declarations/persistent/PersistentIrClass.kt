@@ -19,20 +19,22 @@ package org.jetbrains.kotlin.ir.declarations.persistent
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ClassCarrier
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 
 internal class PersistentIrClass(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrClassSymbol,
     override val name: Name,
     override val kind: ClassKind,
-    visibility: Visibility,
+    visibility: DescriptorVisibility,
     modality: Modality,
     override val isCompanion: Boolean = false,
     override val isInner: Boolean = false,
@@ -42,22 +44,31 @@ internal class PersistentIrClass(
     override val isExpect: Boolean = false,
     override val isFun: Boolean = false,
     override val source: SourceElement = SourceElement.NO_SOURCE
-) :
-    PersistentIrDeclarationBase<ClassCarrier>(startOffset, endOffset, origin),
-    IrClass,
+) : IrClass(),
+    PersistentIrDeclarationBase<ClassCarrier>,
     ClassCarrier {
 
     init {
         symbol.bind(this)
     }
 
+    override var lastModified: Int = stageController.currentStage
+    override var loweredUpTo: Int = stageController.currentStage
+    override var values: Array<Carrier>? = null
+    override val createdOn: Int = stageController.currentStage
+
+    override var parentField: IrDeclarationParent? = null
+    override var originField: IrDeclarationOrigin = origin
+    override var removedOn: Int = Int.MAX_VALUE
+    override var annotationsField: List<IrConstructorCall> = emptyList()
+
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassDescriptor
         get() = symbol.descriptor
 
-    override var visibilityField: Visibility = visibility
+    override var visibilityField: DescriptorVisibility = visibility
 
-    override var visibility: Visibility
+    override var visibility: DescriptorVisibility
         get() = getCarrier().visibilityField
         set(v) {
             if (visibility !== v) {

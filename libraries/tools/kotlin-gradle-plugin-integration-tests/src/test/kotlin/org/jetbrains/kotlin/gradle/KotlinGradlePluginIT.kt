@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Test
 import java.io.File
+import java.nio.file.FileSystemException
 import java.nio.file.Files
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
@@ -365,7 +366,7 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testDowngradeTo106() {
+    fun testDowngradePluginVersion() {
         val project = Project("kotlinProject")
         val options = defaultBuildOptions().copy(incremental = true, withDaemon = false)
 
@@ -373,7 +374,7 @@ class KotlinGradleIT : BaseGradleIT() {
             assertSuccessful()
         }
 
-        project.build("clean", "assemble", options = options.copy(kotlinVersion = "1.0.6")) {
+        project.build("clean", "assemble", options = options.copy(kotlinVersion = "1.3.41")) {
             assertSuccessful()
         }
     }
@@ -692,7 +693,12 @@ class KotlinGradleIT : BaseGradleIT() {
         val buildDir = projectDir.resolve("build")
         buildDir.deleteRecursively()
         val externalBuildDir = Files.createTempDirectory(workingDir.toPath(), "externalBuild")
-        Files.createSymbolicLink(buildDir.toPath(), externalBuildDir)
+        try {
+            Files.createSymbolicLink(buildDir.toPath(), externalBuildDir)
+        } catch (_: FileSystemException) {
+            //Windows requires SeSymbolicLink privilege and we can't grant it
+            null
+        } ?: return@with
 
         build("build") {
             assertSuccessful()
@@ -1051,6 +1057,33 @@ class KotlinGradleIT : BaseGradleIT() {
         ) {
             assertSuccessful()
             assertTasksExecuted(":lib1:compileDebugKotlin")
+        }
+    }
+
+    /** Regression test for KT-38692. */
+    @Test
+    fun testIncrementalWhenNoKotlinSources() = with(
+        Project("kotlinProject")
+    ) {
+        setupWorkingDir()
+        assertTrue(this.allKotlinFiles.toList().isNotEmpty())
+        build(":compileKotlin") {
+            assertSuccessful()
+            assertTasksExecuted(":compileKotlin")
+        }
+
+        // Remove all Kotlin sources and force non-incremental run
+        allKotlinFiles.forEach { assertTrue(it.delete()) }
+        projectDir.resolve("src/main/java/Sample.java").also {
+            it.parentFile.mkdirs()
+            it.writeText("public class Sample {}")
+        }
+        build("compileKotlin", "--rerun-tasks") {
+            assertSuccessful()
+            assertTasksExecuted(":compileKotlin")
+            val compiledKotlinClasses = fileInWorkingDir(classesDir()).allFilesWithExtension("class").toList()
+
+            assertTrue(compiledKotlinClasses.isEmpty())
         }
     }
 }

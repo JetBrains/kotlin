@@ -10,7 +10,7 @@ fun test() {
     }
 
     anotherUseA {
-        <!UNRESOLVED_REFERENCE("foo")!>foo<!>()
+        <!UNRESOLVED_REFERENCE!>foo<!>()
     }
 
     anotherUseA {

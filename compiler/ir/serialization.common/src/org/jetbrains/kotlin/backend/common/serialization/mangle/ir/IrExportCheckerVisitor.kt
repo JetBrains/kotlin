@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.backend.common.serialization.mangle.ir
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
 import org.jetbrains.kotlin.backend.common.serialization.mangle.publishedApiAnnotation
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -27,7 +27,7 @@ abstract class IrExportCheckerVisitor : IrElementVisitor<Boolean, Nothing?>, Kot
 
     abstract override fun IrDeclaration.isPlatformSpecificExported(): Boolean
 
-    private fun IrDeclaration.isExported(annotations: List<IrConstructorCall>, visibility: Visibility?): Boolean {
+    private fun IrDeclaration.isExported(annotations: List<IrConstructorCall>, visibility: DescriptorVisibility?): Boolean {
         val speciallyExported = annotations.hasAnnotation(publishedApiAnnotation) || isPlatformSpecificExported()
 
         val selfExported = speciallyExported || visibility == null || visibility.isPubliclyVisible()
@@ -35,16 +35,17 @@ abstract class IrExportCheckerVisitor : IrElementVisitor<Boolean, Nothing?>, Kot
         return selfExported && parent.accept(this@IrExportCheckerVisitor, null)
     }
 
-    private fun Visibility.isPubliclyVisible(): Boolean = isPublicAPI || this === Visibilities.INTERNAL
+    private fun DescriptorVisibility.isPubliclyVisible(): Boolean = isPublicAPI || this === DescriptorVisibilities.INTERNAL
 
     override fun visitElement(element: IrElement, data: Nothing?): Boolean = error("Should bot reach here ${element.render()}")
 
-    override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?) = declaration.run { isExported(annotations, null) }
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?) = declaration.run { isExported(annotations, null) }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?) = false
     override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) = false
     override fun visitVariable(declaration: IrVariable, data: Nothing?) = false
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?) = false
+    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?): Boolean = false
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?) = false
 

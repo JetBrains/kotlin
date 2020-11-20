@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.Variance
 
-interface IrTypeParameter : IrSymbolDeclaration<IrTypeParameterSymbol>, IrDeclarationWithName {
+abstract class IrTypeParameter : IrDeclarationBase(), IrSymbolDeclaration<IrTypeParameterSymbol>, IrDeclarationWithName {
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: TypeParameterDescriptor
+    abstract override val descriptor: TypeParameterDescriptor
 
-    val variance: Variance
-    val index: Int
-    val isReified: Boolean
-    val superTypes: MutableList<IrType>
+    abstract val variance: Variance
+    abstract val index: Int
+    abstract val isReified: Boolean
+    abstract var superTypes: List<IrType>
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeParameter(this, data)

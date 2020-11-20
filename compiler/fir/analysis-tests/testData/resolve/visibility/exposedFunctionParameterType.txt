@@ -5,7 +5,7 @@ FILE: exposedFunctionParameterType.kt
         }
 
         private final class AInner : R|kotlin/Any| {
-            public[private] constructor(): R|A.AInner| {
+            public constructor(): R|A.AInner| {
                 super<R|kotlin/Any|>()
             }
 

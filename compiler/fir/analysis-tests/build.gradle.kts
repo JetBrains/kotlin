@@ -11,23 +11,22 @@ plugins {
 dependencies {
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    testCompile(intellijDep())
+    testApi(intellijDep())
 
-    testCompile(commonDep("junit:junit"))
+    testApi(commonDep("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":compiler:fir:checkers"))
-    testCompile(project(":compiler:frontend"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(project(":compiler:fir:checkers"))
+    testApi(project(":compiler:fir:entrypoint"))
+    testApi(project(":compiler:frontend"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":core:descriptors.runtime"))
 
-    Platform[192].orHigher {
-        testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-        testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {

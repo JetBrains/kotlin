@@ -1,0 +1,12 @@
+FILE: functionWithBothOldAndNewSyntaxContractDescription.kt
+    public? final? fun test1(s: String?): R|kotlin/Unit|
+        [Contract description] <
+            returnsNotNull#()
+        >
+     {
+        contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> {
+            returns#().implies#(!=(s#, Null(null)))
+        }
+        )
+        test1#()
+    }

@@ -31,7 +31,7 @@ abstract class FirRegularClass : FirPureAbstractElement(), FirMemberDeclaration,
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val classKind: ClassKind
     abstract override val declarations: List<FirDeclaration>
     abstract override val scopeProvider: FirScopeProvider
@@ -45,6 +45,8 @@ abstract class FirRegularClass : FirPureAbstractElement(), FirMemberDeclaration,
 
     abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+
     abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirRegularClass
@@ -52,8 +54,6 @@ abstract class FirRegularClass : FirPureAbstractElement(), FirMemberDeclaration,
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirRegularClass
 
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirRegularClass
-
-    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirRegularClass
 
     abstract override fun <D> transformDeclarations(transformer: FirTransformer<D>, data: D): FirRegularClass
 

@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/for.kt
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=FOR_LOOP
         VAR FOR_LOOP_ITERATOR name:tmp_3 type:kotlin.collections.IntIterator [val]
-          CALL 'public open fun iterator (): kotlin.collections.IntIterator [operator] declared in kotlin.ranges.IntProgression' type=kotlin.collections.IntIterator origin=null
+          CALL 'public open fun iterator (): kotlin.collections.IntIterator [operator] declared in kotlin.ranges.IntProgression' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
             $this: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange [operator] declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
               $this: CONST Int type=kotlin.Int value=1
               other: CONST Int type=kotlin.Int value=10

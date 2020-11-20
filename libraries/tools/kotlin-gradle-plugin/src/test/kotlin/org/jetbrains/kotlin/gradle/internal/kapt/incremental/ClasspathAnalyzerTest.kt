@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.file.FileSystemLocation
-import org.gradle.api.internal.file.DefaultFileSystemLocation
-import org.gradle.api.internal.provider.DefaultProvider
 import org.gradle.api.provider.Provider
+import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert.*
@@ -18,7 +17,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
-import java.util.concurrent.Callable
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -41,7 +39,7 @@ class ClasspathAnalyzerTest {
             }
         }
         val outputs = TransformOutputsMock(tmp.newFolder())
-        StructureTransformTestAction(classesDir).transform(outputs)
+        StructureTransformTestAction(classesDir, tmp.newFolder("project")).transform(outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertEquals(setOf("test/A", "test/B"), data.classAbiHash.keys)
@@ -77,7 +75,7 @@ class ClasspathAnalyzerTest {
             }
         }
         val outputs = TransformOutputsMock(tmp.newFolder())
-        StructureTransformTestAction(inputJar).transform(outputs)
+        StructureTransformTestAction(inputJar, tmp.newFolder("project")).transform(outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertEquals(setOf("test/A", "test/B"), data.classAbiHash.keys)
@@ -103,7 +101,7 @@ class ClasspathAnalyzerTest {
             }
         }
         val outputsA = TransformOutputsMock(tmp.newFolder())
-        StructureTransformTestAction(jarA).transform(outputsA)
+        StructureTransformTestAction(jarA, tmp.newFolder("projectA")).transform(outputsA)
 
         val jarB = tmp.newFile("inputB.jar").also { jar ->
             ZipOutputStream(jar.outputStream()).use {
@@ -117,14 +115,14 @@ class ClasspathAnalyzerTest {
             }
         }
         val outputsB = TransformOutputsMock(tmp.newFolder())
-        StructureTransformTestAction(jarB).transform(outputsB)
+        StructureTransformTestAction(jarB, tmp.newFolder("projectB")).transform(outputsB)
 
         assertArrayEquals(outputsA.createdOutputs.single().readBytes(), outputsB.createdOutputs.single().readBytes())
     }
 
     @Test
     fun emptyInput() {
-        val transformAction = StructureTransformTestAction(tmp.newFolder("input"))
+        val transformAction = StructureTransformTestAction(tmp.newFolder("input"), tmp.newFolder("project"))
         val outputs = TransformOutputsMock(tmp.newFolder())
 
         transformAction.transform(outputs)
@@ -151,7 +149,7 @@ class ClasspathAnalyzerTest {
                 it.closeEntry()
             }
         }
-        val transformAction = StructureTransformTestAction(inputJar)
+        val transformAction = StructureTransformTestAction(inputJar, tmp.newFolder("project"))
         val outputs = TransformOutputsMock(tmp.newFolder())
 
         transformAction.transform(outputs)
@@ -168,8 +166,10 @@ class ClasspathAnalyzerTest {
     }
 }
 
-class StructureTransformTestAction(val input: File) : StructureTransformAction() {
-    override val inputArtifact: File = input
+class StructureTransformTestAction(val input: File, val projectDir: File) : StructureTransformAction() {
+    private val project = ProjectBuilder.builder().withProjectDir(projectDir).build()
+
+    override val inputArtifact: Provider<FileSystemLocation> = project.provider { project.objects.fileProperty().fileValue(input).get() }
 
     override fun getParameters(): TransformParameters.None? {
         //no need for StructureTransformAction and so for test

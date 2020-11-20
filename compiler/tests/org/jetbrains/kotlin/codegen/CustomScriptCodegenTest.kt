@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
 import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
@@ -59,6 +60,7 @@ class CustomScriptCodegenTest : CodegenTestCase() {
         val configuration = createConfiguration(
             ConfigurationKind.ALL,
             TestJdkKind.MOCK_JDK,
+            TargetBackend.JVM,
             additionalDependencies,
             emptyList(),
             emptyList()

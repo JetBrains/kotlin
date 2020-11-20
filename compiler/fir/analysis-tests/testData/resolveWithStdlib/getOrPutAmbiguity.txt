@@ -1,0 +1,4 @@
+FILE: getOrPutAmbiguity.kt
+    public final fun test(map: R|kotlin/collections/MutableMap<kotlin/Int, kotlin/collections/MutableMap<kotlin/Int, kotlin/Int>>|): R|kotlin/Unit| {
+        R|<local>/map|.R|kotlin/collections/getOrPut|<R|kotlin/Int|, R|kotlin/collections/MutableMap<kotlin/Int, kotlin/Int>|>(Int(1), ::R|kotlin/collections/mutableMapOf<kotlin/Int, kotlin/Int>|)
+    }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.copyAnnotationsFrom
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -20,8 +21,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.allTypeParameters
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
 
 internal val jvmOverloadsAnnotationPhase = makeIrFilePhase(
@@ -55,10 +56,16 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
     private fun generateWrapper(target: IrFunction, numDefaultParametersToExpect: Int): IrFunction {
         val wrapperIrFunction = context.irFactory.generateWrapperHeader(target, numDefaultParametersToExpect)
 
-        val call = if (target is IrConstructor)
-            IrDelegatingConstructorCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, target.symbol)
-        else
-            IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
+        val call = when (target) {
+            is IrConstructor ->
+                IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, target.symbol
+                )
+            is IrSimpleFunction ->
+                IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, target.returnType, target.symbol)
+            else ->
+                error("unknown function kind: ${target.render()}")
+        }
         for (arg in wrapperIrFunction.allTypeParameters) {
             call.putTypeArgument(arg.index, arg.defaultType)
         }
@@ -117,7 +124,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
     private fun IrFactory.generateWrapperHeader(oldFunction: IrFunction, numDefaultParametersToExpect: Int): IrFunction {
         val res = when (oldFunction) {
             is IrConstructor -> {
-                buildConstructor(oldFunction.descriptor) {
+                buildConstructor {
                     origin = JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
                     name = oldFunction.name
                     visibility = oldFunction.visibility
@@ -125,7 +132,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
                     isInline = oldFunction.isInline
                 }
             }
-            is IrSimpleFunction -> buildFun(oldFunction.descriptor) {
+            is IrSimpleFunction -> buildFun {
                 origin = JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER
                 name = oldFunction.name
                 visibility = oldFunction.visibility
@@ -140,7 +147,7 @@ private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : C
         }
 
         res.parent = oldFunction.parent
-        res.annotations += oldFunction.annotations.map { it.deepCopyWithSymbols(res) }
+        res.copyAnnotationsFrom(oldFunction)
         res.copyTypeParametersFrom(oldFunction)
         res.dispatchReceiverParameter = oldFunction.dispatchReceiverParameter?.copyTo(res)
         res.extensionReceiverParameter = oldFunction.extensionReceiverParameter?.copyTo(res)

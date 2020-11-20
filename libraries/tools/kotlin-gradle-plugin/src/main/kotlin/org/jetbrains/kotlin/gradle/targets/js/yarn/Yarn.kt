@@ -30,11 +30,13 @@ class Yarn : NpmApi {
 
     override fun prepareRootProject(
         rootProject: Project,
-        subProjects: Collection<KotlinCompilationNpmResolution>
+        subProjects: Collection<KotlinCompilationNpmResolution>,
+        resolutions: Map<String, String>
     ) = getDelegate(rootProject.project)
         .prepareRootProject(
             rootProject,
-            subProjects
+            subProjects,
+            resolutions
         )
 
     override fun resolveRootProject(
@@ -44,7 +46,12 @@ class Yarn : NpmApi {
         cliArgs: List<String>
     ) {
         getDelegate(rootProject.project)
-            .resolveRootProject(rootProject, npmProjects, skipExecution, cliArgs)
+            .resolveRootProject(
+                rootProject,
+                npmProjects,
+                skipExecution,
+                cliArgs
+            )
     }
 
     override fun resolveDependency(

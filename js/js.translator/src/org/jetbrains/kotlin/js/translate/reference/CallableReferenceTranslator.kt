@@ -223,7 +223,7 @@ object CallableReferenceTranslator {
 
     private fun isSetterVisible(descriptor: PropertyDescriptor, context: TranslationContext): Boolean {
         val setter = descriptor.setter ?: return false
-        if (setter.visibility != Visibilities.PRIVATE) return true
+        if (setter.visibility != DescriptorVisibilities.PRIVATE) return true
         val classDescriptor = context.classDescriptor ?: return false
 
         val outerClasses = generateSequence<DeclarationDescriptor>(classDescriptor) { it.containingDeclaration }

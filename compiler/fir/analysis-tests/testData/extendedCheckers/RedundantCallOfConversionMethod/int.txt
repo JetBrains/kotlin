@@ -1,0 +1,3 @@
+FILE: int.kt
+    public final val foo: R|kotlin/Int| = Int(1).R|kotlin/Int.toInt|()
+        public get(): R|kotlin/Int|

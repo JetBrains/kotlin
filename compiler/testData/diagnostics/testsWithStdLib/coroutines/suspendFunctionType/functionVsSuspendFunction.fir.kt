@@ -8,7 +8,7 @@ fun ambiguous(sfn: suspend () -> Unit) = sfn
 fun ambiguous(fn: () -> Unit) = fn
 
 fun test1(sfn: suspend () -> Unit) = <!INAPPLICABLE_CANDIDATE!>useFn<!>(sfn)
-fun test2(fn: () -> Unit) = <!INAPPLICABLE_CANDIDATE!>useSuspendFn<!>(fn)
+fun test2(fn: () -> Unit) = useSuspendFn(fn)
 
 fun test3(sfn: suspend () -> Unit) = useSuspendFn(sfn)
 fun test4(): suspend () -> Unit = useSuspendFn {}

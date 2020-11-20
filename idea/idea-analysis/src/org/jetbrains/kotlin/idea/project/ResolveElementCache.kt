@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.project
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.context.withProject
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.frontend.di.createContainerForBodyResolve
+import org.jetbrains.kotlin.idea.DaemonCodeAnalyzerStatusService
 import org.jetbrains.kotlin.idea.caches.resolve.CodeFragmentAnalyzer
 import org.jetbrains.kotlin.idea.caches.resolve.util.analyzeControlFlow
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
@@ -49,6 +51,8 @@ class ResolveElementCache(
     private val targetPlatform: TargetPlatform,
     private val codeFragmentAnalyzer: CodeFragmentAnalyzer
 ) : BodyResolveCache {
+
+    private val forcedFullResolveOnHighlighting = Registry.`is`("kotlin.resolve.force.full.resolve.on.highlighting", true)
 
     private class CachedFullResolve(val bindingContext: BindingContext, resolveElement: KtElement) {
         private val modificationStamp: Long? = modificationStamp(resolveElement)
@@ -162,7 +166,11 @@ class ResolveElementCache(
         // neither result of PARTIAL nor result of PARTIAL_WITH_CFA analyses could be reused by FULL analysis.
         //
         // Force perform FULL analysis to avoid redundant analysis for the current selected files.
-        if (bodyResolveMode != BodyResolveMode.FULL && bodyResolveMode != BodyResolveMode.PARTIAL_FOR_COMPLETION && (!isUnitTestMode() || forceFullAnalysisModeInTests)) {
+        if (bodyResolveMode != BodyResolveMode.FULL &&
+            bodyResolveMode != BodyResolveMode.PARTIAL_FOR_COMPLETION &&
+            (!isUnitTestMode() || forceFullAnalysisModeInTests) &&
+            forcedFullResolveOnHighlighting && DaemonCodeAnalyzerStatusService.getInstance(project).daemonRunning
+        ) {
             val virtualFile = resolveElement.containingFile.virtualFile
             // applicable for real (physical) files only
             if (virtualFile != null && FileEditorManager.getInstance(resolveElement.project).selectedFiles.any { it == virtualFile }) {

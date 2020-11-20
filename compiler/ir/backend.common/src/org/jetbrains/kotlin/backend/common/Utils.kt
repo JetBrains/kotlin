@@ -28,8 +28,3 @@ fun <E> MutableList<E>.push(element: E) = this.add(element)
 fun <E> MutableList<E>.pop() = this.removeAt(size - 1)
 
 fun <E> MutableList<E>.peek(): E? = if (size == 0) null else this[size - 1]
-
-fun <T: Any> T.onlyIf(condition: T.()->Boolean, then: (T)->Unit): T {
-    if (this.condition()) then(this)
-    return this
-}

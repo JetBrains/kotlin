@@ -5,18 +5,34 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
+import com.intellij.mock.MockProjectEx
+import com.intellij.openapi.Disposable
+import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.scripting.gradle.GradleKotlinScriptConfigurationInputs
 import org.jetbrains.kotlin.idea.scripting.gradle.LastModifiedFiles
 import org.jetbrains.kotlin.idea.scripting.gradle.importing.KotlinDslScriptModel
-import kotlin.test.assertEquals
 
-open class AbstractGradleBuildRootsLocatorTest {
+abstract class AbstractGradleBuildRootsLocatorTest : TestCase() {
     private val scripts = mutableMapOf<String, ScriptFixture>()
-    private val locator = MyRootsLocator()
+    private val locator by lazy { MyRootsLocator() }
 
     class ScriptFixture(val introductionTs: Long, val info: GradleScriptInfo)
 
-    private inner class MyRootsLocator : GradleBuildRootsLocator() {
+    lateinit var disposable: Disposable
+
+    override fun setUp() {
+        super.setUp()
+
+        disposable = Disposable { }
+    }
+
+    override fun tearDown() {
+        disposable.dispose()
+
+        super.tearDown()
+    }
+
+    private inner class MyRootsLocator : GradleBuildRootsLocator(MockProjectEx(disposable)) {
         override fun getScriptFirstSeenTs(path: String): Long = scripts[path]?.introductionTs ?: 0
         override fun getScriptInfo(localPath: String): GradleScriptInfo? = scripts[localPath]?.info
         fun accessRoots() = roots

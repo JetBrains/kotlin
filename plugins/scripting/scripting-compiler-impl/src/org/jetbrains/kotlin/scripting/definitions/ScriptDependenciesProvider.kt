@@ -19,13 +19,14 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 open class ScriptDependenciesProvider constructor(
     protected val project: Project
 ) {
-
+    @Suppress("DEPRECATION")
     @Deprecated("Migrating to configuration refinement", level = DeprecationLevel.ERROR)
     fun getScriptDependencies(file: VirtualFile): ScriptDependencies? {
         val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return null
         return getScriptConfiguration(ktFile)?.legacyDependencies
     }
 
+    @Suppress("DEPRECATION")
     @Deprecated("Migrating to configuration refinement", level = DeprecationLevel.ERROR)
     fun getScriptDependencies(file: PsiFile): ScriptDependencies? {
         if (file !is KtFile) return null

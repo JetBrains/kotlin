@@ -6,11 +6,11 @@ class C<T> {
     typealias P2 = Pair<T, T>
     typealias PT2<T2> = Pair<T, T2>
 
-    fun first(p: P2) = p.<!UNRESOLVED_REFERENCE!>x1<!>
-    fun second(p: P2) = p.<!UNRESOLVED_REFERENCE!>x2<!>
+    fun first(p: <!UNRESOLVED_REFERENCE!>P2<!>) = p.<!UNRESOLVED_REFERENCE!>x1<!>
+    fun second(p: <!UNRESOLVED_REFERENCE!>P2<!>) = p.<!UNRESOLVED_REFERENCE!>x2<!>
 
-    fun <T2> first2(p: PT2<T2>) = p.<!UNRESOLVED_REFERENCE!>x1<!>
-    fun <T2> second2(p: PT2<T2>) = p.<!UNRESOLVED_REFERENCE!>x2<!>
+    fun <T2> first2(p: <!UNRESOLVED_REFERENCE!>PT2<T2><!>) = p.<!UNRESOLVED_REFERENCE!>x1<!>
+    fun <T2> second2(p: <!UNRESOLVED_REFERENCE!>PT2<T2><!>) = p.<!UNRESOLVED_REFERENCE!>x2<!>
 }
 
 val p1 = Pair(1, 1)

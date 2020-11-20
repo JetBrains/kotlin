@@ -10,6 +10,7 @@ import com.intellij.openapi.application.PathMacros
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.io.FileUtil
@@ -35,12 +36,11 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     override fun setUp() {
         super.setUp()
 
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(testRootDisposable, KotlinTestUtils.getHomeDirectory())
     }
 
     @Throws(Exception::class)
     override fun tearDown() {
-        VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
         PathMacros.getInstance().removeMacro(TEMP_DIR_MACRO_KEY)
 
         super.tearDown()
@@ -105,14 +105,15 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     val modules: Array<Module>
         get() = ModuleManager.getInstance(myProject).modules
 
-    override fun getProjectDirOrFile(): Path {
+    override fun getProjectDirOrFile(isDirectoryBasedProject: Boolean): Path {
         val projectFilePath = projectRoot + "/projectFile.ipr"
         TestCase.assertTrue("Project file should exists " + projectFilePath, File(projectFilePath).exists())
         return File(projectFilePath).toPath()
     }
 
-    override fun doCreateAndOpenProject(projectFile: Path): Project {
-        return loadProjectCompat(projectFile)
+    override fun doCreateAndOpenProject(): Project {
+        val projectFile = getProjectDirOrFile(isCreateDirectoryBasedProject)
+        return (ProjectManagerEx.getInstanceEx()).loadProject(projectFile)
     }
 
     private val projectName: String
@@ -238,14 +239,14 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
     private val pathToNonexistentRuntimeJar: String
         get() {
             val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.KOTLIN_JAVA_STDLIB_JAR
-            myFilesToDelete.add(Paths.get(pathToTempKotlinRuntimeJar))
+            tempDir.scheduleDelete(Paths.get(pathToTempKotlinRuntimeJar))
             return pathToTempKotlinRuntimeJar
         }
 
     private val pathToNonexistentJsJar: String
         get() {
             val pathToTempKotlinRuntimeJar = FileUtil.getTempDirectory() + "/" + PathUtil.JS_LIB_JAR_NAME
-            myFilesToDelete.add(Paths.get(pathToTempKotlinRuntimeJar))
+            tempDir.scheduleDelete(Paths.get(pathToTempKotlinRuntimeJar))
             return pathToTempKotlinRuntimeJar
         }
 

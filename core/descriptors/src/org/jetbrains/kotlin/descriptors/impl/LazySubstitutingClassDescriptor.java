@@ -224,7 +224,7 @@ public class LazySubstitutingClassDescriptor extends ModuleAwareClassDescriptor 
 
     @NotNull
     @Override
-    public Visibility getVisibility() {
+    public DescriptorVisibility getVisibility() {
         return original.getVisibility();
     }
 

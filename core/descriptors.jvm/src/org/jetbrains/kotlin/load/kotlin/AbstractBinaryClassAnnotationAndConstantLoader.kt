@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -62,7 +62,7 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         source: SourceElement,
         result: MutableList<A>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
-        if (annotationClassId in SPECIAL_ANNOTATIONS) return null
+        if (annotationClassId in SpecialJvmAnnotations.SPECIAL_ANNOTATIONS) return null
 
         return loadAnnotation(annotationClassId, source, result)
     }
@@ -409,15 +409,4 @@ abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
         val memberAnnotations: Map<MemberSignature, List<A>>,
         val propertyConstants: Map<MemberSignature, C>
     )
-
-    companion object {
-        val SPECIAL_ANNOTATIONS = listOf(
-            JvmAnnotationNames.METADATA_FQ_NAME,
-            JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION,
-            JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION,
-            FqName("java.lang.annotation.Target"),
-            FqName("java.lang.annotation.Retention"),
-            FqName("java.lang.annotation.Documented")
-        ).map(ClassId::topLevel).toSet()
-    }
 }

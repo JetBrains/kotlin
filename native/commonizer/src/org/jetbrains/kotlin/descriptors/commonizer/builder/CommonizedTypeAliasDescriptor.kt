@@ -21,7 +21,7 @@ class CommonizedTypeAliasDescriptor(
     containingDeclaration: DeclarationDescriptor,
     annotations: Annotations,
     name: Name,
-    visibility: Visibility,
+    visibility: DescriptorVisibility,
     private val isActual: Boolean
 ) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility) {
 

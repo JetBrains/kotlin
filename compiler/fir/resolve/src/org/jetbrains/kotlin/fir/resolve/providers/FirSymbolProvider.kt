@@ -7,14 +7,9 @@ package org.jetbrains.kotlin.fir.resolve.providers
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
-import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
-import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTagWithFixedSymbol
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -23,45 +18,22 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-abstract class FirSymbolProvider : FirSessionComponent {
+@RequiresOptIn
+annotation class FirSymbolProviderInternals
 
+abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent {
     abstract fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>?
 
-    fun getSymbolByLookupTag(lookupTag: ConeClassLikeLookupTag): FirClassLikeSymbol<*>? {
-        (lookupTag as? ConeClassLikeLookupTagImpl)
-            ?.boundSymbol?.takeIf { it.first === this }?.let { return it.second }
-
-        return getClassLikeSymbolByFqName(lookupTag.classId).also {
-            (lookupTag as? ConeClassLikeLookupTagImpl)?.bindSymbolToLookupTag(this, it)
-        }
+    @OptIn(ExperimentalStdlibApi::class, FirSymbolProviderInternals::class)
+    open fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
+        return buildList { getTopLevelCallableSymbolsTo(this, packageFqName, name) }
     }
 
-    fun getSymbolByLookupTag(lookupTag: ConeClassifierLookupTag): FirClassifierSymbol<*>? {
-        return when (lookupTag) {
-            is ConeClassLikeLookupTag -> getSymbolByLookupTag(lookupTag)
-            is ConeClassifierLookupTagWithFixedSymbol -> lookupTag.symbol
-            else -> error("Unknown lookupTag type: ${lookupTag::class}")
-        }
-    }
-
-    abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>>
-
-    abstract fun getNestedClassifierScope(classId: ClassId): FirScope?
-
-    open fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> = emptySet()
-    open fun getClassNamesInPackage(fqName: FqName): Set<Name> = emptySet()
-
-    open fun getAllCallableNamesInClass(classId: ClassId): Set<Name> = emptySet()
-    open fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> = emptySet()
+    @FirSymbolProviderInternals
+    abstract fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name)
 
     abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
 }
-
-fun FirSession.getNestedClassifierScope(lookupTag: ConeClassLikeLookupTag): FirScope? =
-    when (lookupTag) {
-        is ConeClassLookupTagWithFixedSymbol -> nestedClassifierScope(lookupTag.symbol.fir)
-        else -> firSymbolProvider.getNestedClassifierScope(lookupTag.classId)
-    }
 
 fun FirSymbolProvider.getClassDeclaredCallableSymbols(classId: ClassId, name: Name): List<FirCallableSymbol<*>> {
     val classSymbol = getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return emptyList()
@@ -77,8 +49,4 @@ fun FirSymbolProvider.getClassDeclaredCallableSymbols(classId: ClassId, name: Na
 inline fun <reified T : AbstractFirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(typeRef: FirTypeRef): T? {
     val lookupTag = typeRef.coneTypeSafe<ConeLookupTagBasedType>()?.lookupTag ?: return null
     return getSymbolByLookupTag(lookupTag) as? T
-}
-
-fun ConeClassLikeLookupTagImpl.bindSymbolToLookupTag(provider: FirSymbolProvider, symbol: FirClassLikeSymbol<*>?) {
-    boundSymbol = Pair(provider, symbol)
 }

@@ -21,6 +21,9 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.RemoteBuildReporter
+import org.jetbrains.kotlin.build.report.RemoteReporter
 import org.jetbrains.kotlin.cli.common.CLICompiler
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
@@ -286,7 +289,7 @@ abstract class CompileServiceImplBase(
         createMessageCollector: (ServicesFacadeT, CompilationOptions) -> MessageCollector,
         createReporter: (ServicesFacadeT, CompilationOptions) -> DaemonMessageReporter,
         createServices: (JpsServicesFacadeT, EventManager, Profiler) -> Services,
-        getICReporter: (ServicesFacadeT, CompilationResultsT?, IncrementalCompilationOptions) -> RemoteICReporter
+        getICReporter: (ServicesFacadeT, CompilationResultsT?, IncrementalCompilationOptions) -> RemoteBuildReporter
     ) = kotlin.run {
         val messageCollector = createMessageCollector(servicesFacade, compilationOptions)
         val daemonReporter = createReporter(servicesFacade, compilationOptions)
@@ -309,6 +312,7 @@ abstract class CompileServiceImplBase(
             CompileService.CallResult.Good(ExitCode.COMPILATION_ERROR.code)
         } else when (compilationOptions.compilerMode) {
             CompilerMode.JPS_COMPILER -> {
+                @Suppress("UNCHECKED_CAST")
                 servicesFacade as JpsServicesFacadeT
                 withIC(enabled = servicesFacade.hasIncrementalCaches()) {
                     doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
@@ -513,7 +517,7 @@ abstract class CompileServiceImplBase(
         args: K2JSCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
-        reporter: RemoteICReporter
+        reporter: RemoteBuildReporter
     ): ExitCode {
         val allKotlinFiles = arrayListOf<File>()
         val freeArgsWithoutKotlinFiles = arrayListOf<String>()
@@ -553,7 +557,7 @@ abstract class CompileServiceImplBase(
         k2jvmArgs: K2JVMCompilerArguments,
         incrementalCompilationOptions: IncrementalCompilationOptions,
         compilerMessageCollector: MessageCollector,
-        reporter: RemoteICReporter
+        reporter: RemoteBuildReporter
     ): ExitCode {
         val allKotlinExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
                 (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).distinct()
@@ -588,6 +592,8 @@ abstract class CompileServiceImplBase(
             }
         }
 
+        val projectRoot = incrementalCompilationOptions.modulesInfo.projectRoot
+
         val compiler = IncrementalJvmCompilerRunner(
             workingDir,
             reporter,
@@ -598,7 +604,7 @@ abstract class CompileServiceImplBase(
             kotlinSourceFilesExtensions = allKotlinExtensions
         )
         return try {
-            compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles)
+            compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles, projectRoot)
         } finally {
             reporter.flush()
         }
@@ -609,6 +615,7 @@ abstract class CompileServiceImplBase(
         body: KotlinJvmReplServiceT.() -> CompileService.CallResult<R>
     ): CompileService.CallResult<R> =
         withValidClientOrSessionProxy(sessionId) { session ->
+            @Suppress("UNCHECKED_CAST")
             (session?.data as? KotlinJvmReplServiceT?)?.body() ?: CompileService.CallResult.Error("Not a REPL session $sessionId")
         }
 
@@ -703,6 +710,7 @@ class CompileServiceImpl(
         CompileService.CallResult.Good(res)
     }
 
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun remoteCompile(
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
@@ -728,6 +736,7 @@ class CompileServiceImpl(
             }
         }
 
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     override fun remoteIncrementalCompile(
         sessionId: Int,
         targetPlatform: CompileService.TargetPlatform,
@@ -778,13 +787,13 @@ class CompileServiceImpl(
         createMessageCollector = ::CompileServicesFacadeMessageCollector,
         createReporter = ::DaemonMessageReporter,
         createServices = this::createCompileServices,
-        getICReporter = { a, b, c -> getICReporter(a, b!!, c)}
+        getICReporter = { a, b, c -> getBuildReporter(a, b!!, c)}
     )
 
     override fun leaseReplSession(
         aliveFlagPath: String?,
         targetPlatform: CompileService.TargetPlatform,
-        servicesFacade: CompilerCallbackServicesFacade,
+        @Suppress("DEPRECATION") servicesFacade: CompilerCallbackServicesFacade,
         templateClasspath: List<File>,
         templateClassName: String,
         scriptArgs: Array<out Any?>?,
@@ -819,15 +828,17 @@ class CompileServiceImpl(
     // TODO: add more checks (e.g. is it a repl session)
     override fun releaseReplSession(sessionId: Int): CompileService.CallResult<Nothing> = releaseCompileSession(sessionId)
 
+    @Suppress("OverridingDeprecatedMember")
     override fun remoteReplLineCheck(sessionId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> =
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
+                @Suppress("DEPRECATION")
                 CompileService.CallResult.Good(check(codeLine))
             }
         }
 
     private fun createCompileServices(
-        facade: CompilerCallbackServicesFacade,
+        @Suppress("DEPRECATION") facade: CompilerCallbackServicesFacade,
         eventManager: EventManager,
         rpcProfiler: Profiler
     ): Services {
@@ -835,7 +846,7 @@ class CompileServiceImpl(
         if (facade.hasIncrementalCaches()) {
             builder.register(
                 IncrementalCompilationComponents::class.java,
-                RemoteIncrementalCompilationComponentsClient(facade, eventManager, rpcProfiler)
+                RemoteIncrementalCompilationComponentsClient(facade, rpcProfiler)
             )
         }
         if (facade.hasLookupTracker()) {
@@ -857,6 +868,7 @@ class CompileServiceImpl(
         return builder.build()
     }
 
+    @Suppress("OverridingDeprecatedMember")
     override fun remoteReplLineCompile(
         sessionId: Int,
         codeLine: ReplCodeLine,
@@ -864,10 +876,12 @@ class CompileServiceImpl(
     ): CompileService.CallResult<ReplCompileResult> =
         ifAlive(minAliveness = Aliveness.Alive) {
             withValidRepl(sessionId) {
+                @Suppress("DEPRECATION")
                 CompileService.CallResult.Good(compile(codeLine, history))
             }
         }
 
+    @Suppress("OverridingDeprecatedMember")
     override fun remoteReplLineEval(
         sessionId: Int,
         codeLine: ReplCodeLine,
@@ -997,7 +1011,7 @@ class CompileServiceImpl(
             val comparator =
                 compareByDescending<DaemonWithMetadata, DaemonJVMOptions>(DaemonJVMOptionsMemoryComparator(), { it.jvmOptions })
                     .thenBy(FileAgeComparator()) { it.runFile }
-            aliveWithOpts.maxWith(comparator)?.let { bestDaemonWithMetadata ->
+            aliveWithOpts.maxWithOrNull(comparator)?.let { bestDaemonWithMetadata ->
                 val fattestOpts = bestDaemonWithMetadata.jvmOptions
                 if (fattestOpts memorywiseFitsInto daemonJVMOptions && FileAgeComparator().compare(
                         bestDaemonWithMetadata.runFile,

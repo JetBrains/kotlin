@@ -74,7 +74,7 @@ fun case_6() {
     var y: Inv<out Number> = Inv<Int>()
     if (true)
         y = x
-    y.put(0)
+    y.<!INAPPLICABLE_CANDIDATE!>put<!>(0)
     val z: Inv<out Number> = x
     z.put(0)
 }

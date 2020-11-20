@@ -33,7 +33,8 @@ private fun getKPropMetadata(paramCount: Int, setter: Any?, type: dynamic): dyna
     return mdata
 }
 
-inline private fun metadataObject(): dynamic = js("{ kind: 'class', interfaces: [] }")
+@Suppress("NOTHING_TO_INLINE")
+private inline fun metadataObject(): dynamic = js("{ kind: 'class', interfaces: [] }")
 
 private val propertyRefClassMetadataCache: Array<Array<dynamic>> = arrayOf<Array<dynamic>>(
     //                 immutable     ,     mutable

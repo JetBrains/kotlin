@@ -5,7 +5,7 @@ val z get(): List<Int> {
     return bar()
 }
 
-val u get(): String = field
+val u get(): String = <!UNRESOLVED_REFERENCE!>field<!>
 
 fun <E> foo(): E = null!!
 fun <E> bar(): List<E> = null!!

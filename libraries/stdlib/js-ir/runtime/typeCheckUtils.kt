@@ -76,6 +76,7 @@ public fun isInterface(ctor: dynamic, IType: dynamic): Boolean {
 
 internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
     if (jsTypeOf(obj) == "function") {
+        @Suppress("DEPRECATED_IDENTITY_EQUALS")
         return obj.`$arity`.unsafeCast<Int>() === arity
     }
 
@@ -106,7 +107,7 @@ internal  fun isArrayish(o: dynamic) =
     isJsArray(o) || js("ArrayBuffer").isView(o).unsafeCast<Boolean>()
 
 
-internal fun isChar(c: Any): Boolean {
+internal fun isChar(@Suppress("UNUSED_PARAMETER") c: Any): Boolean {
     error("isChar is not implemented")
 }
 

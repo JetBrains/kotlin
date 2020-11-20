@@ -1,9 +1,9 @@
 public/*package*/ open class A : R|kotlin/Any| {
-    public open fun emptyName(@R|kotlin/annotations/jvm/internal/ParameterName|(String()) first: R|ft<kotlin/String, kotlin/String?>!|, @R|kotlin/annotations/jvm/internal/ParameterName|(String(ok)) second: R|kotlin/Int|): R|kotlin/Unit|
+    public open fun emptyName(@R|kotlin/annotations/jvm/internal/ParameterName|(String()) first: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|, @R|kotlin/annotations/jvm/internal/ParameterName|(String(ok)) second: R|kotlin/Int|): R|kotlin/Unit|
 
-    public open fun missingName(@R|kotlin/annotations/jvm/internal/ParameterName|() first: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
+    public open fun missingName(@R|kotlin/annotations/jvm/internal/ParameterName|() first: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
 
-    public open fun numberName(@R|kotlin/annotations/jvm/internal/ParameterName|(Int(42)) first: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
+    public open fun numberName(@R|kotlin/annotations/jvm/internal/ParameterName|(Int(42)) first: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
 
     public/*package*/ constructor(): R|A|
 

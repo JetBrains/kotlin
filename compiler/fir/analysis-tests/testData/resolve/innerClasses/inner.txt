@@ -1,0 +1,48 @@
+FILE: inner.kt
+    public final class Owner : R|kotlin/Any| {
+        public constructor(): R|Owner| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/Owner|.R|/Owner.bar|()
+            this@R|/Owner|.R|/Owner.bar|()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+            lval i: R|Owner.Inner| = this@R|/Owner|.R|/Owner.Inner.Inner|()
+            R|<local>/i|.R|/Owner.Inner.baz|()
+        }
+
+        public final fun err(): R|kotlin/Unit| {
+        }
+
+        public final inner class Inner : R|kotlin/Any| {
+            public constructor(): R|Owner.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun baz(): R|kotlin/Unit| {
+                this@R|/Owner.Inner|.R|/Owner.Inner.gau|()
+                this@R|/Owner.Inner|.R|/Owner.Inner.gau|()
+            }
+
+            public final fun gau(): R|kotlin/Unit| {
+                lval o: R|Owner| = R|/Owner.Owner|()
+                R|<local>/o|.R|/Owner.foo|()
+                this@R|/Owner|.R|/Owner.foo|()
+                this@R|/Owner|.R|/Owner.foo|()
+                this@R|/Owner.Inner|.<Unresolved name: err>#()
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval o: R|Owner| = R|/Owner.Owner|()
+        R|<local>/o|.R|/Owner.foo|()
+        lval err: R|ERROR CLASS: Unresolved name: Inner| = Q|Owner|.<Unresolved name: Inner>#()
+        R|<local>/err|.<Unresolved name: baz>#()
+        lval i: R|Owner.Inner| = R|<local>/o|.R|/Owner.Inner.Inner|()
+        R|<local>/i|.R|/Owner.Inner.gau|()
+    }

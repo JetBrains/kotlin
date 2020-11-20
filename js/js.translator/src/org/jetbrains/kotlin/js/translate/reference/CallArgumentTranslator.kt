@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.translate.reference
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -70,6 +71,12 @@ class CallArgumentTranslator private constructor(
         result.subList(i + 1, result.size).clear()
     }
 
+    private fun ValueArgument.hasSpreadElementOrNamedArgument() =
+        getSpreadElement() != null ||
+                context.config.languageVersionSettings
+                    .supportsFeature(LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions) &&
+                isNamed()
+
     private fun translate(): ArgumentsInfo {
         val valueParameters = resolvedCall.resultingDescriptor.valueParameters
         var hasSpreadOperator = false
@@ -91,7 +98,7 @@ class CallArgumentTranslator private constructor(
                 val arguments = actualArgument.getArguments()
 
                 if (!hasSpreadOperator) {
-                    hasSpreadOperator = arguments.any { it.getSpreadElement() != null }
+                    hasSpreadOperator = arguments.any { it.hasSpreadElementOrNamedArgument()}
                 }
 
                 varargElementType = parameterDescriptor.original.varargElementType!!
@@ -280,7 +287,7 @@ class CallArgumentTranslator private constructor(
             val valueArgument = arguments[index]
             val expressionArgument = list[index]
 
-            if (valueArgument.getSpreadElement() != null) {
+            if (valueArgument.hasSpreadElementOrNamedArgument()) {
                 if (lastArrayContent.size > 0) {
                     concatArguments.add(toArray(varargElementType, lastArrayContent))
                     lastArrayContent = mutableListOf()

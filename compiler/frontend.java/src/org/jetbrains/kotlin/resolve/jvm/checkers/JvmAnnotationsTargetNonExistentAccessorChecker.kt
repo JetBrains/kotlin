@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
@@ -34,7 +34,7 @@ class JvmAnnotationsTargetNonExistentAccessorChecker : DeclarationChecker {
         if (descriptor !is MemberDescriptor) return
         if (declaration !is KtParameter && declaration !is KtProperty) return
 
-        if (!Visibilities.isPrivate(descriptor.visibility) && !isSpecialStaticProperty(descriptor)) return
+        if (!DescriptorVisibilities.isPrivate(descriptor.visibility) && !isSpecialStaticProperty(descriptor)) return
 
         val hasGetterWithBody = declaration is KtProperty && declaration.getter?.hasBody() == true
         val hasSetterWithBody = declaration is KtProperty && declaration.setter?.hasBody() == true

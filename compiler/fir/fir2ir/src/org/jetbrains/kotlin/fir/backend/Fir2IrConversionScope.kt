@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -23,6 +22,8 @@ class Fir2IrConversionScope {
         parentStack.removeAt(parentStack.size - 1)
         return parent
     }
+
+    fun containingFileIfAny(): IrFile? = parentStack.getOrNull(0) as? IrFile
 
     fun withContainingFirClass(containingFirClass: FirClass<*>, f: () -> Unit) {
         containingFirClassStack += containingFirClass
@@ -93,11 +94,16 @@ class Fir2IrConversionScope {
         return result
     }
 
-    fun returnTarget(expression: FirReturnExpression): IrFunction {
+    fun returnTarget(expression: FirReturnExpression, declarationStorage: Fir2IrDeclarationStorage): IrFunction {
         val firTarget = expression.target.labeledElement
+        val irTarget = (firTarget as? FirFunction)?.let {
+            when (it) {
+                is FirConstructor -> declarationStorage.getCachedIrConstructor(it)
+                else -> declarationStorage.getCachedIrFunction(it)
+            }
+        }
         for (potentialTarget in functionStack.asReversed()) {
-            // TODO: remove comparison by name
-            if (potentialTarget.name == (firTarget as? FirSimpleFunction)?.name) {
+            if (potentialTarget == irTarget) {
                 return potentialTarget
             }
         }
@@ -109,6 +115,11 @@ class Fir2IrConversionScope {
     fun dispatchReceiverParameter(irClass: IrClass): IrValueParameter? {
         for (function in functionStack.asReversed()) {
             if (function.parentClassOrNull == irClass) {
+                // An inner class's constructor needs an instance of the outer class as a dispatch receiver.
+                // However, if we are converting `this` receiver inside that constructor, now we should point to the inner class instance.
+                if (function is IrConstructor && irClass.isInner) {
+                    irClass.thisReceiver?.let { return it }
+                }
                 function.dispatchReceiverParameter?.let { return it }
             }
         }

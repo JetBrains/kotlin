@@ -87,7 +87,7 @@ class ModuleInfo(
     val projectInfo: ProjectInfo
 ) {
     private val rootModel = module.rootManager
-    private val expectedDependencyNames = HashSet<String>()
+    private val expectedDependencyNames = ArrayList<String>()
     private val expectedSourceRoots = HashSet<String>()
     private val expectedExternalSystemTestTasks = ArrayList<ExternalSystemTestRunTask>()
 
@@ -200,7 +200,8 @@ class ModuleInfo(
     }
 
     fun moduleDependency(moduleName: String, scope: DependencyScope, productionOnTest: Boolean? = null) {
-        val moduleEntries = rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().filter { it.moduleName == moduleName }
+        val moduleEntries =
+            rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>().filter { it.moduleName == moduleName && it.scope == scope}
         if (moduleEntries.size > 1) {
             projectInfo.messageCollector.report(
                 "Found multiple order entries for module $moduleName: ${rootModel.orderEntries.filterIsInstance<ModuleOrderEntry>()}"

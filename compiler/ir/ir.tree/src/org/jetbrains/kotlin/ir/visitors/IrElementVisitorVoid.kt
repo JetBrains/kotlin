@@ -37,8 +37,8 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitFile(declaration: IrFile) = visitPackageFragment(declaration)
     override fun visitFile(declaration: IrFile, data: Nothing?) = visitFile(declaration)
 
-    fun visitDeclaration(declaration: IrDeclaration) = visitElement(declaration)
-    override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?) = visitDeclaration(declaration)
+    fun visitDeclaration(declaration: IrDeclarationBase) = visitElement(declaration)
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?) = visitDeclaration(declaration)
 
     fun visitClass(declaration: IrClass) = visitDeclaration(declaration)
     override fun visitClass(declaration: IrClass, data: Nothing?) = visitClass(declaration)
@@ -143,8 +143,8 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitGetValue(expression: IrGetValue) = visitVariableAccess(expression)
     override fun visitGetValue(expression: IrGetValue, data: Nothing?) = visitGetValue(expression)
 
-    fun visitSetVariable(expression: IrSetVariable) = visitVariableAccess(expression)
-    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?) = visitSetVariable(expression)
+    fun visitSetValue(expression: IrSetValue) = visitVariableAccess(expression)
+    override fun visitSetValue(expression: IrSetValue, data: Nothing?) = visitSetValue(expression)
 
     fun visitFieldAccess(expression: IrFieldAccessExpression) = visitDeclarationReference(expression)
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: Nothing?) = visitFieldAccess(expression)

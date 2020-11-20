@@ -7,31 +7,14 @@ package org.jetbrains.kotlin.daemon.experimental
 
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
-import org.jetbrains.kotlin.cli.js.K2JSCompiler
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.daemon.CompileServiceImplBase
 import org.jetbrains.kotlin.daemon.CompilerSelector
-import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
-import org.jetbrains.kotlin.daemon.common.ensureServerHostnameIsSetUp
-import java.io.File
-import java.io.IOException
-import java.io.OutputStream
-import java.io.PrintStream
-import java.lang.management.ManagementFactory
-import java.net.URLClassLoader
-import java.text.SimpleDateFormat
-import java.util.*
-import java.util.jar.Manifest
-import java.util.logging.Level
-import java.util.logging.LogManager
-import java.util.logging.Logger
-import kotlin.concurrent.schedule
 import org.jetbrains.kotlin.daemon.KotlinCompileDaemonBase
+import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.common.experimental.CompileServiceServerSide
+import org.jetbrains.kotlin.daemon.common.experimental.findPortForSocket
+import java.util.*
+import kotlin.concurrent.schedule
 
 object KotlinCompileDaemon : KotlinCompileDaemonBase() {
     override fun <T> runSynchronized(block: () -> T) = runBlocking { block() }
@@ -73,7 +56,10 @@ object KotlinCompileDaemon : KotlinCompileDaemonBase() {
 
     override fun runCompileService(compileService: CompileServiceImplBase) = (compileService as CompileServiceServerSide).runServer()
     override fun awaitServerRun(serverRun: Any?) {
-        runBlocking { (serverRun as Deferred<Unit>?)?.await() }
+        runBlocking {
+            @Suppress("UNCHECKED_CAST")
+            (serverRun as Deferred<Unit>?)?.await()
+        }
     }
 
     @JvmStatic

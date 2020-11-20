@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // Properties can be recursively annotated
 annotation class ann(val x: Int)
 class My {

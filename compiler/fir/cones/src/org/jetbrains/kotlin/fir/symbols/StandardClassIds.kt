@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.name.Name
 object StandardClassIds {
 
     private val BASE_KOTLIN_PACKAGE = FqName("kotlin")
-    private val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
+    val BASE_REFLECT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("reflect"))
     private fun String.baseId() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier(this))
     private fun ClassId.unsignedId() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier("U" + shortClassName.identifier))
     private fun String.reflectId() = ClassId(BASE_REFLECT_PACKAGE, Name.identifier(this))
@@ -42,6 +43,7 @@ object StandardClassIds {
     val String = "String".baseId()
 
     val KProperty = "KProperty".reflectId()
+    val KMutableProperty = "KMutableProperty".reflectId()
     val KProperty0 = "KProperty0".reflectId()
     val KMutableProperty0 = "KMutableProperty0".reflectId()
     val KProperty1 = "KProperty1".reflectId()
@@ -50,6 +52,7 @@ object StandardClassIds {
     val KMutableProperty2 = "KMutableProperty2".reflectId()
     val KFunction = "KFunction".reflectId()
     val KClass = "KClass".reflectId()
+    val KCallable = "KCallable".reflectId()
 
     val Comparable = "Comparable".baseId()
     val Number = "Number".baseId()
@@ -72,6 +75,14 @@ object StandardClassIds {
     val unsignedTypes = listOf(UByte, UShort, UInt, ULong)
     val unsignedArrayTypeByElementType = unsignedTypes.associate { id -> id to id.shortClassName.primitiveArrayId() }
     val elementTypeByUnsignedArrayType = unsignedArrayTypeByElementType.inverseMap()
+
+    val Continuation =
+        ClassId(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE, StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.shortName())
+
+    @Suppress("FunctionName")
+    fun FunctionN(n: Int): ClassId {
+        return "Function$n".baseId()
+    }
 }
 
 private fun <K, V> Map<K, V>.inverseMap() = entries.associate { (k, v) -> v to k }

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.js.translate.declaration
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -39,7 +40,7 @@ class EnumTranslator(
     }
 
     private fun generateValuesFunction() {
-        val function = createFunction(DescriptorUtils.getFunctionByName(descriptor.staticScope, DescriptorUtils.ENUM_VALUES))
+        val function = createFunction(DescriptorUtils.getFunctionByName(descriptor.staticScope, StandardNames.ENUM_VALUES))
 
         val values = entries.map {
             JsInvocation(JsAstUtils.pureFqn(context().getNameForObjectInstance(it), null)).source(psi)
@@ -48,7 +49,7 @@ class EnumTranslator(
     }
 
     private fun generateValueOfFunction() {
-        val function = createFunction(DescriptorUtils.getFunctionByName(descriptor.staticScope, DescriptorUtils.ENUM_VALUE_OF))
+        val function = createFunction(DescriptorUtils.getFunctionByName(descriptor.staticScope, StandardNames.ENUM_VALUE_OF))
 
         val nameParam = JsScope.declareTemporaryName("name")
         function.parameters += JsParameter(nameParam)

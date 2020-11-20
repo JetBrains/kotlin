@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -44,12 +44,14 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
     override lateinit var session: FirSession
     open var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
+    override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var returnTypeRef: FirTypeRef
     open var receiverTypeRef: FirTypeRef? = null
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
     open lateinit var status: FirDeclarationStatus
     open var containerSource: DeserializedContainerSource? = null
+    open var dispatchReceiverType: ConeKotlinType? = null
     open var contractDescription: FirContractDescription = FirEmptyContractDescription
     open lateinit var name: Name
     open lateinit var symbol: FirFunctionSymbol<FirSimpleFunction>
@@ -63,12 +65,14 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
             session,
             resolvePhase,
             origin,
+            attributes,
             returnTypeRef,
             receiverTypeRef,
             valueParameters,
             body,
             status,
             containerSource,
+            dispatchReceiverType,
             contractDescription,
             name,
             symbol,
@@ -85,4 +89,30 @@ inline fun buildSimpleFunction(init: FirSimpleFunctionBuilder.() -> Unit): FirSi
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return FirSimpleFunctionBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildSimpleFunctionCopy(original: FirSimpleFunction, init: FirSimpleFunctionBuilder.() -> Unit): FirSimpleFunction {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirSimpleFunctionBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.session = original.session
+    copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.origin = original.origin
+    copyBuilder.attributes = original.attributes.copy()
+    copyBuilder.returnTypeRef = original.returnTypeRef
+    copyBuilder.receiverTypeRef = original.receiverTypeRef
+    copyBuilder.valueParameters.addAll(original.valueParameters)
+    copyBuilder.body = original.body
+    copyBuilder.status = original.status
+    copyBuilder.containerSource = original.containerSource
+    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
+    copyBuilder.contractDescription = original.contractDescription
+    copyBuilder.name = original.name
+    copyBuilder.symbol = original.symbol
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.typeParameters.addAll(original.typeParameters)
+    return copyBuilder.apply(init).build()
 }

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun <T> Iterable<T>.first() : T? {
     return this.iterator()?.next()
 }

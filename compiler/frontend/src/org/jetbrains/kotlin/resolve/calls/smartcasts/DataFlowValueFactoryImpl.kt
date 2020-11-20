@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isError
 
-class DataFlowValueFactoryImpl
-@Deprecated("Please, avoid to use that implementation explicitly. If you need DataFlowValueFactory, use injection")
-constructor(private val languageVersionSettings: LanguageVersionSettings) : DataFlowValueFactory {
-
+// Please, avoid using this implementation explicitly. If you need DataFlowValueFactory, use injection.
+class DataFlowValueFactoryImpl constructor(private val languageVersionSettings: LanguageVersionSettings) : DataFlowValueFactory {
     // Receivers
     override fun createDataFlowValue(
         receiverValue: ReceiverValue,
@@ -91,11 +89,11 @@ constructor(private val languageVersionSettings: LanguageVersionSettings) : Data
             KotlinBuiltIns.isNullableNothing(type) ->
                 DataFlowValue.nullValue(containingDeclarationOrModule.builtIns) // 'null' is the only inhabitant of 'Nothing?'
 
-        // In most cases type of `E!!`-expression is strictly not nullable and we could get proper Nullability
-        // by calling `getImmanentNullability` (as it happens below).
-        //
-        // But there are some problem with types built on type parameters, e.g.
-        // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
+            // In most cases type of `E!!`-expression is strictly not nullable and we could get proper Nullability
+            // by calling `getImmanentNullability` (as it happens below).
+            //
+            // But there are some problem with types built on type parameters, e.g.
+            // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
             ExpressionTypingUtils.isExclExclExpression(KtPsiUtil.deparenthesize(expression)) ->
                 DataFlowValue(IdentifierInfo.Expression(expression), type, Nullability.NOT_NULL)
 

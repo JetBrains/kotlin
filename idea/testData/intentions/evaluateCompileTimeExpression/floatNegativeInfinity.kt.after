@@ -1,0 +1,2 @@
+// INTENTION_TEXT: "Replace with 'Float.NEGATIVE_INFINITY'"
+val x = Float.NEGATIVE_INFINITY

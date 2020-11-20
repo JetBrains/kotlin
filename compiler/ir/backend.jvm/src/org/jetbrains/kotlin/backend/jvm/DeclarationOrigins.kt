@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object CLASS_STATIC_INITIALIZER : IrDeclarationOriginImpl("CLASS_STATIC_INITIALIZER")
     object DEFAULT_IMPLS : IrDeclarationOriginImpl("DEFAULT_IMPLS")
+    object DEFAULT_IMPLS_WITH_MOVED_RECEIVERS : IrDeclarationOriginImpl("STATIC_WITH_MOVED_RECEIVERS")
+    object DEFAULT_IMPLS_WITH_MOVED_RECEIVERS_SYNTHETIC :
+        IrDeclarationOriginImpl("STATIC_WITH_MOVED_RECEIVERS_SYNTHETIC", isSynthetic = true)
     object DEFAULT_IMPLS_BRIDGE : IrDeclarationOriginImpl("DEFAULT_IMPLS_BRIDGE")
     object DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY : IrDeclarationOriginImpl("DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY")
     object DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC : IrDeclarationOriginImpl("DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC", isSynthetic = true)
     object DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC : IrDeclarationOriginImpl("DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC", isSynthetic = true)
-    object MULTIFILE_BRIDGE : IrDeclarationOriginImpl("MULTIFILE_BRIDGE")
     object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
     object LAMBDA_IMPL : IrDeclarationOriginImpl("LAMBDA_IMPL")
     object FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL", isSynthetic = true)
@@ -50,6 +52,6 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE : IrDeclarationOriginImpl("FOR_INLINE_TEMPLATE_CROSSINLINE")
     object CONTINUATION_CLASS_RESULT_FIELD: IrDeclarationOriginImpl("CONTINUATION_CLASS_RESULT_FIELD", isSynthetic = true)
     object COMPANION_PROPERTY_BACKING_FIELD : IrDeclarationOriginImpl("COMPANION_MOVED_PROPERTY_BACKING_FIELD")
-    object FIELD_FOR_STATIC_LAMBDA_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_STATIC_LAMBDA_INSTANCE")
+    object FIELD_FOR_STATIC_CALLABLE_REFERENCE_INSTANCE : IrDeclarationOriginImpl("FIELD_FOR_STATIC_CALLABLE_REFERENCE_INSTANCE")
     object ABSTRACT_BRIDGE_STUB : IrDeclarationOriginImpl("ABSTRACT_BRIDGE_STUB")
 }

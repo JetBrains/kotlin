@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.plugins.templates
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.PluginSettingsOwner
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.PipelineTask
+import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.templates.KtorServerTemplate
 
 class KtorTemplatesPlugin(context: Context) : TemplatePlugin(context) {
@@ -16,6 +17,10 @@ class KtorTemplatesPlugin(context: Context) : TemplatePlugin(context) {
     companion object: PluginSettingsOwner() {
         override val pluginPath = "template.ktorTemplates"
 
-        val addTemplate by addTemplateTask(KtorServerTemplate())
+        val addTemplate by pipelineTask(GenerationPhase.PREPARE) {
+            withAction {
+                TemplatesPlugin.addTemplate.execute(KtorServerTemplate())
+            }
+        }
     }
 }

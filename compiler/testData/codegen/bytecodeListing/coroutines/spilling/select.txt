@@ -29,6 +29,7 @@ public interface SelectClause2 {
 @kotlin.Metadata
 final class SelectKt$produceNumbers$1$1$1 {
     // source: 'select.kt'
+    enclosing method SelectKt$produceNumbers$1.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
     field label: int
     inner (anonymous) class SelectKt$produceNumbers$1$1$1
     method <init>(p0: kotlin.coroutines.Continuation): void
@@ -41,8 +42,9 @@ final class SelectKt$produceNumbers$1$1$1 {
 @kotlin.Metadata
 final class SelectKt$produceNumbers$1 {
     // source: 'select.kt'
+    enclosing method SelectKt.produceNumbers(LCoroutineScope;LSendChannel;)LReceiveChannel;
+    private synthetic field L$0: java.lang.Object
     field label: int
-    private synthetic field p$: ProducerScope
     inner (anonymous) class SelectKt$produceNumbers$1
     method <init>(p0: kotlin.coroutines.Continuation): void
     public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation

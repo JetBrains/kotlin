@@ -135,9 +135,13 @@ fun box(): String {
 
     assertEquals(45, sumOfParameters(1, 2, 3, 4, 5, 6, 7, 8, 9))
     assertEquals(45, sumOfParameters(1, 2, *intArrayOf(3, 4, 5, 6, 7, 8, 9)))
+    assertEquals(45, sumOfParameters(1, 2, a = *intArrayOf(3, 4, 5, 6, 7, 8, 9)))
+    assertEquals(45, sumOfParameters(1, 2, a = intArrayOf(3, 4, 5, 6, 7, 8, 9)))
     assertEquals(45, sumOfParameters(1, 2, 3, 4, *intArrayOf(5, 6, 7, 8, 9)))
     assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, 5, 6, 7, 8, 9) { 2*it })
     assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5, 6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, a = *intArrayOf(3, 4, 5, 6, 7, 8, 9)) { 2*it })
+    assertEquals(90, sumFunValuesOnParameters(1, 2, a = intArrayOf(3, 4, 5, 6, 7, 8, 9)) { 2*it })
     assertEquals(90, sumFunValuesOnParameters(1, 2, 3, 4, *intArrayOf(5, 6, 7, 8, 9)) { 2*it })
     assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5, 6, 7), 8, 9) { 2*it })
     assertEquals(90, sumFunValuesOnParameters(1, 2, *intArrayOf(3, 4, 5), *intArrayOf(6, 7, 8, 9)) { 2*it })

@@ -1,8 +1,8 @@
 versions.intellijSdk=201.7223.91
 versions.androidBuildTools=r23.0.1
 versions.idea.NodeJS=193.6494.7
-versions.androidStudioRelease=4.1.0.10
-versions.androidStudioBuild=201.6507185
+versions.androidStudioRelease=4.1.0.18
+versions.androidStudioBuild=201.6823847
 versions.jar.asm-all=7.0.1
 versions.jar.guava=28.2-jre
 versions.jar.groovy-all=2.4.17

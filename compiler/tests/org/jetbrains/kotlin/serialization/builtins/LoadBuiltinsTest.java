@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.serialization.builtins;
 
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.util.containers.ContainerUtil;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
@@ -28,27 +26,23 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor;
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider;
+import org.jetbrains.kotlin.descriptors.PackageFragmentProviderKt;
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider;
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter;
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.psi.KtFile;
-import org.jetbrains.kotlin.resolve.lazy.LazyResolveTestUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor;
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInsLoaderImpl;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment;
 import org.jetbrains.kotlin.test.TestJdkKind;
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.List;
-import java.util.regex.Pattern;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.*;
+import static org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAMES;
 
 public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
     @Override
@@ -56,23 +50,17 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
         return createEnvironmentWithJdk(ConfigurationKind.JDK_NO_RUNTIME, TestJdkKind.MOCK_JDK);
     }
 
-    public void testBuiltIns() throws Exception {
+    public void testBuiltIns() {
+        ModuleDescriptor module = BuiltinsTestUtils.INSTANCE.compileBuiltinsModule(getEnvironment());
+
         PackageFragmentProvider packageFragmentProvider = createBuiltInsPackageFragmentProvider();
 
-        List<KtFile> files = KotlinTestUtils.loadToJetFiles(getEnvironment(), ContainerUtil.concat(
-                allFilesUnder("core/builtins/native"),
-                allFilesUnder("core/builtins/src")
-        ));
-
-        ModuleDescriptor module =
-                LazyResolveTestUtilsKt.createResolveSessionForFiles(getEnvironment().getProject(), files, false).getModuleDescriptor();
-
-        for (FqName packageFqName : CollectionsKt.listOf(BUILT_INS_PACKAGE_FQ_NAME, COLLECTIONS_PACKAGE_FQ_NAME, RANGES_PACKAGE_FQ_NAME)) {
+        for (FqName packageFqName : BuiltinsTestUtils.BUILTIN_PACKAGE_NAMES) {
             PackageFragmentDescriptor fromLazyResolve =
                     CollectionsKt.single(module.getPackage(packageFqName).getFragments());
             if (fromLazyResolve instanceof LazyPackageDescriptor) {
                 PackageFragmentDescriptor deserialized =
-                        CollectionsKt.single(packageFragmentProvider.getPackageFragments(packageFqName));
+                        CollectionsKt.single(PackageFragmentProviderKt.packageFragments(packageFragmentProvider, packageFqName));
                 RecursiveDescriptorComparator.validateAndCompareDescriptors(
                         fromLazyResolve, deserialized, AbstractBuiltInsWithJDKMembersTest.createComparatorConfiguration(),
                         new File("compiler/testData/builtin-classes/default/" + packageFqName.asString().replace('.', '-') + ".txt")
@@ -100,10 +88,5 @@ public class LoadBuiltinsTest extends KotlinTestWithEnvironment {
         builtInsModule.setDependencies(builtInsModule);
 
         return packageFragmentProvider;
-    }
-
-    @NotNull
-    private static List<File> allFilesUnder(@NotNull String directory) {
-        return FileUtil.findFilesByMask(Pattern.compile(".*\\.kt"), new File(directory));
     }
 }

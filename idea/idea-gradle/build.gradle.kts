@@ -20,9 +20,7 @@ dependencies {
 
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("gradle"))
-    Platform[193].orHigher {
-        compileOnly(intellijPluginDep("gradle-java"))
-    }
+    compileOnly(intellijPluginDep("gradle-java"))
     compileOnly(intellijPluginDep("Groovy"))
     compileOnly(intellijPluginDep("junit"))
     compileOnly(intellijPluginDep("testng"))
@@ -30,19 +28,15 @@ dependencies {
 
     compileOnly(project(":kotlin-gradle-statistics"))
 
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-        testCompileOnly(intellijPluginDep("java"))
-        testRuntimeOnly(intellijPluginDep("java"))
-    }
+    compileOnly(intellijPluginDep("java"))
+    testCompileOnly(intellijPluginDep("java"))
+    testRuntimeOnly(intellijPluginDep("java"))
 
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":idea:idea-test-framework"))
 
     testCompile(intellijPluginDep("gradle"))
-    Platform[193].orHigher {
-        testCompile(intellijPluginDep("gradle-java"))
-    }
+    testCompile(intellijPluginDep("gradle-java"))
     testCompileOnly(intellijPluginDep("Groovy"))
     testCompileOnly(intellijDep())
 
@@ -64,15 +58,14 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin"))
     testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide"))
     testRuntime(project(":kotlin-gradle-statistics"))
     // TODO: the order of the plugins matters here, consider avoiding order-dependency
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("testng"))
     testRuntime(intellijPluginDep("properties"))
     testRuntime(intellijPluginDep("gradle"))
-    Platform[193].orHigher {
-        testRuntime(intellijPluginDep("gradle-java"))
-    }
+    testRuntime(intellijPluginDep("gradle-java"))
     testRuntime(intellijPluginDep("Groovy"))
     testRuntime(intellijPluginDep("coverage"))
     if (Ide.IJ()) {
@@ -85,7 +78,7 @@ dependencies {
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
 
-    if (Ide.AS41.orHigher()) {
+    if (Ide.AS41.orHigher() || Ide.IJ202.orHigher()) {
          testRuntime(intellijPluginDep("platform-images"))
     }
 
@@ -105,7 +98,11 @@ sourceSets {
 testsJar()
 
 projectTest(parallel = false) {
+    dependsOn(":dist")
     dependsOnKotlinPluginInstall()
+    if (!Ide.AS41.orHigher()) {
+        systemProperty("android.studio.sdk.manager.disabled", "true")
+    }
     workingDir = rootDir
     useAndroidSdk()
 

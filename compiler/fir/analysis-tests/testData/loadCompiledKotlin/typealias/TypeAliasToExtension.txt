@@ -4,3 +4,6 @@ public final class Foo<T> : R|kotlin/Any| {
     public constructor<T>(): R|test/Foo<T>|
 
 }
+
+public final typealias MyHandler<P> = R|test/Foo<P>.() -> kotlin/Unit|
+

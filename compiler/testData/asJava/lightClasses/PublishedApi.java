@@ -1,8 +1,9 @@
-public final class A {
-    public final void test() { /* compiled code */ }
+public final class A /* A*/ {
+  @kotlin.PublishedApi()
+  public final int access$test(int);//  access$test(int)
 
-    @kotlin.PublishedApi
-    public final int access$test(int p) { /* compiled code */ }
+  public  A();//  .ctor()
 
-    public A() { /* compiled code */ }
+  public final void test();//  test()
+
 }

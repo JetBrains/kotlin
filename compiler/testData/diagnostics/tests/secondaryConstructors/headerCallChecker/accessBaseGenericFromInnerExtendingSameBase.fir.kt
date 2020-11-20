@@ -6,7 +6,7 @@ open class Base<T>(p: Any?) {
 
 class D: Base<Int>("") {
     inner class B : Base<String> {
-        constructor() : super(foo1(""))
+        constructor() : super(<!INAPPLICABLE_CANDIDATE!>foo1<!>(""))
         constructor(x: Int) : super(foo1(1))
     }
 }

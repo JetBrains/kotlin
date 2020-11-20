@@ -94,7 +94,7 @@ open class KotlinPsiChecker : AbstractKotlinPsiChecker() {
 }
 
 private fun createQuickFixes(similarDiagnostics: Collection<Diagnostic>): MultiMap<Diagnostic, IntentionAction> {
-    val first = similarDiagnostics.minBy { it.toString() }
+    val first = similarDiagnostics.minByOrNull { it.toString() }
     val factory = similarDiagnostics.first().getRealDiagnosticFactory()
 
     val actions = MultiMap<Diagnostic, IntentionAction>()

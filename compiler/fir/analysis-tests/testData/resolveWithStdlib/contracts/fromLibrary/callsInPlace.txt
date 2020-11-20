@@ -9,13 +9,13 @@ FILE: callsInPlace.kt
     }
     public final fun test_2(): R|kotlin/Unit| {
         R|kotlin/repeat|(Int(10), <L> = repeat@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <kind=UNKNOWN>  {
-            ^ String(test_2)
+            String(test_2)
         }
         )
     }
     public final fun test_3(): R|kotlin/Unit| {
         R|kotlin/repeat|(action = repeat@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <kind=UNKNOWN>  {
-            ^ String(test_3)
+            String(test_3)
         }
         , times = Int(10))
     }
@@ -34,33 +34,33 @@ FILE: callsInPlace.kt
         )
     }
     public final inline fun myRun(block1: R|() -> kotlin/Unit|, block2: R|() -> kotlin/Unit|): R|kotlin/Unit| {
-        R|<local>/block1|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
-        R|<local>/block2|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/block1|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/block2|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun test_6(): R|kotlin/Unit| {
         R|/myRun|(myRun@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-            ^ String(test_6_1)
+            String(test_6_1)
         }
         , <L> = myRun@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-            ^ String(test_6_2)
+            String(test_6_2)
         }
         )
     }
     public final fun test_7(): R|kotlin/Unit| {
         R|/myRun|(block2 = myRun@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-            ^ String(test_7_2)
+            String(test_7_2)
         }
         , block1 = myRun@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-            ^ String(test_7_1)
+            String(test_7_1)
         }
         )
     }
     public final fun myDummyRun(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
-        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun test_8(): R|kotlin/Unit| {
         R|/myDummyRun|(<L> = myDummyRun@fun <anonymous>(): R|kotlin/Unit| {
-            ^ String(test_8)
+            String(test_8)
         }
         )
     }

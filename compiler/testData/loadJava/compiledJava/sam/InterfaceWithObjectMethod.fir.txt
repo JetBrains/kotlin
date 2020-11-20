@@ -1,4 +1,2 @@
 public abstract interface InterfaceWithObjectMethod : R|kotlin/Any| {
-    public abstract fun toString(): R|kotlin/String|
-
 }

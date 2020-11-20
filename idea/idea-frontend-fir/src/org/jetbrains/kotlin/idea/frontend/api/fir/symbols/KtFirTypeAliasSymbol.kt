@@ -8,20 +8,27 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.idea.fir.findPsi
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.ReadOnlyWeakRef
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeAliasSymbol
-import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirTypeAliasSymbol(
     fir: FirTypeAlias,
-    override val token: ValidityOwner
+    resolveState: FirModuleResolveState,
+    override val token: ValidityToken
 ) : KtTypeAliasSymbol(), KtFirSymbol<FirTypeAlias> {
-    override val fir: FirTypeAlias by ReadOnlyWeakRef(fir, this)
-    override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
-    override val name: Name get() = withValidityAssertion { fir.name }
-    override val classId: ClassId get() = withValidityAssertion { fir.symbol.classId }
+    override val firRef = firRef(fir, resolveState)
+    override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
+    override val name: Name get() = firRef.withFir { it.name }
+    override val classIdIfNonLocal: ClassId get() = firRef.withFir { it.symbol.classId }
+
+    override fun createPointer(): KtSymbolPointer<KtTypeAliasSymbol> {
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        TODO("Creating symbols for library typealiases is not supported yet")
+    }
 }

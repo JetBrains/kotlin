@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 open class CandidateCollector(
     val components: BodyResolveComponents,
@@ -27,8 +29,8 @@ open class CandidateCollector(
         bestGroup = TowerGroup.Last
     }
 
-    open fun consumeCandidate(group: TowerGroup, candidate: Candidate): CandidateApplicability {
-        val applicability = resolutionStageRunner.processCandidate(candidate)
+    open fun consumeCandidate(group: TowerGroup, candidate: Candidate, context: ResolutionContext): CandidateApplicability {
+        val applicability = resolutionStageRunner.processCandidate(candidate, context)
 
         if (applicability > currentApplicability || (applicability == currentApplicability && group < bestGroup)) {
             candidates.clear()
@@ -43,13 +45,12 @@ open class CandidateCollector(
         return applicability
     }
 
-    fun bestCandidates() = candidates
+    fun bestCandidates(): List<Candidate> = candidates
 
-    fun shouldStopAtTheLevel(group: TowerGroup) =
+    fun shouldStopAtTheLevel(group: TowerGroup): Boolean =
         isSuccess() && bestGroup < group
 
     fun isSuccess(): Boolean {
-        return currentApplicability >= CandidateApplicability.SYNTHETIC_RESOLVED
+        return currentApplicability.isSuccess
     }
 }
-

@@ -104,6 +104,18 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("constructors.kt")
+    public void testConstructors() throws Exception {
+        runTest("compiler/testData/debug/stepping/constructors.kt");
+    }
+
+    @Test
+    @TestMetadata("dataClass.kt")
+    public void testDataClass() throws Exception {
+        runTest("compiler/testData/debug/stepping/dataClass.kt");
+    }
+
+    @Test
     @TestMetadata("defaultParameter.kt")
     public void testDefaultParameter() throws Exception {
         runTest("compiler/testData/debug/stepping/defaultParameter.kt");
@@ -179,6 +191,12 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     @TestMetadata("IfTrueThenFalse.kt")
     public void testIfTrueThenFalse() throws Exception {
         runTest("compiler/testData/debug/stepping/IfTrueThenFalse.kt");
+    }
+
+    @Test
+    @TestMetadata("ifWithInlineInCondition.kt")
+    public void testIfWithInlineInCondition() throws Exception {
+        runTest("compiler/testData/debug/stepping/ifWithInlineInCondition.kt");
     }
 
     @Test
@@ -350,6 +368,30 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("stringSwitches.kt")
+    public void testStringSwitches() throws Exception {
+        runTest("compiler/testData/debug/stepping/stringSwitches.kt");
+    }
+
+    @Test
+    @TestMetadata("stringSwitchesSmall.kt")
+    public void testStringSwitchesSmall() throws Exception {
+        runTest("compiler/testData/debug/stepping/stringSwitchesSmall.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFunWithLambdaParameter.kt")
+    public void testSuspendFunWithLambdaParameter() throws Exception {
+        runTest("compiler/testData/debug/stepping/suspendFunWithLambdaParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFunWithSuspendLambdaParameter.kt")
+    public void testSuspendFunWithSuspendLambdaParameter() throws Exception {
+        runTest("compiler/testData/debug/stepping/suspendFunWithSuspendLambdaParameter.kt");
+    }
+
+    @Test
     @TestMetadata("throwException.kt")
     public void testThrowException() throws Exception {
         runTest("compiler/testData/debug/stepping/throwException.kt");
@@ -410,9 +452,57 @@ public class SteppingTestGenerated extends AbstractSteppingTest {
     }
 
     @Test
+    @TestMetadata("whenComplicatedSubject.kt")
+    public void testWhenComplicatedSubject() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenComplicatedSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("whenConstant.kt")
+    public void testWhenConstant() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenConstant.kt");
+    }
+
+    @Test
+    @TestMetadata("whenIsChecks.kt")
+    public void testWhenIsChecks() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenIsChecks.kt");
+    }
+
+    @Test
+    @TestMetadata("whenMultiLine.kt")
+    public void testWhenMultiLine() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenMultiLine.kt");
+    }
+
+    @Test
+    @TestMetadata("whenMultiLineSubject.kt")
+    public void testWhenMultiLineSubject() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenMultiLineSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("whenNullalbeSubject.kt")
+    public void testWhenNullalbeSubject() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenNullalbeSubject.kt");
+    }
+
+    @Test
     @TestMetadata("whenSubject.kt")
     public void testWhenSubject() throws Exception {
         runTest("compiler/testData/debug/stepping/whenSubject.kt");
+    }
+
+    @Test
+    @TestMetadata("whenSubject2.kt")
+    public void testWhenSubject2() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenSubject2.kt");
+    }
+
+    @Test
+    @TestMetadata("whenWithInlineInCondition.kt")
+    public void testWhenWithInlineInCondition() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenWithInlineInCondition.kt");
     }
 
     @Test

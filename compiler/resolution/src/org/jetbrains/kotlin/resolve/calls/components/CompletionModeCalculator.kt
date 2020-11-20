@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.newLinkedHashMapWithExpectedSize
 import java.util.*
 
-typealias CsCompleterContext = KotlinConstraintSystemCompleter.Context
+typealias CsCompleterContext = ConstraintSystemCompletionContext
 
 class CompletionModeCalculator {
     companion object {

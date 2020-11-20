@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,11 +15,10 @@ import org.jetbrains.kotlin.ir.backend.js.export.ExportedModule
 import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
 import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
 import org.jetbrains.kotlin.ir.backend.js.utils.*
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.declarations.path
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.utils.DFS
@@ -149,7 +148,8 @@ class IrModuleToJsTransformer(
         val moduleBody = generateModuleBody(modules, rootContext)
 
         val internalModuleName = JsName("_")
-        val exportStatements = ExportModelToJsStatements(internalModuleName, namer).generateModuleExport(exportedModule)
+        val globalNames = NameTable<String>(namer.globalNames)
+        val exportStatements = ExportModelToJsStatements(internalModuleName, nameGenerator, { globalNames.declareFreshName(it, it)}).generateModuleExport(exportedModule)
 
         val callToMain = generateCallToMain(modules, rootContext)
 
@@ -357,6 +357,7 @@ class IrModuleToJsTransformer(
             file.declarations
                 .asSequence()
                 .filterIsInstance<IrDeclarationWithName>()
+                .filter { !(it is IrClass && it.isInterface && it.isEffectivelyExternal()) }
                 .forEach { declaration ->
                     val declName = getNameForExternalDeclaration(declaration)
                     importStatements.add(

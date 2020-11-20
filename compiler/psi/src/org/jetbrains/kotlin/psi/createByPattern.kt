@@ -286,7 +286,7 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
     }
 
     if (!ranges.isEmpty()) {
-        val max = ranges.keys.max()!!
+        val max = ranges.keys.maxOrNull()!!
         for (i in 0..max) {
             check(ranges.contains(i), "no '$$i' placeholder")
         }

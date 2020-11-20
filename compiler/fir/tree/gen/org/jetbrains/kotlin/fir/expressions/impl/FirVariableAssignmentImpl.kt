@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.*
@@ -21,14 +20,14 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirVariableAssignmentImpl(
     override val source: FirSourceElement?,
+    override var calleeReference: FirReference,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeArguments: MutableList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
-    override var calleeReference: FirReference,
     override var rValue: FirExpression,
-) : FirVariableAssignment(), FirModifiableQualifiedAccess {
+) : FirVariableAssignment() {
     override var lValue: FirReference 
         get() = calleeReference
         set(value) {
@@ -36,6 +35,7 @@ internal class FirVariableAssignmentImpl(
         }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        calleeReference.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         typeArguments.forEach { it.accept(visitor, data) }
         explicitReceiver?.accept(visitor, data)
@@ -45,11 +45,11 @@ internal class FirVariableAssignmentImpl(
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
             extensionReceiver.accept(visitor, data)
         }
-        calleeReference.accept(visitor, data)
         rValue.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
+        transformCalleeReference(transformer, data)
         transformAnnotations(transformer, data)
         transformTypeArguments(transformer, data)
         explicitReceiver = explicitReceiver?.transformSingle(transformer, data)
@@ -59,8 +59,12 @@ internal class FirVariableAssignmentImpl(
         if (extensionReceiver !== explicitReceiver && extensionReceiver !== dispatchReceiver) {
             extensionReceiver = extensionReceiver.transformSingle(transformer, data)
         }
-        transformCalleeReference(transformer, data)
         transformRValue(transformer, data)
+        return this
+    }
+
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
+        calleeReference = calleeReference.transformSingle(transformer, data)
         return this
     }
 
@@ -89,14 +93,13 @@ internal class FirVariableAssignmentImpl(
         return this
     }
 
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
-        calleeReference = calleeReference.transformSingle(transformer, data)
-        return this
-    }
-
     override fun <D> transformRValue(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
         rValue = rValue.transformSingle(transformer, data)
         return this
+    }
+
+    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        calleeReference = newCalleeReference
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
@@ -104,7 +107,7 @@ internal class FirVariableAssignmentImpl(
         typeArguments.addAll(newTypeArguments)
     }
 
-    override fun replaceCalleeReference(newCalleeReference: FirReference) {
-        calleeReference = newCalleeReference
+    override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
+        explicitReceiver = newExplicitReceiver
     }
 }

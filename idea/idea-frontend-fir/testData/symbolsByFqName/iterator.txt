@@ -1,0 +1,17 @@
+class: kotlin/collections/Iterator
+
+// SYMBOLS:
+KtFirClassOrObjectSymbol:
+  annotations: []
+  classIdIfNonLocal: kotlin/collections/Iterator
+  classKind: INTERFACE
+  companionObject: null
+  isInner: false
+  modality: ABSTRACT
+  name: Iterator
+  origin: LIBRARY
+  primaryConstructor: null
+  superTypes: [kotlin/Any]
+  symbolKind: TOP_LEVEL
+  typeParameters: [KtFirTypeParameterSymbol(T)]
+  visibility: PUBLIC

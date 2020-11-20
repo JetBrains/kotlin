@@ -436,10 +436,10 @@ internal class MapBuilder<K, V> private constructor(
         private const val INITIAL_MAX_PROBE_DISTANCE = 2
         private const val TOMBSTONE = -1
 
-        @UseExperimental(ExperimentalStdlibApi::class)
+        @OptIn(ExperimentalStdlibApi::class)
         private fun computeHashSize(capacity: Int): Int = (capacity.coerceAtLeast(1) * 3).takeHighestOneBit()
 
-        @UseExperimental(ExperimentalStdlibApi::class)
+        @OptIn(ExperimentalStdlibApi::class)
         private fun computeShift(hashSize: Int): Int = hashSize.countLeadingZeroBits() + 1
     }
 

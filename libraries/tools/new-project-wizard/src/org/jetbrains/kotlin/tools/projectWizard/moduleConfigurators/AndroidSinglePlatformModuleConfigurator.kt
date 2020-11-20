@@ -10,16 +10,19 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.core.*
+import org.jetbrains.kotlin.tools.projectWizard.core.entity.properties.ModuleConfiguratorProperty
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.AndroidConfigIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptDependencyIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.BuildScriptRepositoryIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.AndroidTargetConfigurator.createAndroidPlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.templates.TemplatesPlugin
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.javaPackage
-import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import java.nio.file.Path
 
@@ -61,6 +64,20 @@ object AndroidSinglePlatformModuleConfigurator :
         }
     }
 
+    override fun createBuildFileIRs(reader: Reader, configurationData: ModulesToIrConversionData, module: Module) = irsList {
+        +super<AndroidModuleConfigurator>.createBuildFileIRs(reader, configurationData, module)
+        +RepositoryIR((DefaultRepository.JCENTER))
+        +AndroidConfigIR(
+            javaPackage = when (reader.createAndroidPlugin(module)) {
+                AndroidGradlePlugin.APPLICATION -> module.javaPackage(configurationData.pomIr)
+                AndroidGradlePlugin.LIBRARY -> null
+            },
+            newManifestPath = getNewAndroidManifestPath(module),
+            printVersionCode = true,
+            printBuildTypes = true,
+        )
+    }
+
     override fun createKotlinPluginIR(configurationData: ModulesToIrConversionData, module: Module): KotlinBuildSystemPluginIR? =
         KotlinBuildSystemPluginIR(
             KotlinBuildSystemPluginIR.Type.android,
@@ -68,24 +85,15 @@ object AndroidSinglePlatformModuleConfigurator :
             priority = 2
         )
 
+
     override fun createModuleIRs(
         reader: Reader,
         configurationData: ModulesToIrConversionData,
         module: Module
-    ) = buildList<BuildSystemIR> {
+    ): List<BuildSystemIR> = buildList {
         +super<AndroidModuleConfigurator>.createModuleIRs(reader, configurationData, module)
-
-        +ArtifactBasedLibraryDependencyIR(
-            MavenArtifact(DefaultRepository.GOOGLE, "androidx.appcompat", "appcompat"),
-            version = Versions.ANDROID.ANDROIDX_APPCOMPAT,
-            dependencyType = DependencyType.MAIN
-        )
-
-        +ArtifactBasedLibraryDependencyIR(
-            MavenArtifact(DefaultRepository.GOOGLE, "androidx.constraintlayout", "constraintlayout"),
-            version = Versions.ANDROID.ANDROIDX_CONSTRAINTLAYOUT,
-            dependencyType = DependencyType.MAIN
-        )
+        +DEPENDENCIES.APP_COMPAT
+        +DEPENDENCIES.CONSTRAINT_LAYOUT
     }
 
     override fun Writer.runArbitraryTask(
@@ -104,6 +112,7 @@ object AndroidSinglePlatformModuleConfigurator :
             "package" to javaPackage.asCodePackage(),
             "sharedPackage" to sharedPackage?.asCodePackage()
         )
+
         TemplatesPlugin.addFileTemplates.execute(
             listOf(
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.activityMainXml, modulePath, settings),
@@ -113,8 +122,24 @@ object AndroidSinglePlatformModuleConfigurator :
                 FileTemplate(AndroidModuleConfigurator.FileTemplateDescriptors.mainActivityKt(javaPackage), modulePath, settings)
             )
         )
+        GradlePlugin.gradleProperties.addValues("android.useAndroidX" to true)
     }
 
     override fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin =
         AndroidGradlePlugin.APPLICATION
+
+
+    object DEPENDENCIES {
+        val CONSTRAINT_LAYOUT = ArtifactBasedLibraryDependencyIR(
+            MavenArtifact(DefaultRepository.GOOGLE, "androidx.constraintlayout", "constraintlayout"),
+            version = Versions.ANDROID.ANDROIDX_CONSTRAINTLAYOUT,
+            dependencyType = DependencyType.MAIN
+        )
+
+        val APP_COMPAT = ArtifactBasedLibraryDependencyIR(
+            MavenArtifact(DefaultRepository.GOOGLE, "androidx.appcompat", "appcompat"),
+            version = Versions.ANDROID.ANDROIDX_APPCOMPAT,
+            dependencyType = DependencyType.MAIN
+        )
+    }
 }

@@ -9,7 +9,7 @@ val a: Int
         fun bar(): Int {
             val d: Int
             42
-            return d
+            return <!UNINITIALIZED_VARIABLE!>d<!>
         }
 
         return <!UNINITIALIZED_VARIABLE!>b<!>

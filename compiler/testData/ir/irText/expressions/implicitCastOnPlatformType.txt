@@ -3,5 +3,5 @@ FILE fqName:<root> fileName:/implicitCastOnPlatformType.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): kotlin.String declared in <root>'
         TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public open fun getProperty (p0: kotlin.String?): kotlin.String? declared in java.lang.System' type=kotlin.String? origin=null
+          CALL 'public open fun getProperty (p0: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in java.lang.System' type=@[FlexibleNullability] kotlin.String? origin=null
             p0: CONST String type=kotlin.String value="test"

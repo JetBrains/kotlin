@@ -108,22 +108,26 @@ object JvmFileClassUtil {
 
 internal class ParsedJvmFileClassAnnotations(val jvmName: String?, val jvmPackageName: FqName?, val isMultifileClass: Boolean)
 
-val KtFile.javaFileFacadeFqName: FqName
+val KtFile.fileClassInfo: JvmFileClassInfo
     get() {
         return CachedValuesManager.getCachedValue(this) {
-            val facadeFqName =
-                if (isCompiled) packageFqName.child(Name.identifier(virtualFile.nameWithoutExtension))
-                else JvmFileClassUtil.getFileClassInfoNoResolve(this).facadeClassFqName
-
-            if (!Name.isValidIdentifier(facadeFqName.shortName().identifier)) {
-                LOG.error(
-                    "An invalid fqName `$facadeFqName` with short name `${facadeFqName.shortName()}` is created for file `$name` " +
-                            "(isCompiled = $isCompiled)"
-                )
-            }
-
-            CachedValueProvider.Result(facadeFqName, this)
+            CachedValueProvider.Result(JvmFileClassUtil.getFileClassInfoNoResolve(this), this)
         }
+    }
+
+val KtFile.javaFileFacadeFqName: FqName
+    get() {
+        val facadeFqName =
+            if (isCompiled) packageFqName.child(Name.identifier(virtualFile.nameWithoutExtension))
+            else this.fileClassInfo.facadeClassFqName
+
+        if (!Name.isValidIdentifier(facadeFqName.shortName().identifier)) {
+            LOG.error(
+                "An invalid fqName `$facadeFqName` with short name `${facadeFqName.shortName()}` is created for file `$name` " +
+                        "(isCompiled = $isCompiled)"
+            )
+        }
+        return facadeFqName
     }
 
 private val LOG = Logger.getInstance("JvmFileClassUtil")

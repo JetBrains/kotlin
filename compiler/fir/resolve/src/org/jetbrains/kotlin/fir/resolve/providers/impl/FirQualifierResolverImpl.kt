@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -13,14 +14,15 @@ import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver {
+@NoMutableState
+class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver() {
 
     override fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): FirClassifierSymbol<*>? {
         val symbolProvider = session.firSymbolProvider
 
         val fqName = ClassId(
             prefix.packageFqName,
-            parts.drop(1).fold(prefix.relativeClassName) { prefix, suffix -> prefix.child(suffix.name) },
+            parts.drop(1).fold(prefix.relativeClassName) { result, suffix -> result.child(suffix.name) },
             false
         )
         return symbolProvider.getClassLikeSymbolByFqName(fqName)

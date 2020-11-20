@@ -1,0 +1,25 @@
+@kotlin.Metadata
+public interface ObservableMap {
+    // source: 'observableMutableMap.kt'
+}
+
+@kotlin.Metadata
+public abstract class ObservableMutableMap {
+    // source: 'observableMutableMap.kt'
+    public method <init>(): void
+    public method clear(): void
+    public abstract method containsKey(p0: java.lang.Object): boolean
+    public abstract method containsValue(p0: java.lang.Object): boolean
+    public bridge final method entrySet(): java.util.Set
+    public abstract method get(p0: java.lang.Object): java.lang.Object
+    public abstract method getEntries(): java.util.Set
+    public abstract method getKeys(): java.util.Set
+    public abstract method getSize(): int
+    public abstract method getValues(): java.util.Collection
+    public bridge final method keySet(): java.util.Set
+    public final @org.jetbrains.annotations.Nullable method put(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final method putAll(@org.jetbrains.annotations.NotNull p0: java.util.Map): void
+    public final @org.jetbrains.annotations.Nullable method remove(p0: java.lang.Object): java.lang.Object
+    public bridge final method size(): int
+    public bridge final method values(): java.util.Collection
+}

@@ -185,7 +185,7 @@ fun case_4(value_1: String?, value_2: String?) {
 fun case_5(value_1: Any?) {
     if (value_1.case_5_1()) println(value_1.length)
     if (!value_1.case_5_2()) println(value_1.length)
-    if (value_1.case_5_3() != null) <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+    if (value_1.case_5_3() != null) println(value_1.length)
     if (value_1.case_5_4() == null) println(value_1.length)
 }
 
@@ -193,7 +193,7 @@ fun case_5(value_1: Any?) {
 fun case_6(value_1: Number) {
     when { value_1.case_6_1() -> println(value_1.inv()) }
     when { !value_1.case_6_2() -> println(value_1.inv()) }
-    when { value_1.case_6_3() != null -> <!AMBIGUITY!>println<!>(value_1.inv()) }
+    when { value_1.case_6_3() != null -> println(value_1.inv()) }
     when { value_1.case_6_4() == null -> println(value_1.inv()) }
 }
 
@@ -207,7 +207,7 @@ fun case_7(value_1: String?) {
         else println(value_1)
     when (value_1.case_7_6() == null) {
         true -> println(value_1)
-        false -> println(value_1.<!INAPPLICABLE_CANDIDATE!>length<!>)
+        false -> println(value_1.length)
     }
     if (value_1.case_7_7() != null) println(value_1)
         else println(value_1.length)

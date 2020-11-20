@@ -10,5 +10,5 @@ internal fun <T : Enum<T>> enumValuesIntrinsic(): Array<T> =
     throw IllegalStateException("Should be replaced by compiler")
 
 @PublishedApi
-internal fun <T : Enum<T>> enumValueOfIntrinsic(name: String): T =
+internal fun <T : Enum<T>> enumValueOfIntrinsic(@Suppress("UNUSED_PARAMETER") name: String): T =
     throw IllegalStateException("Should be replaced by compiler")

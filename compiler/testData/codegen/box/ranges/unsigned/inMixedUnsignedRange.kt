@@ -1,5 +1,6 @@
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
+// IGNORE_BACKEND_FIR: JVM_IR
 
 fun ub_ub(x: UByte, a: UByte, b: UByte) = x in a..b
 fun ub_us(x: UByte, a: UShort, b: UShort) = x in a..b

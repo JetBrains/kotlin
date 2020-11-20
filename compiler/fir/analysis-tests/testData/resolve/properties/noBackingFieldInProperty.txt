@@ -1,0 +1,29 @@
+FILE: noBackingFieldInProperty.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val field: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        public final val x: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ this@R|/A|.R|/A.field|.R|kotlin/String.length|
+            }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val field: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        public final val x: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ this@R|/B|.F|/B.x|.<Unresolved name: length>#
+            }
+
+    }

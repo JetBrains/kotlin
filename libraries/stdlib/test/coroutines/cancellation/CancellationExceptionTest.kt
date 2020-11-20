@@ -20,8 +20,7 @@ class CancellationExceptionTest {
         checkException(CancellationException(message, null), null, message)
         checkException(CancellationException(cause), cause, cause.defaultMessage())
         checkException(CancellationException(message), null, message)
-        // TODO doesn't work on js ir KT-39964
-//        checkException(CancellationException(null, cause), cause, null)
+        checkException(CancellationException(null, cause), cause, null)
         checkException(CancellationException(cause = cause), cause, cause.defaultMessage())
         // does not work on JVM because of typealias
 //      checkException(CancellationException(message = message), null, message)

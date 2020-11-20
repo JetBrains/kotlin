@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.konan.properties.resolvablePropertyString
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import java.nio.file.Files
 import java.util.*
 
 private val Project.jvmArgs
@@ -104,7 +106,7 @@ internal abstract class AbstractKotlinNativeCInteropRunner(toolName: String, pro
                 project.file("${project.konanHome}/konan/konan.properties").inputStream().use(::load)
             }
 
-            konanProperties.getProperty("llvmHome.mingw_x64")?.let { toolchainDir ->
+            konanProperties.resolvablePropertyString("llvmHome.mingw_x64")?.let { toolchainDir ->
                 DependencyDirectories.defaultDependenciesRoot
                     .resolve("$toolchainDir/bin")
                     .absolutePath
@@ -126,7 +128,7 @@ internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRu
     override fun transformArgs(args: List<String>): List<String> {
         if (!useArgFile) return super.transformArgs(args)
 
-        val argFile = createTempFile(prefix = "kotlinc-native-args", suffix = ".lst").apply { deleteOnExit() }
+        val argFile = Files.createTempFile(/* prefix = */ "kotlinc-native-args", /* suffix = */ ".lst").toFile().apply { deleteOnExit() }
         argFile.printWriter().use { w ->
             args.forEach { arg ->
                 val escapedArg = arg

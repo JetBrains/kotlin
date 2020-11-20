@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.CLASS_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.FUNCTION_MODIFIER
-import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.INLINE_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.INHERITANCE_MODIFIER
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.INLINE_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.MEMBER_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PARAMETER_MODIFIER
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierSets.PLATFORM_MODIFIER
@@ -92,11 +92,11 @@ class Modifier(
 
     fun getVisibility(): Visibility {
         return when {
-            visibilityModifiers.contains(VisibilityModifier.PRIVATE) -> Visibilities.PRIVATE
-            visibilityModifiers.contains(VisibilityModifier.PUBLIC) -> Visibilities.PUBLIC
-            visibilityModifiers.contains(VisibilityModifier.PROTECTED) -> Visibilities.PROTECTED
-            visibilityModifiers.contains(VisibilityModifier.INTERNAL) -> Visibilities.INTERNAL
-            else -> Visibilities.UNKNOWN
+            visibilityModifiers.contains(VisibilityModifier.PRIVATE) -> Visibilities.Private
+            visibilityModifiers.contains(VisibilityModifier.PUBLIC) -> Visibilities.Public
+            visibilityModifiers.contains(VisibilityModifier.PROTECTED) -> Visibilities.Protected
+            visibilityModifiers.contains(VisibilityModifier.INTERNAL) -> Visibilities.Internal
+            else -> Visibilities.Unknown
         }
     }
 

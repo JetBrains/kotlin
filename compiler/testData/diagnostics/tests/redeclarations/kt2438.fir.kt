@@ -4,19 +4,19 @@
 package kt2438
 
 class B {
-    class C
-    class C
+    <!REDECLARATION!>class C<!>
+    <!REDECLARATION!>class C<!>
 }
 
 
 
 class A {
-    class B
+    <!REDECLARATION!>class B<!>
     
     companion object {
-        class B
-        class B
+        <!REDECLARATION!>class B<!>
+        <!REDECLARATION!>class B<!>
     }
     
-    class B
+    <!REDECLARATION!>class B<!>
 }

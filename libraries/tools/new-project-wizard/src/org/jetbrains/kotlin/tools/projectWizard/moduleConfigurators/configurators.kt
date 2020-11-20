@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators
 
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
+import org.jetbrains.kotlin.tools.projectWizard.core.ListBuilder
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
 import org.jetbrains.kotlin.tools.projectWizard.core.buildList
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.ModuleConfiguratorSetting
@@ -26,6 +27,7 @@ interface JvmModuleConfigurator : ModuleConfiguratorWithTests {
             KotlinNewProjectWizardBundle.message("module.configurator.jvm.setting.target.jvm.version"),
             GenerationPhase.PROJECT_GENERATION
         ) {
+            description = KotlinNewProjectWizardBundle.message("module.configurator.jvm.setting.target.jvm.version.description")
             defaultValue = value(TargetJvmVersion.JVM_1_8)
         }
     }
@@ -67,8 +69,12 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
     ModuleConfiguratorWithModuleType {
     override val moduleType get() = ModuleType.jvm
     override val moduleKind: ModuleKind get() = ModuleKind.singleplatformJvm
-    @NonNls override val suggestedModuleName = "jvm"
-    @NonNls override val id = "JVM Module"
+
+    @NonNls
+    override val suggestedModuleName = "jvm"
+
+    @NonNls
+    override val id = "JVM Module"
     override val text = KotlinNewProjectWizardBundle.message("module.configurator.jvm")
 
 
@@ -89,15 +95,18 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
         module: Module
     ): List<BuildSystemIR> =
         buildList {
-            +GradleImportIR("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
+            +super<JvmModuleConfigurator>.createBuildFileIRs(reader, configurationData, module)
+            if (configurationData.buildSystemType == BuildSystemType.GradleKotlinDsl) {
+                +GradleImportIR("org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
+            }
 
             val targetVersionValue = inContextOfModuleConfigurator(module) {
                 reader {
                     JvmModuleConfigurator.targetJvmVersion.reference.settingValue.value
                 }
             }
-            when {
-                configurationData.buildSystemType.isGradle -> {
+            when (configurationData.buildSystemType) {
+                BuildSystemType.GradleKotlinDsl -> {
                     +GradleConfigureTaskIR(
                         GradleByClassTasksAccessIR("KotlinCompile"),
                         irs = listOf(
@@ -105,11 +114,22 @@ object JvmSinglePlatformModuleConfigurator : JvmModuleConfigurator,
                         )
                     )
                 }
-                configurationData.buildSystemType == BuildSystemType.Maven -> {
+                BuildSystemType.GradleGroovyDsl -> {
+                    +jvmTargetSetup("compileKotlin", targetVersionValue)
+                    +jvmTargetSetup("compileTestKotlin", targetVersionValue)
+                }
+                BuildSystemType.Maven -> {
                     +MavenPropertyIR("kotlin.compiler.jvmTarget", targetVersionValue)
                 }
             }
         }
+
+    private fun jvmTargetSetup(taskName: String, targetVersion: String) = GradleSectionIR(
+        taskName,
+        irs = listOf(
+            GradleAssignmentIR("kotlinOptions.jvmTarget", GradleStringConstIR(targetVersion))
+        )
+    )
 }
 
 

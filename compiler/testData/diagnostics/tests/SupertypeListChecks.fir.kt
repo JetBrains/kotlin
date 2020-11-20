@@ -24,17 +24,17 @@ interface T2<T> {}
 interface Test() {
 }
 
-interface Test1 : C2() {}
+interface Test1 : <!INTERFACE_WITH_SUPERCLASS, SUPERTYPE_INITIALIZED_IN_INTERFACE!>C2<!>() {}
 
-interface Test2 : C2 {}
+interface Test2 : <!INTERFACE_WITH_SUPERCLASS!>C2<!> {}
 
-interface Test3 : C2, C3 {}
+interface Test3 : <!INTERFACE_WITH_SUPERCLASS!>C2<!>, C3 {}
 
 interface Test4 : T1 {}
 
 interface Test5 : T1, T1 {}
 
-interface Test6 : C1 {}
+interface Test6 : <!INTERFACE_WITH_SUPERCLASS!>C1<!> {}
 
 class CTest1() : OC1() {}
 

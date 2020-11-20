@@ -1,1 +1,28 @@
+public final var R|kotlin/Long|.date1: R|kotlin/Any|
+    public get(): R|kotlin/Any|
+    public set(value: R|kotlin/Any|): R|kotlin/Unit|
+
+public final var R|kotlin/Long|.date11: R|java/util/Date|
+    public get(): R|java/util/Date|
+    public set(value: R|java/util/Date|): R|kotlin/Unit|
+
+public final var R|kotlin/Long|.date3: R|kotlin/Any|
+    public get(): R|kotlin/Any|
+    private set(value: R|kotlin/Any|): R|kotlin/Unit|
+
+private final var R|kotlin/Long|.date4: R|java/util/Date|
+    private get(): R|java/util/Date|
+    private set(value: R|java/util/Date|): R|kotlin/Unit|
+
+public final var R|kotlin/Long|.date7: R|java/util/Date|
+    public get(): R|java/util/Date|
+    public set(value: R|java/util/Date|): R|kotlin/Unit|
+
+public final var R|kotlin/Long|.date8: R|java/util/Date|
+    public get(): R|java/util/Date|
+    internal set(value: R|java/util/Date|): R|kotlin/Unit|
+
+public final var R|kotlin/Long|.date9: R|java/util/Date|
+    public get(): R|java/util/Date|
+    private set(value: R|java/util/Date|): R|kotlin/Unit|
 

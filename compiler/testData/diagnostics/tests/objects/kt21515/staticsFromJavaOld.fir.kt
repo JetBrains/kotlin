@@ -27,7 +27,7 @@ open class Base {
 }
 
 class Derived : Base() {
-    fun test(javaStaticInTypePosition: Classifier) {
+    fun test(javaStaticInTypePosition: <!UNRESOLVED_REFERENCE!>Classifier<!>) {
         <!UNRESOLVED_REFERENCE!>method<!>()
         <!UNRESOLVED_REFERENCE!>property<!>
         <!UNRESOLVED_REFERENCE!>Classifier<!>()
@@ -42,7 +42,7 @@ class Derived : Base() {
         <!UNRESOLVED_REFERENCE!>syntheticProperty<!> = 42
     }
 
-    class JavaStaticInSupertypeList : Classifier() {
+    class JavaStaticInSupertypeList : <!UNRESOLVED_REFERENCE!>Classifier<!>() {
 
     }
 }

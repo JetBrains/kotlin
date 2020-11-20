@@ -54,7 +54,7 @@ abstract class IrDelegateDescriptorBase(
         /* original = */ null,
         annotations,
         Modality.FINAL,
-        Visibilities.PRIVATE,
+        DescriptorVisibilities.PRIVATE,
         /* isVar = */ false,
         name,
         CallableMemberDescriptor.Kind.SYNTHESIZED,
@@ -76,7 +76,7 @@ abstract class IrDelegateDescriptorBase(
 
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
 
-    override fun getVisibility(): Visibility = Visibilities.PRIVATE
+    override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.PRIVATE
 
     override fun substitute(substitutor: TypeSubstitutor): PropertyDescriptor {
         throw UnsupportedOperationException("Property delegate descriptor shouldn't be substituted: $this")
@@ -134,7 +134,7 @@ class IrLocalDelegatedPropertyDelegateDescriptorImpl(
     override fun isVar(): Boolean = false
     override fun isLateInit(): Boolean = false
     override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? = throw UnsupportedOperationException()
-    override fun getVisibility(): Visibility = Visibilities.LOCAL
+    override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.LOCAL
 
     override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
         visitor.visitVariableDescriptor(this, data)

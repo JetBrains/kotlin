@@ -1,0 +1,5 @@
+FILE: NotNullType.kt
+    public final val list1: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1))
+        public get(): R|kotlin/collections/List<kotlin/Int>|
+    public final val list: R|kotlin/collections/List<kotlin/Int>| = R|/list1|.R|kotlin/collections/orEmpty|<R|kotlin/Int|>()
+        public get(): R|kotlin/collections/List<kotlin/Int>|

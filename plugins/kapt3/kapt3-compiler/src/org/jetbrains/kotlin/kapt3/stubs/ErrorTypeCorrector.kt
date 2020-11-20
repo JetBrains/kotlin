@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.METHOD_PARAM
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.RETURN_TYPE
 import org.jetbrains.kotlin.kapt3.stubs.ErrorTypeCorrector.TypeKind.SUPER_TYPE
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.load.kotlin.getOptimalModeForReturnType
+import org.jetbrains.kotlin.load.kotlin.getOptimalModeForValueParameter
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.source.getPsi

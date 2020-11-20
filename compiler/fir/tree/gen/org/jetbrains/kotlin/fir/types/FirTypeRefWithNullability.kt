@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirTypeRefWithNullability : FirTypeRef {
-    override val source: FirSourceElement?
-    override val annotations: List<FirAnnotationCall>
-    val isMarkedNullable: Boolean
+abstract class FirTypeRefWithNullability : FirTypeRef() {
+    abstract override val source: FirSourceElement?
+    abstract override val annotations: List<FirAnnotationCall>
+    abstract val isMarkedNullable: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitTypeRefWithNullability(this, data)
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeRefWithNullability
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirTypeRefWithNullability
 }

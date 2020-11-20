@@ -19,13 +19,12 @@ package org.jetbrains.kotlin.checkers.javac
 import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsTest
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import java.io.File
 
 abstract class AbstractJavacForeignJava8AnnotationsTest : AbstractForeignJava8AnnotationsTest() {
 
     override fun shouldSkipTest(wholeFile: File, files: List<TestFile>): Boolean {
-        return isSkipJavacTest(wholeFile, files)
+        return isSkipJavacTest(wholeFile)
     }
 
     override fun setupEnvironment(environment: KotlinCoreEnvironment, testDataFile: File, files: List<TestFile>) {

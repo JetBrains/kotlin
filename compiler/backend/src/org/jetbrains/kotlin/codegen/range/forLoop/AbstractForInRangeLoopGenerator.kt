@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.codegen.range.forLoop
 
-import org.jetbrains.kotlin.codegen.AsmUtil.genIncrement
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genIncrement
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.range.comparison.ComparisonGenerator

@@ -1096,6 +1096,34 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/boxAgainstJava/varargs")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Varargs extends AbstractBlackBoxAgainstJavaCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInVarargs() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/varargs"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("varargsOverride.kt")
+        public void testVarargsOverride() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/varargs/varargsOverride.kt");
+        }
+
+        @TestMetadata("varargsOverride2.kt")
+        public void testVarargsOverride2() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/varargs/varargsOverride2.kt");
+        }
+
+        @TestMetadata("varargsOverride3.kt")
+        public void testVarargsOverride3() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/varargs/varargsOverride3.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/boxAgainstJava/visibility")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1181,6 +1209,11 @@ public class BlackBoxAgainstJavaCodegenTestGenerated extends AbstractBlackBoxAga
             @TestMetadata("protectedStaticClass.kt")
             public void testProtectedStaticClass() throws Exception {
                 runTest("compiler/testData/codegen/boxAgainstJava/visibility/protectedAndPackage/protectedStaticClass.kt");
+            }
+
+            @TestMetadata("protectedSuperField.kt")
+            public void testProtectedSuperField() throws Exception {
+                runTest("compiler/testData/codegen/boxAgainstJava/visibility/protectedAndPackage/protectedSuperField.kt");
             }
 
             @TestMetadata("protectedSuperMethod.kt")

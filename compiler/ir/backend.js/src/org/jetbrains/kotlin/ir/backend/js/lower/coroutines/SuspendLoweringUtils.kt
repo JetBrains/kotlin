@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.getInlinedClass
 import org.jetbrains.kotlin.ir.visitors.*
 
 object COROUTINE_ROOT_LOOP : IrStatementOriginImpl("COROUTINE_ROOT_LOOP")
@@ -90,7 +89,7 @@ class LiveLocalsTransformer(
         return expression.run { IrGetFieldImpl(startOffset, endOffset, field, type, receiver(), origin) }
     }
 
-    override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+    override fun visitSetValue(expression: IrSetValue): IrExpression {
         expression.transformChildrenVoid(this)
         val field = localMap[expression.symbol] ?: return expression
         return expression.run { IrSetFieldImpl(startOffset, endOffset, field, receiver(), value, unitType, origin) }
@@ -106,9 +105,4 @@ class LiveLocalsTransformer(
             JsIrBuilder.buildComposite(declaration.type)
         }
     }
-}
-
-internal fun needUnboxingOrUnit(fromType: IrType, toType: IrType): Boolean {
-    return (fromType.getInlinedClass() == null && toType.getInlinedClass() != null) ||
-            (fromType.isUnit() && !toType.isUnit())
 }

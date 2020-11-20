@@ -1,0 +1,42 @@
+@kotlin.Metadata
+public final class<<T:Ljava/lang/Number;>Ljava/lang/Object;>  GenericIn {
+    // source: 'rawTypeInSignature.kt'
+    public <null> method <init>(): void
+}
+
+@kotlin.Metadata
+public final class<<T:Ljava/lang/Number;>Ljava/lang/Object;>  GenericInv {
+    // source: 'rawTypeInSignature.kt'
+    public <null> method <init>(): void
+}
+
+@kotlin.Metadata
+public final class<<T:Ljava/lang/Number;>Ljava/lang/Object;>  GenericOut {
+    // source: 'rawTypeInSignature.kt'
+    public <null> method <init>(): void
+}
+
+@kotlin.Metadata
+public final class<null>  KRaw {
+    // source: 'rawTypeInSignature.kt'
+    public <()LGenericIn<Ljava/lang/Number;>;> method returnsRawGenericIn(): GenericIn
+    public <()LGenericInv<Ljava/lang/Number;>;> method returnsRawGenericInv(): GenericInv
+    public <()LGenericOut<Ljava/lang/Number;>;> method returnsRawGenericOut(): GenericOut
+    public <()Ljava/util/List<Ljava/lang/Object;>;> method returnsRawList(): java.util.List
+    public <(LGenericIn<-Ljava/lang/Number;>;)V> method takesRawGenericIn(p0: GenericIn): void
+    public <(LGenericInv<Ljava/lang/Number;>;)V> method takesRawGenericInv(p0: GenericInv): void
+    public <(LGenericOut<+Ljava/lang/Number;>;)V> method takesRawGenericOut(p0: GenericOut): void
+    public <(Ljava/util/List<Ljava/lang/Object;>;)V> method takesRawList(p0: java.util.List): void
+    public <(Ljava/util/List<Ljava/lang/Object;>;Ljava/util/List<Ljava/lang/Object;>;)Ljava/util/List<Ljava/lang/Object;>;> method bothRawAndGeneric(p0: java.util.List, p1: java.util.List): java.util.List
+    public <null> method <init>(@org.jetbrains.annotations.NotNull p0: JRaw): void
+    private synthetic final field <null> $$delegate_0: JRaw
+}
+
+@kotlin.Metadata
+public final class<null>  RawTypeInSignatureKt {
+    // source: 'rawTypeInSignature.kt'
+    public final static <(LJRaw;)LGenericIn<Ljava/lang/Number;>;> method testReturnsRawGenericIn(@org.jetbrains.annotations.NotNull p0: JRaw): GenericIn
+    public final static <(LJRaw;)LGenericInv<Ljava/lang/Number;>;> method testReturnsRawGenericInv(@org.jetbrains.annotations.NotNull p0: JRaw): GenericInv
+    public final static <(LJRaw;)LGenericOut<Ljava/lang/Number;>;> method testReturnsRawGenericOut(@org.jetbrains.annotations.NotNull p0: JRaw): GenericOut
+    public final static <(LJRaw;Ljava/util/List<+Ljava/lang/Object;>;)Ljava/util/List<Ljava/lang/Object;>;> method testBothRawAndGeneric(@org.jetbrains.annotations.NotNull p0: JRaw, @org.jetbrains.annotations.NotNull p1: java.util.List): java.util.List
+}

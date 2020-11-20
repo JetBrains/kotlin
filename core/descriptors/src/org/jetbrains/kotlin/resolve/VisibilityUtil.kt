@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 
 fun findMemberWithMaxVisibility(descriptors: Collection<CallableMemberDescriptor>): CallableMemberDescriptor {
     assert(descriptors.isNotEmpty())
@@ -29,7 +29,7 @@ fun findMemberWithMaxVisibility(descriptors: Collection<CallableMemberDescriptor
             continue
         }
 
-        val result = Visibilities.compare(descriptor.visibility, candidate.visibility)
+        val result = DescriptorVisibilities.compare(descriptor.visibility, candidate.visibility)
         if (result != null && result < 0) {
             descriptor = candidate
         }

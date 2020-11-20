@@ -616,7 +616,7 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
         String nameForClassOrPackageMember = getNameForClassOrPackageMember(functionDescriptor);
 
         if (functionDescriptor instanceof SimpleFunctionDescriptor && functionDescriptor.isSuspend() &&
-            !functionDescriptor.getVisibility().equals(Visibilities.LOCAL)) {
+            !functionDescriptor.getVisibility().equals(DescriptorVisibilities.LOCAL)) {
 
             if (nameForClassOrPackageMember != null) {
                 nameStack.push(nameForClassOrPackageMember);
@@ -821,20 +821,17 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
 
         Map<ValueParameterDescriptor, ResolvedValueArgument> arguments = newResolvedCall.getValueArguments();
         for (ValueParameterDescriptor valueParameter : arguments.keySet()) {
-            SamType samType = SamType.createByValueParameter(valueParameter);
-            if (samType == null) continue;
-
             ResolvedValueArgument argument = arguments.get(valueParameter);
             if (argument instanceof ExpressionValueArgument) {
                 ValueArgument valueArgument = ((ExpressionValueArgument) argument).getValueArgument();
                 if (valueArgument != null && newResolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument) != null) {
-                    recordSamTypeOnArgumentExpression(samType, valueArgument);
+                    recordSamTypeOnArgumentExpression(valueParameter, valueArgument);
                 }
             } else if (argument instanceof VarargValueArgument) {
                 VarargValueArgument varargValueArgument = (VarargValueArgument) argument;
                 for (ValueArgument valueArgument : varargValueArgument.getArguments()) {
                     if (valueArgument != null && newResolvedCall.getExpectedTypeForSamConvertedArgument(valueArgument) != null) {
-                        recordSamTypeOnArgumentExpression(samType, valueArgument);
+                        recordSamTypeOnArgumentExpression(valueParameter, valueArgument);
                     }
                 }
             }
@@ -870,6 +867,13 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
             assert valueArgument != null;
             recordSamTypeOnArgumentExpression(samType, valueArgument);
         }
+    }
+
+    private void recordSamTypeOnArgumentExpression(ValueParameterDescriptor valueParameter, ValueArgument valueArgument) {
+        SamType samType = SamType.createByValueParameter(valueParameter);
+        if (samType == null) return;
+
+        recordSamTypeOnArgumentExpression(samType, valueArgument);
     }
 
     private void recordSamTypeOnArgumentExpression(SamType samType, ValueArgument valueArgument) {

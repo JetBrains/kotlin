@@ -1,7 +1,7 @@
 // JAVAC_EXPECTED_FILE
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass<String>): String {
-    return javaClass.doSomething("", 1) { s: String -> "" }
+    return javaClass.<!INAPPLICABLE_CANDIDATE!>doSomething<!>("", 1) { s: String -> "" }
 }
 
 // FILE: JavaClass.java

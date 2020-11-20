@@ -1,0 +1,64 @@
+FILE: propertyAccessorsContractDescription.kt
+    public? final? class MyClass : R|kotlin/Any| {
+        public? constructor(): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? var myInt: Int = IntegerLiteral(0)
+            public? get(): Int
+                [Contract description] <
+                    returnsNotNull#()
+                >
+             {
+                ^ IntegerLiteral(1)
+            }
+            public? set(value: Int): R|kotlin/Unit| {
+                field# = value#.times#(IntegerLiteral(10))
+            }
+
+    }
+    public? final? class AnotherClass : R|kotlin/Any| {
+        public? constructor(multiplier: Int): R|AnotherClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? var anotherInt: Int = IntegerLiteral(0)
+            public? get(): Int
+                [Contract description] <
+                    returnsNotNull#()
+                >
+             {
+                ^ IntegerLiteral(1)
+            }
+            public? set(value: Int): R|kotlin/Unit|
+                [Contract description] <
+                    returns#()
+                >
+             {
+                field# = value#.times#(multiplier#)
+            }
+
+    }
+    public? final? class SomeClass : R|kotlin/Any| {
+        public? constructor(multiplier: Int?): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? var someInt: Int = IntegerLiteral(0)
+            public? get(): Int
+                [Contract description] <
+                    returnsNotNull#()
+                >
+             {
+                ^ IntegerLiteral(1)
+            }
+            public? set(value: Int): R|kotlin/Unit|
+                [Contract description] <
+                    returns#().implies#(!=(value#, Null(null)))
+                >
+             {
+                value# ?: throw NullArgumentException#()
+                field# = value#
+            }
+
+    }

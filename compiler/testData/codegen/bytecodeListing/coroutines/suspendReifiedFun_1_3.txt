@@ -1,0 +1,13 @@
+@kotlin.Metadata
+public class AbstractStuff {
+    // source: 'suspendReifiedFun.kt'
+    public method <init>(): void
+    public synthetic final method hello(p0: java.lang.Object, p1: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class Stuff {
+    // source: 'suspendReifiedFun.kt'
+    public method <init>(): void
+    public final @org.jetbrains.annotations.Nullable method foo(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}

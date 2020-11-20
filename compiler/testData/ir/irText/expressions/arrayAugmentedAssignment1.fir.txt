@@ -77,15 +77,19 @@ FILE fqName:<root> fileName:/arrayAugmentedAssignment1.kt
   FUN name:testMember visibility:public modality:FINAL <> (c:<root>.C) returnType:kotlin.Unit
     VALUE_PARAMETER name:c index:0 type:<root>.C
     BLOCK_BODY
-      VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.Int [val]
-        CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=null
-          $this: CALL 'public final fun <get-x> (): kotlin.IntArray declared in <root>.C' type=kotlin.IntArray origin=GET_PROPERTY
-            $this: GET_VAR 'c: <root>.C declared in <root>.testMember' type=<root>.C origin=null
-          index: CONST Int type=kotlin.Int value=0
-      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=null
-        $this: CALL 'public final fun <get-x> (): kotlin.IntArray declared in <root>.C' type=kotlin.IntArray origin=GET_PROPERTY
+      VAR IR_TEMPORARY_VARIABLE name:tmp_4 type:kotlin.IntArray [val]
+        CALL 'public final fun <get-x> (): kotlin.IntArray declared in <root>.C' type=kotlin.IntArray origin=GET_PROPERTY
           $this: GET_VAR 'c: <root>.C declared in <root>.testMember' type=<root>.C origin=null
-        index: CONST Int type=kotlin.Int value=0
+      VAR IR_TEMPORARY_VARIABLE name:tmp_5 type:kotlin.Int [val]
+        CONST Int type=kotlin.Int value=0
+      VAR IR_TEMPORARY_VARIABLE name:tmp_6 type:kotlin.Int [val]
+        CALL 'public final fun get (index: kotlin.Int): kotlin.Int [operator] declared in kotlin.IntArray' type=kotlin.Int origin=null
+          $this: GET_VAR 'val tmp_4: kotlin.IntArray [val] declared in <root>.testMember' type=kotlin.IntArray origin=null
+          index: GET_VAR 'val tmp_5: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
+      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit [operator] declared in kotlin.IntArray' type=kotlin.Unit origin=null
+        $this: GET_VAR 'val tmp_4: kotlin.IntArray [val] declared in <root>.testMember' type=kotlin.IntArray origin=null
+        index: GET_VAR 'val tmp_5: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
         value: CALL 'public final fun inc (): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-          $this: GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
-      GET_VAR 'val tmp_4: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
+          $this: GET_VAR 'val tmp_6: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        GET_VAR 'val tmp_6: kotlin.Int [val] declared in <root>.testMember' type=kotlin.Int origin=null

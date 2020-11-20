@@ -20,6 +20,7 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.js.translate.context.Namer;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
@@ -41,7 +42,7 @@ import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 public final class JsDescriptorUtils {
     // TODO: maybe we should use external annotations or something else.
     private static final Set<String> FAKE_CLASSES = ContainerUtil.immutableSet(
-            KotlinBuiltIns.FQ_NAMES.any.asString()
+            StandardNames.FqNames.any.asString()
     );
 
     private JsDescriptorUtils() {
@@ -131,7 +132,7 @@ public final class JsDescriptorUtils {
 
     public static boolean sideEffectsPossibleOnRead(@NotNull PropertyDescriptor property) {
         return DynamicCallsKt.isDynamic(property) || !isDefaultAccessor(property.getGetter()) ||
-               ModalityKt.isOverridableOrOverrides(property) || isStaticInitializationPossible(property);
+               ModalityUtilsKt.isOverridableOrOverrides(property) || isStaticInitializationPossible(property);
     }
 
     private static boolean isStaticInitializationPossible(PropertyDescriptor property) {
@@ -144,7 +145,7 @@ public final class JsDescriptorUtils {
                isDefaultAccessor(propertyDescriptor.getGetter()) &&
                isDefaultAccessor(propertyDescriptor.getSetter()) &&
                !TranslationUtils.shouldAccessViaFunctions(propertyDescriptor) &&
-               !ModalityKt.isOverridableOrOverrides(propertyDescriptor);
+               !ModalityUtilsKt.isOverridableOrOverrides(propertyDescriptor);
     }
 
     @NotNull

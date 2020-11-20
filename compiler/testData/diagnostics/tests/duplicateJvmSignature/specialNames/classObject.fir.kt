@@ -1,5 +1,5 @@
 class C {
-    companion object {}
+    companion <!REDECLARATION!>object<!> {}
 
-    val Companion = C
+    <!REDECLARATION!>val Companion = C<!>
 }

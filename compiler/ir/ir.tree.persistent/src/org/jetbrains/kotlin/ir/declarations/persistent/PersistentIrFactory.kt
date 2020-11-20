@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.persistent.PersistentIrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
 
 object PersistentIrFactory : IrFactory {
@@ -35,7 +36,7 @@ object PersistentIrFactory : IrFactory {
         symbol: IrClassSymbol,
         name: Name,
         kind: ClassKind,
-        visibility: Visibility,
+        visibility: DescriptorVisibility,
         modality: Modality,
         isCompanion: Boolean,
         isInner: Boolean,
@@ -57,15 +58,17 @@ object PersistentIrFactory : IrFactory {
         origin: IrDeclarationOrigin,
         symbol: IrConstructorSymbol,
         name: Name,
-        visibility: Visibility,
+        visibility: DescriptorVisibility,
         returnType: IrType,
         isInline: Boolean,
         isExternal: Boolean,
         isPrimary: Boolean,
         isExpect: Boolean,
+        containerSource: DeserializedContainerSource?,
     ): IrConstructor =
         PersistentIrConstructor(
-            startOffset, endOffset, origin, symbol, name, visibility, returnType, isInline, isExternal, isPrimary, isExpect
+            startOffset, endOffset, origin, symbol, name, visibility, returnType, isInline, isExternal, isPrimary, isExpect,
+            containerSource,
         )
 
     override fun createEnumEntry(
@@ -91,7 +94,7 @@ object PersistentIrFactory : IrFactory {
         symbol: IrFieldSymbol,
         name: Name,
         type: IrType,
-        visibility: Visibility,
+        visibility: DescriptorVisibility,
         isFinal: Boolean,
         isExternal: Boolean,
         isStatic: Boolean,
@@ -104,7 +107,7 @@ object PersistentIrFactory : IrFactory {
         origin: IrDeclarationOrigin,
         symbol: IrSimpleFunctionSymbol,
         name: Name,
-        visibility: Visibility,
+        visibility: DescriptorVisibility,
         modality: Modality,
         returnType: IrType,
         isInline: Boolean,
@@ -115,10 +118,12 @@ object PersistentIrFactory : IrFactory {
         isInfix: Boolean,
         isExpect: Boolean,
         isFakeOverride: Boolean,
+        containerSource: DeserializedContainerSource?,
     ): IrSimpleFunction =
         PersistentIrFunction(
             startOffset, endOffset, origin, symbol, name, visibility, modality, returnType,
             isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride,
+            containerSource
         )
 
     override fun createFakeOverrideFunction(
@@ -126,7 +131,7 @@ object PersistentIrFactory : IrFactory {
         endOffset: Int,
         origin: IrDeclarationOrigin,
         name: Name,
-        visibility: Visibility,
+        visibility: DescriptorVisibility,
         modality: Modality,
         returnType: IrType,
         isInline: Boolean,
@@ -161,7 +166,7 @@ object PersistentIrFactory : IrFactory {
         origin: IrDeclarationOrigin,
         symbol: IrPropertySymbol,
         name: Name,
-        visibility: Visibility,
+        visibility: DescriptorVisibility,
         modality: Modality,
         isVar: Boolean,
         isConst: Boolean,
@@ -170,10 +175,12 @@ object PersistentIrFactory : IrFactory {
         isExternal: Boolean,
         isExpect: Boolean,
         isFakeOverride: Boolean,
+        containerSource: DeserializedContainerSource?,
     ): IrProperty =
         PersistentIrProperty(
             startOffset, endOffset, origin, symbol, name, visibility, modality,
             isVar, isConst, isLateinit, isDelegated, isExternal, isExpect, isFakeOverride,
+            containerSource
         )
 
     override fun createFakeOverrideProperty(
@@ -181,7 +188,7 @@ object PersistentIrFactory : IrFactory {
         endOffset: Int,
         origin: IrDeclarationOrigin,
         name: Name,
-        visibility: Visibility,
+        visibility: DescriptorVisibility,
         modality: Modality,
         isVar: Boolean,
         isConst: Boolean,
@@ -200,7 +207,7 @@ object PersistentIrFactory : IrFactory {
         endOffset: Int,
         symbol: IrTypeAliasSymbol,
         name: Name,
-        visibility: Visibility,
+        visibility: DescriptorVisibility,
         expandedType: IrType,
         isActual: Boolean,
         origin: IrDeclarationOrigin,
@@ -230,8 +237,12 @@ object PersistentIrFactory : IrFactory {
         varargElementType: IrType?,
         isCrossinline: Boolean,
         isNoinline: Boolean,
+        isHidden: Boolean,
+        isAssignable: Boolean
     ): IrValueParameter =
-        PersistentIrValueParameter(startOffset, endOffset, origin, symbol, name, index, type, varargElementType, isCrossinline, isNoinline)
+        PersistentIrValueParameter(
+            startOffset, endOffset, origin, symbol, name, index, type, varargElementType, isCrossinline, isNoinline, isHidden, isAssignable
+        )
 
     override fun createExpressionBody(
         startOffset: Int,

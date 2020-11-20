@@ -53,7 +53,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     }
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
-        get() = requiredDependencies
+        get() = requiredDependencies + webpackConfig.getRequiredDependencies(versions)
 
     override val settingsState: String
         get() = "KotlinKarma($config)"
@@ -139,7 +139,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
         useChromeLike(debuggableChrome)
     }
 
-    fun usePhantomJS() = useBrowser("PhantomJS", versions.karmaPhantomJsLauncher)
+    fun usePhantomJS() = useBrowser("PhantomJS", versions.karmaPhantomjsLauncher)
 
     private fun useFirefoxLike(id: String) = useBrowser(id, versions.karmaFirefoxLauncher)
 
@@ -183,8 +183,6 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     private fun useWebpack() {
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(versions.webpack)
-
-        requiredDependencies.addAll(webpackConfig.getRequiredDependencies(versions))
 
         addPreprocessor("webpack")
         confJsWriters.add {
@@ -257,7 +255,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
     }
 
     fun useSourceMapSupport() {
-        requiredDependencies.add(versions.karmaSourceMapLoader)
+        requiredDependencies.add(versions.karmaSourcemapLoader)
         sourceMaps = true
         addPreprocessor("sourcemap")
     }

@@ -1,0 +1,40 @@
+FILE: notNull.kt
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun foo(x: R|kotlin/String?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(NULL) -> x != null
+        >
+     {
+        [StubStatement]
+        when () {
+            Boolean(true) ->  {
+                throw Q|java/lang|.R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+        ^foo R|<local>/x|
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun bar(x: R|kotlin/String?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> x != null
+        >
+     {
+        [StubStatement]
+        when () {
+            ==(R|<local>/x|, Null(null)) ->  {
+                ^bar R|<local>/x|
+            }
+        }
+
+        ^bar R|<local>/x|
+    }
+    @R|kotlin/OptIn|(vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun baz(x: R|kotlin/String?|): R|kotlin/Any?|
+        [R|Contract description]
+         <
+            Returns(NULL) -> x != null
+        >
+     {
+        [StubStatement]
+        ^baz R|<local>/x|
+    }

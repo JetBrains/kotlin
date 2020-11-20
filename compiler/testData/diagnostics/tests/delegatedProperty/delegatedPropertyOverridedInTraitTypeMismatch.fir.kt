@@ -15,7 +15,7 @@ fun foo() {
 }
 
 class Delegate {
-    operator fun getValue(t: Any?, p: KProperty<*>): String {
+    operator fun getValue(t: Any?, p: KProperty<*>): <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>String<!> {
         return ""
     }
 }

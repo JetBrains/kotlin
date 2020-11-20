@@ -176,9 +176,15 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
         fun generateShiftOperator(name: String, implementation: String = name) {
             val doc = GeneratePrimitives.shiftOperators[implementation]!!
-            out.println("    /** $doc */")
+            val detail = GeneratePrimitives.shiftOperatorsDocDetail(type.asSigned)
+            out.println("    /**")
+            out.println("     * $doc")
+            out.println("     *")
+            out.println(detail.replaceIndent("     "))
+            out.println("     */")
             out.println("    @kotlin.internal.InlineOnly")
             out.println("    public inline infix fun $name(bitCount: Int): $className = $className(data $implementation bitCount)")
+            out.println()
         }
 
         generateShiftOperator("shl")
@@ -458,6 +464,7 @@ class UnsignedArrayGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
     override fun contains(element: $elementType): Boolean {
         // TODO: Eliminate this check after KT-30016 gets fixed.
         // Currently JS BE does not generate special bridge method for this method.
+        @Suppress("USELESS_CAST")
         if ((element as Any?) !is $elementType) return false
 
         return storage.contains(element.to$storageElementType())

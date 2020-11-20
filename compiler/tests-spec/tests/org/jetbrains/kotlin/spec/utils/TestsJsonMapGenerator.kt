@@ -9,6 +9,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.LINKED_TESTS_PATH
+import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTS_MAP_FILENAME
 import org.jetbrains.kotlin.spec.utils.models.LinkedSpecTest
 import org.jetbrains.kotlin.spec.utils.models.SpecPlace
 import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
@@ -16,8 +18,6 @@ import org.jetbrains.kotlin.spec.utils.parsers.LinkedSpecTestPatterns
 import java.io.File
 
 object TestsJsonMapGenerator {
-    const val LINKED_TESTS_PATH = "linked"
-    const val TESTS_MAP_FILENAME = "testsMap.json"
 
     private inline fun <reified T : JsonElement> JsonObject.getOrCreate(key: String): T {
         if (!has(key)) {
@@ -113,6 +113,7 @@ object TestsJsonMapGenerator {
 
             File(testMapFolder).mkdirs()
             File("$testMapFolder/$TESTS_MAP_FILENAME").writeText(gson.toJson(testsMap.get(testPath)))
+            SectionsJsonMapGenerator.buildSectionsMap(testPath)
         }
     }
 }

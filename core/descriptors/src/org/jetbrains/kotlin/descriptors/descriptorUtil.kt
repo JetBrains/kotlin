@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
+import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
@@ -28,9 +29,9 @@ fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: Lookup
 
 fun ModuleDescriptor.findContinuationClassDescriptorOrNull(lookupLocation: LookupLocation, releaseCoroutines: Boolean) =
     if (releaseCoroutines)
-        resolveClassByFqName(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE, lookupLocation)
+        resolveClassByFqName(CONTINUATION_INTERFACE_FQ_NAME_RELEASE, lookupLocation)
     else
-        resolveClassByFqName(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL, lookupLocation)
+        resolveClassByFqName(CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL, lookupLocation)
 
 fun ModuleDescriptor.findContinuationClassDescriptor(lookupLocation: LookupLocation, releaseCoroutines: Boolean) =
     findContinuationClassDescriptorOrNull(lookupLocation, releaseCoroutines).sure { "Continuation interface is not found" }
@@ -53,3 +54,5 @@ fun DeclarationDescriptor.isTopLevelInPackage(name: String, packageName: String)
     val packageFqName = containingDeclaration.fqName.asString()
     return packageName == packageFqName
 }
+
+fun CallableDescriptor.isSupportedForCallableReference() = this is PropertyDescriptor || this is FunctionDescriptor

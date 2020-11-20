@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.name.ClassId
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeUnsafe() = (this as FirResolvedTypeRef).type as T
+inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeUnsafe(): T = (this as FirResolvedTypeRef).type as T
+
 @OptIn(ExperimentalContracts::class)
 inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeSafe(): T? {
     contract {
@@ -21,6 +22,7 @@ inline fun <reified T : ConeKotlinType> FirTypeRef.coneTypeSafe(): T? {
     }
     return (this as? FirResolvedTypeRef)?.type as? T
 }
+
 inline val FirTypeRef.coneType: ConeKotlinType get() = coneTypeUnsafe()
 
 val FirTypeRef.isAny: Boolean get() = isBuiltinType(StandardClassIds.Any, false)
@@ -35,14 +37,20 @@ val FirTypeRef.isArrayType: Boolean
         isBuiltinType(StandardClassIds.Array, false) ||
                 StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
 
-private fun FirTypeRef.isBuiltinType(classId: ClassId, isNullable: Boolean): Boolean {
-    val type = when (this) {
+private val FirTypeRef.classLikeTypeOrNull: ConeClassLikeType?
+    get() = when (this) {
         is FirImplicitBuiltinTypeRef -> type
-        is FirResolvedTypeRef -> type as? ConeClassLikeType ?: return false
-        else -> return false
+        is FirResolvedTypeRef -> type as? ConeClassLikeType
+        else -> null
     }
+
+private fun FirTypeRef.isBuiltinType(classId: ClassId, isNullable: Boolean): Boolean {
+    val type = this.classLikeTypeOrNull ?: return false
     return type.lookupTag.classId == classId && type.isNullable == isNullable
 }
+
+val FirTypeRef.isMarkedNullable: Boolean?
+    get() = classLikeTypeOrNull?.isMarkedNullable
 
 val FirFunctionTypeRef.parametersCount: Int
     get() = if (receiverTypeRef != null)
@@ -53,9 +61,9 @@ val FirFunctionTypeRef.parametersCount: Int
 const val EXTENSION_FUNCTION_ANNOTATION = "kotlin/ExtensionFunctionType"
 
 val FirAnnotationCall.isExtensionFunctionAnnotationCall: Boolean
-    get() = (this as? FirAnnotationCall)?.let {
-        (it.annotationTypeRef as? FirResolvedTypeRef)?.let {
-            (it.type as? ConeClassLikeType)?.let {
+    get() = (this as? FirAnnotationCall)?.let { annotationCall ->
+        (annotationCall.annotationTypeRef as? FirResolvedTypeRef)?.let { typeRef ->
+            (typeRef.type as? ConeClassLikeType)?.let {
                 it.lookupTag.classId.asString() == EXTENSION_FUNCTION_ANNOTATION
             }
         }
@@ -79,16 +87,72 @@ fun ConeClassLikeType.toConstKind(): FirConstKind<*>? = when (lookupTag.classId)
     else -> null
 }
 
-fun List<FirAnnotationCall>.computeTypeAttributes(): ConeAttributes {
+fun List<FirAnnotationCall>.computeTypeAttributes(
+    additionalProcessor: MutableList<ConeAttribute<*>>.(ClassId) -> Unit = {}
+): ConeAttributes {
     if (this.isEmpty()) return ConeAttributes.Empty
     val attributes = mutableListOf<ConeAttribute<*>>()
     for (annotation in this) {
         val type = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
-        when (type.lookupTag.classId) {
+        when (val classId = type.lookupTag.classId) {
             CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact
             CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
             CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.ExtensionFunctionType
+            CompilerConeAttributes.UnsafeVariance.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.UnsafeVariance
+            else -> additionalProcessor.invoke(attributes, classId)
         }
     }
     return ConeAttributes.create(attributes)
 }
+
+fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection =
+    when (this) {
+        is FirStarProjection -> ConeStarProjection
+        is FirTypeProjectionWithVariance -> {
+            val type = typeRef.coneType
+            type.toTypeProjection(this.variance)
+        }
+        else -> error("!")
+    }
+
+fun makesSenseToBeDefinitelyNotNull(type: ConeKotlinType): Boolean =
+    type.canHaveUndefinedNullability() // TODO: also check nullability
+
+fun ConeKotlinType.canHaveUndefinedNullability(): Boolean {
+    return when (this) {
+        is ConeTypeVariableType,
+        is ConeCapturedType
+        -> true
+        is ConeTypeParameterType -> type.isMarkedNullable || !hasNotNullUpperBound()
+        else -> false
+    }
+}
+
+private fun ConeTypeParameterType.hasNotNullUpperBound(): Boolean {
+    return lookupTag.typeParameterSymbol.fir.bounds.any {
+        val boundType = it.coneType
+        if (boundType is ConeTypeParameterType) {
+            boundType.hasNotNullUpperBound()
+        } else {
+            boundType.nullability == ConeNullability.NOT_NULL
+        }
+    }
+}
+
+val FirTypeRef.canBeNull: Boolean
+    // TODO: replace with coneType (for some reason, implicit type still can arise here)
+    get() = coneTypeSafe<ConeKotlinType>()?.canBeNull == true
+
+val ConeKotlinType.canBeNull: Boolean
+    get() {
+        if (isMarkedNullable) {
+            return true
+        }
+        return when (this) {
+            is ConeFlexibleType -> upperBound.canBeNull
+            is ConeDefinitelyNotNullType -> false
+            is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.fir.bounds.any { it.canBeNull }
+            is ConeIntersectionType -> intersectedTypes.any { it.canBeNull }
+            else -> isNullable
+        }
+    }

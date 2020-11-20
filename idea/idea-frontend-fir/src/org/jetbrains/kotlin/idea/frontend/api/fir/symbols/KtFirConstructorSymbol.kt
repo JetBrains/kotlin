@@ -6,59 +6,65 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.getPrimaryConstructorIfAny
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.idea.fir.findPsi
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
-import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.KtFirConstructorSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignature
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertAnnotation
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorParameterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtConstructorSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirConstructorSymbol(
     fir: FirConstructor,
-    override val token: ValidityOwner,
+    resolveState: FirModuleResolveState,
+    override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtConstructorSymbol(), KtFirSymbol<FirConstructor> {
-    override val fir: FirConstructor by weakRef(fir)
-    override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
+    override val firRef = firRef(fir, resolveState)
+    override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
 
-    override val type: KtType by cached { builder.buildKtType(fir.returnTypeRef) }
-    override val valueParameters: List<KtConstructorParameterSymbol> by cached {
+    override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { builder.buildKtType(it.returnTypeRef) }
+    override val valueParameters: List<KtConstructorParameterSymbol> by firRef.withFirAndCache { fir ->
         fir.valueParameters.map { valueParameter ->
             check(valueParameter is FirValueParameterImpl)
             builder.buildFirConstructorParameter(valueParameter)
         }
     }
 
-    override val isPrimary: Boolean get() = withValidityAssertion { fir.isPrimary }
-    override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
+    override val visibility: KtSymbolVisibility get() = getVisibility()
 
-    override val owner: KtClassOrObjectSymbol by cached {
-        val session = fir.session
-        val classId = fir.symbol.callableId.classId ?: error("ClassID should present for constructor")
-        val firClass = session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir
-            ?: error("Class with id $classId id was not found")
-        check(firClass is FirRegularClass) { "Owner class for constructor should be FirRegularClass, but ${firClass::class} was met" }
-        builder.buildClassSymbol(firClass)
+    override val annotations: List<KtAnnotationCall> by firRef.withFirAndCache(FirResolvePhase.TYPES) {
+        convertAnnotation(it)
     }
 
+    override val containingClassIdIfNonLocal: ClassId?
+        get() = firRef.withFir { fir -> fir.containingClass()?.classId /* TODO check if local */ }
+
+    override val isPrimary: Boolean get() = firRef.withFir { it.isPrimary }
+
     override fun createPointer(): KtSymbolPointer<KtConstructorSymbol> = withValidityAssertion {
-        if (!isPrimary) {
-            // TODO for now we can not find symbol for member function :(
-            return NonRestorableKtSymbolPointer
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        if (symbolKind == KtSymbolKind.LOCAL) {
+            throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException("constructor")
         }
-        val ownerClassId = owner.classId
-        return symbolPointer { session ->
-            val ownerSymbol = session.symbolProvider.getClassOrObjectSymbolByClassId(ownerClassId) ?: return@symbolPointer null
-            check(ownerSymbol is KtFirSymbol<*>)
-            val classFir = (ownerSymbol.fir as? FirRegularClass) ?: error("FirRegularClass expected but ${ownerSymbol.fir::class} found")
-            classFir.getPrimaryConstructorIfAny()?.let(builder::buildConstructorSymbol)
-        }
+        val ownerClassId = containingClassIdIfNonLocal
+            ?: error("ClassId should present for member declaration")
+        return KtFirConstructorSymbolPointer(ownerClassId, isPrimary, firRef.withFir { it.createSignature() })
     }
 }

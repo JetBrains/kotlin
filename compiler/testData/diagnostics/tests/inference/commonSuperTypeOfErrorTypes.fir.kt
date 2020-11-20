@@ -8,14 +8,14 @@ fun <T> consume(x: Foo<out T>, y: Foo<out T>) {}
 fun <T> materialize() = null as T
 
 fun test() {
-    consume(
-        materialize<<!UPPER_BOUND_VIOLATED!>Foo<Bar<ErrorType>><!>>(),
-        materialize<<!UPPER_BOUND_VIOLATED!>Foo<Bar<ErrorType>><!>>()
+    <!INAPPLICABLE_CANDIDATE!>consume<!>(
+        materialize<<!UNRESOLVED_REFERENCE!>Foo<Bar<ErrorType>><!>>(),
+        materialize<<!UNRESOLVED_REFERENCE!>Foo<Bar<ErrorType>><!>>()
     )
 
     <!INAPPLICABLE_CANDIDATE!>consume<!>(
-        materialize<<!UPPER_BOUND_VIOLATED!>Foo<Bar<ErrorType>><!>>(),
-        materialize<<!UPPER_BOUND_VIOLATED!>Foo<ErrorType><!>>()
+        materialize<<!UNRESOLVED_REFERENCE!>Foo<Bar<ErrorType>><!>>(),
+        materialize<<!UNRESOLVED_REFERENCE!>Foo<ErrorType><!>>()
     )
 
 }

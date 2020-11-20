@@ -4,11 +4,11 @@ class Inv<T>
 class X
 
 fun f1(p: In<in X>) {}
-fun f2(p: In<out X>) {}
+fun f2(p: <!CONFLICTING_PROJECTION!>In<out X><!>) {}
 fun f3(p: In<X>) {}
 
 fun f4(p: Out<out X>) {}
-fun f5(p: Out<in X>) {}
+fun f5(p: <!CONFLICTING_PROJECTION!>Out<in X><!>) {}
 fun f6(p: Out<X>) {}
 
 fun f6(p: Inv<X>) {}

@@ -5,6 +5,7 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("StringsKt")
+@file:Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 
 package kotlin.text
 

@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirFakeSourceElement
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.FirLightSourceElement
+import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirMemberDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -32,7 +34,7 @@ object RedundantExplicitTypeChecker : FirMemberDeclarationChecker() {
         val initializer = declaration.initializer ?: return
         val typeReference = declaration.returnTypeRef
 
-        if (typeReference.source is FirFakeSourceElement<*>) return
+        if (typeReference.source?.kind is FirFakeSourceElementKind) return
 
         val type = declaration.returnTypeRef.coneType
 
@@ -46,14 +48,14 @@ object RedundantExplicitTypeChecker : FirMemberDeclarationChecker() {
                         if (!type.isSame(StandardClassIds.Boolean)) return
                     }
                     KtNodeTypes.INTEGER_CONSTANT -> {
-                        if (initializer.text?.endsWith("L") == true) {
+                        if (initializer.kind == FirConstKind.Long) {
                             if (!type.isSame(StandardClassIds.Long)) return
                         } else {
                             if (!type.isSame(StandardClassIds.Int)) return
                         }
                     }
                     KtNodeTypes.FLOAT_CONSTANT -> {
-                        if (initializer.text?.endsWith("f", ignoreCase = true) == true) {
+                        if (initializer.kind == FirConstKind.Float) {
                             if (!type.isSame(StandardClassIds.Float)) return
                         } else {
                             if (!type.isSame(StandardClassIds.Double)) return
@@ -89,11 +91,18 @@ object RedundantExplicitTypeChecker : FirMemberDeclarationChecker() {
         reporter.report(declaration.returnTypeRef.source, FirErrors.REDUNDANT_EXPLICIT_TYPE)
     }
 
-    private val FirExpression.text
-        get() = this.source.psi?.text
-
-    private val FirTypeRef.text
-        get() = this.psi?.text
+    private val FirTypeRef.text: String?
+        get() {
+            return when (source) {
+                is FirPsiSourceElement<*> -> {
+                    source.psi?.text
+                }
+                is FirLightSourceElement -> {
+                    (source as FirLightSourceElement).element.toString()
+                }
+                else -> null
+            }
+        }
 
     private fun ConeKotlinType.isSame(other: ClassId?): Boolean {
         if (this.nullability.isNullable) return false

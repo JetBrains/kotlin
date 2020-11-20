@@ -1,11 +1,13 @@
 package org.jetbrains.kotlin.gradle.internal
 
-import com.intellij.openapi.util.io.FileUtil
-import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.ConventionTask
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.ClasspathSnapshot
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptClasspathChanges
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
@@ -28,7 +30,7 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
         outputs.cacheIf(reason) { useBuildCache }
     }
 
-    override fun localStateDirectories(): FileCollection = project.files()
+    override fun localStateDirectories(): FileCollection = objects.fileCollection()
 
     @get:Internal
     @field:Transient
@@ -37,10 +39,12 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     @get:Internal
     internal lateinit var stubsDir: File
 
+    @get:Internal
+    internal val objects = project.objects
+
     @get:Classpath
     @get:InputFiles
-    val kaptClasspath: FileCollection
-        get() = project.files(kaptClasspathConfigurations)
+    abstract val kaptClasspath: ConfigurableFileCollection
 
     @get:Classpath
     @get:InputFiles
@@ -49,7 +53,7 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     }
 
     @get:Internal
-    internal lateinit var kaptClasspathConfigurations: List<Configuration>
+    internal abstract val kaptClasspathConfigurationNames: ListProperty<String>
 
 
     @get:PathSensitive(PathSensitivity.NONE)
@@ -135,10 +139,42 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     protected val javaSourceRoots: Set<File>
         get() = unfilteredJavaSourceRoots.filterTo(HashSet(), ::isRootAllowed)
 
+    @get:Internal
+    override val metrics: BuildMetricsReporter =
+        BuildMetricsReporterImpl()
+
     private fun isRootAllowed(file: File): Boolean =
         file.exists() &&
-                !FileUtil.isAncestor(destinationDir, file, /* strict = */ false) &&
-                !FileUtil.isAncestor(classesDir, file, /* strict = */ false)
+                !isAncestor(destinationDir, file) &&
+                !isAncestor(classesDir, file)
+
+    //Have to avoid using FileUtil because it is required system property reading that is not allowed for configuration cache
+    private fun isAncestor(dir: File, file: File): Boolean {
+        val path = file.canonicalPath
+        val prefix = dir.canonicalPath
+        val pathLength = path.length
+        val prefixLength = prefix.length
+        //TODO
+        val caseSensitive = true
+        return if (prefixLength == 0) {
+            true
+        } else if (prefixLength > pathLength) {
+            false
+        } else if (!path.regionMatches(0, prefix, 0, prefixLength, ignoreCase = !caseSensitive)) {
+            return false
+        } else if (pathLength == prefixLength) {
+            return true
+        } else {
+            val lastPrefixChar: Char = prefix.get(prefixLength - 1)
+            var slashOrSeparatorIdx = prefixLength
+            if (lastPrefixChar == '/' || lastPrefixChar == File.separatorChar) {
+                slashOrSeparatorIdx = prefixLength - 1
+            }
+            val next1 = path[slashOrSeparatorIdx]
+            return !(next1 != '/' && next1 != File.separatorChar)
+        }
+    }
+
 
     private fun FileCollection?.orEmpty(): FileCollection =
         this ?: project.files()
@@ -159,7 +195,7 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
                             + "\nThe following files, containing annotation processors, are not present in KAPT classpath:\n"
                             + processorsAbsentInKaptClasspath.joinToString("\n") { "  '$it'" }
                             + "\nAdd corresponding dependencies to any of the following configurations:\n"
-                            + kaptClasspathConfigurations.joinToString("\n") { " '${it.name}'" }
+                            + kaptClasspathConfigurationNames.get().joinToString("\n") { " '$it'" }
                 )
             } else {
                 logger.warn(

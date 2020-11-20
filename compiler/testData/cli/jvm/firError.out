@@ -1,0 +1,10 @@
+compiler/testData/cli/jvm/firError.kt:5:13: error: x must be initialized before access
+    println(x)
+            ^
+compiler/testData/cli/jvm/firError.kt:10:16: error: public subclass exposes its private supertype 'Private'
+class Public : Private() {
+               ^
+compiler/testData/cli/jvm/firError.kt:11:9: error: public property exposes its private type 'Private'
+    val x: Private
+        ^
+COMPILATION_ERROR

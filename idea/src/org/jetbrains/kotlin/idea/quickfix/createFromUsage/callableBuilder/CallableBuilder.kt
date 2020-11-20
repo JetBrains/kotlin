@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithAllCompilerChecks
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
@@ -63,6 +64,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.utils.findClassifier
 import org.jetbrains.kotlin.resolve.scopes.utils.memberScopeAsImportingScope
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeUtils
@@ -391,6 +393,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             }
         }
 
+        @OptIn(FrontendInternals::class)
         private fun createFakeFunctionDescriptor(scope: HierarchicalScope, typeParameterCount: Int): FunctionDescriptor {
             val fakeFunction = SimpleFunctionDescriptorImpl.create(
                 MutablePackageFragmentDescriptor(currentFileModule, FqName("fake")),
@@ -416,7 +419,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
 
             return fakeFunction.initialize(
                 null, null, typeParameters, Collections.emptyList(), null,
-                null, Visibilities.INTERNAL
+                null, DescriptorVisibilities.INTERNAL
             )
         }
 
@@ -528,7 +531,8 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                         }
                     }
                     CallableKind.CLASS_WITH_PRIMARY_CONSTRUCTOR -> {
-                        with((callableInfo as ClassWithPrimaryConstructorInfo).classInfo) {
+                        val classWithPrimaryConstructorInfo = callableInfo as ClassWithPrimaryConstructorInfo
+                        with(classWithPrimaryConstructorInfo.classInfo) {
                             val classBody = when (kind) {
                                 ClassKind.ANNOTATION_CLASS, ClassKind.ENUM_ENTRY -> ""
                                 else -> "{\n\n}"
@@ -548,8 +552,10 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                                         ClassKind.PLAIN_CLASS, ClassKind.INTERFACE -> "<>"
                                         else -> ""
                                     }
+                                    val ctor =
+                                        classWithPrimaryConstructorInfo.primaryConstructorVisibility?.name?.let { " $it constructor" } ?: ""
                                     psiFactory.createDeclaration<KtClassOrObject>(
-                                        "$openMod$innerMod${kind.keyword} $safeName$typeParamList$paramList$returnTypeString $classBody"
+                                        "$openMod$innerMod${kind.keyword} $safeName$typeParamList$ctor$paramList$returnTypeString $classBody"
                                     )
                                 }
                             }

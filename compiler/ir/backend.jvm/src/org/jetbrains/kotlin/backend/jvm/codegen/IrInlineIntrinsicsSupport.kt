@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.common.ir.allParameters
+import org.jetbrains.kotlin.backend.common.ir.allParametersCount
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.intrinsics.SignatureString
 import org.jetbrains.kotlin.backend.jvm.lower.FunctionReferenceLowering
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
@@ -64,7 +64,7 @@ class IrInlineIntrinsicsSupport(
         // thus cannot have a backing field, and is required to have a getter.
         val getter = property.getter
             ?: error("Property without getter: ${property.render()}")
-        val arity = getter.allParameters.size
+        val arity = getter.allParametersCount
         val implClass = (if (property.isVar) MUTABLE_PROPERTY_REFERENCE_IMPL else PROPERTY_REFERENCE_IMPL).getOrNull(arity)
             ?: error("No property reference impl class with arity $arity (${property.render()}")
 
@@ -77,7 +77,7 @@ class IrInlineIntrinsicsSupport(
         v.anew(implClass)
         v.dup()
         if (withArity) {
-            v.aconst(function.allParameters.size)
+            v.aconst(function.allParametersCount)
         }
         putClassInstance(v, FunctionReferenceLowering.getOwnerKClassType(declaration.parent, context))
         v.aconst(declaration.name.asString())
@@ -94,5 +94,5 @@ class IrInlineIntrinsicsSupport(
         )
     }
 
-    override fun toKotlinType(type: IrType): KotlinType = type.toKotlinType()
+    override fun toKotlinType(type: IrType): KotlinType = type.toIrBasedKotlinType()
 }

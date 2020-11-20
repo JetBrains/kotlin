@@ -1,15 +1,15 @@
 FILE: main.kt
     public final fun test_1(x: R|A|): R|kotlin/Unit| {
-        lval str1: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/x|.R|/A.vmParameters|
-        lval str2: <ERROR TYPE REF: Unresolved name: vMParameters> = R|<local>/x|.<Unresolved name: vMParameters>#
+        lval str1: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = R|<local>/x|.R|/A.vmParameters|
+        lval str2: R|ERROR CLASS: Unresolved name: vMParameters| = R|<local>/x|.<Unresolved name: vMParameters>#
     }
     public final fun test_2(x: R|B|): R|kotlin/Unit| {
-        lval int: R|ft<kotlin/Int, kotlin/Int?>!| = R|<local>/x|.R|/B.vmParameters|
-        lval error: <ERROR TYPE REF: Unresolved name: vMParameters> = R|<local>/x|.<Unresolved name: vMParameters>#
+        lval int: R|ft<@FlexibleNullability kotlin/Int, kotlin/Int?>!| = R|<local>/x|.R|/B.vmParameters|
+        lval error: R|ERROR CLASS: Unresolved name: vMParameters| = R|<local>/x|.<Unresolved name: vMParameters>#
     }
     public final fun test_3(x: R|C|): R|kotlin/Unit| {
-        lval error: <ERROR TYPE REF: Ambiguity: vmParameters, [/C.vmParameters, /C.vmParameters]> = R|<local>/x|.<Ambiguity: vmParameters, [/C.vmParameters, /C.vmParameters]>#
-        lval int: <ERROR TYPE REF: Unresolved name: vMParameters> = R|<local>/x|.<Unresolved name: vMParameters>#
+        lval error: R|ERROR CLASS: Ambiguity: vmParameters, [/C.vmParameters, /C.vmParameters]| = R|<local>/x|.<Ambiguity: vmParameters, [/C.vmParameters, /C.vmParameters]>#
+        lval int: R|ERROR CLASS: Unresolved name: vMParameters| = R|<local>/x|.<Unresolved name: vMParameters>#
     }
     public final class Foo : R|kotlin/Any| {
         public constructor(): R|Foo| {

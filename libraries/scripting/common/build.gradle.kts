@@ -8,7 +8,7 @@ jvmTarget = "1.6"
 
 dependencies {
     compile(kotlinStdlib())
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
     compileOnly(project(":kotlin-reflect-api"))
     testCompile(commonDep("junit"))
 }

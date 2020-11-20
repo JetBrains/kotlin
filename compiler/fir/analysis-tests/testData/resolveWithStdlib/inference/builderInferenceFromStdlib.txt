@@ -1,14 +1,14 @@
 FILE: builderInferenceFromStdlib.kt
     public final fun test_1(): R|kotlin/Unit| {
         lval list: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/buildList|<R|kotlin/String|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-            ^ this@R|special/anonymous|.R|FakeOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
         }
         )
         R|/takeList|(R|<local>/list|)
     }
     public final fun test_2(): R|kotlin/Unit| {
         lval list: R|kotlin/collections/List<kotlin/String>| = R|/myBuildList|<R|kotlin/String|>(<L> = myBuildList@fun R|kotlin/collections/MutableList<kotlin/String>|.<anonymous>(): R|kotlin/Unit| {
-            ^ this@R|special/anonymous|.R|FakeOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
         }
         )
         R|/takeList|(R|<local>/list|)

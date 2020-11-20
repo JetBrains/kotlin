@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.packageFragments
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -21,14 +23,16 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 class KlibMetadataMonolithicSerializer(
     languageVersionSettings: LanguageVersionSettings,
     metadataVersion: BinaryVersion,
+    project: Project?,
     skipExpects: Boolean,
-    includeOnlyModuleContent: Boolean = false
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, skipExpects, includeOnlyModuleContent) {
+    includeOnlyModuleContent: Boolean = false,
+    allowErrorTypes: Boolean = false
+) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, project, skipExpects, includeOnlyModuleContent, allowErrorTypes) {
 
     private fun serializePackageFragment(fqName: FqName, module: ModuleDescriptor): List<ProtoBuf.PackageFragment> {
 
         val fragments = if (includeOnlyModuleContent) {
-            module.packageFragmentProviderForModuleContentWithoutDependencies.getPackageFragments(fqName)
+            module.packageFragmentProviderForModuleContentWithoutDependencies.packageFragments(fqName)
         } else {
             module.getPackage(fqName).fragments.filter { it.module == module }
         }

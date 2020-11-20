@@ -1,19 +1,19 @@
 FILE: localAnnotationClass.kt
     public final fun foo(): R|kotlin/Unit| {
         local final annotation class Ann : R|kotlin/Annotation| {
-            public[local] constructor(): R|Ann| {
+            public constructor(): R|Ann| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        @R|ERROR CLASS: Symbol not found, for `Anno`|() local final class Local : R|kotlin/Any| {
-            public[local] constructor(): R|Local| {
+        @R|Ann|() local final class Local : R|kotlin/Any| {
+            public constructor(): R|Local| {
                 super<R|kotlin/Any|>()
             }
 
             local final annotation class Nested : R|kotlin/Annotation| {
-                public[local] constructor(): R|Local.Nested| {
+                public constructor(): R|Local.Nested| {
                     super<R|kotlin/Any|>()
                 }
 

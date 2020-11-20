@@ -23,7 +23,7 @@ class B : A() {
 
         a.<!INVISIBLE_MEMBER!>foo<!>
         // TODO: should be INVISIBLE_SETTER
-        a.bar = a.bar + ""
+        a.<!INVISIBLE_SETTER!>bar<!> = a.bar + ""
 
         if (a is B) {
             <!DEBUG_INFO_SMARTCAST!>a<!>.foo
@@ -34,12 +34,12 @@ class B : A() {
             d.x.abc // Ok
             d.x.<!INVISIBLE_MEMBER!>foo<!>
             // TODO: should be INVISIBLE_SETTER
-            d.x.bar = d.x.bar + ""
+            d.x.<!INVISIBLE_SETTER!>bar<!> = d.x.bar + ""
         }
     }
 }
 
 fun baz(a: A) {
     a.<!INVISIBLE_MEMBER!>foo<!>
-    <!INVISIBLE_SETTER!>a.bar<!> = a.bar + ""
+    <!INVISIBLE_SETTER!>a.<!INVISIBLE_SETTER!>bar<!><!> = a.bar + ""
 }

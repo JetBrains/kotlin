@@ -5,7 +5,7 @@ FILE: annotationClassMember.kt
         }
 
         public constructor(s: R|kotlin/Nothing?|): R|A| {
-            this<R|A|>()
+            super<R|kotlin/Any|>()
         }
 
         init {

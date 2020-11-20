@@ -4,10 +4,10 @@
 // Issue: KT-26698
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.contains1(element: T): Boolean = null!!
+public fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> T> Iterable<T>.contains1(element: T): Boolean = null!!
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-public fun <@kotlin.internal.OnlyInputTypes T> Iterable<T>.foo(element: T): T = null!!
+public fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> T> Iterable<T>.foo(element: T): T = null!!
 
 class Inv<T>
 class Inv2<T, R>

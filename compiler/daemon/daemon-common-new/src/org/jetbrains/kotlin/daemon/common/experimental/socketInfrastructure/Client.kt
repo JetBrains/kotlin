@@ -1,10 +1,17 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+@file:Suppress("JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE")
 package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
-import io.ktor.network.sockets.Socket
-import kotlinx.coroutines.channels.*
+import io.ktor.network.sockets.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.*
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
 import org.jetbrains.kotlin.daemon.common.experimental.LoopbackNetworkInterfaceKtor
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.AnyMessage
+import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.ServerDownMessage
 import sun.net.ConnectionResetException
 import java.beans.Transient
 import java.io.IOException
@@ -12,7 +19,6 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.util.logging.Logger
-import org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure.Server.*
 
 interface Client<ServerType : ServerBase> : Serializable, AutoCloseable {
 
@@ -114,6 +120,7 @@ abstract class DefaultAuthorizableClient<ServerType : ServerBase>(
         return actualResult as T
     }
 
+    @OptIn(ObsoleteCoroutinesApi::class, ExperimentalCoroutinesApi::class)
     override suspend fun connectToServer() {
 
         writeActor = GlobalScope.actor(capacity = Channel.UNLIMITED) {
@@ -242,7 +249,7 @@ class DefaultClient<ServerType : ServerBase>(
     serverHost: String = LoopbackNetworkInterface.loopbackInetAddressName
 ) : DefaultAuthorizableClient<ServerType>(serverPort, serverHost) {
     override suspend fun clientHandshake(input: ByteReadChannelWrapper, output: ByteWriteChannelWrapper, log: Logger) = true
-    override suspend fun authorizeOnServer(output: ByteWriteChannelWrapper): Boolean = true
+    override suspend fun authorizeOnServer(serverOutputChannel: ByteWriteChannelWrapper): Boolean = true
     override fun startKeepAlives() {}
     override fun delayKeepAlives() {}
 }

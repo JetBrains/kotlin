@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.idea.completion.test.handlers
 
+import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElementPresentation
+import com.intellij.testFramework.fixtures.LightJavaCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.completion.test.COMPLETION_TEST_DATA_BASE_PATH
-import org.jetbrains.kotlin.idea.completion.test.KotlinCompletionTestCase
+import org.jetbrains.kotlin.idea.completion.test.KotlinFixtureCompletionBaseTestCase
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
+class CompletionMultiFileHandlerTest : KotlinFixtureCompletionBaseTestCase() {
     fun testExtensionFunctionImport() {
         doTest()
     }
@@ -122,24 +126,28 @@ class CompletionMultiFileHandlerTest : KotlinCompletionTestCase() {
 
         require(filteredFiles.isNotEmpty()) { "At least one of $defaultFiles should exist!" }
 
-        configureByFiles(null, *extraFileNames)
-        configureByFiles(null, *filteredFiles.toTypedArray())
-        complete(2)
-        if (myItems != null) {
+        myFixture.configureByFiles(*extraFileNames)
+        myFixture.configureByFiles(*filteredFiles.toTypedArray())
+        val items = complete(CompletionType.BASIC, 2)
+        if (items != null) {
             val item = if (tailText == null)
-                myItems.singleOrNull() ?: error("Multiple items in completion")
+                items.singleOrNull() ?: error("Multiple items in completion")
             else {
                 val presentation = LookupElementPresentation()
-                myItems.first {
+                items.first {
                     it.renderElement(presentation)
                     presentation.tailText == tailText
-                } ?: error("Tail text not found")
+                }
             }
 
-            selectItem(item, completionChar)
+            CompletionHandlerTestBase.selectItem(myFixture, item, completionChar)
         }
-        checkResultByFile("$fileName.kt.after")
+        myFixture.checkResultByFile("$fileName.kt.after")
     }
 
     override fun getTestDataPath() = File(COMPLETION_TEST_DATA_BASE_PATH, "/handlers/multifile/").path + File.separator
+
+    override fun defaultCompletionType(): CompletionType = CompletionType.BASIC
+    override fun getPlatform(): TargetPlatform = JvmPlatforms.unspecifiedJvmPlatform
+    override fun getProjectDescriptor() = LightJavaCodeInsightFixtureTestCase.JAVA_LATEST
 }

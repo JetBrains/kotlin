@@ -15,7 +15,7 @@ fun case_1(value_1: Int?, value_2: Int? = 10): Boolean {
 
 // TESTCASE NUMBER: 2
 fun case_2(value_1: Int? = 10, value_2: Int? = 10, value_3: Int? = 10): Boolean {
-    contract { returns(true) implies (value_2 != null) }
+    <!WRONG_IMPLIES_CONDITION!>contract { returns(true) implies (value_2 != null) }<!>
     return value_1 != null
 }
 

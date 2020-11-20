@@ -46,10 +46,7 @@ object PositioningStrategies {
                 is KtObjectLiteralExpression -> {
                     val objectDeclaration = element.objectDeclaration
                     val objectKeyword = objectDeclaration.getObjectKeyword()!!
-                    val delegationSpecifierList = objectDeclaration.getSuperTypeList()
-                    if (delegationSpecifierList == null) {
-                        return markElement(objectKeyword)
-                    }
+                    val delegationSpecifierList = objectDeclaration.getSuperTypeList() ?: return markElement(objectKeyword)
                     return markRange(objectKeyword, delegationSpecifierList)
                 }
                 is KtObjectDeclaration -> {
@@ -612,15 +609,26 @@ object PositioningStrategies {
     }
 
     @JvmField
-    val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: PositioningStrategy<KtConstructorDelegationCall> =
-        object : PositioningStrategy<KtConstructorDelegationCall>() {
-            override fun mark(element: KtConstructorDelegationCall): List<TextRange> {
-                if (element.isImplicit) {
-                    val constructor = element.getStrictParentOfType<KtSecondaryConstructor>()!!
-                    val valueParameterList = constructor.valueParameterList ?: return markElement(constructor)
-                    return markRange(constructor.getConstructorKeyword(), valueParameterList.lastChild)
+    val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: PositioningStrategy<PsiElement> =
+        object : PositioningStrategy<PsiElement>() {
+            override fun mark(element: PsiElement): List<TextRange> {
+                when (element) {
+                    is KtSecondaryConstructor -> {
+                        val valueParameterList = element.valueParameterList ?: return markElement(element)
+                        return markRange(element.getConstructorKeyword(), valueParameterList.lastChild)
+                    }
+                    is KtConstructorDelegationCall -> {
+                        if (element.isImplicit) {
+                            // TODO: [VD] FIR collects for some reason implicit KtConstructorDelegationCall
+                            // check(!element.isImplicit) { "Implicit KtConstructorDelegationCall should not be collected directly" }
+                            val constructor = element.getStrictParentOfType<KtSecondaryConstructor>()!!
+                            val valueParameterList = constructor.valueParameterList ?: return markElement(constructor)
+                            return markRange(constructor.getConstructorKeyword(), valueParameterList.lastChild)
+                        }
+                        return markElement(element.calleeExpression ?: element)
+                    }
+                    else -> error("unexpected element $element")
                 }
-                return markElement(element.calleeExpression ?: element)
             }
         }
 

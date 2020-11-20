@@ -55,8 +55,9 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.Bar<T of <root>.Bar>
       VALUE_PARAMETER name:arg index:0 type:kotlin.Any
       BLOCK_BODY
-        TYPE_OP type=T of <root>.Bar origin=CAST typeOperand=T of <root>.Bar
-          GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=kotlin.Any origin=null
+        TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+          TYPE_OP type=T of <root>.Bar origin=CAST typeOperand=T of <root>.Bar
+            GET_VAR 'arg: kotlin.Any declared in <root>.Bar.test' type=kotlin.Any origin=null
         CALL 'public final fun useT (t: T of <root>.Bar): kotlin.Unit declared in <root>.Bar' type=kotlin.Unit origin=null
           $this: GET_VAR '<this>: <root>.Bar<T of <root>.Bar> declared in <root>.Bar.test' type=<root>.Bar<T of <root>.Bar> origin=null
           t: TYPE_OP type=T of <root>.Bar origin=IMPLICIT_CAST typeOperand=T of <root>.Bar

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM_IR
 
 inline class ICAny(val x: Any)
@@ -23,4 +24,5 @@ suspend fun test() {
 
 // -- 1 in 'useICAny(suspendGeneric(ICAny("")))
 // -- 1 in 'equals-impl' for ICAny
-// 2 INVOKEVIRTUAL ICAny\.unbox-impl
+// -- 2 on resume path of suspendICAny
+// 4 INVOKEVIRTUAL ICAny\.unbox-impl

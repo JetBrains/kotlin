@@ -147,9 +147,14 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 ModuleChunk(listOf(module))
             }
 
-            KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, moduleChunk.modules, buildFile)
-            val environment = createCoreEnvironment(rootDisposable, configuration, messageCollector)
-                ?: return COMPILATION_ERROR
+            val chunk = moduleChunk.modules
+            KotlinToJVMBytecodeCompiler.configureSourceRoots(configuration, chunk, buildFile)
+            val environment = createCoreEnvironment(
+                rootDisposable, configuration, messageCollector,
+                chunk.map { input -> input.getModuleName() + "-" + input.getModuleType() }.let { names ->
+                    names.singleOrNull() ?: names.joinToString()
+                }
+            ) ?: return COMPILATION_ERROR
             environment.registerJavacIfNeeded(arguments).let {
                 if (!it) return COMPILATION_ERROR
             }
@@ -161,7 +166,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 return COMPILATION_ERROR
             }
 
-            KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, moduleChunk.modules)
+            KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)
             return OK
         } catch (e: CompilationException) {
             messageCollector.report(
@@ -213,13 +218,17 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     private fun createCoreEnvironment(
         rootDisposable: Disposable,
         configuration: CompilerConfiguration,
-        messageCollector: MessageCollector
+        messageCollector: MessageCollector,
+        targetDescription: String
     ): KotlinCoreEnvironment? {
         if (messageCollector.hasErrors()) return null
 
         val environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        configuration[CLIConfigurationKeys.PERF_MANAGER]?.notifyCompilerInitialized()
+        val sourceFiles = environment.getSourceFiles()
+        configuration[CLIConfigurationKeys.PERF_MANAGER]?.notifyCompilerInitialized(
+            sourceFiles.size, environment.countLinesOfCode(sourceFiles), targetDescription
+        )
 
         return if (messageCollector.hasErrors()) null else environment
     }

@@ -1,0 +1,4 @@
+FILE: uByte.kt
+    public final fun test(i: R|kotlin/UByte|): R|kotlin/Unit| {
+        lval foo: R|kotlin/UByte| = R|<local>/i|.R|kotlin/UByte.toUByte|()
+    }

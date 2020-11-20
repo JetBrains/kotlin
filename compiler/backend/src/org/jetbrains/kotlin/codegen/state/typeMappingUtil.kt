@@ -18,6 +18,7 @@
 
 package org.jetbrains.kotlin.codegen.state
 
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -37,7 +38,6 @@ import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.getEffectiveVariance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES as BUILTIN_NAMES
 
 // TODO: probably class upper bound should be used
 @Suppress("UNUSED_PARAMETER")
@@ -81,9 +81,9 @@ val FqName?.isMethodWithDeclarationSiteWildcardsFqName: Boolean
 
 private fun FqName.child(name: String): FqName = child(Name.identifier(name))
 private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
-    BUILTIN_NAMES.mutableCollection.child("addAll"),
-    BUILTIN_NAMES.mutableList.child("addAll"),
-    BUILTIN_NAMES.mutableMap.child("putAll")
+    FqNames.mutableCollection.child("addAll"),
+    FqNames.mutableList.child("addAll"),
+    FqNames.mutableMap.child("putAll")
 )
 
 fun TypeMappingMode.updateArgumentModeFromAnnotations(

@@ -36,7 +36,7 @@ interface CirHasFqName {
 }
 
 interface CirHasVisibility {
-    val visibility: Visibility
+    val visibility: DescriptorVisibility
 }
 
 interface CirHasModality {
@@ -52,8 +52,8 @@ interface CirHasTypeParameters {
 }
 
 interface CirCallableMemberWithParameters {
-    val valueParameters: List<CirValueParameter>
-    val hasStableParameterNames: Boolean
+    var valueParameters: List<CirValueParameter>
+    var hasStableParameterNames: Boolean
 }
 
 /**

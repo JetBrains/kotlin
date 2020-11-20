@@ -33,6 +33,7 @@ interface AbstractElement : FieldContainer, KindOwner {
     val defaultImplementation: Implementation?
     val customImplementations: List<Implementation>
     val overridenFields: Map<Field, Map<Importable, Boolean>>
+    val useNullableForReplace: Set<Field>
 
     override val allParents: List<KindOwner> get() = parents
 }
@@ -63,6 +64,7 @@ class Element(val name: String, kind: Kind) : AbstractElement {
 
     override val needTransformOtherChildren: Boolean get() = _needTransformOtherChildren || parents.any { it.needTransformOtherChildren }
     override val overridenFields: MutableMap<Field, MutableMap<Importable, Boolean>> = mutableMapOf()
+    override val useNullableForReplace: MutableSet<Field> = mutableSetOf()
     override val allImplementations: List<Implementation> by lazy {
         if (doesNotNeedImplementation) {
             emptyList()
@@ -90,6 +92,9 @@ class Element(val name: String, kind: Kind) : AbstractElement {
                     overridenFields[existingField, parentField] = false
                 } else {
                     overridenFields[existingField, parentField] = true
+                    if (parentField.nullable != existingField.nullable) {
+                        existingField.useNullableForReplace = true
+                    }
                 }
             } else {
                 overridenFields[parentField, parentField] = true

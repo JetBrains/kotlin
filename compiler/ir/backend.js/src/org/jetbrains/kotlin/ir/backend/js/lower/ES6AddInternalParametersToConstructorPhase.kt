@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -88,7 +88,7 @@ class ES6AddInternalParametersToConstructorPhase(val context: JsIrBackendContext
         context.mapping.constructorToInitFunction[constructor] = initFunction
 
         initFunction.transformChildren(object : IrElementTransformerVoid() {
-            override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+            override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
                 declaration.parent = initFunction
                 return declaration
             }
@@ -109,7 +109,7 @@ class ES6AddInternalParametersToConstructorPhase(val context: JsIrBackendContext
         return context.irFactory.buildFun {
             name = Name.identifier(functionName)
             returnType = context.irBuiltIns.unitType
-            visibility = Visibilities.PROTECTED
+            visibility = DescriptorVisibilities.PROTECTED
             modality = Modality.FINAL
             isInline = constructor.isInline
             isExternal = constructor.isExternal

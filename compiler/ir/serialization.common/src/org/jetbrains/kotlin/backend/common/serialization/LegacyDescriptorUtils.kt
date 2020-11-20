@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.kotlinLibrary
 import org.jetbrains.kotlin.library.metadata.DeserializedSourceFile
 import org.jetbrains.kotlin.library.metadata.KlibMetadataDeserializedPackageFragment
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
@@ -27,11 +25,6 @@ internal val DeclarationDescriptor.isSerializableExpectClass: Boolean
 tailrec fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
     return if (this is PackageFragmentDescriptor) this
     else this.containingDeclaration!!.findPackage()
-}
-
-fun DeclarationDescriptor.findTopLevelDescriptor(): DeclarationDescriptor {
-    return if (this.containingDeclaration is PackageFragmentDescriptor) this.propertyIfAccessor
-    else this.containingDeclaration!!.findTopLevelDescriptor()
 }
 
 // This is Native specific. Try to eliminate.

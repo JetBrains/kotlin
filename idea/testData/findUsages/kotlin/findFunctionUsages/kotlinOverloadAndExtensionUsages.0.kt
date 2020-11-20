@@ -1,5 +1,7 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtNamedFunction
 // OPTIONS: overloadUsages
+// FIR_IGNORE
+
 interface X<T> {
 }
 
@@ -43,3 +45,5 @@ fun B.foo(s: String, n: Number) {
 fun bar(b: B) {
     b.foo("", 0)
 }
+
+// DISABLE-ERRORS

@@ -49,7 +49,7 @@ fun generateMap(): String {
 
     val binaryIrOperationsMap = getBinaryIrOperationMap(irBuiltIns)
 
-    //save to file
+    p.println("@Suppress(\"DEPRECATION\")")
     p.println("val unaryFunctions = mapOf<CompileTimeFunction, Function1<Any?, Any?>>(")
     p.println(generateUnaryBody(unaryOperationsMap, irBuiltIns))
     p.println(")")

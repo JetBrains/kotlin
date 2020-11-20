@@ -1,4 +1,4 @@
 FILE: capturedFlexible.kt
     public final fun foo(z: R|java/util/zip/ZipFile|): R|kotlin/Unit| {
-        R|<local>/z|.R|java/util/zip/ZipFile.entries|().R|kotlin/sequences/asSequence|<R|CapturedType(out ft<java/util/zip/ZipEntry, java/util/zip/ZipEntry?>!)|>()
+        R|<local>/z|.R|java/util/zip/ZipFile.entries|().R|kotlin/sequences/asSequence|<R|ft<@FlexibleNullability java/util/zip/ZipEntry, java/util/zip/ZipEntry?>!|>()
     }

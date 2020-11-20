@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: propertyClassFileDependencyRecursion.kt
 package test
 

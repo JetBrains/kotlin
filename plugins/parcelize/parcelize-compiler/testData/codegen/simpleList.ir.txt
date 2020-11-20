@@ -1,0 +1,38 @@
+public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creator {
+    public void <init>()
+
+    public final Test createFromParcel(android.os.Parcel parcel)
+
+    public java.lang.Object createFromParcel(android.os.Parcel source)
+
+    public final Test[] newArray(int size)
+
+    public java.lang.Object[] newArray(int size)
+}
+
+public final class Test : java/lang/Object, android/os/Parcelable {
+    public final static android.os.Parcelable$Creator CREATOR
+
+    private final java.util.List names
+
+    static void <clinit>()
+
+    public void <init>(java.util.List names)
+
+    public int describeContents()
+
+    public final java.util.List getNames()
+
+    public void writeToParcel(android.os.Parcel out, int flags) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (out)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          ALOAD (1)
+          ALOAD (0)
+          GETFIELD (names, Ljava/util/List;)
+          INVOKEVIRTUAL (android/os/Parcel, writeStringList, (Ljava/util/List;)V)
+          RETURN
+        LABEL (L1)
+    }
+}

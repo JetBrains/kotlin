@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/constructorWithAdaptedArguments.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.Any>): kotlin.Any declared in <root>'
         CALL 'public abstract fun invoke (p1: P1 of kotlin.Function1): R of kotlin.Function1 [operator] declared in kotlin.Function1' type=kotlin.Any origin=INVOKE
-          $this: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Any> declared in <root>.use' type=kotlin.Function1<kotlin.Int, kotlin.Any> origin=null
+          $this: GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.Any> declared in <root>.use' type=kotlin.Function1<kotlin.Int, kotlin.Any> origin=VARIABLE_AS_FUNCTION
           p1: CONST Int type=kotlin.Int value=42
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
@@ -69,16 +69,18 @@ FILE fqName:<root> fileName:/constructorWithAdaptedArguments.kt
   FUN name:testConstructor visibility:public modality:FINAL <> () returnType:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testConstructor (): kotlin.Any declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.Any
-          ERROR_CALL 'Unsupported callable reference: ::<Unresolved reference: C>#' type=IrErrorType
+        CALL 'public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
+          fn: FUNCTION_REFERENCE 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.C' type=kotlin.reflect.KFunction1<kotlin.Int, <root>.C> origin=null reflectionTarget=<same>
   FUN name:testInnerClassConstructor visibility:public modality:FINAL <> (outer:<root>.Outer) returnType:kotlin.Any
     VALUE_PARAMETER name:outer index:0 type:<root>.Outer
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructor (outer: <root>.Outer): kotlin.Any declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.Any
-          ERROR_CALL 'Unsupported callable reference: R|<local>/outer|::<Unresolved reference: Inner>#' type=IrErrorType
+        CALL 'public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
+          fn: FUNCTION_REFERENCE 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.Outer.Inner' type=kotlin.reflect.KFunction1<kotlin.Int, <root>.Outer.Inner> origin=null reflectionTarget=<same>
+            $this: GET_VAR 'outer: <root>.Outer declared in <root>.testInnerClassConstructor' type=<root>.Outer origin=null
   FUN name:testInnerClassConstructorCapturingOuter visibility:public modality:FINAL <> () returnType:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testInnerClassConstructorCapturingOuter (): kotlin.Any declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /use>#' type=kotlin.Any
-          ERROR_CALL 'Unsupported callable reference: R|/Outer.Outer|()::<Unresolved reference: Inner>#' type=IrErrorType
+        CALL 'public final fun use (fn: kotlin.Function1<kotlin.Int, kotlin.Any>): kotlin.Any declared in <root>' type=kotlin.Any origin=null
+          fn: FUNCTION_REFERENCE 'public constructor <init> (vararg xs: kotlin.Int) [primary] declared in <root>.Outer.Inner' type=kotlin.reflect.KFunction1<kotlin.Int, <root>.Outer.Inner> origin=null reflectionTarget=<same>
+            $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer' type=<root>.Outer origin=null

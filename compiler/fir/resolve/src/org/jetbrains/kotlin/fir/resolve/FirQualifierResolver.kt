@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.name.ClassId
 
-interface FirQualifierResolver : FirSessionComponent {
-    fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): FirClassifierSymbol<*>?
-    fun resolveSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>?
+abstract class FirQualifierResolver : FirSessionComponent {
+    abstract fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): FirClassifierSymbol<*>?
+    abstract fun resolveSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>?
 }

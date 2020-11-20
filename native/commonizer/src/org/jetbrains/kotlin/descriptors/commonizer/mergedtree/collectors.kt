@@ -72,7 +72,7 @@ internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(collector: (FqN
         if (packageFqName.isUnderStandardKotlinPackages || packageFqName.isUnderKotlinNativeSyntheticPackages)
             return
 
-        val ownPackageFragments = packageFragmentProvider.getPackageFragments(packageFqName)
+        val ownPackageFragments = packageFragmentProvider.packageFragments(packageFqName)
         val ownPackageMemberScopes = ownPackageFragments.asSequence()
             .filter { it !is ExportedForwardDeclarationsPackageFragmentDescriptor }
             .map { it.getMemberScope() }

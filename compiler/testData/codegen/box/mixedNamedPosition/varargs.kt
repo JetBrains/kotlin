@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: SPREAD_OPERATOR
 // !LANGUAGE: +NewInference +MixedNamedArgumentsInTheirOwnPosition
 
 fun foo1(
@@ -19,6 +21,7 @@ fun foo3(
 ) = "$p1 $p2 ${p3[0].toInt()} ${p3[1].toInt()}"
 
 fun box(): String {
+    if (foo1(1, 2, p2 = "3", p3 = 4.0) != "1 2 3 4") return "fail 1"
     if (foo1(p1 = *intArrayOf(1, 2), "3", p3 = 4.0) != "1 2 3 4") return "fail 2"
 
     if (foo2(p1 = 1, "2", "3", p3 = 4.0) != "1 2 3 4") return "fail 3"

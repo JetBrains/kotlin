@@ -23,12 +23,13 @@ import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
+import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.optionalProvider
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import java.io.File
 
-open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
+abstract class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
@@ -43,6 +44,9 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     val pluginClasspath: FileCollection
         get() = project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
 
+    @get:Internal
+    val taskProvider = GradleCompileTaskProvider(this)
+
     override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
     private val compileKotlinArgumentsContributor by project.provider {
@@ -50,8 +54,9 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     }
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        compileKotlinArgumentsContributor.contributeArguments(args, compilerArgumentsConfigurationFlags(
-            defaultsOnly,
+        compileKotlinArgumentsContributor.contributeArguments(
+            args, compilerArgumentsConfigurationFlags(
+                defaultsOnly,
             ignoreClasspathResolutionErrors
         ))
 
@@ -79,7 +84,7 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     private var processIncrementally = false
 
     private val javaPackagePrefix by project.optionalProvider { kotlinCompileTask.javaPackagePrefix }
-    private val buildReportMode by project.optionalProvider { kotlinCompileTask.buildReportMode }
+    private val reportingSettings by project.provider { kotlinCompileTask.reportingSettings }
 
     @TaskAction
     fun compile(inputs: IncrementalTaskInputs) {
@@ -99,14 +104,14 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
         val outputItemCollector = OutputItemsCollectorImpl()
         val environment = GradleCompilerEnvironment(
             compilerClasspath, messageCollector, outputItemCollector,
-            buildReportMode = buildReportMode,
+            reportingSettings = reportingSettings,
             outputFiles = allOutputFiles()
         )
         if (environment.toolsJar == null && !isAtLeastJava9) {
             throw GradleException("Could not find tools.jar in system classpath, which is required for kapt to work")
         }
 
-        val compilerRunner = GradleCompilerRunner(this)
+        val compilerRunner = GradleCompilerRunner(taskProvider)
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),
             commonSources = emptyList(),

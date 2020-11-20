@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.resolve;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap;
+import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.psi.KtElement;
@@ -30,7 +30,7 @@ import static org.jetbrains.kotlin.diagnostics.Errors.PLATFORM_CLASS_MAPPED_TO_K
 
 public class PlatformClassesMappedToKotlinChecker {
     public static void checkPlatformClassesMappedToKotlin(
-            @NotNull PlatformToKotlinClassMap platformToKotlinMap,
+            @NotNull PlatformToKotlinClassMapper platformToKotlinMap,
             @NotNull BindingTrace trace,
             @NotNull KtImportDirective importDirective,
             @NotNull Collection<? extends DeclarationDescriptor> descriptors
@@ -44,7 +44,7 @@ public class PlatformClassesMappedToKotlinChecker {
     }
 
     public static void reportPlatformClassMappedToKotlin(
-            @NotNull PlatformToKotlinClassMap platformToKotlinMap,
+            @NotNull PlatformToKotlinClassMapper platformToKotlinMap,
             @NotNull BindingTrace trace,
             @NotNull KtElement element,
             @NotNull DeclarationDescriptor descriptor

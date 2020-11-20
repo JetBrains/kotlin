@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.asJava.builder
 
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.progress.ProcessCanceledException
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.impl.compiled.ClsFileImpl
@@ -44,7 +43,7 @@ fun buildLightClass(
     val project = files.first().project
 
     try {
-        val classBuilderFactory = KotlinLightClassBuilderFactory(createJavaFileStub(project, packageFqName, files))
+        val classBuilderFactory = KotlinLightClassBuilderFactory(createJavaFileStub(packageFqName, files))
         val state = GenerationState.Builder(
                 project,
                 classBuilderFactory,
@@ -77,7 +76,7 @@ fun buildLightClass(
     }
 }
 
-private fun createJavaFileStub(project: Project, packageFqName: FqName, files: Collection<KtFile>): PsiJavaFileStub {
+private fun createJavaFileStub(packageFqName: FqName, files: Collection<KtFile>): PsiJavaFileStub {
     val javaFileStub = PsiJavaFileStubImpl(packageFqName.asString(), /*compiled = */true)
     javaFileStub.psiFactory = ClsWrapperStubPsiFactory.INSTANCE
 

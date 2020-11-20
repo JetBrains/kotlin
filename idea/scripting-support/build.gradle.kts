@@ -26,13 +26,13 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlinx-serialization-compiler-plugin"))
     testRuntime(project(":kotlinx-serialization-ide-plugin")) { isTransitive = false }
+    testRuntime(project(":plugins:parcelize:parcelize-compiler"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide")) { isTransitive = false }
 
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
 
-    Platform[192].orHigher {
-        testCompileOnly(intellijPluginDep("java"))
-        testRuntime(intellijPluginDep("java"))
-    }
+    testCompileOnly(intellijPluginDep("java"))
+    testRuntime(intellijPluginDep("java"))
 
     testRuntimeOnly(toolsJar())
     testRuntime(project(":kotlin-reflect"))

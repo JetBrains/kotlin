@@ -42,4 +42,12 @@ projectTest(parallel = true) {
     dependsOn(":kotlin-stdlib-js-ir:packFullRuntimeKLib")
 }
 
+projectTest("testJvmICWithJdk11", parallel = true) {
+    workingDir = rootDir
+    filter {
+        includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerTestGenerated*")
+    }
+    executable = "${rootProject.extra["JDK_11"]}/bin/java"
+}
+
 testsJar()

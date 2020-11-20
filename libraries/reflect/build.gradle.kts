@@ -44,10 +44,13 @@ dependencies {
     proguardDeps(kotlinStdlib())
     proguardAdditionalInJars(project(":kotlin-annotations-jvm"))
 
-    embedded(project(":core:type-system"))
     embedded(project(":kotlin-reflect-api"))
     embedded(project(":core:metadata"))
     embedded(project(":core:metadata.jvm"))
+    embedded(project(":core:compiler.common"))
+    embedded(project(":core:compiler.common.jvm"))
+    embedded(project(":core:deserialization.common"))
+    embedded(project(":core:deserialization.common.jvm"))
     embedded(project(":core:descriptors"))
     embedded(project(":core:descriptors.jvm"))
     embedded(project(":core:deserialization"))
@@ -106,6 +109,7 @@ val reflectShadowJar by task<ShadowJar> {
     configurations = listOf(embedded)
 
     exclude("**/*.proto")
+    exclude("org/jetbrains/annotations/Nls*.class")
 
     if (kotlinBuildProperties.relocation) {
         mergeServiceFiles()
@@ -158,9 +162,11 @@ val relocateCoreSources by task<Copy> {
     }
 
     from("$core/descriptors/src")
+    from("$core/descriptors.common/src")
     from("$core/descriptors.jvm/src")
     from("$core/descriptors.runtime/src")
     from("$core/deserialization/src")
+    from("$core/deserialization/deserialization.common/src")
     from("$core/util.runtime/src")
 
     exclude("META-INF/services/**")

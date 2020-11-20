@@ -2,7 +2,7 @@
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass<Int>): Int {
     val inner = javaClass.createInner<String>()
-    return inner.doSomething(1, "") { }
+    return inner.<!INAPPLICABLE_CANDIDATE!>doSomething<!>(1, "") { }
 }
 
 // FILE: JavaClass.java

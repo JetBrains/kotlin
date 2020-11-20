@@ -13,14 +13,14 @@ interface A<H> {
 abstract class B<H>() : A<H> {
     override fun foo() {
     }
-    override fun foo2() : Unit {
+    override fun foo2() : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Unit<!> {
     }
 
-    override val a : Double = 1.toDouble()
+    override val a : <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>Double<!> = 1.toDouble()
     override val a1 = 1.toDouble()
 
-    abstract override fun <X> g() : Int
-    abstract override fun <X> g1() : List<X>
+    abstract override fun <X> g() : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Int<!>
+    abstract override fun <X> g1() : <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>List<X><!>
 
-    abstract override val g : Iterator<Int>
+    abstract override val g : <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>Iterator<Int><!>
 }

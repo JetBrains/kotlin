@@ -258,7 +258,7 @@ class BodyGenerator(
     private fun generateAnySuperConstructorCall(body: IrBlockBody, ktElement: KtPureElement) {
         val anyConstructor = context.builtIns.any.constructors.single()
         body.statements.add(
-            IrDelegatingConstructorCallImpl(
+            IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                 ktElement.pureStartOffset, ktElement.pureEndOffset,
                 context.irBuiltIns.unitType,
                 context.symbolTable.referenceConstructor(anyConstructor)
@@ -269,7 +269,7 @@ class BodyGenerator(
     private fun generateEnumSuperConstructorCall(body: IrBlockBody, ktElement: KtElement, classDescriptor: ClassDescriptor) {
         val enumConstructor = context.builtIns.enum.constructors.single()
         body.statements.add(
-            IrEnumConstructorCallImpl(
+            IrEnumConstructorCallImpl.fromSymbolDescriptor(
                 ktElement.startOffsetSkippingComments, ktElement.endOffset,
                 context.irBuiltIns.unitType,
                 context.symbolTable.referenceConstructor(enumConstructor),
@@ -287,7 +287,7 @@ class BodyGenerator(
     fun generateEnumEntryInitializer(ktEnumEntry: KtEnumEntry, enumEntryDescriptor: ClassDescriptor): IrExpression {
         if (ktEnumEntry.declarations.isNotEmpty()) {
             val enumEntryConstructor = enumEntryDescriptor.unsubstitutedPrimaryConstructor!!
-            return IrEnumConstructorCallImpl(
+            return IrEnumConstructorCallImpl.fromSymbolDescriptor(
                 ktEnumEntry.startOffsetSkippingComments, ktEnumEntry.endOffset,
                 context.irBuiltIns.unitType,
                 context.symbolTable.referenceConstructor(enumEntryConstructor),

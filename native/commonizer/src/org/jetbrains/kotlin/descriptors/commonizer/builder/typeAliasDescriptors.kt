@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifier
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeAlias
@@ -14,6 +15,8 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTypeAliasNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode.Companion.indexOfCommon
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.TypeAliasExpander
+import org.jetbrains.kotlin.types.TypeAliasExpansion
 
 internal fun CirTypeAliasNode.buildDescriptors(
     components: GlobalDeclarationsBuilderComponents,
@@ -70,10 +73,21 @@ private fun CirTypeAlias.buildDescriptor(
         typeAliasDescriptor
     )
 
+    val lazyUnderlyingType = storageManager.createLazyValue {
+        underlyingType.buildType(targetComponents, typeParameterResolver, expandTypeAliases = false)
+    }
+
+    val lazyExpandedType = storageManager.createLazyValue {
+        TypeAliasExpander.NON_REPORTING.expandWithoutAbbreviation(
+            TypeAliasExpansion.createWithFormalArguments(typeAliasDescriptor),
+            Annotations.EMPTY
+        )
+    }
+
     typeAliasDescriptor.initialize(
         declaredTypeParameters = declaredTypeParameters,
-        underlyingType = storageManager.createLazyValue { underlyingType.buildType(targetComponents, typeParameterResolver) },
-        expandedType = storageManager.createLazyValue { expandedType.buildType(targetComponents, typeParameterResolver) }
+        underlyingType = lazyUnderlyingType,
+        expandedType = lazyExpandedType
     )
 
     // cache created type alias descriptor:

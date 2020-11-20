@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsModule
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsQualifier
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 
 private val BODILESS_BUILTIN_CLASSES = listOf(
@@ -59,11 +59,8 @@ private class DescriptorlessIrFileSymbol : IrFileSymbol {
 
     override val isBound get() = _owner != null
 
-    override val isPublicApi: Boolean
-        get() = error("Operation is unsupported")
-
-    override val signature: IdSignature
-        get() = error("Operation is unsupported")
+    override val signature: IdSignature?
+        get() = null
 }
 
 private fun isBuiltInClass(declaration: IrDeclaration): Boolean =
@@ -129,7 +126,7 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
                 element.acceptChildrenVoid(this)
             }
 
-            override fun visitDeclaration(declaration: IrDeclaration) {
+            override fun visitDeclaration(declaration: IrDeclarationBase) {
                 context.externalDeclarations.add(declaration)
                 super.visitDeclaration(declaration)
             }

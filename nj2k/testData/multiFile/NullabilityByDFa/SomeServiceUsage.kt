@@ -39,6 +39,10 @@ class SomeServiceUsage {
     // nullable, safe-call
     fun aString6(): String? {
         val s = serviceNullable
-        return s?.nullableString()
+        return if (s != null) {
+            s.nullableString()
+        } else {
+            null
+        }
     }
 }

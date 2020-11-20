@@ -7,36 +7,38 @@ package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.FirElement
 
-sealed class CompositeTransformResult<out T : Any>() {
+sealed class CompositeTransformResult<out T : Any> {
 
     class Single<out T : Any>(val _single: T) : CompositeTransformResult<T>()
 
     class Multiple<out T : Any>(val _list: List<T>) : CompositeTransformResult<T>()
 
     companion object {
-        fun <T : Any> empty() = CompositeTransformResult.Multiple<T>(emptyList<T>())
-        fun <T : Any> single(t: T) = CompositeTransformResult.Single(t)
-        fun <T : Any> many(l: List<T>) = CompositeTransformResult.Multiple(l)
+        fun <T : Any> empty() = Multiple(emptyList<T>())
+        fun <T : Any> single(t: T) = Single(t)
+        fun <T : Any> many(l: List<T>) = Multiple(l)
     }
 
+    @Suppress("UNCHECKED_CAST")
     val list: List<T>
         get() = when (this) {
-            is CompositeTransformResult.Multiple<*> -> _list as List<T>
+            is Multiple<*> -> _list as List<T>
             else -> error("!")
         }
 
 
+    @Suppress("UNCHECKED_CAST")
     val single: T
         get() = when (this) {
-            is CompositeTransformResult.Single<*> -> _single as T
+            is Single<*> -> _single as T
             else -> error("!")
         }
 
     val isSingle
-        get() = this is CompositeTransformResult.Single<*>
+        get() = this is Single<*>
 
     val isEmpty
-        get() = this is CompositeTransformResult.Multiple<*> && this.list.isEmpty()
+        get() = this is Multiple<*> && this.list.isEmpty()
 }
 
 @Suppress("NOTHING_TO_INLINE")

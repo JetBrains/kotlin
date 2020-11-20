@@ -3,6 +3,6 @@ interface Some {
 }
 
 class SomeImpl : Some  {
-    override fun test() {}
-    override fun test() {}
+    <!CONFLICTING_OVERLOADS!>override fun test() {}<!>
+    <!CONFLICTING_OVERLOADS!>override fun test() {}<!>
 }

@@ -1,0 +1,6 @@
+fun test() {
+    foo()
+    /* comment */foo()
+}
+
+fun foo() {}

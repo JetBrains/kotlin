@@ -1,7 +1,9 @@
+// !LANGUAGE: -UseCorrectExecutionOrderForVarargArguments
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS, JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR
+// IGNORE_BACKEND_MULTI_MODULE: JVM_IR, JVM_MULTI_MODULE_IR_AGAINST_OLD
+// IGNORE_BACKEND_FIR: JVM_IR
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 // WITH_RUNTIME
@@ -35,18 +37,16 @@ fun box(): String {
                        init = { invokeOrder += " init"; "I" }())
     if (result != "C, R, I") return "fail 1: $result"
 
-    //Change test after KT-17691 FIX; and remove cloned test for Native (enable this).
     if (invokeOrder != " receiver initconstraints") return "fail 2: $invokeOrder"
 
     result = ""
     invokeOrder = ""
     result = inlineFun(init = { invokeOrder += "init"; "I" }(),
-                       constraints = *arrayOf({ invokeOrder += "constraints";A("C") }()),
+                       constraints = *arrayOf({ invokeOrder += " constraints";A("C") }()),
                        receiver = { invokeOrder += " receiver"; "R" }()
     )
     if (result != "C, R, I") return "fail 3: $result"
-    //Change test after KT-17691 FIX
-    if (invokeOrder != "init receiverconstraints") return "fail 4: $invokeOrder"
+    if (invokeOrder != "init receiver constraints") return "fail 4: $invokeOrder"
 
     result = ""
     invokeOrder = ""

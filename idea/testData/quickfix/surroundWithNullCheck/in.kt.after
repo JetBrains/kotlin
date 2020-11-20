@@ -1,0 +1,6 @@
+// "Surround with null check" "true"
+fun test(a: String, b: List<String>?) {
+    if (b != null) {
+        a in b
+    }
+}

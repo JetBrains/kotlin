@@ -1,5 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
 // OPTIONS: usages
+
 package pack
 
 data class A(val <caret>n: Int, val s: String, val o: Any) {
@@ -25,3 +26,5 @@ fun List<A>.ext1() {
 }
 
 fun <T> T.getThis(): T = this
+
+// FIR_IGNORE

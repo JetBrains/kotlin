@@ -11,13 +11,12 @@ import org.gradle.workers.IsolationMode
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChanges
-import org.jetbrains.kotlin.gradle.plugin.CompositeSubpluginOption
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPluginWrapper
-import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.findKotlinStdlibClasspath
 import org.jetbrains.kotlin.gradle.tasks.findToolsJar
 import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.Serializable
@@ -25,11 +24,11 @@ import java.net.URL
 import java.net.URLClassLoader
 import javax.inject.Inject
 
-open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor: WorkerExecutor) : KaptTask() {
+abstract class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor: WorkerExecutor) : KaptTask() {
     @get:InputFiles
     @get:Classpath
     @Suppress("unused")
-    val kaptJars: Collection<File> by project.provider {
+    val kaptJars: Collection<File> by lazy {
         project.configurations.getByName(KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME).resolve()
     }
 
@@ -47,6 +46,18 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
 
     @get:Input
     lateinit var javacOptions: Map<String, String>
+
+    @get:Input
+    internal val kotlinAndroidPluginWrapperPluginDoesNotExist = project.plugins.none { it is KotlinAndroidPluginWrapper }
+
+    @get:Input
+    internal val kotlinStdlibClasspath = findKotlinStdlibClasspath(project)
+
+    @get:Internal
+    internal val projectDir = project.projectDir
+
+    @get:Internal
+    internal val providers = project.providers
 
     private fun getAnnotationProcessorOptions(): Map<String, String> {
         val options = processorOptions.subpluginOptionsByPluginId[Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID] ?: return emptyMap()
@@ -70,7 +81,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
         }
 
         val compileClasspath = classpath.files.toMutableList()
-        if (project.plugins.none { it is KotlinAndroidPluginWrapper }) {
+        if (kotlinAndroidPluginWrapperPluginDoesNotExist) {
             compileClasspath.addAll(0, PathUtil.getJdkClassesRootsFromCurrentJre())
         }
 
@@ -82,7 +93,7 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
         }
 
         val optionsForWorker = KaptOptionsForWorker(
-            project.projectDir,
+            projectDir,
             compileClasspath,
             javaSourceRoots.toList(),
 
@@ -108,24 +119,34 @@ open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor
         if (annotationProcessorFqNames.isEmpty() && kaptClasspath.isEmpty())
             return
 
-        val kaptClasspath = kaptJars + findKotlinStdlibClasspath(project)
+        val kaptClasspath = kaptJars + kotlinStdlibClasspath
 
         workerExecutor.submit(KaptExecution::class.java) { config ->
-            val isolationModeStr = project.findProperty("kapt.workers.isolation") as String? ?: "none"
+            //TODO for gradle < 6.5
+            val isolationModeStr = getValue("kapt.workers.isolation") ?: "none"
             config.isolationMode = when (isolationModeStr.toLowerCase()) {
                 "process" -> IsolationMode.PROCESS
                 "none" -> IsolationMode.NONE
                 else -> IsolationMode.NONE
             }
             config.params(optionsForWorker, findToolsJar()?.toURI()?.toURL()?.toString().orEmpty(), kaptClasspath)
-            if (project.findProperty("kapt.workers.log.classloading") == "true") {
+            if (getValue("kapt.workers.log.classloading") == "true") {
                 // for tests
                 config.forkOptions.jvmArgs("-verbose:class")
             }
             logger.info("Kapt worker classpath: ${config.classpath}")
         }
     }
+
+    internal fun getValue(propertyName: String): String? =
+        if (isGradleVersionAtLeast(6, 5)) {
+            providers.systemProperty(propertyName).forUseAtConfigurationTime().orNull
+        } else {
+            project.findProperty(propertyName) as String?
+        }
+
 }
+
 
 private class KaptExecution @Inject constructor(
     val optionsForWorker: KaptOptionsForWorker,

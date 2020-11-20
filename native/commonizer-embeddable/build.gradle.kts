@@ -20,5 +20,5 @@ publish()
 noDefaultJar()
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
-sourcesJar()
-javadocJar()
+sourcesJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public sources
+javadocJar { includeEmptyDirs = false; eachFile { exclude() } } // empty Jar, no public javadocs

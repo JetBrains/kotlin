@@ -13,6 +13,11 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -21,11 +26,11 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
+import org.jetbrains.kotlin.load.java.JavaDefaultQualifiers
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_NULL_FQ_NAME
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_VALUE_FQ_NAME
 import org.jetbrains.kotlin.load.java.descriptors.AnnotationDefaultValue
@@ -83,22 +88,29 @@ private fun ConeKotlinType.enhanceConeKotlinType(
 ): ConeKotlinType {
     return when (this) {
         is ConeFlexibleType -> {
+            val needsFlexibleNullabilityAttribute = lowerBound.nullability != upperBound.nullability && !lowerBound.hasEnhancedNullability
             val lowerResult = lowerBound.enhanceInflexibleType(
-                session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index
+                session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index,
+                attributes = if (needsFlexibleNullabilityAttribute)
+                    lowerBound.attributes.withFlexible()
+                else
+                    lowerBound.attributes
             )
             val upperResult = upperBound.enhanceInflexibleType(
-                session, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index
+                session, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index, upperBound.attributes
             )
 
             when {
-                lowerResult === lowerBound && upperResult === upperBound -> this
+                !needsFlexibleNullabilityAttribute && lowerResult === lowerBound && upperResult === upperBound -> this
                 this is ConeRawType -> ConeRawType(lowerResult, upperResult)
                 else -> coneFlexibleOrSimpleType(
                     session, lowerResult, upperResult, isNotNullTypeParameter = qualifiers(index).isNotNullTypeParameter
                 )
             }
         }
-        is ConeSimpleKotlinType -> enhanceInflexibleType(session, TypeComponentPosition.INFLEXIBLE, qualifiers, index)
+        is ConeSimpleKotlinType -> enhanceInflexibleType(
+            session, TypeComponentPosition.INFLEXIBLE, qualifiers, index, attributes
+        )
         else -> this
     }
 }
@@ -153,7 +165,8 @@ private fun ConeKotlinType.enhanceInflexibleType(
     session: FirSession,
     position: TypeComponentPosition,
     qualifiers: IndexedJavaTypeQualifiers,
-    index: Int
+    index: Int,
+    attributes: ConeAttributes = this.attributes
 ): ConeKotlinType {
     require(this !is ConeFlexibleType) {
         "$this should not be flexible"
@@ -172,7 +185,7 @@ private fun ConeKotlinType.enhanceInflexibleType(
         typeArguments
     } else {
         var globalArgIndex = index + 1
-        typeArguments.mapIndexed { localArgIndex, arg ->
+        typeArguments.map { arg ->
             if (arg.kind != ProjectionKind.INVARIANT) {
                 globalArgIndex++
                 arg
@@ -193,7 +206,7 @@ private fun ConeKotlinType.enhanceInflexibleType(
 
     if (!wereChangesInArgs && originalTag == enhancedTag && enhancedNullability == isNullable) return this
 
-    val enhancedType = enhancedTag.constructType(enhancedArguments, enhancedNullability)
+    val enhancedType = enhancedTag.constructType(enhancedArguments, enhancedNullability, attributes)
 
     // TODO: why all of these is needed
 //    val enhancement = if (effectiveQualifiers.isNotNullTypeParameter) NotNullTypeParameter(enhancedType) else enhancedType
@@ -244,11 +257,11 @@ private fun ConeClassifierLookupTag.enhanceMutability(
 
 internal data class TypeAndDefaultQualifiers(
     val type: FirTypeRef?, // null denotes '*' here
-    val defaultQualifiers: JavaTypeQualifiers?
+    val defaultQualifiers: JavaDefaultQualifiers?
 )
 
 internal fun FirTypeRef.typeArguments(): List<FirTypeProjection> =
-    (this as? FirUserTypeRef)?.qualifier?.lastOrNull()?.typeArguments.orEmpty()
+    (this as? FirUserTypeRef)?.qualifier?.lastOrNull()?.typeArgumentList?.typeArguments.orEmpty()
 
 internal fun JavaType.typeArguments(): List<JavaType?> = (this as? JavaClassifierType)?.typeArguments.orEmpty()
 
@@ -277,7 +290,7 @@ internal fun ConeKotlinType.lexicalCastFrom(session: FirSession, value: String):
                 buildQualifiedAccessExpression {
                     calleeReference = buildResolvedNamedReference {
                         this.name = name
-                        resolvedSymbol = firStaticProperty.symbol as FirCallableSymbol<*>
+                        resolvedSymbol = firStaticProperty.symbol
                     }
                 }
             } else null
@@ -319,3 +332,15 @@ internal fun FirValueParameter.getDefaultValueFromAnnotation(): AnnotationDefaul
 private val DEFAULT_VALUE_ID = ClassId.topLevel(DEFAULT_VALUE_FQ_NAME)
 private val DEFAULT_NULL_ID = ClassId.topLevel(DEFAULT_NULL_FQ_NAME)
 
+internal fun List<FirAnnotationCall>.computeTypeAttributesForJavaType(): ConeAttributes =
+    computeTypeAttributes { classId ->
+        when (classId) {
+            CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID -> add(CompilerConeAttributes.EnhancedNullability)
+            in NOT_NULL_ANNOTATION_IDS -> add(CompilerConeAttributes.EnhancedNullability)
+            JAVAX_NONNULL_ANNOTATION_ID,
+            JAVAX_CHECKFORNULL_ANNOTATION_ID,
+            COMPATQUAL_NONNULL_ANNOTATION_ID,
+            ANDROIDX_RECENTLY_NON_NULL_ANNOTATION_ID
+            -> add(CompilerConeAttributes.EnhancedNullability)
+        }
+    }

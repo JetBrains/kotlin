@@ -1,40 +1,44 @@
-public final class SmartSet <T> extends kotlin.collections.AbstractSet<T> implements java.util.Set<T>, kotlin.collections.MutableSet<T>, kotlin.jvm.internal.markers.KMutableSet {
-    private java.lang.Object data;
-    private int size;
-    private static final int ARRAY_THRESHOLD;
-    @org.jetbrains.annotations.NotNull
-    public static final SmartSet.Companion Companion;
+public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.AbstractSet<T> implements java.util.Set<T>, kotlin.collections.MutableSet<T>, kotlin.jvm.internal.markers.KMutableSet {
+  @org.jetbrains.annotations.NotNull()
+  public static final SmartSet.Companion Companion;
 
-    public int getSize() { /* compiled code */ }
+  private int size;
 
-    public void setSize(int i) { /* compiled code */ }
+  private java.lang.Object data;
 
-    @org.jetbrains.annotations.NotNull
-    public java.util.Iterator<T> iterator() { /* compiled code */ }
+  private static final int ARRAY_THRESHOLD;
 
-    public boolean add(T element) { /* compiled code */ }
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public static final <T> SmartSet<T> create();// <T>  create()
 
-    public void clear() { /* compiled code */ }
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public static final <T> SmartSet<T> create(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>);// <T>  create(java.util.Collection<? extends T>)
 
-    private SmartSet() { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  public java.util.Iterator<T> iterator();//  iterator()
 
-    @kotlin.jvm.JvmStatic
-    @org.jetbrains.annotations.NotNull
-    public static final <T> SmartSet<T> create() { /* compiled code */ }
+  private  SmartSet();//  .ctor()
 
-    @kotlin.jvm.JvmStatic
-    @org.jetbrains.annotations.NotNull
-    public static final <T> SmartSet<T> create(@org.jetbrains.annotations.NotNull java.util.Collection<? extends T> set) { /* compiled code */ }
+  public boolean add(T);//  add(T)
 
-    public static final class Companion {
-        @kotlin.jvm.JvmStatic
-        @org.jetbrains.annotations.NotNull
-        public final <T> SmartSet<T> create() { /* compiled code */ }
+  public int getSize();//  getSize()
 
-        @kotlin.jvm.JvmStatic
-        @org.jetbrains.annotations.NotNull
-        public final <T> SmartSet<T> create(@org.jetbrains.annotations.NotNull java.util.Collection<? extends T> set) { /* compiled code */ }
+  public void clear();//  clear()
 
-        private Companion() { /* compiled code */ }
-    }
-}
+  public void setSize(int);//  setSize(int)
+
+
+public static final class Companion /* SmartSet.Companion*/ {
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public final <T> SmartSet<T> create();// <T>  create()
+
+  @kotlin.jvm.JvmStatic()
+  @org.jetbrains.annotations.NotNull()
+  public final <T> SmartSet<T> create(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>);// <T>  create(java.util.Collection<? extends T>)
+
+  private  Companion();//  .ctor()
+
+}}

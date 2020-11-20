@@ -55,7 +55,7 @@ public class ErrorUtils {
         ERROR_MODULE = new ModuleDescriptor() {
             @Nullable
             @Override
-            public <T> T getCapability(@NotNull Capability<T> capability) {
+            public <T> T getCapability(@NotNull ModuleCapability<T> capability) {
                 return null;
             }
 
@@ -105,6 +105,12 @@ public class ErrorUtils {
             @Override
             public List<ModuleDescriptor> getExpectedByModules() {
                 return emptyList();
+            }
+
+            @NotNull
+            @Override
+            public Set<ModuleDescriptor> getAllExpectedByModules() {
+                return emptySet();
             }
 
             @Override
@@ -349,7 +355,7 @@ public class ErrorUtils {
             ClassConstructorDescriptorImpl
                     errorConstructor = ClassConstructorDescriptorImpl.create(this, Annotations.Companion.getEMPTY(), true, SourceElement.NO_SOURCE);
             errorConstructor.initialize(Collections.<ValueParameterDescriptor>emptyList(),
-                                        Visibilities.INTERNAL);
+                                        DescriptorVisibilities.INTERNAL);
             MemberScope memberScope = createErrorScope(getName().asString());
             errorConstructor.setReturnType(
                     new ErrorType(
@@ -417,7 +423,7 @@ public class ErrorUtils {
                 ERROR_CLASS,
                 Annotations.Companion.getEMPTY(),
                 Modality.OPEN,
-                Visibilities.PUBLIC,
+                DescriptorVisibilities.PUBLIC,
                 true,
                 Name.special("<ERROR PROPERTY>"),
                 CallableMemberDescriptor.Kind.DECLARATION,
@@ -439,7 +445,7 @@ public class ErrorUtils {
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),
                 Modality.OPEN,
-                Visibilities.PUBLIC
+                DescriptorVisibilities.PUBLIC
         );
         return function;
     }

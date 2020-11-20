@@ -17,15 +17,10 @@
 package org.jetbrains.kotlin.idea.debugger
 
 import com.intellij.debugger.SourcePosition
-import com.intellij.debugger.engine.DebugProcess
-import com.intellij.debugger.engine.DebuggerUtils
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
-import com.sun.jdi.AbsentInformationException
-import com.sun.jdi.ObjectCollectedException
-import com.sun.jdi.ReferenceType
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClassOrNull
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -46,7 +41,6 @@ import org.jetbrains.kotlin.psi.psiUtil.isTopLevelInFileOrScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.org.objectweb.asm.Type
-import java.util.*
 
 class DebuggerClassNameProvider(
     val project: Project, val searchScope: GlobalSearchScope,

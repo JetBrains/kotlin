@@ -27,30 +27,25 @@ class ControlFlowAnalysisDiagnosticComponent(collector: AbstractDiagnosticCollec
 
     private fun <F : FirClass<F>> visitClass(
         klass: FirClass<F>,
-        controlFlowGraphReference: FirControlFlowGraphReference,
+        controlFlowGraphReference: FirControlFlowGraphReference?,
         data: CheckerContext
     ) {
-        val graph = controlFlowGraphReference.controlFlowGraph ?: return
-        runCheck {
-            controlFlowAnalyzer.analyzeClassInitializer(klass, graph, data, it)
-        }
+        val graph = controlFlowGraphReference?.controlFlowGraph ?: return
+        controlFlowAnalyzer.analyzeClassInitializer(klass, graph, data, reporter)
     }
 
     // ------------------------------- Property initializer -------------------------------
     override fun visitProperty(property: FirProperty, data: CheckerContext) {
-        val graph = property.controlFlowGraphReference.controlFlowGraph ?: return
-        runCheck {
-            controlFlowAnalyzer.analyzePropertyInitializer(property, graph, data, it)
-        }
+        val graph = property.controlFlowGraphReference?.controlFlowGraph ?: return
+        controlFlowAnalyzer.analyzePropertyInitializer(property, graph, data, reporter)
     }
 
     // ------------------------------- Function -------------------------------
 
     override fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>, data: CheckerContext) {
-        val graph = function.controlFlowGraphReference.controlFlowGraph ?: return
-        runCheck {
-            controlFlowAnalyzer.analyzeFunction(function, graph, data, it)
-        }
+        val graph = function.controlFlowGraphReference?.controlFlowGraph ?: return
+
+        controlFlowAnalyzer.analyzeFunction(function, graph, data, reporter)
     }
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: CheckerContext) {
@@ -58,7 +53,9 @@ class ControlFlowAnalysisDiagnosticComponent(collector: AbstractDiagnosticCollec
     }
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: CheckerContext) {
-        visitFunction(propertyAccessor, data)
+        val graph = propertyAccessor.controlFlowGraphReference?.controlFlowGraph ?: return
+
+        controlFlowAnalyzer.analyzePropertyAccessor(propertyAccessor, graph, data, reporter)
     }
 
     override fun visitConstructor(constructor: FirConstructor, data: CheckerContext) {

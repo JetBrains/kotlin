@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl.Modifier.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -20,13 +20,11 @@ open class FirDeclarationStatusImpl(
     override val modality: Modality?
 ) : FirPureAbstractElement(), FirDeclarationStatus {
     override val source: FirSourceElement? get() = null
-    override val effectiveVisibility: FirEffectiveVisibility
-        get() = FirEffectiveVisibility.Default
     protected var flags: Int = 0
 
-    private operator fun get(modifier: Modifier): Boolean = (flags and modifier.mask) != 0
+    operator fun get(modifier: Modifier): Boolean = (flags and modifier.mask) != 0
 
-    private operator fun set(modifier: Modifier, value: Boolean) {
+    operator fun set(modifier: Modifier, value: Boolean) {
         flags = if (value) {
             flags or modifier.mask
         } else {
@@ -142,7 +140,7 @@ open class FirDeclarationStatusImpl(
             this[FUN] = value
         }
 
-    private enum class Modifier(val mask: Int) {
+    enum class Modifier(val mask: Int) {
         EXPECT(0x1),
         ACTUAL(0x2),
         OVERRIDE(0x4),
@@ -169,7 +167,7 @@ open class FirDeclarationStatusImpl(
         return this
     }
 
-    fun resolved(visibility: Visibility, effectiveVisibility: FirEffectiveVisibility, modality: Modality): FirDeclarationStatus {
-        return FirResolvedDeclarationStatusImpl(visibility, effectiveVisibility, modality, flags)
+    fun resolved(visibility: Visibility, modality: Modality): FirResolvedDeclarationStatusImpl {
+        return FirResolvedDeclarationStatusImpl(visibility, modality, flags)
     }
 }

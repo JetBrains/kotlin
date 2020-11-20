@@ -5,7 +5,7 @@ FILE: Derived.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/Derived|.R|/Derived.myHost|.R|kotlin/String.length|
+            this@R|/Derived|.R|SubstitutionOverride</Derived.myHost>|.R|kotlin/String.length|
         }
 
     }

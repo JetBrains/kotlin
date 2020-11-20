@@ -1,6 +1,6 @@
 FILE: propertiesAndInitBlocks.kt
     public final inline fun run(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
-        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final val x1: R|kotlin/Int| = Int(1)
         public get(): R|kotlin/Int|
@@ -18,7 +18,7 @@ FILE: propertiesAndInitBlocks.kt
         }
 
         local final class InitializerLocalClass : R|kotlin/Any| {
-            public[local] constructor(): R|InitializerLocalClass| {
+            public constructor(): R|InitializerLocalClass| {
                 super<R|kotlin/Any|>()
             }
 
@@ -34,7 +34,7 @@ FILE: propertiesAndInitBlocks.kt
     )
         public get(): R|kotlin/Unit| {
             local final class GetterLocalClass : R|kotlin/Any| {
-                public[local] constructor(): R|GetterLocalClass| {
+                public constructor(): R|GetterLocalClass| {
                     super<R|kotlin/Any|>()
                 }
 

@@ -6,6 +6,6 @@ internal fun Any.matchesRendering(other: Any): Boolean {
     return when {
         this::class != other::class -> false
         this !is UpdatableRendering<*> -> true
-        else -> this.<!INAPPLICABLE_CANDIDATE!>canUpdateFrom<!>(other as UpdatableRendering<*>)
+        else -> this.canUpdateFrom(other as UpdatableRendering<*>)
     }
 }

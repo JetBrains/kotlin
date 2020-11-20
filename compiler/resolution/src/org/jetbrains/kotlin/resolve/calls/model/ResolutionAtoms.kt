@@ -66,7 +66,7 @@ abstract class ResolvedCallAtom : ResolvedAtom() {
     abstract val typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     abstract val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     abstract val freshVariablesSubstitutor: FreshVariableNewTypeSubstitutor
-    abstract val knownParametersSubstitutor: TypeSubstitutor
+    abstract val knownParametersSubstitutor: NewTypeSubstitutor
     abstract val argumentsWithConversion: Map<KotlinCallArgument, SamConversionDescription>
     abstract val argumentsWithSuspendConversion: Map<KotlinCallArgument, UnwrappedType>
     abstract val argumentsWithUnitConversion: Map<KotlinCallArgument, UnwrappedType>
@@ -93,34 +93,36 @@ class ResolvedSubCallArgument(override val atom: SubKotlinCallArgument, resolveI
     }
 }
 
-interface PostponedResolvedAtomMarker {
-    val inputTypes: Collection<KotlinTypeMarker>
-    val outputType: KotlinTypeMarker?
-    val analyzed: Boolean
-}
-
-interface PostponedAtomWithRevisableExpectedType {
-    var revisedExpectedType: UnwrappedType?
-    val expectedType: UnwrappedType?
-    val atom: PostponableKotlinCallArgument
-}
 
 sealed class PostponedResolvedAtom : ResolvedAtom(), PostponedResolvedAtomMarker {
     abstract override val inputTypes: Collection<UnwrappedType>
     abstract override val outputType: UnwrappedType?
-    abstract val expectedType: UnwrappedType?
+    abstract override val expectedType: UnwrappedType?
 }
 
 class LambdaWithTypeVariableAsExpectedTypeAtom(
     override val atom: LambdaKotlinCallArgument,
     override val expectedType: UnwrappedType
-) : PostponedResolvedAtom(), PostponedAtomWithRevisableExpectedType {
+) : PostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
     override val inputTypes: Collection<UnwrappedType> get() = listOf(expectedType)
     override val outputType: UnwrappedType? get() = null
 
     override var revisedExpectedType: UnwrappedType? = null
+        private set
 
-    var parameterTypesFromDeclaration: List<UnwrappedType?>? = null
+    override var parameterTypesFromDeclaration: List<UnwrappedType?>? = null
+        private set
+
+    override fun updateParameterTypesFromDeclaration(types: List<KotlinTypeMarker?>?) {
+        @Suppress("UNCHECKED_CAST")
+        types as List<UnwrappedType?>?
+        parameterTypesFromDeclaration = types
+    }
+
+    override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
+        require(expectedType is UnwrappedType)
+        revisedExpectedType = expectedType
+    }
 
     fun setAnalyzed(resolvedLambdaAtom: ResolvedLambdaAtom) {
         setAnalyzedResults(listOf(resolvedLambdaAtom))
@@ -168,6 +170,8 @@ abstract class ResolvedCallableReferenceAtom(
     var candidate: CallableReferenceCandidate? = null
         private set
 
+    var completed: Boolean = false
+
     fun setAnalyzedResults(
         candidate: CallableReferenceCandidate?,
         subResolvedAtoms: List<ResolvedAtom>
@@ -207,8 +211,16 @@ class CallableReferenceWithRevisedExpectedTypeAtom(
 
 class PostponedCallableReferenceAtom(
     eagerCallableReferenceAtom: EagerCallableReferenceAtom
-) : AbstractPostponedCallableReferenceAtom(eagerCallableReferenceAtom.atom, eagerCallableReferenceAtom.expectedType), PostponedAtomWithRevisableExpectedType {
+) : AbstractPostponedCallableReferenceAtom(eagerCallableReferenceAtom.atom, eagerCallableReferenceAtom.expectedType),
+    PostponedCallableReferenceMarker
+{
     override var revisedExpectedType: UnwrappedType? = null
+        private set
+
+    override fun reviseExpectedType(expectedType: KotlinTypeMarker) {
+        require(expectedType is UnwrappedType)
+        revisedExpectedType = expectedType
+    }
 }
 
 class ResolvedCollectionLiteralAtom(
@@ -235,16 +247,17 @@ sealed class CallResolutionResult(
 
     fun completedDiagnostic(substitutor: NewTypeSubstitutor): List<KotlinCallDiagnostic> {
         return diagnostics.map {
-            if (it !is NewConstraintError) return@map it
-            val lowerType = it.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
+            val error = it.constraintSystemError ?: return@map it
+            if (error !is NewConstraintError) return@map it
+            val lowerType = error.lowerType.safeAs<KotlinType>()?.unwrap() ?: return@map it
             val newLowerType = substitutor.safeSubstitute(lowerType.unCapture())
-            NewConstraintError(newLowerType, it.upperType, it.position)
+            NewConstraintError(newLowerType, error.upperType, error.position).asDiagnostic()
         }
     }
 
     override val atom: ResolutionAtom? get() = null
 
-    override fun toString() = "diagnostics: (${diagnostics.joinToString()})"
+    override fun toString(): String = "diagnostics: (${diagnostics.joinToString()})"
 }
 
 open class SingleCallResolutionResult(

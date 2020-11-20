@@ -9,10 +9,13 @@ dependencies {
     compile(project(":idea:idea-frontend-api"))
     compile(project(":idea:idea-core"))
     compile(project(":compiler:fir:fir2ir"))
+    compile(project(":compiler:fir:fir2ir:jvm-backend"))
+    compile(project(":compiler:ir.serialization.common"))
     compile(project(":compiler:fir:resolve"))
     compile(project(":compiler:fir:checkers"))
     compile(project(":compiler:fir:java"))
     compile(project(":compiler:fir:jvm"))
+    implementation(project(":compiler:fir:entrypoint"))
     compile(intellijDep())
     compile(intellijCoreDep())
 
@@ -26,15 +29,14 @@ dependencies {
 
     testCompile(toolsJar())
     testCompile(projectTests(":idea"))
+    testCompile(project(":idea:idea-fir"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(projectTests(":compiler:fir:analysis-tests"))
     testCompile(projectTests(":idea:idea-test-framework"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
 
-    Platform[192].orHigher {
-        compile(intellijPluginDep("java"))
-    }
+    compile(intellijPluginDep("java"))
 }
 
 sourceSets {
@@ -42,7 +44,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-if (rootProject.findProperty("idea.fir.plugin") == "true") {
+if (kotlinBuildProperties.useFirIdeaPlugin) {
     projectTest {
         dependsOn(":dist")
         workingDir = rootDir

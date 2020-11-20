@@ -337,6 +337,19 @@ open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
             assertTasksExecuted(lintTask) // Check that the lint task ran successfully, KT-27170
         }
     }
+
+    @Test
+    fun testJvmWithJava() = with(Project("mppJvmWithJava")) {
+        setupWorkingDir()
+
+        build("build") {
+            assertSuccessful()
+        }
+
+        build("assemble") {
+            assertSuccessful()
+        }
+    }
 }
 
 open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
@@ -668,6 +681,17 @@ fun getSomething() = 10
 
         project.build("assembleDebug", options = options) {
             assertSuccessful()
+            assertContains("The 'kotlin-android-extensions' Gradle plugin is deprecated")
+        }
+    }
+
+    @Test
+    fun testParcelize() {
+        val project = Project("AndroidParcelizeProject")
+        val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
         }
     }
 
@@ -726,7 +750,7 @@ fun getSomething() = 10
 
         project.build("assemble", options = options) {
             assertFailed()
-            assertContains("Class 'User' is not abstract and does not implement abstract member public abstract fun writeToParcel")
+            assertContainsRegex("Class 'User' is not abstract and does not implement abstract member public abstract fun (writeToParcel|describeContents)".toRegex())
         }
 
         File(project.projectDir, "app/build.gradle").modify { it.replace("[\"views\"]", "[\"parcelize\", \"views\"]") }

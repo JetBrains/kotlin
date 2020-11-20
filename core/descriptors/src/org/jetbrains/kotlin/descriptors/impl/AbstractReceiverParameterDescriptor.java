@@ -120,8 +120,8 @@ public abstract class AbstractReceiverParameterDescriptor extends DeclarationDes
 
     @NotNull
     @Override
-    public Visibility getVisibility() {
-        return Visibilities.LOCAL;
+    public DescriptorVisibility getVisibility() {
+        return DescriptorVisibilities.LOCAL;
     }
 
     @NotNull

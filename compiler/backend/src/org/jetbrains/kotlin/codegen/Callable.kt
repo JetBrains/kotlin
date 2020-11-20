@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
@@ -42,7 +43,7 @@ interface Callable {
         }
     }
 
-    fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap) {
+    fun afterReceiverGeneration(v: InstructionAdapter, frameMap: FrameMap, state: GenerationState) {
     }
 
 }

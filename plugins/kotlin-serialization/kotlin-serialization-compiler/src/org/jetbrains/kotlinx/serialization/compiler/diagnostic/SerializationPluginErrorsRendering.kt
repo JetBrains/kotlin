@@ -54,8 +54,15 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         MAP.put(
             SerializationErrors.SERIALIZER_NULLABILITY_INCOMPATIBLE,
             "Type ''{1}'' is non-nullable and therefore can not be serialized with serializer for nullable type ''{0}''",
-            Renderers.RENDER_TYPE_WITH_ANNOTATIONS,
-            Renderers.RENDER_TYPE_WITH_ANNOTATIONS
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
+        )
+        MAP.put(
+            SerializationErrors.SERIALIZER_TYPE_INCOMPATIBLE,
+            "Class ''{1}'', which is serializer for type ''{2}'', is applied here to type ''{0}''. This may lead to errors or incorrect behavior.",
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE,
+            Renderers.RENDER_TYPE
         )
         MAP.put(
             SerializationErrors.TRANSIENT_MISSING_INITIALIZER,

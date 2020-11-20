@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -60,18 +61,19 @@ class JvmSerializerExtension @JvmOverloads constructor(
     override val metadataVersion = state.metadataVersion
     private val jvmDefaultMode = state.jvmDefaultMode
     private val approximator = state.typeApproximator
+    private val useOldManglingScheme = state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
     override fun shouldSerializeFunction(descriptor: FunctionDescriptor): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != Visibilities.PRIVATE
+        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != DescriptorVisibilities.PRIVATE
     }
 
     override fun shouldSerializeProperty(descriptor: PropertyDescriptor): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != Visibilities.PRIVATE
+        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != DescriptorVisibilities.PRIVATE
     }
 
     override fun shouldSerializeTypeAlias(descriptor: TypeAliasDescriptor): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != Visibilities.PRIVATE
+        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != DescriptorVisibilities.PRIVATE
     }
 
     override fun shouldSerializeNestedClass(descriptor: ClassDescriptor): Boolean {
@@ -215,6 +217,13 @@ class JvmSerializerExtension @JvmOverloads constructor(
         ) {
             versionRequirementTable?.writeFunctionNameManglingForReturnTypeRequirement(proto::addVersionRequirement)
         }
+
+        if ((requiresFunctionNameManglingForReturnType(descriptor) ||
+                    requiresFunctionNameManglingForParameterTypes(descriptor)) &&
+            !DescriptorUtils.hasJvmNameAnnotation(descriptor) && !useOldManglingScheme
+        ) {
+            versionRequirementTable?.writeNewFunctionNameManglingRequirement(proto::addVersionRequirement)
+        }
     }
 
     private fun MutableVersionRequirementTable.writeInlineParameterNullCheckRequirement(add: (Int) -> Unit) {
@@ -231,9 +240,13 @@ class JvmSerializerExtension @JvmOverloads constructor(
         }
     }
 
+    private fun MutableVersionRequirementTable.writeNewFunctionNameManglingRequirement(add: (Int) -> Unit) {
+        add(writeVersionRequirement(1, 4, 30, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this))
+    }
+
     private fun FunctionDescriptor.needsInlineParameterNullCheckRequirement(): Boolean =
         isInline && !isSuspend && !isParamAssertionsDisabled &&
-                !Visibilities.isPrivate(visibility) &&
+                !DescriptorVisibilities.isPrivate(visibility) &&
                 (valueParameters.any { it.type.isFunctionType } || extensionReceiverParameter?.type?.isFunctionType == true)
 
     override fun serializeProperty(
@@ -278,12 +291,15 @@ class JvmSerializerExtension @JvmOverloads constructor(
         }
 
         if (!DescriptorUtils.hasJvmNameAnnotation(descriptor) && requiresFunctionNameManglingForReturnType(descriptor)) {
+            if (!useOldManglingScheme) {
+                versionRequirementTable?.writeNewFunctionNameManglingRequirement(proto::addVersionRequirement)
+            }
             versionRequirementTable?.writeFunctionNameManglingForReturnTypeRequirement(proto::addVersionRequirement)
         }
     }
 
     private fun PropertyDescriptor.isJvmFieldPropertyInInterfaceCompanion(): Boolean {
-        if (!JvmAbi.hasJvmFieldAnnotation(this)) return false
+        if (!DescriptorsJvmAbiUtil.hasJvmFieldAnnotation(this)) return false
 
         val container = containingDeclaration
         if (!DescriptorUtils.isCompanionObject(container)) return false

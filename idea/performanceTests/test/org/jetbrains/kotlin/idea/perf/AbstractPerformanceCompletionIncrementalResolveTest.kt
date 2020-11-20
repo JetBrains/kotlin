@@ -9,6 +9,8 @@ import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.testFramework.RunAll
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.completion.CompletionBindingContextProvider
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
@@ -33,11 +35,6 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
 
         @JvmStatic
         val stats: Stats = Stats("completion-incremental")
-
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
-        }
     }
 
     override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
@@ -53,7 +50,9 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
 
     override fun tearDown() {
         commitAllDocuments()
-        super.tearDown()
+        RunAll(
+            ThrowableRunnable { super.tearDown() }
+        ).run()
     }
 
     private fun doWarmUpPerfTest() {

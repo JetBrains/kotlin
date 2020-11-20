@@ -1,7 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // !LANGUAGE: +StrictJavaNullabilityAssertions
 // TARGET_BACKEND: JVM
-// SKIP_JDK6
 // See KT-8135
 // We could generate runtime assertion on call site for 'generic<NOT_NULL_TYPE>()' below.
 
@@ -25,7 +23,8 @@ fun <T> generic(j: J) = j.nullT<T>()
 import org.jetbrains.annotations.NotNull;
 
 public class J {
-    public <T> @NotNull T nullT() {
+    @NotNull
+    public <T> T nullT() {
         return null;
     }
 

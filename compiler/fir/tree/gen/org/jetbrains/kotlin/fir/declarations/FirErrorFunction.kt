@@ -31,7 +31,7 @@ abstract class FirErrorFunction : FirPureAbstractElement(), FirFunction<FirError
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverTypeRef: FirTypeRef?
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
     abstract override val diagnostic: ConeDiagnostic
@@ -46,15 +46,17 @@ abstract class FirErrorFunction : FirPureAbstractElement(), FirFunction<FirError
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+
     abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
+
+    abstract override fun replaceBody(newBody: FirBlock?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction
-
-    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirErrorFunction
 

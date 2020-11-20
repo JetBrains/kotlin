@@ -240,7 +240,7 @@ fun <T : KtDeclaration> insertDeclaration(declaration: T, targetSibling: PsiElem
         anchorCandidates.add(targetSibling.siblings().last { it is KtEnumEntry })
     }
 
-    val anchor = anchorCandidates.minBy { it.startOffset }!!.parentsWithSelf.first { it.parent == targetParent }
+    val anchor = anchorCandidates.minByOrNull { it.startOffset }!!.parentsWithSelf.first { it.parent == targetParent }
     val targetContainer = anchor.parent!!
 
     @Suppress("UNCHECKED_CAST")

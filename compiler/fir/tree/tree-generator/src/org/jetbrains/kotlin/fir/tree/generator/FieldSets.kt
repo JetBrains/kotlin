@@ -24,7 +24,7 @@ object FieldSets {
     val calleeReference = field("calleeReference", reference, withReplace = true)
 
     val receivers = fieldSet(
-        field("explicitReceiver", expression, nullable = true).withTransform(),
+        field("explicitReceiver", expression, nullable = true, withReplace = true).withTransform(),
         field("dispatchReceiver", expression).withTransform(),
         field("extensionReceiver", expression).withTransform()
     )
@@ -47,8 +47,8 @@ object FieldSets {
     fun symbol(symbolClassName: String, argument: String? = null): Field =
         symbolWithPackage("fir.symbols.impl", symbolClassName, argument)
 
-    fun body(nullable: Boolean = false) =
-        field("body", block, nullable)
+    fun body(nullable: Boolean = false, withReplace: Boolean = false) =
+        field("body", block, nullable, withReplace = withReplace)
 
     val returnTypeRef =
         field("returnTypeRef", typeRef)
@@ -74,7 +74,7 @@ object FieldSets {
 
     val status = field("status", declarationStatus)
 
-    val controlFlowGraphReferenceField = field("controlFlowGraphReference", controlFlowGraphReference).withTransform()
+    val controlFlowGraphReferenceField = field("controlFlowGraphReference", controlFlowGraphReference, withReplace = true, nullable = true)
 
     val visibility = field(visibilityType)
 

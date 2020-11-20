@@ -14,16 +14,15 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
 import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
@@ -44,6 +43,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     source: FirSourceElement?,
     session: FirSession,
     resolvePhase: FirResolvePhase,
+    attributes: FirDeclarationAttributes,
     returnTypeRef: FirTypeRef,
     receiverTypeRef: FirTypeRef?,
     typeParameters: MutableList<FirTypeParameter>,
@@ -54,17 +54,20 @@ class FirJavaMethod @FirImplementationDetail constructor(
     containerSource: DeserializedContainerSource?,
     symbol: FirFunctionSymbol<FirSimpleFunction>,
     annotations: MutableList<FirAnnotationCall>,
+    dispatchReceiverType: ConeKotlinType?,
 ) : FirSimpleFunctionImpl(
     source,
     session,
     resolvePhase,
     FirDeclarationOrigin.Java,
+    attributes,
     returnTypeRef,
     receiverTypeRef,
     valueParameters,
     body,
     status,
     containerSource,
+    dispatchReceiverType = dispatchReceiverType,
     contractDescription = FirEmptyContractDescription,
     name,
     symbol,
@@ -72,7 +75,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     typeParameters,
 )
 
-private val ALL_JAVA_OPERATION_NAMES =
+val ALL_JAVA_OPERATION_NAMES =
     UNARY_OPERATION_NAMES + BINARY_OPERATION_NAMES + ASSIGNMENT_OPERATIONS + DELEGATED_PROPERTY_OPERATORS +
             EQUALS + COMPARE_TO + CONTAINS + INVOKE + ITERATOR + GET + SET + NEXT + HAS_NEXT
 
@@ -86,31 +89,17 @@ class FirJavaMethodBuilder : FirSimpleFunctionBuilder() {
     @Deprecated("Modification of 'origin' has no impact for FirJavaFunctionBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirDeclarationOrigin
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaMethod {
-        val status = FirDeclarationStatusImpl(visibility, modality).apply {
-            isStatic = this@FirJavaMethodBuilder.isStatic
-            isExpect = false
-            isActual = false
-            isOverride = false
-            // Approximation: all Java methods with name that allows to use it in operator form are considered operators
-            // We need here more detailed checks (see modifierChecks.kt)
-            isOperator = name in ALL_JAVA_OPERATION_NAMES || OperatorNameConventions.COMPONENT_REGEX.matches(name.asString())
-            isInfix = false
-            isInline = false
-            isTailRec = false
-            isExternal = false
-            isSuspend = false
-        }
-
         return FirJavaMethod(
             source,
             session,
             resolvePhase,
+            attributes,
             returnTypeRef as FirJavaTypeRef,
             receiverTypeRef = null,
             typeParameters,
@@ -121,6 +110,7 @@ class FirJavaMethodBuilder : FirSimpleFunctionBuilder() {
             containerSource,
             symbol,
             annotations,
+            dispatchReceiverType,
         )
     }
 }

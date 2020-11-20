@@ -7,21 +7,23 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
-import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.firClassLike
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -31,7 +33,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtModifierList
-import org.jetbrains.kotlin.psi.psiUtil.toVisibility
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -141,18 +142,8 @@ inline fun <reified T : Any> FirQualifiedAccessExpression.getDeclaration(): T? {
  * Returns the ClassLikeDeclaration where the Fir object has been defined
  * or null if no proper declaration has been found.
  */
-fun FirSymbolOwner<*>.getContainingClass(context: CheckerContext): FirClassLikeDeclaration<*>? {
-    val classId = this.symbol.safeAs<FirCallableSymbol<*>>()
-        ?.callableId
-        ?.classId
-        ?: return null
-
-    if (!classId.isLocal) {
-        return context.session.firSymbolProvider.getClassLikeSymbolByFqName(classId)?.fir
-    }
-
-    return null
-}
+fun FirSymbolOwner<*>.getContainingClass(context: CheckerContext): FirClassLikeDeclaration<*>? =
+    this.safeAs<FirCallableMemberDeclaration<*>>()?.containingClass()?.toSymbol(context.session)?.fir
 
 /**
  * Returns the FirClassLikeDeclaration the type alias is pointing
@@ -186,7 +177,7 @@ fun FirClassLikeDeclaration<*>.followAllAlias(session: FirSession): FirClassLike
  * or null if no such item could be found.
  */
 fun CheckerContext.findClosestClassOrObject(): FirClass<*>? {
-    for (it in containingDeclarations.reversed()) {
+    for (it in containingDeclarations.asReversed()) {
         if (
             it is FirRegularClass ||
             it is FirAnonymousObject
@@ -207,8 +198,9 @@ fun FirSimpleFunction.overriddenFunctions(
 ): List<FirFunctionSymbol<*>> {
     val firTypeScope = containingClass.unsubstitutedScope(
         context.sessionHolder.session,
-        context.sessionHolder.scopeSession
-    ) as FirTypeScope
+        context.sessionHolder.scopeSession,
+        withForcedTypeCalculator = true
+    )
 
     val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()
     firTypeScope.processFunctionsByName(symbol.fir.name) { }
@@ -223,7 +215,20 @@ fun FirSimpleFunction.overriddenFunctions(
 /**
  * Returns the visibility by given KtModifierList
  */
-fun KtModifierList?.getVisibility() = this?.visibilityModifierType()?.toVisibility()
+fun KtModifierList?.getVisibility() = this?.visibilityModifierType()?.toVisibilityOrNull()
+
+/**
+ * Returns Visibility by token or null
+ */
+fun KtModifierKeywordToken.toVisibilityOrNull(): Visibility? {
+    return when (this) {
+        KtTokens.PUBLIC_KEYWORD -> Visibilities.Public
+        KtTokens.PRIVATE_KEYWORD -> Visibilities.Private
+        KtTokens.PROTECTED_KEYWORD -> Visibilities.Protected
+        KtTokens.INTERNAL_KEYWORD -> Visibilities.Internal
+        else -> null
+    }
+}
 
 /**
  * Returns the modality of the class
@@ -238,38 +243,74 @@ fun FirClass<*>.modality(): Modality? {
 /**
  * returns implicit modality by FirMemberDeclaration
  */
-fun FirMemberDeclaration.implicitModality(context: CheckerContext): KtModifierKeywordToken {
+fun FirMemberDeclaration.implicitModality(context: CheckerContext): Modality {
     if (this is FirRegularClass && (this.classKind == ClassKind.CLASS || this.classKind == ClassKind.OBJECT)) {
-        if (this.classKind == ClassKind.INTERFACE) return KtTokens.ABSTRACT_KEYWORD
-        return KtTokens.FINAL_KEYWORD
+        if (this.classKind == ClassKind.INTERFACE) return Modality.ABSTRACT
+        return Modality.FINAL
     }
 
-    val klass = context.findClosestClassOrObject() ?: return KtTokens.FINAL_KEYWORD
-    val modifiers = this.modifierListOrNull() ?: return KtTokens.FINAL_KEYWORD
-    if (modifiers.hasModifier(KtTokens.OVERRIDE_KEYWORD)) {
+    val klass = context.findClosestClassOrObject() ?: return Modality.FINAL
+    val modifiers = this.modifierListOrNull() ?: return Modality.FINAL
+    if (modifiers.contains(KtTokens.OVERRIDE_KEYWORD)) {
         val klassModifiers = klass.modifierListOrNull()
         if (klassModifiers != null && klassModifiers.run {
-                hasModifier(KtTokens.ABSTRACT_KEYWORD) || hasModifier(KtTokens.OPEN_KEYWORD) || hasModifier(KtTokens.SEALED_KEYWORD)
+                contains(KtTokens.ABSTRACT_KEYWORD) || contains(KtTokens.OPEN_KEYWORD) || contains(KtTokens.SEALED_KEYWORD)
             }) {
-            return KtTokens.OPEN_KEYWORD
+            return Modality.OPEN
         }
     }
 
     if (
         klass is FirRegularClass
         && klass.classKind == ClassKind.INTERFACE
-        && !modifiers.hasModifier(KtTokens.PRIVATE_KEYWORD)
+        && !modifiers.contains(KtTokens.PRIVATE_KEYWORD)
     ) {
-        return if (this.hasBody()) KtTokens.OPEN_KEYWORD else KtTokens.ABSTRACT_KEYWORD
+        return if (this.hasBody()) Modality.OPEN else Modality.ABSTRACT
     }
 
-    return KtTokens.FINAL_KEYWORD
+    return Modality.FINAL
 }
 
-private fun FirDeclaration.modifierListOrNull() = (this.source.getModifierList() as? FirPsiModifierList)?.modifierList
+private fun FirDeclaration.modifierListOrNull() = this.source.getModifierList()?.modifiers?.map { it.token }
 
 private fun FirDeclaration.hasBody(): Boolean = when (this) {
     is FirSimpleFunction -> this.body != null && this.body !is FirEmptyExpressionBlock
     is FirProperty -> this.setter?.body !is FirEmptyExpressionBlock? || this.getter?.body !is FirEmptyExpressionBlock?
     else -> false
 }
+
+/**
+ * Finds any non-interface supertype and returns it
+ * or null if couldn't find any.
+ */
+fun FirClass<*>.findNonInterfaceSupertype(context: CheckerContext): FirTypeRef? {
+    for (it in superTypeRefs) {
+        val classId = it.safeAs<FirResolvedTypeRef>()
+            ?.type.safeAs<ConeClassLikeType>()
+            ?.lookupTag?.classId
+            ?: continue
+
+        val fir = context.session.firSymbolProvider.getClassLikeSymbolByFqName(classId)
+            ?.fir.safeAs<FirClass<*>>()
+            ?: continue
+
+        if (fir.classKind != ClassKind.INTERFACE) {
+            return it
+        }
+    }
+
+    return null
+}
+
+/**
+ * Returns KtModifierToken by Modality
+ */
+fun Modality.toToken(): KtModifierKeywordToken = when (this) {
+    Modality.FINAL -> KtTokens.FINAL_KEYWORD
+    Modality.SEALED -> KtTokens.SEALED_KEYWORD
+    Modality.OPEN -> KtTokens.OPEN_KEYWORD
+    Modality.ABSTRACT -> KtTokens.ABSTRACT_KEYWORD
+}
+
+val FirFunctionCall.isIterator
+    get() = this.calleeReference.name.asString() == "<iterator>"

@@ -6,23 +6,19 @@
 package org.jetbrains.kotlin.fir.analysis.collectors
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.SimpleDiagnosticReporter
 
 class SimpleDiagnosticsCollector(session: FirSession) : AbstractDiagnosticCollector(session) {
-    private var reporter = SimpleDiagnosticReporter()
+    override var reporter = SimpleDiagnosticReporter()
+        private set
 
     override fun initializeCollector() {
         reporter = SimpleDiagnosticReporter()
     }
 
-    override fun getCollectedDiagnostics(): Iterable<FirDiagnostic<*>> {
+    override fun getCollectedDiagnostics(): List<FirDiagnostic<*>> {
         return reporter.diagnostics
-    }
-
-    override fun runCheck(block: (DiagnosticReporter) -> Unit) {
-        block(reporter)
     }
 }
 

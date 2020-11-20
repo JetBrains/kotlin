@@ -1,0 +1,4 @@
+package
+
+private inline fun foo(/*0*/ crossinline f: () -> kotlin.Int): foo.<no name provided>
+public fun test(/*0*/ b: kotlin.Boolean): kotlin.Unit

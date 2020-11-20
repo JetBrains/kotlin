@@ -25,7 +25,7 @@ FILE: nestedObjects.kt
         }
 
     }
-    public final val err: <ERROR TYPE REF: Unresolved name: B> = Q|B|.<Unresolved name: A>#.<Unresolved name: B>#
-        public get(): <ERROR TYPE REF: Unresolved name: B>
+    public final val err: R|ERROR CLASS: Unresolved name: B| = Q|B|.<Unresolved name: A>#.<Unresolved name: B>#
+        public get(): R|ERROR CLASS: Unresolved name: B|
     public final val correct: R|A.B.A| = Q|A.B.A|
         public get(): R|A.B.A|

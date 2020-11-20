@@ -1,4 +1,6 @@
-// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, NATIVE
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: SAM_CONVERSIONS
+// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6
 
 fun checkEqual(x: Any, y: Any) {
     if (x != y || y != x) throw AssertionError("$x and $y should be equal")

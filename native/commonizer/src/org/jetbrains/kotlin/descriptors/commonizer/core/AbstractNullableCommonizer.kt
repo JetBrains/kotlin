@@ -27,7 +27,8 @@ abstract class AbstractNullableCommonizer<T : Any, R : Any, WT, WR>(
 
     final override val result: R?
         get() = when (state) {
-            State.EMPTY, State.ERROR -> throw IllegalCommonizerStateException()
+            State.EMPTY -> failInEmptyState()
+            State.ERROR -> failInErrorState()
             State.WITH_WRAPPED -> builder(wrapped.result)
             State.WITHOUT_WRAPPED -> null // null means there is no commonized result
         }

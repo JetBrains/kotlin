@@ -20,7 +20,7 @@ import kotlin.jvm.functions.Function0;
 import org.apache.maven.plugin.logging.Log;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.common.ExitCode;
-import org.jetbrains.kotlin.incremental.ICReporterBase;
+import org.jetbrains.kotlin.build.report.ICReporterBase;
 
 import java.io.File;
 import java.util.Collection;

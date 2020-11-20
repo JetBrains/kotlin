@@ -3,53 +3,53 @@
 
 enum class Color {
     RED {
-        fun <T : RED> simpleName(): RED = null!!
+        fun <T : <!UNRESOLVED_REFERENCE!>RED<!>> simpleName(): <!UNRESOLVED_REFERENCE!>RED<!> = null!!
     }
 }
 
-class MyColor(val x: Color.RED, y: Color.RED) : Color.RED {
+class MyColor(val x: <!UNRESOLVED_REFERENCE!>Color.RED<!>, y: <!UNRESOLVED_REFERENCE!>Color.RED<!>) : <!UNRESOLVED_REFERENCE!>Color.RED<!> {
 
-    var z: Color.RED = Color.RED
-    set(arg: Color.RED) { z = arg }
+    var z: <!UNRESOLVED_REFERENCE!>Color.RED<!> = Color.RED
+    set(arg: <!UNRESOLVED_REFERENCE!>Color.RED<!>) { z = arg }
 
-    fun foo(arg: Color.RED): Color.RED = arg
+    fun foo(arg: <!UNRESOLVED_REFERENCE!>Color.RED<!>): <!UNRESOLVED_REFERENCE!>Color.RED<!> = arg
 
-    fun bar(): Color.RED {
-        class Local : Color.RED
-        fun local(arg: Color.RED): Color.RED = arg
-        val temp: Color.RED = Color.RED
-        temp as? Color.RED
-        if (temp is Color.RED) {
-        return temp as Color.RED
+    fun bar(): <!UNRESOLVED_REFERENCE!>Color.RED<!> {
+        class Local : <!UNRESOLVED_REFERENCE!>Color.RED<!>
+        fun local(arg: <!UNRESOLVED_REFERENCE!>Color.RED<!>): <!UNRESOLVED_REFERENCE!>Color.RED<!> = arg
+        val temp: <!UNRESOLVED_REFERENCE!>Color.RED<!> = Color.RED
+        temp as? <!UNRESOLVED_REFERENCE!>Color.RED<!>
+        if (temp is <!UNRESOLVED_REFERENCE!>Color.RED<!>) {
+        return temp as <!UNRESOLVED_REFERENCE!>Color.RED<!>
     }
-        val obj = object : Color.RED {}
-        if (obj is Color.RED) {
+        val obj = object : <!UNRESOLVED_REFERENCE!>Color.RED<!> {}
+        if (obj is <!UNRESOLVED_REFERENCE!>Color.RED<!>) {
         return obj
     }
         return Color.RED
     }
 }
 
-fun create(): Array<Color.RED>? = null
+fun create(): <!UNRESOLVED_REFERENCE!>Array<Color.RED>?<!> = null
 
-interface Your<T : Color.RED>
+interface Your<T : <!UNRESOLVED_REFERENCE!>Color.RED<!>>
 
-class His : Your<Color.RED>
+class His : <!UNRESOLVED_REFERENCE!>Your<Color.RED><!>
 
-fun <T : Color.RED> otherCreate(): Array<T>? = null
+fun <T : <!UNRESOLVED_REFERENCE!>Color.RED<!>> otherCreate(): Array<T>? = null
 
-typealias RedAlias = Color.RED
+typealias RedAlias = <!UNRESOLVED_REFERENCE!>Color.RED<!>
 
-typealias ArrayOfEnumEntry = Array<Color.RED>
+typealias ArrayOfEnumEntry = <!UNRESOLVED_REFERENCE!>Array<Color.RED><!>
 
 typealias ArrayOfEnumEntryAlias = Array<RedAlias>
 
 fun <T> bar(a: Any): T = a as T
 
 fun <T> foo() {
-    foo<Color.RED>()
+    foo<<!UNRESOLVED_REFERENCE!>Color.RED<!>>()
     foo<RedAlias>()
-    <!INAPPLICABLE_CANDIDATE!>bar<!><Color.RED>(Color.RED)
+    <!INAPPLICABLE_CANDIDATE!>bar<!><<!UNRESOLVED_REFERENCE!>Color.RED<!>>(Color.RED)
 }
 
-fun Array<Color.RED>.foo(entries: Array<Color.RED>): Array<Color.RED> = null!!
+fun <!UNRESOLVED_REFERENCE!>Array<Color.RED><!>.foo(entries: <!UNRESOLVED_REFERENCE!>Array<Color.RED><!>): <!UNRESOLVED_REFERENCE!>Array<Color.RED><!> = null!!

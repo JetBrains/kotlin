@@ -133,11 +133,14 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
     // `a > b` will be wrapped in FirComparisonExpression
     // with real source which points to initial `a > b` expression
     // and inner FirFunctionCall will refer to a fake source
-    object GeneratedCompararisonExpression : FirFakeSourceElementKind()
+    object GeneratedComparisonExpression : FirFakeSourceElementKind()
 
     // a ?: b --> when(val $subj = a) { .... }
     // where `val $subj = a` has a fake source
     object WhenGeneratedSubject : FirFakeSourceElementKind()
+
+    // list[0] -> list.get(0) where name reference will have a fake source element
+    object ArrayAccessNameReference : FirFakeSourceElementKind()
 
     // super.foo() --> super<Supertype>.foo()
     // where `Supertype` has a fake source
@@ -201,7 +204,8 @@ inline fun PsiElement.toFirPsiSourceElement(kind: FirSourceElementKind = FirReal
 @Suppress("NOTHING_TO_INLINE")
 inline fun LighterASTNode.toFirLightSourceElement(
     startOffset: Int, endOffset: Int,
-    tree: FlyweightCapableTreeStructure<LighterASTNode>
-): FirLightSourceElement = FirLightSourceElement(this, startOffset, endOffset, tree)
+    tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    kind: FirSourceElementKind = FirRealSourceElementKind
+): FirLightSourceElement = FirLightSourceElement(this, startOffset, endOffset, tree, kind)
 
 val FirSourceElement?.lightNode: LighterASTNode? get() = (this as? FirLightSourceElement)?.element

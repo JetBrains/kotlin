@@ -18,37 +18,34 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrEnumConstructorCallImpl(
-    startOffset: Int,
-    endOffset: Int,
-    type: IrType,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var type: IrType,
     override val symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int
-) :
-    IrCallWithIndexedArgumentsBase(
-        startOffset,
-        endOffset,
-        type,
-        typeArgumentsCount = typeArgumentsCount,
-        valueArgumentsCount = valueArgumentsCount
-    ),
-    IrEnumConstructorCall {
-
-    @ObsoleteDescriptorBasedAPI
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        symbol: IrConstructorSymbol,
-        typeArgumentsCount: Int
-    ) : this(startOffset, endOffset, type, symbol, typeArgumentsCount, symbol.descriptor.valueParameters.size)
+) : IrEnumConstructorCall(typeArgumentsCount, valueArgumentsCount) {
+    override val origin: IrStatementOrigin?
+        get() = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitEnumConstructorCall(this, data)
+    }
+
+    companion object {
+        @ObsoleteDescriptorBasedAPI
+        fun fromSymbolDescriptor(
+            startOffset: Int,
+            endOffset: Int,
+            type: IrType,
+            symbol: IrConstructorSymbol,
+            typeArgumentsCount: Int
+        ) = IrEnumConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, symbol.descriptor.valueParameters.size)
     }
 }

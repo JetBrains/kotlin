@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface A { fun f() }
 
 open class P(val z: B)

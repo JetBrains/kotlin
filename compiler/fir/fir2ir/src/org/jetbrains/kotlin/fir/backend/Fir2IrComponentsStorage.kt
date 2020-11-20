@@ -28,6 +28,8 @@ class Fir2IrComponentsStorage(
     override lateinit var typeConverter: Fir2IrTypeConverter
     override lateinit var callGenerator: CallAndReferenceGenerator
     override lateinit var fakeOverrideGenerator: FakeOverrideGenerator
+    override lateinit var visibilityConverter: Fir2IrVisibilityConverter
+    override lateinit var builtIns: Fir2IrBuiltIns
 
     override val signatureComposer = FirBasedSignatureComposer(mangler)
 }

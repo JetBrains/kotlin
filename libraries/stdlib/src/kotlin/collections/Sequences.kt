@@ -76,6 +76,8 @@ public fun <T> Sequence<T>.ifEmpty(defaultValue: () -> Sequence<T>): Sequence<T>
  * Returns a sequence of all elements from all sequences in this sequence.
  *
  * The operation is _intermediate_ and _stateless_.
+ *
+ * @sample samples.collections.Sequences.Transformations.flattenSequenceOfSequences
  */
 public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> = flatten { it.iterator() }
 
@@ -83,6 +85,8 @@ public fun <T> Sequence<Sequence<T>>.flatten(): Sequence<T> = flatten { it.itera
  * Returns a sequence of all elements from all iterables in this sequence.
  *
  * The operation is _intermediate_ and _stateless_.
+ *
+ * @sample samples.collections.Sequences.Transformations.flattenSequenceOfLists
  */
 @kotlin.jvm.JvmName("flattenSequenceOfIterable")
 public fun <T> Sequence<Iterable<T>>.flatten(): Sequence<T> = flatten { it.iterator() }
@@ -100,6 +104,8 @@ private fun <T, R> Sequence<T>.flatten(iterator: (T) -> Iterator<R>): Sequence<R
  * *second* list is built from the second values of each pair from this sequence.
  *
  * The operation is _terminal_.
+ *
+ * @sample samples.collections.Sequences.Transformations.unzip
  */
 public fun <T, R> Sequence<Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
     val listT = ArrayList<T>()

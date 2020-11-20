@@ -34,6 +34,8 @@ abstract class FirCallableReferenceAccess : FirQualifiedAccessExpression() {
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
+    abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
+
     abstract fun replaceCalleeReference(newCalleeReference: FirNamedReference)
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)

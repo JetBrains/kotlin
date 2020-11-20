@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -22,6 +22,7 @@ interface InferenceSession {
             override fun inferPostponedVariables(
                 lambda: ResolvedLambdaAtom,
                 initialStorage: ConstraintStorage,
+                completionMode: ConstraintSystemCompletionMode,
                 diagnosticsHolder: KotlinDiagnosticsHolder
             ): Map<TypeConstructor, UnwrappedType> = emptyMap()
 
@@ -30,7 +31,7 @@ interface InferenceSession {
             override fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom) = true
             override fun computeCompletionMode(
                 candidate: KotlinResolutionCandidate
-            ): KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode? = null
+            ): ConstraintSystemCompletionMode? = null
 
             override fun resolveReceiverIndependently(): Boolean = false
         }
@@ -44,13 +45,14 @@ interface InferenceSession {
     fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         initialStorage: ConstraintStorage,
+        completionMode: ConstraintSystemCompletionMode,
         diagnosticsHolder: KotlinDiagnosticsHolder
     ): Map<TypeConstructor, UnwrappedType>?
 
     fun writeOnlyStubs(callInfo: SingleCallResolutionResult): Boolean
     fun callCompleted(resolvedAtom: ResolvedAtom): Boolean
     fun shouldCompleteResolvedSubAtomsOf(resolvedCallAtom: ResolvedCallAtom): Boolean
-    fun computeCompletionMode(candidate: KotlinResolutionCandidate): KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode?
+    fun computeCompletionMode(candidate: KotlinResolutionCandidate): ConstraintSystemCompletionMode?
     fun resolveReceiverIndependently(): Boolean
 }
 

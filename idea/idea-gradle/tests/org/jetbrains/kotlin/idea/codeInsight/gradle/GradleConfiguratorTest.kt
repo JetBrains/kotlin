@@ -46,7 +46,7 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
             """
             <p>The compiler bundled to Kotlin plugin (1.0.0) is older than external compiler used for building modules:</p>
             <ul>
-            <li>app (1.1.0)</li>
+            <li>app (${LATEST_STABLE_GRADLE_PLUGIN_VERSION})</li>
             </ul>
             <p>This may cause different set of errors and warnings reported in IDE.</p>
             <p><a href="update">Update</a>  <a href="ignore">Ignore</a></p>

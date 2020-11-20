@@ -51,25 +51,23 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
 ): Boolean {
     if (!TypeUtils.contains(expectedType) { it.isAnyOrNullableAny() || it.isNothing() || it.isNullableNothing() }) return false
 
-    val callPosition = this.callPosition
     val (resolvedCall, correspondingNotApproximatedTypeByDescriptor: (CallableDescriptor) -> KotlinType?) = when (callPosition) {
-        is CallPosition.ValueArgumentPosition -> Pair(
-            callPosition.resolvedCall, { f: CallableDescriptor ->
+        is CallPosition.ValueArgumentPosition ->
+            callPosition.resolvedCall to { f: CallableDescriptor ->
                 getEffectiveExpectedType(f.valueParameters[callPosition.valueParameter.index], callPosition.valueArgument, this)
-            })
-        is CallPosition.ExtensionReceiverPosition -> Pair<ResolvedCall<*>, (CallableDescriptor) -> KotlinType?>(
-            callPosition.resolvedCall, { f: CallableDescriptor ->
-                f.extensionReceiverParameter?.type
-            })
-        is CallPosition.PropertyAssignment -> Pair<ResolvedCall<out CallableDescriptor>, (CallableDescriptor) -> KotlinType?>(
-            callPosition.leftPart.getResolvedCall(trace.bindingContext) ?: return false, { f: CallableDescriptor ->
-                (f as? PropertyDescriptor)?.setter?.valueParameters?.get(0)?.type
-            })
+            }
+        is CallPosition.ExtensionReceiverPosition ->
+            callPosition.resolvedCall to { f: CallableDescriptor -> f.extensionReceiverParameter?.type }
+        is CallPosition.PropertyAssignment -> {
+            if (callPosition.isLeft) return false
+            val resolvedCall = callPosition.leftPart.getResolvedCall(trace.bindingContext) ?: return false
+            resolvedCall to { f: CallableDescriptor -> (f as? PropertyDescriptor)?.setter?.valueParameters?.get(0)?.type }
+        }
         is CallPosition.Unknown -> return false
     }
 
     val receiverType = resolvedCall.smartCastDispatchReceiverType
-            ?: (resolvedCall.dispatchReceiver ?: return false).type
+        ?: (resolvedCall.dispatchReceiver ?: return false).type
 
     val callableDescriptor = resolvedCall.resultingDescriptor.original
 

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.debugger.evaluate.EvaluationStatus
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.ClassToLoad
@@ -69,6 +70,8 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
 
         val project = codeFragment.project
         val resolutionFacade = getResolutionFacadeForCodeFragment(codeFragment)
+
+        @OptIn(FrontendInternals::class)
         val resolveSession = resolutionFacade.getFrontendService(ResolveSession::class.java)
         val moduleDescriptorWrapper = EvaluatorModuleDescriptor(codeFragment, moduleDescriptor, resolveSession)
 
@@ -206,7 +209,7 @@ class CodeFragmentCompiler(private val executionContext: ExecutionContext, priva
 
         methodDescriptor.initialize(
             null, classDescriptor.thisAsReceiverParameter, emptyList(),
-            parameters, returnType, Modality.FINAL, Visibilities.PUBLIC
+            parameters, returnType, Modality.FINAL, DescriptorVisibilities.PUBLIC
         )
 
         val memberScope = EvaluatorMemberScopeForMethod(methodDescriptor)

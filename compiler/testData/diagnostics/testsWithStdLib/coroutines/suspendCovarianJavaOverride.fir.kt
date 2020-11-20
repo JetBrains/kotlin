@@ -23,7 +23,7 @@ class K2 : JavaClass() {
 }
 
 class K3 : JavaClass() {
-    override fun foo(x: Int, y: Continuation<String>): Any? = null
+    override fun foo(x: Int, y: Continuation<String>): <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>Any?<!> = null
 }
 
 fun builder(block: suspend () -> Unit) {}

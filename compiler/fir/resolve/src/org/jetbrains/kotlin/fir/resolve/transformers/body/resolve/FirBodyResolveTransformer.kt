@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.asTowerDataElement
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
@@ -40,6 +41,8 @@ open class FirBodyResolveTransformer(
         outerBodyResolveContext ?: BodyResolveContext(returnTypeCalculator, DataFlowAnalyzerContext.empty(session))
     final override val components: BodyResolveTransformerComponents =
         BodyResolveTransformerComponents(session, scopeSession, this, context)
+
+    final override val resolutionContext: ResolutionContext = ResolutionContext(session, components, context)
 
     internal open val expressionsTransformer = FirExpressionsResolveTransformer(this)
     protected open val declarationsTransformer = FirDeclarationsResolveTransformer(this)
@@ -83,6 +86,10 @@ open class FirBodyResolveTransformer(
         return data.expectedTypeRef.compose()
     }
 
+    open fun onBeforeStatementResolution(statement: FirStatement) {}
+
+    open fun onBeforeDeclarationContentResolve(declaration: FirDeclaration) {}
+
     // ------------------------------------- Expressions -------------------------------------
 
     override fun transformExpression(expression: FirExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
@@ -93,7 +100,7 @@ open class FirBodyResolveTransformer(
         wrappedArgumentExpression: FirWrappedArgumentExpression,
         data: ResolutionMode
     ): CompositeTransformResult<FirStatement> {
-        return (wrappedArgumentExpression.transformChildren(this, data) as FirStatement).compose()
+        return transformElement(wrappedArgumentExpression, data)
     }
 
     override fun transformQualifiedAccessExpression(
@@ -132,7 +139,10 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformComparisonExpression(comparisonExpression, data)
     }
 
-    override fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun transformTypeOperatorCall(
+        typeOperatorCall: FirTypeOperatorCall,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         return expressionsTransformer.transformTypeOperatorCall(typeOperatorCall, data)
     }
 
@@ -182,7 +192,10 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformWrappedDelegateExpression(wrappedDelegateExpression, data)
     }
 
-    override fun <T> transformConstExpression(constExpression: FirConstExpression<T>, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun <T> transformConstExpression(
+        constExpression: FirConstExpression<T>,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         return expressionsTransformer.transformConstExpression(constExpression, data)
     }
 
@@ -197,7 +210,10 @@ open class FirBodyResolveTransformer(
         return expressionsTransformer.transformDelegatedConstructorCall(delegatedConstructorCall, data)
     }
 
-    override fun transformAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun transformAugmentedArraySetCall(
+        augmentedArraySetCall: FirAugmentedArraySetCall,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         return expressionsTransformer.transformAugmentedArraySetCall(augmentedArraySetCall, data)
     }
 
@@ -242,15 +258,24 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformRegularClass(regularClass, data)
     }
 
-    override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun transformAnonymousObject(
+        anonymousObject: FirAnonymousObject,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         return declarationsTransformer.transformAnonymousObject(anonymousObject, data)
     }
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: ResolutionMode): CompositeTransformResult<FirSimpleFunction> {
+    override fun transformSimpleFunction(
+        simpleFunction: FirSimpleFunction,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirSimpleFunction> {
         return declarationsTransformer.transformSimpleFunction(simpleFunction, data)
     }
 
-    override fun <F : FirFunction<F>> transformFunction(function: FirFunction<F>, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun <F : FirFunction<F>> transformFunction(
+        function: FirFunction<F>,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         return declarationsTransformer.transformFunction(function, data)
     }
 
@@ -265,7 +290,10 @@ open class FirBodyResolveTransformer(
         return declarationsTransformer.transformAnonymousInitializer(anonymousInitializer, data)
     }
 
-    override fun transformAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun transformAnonymousFunction(
+        anonymousFunction: FirAnonymousFunction,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         return declarationsTransformer.transformAnonymousFunction(anonymousFunction, data)
     }
 
@@ -310,11 +338,17 @@ open class FirBodyResolveTransformer(
         return controlFlowStatementsTransformer.transformJump(jump, data)
     }
 
-    override fun transformThrowExpression(throwExpression: FirThrowExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun transformThrowExpression(
+        throwExpression: FirThrowExpression,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         return controlFlowStatementsTransformer.transformThrowExpression(throwExpression, data)
     }
 
-    override fun transformElvisExpression(elvisExpression: FirElvisExpression, data: ResolutionMode): CompositeTransformResult<FirStatement> {
+    override fun transformElvisExpression(
+        elvisExpression: FirElvisExpression,
+        data: ResolutionMode
+    ): CompositeTransformResult<FirStatement> {
         return controlFlowStatementsTransformer.transformElvisExpression(elvisExpression, data)
     }
 

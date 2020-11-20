@@ -92,8 +92,8 @@ public class LocalVariableDescriptor extends VariableDescriptorWithInitializerIm
 
     @NotNull
     @Override
-    public Visibility getVisibility() {
-        return Visibilities.LOCAL;
+    public DescriptorVisibility getVisibility() {
+        return DescriptorVisibilities.LOCAL;
     }
 
     @Nullable

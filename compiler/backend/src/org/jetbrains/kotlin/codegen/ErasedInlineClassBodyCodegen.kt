@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.codegen.AsmUtil.genTotalOrderEqualsForExpressionOnStack
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genTotalOrderEqualsForExpressionOnStack
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper

@@ -1,5 +1,6 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BIG_ARITY
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun foo(
     f: (

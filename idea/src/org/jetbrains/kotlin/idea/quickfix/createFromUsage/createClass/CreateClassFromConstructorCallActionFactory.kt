@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.idea.quickfix.createFromUsage.createClass
 
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeAndGetResult
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.ParameterInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.TypeInfo
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getTypeInfoForTypeArguments
@@ -88,13 +91,23 @@ object CreateClassFromConstructorCallActionFactory : CreateClassFromUsageFactory
 
         val typeArgumentInfos = if (inAnnotationEntry) Collections.emptyList() else callExpr.getTypeInfoForTypeArguments()
 
+        val argumentClassVisibilities = valueArguments.mapNotNull {
+            (it.getArgumentExpression()?.getCallableDescriptor() as? ClassConstructorDescriptor)?.containingDeclaration?.visibility
+        }
+        val primaryConstructorVisibility = when {
+            DescriptorVisibilities.PRIVATE in argumentClassVisibilities -> DescriptorVisibilities.PRIVATE
+            DescriptorVisibilities.INTERNAL in argumentClassVisibilities -> DescriptorVisibilities.INTERNAL
+            else -> null
+        }
+
         return ClassInfo(
             name = name,
             targetParents = filteredParents,
             expectedTypeInfo = expectedTypeInfo,
             inner = inner,
             typeArguments = typeArgumentInfos,
-            parameterInfos = parameterInfos
+            parameterInfos = parameterInfos,
+            primaryConstructorVisibility = primaryConstructorVisibility
         )
     }
 }

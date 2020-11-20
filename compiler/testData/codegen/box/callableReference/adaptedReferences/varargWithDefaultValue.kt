@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-// IGNORE_BACKEND_FIR: JVM_IR
 
 fun foo(x: Int, s: Int, vararg y: CharSequence = arrayOf("Aaa")): String =
         if (y.size == s && y[0].length == x) "OK" else "Fail"

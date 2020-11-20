@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeAbbreviation
@@ -81,51 +81,74 @@ class TypeTranslator(
         translateType(kotlinType, Variance.INVARIANT).type
 
     private fun translateType(kotlinType: KotlinType, variance: Variance): IrTypeProjection {
-        val flexibleApproximatedType = approximate(kotlinType)
+        val approximatedType = approximate(kotlinType)
 
         when {
-            flexibleApproximatedType.isError ->
-                return IrErrorTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType.annotations), variance)
-            flexibleApproximatedType.isDynamic() ->
-                return IrDynamicTypeImpl(flexibleApproximatedType, translateTypeAnnotations(flexibleApproximatedType.annotations), variance)
+            approximatedType.isError ->
+                return IrErrorTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
+            approximatedType.isDynamic() ->
+                return IrDynamicTypeImpl(approximatedType, translateTypeAnnotations(approximatedType), variance)
         }
 
-        val approximatedType = flexibleApproximatedType.upperIfFlexible()
-
-        val ktTypeConstructor = approximatedType.constructor
-        val ktTypeDescriptor = ktTypeConstructor.declarationDescriptor
-            ?: throw AssertionError("No descriptor for type $approximatedType")
+        val upperType = approximatedType.upperIfFlexible()
+        val upperTypeDescriptor = upperType.constructor.declarationDescriptor
+            ?: throw AssertionError("No descriptor for type $upperType")
 
         if (erasureStack.isNotEmpty()) {
-            if (ktTypeDescriptor is TypeParameterDescriptor) {
-                if (ktTypeDescriptor.containingDeclaration in erasureStack) {
+            if (upperTypeDescriptor is TypeParameterDescriptor) {
+                if (upperTypeDescriptor.containingDeclaration in erasureStack) {
                     // This hack is about type parameter leak in case of generic delegated property
                     // Such code has to be prohibited since LV 1.5
                     // For more details see commit message or KT-24643
-                    return approximateUpperBounds(ktTypeDescriptor.upperBounds, variance)
+                    return approximateUpperBounds(upperTypeDescriptor.upperBounds, variance)
                 }
             }
         }
 
         return IrSimpleTypeBuilder().apply {
-            this.kotlinType = flexibleApproximatedType
-            this.hasQuestionMark = approximatedType.isMarkedNullable || extensions.enhancedNullability.hasEnhancedNullability(approximatedType)
+            this.kotlinType = approximatedType
+            this.hasQuestionMark = upperType.isMarkedNullable
             this.variance = variance
-            this.abbreviation = approximatedType.getAbbreviation()?.toIrTypeAbbreviation()
-            when (ktTypeDescriptor) {
+            this.abbreviation = upperType.getAbbreviation()?.toIrTypeAbbreviation()
+
+            when (upperTypeDescriptor) {
                 is TypeParameterDescriptor -> {
-                    classifier = resolveTypeParameter(ktTypeDescriptor)
-                    annotations = translateTypeAnnotations(approximatedType.annotations)
+                    classifier = resolveTypeParameter(upperTypeDescriptor)
+                    annotations = translateTypeAnnotations(upperType, approximatedType)
                 }
 
+                is ScriptDescriptor -> {
+                    classifier = symbolTable.referenceScript(upperTypeDescriptor)
+                }
                 is ClassDescriptor -> {
-                    classifier = symbolTable.referenceClass(ktTypeDescriptor)
-                    arguments = translateTypeArguments(approximatedType.arguments)
-                    annotations = translateTypeAnnotations(approximatedType.annotations)
+                    // Types such as 'java.util.Collection<? extends CharSequence>' are treated as
+                    // '( kotlin.collections.MutableCollection<out kotlin.CharSequence!>
+                    //   .. kotlin.collections.Collection<kotlin.CharSequence!>? )'
+                    // by the front-end.
+                    // When generating generic signatures, JVM BE uses generic arguments of lower bound,
+                    // thus producing 'java.util.Collection<? extends CharSequence>' from
+                    // 'kotlin.collections.MutableCollection<out kotlin.CharSequence!>'.
+                    // Construct equivalent type here.
+                    // NB the difference is observed only when lowerTypeDescriptor != upperTypeDescriptor,
+                    // which corresponds to mutability-flexible types such as mentioned above.
+                    val lowerType = approximatedType.lowerIfFlexible()
+                    val lowerTypeDescriptor =
+                        lowerType.constructor.declarationDescriptor as? ClassDescriptor
+                            ?: throw AssertionError("No class descriptor for lower type $lowerType of $approximatedType")
+                    classifier = symbolTable.referenceClass(lowerTypeDescriptor)
+                    arguments = when {
+                        approximatedType is RawType ->
+                            translateTypeArguments(approximatedType.arguments)
+                        lowerTypeDescriptor != upperTypeDescriptor ->
+                            translateTypeArguments(lowerType.arguments)
+                        else ->
+                            translateTypeArguments(upperType.arguments)
+                    }
+                    annotations = translateTypeAnnotations(upperType, approximatedType)
                 }
 
                 else ->
-                    throw AssertionError("Unexpected type descriptor $ktTypeDescriptor :: ${ktTypeDescriptor::class}")
+                    throw AssertionError("Unexpected type descriptor $upperTypeDescriptor :: ${upperTypeDescriptor::class}")
             }
         }.buildTypeProjection()
     }
@@ -144,7 +167,7 @@ class TypeTranslator(
             symbolTable.referenceTypeAlias(typeAliasDescriptor),
             isMarkedNullable,
             translateTypeArguments(this.arguments),
-            translateTypeAnnotations(this.annotations)
+            translateTypeAnnotations(this)
         )
     }
 
@@ -184,8 +207,43 @@ class TypeTranslator(
                 approximateCapturedTypes(ktType).upper
         }
 
-    private fun translateTypeAnnotations(annotations: Annotations): List<IrConstructorCall> =
-        annotations.mapNotNull(constantValueGenerator::generateAnnotationConstructorCall)
+    private fun translateTypeAnnotations(kotlinType: KotlinType, flexibleType: KotlinType = kotlinType): List<IrConstructorCall> {
+        val annotations = kotlinType.annotations
+        val irAnnotations = ArrayList<IrConstructorCall>()
+
+        annotations.mapNotNullTo(irAnnotations) {
+            constantValueGenerator.generateAnnotationConstructorCall(it)
+        }
+
+        // EnhancedNullability annotation is not present in 'annotations', see 'EnhancedTypeAnnotations::iterator()'.
+        // Also, EnhancedTypeAnnotationDescriptor is not a "real" annotation descriptor, there's no corresponding ClassDescriptor, etc.
+        if (extensions.enhancedNullability.hasEnhancedNullability(kotlinType)) {
+            irAnnotations.addSpecialAnnotation(extensions.enhancedNullabilityAnnotationConstructor)
+        }
+
+        if (flexibleType.isNullabilityFlexible()) {
+            irAnnotations.addSpecialAnnotation(extensions.flexibleNullabilityAnnotationConstructor)
+        }
+
+        if (flexibleType is RawType) {
+            irAnnotations.addSpecialAnnotation(extensions.rawTypeAnnotationConstructor)
+        }
+
+        return irAnnotations
+    }
+
+    private fun MutableList<IrConstructorCall>.addSpecialAnnotation(irConstructor: IrConstructor?) {
+        if (irConstructor != null) {
+            add(
+                IrConstructorCallImpl.fromSymbolOwner(
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
+                    irConstructor.constructedClassType,
+                    irConstructor.symbol
+                )
+            )
+        }
+    }
 
     private fun translateTypeArguments(arguments: List<TypeProjection>) =
         arguments.map {

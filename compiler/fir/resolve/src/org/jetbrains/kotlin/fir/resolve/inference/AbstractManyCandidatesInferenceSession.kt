@@ -9,15 +9,19 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 
 abstract class AbstractManyCandidatesInferenceSession(
-    protected val components: BodyResolveComponents
+    protected val resolutionContext: ResolutionContext
 ) : FirInferenceSession() {
     private val errorCalls: MutableList<FirResolvable> = mutableListOf()
     protected val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()
     private val completedCalls: MutableSet<FirResolvable> = mutableSetOf()
+
+    protected val components: BodyResolveComponents
+        get() = resolutionContext.bodyResolveComponents
 
     override val currentConstraintSystem: ConstraintStorage
         get() = partiallyResolvedCalls.lastOrNull()

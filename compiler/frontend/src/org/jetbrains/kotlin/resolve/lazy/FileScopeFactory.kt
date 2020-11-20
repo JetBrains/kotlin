@@ -269,7 +269,7 @@ class FileScopeFactory(
             override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
                 if (name in excludedNames) return null
                 val classifier = scope.getContributedClassifier(name, location) ?: return null
-                val visible = Visibilities.isVisibleIgnoringReceiver(classifier as DeclarationDescriptorWithVisibility, fromDescriptor)
+                val visible = DescriptorVisibilities.isVisibleIgnoringReceiver(classifier as DeclarationDescriptorWithVisibility, fromDescriptor)
                 return classifier.takeIf { filteringKind == if (visible) FilteringKind.VISIBLE_CLASSES else FilteringKind.INVISIBLE_CLASSES }
             }
 

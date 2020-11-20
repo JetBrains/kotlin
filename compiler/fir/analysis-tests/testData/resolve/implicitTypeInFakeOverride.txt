@@ -1,0 +1,20 @@
+FILE: implicitTypeInFakeOverride.kt
+    public final fun <K> extract(x: R|Out<K>|): R|K| {
+        ^extract R|<local>/x|.R|SubstitutionOverride</Out.get: R|K|>|()
+    }
+    public final class Out<out T> : R|kotlin/Any| {
+        public constructor<out T>(x: R|T|): R|Out<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|T| = R|<local>/x|
+            public get(): R|T|
+
+        public final fun get(): R|T| {
+            ^get this@R|/Out|.R|/Out.x|
+        }
+
+    }
+    public final fun test(out: R|Out<kotlin/String>|): R|kotlin/Unit| {
+        R|/extract|<R|kotlin/String|>(R|<local>/out|)
+    }

@@ -1,1 +1,7 @@
+public final var R|kotlin/Int|.junk: R|kotlin/Short|
+    public get(): R|kotlin/Short|
+    public set(p: R|kotlin/Short|): R|kotlin/Unit|
+
+public final val R|kotlin/String|.junk: R|kotlin/Int|
+    public get(): R|kotlin/Int|
 

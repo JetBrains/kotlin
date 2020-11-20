@@ -81,7 +81,8 @@ FILE fqName:<root> fileName:/kt16905.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:test visibility:public modality:FINAL <> () returnType:IrErrorType
+  FUN name:test visibility:public modality:FINAL <> () returnType:<root>.Outer.Inner
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test (): IrErrorType declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: OI>#' type=IrErrorType
+      RETURN type=kotlin.Nothing from='public final fun test (): <root>.Outer.Inner declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer.Inner' type=<root>.Outer.Inner origin=null
+          $outer: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Outer' type=<root>.Outer origin=null

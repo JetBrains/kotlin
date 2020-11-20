@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
+import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
@@ -18,9 +19,12 @@ object RedundantReturnUnitType : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration !is FirSimpleFunction) return
         if (declaration.body is FirSingleExpressionBlock) return
-        if (declaration.returnTypeRef.source == null) return
+        val returnType = declaration.returnTypeRef
+        if (returnType.source == null) return
+        if (declaration.source?.kind is FirFakeSourceElementKind) return
+        if (returnType.annotations.isNotEmpty()) return
 
-        if (declaration.returnTypeRef.isUnit) {
+        if (returnType.isUnit) {
             reporter.report(declaration.returnTypeRef.source, FirErrors.REDUNDANT_RETURN_UNIT_TYPE)
         }
     }

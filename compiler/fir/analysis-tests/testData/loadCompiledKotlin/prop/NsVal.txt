@@ -1,1 +1,3 @@
+public final val nsVal: R|kotlin/Int|
+    public get(): R|kotlin/Int|
 

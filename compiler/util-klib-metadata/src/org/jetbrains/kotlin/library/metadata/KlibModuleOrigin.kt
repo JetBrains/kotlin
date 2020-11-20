@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.konan
 
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isInterop
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.library.isInterop
 sealed class KlibModuleOrigin {
 
     companion object {
-        val CAPABILITY = ModuleDescriptor.Capability<KlibModuleOrigin>("KlibModuleOrigin")
+        val CAPABILITY = ModuleCapability<KlibModuleOrigin>("KlibModuleOrigin")
     }
 }
 

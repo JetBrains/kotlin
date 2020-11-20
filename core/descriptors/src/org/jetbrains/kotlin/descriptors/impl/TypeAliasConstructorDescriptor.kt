@@ -39,11 +39,11 @@ interface TypeAliasConstructorDescriptor : ConstructorDescriptor, DescriptorDeri
     val withDispatchReceiver: TypeAliasConstructorDescriptor?
 
     override fun copy(
-        newOwner: DeclarationDescriptor,
-        modality: Modality,
-        visibility: Visibility,
-        kind: Kind,
-        copyOverrides: Boolean
+            newOwner: DeclarationDescriptor,
+            modality: Modality,
+            visibility: DescriptorVisibility,
+            kind: Kind,
+            copyOverrides: Boolean
     ): TypeAliasConstructorDescriptor
 }
 
@@ -128,11 +128,11 @@ class TypeAliasConstructorDescriptorImpl private constructor(
     }
 
     override fun copy(
-        newOwner: DeclarationDescriptor,
-        modality: Modality,
-        visibility: Visibility,
-        kind: Kind,
-        copyOverrides: Boolean
+            newOwner: DeclarationDescriptor,
+            modality: Modality,
+            visibility: DescriptorVisibility,
+            kind: Kind,
+            copyOverrides: Boolean
     ): TypeAliasConstructorDescriptor =
         newCopyBuilder()
             .setOwner(newOwner)

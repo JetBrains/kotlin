@@ -323,17 +323,19 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
 
 private val jvmAssertArgsRegex = "(es?a|ds?a|(enable|disable)(system)?assertions)(${'$'}|:)".toRegex()
 
-fun configureDaemonJVMOptions(vararg additionalParams: String,
-                              inheritMemoryLimits: Boolean,
-                              inheritOtherJvmOptions: Boolean,
-                              inheritAdditionalProperties: Boolean
+fun configureDaemonJVMOptions(
+    vararg additionalParams: String,
+    inheritMemoryLimits: Boolean,
+    inheritOtherJvmOptions: Boolean,
+    inheritAdditionalProperties: Boolean
 ): DaemonJVMOptions =
-        configureDaemonJVMOptions(DaemonJVMOptions(),
-                                  additionalParams = *additionalParams,
-                                  inheritMemoryLimits = inheritMemoryLimits,
-                                  inheritOtherJvmOptions = inheritOtherJvmOptions,
-                                  inheritAdditionalProperties = inheritAdditionalProperties)
-
+    configureDaemonJVMOptions(
+        DaemonJVMOptions(),
+        *additionalParams,
+        inheritMemoryLimits = inheritMemoryLimits,
+        inheritOtherJvmOptions = inheritOtherJvmOptions,
+        inheritAdditionalProperties = inheritAdditionalProperties,
+    )
 
 fun configureDaemonOptions(opts: DaemonOptions): DaemonOptions {
     System.getProperty(COMPILE_DAEMON_OPTIONS_PROPERTY)?.let {

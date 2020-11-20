@@ -487,9 +487,9 @@ class ControlFlowInformationProvider private constructor(
 
             val receiverValue = expression.getResolvedCall(trace.bindingContext)?.getDispatchReceiverWithSmartCast()
 
-            if (Visibilities.isVisible(receiverValue, variableDescriptor, descriptor)
+            if (DescriptorVisibilities.isVisible(receiverValue, variableDescriptor, descriptor)
                 && setterDescriptor != null
-                && !Visibilities.isVisible(receiverValue, setterDescriptor, descriptor)
+                && !DescriptorVisibilities.isVisible(receiverValue, setterDescriptor, descriptor)
             ) {
                 report(
                     Errors.INVISIBLE_SETTER.on(
@@ -887,7 +887,9 @@ class ControlFlowInformationProvider private constructor(
             }
 
             instruction.next?.let { dfs(it) }
-        } else if (instruction.element is KtNameReferenceExpression) {
+        } else if (instruction.element is KtNameReferenceExpression || instruction.element is KtBinaryExpression ||
+            instruction.element is KtUnaryExpression
+        ) {
             val call = instruction.element.getResolvedCall(trace.bindingContext)
             if (call is VariableAsFunctionResolvedCall) {
                 (call.variableCall.dispatchReceiver as? ExtensionReceiver)?.declarationDescriptor?.apply { markIfNeeded() }

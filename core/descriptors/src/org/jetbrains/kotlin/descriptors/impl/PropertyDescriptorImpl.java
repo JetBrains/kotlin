@@ -36,7 +36,7 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getB
 @SuppressWarnings("deprecation")
 public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImpl implements PropertyDescriptor {
     private final Modality modality;
-    private Visibility visibility;
+    private DescriptorVisibility visibility;
     private Collection<? extends PropertyDescriptor> overriddenProperties = null;
     private final PropertyDescriptor original;
     private final Kind kind;
@@ -61,7 +61,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @Nullable PropertyDescriptor original,
             @NotNull Annotations annotations,
             @NotNull Modality modality,
-            @NotNull Visibility visibility,
+            @NotNull DescriptorVisibility visibility,
             boolean isVar,
             @NotNull Name name,
             @NotNull Kind kind,
@@ -91,7 +91,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             @NotNull Modality modality,
-            @NotNull Visibility visibility,
+            @NotNull DescriptorVisibility visibility,
             boolean isVar,
             @NotNull Name name,
             @NotNull Kind kind,
@@ -145,7 +145,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         this.setterProjectedOut = setterProjectedOut;
     }
 
-    public void setVisibility(@NotNull Visibility visibility) {
+    public void setVisibility(@NotNull DescriptorVisibility visibility) {
         this.visibility = visibility;
     }
 
@@ -186,7 +186,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
     @NotNull
     @Override
-    public Visibility getVisibility() {
+    public DescriptorVisibility getVisibility() {
         return visibility;
     }
 
@@ -255,7 +255,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     public class CopyConfiguration implements PropertyDescriptor.CopyBuilder<PropertyDescriptor> {
         private DeclarationDescriptor owner = getContainingDeclaration();
         private Modality modality = getModality();
-        private Visibility visibility = getVisibility();
+        private DescriptorVisibility visibility = getVisibility();
         private PropertyDescriptor original = null;
         private boolean preserveSourceElement = false;
         private Kind kind = getKind();
@@ -303,7 +303,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
         @NotNull
         @Override
-        public CopyConfiguration setVisibility(@NotNull Visibility visibility) {
+        public CopyConfiguration setVisibility(@NotNull DescriptorVisibility visibility) {
             this.visibility = visibility;
             return this;
         }
@@ -492,9 +492,9 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         return substitutedDescriptor;
     }
 
-    private static Visibility normalizeVisibility(Visibility prev, Kind kind) {
-        if (kind == Kind.FAKE_OVERRIDE && Visibilities.isPrivate(prev.normalize())) {
-            return Visibilities.INVISIBLE_FAKE;
+    private static DescriptorVisibility normalizeVisibility(DescriptorVisibility prev, Kind kind) {
+        if (kind == Kind.FAKE_OVERRIDE && DescriptorVisibilities.isPrivate(prev.normalize())) {
+            return DescriptorVisibilities.INVISIBLE_FAKE;
         }
         return prev;
     }
@@ -512,7 +512,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
     protected PropertyDescriptorImpl createSubstitutedCopy(
             @NotNull DeclarationDescriptor newOwner,
             @NotNull Modality newModality,
-            @NotNull Visibility newVisibility,
+            @NotNull DescriptorVisibility newVisibility,
             @Nullable PropertyDescriptor original,
             @NotNull Kind kind,
             @NotNull Name newName,
@@ -577,7 +577,7 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
     @NotNull
     @Override
-    public PropertyDescriptor copy(DeclarationDescriptor newOwner, Modality modality, Visibility visibility, Kind kind, boolean copyOverrides) {
+    public PropertyDescriptor copy(DeclarationDescriptor newOwner, Modality modality, DescriptorVisibility visibility, Kind kind, boolean copyOverrides) {
         //noinspection ConstantConditions
         return newCopyBuilder()
                 .setOwner(newOwner)

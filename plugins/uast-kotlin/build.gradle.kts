@@ -21,12 +21,10 @@ dependencies {
         compileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
     }
 
-    if (Platform.P192.orHigher()) {
-        compileOnly(intellijDep()) { includeJars("platform-impl") }
-        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
-        testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
-        testRuntime(intellijPluginDep("java"))
-    }
+    compileOnly(intellijDep()) { includeJars("platform-impl") }
+    compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
+    testCompileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
+    testRuntime(intellijPluginDep("java"))
 
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
     testCompile(projectTests(":compiler:tests-common"))
@@ -51,6 +49,7 @@ dependencies {
     testRuntime(project(":plugins:android-extensions-ide"))
     testRuntime(project(":plugins:kapt3-idea"))
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide"))
     testRuntime(intellijDep())
     testRuntime(intellijPluginDep("junit"))
     testRuntime(intellijPluginDep("gradle"))

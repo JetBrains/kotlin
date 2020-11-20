@@ -50,7 +50,7 @@ class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
     fun checkDeclarationWithVisibility(
         modifierListOwner: KtModifierListOwner,
         descriptor: DeclarationDescriptorWithVisibility,
-        visibility: Visibility
+        visibility: DescriptorVisibility
     ): Boolean {
         return when {
             modifierListOwner is KtFunction &&
@@ -78,7 +78,7 @@ class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
         function: KtFunction,
         functionDescriptor: FunctionDescriptor,
         // for checking situation with modified basic visibility
-        visibility: Visibility = functionDescriptor.visibility
+        visibility: DescriptorVisibility = functionDescriptor.visibility
     ): Boolean {
         val functionVisibility = functionDescriptor.effectiveVisibility(visibility)
         var result = true
@@ -116,7 +116,7 @@ class ExposedVisibilityChecker(private val trace: BindingTrace? = null) {
         property: KtProperty,
         propertyDescriptor: PropertyDescriptor,
         // for checking situation with modified basic visibility
-        visibility: Visibility = propertyDescriptor.visibility
+        visibility: DescriptorVisibility = propertyDescriptor.visibility
     ): Boolean {
         val propertyVisibility = propertyDescriptor.effectiveVisibility(visibility)
         val restricting = propertyDescriptor.type.leastPermissiveDescriptor(propertyVisibility)

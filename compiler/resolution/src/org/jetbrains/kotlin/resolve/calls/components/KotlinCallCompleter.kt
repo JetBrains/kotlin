@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.addEqualityConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empty.hasContradiction
-import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPositionImpl
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -115,6 +115,7 @@ class KotlinCallCompleter(
             firstCandidate.getSystem().asPostponedArgumentsAnalyzerContext(),
             resolutionCallbacks,
             firstAtom,
+            ConstraintSystemCompletionMode.FULL,
             diagnosticHolderForLambda,
         )
 
@@ -124,6 +125,7 @@ class KotlinCallCompleter(
                 candidate.getSystem().asPostponedArgumentsAnalyzerContext(),
                 atom,
                 results,
+                ConstraintSystemCompletionMode.FULL,
                 diagnosticHolderForLambda
             )
         }
@@ -228,12 +230,13 @@ class KotlinCallCompleter(
                     constraintSystem.asPostponedArgumentsAnalyzerContext(),
                     resolutionCallbacks,
                     it,
+                    completionMode,
                     diagnosticsHolder
                 )
             }
         }
 
-        constraintSystem.diagnostics.forEach(diagnosticsHolder::addDiagnostic)
+        constraintSystem.errors.forEach(diagnosticsHolder::addError)
     }
 
     private fun prepareCandidateForCompletion(
@@ -283,11 +286,11 @@ class KotlinCallCompleter(
 
             expectedType === TypeUtils.UNIT_EXPECTED_TYPE ->
                 csBuilder.addEqualityConstraintIfCompatible(
-                    returnType, csBuilder.builtIns.unitType, ExpectedTypeConstraintPosition(resolvedCall.atom)
+                    returnType, csBuilder.builtIns.unitType, ExpectedTypeConstraintPositionImpl(resolvedCall.atom)
                 )
 
             else ->
-                csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
+                csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPositionImpl(resolvedCall.atom))
         }
     }
 
@@ -298,7 +301,7 @@ class KotlinCallCompleter(
         if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ExpectedTypeFromCast)) return
         if (returnType == null) return
         val expectedType = resolutionCallbacks.getExpectedTypeFromAsExpressionAndRecordItInTrace(resolvedCall) ?: return
-        csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPosition(resolvedCall.atom))
+        csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPositionImpl(resolvedCall.atom))
     }
 
     fun KotlinResolutionCandidate.asCallResolutionResult(

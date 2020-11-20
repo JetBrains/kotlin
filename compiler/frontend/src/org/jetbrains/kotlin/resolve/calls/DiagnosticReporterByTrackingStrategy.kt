@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
@@ -67,16 +66,7 @@ class DiagnosticReporterByTrackingStrategy(
             AbstractSuperCall::class.java -> tracingStrategy.abstractSuperCall(trace)
             NonApplicableCallForBuilderInferenceDiagnostic::class.java -> {
                 val reportOn = (diagnostic as NonApplicableCallForBuilderInferenceDiagnostic).kotlinCall
-                trace.reportDiagnosticOnce(Errors.NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE.on(reportOn.psiKotlinCall.psiCall.callElement))
-            }
-            OnlyInputTypesDiagnostic::class.java -> {
-                val typeVariable = (diagnostic as OnlyInputTypesDiagnostic).typeVariable as? TypeVariableFromCallableDescriptor ?: return
-                psiKotlinCall.psiCall.calleeExpression?.let {
-                    val factory = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NonStrictOnlyInputTypesChecks))
-                        TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING
-                    else TYPE_INFERENCE_ONLY_INPUT_TYPES
-                    trace.report(factory.on(it, typeVariable.originalTypeParameter))
-                }
+                trace.reportDiagnosticOnce(NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE.on(reportOn.psiKotlinCall.psiCall.callElement))
             }
             CandidateChosenUsingOverloadResolutionByLambdaAnnotation::class.java -> {
                 trace.report(CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION.on(psiKotlinCall.psiCall.callElement))
@@ -168,7 +158,11 @@ class DiagnosticReporterByTrackingStrategy(
 
             CallableReferenceCandidatesAmbiguity::class.java -> {
                 val ambiguityDiagnostic = diagnostic as CallableReferenceCandidatesAmbiguity
-                val expression = ambiguityDiagnostic.argument.psiExpression.safeAs<KtCallableReferenceExpression>()
+                val expression = when (val psiExpression = ambiguityDiagnostic.argument.psiExpression) {
+                    is KtPsiUtil.KtExpressionWrapper -> psiExpression.baseExpression
+                    else -> psiExpression
+                }.safeAs<KtCallableReferenceExpression>()
+
                 val candidates = ambiguityDiagnostic.candidates.map { it.candidate }
                 if (expression != null) {
                     trace.reportDiagnosticOnce(CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY.on(expression.callableReference, candidates))
@@ -340,32 +334,32 @@ class DiagnosticReporterByTrackingStrategy(
         )
     }
 
-    override fun constraintError(diagnostic: KotlinCallDiagnostic) {
-        when (diagnostic.javaClass) {
+    override fun constraintError(error: ConstraintSystemError) {
+        when (error.javaClass) {
             NewConstraintError::class.java -> {
-                val constraintError = diagnostic as NewConstraintError
-                val position = constraintError.position.from
+                error as NewConstraintError
+                val position = error.position.from
                 val argument =
                     when (position) {
-                        is ArgumentConstraintPosition -> position.argument
-                        is ReceiverConstraintPosition -> position.argument
-                        is LHSArgumentConstraintPosition -> position.argument
-                        is LambdaArgumentConstraintPosition -> position.lambda.atom
+                        is ArgumentConstraintPositionImpl -> position.argument
+                        is ReceiverConstraintPositionImpl -> position.argument
+                        is LHSArgumentConstraintPositionImpl -> position.argument
+                        is LambdaArgumentConstraintPositionImpl -> position.lambda.atom
                         else -> null
                     }
                 argument?.let {
                     it.safeAs<LambdaKotlinCallArgument>()?.let lambda@{ lambda ->
                         val parameterTypes = lambda.parametersTypes?.toList() ?: return@lambda
-                        val index = parameterTypes.indexOf(constraintError.upperKotlinType.unwrap())
+                        val index = parameterTypes.indexOf(error.upperKotlinType.unwrap())
                         val lambdaExpression = lambda.psiExpression as? KtLambdaExpression ?: return@lambda
                         val parameter = lambdaExpression.valueParameters.getOrNull(index) ?: return@lambda
-                        trace.report(Errors.EXPECTED_PARAMETER_TYPE_MISMATCH.on(parameter, constraintError.upperKotlinType))
+                        trace.report(EXPECTED_PARAMETER_TYPE_MISMATCH.on(parameter, error.upperKotlinType))
                         return
                     }
 
                     val expression = it.psiExpression ?: return
                     val deparenthesized = KtPsiUtil.safeDeparenthesize(expression)
-                    if (reportConstantTypeMismatch(constraintError, deparenthesized)) return
+                    if (reportConstantTypeMismatch(error, deparenthesized)) return
 
                     val compileTimeConstant = trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized] as? TypedCompileTimeConstant
                     if (compileTimeConstant != null) {
@@ -376,84 +370,67 @@ class DiagnosticReporterByTrackingStrategy(
                             return
                         }
                     }
-                    trace.report(
-                        Errors.TYPE_MISMATCH.on(
-                            deparenthesized,
-                            constraintError.upperKotlinType,
-                            constraintError.lowerKotlinType
-                        )
-                    )
+                    trace.report(TYPE_MISMATCH.on(deparenthesized, error.upperKotlinType, error.lowerKotlinType))
                 }
 
-                (position as? ExpectedTypeConstraintPosition)?.let {
+                (position as? ExpectedTypeConstraintPositionImpl)?.let {
                     val call = it.topLevelCall.psiKotlinCall.psiCall.callElement.safeAs<KtExpression>()
                     val inferredType =
-                        if (!constraintError.lowerKotlinType.isNullableNothing()) constraintError.lowerKotlinType
-                        else constraintError.upperKotlinType.makeNullable()
+                        if (!error.lowerKotlinType.isNullableNothing()) error.lowerKotlinType
+                        else error.upperKotlinType.makeNullable()
                     if (call != null) {
-                        trace.report(
-                            Errors.TYPE_MISMATCH.on(
-                                call,
-                                constraintError.upperKotlinType,
-                                inferredType
-                            )
-                        )
+                        trace.report(TYPE_MISMATCH.on(call, error.upperKotlinType, inferredType))
                     }
                 }
 
-                (position as? ExplicitTypeParameterConstraintPosition)?.let {
+                (position as? ExplicitTypeParameterConstraintPositionImpl)?.let {
                     val typeArgumentReference = (it.typeArgument as SimpleTypeArgumentImpl).typeReference
-                    trace.report(
-                        UPPER_BOUND_VIOLATED.on(
-                            typeArgumentReference,
-                            constraintError.upperKotlinType,
-                            constraintError.lowerKotlinType
-                        )
-                    )
+                    trace.report(UPPER_BOUND_VIOLATED.on(typeArgumentReference, error.upperKotlinType, error.lowerKotlinType))
                 }
 
-                (position as? FixVariableConstraintPosition)?.let {
+                (position as? FixVariableConstraintPositionImpl)?.let {
                     val morePreciseDiagnosticExists = allDiagnostics.any { other ->
-                        other is NewConstraintError && other.position.from !is FixVariableConstraintPosition
+                        val otherError = other.constraintSystemError ?: return@any false
+                        otherError is NewConstraintError && otherError.position.from !is FixVariableConstraintPositionImpl
                     }
                     if (morePreciseDiagnosticExists) return
 
                     val call = it.resolvedAtom?.atom?.safeAs<PSIKotlinCall>()?.psiCall ?: call
                     val expression = call.calleeExpression ?: return
 
-                    trace.reportDiagnosticOnce(
-                        TYPE_MISMATCH.on(
-                            expression,
-                            constraintError.upperKotlinType,
-                            constraintError.lowerKotlinType
-                        )
-                    )
+                    trace.reportDiagnosticOnce(TYPE_MISMATCH.on(expression, error.upperKotlinType, error.lowerKotlinType))
                 }
             }
 
             CapturedTypeFromSubtyping::class.java -> {
-                val capturedError = diagnostic as CapturedTypeFromSubtyping
-                val position = capturedError.position
-                val argumentPosition =
-                    position.safeAs<ArgumentConstraintPosition>()
-                        ?: position.safeAs<IncorporationConstraintPosition>()?.from.safeAs<ArgumentConstraintPosition>()
+                error as CapturedTypeFromSubtyping
+                val position = error.position
+                val argumentPosition: ArgumentConstraintPositionImpl? =
+                    position.safeAs() ?: position.safeAs<IncorporationConstraintPosition>()?.from.safeAs()
 
                 argumentPosition?.let {
                     val expression = it.argument.psiExpression ?: return
                     trace.reportDiagnosticOnce(
                         NEW_INFERENCE_ERROR.on(
                             expression,
-                            "Capture type from subtyping ${capturedError.constraintType} for variable ${capturedError.typeVariable}"
+                            "Capture type from subtyping ${error.constraintType} for variable ${error.typeVariable}"
                         )
                     )
                 }
             }
 
-            NotEnoughInformationForTypeParameter::class.java -> {
-                val error = diagnostic as NotEnoughInformationForTypeParameter
+            NotEnoughInformationForTypeParameterImpl::class.java -> {
+                error as NotEnoughInformationForTypeParameterImpl
                 if (allDiagnostics.any {
-                        (it is ConstrainingTypeIsError && it.typeVariable == error.typeVariable)
-                                || it is NewConstraintError || it is WrongCountOfTypeArguments
+                        when (it) {
+                            is WrongCountOfTypeArguments -> true
+                            is KotlinConstraintSystemDiagnostic -> {
+                                val otherError = it.error
+                                (otherError is ConstrainingTypeIsError && otherError.typeVariable == error.typeVariable)
+                                        || otherError is NewConstraintError
+                            }
+                            else -> false
+                        }
                     }
                 ) return
 
@@ -472,6 +449,16 @@ class DiagnosticReporterByTrackingStrategy(
                     else -> error("Unsupported type variable: $typeVariable")
                 }
                 trace.reportDiagnosticOnce(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER.on(expression, typeVariableName))
+            }
+
+            OnlyInputTypesDiagnostic::class.java -> {
+                val typeVariable = (error as OnlyInputTypesDiagnostic).typeVariable as? TypeVariableFromCallableDescriptor ?: return
+                psiKotlinCall.psiCall.calleeExpression?.let {
+                    val factory = if (context.languageVersionSettings.supportsFeature(LanguageFeature.NonStrictOnlyInputTypesChecks))
+                        TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING
+                    else TYPE_INFERENCE_ONLY_INPUT_TYPES
+                    trace.report(factory.on(it, typeVariable.originalTypeParameter))
+                }
             }
         }
     }

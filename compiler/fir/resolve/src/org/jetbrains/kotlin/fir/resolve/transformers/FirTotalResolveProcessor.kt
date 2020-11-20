@@ -33,9 +33,10 @@ class FirTotalResolveProcessor(session: FirSession) {
 
 fun createAllCompilerResolveProcessors(
     session: FirSession,
-    scopeSession: ScopeSession? = null
+    scopeSession: ScopeSession? = null,
+    pluginPhasesEnabled: Boolean = false
 ): List<FirResolveProcessor> {
-    return createAllResolveProcessors(scopeSession) {
+    return createAllResolveProcessors(scopeSession, pluginPhasesEnabled) {
         createCompilerProcessorByPhase(session, it)
     }
 }
@@ -43,19 +44,22 @@ fun createAllCompilerResolveProcessors(
 fun createAllTransformerBasedResolveProcessors(
     session: FirSession,
     scopeSession: ScopeSession? = null,
+    pluginPhasesEnabled: Boolean = false,
 ): List<FirTransformerBasedResolveProcessor> {
-    return createAllResolveProcessors(scopeSession) {
+    return createAllResolveProcessors(scopeSession, pluginPhasesEnabled) {
         createTransformerBasedProcessorByPhase(session, it)
     }
 }
 
 private inline fun <T : FirResolveProcessor> createAllResolveProcessors(
     scopeSession: ScopeSession? = null,
+    pluginPhasesEnabled: Boolean,
     creator: FirResolvePhase.(ScopeSession) -> T
 ): List<T> {
     @Suppress("NAME_SHADOWING")
     val scopeSession = scopeSession ?: ScopeSession()
-    return FirResolvePhase.values()
-        .drop(1) // to remove RAW_FIR phase
-        .map { it.creator(scopeSession) }
+    val phases = FirResolvePhase.values().filter {
+        !it.noProcessor && if (!pluginPhasesEnabled) !it.pluginPhase else true
+    }
+    return phases.map { it.creator(scopeSession) }
 }

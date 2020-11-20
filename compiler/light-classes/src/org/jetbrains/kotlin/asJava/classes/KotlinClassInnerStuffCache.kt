@@ -19,8 +19,8 @@ import com.intellij.psi.scope.NameHint
 import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.ArrayUtil
-import com.intellij.util.containers.ContainerUtil
 import gnu.trove.THashMap
+import org.jetbrains.kotlin.utils.SmartList
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
 
@@ -176,17 +176,17 @@ class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDepend
         val methods = this.methods
         if (methods.isEmpty()) return emptyMap()
 
-        val collectedMethods = ContainerUtil.newHashMap<String, MutableList<PsiMethod>>()
+        val collectedMethods = hashMapOf<String, MutableList<PsiMethod>>()
         for (method in methods) {
             var list: MutableList<PsiMethod>? = collectedMethods[method.name]
             if (list == null) {
-                list = ContainerUtil.newSmartList()
+                list = SmartList()
                 collectedMethods[method.name] = list
             }
             list.add(method)
         }
 
-        val cachedMethods = ContainerUtil.newTroveMap<String, Array<PsiMethod>>()
+        val cachedMethods = THashMap<String, Array<PsiMethod>>()
         for ((key, list) in collectedMethods) {
             cachedMethods[key] = list.toTypedArray()
         }

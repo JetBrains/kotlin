@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.ir.descriptors
 
-import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -267,7 +268,8 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         val vDeclaration = irFactory.createValueParameter(
             offset, offset, classOrigin, vSymbol, Name.special("<this>"), -1, type, null,
             isCrossinline = false,
-            isNoinline = false
+            isNoinline = false,
+            isAssignable = false
         )
 
         if (vDescriptor is WrappedReceiverParameterDescriptor) vDescriptor.bind(vDeclaration)
@@ -281,19 +283,19 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         return symbolTable.declareClass(this) {
             val factory = FunctionDescriptorFactory.RealDescriptorFactory(this, symbolTable)
             when (functionKind) {
-                FunctionClassDescriptor.Kind.Function ->
+                FunctionClassKind.Function ->
                     createFunctionClass(it, false, false, arity, irBuiltIns.functionClass, kotlinPackageFragment, factory)
-                FunctionClassDescriptor.Kind.SuspendFunction ->
+                FunctionClassKind.SuspendFunction ->
                     createFunctionClass(it, false, true, arity, irBuiltIns.functionClass, kotlinCoroutinesPackageFragment, factory)
-                FunctionClassDescriptor.Kind.KFunction ->
+                FunctionClassKind.KFunction ->
                     createFunctionClass(it, true, false, arity, irBuiltIns.kFunctionClass, kotlinReflectPackageFragment, factory)
-                FunctionClassDescriptor.Kind.KSuspendFunction ->
+                FunctionClassKind.KSuspendFunction ->
                     createFunctionClass(it, true, true, arity, irBuiltIns.kFunctionClass, kotlinReflectPackageFragment, factory)
             }
         }
     }
 
-    private fun IrClass.createMembers(isK: Boolean, isSuspend: Boolean, arity: Int, name: String, descriptorFactory: FunctionDescriptorFactory) {
+    private fun IrClass.createMembers(isK: Boolean, isSuspend: Boolean, descriptorFactory: FunctionDescriptorFactory) {
         if (!isK) {
             val invokeSymbol = descriptorFactory.memberDescriptor("invoke") {
                 val returnType = with(IrSimpleTypeBuilder()) {
@@ -302,7 +304,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                 }
 
                 irFactory.createFunction(
-                    offset, offset, memberOrigin, it, Name.identifier("invoke"), Visibilities.PUBLIC, Modality.ABSTRACT,
+                    offset, offset, memberOrigin, it, Name.identifier("invoke"), DescriptorVisibilities.PUBLIC, Modality.ABSTRACT,
                     returnType,
                     isInline = false,
                     isExternal = false,
@@ -331,7 +333,8 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                 val vDeclaration = irFactory.createValueParameter(
                     offset, offset, memberOrigin, vSymbol, Name.identifier("p$i"), i - 1, vType, null,
                     isCrossinline = false,
-                    isNoinline = false
+                    isNoinline = false,
+                    isAssignable = false
                 )
                 vDeclaration.parent = fDeclaration
                 if (vDescriptor is WrappedValueParameterDescriptor) vDescriptor.bind(vDeclaration)
@@ -440,7 +443,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         val name = functionClassName(isK, isSuspend, n)
         if (symbol.isBound) return symbol.owner
         val klass = irFactory.createClass(
-            offset, offset, classOrigin, symbol, Name.identifier(name), ClassKind.INTERFACE, Visibilities.PUBLIC, Modality.ABSTRACT
+            offset, offset, classOrigin, symbol, Name.identifier(name), ClassKind.INTERFACE, DescriptorVisibilities.PUBLIC, Modality.ABSTRACT
         )
 
         val r = klass.createTypeParameters(n, descriptorFactory)
@@ -461,7 +464,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
         klass.parent = packageFragment
         packageFragment.declarations += klass
 
-        klass.createMembers(isK, isSuspend, n, klass.name.identifier, descriptorFactory)
+        klass.createMembers(isK, isSuspend, descriptorFactory)
 
         return klass
     }

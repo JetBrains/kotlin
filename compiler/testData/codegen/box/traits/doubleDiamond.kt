@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 interface A {
     val result: String get() = "Fail"
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.CompanionObjectMapping;
+import org.jetbrains.kotlin.builtins.CompanionObjectMappingUtilsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.load.java.JvmAbi;
@@ -24,7 +25,7 @@ public class FieldInfo {
             throw new UnsupportedOperationException("Can't create singleton field for class: " + classDescriptor);
         }
 
-        if (isNonCompanionObject(classDescriptor) || CompanionObjectMapping.INSTANCE.isMappedIntrinsicCompanionObject(classDescriptor)) {
+        if (isNonCompanionObject(classDescriptor) || CompanionObjectMappingUtilsKt.isMappedIntrinsicCompanionObject(CompanionObjectMapping.INSTANCE, classDescriptor)) {
             return createSingletonViaInstance(classDescriptor, typeMapper, JvmAbi.INSTANCE_FIELD);
         }
 

@@ -6,9 +6,6 @@ plugins {
 }
 
 val kotlinVersion: String by rootProject.extra
-val isFirPlugin: Boolean
-    get() = rootProject.findProperty("idea.fir.plugin") == "true"
-
 
 repositories {
     maven("https://jetbrains.bintray.com/markdown")
@@ -28,7 +25,7 @@ sourceSets {
             "idea-repl/resources",
             "resources-en"
         )
-        if (isFirPlugin) {
+        if (kotlinBuildProperties.useFirIdeaPlugin) {
             resources.srcDir("resources-fir")
         } else {
             resources.srcDir("resources-descriptors")
@@ -95,17 +92,14 @@ dependencies {
     compileOnly(project(":kotlin-daemon-client"))
 
     compileOnly(intellijDep())
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-        testCompileOnly(intellijPluginDep("java"))
-        testRuntime(intellijPluginDep("java"))
-    }
 
-    Platform[193].orHigher {
-        implementation(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
-        Ide.IJ {
-            implementation(intellijPluginDep("stats-collector"))
-        }
+    compileOnly(intellijPluginDep("java"))
+    testCompileOnly(intellijPluginDep("java"))
+    testRuntime(intellijPluginDep("java"))
+
+    implementation(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
+    Ide.IJ {
+        implementation(intellijPluginDep("stats-collector"))
     }
 
     compileOnly(commonDep("org.jetbrains", "markdown"))
@@ -145,6 +139,8 @@ dependencies {
     testRuntime(project(":noarg-ide-plugin")) { isTransitive = false }
     testRuntime(project(":kotlin-noarg-compiler-plugin"))
     testRuntime(project(":plugins:annotation-based-compiler-plugins-ide-support")) { isTransitive = false }
+    testRuntime(project(":plugins:parcelize:parcelize-compiler"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide")) { isTransitive = false }
     testRuntime(project(":kotlin-scripting-idea")) { isTransitive = false }
     testRuntime(project(":kotlin-scripting-compiler-impl"))
     testRuntime(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
@@ -186,6 +182,10 @@ dependencies {
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("testng"))
+
+    if (kotlinBuildProperties.useFirIdeaPlugin) {
+        testRuntime(project(":idea:idea-fir"))
+    }
 
     if (Ide.AS36.orHigher()) {
         testRuntime(intellijPluginDep("android-layoutlib"))

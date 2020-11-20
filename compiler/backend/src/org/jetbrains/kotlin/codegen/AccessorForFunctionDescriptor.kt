@@ -43,7 +43,7 @@ class AccessorForFunctionDescriptor(
             copyValueParameters(calleeDescriptor),
             calleeDescriptor.returnType,
             Modality.FINAL,
-            Visibilities.LOCAL
+            DescriptorVisibilities.LOCAL
         )
 
         isSuspend = calleeDescriptor.isSuspend

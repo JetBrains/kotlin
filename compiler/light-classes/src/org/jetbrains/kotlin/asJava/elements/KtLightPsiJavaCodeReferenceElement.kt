@@ -25,7 +25,7 @@ class KtLightPsiJavaCodeReferenceElement(
     override fun advancedResolve(incompleteCode: Boolean): JavaResolveResult =
         delegate?.advancedResolve(incompleteCode) ?: JavaResolveResult.EMPTY
 
-    override fun getReferenceNameElement(): PsiElement? = ktElement
+    override fun getReferenceNameElement(): PsiElement? = delegate?.referenceNameElement
 
     override fun getTypeParameters(): Array<PsiType> = delegate?.typeParameters ?: emptyArray()
 

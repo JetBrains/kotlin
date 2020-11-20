@@ -87,7 +87,7 @@ fun InstructionAdapter.generateClosureFieldsInitializationFromParameters(
             k += fieldInfo.fieldType.size
             continue
         }
-        k = AsmUtil.genAssignInstanceFieldFromParam(fieldInfo, k, this)
+        k = DescriptorAsmUtil.genAssignInstanceFieldFromParam(fieldInfo, k, this)
     }
 
     return boundReferenceReceiverFieldInfo?.let { Pair(boundReferenceReceiverParameterIndex, it) }
@@ -122,7 +122,7 @@ internal fun generateCallableReferenceDeclarationContainerClass(
             // TODO: would it work for arrays?
             val containerKotlinType = container.defaultType
             val containerType = typeMapper.mapClass(container)
-            AsmUtil.putJavaLangClassInstance(iv, containerType, containerKotlinType, typeMapper)
+            DescriptorAsmUtil.putJavaLangClassInstance(iv, containerType, containerKotlinType, typeMapper)
         }
         container is PackageFragmentDescriptor -> {
             iv.aconst(typeMapper.mapOwner(descriptor))

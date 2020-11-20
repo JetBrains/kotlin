@@ -51,11 +51,7 @@ internal fun Project.runOnceAfterEvaluated(name: String, task: TaskProvider<*>, 
 }
 
 internal fun Project.runOnceAfterEvaluated(runOnce: RunOnceAfterEvaluated, task: TaskProvider<*>) {
-    if (state.executed) {
-        runOnce.onEvaluated()
-    } else {
-        afterEvaluate { runOnce.onEvaluated() }
-    }
+    whenEvaluated { runOnce.onEvaluated() }
     task.configure {
         runOnce.onConfigure()
     }

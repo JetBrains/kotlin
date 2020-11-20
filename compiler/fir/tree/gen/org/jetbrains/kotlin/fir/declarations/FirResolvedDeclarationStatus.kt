@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 interface FirResolvedDeclarationStatus : FirDeclarationStatus {
     override val source: FirSourceElement?
     override val visibility: Visibility
-    override val effectiveVisibility: FirEffectiveVisibility
     override val modality: Modality?
     override val isExpect: Boolean
     override val isActual: Boolean

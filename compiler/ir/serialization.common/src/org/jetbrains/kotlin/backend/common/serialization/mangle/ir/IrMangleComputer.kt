@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle.ir
 
-import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
+import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isVararg
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -106,14 +106,19 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
         }
 
         extensionReceiverParameter?.let {
-            builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
-            mangleValueParameter(builder, it)
+            if (!it.isHidden) {
+                builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
+                mangleValueParameter(builder, it)
+            }
         }
 
         valueParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
-            appendSignature(specialValueParamPrefix(it))
-            mangleValueParameter(this, it)
+            if (!it.isHidden) {
+                appendSignature(specialValueParamPrefix(it))
+                mangleValueParameter(this, it)
+            }
         }
+
         typeParameters.collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it) }
 
         if (!isCtor && !returnType.isUnit() && addReturnType()) {
@@ -175,8 +180,13 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
                 }
 
                 if (type.hasQuestionMark) tBuilder.appendSignature(MangleConstant.Q_MARK)
+
+                if (type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)) {
+                    tBuilder.append(MangleConstant.ENHANCED_NULLABILITY_MARK)
+                }
             }
             is IrDynamicType -> tBuilder.appendSignature(MangleConstant.DYNAMIC_MARK)
+            is IrErrorType -> tBuilder.appendSignature(MangleConstant.ERROR_MARK)
             else -> error("Unexpected type $type")
         }
     }
@@ -185,6 +195,10 @@ abstract class IrMangleComputer(protected val builder: StringBuilder, private va
 
     override fun visitScript(declaration: IrScript, data: Boolean) {
         declaration.parent.accept(this, data)
+    }
+
+    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Boolean) {
+        declaration.mangleSimpleDeclaration(MangleConstant.ERROR_DECLARATION)
     }
 
     override fun visitClass(declaration: IrClass, data: Boolean) {

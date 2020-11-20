@@ -167,7 +167,8 @@ object JsExportDeclarationChecker : DeclarationChecker {
             KotlinBuiltIns.isPrimitiveArray(type)
         ) return true
 
-        val descriptor: ClassifierDescriptor = type.constructor.declarationDescriptor ?: return false
-        return descriptor.isEffectivelyExternal() || AnnotationsUtils.isExportedObject(descriptor, bindingContext)
+        val descriptor = type.constructor.declarationDescriptor ?: return false
+        return descriptor is MemberDescriptor && descriptor.isEffectivelyExternal() ||
+                AnnotationsUtils.isExportedObject(descriptor, bindingContext)
     }
 }

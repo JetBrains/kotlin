@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SERIALIZABLE_PROPERTIES
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginMetadataExtensions
 
 class SerializableProperties(private val serializableClass: ClassDescriptor, val bindingContext: BindingContext) {
@@ -39,7 +40,7 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
 
         fun isPropSerializable(it: PropertyDescriptor) =
             if (serializableClass.isInternalSerializable) !it.annotations.serialTransient
-            else !Visibilities.isPrivate(it.visibility) && ((it.isVar && !it.annotations.serialTransient) || primaryConstructorProperties.contains(
+            else !DescriptorVisibilities.isPrivate(it.visibility) && ((it.isVar && !it.annotations.serialTransient) || primaryConstructorProperties.contains(
                 it
             ))
 
@@ -88,9 +89,9 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
 internal fun List<SerializableProperty>.bitMaskSlotCount() = size / 32 + 1
 internal fun bitMaskSlotAt(propertyIndex: Int) = propertyIndex / 32
 
-internal fun BindingContext.serializablePropertiesFor(classDescriptor: ClassDescriptor): SerializableProperties {
+internal fun BindingContext.serializablePropertiesFor(classDescriptor: ClassDescriptor, serializationDescriptorSerializer: SerializationDescriptorSerializerPlugin? = null): SerializableProperties {
     val props = this.get(SERIALIZABLE_PROPERTIES, classDescriptor) ?: SerializableProperties(classDescriptor, this)
-    SerializationComponentRegistrar.serializationDescriptorSerializer.putIfNeeded(classDescriptor, props)
+    serializationDescriptorSerializer?.putIfNeeded(classDescriptor, props)
     return props
 }
 

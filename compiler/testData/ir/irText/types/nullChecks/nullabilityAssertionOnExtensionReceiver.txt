@@ -29,11 +29,11 @@ FILE fqName:<root> fileName:/nullabilityAssertionOnExtensionReceiver.kt
     BLOCK_BODY
       CALL 'public final fun extension (): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         $receiver: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public open fun s (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+          CALL 'public open fun s (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
   FUN name:testMemberExt visibility:public modality:FINAL <> ($receiver:<root>.C) returnType:kotlin.Unit
     $receiver: VALUE_PARAMETER name:<this> type:<root>.C
     BLOCK_BODY
       CALL 'public final fun memberExtension (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
         $this: GET_VAR '<this>: <root>.C declared in <root>.testMemberExt' type=<root>.C origin=null
         $receiver: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public open fun s (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+          CALL 'public open fun s (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null

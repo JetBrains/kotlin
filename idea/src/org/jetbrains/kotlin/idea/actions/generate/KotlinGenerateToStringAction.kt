@@ -28,6 +28,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
@@ -168,11 +169,12 @@ class KotlinGenerateToStringAction : KotlinGenerateMemberActionBase<KotlinGenera
         val superToString = classDescriptor.getSuperClassOrAny().findDeclaredToString(true)!!
 
         val memberChooserObjects = properties.map { DescriptorMemberChooserObject(it, it.unsafeResolveToDescriptor()) }.toTypedArray()
+        val selectedElements = memberChooserObjects.filter { (it.descriptor as? PropertyDescriptor)?.getter?.isDefault ?: true }.toTypedArray()
         val headerPanel = ToStringMemberChooserHeaderPanel(!superToString.builtIns.isMemberOfAny(superToString))
         val chooser = MemberChooser<DescriptorMemberChooserObject>(memberChooserObjects, true, true, project, false, headerPanel).apply {
             title = KotlinBundle.message("action.generate.tostring.name")
             setCopyJavadocVisible(false)
-            selectElements(memberChooserObjects)
+            selectElements(selectedElements)
         }
 
         if (!klass.hasExpectModifier()) {

@@ -35,7 +35,7 @@ private class State<T>(val path: MutableList<String>) {
         path.add(step)
     }
 
-    fun removeStep(step: String) {
+    fun removeStep() {
         path.removeAt(path.lastIndex)
     }
 
@@ -93,7 +93,7 @@ abstract class TypeAnnotationCollector<T>(val context: TypeSystemCommonBackendCo
     fun KotlinTypeMarker.process(step: String) {
         state.addStep(step)
         this.gatherTypeAnnotations()
-        state.removeStep(step)
+        state.removeStep()
     }
 
 

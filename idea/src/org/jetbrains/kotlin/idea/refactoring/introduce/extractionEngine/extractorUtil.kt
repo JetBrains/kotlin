@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.isMultiLine
 import org.jetbrains.kotlin.idea.inspections.PublicApiImplicitTypeInspection
@@ -499,8 +499,8 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         val visibility = (descriptor.visibility ?: KtTokens.DEFAULT_VISIBILITY_KEYWORD).toVisibility()
         return when {
             visibility.isPublicAPI -> true
-            inspection.reportInternal && visibility == Visibilities.INTERNAL -> true
-            inspection.reportPrivate && visibility == Visibilities.PRIVATE -> true
+            inspection.reportInternal && visibility == DescriptorVisibilities.INTERNAL -> true
+            inspection.reportPrivate && visibility == DescriptorVisibilities.PRIVATE -> true
             else -> false
         }
     }
@@ -642,9 +642,9 @@ fun ExtractionGeneratorConfiguration.generateDeclaration(
         }
 
         val marginalCandidate = if (insertBefore) {
-            anchorCandidates.minBy { it.startOffset }!!
+            anchorCandidates.minByOrNull { it.startOffset }!!
         } else {
-            anchorCandidates.maxBy { it.startOffset }!!
+            anchorCandidates.maxByOrNull { it.startOffset }!!
         }
 
         // Ascend to the level of targetSibling

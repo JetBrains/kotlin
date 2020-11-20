@@ -15,10 +15,10 @@ annotation class Ann(vararg val s: String)
 @Ann(s = arrayOf())
 fun test1() {}
 
-@Ann(s = intArrayOf())
+<!INAPPLICABLE_CANDIDATE!>@Ann(s = intArrayOf())<!>
 fun test2() {}
 
-@Ann(s = arrayOf(1))
+<!INAPPLICABLE_CANDIDATE!>@Ann(s = arrayOf(1))<!>
 fun test3() {}
 
 @Ann("value1", "value2")

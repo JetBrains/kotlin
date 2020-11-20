@@ -1,0 +1,19 @@
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:26: error: unresolved reference: getSomeInt
+    constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
+                         ^
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:51: error: cannot access '<this>' before superclass constructor has been called
+    constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
+                                                  ^
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:2:74: error: unresolved reference: keker
+    constructor(x: Int = getSomeInt(), other: A = this, header: String = keker) {}
+                                                                         ^
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:7:20: error: 'this' is not defined in this context
+class B(other: B = this)
+                   ^
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:10:27: error: inapplicable candidate(s): /C.C
+    constructor(x: Int) : this({
+                          ^
+compiler/testData/cli/jvm/instanceAccessBeforeSuperCall.kt:12:9: error: cannot access '<this>' before superclass constructor has been called
+        this
+        ^
+COMPILATION_ERROR

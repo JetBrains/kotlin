@@ -10,9 +10,7 @@ import groovy.lang.Closure
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
@@ -31,11 +29,10 @@ abstract class AbstractKotlinNativeCompilation(
     compilationName: String
 ) : AbstractKotlinCompilation<KotlinCommonOptions>(target, compilationName) {
 
-    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions()
+    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions { defaultSourceSet.languageSettings }
 
-    private inner class NativeCompileOptions : KotlinCommonOptions {
-        private val languageSettings: LanguageSettingsBuilder
-            get() = defaultSourceSet.languageSettings
+    private class NativeCompileOptions(languageSettingsProvider: () -> LanguageSettingsBuilder) : KotlinCommonOptions {
+        private val languageSettings: LanguageSettingsBuilder by lazy(languageSettingsProvider)
 
         override var apiVersion: String?
             get() = languageSettings.apiVersion

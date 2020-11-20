@@ -6,19 +6,25 @@
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.dependenciesWithoutSelf
-import org.jetbrains.kotlin.fir.resolve.providers.AbstractFirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.SymbolProviderCache
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-open class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSymbolProvider<FirClassLikeSymbol<*>>() {
+@ThreadSafeMutableState
+open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirSymbolProvider(session) {
+    private val classCache = SymbolProviderCache<ClassId, FirClassLikeSymbol<*>>()
+    private val topLevelCallableCache = SymbolProviderCache<CallableId, List<FirCallableSymbol<*>>>()
+    private val packageCache = SymbolProviderCache<FqName, FqName>()
+
     protected open val dependencyProviders by lazy {
         val moduleInfo = session.moduleInfo ?: return@lazy emptyList()
         moduleInfo.dependenciesWithoutSelf().mapNotNull {
@@ -26,14 +32,15 @@ open class FirDependenciesSymbolProviderImpl(val session: FirSession) : Abstract
         }.toList()
     }
 
+    @FirSymbolProviderInternals
+    override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
+        destination += getTopLevelCallableSymbols(packageFqName, name)
+    }
+
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         return topLevelCallableCache.lookupCacheOrCalculate(CallableId(packageFqName, null, name)) {
             dependencyProviders.flatMap { provider -> provider.getTopLevelCallableSymbols(packageFqName, name) }
         } ?: emptyList()
-    }
-
-    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
-        return dependencyProviders.firstNotNullResult { it.getNestedClassifierScope(classId) }
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
@@ -56,21 +63,5 @@ open class FirDependenciesSymbolProviderImpl(val session: FirSession) : Abstract
             }
             null
         }
-    }
-
-    override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {
-        return dependencyProviders.flatMapTo(mutableSetOf()) { it.getAllCallableNamesInPackage(fqName) }
-    }
-
-    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
-        return dependencyProviders.flatMapTo(mutableSetOf()) { it.getClassNamesInPackage(fqName) }
-    }
-
-    override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> {
-        return dependencyProviders.flatMapTo(mutableSetOf()) { it.getAllCallableNamesInClass(classId) }
-    }
-
-    override fun getNestedClassesNamesInClass(classId: ClassId): Set<Name> {
-        return dependencyProviders.flatMapTo(mutableSetOf()) { it.getNestedClassesNamesInClass(classId) }
     }
 }

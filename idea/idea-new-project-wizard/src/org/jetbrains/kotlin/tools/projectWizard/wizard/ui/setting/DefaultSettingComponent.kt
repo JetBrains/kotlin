@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.label
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.customPanel
 import java.awt.BorderLayout
 import java.awt.event.ItemEvent
+import java.awt.event.KeyAdapter
+import java.awt.event.KeyEvent
 import java.nio.file.Path
 import javax.swing.DefaultComboBoxModel
 import javax.swing.JComponent
@@ -66,6 +68,7 @@ class VersionSettingComponent(
     reference: SettingReference<Version, VersionSettingType>,
     context: Context
 ) : SettingComponent<Version, VersionSettingType>(reference, context) {
+
     private val settingLabel = label(setting.title)
     private val comboBox = ComboBox<Version>().apply {
         addItemListener { e ->
@@ -111,6 +114,7 @@ class DropdownSettingComponent(
     override val uiComponent = DropDownComponent(
         context = context,
         initialValues = setting.type.values,
+        description = setting.description,
         validator = setting.validator,
         filter = { value ->
             context.read { setting.type.filter(this, reference, value) }
@@ -135,6 +139,7 @@ class BooleanSettingComponent(
     override val uiComponent = CheckboxComponent(
         context = context,
         labelText = setting.title,
+        description = setting.description,
         initialValue = null,
         validator = setting.validator,
         onValueUpdate = { newValue -> value = newValue }
@@ -152,10 +157,15 @@ class StringSettingComponent(
     override val uiComponent = TextFieldComponent(
         context = context,
         initialValue = null,
+        description = setting.description,
         labelText = setting.title.takeIf { needLabel },
         validator = setting.validator,
         onValueUpdate = { newValue -> value = newValue }
     ).asSubComponent()
+
+    fun onUserType(action: () -> Unit) {
+        uiComponent.onUserType(action)
+    }
 }
 
 class PathSettingComponent(
@@ -168,8 +178,13 @@ class PathSettingComponent(
 ) {
     override val uiComponent = PathFieldComponent(
         context = context,
+        description = setting.description,
         labelText = setting.title.takeIf { needLabel },
         validator = settingValidator { path -> setting.validator.validate(this, path) },
         onValueUpdate = { newValue -> value = newValue }
     ).asSubComponent()
+
+    fun onUserType(action: () -> Unit) {
+        uiComponent.onUserType(action)
+    }
 }

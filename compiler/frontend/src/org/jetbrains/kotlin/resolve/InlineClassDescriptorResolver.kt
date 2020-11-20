@@ -75,7 +75,7 @@ object InlineClassDescriptorResolver {
             createValueParametersForSpecializedEquals(functionDescriptor, inlinedValue),
             owner.builtIns.booleanType,
             Modality.FINAL,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
 
         return functionDescriptor
@@ -102,7 +102,7 @@ object InlineClassDescriptorResolver {
             if (isBoxMethod) listOf(createValueParameterForBoxing(functionDescriptor, inlinedValue)) else emptyList(),
             if (isBoxMethod) owner.defaultType else inlinedValue.returnType,
             Modality.FINAL,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
 
         return functionDescriptor

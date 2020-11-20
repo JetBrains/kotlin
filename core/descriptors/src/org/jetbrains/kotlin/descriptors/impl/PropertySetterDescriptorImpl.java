@@ -39,7 +39,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             @NotNull PropertyDescriptor correspondingProperty,
             @NotNull Annotations annotations,
             @NotNull Modality modality,
-            @NotNull Visibility visibility,
+            @NotNull DescriptorVisibility visibility,
             boolean isDefault,
             boolean isExternal,
             boolean isInline,

@@ -8,5 +8,5 @@ UFile (package = )
                 UReturnExpression
                     USimpleNameReferenceExpression (identifier = field)
         UMethod (name = setWithoutSetter)
-            UParameter (name = p)
+            UParameter (name = withoutSetter)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)

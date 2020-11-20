@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
@@ -90,7 +91,10 @@ class FirSealedClassInheritorsTransformer : FirTransformer<Nothing?>() {
             val classLikeSymbol: FirClassifierSymbol<*> = symbolProvider.getSymbolByLookupTag(lookupTag) ?: return null
             return when (classLikeSymbol) {
                 is FirRegularClassSymbol -> classLikeSymbol.fir
-                is FirTypeAliasSymbol -> extractClassFromTypeRef(symbolProvider, classLikeSymbol.fir.expandedTypeRef)
+                is FirTypeAliasSymbol -> {
+                    classLikeSymbol.ensureResolved(FirResolvePhase.SUPER_TYPES, symbolProvider.session)
+                    extractClassFromTypeRef(symbolProvider, classLikeSymbol.fir.expandedTypeRef)
+                }
                 else -> null
             }
         }

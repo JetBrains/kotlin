@@ -112,7 +112,7 @@ internal fun generateDestructuringBlock(
                 }
                 this.isVar = isVar
                 isLocal = true
-                status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                 symbol = FirPropertySymbol(name)
                 entry.extractAnnotationsTo(this)
             }

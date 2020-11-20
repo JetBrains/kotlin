@@ -10,11 +10,12 @@ package org.jetbrains.kotlin.idea.util
 import com.intellij.psi.*
 import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.builtins.replaceReturnType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -57,7 +58,7 @@ private fun KotlinType.approximateNonDynamicFlexibleTypes(
     if (isFlexible()) {
         val flexible = asFlexibleType()
         val lowerClass = flexible.lowerBound.constructor.declarationDescriptor as? ClassDescriptor?
-        val isCollection = lowerClass != null && JavaToKotlinClassMap.isMutable(lowerClass)
+        val isCollection = lowerClass != null && JavaToKotlinClassMapper.isMutable(lowerClass)
         // (Mutable)Collection<T>! -> MutableCollection<T>?
         // Foo<(Mutable)Collection<T>!>! -> Foo<Collection<T>>?
         // Foo! -> Foo?
@@ -204,6 +205,7 @@ fun KotlinType.isAbstract(): Boolean {
  * NOTE: this is a very shaky implementation of [PsiType] to [KotlinType] conversion,
  * produced types are fakes and are usable only for code generation. Please be careful using this method.
  */
+@OptIn(FrontendInternals::class)
 fun PsiType.resolveToKotlinType(resolutionFacade: ResolutionFacade): KotlinType {
     if (this == PsiType.NULL) {
         return resolutionFacade.moduleDescriptor.builtIns.nullableAnyType

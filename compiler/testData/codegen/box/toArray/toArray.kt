@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-
 // WITH_RUNTIME
 
 class MyCollection<T>(val delegate: Collection<T>): Collection<T> by delegate

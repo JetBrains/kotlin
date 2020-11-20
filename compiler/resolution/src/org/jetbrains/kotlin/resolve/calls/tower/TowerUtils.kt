@@ -18,16 +18,12 @@ package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 
 private val INAPPLICABLE_STATUSES = setOf(
-    ResolutionCandidateApplicability.INAPPLICABLE,
-    ResolutionCandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR,
-    ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+    CandidateApplicability.INAPPLICABLE,
+    CandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR,
+    CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
 )
-
-val ResolutionCandidateApplicability.isSuccess: Boolean
-    get() = this <= ResolutionCandidateApplicability.RESOLVED_LOW_PRIORITY
 
 val CallableDescriptor.isSynthesized: Boolean
     get() = (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED)
@@ -35,7 +31,7 @@ val CallableDescriptor.isSynthesized: Boolean
 val CandidateWithBoundDispatchReceiver.requiresExtensionReceiver: Boolean
     get() = descriptor.extensionReceiverParameter != null
 
-val ResolutionCandidateApplicability.isInapplicable: Boolean
+val CandidateApplicability.isInapplicable: Boolean
     get() = this in INAPPLICABLE_STATUSES
 
 fun <C : Candidate> C.forceResolution(): C {

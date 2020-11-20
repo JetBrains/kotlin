@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.roots
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 
 /**
@@ -13,8 +14,8 @@ import com.intellij.openapi.vfs.VirtualFile
  *
  * @see GradleBuildRootsManager for details.
  */
-abstract class GradleBuildRootsLocator {
-    protected val roots = GradleBuildRootIndex()
+abstract class GradleBuildRootsLocator(project: Project) {
+    protected val roots = GradleBuildRootIndex(project)
 
     abstract fun getScriptInfo(localPath: String): GradleScriptInfo?
 

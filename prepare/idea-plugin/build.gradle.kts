@@ -13,8 +13,10 @@ repositories {
 // PILL: used in pill importer
 val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
-        ":core:type-system",
         ":compiler:backend",
+        ":compiler:resolution.common.jvm",
+        ":core:compiler.common.jvm",
+        ":compiler:backend.common.jvm",
         ":compiler:backend-common",
         ":compiler:backend.jvm",
         ":compiler:ir.backend.common",
@@ -27,8 +29,11 @@ val projectsToShadow by extra(listOf(
         ":daemon-common-new",
         ":core:metadata",
         ":core:metadata.jvm",
+        ":core:compiler.common",
         ":core:descriptors",
         ":core:descriptors.jvm",
+        ":core:deserialization.common",
+        ":core:deserialization.common.jvm",
         ":core:deserialization",
         ":idea:jvm-debugger:eval4j",
         ":idea:jvm-debugger:jvm-debugger-util",
@@ -43,13 +48,15 @@ val projectsToShadow by extra(listOf(
         ":compiler:psi",
         ":compiler:fir:cones",
         ":compiler:fir:checkers",
+        ":compiler:fir:entrypoint",
         ":compiler:fir:resolve",
         ":compiler:fir:fir-serialization",
+        ":compiler:fir:fir-deserialization",
         ":compiler:fir:tree",
         ":compiler:fir:java",
         ":compiler:fir:jvm",
         ":compiler:fir:raw-fir:psi2fir",
-        ":compiler:fir:raw-fir:fir-common",
+        ":compiler:fir:raw-fir:raw-fir.common",
         ":compiler:fir:fir2ir",
         ":compiler:fir:fir2ir:jvm-backend",
         ":compiler:frontend",
@@ -75,6 +82,7 @@ val projectsToShadow by extra(listOf(
         ":compiler:light-classes",
         ":compiler:plugin-api",
         ":kotlin-preloader",
+        ":compiler:resolution.common",
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:util",
@@ -99,6 +107,7 @@ val projectsToShadow by extra(listOf(
         ":idea:idea-frontend-fir",
         ":idea:idea-frontend-api",
         ":idea:idea-frontend-fir:idea-fir-low-level-api",
+        ":idea:idea-fir-performance-tests",
         ":idea:idea-fir",
         *if (Ide.IJ())
             arrayOf(
@@ -109,7 +118,8 @@ val projectsToShadow by extra(listOf(
             )
         else
             emptyArray<String>()
-))
+    )
+)
 
 // Projects published to maven copied to the plugin as separate jars
 val libraryProjects = listOf(
@@ -132,6 +142,7 @@ val libraryProjects = listOf(
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin",
     ":plugins:android-extensions-compiler",
+    ":plugins:parcelize:parcelize-compiler",
     ":kotlinx-serialization-compiler-plugin",
     ":idea:ide-common"
 )
@@ -164,7 +175,7 @@ dependencies {
     embedded(protobufFull())
     embedded(kotlinBuiltins(forJvm = true))
 
-    libraries(commonDep("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm:${property("versions.kotlinx-collections-immutable")}"))
+    libraries(commonDep(kotlinxCollectionsImmutable()))
     libraries(commonDep("javax.inject"))
     libraries(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8"))
     libraries(commonDep("org.jetbrains", "markdown"))
@@ -172,9 +183,7 @@ dependencies {
 
     libraries(kotlinStdlib("jdk8"))
 
-    Platform[193].orHigher {
-        libraries(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
-    }
+    libraries(commonDep("org.jetbrains.intellij.deps.completion", "completion-ranking-kotlin"))
 
     libraryProjects.forEach {
         libraries(project(it)) { isTransitive = false }
@@ -184,15 +193,11 @@ dependencies {
     gradleToolingModel(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":plugins:kapt3-idea")) { isTransitive = false }
     gradleToolingModel(project(":plugins:android-extensions-ide")) { isTransitive = false }
+    gradleToolingModel(project(":plugins:parcelize:parcelize-ide")) { isTransitive = false }
     gradleToolingModel(project(":noarg-ide-plugin")) { isTransitive = false }
     gradleToolingModel(project(":allopen-ide-plugin")) { isTransitive = false }
 
-    Platform[193].orLower {
-        gradleToolingModel(project(":idea:idea-gradle-tooling-api")) { isTransitive = false }
-    }
-
     jpsPlugin(project(":kotlin-jps-plugin")) { isTransitive = false }
-
 
     (libraries.dependencies + gradleToolingModel.dependencies)
         .map { if (it is ProjectDependency) it.dependencyProject else it }

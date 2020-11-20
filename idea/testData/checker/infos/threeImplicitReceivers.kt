@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 interface IA
 interface IB
 interface IC

@@ -55,7 +55,7 @@ private fun TypeArgument.toTypeProjection(): TypeProjection {
     }
     fun removeProjectionIfRedundant(variance: Variance) = if (variance == typeParameter.variance) Variance.INVARIANT else variance
     return when {
-        inProjection == outProjection -> TypeProjectionImpl(inProjection)
+        inProjection == outProjection || typeParameter.variance == Variance.IN_VARIANCE -> TypeProjectionImpl(inProjection)
         KotlinBuiltIns.isNothing(inProjection) && typeParameter.variance != Variance.IN_VARIANCE ->
             TypeProjectionImpl(removeProjectionIfRedundant(Variance.OUT_VARIANCE), outProjection)
         KotlinBuiltIns.isNullableAny(outProjection) -> TypeProjectionImpl(removeProjectionIfRedundant(Variance.IN_VARIANCE), inProjection)

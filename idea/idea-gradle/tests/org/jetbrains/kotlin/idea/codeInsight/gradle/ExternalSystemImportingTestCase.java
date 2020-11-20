@@ -20,15 +20,11 @@ import com.intellij.find.findUsages.FindUsagesHandler;
 import com.intellij.find.findUsages.FindUsagesManager;
 import com.intellij.find.findUsages.FindUsagesOptions;
 import com.intellij.find.impl.FindManagerImpl;
-import com.intellij.openapi.application.AccessToken;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.importing.ImportSpec;
 import com.intellij.openapi.externalSystem.importing.ImportSpecBuilder;
 import com.intellij.openapi.externalSystem.model.DataNode;
-import com.intellij.openapi.externalSystem.model.ExternalProjectInfo;
 import com.intellij.openapi.externalSystem.model.ProjectSystemId;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
@@ -37,7 +33,6 @@ import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMo
 import com.intellij.openapi.externalSystem.service.notification.ExternalSystemProgressNotificationManager;
 import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefreshCallback;
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
-import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataManagerImpl;
 import com.intellij.openapi.externalSystem.settings.AbstractExternalSystemSettings;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
@@ -66,13 +61,11 @@ import com.intellij.packaging.artifacts.ArtifactManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.usageView.UsageInfo;
-import com.intellij.util.BooleanFunction;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.Function;
 import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ConcurrentWeakKeySoftValueHashMap;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.containers.ContainerUtilRt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -98,7 +91,7 @@ import static com.intellij.testFramework.EdtTestUtil.runInEdtAndGet;
 public abstract class ExternalSystemImportingTestCase extends ExternalSystemTestCase {
 
     public static final String MINIMAL_SUPPORTED_GRADLE_PLUGIN_VERSION = "1.3.0";
-    public static final String LATEST_STABLE_GRADLE_PLUGIN_VERSION = "1.3.50";
+    public static final String LATEST_STABLE_GRADLE_PLUGIN_VERSION = "1.3.72";
 
     private Logger logger;
 
@@ -456,13 +449,28 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         return getRootManager(moduleName).getContentEntries();
     }
 
-    protected void importProject(@NonNls String config) throws IOException {
+    protected void importProject(@NonNls String config, Boolean skipIndexing) throws IOException {
         createProjectConfig(config);
-        importProject();
+        importProject(skipIndexing);
     }
 
-    protected void importProject() {
-        doImportProject();
+    protected void importProject(Boolean skipIndexing) {
+        String indexingPropertyName = "idea.skip.indices.initialization";
+        String previousIndexingState = System.getProperty(indexingPropertyName);
+        try {
+            if (skipIndexing != null) {
+                System.setProperty(indexingPropertyName, skipIndexing.toString());
+            }
+            doImportProject();
+        } finally {
+            if (skipIndexing != null) {
+                if (previousIndexingState == null) {
+                    System.clearProperty(indexingPropertyName);
+                } else {
+                    System.setProperty(indexingPropertyName, previousIndexingState);
+                }
+            }
+        }
     }
 
     public boolean ensureIsNotGradleProxyObject(
@@ -595,7 +603,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         final Ref<Couple<String>> error = Ref.create();
         ImportSpec importSpec = createImportSpec();
         ExternalProjectRefreshCallback callback = importSpec.getCallback();
-        if (callback == null || ExternalSystemTestCaseBunch.isDefaultRefreshCallback(callback)) {
+        if (callback == null || callback instanceof ImportSpecBuilder.DefaultProjectRefreshCallback) {
             importSpec = new TestImportSpecBuilder(importSpec)
                     .setCreateEmptyContentRoots(projectSettings.isCreateEmptyContentRootDirectories())
                     .callback(new ExternalProjectRefreshCallback() {

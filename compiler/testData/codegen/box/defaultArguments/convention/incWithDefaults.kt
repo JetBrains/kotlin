@@ -1,5 +1,4 @@
 // !LANGUAGE: +ProperArrayConventionSetterWithDefaultCalls
-// IGNORE_BACKEND_FIR: JVM_IR
 var inc: String = ""
 
 class X {

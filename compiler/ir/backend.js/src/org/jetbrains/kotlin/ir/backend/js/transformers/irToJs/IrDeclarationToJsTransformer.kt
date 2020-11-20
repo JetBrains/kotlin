@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.js.backend.ast.JsEmpty
-import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
-import org.jetbrains.kotlin.js.backend.ast.JsStatement
-import org.jetbrains.kotlin.js.backend.ast.JsVars
+import org.jetbrains.kotlin.js.backend.ast.*
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
@@ -29,6 +26,11 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
             declaration,
             context.newDeclaration()
         ).generate()
+    }
+
+    override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: JsGenerationContext): JsStatement {
+        // To avoid compiler crash with UnimplementedException just in case I added this visitor to catch uncovered cases
+        return JsSingleLineComment("\$error code: declaration")
     }
 
     override fun visitField(declaration: IrField, context: JsGenerationContext): JsStatement {
@@ -50,8 +52,11 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
 
     override fun visitScript(irScript: IrScript, context: JsGenerationContext): JsStatement {
         return JsGlobalBlock().apply {
-            statements += irScript.declarations.map { it.accept(this@IrDeclarationToJsTransformer, context) }
-            statements += irScript.statements.map { it.accept(IrElementToJsStatementTransformer(), context) }
+            irScript.statements.forEach {
+                statements +=
+                    if (it is IrDeclaration) it.accept(this@IrDeclarationToJsTransformer, context)
+                    else it.accept(IrElementToJsStatementTransformer(), context)
+            }
         }
     }
 }

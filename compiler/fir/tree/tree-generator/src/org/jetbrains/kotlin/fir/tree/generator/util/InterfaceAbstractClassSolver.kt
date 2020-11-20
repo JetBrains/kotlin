@@ -52,9 +52,11 @@ private fun updateKinds(solution: List<Boolean>, elementMapping: ElementMapping)
         val element = elementMapping[index * 2].origin
         val existingKind = element.kind
         if (isClass) {
-            when (existingKind) {
-                Implementation.Kind.Interface -> throw IllegalStateException(element.toString())
-                null -> element.kind = when (element) {
+            if (existingKind == Implementation.Kind.Interface)
+                throw IllegalStateException(element.toString())
+
+            if (existingKind == null) {
+                element.kind = when (element) {
                     is Implementation -> {
                         if (elementMapping.hasInheritors(element))
                             Implementation.Kind.AbstractClass

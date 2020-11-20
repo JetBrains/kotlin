@@ -226,7 +226,7 @@ internal class JKCodeBuilder(context: NewJ2kConverterContext) {
                             ?.let { it as? JKDelegationConstructorCall }
                     if (delegationCall != null) {
                         printer.par { delegationCall.arguments.accept(this) }
-                    } else if (!superType.isInterface() && primaryConstructor != null) {
+                    } else if (!superType.isInterface() && (primaryConstructor != null || parentClass.isObjectOrCompanionObject)) {
                         printer.print("()")
                     }
                 }

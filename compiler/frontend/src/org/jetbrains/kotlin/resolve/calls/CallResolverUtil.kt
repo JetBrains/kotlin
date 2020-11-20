@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.resolve.calls.callResolverUtil
 
 import com.google.common.collect.Lists
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.utils.SmartList
 
 enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
@@ -108,7 +109,7 @@ fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescript
             receiverType = TypeIntersector.intersectUpperBounds(typeParameter, properUpperBounds)
         }
     }
-    val fakeTypeArguments = ContainerUtil.newSmartList<TypeProjection>()
+    val fakeTypeArguments = SmartList<TypeProjection>()
     for (typeProjection in receiverType.arguments) {
         fakeTypeArguments.add(TypeProjectionImpl(typeProjection.projectionKind, DONT_CARE))
     }
@@ -236,9 +237,12 @@ private fun arrayAssignmentToVarargInNamedFormInAnnotation(
 ): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AssigningArraysToVarargsInNamedFormInAnnotations)) return false
 
-    if (!isParameterOfAnnotation(parameterDescriptor)) return false
+    val isAllowedAssigningSingleElementsToVarargsInNamedForm =
+        !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)
 
-    return argument.isNamed() && parameterDescriptor.isVararg && isArrayOrArrayLiteral(argument, trace)
+    if (isAllowedAssigningSingleElementsToVarargsInNamedForm && !isArrayOrArrayLiteral(argument, trace)) return false
+
+    return isParameterOfAnnotation(parameterDescriptor) && argument.isNamed() && parameterDescriptor.isVararg
 }
 
 private fun arrayAssignmentToVarargInNamedFormInFunction(
@@ -249,7 +253,12 @@ private fun arrayAssignmentToVarargInNamedFormInFunction(
 ): Boolean {
     if (!languageVersionSettings.supportsFeature(LanguageFeature.AllowAssigningArrayElementsToVarargsInNamedFormForFunctions)) return false
 
-    return argument.isNamed() && parameterDescriptor.isVararg && isArrayOrArrayLiteral(argument, trace)
+    val isAllowedAssigningSingleElementsToVarargsInNamedForm =
+        !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)
+
+    if (isAllowedAssigningSingleElementsToVarargsInNamedForm && !isArrayOrArrayLiteral(argument, trace)) return false
+
+    return argument.isNamed() && parameterDescriptor.isVararg
 }
 
 fun isArrayOrArrayLiteral(argument: ValueArgument, trace: BindingTrace): Boolean {
@@ -312,3 +321,7 @@ fun createResolutionCandidatesForConstructors(
         ResolutionCandidate.create(call, it, dispatchReceiver, receiverKind, knownSubstitutor)
     }
 }
+
+internal fun KtConstructorDelegationCall.reportOnElement() = if (this.isImplicit) {
+    this.getStrictParentOfType<KtSecondaryConstructor>()!!
+} else this

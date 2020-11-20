@@ -16,4 +16,4 @@
 
 package org.jetbrains.kotlin.ir
 
-abstract class IrElementBase(override val startOffset: Int, override val endOffset: Int) : IrElement
+abstract class IrElementBase : IrElement

@@ -5,5 +5,6 @@ suspend fun topLevel(a: String, b: String) {
     blackhole(b) // no spills
 }
 
-// 1 PUTFIELD .*L\$0 : Ljava/lang/Object;
+// a and a's cleanup
+// 2 PUTFIELD .*L\$0 : Ljava/lang/Object;
 // 0 PUTFIELD .*L\$1 : Ljava/lang/Object;

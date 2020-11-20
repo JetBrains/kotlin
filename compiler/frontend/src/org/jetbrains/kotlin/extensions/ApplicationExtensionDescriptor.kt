@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.extensions
 
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
@@ -20,8 +21,8 @@ open class ApplicationExtensionDescriptor<T : Any>(name: String, private val ext
         )
     }
 
-    fun registerExtension(extension: T) {
-        Extensions.getRootArea().getExtensionPoint(extensionPointName).registerExtension(extension)
+    fun registerExtension(extension: T, disposable: Disposable) {
+        Extensions.getRootArea().getExtensionPoint(extensionPointName).registerExtension(extension, disposable)
     }
 
     fun getInstances(): List<T> {

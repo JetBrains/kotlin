@@ -27,7 +27,7 @@ interface I {
 }
 
 class IImpl: I {
-    // super call in override (step into doesn't work)
+    // super call in override (step into works in JVM_IR, doesn't work in the old backend)
     override fun fooOverride() {
         return super.fooOverride()
     }
@@ -85,7 +85,7 @@ fun main(args: Array<String>) {
 }
 
 fun testSmartStepInto() {
-    // TODO First time - doesn't work: should be smartStepIntoInterfaceImpl.kt:8 between smartStepIntoInterfaceImpl.kt:90 and 95
+    // TODO First time - doesn't work: should be smartStepIntoInterfaceImpl.kt:9 between smartStepIntoInterfaceImpl.kt:91 and 96
     // SMART_STEP_INTO_BY_INDEX: 2
     //Breakpoint!
     barI().foo()
@@ -114,7 +114,7 @@ fun testSmartStepInto() {
 fun testStepInto() {
     val ii = IImpl()
 
-    // TODO: should be smartStepIntoInterfaceImpl.kt:31 instead of smartStepIntoInterfaceImpl.kt:22
+    // (Fixed in JVM_IR) TODO: should be smartStepIntoInterfaceImpl.kt:32 instead of smartStepIntoInterfaceImpl.kt:23
     // STEP_INTO: 1
     // RESUME: 1
     //Breakpoint!
@@ -132,7 +132,7 @@ fun testStepInto() {
 
     val ii2 = IImpl2()
 
-    // TODO: should be smartStepIntoInterfaceImpl.kt:48 instead of MyJavaClass.java:16
+    // TODO: should be smartStepIntoInterfaceImpl.kt:49 instead of MyJavaClass.java:10
     // STEP_INTO: 1
     // RESUME: 1
     //Breakpoint!
@@ -148,7 +148,7 @@ fun testStepInto() {
     //Breakpoint!
     Obj.staticCallInOverride("a")
 
-    // TODO: should be smartStepIntoInterfaceImpl.kt:75 instead of smartStepIntoInterfaceImpl.kt:70
+    // TODO: should be smartStepIntoInterfaceImpl.kt:76 instead of smartStepIntoInterfaceImpl.kt:71
     // STEP_INTO: 1
     // RESUME: 1
     //Breakpoint!

@@ -86,7 +86,7 @@ class JvmRuntimeTypes(
             packageFragment, classKind, false, false, Name.identifier(name), SourceElement.NO_SOURCE, LockBasedStorageManager.NO_LOCKS
         ).apply {
             modality = Modality.FINAL
-            visibility = Visibilities.PUBLIC
+            visibility = DescriptorVisibilities.PUBLIC
             setTypeParameterDescriptors(emptyList())
             createTypeConstructor()
         }
@@ -162,7 +162,7 @@ class JvmRuntimeTypes(
             referencedFunction.isSuspend || isSuspendConversion
         )
 
-        val suspendFunctionType = if (referencedFunction.isSuspend) suspendFunctionInterface?.defaultType else null
+        val suspendFunctionType = if (referencedFunction.isSuspend || isSuspendConversion) suspendFunctionInterface?.defaultType else null
         val superClass = when {
             generateOptimizedCallableReferenceSuperClasses -> when {
                 isAdaptedCallableReference || isSuspendConversion -> adaptedFunctionReference

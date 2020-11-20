@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.codegen.optimization.OptimizationClassBuilderFactory
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -40,6 +39,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.diagnostics.PrecomputedSuppressCache
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
@@ -48,14 +48,13 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 
 class GenerationState private constructor(
     val project: Project,
     builderFactory: ClassBuilderFactory,
     val module: ModuleDescriptor,
-    bindingContext: BindingContext,
+    val originalFrontendBindingContext: BindingContext,
     val files: List<KtFile>,
     val configuration: CompilerConfiguration,
     val generateDeclaredClassFilter: GenerateClassFilter,
@@ -180,7 +179,11 @@ class GenerationState private constructor(
     }
 
     val extraJvmDiagnosticsTrace: BindingTrace =
-        DelegatingBindingTrace(bindingContext, "For extra diagnostics in ${this::class.java}", false)
+        DelegatingBindingTrace(
+            originalFrontendBindingContext, "For extra diagnostics in ${this::class.java}", false,
+            customSuppressCache = if (isIrBackend) PrecomputedSuppressCache(originalFrontendBindingContext, files) else null,
+        )
+
     private val interceptedBuilderFactory: ClassBuilderFactory
     private var used = false
 
@@ -192,21 +195,30 @@ class GenerationState private constructor(
 
     val languageVersionSettings = configuration.languageVersionSettings
 
+    val useOldManglingSchemeForFunctionsWithInlineClassesInSignatures =
+        configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME) ||
+                languageVersionSettings.languageVersion.run { major == 1 && minor < 4 }
+
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
+    val runtimeStringConcat =
+        if (target.bytecodeVersion >= JvmTarget.JVM_9.bytecodeVersion)
+            configuration.get(JVMConfigurationKeys.STRING_CONCAT) ?: JvmStringConcat.INLINE
+        else JvmStringConcat.INLINE
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
     val bindingTrace: BindingTrace = DelegatingBindingTrace(
-        bindingContext, "trace in GenerationState",
+        originalFrontendBindingContext, "trace in GenerationState",
         filter = if (wantsDiagnostics) BindingTraceFilter.ACCEPT_ALL else BindingTraceFilter.NO_DIAGNOSTICS
     )
     val bindingContext: BindingContext = bindingTrace.bindingContext
-    val mainFunctionDetector = MainFunctionDetector(bindingContext, languageVersionSettings)
+    val mainFunctionDetector = MainFunctionDetector(originalFrontendBindingContext, languageVersionSettings)
     val typeMapper: KotlinTypeMapper = KotlinTypeMapper(
-        this.bindingContext,
+        bindingContext,
         classBuilderMode,
         this.moduleName,
         languageVersionSettings,
+        useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
         IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
         target,
         isIrBackend
@@ -240,6 +252,7 @@ class GenerationState private constructor(
         var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
         // and the rest is an output from the codegen
         var resultFieldName: String? = null
+        var resultTypeString: String? = null
         var resultType: KotlinType? = null
     }
 
@@ -251,7 +264,9 @@ class GenerationState private constructor(
     val assertionsMode: JVMAssertionsMode = configuration.get(JVMConfigurationKeys.ASSERTIONS_MODE, JVMAssertionsMode.DEFAULT)
     val isInlineDisabled: Boolean = configuration.getBoolean(CommonConfigurationKeys.DISABLE_INLINE)
     val useTypeTableInSerializer: Boolean = configuration.getBoolean(JVMConfigurationKeys.USE_TYPE_TABLE)
-    val unifiedNullChecks: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4
+    val unifiedNullChecks: Boolean =
+        languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
+                !configuration.getBoolean(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS)
     val functionsWithInlineClassReturnTypesMangled: Boolean =
         languageVersionSettings.supportsFeature(LanguageFeature.MangleClassMembersReturningInlineClasses)
 
@@ -283,7 +298,6 @@ class GenerationState private constructor(
     val isIrWithStableAbi = configuration.getBoolean(JVMConfigurationKeys.IS_IR_WITH_STABLE_ABI)
 
     val globalSerializationBindings = JvmSerializationBindings()
-    lateinit var irBasedMapAsmMethod: (FunctionDescriptor) -> Method
     var mapInlineClass: (ClassDescriptor) -> Type = { descriptor -> typeMapper.mapType(descriptor.defaultType) }
 
     val typeApproximator: TypeApproximator? =
@@ -308,9 +322,9 @@ class GenerationState private constructor(
                         it
                     else
                         BuilderFactoryForDuplicateSignatureDiagnostics(
-                            it, this.bindingContext, diagnostics, this.moduleName, this.languageVersionSettings,
+                            it, bindingContext, diagnostics, this.moduleName, languageVersionSettings,
+                            useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
                             shouldGenerate = { origin -> !shouldOnlyCollectSignatures(origin) },
-                            mapAsmMethod = if (isIrBackend) { descriptor: FunctionDescriptor -> irBasedMapAsmMethod(descriptor) } else null
                         ).apply { duplicateSignatureFactory = this }
                 },
                 { BuilderFactoryForDuplicateClassNameDiagnostics(it, diagnostics) },
@@ -320,7 +334,7 @@ class GenerationState private constructor(
                 }
             )
             .wrapWith(ClassBuilderInterceptorExtension.getInstances(project)) { classBuilderFactory, extension ->
-                extension.interceptClassBuilderFactory(classBuilderFactory, bindingContext, diagnostics)
+                extension.interceptClassBuilderFactory(classBuilderFactory, originalFrontendBindingContext, diagnostics)
             }
 
         this.factory = ClassFileFactory(this, interceptedBuilderFactory)

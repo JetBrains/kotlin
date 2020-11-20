@@ -22,15 +22,15 @@
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
         <repository>
-            <id>bintray.kotlin.kotlin-dev</id>
-            <url>https://dl.bintray.com/kotlin/kotlin-dev</url>
+            <id>bintray.kotlin.kotlin-eap</id>
+            <url>KOTLIN_REPO</url>
         </repository>
     </repositories>
 
     <pluginRepositories>
         <pluginRepository>
-            <id>bintray.kotlin.kotlin-dev</id>
-            <url>https://dl.bintray.com/kotlin/kotlin-dev</url>
+            <id>bintray.kotlin.kotlin-eap</id>
+            <url>KOTLIN_REPO</url>
         </pluginRepository>
     </pluginRepositories>
     <modules>

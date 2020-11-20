@@ -24,15 +24,15 @@ FILE: delegateWithAnonymousObject.kt
 
         public final var issueListView: R|IssueListView|by this@R|/IssuesListUserProfile|.R|/delegate|<R|IssuesListUserProfile|, R|IssuesListUserProfile|, R|IssueListView|>(<L> = delegate@fun <anonymous>(): R|kotlin/properties/ReadWriteProperty<IssuesListUserProfile, IssueListView>| {
             ^ object : R|kotlin/properties/ReadWriteProperty<IssuesListUserProfile, IssueListView>| {
-                private[local] constructor(): R|<anonymous>| {
+                private constructor(): R|<anonymous>| {
                     super<R|kotlin/Any|>()
                 }
 
-                public[local] final override fun getValue(thisRef: R|IssuesListUserProfile|, property: R|kotlin/reflect/KProperty<*>|): R|IssueListView| {
+                public final override operator fun getValue(thisRef: R|IssuesListUserProfile|, property: R|kotlin/reflect/KProperty<*>|): R|IssueListView| {
                     ^getValue R|/IssueListView.IssueListView|()
                 }
 
-                public[local] final override fun setValue(thisRef: R|IssuesListUserProfile|, property: R|kotlin/reflect/KProperty<*>|, value: R|IssueListView|): R|kotlin/Unit| {
+                public final override operator fun setValue(thisRef: R|IssuesListUserProfile|, property: R|kotlin/reflect/KProperty<*>|, value: R|IssueListView|): R|kotlin/Unit| {
                     ^setValue R|/IssueListView.IssueListView|().R|/IssueListView.updateFrom|(R|<local>/value|)
                 }
 
@@ -41,10 +41,10 @@ FILE: delegateWithAnonymousObject.kt
         }
         )
             public get(): R|IssueListView| {
-                ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)
+                ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)
             }
             public set(<set-?>: R|IssueListView|): R|kotlin/Unit| {
-                this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|, R|<local>/issueListView|)
+                this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|, R|<local>/issueListView|)
             }
 
     }

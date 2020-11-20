@@ -1,0 +1,3 @@
+FILE: toOtherType.kt
+    public final val foo: R|kotlin/Long| = Int(1).R|kotlin/Int.toLong|()
+        public get(): R|kotlin/Long|

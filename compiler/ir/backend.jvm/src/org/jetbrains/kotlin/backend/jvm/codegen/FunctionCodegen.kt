@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
@@ -20,12 +21,13 @@ import org.jetbrains.kotlin.codegen.mangleNameIfNeeded
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.visitAnnotableParameterCount
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -69,16 +71,7 @@ class FunctionCodegen(
             generateParameterNames(irFunction, methodVisitor, signature, context.state)
         }
 
-        if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
-            irFunction.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
-            irFunction.origin != IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER &&
-            irFunction.origin != IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER &&
-            irFunction.origin != IrDeclarationOrigin.BRIDGE &&
-            irFunction.origin != IrDeclarationOrigin.BRIDGE_SPECIAL &&
-            irFunction.origin != JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB &&
-            irFunction.origin != JvmLoweredDeclarationOrigin.TO_ARRAY &&
-            irFunction.origin != IrDeclarationOrigin.IR_BUILTINS_STUB
-        ) {
+        if (irFunction.origin !in methodOriginsWithoutAnnotations) {
             val skipNullabilityAnnotations = flags and Opcodes.ACC_PRIVATE != 0 || flags and Opcodes.ACC_SYNTHETIC != 0
             object : AnnotationCodegen(classCodegen, context, skipNullabilityAnnotations) {
                 override fun visitAnnotation(descr: String?, visible: Boolean): AnnotationVisitor {
@@ -109,7 +102,7 @@ class FunctionCodegen(
         } else {
             val sourceMapper = context.getSourceMapper(classCodegen.irClass)
             val frameMap = irFunction.createFrameMapWithReceivers()
-            context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().descriptor)
+            context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().toIrBasedDescriptor())
             try {
                 val adapter = InstructionAdapter(methodVisitor)
                 ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, inlinedInto, sourceMapper).generate()
@@ -145,45 +138,60 @@ class FunctionCodegen(
 
     private fun IrFunction.getVisibilityForDefaultArgumentStub(): Int =
         when (visibility) {
-            Visibilities.PUBLIC -> Opcodes.ACC_PUBLIC
-            JavaVisibilities.PACKAGE_VISIBILITY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
+            DescriptorVisibilities.PUBLIC -> Opcodes.ACC_PUBLIC
+            JavaDescriptorVisibilities.PACKAGE_VISIBILITY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
             else -> throw IllegalStateException("Default argument stub should be either public or package private: ${ir2string(this)}")
         }
 
     private fun IrFunction.calculateMethodFlags(): Int {
         if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
-            return getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC or deprecationFlags.let {
-                if (this is IrConstructor) it else it or Opcodes.ACC_STATIC
-            }
+            return getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC or
+                    (if (isDeprecatedFunction) Opcodes.ACC_DEPRECATED else 0) or
+                    (if (this is IrConstructor) 0 else Opcodes.ACC_STATIC)
         }
 
-        val isVararg = valueParameters.lastOrNull()?.varargElementType != null
-        val isBridge = origin == IrDeclarationOrigin.BRIDGE || origin == IrDeclarationOrigin.BRIDGE_SPECIAL
+        val isVararg = valueParameters.lastOrNull()?.varargElementType != null && !isBridge()
         val modalityFlag = when ((this as? IrSimpleFunction)?.modality) {
             Modality.FINAL -> when {
                 origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER -> 0
                 origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> 0
                 parentAsClass.isInterface && body != null -> 0
-                parentAsClass.isAnnotationClass && !isStatic -> Opcodes.ACC_ABSTRACT
+                parentAsClass.isAnnotationClass -> if (isStatic) 0 else Opcodes.ACC_ABSTRACT
                 else -> Opcodes.ACC_FINAL
             }
             Modality.ABSTRACT -> Opcodes.ACC_ABSTRACT
             // TODO transform interface modality on lowering to DefaultImpls
             else -> if (parentAsClass.isJvmInterface && body == null) Opcodes.ACC_ABSTRACT else 0
         }
-        val isSynthetic = origin.isSynthetic || hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
-                (isSuspend && Visibilities.isPrivate(visibility) && !isInline) || isReifiable()
+        val isSynthetic = origin.isSynthetic ||
+                hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
+                (isSuspend && DescriptorVisibilities.isPrivate(visibility) && !isInline) ||
+                isReifiable() ||
+                isDeprecatedHidden()
+
         val isStrict = hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
         val isSynchronized = hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
 
-        return getVisibilityAccessFlag() or modalityFlag or deprecationFlags or
+        return getVisibilityAccessFlag() or modalityFlag or
+                (if (isDeprecatedFunction) Opcodes.ACC_DEPRECATED else 0) or
                 (if (isStatic) Opcodes.ACC_STATIC else 0) or
                 (if (isVararg) Opcodes.ACC_VARARGS else 0) or
                 (if (isExternal) Opcodes.ACC_NATIVE else 0) or
-                (if (isBridge) Opcodes.ACC_BRIDGE else 0) or
+                (if (isBridge()) Opcodes.ACC_BRIDGE else 0) or
                 (if (isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
                 (if (isStrict) Opcodes.ACC_STRICT else 0) or
                 (if (isSynchronized) Opcodes.ACC_SYNCHRONIZED else 0)
+    }
+
+    private fun IrFunction.isDeprecatedHidden(): Boolean {
+        val mightBeDeprecated = if (this is IrSimpleFunction) {
+            allOverridden(true).any {
+                it.isAnnotatedWithDeprecated || it.correspondingPropertySymbol?.owner?.isAnnotatedWithDeprecated == true
+            }
+        } else {
+            isAnnotatedWithDeprecated
+        }
+        return mightBeDeprecated && context.state.deprecationProvider.isDeprecatedHidden(toIrBasedDescriptor())
     }
 
     private fun getThrownExceptions(function: IrFunction): List<String>? {
@@ -279,6 +287,21 @@ class FunctionCodegen(
                 }.genAnnotations(annotated, parameterSignature.asmType, annotated.type)
             }
         }
+    }
+
+    companion object {
+        internal val methodOriginsWithoutAnnotations =
+            setOf(
+                IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
+                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
+                IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
+                IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER,
+                IrDeclarationOrigin.BRIDGE,
+                IrDeclarationOrigin.BRIDGE_SPECIAL,
+                JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB,
+                JvmLoweredDeclarationOrigin.TO_ARRAY,
+                IrDeclarationOrigin.IR_BUILTINS_STUB,
+            )
     }
 }
 

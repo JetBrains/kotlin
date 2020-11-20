@@ -17,22 +17,28 @@
 package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightField
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
+import org.jetbrains.kotlin.asJava.classes.KtUltraLightElementWithNullabilityAnnotation
+import org.jetbrains.kotlin.asJava.classes.runReadAction
 import org.jetbrains.kotlin.asJava.elements.PsiElementWithOrigin
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.propertyNameByGetMethodName
 import org.jetbrains.kotlin.load.java.propertyNameBySetMethodName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.types.TypeUtils
 
 /**
  * Can be null in scripts and for elements from non-jvm modules.
@@ -220,4 +226,69 @@ fun KtLightMethod.checkIsMangled(): Boolean {
     val demangledName = KotlinTypeMapper.InternalNameMapper.demangleInternalName(name) ?: return false
     val originalName = propertyNameByAccessor(demangledName, this) ?: demangledName
     return originalName == kotlinOrigin?.name
+}
+
+fun fastCheckIsNullabilityApplied(lightElement: KtLightElement<*, PsiModifierListOwner>): Boolean {
+
+    val elementIsApplicable =
+        (lightElement is KtLightMember<*> && lightElement !is KtLightFieldImpl.KtLightEnumConstant) || lightElement is LightParameter
+    if (!elementIsApplicable) return false
+
+    val annotatedElement = lightElement.kotlinOrigin ?: return true
+
+    // all data-class generated members are not-null
+    if (annotatedElement is KtClass && annotatedElement.isData()) return true
+
+    // backing fields for lateinit props are skipped
+    if (lightElement is KtLightField && annotatedElement is KtProperty && annotatedElement.hasModifier(KtTokens.LATEINIT_KEYWORD)) return false
+
+    if (lightElement is KtLightField && (annotatedElement as? KtModifierListOwner)?.isPrivate() == true) {
+        return false
+    }
+
+    if (annotatedElement is KtParameter) {
+        val containingClassOrObject = annotatedElement.containingClassOrObject
+        if (containingClassOrObject?.isAnnotation() == true) return false
+        if ((containingClassOrObject as? KtClass)?.isEnum() == true) {
+            if (annotatedElement.parent.parent is KtPrimaryConstructor) return false
+        }
+
+        val parent = annotatedElement.parent.parent
+        if (parent is KtModifierListOwner && parent.isPrivate()) return false
+
+        if (parent is KtPropertyAccessor) {
+            val propertyOfAccessor = parent.parent
+            if (propertyOfAccessor is KtProperty && propertyOfAccessor.isPrivate()) return false
+        }
+    } else {
+        // private properties
+        if ((annotatedElement as? KtModifierListOwner)?.isPrivate() == true) return false
+    }
+
+    return true
+}
+
+fun computeExpression(expression: PsiElement): Any? {
+    fun evalConstantValue(constantValue: ConstantValue<*>): Any? {
+        return if (constantValue is ArrayValue) {
+            val items = constantValue.value.map { evalConstantValue(it) }
+            items.singleOrNull() ?: items
+        } else constantValue.value
+    }
+
+    val expressionToCompute = when (expression) {
+        is KtLightElementBase -> expression.kotlinOrigin as? KtExpression ?: return null
+        else -> return null
+    }
+
+    val generationSupport = LightClassGenerationSupport.getInstance(expressionToCompute.project)
+    val evaluator = generationSupport.createConstantEvaluator(expressionToCompute)
+
+    val constant = runReadAction {
+        val evaluatorTrace = DelegatingBindingTrace(generationSupport.analyze(expressionToCompute), "Evaluating annotation argument")
+        evaluator.evaluateExpression(expressionToCompute, evaluatorTrace)
+    } ?: return null
+
+    if (constant.isError) return null
+    return evalConstantValue(constant.toConstantValue(TypeUtils.NO_EXPECTED_TYPE))
 }

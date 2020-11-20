@@ -9,6 +9,8 @@ import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.actionSystem.IdeActions
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.testFramework.RunAll
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.configuration.ExperimentalFeatures
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
@@ -28,11 +30,6 @@ abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private va
         val warmedUp: Array<Boolean> = arrayOf(false, false)
 
         val stats: Array<Stats> = arrayOf(Stats("old j2k"), Stats("new j2k"))
-
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.forEach { it.close() } }))
-        }
     }
 
     override fun setUp() {
@@ -45,6 +42,13 @@ abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private va
             doWarmUpPerfTest()
             warmedUp[index] = true
         }
+    }
+
+    override fun tearDown() {
+        RunAll(
+            ThrowableRunnable { super.tearDown() }
+        ).run()
+
     }
 
     private fun doWarmUpPerfTest() {

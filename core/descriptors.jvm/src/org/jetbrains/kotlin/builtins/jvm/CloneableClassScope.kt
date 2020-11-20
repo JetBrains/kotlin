@@ -22,7 +22,7 @@ class CloneableClassScope(
         SimpleFunctionDescriptorImpl.create(containingClass, Annotations.EMPTY, CLONE_NAME, DECLARATION, SourceElement.NO_SOURCE).apply {
             initialize(
                 null, containingClass.thisAsReceiverParameter, emptyList(), emptyList(), containingClass.builtIns.anyType,
-                Modality.OPEN, Visibilities.PROTECTED
+                Modality.OPEN, DescriptorVisibilities.PROTECTED
             )
         }
     )

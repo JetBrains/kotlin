@@ -1,7 +1,8 @@
 @kotlin.Metadata
 final class LambdaWithLongReceiverKt$box$1$1 {
     // source: 'lambdaWithLongReceiver.kt'
-    private synthetic field p$: long
+    enclosing method LambdaWithLongReceiverKt$box$1.doResume(Ljava/lang/Object;Ljava/lang/Throwable;)Ljava/lang/Object;
+    private synthetic field J$0: long
     inner (anonymous) class LambdaWithLongReceiverKt$box$1
     inner (anonymous) class LambdaWithLongReceiverKt$box$1$1
     method <init>(p0: kotlin.coroutines.experimental.Continuation): void
@@ -13,6 +14,7 @@ final class LambdaWithLongReceiverKt$box$1$1 {
 @kotlin.Metadata
 final class LambdaWithLongReceiverKt$box$1 {
     // source: 'lambdaWithLongReceiver.kt'
+    enclosing method LambdaWithLongReceiverKt.box()Ljava/lang/String;
     synthetic final field $res: kotlin.jvm.internal.Ref$ObjectRef
     field L$0: java.lang.Object
     inner (anonymous) class LambdaWithLongReceiverKt$box$1

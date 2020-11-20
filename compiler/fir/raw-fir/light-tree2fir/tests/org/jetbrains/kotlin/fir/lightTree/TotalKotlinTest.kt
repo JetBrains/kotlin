@@ -12,7 +12,9 @@ import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
+import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
+import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.junit.runner.RunWith
@@ -27,7 +29,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         if (onlyPsi) {
             DebugUtil.psiTreeToString(ktFile, false)
         } else {
-            val firFile = ktFile.toFirFile(stubMode = true)
+            val firFile = ktFile.toFirFile(RawFirBuilderMode.STUBS)
             StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
         }
     }
@@ -47,7 +49,11 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         var counter = 0
         var time = 0L
 
-        val lightTreeConverter = LightTree2Fir(scopeProvider = StubFirScopeProvider, stubMode = true)
+        val lightTreeConverter = LightTree2Fir(
+            session = FirSessionFactory.createEmptySession(),
+            scopeProvider = StubFirScopeProvider,
+            stubMode = true
+        )
 
         if (onlyLightTree) println("LightTree generation") else println("Fir from LightTree converter")
         println("BASE PATH: $path")

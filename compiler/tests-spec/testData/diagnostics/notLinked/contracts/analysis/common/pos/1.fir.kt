@@ -61,7 +61,7 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
             println(value_2)
         }
         null -> {
-            <!AMBIGUITY!>println<!>(value_3?.xor(true))
+            <!AMBIGUITY!>println<!>(value_3?.<!UNRESOLVED_REFERENCE!>xor<!>(true))
             println(value_4)
             println(value_1)
             println(value_2)

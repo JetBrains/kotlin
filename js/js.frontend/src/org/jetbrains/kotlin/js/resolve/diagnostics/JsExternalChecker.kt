@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
@@ -78,9 +78,9 @@ object JsExternalChecker : DeclarationChecker {
         if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.ANNOTATION_CLASS) {
             val superClasses = (listOfNotNull(descriptor.getSuperClassNotAny()) + descriptor.getSuperInterfaces()).toMutableSet()
             if (descriptor.kind == ClassKind.ENUM_CLASS || descriptor.kind == ClassKind.ENUM_ENTRY) {
-                superClasses.removeAll { it.fqNameUnsafe == KotlinBuiltIns.FQ_NAMES._enum }
+                superClasses.removeAll { it.fqNameUnsafe == StandardNames.FqNames._enum }
             }
-            if (superClasses.any { !AnnotationsUtils.isNativeObject(it) && it.fqNameSafe != KotlinBuiltIns.FQ_NAMES.throwable }) {
+            if (superClasses.any { !AnnotationsUtils.isNativeObject(it) && it.fqNameSafe != StandardNames.FqNames.throwable }) {
                 trace.report(ErrorsJs.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE.on(declaration))
             }
         }
@@ -216,7 +216,7 @@ object JsExternalChecker : DeclarationChecker {
 
     private fun isPrivateMemberOfExternalClass(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor is PropertyAccessorDescriptor && descriptor.visibility == descriptor.correspondingProperty.visibility) return false
-        if (descriptor !is MemberDescriptor || descriptor.visibility != Visibilities.PRIVATE) return false
+        if (descriptor !is MemberDescriptor || descriptor.visibility != DescriptorVisibilities.PRIVATE) return false
 
         val containingDeclaration = descriptor.containingDeclaration as? ClassDescriptor ?: return false
         return AnnotationsUtils.isNativeObject(containingDeclaration)

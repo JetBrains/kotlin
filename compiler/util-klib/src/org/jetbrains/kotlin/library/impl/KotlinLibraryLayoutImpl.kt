@@ -52,6 +52,7 @@ class IrLibraryLayoutImpl(klib: File, component: String) : KotlinLibraryLayoutIm
         FromZipIrLibraryImpl(this, zipFileSystem)
 }
 
+@Suppress("UNCHECKED_CAST")
 open class BaseLibraryAccess<L : KotlinLibraryLayout>(val klib: File, component: String?) {
     open val layout = KotlinLibraryLayoutImpl(klib, component)
 

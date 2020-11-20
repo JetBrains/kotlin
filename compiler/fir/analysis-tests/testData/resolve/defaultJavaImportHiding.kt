@@ -1,3 +1,4 @@
+// FULL_JDK
 // FILE: util/HashMap.java
 
 package util;

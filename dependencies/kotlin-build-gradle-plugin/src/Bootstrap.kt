@@ -73,6 +73,10 @@ sealed class BootstrapOption {
     class BintrayBootstrap(kotlinVersion: String, cacheRedirector: Boolean = false) :
         Custom(kotlinVersion, "https://dl.bintray.com/kotlin/kotlin-bootstrap", cacheRedirector)
 
+    /** Get bootstrap from kotlin bootstrap space repo, where bootstraps are published */
+    class SpaceBootstrap(kotlinVersion: String, cacheRedirector: Boolean = false) :
+        Custom(kotlinVersion, "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap", cacheRedirector)
+
     /** Get bootstrap from teamcity maven artifacts of the specified build configuration
      *
      * [kotlinVersion] the version of maven artifacts

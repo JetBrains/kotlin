@@ -1,6 +1,6 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BINDING_RECEIVERS
 // !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-// IGNORE_BACKEND_FIR: JVM_IR
-
 
 class Outer(val o: String) {
     inner class Inner1(val i: Int, vararg v: String) {

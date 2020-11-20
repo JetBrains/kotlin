@@ -1,0 +1,15 @@
+FILE: booleanToInt.kt
+    public final fun R|kotlin/Boolean|.toInt(): R|kotlin/Int| {
+        ^toInt when () {
+            this@R|/toInt| ->  {
+                Int(1)
+            }
+            else ->  {
+                Int(0)
+            }
+        }
+
+    }
+    public final fun test(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Int| {
+        ^test CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(R|<local>/y|)).R|/toInt|()
+    }

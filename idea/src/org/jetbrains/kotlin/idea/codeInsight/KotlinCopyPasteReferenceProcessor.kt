@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.codeInsight
 import com.intellij.codeInsight.CodeInsightSettings
 import com.intellij.codeInsight.editorActions.CopyPastePostProcessor
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
@@ -22,7 +23,9 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.util.concurrency.AppExecutorUtil
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.concurrency.CancellablePromise
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
@@ -39,18 +42,14 @@ import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.references.*
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
-import org.jetbrains.kotlin.idea.util.ProgressIndicatorUtils
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.invokeLater
 import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
 import org.jetbrains.kotlin.idea.util.application.runReadAction
-import org.jetbrains.kotlin.idea.util.getFileResolutionScope
-import org.jetbrains.kotlin.idea.util.getSourceRoot
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_EXT
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -101,7 +100,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         val packageName = file.packageDirective?.fqName?.asString() ?: ""
         val imports = file.importDirectives.map { it.text }
-        val endOfImportsOffset = file.importDirectives.map { it.endOffset }.max() ?: file.packageDirective?.endOffset ?: 0
+        val endOfImportsOffset = file.importDirectives.maxOfOrNull { it.endOffset } ?: file.packageDirective?.endOffset ?: 0
         val offsetDelta = if (startOffsets.any { it <= endOfImportsOffset }) 0 else endOfImportsOffset
         val text = file.text.substring(offsetDelta)
         val ranges = startOffsets.indices.map { TextRange(startOffsets[it], endOffsets[it]) }
@@ -168,9 +167,11 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
             elements.flatMap { it.collectDescendantsOfType<KtElement>() }
         }
 
+        val project = file.project
+
         // TODO: allowResolveInDispatchThread could be dropped as soon as
         //  ConvertJavaCopyPasteProcessor will perform it on non UI thread
-        val bindingContext = runReadAction {
+        val bindingContext = project.runReadActionInSmartMode {
             allowResolveInDispatchThread {
                 file.getResolutionFacade().analyze(allElementsToResolve, BodyResolveMode.PARTIAL)
             }
@@ -178,7 +179,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         val result = mutableListOf<KotlinReferenceData>()
         for (ktElement in allElementsToResolve) {
-            runReadAction {
+            project.runReadActionInSmartMode {
                 indicator?.checkCanceled()
                 result.addReferenceDataInsideElement(
                     ktElement, file, ranges, bindingContext, fakePackageName = fakePackageName,
@@ -212,7 +213,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         sourcePackageName: String? = null,
         targetPackageName: String? = null
     ) {
-        val reference = runReadAction { ktElement.mainReference } ?: return
+        val reference = file.project.runReadActionInSmartMode { ktElement.mainReference } ?: return
 
         val descriptors = resolveReference(reference, bindingContext)
         //check whether this reference is unambiguous
@@ -479,6 +480,16 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
         )
     }
 
+    private fun <T> submitNonBlocking(project: Project, indicator: ProgressIndicator, block: () -> T): CancellablePromise<T> =
+        ReadAction.nonBlocking<T> {
+            return@nonBlocking block()
+        }
+            .withDocumentsCommitted(project)
+            .cancelWith(indicator)
+            .expireWith(project)
+            .inSmartMode(project)
+            .submit(AppExecutorUtil.getAppExecutorService())
+
     private fun buildDummySourceScope(
         sourcePkgName: String,
         imports: List<String>,
@@ -504,8 +515,9 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
 
         fun joinLines(items: Collection<String>) = items.joinToString("\n")
 
+        val project = file.project
         val dummyImportsFile = runReadAction {
-            KtPsiFactory(file.project)
+            KtPsiFactory(project)
                 .createAnalyzableFile(
                     "dummy-imports.kt",
                     "package $fakePkgName\n" +
@@ -515,7 +527,7 @@ class KotlinCopyPasteReferenceProcessor : CopyPastePostProcessor<BasicKotlinRefe
                 )
         }
 
-        val dummyFileImports = runReadAction {
+        val dummyFileImports = project.runReadActionInSmartMode {
             dummyImportsFile.collectDescendantsOfType<KtImportDirective>().mapNotNull { directive ->
                 val importedReference =
                     directive.importedReference?.getQualifiedElementSelector()?.mainReference?.resolve() as? KtNamedDeclaration

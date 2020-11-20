@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.references
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.idea.fir.getCalleeSymbol
-import org.jetbrains.kotlin.idea.fir.getOrBuildFirSafe
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.buildSymbol
@@ -20,10 +20,10 @@ class KtFirDestructuringDeclarationReference(
 ) : KtDestructuringDeclarationReference(element), KtFirReference {
     override fun canRename(): Boolean = false //todo
 
-    override fun resolveToSymbols(analysisSession: KtAnalysisSession): Collection<KtSymbol> {
-        check(analysisSession is KtFirAnalysisSession)
-        val fir = expression.getOrBuildFirSafe<FirProperty>() ?: return emptyList()
+    override fun KtAnalysisSession.resolveToSymbols(): Collection<KtSymbol> {
+        check(this is KtFirAnalysisSession)
+        val fir = expression.getOrBuildFirSafe<FirProperty>(firResolveState) ?: return emptyList()
         val componentFunctionSymbol = (fir.initializer as? FirComponentCall)?.getCalleeSymbol() ?: return emptyList()
-        return listOfNotNull(componentFunctionSymbol.fir.buildSymbol(analysisSession.firSymbolBuilder))
+        return listOfNotNull(componentFunctionSymbol.fir.buildSymbol(firSymbolBuilder))
     }
 }

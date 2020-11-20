@@ -1,0 +1,7 @@
+FILE: main.kt
+    @R|Ann|(vararg(String(a), String(b))) public final fun test_1(): R|kotlin/Unit| {
+    }
+    @R|Ann|(<implicitArrayOf>(String(a), String(b))) public final fun test_2(): R|kotlin/Unit| {
+    }
+    @R|Ann|(vararg(*<implicitArrayOf>(String(a), String(b)))) public final fun test_3(): R|kotlin/Unit| {
+    }

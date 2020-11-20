@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 
-class IrBlockBodyImpl(startOffset: Int, endOffset: Int) : IrElementBase(startOffset, endOffset), IrBlockBody {
+class IrBlockBodyImpl(
+    override val startOffset: Int,
+    override val endOffset: Int
+) : IrBlockBody() {
     constructor(startOffset: Int, endOffset: Int, statements: List<IrStatement>) : this(startOffset, endOffset) {
         this.statements.addAll(statements)
     }

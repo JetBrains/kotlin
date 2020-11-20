@@ -1,0 +1,65 @@
+{
+  "type-system": [
+    "type-kinds/built-in-types/kotlin.nothing",
+    "introduction-1"
+  ],
+  "statements": [
+    "assignments/operator-assignments",
+    "assignments/simple-assignments",
+    "loop-statements/while-loop-statement",
+    "loop-statements/do-while-loop-statement",
+    "assignments"
+  ],
+  "expressions": [
+    "not-null-assertion-expression",
+    "comparison-expressions",
+    "indexing-expressions",
+    "when-expression",
+    "constant-literals/real-literals",
+    "constant-literals/integer-literals/decimal-integer-literals",
+    "constant-literals/integer-literals/binary-integer-literals",
+    "constant-literals/integer-literals/hexadecimal-integer-literals",
+    "constant-literals/boolean-literals",
+    "constant-literals/character-literals",
+    "constant-literals/the-types-for-integer-literals",
+    "logical-disjunction-expression",
+    "logical-conjunction-expression",
+    "postfix-operator-expressions/postfix-increment-expression",
+    "prefix-expressions/prefix-increment-expression",
+    "postfix-operator-expressions/postfix-decrement-expression",
+    "prefix-expressions/prefix-decrement-expression",
+    "additive-expression",
+    "type-checking-and-containment-checking-expressions/type-checking-expression",
+    "type-checking-and-containment-checking-expressions/containment-checking-expression",
+    "try-expression",
+    "elvis-operator-expression",
+    "multiplicative-expression",
+    "range-expression",
+    "equality-expressions/value-equality-expressions",
+    "equality-expressions/reference-equality-expressions",
+    "jump-expressions/break-expression",
+    "jump-expressions/return-expressions",
+    "jump-expressions/continue-expression",
+    "conditional-expression",
+    "built-in-types-and-their-semantics/kotlin.nothing-1",
+    "built-in-types-and-their-semantics/kotlin.unit",
+    "cast-expression",
+    "prefix-expressions/unary-minus-expression",
+    "prefix-expressions/logical-not-expression",
+    "prefix-expressions/unary-plus-expression"
+  ],
+  "overloadable-operators": [
+    ""
+  ],
+  "exceptions": [
+    "catching-exceptions"
+  ],
+  "overload-resolution": [
+    "choosing-the-most-specific-candidate-from-the-overload-candidate-set/algorithm-of-msc-selection",
+    "callables-and-invoke-convention",
+    "building-the-overload-candidate-set-ocs/infix-function-call",
+    "building-the-overload-candidate-set-ocs/operator-call",
+    "building-the-overload-candidate-set-ocs/call-with-an-explicit-receiver",
+    "receivers"
+  ]
+}

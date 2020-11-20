@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.java
 
 import com.intellij.lang.java.JavaLanguage
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtilRt
@@ -82,9 +81,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             ),
             EnvironmentConfigFiles.JVM_CONFIG_FILES
         ).apply {
-            Extensions.getArea(project)
-                .getExtensionPoint(PsiElementFinder.EP_NAME)
-                .unregisterExtension(JavaElementFinder::class.java)
+            PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
         }
     }
 
@@ -146,16 +143,14 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             val symbolProvider = session.firSymbolProvider as FirCompositeSymbolProvider
             val javaProvider = symbolProvider.providers.filterIsInstance<JavaSymbolProvider>().first()
 
+            val topLevelJavaClasses = topPsiClasses.map { it.classId(FqName.ROOT) }
+
             fun processClassWithChildren(psiClass: PsiClass, parentFqName: FqName) {
-                val psiFile = psiClass.containingFile
-                val packageStatement = psiFile.children.filterIsInstance<PsiPackageStatement>().firstOrNull()
-                val packageName = packageStatement?.packageName
-                val fqName = parentFqName.child(Name.identifier(psiClass.name!!))
-                val classId = ClassId(packageName?.let { FqName(it) } ?: FqName.ROOT, fqName, false)
+                val classId = psiClass.classId(parentFqName)
                 javaProvider.getClassLikeSymbolByFqName(classId)
                     ?: throw AssertionError(classId.asString())
                 psiClass.innerClasses.forEach {
-                    processClassWithChildren(psiClass = it, parentFqName = fqName)
+                    processClassWithChildren(psiClass = it, parentFqName = classId.relativeClassName)
                 }
             }
             for (psiClass in topPsiClasses) {
@@ -163,7 +158,8 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
             }
 
             val processedJavaClasses = mutableSetOf<FirJavaClass>()
-            for (javaClass in javaProvider.getJavaTopLevelClasses().sortedBy { it.name }) {
+            for (javaClassId in topLevelJavaClasses.sortedBy { it.shortClassName }) {
+                val javaClass = javaProvider.getClassLikeSymbolByFqName(javaClassId)?.fir ?: continue
                 if (javaClass !is FirJavaClass || javaClass in processedJavaClasses) continue
                 renderJavaClass(renderer, javaClass, session)
                 processedJavaClasses += javaClass
@@ -172,6 +168,14 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
 
         val expectedFile = File(javaFile.absolutePath.replace(".java", ".fir.txt"))
         KotlinTestUtils.assertEqualsToFile(expectedFile, javaFirDump)
+    }
+
+    private fun PsiClass.classId(parentFqName: FqName): ClassId {
+        val psiFile = this.containingFile
+        val packageStatement = psiFile.children.filterIsInstance<PsiPackageStatement>().firstOrNull()
+        val packageName = packageStatement?.packageName
+        val fqName = parentFqName.child(Name.identifier(this.name!!))
+        return ClassId(packageName?.let { FqName(it) } ?: FqName.ROOT, fqName, false)
     }
 
     companion object {

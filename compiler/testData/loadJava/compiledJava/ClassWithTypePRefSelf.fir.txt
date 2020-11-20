@@ -1,4 +1,4 @@
-public final class ClassWithTypePRefSelf<P : R|ft<kotlin/Enum<ft<P, P?>!>, kotlin/Enum<ft<P, P?>!>?>!|> : R|kotlin/Any| {
-    public constructor<P : R|ft<kotlin/Enum<ft<P, P?>!>, kotlin/Enum<ft<P, P?>!>?>!|>(): R|test/ClassWithTypePRefSelf<P>|
+public final class ClassWithTypePRefSelf<P : R|ft<@FlexibleNullability kotlin/Enum<ft<@FlexibleNullability P, P?>!>, kotlin/Enum<ft<@FlexibleNullability P, P?>!>?>!|> : R|kotlin/Any| {
+    public constructor<P : R|ft<@FlexibleNullability kotlin/Enum<ft<@FlexibleNullability P, P?>!>, kotlin/Enum<ft<@FlexibleNullability P, P?>!>?>!|>(): R|test/ClassWithTypePRefSelf<P>|
 
 }

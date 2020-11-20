@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -57,17 +57,18 @@ abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
         remapVariable(expression.symbol.owner)?.let {
             IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.origin)
         } ?: expression
+
+    override fun visitSetValue(expression: IrSetValue): IrExpression {
+        expression.transformChildrenVoid()
+        return remapVariable(expression.symbol.owner)?.let {
+            IrSetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.value, expression.origin)
+        } ?: expression
+    }
 }
 
 open class VariableRemapper(val mapping: Map<IrValueParameter, IrValueDeclaration>) : AbstractVariableRemapper() {
     override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
         mapping[value]
-}
-
-@ObsoleteDescriptorBasedAPI
-class VariableRemapperDesc(val mapping: Map<ValueDescriptor, IrValueParameter>) : AbstractVariableRemapper() {
-    override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
-        mapping[value.descriptor]
 }
 
 fun BackendContext.createIrBuilder(
@@ -161,9 +162,14 @@ open class IrBuildingTransformer(private val context: BackendContext) : IrElemen
             return super.visitEnumEntry(declaration)
         }
     }
+
+    override fun visitScript(declaration: IrScript): IrStatement {
+        withBuilder(declaration.symbol) {
+            return super.visitScript(declaration)
+        }
+    }
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
     val constructedClass = parent as IrClass
     val superClass = constructedClass.superTypes
@@ -186,9 +192,9 @@ fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
             val delegatingClass = expression.symbol.owner.parent as IrClass
             // TODO: figure out why Lazy IR multiplies Declarations for descriptors and fix it
             // It happens because of IrBuiltIns whose IrDeclarations are different for runtime and test
-            if (delegatingClass.descriptor == superClass.classifierOrFail.descriptor)
+            if (delegatingClass.symbol == superClass.classifierOrFail)
                 callsSuper = true
-            else if (delegatingClass.descriptor != constructedClass.descriptor)
+            else if (delegatingClass.symbol != constructedClass.symbol)
                 throw AssertionError(
                     "Expected either call to another constructor of the class being constructed or" +
                             " call to super class constructor. But was: $delegatingClass with '${delegatingClass.name}' name"

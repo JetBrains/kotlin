@@ -1,7 +1,7 @@
 public open class MethodWithMappedClasses : R|kotlin/Any| {
-    public open fun <T : R|ft<kotlin/Any, kotlin/Any?>!|> copy(dest: R|ft<kotlin/collections/MutableList<in ft<T, T?>!>, kotlin/collections/List<in ft<T, T?>!>?>!|, src: R|ft<kotlin/collections/MutableList<ft<T, T?>!>, kotlin/collections/List<ft<T, T?>!>?>!|): R|kotlin/Unit|
+    public open fun <T : R|ft<kotlin/Any, kotlin/Any?>!|> copy(dest: R|ft<@FlexibleNullability kotlin/collections/MutableList<in ft<@FlexibleNullability T, T?>!>, kotlin/collections/List<*>?>!|, src: R|ft<@FlexibleNullability kotlin/collections/MutableList<ft<@FlexibleNullability T, T?>!>, kotlin/collections/List<ft<@FlexibleNullability T, T?>!>?>!|): R|kotlin/Unit|
 
-    public open fun <T : R|ft<kotlin/Any, kotlin/Any?>!|> copyMap(dest: R|ft<kotlin/collections/MutableMap<ft<kotlin/String, kotlin/String?>!, in ft<T, T?>!>, kotlin/collections/Map<ft<kotlin/String, kotlin/String?>!, in ft<T, T?>!>?>!|, src: R|ft<kotlin/collections/MutableMap<ft<kotlin/String, kotlin/String?>!, ft<T, T?>!>, kotlin/collections/Map<ft<kotlin/String, kotlin/String?>!, ft<T, T?>!>?>!|): R|kotlin/Unit|
+    public open fun <T : R|ft<kotlin/Any, kotlin/Any?>!|> copyMap(dest: R|ft<@FlexibleNullability kotlin/collections/MutableMap<ft<@FlexibleNullability kotlin/String, kotlin/String?>!, in ft<@FlexibleNullability T, T?>!>, kotlin/collections/Map<ft<@FlexibleNullability kotlin/String, kotlin/String?>!, *>?>!|, src: R|ft<@FlexibleNullability kotlin/collections/MutableMap<ft<@FlexibleNullability kotlin/String, kotlin/String?>!, ft<@FlexibleNullability T, T?>!>, kotlin/collections/Map<ft<@FlexibleNullability kotlin/String, kotlin/String?>!, ft<@FlexibleNullability T, T?>!>?>!|): R|kotlin/Unit|
 
     public constructor(): R|test/MethodWithMappedClasses|
 

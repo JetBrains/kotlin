@@ -59,10 +59,10 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
     BLOCK_BODY
       CALL 'public final fun f (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         s: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          CALL 'public open fun s (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=null
+          CALL 'public open fun s (): @[FlexibleNullability] kotlin.String? declared in <root>.J' type=@[FlexibleNullability] kotlin.String? origin=null
       CALL 'public final fun f (s: kotlin.String): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         s: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:kotlin.String? visibility:public [static]' type=kotlin.String? origin=GET_PROPERTY
+          GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:@[FlexibleNullability] kotlin.String? visibility:public [static]' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
   FUN name:testContains visibility:public modality:FINAL <> (m:<root>.MySet) returnType:kotlin.Unit
     VALUE_PARAMETER name:m index:0 type:<root>.MySet
     BLOCK_BODY
@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
         CALL 'public open fun contains (element: kotlin.String): kotlin.Boolean [operator] declared in <root>.MySet' type=kotlin.Boolean origin=null
           $this: GET_VAR 'm: <root>.MySet declared in <root>.testContains' type=<root>.MySet origin=null
           element: TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:kotlin.String? visibility:public [static]' type=kotlin.String? origin=GET_PROPERTY
+            GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:STRING type:@[FlexibleNullability] kotlin.String? visibility:public [static]' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun contains (element: kotlin.String): kotlin.Boolean [operator] declared in <root>.MySet' type=kotlin.Boolean origin=null
           $this: GET_VAR 'm: <root>.MySet declared in <root>.testContains' type=<root>.MySet origin=null

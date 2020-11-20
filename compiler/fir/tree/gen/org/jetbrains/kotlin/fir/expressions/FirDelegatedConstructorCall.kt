@@ -18,25 +18,25 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirDelegatedConstructorCall : FirPureAbstractElement(), FirResolvable, FirCall {
     abstract override val source: FirSourceElement?
-    abstract override val calleeReference: FirReference
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val argumentList: FirArgumentList
     abstract val constructedTypeRef: FirTypeRef
     abstract val dispatchReceiver: FirExpression
+    abstract override val calleeReference: FirReference
     abstract val isThis: Boolean
     abstract val isSuper: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitDelegatedConstructorCall(this, data)
 
-    abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
-
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
     abstract fun replaceConstructedTypeRef(newConstructedTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
+    abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
 
     abstract fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
+
+    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirDelegatedConstructorCall
 }

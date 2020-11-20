@@ -3,14 +3,14 @@
 
     <extensionPoints>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.updater" beanClass="com.intellij.openapi.fileTypes.FileTypeExtensionPoint"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.projectConfigurator" interface="org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.declarationAttributeAltererExtension"
                         interface="org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension"
                         area="IDEA_PROJECT"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.highlighterExtension"
-                        interface="org.jetbrains.kotlin.idea.highlighter.HighlighterExtension"/>
+                        interface="org.jetbrains.kotlin.idea.highlighter.HighlighterExtension"
+                        dynamic="true"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.ultraLightClassModifierExtension"
                         interface="org.jetbrains.kotlin.asJava.UltraLightClassModifierExtension"
@@ -25,8 +25,7 @@
                         interface="org.jetbrains.kotlin.idea.facet.KotlinFacetValidatorCreator"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.clearBuildState"
                         interface="org.jetbrains.kotlin.idea.compiler.configuration.ClearBuildStateExtension"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.newFileHook"
-                        interface="org.jetbrains.kotlin.idea.actions.NewKotlinFileHook"/>
+
         <extensionPoint qualifiedName="org.jetbrains.kotlin.completionExtension"
                         interface="org.jetbrains.kotlin.idea.completion.KotlinCompletionExtension"/>
 
@@ -37,14 +36,15 @@
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptDefinitionsProvider"
                         interface="kotlin.script.experimental.intellij.ScriptDefinitionsProvider"
-                        area="IDEA_PROJECT"/>
+                        area="IDEA_PROJECT" dynamic="true"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.syntheticScopeProviderExtension"
                         interface="org.jetbrains.kotlin.synthetic.SyntheticScopeProviderExtension"
                         area="IDEA_PROJECT"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.resolveScopeEnlarger"
-                        interface="org.jetbrains.kotlin.idea.caches.resolve.util.KotlinResolveScopeEnlarger"/>
+                        interface="org.jetbrains.kotlin.idea.caches.resolve.util.KotlinResolveScopeEnlarger"
+                        dynamic="true"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.j2kConverterExtension"
                         interface="org.jetbrains.kotlin.j2k.J2kConverterExtension"/>
@@ -72,8 +72,6 @@
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
-        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator"/>
-        <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator"/>
 
         <scriptDefinitionContributor
             id="ScriptTemplatesFromCompilerSettingsProvider"
@@ -116,14 +114,6 @@
                      description="Add all transitive dependencies on MPP modules when Android project is imported"
                      defaultValue="true"
                      restartRequired="false"/>
-        <registryKey key="kotlin.formatter.allowTrailingCommaInAnyProject"
-                     description="Allow a trailing comma regardless of plugin version"
-                     defaultValue="false"
-                     restartRequired="false"/>
-        <registryKey key="kotlin.formatter.allowTrailingCommaOnCallSite"
-                     description="Allow a trailing comma on call-site"
-                     defaultValue="false"
-                     restartRequired="false"/>
 
         <registryKey key="kotlin.experimental.new.j2k"
                      description="Enable new Java to Kotlin converter"
@@ -140,9 +130,13 @@
                      defaultValue="false"
                      restartRequired="false"/>
 
+        <registryKey key="kotlin.enable.move.method.refactoring"
+                     description="Enable experimental move method refactoring"
+                     defaultValue="false"
+                     restartRequired="false"/>
+
         <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
 
-        <moduleBuilder builderClass="org.jetbrains.kotlin.tools.projectWizard.wizard.NewProjectWizardModuleBuilder"/>
         <jbProtocolCommand implementation="org.jetbrains.kotlin.tools.projectWizard.wizard.OpenNewProjectWizardProtocolCommand"/>
     </extensions>
 </idea-plugin>

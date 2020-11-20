@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.mapTypeParameters
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -129,26 +132,47 @@ abstract class DataClassMembersGenerator(
         private val intType = context.builtIns.intType
 
         private val intTimesSymbol: IrSimpleFunctionSymbol =
-            intClass.findFirstFunction("times") { KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType) }
-                .let { symbolTable.referenceSimpleFunction(it) }
+            intClass.unsubstitutedMemberScope.findFirstFunction("times") {
+                KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType)
+            }.let { symbolTable.referenceSimpleFunction(it) }
 
         private val intPlusSymbol: IrSimpleFunctionSymbol =
-            intClass.findFirstFunction("plus") { KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType) }
-                .let { symbolTable.referenceSimpleFunction(it) }
+            intClass.unsubstitutedMemberScope.findFirstFunction("plus") {
+                KotlinTypeChecker.DEFAULT.equalTypes(it.valueParameters[0].type, intType)
+            }.let { symbolTable.referenceSimpleFunction(it) }
 
         fun generateHashCodeMethodBody(properties: List<PropertyDescriptor>) {
-            val irIntType = context.irBuiltIns.intType
-            var result: IrExpression? = null
-            for (property in properties) {
-                val hashCodeOfProperty = getHashCodeOfProperty(property)
-                result = if (result == null) {
-                    hashCodeOfProperty
-                } else {
-                    val shiftedResult = irCallOp(intTimesSymbol, irIntType, result, irInt(31))
-                    irCallOp(intPlusSymbol, irIntType, shiftedResult, hashCodeOfProperty)
-                }
+            if (properties.isEmpty()) {
+                +irReturn(irInt(0))
+                return
+            } else if (properties.size == 1) {
+                +irReturn(getHashCodeOfProperty(properties[0]))
+                return
             }
-            +irReturn(result ?: irInt(0))
+
+            val irIntType = context.irBuiltIns.intType
+
+            val resultVarDescriptor = WrappedVariableDescriptor()
+            val irResultVar = IrVariableImpl(
+                startOffset, endOffset,
+                IrDeclarationOrigin.DEFINED,
+                IrVariableSymbolImpl(resultVarDescriptor),
+                Name.identifier("result"), irIntType,
+                isVar = true, isConst = false, isLateinit = false
+            ).also {
+                resultVarDescriptor.bind(it)
+                it.parent = irFunction
+                it.initializer = getHashCodeOfProperty(properties[0])
+            }
+            +irResultVar
+
+            for (property in properties.drop(1)) {
+                val shiftedResult = irCallOp(intTimesSymbol, irIntType, irGet(irResultVar), irInt(31))
+                val irRhs = irCallOp(intPlusSymbol, irIntType, shiftedResult, getHashCodeOfProperty(property))
+                +irSet(irResultVar.symbol, irRhs)
+            }
+
+            +irReturn(irGet(irResultVar))
         }
 
         private fun getHashCodeOfProperty(property: PropertyDescriptor): IrExpression {
@@ -229,8 +253,8 @@ abstract class DataClassMembersGenerator(
     // Build a member from a descriptor (psi2ir) as well as its body.
     private inline fun buildMember(
         function: FunctionDescriptor,
-        startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET,
+        startOffset: Int = SYNTHETIC_OFFSET,
+        endOffset: Int = SYNTHETIC_OFFSET,
         body: MemberFunctionBuilder.(IrFunction) -> Unit
     ) {
         MemberFunctionBuilder(startOffset, endOffset, declareSimpleFunction(startOffset, endOffset, function)).addToClass { irFunction ->
@@ -244,8 +268,8 @@ abstract class DataClassMembersGenerator(
     // Use a prebuilt member (fir2ir) and build a member body for it.
     private inline fun buildMember(
         irFunction: IrFunction,
-        startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET,
+        startOffset: Int = SYNTHETIC_OFFSET,
+        endOffset: Int = SYNTHETIC_OFFSET,
         body: MemberFunctionBuilder.(IrFunction) -> Unit
     ) {
         MemberFunctionBuilder(startOffset, endOffset, irFunction).build { function ->
@@ -257,15 +281,15 @@ abstract class DataClassMembersGenerator(
     }
 
     // Entry for psi2ir
-    fun generateComponentFunction(function: FunctionDescriptor, irField: IrField, startOffset: Int, endOffset: Int) {
-        buildMember(function, startOffset, endOffset) {
+    fun generateComponentFunction(function: FunctionDescriptor, irField: IrField) {
+        buildMember(function) {
             generateComponentFunction(irField)
         }
     }
 
     // Entry for fir2ir
-    fun generateComponentFunction(irFunction: IrFunction, irField: IrField, startOffset: Int, endOffset: Int) {
-        buildMember(irFunction, startOffset, endOffset) {
+    fun generateComponentFunction(irFunction: IrFunction, irField: IrField) {
+        buildMember(irFunction) {
             generateComponentFunction(irField)
         }
     }
@@ -276,7 +300,7 @@ abstract class DataClassMembersGenerator(
 
     // Entry for psi2ir
     fun generateCopyFunction(function: FunctionDescriptor, constructorSymbol: IrConstructorSymbol) {
-        buildMember(function, irClass.startOffset, irClass.endOffset) {
+        buildMember(function) {
             function.valueParameters.forEach { parameter ->
                 putDefault(parameter, irGetField(irThis(), getBackingField(parameter, null)!!))
             }
@@ -286,7 +310,7 @@ abstract class DataClassMembersGenerator(
 
     // Entry for fir2ir
     fun generateCopyFunction(irFunction: IrFunction, constructorSymbol: IrConstructorSymbol) {
-        buildMember(irFunction, irClass.startOffset, irClass.endOffset) {
+        buildMember(irFunction) {
             irFunction.valueParameters.forEach { irValueParameter ->
                 irValueParameter.defaultValue = irExprBody(irGetField(irThis(), getBackingField(null, irValueParameter)!!))
             }
@@ -296,14 +320,14 @@ abstract class DataClassMembersGenerator(
 
     // Entry for psi2ir
     fun generateEqualsMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
-        buildMember(function, irClass.startOffset, irClass.endOffset) {
+        buildMember(function) {
             generateEqualsMethodBody(properties)
         }
     }
 
     // Entry for fir2ir
     fun generateEqualsMethod(irFunction: IrFunction, properties: List<PropertyDescriptor>) {
-        buildMember(irFunction, irClass.startOffset, irClass.endOffset) {
+        buildMember(irFunction) {
             generateEqualsMethodBody(properties)
         }
     }
@@ -344,28 +368,28 @@ abstract class DataClassMembersGenerator(
 
     // Entry for psi2ir
     fun generateHashCodeMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
-        buildMember(function, irClass.startOffset, irClass.endOffset) {
+        buildMember(function) {
             generateHashCodeMethodBody(properties)
         }
     }
 
     // Entry for fir2ir
     fun generateHashCodeMethod(irFunction: IrFunction, properties: List<PropertyDescriptor>) {
-        buildMember(irFunction, irClass.startOffset, irClass.endOffset) {
+        buildMember(irFunction) {
             generateHashCodeMethodBody(properties)
         }
     }
 
     // Entry for psi2ir
     fun generateToStringMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
-        buildMember(function, irClass.startOffset, irClass.endOffset) {
+        buildMember(function) {
             generateToStringMethodBody(properties)
         }
     }
 
     // Entry for fir2ir
     fun generateToStringMethod(irFunction: IrFunction, properties: List<PropertyDescriptor>) {
-        buildMember(irFunction, irClass.startOffset, irClass.endOffset) {
+        buildMember(irFunction) {
             generateToStringMethodBody(properties)
         }
     }

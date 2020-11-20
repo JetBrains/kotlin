@@ -27,20 +27,20 @@ interface Foo {
     // CR on property with to receivers are forbidden
     fun <T: Foo> test() {
         // with LHS and property
-        bar8<T>(<!TYPE_MISMATCH, TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!><!>)
+        bar8<T>(<!TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!><!>)
         bar8<Foo>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!>)
         bar8(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!>)
 
         // with LHS and mutable property
-        bar8<T>(<!TYPE_MISMATCH, TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x2<!><!>)
+        bar8<T>(<!TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x2<!><!>)
         bar8<Foo>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x2<!>)
         bar8(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x2<!>)
 
         // with LHS and propery + mutable property (mixed)
-        bar8<T>(<!TYPE_MISMATCH, TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!><!>)
+        bar8<T>(<!TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!><!>)
         bar8<Foo>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!>)
         bar8(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!>)
-        bar9<T>(<!TYPE_MISMATCH, TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!><!>)
+        bar9<T>(<!TYPE_MISMATCH!>Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!><!>)
         bar9<Foo>(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!>)
         bar9(Foo::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x3<!>)
     }
@@ -114,7 +114,7 @@ fun <T : Foo, R: Number, D: Int> main() {
     bar7(Foo::resolve) // OK
 
     // with LHS and sentension function expected type
-    bar10<D>(<!TYPE_MISMATCH, TYPE_MISMATCH!>Int::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!><!>) // ERROR before the fix in NI
+    bar10<D>(<!TYPE_MISMATCH!>Int::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>x1<!><!>) // ERROR before the fix in NI
     bar10<Int>(Int::x1) // OK
     bar10(Int::x1) // OK
 

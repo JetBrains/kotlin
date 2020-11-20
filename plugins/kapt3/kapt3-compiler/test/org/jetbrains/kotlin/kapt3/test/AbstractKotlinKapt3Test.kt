@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.resolve.jvm.extensions.PartialAnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -101,7 +102,9 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *listOfNotNull(writeJavaFiles(files)).toTypedArray())
+        val javaSourceRoots = listOfNotNull(writeJavaFiles(files))
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, files, TestJdkKind.MOCK_JDK, *javaSourceRoots.toTypedArray())
+
         addAnnotationProcessingRuntimeLibrary(myEnvironment)
 
         val project = myEnvironment.project
@@ -212,7 +215,8 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
         kaptContext: KaptContextForStubGeneration,
         javaFiles: List<File>,
         txtFile: File,
-            wholeFile: File)
+        wholeFile: File
+    )
 }
 
 open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(), CustomJdkTestLauncher {
@@ -243,6 +247,22 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
     fun testSuppressWarning() {}
 
     override fun doTest(filePath: String) {
+        val wholeFile = File(filePath)
+
+        kaptFlags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
+
+        if (wholeFile.isOptionSet("CORRECT_ERROR_TYPES")) {
+            kaptFlags.add(KaptFlag.CORRECT_ERROR_TYPES)
+        }
+
+        if (wholeFile.isOptionSet("STRICT_MODE")) {
+            kaptFlags.add(KaptFlag.STRICT)
+        }
+
+        if (wholeFile.isOptionSet("STRIP_METADATA")) {
+            kaptFlags.add(KaptFlag.STRIP_METADATA)
+        }
+
         super.doTest(filePath)
         doTestWithJdk9(AbstractClassFileToSourceStubConverterTest::class.java, filePath)
         doTestWithJdk11(AbstractClassFileToSourceStubConverterTest::class.java, filePath)

@@ -1,5 +1,0 @@
-Actual data differs from file content: ClassAndConstuctors.source.expected expected:< [SomeClassWithConstructors.class
-public final class <1><2><3><4>SomeClassWithConstructors public constructor(arg: kotlin.String)] {
-> but was:< [classAndConstructors.kt
-class <1><2><3><4>SomeClassWithConstructors(private val arg: String) ] {
->

@@ -173,10 +173,12 @@ public actual fun CharArray.asList(): List<Char> {
             return this@asList[index]
         }
         override fun indexOf(element: Char): Int {
+            @Suppress("USELESS_CAST")
             if ((element as Any?) !is Char) return -1
             return this@asList.indexOf(element)
         }
         override fun lastIndexOf(element: Char): Int {
+            @Suppress("USELESS_CAST")
             if ((element as Any?) !is Char) return -1
             return this@asList.lastIndexOf(element)
         }

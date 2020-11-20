@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Delegate(val value: String) {
     operator fun getValue(thisRef: Any?, property: Any?) = value
 }

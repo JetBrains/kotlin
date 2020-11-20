@@ -336,58 +336,76 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Test1
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test1'
+        VAR name:result type:kotlin.Int [var]
+          CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
+            arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stringArray type:kotlin.Array<kotlin.String> visibility:private [final]' type=kotlin.Array<kotlin.String> origin=null
+              receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
+        SET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Unit origin=EQ
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-              $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                  $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                    $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                      $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                        $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                          $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                              $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                                $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                                  $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                                    $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                                      $this: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                                        $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-                                          $this: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
-                                            arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stringArray type:kotlin.Array<kotlin.String> visibility:private [final]' type=kotlin.Array<kotlin.String> origin=null
-                                              receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
-                                          other: CONST Int type=kotlin.Int value=31
-                                        other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
-                                          arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:charArray type:kotlin.CharArray visibility:private [final]' type=kotlin.CharArray origin=null
-                                            receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
-                                      other: CONST Int type=kotlin.Int value=31
-                                    other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
-                                      arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:booleanArray type:kotlin.BooleanArray visibility:private [final]' type=kotlin.BooleanArray origin=null
-                                        receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
-                                  other: CONST Int type=kotlin.Int value=31
-                                other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
-                                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:byteArray type:kotlin.ByteArray visibility:private [final]' type=kotlin.ByteArray origin=null
-                                    receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
-                              other: CONST Int type=kotlin.Int value=31
-                            other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
-                              arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:shortArray type:kotlin.ShortArray visibility:private [final]' type=kotlin.ShortArray origin=null
-                                receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
-                          other: CONST Int type=kotlin.Int value=31
-                        other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
-                          arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intArray type:kotlin.IntArray visibility:private [final]' type=kotlin.IntArray origin=null
-                            receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
-                      other: CONST Int type=kotlin.Int value=31
-                    other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
-                      arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:longArray type:kotlin.LongArray visibility:private [final]' type=kotlin.LongArray origin=null
-                        receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
-                  other: CONST Int type=kotlin.Int value=31
-                other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
-                  arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:floatArray type:kotlin.FloatArray visibility:private [final]' type=kotlin.FloatArray origin=null
-                    receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
+              $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
+              arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:charArray type:kotlin.CharArray visibility:private [final]' type=kotlin.CharArray origin=null
+                receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
+        SET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
+              arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:booleanArray type:kotlin.BooleanArray visibility:private [final]' type=kotlin.BooleanArray origin=null
+                receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
+        SET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
+              arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:byteArray type:kotlin.ByteArray visibility:private [final]' type=kotlin.ByteArray origin=null
+                receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
+        SET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
+              arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:shortArray type:kotlin.ShortArray visibility:private [final]' type=kotlin.ShortArray origin=null
+                receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
+        SET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
+              arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intArray type:kotlin.IntArray visibility:private [final]' type=kotlin.IntArray origin=null
+                receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
+        SET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
+              arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:longArray type:kotlin.LongArray visibility:private [final]' type=kotlin.LongArray origin=null
+                receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
+        SET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Int origin=null
+              other: CONST Int type=kotlin.Int value=31
+            other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
+              arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:floatArray type:kotlin.FloatArray visibility:private [final]' type=kotlin.FloatArray origin=null
+                receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
+        SET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Unit origin=EQ
+          CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
+              $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value=31
             other: CALL 'public final fun dataClassArrayMemberHashCode (arg0: kotlin.Any): kotlin.Int declared in kotlin.internal.ir' type=kotlin.Int origin=null
               arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:doubleArray type:kotlin.DoubleArray visibility:private [final]' type=kotlin.DoubleArray origin=null
                 receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.hashCode' type=<root>.Test1 origin=null
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Test1'
+          GET_VAR 'var result: kotlin.Int [var] declared in <root>.Test1.hashCode' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Test1) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any

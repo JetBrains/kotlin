@@ -1,0 +1,139 @@
+FILE: cyclicConstructorDelegationCall.kt
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(a: R|kotlin/Int|): R|A| {
+            this<R|A|>(String(test))
+        }
+
+        public constructor(a: R|kotlin/String|): R|A| {
+            this<R|A|>(Int(10))
+        }
+
+        public constructor(a: R|kotlin/Boolean|): R|A| {
+            this<R|A|>(Char(10))
+        }
+
+        public constructor(a: R|kotlin/Char|): R|A| {
+            this<R|A|>(Double(0.0))
+        }
+
+        public constructor(a: R|kotlin/Double|): R|A| {
+            this<R|A|>(Boolean(false))
+        }
+
+        public constructor(b: R|B|): R|A| {
+            this<R|A|>(Double(3.14159265))
+        }
+
+        public constructor(c: R|C|): R|A| {
+            this<R|A|>()
+        }
+
+        public constructor(a: R|kotlin/collections/List<kotlin/Int>|): R|A| {
+            this<R|A|>(R|/C.C|())
+        }
+
+    }
+    public final class D : R|kotlin/Any| {
+        public constructor(i: R|kotlin/Boolean|): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(i: R|kotlin/Int|): R|D| {
+            this<R|D|>(Int(3))
+        }
+
+    }
+    public final class E<T> : R|kotlin/Any| {
+        public constructor<T>(e: R|T|, i: R|kotlin/Int|): R|E<T>| {
+            this<R|E<T>|>(R|<local>/i|, Int(10))
+        }
+
+    }
+    public final class I<T> : R|kotlin/Any| {
+        public constructor<T>(e: R|T|, i: R|kotlin/Int|): R|I<T>| {
+            this<R|I<T>|>(R|<local>/i|, Int(10))
+        }
+
+    }
+    public final class J<T> : R|kotlin/Any| {
+        public constructor<T>(e: R|T|, i: R|kotlin/Int|): R|J<T>| {
+            this<R|J<T>|>(R|<local>/i|, Int(10))
+        }
+
+        public constructor<T>(e: R|kotlin/Int|, i: R|kotlin/Int|): R|J<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class F : R|kotlin/Any| {
+        public constructor(s: R|kotlin/String|): R|F| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(i: R|kotlin/Boolean|): R|F| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(i: R|kotlin/Int|): R|F| {
+            this<R|F|>(Int(3))
+        }
+
+    }
+    public final class G : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|G| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(): R|G| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class H : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|H| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(): R|H| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class K : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|K| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(): R|K| {
+            this<R|K|>()
+        }
+
+    }
+    public final class M : R|kotlin/Any| {
+        public constructor(m: R|kotlin/Int|): R|M| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class U : R|M| {
+        public constructor(): R|U| {
+            super<R|M|>()
+        }
+
+    }

@@ -181,7 +181,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         }
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
-        override fun visitDeclaration(declaration: IrDeclaration) {
+        override fun visitDeclaration(declaration: IrDeclarationBase) {
             if (declaration is IrSymbolOwner) {
                 declaration.symbol.checkBinding("decl", declaration)
 

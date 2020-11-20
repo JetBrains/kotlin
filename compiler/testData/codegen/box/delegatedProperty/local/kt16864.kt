@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 object Whatever {
     operator fun getValue(thisRef: Any?, prop: Any?) = "OK"
 }

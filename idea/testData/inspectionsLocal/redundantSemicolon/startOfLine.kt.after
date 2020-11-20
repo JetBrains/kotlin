@@ -1,0 +1,6 @@
+fun test() {
+    foo()
+    foo()
+}
+
+fun foo() {}

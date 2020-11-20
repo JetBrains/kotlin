@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.codegen.inline
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.context.ClosureContext
@@ -133,14 +133,13 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         mapDefaultSignature: Boolean,
         typeSystem: TypeSystemCommonBackendContext,
         registerLineNumberAfterwards: Boolean,
-        isCallOfFunctionInCorrespondingDefaultDispatch: Boolean
     ) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
             nodeAndSmap = createInlineMethodNode(
                 functionDescriptor, methodOwner, jvmSignature, mapDefaultSignature, typeArguments, typeSystem, state, sourceCompiler
             )
-            endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas, isCallOfFunctionInCorrespondingDefaultDispatch), registerLineNumberAfterwards)
+            endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas), registerLineNumberAfterwards)
         } catch (e: CompilationException) {
             throw e
         } catch (e: InlineException) {
@@ -206,7 +205,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 ?: error("No stack value for continuation parameter of suspend function")
     }
 
-    protected fun inlineCall(nodeAndSmap: SMAPAndMethodNode, inlineDefaultLambda: Boolean, isCallOfFunctionInCorrespondingDefaultDispatch: Boolean): InlineResult {
+    private fun inlineCall(nodeAndSmap: SMAPAndMethodNode, inlineDefaultLambda: Boolean): InlineResult {
         assert(delayedHiddenWriting == null) { "'putHiddenParamsIntoLocals' should be called after 'processAndPutHiddenParameters(true)'" }
         val node = nodeAndSmap.node
         if (inlineDefaultLambda) {
@@ -234,7 +233,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
         val inliner = MethodInliner(
             node, parameters, info, FieldRemapper(null, null, parameters), isSameModule,
             "Method inlining " + sourceCompiler.callElementText,
-            SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP, callSite.takeIf { !isCallOfFunctionInCorrespondingDefaultDispatch }),
+            SourceMapCopier(sourceMapper, nodeAndSmap.classSMAP, callSite),
             info.callSiteInfo, if (functionDescriptor.isInlineOnly()) InlineOnlySmapSkipper(codegen) else null,
             !isInlinedToInlineFunInKotlinRuntime()
         ) //with captured
@@ -658,6 +657,10 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
                 if (nameWithoutManglingSuffix != null) {
                     methodNode = getMethodNode(bytes, nameWithoutManglingSuffix, asmMethod.descriptor, classType)
                 }
+                if (methodNode == null) {
+                    val nameWithImplSuffix = "$nameWithoutManglingSuffix-impl"
+                    methodNode = getMethodNode(bytes, nameWithImplSuffix, asmMethod.descriptor, classType)
+                }
             }
             return methodNode
         }
@@ -671,7 +674,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             if (callableDescriptor is FictitiousArrayConstructor) return true
             val name = callableDescriptor.name.asString()
             return (name == "arrayOf" || name == "emptyArray") && callableDescriptor.containingDeclaration.let { container ->
-                container is PackageFragmentDescriptor && container.fqName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME
+                container is PackageFragmentDescriptor && container.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
             }
         }
 

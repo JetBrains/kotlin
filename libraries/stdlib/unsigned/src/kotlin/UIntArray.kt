@@ -50,6 +50,7 @@ internal constructor(@PublishedApi internal val storage: IntArray) : Collection<
     override fun contains(element: UInt): Boolean {
         // TODO: Eliminate this check after KT-30016 gets fixed.
         // Currently JS BE does not generate special bridge method for this method.
+        @Suppress("USELESS_CAST")
         if ((element as Any?) !is UInt) return false
 
         return storage.contains(element.toInt())

@@ -11,16 +11,16 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.testFramework.LightCodeInsightTestCase;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 
 import java.io.File;
 import java.util.List;
 
 @SuppressWarnings("deprecation")
-public abstract class AbstractUnwrapRemoveTest extends KotlinLightCodeInsightTestCase {
+public abstract class AbstractUnwrapRemoveTest extends LightCodeInsightTestCase {
     public void doTestExpressionRemover(@NotNull String path) throws Exception {
         doTest(path, KotlinUnwrappers.KotlinExpressionRemover.class);
     }

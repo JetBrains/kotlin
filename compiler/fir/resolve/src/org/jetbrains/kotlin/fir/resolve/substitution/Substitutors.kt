@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.fir.resolve.substitution
 
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 abstract class AbstractConeSubstitutor : ConeSubstitutor() {
     private fun wrapProjection(old: ConeTypeProjection, newType: ConeKotlinType): ConeTypeProjection {
@@ -48,7 +50,12 @@ abstract class AbstractConeSubstitutor : ConeSubstitutor() {
             is ConeClassErrorType -> return null
             is ConeClassLikeType -> this.substituteArguments()
             is ConeLookupTagBasedType -> return null
-            is ConeFlexibleType -> this.substituteBounds()
+            is ConeFlexibleType -> this.substituteBounds()?.let {
+                // TODO: may be (?) it's worth adding regular type comparison via AbstractTypeChecker
+                // However, the simplified check here should be enough for typical flexible types
+                if (it.lowerBound == it.upperBound) it.lowerBound
+                else it
+            }
             is ConeCapturedType -> return null
             is ConeDefinitelyNotNullType -> this.substituteOriginal()
             is ConeIntersectionType -> this.substituteIntersectedTypes()
@@ -145,6 +152,13 @@ fun ConeSubstitutor.chain(other: ConeSubstitutor): ConeSubstitutor {
 data class ConeSubstitutorByMap(val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>) : AbstractConeSubstitutor() {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
-        return substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type)
+        val result = substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type) ?: return null
+        val session = type.lookupTag.symbol.fir.session
+        if (type.isUnsafeVarianceType(session)) {
+            return session.inferenceComponents.approximator.approximateToSuperType(
+                result, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+            ) as? ConeKotlinType ?: result
+        }
+        return result
     }
 }

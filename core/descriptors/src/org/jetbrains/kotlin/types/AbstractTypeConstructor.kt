@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
+import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.refineTypes
@@ -97,13 +99,16 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
             // We also check if there are a loop with additional edges going from owner of companion to
             // the companion itself.
             // Note that we use already disconnected types to not report two diagnostics on cyclic supertypes
-            supertypeLoopChecker.findLoopsInSupertypesAndDisconnect(
-                this, resultWithoutCycles,
-                { it.computeNeighbours(useCompanions = true) },
-                { reportScopesLoopError(it) }
-            )
+            if (shouldReportCyclicScopeWithCompanionWarning) {
+                supertypeLoopChecker.findLoopsInSupertypesAndDisconnect(
+                    this, resultWithoutCycles,
+                    { it.computeNeighbours(useCompanions = true) },
+                    { reportScopesLoopError(it) }
+                )
+            }
 
-            supertypes.supertypesWithoutCycles = (resultWithoutCycles as? List<KotlinType>) ?: resultWithoutCycles.toList()
+            supertypes.supertypesWithoutCycles =
+                processSupertypesWithoutCycles(resultWithoutCycles as? List<KotlinType> ?: resultWithoutCycles.toList())
         })
 
     private fun TypeConstructor.computeNeighbours(useCompanions: Boolean): Collection<KotlinType> =
@@ -116,8 +121,11 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
     protected abstract val supertypeLoopChecker: SupertypeLoopChecker
     protected open fun reportSupertypeLoopError(type: KotlinType) {}
 
+    protected open fun processSupertypesWithoutCycles(supertypes: List<@JvmSuppressWildcards KotlinType>): List<KotlinType> = supertypes
+
     // TODO: overload in AbstractTypeParameterDescriptor?
     protected open fun reportScopesLoopError(type: KotlinType) {}
+    protected open val shouldReportCyclicScopeWithCompanionWarning: Boolean = false
 
     protected open fun getAdditionalNeighboursInSupertypeGraph(useCompanions: Boolean): Collection<KotlinType> = emptyList()
     protected open fun defaultSupertypeIfEmpty(): KotlinType? = null

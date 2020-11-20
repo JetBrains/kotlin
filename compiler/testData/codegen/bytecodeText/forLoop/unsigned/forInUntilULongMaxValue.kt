@@ -28,6 +28,6 @@ fun f(a: ULong): Int {
 
 // JVM_IR_TEMPLATES
 // 2 INVOKESTATIC kotlin/UnsignedKt.ulongCompare
-// 1 IFGT
-// 1 IFLE
+// 1 IFGE
+// 1 IFLT
 // 2 IF

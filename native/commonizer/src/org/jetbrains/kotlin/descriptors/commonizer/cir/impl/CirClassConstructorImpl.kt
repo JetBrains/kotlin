@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 
 data class CirClassConstructorImpl(
     override val annotations: List<CirAnnotation>,
     override val typeParameters: List<CirTypeParameter>,
-    override val visibility: Visibility,
+    override val visibility: DescriptorVisibility,
     override val containingClassDetails: CirContainingClassDetails,
-    override val valueParameters: List<CirValueParameter>,
-    override val hasStableParameterNames: Boolean,
-    override val isPrimary: Boolean,
-    override val kind: CallableMemberDescriptor.Kind
+    override var valueParameters: List<CirValueParameter>,
+    override var hasStableParameterNames: Boolean,
+    override val isPrimary: Boolean
 ) : CirClassConstructor

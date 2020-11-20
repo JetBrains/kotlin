@@ -16,12 +16,12 @@ class B3_3 : A3("", true)
 class B3_4 : <!NONE_APPLICABLE!>A3<!>("", Unit)
 
 open class A4(val x: Byte)
-class B4 : A4( 1 + 1)
+class B4 : <!INAPPLICABLE_CANDIDATE!>A4<!>( 1 + 1)
 
 open class A5 {
     constructor(x: Byte)
     constructor(x: Short)
 }
 
-class B5_1 : A5(1 + 1)
-class B5_2 : A5(100 * 2)
+class B5_1 : <!NONE_APPLICABLE!>A5<!>(1 + 1)
+class B5_2 : <!NONE_APPLICABLE!>A5<!>(100 * 2)

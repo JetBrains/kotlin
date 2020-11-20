@@ -23,3 +23,5 @@ suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 /* TODO: JVM_IR does not generate LINENUMBER at the end of the lambda */
 // JVM_IR_TEMPLATES
 // 1 LOCALVARIABLE a I L[0-9]+ L16
+
+// IGNORE_BACKEND_FIR: JVM_IR

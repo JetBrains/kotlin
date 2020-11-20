@@ -13,7 +13,7 @@ import kotlin.reflect.*
 fun case_1(x: Int?) {
     if (x != funNothingQuest() == true) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 
@@ -26,7 +26,7 @@ fun case_2(x: Int?) {
     operator fun Nothing?.not() = null
     if (x != !null != false) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 
@@ -50,7 +50,7 @@ fun case_3(x: Int?) {
 fun case_4(x: Int?, y: List<Nothing?>) {
     if (x == y[0] == true) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 
@@ -66,7 +66,7 @@ fun case_5(x: Int?) {
 
     if (x == y.z == true) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 
@@ -80,7 +80,7 @@ fun case_6(x: Int?) {
 
     if (x == y == true) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 
@@ -97,7 +97,7 @@ fun case_7(x: Int?) {
 
     if (x == y.z == true) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 

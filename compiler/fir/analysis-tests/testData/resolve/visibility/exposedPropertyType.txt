@@ -5,11 +5,11 @@ FILE: exposedPropertyType.kt
         }
 
         private final class AInnerPrivate : R|kotlin/Any| {
-            public[private] constructor(str: R|kotlin/String|): R|A.AInnerPrivate| {
+            public constructor(str: R|kotlin/String|): R|A.AInnerPrivate| {
                 super<R|kotlin/Any|>()
             }
 
-            public[private] final val str: R|kotlin/String| = R|<local>/str|
+            public final val str: R|kotlin/String| = R|<local>/str|
                 public get(): R|kotlin/String|
 
         }
@@ -21,10 +21,10 @@ FILE: exposedPropertyType.kt
 
             public final static enum entry A: R|A.AInnerProtectedEnum|
             public final static enum entry B: R|A.AInnerProtectedEnum|
-            public[protected] final static fun values(): R|kotlin/Array<A.AInnerProtectedEnum>| {
+            public final static fun values(): R|kotlin/Array<A.AInnerProtectedEnum>| {
             }
 
-            public[protected] final static fun valueOf(value: R|kotlin/String|): R|A.AInnerProtectedEnum| {
+            public final static fun valueOf(value: R|kotlin/String|): R|A.AInnerProtectedEnum| {
             }
 
         }

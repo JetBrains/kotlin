@@ -1,0 +1,17 @@
+FILE: annotated.kt
+    @Target(AnnotationTarget#.EXPRESSION#) @Retention(AnnotationRetention#.SOURCE#) public? final? annotation class Ann : R|kotlin/Annotation| {
+        public? constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? fun foo(arg: Int): Int { LAZY_BLOCK }
+    public? final? data class Two : R|kotlin/Any| {
+        public? constructor(x: Int, y: Int): R|Two| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun copy(): R|Two|
+
+    }
+    public? final? fun bar(two: Two): R|kotlin/Unit| { LAZY_BLOCK }

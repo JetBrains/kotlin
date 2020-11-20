@@ -1,10 +1,12 @@
 <idea-plugin>
     <extensionPoints>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.gradleProjectImportHandler" area="IDEA_PROJECT"
-                        interface="org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler"/>
+                        interface="org.jetbrains.kotlin.idea.configuration.GradleProjectImportHandler"
+                        dynamic="true"/>
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.gradleModelFacade"
-                        interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade"/>
+                        interface="org.jetbrains.kotlin.idea.inspections.gradle.KotlinGradleModelFacade"
+                        dynamic="true"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -19,6 +21,8 @@
         <loader order="first" implementation="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleLegacyScriptConfigurationLoader"/>
 
         <scriptingSupport implementation="org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager"/>
+
+        <settings.provider implementation="org.jetbrains.kotlin.idea.scripting.gradle.settings.GradleSettingsProvider"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
@@ -48,6 +52,7 @@
                      restartRequired="false"/>
 
         <projectService serviceImplementation="org.jetbrains.kotlin.idea.scripting.gradle.legacy.GradleStandaloneScriptActionsManager"/>
+        <projectService serviceImplementation="org.jetbrains.kotlin.idea.scripting.gradle.settings.StandaloneScriptsStorage"/>
     </extensions>
 
     <actions>

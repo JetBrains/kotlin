@@ -3,3 +3,5 @@
 public class A {
     public String <caret>foo = "foo";
 }
+
+// FIR_COMPARISON

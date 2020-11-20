@@ -95,13 +95,20 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         }
     }
 
-    @JvmOverloads
     fun process(
         element: KtElement,
         elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS },
         actionRunningMode: ActionRunningMode = ActionRunningMode.RUN_IN_CURRENT_THREAD
     ): KtElement {
         return process(listOf(element), elementFilter, actionRunningMode).single()
+    }
+
+    @JvmOverloads
+    fun process(
+        element: KtElement,
+        elementFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS },
+    ): KtElement {
+        return process(element, elementFilter, ActionRunningMode.RUN_IN_CURRENT_THREAD)
     }
 
     @JvmOverloads

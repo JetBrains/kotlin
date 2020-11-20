@@ -28,7 +28,7 @@ FILE: whenElse.kt
             public get(): R|B|
 
     }
-    public final fun get(f: R|kotlin/Boolean|): R|it(kotlin/Comparable<it(A & kotlin/String)> & java/io/Serializable)| {
+    public final fun get(f: R|kotlin/Boolean|): R|kotlin/Any| {
         ^get when () {
             R|<local>/f| ->  {
                 Q|A|.R|/A.A1|

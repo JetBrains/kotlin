@@ -1,0 +1,7 @@
+Failures detected in FirBodyResolveTransformerAdapter, file: /kt41308.fir.kt
+Cause: java.lang.RuntimeException: While resolving call R?C|kotlin/sequences/sequence|(<L> = sequence@fun R|kotlin/sequences/SequenceScope<Stub: TypeVariable(T)>|.<anonymous>(): R|kotlin/Unit| {
+    lval list: R|kotlin/collections/List<kotlin/String>?| = Null(null)
+    lval outputList: R|TypeVariable(K)| = R|<local>/list| ?: R?C|kotlin/collections/listOf|()
+    yieldAll#(R|<local>/outputList|)
+}
+)

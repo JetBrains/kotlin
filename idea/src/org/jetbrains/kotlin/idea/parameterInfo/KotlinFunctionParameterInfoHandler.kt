@@ -25,13 +25,17 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.ui.Gray
 import com.intellij.ui.JBColor
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.idea.FrontendInternals
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
+import org.jetbrains.kotlin.idea.completion.canBeUsedWithoutNameInCall
 import org.jetbrains.kotlin.idea.core.OptionalParametersHelper
 import org.jetbrains.kotlin.idea.core.resolveCandidates
+import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.ShadowedDeclarationsFilter
@@ -58,6 +62,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.containsError
+import org.jetbrains.kotlin.utils.checkWithAttachment
 import java.awt.Color
 import java.util.*
 import kotlin.reflect.KClass
@@ -185,9 +190,9 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         context.setCurrentParameter(parameterIndex)
 
         runReadAction {
-            val bindingContext = argumentList.analyze(BodyResolveMode.PARTIAL)
-            val call = findCall(argumentList, bindingContext) ?: return@runReadAction
             val resolutionFacade = argumentList.getResolutionFacade()
+            val bindingContext = argumentList.analyze(resolutionFacade, BodyResolveMode.PARTIAL)
+            val call = findCall(argumentList, bindingContext) ?: return@runReadAction
 
             context.objectsToView.forEach { resolveCallInfo(it as CallInfo, call, bindingContext, resolutionFacade) }
         }
@@ -212,6 +217,9 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
         if (!argumentListClass.java.isInstance(context.parameterOwner)) return false
         val call = itemToShow.call ?: return false
 
+        val supportsMixedNamedArgumentsInTheirOwnPosition =
+            call.callElement.languageVersionSettings.supportsFeature(LanguageFeature.MixedNamedArgumentsInTheirOwnPosition)
+
         @Suppress("UNCHECKED_CAST")
         val argumentList = context.parameterOwner as TArgumentList
 
@@ -226,9 +234,11 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
         var boldStartOffset = -1
         var boldEndOffset = -1
+        var disabledBeforeHighlight = false
         val text = buildString {
             val usedParameterIndices = HashSet<Int>()
             var namedMode = false
+            var argumentIndex = 0
 
             if (call.callType == Call.CallType.ARRAY_SET_METHOD) {
                 // for set-operator the last parameter is used for the value assigned
@@ -237,9 +247,21 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
             val includeParameterNames = !substitutedDescriptor.hasSynthesizedParameterNames()
 
-            fun appendParameter(parameter: ValueParameterDescriptor) {
+            fun appendParameter(
+                parameter: ValueParameterDescriptor,
+                named: Boolean = false,
+                markUsedUnusedParameterBorder: Boolean = false
+            ) {
+                argumentIndex++
+
                 if (length > 0) {
                     append(", ")
+                    if (markUsedUnusedParameterBorder) {
+                        // mark the space after the comma as bold; bold text needs to be at least one character long
+                        boldStartOffset = length - 1
+                        boldEndOffset = length
+                        disabledBeforeHighlight = true
+                    }
                 }
 
                 val highlightParameter = parameter.index == highlightParameterIndex
@@ -247,7 +269,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
                     boldStartOffset = length
                 }
 
-                append(renderParameter(parameter, includeParameterNames, namedMode, project))
+                append(renderParameter(parameter, includeParameterNames, named || namedMode, project))
 
                 if (highlightParameter) {
                     boldEndOffset = length
@@ -259,16 +281,21 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
                 val parameter = argumentToParameter(argument) ?: continue
                 if (!usedParameterIndices.add(parameter.index)) continue
 
-                if (argument.isNamed()) {
+                if (argument.isNamed() &&
+                    !(supportsMixedNamedArgumentsInTheirOwnPosition && argument.canBeUsedWithoutNameInCall(itemToShow))
+                ) {
                     namedMode = true
                 }
 
-                appendParameter(parameter)
+                appendParameter(parameter, argument.isNamed())
             }
 
             for (parameter in substitutedDescriptor.valueParameters) {
                 if (parameter.index !in usedParameterIndices) {
-                    appendParameter(parameter)
+                    if (argumentIndex != parameter.index) {
+                        namedMode = true
+                    }
+                    appendParameter(parameter, markUsedUnusedParameterBorder = highlightParameterIndex == null && boldStartOffset == -1)
                 }
             }
 
@@ -280,7 +307,15 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
         val color = if (itemToShow.isResolvedToDescriptor) GREEN_BACKGROUND else context.defaultParameterColor
 
-        context.setupUIComponentPresentation(text, boldStartOffset, boldEndOffset, isGrey, itemToShow.isDeprecatedAtCallSite, false, color)
+        context.setupUIComponentPresentation(
+            text,
+            boldStartOffset,
+            boldEndOffset,
+            isGrey,
+            itemToShow.isDeprecatedAtCallSite,
+            disabledBeforeHighlight,
+            color
+        )
 
         return true
     }
@@ -418,6 +453,7 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
                     !argument.hasError(bindingContext) /* ignore arguments that have error type */
         }
 
+        @OptIn(FrontendInternals::class)
         val isDeprecated = resolutionFacade.frontendService<DeprecationResolver>().getDeprecations(resultingDescriptor).isNotEmpty()
 
         with(info) {
@@ -484,9 +520,13 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
         val arguments = info.arguments
 
-        assert(arguments.size >= currentArgumentIndex) {
-            "currentArgumentIndex: $currentArgumentIndex has to be not more than number of arguments ${arguments.size}"
-        }
+        checkWithAttachment(
+            arguments.size >= currentArgumentIndex,
+            lazyMessage = { "currentArgumentIndex: $currentArgumentIndex has to be not more than number of arguments ${arguments.size}" },
+            attachments = {
+                it.withAttachment("info.txt", info)
+            }
+        )
 
         val callToUse: ResolvedCall<FunctionDescriptor>
         val currentArgument = if (arguments.size > currentArgumentIndex) {
@@ -503,12 +543,39 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
             return (callToUse.getArgumentMapping(argument) as? ArgumentMatch)?.valueParameter
         }
 
-        val highlightParameterIndex = argumentToParameter(currentArgument)?.index
+        val currentParameter = argumentToParameter(currentArgument)
+        val highlightParameterIndex = currentParameter?.index
 
         val argumentsBeforeCurrent = arguments.subList(0, currentArgumentIndex)
-        if ((argumentsBeforeCurrent + currentArgument).any { argumentToParameter(it) == null }) {
-            // some of arguments before the current one (or the current one) are not mapped to any of the parameters
+        if (argumentsBeforeCurrent.any { argumentToParameter(it) == null }) {
+            // some of arguments before the current one are not mapped to any of the parameters
             return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey = true)
+        }
+
+        if (currentParameter == null) {
+            if (currentArgumentIndex < arguments.lastIndex) {
+                // the current argument is not the last one and it is not mapped to any of the parameters
+                return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey = true)
+            }
+
+            val usedParameters = argumentsBeforeCurrent.mapNotNull { argumentToParameter(it) }
+            val availableParameters = if (call.callType == Call.CallType.ARRAY_SET_METHOD) {
+                resultingDescriptor.valueParameters.dropLast(1)
+            } else {
+                resultingDescriptor.valueParameters
+            } 
+            val noUnusedParametersLeft = (availableParameters - usedParameters).isEmpty()
+
+            if (currentArgument == info.dummyArgument) {
+                val supportsTrailingCommas = call.callElement.languageVersionSettings.supportsFeature(LanguageFeature.TrailingCommas)
+                if (!supportsTrailingCommas && noUnusedParametersLeft) {
+                    // current argument is empty but there are no unused parameters left and trailing commas are not supported
+                    return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey = true)
+                }
+            } else if (noUnusedParametersLeft) {
+                // there are no unused parameters left to which this argument could be matched
+                return SignatureInfo(resultingDescriptor, ::argumentToParameter, highlightParameterIndex, isGrey = true)
+            }
         }
 
         // grey out if not all arguments before the current are matched
@@ -518,6 +585,9 @@ abstract class KotlinParameterInfoWithCallHandlerBase<TArgumentList : KtElement,
 
     private fun ValueArgument.hasError(bindingContext: BindingContext) =
         getArgumentExpression()?.let { bindingContext.getType(it) }?.isError ?: true
+
+    private fun ValueArgument.canBeUsedWithoutNameInCall(callInfo: CallInfo) =
+        this is KtValueArgument && this.canBeUsedWithoutNameInCall(callInfo.resolvedCall as ResolvedCall<out CallableDescriptor>)
 
     // we should not compare descriptors directly because partial resolve is involved
     private fun descriptorsEqual(descriptor1: FunctionDescriptor, descriptor2: FunctionDescriptor): Boolean {

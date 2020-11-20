@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.compiler.configuration;
 
 import com.intellij.icons.AllIcons;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.module.ModuleManager;
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments;
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants;
 import org.jetbrains.kotlin.config.*;
-import org.jetbrains.kotlin.idea.PluginStartupService;
+import org.jetbrains.kotlin.idea.PluginStartupApplicationService;
 import org.jetbrains.kotlin.idea.KotlinBundle;
 import org.jetbrains.kotlin.idea.facet.DescriptionListCellRenderer;
 import org.jetbrains.kotlin.idea.facet.KotlinFacet;
@@ -58,6 +59,8 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
             LanguageFeature.State.ENABLED, LanguageFeature.State.ENABLED_WITH_WARNING, LanguageFeature.State.ENABLED_WITH_ERROR
     );
     private static final int MAX_WARNING_SIZE = 75;
+
+    private static final Disposable validatorsDisposable = Disposer.newDisposable();
 
     static {
         moduleKindDescriptions.put(K2JsArgumentConstants.MODULE_PLAIN, KotlinBundle.message("configuration.description.plain.put.to.global.scope"));
@@ -554,7 +557,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
             boolean oldEnableDaemon = compilerWorkspaceSettings.getEnableDaemon();
             compilerWorkspaceSettings.setEnableDaemon(keepAliveCheckBox.isSelected());
             if (keepAliveCheckBox.isSelected() != oldEnableDaemon) {
-                PluginStartupService.getInstance().resetAliveFlag();
+                PluginStartupApplicationService.getInstance().resetAliveFlag();
             }
         }
 
@@ -759,7 +762,7 @@ public class KotlinCompilerConfigurableTab implements SearchableConfigurable {
     }
 
     private static void createVersionValidator(JComboBox<VersionView> component, String messageKey) {
-        new ComponentValidator(Disposer.newDisposable())
+        new ComponentValidator(validatorsDisposable)
                 .withValidator(() -> {
                     VersionView selectedItem = (VersionView) component.getSelectedItem();
                     if (selectedItem == null) return null;

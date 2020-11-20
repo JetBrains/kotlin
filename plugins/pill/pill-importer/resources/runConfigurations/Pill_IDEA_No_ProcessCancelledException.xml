@@ -3,7 +3,7 @@
     <log_file alias="idea.log" path="$PROJECT_DIR$/ideaSDK/system-idea/log/idea.log" />
     <option name="MAIN_CLASS_NAME" value="com.intellij.idea.Main" />
     <module name="idea-runner.main" />
-    <option name="VM_PARAMETERS" value="-Xmx1250m -XX:ReservedCodeCacheSize=240m -XX:+HeapDumpOnOutOfMemoryError -ea -Didea.is.internal=true -Didea.debug.mode=true -Didea.system.path=$PROJECT_DIR$/local/ideaSandbox -Didea.config.path=$PROJECT_DIR$/local/ideaSandbox/config -Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Dsun.io.useCanonCaches=false -Dplugin.path=$PROJECT_DIR$/out/artifacts/Kotlin -Didea.ProcessCanceledException=disabled $ADDITIONAL_IDEA_ARGS$" />
+    <option name="VM_PARAMETERS" value="-Xmx1250m -XX:ReservedCodeCacheSize=240m -XX:+HeapDumpOnOutOfMemoryError -ea -Didea.is.internal=true -Didea.platform.prefix=Idea -Didea.debug.mode=true -Didea.system.path=$PROJECT_DIR$/local/ideaSandbox -Didea.config.path=$PROJECT_DIR$/local/ideaSandbox/config -Dapple.laf.useScreenMenuBar=true -Dapple.awt.graphics.UseQuartz=true -Dsun.io.useCanonCaches=false -Dplugin.path=$PROJECT_DIR$/out/artifacts/Kotlin -Didea.ProcessCanceledException=disabled $ADDITIONAL_IDEA_ARGS$" />
     <option name="WORKING_DIRECTORY" value="file://$IDEA_HOME_PATH$" />
     <RunnerSettings RunnerId="Debug">
       <option name="DEBUG_PORT" value="" />

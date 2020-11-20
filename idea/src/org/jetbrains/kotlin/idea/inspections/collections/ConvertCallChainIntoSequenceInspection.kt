@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceiverValue
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
-import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import java.awt.BorderLayout
 import javax.swing.JPanel
 
@@ -223,6 +220,7 @@ private val transformations = listOf(
     "minus",
     "minusElement",
     "onEach",
+    "onEachIndexed",
     "plus",
     "plusElement",
     "requireNoNulls",
@@ -282,18 +280,41 @@ internal val collectionTerminationFunctionNames = listOf(
     "max",
     "maxBy",
     "maxWith",
+    "maxOrNull",
+    "maxByOrNull",
+    "maxWithOrNull",
+    "maxOf",
+    "maxOfOrNull",
+    "maxOfWith",
+    "maxOfWithOrNull",
     "min",
     "minBy",
     "minWith",
+    "minOrNull",
+    "minByOrNull",
+    "minWithOrNull",
+    "minOf",
+    "minOfOrNull",
+    "minOfWith",
+    "minOfWithOrNull",
     "none",
     "partition",
     "reduce",
     "reduceIndexed",
+    "reduceIndexedOrNull",
+    "reduceOrNull",
+    "runningFold",
+    "runningFoldIndexed",
+    "runningReduce",
+    "runningReduceIndexed",
+    "scan",
+    "scanIndexed",
     "single",
     "singleOrNull",
     "sum",
     "sumBy",
     "sumByDouble",
+    "sumOf",
     "toCollection",
     "toHashSet",
     "toList",

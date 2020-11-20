@@ -36,6 +36,10 @@ data class ModuleData(
     val classpath = rawClasspath.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
     val sources = rawSources.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
     val javaSourceRoots = rawJavaSourceRoots.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
+    lateinit var targetInfo: String
+    var compilationError: String? = null
+    var jvmInternalError: String? = null
+    var exceptionMessage: String = "NO MESSAGE"
 }
 
 private fun NodeList.toList(): List<Node> {
@@ -132,13 +136,13 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
     }
 
 
-    protected abstract fun beforePass()
+    protected abstract fun beforePass(pass: Int)
     protected abstract fun afterPass(pass: Int)
     protected open fun afterAllPasses() {}
     protected abstract fun processModule(moduleData: ModuleData): ProcessorAction
 
     protected fun runTestOnce(pass: Int) {
-        beforePass()
+        beforePass(pass)
         val testDataPath = System.getProperty("fir.bench.jps.dir")?.toString() ?: "/Users/jetbrains/jps"
         val root = File(testDataPath)
 

@@ -1,7 +1,7 @@
 FILE: LinkedList.kt
-    public final class LinkedList<T> : R|ERROR CLASS: Symbol not found, for `java.util.LinkedList<R|T|>`| {
+    public final class LinkedList<T> : R|java/util/LinkedList<T>| {
         public constructor<T>(): R|foo/LinkedList<T>| {
-            super<R|ERROR CLASS: Symbol not found, for `java.util.LinkedList<R|T|>`|>()
+            super<R|java/util/LinkedList<T>|>()
         }
 
     }
@@ -13,9 +13,9 @@ FILE: HashSet.kt
 
     }
 FILE: main.kt
-    public final class LinkedHashMap<K, V> : R|ERROR CLASS: Symbol not found, for `java.util.LinkedHashMap<R|K|, R|V|>`| {
+    public final class LinkedHashMap<K, V> : R|java/util/LinkedHashMap<K, V>| {
         public constructor<K, V>(): R|foo/LinkedHashMap<K, V>| {
-            super<R|ERROR CLASS: Symbol not found, for `java.util.LinkedHashMap<R|K|, R|V|>`|>()
+            super<R|java/util/LinkedHashMap<K, V>|>()
         }
 
     }

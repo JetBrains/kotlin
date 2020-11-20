@@ -15,18 +15,18 @@ fun test1(a: A.B.<!SYNTAX!><!>): A.B.<!SYNTAX!><!> {
     val aa: A.B. <!SYNTAX!>=<!><!SYNTAX!><!> null!!
 }
 
-fun test2(a: A.e.C): A.e.C {
-    val aa: A.e.C = null!!
+fun test2(a: <!UNRESOLVED_REFERENCE!>A.e.C<!>): <!UNRESOLVED_REFERENCE!>A.e.C<!> {
+    val aa: <!UNRESOLVED_REFERENCE!>A.e.C<!> = null!!
 }
 
-fun test3(a: a.A.C): a.A.C {
-    val aa: a.A.C = null!!
+fun test3(a: <!UNRESOLVED_REFERENCE!>a.A.C<!>): <!UNRESOLVED_REFERENCE!>a.A.C<!> {
+    val aa: <!UNRESOLVED_REFERENCE!>a.A.C<!> = null!!
 }
 
-fun test4(a: A.B.ee): A.B.ee {
-    val aa: A.B.ee = null!!
+fun test4(a: <!UNRESOLVED_REFERENCE!>A.B.ee<!>): <!UNRESOLVED_REFERENCE!>A.B.ee<!> {
+    val aa: <!UNRESOLVED_REFERENCE!>A.B.ee<!> = null!!
 }
 
-fun test5(a: A.ee): A.ee {
-    val aa: A.ee = null!!
+fun test5(a: <!UNRESOLVED_REFERENCE!>A.ee<!>): <!UNRESOLVED_REFERENCE!>A.ee<!> {
+    val aa: <!UNRESOLVED_REFERENCE!>A.ee<!> = null!!
 }

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
@@ -38,6 +37,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
+    var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
@@ -50,6 +50,7 @@ class FirErrorFunctionBuilder : FirAnnotationContainerBuilder {
             session,
             resolvePhase,
             origin,
+            attributes,
             annotations,
             valueParameters,
             diagnostic,

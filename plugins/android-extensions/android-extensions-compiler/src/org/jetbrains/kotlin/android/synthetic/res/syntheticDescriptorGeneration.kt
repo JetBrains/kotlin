@@ -49,7 +49,7 @@ internal fun genClearCacheFunction(packageFragmentDescriptor: PackageFragmentDes
     val unitType = packageFragmentDescriptor.builtIns.unitType
     return function.initialize(
         DescriptorFactory.createExtensionReceiverParameterForCallable(function, receiverType, Annotations.EMPTY),
-        null, emptyList(), emptyList(), unitType, Modality.FINAL, Visibilities.PUBLIC
+        null, emptyList(), emptyList(), unitType, Modality.FINAL, DescriptorVisibilities.PUBLIC
     )
 }
 
@@ -100,7 +100,7 @@ private fun genProperty(
             null,
             Annotations.EMPTY,
             Modality.FINAL,
-            Visibilities.PUBLIC,
+            DescriptorVisibilities.PUBLIC,
             false,
             Name.identifier(resource.id.name),
             CallableMemberDescriptor.Kind.SYNTHESIZED,
@@ -130,7 +130,7 @@ private fun genProperty(
             property,
             Annotations.EMPTY,
             Modality.FINAL,
-            Visibilities.PUBLIC,
+            DescriptorVisibilities.PUBLIC,
             /* isDefault = */ false,
             /* isExternal = */ false,
             /* isInline = */ false,

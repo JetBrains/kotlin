@@ -523,7 +523,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.visibility(visibility: Visibility) {
-        if (visibility == Visibilities.UNKNOWN)
+        if (visibility == Visibilities.Unknown)
             return unresolved { keyword("public?") }
         return keyword(visibility.toString())
     }
@@ -838,10 +838,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.generate(type: ConeKotlinType) {
         when (type) {
-            is ConeClassErrorType -> error { +type.reason }
+            is ConeClassErrorType -> error { +type.diagnostic.reason }
             is ConeClassLikeType -> return generate(type)
             is ConeTypeParameterType -> resolved {
-                symbolRef(type.lookupTag.toSymbol()) {
+                symbolRef(type.lookupTag.symbol) {
                     simpleName(type.lookupTag.name)
                 }
             }
@@ -901,7 +901,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 unresolved++
                 generateList(typeRef.qualifier, separator = ".") {
                     simpleName(it.name)
-                    generateTypeProjections(it.typeArguments)
+                    generateTypeProjections(it.typeArgumentList.typeArguments)
                 }
                 if (typeRef.isMarkedNullable) {
                     +"?"
@@ -1231,7 +1231,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is ConeInapplicableCandidateError -> {
                 describeVerbose(diagnostic.candidateSymbol)
                 br
-                diagnostic.diagnostics.forEach { callDiagnostic ->
+                diagnostic.errors.forEach { callDiagnostic ->
                     when (callDiagnostic) {
                         is NewConstraintError -> {
                             ident()

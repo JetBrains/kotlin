@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class PropertyAccessorInlineLowering(private val context: CommonBackendContext) : BodyLoweringPass {
 
-    private val IrProperty.isSafeToInline: Boolean get() = isTopLevel || (modality === Modality.FINAL || visibility == Visibilities.PRIVATE) || (parent as IrClass).modality === Modality.FINAL
+    private val IrProperty.isSafeToInline: Boolean get() = isTopLevel || (modality === Modality.FINAL || visibility == DescriptorVisibilities.PRIVATE) || (parent as IrClass).modality === Modality.FINAL
 
     // TODO: implement general function inlining optimization and replace it with
     private inner class AccessorInliner : IrElementTransformerVoid() {
@@ -31,7 +31,7 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
         override fun visitCall(expression: IrCall): IrExpression {
             expression.transformChildrenVoid(this)
 
-            val callee = expression.symbol.owner as IrSimpleFunction
+            val callee = expression.symbol.owner
             val property = callee.correspondingPropertySymbol?.owner ?: return expression
 
             // Some devirtualization required here

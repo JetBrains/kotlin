@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
@@ -31,9 +32,12 @@ import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
 import org.jetbrains.kotlin.resolve.constants.NullValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
+import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
+import org.jetbrains.kotlin.serialization.deserialization.memberKind
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
@@ -66,7 +70,7 @@ class DescriptorSerializer private constructor(
 
         val flags = Flags.getClassFlags(
             hasAnnotations(classDescriptor),
-            ProtoEnumFlags.visibility(normalizeVisibility(classDescriptor)),
+            ProtoEnumFlags.descriptorVisibility(normalizeVisibility(classDescriptor)),
             ProtoEnumFlags.modality(classDescriptor.modality),
             ProtoEnumFlags.classKind(classDescriptor.kind, classDescriptor.isCompanionObject),
             classDescriptor.isInner, classDescriptor.isData, classDescriptor.isExternal, classDescriptor.isExpect,
@@ -204,7 +208,7 @@ class DescriptorSerializer private constructor(
 
         val defaultAccessorFlags = Flags.getAccessorFlags(
             hasAnnotations,
-            ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
+            ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)),
             ProtoEnumFlags.modality(descriptor.modality),
             false, false, false
         )
@@ -236,7 +240,7 @@ class DescriptorSerializer private constructor(
 
         val flags = Flags.getPropertyFlags(
             hasAnnotations,
-            ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
+            ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)),
             ProtoEnumFlags.modality(descriptor.modality),
             ProtoEnumFlags.memberKind(descriptor.kind),
             descriptor.isVar, hasGetter, hasSetter, hasConstant, descriptor.isConst, descriptor.isLateInit, descriptor.isExternal,
@@ -308,7 +312,7 @@ class DescriptorSerializer private constructor(
 
         val flags = Flags.getFunctionFlags(
             hasAnnotations(descriptor),
-            ProtoEnumFlags.visibility(normalizeVisibility(descriptor)),
+            ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)),
             ProtoEnumFlags.modality(descriptor.modality),
             ProtoEnumFlags.memberKind(descriptor.kind),
             descriptor.isOperator, descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal,
@@ -375,7 +379,7 @@ class DescriptorSerializer private constructor(
         val local = createChildSerializer(descriptor)
 
         val flags = Flags.getConstructorFlags(
-            hasAnnotations(descriptor), ProtoEnumFlags.visibility(normalizeVisibility(descriptor)), !descriptor.isPrimary,
+            hasAnnotations(descriptor), ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)), !descriptor.isPrimary,
             shouldSerializeHasStableParameterNames(descriptor)
         )
         if (flags != builder.flags) {
@@ -431,7 +435,7 @@ class DescriptorSerializer private constructor(
         val builder = ProtoBuf.TypeAlias.newBuilder()
         val local = createChildSerializer(descriptor)
 
-        val flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), ProtoEnumFlags.visibility(normalizeVisibility(descriptor)))
+        val flags = Flags.getTypeAliasFlags(hasAnnotations(descriptor), ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)))
         if (flags != builder.flags) {
             builder.flags = flags
         }
@@ -745,7 +749,7 @@ class DescriptorSerializer private constructor(
 
     private fun getAccessorFlags(accessor: PropertyAccessorDescriptor): Int = Flags.getAccessorFlags(
         hasAnnotations(accessor),
-        ProtoEnumFlags.visibility(normalizeVisibility(accessor)),
+        ProtoEnumFlags.descriptorVisibility(normalizeVisibility(accessor)),
         ProtoEnumFlags.modality(accessor.modality),
         !accessor.isDefault,
         accessor.isExternal,
@@ -753,13 +757,6 @@ class DescriptorSerializer private constructor(
     )
 
     companion object {
-        private val plugins: MutableSet<DescriptorSerializerPlugin> = mutableSetOf()
-
-        @JvmStatic
-        fun registerSerializerPlugin(plugin: DescriptorSerializerPlugin) {
-            plugins.add(plugin)
-        }
-
         @JvmStatic
         fun createTopLevel(extension: SerializerExtension): DescriptorSerializer =
             DescriptorSerializer(
@@ -776,13 +773,15 @@ class DescriptorSerializer private constructor(
         fun create(
             descriptor: ClassDescriptor,
             extension: SerializerExtension,
-            parentSerializer: DescriptorSerializer?
+            parentSerializer: DescriptorSerializer?,
+            project: Project? = null
         ): DescriptorSerializer {
             val container = descriptor.containingDeclaration
             val parent = if (container is ClassDescriptor)
-                parentSerializer ?: create(container, extension, null)
+                parentSerializer ?: create(container, extension, null, project)
             else
                 createTopLevel(extension)
+            val plugins = project?.let { DescriptorSerializerPlugin.getInstances(it) }.orEmpty()
 
             // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
             // serializing outer classes before nested classes.
@@ -795,7 +794,7 @@ class DescriptorSerializer private constructor(
                 if (container is ClassDescriptor && !isVersionRequirementTableWrittenCorrectly(extension.metadataVersion))
                     parent.versionRequirementTable else MutableVersionRequirementTable(),
                 serializeTypeTableToFunction = false,
-                plugins.toList()
+                plugins
             )
             for (typeParameter in descriptor.declaredTypeParameters) {
                 serializer.typeParameters.intern(typeParameter)

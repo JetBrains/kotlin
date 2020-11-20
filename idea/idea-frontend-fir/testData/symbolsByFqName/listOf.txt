@@ -1,0 +1,17 @@
+class: kotlin/io/FileWalkDirection
+
+// SYMBOLS:
+KtFirClassOrObjectSymbol:
+  annotations: []
+  classIdIfNonLocal: kotlin/io/FileWalkDirection
+  classKind: ENUM_CLASS
+  companionObject: null
+  isInner: false
+  modality: FINAL
+  name: FileWalkDirection
+  origin: LIBRARY
+  primaryConstructor: KtFirConstructorSymbol(<constructor>)
+  superTypes: [kotlin/Enum<kotlin/io/FileWalkDirection>]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: PUBLIC

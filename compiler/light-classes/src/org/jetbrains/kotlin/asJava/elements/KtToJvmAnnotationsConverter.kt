@@ -13,7 +13,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNameValuePair
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightSimpleAnnotation
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
@@ -64,7 +64,7 @@ private val targetMapping = hashMapOf(
 
 internal fun PsiAnnotation.tryConvertAsTarget(support: KtUltraLightSupport): KtLightAbstractAnnotation? {
 
-    if (FQ_NAMES.target.asString() != qualifiedName) return null
+    if (FqNames.target.asString() != qualifiedName) return null
 
     val attributeValues = extractArrayAnnotationFqNames("allowedTargets")
         ?: extractAnnotationFqName("value")?.let { listOf(it) }
@@ -101,11 +101,10 @@ internal fun createRetentionRuntimeAnnotation(support: KtUltraLightSupport, pare
 
 internal fun PsiAnnotation.tryConvertAsRetention(support: KtUltraLightSupport): KtLightAbstractAnnotation? {
 
-    if (FQ_NAMES.retention.asString() != qualifiedName) return null
+    if (FqNames.retention.asString() != qualifiedName) return null
 
     val convertedValue = extractAnnotationFqName("value")
         ?.let { retentionMapping[it] }
-        ?: null
 
     convertedValue ?: return null
 
@@ -119,7 +118,7 @@ internal fun PsiAnnotation.tryConvertAsRetention(support: KtUltraLightSupport): 
 
 internal fun PsiAnnotation.tryConvertAsMustBeDocumented(support: KtUltraLightSupport): KtLightAbstractAnnotation? {
 
-    if (FQ_NAMES.mustBeDocumented.asString() != qualifiedName) return null
+    if (FqNames.mustBeDocumented.asString() != qualifiedName) return null
 
     return KtUltraLightSimpleAnnotation(
         JAVA_LANG_ANNOTATION_DOCUMENTED,

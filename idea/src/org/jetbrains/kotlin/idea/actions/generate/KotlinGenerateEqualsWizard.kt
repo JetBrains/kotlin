@@ -25,7 +25,9 @@ import com.intellij.openapi.ui.VerticalFlowLayout
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel
 import com.intellij.ui.NonFocusableCheckBox
 import com.intellij.util.containers.HashMap
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.isInheritable
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel
@@ -73,7 +75,12 @@ class KotlinGenerateEqualsWizard(
             } else null
         }
 
-        private fun createMemberInfo(it: KtNamedDeclaration) = KotlinMemberInfo(it).apply { isChecked = true }
+        private fun createMemberInfo(it: KtNamedDeclaration): KotlinMemberInfo {
+            return KotlinMemberInfo(it).apply {
+                val descriptor = it.unsafeResolveToDescriptor()
+                isChecked = (descriptor as? PropertyDescriptor)?.getter?.isDefault ?: true
+            }
+        }
 
         override fun getPsiClass() = klass
 

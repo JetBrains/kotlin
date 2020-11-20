@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.extensions
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
@@ -19,16 +20,16 @@ import org.jetbrains.kotlin.resolve.BindingContext
 interface IrPluginContext : IrGeneratorContext {
     val languageVersionSettings: LanguageVersionSettings
 
-    @Deprecated("FrontEnd API shouldn't be accessed in Ir plugin environment")
+    @ObsoleteDescriptorBasedAPI
     val moduleDescriptor: ModuleDescriptor
 
-    @Deprecated("FrontEnd API shouldn't be accessed in Ir plugin environment")
+    @ObsoleteDescriptorBasedAPI
     val bindingContext: BindingContext
 
-    @Deprecated("FrontEnd API shouldn't be accessed in Ir plugin environment")
+    @ObsoleteDescriptorBasedAPI
     val symbolTable: ReferenceSymbolTable
 
-    @Deprecated("FrontEnd API shouldn't be accessed in Ir plugin environment")
+    @ObsoleteDescriptorBasedAPI
     val typeTranslator: TypeTranslator
 
     val symbols: BuiltinSymbolsBase
@@ -42,4 +43,3 @@ interface IrPluginContext : IrGeneratorContext {
     fun referenceFunctions(fqName: FqName): Collection<IrSimpleFunctionSymbol>
     fun referenceProperties(fqName: FqName): Collection<IrPropertySymbol>
 }
-

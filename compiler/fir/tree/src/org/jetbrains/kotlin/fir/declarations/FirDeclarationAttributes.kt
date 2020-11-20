@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.fir.utils.ArrayMap
 import org.jetbrains.kotlin.fir.utils.AttributeArrayOwner
 import org.jetbrains.kotlin.fir.utils.NullableArrayMapAccessor
 import org.jetbrains.kotlin.fir.utils.TypeRegistry
@@ -14,9 +15,12 @@ import kotlin.reflect.KProperty
 
 abstract class FirDeclarationDataKey
 
-class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any>() {
+class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any> {
     override val typeRegistry: TypeRegistry<FirDeclarationDataKey, Any>
         get() = FirDeclarationDataRegistry
+
+    constructor() : super()
+    private constructor(arrayMap: ArrayMap<Any>) : super(arrayMap)
 
     internal operator fun set(key: KClass<out FirDeclarationDataKey>, value: Any?) {
         if (value == null) {
@@ -25,6 +29,8 @@ class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any>
             registerComponent(key, value)
         }
     }
+
+    fun copy(): FirDeclarationAttributes = FirDeclarationAttributes(arrayMap.copy())
 }
 
 /*
@@ -39,6 +45,11 @@ object FirDeclarationDataRegistry : TypeRegistry<FirDeclarationDataKey, Any>() {
         return DeclarationDataAccessor(generateNullableAccessor(kClass), kClass)
     }
 
+    fun <K : FirDeclarationDataKey, V : Any> attributesAccessor(key: K): ReadWriteProperty<FirDeclarationAttributes, V?> {
+        val kClass = key::class
+        return AttributeDataAccessor(generateNullableAccessor(kClass), kClass)
+    }
+
     private class DeclarationDataAccessor<V : Any>(
         val dataAccessor: NullableArrayMapAccessor<FirDeclarationDataKey, Any, V>,
         val key: KClass<out FirDeclarationDataKey>
@@ -49,6 +60,19 @@ object FirDeclarationDataRegistry : TypeRegistry<FirDeclarationDataKey, Any>() {
 
         override fun setValue(thisRef: FirDeclaration, property: KProperty<*>, value: V?) {
             thisRef.attributes[key] = value
+        }
+    }
+
+    private class AttributeDataAccessor<V : Any>(
+        val dataAccessor: NullableArrayMapAccessor<FirDeclarationDataKey, Any, V>,
+        val key: KClass<out FirDeclarationDataKey>
+    ) : ReadWriteProperty<FirDeclarationAttributes, V?> {
+        override fun getValue(thisRef: FirDeclarationAttributes, property: KProperty<*>): V? {
+            return dataAccessor.getValue(thisRef, property)
+        }
+
+        override fun setValue(thisRef: FirDeclarationAttributes, property: KProperty<*>, value: V?) {
+            thisRef[key] = value
         }
     }
 }

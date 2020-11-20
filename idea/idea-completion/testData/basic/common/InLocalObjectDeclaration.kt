@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 fun hello(moParam : Int) : Int {
     val more = 12
 

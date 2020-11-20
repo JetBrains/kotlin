@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -24,8 +23,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
@@ -59,39 +56,14 @@ internal class ClassMemberGenerator(
                     convertFunctionContent(irPrimaryConstructor, primaryConstructor, containingClass = klass)
                 }
             }
-            val processedCallableNames = klass.declarations.mapNotNullTo(mutableSetOf()) {
-                when (it) {
-                    is FirSimpleFunction -> it.name
-                    is FirProperty -> it.name
-                    else -> null
-                }
-            }
-            // Add delegated members *before* fake override generations.
-            // Otherwise, fake overrides for delegated members, which are redundant, will be added.
-            irClass.declarations.filter {
-                it.origin == IrDeclarationOrigin.DELEGATED_MEMBER
-            }.forEach {
-                when (it) {
-                    is IrSimpleFunction -> processedCallableNames += it.name
-                    is IrProperty -> processedCallableNames += it.name
-                }
-            }
-            // Add synthetic members *before* fake override generations.
-            // Otherwise, redundant members, e.g., synthetic toString _and_ fake override toString, will be added.
-            if (irClass.isInline && klass.getPrimaryConstructorIfAny() != null) {
-                processedCallableNames += DataClassMembersGenerator(components).generateInlineClassMembers(klass, irClass)
-            }
-            if (irClass.isData && klass.getPrimaryConstructorIfAny() != null) {
-                processedCallableNames += DataClassMembersGenerator(components).generateDataClassMembers(klass, irClass)
-            }
-            with(fakeOverrideGenerator) { irClass.addFakeOverrides(klass, processedCallableNames) }
+            fakeOverrideGenerator.bindOverriddenSymbols(irClass.declarations)
             klass.declarations.forEach { declaration ->
                 when {
                     declaration is FirTypeAlias -> {
                     }
                     declaration is FirConstructor && declaration.isPrimary -> {
                     }
-                    declaration is FirRegularClass && declaration.visibility == Visibilities.LOCAL -> {
+                    declaration is FirRegularClass && declaration.visibility == Visibilities.Local -> {
                         val irNestedClass = classifierStorage.getCachedIrClass(declaration)!!
                         irNestedClass.parent = irClass
                         conversionScope.withParent(irNestedClass) {
@@ -153,14 +125,14 @@ internal class ClassMemberGenerator(
                         irFunction.body = IrSyntheticBodyImpl(startOffset, endOffset, kind)
                     }
                     irFunction.parent is IrClass && irFunction.parentAsClass.isData -> {
-                        val classId = firFunction?.symbol?.callableId?.classId
+                        val lookupTag = firFunction?.symbol?.dispatchReceiverClassOrNull()
                         when {
                             DataClassMembersGenerator.isComponentN(irFunction) ->
                                 firFunction?.body?.let { irFunction.body = visitor.convertToIrBlockBody(it) }
-                                    ?: DataClassMembersGenerator(components).generateDataClassComponentBody(irFunction, classId!!)
+                                    ?: DataClassMembersGenerator(components).generateDataClassComponentBody(irFunction, lookupTag!!)
                             DataClassMembersGenerator.isCopy(irFunction) ->
                                 firFunction?.body?.let { irFunction.body = visitor.convertToIrBlockBody(it) }
-                                    ?: DataClassMembersGenerator(components).generateDataClassCopyBody(irFunction, classId!!)
+                                    ?: DataClassMembersGenerator(components).generateDataClassCopyBody(irFunction, lookupTag!!)
                             else ->
                                 irFunction.body = firFunction?.body?.let { visitor.convertToIrBlockBody(it) }
                         }
@@ -174,19 +146,10 @@ internal class ClassMemberGenerator(
                 // Scope for primary constructor should be left after class declaration
                 declarationStorage.leaveScope(irFunction)
             }
-            if (irFunction is IrSimpleFunction && firFunction != null && containingClass != null) {
-                val scope = containingClass.unsubstitutedScope(session, scopeSession)
-                scope.processFunctionsByName(name) {}
-                val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
-                scope.processDirectlyOverriddenFunctions(firFunction.symbol) {
-                    if ((it.fir as FirSimpleFunction).visibility == Visibilities.PRIVATE) {
-                        return@processDirectlyOverriddenFunctions ProcessorAction.NEXT
-                    }
-                    val overridden = declarationStorage.getIrFunctionSymbol(it)
-                    overriddenSet += overridden as IrSimpleFunctionSymbol
-                    ProcessorAction.NEXT
-                }
-                irFunction.overriddenSymbols = overriddenSet.toList()
+            if (irFunction is IrSimpleFunction && firFunction is FirSimpleFunction && containingClass != null) {
+                irFunction.overriddenSymbols = firFunction.generateOverriddenFunctionSymbols(
+                    containingClass, session, scopeSession, declarationStorage
+                )
             }
         }
         return irFunction
@@ -224,7 +187,18 @@ internal class ClassMemberGenerator(
             declarationStorage.enterScope(this@initializeBackingField)
             // NB: initializer can be already converted
             if (initializer == null && initializerExpression != null) {
-                initializer = irFactory.createExpressionBody(visitor.convertToIrExpression(initializerExpression))
+                initializer = irFactory.createExpressionBody(
+                    run {
+                        val irExpression = visitor.convertToIrExpression(initializerExpression)
+                        if (property.delegate == null) {
+                            with(visitor.implicitCastInserter) {
+                                irExpression.cast(initializerExpression, initializerExpression.typeRef, property.returnTypeRef)
+                            }
+                        } else {
+                            irExpression
+                        }
+                    }
+                )
             }
             declarationStorage.leaveScope(this@initializeBackingField)
         }
@@ -271,25 +245,9 @@ internal class ClassMemberGenerator(
                 }
             }
             if (containingClass != null) {
-                val scope = containingClass.unsubstitutedScope(session, scopeSession)
-                scope.processPropertiesByName(property.name) {}
-                val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
-                scope.processDirectlyOverriddenProperties(property.symbol) {
-                    if (it.fir.visibility == Visibilities.PRIVATE) {
-                        return@processDirectlyOverriddenProperties ProcessorAction.NEXT
-                    }
-                    val overridden = declarationStorage.getIrPropertyOrFieldSymbol(it)
-                    if (overridden is IrPropertySymbol) {
-                        val accessorSymbol =
-                            if (isGetter) overridden.owner.getter?.symbol
-                            else overridden.owner.setter?.symbol
-                        if (accessorSymbol != null) {
-                            overriddenSet += accessorSymbol
-                        }
-                    }
-                    ProcessorAction.NEXT
-                }
-                this.overriddenSymbols = overriddenSet.toList()
+                this.overriddenSymbols = property.generateOverriddenAccessorSymbols(
+                    containingClass, isGetter, session, scopeSession, declarationStorage
+                )
             }
 
         }
@@ -314,7 +272,7 @@ internal class ClassMemberGenerator(
                     startOffset, endOffset, constructedIrType, "Cannot find delegated constructor call"
                 )
             }
-        val constructorSymbol = referencedSymbol.deepestMatchingOverriddenSymbol() as FirConstructorSymbol
+        val constructorSymbol = referencedSymbol.unwrapCallRepresentative() as FirConstructorSymbol
         val firDispatchReceiver = dispatchReceiver
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol

@@ -27,14 +27,14 @@ val ParameterDescriptor.isNoinline: Boolean
     get() = this is ValueParameterDescriptor && isNoinline
 
 fun IrFactory.createIrClassFromDescriptor(
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    symbol: IrClassSymbol,
-    descriptor: ClassDescriptor,
-    name: Name = descriptor.name,
-    visibility: Visibility = descriptor.visibility,
-    modality: Modality = descriptor.modality
+        startOffset: Int,
+        endOffset: Int,
+        origin: IrDeclarationOrigin,
+        symbol: IrClassSymbol,
+        descriptor: ClassDescriptor,
+        name: Name = descriptor.name,
+        visibility: DescriptorVisibility = descriptor.visibility,
+        modality: Modality = descriptor.modality
 ): IrClass = createClass(
     startOffset, endOffset, origin, symbol, name, descriptor.kind, visibility, modality,
     descriptor.isCompanionObject, descriptor.isInner, descriptor.isData, descriptor.isEffectivelyExternal(),

@@ -9,26 +9,35 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.declarations.isLateInit
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker() {
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter) {
-        val localProperties = LocalPropertyCollector.collect(graph)
-        // we want to analyze only properties without initializers
-        localProperties.retainAll { it.fir.initializer == null && it.fir.delegate == null }
-        if (localProperties.isEmpty()) return
-        val data = DataCollector(localProperties).getData(graph)
-        val reporterVisitor = UninitializedPropertyReporter(data, localProperties, reporter)
+    override fun analyze(
+        graph: ControlFlowGraph,
+        reporter: DiagnosticReporter,
+        data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
+        properties: Set<FirPropertySymbol>
+    ) {
+        val localData = data.filter {
+            val symbolFir = (it.key.fir as? FirVariableSymbol<*>)?.fir
+            symbolFir == null || symbolFir.initializer == null && symbolFir.delegate == null
+        }
+
+        val localProperties = properties.filter { it.fir.initializer == null && it.fir.delegate == null }.toSet()
+
+        val reporterVisitor = UninitializedPropertyReporter(localData, localProperties, reporter)
         graph.traverse(TraverseDirection.Forward, reporterVisitor)
     }
 
     private class UninitializedPropertyReporter(
-        val data: Map<CFGNode<*>, PropertyInitializationInfo>,
+        val data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
         val localProperties: Set<FirPropertySymbol>,
         val reporter: DiagnosticReporter
     ) : ControlFlowGraphVisitorVoid() {
@@ -38,12 +47,25 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
             val reference = node.fir.calleeReference as? FirResolvedNamedReference ?: return
             val symbol = reference.resolvedSymbol as? FirPropertySymbol ?: return
             if (symbol !in localProperties) return
-            val kind = data.getValue(node)[symbol] ?: EventOccurrencesRange.ZERO
+            if (symbol.fir.isLateInit) return
+            val pathAwareInfo = data.getValue(node)
+            for (label in pathAwareInfo.keys) {
+                if (investigate(pathAwareInfo[label]!!, symbol, node)) {
+                    // To avoid duplicate reports, stop investigating remaining paths if the property is not initialized at any path.
+                    break
+                }
+            }
+        }
+
+        private fun investigate(info: PropertyInitializationInfo, symbol: FirPropertySymbol, node: QualifiedAccessNode): Boolean {
+            val kind = info[symbol] ?: EventOccurrencesRange.ZERO
             if (!kind.isDefinitelyVisited()) {
                 node.fir.source?.let {
                     reporter.report(FirErrors.UNINITIALIZED_VARIABLE.on(it, symbol))
+                    return true
                 }
             }
+            return false
         }
     }
 }

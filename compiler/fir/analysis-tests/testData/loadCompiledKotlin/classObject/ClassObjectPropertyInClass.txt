@@ -1,9 +1,4 @@
 public final class A : R|kotlin/Any| {
-    public final val other: R|kotlin/Int|
-        public get(): R|kotlin/Int|
-
-    public constructor(): R|test/A|
-
     public final companion object Companion : R|kotlin/Any| {
         public final val some: R|kotlin/Int|
             public get(): R|kotlin/Int|
@@ -11,5 +6,10 @@ public final class A : R|kotlin/Any| {
         private constructor(): R|test/A.Companion|
 
     }
+
+    public final val other: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public constructor(): R|test/A|
 
 }

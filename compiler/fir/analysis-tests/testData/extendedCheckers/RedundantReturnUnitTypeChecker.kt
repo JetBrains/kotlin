@@ -1,4 +1,12 @@
+data class My(val x: Unit)
+
+interface I {
+    val x: Unit
+}
+
 class A {
+    fun too(): @Annotation Unit {}
+
     fun foo(): <!REDUNDANT_RETURN_UNIT_TYPE!>Unit<!>
     {
     }

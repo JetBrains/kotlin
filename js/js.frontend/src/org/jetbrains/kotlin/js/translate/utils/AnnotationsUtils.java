@@ -119,7 +119,7 @@ public final class AnnotationsUtils {
     public static boolean isExportedObject(@NotNull DeclarationDescriptor descriptor, @NotNull BindingContext bindingContext) {
         if (descriptor instanceof MemberDescriptor) {
             MemberDescriptor memberDescriptor = (MemberDescriptor) descriptor;
-            if (memberDescriptor.getVisibility() != Visibilities.PUBLIC) return false;
+            if (memberDescriptor.getVisibility() != DescriptorVisibilities.PUBLIC) return false;
         }
 
         if (hasAnnotationOrInsideAnnotatedClass(descriptor, JS_EXPORT)) return true;

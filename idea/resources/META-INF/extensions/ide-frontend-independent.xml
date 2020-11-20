@@ -4,6 +4,30 @@
                     interface="org.jetbrains.kotlin.idea.highlighter.BeforeResolveHighlightingExtension"/>
     <extensionPoint qualifiedName="org.jetbrains.kotlin.binaryExtension" interface="org.jetbrains.kotlin.idea.util.KotlinBinaryExtension"/>
     <extensionPoint qualifiedName="org.jetbrains.kotlin.buildSystemTypeDetector"
-                    interface="org.jetbrains.kotlin.idea.configuration.BuildSystemTypeDetector"/>
+                    interface="org.jetbrains.kotlin.idea.configuration.BuildSystemTypeDetector"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.projectConfigurator"
+                    interface="org.jetbrains.kotlin.idea.configuration.KotlinProjectConfigurator"
+                    dynamic="true"/>
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.newFileHook"
+                    interface="org.jetbrains.kotlin.idea.actions.NewKotlinFileHook"/>
   </extensionPoints>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="kotlin.formatter.allowTrailingCommaInAnyProject"
+                 description="Allow a trailing comma regardless of plugin version"
+                 defaultValue="false"
+                 restartRequired="false"/>
+    <registryKey key="kotlin.formatter.allowTrailingCommaOnCallSite"
+                 description="Allow a trailing comma on call-site"
+                 defaultValue="false"
+                 restartRequired="false"/>
+
+    <moduleBuilder builderClass="org.jetbrains.kotlin.tools.projectWizard.wizard.NewProjectWizardModuleBuilder"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJavaModuleConfigurator"/>
+    <projectConfigurator implementation="org.jetbrains.kotlin.idea.configuration.KotlinJsModuleConfigurator"/>
+  </extensions>
 </idea-plugin>

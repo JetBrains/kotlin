@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.highlighter
 
+import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.shouldBeRethrown
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.idea.withPossiblyDisabledDuplicatedFirSourceElementsException
@@ -16,6 +17,11 @@ abstract class AbstractFirHighlightingTest : AbstractHighlightingTest() {
     override fun getDefaultProjectDescriptor() = ProjectDescriptorWithStdlibSources.INSTANCE
 
     override fun isFirPlugin() = true
+
+    override fun doTest(unused: String?) {
+        addExternalTestFiles(testPath())
+        super.doTest(unused)
+    }
 
     override fun checkHighlighting(fileText: String) {
         val doComparison = !InTextDirectivesUtils.isDirectiveDefined(myFixture.file.text, "IGNORE_FIR")

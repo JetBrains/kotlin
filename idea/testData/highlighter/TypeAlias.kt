@@ -1,3 +1,4 @@
+// IGNORE_FIR
 // EXPECTED_DUPLICATED_HIGHLIGHTING
 
 typealias <info textAttributesKey="KOTLIN_TYPE_ALIAS">Predicate</info><<info textAttributesKey="KOTLIN_TYPE_PARAMETER">T</info>> = (<info textAttributesKey="KOTLIN_TYPE_PARAMETER">T</info>) -> <info textAttributesKey="KOTLIN_CLASS">Boolean</info>

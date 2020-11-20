@@ -641,7 +641,7 @@ public class BodyResolver {
                         trace.report(SEALED_SUPERTYPE_IN_LOCAL_CLASS.on(typeReference));
                     }
                 }
-                else if (ModalityKt.isFinalOrEnum(classDescriptor)) {
+                else if (ModalityUtilsKt.isFinalOrEnum(classDescriptor)) {
                     trace.report(FINAL_SUPERTYPE.on(typeReference));
                 }
                 else if (KotlinBuiltIns.isEnum(classDescriptor)) {

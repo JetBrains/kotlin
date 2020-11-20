@@ -23,6 +23,6 @@ fun f(a: Int): Int {
 // 1 IF
 
 // JVM_IR_TEMPLATES
-// 1 IF_ICMPGT
-// 1 IF_ICMPLE
+// 1 IF_ICMPGE
+// 1 IF_ICMPLT
 // 2 IF

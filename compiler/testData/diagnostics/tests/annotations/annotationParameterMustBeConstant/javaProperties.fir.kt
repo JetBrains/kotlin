@@ -14,12 +14,12 @@ public class Test {
 annotation class Ann(vararg val i: Int)
 
 @Ann(
-        Test.i1,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Test.i1<!>,
         Test.i2,
         Test.i3,
         Test.i4,
-        Test.i5,
-        Test.i6,
-        Test().i7
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Test.i5<!>,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Test.i6<!>,
+        <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>Test().i7<!>
 )
 class A

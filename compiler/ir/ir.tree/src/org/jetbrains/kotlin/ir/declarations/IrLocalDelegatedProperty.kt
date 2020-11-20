@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.declarations
@@ -23,21 +12,22 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrLocalDelegatedProperty :
+abstract class IrLocalDelegatedProperty :
+    IrDeclarationBase(),
     IrDeclarationWithName,
     IrSymbolOwner,
     IrMetadataSourceOwner {
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: VariableDescriptorWithAccessors
-    override val symbol: IrLocalDelegatedPropertySymbol
+    abstract override val descriptor: VariableDescriptorWithAccessors
+    abstract override val symbol: IrLocalDelegatedPropertySymbol
 
-    val type: IrType
-    val isVar: Boolean
+    abstract var type: IrType
+    abstract val isVar: Boolean
 
-    var delegate: IrVariable
-    var getter: IrFunction
-    var setter: IrFunction?
+    abstract var delegate: IrVariable
+    abstract var getter: IrSimpleFunction
+    abstract var setter: IrSimpleFunction?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedProperty(this, data)
@@ -50,7 +40,7 @@ interface IrLocalDelegatedProperty :
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         delegate = delegate.transform(transformer, data) as IrVariable
-        getter = getter.transform(transformer, data) as IrFunction
-        setter = setter?.transform(transformer, data) as? IrFunction
+        getter = getter.transform(transformer, data) as IrSimpleFunction
+        setter = setter?.transform(transformer, data) as? IrSimpleFunction
     }
 }

@@ -57,7 +57,7 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProp
 
         val assignment = findAssignment(element) ?: return null
         if (assignment.right?.let {
-                hasNoLocalDependencies(it, element.parent) && assignment.analyze().let { context ->
+                hasNoLocalDependencies(it, element) && assignment.analyze().let { context ->
                     (element.isVar && !element.isLocal) ||
                             equalNullableTypes(it.getType(context), context[BindingContext.TYPE, element.typeReference])
                 }
@@ -155,10 +155,13 @@ class JoinDeclarationAndAssignmentIntention : SelfTargetingRangeIntention<KtProp
     // a block that only contains comments is not empty
     private fun KtBlockExpression.isEmpty() = contentRange().isEmpty
 
-    private fun hasNoLocalDependencies(element: KtElement, localContext: PsiElement): Boolean =
-        !element.anyDescendantOfType<PsiElement> { child ->
-            child.resolveAllReferences().any { it != null && PsiTreeUtil.isAncestor(localContext, it, false) }
+    private fun hasNoLocalDependencies(element: KtElement, property: KtProperty): Boolean {
+        val localContext = property.parent
+        val nextSiblings = property.siblings(forward = true, withItself = false)
+        return !element.anyDescendantOfType<PsiElement> { child ->
+            child.resolveAllReferences().any { it != null && PsiTreeUtil.isAncestor(localContext, it, false) && it in nextSiblings }
         }
+    }
 }
 
 private fun PsiElement.resolveAllReferences(): Sequence<PsiElement?> =

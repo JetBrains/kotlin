@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.properties
-import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -75,12 +75,12 @@ class ClassGenerator(
 
         fun <T : DeclarationDescriptor> List<T>.sortedByRenderer(): List<T> {
             val rendered = map(DESCRIPTOR_RENDERER::render)
-            val sortedIndices = (0 until size).sortedWith(Comparator { i, j -> rendered[i].compareTo(rendered[j]) })
+            val sortedIndices = (0 until size).sortedWith { i, j -> rendered[i].compareTo(rendered[j]) }
             return sortedIndices.map { this[it] }
         }
     }
 
-    fun generateClass(ktClassOrObject: KtPureClassOrObject, visibility_: Visibility? = null): IrClass {
+    fun generateClass(ktClassOrObject: KtPureClassOrObject, visibility_: DescriptorVisibility? = null): IrClass {
         val classDescriptor = ktClassOrObject.findClassDescriptor(this.context.bindingContext)
         val startOffset = ktClassOrObject.getStartOffsetOfClassDeclarationOrNull() ?: ktClassOrObject.pureStartOffset
         val endOffset = ktClassOrObject.pureEndOffset
@@ -92,7 +92,7 @@ class ClassGenerator(
                 startOffset, endOffset, IrDeclarationOrigin.DEFINED, it, classDescriptor,
                 context.symbolTable.nameProvider.nameForDeclaration(classDescriptor), visibility, modality
             ).apply {
-                metadata = MetadataSource.Class(it.descriptor)
+                metadata = DescriptorMetadataSource.Class(it.descriptor)
             }
         }.buildWithScope { irClass ->
             declarationGenerator.generateGlobalTypeParametersDeclarations(irClass, classDescriptor.declaredTypeParameters)
@@ -170,7 +170,7 @@ class ClassGenerator(
             getContributedDescriptors()
                 .filterIsInstance<FunctionDescriptor>()
                 .filter {
-                    Visibilities.isVisibleIgnoringReceiver(it, classDescriptor)
+                    DescriptorVisibilities.isVisibleIgnoringReceiver(it, classDescriptor)
                 }
                 .sortedByRenderer()
                 .forEach { parentStaticMember ->
@@ -306,7 +306,7 @@ class ClassGenerator(
         delegateToDescriptor: FunctionDescriptor
     ): IrSimpleFunction =
         context.symbolTable.declareSimpleFunctionWithOverrides(
-            irDelegate.startOffset, irDelegate.endOffset,
+            SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
             IrDeclarationOrigin.DELEGATED_MEMBER,
             delegatedDescriptor
         ).buildWithScope { irFunction ->
@@ -324,17 +324,17 @@ class ClassGenerator(
         delegateToDescriptor: FunctionDescriptor,
         irDelegatedFunction: IrSimpleFunction
     ): IrBlockBody {
-        val startOffset = irDelegate.startOffset
-        val endOffset = irDelegate.endOffset
+        val startOffset = SYNTHETIC_OFFSET
+        val endOffset = SYNTHETIC_OFFSET
 
         val irBlockBody = context.irFactory.createBlockBody(startOffset, endOffset)
 
         val substitutedDelegateTo = substituteDelegateToDescriptor(delegatedDescriptor, delegateToDescriptor)
         val returnType = substitutedDelegateTo.returnType!!
 
-        val delegateToSymbol = context.symbolTable.referenceFunction(delegateToDescriptor.original)
+        val delegateToSymbol = context.symbolTable.referenceSimpleFunction(delegateToDescriptor.original)
 
-        val irCall = IrCallImpl(
+        val irCall = IrCallImpl.fromSymbolDescriptor(
             startOffset, endOffset,
             returnType.toIrType(),
             delegateToSymbol,
@@ -506,7 +506,7 @@ class ClassGenerator(
             }
 
             if (ktEnumEntry.hasMemberDeclarations()) {
-                irEnumEntry.correspondingClass = generateClass(ktEnumEntry, Visibilities.PRIVATE)
+                irEnumEntry.correspondingClass = generateClass(ktEnumEntry, DescriptorVisibilities.PRIVATE)
             }
         }
 

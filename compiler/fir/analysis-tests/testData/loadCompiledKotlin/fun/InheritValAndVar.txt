@@ -20,3 +20,4 @@ public abstract interface Super2 : R|kotlin/Any| {
         public get(): R|kotlin/String|
 
 }
+

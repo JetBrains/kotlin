@@ -33,7 +33,7 @@ fun test() {
     val z = <!HIDDEN!>x<!>
     <!HIDDEN!>x<!> = 30
 
-    val po = PO
+    val po = <!HIDDEN!>PO<!>
 }
 
 class B : <!EXPOSED_SUPER_CLASS, HIDDEN!>A<!>() {}

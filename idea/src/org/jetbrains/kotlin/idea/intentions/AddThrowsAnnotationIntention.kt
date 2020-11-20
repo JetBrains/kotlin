@@ -10,7 +10,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
@@ -44,7 +44,7 @@ class AddThrowsAnnotationIntention : SelfTargetingIntention<KtThrowExpression>(
         val containingDeclaration = element.getContainingDeclaration() ?: return false
 
         val type = element.thrownExpression?.resolveToCall()?.resultingDescriptor?.returnType ?: return false
-        if ((type.constructor.declarationDescriptor as? DeclarationDescriptorWithVisibility)?.visibility == Visibilities.LOCAL) return false
+        if ((type.constructor.declarationDescriptor as? DeclarationDescriptorWithVisibility)?.visibility == DescriptorVisibilities.LOCAL) return false
 
         val module = element.module ?: return false
         if (!KOTLIN_THROWS_ANNOTATION_FQ_NAME.fqNameIsExists(module) &&

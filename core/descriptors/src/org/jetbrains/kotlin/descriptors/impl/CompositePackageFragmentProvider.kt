@@ -18,19 +18,34 @@ package org.jetbrains.kotlin.descriptors.impl
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.PackageFragmentProviderOptimized
+import org.jetbrains.kotlin.descriptors.collectPackageFragmentsOptimizedIfPossible
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
 import org.jetbrains.kotlin.name.Name
 
 class CompositePackageFragmentProvider(// can be modified from outside
-        private val providers: List<PackageFragmentProvider>) : PackageFragmentProvider {
+    private val providers: List<PackageFragmentProvider>
+) : PackageFragmentProviderOptimized {
+
+    init {
+        assert(providers.size == providers.toSet().size) {
+            "providers.size is ${providers.size} while only ${providers.toSet().size} unique providers"
+        }
+    }
 
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
         val result = ArrayList<PackageFragmentDescriptor>()
         for (provider in providers) {
-            result.addAll(provider.getPackageFragments(fqName))
+            provider.collectPackageFragmentsOptimizedIfPossible(fqName, result)
         }
         return result.toList()
+    }
+
+    override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {
+        for (provider in providers) {
+            provider.collectPackageFragmentsOptimizedIfPossible(fqName, packageFragments)
+        }
     }
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {

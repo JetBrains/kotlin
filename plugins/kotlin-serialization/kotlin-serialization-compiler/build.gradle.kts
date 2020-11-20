@@ -25,15 +25,18 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-jvm:1.0-M1-1.4.0-rc") { isTransitive = false }
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-
-    Platform[192].orHigher {
-        testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
-    }
+    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        freeCompilerArgs += "-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
+    }
 }
 
 runtimeJar()

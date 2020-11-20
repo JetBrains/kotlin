@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader;
 import org.jetbrains.kotlin.metadata.ProtoBuf;
 import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
@@ -50,8 +51,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.AsmUtil.CAPTURED_THIS_FIELD;
 import static org.jetbrains.kotlin.codegen.CallableReferenceUtilKt.*;
+import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
@@ -139,7 +141,7 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
 
         this.asmType = typeMapper.mapClass(classDescriptor);
 
-        visibilityFlag = AsmUtil.getVisibilityAccessFlagForClass(classDescriptor);
+        visibilityFlag = DescriptorAsmUtil.getVisibilityAccessFlagForClass(classDescriptor);
     }
 
     @Override
@@ -366,6 +368,11 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
                 value = StackValue.local(slot, type, bridgeParameterKotlinTypes.get(i));
                 slot += type.getSize();
             }
+            if (InlineClassesCodegenUtilKt.isInlineClassWithUnderlyingTypeAnyOrAnyN(parameterType) &&
+                functionReferenceCall == null
+            ) {
+                parameterType = InlineClassesUtilsKt.unsubstitutedUnderlyingParameter(parameterType).getType();
+            }
             value.put(typeMapper.mapType(calleeParameter), parameterType, iv);
         }
 
@@ -588,5 +595,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         );
         MemberScope scope = functionClass.getDefaultType().getMemberScope();
         return scope.getContributedFunctions(OperatorNameConventions.INVOKE, NoLookupLocation.FROM_BACKEND).iterator().next();
+    }
+
+    public boolean isCallableReference() {
+        return functionReferenceTarget != null;
     }
 }

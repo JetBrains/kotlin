@@ -58,3 +58,95 @@ class Test {
         }
     }
 }
+
+@kotlin.contracts.ExperimentalContracts
+class Test1 {
+    val a: String = ""
+    val b: String = ""
+    val c: String = ""
+    val d: String = ""
+
+    init {
+        inlineMe {
+            <!VARIABLE_EXPECTED!>a<!> += "allowed"
+        }
+        crossinlineMe {
+            <!VARIABLE_EXPECTED!>b<!> += "not allowed"
+        }
+        noinlineMe {
+            <!VARIABLE_EXPECTED!>c<!> += "not allowed"
+        }
+        notinline {
+            <!VARIABLE_EXPECTED!>d<!> += "not allowed"
+        }
+    }
+}
+
+@kotlin.contracts.ExperimentalContracts
+class Test2 {
+    val a: String = ""
+    val b: String = ""
+    val c: String = ""
+    val d: String = ""
+
+    init {
+        var blackhole = ""
+        inlineMe {
+            blackhole += a
+        }
+        crossinlineMe {
+            blackhole += b
+        }
+        noinlineMe {
+            blackhole += c
+        }
+        notinline {
+            blackhole += d
+        }
+    }
+}
+
+@kotlin.contracts.ExperimentalContracts
+class Test4 {
+    val a: String = ""
+    val b: String = ""
+    val c: String = ""
+    val d: String = ""
+
+    init {
+        var blackhole: String
+        inlineMe {
+            blackhole = a
+        }
+        crossinlineMe {
+            blackhole = b
+        }
+        noinlineMe {
+            blackhole = c
+        }
+        notinline {
+            blackhole = d
+        }
+    }
+}
+
+@kotlin.contracts.ExperimentalContracts
+class Test5 {
+    val a: String
+    val b: String
+    val c: String
+    val d: String
+
+    val aInit = inlineMe {
+        a = "OK"
+    }
+    val bInit = crossinlineMe {
+        b = "OK"
+    }
+    val cInit = noinlineMe {
+        c = "OK"
+    }
+    val dInit = notinline {
+        d = "OK"
+    }
+}

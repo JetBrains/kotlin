@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import org.jetbrains.kotlin.codegen.AsmUtil.genIncrement
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.CallableMethod
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genIncrement
 import org.jetbrains.kotlin.psi.KtPrefixExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 

@@ -22,6 +22,9 @@ import org.jetbrains.kotlin.codegen.defaultConstructor.AbstractDefaultArgumentsR
 import org.jetbrains.kotlin.codegen.flags.AbstractWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.AbstractPartialRawFirBuilderTestCase
+import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesTestCase
+import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderSourceElementMappingTestCase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.java.AbstractFirOldFrontendLightClassesTest
 import org.jetbrains.kotlin.fir.java.AbstractFirTypeEnhancementTest
@@ -37,6 +40,7 @@ import org.jetbrains.kotlin.ir.AbstractIrSourceRangesTestCase
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.jvm.compiler.*
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileJavaAgainstKotlinTest
+import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrCompileKotlinAgainstJavaTest
 import org.jetbrains.kotlin.jvm.compiler.ir.AbstractIrLoadJavaTest
 import org.jetbrains.kotlin.jvm.compiler.javac.AbstractLoadJavaUsingJavacTest
 import org.jetbrains.kotlin.lexer.kdoc.AbstractKDocLexerTest
@@ -239,7 +243,7 @@ fun main(args: Array<String>) {
 
 
             testClass<AbstractBytecodeListingTest> {
-                model("codegen/bytecodeListing")
+                model("codegen/bytecodeListing", targetBackend = TargetBackend.JVM)
             }
 
             testClass<AbstractTopLevelMembersInvocationTest> {
@@ -326,8 +330,18 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractCompileKotlinAgainstJavaTest> {
-                model("compileKotlinAgainstJava", testClassName = "WithAPT", testMethod = "doTestWithAPT")
-                model("compileKotlinAgainstJava", testClassName = "WithoutAPT", testMethod = "doTestWithoutAPT")
+                model(
+                    "compileKotlinAgainstJava",
+                    testClassName = "WithAPT",
+                    testMethod = "doTestWithAPT",
+                    targetBackend = TargetBackend.JVM
+                )
+                model(
+                    "compileKotlinAgainstJava",
+                    testClassName = "WithoutAPT",
+                    testMethod = "doTestWithoutAPT",
+                    targetBackend = TargetBackend.JVM
+                )
             }
 
             testClass<AbstractCompileKotlinAgainstKotlinTest> {
@@ -435,11 +449,41 @@ fun main(args: Array<String>) {
                     testMethod = "doTestWithoutJavac",
                     targetBackend = TargetBackend.JVM_IR
                 )
-                //model("compileJavaAgainstKotlin", testClassName = "WithJavac", testMethod = "doTestWithJavac", targetBackend = TargetBackend.JVM_IR)
+                model(
+                    "compileJavaAgainstKotlin",
+                    testClassName = "WithJavac",
+                    testMethod = "doTestWithJavac",
+                    targetBackend = TargetBackend.JVM_IR
+                )
+            }
+
+            testClass<AbstractIrCompileKotlinAgainstJavaTest> {
+                model(
+                    "compileKotlinAgainstJava",
+                    testClassName = "WithAPT",
+                    testMethod = "doTestWithAPT",
+                    targetBackend = TargetBackend.JVM_IR
+                )
+                model(
+                    "compileKotlinAgainstJava",
+                    testClassName = "WithoutAPT",
+                    testMethod = "doTestWithoutAPT",
+                    targetBackend = TargetBackend.JVM_IR
+                )
             }
 
             testClass<AbstractIrCompileKotlinAgainstKotlinTest> {
                 model("compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_IR)
+            }
+            testClass<AbstractJvmIrAgainstOldBoxTest> {
+                model("compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD)
+            }
+            testClass<AbstractJvmOldAgainstIrBoxTest> {
+                model(
+                    "compileKotlinAgainstKotlin",
+                    targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR,
+                    skipTestsForExperimentalCoroutines = true
+                )
             }
 
             testClass<AbstractIrBytecodeListingTest> {
@@ -513,6 +557,10 @@ fun main(args: Array<String>) {
             testClass<AbstractIrAsmLikeInstructionListingTest> {
                 model("codegen/asmLike", targetBackend = TargetBackend.JVM_IR)
             }
+
+            testClass<AbstractIrScriptCodegenTest> {
+                model("codegen/script", extension = "kts", targetBackend = TargetBackend.JVM_IR)
+            }
         }
 
         testGroup(
@@ -522,6 +570,22 @@ fun main(args: Array<String>) {
         ) {
             testClass<AbstractFirBlackBoxCodegenTest> {
                 model("codegen/box", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
+            }
+
+            testClass<AbstractFirBlackBoxInlineCodegenTest> {
+                model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
+            }
+
+            testClass<AbstractFirBlackBoxAgainstJavaCodegenTest> {
+                model("codegen/boxAgainstJava", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
+            }
+
+            testClass<AbstractFirBytecodeTextTest> {
+                model("codegen/bytecodeText", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
+            }
+
+            testClass<AbstractFirCompileKotlinAgainstKotlinTest> {
+                model("compileKotlinAgainstKotlin", targetBackend = TargetBackend.JVM_IR)
             }
         }
 
@@ -536,11 +600,35 @@ fun main(args: Array<String>) {
             testClass<AbstractIrCompileKotlinAgainstInlineKotlinTest> {
                 model("codegen/boxInline", targetBackend = TargetBackend.JVM_IR)
             }
+            testClass<AbstractJvmIrAgainstOldBoxInlineTest> {
+                model("codegen/boxInline", targetBackend = TargetBackend.JVM_MULTI_MODULE_IR_AGAINST_OLD)
+            }
+            testClass<AbstractJvmOldAgainstIrBoxInlineTest> {
+                model(
+                    "codegen/boxInline",
+                    targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR,
+                    skipTestsForExperimentalCoroutines = true
+                )
+            }
         }
 
         testGroup("compiler/fir/raw-fir/psi2fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractRawFirBuilderTestCase> {
                 model("rawBuilder", testMethod = "doRawFirTest")
+            }
+
+            testClass<AbstractRawFirBuilderLazyBodiesTestCase> {
+                model("rawBuilder", testMethod = "doRawFirTest")
+            }
+
+            testClass<AbstractRawFirBuilderSourceElementMappingTestCase> {
+                model("sourceElementMapping", testMethod = "doRawFirTest")
+            }
+        }
+
+        testGroup("compiler/fir/raw-fir/psi2fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
+            testClass<AbstractPartialRawFirBuilderTestCase> {
+                model("partialRawBuilder", testMethod = "doRawFirTest")
             }
         }
 
@@ -558,6 +646,11 @@ fun main(args: Array<String>) {
             testClass<AbstractFirDiagnosticsWithLightTreeTest> {
                 model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
+
+            testClass<AbstractLazyBodyIsNotTouchedTilContractsPhaseTest> {
+                model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+
         }
 
         testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
@@ -636,6 +729,12 @@ fun main(args: Array<String>) {
 
         testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractExtendedFirDiagnosticsTest> {
+                model("extendedCheckers", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+        }
+
+        testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
+            testClass<AbstractExtendedFirWithLightTreeDiagnosticsTest> {
                 model("extendedCheckers", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
         }

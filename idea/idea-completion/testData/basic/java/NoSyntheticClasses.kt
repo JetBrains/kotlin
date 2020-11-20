@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 import kotlin.properties.*
 
 val x: ReadOnlyPr<caret>

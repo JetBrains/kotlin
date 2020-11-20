@@ -19,12 +19,23 @@ interface TargetIR : MultiplatformIR
 
 data class TargetAccessIR(
     val type: ModuleSubType,
-    val nonDefaultName: String? // `null` stands for default target name
+    val nonDefaultName: String?, // `null` stands for default target name
+    val additionalParams: List<Any> = listOf()
 ) : TargetIR {
     override fun GradlePrinter.renderGradle() {
         +type.toString()
         par {
-            nonDefaultName?.let { +it.quotified }
+            nonDefaultName?.let {
+                +it.quotified
+                if (additionalParams.isNotEmpty()) +", "
+            }
+            if (additionalParams.isNotEmpty()) {
+                additionalParams
+                    .joinToString {
+                        it.toString()
+                    }
+                    .apply { +this }
+            }
         }
     }
 }
@@ -56,8 +67,18 @@ data class DefaultTargetConfigurationIR(
 
     override fun GradlePrinter.renderGradle() {
         +targetAccess.type.toString()
-        if (irs.isEmpty() || targetAccess.nonDefaultName != null) par {
-            targetAccess.nonDefaultName?.let { +it.quotified }
+        if (irs.isEmpty() || targetAccess.nonDefaultName != null || targetAccess.additionalParams.isNotEmpty()) par {
+            targetAccess.nonDefaultName?.let {
+                +it.quotified
+                if (targetAccess.additionalParams.isNotEmpty()) +", "
+            }
+            if (targetAccess.additionalParams.isNotEmpty()) {
+                targetAccess.additionalParams
+                    .joinToString {
+                        it.toString()
+                    }
+                    .apply { +this }
+            }
         }
         if (irs.isNotEmpty()) {
             +" "; inBrackets { irs.listNl() }

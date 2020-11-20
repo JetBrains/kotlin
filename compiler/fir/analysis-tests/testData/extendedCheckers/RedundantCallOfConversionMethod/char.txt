@@ -1,0 +1,3 @@
+FILE: char.kt
+    public final val foo: R|kotlin/Char| = Char(a).R|kotlin/Char.toChar|()
+        public get(): R|kotlin/Char|

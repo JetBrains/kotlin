@@ -2,7 +2,7 @@ package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -38,7 +38,7 @@ class FakeOverrideChecker(
             .getDescriptorsFiltered(DescriptorKindFilter.CALLABLES)
             .filterIsInstance<CallableMemberDescriptor>()
             .filter { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
-            .filterNot { it.visibility == Visibilities.PRIVATE || it.visibility == Visibilities.INVISIBLE_FAKE }
+            .filterNot { it.visibility == DescriptorVisibilities.PRIVATE || it.visibility == DescriptorVisibilities.INVISIBLE_FAKE }
 
         val descriptorSignatures = descriptorFakeOverrides
             .map { with(descriptorMangler) { it.signatureString }}
@@ -75,9 +75,6 @@ class FakeOverrideChecker(
             override fun visitClass(declaration: IrClass) {
                 validateFakeOverrides(declaration)
                 super.visitClass(declaration)
-            }
-            override fun visitFunction(declaration: IrFunction) {
-                // Don't go for function local classes
             }
         })
     }

@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.idea.debugger.coroutine
 
 import com.intellij.debugger.DebuggerInvocationUtil
 import com.intellij.debugger.engine.JavaDebugProcess
-import com.intellij.debugger.engine.SuspendContextImpl
 import com.intellij.execution.configurations.DebuggingRunnerData
 import com.intellij.execution.configurations.JavaParameters
 import com.intellij.execution.configurations.RunConfigurationBase
 import com.intellij.execution.ui.RunnerLayoutUi
 import com.intellij.execution.ui.layout.PlaceInGrid
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.ui.content.Content
@@ -24,7 +24,6 @@ import com.intellij.xdebugger.XDebuggerManager
 import com.intellij.xdebugger.XDebuggerManagerListener
 import com.intellij.xdebugger.impl.XDebugSessionImpl
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
-import org.jetbrains.kotlin.idea.debugger.coroutine.proxy.ManagerThreadExecutor
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.CreateContentParamsProvider
 import org.jetbrains.kotlin.idea.debugger.coroutine.util.logger
 import org.jetbrains.kotlin.idea.debugger.coroutine.view.XCoroutineView
@@ -57,12 +56,12 @@ class DebuggerConnection(
     }
 
     private fun determineCoreVersionMode(kotlinxCoroutinesCore: String): CoroutineDebuggerMode {
-        val regex = Regex(""".+\Wkotlinx-coroutines-core-(.+)?\.jar""")
+        val regex = Regex(""".+\Wkotlinx-coroutines-core(\-jvm)?-(\d[\w\.\-]+)?\.jar""")
         val matchResult = regex.matchEntire(kotlinxCoroutinesCore) ?: return CoroutineDebuggerMode.DISABLED
         val versionToCompareTo = DefaultArtifactVersion("1.3.7-255")
 
-        val artifactVersion = DefaultArtifactVersion(matchResult.groupValues[1])
-        return if (artifactVersion >= versionToCompareTo)
+        val artifactVersion = DefaultArtifactVersion(matchResult.groupValues[2])
+        return if (artifactVersion > versionToCompareTo)
             CoroutineDebuggerMode.VERSION_1_3_8_AND_UP
         else
             CoroutineDebuggerMode.DISABLED
@@ -80,15 +79,19 @@ class DebuggerConnection(
     override fun processStarted(debugProcess: XDebugProcess) {
         DebuggerInvocationUtil.swingInvokeLater(project) {
             if (debugProcess is JavaDebugProcess) {
-                registerXCoroutinesPanel(debugProcess.session)?.let {
-                    Disposer.register(this, it)
+                if (!Disposer.isDisposed(this)) {
+                    registerXCoroutinesPanel(debugProcess.session)?.let {
+                        Disposer.register(this, it)
+                    }
                 }
             }
         }
     }
 
     override fun processStopped(debugProcess: XDebugProcess) {
-        Disposer.dispose(this)
+        ApplicationManager.getApplication().invokeLater {
+            Disposer.dispose(this)
+        }
     }
 
     private fun registerXCoroutinesPanel(session: XDebugSession): Disposable? {

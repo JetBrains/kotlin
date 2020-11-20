@@ -1,0 +1,20 @@
+@kotlin.Metadata
+public abstract class AbstractCharSequence {
+    // source: 'charSequence.kt'
+    public method <init>(): void
+    public bridge final method charAt(p0: int): char
+    public abstract method get(p0: int): char
+    public abstract method getLength(): int
+    public bridge final method length(): int
+}
+
+@kotlin.Metadata
+public final class MyCharSequence {
+    // source: 'charSequence.kt'
+    public method <init>(): void
+    public bridge final method charAt(p0: int): char
+    public method get(p0: int): char
+    public method getLength(): int
+    public bridge final method length(): int
+    public @org.jetbrains.annotations.NotNull method subSequence(p0: int, p1: int): java.lang.CharSequence
+}

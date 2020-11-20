@@ -12,6 +12,8 @@ import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.builtins.StandardNames;
+import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity;
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.context.CodegenContext;
@@ -27,7 +29,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
-import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil;
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor;
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityUtilsKt;
@@ -106,7 +108,7 @@ public class JvmCodegenUtil {
         boolean isDelegate = descriptor.getKind() == CallableMemberDescriptor.Kind.DELEGATION;
 
         DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration().getOriginal();
-        if (JvmAbi.isPropertyWithBackingFieldInOuterClass(descriptor)) {
+        if (DescriptorsJvmAbiUtil.isPropertyWithBackingFieldInOuterClass(descriptor)) {
             // For property with backed field, check if the access is done in the same class containing the backed field and
             // not the class that declared the field.
             containingDeclaration = containingDeclaration.getContainingDeclaration();
@@ -219,7 +221,7 @@ public class JvmCodegenUtil {
         if (DescriptorPsiUtilsKt.hasBody(accessor)) return false;
 
         // If the accessor is private or final, it can't be overridden in the subclass and thus we can use direct access
-        return Visibilities.isPrivate(accessor.getVisibility()) || accessor.getModality() == FINAL;
+        return DescriptorVisibilities.isPrivate(accessor.getVisibility()) || accessor.getModality() == FINAL;
     }
 
     public static boolean isDebuggerContext(@NotNull CodegenContext context) {
@@ -338,12 +340,12 @@ public class JvmCodegenUtil {
     public static boolean isCompanionObjectInInterfaceNotIntrinsic(@NotNull DeclarationDescriptor companionObject) {
         return isCompanionObject(companionObject) &&
                isJvmInterface(companionObject.getContainingDeclaration()) &&
-               !JvmAbi.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
+               !DescriptorsJvmAbiUtil.isMappedIntrinsicCompanionObject((ClassDescriptor) companionObject);
     }
 
     public static boolean isNonIntrinsicPrivateCompanionObjectInInterface(@NotNull DeclarationDescriptorWithVisibility companionObject) {
         return isCompanionObjectInInterfaceNotIntrinsic(companionObject) &&
-               Visibilities.isPrivate(companionObject.getVisibility());
+               DescriptorVisibilities.isPrivate(companionObject.getVisibility());
     }
 
     public static boolean isDeclarationOfBigArityFunctionInvoke(@Nullable DeclarationDescriptor descriptor) {
@@ -352,7 +354,7 @@ public class JvmCodegenUtil {
 
     public static boolean isDeclarationOfBigArityCreateCoroutineMethod(@Nullable DeclarationDescriptor descriptor) {
         return descriptor instanceof SimpleFunctionDescriptor && descriptor.getName().asString().equals(SUSPEND_FUNCTION_CREATE_METHOD_NAME) &&
-               ((SimpleFunctionDescriptor) descriptor).getValueParameters().size() >= FunctionInvokeDescriptor.BIG_ARITY - 1 &&
+               ((SimpleFunctionDescriptor) descriptor).getValueParameters().size() >= BuiltInFunctionArity.BIG_ARITY - 1 &&
                descriptor.getContainingDeclaration() instanceof AnonymousFunctionDescriptor && ((AnonymousFunctionDescriptor) descriptor.getContainingDeclaration()).isSuspend();
     }
 
@@ -404,7 +406,7 @@ public class JvmCodegenUtil {
         // The Result class is the only inline class in the standard library without special rules for equality.
         // We only call Result.equals-impl0 if we are compiling for Kotlin 1.4 or later. Otherwise, the code
         // might well be running against an older version of the standard library.
-        if (DescriptorUtils.getFqNameSafe(classDescriptor).equals(DescriptorUtils.RESULT_FQ_NAME)) {
+        if (DescriptorUtils.getFqNameSafe(classDescriptor).equals(StandardNames.RESULT_FQ_NAME)) {
             return state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_4) >= 0;
         } else {
             return ((DeserializedClassDescriptor) descriptor).getMetadataVersion().isAtLeast(1, 1, 16);

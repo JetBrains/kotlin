@@ -11,3 +11,5 @@ fun test() {
         val (x, y) = a
     }
 }
+
+// FIR_IGNORE

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 abstract class A3<W> : java.util.AbstractList<W>()
 abstract class A4<W> : java.util.AbstractList<W>() {
     override fun contains(o: W): Boolean {

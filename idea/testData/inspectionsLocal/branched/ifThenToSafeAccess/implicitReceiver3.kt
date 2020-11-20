@@ -1,3 +1,4 @@
+// PROBLEM: none
 class Foo
 
 class Bar {

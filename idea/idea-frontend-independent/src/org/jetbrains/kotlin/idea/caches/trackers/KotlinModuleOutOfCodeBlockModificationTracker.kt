@@ -32,6 +32,9 @@ class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private 
                 ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule(
                     CommonProcessors.CollectProcessor(resultModuleSet)
                 )
+                resultModuleSet.addAll(
+                    ModuleDependencyProviderExtension.getInstance(module.project).getAdditionalDependencyModules(module)
+                )
             }
         }
     }

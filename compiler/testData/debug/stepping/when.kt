@@ -18,41 +18,51 @@ fun box() {
     foo(21)
 }
 
-// IGNORE_BACKEND: JVM_IR
-
-// The JVM_IR backend has line number 8 when leaving the first
-// when. Also, the stepping is different, probably because the when
-// is compiled to a switch which it isn't with JVM? The stepping
-// behavior is likely OK, but should be double checked.
+// JVM_IR backend optimized the when to a switch in the java bytecode.
+// Therefore, the stepping for JVM_IR does not step through the evaluation
+// of each of the conditions, but goes directly to the right body. The
+// JVM_IR stepping behavior here is the same as for `whenSubject.kt`.
 
 // LINENUMBERS
 // test.kt:18 box
 // test.kt:4 foo
 // test.kt:5 foo
 // test.kt:4 foo
+// LINENUMBERS JVM
 // test.kt:5 foo
+// LINENUMBERS
 // test.kt:6 foo
 // test.kt:4 foo
+// LINENUMBERS JVM
 // test.kt:5 foo
 // test.kt:6 foo
+// LINENUMBERS
 // test.kt:7 foo
 // test.kt:10 foo
+// LINENUMBERS JVM
 // test.kt:11 foo
 // test.kt:12 foo
+// LINENUMBERS
 // test.kt:13 foo
 // test.kt:10 foo
 // test.kt:15 foo
 // test.kt:6 foo
 // test.kt:10 foo
+// LINENUMBERS JVM
 // test.kt:11 foo
+// LINENUMBERS
 // test.kt:12 foo
 // test.kt:4 foo
+// LINENUMBERS JVM
 // test.kt:5 foo
 // test.kt:6 foo
+// LINENUMBERS
 // test.kt:7 foo
 // test.kt:10 foo
+// LINENUMBERS JVM
 // test.kt:11 foo
 // test.kt:12 foo
+// LINENUMBERS
 // test.kt:13 foo
 // test.kt:10 foo
 // test.kt:15 foo
@@ -63,29 +73,41 @@ fun box() {
 // test.kt:10 foo
 // test.kt:11 foo
 // test.kt:4 foo
+// LINENUMBERS JVM
 // test.kt:5 foo
+// LINENUMBERS
 // test.kt:6 foo
 // test.kt:4 foo
+// LINENUMBERS JVM
 // test.kt:5 foo
 // test.kt:6 foo
+// LINENUMBERS
 // test.kt:7 foo
 // test.kt:10 foo
+// LINENUMBERS JVM
 // test.kt:11 foo
 // test.kt:12 foo
+// LINENUMBERS
 // test.kt:13 foo
 // test.kt:10 foo
 // test.kt:15 foo
 // test.kt:6 foo
 // test.kt:10 foo
+// LINENUMBERS JVM
 // test.kt:11 foo
+// LINENUMBERS
 // test.kt:12 foo
 // test.kt:4 foo
+// LINENUMBERS JVM
 // test.kt:5 foo
 // test.kt:6 foo
+// LINENUMBERS
 // test.kt:7 foo
 // test.kt:10 foo
+// LINENUMBERS JVM
 // test.kt:11 foo
 // test.kt:12 foo
+// LINENUMBERS
 // test.kt:13 foo
 // test.kt:10 foo
 // test.kt:15 foo

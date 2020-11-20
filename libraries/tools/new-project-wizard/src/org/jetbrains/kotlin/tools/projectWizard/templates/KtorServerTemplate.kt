@@ -18,23 +18,24 @@ import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleType
 import org.jetbrains.kotlin.tools.projectWizard.settings.DisplayableSettingItem
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepository
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repositories
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.SourcesetType
 import org.jetbrains.kotlin.tools.projectWizard.transformers.interceptors.InterceptionPoint
 import org.jetbrains.kotlin.tools.projectWizard.KotlinNewProjectWizardBundle
 import org.jetbrains.kotlin.tools.projectWizard.Versions
 import org.jetbrains.kotlin.tools.projectWizard.WizardGradleRunConfiguration
 import org.jetbrains.kotlin.tools.projectWizard.WizardRunConfiguration
 import org.jetbrains.kotlin.tools.projectWizard.core.Reader
+import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.moduleType
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
-import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleKind
+import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ProjectKind
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 
 class KtorServerTemplate : Template() {
     override val title: String = KotlinNewProjectWizardBundle.message("module.template.ktor.server.title")
     override val description: String = KotlinNewProjectWizardBundle.message("module.template.ktor.server.description")
-    override val moduleTypes: Set<ModuleType> = setOf(ModuleType.jvm)
+
+    override fun isSupportedByModuleType(module: Module, projectKind: ProjectKind): Boolean =
+        module.configurator.moduleType == ModuleType.jvm
 
     @NonNls
     override val id: String = "ktorServer"
@@ -47,7 +48,7 @@ class KtorServerTemplate : Template() {
                 +ktorArtifactDependency("ktor-html-builder", kotlinVersion)
                 +ArtifactBasedLibraryDependencyIR(
                     MavenArtifact(Repositories.KOTLINX, "org.jetbrains.kotlinx", "kotlinx-html-jvm"),
-                    Versions.KOTLINX.KOTLINX_HTML(KotlinPlugin.version.propertyValue.version),
+                    Versions.KOTLINX.KOTLINX_HTML,
                     DependencyType.MAIN
                 )
             }
@@ -85,7 +86,7 @@ class KtorServerTemplate : Template() {
 
 private fun ktorArtifactDependency(@NonNls name: String, kotlinVersion: Version) = ArtifactBasedLibraryDependencyIR(
     MavenArtifact(Repositories.KTOR_BINTRAY, "io.ktor", name),
-    Versions.KTOR(kotlinVersion),
+    Versions.KTOR,
     DependencyType.MAIN
 )
 

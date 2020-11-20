@@ -18,13 +18,11 @@ dependencies {
     compile(project(":idea:idea-jps-common"))
 
     compileOnly(intellijDep())
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-        testCompileOnly(intellijPluginDep("java"))
-        testRuntimeOnly(intellijPluginDep("java"))
-        testRuntimeOnly(intellijPluginDep("java-ide-customization"))
-    }
-    
+    compileOnly(intellijPluginDep("java"))
+    testCompileOnly(intellijPluginDep("java"))
+    testRuntimeOnly(intellijPluginDep("java"))
+    testRuntimeOnly(intellijPluginDep("java-ide-customization"))
+
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
 
     excludeInAndroidStudio(rootProject) {
@@ -64,6 +62,7 @@ dependencies {
     testRuntime(project(":sam-with-receiver-ide-plugin"))
     testRuntime(project(":allopen-ide-plugin"))
     testRuntime(project(":noarg-ide-plugin"))
+    testRuntime(project(":plugins:parcelize:parcelize-ide"))
     testRuntime(project(":kotlin-scripting-idea"))
     testRuntime(project(":kotlinx-serialization-ide-plugin"))
 

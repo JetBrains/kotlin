@@ -9,6 +9,7 @@ import com.intellij.openapi.application.ApplicationManager
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingReference
 import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.SettingType
+import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.TitleComponentAlignment
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.UIComponent
 import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.components.valueForSetting
 import javax.swing.JComponent
@@ -18,6 +19,10 @@ abstract class UIComponentDelegatingSettingComponent<V : Any, T : SettingType<V>
     context: Context
 ) : SettingComponent<V, T>(reference, context) {
     abstract val uiComponent: UIComponent<V>
+
+    override val alignment: TitleComponentAlignment
+        get() = uiComponent.alignTarget?.let { TitleComponentAlignment.AlignAgainstSpecificComponent(it) }
+            ?: TitleComponentAlignment.AlignAgainstMainComponent
 
     // As there is one in UIComponent
     override val validationIndicator: ValidationIndicator? = null
@@ -37,10 +42,8 @@ abstract class UIComponentDelegatingSettingComponent<V : Any, T : SettingType<V>
     override fun onValueUpdated(reference: SettingReference<*, *>?) {
         super.onValueUpdated(reference)
         if (reference == this.reference) {
-            ApplicationManager.getApplication().invokeLater {
-                if (uiComponent.getUiValue() != value) {
-                    value?.let(uiComponent::updateUiValue)
-                }
+            if (uiComponent.getUiValue() != value) {
+                value?.let(uiComponent::updateUiValue)
             }
         }
     }

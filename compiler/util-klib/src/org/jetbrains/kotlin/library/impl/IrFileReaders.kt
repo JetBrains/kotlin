@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
 import java.nio.ByteBuffer
-import java.nio.channels.FileChannel
 
-abstract class IrArrayReader(private val buffer: ByteBuffer) {
+abstract class IrArrayReader(private val buffer: ReadBuffer) {
     private val indexToOffset: IntArray
 
     fun entryCount() = indexToOffset.size - 1
@@ -28,21 +27,21 @@ abstract class IrArrayReader(private val buffer: ByteBuffer) {
         val offset = indexToOffset[id]
         val size = indexToOffset[id + 1] - offset
         val result = ByteArray(size)
-        buffer.position(offset)
+        buffer.position = offset
         buffer.get(result, 0, size)
         return result
     }
 }
 
-class IrArrayFileReader(file: File) : IrArrayReader(file.readBuffer)
-class IrArrayMemoryReader(bytes: ByteArray) : IrArrayReader(bytes.buffer)
+class IrArrayFileReader(file: File) : IrArrayReader(ReadBuffer.WeakFileBuffer(file.javaFile()))
+class IrArrayMemoryReader(bytes: ByteArray) : IrArrayReader(ReadBuffer.MemoryBuffer(bytes))
 
-abstract class IrMultiArrayReader(private val buffer: ByteBuffer) {
+abstract class IrMultiArrayReader(private val buffer: ReadBuffer) {
     private val indexToOffset: IntArray
     private val indexIndexToOffset = mutableMapOf<Int, IntArray>()
 
     private fun readOffsets(position: Int): IntArray {
-        buffer.position(position)
+        buffer.position = position
         val count = buffer.int
         val result = IntArray(count + 1)
         result[0] = 4 * (count + 1)
@@ -62,7 +61,7 @@ abstract class IrMultiArrayReader(private val buffer: ByteBuffer) {
         val offset = indexToOffset[id]
         val size = indexToOffset[id + 1] - offset
         val result = ByteArray(size)
-        buffer.position(offset)
+        buffer.position = offset
         buffer.get(result, 0, size)
         return result
     }
@@ -78,22 +77,22 @@ abstract class IrMultiArrayReader(private val buffer: ByteBuffer) {
         val dataSize = collumnOffsets[column + 1] - dataOffset
         val result = ByteArray(dataSize)
 
-        buffer.position(rowOffset + dataOffset)
+        buffer.position = rowOffset + dataOffset
         buffer.get(result, 0, dataSize)
 
         return result
     }
 }
 
-class IrMultiArrayFileReader(file: File) : IrMultiArrayReader(file.readBuffer)
-class IrMultiArrayMemoryReader(bytes: ByteArray) : IrMultiArrayReader(bytes.buffer)
+class IrMultiArrayFileReader(file: File) : IrMultiArrayReader(ReadBuffer.WeakFileBuffer(file.javaFile()))
+class IrMultiArrayMemoryReader(bytes: ByteArray) : IrMultiArrayReader(ReadBuffer.MemoryBuffer(bytes))
 
-abstract class IrMultiTableReader<K>(private val buffer: ByteBuffer, private val keyReader: ByteBuffer.() -> K) {
+abstract class IrMultiTableReader<K>(private val buffer: ReadBuffer, private val keyReader: ReadBuffer.() -> K) {
     private val indexToOffset: IntArray
     private val indexToIndexMap = mutableMapOf<Int, Map<K, Pair<Int, Int>>>()
 
     private fun readOffsets(position: Int): IntArray {
-        buffer.position(position)
+        buffer.position = position
         val count = buffer.int
         val result = IntArray(count + 1)
         result[0] = 4 * (count + 1)
@@ -110,7 +109,7 @@ abstract class IrMultiTableReader<K>(private val buffer: ByteBuffer, private val
     }
 
     private fun readIndexMap(position: Int): Map<K, Pair<Int, Int>> {
-        buffer.position(position)
+        buffer.position = position
         val result = mutableMapOf<K, Pair<Int, Int>>()
 
         val count = buffer.int
@@ -138,13 +137,13 @@ abstract class IrMultiTableReader<K>(private val buffer: ByteBuffer, private val
         val offset = coordinates.first
         val size = coordinates.second
         val result = ByteArray(size)
-        buffer.position(rowOffset + offset)
+        buffer.position = rowOffset + offset
         buffer.get(result, 0, size)
         return result
     }
 }
 
-abstract class IrTableReader<K>(private val buffer: ByteBuffer, keyReader: ByteBuffer.() -> K) {
+abstract class IrTableReader<K>(private val buffer: ReadBuffer, keyReader: ReadBuffer.() -> K) {
     private val indexToOffset = mutableMapOf<K, Pair<Int, Int>>()
 
     init {
@@ -163,22 +162,29 @@ abstract class IrTableReader<K>(private val buffer: ByteBuffer, keyReader: ByteB
         val offset = coordinates.first
         val size = coordinates.second
         val result = ByteArray(size)
-        buffer.position(offset)
+        buffer.position = offset
         buffer.get(result, 0, size)
         return result
     }
 }
 
-val File.readBuffer: ByteBuffer get() = this.readBytes().buffer
 val ByteArray.buffer: ByteBuffer get() = ByteBuffer.wrap(this)
 
-class IndexIrTableFileReader(file: File) : IrTableReader<Long>(file.readBuffer, { long })
-class IndexIrTableMemoryReader(bytes: ByteArray) : IrTableReader<Long>(bytes.buffer, { long })
+fun File.javaFile(): java.io.File = java.io.File(path)
+
+class IndexIrTableFileReader(file: File) : IrTableReader<Long>(ReadBuffer.WeakFileBuffer(file.javaFile()), { long })
+class IndexIrTableMemoryReader(bytes: ByteArray) : IrTableReader<Long>(ReadBuffer.MemoryBuffer(bytes), { long })
 
 data class DeclarationId(val id: Int)
 
-class DeclarationIrTableFileReader(file: File) : IrTableReader<DeclarationId>(file.readBuffer, { DeclarationId(int) })
-class DeclarationIrTableMemoryReader(bytes: ByteArray) : IrTableReader<DeclarationId>(bytes.buffer, { DeclarationId(int) })
+class DeclarationIrTableFileReader(file: File) :
+    IrTableReader<DeclarationId>(ReadBuffer.WeakFileBuffer(file.javaFile()), { DeclarationId(int) })
 
-class DeclarationIrMultiTableFileReader(file: File) : IrMultiTableReader<DeclarationId>(file.readBuffer, { DeclarationId(int) })
-class DeclarationIrMultiTableMemoryReader(bytes: ByteArray) : IrMultiTableReader<DeclarationId>(bytes.buffer, { DeclarationId(int) })
+class DeclarationIrTableMemoryReader(bytes: ByteArray) :
+    IrTableReader<DeclarationId>(ReadBuffer.MemoryBuffer(bytes), { DeclarationId(int) })
+
+class DeclarationIrMultiTableFileReader(file: File) :
+    IrMultiTableReader<DeclarationId>(ReadBuffer.WeakFileBuffer(file.javaFile()), { DeclarationId(int) })
+
+class DeclarationIrMultiTableMemoryReader(bytes: ByteArray) :
+    IrMultiTableReader<DeclarationId>(ReadBuffer.MemoryBuffer(bytes), { DeclarationId(int) })

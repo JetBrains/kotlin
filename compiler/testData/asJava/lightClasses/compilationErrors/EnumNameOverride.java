@@ -1,5 +1,6 @@
-public enum EnumNameOverride implements Bar {
-    ;
+public enum EnumNameOverride /* EnumNameOverride*/ implements Bar {
+  ;
 
-    private EnumNameOverride() { /* compiled code */ }
+  private  EnumNameOverride();//  .ctor()
+
 }

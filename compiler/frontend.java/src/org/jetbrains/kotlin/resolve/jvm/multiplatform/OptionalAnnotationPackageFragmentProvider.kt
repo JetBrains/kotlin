@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class OptionalAnnotationPackageFragmentProvider(
     module: ModuleDescriptor,
@@ -32,7 +33,7 @@ class OptionalAnnotationPackageFragmentProvider(
     notFoundClasses: NotFoundClasses,
     languageVersionSettings: LanguageVersionSettings,
     packagePartProvider: PackagePartProvider,
-) : PackageFragmentProvider {
+) : PackageFragmentProviderOptimized {
     val packages: Map<FqName, PackageFragmentDescriptor> by storageManager.createLazyValue p@{
         // We call getAllOptionalAnnotationClasses under lazy value only because IncrementalPackagePartProvider requires
         // deserializationConfiguration to be injected.
@@ -78,6 +79,9 @@ class OptionalAnnotationPackageFragmentProvider(
             }
         }
     }
+
+    override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) =
+        packageFragments.addIfNotNull(packages[fqName])
 
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> =
         packages[fqName]?.let(::listOf).orEmpty()

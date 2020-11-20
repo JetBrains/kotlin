@@ -57,6 +57,7 @@ abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticsT
                 val expected = existingDiagnostics[startOffset] ?: emptyMap()
                 val actual = actualDiagnostics[startOffset] ?: emptyMap()
                 for (name in expected.keys + actual.keys) {
+                    if (name == "SYNTAX") continue
                     val expectedCount = expected[name] ?: 0
                     val actualCount = actual[name] ?: 0
                     if (expectedCount != actualCount) {
@@ -102,7 +103,7 @@ abstract class AbstractFirDiagnosticsWithLightTreeTest : AbstractFirDiagnosticsT
         return groupBy { it }.mapValues { (_, value) -> value.size }
     }
 
-    private class MissingDiagnostic(val startOffset: Int, val name: String, diff: Int, ktFile: KtFile) {
+    private class MissingDiagnostic(val startOffset: Int, val name: String, diff: Int, @Suppress("UNUSED_PARAMETER") ktFile: KtFile) {
         val kind: Kind = if (diff > 0) Kind.WasExpected else Kind.IsActual
         val count: Int = abs(diff)
 

@@ -12,10 +12,11 @@ import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
+import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.builder.StubFirScopeProvider
 import org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter
+import org.jetbrains.kotlin.fir.session.FirSessionFactory
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.parsing.KotlinParser
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
@@ -63,7 +64,7 @@ class SimpleTestCase : AbstractRawFirBuilderTestCase() {
         println(DebugUtil.nodeTreeToString(builder.treeBuilt, false))
 
         val firFromLightTreeFile = DeclarationsConverter(
-            object : FirSession(null) {},
+            FirSessionFactory.createEmptySession(),
             StubFirScopeProvider,
             true,
             builder.lightTree
@@ -72,7 +73,7 @@ class SimpleTestCase : AbstractRawFirBuilderTestCase() {
         println(StringBuilder().also { FirRenderer(it).visitFile(firFromLightTreeFile) }.toString())
 
         val psiFile = createPsiFile("foo", code) as KtFile
-        val firFromPsiFile = psiFile.toFirFile(stubMode = true)
+        val firFromPsiFile = psiFile.toFirFile(RawFirBuilderMode.STUBS)
         println("Fir from PSI")
         println(StringBuilder().also { FirRenderer(it).visitFile(firFromPsiFile) }.toString())
 

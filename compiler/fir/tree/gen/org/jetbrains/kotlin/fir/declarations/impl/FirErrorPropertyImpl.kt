@@ -33,13 +33,13 @@ internal class FirErrorPropertyImpl(
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
     override val name: Name,
     override val annotations: MutableList<FirAnnotationCall>,
     override val diagnostic: ConeDiagnostic,
     override val typeParameters: MutableList<FirTypeParameter>,
     override val symbol: FirErrorPropertySymbol,
 ) : FirErrorProperty() {
-    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, diagnostic)
     override val receiverTypeRef: FirTypeRef? get() = null
     override val initializer: FirExpression? get() = null
@@ -117,4 +117,6 @@ internal class FirErrorPropertyImpl(
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
+
+    override fun replaceInitializer(newInitializer: FirExpression?) {}
 }

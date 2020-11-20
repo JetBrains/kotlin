@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.ui.RefactoringDialog
 import com.intellij.ui.EditorTextField
 import com.intellij.util.ui.FormBuilder
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.*
@@ -31,7 +32,7 @@ class KotlinChangePropertySignatureDialog(
     private val commandName: String?
 ) : RefactoringDialog(project, true) {
     private val visibilityCombo = ComboBox(
-        arrayOf(Visibilities.INTERNAL, Visibilities.PRIVATE, Visibilities.PROTECTED, Visibilities.PUBLIC)
+        arrayOf(DescriptorVisibilities.INTERNAL, DescriptorVisibilities.PRIVATE, DescriptorVisibilities.PROTECTED, DescriptorVisibilities.PUBLIC)
     )
     private val nameField = EditorTextField(methodDescriptor.name)
     private var returnTypeField: EditorTextField by Delegates.notNull()
@@ -146,7 +147,7 @@ class KotlinChangePropertySignatureDialog(
             originalDescriptor,
             nameField.text,
             KotlinTypeInfo(true, null, returnTypeField.text),
-            visibilityCombo.selectedItem as Visibility,
+            visibilityCombo.selectedItem as DescriptorVisibility,
             emptyList(),
             receiver,
             originalDescriptor.method

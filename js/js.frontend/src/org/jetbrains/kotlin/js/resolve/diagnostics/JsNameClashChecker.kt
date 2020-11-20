@@ -33,10 +33,12 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
 class JsNameClashChecker(
     private val nameSuggestion: NameSuggestion,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val kotlinTypeRefiner: KotlinTypeRefiner,
 ) : DeclarationChecker {
     companion object {
         private val COMMON_DIAGNOSTICS = setOf(
@@ -124,7 +126,7 @@ class JsNameClashChecker(
             // If refinement is enabled, we can get duplicate descriptors for one and the same members (as refinement re-creates
             // descriptors), so, in this case, we have to compare descriptors structurally
             DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(
-                existing, overrideDescriptor, allowCopiesFromTheSameDeclaration = true
+                existing, overrideDescriptor, allowCopiesFromTheSameDeclaration = true, kotlinTypeRefiner = kotlinTypeRefiner
             )
         }
     }

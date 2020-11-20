@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDispatchReceiverParameterForConstructorCall
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
+import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToInlineClassTypeValueParameters
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -127,15 +129,16 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         substituteCount: Int
     ) {
         val typeMapper = state.typeMapper
-        val isStatic = AsmUtil.isStaticMethod(contextKind, functionDescriptor)
-        val baseMethodFlags = AsmUtil.getCommonCallableFlags(functionDescriptor, state) and Opcodes.ACC_VARARGS.inv()
+        val isStatic = DescriptorAsmUtil.isStaticMethod(contextKind, functionDescriptor)
+        val baseMethodFlags = DescriptorAsmUtil.getCommonCallableFlags(functionDescriptor, state) and Opcodes.ACC_VARARGS.inv()
         val remainingParameters = getRemainingParameters(functionDescriptor.original, substituteCount)
         val remainingParametersDeclarations =
             remainingParameters.map { DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtParameter }
 
         val generateAsFinal =
-            functionDescriptor.modality == Modality.FINAL ||
-                    state.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)
+            (functionDescriptor.modality == Modality.FINAL ||
+                    state.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) &&
+                    !isJvmInterface(functionDescriptor.containingDeclaration)
         val flags =
             baseMethodFlags or
                     (if (isStatic) Opcodes.ACC_STATIC else 0) or
@@ -265,10 +268,11 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
 
         if (classOrObject.isLocal) return false
         if (classDescriptor.isInline) return false
+        if (shouldHideConstructorDueToInlineClassTypeValueParameters(constructorDescriptor)) return false
 
         if (CodegenBinding.canHaveOuter(state.bindingContext, classDescriptor)) return false
 
-        if (Visibilities.isPrivate(constructorDescriptor.visibility)) return false
+        if (DescriptorVisibilities.isPrivate(constructorDescriptor.visibility)) return false
 
         if (constructorDescriptor.valueParameters.isEmpty()) return false
         if (classOrObject is KtClass && hasSecondaryConstructorsWithNoParameters(classOrObject)) return false

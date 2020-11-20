@@ -13,6 +13,7 @@ public interface FlowCollector {
 @kotlin.Metadata
 public final class TcoContinuationKt$collect$2$emit$1 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt$collect$2.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$collect$2
@@ -25,6 +26,7 @@ public final class TcoContinuationKt$collect$2$emit$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$collect$2 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt.collect(LFlow;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     synthetic final field $action: kotlin.jvm.functions.Function2
     inner (anonymous) class TcoContinuationKt$collect$2
     inner (anonymous) class TcoContinuationKt$collect$2$emit$1
@@ -36,6 +38,7 @@ public final class TcoContinuationKt$collect$2 {
 @kotlin.Metadata
 public final class TcoContinuationKt$flow$1$collect$1 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt$flow$1.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$flow$1
@@ -48,6 +51,7 @@ public final class TcoContinuationKt$flow$1$collect$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$flow$1 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt.flow(Lkotlin/jvm/functions/Function2;)LFlow;
     synthetic final field $block: kotlin.jvm.functions.Function2
     inner (anonymous) class TcoContinuationKt$flow$1
     inner (anonymous) class TcoContinuationKt$flow$1$collect$1
@@ -59,6 +63,7 @@ public final class TcoContinuationKt$flow$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$foo$$inlined$collect$1 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt.foo(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     inner (anonymous) class TcoContinuationKt$foo$$inlined$collect$1
     public method <init>(): void
     public @org.jetbrains.annotations.Nullable method emit(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -67,6 +72,7 @@ public final class TcoContinuationKt$foo$$inlined$collect$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$foo$$inlined$flow$1 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt.foo(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     inner (anonymous) class TcoContinuationKt$foo$$inlined$flow$1
     public method <init>(): void
     public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -75,8 +81,8 @@ public final class TcoContinuationKt$foo$$inlined$flow$1 {
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class TcoContinuationKt$foo$$inlined$map$1$2$1 {
+    enclosing method TcoContinuationKt$foo$$inlined$map$1$2.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
-    field L$1: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$foo$$inlined$map$1$2
@@ -89,6 +95,7 @@ public final class TcoContinuationKt$foo$$inlined$map$1$2$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$foo$$inlined$map$1$2 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt$foo$$inlined$map$1.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     synthetic final field $this_flow$inlined: FlowCollector
     synthetic final field this$0: TcoContinuationKt$foo$$inlined$map$1
     inner (anonymous) class TcoContinuationKt$foo$$inlined$map$1$2
@@ -100,6 +107,7 @@ public final class TcoContinuationKt$foo$$inlined$map$1$2 {
 @kotlin.Metadata
 public final class TcoContinuationKt$foo$$inlined$map$1 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt.foo(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     synthetic final field $this_transform$inlined: Flow
     inner (anonymous) class TcoContinuationKt$foo$$inlined$map$1
     public method <init>(p0: Flow): void
@@ -108,6 +116,7 @@ public final class TcoContinuationKt$foo$$inlined$map$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$map$$inlined$transform$1$1 {
+    enclosing method TcoContinuationKt$map$$inlined$transform$1.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$1
@@ -120,8 +129,8 @@ public final class TcoContinuationKt$map$$inlined$transform$1$1 {
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class TcoContinuationKt$map$$inlined$transform$1$2$1 {
+    enclosing method TcoContinuationKt$map$$inlined$transform$1$2.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
-    field L$1: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$1$2
@@ -134,6 +143,7 @@ public final class TcoContinuationKt$map$$inlined$transform$1$2$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$map$$inlined$transform$1$2 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt$map$$inlined$transform$1.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     synthetic final field $this_flow$inlined: FlowCollector
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$1
     inner (anonymous) class TcoContinuationKt$map$$inlined$transform$1$2
@@ -146,6 +156,7 @@ public final class TcoContinuationKt$map$$inlined$transform$1$2 {
 @kotlin.Metadata
 public final class TcoContinuationKt$map$$inlined$transform$1 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt.map(LFlow;Lkotlin/jvm/functions/Function2;)LFlow;
     synthetic final field $this_transform$inlined: Flow
     synthetic final field $transformer$inlined$1: kotlin.jvm.functions.Function2
     inner (anonymous) class TcoContinuationKt$map$$inlined$transform$1
@@ -157,6 +168,7 @@ public final class TcoContinuationKt$map$$inlined$transform$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$map$$inlined$transform$2$1 {
+    enclosing method TcoContinuationKt$map$$inlined$transform$2.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$2
@@ -169,8 +181,8 @@ public final class TcoContinuationKt$map$$inlined$transform$2$1 {
 @kotlin.Metadata
 @kotlin.coroutines.jvm.internal.DebugMetadata
 public final class TcoContinuationKt$map$$inlined$transform$2$2$1 {
+    enclosing method TcoContinuationKt$map$$inlined$transform$2$2.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field L$0: java.lang.Object
-    field L$1: java.lang.Object
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$2$2
@@ -183,6 +195,7 @@ public final class TcoContinuationKt$map$$inlined$transform$2$2$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$map$$inlined$transform$2$2 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt$map$$inlined$transform$2.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     synthetic final field $this_flow$inlined: FlowCollector
     synthetic final field this$0: TcoContinuationKt$map$$inlined$transform$2
     inner (anonymous) class TcoContinuationKt$map$$inlined$transform$2$2
@@ -195,6 +208,7 @@ public final class TcoContinuationKt$map$$inlined$transform$2$2 {
 @kotlin.Metadata
 public final class TcoContinuationKt$map$$inlined$transform$2 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt.map(LFlow;Lkotlin/jvm/functions/Function2;)LFlow;
     synthetic final field $this_transform$inlined: Flow
     synthetic final field $transformer$inlined$1: kotlin.jvm.functions.Function2
     inner (anonymous) class TcoContinuationKt$map$$inlined$transform$2
@@ -206,6 +220,7 @@ public final class TcoContinuationKt$map$$inlined$transform$2 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$1$1 {
+    enclosing method TcoContinuationKt$transform$$inlined$flow$1.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$1
@@ -217,6 +232,7 @@ public final class TcoContinuationKt$transform$$inlined$flow$1$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$1$lambda$1$1 {
+    enclosing method TcoContinuationKt$transform$$inlined$flow$1$lambda$1.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$1$lambda$1
@@ -229,6 +245,7 @@ public final class TcoContinuationKt$transform$$inlined$flow$1$lambda$1$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$1$lambda$1 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt$transform$$inlined$flow$1.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     synthetic final field $this_flow$inlined: FlowCollector
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$1
     inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$1$lambda$1
@@ -241,6 +258,7 @@ public final class TcoContinuationKt$transform$$inlined$flow$1$lambda$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$1 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt.transform(LFlow;Lkotlin/jvm/functions/Function3;)LFlow;
     synthetic final field $this_transform$inlined: Flow
     synthetic final field $transformer$inlined: kotlin.jvm.functions.Function3
     inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$1
@@ -252,6 +270,7 @@ public final class TcoContinuationKt$transform$$inlined$flow$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$2$1 {
+    enclosing method TcoContinuationKt$transform$$inlined$flow$2.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$2
@@ -263,6 +282,7 @@ public final class TcoContinuationKt$transform$$inlined$flow$2$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$2$lambda$1$1 {
+    enclosing method TcoContinuationKt$transform$$inlined$flow$2$lambda$1.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$2$lambda$1
@@ -275,6 +295,7 @@ public final class TcoContinuationKt$transform$$inlined$flow$2$lambda$1$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$2$lambda$1 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt$transform$$inlined$flow$2.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     synthetic final field $this_flow$inlined: FlowCollector
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$2
     inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$2$lambda$1
@@ -287,6 +308,7 @@ public final class TcoContinuationKt$transform$$inlined$flow$2$lambda$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$2 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt.transform(LFlow;Lkotlin/jvm/functions/Function3;)LFlow;
     synthetic final field $this_transform$inlined: Flow
     synthetic final field $transformer$inlined: kotlin.jvm.functions.Function3
     inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$2
@@ -298,6 +320,7 @@ public final class TcoContinuationKt$transform$$inlined$flow$2 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$3$1 {
+    enclosing method TcoContinuationKt$transform$$inlined$flow$3.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$3
@@ -309,6 +332,7 @@ public final class TcoContinuationKt$transform$$inlined$flow$3$1 {
 
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$3$lambda$1$1 {
+    enclosing method TcoContinuationKt$transform$$inlined$flow$3$lambda$1.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$3$lambda$1
@@ -321,6 +345,7 @@ public final class TcoContinuationKt$transform$$inlined$flow$3$lambda$1$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$3$lambda$1 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt$transform$$inlined$flow$3.collect(LFlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     synthetic final field $this_flow$inlined: FlowCollector
     synthetic final field this$0: TcoContinuationKt$transform$$inlined$flow$3
     inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$3$lambda$1
@@ -333,6 +358,7 @@ public final class TcoContinuationKt$transform$$inlined$flow$3$lambda$1 {
 @kotlin.Metadata
 public final class TcoContinuationKt$transform$$inlined$flow$3 {
     // source: 'tcoContinuation.kt'
+    enclosing method TcoContinuationKt.transform(LFlow;Lkotlin/jvm/functions/Function3;)LFlow;
     synthetic final field $this_transform$inlined: Flow
     synthetic final field $transformer$inlined: kotlin.jvm.functions.Function3
     inner (anonymous) class TcoContinuationKt$transform$$inlined$flow$3

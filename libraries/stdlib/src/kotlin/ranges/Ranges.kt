@@ -31,7 +31,7 @@ private open class ComparableRange<T : Comparable<T>>(
 /**
  * Creates a range from this [Comparable] value to the specified [that] value.
  *
- * This value needs to be smaller than [that] value, otherwise the returned range will be empty.
+ * This value needs to be smaller than or equal to [that] value, otherwise the returned range will be empty.
  * @sample samples.ranges.Ranges.rangeFromComparable
  */
 public operator fun <T : Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = ComparableRange(this, that)

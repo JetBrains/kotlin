@@ -1,9 +1,7 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: KOTLIN_TEST_LIB
 // WITH_RUNTIME
+import kotlin.test.*
 
 fun Long.inLongs(l: Long, r: Long): Boolean {
     return this in l..r
@@ -14,11 +12,11 @@ fun Double.inDoubles(l: Double, r: Double): Boolean {
 }
 
 fun box(): String {
-    assert(2L.inLongs(1L, 3L))
-    assert(!2L.inLongs(0L, 1L))
+    assertTrue(2L.inLongs(1L, 3L))
+    assertTrue(!2L.inLongs(0L, 1L))
 
-    assert(2.0.inDoubles(1.0, 3.0))
-    assert(!2.0.inDoubles(0.0, 1.0))
+    assertTrue(2.0.inDoubles(1.0, 3.0))
+    assertTrue(!2.0.inDoubles(0.0, 1.0))
 
     return "OK"
 }

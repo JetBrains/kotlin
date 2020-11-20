@@ -11,7 +11,7 @@ FILE: simpleFakeOverride.kt
         }
 
         public final fun test(): R|kotlin/Unit| {
-            this@R|/B|.R|FakeOverride</B.foo: R|ft<Some, Some?>!|>|(R|/Some.Some|())
+            this@R|/B|.R|SubstitutionOverride</B.foo: R|ft<Some, Some?>!|>|(R|/Some.Some|())
         }
 
     }

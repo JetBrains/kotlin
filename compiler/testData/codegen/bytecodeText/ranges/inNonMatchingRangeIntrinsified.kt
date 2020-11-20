@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
-// TODO KT-36829 Optimize 'in' expressions in JVM_IR
+// IGNORE_BACKEND_FIR: JVM_IR
 fun inInt(x: Long): Boolean {
     return x in 1..2
 }
@@ -16,8 +15,6 @@ fun inDouble(x: Float): Boolean {
     return x in 1.0..2.0
 }
 
-// 2 I2L
-// 3 F2D
 // 0 INVOKESPECIAL
 // 0 NEW
 // 0 rangeTo
@@ -25,3 +22,12 @@ fun inDouble(x: Float): Boolean {
 // 0 intRangeContains
 // 0 doubleRangeContains
 // 0 floatRangeContains
+// 0 contains
+
+// JVM_TEMPLATES
+// 2 I2L
+// 3 F2D
+
+// JVM_IR_TEMPLATES
+// 1 I2L
+// 1 F2D

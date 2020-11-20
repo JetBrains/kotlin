@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +AllowAssigningArrayElementsToVarargsInNamedFormForFunctions
 fun foo(vararg s: String) {}
 

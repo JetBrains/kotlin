@@ -17,14 +17,17 @@
 package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import org.jetbrains.kotlin.progress.CompilationCanceledException
+import org.jetbrains.kotlin.progress.CompilationCanceledStatus
 import java.util.concurrent.TimeUnit
 import java.util.logging.Logger
 
 val CANCELED_STATUS_CHECK_THRESHOLD_NS = TimeUnit.MILLISECONDS.toNanos(100)
 
-class RemoteCompilationCanceledStatusClient(val facade: CompilerCallbackServicesFacade, val profiler: Profiler = DummyProfiler()): CompilationCanceledStatus {
+class RemoteCompilationCanceledStatusClient(
+    @Suppress("DEPRECATION") val facade: CompilerCallbackServicesFacade,
+    val profiler: Profiler = DummyProfiler()
+): CompilationCanceledStatus {
 
     private val log by lazy { Logger.getLogger("compiler") }
 

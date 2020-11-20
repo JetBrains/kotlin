@@ -5,22 +5,9 @@
 
 package org.jetbrains.kotlin.idea
 
-import com.intellij.ide.hierarchy.HierarchyTreeStructure
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.openapi.util.Computable
 import com.intellij.testFramework.ExtensionTestUtil
-import com.intellij.testFramework.codeInsight.hierarchy.HierarchyViewTestFixture
-
-// FIX ME WHEN BUNCH 193 REMOVED
-@Suppress("UNUSED_PARAMETER")
-fun doHierarchyTestCompat(
-    hierarchyFixture: HierarchyViewTestFixture,
-    treeStructureComputable: Computable<out HierarchyTreeStructure>,
-    expectedStructure: String,
-) {
-    HierarchyViewTestFixture.doHierarchyTest(treeStructureComputable.compute(), expectedStructure)
-}
 
 fun <T> maskExtensions(
     pointName: ExtensionPointName<T>,

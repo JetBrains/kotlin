@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -62,7 +62,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     return function
 }
 
-private fun isNativeInvoke(receiver: JsExpression?, call: IrCall): Boolean {
+private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean {
     if (receiver == null || receiver is JsThisRef) return false
     val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return false
     val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return false
@@ -78,11 +78,8 @@ fun translateCall(
     transformer: IrElementToJsExpressionTransformer
 ): JsExpression {
     val function = expression.symbol.owner.realOverrideTarget
-    require(function is IrSimpleFunction) { "Only IrSimpleFunction could be called via IrCall" } // TODO: fix it in IrCall
 
-    val symbol = function.symbol
-
-    context.staticContext.intrinsics[symbol]?.let {
+    context.staticContext.intrinsics[function.symbol]?.let {
         return it(expression, context)
     }
 
@@ -104,8 +101,8 @@ fun translateCall(
         }
     }
 
-    if (isNativeInvoke(jsDispatchReceiver, expression)) {
-        return JsInvocation(jsDispatchReceiver!!, arguments)
+    if (isFunctionTypeInvoke(jsDispatchReceiver, expression) || expression.symbol.owner.isJsNativeInvoke()) {
+        return JsInvocation(jsDispatchReceiver ?: jsExtensionReceiver!!, arguments)
     }
 
     expression.superQualifierSymbol?.let { superQualifier ->

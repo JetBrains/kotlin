@@ -10,55 +10,28 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.name.Name
 
-interface FirMetadataSource : MetadataSource {
+sealed class FirMetadataSource : MetadataSource {
+    abstract val fir: FirDeclaration
 
     val session: FirSession
+        get() = fir.session
 
-    class File(
-        val file: FirFile, override val session: FirSession
-    ) : MetadataSource.File(emptyList()), FirMetadataSource
+    override val name: Name?
+        get() = when (val fir = fir) {
+            is FirConstructor -> Name.special("<init>")
+            is FirSimpleFunction -> fir.name
+            is FirRegularClass -> fir.name
+            is FirProperty -> fir.name
+            else -> null
+        }
 
-    class Class(
-        val klass: FirClass<*>
-    ) : FirMetadataSource {
-        override val session: FirSession
-            get() = klass.session
+    class File(override val fir: FirFile) : FirMetadataSource(), MetadataSource.File
 
-        override val name: Name?
-            get() = (klass as? FirRegularClass)?.name
-    }
+    class Class(override val fir: FirClass<*>) : FirMetadataSource(), MetadataSource.Class
 
-    class Function(
-        val function: FirFunction<*>
-    ) : FirMetadataSource {
-        override val session: FirSession
-            get() = function.session
+    class Function(override val fir: FirFunction<*>) : FirMetadataSource(), MetadataSource.Function
 
-        override val name: Name?
-            get() = when (function) {
-                is FirSimpleFunction -> function.name
-                is FirConstructor -> Name.special("<init>")
-                else -> null
-            }
-    }
-
-    class Property(
-        val property: FirProperty
-    ) : FirMetadataSource {
-        override val session: FirSession
-            get() = property.session
-
-        override val name: Name
-            get() = property.name
-    }
-
-    class Variable(
-        val variable: FirVariable<*>
-    ) : FirMetadataSource {
-        override val session: FirSession
-            get() = variable.session
-
-        override val name: Name
-            get() = variable.name
+    class Property(override val fir: FirProperty) : FirMetadataSource(), MetadataSource.Property {
+        override val isConst: Boolean get() = fir.isConst
     }
 }

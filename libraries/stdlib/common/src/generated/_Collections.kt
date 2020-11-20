@@ -159,6 +159,8 @@ public inline fun <T> List<T>.elementAtOrNull(index: Int): T? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T? {
@@ -167,6 +169,8 @@ public inline fun <T> Iterable<T>.find(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Iterable<T>.findLast(predicate: (T) -> Boolean): T? {
@@ -175,6 +179,8 @@ public inline fun <T> Iterable<T>.findLast(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> List<T>.findLast(predicate: (T) -> Boolean): T? {
@@ -261,6 +267,8 @@ public inline fun <T> List<T>.getOrElse(index: Int, defaultValue: (Int) -> T): T
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this list.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun <T> List<T>.getOrNull(index: Int): T? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -346,7 +354,10 @@ public inline fun <T> List<T>.indexOfLast(predicate: (T) -> Boolean): Int {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the collection is empty.
+ * 
+ * @throws NoSuchElementException if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> Iterable<T>.last(): T {
     when (this) {
@@ -365,7 +376,10 @@ public fun <T> Iterable<T>.last(): T {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the list is empty.
+ * 
+ * @throws NoSuchElementException if the list is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> List<T>.last(): T {
     if (isEmpty())
@@ -375,7 +389,10 @@ public fun <T> List<T>.last(): T {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
     var last: T? = null
@@ -393,7 +410,10 @@ public inline fun <T> Iterable<T>.last(predicate: (T) -> Boolean): T {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> List<T>.last(predicate: (T) -> Boolean): T {
     val iterator = this.listIterator(size)
@@ -430,6 +450,8 @@ public fun <@kotlin.internal.OnlyInputTypes T> List<T>.lastIndexOf(element: T): 
 
 /**
  * Returns the last element, or `null` if the collection is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> Iterable<T>.lastOrNull(): T? {
     when (this) {
@@ -448,6 +470,8 @@ public fun <T> Iterable<T>.lastOrNull(): T? {
 
 /**
  * Returns the last element, or `null` if the list is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> List<T>.lastOrNull(): T? {
     return if (isEmpty()) null else this[size - 1]
@@ -455,6 +479,8 @@ public fun <T> List<T>.lastOrNull(): T? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean): T? {
     var last: T? = null
@@ -468,6 +494,8 @@ public inline fun <T> Iterable<T>.lastOrNull(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> List<T>.lastOrNull(predicate: (T) -> Boolean): T? {
     val iterator = this.listIterator(size)
@@ -710,6 +738,8 @@ public inline fun <T> Iterable<T>.filter(predicate: (T) -> Boolean): List<T> {
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public inline fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T> {
     return filterIndexedTo(ArrayList<T>(), predicate)
@@ -719,6 +749,8 @@ public inline fun <T> Iterable<T>.filterIndexed(predicate: (index: Int, T) -> Bo
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -729,6 +761,8 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterIndexedTo(d
 
 /**
  * Returns a list containing all elements that are instances of specified type parameter R.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIsInstance
  */
 public inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R> {
     return filterIsInstanceTo(ArrayList<R>())
@@ -736,6 +770,8 @@ public inline fun <reified R> Iterable<*>.filterIsInstance(): List<@kotlin.inter
 
 /**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIsInstanceTo
  */
 public inline fun <reified R, C : MutableCollection<in R>> Iterable<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
@@ -762,6 +798,8 @@ public fun <T : Any> Iterable<T?>.filterNotNull(): List<T> {
 
 /**
  * Appends all elements that are not `null` to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterNotNullTo
  */
 public fun <C : MutableCollection<in T>, T : Any> Iterable<T?>.filterNotNullTo(destination: C): C {
     for (element in this) if (element != null) destination.add(element)
@@ -770,6 +808,8 @@ public fun <C : MutableCollection<in T>, T : Any> Iterable<T?>.filterNotNullTo(d
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
@@ -778,6 +818,8 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterNotTo(desti
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -1522,6 +1564,8 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapIndexedTo(d
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each element in the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.mapNotNull
  */
 public inline fun <T, R : Any> Iterable<T>.mapNotNull(transform: (T) -> R?): List<R> {
     return mapNotNullTo(ArrayList<R>(), transform)
@@ -1785,27 +1829,27 @@ public inline fun <T> Iterable<T>.forEachIndexed(action: (index: Int, T) -> Unit
     for (item in this) action(checkIndexOverflow(index++), item)
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Iterable<Double>.max(): Double? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Iterable<Float>.max(): Float? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T : Comparable<T>> Iterable<T>.max(): T? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <T, R : Comparable<R>> Iterable<T>.maxBy(selector: (T) -> R): T? {
     return maxByOrNull(selector)
@@ -2059,7 +2103,7 @@ public fun <T : Comparable<T>> Iterable<T>.maxOrNull(): T? {
     return max
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T> Iterable<T>.maxWith(comparator: Comparator<in T>): T? {
     return maxWithOrNull(comparator)
@@ -2080,27 +2124,27 @@ public fun <T> Iterable<T>.maxWithOrNull(comparator: Comparator<in T>): T? {
     return max
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Iterable<Double>.min(): Double? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Iterable<Float>.min(): Float? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T : Comparable<T>> Iterable<T>.min(): T? {
     return minOrNull()
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <T, R : Comparable<R>> Iterable<T>.minBy(selector: (T) -> R): T? {
     return minByOrNull(selector)
@@ -2354,7 +2398,7 @@ public fun <T : Comparable<T>> Iterable<T>.minOrNull(): T? {
     return min
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T> Iterable<T>.minWith(comparator: Comparator<in T>): T? {
     return minWithOrNull(comparator)
@@ -2884,7 +2928,7 @@ public fun <T : Any> List<T?>.requireNoNulls(): List<T> {
 /**
  * Splits this collection into a list of lists each not exceeding the given [size].
  * 
- * The last list in the resulting list may have less elements than the given [size].
+ * The last list in the resulting list may have fewer elements than the given [size].
  * 
  * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
  * 
@@ -2903,7 +2947,7 @@ public fun <T> Iterable<T>.chunked(size: Int): List<List<T>> {
  * 
  * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * The last list may have less elements than the given [size].
+ * The last list may have fewer elements than the given [size].
  * 
  * @param size the number of elements to take in each list, must be positive and can be greater than the number of elements in this collection.
  * 
@@ -3099,7 +3143,7 @@ public inline fun <T> Collection<T>.plusElement(element: T): List<T> {
  * sliding along this collection with the given [step], where each
  * snapshot is a list.
  * 
- * Several last lists may have less elements than the given [size].
+ * Several last lists may have fewer elements than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
  * @param size the number of elements to take in each window
@@ -3139,7 +3183,7 @@ public fun <T> Iterable<T>.windowed(size: Int, step: Int = 1, partialWindows: Bo
  * 
  * Note that the list passed to the [transform] function is ephemeral and is valid only inside that function.
  * You should not store it or allow it to escape in some way, unless you made a snapshot of it.
- * Several last lists may have less elements than the given [size].
+ * Several last lists may have fewer elements than the given [size].
  * 
  * Both [size] and [step] must be positive and can be greater than the number of elements in this collection.
  * @param size the number of elements to take in each window

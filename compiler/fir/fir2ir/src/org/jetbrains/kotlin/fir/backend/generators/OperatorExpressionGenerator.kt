@@ -169,7 +169,7 @@ internal class OperatorExpressionGenerator(
 
             unsafeIrCall.dispatchReceiver = IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
 
-            components.createSafeCallConstruction(receiverVariable, receiverVariableSymbol, unsafeIrCall, isReceiverNullable = true)
+            components.createSafeCallConstruction(receiverVariable, receiverVariableSymbol, unsafeIrCall)
         } else {
             unsafeIrCall
         }

@@ -2,6 +2,7 @@
 // OPTIONS: usages, constructorUsages
 // FIND_BY_REF
 // WITH_FILE_NAME
+
 package usages
 
 import library.*
@@ -16,3 +17,5 @@ fun test() {
     val a: <caret>A = A()
     val aa = A(1)
 }
+
+// FIR_IGNORE

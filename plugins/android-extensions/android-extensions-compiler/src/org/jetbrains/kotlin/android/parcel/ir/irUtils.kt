@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.android.parcel.PARCELER_FQNAME
 import org.jetbrains.kotlin.android.parcel.PARCELIZE_CLASS_FQNAME
 import org.jetbrains.kotlin.android.parcel.serializers.ParcelableExtensionBase
 import org.jetbrains.kotlin.android.parcel.serializers.ParcelableExtensionBase.Companion.CREATOR_NAME
-import org.jetbrains.kotlin.backend.common.lower.allOverridden
+import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // true if the class should be processed by the parcelize plugin
 val IrClass.isParcelize: Boolean
@@ -34,7 +33,7 @@ val IrClass.isParcelize: Boolean
 
 // Finds the getter for a pre-existing CREATOR field on the class companion, which is used for manual Parcelable implementations in Kotlin.
 val IrClass.creatorGetter: IrSimpleFunctionSymbol?
-    get() = companionObject()?.safeAs<IrClass>()?.getPropertyGetter(CREATOR_NAME.asString())?.takeIf {
+    get() = companionObject()?.getPropertyGetter(CREATOR_NAME.asString())?.takeIf {
         it.owner.correspondingPropertySymbol?.owner?.backingField?.hasAnnotation(FqName("kotlin.jvm.JvmField")) == true
     }
 
@@ -126,13 +125,13 @@ fun IrClass.isSubclassOfFqName(fqName: String): Boolean =
     fqNameWhenAvailable?.asString() == fqName || superTypes.any { it.erasedUpperBound.isSubclassOfFqName(fqName) }
 
 inline fun IrBlockBuilder.forUntil(upperBound: IrExpression, loopBody: IrBlockBuilder.(IrValueDeclaration) -> Unit) {
-    val indexTemporary = irTemporaryVar(irInt(0))
+    val indexTemporary = irTemporary(irInt(0), isMutable = true)
     +irWhile().apply {
         condition = irNotEquals(irGet(indexTemporary), upperBound)
         body = irBlock {
             loopBody(indexTemporary)
             val inc = context.irBuiltIns.intClass.getSimpleFunction("inc")!!
-            +irSetVar(indexTemporary.symbol, irCall(inc).apply {
+            +irSet(indexTemporary.symbol, irCall(inc).apply {
                 dispatchReceiver = irGet(indexTemporary)
             })
         }

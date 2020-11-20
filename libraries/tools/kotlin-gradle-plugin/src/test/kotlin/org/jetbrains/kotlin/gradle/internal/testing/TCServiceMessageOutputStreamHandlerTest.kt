@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.internal.testing
 
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageParserCallback
+import jetbrains.buildServer.messages.serviceMessages.TestFailed
 import org.junit.Test
 import org.slf4j.event.EventRecodingLogger
 import org.slf4j.event.SubstituteLoggingEvent
@@ -19,11 +20,11 @@ class TCServiceMessageOutputStreamHandlerTest {
     private val client = Mock()
     private val logEvents = ArrayBlockingQueue<SubstituteLoggingEvent>(10)
     private val log = EventRecodingLogger(SubstituteLogger("", logEvents, false), logEvents)
-    private val handler = TCServiceMessageOutputStreamHandler(client, {}, log, 35)
+    private val handler = TCServiceMessageOutputStreamHandler(client, {}, log, messageLimitBytes = 35)
 
     private val clientCalls get() = client.log.toString()
     private val logString get() = logEvents.map { it.message }.toString()
-    
+
     @Test
     fun testLines() {
         handler.write("Test1\n".toByteArray())
@@ -160,13 +161,9 @@ class TCServiceMessageOutputStreamHandlerTest {
         handler.close()
         assertEquals(
             "TEXT: `012345`\n" +
-                    "EXCEPTION: `java.text.ParseException: The service message is invalid because it does not end with ] character: ##teamcity[123456789012345678901234`, `##teamcity[123456789012345678901234`\n" +
+                    "MESSAGE: `overflow-message`\n" +
                     "TEXT: `]\n`\n",
             clientCalls
-        )
-        assertEquals(
-            "[Cannot process process output: too long teamcity service message (more then 1Mb). Event was lost. See stdout for more details.]",
-            logString
         )
     }
 
@@ -178,6 +175,11 @@ class TCServiceMessageOutputStreamHandlerTest {
         }
 
         override fun serviceMessage(p0: ServiceMessage) {
+            if (p0 is TestFailed) {
+                log.append("MESSAGE: `${p0.testName}`\n")
+                return
+            }
+
             log.append("MESSAGE: `$p0`\n")
         }
 

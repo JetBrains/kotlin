@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 class Controller {
     suspend fun suspendHere(x: Continuation<Unit>) {
     }

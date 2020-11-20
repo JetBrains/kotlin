@@ -46,12 +46,6 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             return
         }
 
-        val primaryConstructorVisibility = descriptor.unsubstitutedPrimaryConstructor?.visibility
-        if (primaryConstructorVisibility != null && primaryConstructorVisibility != Visibilities.PUBLIC) {
-            trace.report(Errors.NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS.on(primaryConstructor.visibilityModifier() ?: inlineKeyword))
-            return
-        }
-
         val baseParameter = primaryConstructor.valueParameters.singleOrNull()
         if (baseParameter == null) {
             (primaryConstructor.valueParameterList ?: declaration).let {
@@ -62,17 +56,6 @@ object InlineClassDeclarationChecker : DeclarationChecker {
 
         if (!isParameterAcceptableForInlineClass(baseParameter)) {
             trace.report(Errors.INLINE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.on(baseParameter))
-            return
-        }
-
-        val anonymousInitializers = declaration.getAnonymousInitializers()
-        if (anonymousInitializers.isNotEmpty()) {
-            for (anonymousInitializer in anonymousInitializers) {
-                if (anonymousInitializer is KtClassInitializer) {
-                    trace.report(Errors.INLINE_CLASS_WITH_INITIALIZER.on(anonymousInitializer.initKeyword))
-                }
-            }
-
             return
         }
 

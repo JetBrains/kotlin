@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.junit.Test
 
 class ConfigurationAvoidanceIT : BaseGradleIT() {
@@ -28,4 +29,46 @@ class ConfigurationAvoidanceIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testAndroidUnrelatedTaskNotConfigured() = with(
+        Project(
+            "AndroidProject",
+            gradleVersionRequirement = GradleVersionRequired.AtLeast("6.6.1")
+        )
+    ) {
+        setupWorkingDir()
+
+        listOf("Android", "Test").forEach { subproject ->
+            gradleBuildScript(subproject).appendText("\n" + """
+                android {
+                    applicationVariants.all {
+                        it.getAidlCompileProvider().configure {
+                            throw new RuntimeException("Task should not be configured.")
+                        }
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+
+        gradleBuildScript("Lib").appendText(
+            "\n" + """
+            android {
+                libraryVariants.all {
+                    it.getAidlCompileProvider().configure {
+                        throw new RuntimeException("Task should not be configured.")
+                    }
+                }
+            }
+        """.trimIndent()
+        )
+
+        build(
+            "help", options = defaultBuildOptions().copy(
+                androidGradlePluginVersion = AGPVersion.v4_2_0
+            )
+        ) {
+            assertSuccessful()
+        }
+    }
 }

@@ -31,12 +31,14 @@ private class VarargTransformer(
     val context: JsIrBackendContext
 ) : IrElementTransformerVoid() {
 
+    fun IrType.getInlinedClass() = context.inlineClassesUtils.getInlinedClass(this)
+
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun List<IrExpression>.toArrayLiteral(type: IrType, varargElementType: IrType): IrExpression {
 
         // TODO: Use symbols when builtins symbol table is fixes
         val primitiveType = context.intrinsics.primitiveArrays
-            .mapKeys { it.key.descriptor }[type.classifierOrNull?.descriptor]
+            .mapKeys { it.key }[type.classifierOrNull]
 
         val intrinsic =
             if (primitiveType != null)

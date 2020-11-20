@@ -109,7 +109,7 @@ class KlibInfoProvider(kotlinNativeHome: File) {
             1 -> candidates.single()
             else -> {
                 // there are multiple components, let's take just the first one alphabetically
-                candidates.minBy { it.getName(it.nameCount - 2).toString() }!!
+                candidates.minByOrNull { it.getName(it.nameCount - 2).toString() }!!
             }
         }
     }

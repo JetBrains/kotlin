@@ -3,15 +3,21 @@ fun foo(): Int = 10
 // SYMBOLS:
 /*
 KtFirFunctionSymbol:
-  fqName: foo
+  annotations: []
+  callableIdIfNonLocal: foo
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: FINAL
   name: foo
   origin: SOURCE
+  receiverType: null
   symbolKind: TOP_LEVEL
   type: kotlin/Int
   typeParameters: []
   valueParameters: []
+  visibility: PUBLIC
 */

@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/instanceAccessBeforeSuperCall.kt
+-Xuse-fir
+-d
+$TEMP_DIR$

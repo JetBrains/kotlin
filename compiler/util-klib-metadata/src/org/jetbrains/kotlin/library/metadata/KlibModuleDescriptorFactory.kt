@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.konan
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.Name
@@ -21,7 +22,7 @@ interface KlibModuleDescriptorFactory {
         storageManager: StorageManager,
         builtIns: KotlinBuiltIns,
         origin: KlibModuleOrigin,
-        customCapabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
+        customCapabilities: Map<ModuleCapability<*>, Any?> = emptyMap()
     ): ModuleDescriptorImpl
 
     /**
@@ -32,6 +33,6 @@ interface KlibModuleDescriptorFactory {
         name: Name,
         storageManager: StorageManager,
         origin: KlibModuleOrigin,
-        customCapabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap()
+        customCapabilities: Map<ModuleCapability<*>, Any?> = emptyMap()
     ): ModuleDescriptorImpl
 }

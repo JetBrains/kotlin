@@ -1,0 +1,27 @@
+FILE: superCallWithDelegation.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public open class B : R|A| {
+        local final field <$$delegate_0>: R|A|
+
+        public constructor(a: R|A|): R|B| {
+            super<R|kotlin/Any|>()
+            this@R|/B|.R|<local>/<$$delegate_0>| = R|<local>/a|
+        }
+
+        private final val a: R|A| = R|<local>/a|
+            private get(): R|A|
+
+    }
+    public final class C : R|B| {
+        public constructor(a: R|A|): R|C| {
+            super<R|B|>(R|<local>/a|)
+        }
+
+        public final override fun foo(): R|kotlin/Unit| {
+            this@R|/C|.super<R|B|>.R|/A.foo|()
+        }
+
+    }

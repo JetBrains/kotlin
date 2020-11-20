@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyToWithoutSuperTypes
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -114,7 +114,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             endOffset = invokeFun.endOffset
             // Since box/unbox is done on declaration side in case of suspend function use the specified type
             returnType = if (invokeFun.isSuspend) invokeFun.returnType else superInvokeFun.returnType
-            visibility = Visibilities.LOCAL
+            visibility = DescriptorVisibilities.LOCAL
             name = lambdaName
             isSuspend = invokeFun.isSuspend
         }

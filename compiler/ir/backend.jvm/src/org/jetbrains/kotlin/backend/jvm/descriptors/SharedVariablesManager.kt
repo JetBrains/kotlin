@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrSetVariable
+import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -95,13 +95,14 @@ class JvmSharedVariablesManager(
             typeArguments.forEachIndexed(::putTypeArgument)
         }
         return with(originalDeclaration) {
+            val descriptor = WrappedVariableDescriptor()
             IrVariableImpl(
-                startOffset, endOffset, origin, IrVariableSymbolImpl(WrappedVariableDescriptor()), name, refType,
+                startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), name, refType,
                 isVar = false, // writes are remapped to field stores
                 isConst = false, // const vals could not possibly require ref wrappers
                 isLateinit = false
             ).apply {
-                (descriptor as WrappedVariableDescriptor).bind(this)
+                descriptor.bind(this)
                 initializer = refConstructorCall
             }
         }
@@ -115,7 +116,7 @@ class JvmSharedVariablesManager(
             return sharedVariableDeclaration
         }
         val initializationStatement = with (originalDeclaration) {
-            IrSetVariableImpl(startOffset, endOffset, irBuiltIns.unitType, symbol, initializer, null)
+            IrSetValueImpl(startOffset, endOffset, irBuiltIns.unitType, symbol, initializer, null)
         }
         val sharedVariableInitialization = setSharedValue(sharedVariableDeclaration.symbol, initializationStatement)
         return with(originalDeclaration) {
@@ -127,7 +128,7 @@ class JvmSharedVariablesManager(
     }
 
     private fun unsafeCoerce(value: IrExpression, from: IrType, to: IrType): IrExpression =
-        IrCallImpl(value.startOffset, value.endOffset, to, symbols.unsafeCoerceIntrinsic).apply {
+        IrCallImpl.fromSymbolOwner(value.startOffset, value.endOffset, to, symbols.unsafeCoerceIntrinsic).apply {
             putTypeArgument(0, from)
             putTypeArgument(1, to)
             putValueArgument(0, value)
@@ -142,7 +143,7 @@ class JvmSharedVariablesManager(
             unboxedType?.let { unsafeCoerce(unboxedRead, it, symbol.owner.type) } ?: unboxedRead
         }
 
-    override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetVariable): IrExpression =
+    override fun setSharedValue(sharedVariableSymbol: IrVariableSymbol, originalSet: IrSetValue): IrExpression =
         with(originalSet) {
             val unboxedType = InlineClassAbi.unboxType(symbol.owner.type)
             val unboxedValue = unboxedType?.let { unsafeCoerce(value, symbol.owner.type, it) } ?: value

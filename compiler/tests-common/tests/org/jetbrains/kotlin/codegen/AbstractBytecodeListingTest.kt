@@ -5,23 +5,34 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.sure
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
 abstract class AbstractBytecodeListingTest : CodegenTestCase() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         compile(files)
-        val actualTxt = BytecodeListingTextCollectingVisitor.getText(classFileFactory, withSignatures = isWithSignatures(wholeFile))
+        val actualTxt = BytecodeListingTextCollectingVisitor.getText(
+            classFileFactory,
+            withSignatures = isWithSignatures(wholeFile),
+            withAnnotations = isWithAnnotations(wholeFile),
+            filter = object : BytecodeListingTextCollectingVisitor.Filter {
+                override fun shouldWriteClass(access: Int, name: String): Boolean = !name.startsWith("helpers/")
+                override fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean = true
+                override fun shouldWriteField(access: Int, name: String, desc: String): Boolean = true
+                override fun shouldWriteInnerClass(name: String): Boolean = true
+            }
+        )
 
         val prefixes = when {
             backend.isIR -> listOf("_ir", "_1_3", "")
-            coroutinesPackage == DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString() -> listOf("_1_3", "")
+            coroutinesPackage == StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString() -> listOf("_1_3", "")
             else -> listOf("")
         }
 
@@ -29,31 +40,49 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
             prefixes.firstNotNullResult { File(wholeFile.parentFile, wholeFile.nameWithoutExtension + "$it.txt").takeIf(File::exists) }
                 .sure { "No testData file exists: ${wholeFile.nameWithoutExtension}.txt" }
 
-        KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt) {
-            it.replace("COROUTINES_PACKAGE", coroutinesPackage)
+        KotlinTestUtils.assertEqualsToFile(txtFile, actualTxt)
+
+        if (backend.isIR) {
+            val jvmGoldenFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
+            val jvmIrGoldenFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + "_ir.txt")
+            if (jvmGoldenFile.exists() && jvmIrGoldenFile.exists()) {
+                if (jvmGoldenFile.readText() == jvmIrGoldenFile.readText()) {
+                    fail("JVM and JVM_IR golden files are identical. Remove $jvmIrGoldenFile.")
+                }
+            }
         }
     }
 
     private fun isWithSignatures(wholeFile: File): Boolean =
         WITH_SIGNATURES.containsMatchIn(wholeFile.readText())
 
+    private fun isWithAnnotations(wholeFile: File): Boolean =
+        !IGNORE_ANNOTATIONS.containsMatchIn(wholeFile.readText())
+
     companion object {
         private val WITH_SIGNATURES = Regex.fromLiteral("// WITH_SIGNATURES")
+        private val IGNORE_ANNOTATIONS = Regex.fromLiteral("// IGNORE_ANNOTATIONS")
     }
 }
 
-class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignatures: Boolean, api: Int = API_VERSION) : ClassVisitor(api) {
+class BytecodeListingTextCollectingVisitor(
+    val filter: Filter,
+    val withSignatures: Boolean,
+    api: Int = API_VERSION,
+    val withAnnotations: Boolean = true
+) : ClassVisitor(api) {
     companion object {
         @JvmOverloads
         fun getText(
             factory: ClassFileFactory,
             filter: Filter = Filter.EMPTY,
-            withSignatures: Boolean = false
+            withSignatures: Boolean = false,
+            withAnnotations: Boolean = true
         ) = factory.getClassFiles()
             .sortedBy { it.relativePath }
             .mapNotNull {
                 val cr = ClassReader(it.asByteArray())
-                val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures)
+                val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures, withAnnotations = withAnnotations)
                 cr.accept(visitor, ClassReader.SKIP_CODE)
 
                 if (!filter.shouldWriteClass(cr.access, cr.className)) null else visitor.text
@@ -205,22 +234,26 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
             private var invisibleAnnotableParameterCount = methodParamCount
 
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                val type = Type.getType(desc).className
-                methodAnnotations += "@$type "
+                if (withAnnotations) {
+                    val type = Type.getType(desc).className
+                    methodAnnotations += "@$type "
+                }
                 return super.visitAnnotation(desc, visible)
             }
 
             override fun visitParameterAnnotation(parameter: Int, desc: String, visible: Boolean): AnnotationVisitor? {
-                val type = Type.getType(desc).className
-                parameterAnnotations.getOrPut(
-                    parameter + methodParamCount - (if (visible) visibleAnnotableParameterCount else invisibleAnnotableParameterCount),
-                    { arrayListOf() }).add("@$type ")
+                if (withAnnotations) {
+                    val type = Type.getType(desc).className
+                    parameterAnnotations.getOrPut(
+                        parameter + methodParamCount - (if (visible) visibleAnnotableParameterCount else invisibleAnnotableParameterCount),
+                        { arrayListOf() }).add("@$type ")
+                }
                 return super.visitParameterAnnotation(parameter, desc, visible)
             }
 
             override fun visitEnd() {
                 val parameterWithAnnotations = parameterTypes.mapIndexed { index, parameter ->
-                    val annotations = parameterAnnotations.getOrElse(index, { emptyList<String>() }).joinToString("")
+                    val annotations = parameterAnnotations.getOrElse(index, { emptyList() }).joinToString("")
                     "${annotations}p$index: $parameter"
                 }.joinToString()
                 val signatureIfRequired = if (withSignatures) "<$signature> " else ""
@@ -255,15 +288,19 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
 
         return object : FieldVisitor(API_VERSION) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-                addAnnotation(desc)
+                if (withAnnotations) {
+                    addAnnotation(desc)
+                }
                 return super.visitAnnotation(desc, visible)
             }
         }
     }
 
     override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
-        val name = Type.getType(desc).className
-        classAnnotations.add("@$name")
+        if (withAnnotations) {
+            val name = Type.getType(desc).className
+            classAnnotations.add("@$name")
+        }
         return super.visitAnnotation(desc, visible)
     }
 
@@ -271,6 +308,16 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         className = name
         classAccess = access
         classSignature = signature
+    }
+
+    override fun visitOuterClass(owner: String, name: String?, descriptor: String?) {
+        if (name == null) {
+            assertNull(descriptor)
+            declarationsInsideClass.add(Declaration("enclosing class $owner"))
+        } else {
+            assertNotNull(descriptor)
+            declarationsInsideClass.add(Declaration("enclosing method $owner.$name$descriptor"))
+        }
     }
 
     override fun visitInnerClass(name: String, outerName: String?, innerName: String?, access: Int) {

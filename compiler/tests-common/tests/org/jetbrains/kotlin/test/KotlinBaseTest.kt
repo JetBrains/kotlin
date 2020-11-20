@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.JvmTarget.Companion.fromString
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import java.io.File
 import java.lang.reflect.Field
@@ -82,9 +82,10 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
 
     protected open fun configureTestSpecific(configuration: CompilerConfiguration, testFiles: List<TestFile>) {}
 
-    protected open fun createConfiguration(
+    protected fun createConfiguration(
         kind: ConfigurationKind,
         jdkKind: TestJdkKind,
+        backend: TargetBackend,
         classpath: List<File?>,
         javaSource: List<File?>,
         testFilesWithConfigurationDirectives: List<TestFile>
@@ -156,6 +157,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
             "CONSTRUCTOR_CALL_NORMALIZATION_MODE=([a-zA-Z_\\-0-9]*)"
         )
         private val ASSERTIONS_MODE_FLAG_PATTERN = Pattern.compile("ASSERTIONS_MODE=([a-zA-Z_0-9-]*)")
+        private val STRING_CONCAT = Pattern.compile("STRING_CONCAT=([a-zA-Z_0-9-]*)")
 
         private fun tryApplyBooleanFlag(
             configuration: CompilerConfiguration,
@@ -185,6 +187,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
             }
             assert(configurationKeyField != null) { "Expected [+|-][namespace.]configurationKey, got: $flag" }
             try {
+                @Suppress("UNCHECKED_CAST")
                 val configurationKey = configurationKeyField!![null] as CompilerConfigurationKey<Boolean>
                 configuration.put(configurationKey, flagEnabled)
             } catch (e: java.lang.Exception) {
@@ -238,12 +241,12 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                 }
                 if (directives.contains("COMMON_COROUTINES_TEST")) {
                     assert(!directives.contains("COROUTINES_PACKAGE")) { "Must replace COROUTINES_PACKAGE prior to tests compilation" }
-                    if (DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage) {
+                    if (StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage) {
                         disableReleaseCoroutines = true
                         includeCompatExperimentalCoroutines = true
                     }
                 }
-                if (content.contains(DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())) {
+                if (content.contains(StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())) {
                     includeCompatExperimentalCoroutines = true
                 }
                 val fileLanguageVersionSettings: LanguageVersionSettings? = parseLanguageVersionSettings(directives)
@@ -291,6 +294,14 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                     val mode = JVMAssertionsMode.fromStringOrNull(flagValueString)
                         ?: error("Wrong ASSERTIONS_MODE value: $flagValueString")
                     configuration.put(JVMConfigurationKeys.ASSERTIONS_MODE, mode)
+                }
+
+                m = STRING_CONCAT.matcher(flag)
+                if (m.matches()) {
+                    val flagValueString = m.group(1)
+                    val mode = JvmStringConcat.fromString(flagValueString)
+                        ?: error("Wrong STRING_CONCAT value: $flagValueString")
+                    configuration.put(JVMConfigurationKeys.STRING_CONCAT, mode)
                 }
             }
         }

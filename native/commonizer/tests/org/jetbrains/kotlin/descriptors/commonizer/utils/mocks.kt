@@ -57,7 +57,7 @@ internal fun mockClassType(
         name = classFqName.shortName(),
         kind = ClassKind.CLASS,
         modality = Modality.FINAL,
-        visibility = Visibilities.PUBLIC,
+        visibility = DescriptorVisibilities.PUBLIC,
         isCompanion = false,
         isData = false,
         isInline = false,
@@ -91,7 +91,7 @@ internal fun mockTAType(
         containingDeclaration = createPackageFragmentForClassifier(typeAliasFqName),
         annotations = Annotations.EMPTY,
         name = typeAliasFqName.shortName(),
-        visibility = Visibilities.PUBLIC,
+        visibility = DescriptorVisibilities.PUBLIC,
         isActual = false
     )
 

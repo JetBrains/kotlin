@@ -8,7 +8,7 @@ object Test1 {
         fun foo(f: suspend () -> Unit) {}
 
         fun test(g: () -> Unit) {
-            <!DEBUG_INFO_CALL("fqName: Test1.foo; typeCall: function")!>foo(g)<!>
+            <!DEBUG_INFO_CALL("fqName: Test1.Scope.foo; typeCall: function")!>foo(g)<!>
         }
     }
 }

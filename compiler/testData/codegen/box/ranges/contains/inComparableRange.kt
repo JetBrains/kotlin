@@ -1,9 +1,7 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS
-
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: IGNORED_IN_JS
 // WITH_RUNTIME
+import kotlin.test.*
 
 class ComparablePair<T : Comparable<T>>(val first: T, val second: T) : Comparable<ComparablePair<T>> {
     override fun compareTo(other: ComparablePair<T>): Int {
@@ -21,32 +19,33 @@ operator fun Float.rangeTo(other: Float) = object : ClosedFloatingPointRange<Flo
     override fun lessThanOrEquals(a: Float, b: Float) = a >= b
 }
 
+// assert\((.*)\) \{\s*(".*")\s*}
 fun check(x: Double, left: Double, right: Double): Boolean {
     val result = x in left..right
     val range = left..right
-    assert(result == x in range) { "Failed: unoptimized === unoptimized for custom double $range" }
+    assertTrue(result == x in range, "Failed: unoptimized === unoptimized for custom double $range")
     return result
 }
 
 fun check(x: Float, left: Float, right: Float): Boolean {
     val result = x in left..right
     val range = left..right
-    assert(result == x in range) { "Failed: unoptimized === unoptimized for standard float $range" }
+    assertTrue(result == x in range, "Failed: unoptimized === unoptimized for standard float $range")
     return result
 }
 
 fun box(): String {
-    assert("a" !in "b".."c")
-    assert("b" in "a".."d")
+    assertTrue("a" !in "b".."c")
+    assertTrue("b" in "a".."d")
 
-    assert(ComparablePair(2, 2) !in ComparablePair(1, 10)..ComparablePair(2, 1))
-    assert(ComparablePair(2, 2) in ComparablePair(2, 0)..ComparablePair(2, 10))
+    assertTrue(ComparablePair(2, 2) !in ComparablePair(1, 10)..ComparablePair(2, 1))
+    assertTrue(ComparablePair(2, 2) in ComparablePair(2, 0)..ComparablePair(2, 10))
 
-    assert(!check(-0.0, 0.0, 0.0))
-    assert(check(Double.NaN, Double.NaN, Double.NaN))
+    assertTrue(!check(-0.0, 0.0, 0.0))
+    assertTrue(check(Double.NaN, Double.NaN, Double.NaN))
 
-    assert(check(-0.0f, 0.0f, 0.0f))
-    assert(!check(Float.NaN, Float.NaN, Float.NaN))
+    assertTrue(check(-0.0f, 0.0f, 0.0f))
+    assertTrue(!check(Float.NaN, Float.NaN, Float.NaN))
 
     return "OK"
 }

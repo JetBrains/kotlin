@@ -19,27 +19,32 @@ package org.jetbrains.kotlin.ir.declarations.persistent
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.ValueParameterCarrier
+import org.jetbrains.kotlin.ir.declarations.stageController
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 internal class PersistentIrValueParameter(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrValueParameterSymbol,
     override val name: Name,
     override val index: Int,
-    override val type: IrType,
-    override val varargElementType: IrType?,
+    type: IrType,
+    varargElementType: IrType?,
     override val isCrossinline: Boolean,
-    override val isNoinline: Boolean
-) :
-    PersistentIrDeclarationBase<ValueParameterCarrier>(startOffset, endOffset, origin),
-    IrValueParameter,
+    override val isNoinline: Boolean,
+    override val isHidden: Boolean = false,
+    override val isAssignable: Boolean
+) : IrValueParameter(),
+    PersistentIrDeclarationBase<ValueParameterCarrier>,
     ValueParameterCarrier {
 
     @ObsoleteDescriptorBasedAPI
@@ -49,6 +54,16 @@ internal class PersistentIrValueParameter(
     init {
         symbol.bind(this)
     }
+
+    override var lastModified: Int = stageController.currentStage
+    override var loweredUpTo: Int = stageController.currentStage
+    override var values: Array<Carrier>? = null
+    override val createdOn: Int = stageController.currentStage
+
+    override var parentField: IrDeclarationParent? = null
+    override var originField: IrDeclarationOrigin = origin
+    override var removedOn: Int = Int.MAX_VALUE
+    override var annotationsField: List<IrConstructorCall> = emptyList()
 
     override var defaultValueField: IrExpressionBody? = null
 
@@ -60,6 +75,26 @@ internal class PersistentIrValueParameter(
                     v.container = this
                 }
                 setCarrier().defaultValueField = v
+            }
+        }
+
+    override var typeField: IrType = type
+
+    override var type: IrType
+        get() = getCarrier().typeField
+        set(v) {
+            if (type !== v) {
+                setCarrier().typeField = v
+            }
+        }
+
+    override var varargElementTypeField: IrType? = varargElementType
+
+    override var varargElementType: IrType?
+        get() = getCarrier().varargElementTypeField
+        set(v) {
+            if (varargElementType !== v) {
+                setCarrier().varargElementTypeField = v
             }
         }
 }

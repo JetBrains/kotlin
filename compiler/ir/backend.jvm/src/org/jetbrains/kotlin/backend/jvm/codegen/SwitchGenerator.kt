@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isTrueConst
 import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Type
 import java.util.*
 
 // TODO: eliminate the temporary variable
@@ -348,7 +349,28 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         override fun shouldOptimize() = cases.size > 1
 
         override fun genSwitch() {
-            subject.accept(codegen, data).materialize()
+            // Do not generate line numbers for the table switching. In particular,
+            // the subject is extracted from the condition of the first branch which
+            // will give the wrong stepping behavior for code such as:
+            //
+            // when {
+            //   x == 42 -> 1
+            //   x == 32 -> 2
+            //   x == 24 -> 3
+            //   ...
+            // }
+            //
+            // If the subject line number is generated, we will not stop on the line
+            // of the `when` but instead stop on the `x == 42` line. When x is 24,
+            // we would stop on the line `x == 42` and then step to the line `x == 24`.
+            // That is confusing and we prefer to stop on the `when` line and then step
+            // to the `x == 24` line. This is accomplished by ignoring the line number
+            // information for the subject as the `when` line number has already been
+            // emitted.
+            codegen.noLineNumberScope {
+                val subjectValue = subject.accept(codegen, data)
+                subjectValue.materializeAt(Type.INT_TYPE, subjectValue.irType)
+            }
             genIntSwitch(cases)
         }
     }
@@ -419,13 +441,33 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
         override fun genSwitch() {
             with(codegen) {
-                if (subject.type.isNullableString()) {
+                // Do not generate line numbers for the table switching. In particular,
+                // the subject is extracted from the condition of the first branch which
+                // will give the wrong stepping behavior for code such as:
+                //
+                // when {
+                //   x == "x" -> 1
+                //   x == "y" -> 2
+                //   x == "z" -> 3
+                //   ...
+                // }
+                //
+                // If the subject line number is generated, we will not stop on the line
+                // of the `when` but instead stop on the `x == "x"` line. When x is "z",
+                // we would stop on the line `x == "x"` and then step to the line `x == "z"`.
+                // That is confusing and we prefer to stop on the `when` line and then step
+                // to the `x == "z"` line. This is accomplished by ignoring the line number
+                // information for the subject as the `when` line number has already been
+                // emitted.
+                noLineNumberScope {
+                    if (subject.type.isNullableString()) {
+                        subject.accept(codegen, data).materialize()
+                        mv.ifnull(cases.find { it.value == null }?.label ?: defaultLabel)
+                    }
+                    // Reevaluating the subject is fine here because it is a read of a temporary.
                     subject.accept(codegen, data).materialize()
-                    mv.ifnull(cases.find { it.value == null }?.label ?: defaultLabel)
+                    mv.invokevirtual("java/lang/String", "hashCode", "()I", false)
                 }
-                // Reevaluating the subject is fine here because it is a read of a temporary.
-                subject.accept(codegen, data).materialize()
-                mv.invokevirtual("java/lang/String", "hashCode", "()I", false)
                 genIntSwitch(hashAndSwitchLabels)
 
                 // Multiple strings can be hashed into the same bucket.
@@ -433,7 +475,9 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
                 for ((hash, switchLabel) in hashAndSwitchLabels) {
                     mv.visitLabel(switchLabel)
                     for ((string, label) in hashToStringAndExprLabels[hash]!!) {
-                        subject.accept(codegen, data).materialize()
+                        noLineNumberScope {
+                            subject.accept(codegen, data).materialize()
+                        }
                         mv.aconst(string)
                         mv.invokevirtual("java/lang/String", "equals", "(Ljava/lang/Object;)Z", false)
                         mv.ifne(label)

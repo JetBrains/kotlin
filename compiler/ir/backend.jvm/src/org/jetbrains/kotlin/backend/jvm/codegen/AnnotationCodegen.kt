@@ -20,15 +20,16 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.TypeAnnotationCollector
 import org.jetbrains.kotlin.codegen.TypePathInfo
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget.JVM_1_6
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
@@ -39,7 +40,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.isNullabilityFlexible
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Type
@@ -81,7 +81,7 @@ abstract class AnnotationCodegen(
                 KotlinTarget.CLASS !in applicableTargets &&
                 KotlinTarget.ANNOTATION_CLASS !in applicableTargets
             ) {
-                if (annotated.visibility == Visibilities.LOCAL) {
+                if (annotated.visibility == DescriptorVisibilities.LOCAL) {
                     assert(KotlinTarget.EXPRESSION in applicableTargets) {
                         "Inconsistent target list for object literal annotation: $applicableTargets on $annotated"
                     }
@@ -158,7 +158,7 @@ abstract class AnnotationCodegen(
         }
 
         // A flexible type whose lower bound in not-null and upper bound is nullable, should not be annotated
-        if (type.toKotlinType().isNullabilityFlexible()) {
+        if (type.isNullabilityFlexible()) {
             return
         }
 
@@ -184,6 +184,9 @@ abstract class AnnotationCodegen(
         val annotationClass = annotation.annotationClass
         val retentionPolicy = getRetentionPolicy(annotationClass)
         if (retentionPolicy == RetentionPolicy.SOURCE) return null
+
+        // FlexibleNullability is an internal annotation, used only inside the compiler
+        if (annotationClass.fqNameWhenAvailable in internalAnnotations) return null
 
         // We do not generate annotations whose classes are optional (annotated with `@OptionalExpectation`) because if an annotation entry
         // is resolved to the expected declaration, this means that annotation has no actual class, and thus should not be generated.
@@ -293,9 +296,16 @@ abstract class AnnotationCodegen(
             KotlinRetention.RUNTIME to RetentionPolicy.RUNTIME
         )
 
+        internal val internalAnnotations = setOf(
+            JvmGeneratorExtensions.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME,
+            JvmGeneratorExtensions.ENHANCED_NULLABILITY_ANNOTATION_FQ_NAME,
+            JvmGeneratorExtensions.RAW_TYPE_ANNOTATION_FQ_NAME
+        )
+
         private fun getRetentionPolicy(irClass: IrClass): RetentionPolicy {
             val retention = irClass.getAnnotationRetention()
             if (retention != null) {
+                @Suppress("MapGetWithNotNullAssertionOperator")
                 return annotationRetentionMap[retention]!!
             }
             irClass.getAnnotation(FqName(java.lang.annotation.Retention::class.java.name))?.let { retentionAnnotation ->
@@ -370,11 +380,14 @@ private val RETENTION_PARAMETER_NAME = Name.identifier("value")
 
 private fun IrClass.getAnnotationRetention(): KotlinRetention? {
     val retentionArgument =
-        getAnnotation(KotlinBuiltIns.FQ_NAMES.retention)?.getValueArgument(RETENTION_PARAMETER_NAME)
-                as? IrGetEnumValue?: return null
+        getAnnotation(StandardNames.FqNames.retention)?.getValueArgument(RETENTION_PARAMETER_NAME)
+                as? IrGetEnumValue ?: return null
     val retentionArgumentValue = retentionArgument.symbol.owner
     return KotlinRetention.valueOf(retentionArgumentValue.name.asString())
 }
+
+private fun IrType.isNullabilityFlexible(): Boolean =
+    hasAnnotation(JvmGeneratorExtensions.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME)
 
 // To be generalized to IrMemberAccessExpression as soon as properties get symbols.
 private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
@@ -387,7 +400,7 @@ private fun IrConstructorCall.getValueArgument(name: Name): IrExpression? {
 private val TARGET_ALLOWED_TARGETS = Name.identifier("allowedTargets")
 
 private fun IrClass.applicableTargetSet(): Set<KotlinTarget>? {
-    val targetEntry = getAnnotation(KotlinBuiltIns.FQ_NAMES.target) ?: return null
+    val targetEntry = getAnnotation(StandardNames.FqNames.target) ?: return null
     return loadAnnotationTargets(targetEntry)
 }
 

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.contracts.description
 
-import org.jetbrains.kotlin.contracts.description.expressions.*
-
 class ConeContractRenderer(private val builder: StringBuilder) : ConeContractDescriptionVisitor<Unit, Nothing?>() {
     override fun visitConditionalEffectDeclaration(conditionalEffect: ConeConditionalEffectDeclaration, data: Nothing?) {
         conditionalEffect.effect.accept(this, data)
@@ -66,7 +64,7 @@ class ConeContractRenderer(private val builder: StringBuilder) : ConeContractDes
     }
 
     private fun ConeContractDescriptionElement.isAtom(): Boolean =
-        this is VariableReference || this is ConstantReference || this is ConeIsNullPredicate || this is ConeIsInstancePredicate
+        this is ConeValueParameterReference || this is ConeConstantReference || this is ConeIsNullPredicate || this is ConeIsInstancePredicate
 
     private fun needsBrackets(parent: ConeContractDescriptionElement, child: ConeContractDescriptionElement): Boolean {
         if (child.isAtom()) return false

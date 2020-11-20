@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.lower.SamEqualsHashCodeMethodsGenerator
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
@@ -40,14 +41,20 @@ internal val functionReferencePhase = makeIrFilePhase(
 )
 
 internal class FunctionReferenceLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
-    // This pass ignores suspend function references and function references used in inline arguments to inline functions.
+    // This pass ignores function references used as inline arguments. `InlineCallableReferenceToLambdaPhase`
+    // converts them into lambdas instead, so that after inlining there is only a direct call left, with no
+    // function reference classes needed.
     private val ignoredFunctionReferences = mutableSetOf<IrCallableReference<*>>()
 
     private val IrFunctionReference.isIgnored: Boolean
-        get() = (!type.isFunctionOrKFunction() || ignoredFunctionReferences.contains(this)) && !isSuspendFunctionReference()
+        get() = (!type.isFunctionOrKFunction() && !isSuspendFunctionReference()) || ignoredFunctionReferences.contains(this)
 
-    // TODO: Currently, origin of callable references is null. Do we need to create one?
-    private fun IrFunctionReference.isSuspendFunctionReference(): Boolean = isSuspend && origin == null
+    // `suspend` function references are the same as non-`suspend` ones, just with a `suspend` invoke;
+    // however, suspending lambdas require different generation implemented in AddContinuationLowering
+    // because they are also their own continuation classes.
+    // TODO: Currently, origin of callable references explicitly written in source code is null. Do we need to create one?
+    private fun IrFunctionReference.isSuspendFunctionReference(): Boolean = isSuspend &&
+            (origin == null || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.SUSPEND_CONVERSION)
 
     override fun lower(irFile: IrFile) {
         ignoredFunctionReferences.addAll(IrInlineReferenceLocator.scan(context, irFile))
@@ -167,7 +174,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         private val functionReferenceClass = context.irFactory.buildClass {
             setSourceRange(irFunctionReference)
-            visibility = Visibilities.LOCAL
+            visibility = DescriptorVisibilities.LOCAL
             // A callable reference results in a synthetic class, while a lambda is not synthetic.
             // We don't produce GENERATED_SAM_IMPLEMENTATION, which is always synthetic.
             origin = if (isLambda) JvmLoweredDeclarationOrigin.LAMBDA_IMPL else JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
@@ -220,7 +227,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     generateSamEqualsHashCodeMethods(boundReceiverVar)
                 }
                 if (isKotlinFunInterface) {
-                    functionReferenceClass.addFakeOverridesViaIncorrectHeuristic()
+                    functionReferenceClass.addFakeOverrides(context.irBuiltIns)
                 }
 
                 +functionReferenceClass
@@ -249,7 +256,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 return
             }
 
-            SamEqualsHashCodeMethodsGenerator(backendContext, functionReferenceClass, samSuperType) { receiver ->
+            SamEqualsHashCodeMethodsGenerator(backendContext, functionReferenceClass, samSuperType) {
                 val internalClass = when {
                     isAdaptedReference -> backendContext.ir.symbols.adaptedFunctionReference
                     else -> backendContext.ir.symbols.functionReferenceImpl
@@ -272,12 +279,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             }.apply {
                 // Add receiver parameter for bound function references
                 if (samSuperType == null) {
-                    boundReceiver?.first?.let { param ->
-                        valueParameters += param.copyTo(
-                            irFunction = this,
-                            index = 0,
-                            type = param.type.substitute(typeArgumentsMap)
-                        )
+                    boundReceiver?.let { (param, arg) ->
+                        valueParameters += param.copyTo(irFunction = this, index = 0, type = arg.type)
                     }
                 }
 
@@ -363,12 +366,13 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private fun createInvokeMethod(receiverVar: IrValueDeclaration?): IrSimpleFunction =
             functionReferenceClass.addFunction {
                 setSourceRange(if (isLambda) callee else irFunctionReference)
-                name = if (callee.returnType.erasedUpperBound.isInline && context.state.functionsWithInlineClassReturnTypesMangled) {
-                    // For functions with inline class return type we need to mangle the invoke method.
-                    // Otherwise, bridge lowering may fail to generate bridges for inline class types erasing to Any.
-                    val suffix = InlineClassAbi.returnHashSuffix(callee)
-                    Name.identifier("${superMethod.owner.name.asString()}-${suffix}")
-                } else superMethod.owner.name
+                name =
+                    if (samSuperType == null && callee.returnType.erasedUpperBound.isInline && context.state.functionsWithInlineClassReturnTypesMangled) {
+                        // For functions with inline class return type we need to mangle the invoke method.
+                        // Otherwise, bridge lowering may fail to generate bridges for inline class types erasing to Any.
+                        val suffix = InlineClassAbi.hashReturnSuffix(callee)
+                        Name.identifier("${superMethod.owner.name.asString()}-${suffix}")
+                    } else superMethod.owner.name
                 returnType = callee.returnType
                 isSuspend = callee.isSuspend
             }.apply {
@@ -395,11 +399,11 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 }
             }
 
-            body = context.createJvmIrBuilder(symbol).run {
+            body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
                 var unboundIndex = 0
                 irExprBody(irCall(callee).apply {
-                    for ((typeParameter, typeArgument) in typeArgumentsMap) {
-                        putTypeArgument(typeParameter.owner.index, typeArgument)
+                    for (typeParameter in irFunctionReference.symbol.owner.allTypeParameters) {
+                        putTypeArgument(typeParameter.index, typeArgumentsMap[typeParameter.symbol])
                     }
 
                     for (parameter in callee.explicitParameters) {
@@ -472,8 +476,12 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     0,
                     //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
                     IrFunctionReferenceImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target, 0, irFunctionReference.reflectionTarget, null
-                    )
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target,
+                        irFunctionReference.typeArgumentsCount, target.owner.valueParameters.size,
+                        irFunctionReference.reflectionTarget, null
+                    ).apply {
+                        copyTypeArgumentsFrom(irFunctionReference)
+                    }
                 )
             }
 

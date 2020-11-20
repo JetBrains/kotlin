@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.contracts
 
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirRawContractDescription : FirContractDescription() {
     abstract override val source: FirSourceElement?
-    abstract val contractCall: FirFunctionCall
+    abstract val rawEffects: List<FirExpression>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitRawContractDescription(this, data)
 }

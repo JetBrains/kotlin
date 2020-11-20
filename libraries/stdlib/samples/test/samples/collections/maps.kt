@@ -326,6 +326,14 @@ class Maps {
         }
 
         @Sample
+        fun mapNotNull() {
+            val map = mapOf("Alice" to 20, "Tom" to 13, "Bob" to 18)
+            val adults = map.mapNotNull { (name, age) -> name.takeIf { age >= 18 } }
+
+            assertPrints(adults, "[Alice, Bob]")
+        }
+
+        @Sample
         fun mapToSortedMap() {
             val map = mapOf(Pair("c", 3), Pair("b", 2), Pair("d", 1))
             val sorted = map.toSortedMap()

@@ -1,5 +1,3 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 description = "Kotlin Daemon Client New"
 
 plugins {
@@ -46,6 +44,12 @@ dependencies {
         ktorExcludesForDaemon.forEach { (group, module) ->
             exclude(group = group, module = module)
         }
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    kotlinOptions {
+        apiVersion = "1.3"
     }
 }
 

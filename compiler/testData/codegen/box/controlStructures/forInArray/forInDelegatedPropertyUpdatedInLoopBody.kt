@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: PROPERTY_REFERENCES
 class Del<T>(var x: T) {
     operator fun getValue(thisRef: Any?, kProp: Any) = x
 

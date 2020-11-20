@@ -15,6 +15,7 @@ dependencies {
     compile(project(":compiler:frontend.common"))
     compile(project(":kotlin-script-runtime"))
     compile(commonDep("io.javaslang","javaslang"))
+    api(project(":core:compiler.common.jvm"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("trove4j", "guava", rootProject = rootProject) }
 }

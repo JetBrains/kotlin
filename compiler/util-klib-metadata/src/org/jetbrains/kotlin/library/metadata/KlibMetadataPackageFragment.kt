@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.storage.StorageManager
+import java.lang.ref.SoftReference
 
 class KlibMetadataDeserializedPackageFragment(
     fqName: FqName,
@@ -30,8 +31,17 @@ class KlibMetadataDeserializedPackageFragment(
 
     // The proto field is lazy so that we can load only needed
     // packages from the library.
-    override val protoForNames: ProtoBuf.PackageFragment by lazy {
-        (packageAccessHandler ?: SimplePackageAccessHandler).loadPackageFragment(library, fqName.asString(), partName)
+    override val protoForNames: ProtoBuf.PackageFragment get() = ensureStorage()
+
+    private var protoForNamesStorage: SoftReference<ProtoBuf.PackageFragment> = SoftReference(null)
+
+    private fun ensureStorage(): ProtoBuf.PackageFragment {
+        var tmp = protoForNamesStorage.get()
+        if (tmp == null) {
+            tmp = (packageAccessHandler ?: SimplePackageAccessHandler).loadPackageFragment(library, fqName.asString(), partName)
+            protoForNamesStorage = SoftReference(tmp)
+        }
+        return tmp
     }
 
     override val proto: ProtoBuf.PackageFragment

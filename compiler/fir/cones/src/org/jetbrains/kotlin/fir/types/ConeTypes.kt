@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.name.ClassId
@@ -82,7 +83,7 @@ typealias ConeKotlinErrorType = ConeClassErrorType
 
 class ConeClassLikeErrorLookupTag(override val classId: ClassId) : ConeClassLikeLookupTag()
 
-class ConeClassErrorType(val reason: String) : ConeClassLikeType() {
+class ConeClassErrorType(val diagnostic: ConeDiagnostic) : ConeClassLikeType() {
     override val lookupTag: ConeClassLikeLookupTag
         get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
 
@@ -185,7 +186,8 @@ data class ConeCapturedType(
         other as ConeCapturedType
 
         if (lowerType != other.lowerType) return false
-        if (constructor != other.constructor) return false
+        if (constructor.projection != other.constructor.projection) return false
+        if (constructor.typeParameterMarker != other.constructor.typeParameterMarker) return false
         if (captureStatus != other.captureStatus) return false
         if (nullability != other.nullability) return false
 
@@ -195,7 +197,8 @@ data class ConeCapturedType(
     override fun hashCode(): Int {
         var result = 0
         result = 31 * result + (lowerType?.hashCode() ?: 0)
-        result = 31 * result + constructor.hashCode()
+        result = 31 * result + constructor.projection.hashCode()
+        result = 31 * result + constructor.typeParameterMarker.hashCode()
         result = 31 * result + captureStatus.hashCode()
         result = 31 * result + nullability.hashCode()
         return result
@@ -234,7 +237,7 @@ class ConeRawType(lowerBound: ConeKotlinType, upperBound: ConeKotlinType) : Cone
  */
 class ConeIntersectionType(
     val intersectedTypes: Collection<ConeKotlinType>
-) : ConeSimpleKotlinType(), TypeConstructorMarker {
+) : ConeSimpleKotlinType(), IntersectionTypeConstructorMarker {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = emptyArray()
 

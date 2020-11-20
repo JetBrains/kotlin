@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.visualizer.fir
 
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
@@ -25,8 +24,7 @@ import java.io.File
 
 abstract class AbstractFirVisualizer : AbstractVisualizer() {
     override fun doVisualizerTest(file: File, environment: KotlinCoreEnvironment) {
-        Extensions.getArea(environment.project)
-            .getExtensionPoint(PsiElementFinder.EP_NAME)
+        PsiElementFinder.EP.getPoint(environment.project)
             .unregisterExtension(JavaElementFinder::class.java)
 
         val ktFiles = environment.getSourceFiles()
@@ -35,7 +33,7 @@ abstract class AbstractFirVisualizer : AbstractVisualizer() {
         val session = createSession(environment, scope)
 
         val firProvider = (session.firProvider as FirProviderImpl)
-        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
+        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
 
         val transformer = FirTotalResolveProcessor(session)
         val firFiles = ktFiles.map {

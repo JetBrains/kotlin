@@ -18,6 +18,8 @@ package kotlin.sequences
  * Returns a sequence containing all elements that are instances of specified class.
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIsInstanceJVM
  */
 public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
     @Suppress("UNCHECKED_CAST")
@@ -28,6 +30,8 @@ public fun <R> Sequence<*>.filterIsInstance(klass: Class<R>): Sequence<R> {
  * Appends all elements that are instances of specified class to the given [destination].
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIsInstanceToJVM
  */
 public fun <C : MutableCollection<in R>, R> Sequence<*>.filterIsInstanceTo(destination: C, klass: Class<R>): C {
     @Suppress("UNCHECKED_CAST")

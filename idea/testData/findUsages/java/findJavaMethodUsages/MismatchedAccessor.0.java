@@ -9,3 +9,5 @@ public class Bar {
         return "value " + param;
     }
 }
+
+// FIR_COMPARISON

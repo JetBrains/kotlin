@@ -20,7 +20,7 @@ import com.google.common.collect.HashMultimap
 import com.google.common.collect.ImmutableListMultimap
 import com.google.common.collect.ListMultimap
 import gnu.trove.THashSet
-import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMap
+import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -90,7 +89,7 @@ class ImportResolutionComponents(
     val storageManager: StorageManager,
     val qualifiedExpressionResolver: QualifiedExpressionResolver,
     val moduleDescriptor: ModuleDescriptor,
-    val platformToKotlinClassMap: PlatformToKotlinClassMap,
+    val platformToKotlinClassMapper: PlatformToKotlinClassMapper,
     val languageVersionSettings: LanguageVersionSettings,
     val deprecationResolver: DeprecationResolver
 )
@@ -157,7 +156,7 @@ class LazyImportResolverForKtImportDirective(
         if (scope is LazyExplicitImportScope) {
             val allDescriptors = scope.storeReferencesToDescriptors()
             PlatformClassesMappedToKotlinChecker.checkPlatformClassesMappedToKotlin(
-                components.platformToKotlinClassMap, traceForImportResolve, directive, allDescriptors
+                components.platformToKotlinClassMapper, traceForImportResolve, directive, allDescriptors
             )
         }
 
@@ -235,12 +234,13 @@ class LazyImportScope(
     private fun LazyImportResolver<*>.isClassifierVisible(descriptor: ClassifierDescriptor): Boolean {
         if (filteringKind == FilteringKind.ALL) return true
 
-        if (components.deprecationResolver.isHiddenInResolution(descriptor)) return false
+        // TODO: do not perform this check here because for correct work it requires corresponding PSI element
+        if (components.deprecationResolver.isHiddenInResolution(descriptor, fromImportingScope = true)) return false
 
         val visibility = (descriptor as DeclarationDescriptorWithVisibility).visibility
         val includeVisible = filteringKind == FilteringKind.VISIBLE_CLASSES
         if (!visibility.mustCheckInImports()) return includeVisible
-        return Visibilities.isVisibleIgnoringReceiver(descriptor, components.moduleDescriptor) == includeVisible
+        return DescriptorVisibilities.isVisibleIgnoringReceiver(descriptor, components.moduleDescriptor) == includeVisible
     }
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {

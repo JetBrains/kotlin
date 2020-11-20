@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 class TestClassName
 type TestAlias = TestClassName
 

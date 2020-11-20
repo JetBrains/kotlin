@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.annotations.JVM_FIELD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 fun KtModifierListOwner.addAnnotation(

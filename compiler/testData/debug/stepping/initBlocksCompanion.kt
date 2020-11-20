@@ -30,8 +30,6 @@ fun box() {
     A.s
 }
 
-// JVM backend has extra steps for getX and getS.
-
 // LINENUMBERS
 // test.kt:29 box
 // test.kt:7 <clinit>
@@ -46,14 +44,10 @@ fun box() {
 // test.kt:21 <clinit>
 // test.kt:22 <clinit>
 // test.kt:11 getX
-// LINENUMBERS JVM
 // test.kt:11 getX
-// LINENUMBERS
 // test.kt:29 box
 // test.kt:30 box
 // test.kt:5 getS
-// LINENUMBERS JVM
 // test.kt:5 getS
-// LINENUMBERS
 // test.kt:30 box
 // test.kt:31 box

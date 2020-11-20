@@ -1047,6 +1047,43 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
         }
     }
 
+    public void parseContractDescriptionBlock() {
+        assert _at(CONTRACT_KEYWORD);
+
+        advance(); // CONTRACT_KEYWORD
+
+        parseContractEffectList();
+    }
+
+    private void parseContractEffectList() {
+        PsiBuilder.Marker block = mark();
+
+        expect(LBRACKET, "Expecting '['");
+        myBuilder.enableNewlines();
+
+        parseContractEffects();
+
+        expect(RBRACKET, "Expecting ']'");
+        myBuilder.restoreNewlinesState();
+
+        block.done(CONTRACT_EFFECT_LIST);
+    }
+
+    private void parseContractEffects() {
+        while (true) {
+            if (at(COMMA)) errorAndAdvance("Expecting a contract effect");
+            if (at(RBRACKET)) {
+                break;
+            }
+            PsiBuilder.Marker effect = mark();
+            parseExpression();
+            effect.done(CONTRACT_EFFECT);
+
+            if (!at(COMMA)) break;
+            advance(); // COMMA
+        }
+    }
+
     /*
      * SimpleName
      */

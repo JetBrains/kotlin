@@ -88,7 +88,7 @@ class IndexedParametersSubstitution(
 ) : TypeSubstitution() {
     init {
         assert(parameters.size <= arguments.size) {
-            "Number of arguments should not be less then number of parameters, but: parameters=${parameters.size}, args=${arguments.size}"
+            "Number of arguments should not be less than number of parameters, but: parameters=${parameters.size}, args=${arguments.size}"
         }
     }
 

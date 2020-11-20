@@ -1,0 +1,20 @@
+@kotlin.Metadata
+public abstract class<Ljava/lang/Object;Ljava/util/Iterator<Ljava/lang/Double;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  DoubleIterator {
+    // source: 'iterator.kt'
+    public <null> method <init>(): void
+    public <null> method remove(): void
+}
+
+@kotlin.Metadata
+public abstract class<<T:Ljava/lang/Object;>Ljava/lang/Object;Ljava/util/Iterator<TT;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  GenericIterator {
+    // source: 'iterator.kt'
+    public <null> method <init>(): void
+    public <null> method remove(): void
+}
+
+@kotlin.Metadata
+public abstract class<Ljava/lang/Object;Ljava/util/Iterator<Ljava/lang/String;>;Lkotlin/jvm/internal/markers/KMappedMarker;>  StringIterator {
+    // source: 'iterator.kt'
+    public <null> method <init>(): void
+    public <null> method remove(): void
+}

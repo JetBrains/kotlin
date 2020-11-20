@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/expectClassInherited.kt
     CONSTRUCTOR visibility:protected <> () returnType:<root>.A [primary,expect]
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.A) returnType:kotlin.Unit [expect]
       $this: VALUE_PARAMETER name:<this> type:<root>.A
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [expect,fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [expect,fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/expectClassInherited.kt
     FUN name:bar visibility:public modality:OPEN <> ($this:<root>.B, s:kotlin.String) returnType:kotlin.Unit [expect]
       $this: VALUE_PARAMETER name:<this> type:<root>.B
       VALUE_PARAMETER name:s index:0 type:kotlin.String
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [expect,fake_override]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [expect,fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any

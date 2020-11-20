@@ -37,6 +37,7 @@ fun Task.dependsOnKotlinPluginInstall() {
         ":kotlin-noarg:install",
         ":kotlin-sam-with-receiver:install",
         ":kotlin-android-extensions:install",
+        ":kotlin-parcelize-compiler:install",
         ":kotlin-build-common:install",
         ":kotlin-compiler-embeddable:install",
         ":native:kotlin-native-utils:install",
@@ -54,6 +55,7 @@ fun Task.dependsOnKotlinPluginInstall() {
         ":kotlin-test:kotlin-test-annotations-common:install",
         ":kotlin-test:kotlin-test-jvm:install",
         ":kotlin-test:kotlin-test-js:install",
+        ":kotlin-test:kotlin-test-junit:install",
         ":kotlin-gradle-subplugin-example:install",
         ":kotlin-stdlib-common:install",
         ":kotlin-stdlib:install",
@@ -65,7 +67,8 @@ fun Task.dependsOnKotlinPluginInstall() {
         ":kotlin-scripting-jvm:install",
         ":kotlin-scripting-compiler-embeddable:install",
         ":kotlin-scripting-compiler-impl-embeddable:install",
-        ":kotlin-test-js-runner:install"
+        ":kotlin-test-js-runner:install",
+        ":native:kotlin-klib-commonizer-embeddable:install"
     )
 }
 
@@ -151,7 +154,7 @@ fun Project.projectTest(
 
     var subProjectTempRoot: Path? = null
     doFirst {
-        val teamcity = rootProject.findProperty("teamcity") as? Map<Any?, *>
+        val teamcity = rootProject.findProperty("teamcity") as? Map<*, *>
         val systemTempRoot =
             // TC by default doesn't switch `teamcity.build.tempDir` to 'java.io.tmpdir' so it could cause to wasted disk space
             // Should be fixed soon on Teamcity side
@@ -177,7 +180,7 @@ fun Project.projectTest(
     if (parallel) {
         maxParallelForks =
             project.findProperty("kotlin.test.maxParallelForks")?.toString()?.toInt()
-                ?: Math.max(Runtime.getRuntime().availableProcessors() / if (kotlinBuildProperties.isTeamcityBuild) 2 else 4, 1)
+                ?: (Runtime.getRuntime().availableProcessors() / if (kotlinBuildProperties.isTeamcityBuild) 2 else 4).coerceAtLeast(1)
     }
     body()
 }

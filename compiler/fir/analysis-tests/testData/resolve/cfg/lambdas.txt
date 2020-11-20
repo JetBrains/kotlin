@@ -1,12 +1,12 @@
 FILE: lambdas.kt
     public final inline fun run(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
-        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun test_1(x: R|kotlin/Any?|): R|kotlin/Unit| {
         when () {
             (R|<local>/x| is R|kotlin/Int|) ->  {
                 R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-                    ^ R|<local>/x|.R|kotlin/Int.inc|()
+                    R|<local>/x|.R|kotlin/Int.inc|()
                 }
                 )
             }
@@ -25,7 +25,7 @@ FILE: lambdas.kt
 
     }
     public final inline fun getInt(block: R|() -> kotlin/Unit|): R|kotlin/Int| {
-        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         ^getInt Int(1)
     }
     public final fun test_3(): R|kotlin/Int| {

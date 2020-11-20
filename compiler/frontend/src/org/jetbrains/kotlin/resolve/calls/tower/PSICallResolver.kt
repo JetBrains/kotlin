@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.isUnderscoreNamed
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
@@ -261,7 +262,7 @@ class PSICallResolver(
             return transformManyCandidatesAndRecordTrace(it, tracingStrategy, trace, context)
         }
 
-        if (getResultApplicability(diagnostics) == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) {
+        if (getResultApplicability(diagnostics) == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) {
             val singleCandidate = result.resultCallAtom() ?: error("Should be not null for result: $result")
             val resolvedCall = kotlinToResolvedCallTransformer.onlyTransform<D>(singleCandidate, diagnostics).also {
                 tracingStrategy.unresolvedReferenceWrongReceiver(trace, listOf(it))
@@ -281,7 +282,7 @@ class PSICallResolver(
     ): ManyCandidates<D> {
         val resolvedCalls = diagnostic.candidates.map {
             kotlinToResolvedCallTransformer.onlyTransform<D>(
-                it.resolvedCall, it.diagnosticsFromResolutionParts + it.getSystem().diagnostics
+                it.resolvedCall, it.diagnosticsFromResolutionParts + it.getSystem().errors.asDiagnostics()
             )
         }
 
@@ -333,7 +334,7 @@ class PSICallResolver(
 
     private fun Collection<KotlinResolutionCandidate>.areAllFailedWithInapplicableWrongReceiver() =
         all {
-            it.resultingApplicability == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
+            it.resultingApplicability == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
         }
 
     private fun CallResolutionResult.areAllInapplicable(): Boolean {
@@ -343,9 +344,9 @@ class PSICallResolver(
         }
 
         val applicability = getResultApplicability(diagnostics)
-        return applicability == ResolutionCandidateApplicability.INAPPLICABLE ||
-                applicability == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER ||
-                applicability == ResolutionCandidateApplicability.HIDDEN
+        return applicability == CandidateApplicability.INAPPLICABLE ||
+                applicability == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER ||
+                applicability == CandidateApplicability.HIDDEN
     }
 
     // true if we found something
@@ -721,12 +722,15 @@ class PSICallResolver(
     ): PSIKotlinCallArgument {
         val builtIns = outerCallContext.scope.ownerDescriptor.builtIns
 
-        fun createParseErrorElement() = ParseErrorKotlinCallArgument(valueArgument, startDataFlowInfo, builtIns)
+        fun createParseErrorElement() = ParseErrorKotlinCallArgument(valueArgument, startDataFlowInfo)
 
         val argumentExpression = valueArgument.getArgumentExpression() ?: return createParseErrorElement()
         val ktExpression = KtPsiUtil.deparenthesize(argumentExpression) ?: createParseErrorElement()
 
         val argumentName = valueArgument.getArgumentName()?.asName
+
+        @Suppress("NAME_SHADOWING")
+        val outerCallContext = outerCallContext.expandContextForCatchClause(ktExpression)
 
         processFunctionalExpression(
             outerCallContext, argumentExpression, startDataFlowInfo,
@@ -743,7 +747,7 @@ class PSICallResolver(
 
         val context = outerCallContext.replaceContextDependency(ContextDependency.DEPENDENT)
             .replaceDataFlowInfo(startDataFlowInfo)
-            .expandContextForCatchClause(ktExpression).let {
+            .let {
                 if (isSpecialFunction &&
                     argumentExpression is KtBlockExpression &&
                     ArgumentTypeResolver.getCallableReferenceExpressionIfAny(argumentExpression, it) != null
@@ -834,7 +838,11 @@ class PSICallResolver(
         val catchScope = with(scope) {
             LexicalWritableScope(this, ownerDescriptor, false, redeclarationChecker, LexicalScopeKind.CATCH)
         }
-        catchScope.addVariableDescriptor(variableDescriptor)
+        val isReferencingToUnderscoreNamedParameterForbidden =
+            languageVersionSettings.getFeatureSupport(LanguageFeature.ForbidReferencingToUnderscoreNamedParameterOfCatchBlock) == LanguageFeature.State.ENABLED
+        if (!variableDescriptor.isUnderscoreNamed || !isReferencingToUnderscoreNamedParameterForbidden) {
+            catchScope.addVariableDescriptor(variableDescriptor)
+        }
         return replaceScope(catchScope)
     }
 }

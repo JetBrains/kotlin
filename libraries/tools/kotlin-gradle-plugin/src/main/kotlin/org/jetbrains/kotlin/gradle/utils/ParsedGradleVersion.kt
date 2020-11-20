@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.invocation.Gradle
 import org.gradle.util.GradleVersion
 
 internal data class ParsedGradleVersion(val major: Int, val minor: Int) : Comparable<ParsedGradleVersion> {

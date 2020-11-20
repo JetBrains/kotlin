@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.util.application
@@ -20,7 +9,9 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.components.ComponentManager
 import com.intellij.openapi.progress.impl.CancellationCheck
+import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.Condition
 
 fun <T> runReadAction(action: () -> T): T {
     return ApplicationManager.getApplication().runReadAction<T>(action)
@@ -29,6 +20,15 @@ fun <T> runReadAction(action: () -> T): T {
 fun <T> runWriteAction(action: () -> T): T {
     return ApplicationManager.getApplication().runWriteAction<T>(action)
 }
+
+fun <T> runWriteActionInEdt(action: () -> T): T {
+    var result: T? = null
+    ApplicationManager.getApplication().invokeLater {
+        result = ApplicationManager.getApplication().runWriteAction<T>(action)
+    }
+    return result!!
+}
+
 
 fun Project.executeWriteCommand(name: String, command: () -> Unit) {
     CommandProcessor.getInstance().executeCommand(this, { runWriteAction(command) }, name, null)
@@ -53,7 +53,15 @@ inline fun executeOnPooledThread(crossinline action: () -> Unit) =
 inline fun invokeLater(crossinline action: () -> Unit) =
     ApplicationManager.getApplication().invokeLater { action() }
 
+inline fun invokeLater(expired: Condition<*>, crossinline action: () -> Unit) =
+    ApplicationManager.getApplication().invokeLater({ action() }, expired)
+
 inline fun isUnitTestMode(): Boolean = ApplicationManager.getApplication().isUnitTestMode
 
 inline fun <reified T : Any> ComponentManager.getServiceSafe(): T =
     this.getService(T::class.java) ?: error("Unable to locate service ${T::class.java.name}")
+
+fun <T> Project.runReadActionInSmartMode(action: () -> T): T {
+    if (ApplicationManager.getApplication().isReadAccessAllowed) return action()
+    return DumbService.getInstance(this).runReadActionInSmartMode<T>(action)
+}

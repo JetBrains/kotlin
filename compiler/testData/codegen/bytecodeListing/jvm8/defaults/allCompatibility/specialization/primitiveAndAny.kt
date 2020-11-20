@@ -1,7 +1,6 @@
 // !JVM_DEFAULT_MODE: all-compatibility
 // JVM_TARGET: 1.8
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 
 interface Base {
     fun test(): Int? = 0

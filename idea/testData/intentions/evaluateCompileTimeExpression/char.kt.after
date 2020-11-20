@@ -1,0 +1,2 @@
+// INTENTION_TEXT: "Replace with ''b''"
+val x = 'b'

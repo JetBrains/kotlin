@@ -1,5 +1,6 @@
-public class HelloWorld {
-    public static final void main(java.lang.String[] p) { /* compiled code */ }
+public class HelloWorld /* HelloWorld*/ extends kotlin.script.templates.standard.ScriptTemplateWithArgs {
+  public  HelloWorld();//  .ctor()
 
-    public HelloWorld() { /* compiled code */ }
+  public static final void main(java.lang.String[]);//  main(java.lang.String[])
+
 }

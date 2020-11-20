@@ -29,6 +29,6 @@ fun chained2(arg: First) = run {
 }
 
 fun test(arg: First) {
-    chained1(arg).first()
-    chained2(arg).first()
+    chained1(arg).<!UNRESOLVED_REFERENCE!>first<!>()
+    chained2(arg).<!UNRESOLVED_REFERENCE!>first<!>()
 }

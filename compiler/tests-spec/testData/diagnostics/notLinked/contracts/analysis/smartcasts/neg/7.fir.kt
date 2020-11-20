@@ -210,7 +210,7 @@ import contracts.*
 // TESTCASE NUMBER: 1
 fun case_1(value_1: Int?) {
     case_1_1(value_1)
-    value_1.inv()
+    value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
     case_1_2(value_1)
     value_1.inv()
     case_1_1(value_1)
@@ -222,7 +222,7 @@ fun case_2(value_1: Number?) {
     case_2_1(value_1)
     value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
     case_2_2(value_1)
-    value_1.inv()
+    value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
 }
 
 // TESTCASE NUMBER: 3
@@ -240,13 +240,13 @@ fun case_4(value_1: Any?) {
     <!INAPPLICABLE_CANDIDATE!>case_4_2<!>(value_1)
     value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
     <!INAPPLICABLE_CANDIDATE!>case_4_3<!>(value_1)
-    value_1.inv()
+    value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
 }
 
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Int?) {
     if (case_5_1(value_1)) {
-        value_1.inv()
+        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
         if (case_5_2(value_1)) {
             value_1.inv()
             case_5_1(value_1)
@@ -254,7 +254,7 @@ fun case_5(value_1: Int?) {
         }
     }
     if (!case_5_3(value_1)) {
-        value_1.inv()
+        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
         if (!case_5_4(value_1)) {
             value_1.inv()
             case_5_1(value_1)
@@ -262,7 +262,7 @@ fun case_5(value_1: Int?) {
         }
     }
     if (case_5_5(value_1) != null) {
-        value_1.inv()
+        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
         if (case_5_6(value_1) != null) {
             value_1.inv()
             case_5_1(value_1)
@@ -270,7 +270,7 @@ fun case_5(value_1: Int?) {
         }
     }
     if (case_5_7(value_1) == null) {
-        value_1.inv()
+        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
         if (case_5_8(value_1) == null) {
             value_1.inv()
             case_5_1(value_1)
@@ -284,25 +284,25 @@ fun case_6(value_1: Number?) {
     when {
         case_6_1(value_1) -> {
             value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
-            when { case_6_2(value_1) -> value_1.inv() }
+            when { case_6_2(value_1) -> value_1.<!UNRESOLVED_REFERENCE!>inv<!>() }
         }
     }
     when {
         !case_6_3(value_1) -> {
             value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
-            when { !case_6_4(value_1) -> value_1.inv() }
+            when { !case_6_4(value_1) -> value_1.<!UNRESOLVED_REFERENCE!>inv<!>() }
         }
     }
     when {
         case_6_5(value_1) != null -> {
             value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
-            when { case_6_6(value_1) != null -> value_1.inv() }
+            when { case_6_6(value_1) != null -> value_1.<!UNRESOLVED_REFERENCE!>inv<!>() }
         }
     }
     when {
         case_6_7(value_1) == null -> {
             value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
-            when { case_6_8(value_1) == null -> value_1.inv() }
+            when { case_6_8(value_1) == null -> value_1.<!UNRESOLVED_REFERENCE!>inv<!>() }
         }
     }
 }
@@ -319,7 +319,7 @@ fun case_7(value_1: Any?) {
     }
     if (case_7_5(value_1) != null) {
         value_1.<!UNRESOLVED_REFERENCE!>length<!>
-        if (case_7_6(value_1) != null) value_1.<!UNRESOLVED_REFERENCE!>length<!>
+        if (case_7_6(value_1) != null) value_1.length
     }
     if (case_7_7(value_1) == null) {
         value_1.<!UNRESOLVED_REFERENCE!>length<!>
@@ -333,28 +333,28 @@ fun case_8(value_1: Any?) {
         value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
         if (<!INAPPLICABLE_CANDIDATE!>case_8_2<!>(value_1)) {
             value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (<!INAPPLICABLE_CANDIDATE!>case_8_3<!>(value_1)) value_1.inv()
+            if (<!INAPPLICABLE_CANDIDATE!>case_8_3<!>(value_1)) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
         }
     }
     if (!case_8_4(value_1)) {
         value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
         if (!<!INAPPLICABLE_CANDIDATE!>case_8_5<!>(value_1)) {
             value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (!<!INAPPLICABLE_CANDIDATE!>case_8_6<!>(value_1)) value_1.inv()
+            if (!<!INAPPLICABLE_CANDIDATE!>case_8_6<!>(value_1)) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
         }
     }
     if (case_8_7(value_1) == null) {
-        value_1?.toByte()
-        if (case_8_8(value_1) != null) {
-            value_1.<!INAPPLICABLE_CANDIDATE!>toByte<!>()
-            if (<!INAPPLICABLE_CANDIDATE!>case_8_9<!>(value_1) != null) value_1.inv()
+        value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
+        if (<!INAPPLICABLE_CANDIDATE!>case_8_8<!>(value_1) != null) {
+            value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
+            if (<!INAPPLICABLE_CANDIDATE!>case_8_9<!>(value_1) != null) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
         }
     }
     if (case_8_10(value_1) != null) {
         value_1?.<!UNRESOLVED_REFERENCE!>toByte<!>()
         if (<!INAPPLICABLE_CANDIDATE!>case_8_11<!>(value_1) == null) {
             value_1.<!UNRESOLVED_REFERENCE!>toByte<!>()
-            if (<!INAPPLICABLE_CANDIDATE!>case_8_12<!>(value_1) == null) value_1.inv()
+            if (<!INAPPLICABLE_CANDIDATE!>case_8_12<!>(value_1) == null) value_1.<!UNRESOLVED_REFERENCE!>inv<!>()
         }
     }
 }

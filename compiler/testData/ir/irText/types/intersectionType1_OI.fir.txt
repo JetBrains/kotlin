@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/intersectionType1_OI.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo <T> (a: kotlin.Array<<root>.In<T of <root>.foo>>, b: kotlin.Array<<root>.In<kotlin.String>>): kotlin.Boolean declared in <root>'
         CALL 'public final fun ofType <K> (y: kotlin.Any?): kotlin.Boolean [inline] declared in <root>' type=kotlin.Boolean origin=null
-          <K>: T of <root>.foo
+          <K>: kotlin.Any?
           $receiver: CALL 'public final fun get (index: kotlin.Int): T of kotlin.Array [operator] declared in kotlin.Array' type=<root>.In<T of <root>.foo> origin=null
             $this: CALL 'public final fun select <S> (x: S of <root>.select, y: S of <root>.select): S of <root>.select declared in <root>' type=kotlin.Array<out <root>.In<T of <root>.foo>> origin=null
               <S>: kotlin.Array<out <root>.In<T of <root>.foo>>
@@ -63,7 +63,8 @@ FILE fqName:<root> fileName:/intersectionType1_OI.kt
           elements: VARARG type=kotlin.Array<out <root>.In<kotlin.String>> varargElementType=<root>.In<kotlin.String>
             CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<kotlin.String> origin=null
               <class: I>: kotlin.String
-      CALL 'public final fun foo <T> (a: kotlin.Array<<root>.In<T of <root>.foo>>, b: kotlin.Array<<root>.In<kotlin.String>>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
-        <T>: kotlin.Int
-        a: GET_VAR 'val a1: kotlin.Array<<root>.In<kotlin.Int>> [val] declared in <root>.test' type=kotlin.Array<<root>.In<kotlin.Int>> origin=null
-        b: GET_VAR 'val a2: kotlin.Array<<root>.In<kotlin.String>> [val] declared in <root>.test' type=kotlin.Array<<root>.In<kotlin.String>> origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CALL 'public final fun foo <T> (a: kotlin.Array<<root>.In<T of <root>.foo>>, b: kotlin.Array<<root>.In<kotlin.String>>): kotlin.Boolean declared in <root>' type=kotlin.Boolean origin=null
+          <T>: kotlin.Int
+          a: GET_VAR 'val a1: kotlin.Array<<root>.In<kotlin.Int>> [val] declared in <root>.test' type=kotlin.Array<<root>.In<kotlin.Int>> origin=null
+          b: GET_VAR 'val a2: kotlin.Array<<root>.In<kotlin.String>> [val] declared in <root>.test' type=kotlin.Array<<root>.In<kotlin.String>> origin=null

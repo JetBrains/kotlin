@@ -31,11 +31,14 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 
 interface ReferenceSymbolTable {
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol
+
+    fun referenceScript(descriptor: ScriptDescriptor): IrScriptSymbol
 
     fun referenceConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol
 
@@ -83,7 +86,7 @@ class SymbolTable(
     @Suppress("LeakingThis")
     val lazyWrapper = IrLazySymbolTable(this)
 
-    private abstract inner class SymbolTableBase<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> {
+    private abstract class SymbolTableBase<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> {
         val unboundSymbols = linkedSetOf<S>()
 
         abstract fun get(d: D): S?
@@ -206,7 +209,9 @@ class SymbolTable(
                 }
             } else {
                 if (d.isBound()) {
-                    ((d.owner as? IrSymbolDeclaration<*>)?.symbol ?: descriptorToSymbol[d]) as S?
+                    val result = (d.owner as? IrSymbolDeclaration<*>)?.symbol ?: descriptorToSymbol[d]
+                    @Suppress("UNCHECKED_CAST")
+                    result as S?
                 } else {
                     descriptorToSymbol[d]
                 }
@@ -214,9 +219,9 @@ class SymbolTable(
         }
 
         override fun set(d: D, s: S) {
-            if (s.isPublicApi) {
-                idSigToSymbol[s.signature] = s
-            } else {
+            s.signature?.let {
+                idSigToSymbol[it] = s
+            } ?: run {
                 descriptorToSymbol[d] = s
             }
         }
@@ -262,10 +267,10 @@ class SymbolTable(
             fun getLocal(d: D) = descriptorToSymbol[d]
 
             operator fun set(d: D, s: S) {
-                if (s.isPublicApi) {
+                s.signature?.let {
                     require(d is TypeParameterDescriptor)
-                    idSigToSymbol[s.signature] = s
-                } else {
+                    idSigToSymbol[it] = s
+                } ?: run {
                     descriptorToSymbol[d] = s
                 }
             }
@@ -395,7 +400,19 @@ class SymbolTable(
         )
     }
 
-    fun referenceScript(descriptor: ScriptDescriptor): IrScriptSymbol {
+    fun declareScript(
+        sig: IdSignature,
+        symbolFactory: () -> IrScriptSymbol,
+        classFactory: (IrScriptSymbol) -> IrScript
+    ): IrScript {
+        return scriptSymbolTable.declare(
+            sig,
+            symbolFactory,
+            classFactory
+        )
+    }
+
+    override fun referenceScript(descriptor: ScriptDescriptor): IrScriptSymbol {
         return scriptSymbolTable.referenced(descriptor) { IrScriptSymbolImpl(descriptor) }
     }
 
@@ -575,19 +592,19 @@ class SymbolTable(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun declareField(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
-        type: IrType,
-        visibility: Visibility? = null,
-        fieldFactory: (IrFieldSymbol) -> IrField = {
+            startOffset: Int,
+            endOffset: Int,
+            origin: IrDeclarationOrigin,
+            descriptor: PropertyDescriptor,
+            type: IrType,
+            visibility: DescriptorVisibility? = null,
+            fieldFactory: (IrFieldSymbol) -> IrField = {
             irFactory.createField(
                 startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type,
                 visibility ?: it.descriptor.visibility, !it.descriptor.isVar, it.descriptor.isEffectivelyExternal(),
                 it.descriptor.dispatchReceiverParameter == null
             ).apply {
-                metadata = MetadataSource.Property(it.descriptor)
+                metadata = DescriptorMetadataSource.Property(it.descriptor)
             }
         }
     ): IrField =
@@ -650,17 +667,17 @@ class SymbolTable(
         isDelegated: Boolean = descriptor.isDelegated,
         propertyFactory: (IrPropertySymbol) -> IrProperty = { symbol ->
             irFactory.createProperty(
-                startOffset, endOffset, origin, symbol, isDelegated = isDelegated,
-                name = nameProvider.nameForDeclaration(descriptor),
+                startOffset, endOffset, origin, symbol, name = nameProvider.nameForDeclaration(descriptor),
                 visibility = descriptor.visibility,
                 modality = descriptor.modality,
                 isVar = descriptor.isVar,
                 isConst = descriptor.isConst,
                 isLateinit = descriptor.isLateInit,
+                isDelegated = isDelegated,
                 isExternal = descriptor.isEffectivelyExternal(),
                 isExpect = descriptor.isExpect
             ).apply {
-                metadata = MetadataSource.Property(symbol.descriptor)
+                metadata = DescriptorMetadataSource.Property(symbol.descriptor)
             }
         }
     ): IrProperty =
@@ -891,10 +908,11 @@ class SymbolTable(
         descriptor: ParameterDescriptor,
         type: IrType,
         varargElementType: IrType? = null,
+        name: Name? = null,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
             irFactory.createValueParameter(
-                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor),
-                descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline
+                startOffset, endOffset, origin, it, name ?: nameProvider.nameForDeclaration(descriptor),
+                descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline, false
             )
         }
     ): IrValueParameter =
@@ -964,17 +982,19 @@ class SymbolTable(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: VariableDescriptorWithAccessors,
-        type: IrType
+        type: IrType,
+        factory: (IrLocalDelegatedPropertySymbol) -> IrLocalDelegatedProperty = {
+            irFactory.createLocalDelegatedProperty(
+                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type, descriptor.isVar
+            )
+        }
     ): IrLocalDelegatedProperty =
         localDelegatedPropertySymbolTable.declareLocal(
             descriptor,
             { IrLocalDelegatedPropertySymbolImpl(descriptor) },
-        ) {
-            irFactory.createLocalDelegatedProperty(
-                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor), type, descriptor.isVar
-            ).apply {
-                metadata = MetadataSource.LocalDelegatedProperty(descriptor)
-            }
+            factory
+        ).apply {
+            metadata = DescriptorMetadataSource.LocalDelegatedProperty(descriptor)
         }
 
     fun referenceLocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors) =
@@ -1108,8 +1128,8 @@ fun SymbolTable.noUnboundLeft(message: String) {
     val unbound = this.allUnbound
     assert(unbound.isEmpty()) {
         "$message\n" +
-                unbound.map {
-                    "$it ${if (it.isPublicApi) it.signature.toString() else "NON-PUBLIC API $it"}"
-                }.joinToString("\n")
+                unbound.joinToString("\n") {
+                    "$it ${it.signature?.toString() ?: "NON-PUBLIC API $it"}"
+                }
     }
 }

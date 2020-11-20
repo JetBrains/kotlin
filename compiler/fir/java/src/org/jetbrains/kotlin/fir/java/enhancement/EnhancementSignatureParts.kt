@@ -17,7 +17,8 @@ import org.jetbrains.kotlin.fir.java.toFirJavaTypeRef
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
-import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
+import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType
+import org.jetbrains.kotlin.load.java.JavaDefaultQualifiers
 import org.jetbrains.kotlin.load.java.MUTABLE_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.READ_ONLY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import org.jetbrains.kotlin.load.java.typeEnhancement.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class EnhancementSignatureParts(
@@ -37,19 +38,22 @@ internal class EnhancementSignatureParts(
     private val fromOverridden: Collection<FirTypeRef>,
     private val isCovariant: Boolean,
     private val context: FirJavaEnhancementContext,
-    private val containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType
+    private val containerApplicabilityType: AnnotationQualifierApplicabilityType
 ) {
     private val isForVarargParameter get() = typeContainer.safeAs<FirValueParameter>()?.isVararg == true
+
+    private val attributesCache = mutableMapOf<FirTypeRef?, ConeAttributes>().withDefault { ConeAttributes.Empty }
 
     private fun ConeKotlinType.toFqNameUnsafe(): FqNameUnsafe? =
         ((this as? ConeLookupTagBasedType)?.lookupTag as? ConeClassLikeLookupTag)?.classId?.asSingleFqName()?.toUnsafe()
 
     internal fun enhance(
         session: FirSession,
-        jsr305State: Jsr305State,
-        predefined: TypeEnhancementInfo? = null
+        javaTypeEnhancementState: JavaTypeEnhancementState,
+        predefined: TypeEnhancementInfo? = null,
+        forAnnotationValueParameter: Boolean = false
     ): PartEnhancementResult {
-        val qualifiers = computeIndexedQualifiersForOverride(session, jsr305State)
+        val qualifiers = computeIndexedQualifiersForOverride(session, javaTypeEnhancementState)
 
         val qualifiersWithPredefined = predefined?.let {
             IndexedJavaTypeQualifiers(qualifiers.size) { index ->
@@ -57,7 +61,12 @@ internal class EnhancementSignatureParts(
             }
         }
 
-        val typeWithoutEnhancement = current.type.toConeKotlinTypeWithoutEnhancement(session, javaTypeParameterStack)
+        val typeWithoutEnhancement = current.type.toConeKotlinTypeWithoutEnhancement(
+            session,
+            javaTypeParameterStack,
+            forAnnotationValueParameter,
+            attributes = attributesCache.getValue(current)
+        )
         val containsFunctionN = typeWithoutEnhancement.contains {
             if (it is ConeClassErrorType) false
             else {
@@ -86,19 +95,19 @@ internal class EnhancementSignatureParts(
 
     private fun FirTypeRef.toIndexed(
         typeQualifierResolver: FirAnnotationTypeQualifierResolver,
-        jsr305State: Jsr305State,
+        javaTypeEnhancementState: JavaTypeEnhancementState,
         context: FirJavaEnhancementContext
     ): List<TypeAndDefaultQualifiers> {
         val list = ArrayList<TypeAndDefaultQualifiers>(1)
 
         fun add(type: FirTypeRef?) {
-            val c = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, jsr305State, type?.annotations.orEmpty())
+            val c = context.copyWithNewDefaultTypeQualifiers(typeQualifierResolver, javaTypeEnhancementState, type?.annotations.orEmpty())
 
             list.add(
                 TypeAndDefaultQualifiers(
                     type,
                     c.defaultTypeQualifiers
-                        ?.get(AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE)
+                        ?.get(AnnotationQualifierApplicabilityType.TYPE_USE)
                 )
             )
 
@@ -175,8 +184,8 @@ internal class EnhancementSignatureParts(
 
     private fun FirTypeRef?.extractQualifiersFromAnnotations(
         isHeadTypeConstructor: Boolean,
-        defaultQualifiersForType: JavaTypeQualifiers?,
-        jsr305State: Jsr305State
+        defaultQualifiersForType: JavaDefaultQualifiers?,
+        javaTypeEnhancementState: JavaTypeEnhancementState
     ): JavaTypeQualifiers {
         val composedAnnotation =
             if (isHeadTypeConstructor && typeContainer != null)
@@ -198,11 +207,15 @@ internal class EnhancementSignatureParts(
             else
                 defaultQualifiersForType
 
-        val nullabilityInfo = composedAnnotation.extractNullability(typeQualifierResolver, jsr305State)
-            ?: defaultTypeQualifier?.nullability?.let { nullability ->
+        val nullabilityInfo = composedAnnotation.extractNullability(typeQualifierResolver, javaTypeEnhancementState).also {
+            if (it?.qualifier == NullabilityQualifier.NOT_NULL) {
+                attributesCache[this] = composedAnnotation.computeTypeAttributesForJavaType()
+            }
+        }
+            ?: defaultTypeQualifier?.nullabilityQualifier?.let { nullability ->
                 NullabilityQualifierWithMigrationStatus(
-                    nullability,
-                    defaultTypeQualifier.isNullabilityQualifierForWarning
+                    nullability.qualifier,
+                    nullability.isForWarningOnly
                 )
             }
 
@@ -228,9 +241,9 @@ internal class EnhancementSignatureParts(
     private fun FirTypeRef?.computeQualifiersForOverride(
         session: FirSession,
         fromSupertypes: Collection<FirTypeRef>,
-        defaultQualifiersForType: JavaTypeQualifiers?,
+        defaultQualifiersForType: JavaDefaultQualifiers?,
         isHeadTypeConstructor: Boolean,
-        jsr305State: Jsr305State
+        javaTypeEnhancementState: JavaTypeEnhancementState
     ): JavaTypeQualifiers {
         val superQualifiers = fromSupertypes.map { it.extractQualifiers(session) }
         val mutabilityFromSupertypes = superQualifiers.mapNotNull { it.mutability }.toSet()
@@ -239,7 +252,7 @@ internal class EnhancementSignatureParts(
             .mapNotNull { it.extractQualifiers(session).nullability }
             .toSet()
 
-        val own = extractQualifiersFromAnnotations(isHeadTypeConstructor, defaultQualifiersForType, jsr305State)
+        val own = extractQualifiersFromAnnotations(isHeadTypeConstructor, defaultQualifiersForType, javaTypeEnhancementState)
         val ownNullability = own.takeIf { !it.isNullabilityQualifierForWarning }?.nullability
         val ownNullabilityForWarning = own.nullability
 
@@ -273,9 +286,9 @@ internal class EnhancementSignatureParts(
         )
     }
 
-    private fun computeIndexedQualifiersForOverride(session: FirSession, jsr305State: Jsr305State): IndexedJavaTypeQualifiers {
-        val indexedFromSupertypes = fromOverridden.map { it.toIndexed(typeQualifierResolver, jsr305State, context) }
-        val indexedThisType = current.toIndexed(typeQualifierResolver, jsr305State, context)
+    private fun computeIndexedQualifiersForOverride(session: FirSession, javaTypeEnhancementState: JavaTypeEnhancementState): IndexedJavaTypeQualifiers {
+        val indexedFromSupertypes = fromOverridden.map { it.toIndexed(typeQualifierResolver, javaTypeEnhancementState, context) }
+        val indexedThisType = current.toIndexed(typeQualifierResolver, javaTypeEnhancementState, context)
 
         // The covariant case may be hard, e.g. in the superclass the return may be Super<T>, but in the subclass it may be Derived, which
         // is declared to extend Super<T>, and propagating data here is highly non-trivial, so we only look at the head type constructor
@@ -293,7 +306,7 @@ internal class EnhancementSignatureParts(
             val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type }
 
             // Only the head type constructor is safely co-variant
-            type.computeQualifiersForOverride(session, verticalSlice, defaultQualifiers, isHeadTypeConstructor, jsr305State)
+            type.computeQualifiersForOverride(session, verticalSlice, defaultQualifiers, isHeadTypeConstructor, javaTypeEnhancementState)
         }
 
         return IndexedJavaTypeQualifiers(computedResult)

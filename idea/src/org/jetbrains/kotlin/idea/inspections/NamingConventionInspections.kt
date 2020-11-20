@@ -26,8 +26,10 @@ import org.intellij.lang.regexp.RegExpFileType
 import org.jdom.Element
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.packageMatchesDirectoryOrImplicit
 import org.jetbrains.kotlin.idea.quickfix.RenameIdentifierFix
+import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.idea.refactoring.isInjectedFragment
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -100,14 +102,14 @@ class NamingConventionInspectionSettings(
             }
         }
 
-    fun verifyName(element: PsiNameIdentifierOwner, holder: ProblemsHolder) {
+    fun verifyName(element: PsiNameIdentifierOwner, holder: ProblemsHolder, additionalCheck: () -> Boolean) {
         val name = element.name
         val nameIdentifier = element.nameIdentifier
-        if (name != null && nameIdentifier != null && nameRegex?.matches(name) == false) {
+        if (name != null && nameIdentifier != null && nameRegex?.matches(name) == false && additionalCheck()) {
             val message = getNameMismatchMessage(name)
             holder.registerProblem(
                 element.nameIdentifier!!,
-                "$entityName ${KotlinBundle.message("text.name")}<code>#ref</code> $message #loc",
+                "$entityName ${KotlinBundle.message("text.name")} <code>#ref</code> $message #loc",
                 RenameIdentifierFix()
             )
         }
@@ -162,8 +164,8 @@ sealed class NamingConventionInspection(
         rules = *rules
     )
 
-    protected fun verifyName(element: PsiNameIdentifierOwner, holder: ProblemsHolder) {
-        namingSettings.verifyName(element, holder)
+    protected fun verifyName(element: PsiNameIdentifierOwner, holder: ProblemsHolder, additionalCheck: () -> Boolean = { true }) {
+        namingSettings.verifyName(element, holder, additionalCheck)
     }
 
     protected fun getNameMismatchMessage(name: String): String {
@@ -217,7 +219,15 @@ class FunctionNameInspection : NamingConventionInspection(
                 return@namedFunctionVisitor
             }
             if (!TestUtils.isInTestSourceContent(function)) {
-                verifyName(function, holder)
+                verifyName(function, holder) {
+                    val functionName = function.name
+                    val typeReference = function.typeReference
+                    if (typeReference != null) {
+                        typeReference.text != functionName
+                    } else {
+                        function.resolveToDescriptorIfAny()?.returnType?.fqName?.shortName()?.asString() != functionName
+                    }
+                }
             }
         }
     }

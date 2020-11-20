@@ -826,6 +826,8 @@ public inline fun CharArray.elementAtOrNull(index: Int): Char? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.find(predicate: (T) -> Boolean): T? {
@@ -834,6 +836,8 @@ public inline fun <T> Array<out T>.find(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.find(predicate: (Byte) -> Boolean): Byte? {
@@ -842,6 +846,8 @@ public inline fun ByteArray.find(predicate: (Byte) -> Boolean): Byte? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.find(predicate: (Short) -> Boolean): Short? {
@@ -850,6 +856,8 @@ public inline fun ShortArray.find(predicate: (Short) -> Boolean): Short? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun IntArray.find(predicate: (Int) -> Boolean): Int? {
@@ -858,6 +866,8 @@ public inline fun IntArray.find(predicate: (Int) -> Boolean): Int? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun LongArray.find(predicate: (Long) -> Boolean): Long? {
@@ -866,6 +876,8 @@ public inline fun LongArray.find(predicate: (Long) -> Boolean): Long? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.find(predicate: (Float) -> Boolean): Float? {
@@ -874,6 +886,8 @@ public inline fun FloatArray.find(predicate: (Float) -> Boolean): Float? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.find(predicate: (Double) -> Boolean): Double? {
@@ -882,6 +896,8 @@ public inline fun DoubleArray.find(predicate: (Double) -> Boolean): Double? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.find(predicate: (Boolean) -> Boolean): Boolean? {
@@ -890,6 +906,8 @@ public inline fun BooleanArray.find(predicate: (Boolean) -> Boolean): Boolean? {
 
 /**
  * Returns the first element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun CharArray.find(predicate: (Char) -> Boolean): Char? {
@@ -898,6 +916,8 @@ public inline fun CharArray.find(predicate: (Char) -> Boolean): Char? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.findLast(predicate: (T) -> Boolean): T? {
@@ -906,6 +926,8 @@ public inline fun <T> Array<out T>.findLast(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.findLast(predicate: (Byte) -> Boolean): Byte? {
@@ -914,6 +936,8 @@ public inline fun ByteArray.findLast(predicate: (Byte) -> Boolean): Byte? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.findLast(predicate: (Short) -> Boolean): Short? {
@@ -922,6 +946,8 @@ public inline fun ShortArray.findLast(predicate: (Short) -> Boolean): Short? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun IntArray.findLast(predicate: (Int) -> Boolean): Int? {
@@ -930,6 +956,8 @@ public inline fun IntArray.findLast(predicate: (Int) -> Boolean): Int? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun LongArray.findLast(predicate: (Long) -> Boolean): Long? {
@@ -938,6 +966,8 @@ public inline fun LongArray.findLast(predicate: (Long) -> Boolean): Long? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.findLast(predicate: (Float) -> Boolean): Float? {
@@ -946,6 +976,8 @@ public inline fun FloatArray.findLast(predicate: (Float) -> Boolean): Float? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.findLast(predicate: (Double) -> Boolean): Double? {
@@ -954,6 +986,8 @@ public inline fun DoubleArray.findLast(predicate: (Double) -> Boolean): Double? 
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.findLast(predicate: (Boolean) -> Boolean): Boolean? {
@@ -962,6 +996,8 @@ public inline fun BooleanArray.findLast(predicate: (Boolean) -> Boolean): Boolea
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.find
  */
 @kotlin.internal.InlineOnly
 public inline fun CharArray.findLast(predicate: (Char) -> Boolean): Char? {
@@ -1348,6 +1384,8 @@ public inline fun CharArray.getOrElse(index: Int, defaultValue: (Int) -> Char): 
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun <T> Array<out T>.getOrNull(index: Int): T? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1355,6 +1393,8 @@ public fun <T> Array<out T>.getOrNull(index: Int): T? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun ByteArray.getOrNull(index: Int): Byte? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1362,6 +1402,8 @@ public fun ByteArray.getOrNull(index: Int): Byte? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun ShortArray.getOrNull(index: Int): Short? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1369,6 +1411,8 @@ public fun ShortArray.getOrNull(index: Int): Short? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun IntArray.getOrNull(index: Int): Int? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1376,6 +1420,8 @@ public fun IntArray.getOrNull(index: Int): Int? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun LongArray.getOrNull(index: Int): Long? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1383,6 +1429,8 @@ public fun LongArray.getOrNull(index: Int): Long? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun FloatArray.getOrNull(index: Int): Float? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1390,6 +1438,8 @@ public fun FloatArray.getOrNull(index: Int): Float? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun DoubleArray.getOrNull(index: Int): Double? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1397,6 +1447,8 @@ public fun DoubleArray.getOrNull(index: Int): Double? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun BooleanArray.getOrNull(index: Int): Boolean? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1404,6 +1456,8 @@ public fun BooleanArray.getOrNull(index: Int): Boolean? {
 
 /**
  * Returns an element at the given [index] or `null` if the [index] is out of bounds of this array.
+ * 
+ * @sample samples.collections.Collections.Elements.getOrNull
  */
 public fun CharArray.getOrNull(index: Int): Char? {
     return if (index >= 0 && index <= lastIndex) get(index) else null
@@ -1747,7 +1801,10 @@ public inline fun CharArray.indexOfLast(predicate: (Char) -> Boolean): Int {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> Array<out T>.last(): T {
     if (isEmpty())
@@ -1757,7 +1814,10 @@ public fun <T> Array<out T>.last(): T {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun ByteArray.last(): Byte {
     if (isEmpty())
@@ -1767,7 +1827,10 @@ public fun ByteArray.last(): Byte {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun ShortArray.last(): Short {
     if (isEmpty())
@@ -1777,7 +1840,10 @@ public fun ShortArray.last(): Short {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun IntArray.last(): Int {
     if (isEmpty())
@@ -1787,7 +1853,10 @@ public fun IntArray.last(): Int {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun LongArray.last(): Long {
     if (isEmpty())
@@ -1797,7 +1866,10 @@ public fun LongArray.last(): Long {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun FloatArray.last(): Float {
     if (isEmpty())
@@ -1807,7 +1879,10 @@ public fun FloatArray.last(): Float {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun DoubleArray.last(): Double {
     if (isEmpty())
@@ -1817,7 +1892,10 @@ public fun DoubleArray.last(): Double {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun BooleanArray.last(): Boolean {
     if (isEmpty())
@@ -1827,7 +1905,10 @@ public fun BooleanArray.last(): Boolean {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun CharArray.last(): Char {
     if (isEmpty())
@@ -1837,7 +1918,10 @@ public fun CharArray.last(): Char {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> Array<out T>.last(predicate: (T) -> Boolean): T {
     for (index in this.indices.reversed()) {
@@ -1849,7 +1933,10 @@ public inline fun <T> Array<out T>.last(predicate: (T) -> Boolean): T {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun ByteArray.last(predicate: (Byte) -> Boolean): Byte {
     for (index in this.indices.reversed()) {
@@ -1861,7 +1948,10 @@ public inline fun ByteArray.last(predicate: (Byte) -> Boolean): Byte {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun ShortArray.last(predicate: (Short) -> Boolean): Short {
     for (index in this.indices.reversed()) {
@@ -1873,7 +1963,10 @@ public inline fun ShortArray.last(predicate: (Short) -> Boolean): Short {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun IntArray.last(predicate: (Int) -> Boolean): Int {
     for (index in this.indices.reversed()) {
@@ -1885,7 +1978,10 @@ public inline fun IntArray.last(predicate: (Int) -> Boolean): Int {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun LongArray.last(predicate: (Long) -> Boolean): Long {
     for (index in this.indices.reversed()) {
@@ -1897,7 +1993,10 @@ public inline fun LongArray.last(predicate: (Long) -> Boolean): Long {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun FloatArray.last(predicate: (Float) -> Boolean): Float {
     for (index in this.indices.reversed()) {
@@ -1909,7 +2008,10 @@ public inline fun FloatArray.last(predicate: (Float) -> Boolean): Float {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun DoubleArray.last(predicate: (Double) -> Boolean): Double {
     for (index in this.indices.reversed()) {
@@ -1921,7 +2023,10 @@ public inline fun DoubleArray.last(predicate: (Double) -> Boolean): Double {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun BooleanArray.last(predicate: (Boolean) -> Boolean): Boolean {
     for (index in this.indices.reversed()) {
@@ -1933,7 +2038,10 @@ public inline fun BooleanArray.last(predicate: (Boolean) -> Boolean): Boolean {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun CharArray.last(predicate: (Char) -> Boolean): Char {
     for (index in this.indices.reversed()) {
@@ -2065,6 +2173,8 @@ public fun CharArray.lastIndexOf(element: Char): Int {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun <T> Array<out T>.lastOrNull(): T? {
     return if (isEmpty()) null else this[size - 1]
@@ -2072,6 +2182,8 @@ public fun <T> Array<out T>.lastOrNull(): T? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun ByteArray.lastOrNull(): Byte? {
     return if (isEmpty()) null else this[size - 1]
@@ -2079,6 +2191,8 @@ public fun ByteArray.lastOrNull(): Byte? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun ShortArray.lastOrNull(): Short? {
     return if (isEmpty()) null else this[size - 1]
@@ -2086,6 +2200,8 @@ public fun ShortArray.lastOrNull(): Short? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun IntArray.lastOrNull(): Int? {
     return if (isEmpty()) null else this[size - 1]
@@ -2093,6 +2209,8 @@ public fun IntArray.lastOrNull(): Int? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun LongArray.lastOrNull(): Long? {
     return if (isEmpty()) null else this[size - 1]
@@ -2100,6 +2218,8 @@ public fun LongArray.lastOrNull(): Long? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun FloatArray.lastOrNull(): Float? {
     return if (isEmpty()) null else this[size - 1]
@@ -2107,6 +2227,8 @@ public fun FloatArray.lastOrNull(): Float? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun DoubleArray.lastOrNull(): Double? {
     return if (isEmpty()) null else this[size - 1]
@@ -2114,6 +2236,8 @@ public fun DoubleArray.lastOrNull(): Double? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun BooleanArray.lastOrNull(): Boolean? {
     return if (isEmpty()) null else this[size - 1]
@@ -2121,6 +2245,8 @@ public fun BooleanArray.lastOrNull(): Boolean? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public fun CharArray.lastOrNull(): Char? {
     return if (isEmpty()) null else this[size - 1]
@@ -2128,6 +2254,8 @@ public fun CharArray.lastOrNull(): Char? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean): T? {
     for (index in this.indices.reversed()) {
@@ -2139,6 +2267,8 @@ public inline fun <T> Array<out T>.lastOrNull(predicate: (T) -> Boolean): T? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun ByteArray.lastOrNull(predicate: (Byte) -> Boolean): Byte? {
     for (index in this.indices.reversed()) {
@@ -2150,6 +2280,8 @@ public inline fun ByteArray.lastOrNull(predicate: (Byte) -> Boolean): Byte? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun ShortArray.lastOrNull(predicate: (Short) -> Boolean): Short? {
     for (index in this.indices.reversed()) {
@@ -2161,6 +2293,8 @@ public inline fun ShortArray.lastOrNull(predicate: (Short) -> Boolean): Short? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun IntArray.lastOrNull(predicate: (Int) -> Boolean): Int? {
     for (index in this.indices.reversed()) {
@@ -2172,6 +2306,8 @@ public inline fun IntArray.lastOrNull(predicate: (Int) -> Boolean): Int? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun LongArray.lastOrNull(predicate: (Long) -> Boolean): Long? {
     for (index in this.indices.reversed()) {
@@ -2183,6 +2319,8 @@ public inline fun LongArray.lastOrNull(predicate: (Long) -> Boolean): Long? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun FloatArray.lastOrNull(predicate: (Float) -> Boolean): Float? {
     for (index in this.indices.reversed()) {
@@ -2194,6 +2332,8 @@ public inline fun FloatArray.lastOrNull(predicate: (Float) -> Boolean): Float? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun DoubleArray.lastOrNull(predicate: (Double) -> Boolean): Double? {
     for (index in this.indices.reversed()) {
@@ -2205,6 +2345,8 @@ public inline fun DoubleArray.lastOrNull(predicate: (Double) -> Boolean): Double
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun BooleanArray.lastOrNull(predicate: (Boolean) -> Boolean): Boolean? {
     for (index in this.indices.reversed()) {
@@ -2216,6 +2358,8 @@ public inline fun BooleanArray.lastOrNull(predicate: (Boolean) -> Boolean): Bool
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 public inline fun CharArray.lastOrNull(predicate: (Char) -> Boolean): Char? {
     for (index in this.indices.reversed()) {
@@ -3687,6 +3831,8 @@ public inline fun CharArray.filter(predicate: (Char) -> Boolean): List<Char> {
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public inline fun <T> Array<out T>.filterIndexed(predicate: (index: Int, T) -> Boolean): List<T> {
     return filterIndexedTo(ArrayList<T>(), predicate)
@@ -3696,6 +3842,8 @@ public inline fun <T> Array<out T>.filterIndexed(predicate: (index: Int, T) -> B
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public inline fun ByteArray.filterIndexed(predicate: (index: Int, Byte) -> Boolean): List<Byte> {
     return filterIndexedTo(ArrayList<Byte>(), predicate)
@@ -3705,6 +3853,8 @@ public inline fun ByteArray.filterIndexed(predicate: (index: Int, Byte) -> Boole
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public inline fun ShortArray.filterIndexed(predicate: (index: Int, Short) -> Boolean): List<Short> {
     return filterIndexedTo(ArrayList<Short>(), predicate)
@@ -3714,6 +3864,8 @@ public inline fun ShortArray.filterIndexed(predicate: (index: Int, Short) -> Boo
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public inline fun IntArray.filterIndexed(predicate: (index: Int, Int) -> Boolean): List<Int> {
     return filterIndexedTo(ArrayList<Int>(), predicate)
@@ -3723,6 +3875,8 @@ public inline fun IntArray.filterIndexed(predicate: (index: Int, Int) -> Boolean
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public inline fun LongArray.filterIndexed(predicate: (index: Int, Long) -> Boolean): List<Long> {
     return filterIndexedTo(ArrayList<Long>(), predicate)
@@ -3732,6 +3886,8 @@ public inline fun LongArray.filterIndexed(predicate: (index: Int, Long) -> Boole
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public inline fun FloatArray.filterIndexed(predicate: (index: Int, Float) -> Boolean): List<Float> {
     return filterIndexedTo(ArrayList<Float>(), predicate)
@@ -3741,6 +3897,8 @@ public inline fun FloatArray.filterIndexed(predicate: (index: Int, Float) -> Boo
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public inline fun DoubleArray.filterIndexed(predicate: (index: Int, Double) -> Boolean): List<Double> {
     return filterIndexedTo(ArrayList<Double>(), predicate)
@@ -3750,6 +3908,8 @@ public inline fun DoubleArray.filterIndexed(predicate: (index: Int, Double) -> B
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public inline fun BooleanArray.filterIndexed(predicate: (index: Int, Boolean) -> Boolean): List<Boolean> {
     return filterIndexedTo(ArrayList<Boolean>(), predicate)
@@ -3759,6 +3919,8 @@ public inline fun BooleanArray.filterIndexed(predicate: (index: Int, Boolean) ->
  * Returns a list containing only elements matching the given [predicate].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexed
  */
 public inline fun CharArray.filterIndexed(predicate: (index: Int, Char) -> Boolean): List<Char> {
     return filterIndexedTo(ArrayList<Char>(), predicate)
@@ -3768,6 +3930,8 @@ public inline fun CharArray.filterIndexed(predicate: (index: Int, Char) -> Boole
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterIndexedTo(destination: C, predicate: (index: Int, T) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -3780,6 +3944,8 @@ public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterIndexedTo(
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 public inline fun <C : MutableCollection<in Byte>> ByteArray.filterIndexedTo(destination: C, predicate: (index: Int, Byte) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -3792,6 +3958,8 @@ public inline fun <C : MutableCollection<in Byte>> ByteArray.filterIndexedTo(des
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 public inline fun <C : MutableCollection<in Short>> ShortArray.filterIndexedTo(destination: C, predicate: (index: Int, Short) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -3804,6 +3972,8 @@ public inline fun <C : MutableCollection<in Short>> ShortArray.filterIndexedTo(d
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 public inline fun <C : MutableCollection<in Int>> IntArray.filterIndexedTo(destination: C, predicate: (index: Int, Int) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -3816,6 +3986,8 @@ public inline fun <C : MutableCollection<in Int>> IntArray.filterIndexedTo(desti
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 public inline fun <C : MutableCollection<in Long>> LongArray.filterIndexedTo(destination: C, predicate: (index: Int, Long) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -3828,6 +4000,8 @@ public inline fun <C : MutableCollection<in Long>> LongArray.filterIndexedTo(des
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 public inline fun <C : MutableCollection<in Float>> FloatArray.filterIndexedTo(destination: C, predicate: (index: Int, Float) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -3840,6 +4014,8 @@ public inline fun <C : MutableCollection<in Float>> FloatArray.filterIndexedTo(d
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 public inline fun <C : MutableCollection<in Double>> DoubleArray.filterIndexedTo(destination: C, predicate: (index: Int, Double) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -3852,6 +4028,8 @@ public inline fun <C : MutableCollection<in Double>> DoubleArray.filterIndexedTo
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterIndexedTo(destination: C, predicate: (index: Int, Boolean) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -3864,6 +4042,8 @@ public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterIndexed
  * Appends all elements matching the given [predicate] to the given [destination].
  * @param [predicate] function that takes the index of an element and the element itself
  * and returns the result of predicate evaluation on the element.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIndexedTo
  */
 public inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(destination: C, predicate: (index: Int, Char) -> Boolean): C {
     forEachIndexed { index, element ->
@@ -3874,6 +4054,8 @@ public inline fun <C : MutableCollection<in Char>> CharArray.filterIndexedTo(des
 
 /**
  * Returns a list containing all elements that are instances of specified type parameter R.
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIsInstance
  */
 public inline fun <reified R> Array<*>.filterIsInstance(): List<@kotlin.internal.NoInfer R> {
     return filterIsInstanceTo(ArrayList<R>())
@@ -3881,6 +4063,8 @@ public inline fun <reified R> Array<*>.filterIsInstance(): List<@kotlin.internal
 
 /**
  * Appends all elements that are instances of specified type parameter R to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterIsInstanceTo
  */
 public inline fun <reified R, C : MutableCollection<in R>> Array<*>.filterIsInstanceTo(destination: C): C {
     for (element in this) if (element is R) destination.add(element)
@@ -3979,6 +4163,8 @@ public fun <T : Any> Array<out T?>.filterNotNull(): List<T> {
 
 /**
  * Appends all elements that are not `null` to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterNotNullTo
  */
 public fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(destination: C): C {
     for (element in this) if (element != null) destination.add(element)
@@ -3987,6 +4173,8 @@ public fun <C : MutableCollection<in T>, T : Any> Array<out T?>.filterNotNullTo(
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterNotTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
@@ -3995,6 +4183,8 @@ public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterNotTo(dest
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Byte>> ByteArray.filterNotTo(destination: C, predicate: (Byte) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
@@ -4003,6 +4193,8 @@ public inline fun <C : MutableCollection<in Byte>> ByteArray.filterNotTo(destina
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Short>> ShortArray.filterNotTo(destination: C, predicate: (Short) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
@@ -4011,6 +4203,8 @@ public inline fun <C : MutableCollection<in Short>> ShortArray.filterNotTo(desti
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Int>> IntArray.filterNotTo(destination: C, predicate: (Int) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
@@ -4019,6 +4213,8 @@ public inline fun <C : MutableCollection<in Int>> IntArray.filterNotTo(destinati
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Long>> LongArray.filterNotTo(destination: C, predicate: (Long) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
@@ -4027,6 +4223,8 @@ public inline fun <C : MutableCollection<in Long>> LongArray.filterNotTo(destina
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Float>> FloatArray.filterNotTo(destination: C, predicate: (Float) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
@@ -4035,6 +4233,8 @@ public inline fun <C : MutableCollection<in Float>> FloatArray.filterNotTo(desti
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Double>> DoubleArray.filterNotTo(destination: C, predicate: (Double) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
@@ -4043,6 +4243,8 @@ public inline fun <C : MutableCollection<in Double>> DoubleArray.filterNotTo(des
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterNotTo(destination: C, predicate: (Boolean) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
@@ -4051,6 +4253,8 @@ public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterNotTo(d
 
 /**
  * Appends all elements not matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Char>> CharArray.filterNotTo(destination: C, predicate: (Char) -> Boolean): C {
     for (element in this) if (!predicate(element)) destination.add(element)
@@ -4059,6 +4263,8 @@ public inline fun <C : MutableCollection<in Char>> CharArray.filterNotTo(destina
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destination: C, predicate: (T) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -4067,6 +4273,8 @@ public inline fun <T, C : MutableCollection<in T>> Array<out T>.filterTo(destina
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destination: C, predicate: (Byte) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -4075,6 +4283,8 @@ public inline fun <C : MutableCollection<in Byte>> ByteArray.filterTo(destinatio
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(destination: C, predicate: (Short) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -4083,6 +4293,8 @@ public inline fun <C : MutableCollection<in Short>> ShortArray.filterTo(destinat
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination: C, predicate: (Int) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -4091,6 +4303,8 @@ public inline fun <C : MutableCollection<in Int>> IntArray.filterTo(destination:
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destination: C, predicate: (Long) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -4099,6 +4313,8 @@ public inline fun <C : MutableCollection<in Long>> LongArray.filterTo(destinatio
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destination: C, predicate: (Float) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -4107,6 +4323,8 @@ public inline fun <C : MutableCollection<in Float>> FloatArray.filterTo(destinat
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destination: C, predicate: (Double) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -4115,6 +4333,8 @@ public inline fun <C : MutableCollection<in Double>> DoubleArray.filterTo(destin
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(destination: C, predicate: (Boolean) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -4123,6 +4343,8 @@ public inline fun <C : MutableCollection<in Boolean>> BooleanArray.filterTo(dest
 
 /**
  * Appends all elements matching the given [predicate] to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Filtering.filterTo
  */
 public inline fun <C : MutableCollection<in Char>> CharArray.filterTo(destination: C, predicate: (Char) -> Boolean): C {
     for (element in this) if (predicate(element)) destination.add(element)
@@ -11387,6 +11609,8 @@ public inline fun <R, C : MutableCollection<in R>> CharArray.mapIndexedTo(destin
 /**
  * Returns a list containing only the non-null results of applying the given [transform] function
  * to each element in the original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.mapNotNull
  */
 public inline fun <T, R : Any> Array<out T>.mapNotNull(transform: (T) -> R?): List<R> {
     return mapNotNullTo(ArrayList<R>(), transform)
@@ -13428,117 +13652,117 @@ public inline fun CharArray.forEachIndexed(action: (index: Int, Char) -> Unit): 
     for (item in this) action(index++, item)
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Array<out Double>.max(): Double? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Array<out Float>.max(): Float? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T : Comparable<T>> Array<out T>.max(): T? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ByteArray.max(): Byte? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ShortArray.max(): Short? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun IntArray.max(): Int? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun LongArray.max(): Long? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun FloatArray.max(): Float? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun DoubleArray.max(): Double? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharArray.max(): Char? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.maxBy(selector: (T) -> R): T? {
     return maxByOrNull(selector)
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> ByteArray.maxBy(selector: (Byte) -> R): Byte? {
     return maxByOrNull(selector)
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> ShortArray.maxBy(selector: (Short) -> R): Short? {
     return maxByOrNull(selector)
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> IntArray.maxBy(selector: (Int) -> R): Int? {
     return maxByOrNull(selector)
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> LongArray.maxBy(selector: (Long) -> R): Long? {
     return maxByOrNull(selector)
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> FloatArray.maxBy(selector: (Float) -> R): Float? {
     return maxByOrNull(selector)
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> DoubleArray.maxBy(selector: (Double) -> R): Double? {
     return maxByOrNull(selector)
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> BooleanArray.maxBy(selector: (Boolean) -> R): Boolean? {
     return maxByOrNull(selector)
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> CharArray.maxBy(selector: (Char) -> R): Char? {
     return maxByOrNull(selector)
@@ -15411,55 +15635,55 @@ public fun CharArray.maxOrNull(): Char? {
     return max
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T> Array<out T>.maxWith(comparator: Comparator<in T>): T? {
     return maxWithOrNull(comparator)
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ByteArray.maxWith(comparator: Comparator<in Byte>): Byte? {
     return maxWithOrNull(comparator)
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ShortArray.maxWith(comparator: Comparator<in Short>): Short? {
     return maxWithOrNull(comparator)
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun IntArray.maxWith(comparator: Comparator<in Int>): Int? {
     return maxWithOrNull(comparator)
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun LongArray.maxWith(comparator: Comparator<in Long>): Long? {
     return maxWithOrNull(comparator)
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun FloatArray.maxWith(comparator: Comparator<in Float>): Float? {
     return maxWithOrNull(comparator)
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun DoubleArray.maxWith(comparator: Comparator<in Double>): Double? {
     return maxWithOrNull(comparator)
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun BooleanArray.maxWith(comparator: Comparator<in Boolean>): Boolean? {
     return maxWithOrNull(comparator)
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharArray.maxWith(comparator: Comparator<in Char>): Char? {
     return maxWithOrNull(comparator)
@@ -15591,117 +15815,117 @@ public fun CharArray.maxWithOrNull(comparator: Comparator<in Char>): Char? {
     return max
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Array<out Double>.min(): Double? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.1")
 public fun Array<out Float>.min(): Float? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T : Comparable<T>> Array<out T>.min(): T? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ByteArray.min(): Byte? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ShortArray.min(): Short? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun IntArray.min(): Int? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun LongArray.min(): Long? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun FloatArray.min(): Float? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun DoubleArray.min(): Double? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharArray.min(): Char? {
     return minOrNull()
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <T, R : Comparable<R>> Array<out T>.minBy(selector: (T) -> R): T? {
     return minByOrNull(selector)
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> ByteArray.minBy(selector: (Byte) -> R): Byte? {
     return minByOrNull(selector)
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> ShortArray.minBy(selector: (Short) -> R): Short? {
     return minByOrNull(selector)
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> IntArray.minBy(selector: (Int) -> R): Int? {
     return minByOrNull(selector)
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> LongArray.minBy(selector: (Long) -> R): Long? {
     return minByOrNull(selector)
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> FloatArray.minBy(selector: (Float) -> R): Float? {
     return minByOrNull(selector)
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> DoubleArray.minBy(selector: (Double) -> R): Double? {
     return minByOrNull(selector)
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> BooleanArray.minBy(selector: (Boolean) -> R): Boolean? {
     return minByOrNull(selector)
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : Comparable<R>> CharArray.minBy(selector: (Char) -> R): Char? {
     return minByOrNull(selector)
@@ -17574,55 +17798,55 @@ public fun CharArray.minOrNull(): Char? {
     return min
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun <T> Array<out T>.minWith(comparator: Comparator<in T>): T? {
     return minWithOrNull(comparator)
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ByteArray.minWith(comparator: Comparator<in Byte>): Byte? {
     return minWithOrNull(comparator)
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun ShortArray.minWith(comparator: Comparator<in Short>): Short? {
     return minWithOrNull(comparator)
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun IntArray.minWith(comparator: Comparator<in Int>): Int? {
     return minWithOrNull(comparator)
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun LongArray.minWith(comparator: Comparator<in Long>): Long? {
     return minWithOrNull(comparator)
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun FloatArray.minWith(comparator: Comparator<in Float>): Float? {
     return minWithOrNull(comparator)
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun DoubleArray.minWith(comparator: Comparator<in Double>): Double? {
     return minWithOrNull(comparator)
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun BooleanArray.minWith(comparator: Comparator<in Boolean>): Boolean? {
     return minWithOrNull(comparator)
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 public fun CharArray.minWith(comparator: Comparator<in Char>): Char? {
     return minWithOrNull(comparator)

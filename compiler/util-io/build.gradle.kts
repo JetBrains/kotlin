@@ -7,11 +7,12 @@ description = "Kotlin/Native utils"
 
 dependencies {
     compile(kotlinStdlib())
+    testImplementation(commonDep("junit:junit"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { none() }
+    "test" { projectDefault() }
 }
 
 publish()

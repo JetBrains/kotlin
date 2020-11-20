@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.asJava.finder
 
 import com.google.common.collect.Sets
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Condition
 import com.intellij.psi.*
@@ -27,7 +26,6 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
@@ -36,6 +34,7 @@ import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.util.*
 
 class JavaElementFinder(
@@ -73,7 +72,7 @@ class JavaElementFinder(
 
         for (declaration in classOrObjectDeclarations) {
             if (declaration !is KtEnumEntry) {
-                val lightClass = declaration.toLightClass()
+                val lightClass = kotlinAsJavaSupport.getLightClass(declaration)
                 if (lightClass != null) {
                     answer.add(lightClass)
                 }
@@ -90,7 +89,7 @@ class JavaElementFinder(
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
             //NOTE: can't filter out more interfaces right away because decompiled declarations do not have member bodies
             if (classOrObject is KtClass && classOrObject.isInterface()) {
-                val interfaceClass = classOrObject.toLightClass() ?: continue
+                val interfaceClass = kotlinAsJavaSupport.getLightClass(classOrObject) ?: continue
                 val implsClass = interfaceClass.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false) ?: continue
                 answer.add(implsClass)
             }
@@ -141,7 +140,7 @@ class JavaElementFinder(
 
         val declarations = kotlinAsJavaSupport.findClassOrObjectDeclarationsInPackage(packageFQN, scope)
         for (declaration in declarations) {
-            val aClass = declaration.toLightClass() ?: continue
+            val aClass = kotlinAsJavaSupport.getLightClass(declaration) ?: continue
             answer.add(aClass)
         }
 
@@ -172,16 +171,9 @@ class JavaElementFinder(
     }
 
     companion object {
-
-        fun getInstance(project: Project): JavaElementFinder {
-            val extensions = Extensions.getArea(project).getExtensionPoint(PsiElementFinder.EP_NAME).extensions
-            for (extension in extensions) {
-                if (extension is JavaElementFinder) {
-                    return extension
-                }
-            }
-            throw IllegalStateException(JavaElementFinder::class.java.simpleName + " is not found for project " + project)
-        }
+        fun getInstance(project: Project): JavaElementFinder =
+            EP.getPoint(project).extensions.firstIsInstanceOrNull()
+                ?: error(JavaElementFinder::class.java.simpleName + " is not found for project " + project)
 
         fun byClasspathComparator(searchScope: GlobalSearchScope): Comparator<PsiElement> {
             return Comparator { o1, o2 ->

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.isStatic
@@ -14,13 +15,13 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
-import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
-import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
-import org.jetbrains.kotlin.backend.jvm.ir.isJvmAbstract
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -36,7 +37,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.utils.getOrPutNullable
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -118,10 +118,11 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 internal val bridgePhase = makeIrFilePhase(
     ::BridgeLowering,
     name = "Bridge",
-    description = "Generate bridges"
+    description = "Generate bridges",
+    prerequisite = setOf(jvmInlineClassPhase)
 )
 
-private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
+internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
     // Represents a synthetic bridge to `overridden` with a precomputed signature
     private class Bridge(
         val overridden: IrSimpleFunction,
@@ -142,7 +143,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
     //
     // Finally, we sometimes need to use INVOKESPECIAL to invoke an existing special bridge implementation in a
     // superclass, which is what `superQualifierSymbol` is for.
-    private data class SpecialBridge(
+    data class SpecialBridge(
         val overridden: IrSimpleFunction,
         val signature: Method,
         // We need to produce a generic signature if the underlying Java method contains type parameters.
@@ -159,21 +160,27 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
         val superQualifierSymbol: IrClassSymbol? = null,
         val isFinal: Boolean = true,
         val isSynthetic: Boolean = false,
+        val isOverriding: Boolean = true,
     )
 
-    override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
+    private val potentialBridgeTargets = mutableListOf<IrSimpleFunction>()
+
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid()
+        generateBridges()
+        potentialBridgeTargets.clear()
+    }
 
     override fun visitClass(declaration: IrClass): IrStatement {
         // Bridges in DefaultImpl classes are handled in InterfaceLowering.
         if (declaration.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS || declaration.isAnnotationClass)
             return super.visitClass(declaration)
 
-        // We generate bridges directly in the class, so we make a copy of the list of relevant members.
-        val potentialBridgeTargets = declaration.functions.filterTo(mutableListOf(), fun(irFunction: IrSimpleFunction): Boolean {
+        declaration.functions.filterTo(potentialBridgeTargets, fun(irFunction: IrSimpleFunction): Boolean {
             // Only overrides may need bridges and so in particular, private and static functions do not.
             // Note that this includes the static replacements for inline class functions (which are static, but have
             // overriddenSymbols in order to produce correct signatures in the type mapper).
-            if (Visibilities.isPrivate(irFunction.visibility) || irFunction.isStatic || irFunction.overriddenSymbols.isEmpty())
+            if (DescriptorVisibilities.isPrivate(irFunction.visibility) || irFunction.isStatic || irFunction.overriddenSymbols.isEmpty())
                 return false
 
             // None of the methods of Any have type parameters and so we will not need bridges for them.
@@ -190,21 +197,43 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
             return !irFunction.isFakeOverride || irFunction.resolvesToClass()
         })
 
+        if (declaration.isInline) {
+            // Inline class (implementing 'MutableCollection<T>', where T is Int or an inline class mapped to Int)
+            // can contain a static replacement for a function 'remove', which forces value parameter boxing
+            // in order to avoid signature clash with 'remove(int)' method in 'java.util.List'.
+            // We should rewrite this static replacement as well ('remove' function itself is handled during special bridge processing).
+            for (irFunction in declaration.functions) {
+                val originalFunction = context.inlineClassReplacements.originalFunctionForStaticReplacement[irFunction]
+                    ?: continue
+                if (context.methodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(originalFunction)) {
+                    val oldValueParameter1 = irFunction.valueParameters[1]
+                    val newValueParameter1 = oldValueParameter1.copyTo(irFunction, type = oldValueParameter1.type.makeNullable())
+                    irFunction.valueParameters = listOf(irFunction.valueParameters[0], newValueParameter1)
+                    irFunction.body?.transform(VariableRemapper(mapOf(oldValueParameter1 to newValueParameter1)), null)
+                    break
+                }
+            }
+        }
+
+        return super.visitClass(declaration)
+    }
+
+    private fun generateBridges() {
         for (member in potentialBridgeTargets) {
-            createBridges(declaration, member)
+            val parent = member.parentAsClass
+            createBridges(parent, member)
 
             // For lambda classes, we move overrides from the `invoke` function to its bridge. This will allow us to avoid boxing
             // the return type of `invoke` in codegen for lambdas with primitive return type. This does not apply to lambdas returning
             // inline class types erasing to Any, which we need to box.
             if (member.name == OperatorNameConventions.INVOKE
-                && (declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL || declaration.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL)
+                && (parent.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
+                        parent.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL)
                 && !member.returnType.isInlineClassErasingToAny
             ) {
-                member.overriddenSymbols = listOf()
+                member.overriddenSymbols = emptyList()
             }
         }
-
-        return super.visitClass(declaration)
     }
 
     private fun createBridges(irClass: IrClass, irFunction: IrSimpleFunction) {
@@ -243,7 +272,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
                     bridgeTarget = when {
                         irFunction.isJvmAbstract(context.state.jvmDefaultMode) -> {
                             irClass.declarations.remove(irFunction)
-                            irClass.addAbstractMethodStub(irFunction, specialBridge.methodInfo?.needsArgumentBoxing == true)
+                            irClass.addAbstractMethodStub(irFunction)
                         }
                         irFunction.modality != Modality.FINAL -> {
                             val overriddenFromClass = irFunction.overriddenFromClass()!!
@@ -252,11 +281,17 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
                                 methodInfo = specialBridge.methodInfo?.copy(argumentsToCheck = 0), // For potential argument boxing
                                 isFinal = false,
                             )
-                            // The part after ?: is needed for methods with default implementations in collection interfaces:
+                            // The part after '?:' is needed for methods with default implementations in collection interfaces:
                             // MutableMap.remove() and getOrDefault().
                             val superTarget = overriddenFromClass.takeIf { !it.isFakeOverride } ?: specialBridge.overridden
-                            irClass.declarations.remove(irFunction)
-                            irClass.addSpecialBridge(superBridge, superTarget)
+                            if (superBridge.signature == superTarget.jvmMethod) {
+                                // If the resulting bridge to a super member matches the signature of the bridge callee,
+                                // bridge is not needed.
+                                irFunction
+                            } else {
+                                irClass.declarations.remove(irFunction)
+                                irClass.addSpecialBridge(superBridge, superTarget)
+                            }
                         }
                         else -> irFunction
                     }
@@ -295,7 +330,9 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
         // Generate common bridges
         val generated = mutableMapOf<Method, Bridge>()
 
-        irFunction.allOverridden().filter { !it.isFakeOverride }.forEach { override ->
+        for (override in irFunction.allOverridden()) {
+            if (override.isFakeOverride) continue
+
             val signature = override.jvmMethod
             if (targetMethod != signature && signature !in blacklist) {
                 generated.getOrPut(signature) {
@@ -313,9 +350,12 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
         //
         // This can still break binary compatibility, but it matches the behavior of the JVM backend.
         if (irFunction.isFakeOverride) {
-            irFunction.overriddenSymbols.asSequence().map { it.owner }.filter { !it.isJvmAbstract(context.state.jvmDefaultMode) }
+            irFunction.overriddenSymbols.asSequence()
+                .map { it.owner }.filter { !it.isJvmAbstract(context.state.jvmDefaultMode) }
                 .forEach { override ->
-                    override.allOverridden().mapTo(blacklist) { it.jvmMethod }
+                    override.allOverridden()
+                        .filter { !it.isFakeOverride }
+                        .mapTo(blacklist) { it.jvmMethod }
                 }
         }
 
@@ -324,46 +364,7 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
 
     // Returns the special bridge overridden by the current methods if it exists.
     private val IrSimpleFunction.specialBridgeOrNull: SpecialBridge?
-        get() = specialBridgeCache.getOrPutNullable(symbol) {
-            specialBridgeMethods.getSpecialMethodInfo(this)?.let { specialMethodInfo ->
-                SpecialBridge(
-                    this, jvmMethod, methodInfo = specialMethodInfo, needsGenericSignature = specialMethodInfo.needsGenericSignature
-                )
-            } ?: specialBridgeMethods.getBuiltInWithDifferentJvmName(this)?.let { specialBuiltInInfo ->
-                SpecialBridge(this, jvmMethod, needsGenericSignature = specialBuiltInInfo.needsGenericSignature)
-            } ?: overriddenSymbols.asSequence().mapNotNull { it.owner.specialBridgeOrNull }.firstOrNull()?.let { specialBridge ->
-                if (specialBridge.needsGenericSignature) {
-                    // Compute the substituted signature.
-                    val erasedParameterCount = specialBridge.methodInfo?.argumentsToCheck ?: 0
-                    val substitutedParameterTypes = valueParameters.mapIndexed { index, param ->
-                        if (index < erasedParameterCount) context.irBuiltIns.anyNType else param.type
-                    }
-
-                    val substitutedOverride = context.irFactory.buildFun {
-                        updateFrom(specialBridge.overridden)
-                        name = Name.identifier(specialBridge.signature.name)
-                        returnType = this@specialBridgeOrNull.returnType
-                    }.apply {
-                        // All existing special bridges only have value parameter types.
-                        valueParameters = this@specialBridgeOrNull.valueParameters.zip(substitutedParameterTypes).map { (param, type) ->
-                            param.copyTo(this, IrDeclarationOrigin.BRIDGE, type = type)
-                        }
-                        overriddenSymbols = listOf(specialBridge.overridden.symbol)
-                        parent = this@specialBridgeOrNull.parent
-                    }
-
-                    specialBridge.copy(
-                        signature = substitutedOverride.jvmMethod,
-                        substitutedParameterTypes = substitutedParameterTypes,
-                        substitutedReturnType = returnType
-                    )
-                } else {
-                    specialBridge
-                }
-            }
-        }
-    private val specialBridgeMethods = SpecialBridgeMethods(context)
-    private val specialBridgeCache = mutableMapOf<IrSimpleFunctionSymbol, SpecialBridge?>()
+        get() = context.bridgeLoweringCache.computeSpecialBridge(this)
 
     private fun IrSimpleFunction.overriddenFinalSpecialBridges(): List<Method> = allOverridden().mapNotNullTo(mutableListOf()) {
         // Ignore special bridges in interfaces or Java classes. While we never generate special bridges in Java
@@ -372,21 +373,23 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
         //
         // This matches the behavior of the JVM backend, but it's probably a bad idea since this is an
         // opportunity for a Java and Kotlin implementation of the same interface to go out of sync.
-        if (it.parentAsClass.isInterface || it.comesFromJava())
+        if (it.parentAsClass.isInterface || it.isFromJava())
             null
         else
             it.specialBridgeOrNull?.signature?.takeIf { bridgeSignature -> bridgeSignature != it.jvmMethod }
     }
 
-    // Sequence of special bridge methods which were not implemented in Kotlin superclasses.
-    private fun IrSimpleFunction.overriddenSpecialBridges(): Sequence<SpecialBridge> = allOverridden().mapNotNull {
-        if (it.parentAsClass.isInterface || it.comesFromJava())
-            it.specialBridgeOrNull?.takeIf { bridge -> bridge.signature != jvmMethod }
-                ?.copy(isFinal = false, isSynthetic = true, methodInfo = null)
-        else null
+    // List of special bridge methods which were not implemented in Kotlin superclasses.
+    private fun IrSimpleFunction.overriddenSpecialBridges(): List<SpecialBridge> {
+        val targetJvmMethod = context.methodSignatureMapper.mapCalleeToAsmMethod(this)
+        return allOverridden()
+            .filter { it.parentAsClass.isInterface || it.isFromJava() }
+            .mapNotNull { it.specialBridgeOrNull }
+            .filter { it.signature != targetJvmMethod }
+            .map { it.copy(isFinal = false, isSynthetic = true, methodInfo = null) }
     }
 
-    private fun IrClass.addAbstractMethodStub(irFunction: IrSimpleFunction, needsArgumentBoxing: Boolean) =
+    private fun IrClass.addAbstractMethodStub(irFunction: IrSimpleFunction) =
         addFunction {
             updateFrom(irFunction)
             modality = Modality.ABSTRACT
@@ -401,24 +404,42 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
             copyCorrespondingPropertyFrom(irFunction)
             dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
             valueParameters = irFunction.valueParameters.map { param ->
-                param.copyTo(this, type = if (needsArgumentBoxing) param.type.makeNullable() else param.type)
+                param.copyTo(this, type = param.type)
             }
+            overriddenSymbols = irFunction.overriddenSymbols.toList()
         }
+
+    private fun getBridgeVisibility(bridge: Bridge): DescriptorVisibility {
+        // Even though kotlin.Cloneable#clone() is protected, corresponding bridge is 'public' in JVM.
+        if (bridge.overridden.name.asString() == "clone" &&
+            bridge.overridden.parentAsClass.hasEqualFqName(StandardNames.FqNames.cloneable.toSafe())
+        ) {
+            return DescriptorVisibilities.PUBLIC
+        }
+
+        val overriddenVisibility = bridge.overridden.visibility
+        // Internal functions can be overridden by non-internal functions, which changes their names since the names of internal
+        // functions are mangled. In order to avoid mangling the name twice we reset the visibility for bridges to internal
+        // functions to public and use the mangled name directly.
+        return if (overriddenVisibility == DescriptorVisibilities.INTERNAL)
+            DescriptorVisibilities.PUBLIC
+        else
+            overriddenVisibility
+    }
 
     private fun IrClass.addBridge(bridge: Bridge, target: IrSimpleFunction): IrSimpleFunction =
         addFunction {
+            startOffset = this@addBridge.startOffset
+            endOffset = this@addBridge.startOffset
             modality = Modality.OPEN
             origin = IrDeclarationOrigin.BRIDGE
-            // Internal functions can be overridden by non-internal functions, which changes their names since the names of internal
-            // functions are mangled. In order to avoid mangling the name twice we reset the visibility for bridges to internal
-            // functions to public and use the mangled name directly.
-            visibility = bridge.overridden.visibility.takeUnless { it == Visibilities.INTERNAL } ?: Visibilities.PUBLIC
+            visibility = getBridgeVisibility(bridge)
             name = Name.identifier(bridge.signature.name)
             returnType = bridge.overridden.returnType.eraseTypeParameters()
             isSuspend = bridge.overridden.isSuspend
         }.apply {
             copyParametersWithErasure(this@addBridge, bridge.overridden)
-            body = context.createIrBuilder(symbol).run { irExprBody(delegatingCall(this@apply, target)) }
+            body = context.createIrBuilder(symbol, startOffset, endOffset).run { irExprBody(delegatingCall(this@apply, target)) }
 
             // The generated bridge method overrides all of the symbols which were overridden by its overrides.
             // This is technically wrong, but it's necessary to generate a method which maps to the same signature.
@@ -426,26 +447,26 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
                 function.owner.safeAs<IrSimpleFunction>()?.overriddenSymbols ?: emptyList()
             }
             val redundantOverrides = inheritedOverrides.flatMapTo(mutableSetOf()) {
-                it.owner.allOverridden().map { override -> override.symbol }.asIterable()
+                it.owner.allOverridden().map { override -> override.symbol }
             }
             overriddenSymbols = inheritedOverrides.filter { it !in redundantOverrides }
         }
 
     private fun IrClass.addSpecialBridge(specialBridge: SpecialBridge, target: IrSimpleFunction): IrSimpleFunction =
         addFunction {
+            startOffset = this@addSpecialBridge.startOffset
+            endOffset = this@addSpecialBridge.startOffset
             modality = if (specialBridge.isFinal) Modality.FINAL else Modality.OPEN
             origin = if (specialBridge.isSynthetic) IrDeclarationOrigin.BRIDGE else IrDeclarationOrigin.BRIDGE_SPECIAL
             name = Name.identifier(specialBridge.signature.name)
-            returnType = specialBridge.substitutedReturnType ?: specialBridge.overridden.returnType.eraseTypeParameters()
+            returnType = specialBridge.substitutedReturnType?.eraseToScope(target.parentAsClass)
+                ?: specialBridge.overridden.returnType.eraseTypeParameters()
         }.apply {
-            copyParametersWithErasure(
-                this@addSpecialBridge,
-                specialBridge.overridden,
-                specialBridge.methodInfo?.needsArgumentBoxing == true,
-                specialBridge.substitutedParameterTypes
-            )
+            context.functionsWithSpecialBridges.add(target)
 
-            body = context.createIrBuilder(symbol).irBlockBody {
+            copyParametersWithErasure(this@addSpecialBridge, specialBridge.overridden, specialBridge.substitutedParameterTypes)
+
+            body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
                 specialBridge.methodInfo?.let { info ->
                     valueParameters.take(info.argumentsToCheck).forEach {
                         +parameterTypeCheck(it, target.valueParameters[it.index].type, info.defaultValueGenerator(this@apply))
@@ -453,7 +474,10 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
                 }
                 +irReturn(delegatingCall(this@apply, target, specialBridge.superQualifierSymbol))
             }
-            overriddenSymbols = listOf(specialBridge.overridden.symbol)
+
+            if (specialBridge.isOverriding) {
+                overriddenSymbols = listOf(specialBridge.overridden.symbol)
+            }
         }
 
     private fun IrSimpleFunction.rewriteSpecialMethodBody(
@@ -523,31 +547,31 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
     private fun IrSimpleFunction.copyParametersWithErasure(
         irClass: IrClass,
         from: IrSimpleFunction,
-        forceArgumentBoxing: Boolean = false,
         substitutedParameterTypes: List<IrType>? = null
     ) {
+        val visibleTypeParameters = collectVisibleTypeParameters(this)
         // This is a workaround for a bug affecting fake overrides. Sometimes we encounter fake overrides
         // with dispatch receivers pointing at a superclass instead of the current class.
         dispatchReceiverParameter = irClass.thisReceiver?.copyTo(this, type = irClass.defaultType)
-        extensionReceiverParameter = from.extensionReceiverParameter?.copyWithTypeErasure(this, forceArgumentBoxing)
+        extensionReceiverParameter = from.extensionReceiverParameter?.copyWithTypeErasure(this, visibleTypeParameters)
         valueParameters = if (substitutedParameterTypes != null) {
             from.valueParameters.zip(substitutedParameterTypes).map { (param, type) ->
-                param.copyWithTypeErasure(this, forceArgumentBoxing, type)
+                param.copyWithTypeErasure(this, visibleTypeParameters, type)
             }
         } else {
-            from.valueParameters.map { it.copyWithTypeErasure(this, forceArgumentBoxing) }
+            from.valueParameters.map { it.copyWithTypeErasure(this, visibleTypeParameters) }
         }
     }
 
     private fun IrValueParameter.copyWithTypeErasure(
         target: IrSimpleFunction,
-        forceArgumentBoxing: Boolean = false,
+        visibleTypeParameters: Set<IrTypeParameter>,
         substitutedType: IrType? = null
     ): IrValueParameter = copyTo(
         target, IrDeclarationOrigin.BRIDGE,
-        type = (substitutedType ?: type.eraseTypeParameters()).let { if (forceArgumentBoxing) it.makeNullable() else it },
+        type = (substitutedType?.eraseToScope(visibleTypeParameters) ?: type.eraseTypeParameters()),
         // Currently there are no special bridge methods with vararg parameters, so we don't track substituted vararg element types.
-        varargElementType = varargElementType?.eraseTypeParameters()
+        varargElementType = varargElementType?.eraseToScope(visibleTypeParameters)
     )
 
     private fun IrBuilderWithScope.delegatingCall(
@@ -557,21 +581,91 @@ private class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass,
     ) = irCastIfNeeded(irCall(target, origin = IrStatementOrigin.BRIDGE_DELEGATION, superQualifierSymbol = superQualifierSymbol).apply {
         for ((param, targetParam) in bridge.explicitParameters.zip(target.explicitParameters)) {
             putArgument(targetParam, irGet(param).let { argument ->
-                if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type)
+                if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type.upperBound)
             })
         }
-    }, bridge.returnType)
+    }, bridge.returnType.upperBound)
 
     private fun IrBuilderWithScope.irCastIfNeeded(expression: IrExpression, to: IrType): IrExpression =
         if (expression.type == to || to.isAny() || to.isNullableAny()) expression else irImplicitCast(expression, to)
 
-    private val signatureCache = mutableMapOf<IrFunctionSymbol, Method>()
-
     private val IrFunction.jvmMethod: Method
-        get() = signatureCache.getOrPut(symbol) { context.methodSignatureMapper.mapAsmMethod(this) }
-}
+        get() = context.bridgeLoweringCache.computeJvmMethod(this)
 
-private fun IrDeclaration.comesFromJava() = parentAsClass.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+    internal class BridgeLoweringCache(private val context: JvmBackendContext) {
+        private val specialBridgeMethods = SpecialBridgeMethods(context)
+
+        // TODO: consider moving this cache out to the backend context and using it everywhere throughout the codegen.
+        // It might benefit performance, but can lead to confusing behavior if some declarations are changed along the way.
+        // For example, adding an override for a declaration whose signature is already cached can result in incorrect signature
+        // if its return type is a primitive type, and the new override's return type is an object type.
+        private val signatureCache = hashMapOf<IrFunctionSymbol, Method>()
+
+        fun computeJvmMethod(function: IrFunction): Method =
+            signatureCache.getOrPut(function.symbol) { context.methodSignatureMapper.mapAsmMethod(function) }
+
+        fun computeSpecialBridge(function: IrSimpleFunction): SpecialBridge? {
+            // Optimization: do not try to compute special bridge for irrelevant methods.
+            val correspondingProperty = function.correspondingPropertySymbol
+            if (correspondingProperty != null) {
+                if (correspondingProperty.owner.name !in specialBridgeMethods.specialPropertyNames) return null
+            } else {
+                // 'remove' and 'removeAt' functions can be mangled by inline class rules
+                if (function.name !in specialBridgeMethods.specialMethodNames &&
+                    !function.name.asString().startsWith("removeAt-") &&
+                    !function.name.asString().startsWith("remove-")
+                ) {
+                    return null
+                }
+            }
+
+            val specialMethodInfo = specialBridgeMethods.getSpecialMethodInfo(function)
+            if (specialMethodInfo != null)
+                return SpecialBridge(
+                    function, computeJvmMethod(function), specialMethodInfo.needsGenericSignature, methodInfo = specialMethodInfo
+                )
+
+            val specialBuiltInInfo = specialBridgeMethods.getBuiltInWithDifferentJvmName(function)
+            if (specialBuiltInInfo != null)
+                return SpecialBridge(
+                    function, computeJvmMethod(function), specialBuiltInInfo.needsGenericSignature,
+                    isOverriding = specialBuiltInInfo.isOverriding
+                )
+
+            for (overridden in function.overriddenSymbols) {
+                val specialBridge = computeSpecialBridge(overridden.owner) ?: continue
+                if (!specialBridge.needsGenericSignature) return specialBridge
+
+                // Compute the substituted signature.
+                val erasedParameterCount = specialBridge.methodInfo?.argumentsToCheck ?: 0
+                val substitutedParameterTypes = function.valueParameters.mapIndexed { index, param ->
+                    if (index < erasedParameterCount) context.irBuiltIns.anyNType else param.type
+                }
+
+                val substitutedOverride = context.irFactory.buildFun {
+                    updateFrom(specialBridge.overridden)
+                    name = Name.identifier(specialBridge.signature.name)
+                    returnType = function.returnType
+                }.apply {
+                    // All existing special bridges only have value parameter types.
+                    valueParameters = function.valueParameters.zip(substitutedParameterTypes).map { (param, type) ->
+                        param.copyTo(this, IrDeclarationOrigin.BRIDGE, type = type)
+                    }
+                    overriddenSymbols = listOf(specialBridge.overridden.symbol)
+                    parent = function.parent
+                }
+
+                return specialBridge.copy(
+                    signature = computeJvmMethod(substitutedOverride),
+                    substitutedParameterTypes = substitutedParameterTypes,
+                    substitutedReturnType = function.returnType
+                )
+            }
+
+            return null
+        }
+    }
+}
 
 // Check whether a fake override will resolve to an implementation in class, not an interface.
 private fun IrSimpleFunction.resolvesToClass(): Boolean {

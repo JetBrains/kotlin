@@ -1,0 +1,235 @@
+FILE: CanBeValChecker.kt
+    public final fun testDelegator(): R|kotlin/Unit| {
+        lvar x: R|kotlin/Boolean|by R|/LocalFreezableVar.LocalFreezableVar|<R|kotlin/Boolean|>(Boolean(true))
+        lvar y: R|kotlin/String|by R|/LocalFreezableVar.LocalFreezableVar|<R|kotlin/String|>(String())
+    }
+    public final class LocalFreezableVar<T> : R|kotlin/Any| {
+        public constructor<T>(value: R|T|): R|LocalFreezableVar<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final var value: R|T| = R|<local>/value|
+            private get(): R|T|
+            private set(value: R|T|): R|kotlin/Unit|
+
+        public final operator fun getValue(thisRef: R|kotlin/Nothing?|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
+            ^getValue this@R|/LocalFreezableVar|.R|/LocalFreezableVar.value|
+        }
+
+        public final operator fun setValue(thisRef: R|kotlin/Nothing?|, property: R|kotlin/reflect/KProperty<*>|, value: R|T|): R|kotlin/Unit| {
+            this@R|/LocalFreezableVar|.R|/LocalFreezableVar.value| = R|<local>/value|
+        }
+
+    }
+    public final operator fun R|C|.plus(a: R|kotlin/Any|): R|C| {
+        ^plus this@R|/plus|
+    }
+    public final operator fun R|C|.plusAssign(a: R|kotlin/Any|): R|kotlin/Unit| {
+    }
+    public final fun testOperatorAssignment(): R|kotlin/Unit| {
+        lval c: R|C| = R|/C.C|()
+        R|<local>/c|.R|/plusAssign|(String())
+        lvar c1: R|C| = R|/C.C|()
+        ERROR_EXPR(Operator overload ambiguity. Compatible candidates: [/plus, /plusAssign])
+        lvar a: R|kotlin/Int| = Int(1)
+        R|<local>/a| = R|<local>/a|.R|kotlin/Int.plus|(Int(12))
+        R|<local>/a| = R|<local>/a|.R|kotlin/Int.minus|(Int(10))
+    }
+    public final fun destructuringDeclaration(): R|kotlin/Unit| {
+        lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|/getPair|()
+        lvar v1: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+        lvar v2: R|kotlin/String| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/String|>|()
+        R|kotlin/io/print|(R|<local>/v1|)
+        lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|/getPair|()
+        lvar v3: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+        lvar v4: R|kotlin/String| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/String|>|()
+        R|kotlin/io/print|(R|<local>/v3|)
+        R|<local>/v4| = String()
+        lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|/getPair|()
+        lvar v5: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+        lvar v6: R|kotlin/String| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/String|>|()
+        R|<local>/v5| = Int(1)
+        lval <destruct>: R|kotlin/Pair<kotlin/Int, kotlin/String>| = R|/getPair|()
+        lvar v7: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component1: R|kotlin/Int|>|()
+        lvar v8: R|kotlin/String| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Pair.component2: R|kotlin/String|>|()
+        R|<local>/v7| = Int(2)
+        R|<local>/v8| = String(42)
+        lval <destruct>: R|kotlin/Triple<kotlin/Int, kotlin/Int, kotlin/Int>| = R|kotlin/Triple.Triple|<R|kotlin/Int|, R|kotlin/Int|, R|kotlin/Int|>(Int(1), Int(1), Int(1))
+        lval a: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Triple.component1: R|kotlin/Int|>|()
+        lval b: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Triple.component2: R|kotlin/Int|>|()
+        lval c: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Triple.component3: R|kotlin/Int|>|()
+        lval <destruct>: R|kotlin/Triple<kotlin/Int, kotlin/Int, kotlin/Int>| = R|kotlin/Triple.Triple|<R|kotlin/Int|, R|kotlin/Int|, R|kotlin/Int|>(Int(1), Int(1), Int(1))
+        lvar x: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Triple.component1: R|kotlin/Int|>|()
+        lvar y: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Triple.component2: R|kotlin/Int|>|()
+        lvar z: R|kotlin/Int| = R|<local>/<destruct>|.R|SubstitutionOverride<kotlin/Triple.component3: R|kotlin/Int|>|()
+    }
+    public final fun stackOverflowBug(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int|
+        R|<local>/a| = Int(1)
+        lval <iterator>: R|kotlin/collections/IntIterator| = Int(1).R|kotlin/Int.rangeTo|(Int(10)).R|kotlin/ranges/IntProgression.iterator|()
+        while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
+            lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+            R|kotlin/io/print|(R|<local>/i|)
+        }
+
+    }
+    public final fun smth(flag: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int| = Int(1)
+        when () {
+            R|<local>/flag| ->  {
+                while(CMP(>, R|<local>/a|.R|kotlin/Int.compareTo|(Int(0)))) {
+                    lval <unary>: R|kotlin/Int| = R|<local>/a|
+                    R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.dec|()
+                    R|<local>/<unary>|
+                }
+
+            }
+        }
+
+    }
+    public final fun withAnnotation(p: R|kotlin/collections/List<kotlin/Any>|): R|kotlin/Unit| {
+        @R|kotlin/Suppress|(vararg(String(UNCHECKED_CAST))) lvar v: R|kotlin/collections/List<kotlin/String>| = (R|<local>/p| as R|kotlin/collections/List<kotlin/String>|)
+        R|kotlin/io/print|(R|<local>/v|)
+    }
+    public final fun withReadonlyDeligate(): R|kotlin/Unit| {
+        lval s: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| {
+            ^ String(Hello!)
+        }
+        )
+        R|<local>/s|.R|kotlin/Any.hashCode|()
+    }
+    public final fun getPair(): R|kotlin/Pair<kotlin/Int, kotlin/String>| {
+        ^getPair R|kotlin/Pair.Pair|<R|kotlin/Int|, R|kotlin/String|>(Int(1), String(1))
+    }
+    public final fun listReceiver(p: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+    }
+    public final fun withInitializer(): R|kotlin/Unit| {
+        lvar v1: R|kotlin/Int| = Int(1)
+        lvar v2: R|kotlin/Int| = Int(2)
+        lvar v3: R|kotlin/Int| = Int(3)
+        R|<local>/v1| = Int(1)
+        lval <unary>: R|kotlin/Int| = R|<local>/v2|
+        R|<local>/v2| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+        R|<local>/<unary>|
+        R|kotlin/io/print|(R|<local>/v3|)
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int| = Int(0)
+        while(CMP(>, R|<local>/a|.R|kotlin/Int.compareTo|(Int(0)))) {
+            lval <unary>: R|kotlin/Int| = R|<local>/a|
+            R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+            R|<local>/<unary>|
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int|
+        lval bool: R|kotlin/Boolean| = Boolean(true)
+        when () {
+            R|<local>/bool| ->  {
+                R|<local>/a| = Int(4)
+            }
+            else ->  {
+                R|<local>/a| = Int(42)
+            }
+        }
+
+        lval b: R|kotlin/String|
+        R|<local>/bool| = Boolean(false)
+    }
+    public final fun cycles(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int| = Int(10)
+        while(CMP(>, R|<local>/a|.R|kotlin/Int.compareTo|(Int(0)))) {
+            lval <unary>: R|kotlin/Int| = R|<local>/a|
+            R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.dec|()
+            R|<local>/<unary>|
+        }
+
+        lvar b: R|kotlin/Int|
+        while(CMP(<, R|<local>/a|.R|kotlin/Int.compareTo|(Int(10)))) {
+            lval <unary>: R|kotlin/Int| = R|<local>/a|
+            R|<local>/a| = R|<local>/<unary>|.R|kotlin/Int.inc|()
+            R|<local>/<unary>|
+            R|<local>/b| = R|<local>/a|
+        }
+
+    }
+    public final fun assignedTwice(p: R|kotlin/Int|): R|kotlin/Unit| {
+        lvar v: R|kotlin/Int|
+        R|<local>/v| = Int(0)
+        when () {
+            CMP(>, R|<local>/p|.R|kotlin/Int.compareTo|(Int(0))) ->  {
+                R|<local>/v| = Int(1)
+            }
+        }
+
+    }
+    public final fun main(args: R|kotlin/Array<kotlin/String?>|): R|kotlin/Unit| {
+        lvar a: R|kotlin/String?|
+        lval unused: R|kotlin/Int| = Int(0)
+        when () {
+            ==(R|<local>/args|.R|kotlin/Array.size|, Int(1)) ->  {
+                R|<local>/a| = R|<local>/args|.R|SubstitutionOverride<kotlin/Array.get: R|kotlin/String?|>|(Int(0))
+            }
+            else ->  {
+                R|<local>/a| = R|<local>/args|.R|kotlin/Any.toString|()
+                when () {
+                    !=(R|<local>/a|, Null(null)) && R|<local>/a|.R|kotlin/Any.equals|(String(cde)) ->  {
+                        ^main Unit
+                    }
+                }
+
+            }
+        }
+
+    }
+    public final fun run(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        ^run R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final fun lambda(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int|
+        R|<local>/a| = Int(10)
+        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| {
+            R|<local>/a| = Int(20)
+        }
+        )
+    }
+    public final fun lambdaInitialization(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Int|
+        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| {
+            R|<local>/a| = Int(20)
+        }
+        )
+    }
+    public final fun notAssignedWhenNotUsed(p: R|kotlin/Int|): R|kotlin/Unit| {
+        lvar v: R|kotlin/Int|
+        when () {
+            CMP(>, R|<local>/p|.R|kotlin/Int.compareTo|(Int(0))) ->  {
+                R|<local>/v| = Int(1)
+                R|kotlin/io/print|(R|<local>/v|)
+            }
+        }
+
+    }
+    public final var global: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var field: R|kotlin/Int| = Int(2)
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final fun foo(): R|kotlin/Unit| {
+            R|kotlin/io/print|(this@R|/C|.R|/C.field|)
+            R|kotlin/io/print|(R|/global|)
+        }
+
+    }
+    public final fun withDelegate(): R|kotlin/Unit| {
+        lvar s: R|kotlin/String|by Q|kotlin/properties/Delegates|.R|kotlin/properties/Delegates.notNull|<R|kotlin/String|>()
+        R|<local>/s| = String()
+    }

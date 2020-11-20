@@ -18,3 +18,8 @@ sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
+
+tasks.getByName<Jar>("jar") {
+    //excludes unused bunch files
+    exclude("META-INF/extensions/*.xml.**")
+}

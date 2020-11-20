@@ -15,6 +15,8 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.newvfs.NewVirtualFile
+import com.intellij.openapi.vfs.newvfs.NewVirtualFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.PathUtil
 import com.intellij.util.SmartList
@@ -30,7 +32,7 @@ import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.caches.resolve.resolution
 import org.jetbrains.kotlin.config.SourceKotlinRootType
 import org.jetbrains.kotlin.config.TestSourceKotlinRootType
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.caches.resolve.util.enlargedSearchScope
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinModuleOutOfCodeBlockModificationTracker
@@ -40,10 +42,7 @@ import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
 import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.framework.platform
 import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
-import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.findAnalyzerServices
-import org.jetbrains.kotlin.idea.project.getStableName
-import org.jetbrains.kotlin.idea.project.isHMPPEnabled
+import org.jetbrains.kotlin.idea.project.*
 import org.jetbrains.kotlin.idea.stubindex.KotlinSourceFilterScope
 import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
@@ -61,10 +60,10 @@ import org.jetbrains.kotlin.platform.konan.NativePlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
+import org.jetbrains.kotlin.resolve.jvm.TopPackageNamesProvider
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.types.typeUtil.closure
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.lang.StringBuilder
 import java.util.*
 
 internal val LOG = Logger.getInstance(IdeaModuleInfo::class.java)
@@ -77,7 +76,7 @@ interface IdeaModuleInfo : org.jetbrains.kotlin.idea.caches.resolve.IdeaModuleIn
 
     val project: Project?
 
-    override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+    override val capabilities: Map<ModuleCapability<*>, Any?>
         get() = super.capabilities + mapOf(OriginCapability to moduleOrigin)
 
     override fun dependencies(): List<IdeaModuleInfo>
@@ -298,14 +297,14 @@ private fun Module.hasTestRoots() =
 private fun Module.hasRootsOfType(sourceRootType: JpsModuleSourceRootType<*>): Boolean =
     rootManager.contentEntries.any { it.getSourceFolders(sourceRootType).isNotEmpty() }
 
-private abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.project) {
+abstract class ModuleSourceScope(val module: Module) : GlobalSearchScope(module.project) {
     override fun compare(file1: VirtualFile, file2: VirtualFile) = 0
     override fun isSearchInModuleContent(aModule: Module) = aModule == module
     override fun isSearchInLibraries() = false
 }
 
 @Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
-private class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(module) {
+class ModuleProductionSourceScope(module: Module) : ModuleSourceScope(module) {
     val moduleFileIndex = ModuleRootManager.getInstance(module).fileIndex
 
     override fun equals(other: Any?): Boolean {
@@ -337,7 +336,9 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
     override fun toString() = "ModuleTestSourceScope($module)"
 }
 
-abstract class LibraryInfo(override val project: Project, val library: Library) : IdeaModuleInfo, LibraryModuleInfo, BinaryModuleInfo {
+abstract class LibraryInfo(override val project: Project, val library: Library) :
+    IdeaModuleInfo, LibraryModuleInfo, BinaryModuleInfo, TrackableModuleInfo {
+
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
@@ -370,6 +371,13 @@ abstract class LibraryInfo(override val project: Project, val library: Library) 
 
     override fun getLibraryRoots(): Collection<String> =
         library.getFiles(OrderRootType.CLASSES).mapNotNull(PathUtil::getLocalPath)
+
+    override fun createModificationTracker(): ModificationTracker {
+        if (!project.libraryToSourceAnalysisEnabled)
+            return ModificationTracker.NEVER_CHANGED
+
+        return ResolutionAnchorAwareLibraryModificationTracker(this)
+    }
 
     override fun toString() = "${this::class.simpleName}(libraryName=${library.name}, libraryRoots=${getLibraryRoots()})"
 
@@ -454,9 +462,40 @@ object NotUnderContentRootModuleInfo : IdeaModuleInfo {
         get() = platform.single().findAnalyzerServices()
 }
 
+internal open class PoweredLibraryScopeBase(project: Project, classes: Array<VirtualFile>, sources: Array<VirtualFile>) :
+    LibraryScopeBase(project, classes, sources), TopPackageNamesProvider {
+
+    private val entriesVirtualFileSystems: Set<NewVirtualFileSystem>? = run {
+        val fileSystems = mutableSetOf<NewVirtualFileSystem>()
+        for (file in classes + sources) {
+            val newVirtualFile = file as? NewVirtualFile ?: return@run null
+            fileSystems.add(newVirtualFile.fileSystem)
+        }
+        fileSystems
+    }
+
+    override val topPackageNames: Set<String> by lazy {
+        (classes + sources)
+            .flatMap { it.children.toList() }
+            .filter(VirtualFile::isDirectory)
+            .map(VirtualFile::getName)
+            .toSet() + "" // empty package is always present
+    }
+
+    override fun contains(file: VirtualFile): Boolean {
+        ((file as? NewVirtualFile)?.fileSystem)?.let {
+            if (entriesVirtualFileSystems != null && !entriesVirtualFileSystems.contains(it)) {
+                return false
+            }
+        }
+        return super.contains(file)
+    }
+
+}
+
 @Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
 private class LibraryWithoutSourceScope(project: Project, private val library: Library) :
-    LibraryScopeBase(project, library.getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>()) {
+    PoweredLibraryScopeBase(project, library.getFiles(OrderRootType.CLASSES), arrayOf()) {
 
     override fun getFileRoot(file: VirtualFile): VirtualFile? = myIndex.getClassRootForFile(file)
 
@@ -469,7 +508,7 @@ private class LibraryWithoutSourceScope(project: Project, private val library: L
 
 @Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
 private class LibrarySourceScope(project: Project, private val library: Library) :
-    LibraryScopeBase(project, arrayOf<VirtualFile>(), library.getFiles(OrderRootType.SOURCES)) {
+    PoweredLibraryScopeBase(project, arrayOf(), library.getFiles(OrderRootType.SOURCES)) {
 
     override fun getFileRoot(file: VirtualFile): VirtualFile? = myIndex.getSourceRootForFile(file)
 
@@ -483,7 +522,7 @@ private class LibrarySourceScope(project: Project, private val library: Library)
 //TODO: (module refactoring) android sdk has modified scope
 @Suppress("EqualsOrHashCode") // DelegatingGlobalSearchScope requires to provide calcHashCode()
 private class SdkScope(project: Project, val sdk: Sdk) :
-    LibraryScopeBase(project, sdk.rootProvider.getFiles(OrderRootType.CLASSES), arrayOf<VirtualFile>()) {
+    PoweredLibraryScopeBase(project, sdk.rootProvider.getFiles(OrderRootType.CLASSES), arrayOf()) {
 
     override fun equals(other: Any?) = other is SdkScope && sdk == other.sdk
 
@@ -494,7 +533,7 @@ private class SdkScope(project: Project, val sdk: Sdk) :
 
 fun IdeaModuleInfo.isLibraryClasses() = this is SdkInfo || this is LibraryInfo
 
-val OriginCapability = ModuleDescriptor.Capability<ModuleOrigin>("MODULE_ORIGIN")
+val OriginCapability = ModuleCapability<ModuleOrigin>("MODULE_ORIGIN")
 
 enum class ModuleOrigin {
     MODULE,
@@ -538,7 +577,7 @@ data class PlatformModuleInfo(
     override val platformModule: ModuleSourceInfo,
     private val commonModules: List<ModuleSourceInfo> // NOTE: usually contains a single element for current implementation
 ) : IdeaModuleInfo, CombinedModuleInfo, TrackableModuleInfo {
-    override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+    override val capabilities: Map<ModuleCapability<*>, Any?>
         get() = platformModule.capabilities
 
     override fun contentScope() = GlobalSearchScope.union(containedModules.map { it.contentScope() }.toTypedArray())

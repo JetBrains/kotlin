@@ -17,7 +17,11 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
     override val attributes: ConeAttributes
         get() = ConeAttributes.Empty
 
-    constructor(value: Long, isUnsigned: Boolean, nullability: ConeNullability = ConeNullability.NOT_NULL) : super(value, isUnsigned, nullability) {
+    constructor(
+        value: Long,
+        isUnsigned: Boolean,
+        nullability: ConeNullability = ConeNullability.NOT_NULL
+    ) : super(value, isUnsigned, nullability) {
         possibleTypes = mutableListOf()
 
         fun checkBoundsAndAddPossibleType(classId: ClassId, range: LongRange) {
@@ -64,15 +68,18 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
     }
 
     override fun getApproximatedType(expectedType: ConeKotlinType?): ConeClassLikeType {
-        val approximatedType = when (val expectedTypeForApproximation = expectedType?.lowerBoundIfFlexible()) {
+        val expectedTypeForApproximation = (expectedType?.lowerBoundIfFlexible() as? ConeClassLikeType)
+            ?.withNullability(ConeNullability.NOT_NULL)
+        val approximatedType = when (expectedTypeForApproximation) {
             null, !in possibleTypes -> possibleTypes.first()
-            else -> expectedTypeForApproximation as ConeClassLikeType
+            else -> expectedTypeForApproximation
         }
         return approximatedType.withNullability(nullability)
     }
 
+    @OptIn(ExperimentalUnsignedTypes::class)
     companion object {
-        fun createType(classId: ClassId): ConeClassLikeType {
+        private fun createType(classId: ClassId): ConeClassLikeType {
             return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false)
         }
 
@@ -127,7 +134,7 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
             }
         }
 
-        private fun fold(left: ConeIntegerLiteralType, right: ConeIntegerLiteralType, mode: Mode): ConeIntegerLiteralType? {
+        private fun fold(left: ConeIntegerLiteralType, right: ConeIntegerLiteralType, mode: Mode): ConeIntegerLiteralType {
             val possibleTypes = when (mode) {
                 Mode.COMMON_SUPER_TYPE -> left.possibleTypes intersect right.possibleTypes
                 Mode.INTERSECTION_TYPE -> left.possibleTypes union right.possibleTypes

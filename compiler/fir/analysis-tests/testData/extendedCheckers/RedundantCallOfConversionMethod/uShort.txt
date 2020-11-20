@@ -1,0 +1,4 @@
+FILE: uShort.kt
+    public final fun test(i: R|kotlin/UShort|): R|kotlin/Unit| {
+        lval foo: R|kotlin/UShort| = R|<local>/i|.R|kotlin/UShort.toUShort|()
+    }

@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
       WHILE label=null origin=WHILE_LOOP
         condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
           $this: GET_VAR 'val x: kotlin.collections.DoubleIterator [val] declared in <root>.box' type=kotlin.collections.DoubleIterator origin=null
-        body: BLOCK type=kotlin.Int origin=WHILE_LOOP
+        body: BLOCK type=kotlin.Int origin=null
           WHEN type=kotlin.Unit origin=IF
             BRANCH
               if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
               then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
                 STRING_CONCATENATION type=kotlin.String
                   CONST String type=kotlin.String value="Fail "
-                  CALL 'public open fun toString (): kotlin.String declared in kotlin.Any' type=kotlin.String origin=null
+                  CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.Int' type=kotlin.String origin=null
                     $this: GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.Int [val]
             GET_VAR 'var i: kotlin.Int [var] declared in <root>.box' type=kotlin.Int origin=null

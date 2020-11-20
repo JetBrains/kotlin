@@ -8,23 +8,30 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
-import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.KotlinScopeProvider
-import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+@ThreadSafeMutableState
 class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinScopeProvider) : FirProvider() {
+    override val symbolProvider: FirSymbolProvider = SymbolProvider()
+
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
-        symbol.overriddenSymbol?.let {
+        symbol.originalIfFakeOverride()?.let {
             return getFirCallableContainerFile(it)
         }
         if (symbol is FirAccessorSymbol) {
@@ -36,20 +43,6 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         return state.callableContainerMap[symbol]
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
-        return getFirClassifierByFqName(classId)?.symbol
-    }
-
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-        return (state.callableMap[CallableId(packageFqName, null, name)] ?: emptyList())
-    }
-
-    override fun getNestedClassifierScope(classId: ClassId): FirScope? {
-        return (getFirClassifierByFqName(classId) as? FirRegularClass)?.let {
-            nestedClassifierScope(it)
-        }
-    }
-
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return state.classifierContainerFileMap[fqName] ?: error("Couldn't find container for $fqName")
     }
@@ -58,12 +51,28 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         return state.classifierContainerFileMap[fqName]
     }
 
-    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
-        return state.classesInPackage[fqName] ?: emptySet()
-    }
-
     fun recordFile(file: FirFile) {
         recordFile(file, state)
+    }
+
+    private inner class SymbolProvider : FirSymbolProvider(session) {
+        override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
+            return getFirClassifierByFqName(classId)?.symbol
+        }
+
+        override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
+            return (state.callableMap[CallableId(packageFqName, null, name)] ?: emptyList())
+        }
+
+        @FirSymbolProviderInternals
+        override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
+            destination += getTopLevelCallableSymbols(packageFqName, name)
+        }
+
+        override fun getPackage(fqName: FqName): FqName? {
+            if (getFirFilesByPackage(fqName).isNotEmpty()) return fqName
+            return null
+        }
     }
 
     @FirProviderInternals
@@ -86,7 +95,6 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
     private fun recordFile(file: FirFile, state: State) {
         val packageName = file.packageFqName
         state.fileMap.merge(packageName, listOf(file)) { a, b -> a + b }
-
         file.acceptChildren(FirRecorder, state to file)
     }
 
@@ -113,7 +121,10 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
             state.classifierContainerFileMap[classId] = file
         }
 
-        override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<F>, data: Pair<State, FirFile>) {
+        override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(
+            callableDeclaration: FirCallableDeclaration<F>,
+            data: Pair<State, FirFile>
+        ) {
             val symbol = callableDeclaration.symbol
             val callableId = symbol.callableId
             val (state, file) = data
@@ -131,6 +142,8 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
 
         override fun visitProperty(property: FirProperty, data: Pair<State, FirFile>) {
             visitCallableDeclaration(property, data)
+            property.getter?.let { visitCallableDeclaration(it, data) }
+            property.setter?.let { visitCallableDeclaration(it, data) }
         }
 
         override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Pair<State, FirFile>) {
@@ -243,6 +256,10 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
         } else {
             state.setFrom(newState)
         }
+    }
+
+    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
+        return state.classesInPackage[fqName] ?: emptySet()
     }
 }
 

@@ -232,7 +232,7 @@ class OverloadResolver(
 
     private fun DeclarationDescriptor.isPrivate() =
         this is DeclarationDescriptorWithVisibility &&
-                Visibilities.isPrivate(this.visibility)
+                DescriptorVisibilities.isPrivate(this.visibility)
 
     private fun checkOverloadsInClass(members: Collection<CallableMemberDescriptor>) {
         if (members.size == 1) return

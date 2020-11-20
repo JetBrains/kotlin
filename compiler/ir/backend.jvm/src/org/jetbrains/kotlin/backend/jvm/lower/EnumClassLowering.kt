@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -87,7 +88,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
         private fun buildValuesField(): IrField = irClass.addField {
             name = Name.identifier(ImplementationBodyCodegen.ENUM_VALUES_FIELD_NAME)
             type = context.irBuiltIns.arrayClass.typeWith(irClass.defaultType)
-            visibility = Visibilities.PRIVATE
+            visibility = DescriptorVisibilities.PRIVATE
             origin = IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES
             isFinal = true
             isStatic = true
@@ -161,6 +162,13 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 loweredEnumConstructorParameters[expression.symbol]?.let {
                     IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.origin)
                 } ?: expression
+
+            override fun visitSetValue(expression: IrSetValue): IrExpression {
+                expression.transformChildrenVoid()
+                return loweredEnumConstructorParameters[expression.symbol]?.let {
+                    IrSetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.value, expression.origin)
+                } ?: expression
+            }
 
             override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
                 expression.transformChildrenVoid(this)

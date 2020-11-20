@@ -4,5 +4,5 @@ actual interface A<T> {
 }
 
 fun main() {
-    bar().<!OVERLOAD_RESOLUTION_AMBIGUITY(" public abstract actual fun foo(x: String): Unit defined in A public abstract fun foo(x: String): Unit defined in A")!>foo<!>("")
+    bar().<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>("")
 }

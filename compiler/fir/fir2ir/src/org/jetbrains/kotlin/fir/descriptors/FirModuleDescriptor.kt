@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.descriptors
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
@@ -45,8 +42,10 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
         get() = TODO("not implemented")
     override val expectedByModules: List<ModuleDescriptor>
         get() = TODO("not implemented")
+    override val allExpectedByModules: Set<ModuleDescriptor>
+        get() = TODO("not implemented")
 
-    override fun <T> getCapability(capability: ModuleDescriptor.Capability<T>): T? {
+    override fun <T> getCapability(capability: ModuleCapability<T>): T? {
         return null
     }
 

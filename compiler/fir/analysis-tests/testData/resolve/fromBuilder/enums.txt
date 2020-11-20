@@ -26,39 +26,39 @@ FILE: enums.kt
             internal get(): R|kotlin/Double|
 
         public final static enum entry MERCURY: R|Planet| = object : R|Planet| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|Planet|>(Double(1.0), Double(2.0))
             }
 
-            public[local] final override fun sayHello(): R|kotlin/Unit| {
+            public final override fun sayHello(): R|kotlin/Unit| {
                 <Unresolved name: println>#(String(Hello!!!))
             }
 
         }
 
         public final static enum entry VENERA: R|Planet| = object : R|Planet| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|Planet|>(Double(3.0), Double(4.0))
             }
 
-            public[local] final override fun sayHello(): R|kotlin/Unit| {
+            public final override fun sayHello(): R|kotlin/Unit| {
                 <Unresolved name: println>#(String(Ola!!!))
             }
 
         }
 
         public final static enum entry EARTH: R|Planet| = object : R|Planet| {
-            private[local] constructor(): R|<anonymous>| {
+            private constructor(): R|<anonymous>| {
                 super<R|Planet|>(Double(5.0), Double(6.0))
             }
 
-            public[local] final override fun sayHello(): R|kotlin/Unit| {
+            public final override fun sayHello(): R|kotlin/Unit| {
                 <Unresolved name: println>#(String(Privet!!!))
             }
 
         }
 
-        public final val g: R|kotlin/Double| = this@R|/Planet.Companion|.R|/Planet.Companion.G|.R|kotlin/Double.times|(R|<local>/m|).R|kotlin/Double.div|(R|<local>/r|.R|kotlin/Double.times|(R|<local>/r|))
+        public final val g: R|kotlin/Double| = this@R|/Planet.Companion|.R|/Planet.Companion.G|.R|kotlin/Double.times|(this@R|/Planet|.R|/Planet.m|).R|kotlin/Double.div|(this@R|/Planet|.R|/Planet.r|.R|kotlin/Double.times|(this@R|/Planet|.R|/Planet.r|))
             public get(): R|kotlin/Double|
 
         public abstract fun sayHello(): R|kotlin/Unit|

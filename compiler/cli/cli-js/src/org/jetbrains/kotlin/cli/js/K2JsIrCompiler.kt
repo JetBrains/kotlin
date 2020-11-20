@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.cli.js
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.backend.wasm.compileWasm
+import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR
 import org.jetbrains.kotlin.cli.common.ExitCode.OK
@@ -24,10 +27,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -35,11 +35,9 @@ import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
-import org.jetbrains.kotlin.js.config.EcmaVersion
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.util.Logger
@@ -222,6 +220,33 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 MainModule.SourceFiles(sourcesFiles)
             }
 
+            if (arguments.wasm) {
+                val res = compileWasm(
+                    projectJs,
+                    mainModule,
+                    AnalyzerWithCompilerReport(config.configuration),
+                    config.configuration,
+                    PhaseConfig(wasmPhases),
+                    allDependencies = resolvedLibraries,
+                    friendDependencies = friendDependencies,
+                    exportedDeclarations = setOf(FqName("main"))
+                )
+                val outputWasmFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wasm")!!
+                outputWasmFile.writeBytes(res.wasm)
+                val outputWatFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wat")!!
+                outputWatFile.writeText(res.wat)
+
+                val runner = """
+                    const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
+                    const wasmModule = new WebAssembly.Module(wasmBinary);
+                    const wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
+                    wasmInstance.exports.main();
+                """.trimIndent()
+
+                outputFile.writeText(res.js + "\n" + runner)
+                return OK
+            }
+
             val compiledModule = try {
                 compile(
                     projectJs,
@@ -314,6 +339,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         configuration.putIfNotNull(CommonConfigurationKeys.LOOKUP_TRACKER, services[LookupTracker::class.java])
         configuration.putIfNotNull(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, services[ExpectActualTracker::class.java])
 
+        val errorTolerancePolicy = arguments.errorTolerancePolicy?.let { ErrorTolerancePolicy.resolvePolicy(it) }
+        configuration.putIfNotNull(JSConfigurationKeys.ERROR_TOLERANCE_POLICY, errorTolerancePolicy)
+
+        if (errorTolerancePolicy?.allowErrors == true) {
+            configuration.put(JSConfigurationKeys.DEVELOPER_MODE, true)
+        }
+
         val sourceMapEmbedContentString = arguments.sourceMapEmbedSources
         var sourceMapContentEmbedding: SourceMapSourceEmbedding? = if (sourceMapEmbedContentString != null)
             sourceMapContentEmbeddingMap[sourceMapEmbedContentString]
@@ -332,7 +364,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         configuration.put(JSConfigurationKeys.PRINT_REACHABILITY_INFO, arguments.irDcePrintReachabilityInfo)
-        configuration.put(JSConfigurationKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR, arguments.disableFakeOverrideValidator)
+        configuration.put(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
     }
 
     override fun executableScriptFileName(): String {

@@ -91,9 +91,6 @@ class MyProperty<T> {
 class Modifiers {
   @delegate:Transient
   val plainField: Int = 1
-
-  @delegate:Transient
-  val lazy by lazy { 1 }
 }
 
 interface A {

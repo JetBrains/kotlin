@@ -48,13 +48,15 @@ fun FirRegularClassBuilder.generateValuesFunction(
             )
         }
         name = ENUM_VALUES
-        this.status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
+        this.status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
             isStatic = true
             isExpect = makeExpect
         }
         symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, ENUM_VALUES))
         resolvePhase = FirResolvePhase.BODY_RESOLVE
         body = buildEmptyExpressionBlock()
+    }.apply {
+        containingClassAttr = this@generateValuesFunction.symbol.toLookupTag()
     }
 }
 
@@ -75,7 +77,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             )
         }
         name = ENUM_VALUE_OF
-        status = FirDeclarationStatusImpl(Visibilities.PUBLIC, Modality.FINAL).apply {
+        status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
             isStatic = true
             isExpect = makeExpect
         }
@@ -93,5 +95,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         }
         resolvePhase = FirResolvePhase.BODY_RESOLVE
         body = buildEmptyExpressionBlock()
+    }.apply {
+        containingClassAttr = this@generateValueOfFunction.symbol.toLookupTag()
     }
 }

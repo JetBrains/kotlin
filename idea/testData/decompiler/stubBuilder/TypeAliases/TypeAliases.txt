@@ -95,6 +95,18 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
+      CLASS[fqName=test.TypeAliases.OrderA, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderA, superNames=[]]
+        MODIFIER_LIST[public final]
+        PRIMARY_CONSTRUCTOR
+          MODIFIER_LIST[public]
+          VALUE_PARAMETER_LIST
+        CLASS_BODY
+      CLASS[fqName=test.TypeAliases.OrderB, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=OrderB, superNames=[]]
+        MODIFIER_LIST[public final]
+        PRIMARY_CONSTRUCTOR
+          MODIFIER_LIST[public]
+          VALUE_PARAMETER_LIST
+        CLASS_BODY
       TYPEALIAS[fqName=test.TypeAliases.B, isTopLevel=false, name=B]
         MODIFIER_LIST[public]
         TYPE_REFERENCE

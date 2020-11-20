@@ -176,8 +176,16 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.util.ImportInsertHelper"
                     serviceImplementation="org.jetbrains.kotlin.idea.util.ImportInsertHelperImpl"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.resolve.ResolutionAnchorCacheService"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.ResolutionAnchorCacheServiceImpl"/>
+
+    <projectService serviceImplementation="org.jetbrains.kotlin.idea.DaemonCodeAnalyzerStatusService"/>
+
     <projectService serviceInterface="org.jetbrains.kotlin.resolve.ResolutionAnchorProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KotlinIdeResolutionAnchorService"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.caches.trackers.ModuleDependencyProviderExtension"
+                    serviceImplementation="org.jetbrains.kotlin.idea.caches.project.ResolutionAnchorModuleDependencyProviderExtension"/>
 
     <projectService serviceImplementation="org.jetbrains.kotlin.idea.project.KotlinLibraryToSourceAnalysisStateComponent"/>
 
@@ -204,6 +212,9 @@
 
     <projectService serviceInterface="org.jetbrains.kotlin.asJava.KotlinAsJavaSupport"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.IDEKotlinAsJavaSupport"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.asJava.LightClassProvider"
+                    serviceImplementation="org.jetbrains.kotlin.idea.asJava.LightClassProviderImpl"/>
 
     <projectService serviceInterface="org.jetbrains.kotlin.psi.KtFileClassProvider"
                     serviceImplementation="org.jetbrains.kotlin.idea.caches.resolve.KtFileClassProviderImpl"/>
@@ -275,15 +286,25 @@
     <projectService serviceInterface="org.jetbrains.kotlin.idea.debugger.coroutine.DebuggerListener"
                     serviceImplementation="org.jetbrains.kotlin.idea.debugger.coroutine.CoroutineDebuggerListener"/>
 
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesSupport"
+                    serviceImplementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesSupportImpl"/>
+
+    <projectService serviceInterface="org.jetbrains.kotlin.idea.search.KotlinSearchUsagesSupport"
+                    serviceImplementation="org.jetbrains.kotlin.idea.search.KotlinSearchUsagesSupportImpl"/>
+
     <errorHandler implementation="org.jetbrains.kotlin.idea.reporter.KotlinReportSubmitter"/>
 
-    <registryKey
-        key="kotlin.dispatch.thread.resolve.check"
-        description="Whether to enable the check for resolve activated from the write action"
-        defaultValue="false"
-        restartRequired="false"/>
+    <registryKey key="kotlin.dispatch.thread.resolve.check"
+                 description="Whether to enable the check for resolve activated from the write action"
+                 defaultValue="false"
+                 restartRequired="false"/>
 
+    <registryKey key="kotlin.resolve.force.full.resolve.on.highlighting"
+                 description="Force to perform full resolve on highlighting"
+                 defaultValue="true"
+                 restartRequired="false"/>
 
+    <iconProvider implementation="org.jetbrains.kotlin.idea.KotlinIconProvider"/>
     <gotoSymbolContributor implementation="org.jetbrains.kotlin.idea.goto.KotlinGotoSymbolContributor"/>
     <gotoClassContributor implementation="org.jetbrains.kotlin.idea.goto.KotlinGotoClassContributor"/>
     <searchEverywhereClassifier implementation="org.jetbrains.kotlin.idea.goto.KotlinSearchEverywhereClassifier"/>
@@ -324,6 +345,10 @@
         id="kotlinAwareJavaMoveClassesOrPackagesHandler"
         implementation="org.jetbrains.kotlin.idea.refactoring.move.moveClassesOrPackages.KotlinAwareJavaMoveClassesOrPackagesHandler"
         order="first" />
+    <refactoring.moveHandler
+        id="kotlin.moveMethod"
+        implementation="org.jetbrains.kotlin.idea.refactoring.move.moveMethod.MoveKotlinMethodHandler"
+        order="first,before kotlin.moveTopLevelDeclarations" />
     <moveFileHandler implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.MoveKotlinFileHandler" />
     <moveFileHandler
         implementation="org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories.FqNameFixingMoveJavaFileHandler"
@@ -376,6 +401,7 @@
     <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinArrayAccessParameterInfoHandler"/>
     <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinClassTypeArgumentInfoHandler"/>
     <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinFunctionTypeArgumentInfoHandler"/>
+    <codeInsight.parameterInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.parameterInfo.KotlinClassConstructorInfoHandler"/>
     <codeInsight.parameterNameHints language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.hints.KotlinInlayParameterHintsProvider"/>
 
     <codeInsight.inlayProvider language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.hints.KotlinReferencesTypeHintsProvider"/>
@@ -508,7 +534,7 @@
     <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightExitPointsHandlerFactory"/>
     <highlightUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.highlighter.KotlinHighlightImplicitItHandlerFactory"/>
     <findUsagesHandlerFactory implementation="org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory"/>
-    <usageTypeProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinUsageTypeProvider"/>
+    <usageTypeProvider implementation="org.jetbrains.kotlin.idea.findUsages.KotlinUsageTypeProviderImpl"/>
 
     <refactoring.safeDeleteProcessor
         id="kotlinProcessor"
@@ -610,7 +636,8 @@
         implementationClass="org.jetbrains.kotlin.idea.refactoring.pushDown.JavaToKotlinPushDownDelegate"/>
 
 
-    <codeInsight.typeInfo language="kotlin" implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinExpressionTypeProvider"/>
+    <codeInsight.typeInfo language="kotlin"
+                          implementationClass="org.jetbrains.kotlin.idea.codeInsight.KotlinExpressionTypeProviderDescriptorsImpl"/>
 
     <testCreator language="kotlin" implementationClass="org.jetbrains.kotlin.idea.testIntegration.KotlinTestCreator"/>
     <testFinder implementation="org.jetbrains.kotlin.idea.testIntegration.KotlinTestFinder"/>
@@ -640,6 +667,8 @@
     <resolveScopeEnlarger implementation="org.jetbrains.kotlin.idea.CommonModuleResolveScopeEnlarger"/>
 
     <postStartupActivity implementation="org.jetbrains.kotlin.idea.statistics.KotlinGradleFUSLogger"/>
+
+    <postStartupActivity implementation="org.jetbrains.kotlin.idea.versions.KotlinUpdatePluginStartupActivity"/>
 
     <moduleConfigurationEditorProvider implementation="org.jetbrains.kotlin.idea.roots.ui.NonJvmKotlinModuleEditorsProvider"/>
 

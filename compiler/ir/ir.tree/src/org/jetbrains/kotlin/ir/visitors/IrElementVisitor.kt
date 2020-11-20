@@ -28,7 +28,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: D) = visitPackageFragment(declaration, data)
     fun visitScript(declaration: IrScript, data: D) = visitDeclaration(declaration, data)
 
-    fun visitDeclaration(declaration: IrDeclaration, data: D) = visitElement(declaration, data)
+    fun visitDeclaration(declaration: IrDeclarationBase, data: D) = visitElement(declaration, data)
     fun visitClass(declaration: IrClass, data: D) = visitDeclaration(declaration, data)
     fun visitFunction(declaration: IrFunction, data: D) = visitDeclaration(declaration, data)
     fun visitSimpleFunction(declaration: IrSimpleFunction, data: D) = visitFunction(declaration, data)
@@ -67,7 +67,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitGetEnumValue(expression: IrGetEnumValue, data: D) = visitSingletonReference(expression, data)
     fun visitValueAccess(expression: IrValueAccessExpression, data: D) = visitDeclarationReference(expression, data)
     fun visitGetValue(expression: IrGetValue, data: D) = visitValueAccess(expression, data)
-    fun visitSetVariable(expression: IrSetVariable, data: D) = visitValueAccess(expression, data)
+    fun visitSetValue(expression: IrSetValue, data: D) = visitValueAccess(expression, data)
     fun visitFieldAccess(expression: IrFieldAccessExpression, data: D) = visitDeclarationReference(expression, data)
     fun visitGetField(expression: IrGetField, data: D) = visitFieldAccess(expression, data)
     fun visitSetField(expression: IrSetField, data: D) = visitFieldAccess(expression, data)

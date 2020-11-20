@@ -21,6 +21,6 @@ class IrTypeParameterBuilder : IrDeclarationBuilder() {
         index = from.index
         variance = from.variance
         isReified = from.isReified
-        superTypes.addAll(from.superTypes)
+        // Do not copy superTypes. You typically want a remapping for a group of type parameters at a time, see IrTypeParameterRemapper.
     }
 }

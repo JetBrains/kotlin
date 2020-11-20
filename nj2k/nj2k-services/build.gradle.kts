@@ -14,9 +14,7 @@ dependencies {
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
     compileOnly(intellijDep())
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
-    }
+    compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
 }
 
 sourceSets {

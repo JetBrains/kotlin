@@ -116,7 +116,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return jsAssignment(dest, source)
     }
 
-    override fun visitSetVariable(expression: IrSetVariable, context: JsGenerationContext): JsExpression {
+    override fun visitSetValue(expression: IrSetValue, context: JsGenerationContext): JsExpression {
         val ref = JsNameRef(context.getNameForValueDeclaration(expression.symbol.owner))
         val value = expression.value.accept(this, context)
         return JsBinaryOperation(JsBinaryOperator.ASG, ref, value)

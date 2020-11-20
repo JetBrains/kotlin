@@ -27,7 +27,7 @@ class Test {
     fun <T> List<T>.testClassLiteral3() = b<T, Any>::class
 
     fun <T> List<T>.testUnresolved1() = <!UNRESOLVED_REFERENCE!>unresolved<!><T>::foo
-    fun <T> List<T>.testUnresolved2() = a<unresolved>::foo
+    fun <T> List<T>.testUnresolved2() = a<<!UNRESOLVED_REFERENCE!>unresolved<!>>::foo
     fun <T> List<T>.testUnresolved3() = a<<!SYNTAX!><!>>::foo
     fun <T> List<T>.testUnresolved4() = <!UNRESOLVED_REFERENCE!>unresolved<!>?::foo
 }

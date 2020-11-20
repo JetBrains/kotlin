@@ -8,17 +8,17 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrVariable
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Return the negated value if the expression is const, otherwise call unaryMinus(). */
@@ -70,16 +70,20 @@ internal fun IrExpression.decrement(): IrExpression {
 }
 
 internal val IrExpression.canHaveSideEffects: Boolean
-    get() = this !is IrConst<*> && this !is IrGetValue
+    get() = this !is IrExpressionWithCopy
+
+private fun Any?.toLong(): Long? =
+    when (this) {
+        is Number -> toLong()
+        is Char -> toLong()
+        else -> null
+    }
+
+internal val IrExpressionWithCopy.constLongValue: Long?
+    get() = if (this is IrConst<*>) value.toLong() else null
 
 internal val IrExpression.constLongValue: Long?
-    get() = if (this is IrConst<*>) {
-        when (val value = this.value) {
-            is Number -> value.toLong()
-            is Char -> value.toLong()
-            else -> null
-        }
-    } else null
+    get() = if (this is IrConst<*>) value.toLong() else null
 
 /**
  * If [expression] can have side effects ([IrExpression.canHaveSideEffects]), this function creates a temporary local variable for that
@@ -90,9 +94,27 @@ internal val IrExpression.constLongValue: Long?
 internal fun DeclarationIrBuilder.createTemporaryVariableIfNecessary(
     expression: IrExpression, nameHint: String? = null,
     irType: IrType? = null, isMutable: Boolean = false
-): Pair<IrVariable?, IrExpression> =
-    if (expression.canHaveSideEffects) {
+): Pair<IrVariable?, IrExpressionWithCopy> =
+    if (expression !is IrExpressionWithCopy) {
         scope.createTmpVariable(expression, nameHint = nameHint, irType = irType, isMutable = isMutable).let { Pair(it, irGet(it)) }
     } else {
         Pair(null, expression)
+    }
+
+internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
+    // This expression's type could be Nothing from an exception throw.
+    if (type == targetClass.defaultType || type.isNothing()) {
+        this
+    } else {
+        val numberCastFunctionName = Name.identifier("to${targetClass.name.asString()}")
+        val castFun = type.getClass()!!.functions.single {
+            it.name == numberCastFunctionName &&
+                    it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
+        }
+        IrCallImpl(
+            startOffset, endOffset,
+            castFun.returnType, castFun.symbol,
+            typeArgumentsCount = 0,
+            valueArgumentsCount = 0
+        ).apply { dispatchReceiver = this@castIfNecessary }
     }

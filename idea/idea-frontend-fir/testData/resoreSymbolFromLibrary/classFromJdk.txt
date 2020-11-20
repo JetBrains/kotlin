@@ -1,0 +1,19 @@
+// RUNTIME
+
+class: java.lang.String
+
+// SYMBOLS:
+KtFirClassOrObjectSymbol:
+  annotations: []
+  classIdIfNonLocal: java.lang.String
+  classKind: CLASS
+  companionObject: null
+  isInner: true
+  modality: FINAL
+  name: String
+  origin: JAVA
+  primaryConstructor: null
+  superTypes: [kotlin/Any, java/io/Serializable, kotlin/Comparable<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, kotlin/CharSequence]
+  symbolKind: MEMBER
+  typeParameters: []
+  visibility: PUBLIC

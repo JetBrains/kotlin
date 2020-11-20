@@ -11,7 +11,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.core.util.getLineCount
-import org.jetbrains.kotlin.idea.core.util.isMultiLine
 import org.jetbrains.kotlin.idea.formatter.trailingComma.TrailingCommaHelper
 import org.jetbrains.kotlin.idea.util.isComma
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -120,6 +119,7 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
     }
 
     private var parametersOrArgsToMove: Pair<PsiElement, PsiElement>? = null
+
     override fun beforeMove(
         editor: Editor,
         info: MoveInfo,
@@ -127,6 +127,8 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
     ) {
         if (parametersOrArgsToMove != null) {
             val (first, second) = parametersOrArgsToMove ?: return
+            parametersOrArgsToMove = null
+
             val lastElementOnFirstLine = getLastSiblingOfSameTypeInLine(first, editor)
             val lastElementOnSecondLine = getLastSiblingOfSameTypeInLine(second, editor)
             val withTrailingComma = lastElementOnFirstLine.parent

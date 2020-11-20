@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -35,7 +36,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
     companion object {
         fun isNegation(expression: IrExpression, context: JvmBackendContext): Boolean =
             expression is IrCall &&
-                    context.state.intrinsics.getIntrinsic(expression.symbol.descriptor) is Not
+                    (expression.symbol as? IrPublicSymbolBase<*>)?.signature == context.irBuiltIns.booleanNotSymbol.signature
     }
 
     private val IrFunction.isObjectEquals
@@ -78,25 +79,25 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             // in another class then the one it is nested under in the IR.
             // TODO: Loosen this up for local functions for lambdas passed as an inline lambda
             // argument to an inline function. In that case the code does end up in the current class.
-            override fun visitFunction(declaration: IrFunction, currentClass: IrClass?): IrStatement {
+            override fun visitFunction(declaration: IrFunction, data: IrClass?): IrStatement {
                 val codeMightBeGeneratedInDifferentClass = declaration.isSuspend ||
                         declaration.isInline ||
                         declaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-                declaration.transformChildren(this, currentClass.takeUnless { codeMightBeGeneratedInDifferentClass })
+                declaration.transformChildren(this, data.takeUnless { codeMightBeGeneratedInDifferentClass })
                 return declaration
             }
 
-            override fun visitCall(expression: IrCall, currentClass: IrClass?): IrExpression {
-                expression.transformChildren(this, currentClass)
+            override fun visitCall(expression: IrCall, data: IrClass?): IrExpression {
+                expression.transformChildren(this, data)
 
                 removeIntTypeSafeCastsForEquality(expression)
 
                 if (expression.symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
-                    if (currentClass == null) return expression
+                    if (data == null) return expression
                     val simpleFunction = (expression.symbol.owner as? IrSimpleFunction) ?: return expression
                     val property = simpleFunction.correspondingPropertySymbol?.owner ?: return expression
                     if (property.isLateinit) return expression
-                    return optimizePropertyAccess(expression, simpleFunction, property, currentClass)
+                    return optimizePropertyAccess(expression, simpleFunction, property, data)
                 }
 
                 if (isNegation(expression, context) && isNegation(expression.dispatchReceiver!!, context)) {
@@ -185,9 +186,9 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 return expression
             }
 
-            override fun visitWhen(expression: IrWhen, currentClass: IrClass?): IrExpression {
+            override fun visitWhen(expression: IrWhen, data: IrClass?): IrExpression {
                 val isCompilerGenerated = expression.origin == null
-                expression.transformChildren(this, currentClass)
+                expression.transformChildren(this, data)
                 // Remove all branches with constant false condition.
                 expression.branches.removeIf {
                     it.condition.isFalseConst() && isCompilerGenerated
@@ -203,7 +204,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                                 "Failing expression: ${expression.dump()}"
                     }
                     // Replace conjunction condition with intrinsic "and" function call
-                    return IrCallImpl(
+                    return IrCallImpl.fromSymbolOwner(
                         expression.startOffset,
                         expression.endOffset,
                         context.irBuiltIns.booleanType,
@@ -224,7 +225,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                                 "and an 'if true then b' body on its second branch. " +
                                 "Failing expression: ${expression.dump()}"
                     }
-                    return IrCallImpl(
+                    return IrCallImpl.fromSymbolOwner(
                         expression.startOffset,
                         expression.endOffset,
                         context.irBuiltIns.booleanType,
@@ -329,24 +330,24 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 }
             }
 
-            override fun visitBlockBody(body: IrBlockBody, currentClass: IrClass?): IrBody {
-                body.transformChildren(this, currentClass)
+            override fun visitBlockBody(body: IrBlockBody, data: IrClass?): IrBody {
+                body.transformChildren(this, data)
                 removeUnnecessaryTemporaryVariables(body.statements)
                 return body
             }
 
-            override fun visitContainerExpression(expression: IrContainerExpression, currentClass: IrClass?): IrExpression {
-                expression.transformChildren(this, currentClass)
+            override fun visitContainerExpression(expression: IrContainerExpression, data: IrClass?): IrExpression {
+                expression.transformChildren(this, data)
                 removeUnnecessaryTemporaryVariables(expression.statements)
                 return expression
             }
 
-            override fun visitGetValue(expression: IrGetValue, currentClass: IrClass?): IrExpression {
+            override fun visitGetValue(expression: IrGetValue, data: IrClass?): IrExpression {
                 // Replace IrGetValue of an immutable temporary variable with a constant
                 // initializer with the constant initializer.
                 val variable = expression.symbol.owner
                 return if (isImmutableTemporaryVariableWithConstantValue(variable))
-                    ((variable as IrVariable).initializer!! as IrConst<*>).copy()
+                    ((variable as IrVariable).initializer!! as IrConst<*>).copyWithOffsets(expression.startOffset, expression.endOffset)
                 else
                     expression
             }

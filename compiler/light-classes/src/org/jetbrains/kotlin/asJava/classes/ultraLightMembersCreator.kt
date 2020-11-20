@@ -58,11 +58,12 @@ internal class UltraLightMembersCreator(
         usedPropertyNames: HashSet<String>,
         forceStatic: Boolean
     ): KtLightField? {
-        val property = variable as? KtProperty
-        if (property != null && !hasBackingField(property)) return null
+
+        if (!hasBackingField(variable)) return null
 
         if (variable.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) || variable.hasExpectModifier()) return null
 
+        val property = variable as? KtProperty
         val hasDelegate = property?.hasDelegate() == true
         val fieldName = generateUniqueFieldName((variable.name ?: "") + (if (hasDelegate) "\$delegate" else ""), usedPropertyNames)
 
@@ -93,9 +94,11 @@ internal class UltraLightMembersCreator(
         return KtUltraLightFieldForSourceDeclaration(variable, fieldName, containingClass, support, modifiers)
     }
 
-    private fun hasBackingField(property: KtProperty): Boolean {
+    private fun hasBackingField(property: KtCallableDeclaration): Boolean {
         if (property.hasModifier(ABSTRACT_KEYWORD)) return false
-        if (property.hasModifier(LATEINIT_KEYWORD) || property.accessors.isEmpty()) return true
+        if (property.hasModifier(LATEINIT_KEYWORD)) return true
+        if (property is KtParameter) return true
+        if ((property as? KtProperty)?.accessors?.isEmpty() == true) return true
 
         val context = LightClassGenerationSupport.getInstance(containingClass.project).analyze(property)
         val descriptor = context.get(BindingContext.DECLARATION_TO_DESCRIPTOR, property)
@@ -237,10 +240,10 @@ internal class UltraLightMembersCreator(
         ) return PsiType.VOID
 
         val desc =
-            ktDeclaration.resolve()?.getterIfProperty() as? FunctionDescriptor
+            ktDeclaration.resolve()?.getterIfProperty() as? CallableDescriptor
                 ?: return PsiType.NULL
 
-        return support.mapType(wrapper) { typeMapper, signatureWriter ->
+        return support.mapType(desc.returnType, wrapper) { typeMapper, signatureWriter ->
             typeMapper.mapReturnType(desc, signatureWriter)
         }
     }
@@ -285,9 +288,9 @@ internal class UltraLightMembersCreator(
 
                 if (outerDeclaration.hasModifier(OVERRIDE_KEYWORD)) {
                     when ((outerDeclaration.resolve() as? CallableDescriptor)?.visibility) {
-                        Visibilities.PUBLIC -> return name == PsiModifier.PUBLIC
-                        Visibilities.PRIVATE -> return name == PsiModifier.PRIVATE
-                        Visibilities.PROTECTED -> return name == PsiModifier.PROTECTED
+                        DescriptorVisibilities.PUBLIC -> return name == PsiModifier.PUBLIC
+                        DescriptorVisibilities.PRIVATE -> return name == PsiModifier.PRIVATE
+                        DescriptorVisibilities.PROTECTED -> return name == PsiModifier.PROTECTED
                     }
                 }
 
@@ -418,17 +421,17 @@ internal class UltraLightMembersCreator(
         if (isPrivate && declaration !is KtProperty) return emptyList()
 
         fun needsAccessor(accessor: KtPropertyAccessor?, type: MethodType): Boolean {
-
             if (onlyJvmStatic && !declaration.isJvmStatic(support) && !(accessor != null && accessor.isJvmStatic(support)))
                 return false
 
             if (declaration is KtProperty && declaration.hasDelegate())
                 return true
 
-            if (accessor?.hasModifier(PRIVATE_KEYWORD) == true || accessor?.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) == true)
-                return false
-
-            if (isPrivate && accessor?.hasBody() != true) return false
+            if (accessor?.hasBody() != true &&
+                (accessor?.hasModifier(PRIVATE_KEYWORD) == true ||
+                        accessor?.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) == true ||
+                        isPrivate)
+            ) return false
 
             if (!declaration.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)) return true
 

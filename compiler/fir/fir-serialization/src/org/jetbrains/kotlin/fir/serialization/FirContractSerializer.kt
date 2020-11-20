@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.contracts.description.*
-import org.jetbrains.kotlin.contracts.description.expressions.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.effects
@@ -33,7 +32,7 @@ class FirContractSerializer {
     private class ContractSerializerWorker(private val parentSerializer: FirElementSerializer) {
         fun contractProto(contractDescription: FirContractDescription): ProtoBuf.Contract.Builder {
             return ProtoBuf.Contract.newBuilder().apply {
-                contractDescription.effects?.forEach { addEffect(effectProto(it, contractDescription)) }
+                contractDescription.effects?.forEach { addEffect(effectProto(it.effect, contractDescription)) }
             }
         }
 
@@ -58,9 +57,9 @@ class FirContractSerializer {
 
                 is ConeReturnsEffectDeclaration -> {
                     when (effectDeclaration.value) {
-                        ConstantReference.NOT_NULL ->
+                        ConeConstantReference.NOT_NULL ->
                             builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_NOT_NULL
-                        ConstantReference.WILDCARD ->
+                        ConeConstantReference.WILDCARD ->
                             builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_CONSTANT
                         else -> {
                             builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_CONSTANT

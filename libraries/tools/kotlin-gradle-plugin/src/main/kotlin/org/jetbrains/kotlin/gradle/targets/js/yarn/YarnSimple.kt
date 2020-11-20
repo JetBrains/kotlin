@@ -33,7 +33,8 @@ class YarnSimple : YarnBasics() {
 
     override fun prepareRootProject(
         rootProject: Project,
-        subProjects: Collection<KotlinCompilationNpmResolution>
+        subProjects: Collection<KotlinCompilationNpmResolution>,
+        resolutions: Map<String, String>
     ) = Unit
 
     override fun resolveRootProject(

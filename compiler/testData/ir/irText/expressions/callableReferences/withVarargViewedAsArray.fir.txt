@@ -60,8 +60,17 @@ FILE fqName:<root> fileName:/withVarargViewedAsArray.kt
     BLOCK_BODY
   FUN name:testPlainArgs visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /usePlainArgs>#' type=kotlin.Unit
-        ERROR_CALL 'Unsupported callable reference: ::<Unresolved reference: sum>#' type=IrErrorType
+      CALL 'public final fun usePlainArgs (fn: kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        fn: FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Int> origin=ADAPTED_FUNCTION_REFERENCE
+          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:sum visibility:local modality:FINAL <> (p0:kotlin.Int, p1:kotlin.Int) returnType:kotlin.Int
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p1 index:1 type:kotlin.Int
+            BLOCK_BODY
+              RETURN type=kotlin.Nothing from='local final fun sum (p0: kotlin.Int, p1: kotlin.Int): kotlin.Int declared in <root>.testPlainArgs'
+                CALL 'public final fun sum (vararg args: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+                  args: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                    GET_VAR 'p0: kotlin.Int declared in <root>.testPlainArgs.sum' type=kotlin.Int origin=null
+                    GET_VAR 'p1: kotlin.Int declared in <root>.testPlainArgs.sum' type=kotlin.Int origin=null
   FUN name:testPrimitiveArrayAsVararg visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun usePrimitiveArray (fn: kotlin.Function1<kotlin.IntArray, kotlin.Int>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null

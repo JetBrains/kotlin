@@ -136,7 +136,7 @@ private fun ClassDescriptor.findMemberFunction(name: Name): FunctionDescriptor? 
 }
 
 private fun CallableDescriptor.isLocalOrExtension(extensionClassDescriptor: ClassDescriptor): Boolean {
-    return visibility == Visibilities.LOCAL ||
+    return visibility == DescriptorVisibilities.LOCAL ||
             extensionReceiverParameter?.type?.constructor?.declarationDescriptor == extensionClassDescriptor
 }
 

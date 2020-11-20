@@ -9,7 +9,7 @@ import com.intellij.compiler.server.BuildProcessParametersProvider
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.config.IncrementalCompilation
-import org.jetbrains.kotlin.idea.PluginStartupService
+import org.jetbrains.kotlin.idea.PluginStartupApplicationService
 
 class KotlinBuildProcessParametersProvider(private val project: Project) : BuildProcessParametersProvider() {
     override fun getVMArguments(): MutableList<String> {
@@ -28,7 +28,7 @@ class KotlinBuildProcessParametersProvider(private val project: Project) : Build
         if (Registry.`is`("kotlin.jps.instrument.bytecode", false)) {
             res.add("-Dkotlin.jps.instrument.bytecode=true")
         }
-        PluginStartupService.getInstance().aliveFlagPath.let {
+        PluginStartupApplicationService.getInstance().aliveFlagPath.let {
             if (!it.isBlank()) {
                 // TODO: consider taking the property name from compiler/daemon/common (check whether dependency will be not too heavy)
                 res.add("-Dkotlin.daemon.client.alive.path=\"$it\"")

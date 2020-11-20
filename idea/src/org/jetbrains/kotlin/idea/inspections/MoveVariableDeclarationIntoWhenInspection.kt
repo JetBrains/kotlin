@@ -32,19 +32,22 @@ class MoveVariableDeclarationIntoWhenInspection : AbstractKotlinInspection(), Cl
         whenExpressionVisitor(fun(expression: KtWhenExpression) {
             val subjectExpression = expression.subjectExpression ?: return
             val property = expression.findDeclarationNear() ?: return
-            if (!property.isOneLiner()) return
-            if (property.initializer?.anyDescendantOfType<KtExpression> {
+            val identifier = property.nameIdentifier ?: return
+            val initializer = property.initializer ?: return
+            if (!initializer.isOneLiner()) return
+            if (initializer.anyDescendantOfType<KtExpression> {
                     it is KtThrowExpression || it is KtReturnExpression || it is KtBreakExpression || it is KtContinueExpression
-                } == true) return
+                }) return
 
             val action = property.action(expression)
             if (action == Action.NOTHING) return
+            if (action == Action.MOVE && !property.isOneLiner()) return
 
-            val identifier = property.nameIdentifier ?: return
             holder.registerProblem(
                 property,
                 TextRange.from(identifier.startOffsetInParent, identifier.textLength),
-                action.description, action.createFix(subjectExpression.createSmartPointer())
+                action.description,
+                action.createFix(subjectExpression.createSmartPointer())
             )
         })
 }

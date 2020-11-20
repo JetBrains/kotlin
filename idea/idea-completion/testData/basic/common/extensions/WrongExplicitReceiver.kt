@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 class Foo {
     fun Int.bar() = this
 }

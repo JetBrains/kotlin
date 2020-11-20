@@ -46,13 +46,20 @@ abstract class KotlinLangLineIndentProvider : JavaLikeLangLineIndentProvider() {
 
         when {
             after.isAt(BlockClosingBrace) && !currentPosition.hasLineBreaksAfter(offset) ->
-                return factory.createIndentCalculatorForBrace(before, after, BlockOpeningBrace, BlockClosingBrace)
+                return factory.createIndentCalculatorForBrace(before, after, BlockOpeningBrace, BlockClosingBrace, Indent.getNoneIndent())
 
-            before.isAt(BlockOpeningBrace) && after.isAt(BlockClosingBrace) ->
-                return factory.createIndentCalculator(Indent.getNormalIndent(), before.startOffset)
+            before.isAt(BlockOpeningBrace) && after.isAt(BlockClosingBrace) -> {
+                return factory.createIndentCalculatorForBrace(before, after, BlockOpeningBrace, BlockClosingBrace, Indent.getNormalIndent())
+            }
 
             after.isAt(ArrayClosingBracket) && !currentPosition.hasLineBreaksAfter(offset) ->
-                return factory.createIndentCalculatorForBrace(before, after, ArrayOpeningBracket, ArrayClosingBracket)
+                return factory.createIndentCalculatorForBrace(
+                    before,
+                    after,
+                    ArrayOpeningBracket,
+                    ArrayClosingBracket,
+                    Indent.getNoneIndent()
+                )
 
             before.isAt(ArrayOpeningBracket) && after.isAt(ArrayClosingBracket) -> {
                 val indent = if (isSimilarToFunctionInvocation(before))
@@ -63,18 +70,15 @@ abstract class KotlinLangLineIndentProvider : JavaLikeLangLineIndentProvider() {
                 return factory.createIndentCalculator(indent, before.startOffset)
             }
 
-            before.isAt(BlockOpeningBrace) && before.beforeIgnoringWhiteSpaceOrComment().isFunctionDeclaration() ->
-                return factory.createIndentCalculator(Indent.getNormalIndent(), before.startOffset)
-
-//            KT-39716
-//            after.isAt(Quest) && after.after().isAt(Colon) -> {
-//                val indent = if (settings.continuationIndentInElvis)
-//                    Indent.getContinuationIndent()
-//                else
-//                    Indent.getNormalIndent()
-//
-//                return factory.createIndentCalculator(indent, before.startOffset)
-//            }
+            //            KT-39716
+            //            after.isAt(Quest) && after.after().isAt(Colon) -> {
+            //                val indent = if (settings.continuationIndentInElvis)
+            //                    Indent.getContinuationIndent()
+            //                else
+            //                    Indent.getNormalIndent()
+            //
+            //                return factory.createIndentCalculator(indent, before.startOffset)
+            //            }
 
             before.isAt(Colon) && before.before().isAt(Quest) ->
                 return factory.createIndentCalculator(Indent.getNoneIndent(), before.startOffset)
@@ -214,18 +218,27 @@ abstract class KotlinLangLineIndentProvider : JavaLikeLangLineIndentProvider() {
             before: SemanticEditorPosition,
             after: SemanticEditorPosition,
             leftBraceType: SemanticEditorPosition.SyntaxElement,
-            rightBraceType: SemanticEditorPosition.SyntaxElement
-        ): IndentCalculator? {
+            rightBraceType: SemanticEditorPosition.SyntaxElement,
+            defaultIndent: Indent
+        ): IndentCalculator {
             val leftBrace = before.copyAnd {
                 it.moveToLeftParenthesisBackwardsSkippingNested(leftBraceType, rightBraceType)
             }
 
-            val indent = if (after.after().afterOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET).isAt(Comma))
-                createAlignMultilineIndent(leftBrace)
-            else
-                Indent.getNoneIndent()
+            if (after.after().afterOptionalMix(*WHITE_SPACE_OR_COMMENT_BIT_SET).isAt(Comma)) {
+                return createIndentCalculator(createAlignMultilineIndent(leftBrace), leftBrace.startOffset)
+            }
 
-            return createIndentCalculator(indent, leftBrace.startOffset)
+            val beforeLeftBrace = leftBrace.copyAnd { it.moveBeforeIgnoringWhiteSpaceOrComment() }
+            val leftAnchor = if (beforeLeftBrace.isAt(RightParenthesis)) {
+                beforeLeftBrace.moveBeforeParentheses(LeftParenthesis, RightParenthesis)
+                beforeLeftBrace
+            } else {
+                findFunctionDeclarationBeforeBody(beforeLeftBrace)
+            }
+
+            val resultPosition = leftAnchor?.takeIf { !it.isAtEnd } ?: leftBrace
+            return createIndentCalculator(defaultIndent, resultPosition.startOffset)
         }
 
         private fun IndentCalculatorFactory.createIndentCalculatorForParenthesis(
@@ -273,11 +286,6 @@ abstract class KotlinLangLineIndentProvider : JavaLikeLangLineIndentProvider() {
 
             return null
         }
-
-        /**
-         * @receiver is position before '=' for expression body or '{' for block body
-         */
-        private fun SemanticEditorPosition.isFunctionDeclaration(): Boolean = findFunctionDeclarationBeforeBody(this) != null
 
         /**
          * @param endOfDeclaration is position before '=' for expression body or '{' for block body

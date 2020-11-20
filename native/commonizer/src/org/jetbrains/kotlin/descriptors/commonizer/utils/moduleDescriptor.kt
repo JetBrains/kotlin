@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
+import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ExportedForwardDeclarationsPackageFragmentDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.packageFragments
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.konan.util.KlibMetadataFactories
 import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
@@ -97,5 +99,16 @@ internal fun MutableMap<String, ModuleDescriptor?>.guessModuleByPackageFqName(pa
     this[packageFqNameRaw] = candidate // cache to speed-up the further look-ups
     return candidate
 }
+
+internal val ModuleDescriptor.hasSomethingUnderStandardKotlinPackages: Boolean
+    get() {
+        val packageFragmentProvider = packageFragmentProvider
+        return STANDARD_KOTLIN_PACKAGE_FQNS.any { fqName ->
+            packageFragmentProvider.packageFragments(fqName).any { packageFragment ->
+                packageFragment !is ExportedForwardDeclarationsPackageFragmentDescriptor
+                        && packageFragment.getMemberScope() != MemberScope.Empty
+            }
+        }
+    }
 
 internal val NativeFactories = KlibMetadataFactories(::KonanBuiltIns, NullFlexibleTypeDeserializer, NativeTypeTransformer())

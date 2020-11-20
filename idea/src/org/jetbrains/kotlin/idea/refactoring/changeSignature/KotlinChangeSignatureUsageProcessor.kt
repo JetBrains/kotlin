@@ -84,7 +84,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         methodDescriptor = methodDescriptor,
         name = "",
         newReturnTypeInfo = KotlinTypeInfo(true),
-        newVisibility = Visibilities.DEFAULT_VISIBILITY,
+        newVisibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
         parameterInfos = emptyList<KotlinParameterInfo>(),
         receiver = null,
         context = method

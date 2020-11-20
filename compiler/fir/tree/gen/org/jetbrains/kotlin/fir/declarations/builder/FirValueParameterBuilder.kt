@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -38,6 +37,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
     open lateinit var session: FirSession
     open var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     open lateinit var origin: FirDeclarationOrigin
+    open var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     open lateinit var returnTypeRef: FirTypeRef
     open lateinit var name: Name
     open lateinit var symbol: FirVariableSymbol<FirValueParameter>
@@ -54,6 +54,7 @@ open class FirValueParameterBuilder : FirAnnotationContainerBuilder {
             session,
             resolvePhase,
             origin,
+            attributes,
             returnTypeRef,
             name,
             symbol,
@@ -85,6 +86,7 @@ inline fun buildValueParameterCopy(original: FirValueParameter, init: FirValuePa
     copyBuilder.session = original.session
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
+    copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.name = original.name
     copyBuilder.symbol = original.symbol

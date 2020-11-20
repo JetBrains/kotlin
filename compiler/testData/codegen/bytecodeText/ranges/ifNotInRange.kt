@@ -1,3 +1,6 @@
+fun testChar(x: Char, a: Char, b: Char) =
+        if (x !in a .. b) "no" else "yes"
+
 fun testInt(x: Int, a: Int, b: Int) =
         if (x !in a .. b) "no" else "yes"
 

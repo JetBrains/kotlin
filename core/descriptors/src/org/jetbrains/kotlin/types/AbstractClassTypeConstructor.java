@@ -58,7 +58,7 @@ public abstract class AbstractClassTypeConstructor extends AbstractTypeConstruct
     @Override
     public final boolean isFinal() {
         ClassDescriptor descriptor = getDeclarationDescriptor();
-        return ModalityKt.isFinalClass(descriptor) && !descriptor.isExpect();
+        return ModalityUtilsKt.isFinalClass(descriptor) && !descriptor.isExpect();
     }
 
     @NotNull

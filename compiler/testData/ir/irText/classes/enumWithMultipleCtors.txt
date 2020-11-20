@@ -33,9 +33,9 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
           overridden:
             protected/*protected and package*/ final fun finalize (): kotlin.Unit [fake_override] declared in <root>.A
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.A>
-        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>) returnType:java.lang.Class<<root>.A?>? [fake_override]
+        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.A?>? [fake_override]
           overridden:
-            public final fun getDeclaringClass (): java.lang.Class<<root>.A?>? [fake_override] declared in <root>.A
+            public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.A?>? [fake_override] declared in <root>.A
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.A>
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>, other:<root>.A) returnType:kotlin.Int [fake_override,operator]
           overridden:
@@ -184,9 +184,9 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
       overridden:
         protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.A>
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>) returnType:java.lang.Class<<root>.A?>? [fake_override]
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.A?>? [fake_override]
       overridden:
-        public final fun getDeclaringClass (): java.lang.Class<E of kotlin.Enum?>? declared in kotlin.Enum
+        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.A>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.A>, other:<root>.A) returnType:kotlin.Int [fake_override,operator]
       overridden:

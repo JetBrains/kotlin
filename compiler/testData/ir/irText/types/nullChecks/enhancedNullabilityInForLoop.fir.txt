@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
       WHILE label=null origin=WHILE_LOOP
         condition: CALL 'public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
           $this: GET_VAR 'val iterator: kotlin.collections.MutableIterator<<root>.P?> [val] declared in <root>.testDesugaredForInList' type=kotlin.collections.MutableIterator<<root>.P?> origin=null
-        body: BLOCK type=kotlin.Unit origin=WHILE_LOOP
+        body: BLOCK type=kotlin.Unit origin=null
           VAR name:x type:<root>.P? [val]
             CALL 'public abstract fun next (): T of kotlin.collections.MutableIterator [fake_override,operator] declared in kotlin.collections.MutableIterator' type=<root>.P? origin=null
               $this: GET_VAR 'val iterator: kotlin.collections.MutableIterator<<root>.P?> [val] declared in <root>.testDesugaredForInList' type=kotlin.collections.MutableIterator<<root>.P?> origin=null
@@ -75,8 +75,9 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
               CALL 'public abstract fun next (): T of kotlin.collections.MutableIterator [fake_override,operator] declared in kotlin.collections.MutableIterator' type=<root>.P? origin=FOR_LOOP_NEXT
                 $this: GET_VAR 'val tmp_3: kotlin.collections.MutableIterator<<root>.P?> [val] declared in <root>.testForInListUse' type=kotlin.collections.MutableIterator<<root>.P?> origin=null
             CALL 'public final fun use (s: <root>.P): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-              s: GET_VAR 'val x: <root>.P? [val] declared in <root>.testForInListUse' type=<root>.P? origin=null
-            CALL 'public open fun use (s: <root>.P): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+              s: TYPE_OP type=<root>.P origin=IMPLICIT_NOTNULL typeOperand=<root>.P
+                GET_VAR 'val x: <root>.P? [val] declared in <root>.testForInListUse' type=<root>.P? origin=null
+            CALL 'public open fun use (s: @[EnhancedNullability] <root>.P): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
               s: GET_VAR 'val x: <root>.P? [val] declared in <root>.testForInListUse' type=<root>.P? origin=null
   FUN name:testForInArrayUse visibility:public modality:FINAL <> (j:<root>.J) returnType:kotlin.Unit
     VALUE_PARAMETER name:j index:0 type:<root>.J
@@ -94,8 +95,9 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
               CALL 'public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator' type=<root>.P? origin=FOR_LOOP_NEXT
                 $this: GET_VAR 'val tmp_4: kotlin.collections.Iterator<<root>.P?> [val] declared in <root>.testForInArrayUse' type=kotlin.collections.Iterator<<root>.P?> origin=null
             CALL 'public final fun use (s: <root>.P): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-              s: GET_VAR 'val x: <root>.P? [val] declared in <root>.testForInArrayUse' type=<root>.P? origin=null
-            CALL 'public open fun use (s: <root>.P): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
+              s: TYPE_OP type=<root>.P origin=IMPLICIT_NOTNULL typeOperand=<root>.P
+                GET_VAR 'val x: <root>.P? [val] declared in <root>.testForInArrayUse' type=<root>.P? origin=null
+            CALL 'public open fun use (s: @[EnhancedNullability] <root>.P): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
               s: GET_VAR 'val x: <root>.P? [val] declared in <root>.testForInArrayUse' type=<root>.P? origin=null
   CLASS INTERFACE name:K modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.K
@@ -220,16 +222,20 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.P
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.P'
+        VAR name:result type:kotlin.Int [var]
+          CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Int' type=kotlin.Int origin=null
+            $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.P declared in <root>.P.hashCode' type=<root>.P origin=null
+        SET_VAR 'var result: kotlin.Int [var] declared in <root>.P.hashCode' type=kotlin.Unit origin=EQ
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
-              $this: CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Int' type=kotlin.Int origin=null
-                $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
-                  receiver: GET_VAR '<this>: <root>.P declared in <root>.P.hashCode' type=<root>.P origin=null
+              $this: GET_VAR 'var result: kotlin.Int [var] declared in <root>.P.hashCode' type=kotlin.Int origin=null
               other: CONST Int type=kotlin.Int value=31
             other: CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                 receiver: GET_VAR '<this>: <root>.P declared in <root>.P.hashCode' type=<root>.P origin=null
+        RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.P'
+          GET_VAR 'var result: kotlin.Int [var] declared in <root>.P.hashCode' type=kotlin.Int origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.P) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any

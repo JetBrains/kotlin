@@ -48,8 +48,8 @@ fun doWhileInContract(x: Any?) {
 }
 
 fun localValInContract(x: Any?) {
-    contract {
+    <!WRONG_IMPLIES_CONDITION!>contract {
         val y: Int = 42
         returns() implies (x is String)
-    }
+    }<!>
 }

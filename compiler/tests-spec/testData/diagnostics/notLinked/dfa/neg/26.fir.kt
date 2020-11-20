@@ -10,18 +10,18 @@
 fun case_1() {
     var x: MutableList<Int>? = mutableListOf(1)
     x!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[if (true) {x=null;0} else 0] += <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0]
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0].inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[if (true) {x=null;0} else 0] += <!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>? & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0]<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>? & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>
+    <!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>? & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0]<!>.inv()
 }
 
 // TESTCASE NUMBER: 2
 fun case_2() {
     var x: MutableList<Int>? = mutableListOf(1)
     x!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[if (true) {x=null;0} else 0] = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0]
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0].inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[if (true) {x=null;0} else 0] = <!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>? & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0]<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>? & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>
+    <!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>? & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0]<!>.inv()
 }
 
 // TESTCASE NUMBER: 3
@@ -29,8 +29,8 @@ fun case_3() {
     var x: MutableList<Int>? = mutableListOf(1)
     x!!
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0] = if (true) {x=null;0} else 0
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0].inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>? & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>
+    <!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int>? & kotlin.collections.MutableList<kotlin.Int>?")!>x<!>[0]<!>.inv()
 }
 
 /*
@@ -41,9 +41,9 @@ fun case_3() {
 fun case_4() {
     var x: Class? = Class()
     x!!
-    val y = <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>[if (true) {x=null;0} else 0, <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>[0]]
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>[0].inv()
+    val y = <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>[if (true) {x=null;0} else 0, <!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>[0]<!>]
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>
+    <!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>[0]<!>.inv()
 }
 
 /*
@@ -54,17 +54,17 @@ fun case_4() {
 fun case_5() {
     var x: Class? = Class()
     x!!
-    x(if (true) {x=null;0} else 0, <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>)
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.fun_1()
+    <!NONE_APPLICABLE!>x<!>(if (true) {x=null;0} else 0, <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>fun_1<!>()
 }
 
 // TESTCASE NUMBER: 6
 fun case_6() {
     var x: MutableList<MutableList<Int>>? = mutableListOf(mutableListOf(1))
     x!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[if (true) {x=null;0} else 0][<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[0][0]] += 10
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[0][0].inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[if (true) {x=null;0} else 0][<!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>? & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[0]<!>[0]] += 10
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>? & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>
+    <!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>? & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[0]<!>[0].inv()
 }
 
 /*
@@ -75,22 +75,22 @@ fun case_6() {
 fun case_7() {
     var x: Class? = Class()
     x!!
-    x(if (true) {x=null;0} else 0)(<!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>)
-    <!DEBUG_INFO_EXPRESSION_TYPE("Class & Class?")!>x<!>.fun_1()
+    <!NONE_APPLICABLE!>x<!>(if (true) {x=null;0} else 0)(<!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>)
+    <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>fun_1<!>()
 }
 
 // TESTCASE NUMBER: 8
 fun case_8() {
     var x: MutableList<MutableList<Int>>? = mutableListOf(mutableListOf(1))
     x!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[if (true) {x=null;0} else 0].addAll(1, <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[0])
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[if (true) {x=null;0} else 0].addAll(1, <!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>? & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[0]<!>)
 }
 
 // TESTCASE NUMBER: 9
 fun case_9() {
     var x: MutableList<MutableList<Int>>? = mutableListOf(mutableListOf(1))
     x!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[if (true) {x=null;0} else 0].subList(0, 2)[<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[0][0]]
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[if (true) {x=null;0} else 0].subList(0, 2)[<!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>? & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[0]<!>[0]]
 }
 
 /*
@@ -101,7 +101,7 @@ fun case_9() {
 fun case_10() {
     var x: MutableList<MutableList<Int>>? = mutableListOf(mutableListOf(1))
     x!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>.subList(if (true) {x=null;0} else 0, 2)[<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[0][0]]
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>.subList(if (true) {x=null;0} else 0, 2)[<!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>? & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[0]<!>[0]]
 }
 
 /*
@@ -112,5 +112,5 @@ fun case_10() {
 fun case_11() {
     var x: MutableList<MutableList<Int>>? = mutableListOf(mutableListOf(1))
     x!!
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[if (true) {x=null;0} else 0].subList(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[0][0], 2)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>> & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[if (true) {x=null;0} else 0].subList(<!INAPPLICABLE_CANDIDATE!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>? & kotlin.collections.MutableList<kotlin.collections.MutableList<kotlin.Int>>?")!>x<!>[0]<!>[0], 2)
 }

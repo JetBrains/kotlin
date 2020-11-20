@@ -166,7 +166,7 @@ abstract class AbstractAndroidExtensionsExpressionCodegenExtension : ExpressionC
     private fun FunctionDescriptor.isOnDestroyFunction(): Boolean {
         return kind == CallableMemberDescriptor.Kind.DECLARATION
                && name.asString() == ON_DESTROY_METHOD_NAME
-               && (visibility == Visibilities.INHERITED || visibility == Visibilities.PUBLIC)
+               && (visibility == DescriptorVisibilities.INHERITED || visibility == DescriptorVisibilities.PUBLIC)
                && (valueParameters.isEmpty())
                && (typeParameters.isEmpty())
     }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.impl
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
@@ -18,7 +18,7 @@ data class CirClassImpl(
     override val annotations: List<CirAnnotation>,
     override val name: Name,
     override val typeParameters: List<CirTypeParameter>,
-    override val visibility: Visibility,
+    override val visibility: DescriptorVisibility,
     override val modality: Modality,
     override val kind: ClassKind,
     override var companion: Name?,
@@ -27,5 +27,14 @@ data class CirClassImpl(
     override val isInline: Boolean,
     override val isInner: Boolean,
     override val isExternal: Boolean,
-    override val supertypes: MutableCollection<CirType>
-) : CirClass
+) : CirClass {
+    private var _supertypes: Collection<CirType>? = null
+
+    override val supertypes: Collection<CirType>
+        get() = _supertypes.orEmpty()
+
+    override fun setSupertypes(supertypes: Collection<CirType>) {
+        check(_supertypes == null)
+        _supertypes = supertypes
+    }
+}

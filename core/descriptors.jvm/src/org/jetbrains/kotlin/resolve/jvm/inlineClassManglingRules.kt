@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 
 fun shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor: CallableMemberDescriptor): Boolean {
     val constructorDescriptor = descriptor as? ClassConstructorDescriptor ?: return false
-    if (Visibilities.isPrivate(constructorDescriptor.visibility)) return false
+    if (DescriptorVisibilities.isPrivate(constructorDescriptor.visibility)) return false
     if (constructorDescriptor.constructedClass.isInline) return false
     if (DescriptorUtils.isSealedClass(constructorDescriptor.constructedClass)) return false
 
@@ -47,7 +48,7 @@ private fun KotlinType.requiresFunctionNameManglingInParameterTypes() =
     isInlineClassThatRequiresMangling() || isTypeParameterWithUpperBoundThatRequiresMangling()
 
 private fun isDontMangleClass(classDescriptor: ClassDescriptor) =
-    classDescriptor.fqNameSafe == DescriptorUtils.RESULT_FQ_NAME
+    classDescriptor.fqNameSafe == StandardNames.RESULT_FQ_NAME
 
 private fun KotlinType.isTypeParameterWithUpperBoundThatRequiresMangling(): Boolean {
     val descriptor = constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false

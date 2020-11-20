@@ -1,0 +1,48 @@
+@kotlin.Metadata
+public abstract class AIA {
+    // source: 'abstractIterables.kt'
+    public method <init>(): void
+    public method iterator(): java.util.Iterator
+}
+
+@kotlin.Metadata
+public abstract class AIAN {
+    // source: 'abstractIterables.kt'
+    public method <init>(): void
+    public method iterator(): java.util.Iterator
+}
+
+@kotlin.Metadata
+public abstract class AII {
+    // source: 'abstractIterables.kt'
+    public method <init>(): void
+    public method iterator(): java.util.Iterator
+}
+
+@kotlin.Metadata
+public abstract class AIIN {
+    // source: 'abstractIterables.kt'
+    public method <init>(): void
+    public method iterator(): java.util.Iterator
+}
+
+@kotlin.Metadata
+public abstract class AIS {
+    // source: 'abstractIterables.kt'
+    public method <init>(): void
+    public method iterator(): java.util.Iterator
+}
+
+@kotlin.Metadata
+public abstract class AISN {
+    // source: 'abstractIterables.kt'
+    public method <init>(): void
+    public method iterator(): java.util.Iterator
+}
+
+@kotlin.Metadata
+public abstract class AIT {
+    // source: 'abstractIterables.kt'
+    public method <init>(): void
+    public method iterator(): java.util.Iterator
+}

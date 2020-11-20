@@ -96,10 +96,13 @@ fun transformFunctionDeclaration(transformName: String, returnType: String): Str
     return "fun <D> transform$transformName(transformer: FirTransformer<D>, data: D): $returnType"
 }
 
-fun Field.replaceFunctionDeclaration(overridenType: Importable? = null): String {
+fun Field.replaceFunctionDeclaration(overridenType: Importable? = null, forceNullable: Boolean = false): String {
     val capName = name.capitalize()
     val type = overridenType?.typeWithArguments ?: typeWithArguments
-    return "fun replace$capName(new$capName: $type)"
+
+    val typeWithNullable = if (forceNullable && !type.endsWith("?")) "$type?" else type
+
+    return "fun replace$capName(new$capName: $typeWithNullable)"
 }
 
 val Field.mutableType: String

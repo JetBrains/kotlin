@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.JvmDefaultMode;
 import org.jetbrains.kotlin.descriptors.*;
-import org.jetbrains.kotlin.load.java.JavaVisibilities;
-import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor;
+import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
+import org.jetbrains.kotlin.resolve.sam.SamConstructorDescriptor;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.storage.NullableLazyValue;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 
 import java.util.*;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityAccessFlag;
+import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getVisibilityAccessFlag;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isInSamePackage;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isNonDefaultInterfaceMember;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
@@ -625,7 +625,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
         }
 
         if (descriptorContext == null &&
-            JavaVisibilities.PROTECTED_STATIC_VISIBILITY == descriptor.getVisibility() &&
+            JavaDescriptorVisibilities.PROTECTED_STATIC_VISIBILITY == descriptor.getVisibility() &&
             (!(descriptor.getOriginal() instanceof SamConstructorDescriptor))) {
             //seems we need static receiver in resolved call
             descriptorContext = ExpressionCodegen.getParentContextSubclassOf((ClassDescriptor) enclosed, this);
@@ -672,7 +672,7 @@ public abstract class CodegenContext<T extends DeclarationDescriptor> {
             PropertySetterDescriptor setter = propertyDescriptor.getSetter();
 
             int setterAccessFlag = propertyAccessFlag;
-            if (setter != null && setter.getVisibility().normalize() != Visibilities.INVISIBLE_FAKE) {
+            if (setter != null && setter.getVisibility().normalize() != DescriptorVisibilities.INVISIBLE_FAKE) {
                 setterAccessFlag = propertyAccessFlag | getVisibilityAccessFlag(setter);
             }
             boolean setterAccessorRequired = isAccessorRequired(setterAccessFlag, unwrappedDescriptor, descriptorContext,

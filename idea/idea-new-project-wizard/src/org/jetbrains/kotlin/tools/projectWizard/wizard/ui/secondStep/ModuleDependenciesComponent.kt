@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.tools.projectWizard.wizard.ui.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.awt.Dimension
 import javax.swing.Icon
+import javax.swing.JComponent
 import javax.swing.JPanel
 import kotlin.reflect.KFunction0
 
@@ -27,7 +28,8 @@ class ModuleDependenciesComponent(
 ) : TitledComponent(context) {
     override val title: String = KotlinNewProjectWizardUIBundle.message("module.dependencies.module.dependencies")
     private val dependenciesList = ModuleDependenciesList(::possibleDependencies)
-    override val forceLabelCenteringOffset: Int? = 4
+    override val alignment: TitleComponentAlignment
+        get() = TitleComponentAlignment.AlignAgainstSpecificComponent(dependenciesList)
     override val additionalComponentPadding: Int = 1
     override val maximumWidth: Int = 500
 

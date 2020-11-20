@@ -1,16 +1,17 @@
-public final class A {
-    private final int y;
+public final class A /* p.A*/ {
+  private final int y;
 
-    public boolean equals(@org.jetbrains.annotations.Nullable java.lang.Object other) { /* compiled code */ }
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.String toString();//  toString()
 
-    public int hashCode() { /* compiled code */ }
+  public  A(int);//  .ctor(int)
 
-    @org.jetbrains.annotations.NotNull
-    public java.lang.String toString() { /* compiled code */ }
+  public boolean equals(@org.jetbrains.annotations.Nullable() java.lang.Object);//  equals(java.lang.Object)
 
-    public final int component1() { /* compiled code */ }
+  public final int component1();//  component1()
 
-    public final int getY() { /* compiled code */ }
+  public final int getY();//  getY()
 
-    public A(int y) { /* compiled code */ }
+  public int hashCode();//  hashCode()
+
 }

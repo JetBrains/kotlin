@@ -32,7 +32,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
         val time = measureNanoTime {
             try {
-                KotlinToJVMBytecodeCompiler.analyze(environment, null)
+                KotlinToJVMBytecodeCompiler.analyze(environment)
             } catch (e: Throwable) {
                 var exception: Throwable? = e
                 while (exception != null && exception != exception.cause) {
@@ -106,7 +106,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
 
     override fun afterPass(pass: Int) {}
-    override fun beforePass() {}
+    override fun beforePass(pass: Int) {}
 
     fun testTotalKotlin() {
         writeMessageToLog("use_ni: $USE_NI")
@@ -118,7 +118,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             totalTime = 0L
         }
 
-        val bestTime = times.min()!!
+        val bestTime = times.minOrNull()!!
         val bestPass = times.indexOf(bestTime)
         dumpTime("Best pass: $bestPass", bestTime)
     }

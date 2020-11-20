@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.types.Variance
 
 object FirProjectionsOnNonClassTypeArgumentChecker : FirQualifiedAccessChecker() {
-    override fun check(functionCall: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        for (it in functionCall.typeArguments) {
+    override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
+        for (it in expression.typeArguments) {
             when (it) {
                 is FirStarProjection -> reporter.report(it.source)
                 is FirTypeProjectionWithVariance -> {

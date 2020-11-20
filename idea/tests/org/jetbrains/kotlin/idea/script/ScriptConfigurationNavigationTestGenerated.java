@@ -43,6 +43,11 @@ public class ScriptConfigurationNavigationTestGenerated extends AbstractScriptCo
         runTest("idea/testData/script/definition/navigation/customBaseClass/");
     }
 
+    @TestMetadata("includedPluginProblem")
+    public void testIncludedPluginProblem() throws Exception {
+        runTest("idea/testData/script/definition/navigation/includedPluginProblem/");
+    }
+
     @TestMetadata("javaLib")
     public void testJavaLib() throws Exception {
         runTest("idea/testData/script/definition/navigation/javaLib/");

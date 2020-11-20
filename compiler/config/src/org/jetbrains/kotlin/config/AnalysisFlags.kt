@@ -47,4 +47,7 @@ object AnalysisFlags {
 
     @JvmStatic
     val reportErrorsOnIrDependencies by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val libraryToSourceAnalysis by AnalysisFlag.Delegates.Boolean
 }

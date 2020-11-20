@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestValueParameter.Companion.areEqual
+import org.jetbrains.kotlin.descriptors.commonizer.core.TypeCommonizerTest.Companion.areEqual
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
@@ -181,7 +182,7 @@ internal data class CirTestValueParameter(
     companion object {
         fun areEqual(cache: CirClassifiersCache, a: CirValueParameter, b: CirValueParameter): Boolean {
             if (a.name != b.name
-                || !areTypesEqual(cache, a.returnType, b.returnType)
+                || !areEqual(cache, a.returnType, b.returnType)
                 || a.declaresDefaultValue != b.declaresDefaultValue
                 || a.isCrossinline != b.isCrossinline
                 || a.isNoinline != b.isNoinline
@@ -194,7 +195,7 @@ internal data class CirTestValueParameter(
 
             return (aVarargElementType === bVarargElementType)
                     || (aVarargElementType != null && bVarargElementType != null
-                    && areTypesEqual(cache, aVarargElementType, bVarargElementType))
+                    && areEqual(cache, aVarargElementType, bVarargElementType))
         }
     }
 }

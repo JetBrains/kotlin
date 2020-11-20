@@ -58,6 +58,6 @@ class Test6 : E, <!EXPOSED_SUPER_CLASS!>C.CPublic<!> {
 
 }
 
-class Test7 : D.PublicButProtected {
+class Test7 : <!UNRESOLVED_REFERENCE!>D.PublicButProtected<!> {
 
 }

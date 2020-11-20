@@ -1,9 +1,15 @@
+/*
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package org.jetbrains.kotlin.daemon.common.experimental.socketInfrastructure
 
-import io.ktor.network.sockets.Socket
-import io.ktor.network.sockets.openReadChannel
-import io.ktor.network.sockets.openWriteChannel
-import kotlinx.coroutines.*
+import io.ktor.network.sockets.*
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.consumeEach
@@ -45,6 +51,7 @@ class ByteReadChannelWrapper(readChannel: ByteReadChannel, private val log: Logg
         }
 
     // TODO : replace GlobalScope with something more explicit here and below.
+    @OptIn(ObsoleteCoroutinesApi::class, ExperimentalCoroutinesApi::class)
     private val readActor = GlobalScope.actor<ReadQuery>(capacity = Channel.UNLIMITED) {
         consumeEach { message ->
             if (!readChannel.isClosedForRead) {
@@ -145,6 +152,7 @@ class ByteWriteChannelWrapper(writeChannel: ByteWriteChannel, private val log: L
         }
     }
 
+    @OptIn(ObsoleteCoroutinesApi::class, ExperimentalCoroutinesApi::class)
     private val writeActor = GlobalScope.actor<WriteActorQuery>(capacity = Channel.UNLIMITED) {
         consumeEach { message ->
             if (!writeChannel.isClosedForWrite) {

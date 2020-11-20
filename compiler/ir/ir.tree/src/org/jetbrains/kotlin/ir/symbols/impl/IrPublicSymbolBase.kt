@@ -52,38 +52,30 @@ abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrS
         }
     }
 
-    override val isPublicApi: Boolean = true
-
     override val isBound: Boolean
         get() = _owner != null
 }
 
 class IrClassPublicSymbolImpl(descriptor: ClassDescriptor, sig: IdSignature) :
     IrBindablePublicSymbolBase<ClassDescriptor, IrClass>(descriptor, sig),
-    IrClassSymbol {
-}
+    IrClassSymbol
 
 class IrEnumEntryPublicSymbolImpl(descriptor: ClassDescriptor, sig: IdSignature) :
     IrBindablePublicSymbolBase<ClassDescriptor, IrEnumEntry>(descriptor, sig),
-    IrEnumEntrySymbol {
-}
+    IrEnumEntrySymbol
 
 class IrSimpleFunctionPublicSymbolImpl(descriptor: FunctionDescriptor, sig: IdSignature) :
     IrBindablePublicSymbolBase<FunctionDescriptor, IrSimpleFunction>(descriptor, sig),
-    IrSimpleFunctionSymbol {
-}
+    IrSimpleFunctionSymbol
 
 class IrConstructorPublicSymbolImpl(descriptor: ClassConstructorDescriptor, sig: IdSignature) :
     IrBindablePublicSymbolBase<ClassConstructorDescriptor, IrConstructor>(descriptor, sig),
-    IrConstructorSymbol {
-}
+    IrConstructorSymbol
 
 class IrPropertyPublicSymbolImpl(descriptor: PropertyDescriptor, sig: IdSignature) :
     IrBindablePublicSymbolBase<PropertyDescriptor, IrProperty>(descriptor, sig),
-    IrPropertySymbol {
-}
+    IrPropertySymbol
 
 class IrTypeAliasPublicSymbolImpl(descriptor: TypeAliasDescriptor, sig: IdSignature) :
     IrBindablePublicSymbolBase<TypeAliasDescriptor, IrTypeAlias>(descriptor, sig),
-    IrTypeAliasSymbol {
-}
+    IrTypeAliasSymbol

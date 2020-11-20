@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.utils
 
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -52,7 +54,9 @@ class NullableArrayMapAccessor<K : Any, V : Any, T : V>(
 }
 
 abstract class TypeRegistry<K : Any, V : Any> {
-    private val idPerType = HashMap<KClass<out K>, Int>()
+    private val idPerType = ConcurrentHashMap<KClass<out K>, Int>()
+    private val idCounter = AtomicInteger(0)
+
 
     fun <T : V, KK : K> generateAccessor(kClass: KClass<KK>): ArrayMapAccessor<K, V, T> {
         return ArrayMapAccessor(kClass, getId(kClass))
@@ -63,7 +67,7 @@ abstract class TypeRegistry<K : Any, V : Any> {
     }
 
     fun <T : K> getId(kClass: KClass<T>): Int {
-        return idPerType.getOrPut(kClass) { idPerType.size }
+        return idPerType.computeIfAbsent(kClass) { idCounter.getAndIncrement() }
     }
 
     protected val indices: Collection<Int>

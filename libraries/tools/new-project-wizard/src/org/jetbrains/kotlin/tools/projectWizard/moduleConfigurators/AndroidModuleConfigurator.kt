@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.tools.projectWizard.core.entity.settings.reference
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardKotlinVersion
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.*
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.AndroidConfigIR
+import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.irsList
 import org.jetbrains.kotlin.tools.projectWizard.library.MavenArtifact
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.AndroidPlugin
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.gradle.GradlePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModulesToIrConversionData
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.ModuleSubType
@@ -68,36 +70,29 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
     ) = buildList<BuildSystemIR> {
         +GradleOnlyPluginByNameIR(reader.createAndroidPlugin(module).pluginName, priority = 1)
 
-        +GradleOnlyPluginByNameIR("kotlin-android-extensions", priority = 3)
-        +AndroidConfigIR(
-            javaPackage = when (reader.createAndroidPlugin(module)) {
-                AndroidGradlePlugin.APPLICATION -> module.javaPackage(configurationData.pomIr)
-                AndroidGradlePlugin.LIBRARY -> null
-            },
-            newManifestPath = getNewAndroidManifestPath(module)
-        )
-        +createRepositories(configurationData.kotlinVersion).map(::RepositoryIR)
+        if (reader { AndroidPlugin.addAndroidExtensionPlugin.settingValue }) {
+            +GradleOnlyPluginByNameIR("kotlin-android-extensions", priority = 3)
+        }
     }
 
     fun Reader.createAndroidPlugin(module: Module): AndroidGradlePlugin
 
-    override fun Reader.createSettingsGradleIRs(module: Module) = buildList<BuildSystemIR> {
-        +createRepositories(KotlinPlugin.version.propertyValue).map { PluginManagementRepositoryIR(RepositoryIR(it)) }
-        +AndroidResolutionStrategyIR(Versions.GRADLE_PLUGINS.ANDROID)
+    override fun createSettingsGradleIRs(
+        reader: Reader,
+        module: Module,
+        data: ModulesToIrConversionData
+    ) = buildList<BuildSystemIR> {
+        +createRepositories(reader { KotlinPlugin.version.propertyValue })
+            .map { PluginManagementRepositoryIR(RepositoryIR(it)) }
     }
 
     override fun createModuleIRs(
         reader: Reader,
         configurationData: ModulesToIrConversionData,
         module: Module
-    ): List<BuildSystemIR> =
-        buildList {
-            +ArtifactBasedLibraryDependencyIR(
-                MavenArtifact(DefaultRepository.GOOGLE, "androidx.core", "core-ktx"),
-                version = Versions.ANDROID.ANDROIDX_CORE_KTX,
-                dependencyType = DependencyType.MAIN
-            )
-        }
+    ): List<BuildSystemIR> = buildList {
+        +DEPENDENCIES.MATERIAL
+    }
 
 
     override fun createStdlibType(configurationData: ModulesToIrConversionData, module: Module): StdlibType? =
@@ -125,6 +120,15 @@ interface AndroidModuleConfigurator : ModuleConfigurator,
         )
     }
 
+    object DEPENDENCIES {
+        const val KOTLIN_ANDROID_EXTENSIONS_NAME = "kotlin-android-extensions"
+        val MATERIAL = ArtifactBasedLibraryDependencyIR(
+            MavenArtifact(DefaultRepository.GOOGLE, "com.google.android.material", "material"),
+            version = Versions.ANDROID.ANDROID_MATERIAL,
+            dependencyType = DependencyType.MAIN
+        )
+    }
+
     companion object {
         fun createRepositories(kotlinVersion: WizardKotlinVersion) = buildList<Repository> {
             +DefaultRepository.GRADLE_PLUGIN_PORTAL
@@ -139,6 +143,7 @@ object AndroidTargetConfigurator : TargetConfigurator,
     SimpleTargetConfigurator,
     AndroidModuleConfigurator,
     SingleCoexistenceTargetConfigurator,
+    ModuleConfiguratorWithTests,
     ModuleConfiguratorSettings() {
     override val moduleSubType = ModuleSubType.android
     override val moduleType = ModuleType.android
@@ -152,7 +157,8 @@ object AndroidTargetConfigurator : TargetConfigurator,
         inContextOfModuleConfigurator(module) { androidPlugin.reference.settingValue }
 
     override fun getConfiguratorSettings() = buildList<ModuleConfiguratorSetting<*, *>> {
-        +super.getConfiguratorSettings()
+        +super<AndroidModuleConfigurator>.getConfiguratorSettings()
+        +super<ModuleConfiguratorWithTests>.getConfiguratorSettings()
         +androidPlugin
     }
 
@@ -179,10 +185,27 @@ object AndroidTargetConfigurator : TargetConfigurator,
                 FileTemplate(getAndroidManifestForLibraryXml(module), modulePath, settings)
             )
         )
+
+        GradlePlugin.gradleProperties.addValues("android.useAndroidX" to true)
     }
+
+    override fun createSettingsGradleIRs(
+        reader: Reader,
+        module: Module,
+        data: ModulesToIrConversionData
+    ): List<BuildSystemIR> = irsList {
+        +super.createSettingsGradleIRs(reader, module, data)
+        val containsAndroidSingleplatformModule = data.allModules.any { it.configurator is AndroidSinglePlatformModuleConfigurator }
+        if (!containsAndroidSingleplatformModule) {
+            +AndroidResolutionStrategyIR(Versions.GRADLE_PLUGINS.ANDROID)
+        }
+    }
+
+    override fun defaultTestFramework(): KotlinTestFramework = KotlinTestFramework.JUNIT4
 
     override fun createModuleIRs(reader: Reader, configurationData: ModulesToIrConversionData, module: Module): List<BuildSystemIR> =
         buildList {
+            +super<ModuleConfiguratorWithTests>.createModuleIRs(reader, configurationData, module)
             +super<AndroidModuleConfigurator>.createModuleIRs(reader, configurationData, module)
             +ArtifactBasedLibraryDependencyIR(
                 MavenArtifact(DefaultRepository.MAVEN_CENTRAL, "junit", "junit"),
@@ -191,11 +214,27 @@ object AndroidTargetConfigurator : TargetConfigurator,
             )
         }
 
+    override fun createBuildFileIRs(reader: Reader, configurationData: ModulesToIrConversionData, module: Module): List<BuildSystemIR> =
+        buildList {
+            +super<AndroidModuleConfigurator>.createBuildFileIRs(reader, configurationData, module)
+            +super<ModuleConfiguratorWithTests>.createBuildFileIRs(reader, configurationData, module)
+            +AndroidConfigIR(
+                javaPackage = when (reader.createAndroidPlugin(module)) {
+                    AndroidGradlePlugin.APPLICATION -> module.javaPackage(configurationData.pomIr)
+                    AndroidGradlePlugin.LIBRARY -> null
+                },
+                newManifestPath = getNewAndroidManifestPath(module),
+                printVersionCode = false,
+                printBuildTypes = false,
+            )
+        }
 
     val androidPlugin by enumSetting<AndroidGradlePlugin>(
         KotlinNewProjectWizardBundle.message("module.configurator.android.setting.android.plugin"),
         neededAtPhase = GenerationPhase.PROJECT_GENERATION
-    )
+    ) {
+        description = KotlinNewProjectWizardBundle.message("module.configurator.android.setting.android.plugin.description")
+    }
 }
 
 enum class AndroidGradlePlugin(override val text: String, @NonNls val pluginName: String) : DisplayableSettingItem {

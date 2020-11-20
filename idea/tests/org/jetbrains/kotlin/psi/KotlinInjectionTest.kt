@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.psi
 
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.lang.html.HTMLLanguage
+import com.intellij.lang.xml.XMLLanguage
 import com.intellij.openapi.fileTypes.PlainTextLanguage
 import org.intellij.lang.annotations.Language
 import org.intellij.lang.regexp.RegExpLanguage
@@ -780,5 +781,26 @@ class KotlinInjectionTest : AbstractInjectionTest() {
         languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
     )
 
+    fun testInjectionWithUsageInFunctionWithMarkedSecondNamedParameterWithAnnotation() = doInjectionPresentTest(
+        """
+            import org.intellij.lang.annotations.Language
+
+            fun foo(@Language("XML") a: String = "", @Language("HTML") b: String = "") {}
+
+            fun other() { foo(b = "some<caret>") }
+            """,
+        languageId = HTMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+    )
+
+    fun testInjectionWithUsageInFunctionWithMarkedFirstNamedParameterWithAnnotation() = doInjectionPresentTest(
+        """
+            import org.intellij.lang.annotations.Language
+
+            fun foo(@Language("XML") a: String = "", @Language("HTML") b: String = "") {}
+
+            fun other() { foo(a = "some<caret>") }
+            """,
+        languageId = XMLLanguage.INSTANCE.id, unInjectShouldBePresent = false
+    )
 }
 

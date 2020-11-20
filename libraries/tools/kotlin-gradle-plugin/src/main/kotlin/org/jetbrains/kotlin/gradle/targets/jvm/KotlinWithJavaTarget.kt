@@ -10,6 +10,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.plugins.JavaPlugin
+import org.gradle.api.provider.Provider
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
@@ -44,10 +45,12 @@ open class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions>(
             KotlinWithJavaCompilationFactory(project, this, kotlinOptionsFactory)
         )
 
-    internal val defaultArtifactClassesListFile: File
-        get() {
+    private val layout = project.layout
+
+    internal val defaultArtifactClassesListFile: Provider<File> =
+        layout.buildDirectory.dir(KOTLIN_BUILD_DIR_NAME).map {
             val jarTask = project.tasks.getByName(artifactsTaskName) as Jar
-            return File(File(project.buildDir, KOTLIN_BUILD_DIR_NAME), "${sanitizeFileName(jarTask.archiveFileName.get())}-classes.txt")
+            it.file("${sanitizeFileName(jarTask.archiveFileName.get())}-classes.txt").asFile
         }
 }
 

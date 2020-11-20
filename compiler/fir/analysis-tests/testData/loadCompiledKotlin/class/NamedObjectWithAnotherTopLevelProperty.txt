@@ -1,3 +1,6 @@
+public final val x: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+
 public final object Obj : R|kotlin/Any| {
     public final fun f(): R|kotlin/String|
 
@@ -7,3 +10,4 @@ public final object Obj : R|kotlin/Any| {
     private constructor(): R|test/Obj|
 
 }
+

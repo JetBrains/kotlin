@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
 import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectClass
 import org.jetbrains.kotlin.config.AnalysisFlags
@@ -31,8 +32,10 @@ internal fun <T, R> Iterable<T>.maybeChunked(size: Int?, transform: (List<T>) ->
 abstract class KlibMetadataSerializer(
     val languageVersionSettings: LanguageVersionSettings,
     val metadataVersion: BinaryVersion,
+    val project: Project?,
     val skipExpects: Boolean = false,
-    val includeOnlyModuleContent: Boolean = false
+    val includeOnlyModuleContent: Boolean = false,
+    private val allowErrorTypes: Boolean
 ) {
 
     lateinit var serializerContext: SerializerContext
@@ -48,7 +51,8 @@ abstract class KlibMetadataSerializer(
         val extension = KlibMetadataSerializerExtension(
             languageVersionSettings,
             metadataVersion,
-            KlibMetadataStringTable()
+            KlibMetadataStringTable(),
+            allowErrorTypes
         )
         return SerializerContext(
             extension,
@@ -91,7 +95,7 @@ abstract class KlibMetadataSerializer(
         with(serializerContext) {
             val previousSerializer = classSerializer
 
-            classSerializer = DescriptorSerializer.create(classDescriptor, serializerExtension, classSerializer)
+            classSerializer = DescriptorSerializer.create(classDescriptor, serializerExtension, classSerializer, project)
             val classProto = classSerializer.classProto(classDescriptor).build() ?: error("Class not serialized: $classDescriptor")
             //builder.addClass(classProto)
 
@@ -145,12 +149,12 @@ abstract class KlibMetadataSerializer(
 
     protected fun serializeDescriptors(
         fqName: FqName,
-        classifierDescriptors: List<DeclarationDescriptor>,
-        topLevelDescriptors: List<DeclarationDescriptor>
+        allClassifierDescriptors: List<DeclarationDescriptor>,
+        allTopLevelDescriptors: List<DeclarationDescriptor>
     ): List<ProtoBuf.PackageFragment> {
 
-        val classifierDescriptors = classifierDescriptors.filterOutExpects()
-        val topLevelDescriptors = topLevelDescriptors.filterOutExpects()
+        val classifierDescriptors = allClassifierDescriptors.filterOutExpects()
+        val topLevelDescriptors = allTopLevelDescriptors.filterOutExpects()
 
         if (TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE == null &&
             TOP_LEVEL_DECLARATION_COUNT_PER_FILE == null) {

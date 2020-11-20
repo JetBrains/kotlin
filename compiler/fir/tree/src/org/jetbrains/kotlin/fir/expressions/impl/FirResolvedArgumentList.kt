@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class FirResolvedArgumentList internal constructor(
-    val mapping: Map<FirExpression, FirValueParameter>
+    val mapping: LinkedHashMap<FirExpression, FirValueParameter>
 ) : FirAbstractArgumentList() {
     override val arguments: List<FirExpression>
         get() = mapping.keys.toList()

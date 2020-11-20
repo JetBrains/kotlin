@@ -26,7 +26,6 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicInterpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
-// TODO Use this in variable liveness analysis
 internal class MethodNodeExaminer(
     val languageVersionSettings: LanguageVersionSettings,
     containingClassInternalName: String,

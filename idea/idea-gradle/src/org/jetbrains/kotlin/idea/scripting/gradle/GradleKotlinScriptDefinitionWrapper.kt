@@ -16,7 +16,8 @@ class GradleKotlinScriptDefinitionWrapper(
     hostConfiguration: ScriptingHostConfiguration,
     legacyDefinition: KotlinScriptDefinitionFromAnnotatedTemplate,
     gradleVersion: String,
-) : ScriptDefinition.FromLegacy(hostConfiguration, legacyDefinition) {
+    defaultCompilerOptions: Iterable<String>
+) : ScriptDefinition.FromLegacy(hostConfiguration, legacyDefinition, defaultCompilerOptions) {
     override val compilationConfiguration by lazy {
         ScriptCompilationConfigurationFromDefinition(
             hostConfiguration,

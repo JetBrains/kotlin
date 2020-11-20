@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
-import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.fileParent
@@ -18,13 +17,16 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -59,7 +61,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             type.isReifiedTypeParameter ->
                 irIs(argument, type)
             argument.type.isNullable() && type.isNullable() -> {
-                irLetS(argument) { valueSymbol ->
+                irLetS(argument, irType = context.irBuiltIns.anyNType) { valueSymbol ->
                     context.oror(
                         irEqualsNull(irGet(valueSymbol.owner)),
                         irIs(irGet(valueSymbol.owner), type.makeNotNull())
@@ -77,13 +79,13 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             builder.irAs(argument, type)
         argument.type.isNullable() && !type.isNullable() ->
             with(builder) {
-                irLetS(argument) { valueSymbol ->
+                irLetS(argument, irType = context.irBuiltIns.anyNType) { valueSymbol ->
                     irIfNull(
                         type,
                         irGet(valueSymbol.owner),
-                        irThrow(irCall(typeCastException).apply {
+                        irCall(throwTypeCastException).apply {
                             putValueArgument(0, irString("null cannot be cast to non-null type ${type.render()}"))
-                        }),
+                        },
                         lowerCast(irGet(valueSymbol.owner), type.makeNullable())
                     )
                 }
@@ -119,11 +121,20 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                     expression.transformChildrenVoid()
                     expression
                 } else {
-                    irLetS(expression.argument.transformVoid(), IrStatementOrigin.SAFE_CALL) { valueSymbol ->
+                    irLetS(
+                        expression.argument.transformVoid(),
+                        IrStatementOrigin.SAFE_CALL,
+                        irType = context.irBuiltIns.anyNType
+                    ) { valueSymbol ->
+                        val thenPart =
+                            if (valueSymbol.owner.type.isInlined())
+                                lowerCast(irGet(valueSymbol.owner), expression.typeOperand)
+                            else
+                                irGet(valueSymbol.owner)
                         irIfThenElse(
                             expression.type,
                             lowerInstanceOf(irGet(valueSymbol.owner), expression.typeOperand.makeNotNull()),
-                            irGet(valueSymbol.owner),
+                            thenPart,
                             irNull(expression.type)
                         )
                     }
@@ -136,24 +147,21 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                 irNot(lowerInstanceOf(expression.argument.transformVoid(), expression.typeOperand))
 
             IrTypeOperator.IMPLICIT_NOTNULL -> {
-                val (startOffset, endOffset) = expression.extents()
-                val source = sourceViewFor(parent as IrDeclaration).subSequence(startOffset, endOffset).toString()
+                val owner = scope.scopeOwnerSymbol.owner
+                val source = if (owner is IrFunction && owner.origin == IrDeclarationOrigin.DELEGATED_MEMBER) {
+                    "${owner.name.asString()}(...)"
+                } else {
+                    val (startOffset, endOffset) = expression.extents()
+                    sourceViewFor(parent as IrDeclaration).subSequence(startOffset, endOffset).toString()
+                }
 
-                fun checkExpressionValue(valueSymbol: IrValueSymbol): IrExpression =
+                irLetS(expression.argument.transformVoid(), irType = context.irBuiltIns.anyNType) { valueSymbol ->
                     irComposite(resultType = expression.type) {
                         +irCall(checkExpressionValueIsNotNull).apply {
                             putValueArgument(0, irGet(valueSymbol.owner))
                             putValueArgument(1, irString(source))
                         }
                         +irGet(valueSymbol.owner)
-                    }
-
-                val argument = expression.argument.transformVoid()
-                if (argument is IrGetValue) {
-                    checkExpressionValue(argument.symbol)
-                } else {
-                    irLetS(argument) { valueSymbol ->
-                        checkExpressionValue(valueSymbol)
                     }
                 }
             }
@@ -183,13 +191,13 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
     private fun sourceViewFor(declaration: IrDeclaration) =
         context.psiSourceManager.getKtFile(declaration.fileParent)!!.viewProvider.contents
 
-    private val typeCastException: IrFunctionSymbol =
+    private val throwTypeCastException: IrSimpleFunctionSymbol =
         if (context.state.unifiedNullChecks)
-            context.ir.symbols.ThrowNullPointerException
+            context.ir.symbols.throwNullPointerException
         else
-            context.ir.symbols.ThrowTypeCastException
+            context.ir.symbols.throwTypeCastException
 
-    private val checkExpressionValueIsNotNull: IrFunctionSymbol =
+    private val checkExpressionValueIsNotNull: IrSimpleFunctionSymbol =
         if (context.state.unifiedNullChecks)
             context.ir.symbols.checkNotNullExpressionValue
         else

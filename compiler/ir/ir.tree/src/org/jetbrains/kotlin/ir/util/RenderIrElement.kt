@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.ir.util
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
@@ -106,7 +107,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     private inline fun <T> T.runTrimEnd(fn: T.() -> String): String =
         run(fn).trimEnd()
 
-    private fun IrType.render() =
+    private fun IrType.render(): String =
         "${renderTypeAnnotations(annotations)}${renderTypeInner()}"
 
     private fun IrType.renderTypeInner() =
@@ -250,7 +251,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
 
                 if (declaration is IrSimpleFunction) {
                     append(": ")
-                    append(declaration.returnType.render())
+                    append(declaration.renderReturnType())
                 }
                 append(' ')
 
@@ -280,8 +281,11 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
 
                 append(declaration.name.asString())
 
-                val type = declaration.getter?.returnType ?: declaration.backingField?.type
-                if (type != null) {
+                val getter = declaration.getter
+                if (getter != null) {
+                    append(": ")
+                    append(getter.renderReturnType())
+                } else declaration.backingField?.type?.let { type ->
                     append(": ")
                     append(type.render())
                 }
@@ -340,7 +344,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     override fun visitElement(element: IrElement, data: Nothing?): String =
         "?ELEMENT? ${element::class.java.simpleName} $element"
 
-    override fun visitDeclaration(declaration: IrDeclaration, data: Nothing?): String =
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: Nothing?): String =
         "?DECLARATION? ${declaration::class.java.simpleName} $declaration"
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): String =
@@ -365,8 +369,18 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
                     "name:$name visibility:$visibility modality:$modality " +
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
-                    "returnType:${returnType.render()} " +
+                    "returnType:${renderReturnType()} " +
                     renderSimpleFunctionFlags()
+        }
+
+    private fun IrFunction.renderReturnType(): String =
+        safeReturnType?.render() ?: "<Uninitialized>"
+
+    private val IrFunction.safeReturnType: IrType?
+        get() = try {
+            returnType
+        } catch (e: ReturnTypeIsNotInitializedException) {
+            null
         }
 
     private fun renderFlagsList(vararg flags: String?) =
@@ -405,7 +419,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
                     "visibility:$visibility " +
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
-                    "returnType:${returnType.render()} " +
+                    "returnType:${renderReturnType()} " +
                     renderConstructorFlags()
         }
 
@@ -510,7 +524,8 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         renderFlagsList(
             "vararg".takeIf { varargElementType != null },
             "crossinline".takeIf { isCrossinline },
-            "noinline".takeIf { isNoinline }
+            "noinline".takeIf { isNoinline },
+            "assignable".takeIf { isAssignable }
         )
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
@@ -593,7 +608,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): String =
         "GET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
-    override fun visitSetVariable(expression: IrSetVariable, data: Nothing?): String =
+    override fun visitSetValue(expression: IrSetValue, data: Nothing?): String =
         "SET_VAR '${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitGetField(expression: IrGetField, data: Nothing?): String =
@@ -715,10 +730,6 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
 }
 
-@ObsoleteDescriptorBasedAPI
-internal fun IrDeclaration.name(): String =
-    descriptor.name.toString()
-
 internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescriptor): String =
     if (descriptor is ReceiverParameterDescriptor)
         "this@${descriptor.containingDeclaration.name}: ${descriptor.type}"
@@ -732,6 +743,7 @@ internal fun IrClassifierSymbol.renderClassifierFqn(): String =
     if (isBound)
         when (val owner = owner) {
             is IrClass -> owner.renderClassFqn()
+            is IrScript -> owner.renderScriptFqn()
             is IrTypeParameter -> owner.renderTypeParameterFqn()
             else -> "`unexpected classifier: ${owner.render()}`"
         }
@@ -745,6 +757,9 @@ internal fun IrTypeAliasSymbol.renderTypeAliasFqn(): String =
         "<unbound $this>"
 
 internal fun IrClass.renderClassFqn(): String =
+    StringBuilder().also { renderDeclarationFqn(it) }.toString()
+
+internal fun IrScript.renderScriptFqn(): String =
     StringBuilder().also { renderDeclarationFqn(it) }.toString()
 
 internal fun IrTypeParameter.renderTypeParameterFqn(): String =

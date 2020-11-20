@@ -82,16 +82,21 @@ FILE fqName:<root> fileName:/suspendConversion.kt
               CALL 'public final fun foo2 (vararg xs: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
   FUN name:testWithVarargMapped visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /useSuspendInt>#' type=kotlin.Unit
-        ERROR_CALL 'Unsupported callable reference: ::<Unresolved reference: foo2>#' type=IrErrorType
+      CALL 'public final fun useSuspendInt (fn: kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+        fn: FUN_EXPR type=kotlin.coroutines.SuspendFunction1<kotlin.Int, kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo2 visibility:local modality:FINAL <> (p0:kotlin.Int) returnType:kotlin.Unit [suspend]
+            VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:p0 index:0 type:kotlin.Int
+            BLOCK_BODY
+              CALL 'public final fun foo2 (vararg xs: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                xs: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
+                  GET_VAR 'p0: kotlin.Int declared in <root>.testWithVarargMapped.foo2' type=kotlin.Int origin=null
   FUN name:testWithCoercionToUnit visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         fn: FUN_EXPR type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
           FUN ADAPTER_FOR_CALLABLE_REFERENCE name:foo3 visibility:local modality:FINAL <> () returnType:kotlin.Unit [suspend]
             BLOCK_BODY
-              RETURN type=kotlin.Nothing from='local final fun foo3 (): kotlin.Unit [suspend] declared in <root>.testWithCoercionToUnit'
-                CALL 'public final fun foo3 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
+              CALL 'public final fun foo3 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
   FUN name:testWithDefaults visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
@@ -102,7 +107,11 @@ FILE fqName:<root> fileName:/suspendConversion.kt
   FUN name:testWithBoundReceiver visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun useSuspend (fn: kotlin.coroutines.SuspendFunction0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        fn: FUN_EXPR type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
-          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar visibility:local modality:FINAL <> () returnType:kotlin.Unit [suspend]
+        fn: BLOCK type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE
+          FUN ADAPTER_FOR_CALLABLE_REFERENCE name:bar visibility:local modality:FINAL <> ($receiver:<root>.C) returnType:kotlin.Unit [suspend]
+            $receiver: VALUE_PARAMETER ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE name:receiver type:<root>.C
             BLOCK_BODY
               CALL 'public final fun bar (): kotlin.Unit declared in <root>.C' type=kotlin.Unit origin=null
+                $this: GET_VAR 'receiver: <root>.C declared in <root>.testWithBoundReceiver.bar' type=<root>.C origin=ADAPTED_FUNCTION_REFERENCE
+          FUNCTION_REFERENCE 'local final fun bar (): kotlin.Unit [suspend] declared in <root>.testWithBoundReceiver' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=ADAPTED_FUNCTION_REFERENCE reflectionTarget=null
+            $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null

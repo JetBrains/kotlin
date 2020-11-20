@@ -4,6 +4,7 @@
  */
 
 @file:JvmName("FlagsKt")
+
 package kotlinx.metadata
 
 /**

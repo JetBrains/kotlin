@@ -1,0 +1,25 @@
+FILE: typeParametersInEnum.kt
+    public final enum class A<B, C : R|B|, D> : R|kotlin/Enum<A<B, C, D>>| {
+        private constructor<B, C : R|B|, D>(): R|A<B, C, D>| {
+            super<R|kotlin/Enum<A<B, C, D>>|>()
+        }
+
+        public final static fun values(): R|kotlin/Array<A>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|A| {
+        }
+
+    }
+    public final enum class B : R|kotlin/Enum<B>| {
+        private constructor(): R|B| {
+            super<R|kotlin/Enum<B>|>()
+        }
+
+        public final static fun values(): R|kotlin/Array<B>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|B| {
+        }
+
+    }

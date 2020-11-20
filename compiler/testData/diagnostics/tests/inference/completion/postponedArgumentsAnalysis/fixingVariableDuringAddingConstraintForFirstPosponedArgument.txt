@@ -1,0 +1,4 @@
+package
+
+public fun f(/*0*/ p: (kotlin.Int) -> (kotlin.String) -> kotlin.Unit): kotlin.Unit
+public fun g(/*0*/ cond: kotlin.Boolean): kotlin.Unit

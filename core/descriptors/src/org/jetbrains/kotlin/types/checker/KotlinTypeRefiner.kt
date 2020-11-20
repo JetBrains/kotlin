@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 @DefaultImplementation(impl = KotlinTypeRefiner.Default::class)
@@ -79,4 +78,4 @@ fun KotlinTypeRefiner.refineTypes(types: Iterable<KotlinType>): List<KotlinType>
 class Ref<T : Any>(var value: T?)
 
 @TypeRefinement
-val REFINER_CAPABILITY = ModuleDescriptor.Capability<Ref<KotlinTypeRefiner>>("KotlinTypeRefiner")
+val REFINER_CAPABILITY = ModuleCapability<Ref<KotlinTypeRefiner>>("KotlinTypeRefiner")

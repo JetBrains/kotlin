@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
-import org.jetbrains.kotlin.descriptors.commonizer.utils.concat
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactConcat
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapValues
 import org.jetbrains.kotlin.resolve.constants.AnnotationValue
 import org.jetbrains.kotlin.storage.getValue
 
@@ -17,11 +18,11 @@ class CommonizedAnnotationDescriptor(
     cirAnnotation: CirAnnotation
 ) : AnnotationDescriptor {
     override val type by targetComponents.storageManager.createLazyValue {
-        cirAnnotation.type.buildType(targetComponents, TypeParameterResolver.EMPTY)
+        cirAnnotation.type.buildType(targetComponents, TypeParameterResolver.EMPTY, expandTypeAliases = true)
     }
 
     override val allValueArguments by targetComponents.storageManager.createLazyValue {
-        cirAnnotation.constantValueArguments concat cirAnnotation.annotationValueArguments.mapValues { (_, nestedCirAnnotation) ->
+        cirAnnotation.constantValueArguments compactConcat cirAnnotation.annotationValueArguments.compactMapValues { (_, nestedCirAnnotation) ->
             AnnotationValue(CommonizedAnnotationDescriptor(targetComponents, nestedCirAnnotation))
         }
     }

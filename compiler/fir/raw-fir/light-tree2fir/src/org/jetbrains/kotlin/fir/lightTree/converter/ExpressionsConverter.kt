@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
@@ -369,13 +368,25 @@ class ExpressionsConverter(
                         prefix = unaryExpression.tokenType == PREFIX_EXPRESSION
                     ) { getAsFirExpression(this) }
                 }
+                val receiver = getAsFirExpression<FirExpression>(argument, "No operand")
+                if (operationToken == PLUS || operationToken == MINUS) {
+                    if (receiver is FirConstExpression<*> && receiver.kind == FirConstKind.IntegerLiteral) {
+                        val value = receiver.value as Long
+                        val convertedValue = when (operationToken) {
+                            MINUS -> -value
+                            PLUS -> value
+                            else -> error("Should not be here")
+                        }
+                        return buildConstExpression(unaryExpression.toFirSourceElement(), FirConstKind.IntegerLiteral, convertedValue)
+                    }
+                }
                 buildFunctionCall {
                     source = unaryExpression.toFirSourceElement()
                     calleeReference = buildSimpleNamedReference {
                         source = this@buildFunctionCall.source
                         name = conventionCallName
                     }
-                    explicitReceiver = getAsFirExpression(argument, "No operand")
+                    explicitReceiver = receiver
                 }
             }
             else -> throw IllegalStateException("Unexpected expression: ${unaryExpression.asText}")
@@ -475,12 +486,12 @@ class ExpressionsConverter(
             }
         }
 
-        (firSelector as? FirModifiableQualifiedAccess)?.let {
+        (firSelector as? FirQualifiedAccess)?.let {
             if (isSafe) {
                 return it.wrapWithSafeCall(firReceiver!!)
             }
 
-            it.explicitReceiver = firReceiver
+            it.replaceExplicitReceiver(firReceiver)
         }
         return firSelector
     }
@@ -525,35 +536,46 @@ class ExpressionsConverter(
 
         val source = callSuffix.toFirSourceElement()
 
-        val (calleeReference, explicitReceiver) = when {
-            name != null -> buildSimpleNamedReference {
-                this.source = source
-                this.name = name.nameAsSafeName()
-            } to null
-
-            additionalArgument != null -> {
+        val (calleeReference, explicitReceiver, isImplicitInvoke) = when {
+            name != null -> CalleeAndReceiver(
                 buildSimpleNamedReference {
                     this.source = source
-                    this.name = OperatorNameConventions.INVOKE
-                } to additionalArgument!!
+                    this.name = name.nameAsSafeName()
+                }
+            )
+
+            additionalArgument != null -> {
+                CalleeAndReceiver(
+                    buildSimpleNamedReference {
+                        this.source = source
+                        this.name = OperatorNameConventions.INVOKE
+                    },
+                    additionalArgument!!,
+                    isImplicitInvoke = true
+                )
             }
 
             superNode != null -> {
-                buildErrorNamedReference {
-                    val node = superNode!!
-                    this.source = node.toFirSourceElement()
-                    diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
-                } to null
+                CalleeAndReceiver(
+                    buildErrorNamedReference {
+                        val node = superNode!!
+                        this.source = node.toFirSourceElement()
+                        diagnostic = ConeSimpleDiagnostic("Super cannot be a callee", DiagnosticKind.SuperNotAllowed)
+                    }
+                )
             }
 
-            else -> buildErrorNamedReference {
-                this.source = source
-                diagnostic = ConeSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
-            } to null
+            else -> CalleeAndReceiver(
+                buildErrorNamedReference {
+                    this.source = source
+                    diagnostic = ConeSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
+                }
+            )
         }
 
         val builder: FirQualifiedAccessBuilder = if (hasArguments) {
-            FirFunctionCallBuilder().apply {
+            val builder = if (isImplicitInvoke) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
+            builder.apply {
                 this.source = source
                 this.calleeReference = calleeReference
 
@@ -617,7 +639,7 @@ class ExpressionsConverter(
                         isVar = false
                         symbol = FirPropertySymbol(variable.name)
                         isLocal = true
-                        status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+                        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                     }
                 }
                 DESTRUCTURING_DECLARATION -> subjectExpression =
@@ -643,18 +665,21 @@ class ExpressionsConverter(
                     if (hasSubject) {
                         val firCondition = entry.toFirWhenCondition()
                         buildWhenBranch {
+                            source = branch.source
                             condition = firCondition
                             result = branch 
                         }
                     } else {
                         val firCondition = entry.toFirWhenConditionWithoutSubject()
                         buildWhenBranch {
+                            source = branch.source
                             condition = firCondition
                             result = branch
                         }
                     }
                 } else {
                     buildWhenBranch {
+                        source = branch.source
                         condition = buildElseIfTrueCondition()
                         result = branch
                     }

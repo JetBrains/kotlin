@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
@@ -21,6 +25,8 @@ import org.jetbrains.kotlin.types.Variance
 class Fir2IrTypeConverter(
     private val components: Fir2IrComponents
 ) : Fir2IrComponents by components {
+    private val annotationGenerator = AnnotationGenerator(this)
+
     internal val classIdToSymbolMap = mapOf(
         StandardClassIds.Nothing to irBuiltIns.nothingClass,
         StandardClassIds.Unit to irBuiltIns.unitClass,
@@ -52,10 +58,14 @@ class Fir2IrTypeConverter(
         StandardClassIds.Char to irBuiltIns.charType
     )
 
+    private val capturedTypeCache = mutableMapOf<ConeCapturedType, IrType>()
+    private val errorTypeForCapturedTypeStub by lazy { createErrorType() }
+
     fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType {
+        capturedTypeCache.clear()
         return when (this) {
             !is FirResolvedTypeRef -> createErrorType()
-            !is FirImplicitBuiltinTypeRef -> type.toIrType(typeContext)
+            !is FirImplicitBuiltinTypeRef -> type.toIrType(typeContext, annotations)
             is FirImplicitNothingTypeRef -> irBuiltIns.nothingType
             is FirImplicitUnitTypeRef -> irBuiltIns.unitType
             is FirImplicitBooleanTypeRef -> irBuiltIns.booleanType
@@ -64,11 +74,14 @@ class Fir2IrTypeConverter(
             is FirImplicitIntTypeRef -> irBuiltIns.intType
             is FirImplicitNullableAnyTypeRef -> irBuiltIns.anyNType
             is FirImplicitNullableNothingTypeRef -> irBuiltIns.nothingNType
-            else -> type.toIrType(typeContext)
+            else -> type.toIrType(typeContext, annotations)
         }
     }
 
-    fun ConeKotlinType.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType {
+    fun ConeKotlinType.toIrType(
+        typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT,
+        annotations: List<FirAnnotationCall> = emptyList()
+    ): IrType {
         return when (this) {
             is ConeKotlinErrorType -> createErrorType()
             is ConeLookupTagBasedType -> {
@@ -77,11 +90,24 @@ class Fir2IrTypeConverter(
                     val firSymbol = this.lookupTag.toSymbol(session) ?: return createErrorType()
                     firSymbol.toSymbol(session, classifierStorage, typeContext)
                 }
-                // TODO: annotations
+                val typeAnnotations: MutableList<IrConstructorCall> =
+                    if (!isExtensionFunctionType) mutableListOf()
+                    else mutableListOf(builtIns.extensionFunctionTypeAnnotationConstructorCall())
+                typeAnnotations += with(annotationGenerator) { annotations.toIrAnnotations() }
+                if (hasEnhancedNullability) {
+                    builtIns.enhancedNullabilityAnnotationConstructorCall()?.let {
+                        typeAnnotations += it
+                    }
+                }
+                if (hasFlexibleNullability) {
+                    builtIns.flexibleNullabilityAnnotationConstructorCall()?.let {
+                        typeAnnotations += it
+                    }
+                }
                 IrSimpleTypeImpl(
                     irSymbol, !typeContext.definitelyNotNull && this.isMarkedNullable,
-                    typeArguments.map { it.toIrTypeArgument() },
-                    emptyList()
+                    fullyExpandedType(session).typeArguments.map { it.toIrTypeArgument(typeContext) },
+                    typeAnnotations
                 )
             }
             is ConeFlexibleType -> {
@@ -89,7 +115,20 @@ class Fir2IrTypeConverter(
                 upperBound.toIrType(typeContext)
             }
             is ConeCapturedType -> {
-                lowerType?.toIrType(typeContext) ?: constructor.supertypes!!.first().toIrType(typeContext)
+                val cached = capturedTypeCache[this]
+                if (cached == null) {
+                    val irType = lowerType?.toIrType(typeContext) ?: run {
+                        capturedTypeCache[this] = errorTypeForCapturedTypeStub
+                        constructor.supertypes!!.first().toIrType(typeContext)
+                    }
+                    capturedTypeCache[this] = irType
+                    irType
+                } else {
+                    // Potentially recursive captured type, e.g., Recursive<R> where R : Recursive<R>, ...
+                    // That should have been handled during type argument conversion, though.
+                    // Or, simply repeated captured type, e.g., FunctionN<..., *, ..., *>, literally same captured types.
+                    cached
+                }
             }
             is ConeDefinitelyNotNullType -> {
                 original.toIrType(typeContext.definitelyNotNull())
@@ -103,23 +142,59 @@ class Fir2IrTypeConverter(
         }
     }
 
-    private fun ConeTypeProjection.toIrTypeArgument(): IrTypeArgument {
+    private fun ConeTypeProjection.toIrTypeArgument(typeContext: ConversionTypeContext): IrTypeArgument {
         return when (this) {
             ConeStarProjection -> IrStarProjectionImpl
             is ConeKotlinTypeProjectionIn -> {
-                val irType = this.type.toIrType()
+                val irType = this.type.toIrType(typeContext)
                 makeTypeProjection(irType, Variance.IN_VARIANCE)
             }
             is ConeKotlinTypeProjectionOut -> {
-                val irType = this.type.toIrType()
+                val irType = this.type.toIrType(typeContext)
                 makeTypeProjection(irType, Variance.OUT_VARIANCE)
             }
             is ConeKotlinType -> {
-                val irType = toIrType()
-                makeTypeProjection(irType, Variance.INVARIANT)
+                if (this is ConeCapturedType && this in capturedTypeCache && this.isRecursive(mutableSetOf())) {
+                    // Recursive captured type, e.g., Recursive<R> where R : Recursive<R>, ...
+                    // We can return * early here to avoid recursive type conversions.
+                    IrStarProjectionImpl
+                } else {
+                    val irType = toIrType(typeContext)
+                    makeTypeProjection(irType, Variance.INVARIANT)
+                }
             }
         }
     }
+
+    private fun ConeKotlinType.isRecursive(visited: MutableSet<ConeCapturedType>): Boolean =
+        when (this) {
+            is ConeLookupTagBasedType -> {
+                typeArguments.any {
+                    when (it) {
+                        is ConeKotlinType -> it.isRecursive(visited)
+                        is ConeKotlinTypeProjectionIn -> it.type.isRecursive(visited)
+                        is ConeKotlinTypeProjectionOut -> it.type.isRecursive(visited)
+                        else -> false
+                    }
+                }
+            }
+            is ConeFlexibleType -> {
+                lowerBound.isRecursive(visited) || upperBound.isRecursive(visited)
+            }
+            is ConeCapturedType -> {
+                if (visited.add(this)) {
+                    constructor.supertypes?.any { it.isRecursive(visited) } == true
+                } else
+                    true
+            }
+            is ConeDefinitelyNotNullType -> {
+                original.isRecursive(visited)
+            }
+            is ConeIntersectionType -> {
+                intersectedTypes.any { it.isRecursive(visited) }
+            }
+            else -> false
+        }
 
     private fun getArrayClassSymbol(classId: ClassId?): IrClassSymbol? {
         val primitiveId = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: return null

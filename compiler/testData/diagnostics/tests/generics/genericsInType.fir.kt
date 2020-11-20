@@ -29,8 +29,8 @@ fun test() {
     a<Foo.Bar<Int>.Baz>()
 }
 
-fun <T: Foo<String.Bar>> x() {}
+fun <T: <!UNRESOLVED_REFERENCE!>Foo<String.Bar><!>> x() {}
 fun Foo<String>.Bar.ext() {}
 
-fun ex1(a: Foo<String>.Bar<String>): Foo<String>.Bar<String> {
+fun ex1(a: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Foo<String>.Bar<String><!>): <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Foo<String>.Bar<String><!> {
 }

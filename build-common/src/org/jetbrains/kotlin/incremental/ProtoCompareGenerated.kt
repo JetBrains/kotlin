@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
+
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf

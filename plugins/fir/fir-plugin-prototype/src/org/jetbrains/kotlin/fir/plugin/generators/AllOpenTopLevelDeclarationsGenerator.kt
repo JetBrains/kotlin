@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.fir.plugin.generators
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirEffectiveVisibilityImpl
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -37,8 +36,7 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             origin = FirDeclarationOrigin.Plugin(key)
             status = FirResolvedDeclarationStatusImpl(
-                Visibilities.PUBLIC,
-                FirEffectiveVisibilityImpl.Public,
+                Visibilities.Public,
                 Modality.FINAL
             )
             classKind = ClassKind.OBJECT
@@ -57,12 +55,11 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
             origin = FirDeclarationOrigin.Plugin(key)
             returnTypeRef = session.builtinTypes.intType
             status = FirResolvedDeclarationStatusImpl(
-                Visibilities.PUBLIC,
-                FirEffectiveVisibilityImpl.Public,
+                Visibilities.Public,
                 Modality.FINAL
             )
             name = Name.identifier("hello")
-            symbol = FirNamedFunctionSymbol(CallableId(klass.symbol.classId, name), isFakeOverride = false)
+            symbol = FirNamedFunctionSymbol(CallableId(klass.symbol.classId, name))
         }
         return listOf(function)
     }

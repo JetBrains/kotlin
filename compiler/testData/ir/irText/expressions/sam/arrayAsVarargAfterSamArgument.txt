@@ -5,8 +5,8 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument.kt
     VALUE_PARAMETER name:arr index:2 type:kotlin.Array<kotlin.String>
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
-          r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+        CALL 'public open fun foo1 (r: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
+          r: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -14,54 +14,54 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument.kt
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           strs: GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
-          r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+        CALL 'public open fun foo1 (r: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
+          r: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+          strs: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType=@[FlexibleNullability] kotlin.String?
             SPREAD_ELEMENT
               GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
-          r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+        CALL 'public open fun foo1 (r: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
+          r: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=null
           strs: GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
-          r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+        CALL 'public open fun foo1 (r: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
+          r: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=null
-          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+          strs: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType=@[FlexibleNullability] kotlin.String?
             SPREAD_ELEMENT
               GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
+        CALL 'public open fun foo1 (r: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
           r: GET_VAR 'r: java.lang.Runnable declared in <root>.test' type=java.lang.Runnable origin=null
-          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+          strs: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType=@[FlexibleNullability] kotlin.String?
             CONST String type=kotlin.String value=""
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
-          r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+        CALL 'public open fun foo1 (r: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
+          r: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=null
           strs: GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
-          r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+        CALL 'public open fun foo1 (r: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
+          r: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             GET_VAR 'fn: kotlin.Function0<kotlin.Unit> declared in <root>.test' type=kotlin.Function0<kotlin.Unit> origin=null
-          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+          strs: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType=@[FlexibleNullability] kotlin.String?
             SPREAD_ELEMENT
               GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun foo1 (r: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
+        CALL 'public open fun foo1 (r: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
           r: GET_VAR 'r: java.lang.Runnable declared in <root>.test' type=java.lang.Runnable origin=null
-          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+          strs: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType=@[FlexibleNullability] kotlin.String?
             SPREAD_ELEMENT
               GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       VAR name:i1 type:<root>.Test [val]
-        CONSTRUCTOR_CALL 'public constructor <init> (r: java.lang.Runnable?, vararg strs: kotlin.String?) declared in <root>.Test' type=<root>.Test origin=null
-          r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+        CONSTRUCTOR_CALL 'public constructor <init> (r: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?) declared in <root>.Test' type=<root>.Test origin=null
+          r: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -69,25 +69,25 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument.kt
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           strs: GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       VAR name:i2 type:<root>.Test [val]
-        CONSTRUCTOR_CALL 'public constructor <init> (r: java.lang.Runnable?, vararg strs: kotlin.String?) declared in <root>.Test' type=<root>.Test origin=null
-          r: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+        CONSTRUCTOR_CALL 'public constructor <init> (r: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?) declared in <root>.Test' type=<root>.Test origin=null
+          r: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+          strs: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType=@[FlexibleNullability] kotlin.String?
             SPREAD_ELEMENT
               GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       VAR name:i3 type:<root>.Test [val]
-        CONSTRUCTOR_CALL 'public constructor <init> (r1: java.lang.Runnable?, r2: java.lang.Runnable?, vararg strs: kotlin.String?) declared in <root>.Test' type=<root>.Test origin=null
-          r1: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+        CONSTRUCTOR_CALL 'public constructor <init> (r1: @[FlexibleNullability] java.lang.Runnable?, r2: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?) declared in <root>.Test' type=<root>.Test origin=null
+          r1: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          r2: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          r2: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -95,55 +95,55 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument.kt
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           strs: GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       VAR name:i4 type:<root>.Test [val]
-        CONSTRUCTOR_CALL 'public constructor <init> (r1: java.lang.Runnable?, r2: java.lang.Runnable?, vararg strs: kotlin.String?) declared in <root>.Test' type=<root>.Test origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> (r1: @[FlexibleNullability] java.lang.Runnable?, r2: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?) declared in <root>.Test' type=<root>.Test origin=null
           r1: GET_VAR 'r: java.lang.Runnable declared in <root>.test' type=java.lang.Runnable origin=null
-          r2: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          r2: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+          strs: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType=@[FlexibleNullability] kotlin.String?
             CONST String type=kotlin.String value=""
       VAR name:i5 type:<root>.Test [val]
-        CONSTRUCTOR_CALL 'public constructor <init> (r1: java.lang.Runnable?, r2: java.lang.Runnable?, vararg strs: kotlin.String?) declared in <root>.Test' type=<root>.Test origin=null
-          r1: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+        CONSTRUCTOR_CALL 'public constructor <init> (r1: @[FlexibleNullability] java.lang.Runnable?, r2: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?) declared in <root>.Test' type=<root>.Test origin=null
+          r1: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          r2: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          r2: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+          strs: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType=@[FlexibleNullability] kotlin.String?
             SPREAD_ELEMENT
               GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       VAR name:i6 type:<root>.Test [val]
-        CONSTRUCTOR_CALL 'public constructor <init> (r1: java.lang.Runnable?, r2: java.lang.Runnable?, vararg strs: kotlin.String?) declared in <root>.Test' type=<root>.Test origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> (r1: @[FlexibleNullability] java.lang.Runnable?, r2: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?) declared in <root>.Test' type=<root>.Test origin=null
           r1: GET_VAR 'r: java.lang.Runnable declared in <root>.test' type=java.lang.Runnable origin=null
-          r2: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          r2: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+          strs: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType=@[FlexibleNullability] kotlin.String?
             SPREAD_ELEMENT
               GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun foo2 (r1: java.lang.Runnable?, r2: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
+        CALL 'public open fun foo2 (r1: @[FlexibleNullability] java.lang.Runnable?, r2: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
           $this: GET_VAR 'val i1: <root>.Test [val] declared in <root>.test' type=<root>.Test origin=null
-          r1: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          r1: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          r2: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          r2: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
@@ -151,45 +151,45 @@ FILE fqName:<root> fileName:/arrayAsVarargAfterSamArgument.kt
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
           strs: GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun foo2 (r1: java.lang.Runnable?, r2: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
+        CALL 'public open fun foo2 (r1: @[FlexibleNullability] java.lang.Runnable?, r2: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
           $this: GET_VAR 'val i1: <root>.Test [val] declared in <root>.test' type=<root>.Test origin=null
           r1: GET_VAR 'r: java.lang.Runnable declared in <root>.test' type=java.lang.Runnable origin=null
-          r2: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          r2: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+          strs: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType=@[FlexibleNullability] kotlin.String?
             CONST String type=kotlin.String value=""
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun foo2 (r1: java.lang.Runnable?, r2: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
+        CALL 'public open fun foo2 (r1: @[FlexibleNullability] java.lang.Runnable?, r2: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
           $this: GET_VAR 'val i1: <root>.Test [val] declared in <root>.test' type=<root>.Test origin=null
-          r1: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          r1: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          r2: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          r2: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+          strs: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType=@[FlexibleNullability] kotlin.String?
             SPREAD_ELEMENT
               GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public open fun foo2 (r1: java.lang.Runnable?, r2: java.lang.Runnable?, vararg strs: kotlin.String?): kotlin.String? declared in <root>.Test' type=kotlin.String? origin=null
+        CALL 'public open fun foo2 (r1: @[FlexibleNullability] java.lang.Runnable?, r2: @[FlexibleNullability] java.lang.Runnable?, vararg strs: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] kotlin.String? declared in <root>.Test' type=@[FlexibleNullability] kotlin.String? origin=null
           $this: GET_VAR 'val i1: <root>.Test [val] declared in <root>.test' type=<root>.Test origin=null
           r1: GET_VAR 'r: java.lang.Runnable declared in <root>.test' type=java.lang.Runnable origin=null
-          r2: TYPE_OP type=java.lang.Runnable? origin=SAM_CONVERSION typeOperand=java.lang.Runnable?
+          r2: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
             FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          strs: VARARG type=kotlin.Array<out kotlin.String?>? varargElementType=kotlin.String?
+          strs: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.String?>? varargElementType=@[FlexibleNullability] kotlin.String?
             SPREAD_ELEMENT
               GET_VAR 'arr: kotlin.Array<kotlin.String> declared in <root>.test' type=kotlin.Array<kotlin.String> origin=null

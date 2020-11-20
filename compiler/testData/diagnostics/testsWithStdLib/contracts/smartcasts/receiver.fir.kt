@@ -14,7 +14,7 @@ fun Any?.isNull(): Boolean {
 
 fun smartcastOnReceiver(x: Int?) {
     if (x.isNull()) {
-        x.<!AMBIGUITY!>inc<!>()
+        x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
     }
     else {
         x.dec()
@@ -26,10 +26,10 @@ class UnstableReceiver {
 
     fun smartcastOnUnstableReceiver() {
         if (x.isNull()) {
-            x.<!AMBIGUITY!>inc<!>()
+            x.<!INAPPLICABLE_CANDIDATE!>inc<!>()
         }
         else {
-            x.<!AMBIGUITY!>dec<!>()
+            x.<!INAPPLICABLE_CANDIDATE!>dec<!>()
         }
     }
 }

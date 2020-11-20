@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 object A {
     <!CONSTRUCTOR_IN_OBJECT!>constructor()<!>
     init {}

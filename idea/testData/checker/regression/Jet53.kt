@@ -1,5 +1,3 @@
-// FIR_COMPARISON
-
 import java.util.Collections
 
 fun <T> checkSubtype(t: T) = t

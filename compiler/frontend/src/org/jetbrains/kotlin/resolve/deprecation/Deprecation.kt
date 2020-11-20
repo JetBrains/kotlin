@@ -117,7 +117,7 @@ internal data class DeprecatedByOverridden(private val deprecations: Collection<
         assert(deprecations.none { it is DeprecatedByOverridden })
     }
 
-    override val deprecationLevel: DeprecationLevelValue = deprecations.map(Deprecation::deprecationLevel).min()!!
+    override val deprecationLevel: DeprecationLevelValue = deprecations.map(Deprecation::deprecationLevel).minOrNull()!!
 
     override val target: DeclarationDescriptor
         get() = deprecations.first().target

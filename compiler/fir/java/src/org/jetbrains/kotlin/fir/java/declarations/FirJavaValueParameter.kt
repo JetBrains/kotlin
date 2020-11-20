@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -25,6 +26,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     source: FirSourceElement?,
     session: FirSession,
     resolvePhase: FirResolvePhase,
+    attributes: FirDeclarationAttributes,
     returnTypeRef: FirTypeRef,
     name: Name,
     symbol: FirVariableSymbol<FirValueParameter>,
@@ -38,6 +40,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     session,
     resolvePhase,
     FirDeclarationOrigin.Java,
+    attributes,
     returnTypeRef,
     name,
     symbol,
@@ -56,11 +59,12 @@ class FirJavaValueParameterBuilder : FirValueParameterBuilder() {
             source,
             session,
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
+            attributes,
             returnTypeRef,
             name,
             symbol = FirVariableSymbol(name),
             annotations,
-            defaultValue = null,
+            defaultValue,
             isCrossinline = false,
             isNoinline = false,
             isVararg,
@@ -70,42 +74,35 @@ class FirJavaValueParameterBuilder : FirValueParameterBuilder() {
     @Deprecated("Modification of 'resolvePhase' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
     override var resolvePhase: FirResolvePhase
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 
     @Deprecated("Modification of '' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
     override var symbol: FirVariableSymbol<FirValueParameter>
         get() = throw IllegalStateException()
-        set(value) {
-            throw IllegalStateException()
-        }
-
-    @Deprecated("Modification of 'defaultValue' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
-    override var defaultValue: FirExpression?
-        get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 
     @Deprecated("Modification of 'isCrossinline' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
     override var isCrossinline: Boolean
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 
     @Deprecated("Modification of 'isNoinline' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
     override var isNoinline: Boolean
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 
     @Deprecated("Modification of 'origin' has no impact for FirJavaValueParameterBuilder", level = DeprecationLevel.HIDDEN)
     override var origin: FirDeclarationOrigin
         get() = throw IllegalStateException()
-        set(value) {
+        set(@Suppress("UNUSED_PARAMETER") value) {
             throw IllegalStateException()
         }
 }

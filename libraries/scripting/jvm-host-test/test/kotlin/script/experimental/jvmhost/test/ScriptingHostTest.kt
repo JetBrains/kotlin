@@ -66,7 +66,8 @@ class ScriptingHostTest : TestCase() {
 
     @Test
     fun testValueResult() {
-        val resVal = evalScriptWithResult("42") as ResultValue.Value
+        val evalScriptWithResult = evalScriptWithResult("42")
+        val resVal = evalScriptWithResult as ResultValue.Value
         Assert.assertEquals(42, resVal.value)
         Assert.assertEquals("\$\$result", resVal.name)
         Assert.assertEquals("kotlin.Int", resVal.type)

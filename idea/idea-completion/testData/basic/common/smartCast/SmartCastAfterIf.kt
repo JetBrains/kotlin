@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 interface Expr
 class Num(val value : Int) : Expr
 

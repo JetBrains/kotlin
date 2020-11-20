@@ -14,6 +14,7 @@ public interface flow/FlowCollector {
 @kotlin.Metadata
 final class flow/InnerObjectRetransformationKt$box$1 {
     // source: 'innerObjectRetransformation.kt'
+    enclosing method flow/InnerObjectRetransformationKt.box()Ljava/lang/String;
     field label: int
     inner (anonymous) class flow/InnerObjectRetransformationKt$box$1
     method <init>(p0: kotlin.coroutines.Continuation): void
@@ -25,6 +26,7 @@ final class flow/InnerObjectRetransformationKt$box$1 {
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$check$$inlined$collect$1 {
     // source: 'innerObjectRetransformation.kt'
+    enclosing method flow/InnerObjectRetransformationKt.check(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     inner (anonymous) class flow/InnerObjectRetransformationKt$check$$inlined$collect$1
     public method <init>(): void
     public @org.jetbrains.annotations.Nullable method emit(@org.jetbrains.annotations.NotNull p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -33,6 +35,7 @@ public final class flow/InnerObjectRetransformationKt$check$$inlined$collect$1 {
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$check$$inlined$flow$1 {
     // source: 'innerObjectRetransformation.kt'
+    enclosing method flow/InnerObjectRetransformationKt.check(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     inner (anonymous) class flow/InnerObjectRetransformationKt$check$$inlined$flow$1
     public method <init>(): void
     public @org.jetbrains.annotations.Nullable method collect(@org.jetbrains.annotations.NotNull p0: flow.FlowCollector, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
@@ -41,6 +44,7 @@ public final class flow/InnerObjectRetransformationKt$check$$inlined$flow$1 {
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1 {
     // source: 'innerObjectRetransformation.kt'
+    enclosing method flow/InnerObjectRetransformationKt.check(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     synthetic final field $this_flowWith$inlined: flow.Flow
     inner (anonymous) class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1
     public method <init>(p0: flow.Flow): void
@@ -51,6 +55,7 @@ public final class flow/InnerObjectRetransformationKt$check$$inlined$flowWith$1 
 @kotlin.coroutines.jvm.internal.DebugMetadata
 final class flow/InnerObjectRetransformationKt$check$1 {
     // source: 'innerObjectRetransformation.kt'
+    enclosing method flow/InnerObjectRetransformationKt.check(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     inner (anonymous) class flow/InnerObjectRetransformationKt$check$1
@@ -61,6 +66,7 @@ final class flow/InnerObjectRetransformationKt$check$1 {
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$collect$2$emit$1 {
     // source: 'innerObjectRetransformation.kt'
+    enclosing method flow/InnerObjectRetransformationKt$collect$2.emit(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: flow.InnerObjectRetransformationKt$collect$2
@@ -73,6 +79,7 @@ public final class flow/InnerObjectRetransformationKt$collect$2$emit$1 {
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$collect$2 {
     // source: 'innerObjectRetransformation.kt'
+    enclosing method flow/InnerObjectRetransformationKt.collect(Lflow/Flow;Lkotlin/jvm/functions/Function2;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     synthetic final field $action: kotlin.jvm.functions.Function2
     inner (anonymous) class flow/InnerObjectRetransformationKt$collect$2
     inner (anonymous) class flow/InnerObjectRetransformationKt$collect$2$emit$1
@@ -84,6 +91,7 @@ public final class flow/InnerObjectRetransformationKt$collect$2 {
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$flow$1$collect$1 {
     // source: 'innerObjectRetransformation.kt'
+    enclosing method flow/InnerObjectRetransformationKt$flow$1.collect(Lflow/FlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: flow.InnerObjectRetransformationKt$flow$1
@@ -96,6 +104,7 @@ public final class flow/InnerObjectRetransformationKt$flow$1$collect$1 {
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$flow$1 {
     // source: 'innerObjectRetransformation.kt'
+    enclosing method flow/InnerObjectRetransformationKt.flow(Lkotlin/jvm/functions/Function2;)Lflow/Flow;
     synthetic final field $block: kotlin.jvm.functions.Function2
     inner (anonymous) class flow/InnerObjectRetransformationKt$flow$1
     inner (anonymous) class flow/InnerObjectRetransformationKt$flow$1$collect$1
@@ -106,6 +115,7 @@ public final class flow/InnerObjectRetransformationKt$flow$1 {
 
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1$1 {
+    enclosing method flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1.collect(Lflow/FlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: flow.InnerObjectRetransformationKt$flowWith$$inlined$flow$1
@@ -118,6 +128,7 @@ public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1$1
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1 {
     // source: 'innerObjectRetransformation.kt'
+    enclosing method flow/InnerObjectRetransformationKt.flowWith(Lflow/Flow;Lkotlin/jvm/functions/Function2;)Lflow/Flow;
     synthetic final field $builderBlock$inlined: kotlin.jvm.functions.Function2
     synthetic final field $this_flowWith$inlined: flow.Flow
     inner (anonymous) class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1
@@ -129,6 +140,7 @@ public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$1 {
 
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2$1 {
+    enclosing method flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2.collect(Lflow/FlowCollector;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
     field label: int
     synthetic field result: java.lang.Object
     synthetic final field this$0: flow.InnerObjectRetransformationKt$flowWith$$inlined$flow$2
@@ -141,6 +153,7 @@ public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2$1
 @kotlin.Metadata
 public final class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2 {
     // source: 'innerObjectRetransformation.kt'
+    enclosing method flow/InnerObjectRetransformationKt.flowWith(Lflow/Flow;Lkotlin/jvm/functions/Function2;)Lflow/Flow;
     synthetic final field $builderBlock$inlined: kotlin.jvm.functions.Function2
     synthetic final field $this_flowWith$inlined: flow.Flow
     inner (anonymous) class flow/InnerObjectRetransformationKt$flowWith$$inlined$flow$2

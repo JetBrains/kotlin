@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,15 +14,33 @@ import java.io.IOException
 /**
  * Creates an empty directory in the specified [directory], using the given [prefix] and [suffix] to generate its name.
  *
- * If [prefix] is not specified then some unspecified name will be used.
+ * If [prefix] is not specified then some unspecified string will be used.
  * If [suffix] is not specified then ".tmp" will be used.
  * If [directory] is not specified then the default temporary-file directory will be used.
+ *
+ * The [prefix] argument, if specified, must be at least three characters long.
+ * It is recommended that the prefix be a short, meaningful string such as "job" or "mail".
+ *
+ * To create the new file, the [prefix] and the [suffix] may first be adjusted to fit the limitations of the underlying platform.
+ *
+ * **Note:** if the new directory is created in a directory that is shared with all users,
+ * it may get permissions allowing everyone to read it or its content, thus creating a risk of leaking
+ * sensitive information stored in this directory.
+ * To avoid this, it's recommended either to specify an explicit parent [directory] that is not shared widely,
+ * or to use alternative ways of creating temporary files,
+ * such as [java.nio.file.Files.createTempDirectory](https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#createTempDirectory-java.lang.String-java.nio.file.attribute.FileAttribute...-)
+ * or the experimental `createTempDirectory` function in the `kotlin.io.path` package.
  *
  * @return a file object corresponding to a newly-created directory.
  *
  * @throws IOException in case of input/output error.
  * @throws IllegalArgumentException if [prefix] is shorter than three symbols.
  */
+@Deprecated(
+    "Avoid creating temporary directories in the default temp location with this function " +
+    "due to too wide permissions on the newly created directory. " +
+    "Use kotlin.io.path.createTempDirectory instead."
+)
 public fun createTempDir(prefix: String = "tmp", suffix: String? = null, directory: File? = null): File {
     val dir = File.createTempFile(prefix, suffix, directory)
     dir.delete()
@@ -36,15 +54,33 @@ public fun createTempDir(prefix: String = "tmp", suffix: String? = null, directo
 /**
  * Creates a new empty file in the specified [directory], using the given [prefix] and [suffix] to generate its name.
  *
- * If [prefix] is not specified then some unspecified name will be used.
+ * If [prefix] is not specified then some unspecified string will be used.
  * If [suffix] is not specified then ".tmp" will be used.
  * If [directory] is not specified then the default temporary-file directory will be used.
+ *
+ * The [prefix] argument, if specified, must be at least three characters long.
+ * It is recommended that the prefix be a short, meaningful string such as "job" or "mail".
+ *
+ * To create the new file, the [prefix] and the [suffix] may first be adjusted to fit the limitations of the underlying platform.
+ *
+ * **Note:** if the new file is created in a directory that is shared with all users,
+ * it may get permissions allowing everyone to read it, thus creating a risk of leaking
+ * sensitive information stored in this file.
+ * To avoid this, it's recommended either to specify an explicit parent [directory] that is not shared widely,
+ * or to use alternative ways of creating temporary files,
+ * such as [java.nio.file.Files.createTempFile](https://docs.oracle.com/javase/8/docs/api/java/nio/file/Files.html#createTempFile-java.lang.String-java.lang.String-java.nio.file.attribute.FileAttribute...-)
+ * or the experimental `createTempFile` function in the `kotlin.io.path` package.
  *
  * @return a file object corresponding to a newly-created file.
  *
  * @throws IOException in case of input/output error.
  * @throws IllegalArgumentException if [prefix] is shorter than three symbols.
  */
+@Deprecated(
+    "Avoid creating temporary files in the default temp location with this function " +
+    "due to too wide permissions on the newly created file. " +
+    "Use kotlin.io.path.createTempFile instead or resort to java.io.File.createTempFile."
+)
 public fun createTempFile(prefix: String = "tmp", suffix: String? = null, directory: File? = null): File {
     return File.createTempFile(prefix, suffix, directory)
 }

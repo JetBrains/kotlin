@@ -112,6 +112,8 @@ val distLibraryProjects = listOfNotNull(
 val distCompilerPluginProjects = listOf(
     ":kotlin-allopen-compiler-plugin",
     ":kotlin-android-extensions-runtime",
+    ":plugins:parcelize:parcelize-compiler",
+    ":plugins:parcelize:parcelize-runtime",
     ":kotlin-noarg-compiler-plugin",
     ":kotlin-sam-with-receiver-compiler-plugin",
     ":kotlinx-serialization-compiler-plugin"
@@ -210,18 +212,10 @@ dependencies {
     if (Platform.P202()) {
         fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
     } else if (Platform.P203.orHigher()) {
-        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-2") }
+        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-3") }
     }
 
-    if (Platform.P192.orHigher()) {
-        fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
-    } else {
-        fatJarContents(intellijDep()) { includeJars("lz4-1.3.0") }
-    }
-    
-    if (Platform.P183.orHigher() && Platform.P191.orLower()) {
-        fatJarContents(intellijCoreDep()) { includeJars("java-compatibility-1.0.1") }
-    }
+    fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
 
     fatJarContents(intellijDep()) {
         includeIntellijCoreJarDependencies(project) {

@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.benchmarks
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiElementFinder
@@ -104,9 +103,7 @@ abstract class AbstractSimpleFileBenchmark {
         )
 
         if (isIR) {
-            Extensions.getArea(env.project)
-                .getExtensionPoint(PsiElementFinder.EP_NAME)
-                .unregisterExtension(JavaElementFinder::class.java)
+            PsiElementFinder.EP.getPoint(env.project).unregisterExtension(JavaElementFinder::class.java)
         }
 
         file = createFile(
@@ -155,7 +152,7 @@ abstract class AbstractSimpleFileBenchmark {
             .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(env.project))
         val session = createSession(env, scope)
         val firProvider = session.firProvider as FirProviderImpl
-        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
+        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
 
         val totalTransformer = FirTotalResolveProcessor(session)
         val firFile = builder.buildFirFile(file).also(firProvider::recordFile)
@@ -163,8 +160,8 @@ abstract class AbstractSimpleFileBenchmark {
         totalTransformer.process(listOf(firFile))
 
         bh.consume(firFile.hashCode())
-        Extensions.getArea(env.project)
-            .getExtensionPoint(PsiElementFinder.EP_NAME)
+        env.project.extensionArea
+            .getExtensionPoint<PsiElementFinder>(PsiElementFinder.EP.name)
             .unregisterExtension(FirJavaElementFinder::class.java)
     }
 

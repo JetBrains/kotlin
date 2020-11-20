@@ -8,14 +8,12 @@ FILE: unary.kt
         }
 
         lval x2: <implicit> =  {
-            lval <unary>: <implicit> = x#
-            x# = R|<local>/<unary>|.inc#()
+            x# = x#.inc#()
             x#
         }
 
         lval x3: <implicit> =  {
-            lval <unary>: <implicit> = x#
-            x# = R|<local>/<unary>|.dec#()
+            x# = x#.dec#()
             x#
         }
 
@@ -43,30 +41,34 @@ FILE: unary.kt
     }
     public? final? fun test2(x: X): R|kotlin/Unit| {
         lval x1: <implicit> =  {
-            lval <unary>: <implicit> = x#.i#
-            x#.i# = R|<local>/<unary>|.inc#()
+            lval <receiver>: <implicit> = x#
+            lval <unary>: <implicit> = R|<local>/<receiver>|.i#
+            R|<local>/<receiver>|.i# = R|<local>/<unary>|.inc#()
             R|<local>/<unary>|
         }
 
         lval x2: <implicit> =  {
-            lval <unary>: <implicit> = x#.i#
-            lval <unary-result>: <implicit> = R|<local>/<unary>|.inc#()
-            x#.i# = R|<local>/<unary-result>|
+            lval <receiver>: <implicit> = x#
+            lval <unary-result>: <implicit> = R|<local>/<receiver>|.i#.inc#()
+            R|<local>/<receiver>|.i# = R|<local>/<unary-result>|
             R|<local>/<unary-result>|
         }
 
     }
     public? final? fun test3(arr: Array<Int>): R|kotlin/Unit| {
         lval x1: <implicit> =  {
-            lval <unary>: <implicit> = arr#.get#(IntegerLiteral(0))
-            arr#.set#(IntegerLiteral(0), R|<local>/<unary>|.inc#())
+            lval <array>: <implicit> = arr#
+            lval <index0>: <implicit> = IntegerLiteral(0)
+            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index0>|)
+            R|<local>/<array>|.set#(R|<local>/<index0>|, R|<local>/<unary>|.inc#())
             R|<local>/<unary>|
         }
 
         lval x2: <implicit> =  {
-            lval <unary>: <implicit> = arr#.get#(IntegerLiteral(1))
-            lval <unary-result>: <implicit> = R|<local>/<unary>|.inc#()
-            arr#.set#(IntegerLiteral(1), R|<local>/<unary-result>|)
+            lval <array>: <implicit> = arr#
+            lval <index0>: <implicit> = IntegerLiteral(1)
+            lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index0>|).inc#()
+            R|<local>/<array>|.set#(R|<local>/<index0>|, R|<local>/<unary-result>|)
             R|<local>/<unary-result>|
         }
 
@@ -82,15 +84,18 @@ FILE: unary.kt
     }
     public? final? fun test4(y: Y): R|kotlin/Unit| {
         lval x1: <implicit> =  {
-            lval <unary>: <implicit> = y#.arr#.get#(IntegerLiteral(0))
-            y#.arr#.set#(IntegerLiteral(0), R|<local>/<unary>|.inc#())
+            lval <array>: <implicit> = y#.arr#
+            lval <index0>: <implicit> = IntegerLiteral(0)
+            lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index0>|)
+            R|<local>/<array>|.set#(R|<local>/<index0>|, R|<local>/<unary>|.inc#())
             R|<local>/<unary>|
         }
 
         lval x2: <implicit> =  {
-            lval <unary>: <implicit> = y#.arr#.get#(IntegerLiteral(1))
-            lval <unary-result>: <implicit> = R|<local>/<unary>|.inc#()
-            y#.arr#.set#(IntegerLiteral(1), R|<local>/<unary-result>|)
+            lval <array>: <implicit> = y#.arr#
+            lval <index0>: <implicit> = IntegerLiteral(1)
+            lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index0>|).inc#()
+            R|<local>/<array>|.set#(R|<local>/<index0>|, R|<local>/<unary-result>|)
             R|<local>/<unary-result>|
         }
 

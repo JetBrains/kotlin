@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.lazy
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.toIrConst
 import org.jetbrains.kotlin.fir.declarations.*
@@ -18,34 +17,36 @@ import org.jetbrains.kotlin.fir.symbols.Fir2IrPropertySymbol
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 class Fir2IrLazyProperty(
     components: Fir2IrComponents,
-    startOffset: Int,
-    endOffset: Int,
-    origin: IrDeclarationOrigin,
-    fir: FirProperty,
-    symbol: Fir2IrPropertySymbol,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var origin: IrDeclarationOrigin,
+    override val fir: FirProperty,
+    internal val containingClass: FirRegularClass,
+    override val symbol: Fir2IrPropertySymbol,
     override val isFakeOverride: Boolean
-) : AbstractFir2IrLazyDeclaration<FirProperty, IrProperty>(
-    components, startOffset, endOffset, origin, fir, symbol
-), IrProperty {
+) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty, IrProperty>, Fir2IrComponents by components {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
-        typeParameters = emptyList()
     }
+
+    override var annotations: List<IrConstructorCall> by createLazyAnnotations()
+    override var typeParameters: List<IrTypeParameter> = emptyList()
+    override lateinit var parent: IrDeclarationParent
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: PropertyDescriptor
-        get() = super.descriptor as PropertyDescriptor
-
-    override val symbol: Fir2IrPropertySymbol
-        get() = super.symbol as Fir2IrPropertySymbol
+        get() = symbol.descriptor
 
     override val isVar: Boolean
         get() = fir.isVar
@@ -68,8 +69,8 @@ class Fir2IrLazyProperty(
     override val name: Name
         get() = fir.name
 
-    override var visibility: Visibility
-        get() = fir.visibility
+    @Suppress("SetterBackingFieldAssignment")
+    override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")
         }
@@ -93,7 +94,7 @@ class Fir2IrLazyProperty(
                 with(declarationStorage) {
                     createBackingField(
                         fir, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
-                        fir.fieldVisibility, fir.name, fir.isVal, fir.initializer,
+                        components.visibilityConverter.convertToDescriptorVisibility(fir.visibility), fir.name, fir.isVal, fir.initializer,
                         type
                     ).also { field ->
                         val initializer = fir.initializer
@@ -109,7 +110,7 @@ class Fir2IrLazyProperty(
                 with(declarationStorage) {
                     createBackingField(
                         fir, IrDeclarationOrigin.PROPERTY_DELEGATE, descriptor,
-                        fir.fieldVisibility, Name.identifier("${fir.name}\$delegate"), true, fir.delegate
+                        components.visibilityConverter.convertToDescriptorVisibility(fir.visibility), Name.identifier("${fir.name}\$delegate"), true, fir.delegate
                     )
                 }
             }
@@ -150,4 +151,9 @@ class Fir2IrLazyProperty(
     override var metadata: MetadataSource?
         get() = null
         set(_) = error("We should never need to store metadata of external declarations.")
+
+    override val containerSource: DeserializedContainerSource?
+        get() = fir.containerSource
+
+    override var attributeOwnerId: IrAttributeContainer = this
 }

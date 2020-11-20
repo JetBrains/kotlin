@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.optimization
 
-import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.findNextOrNull
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
@@ -53,41 +52,35 @@ class RedundantNopsCleanupMethodTransformer : MethodTransformer() {
     }
 
     private fun recordNopsRequiredForDebugger(methodNode: MethodNode, requiredNops: MutableSet<AbstractInsnNode>) {
-        // We two subsets of labels that are "special" for the debugger:
+        // We consider two subsets of labels that are special for the debugger:
+        //
         //  1) Labels for line numbers.
         //  2) Labels for observable local variables lifetimes.
         //     NB this includes synthetic variables denoting inlined function bodies and arguments
         //     (see JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION, JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT).
         //
-        // If we enumerate labels in a given subset in order of occurrence in the method code:
-        //      L[0], L[1], ..., L[n-1], L[n]
-        // then for each k, 1 <= k <= n-1:
-        // an instruction interval I[k] = [L[k]; L[k+1]) should contain at least one bytecode instruction (which can be a NOP).
-
-        for (insn in methodNode.instructions) {
-            if (insn is LineNumberNode) {
-                val nextLineNumber = insn.findNextOrNull { it is LineNumberNode && it.line != insn.line }
-                requiredNops.addIfNotNull(getRequiredNopInRange(insn, nextLineNumber))
-            }
-        }
-
-        val localVariableLabels = run {
-            val labels = hashSetOf<LabelNode>().apply {
+        // We must not remove nops if that leads to a line number having no instructions before the next line number
+        // or a linenumber crossing a local variable lifetime boundary.
+        //
+        // We enumerate all special labels, and make sure to leave nops if they are the only real
+        // instruction between a line number label and any other special label.
+        val specialLabels = run {
+            val localVarLables = hashSetOf<LabelNode>().apply {
                 for (localVariable in methodNode.localVariables) {
                     add(localVariable.start)
                     add(localVariable.end)
                 }
             }
 
-            methodNode.instructions.toArray().filter { labels.contains(it) }
+            methodNode.instructions.toArray().filter { localVarLables.contains(it) || it is LineNumberNode }
         }
 
-
-        for (i in 0..localVariableLabels.size - 2) {
-            val begin = localVariableLabels[i]
-            val end = localVariableLabels[i + 1]
-            if (InsnSequence(begin, end).any { it in requiredNops }) continue
-            requiredNops.addIfNotNull(getRequiredNopInRange(begin, end))
+        for (i in 0..specialLabels.size - 2) {
+            val begin = specialLabels[i]
+            val end = specialLabels[i + 1]
+            if (begin is LineNumberNode) {
+                requiredNops.addIfNotNull(getRequiredNopInRange(begin, end))
+            }
         }
     }
 

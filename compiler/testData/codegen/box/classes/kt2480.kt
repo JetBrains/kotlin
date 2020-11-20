@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 fun box() = Class().printSome()
 
 public abstract class AbstractClass<T> {

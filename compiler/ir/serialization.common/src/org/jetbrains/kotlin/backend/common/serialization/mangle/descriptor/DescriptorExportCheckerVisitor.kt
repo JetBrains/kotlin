@@ -23,9 +23,9 @@ abstract class DescriptorExportCheckerVisitor : DeclarationDescriptorVisitor<Boo
         error("unexpected descriptor $descriptor")
     }
 
-    private fun Visibility.isPubliclyVisible(): Boolean = isPublicAPI || this === Visibilities.INTERNAL
+    private fun DescriptorVisibility.isPubliclyVisible(): Boolean = isPublicAPI || this === DescriptorVisibilities.INTERNAL
 
-    private fun DeclarationDescriptorNonRoot.isExported(annotations: Annotations, visibility: Visibility?): Boolean {
+    private fun DeclarationDescriptorNonRoot.isExported(annotations: Annotations, visibility: DescriptorVisibility?): Boolean {
         val speciallyExported = annotations.hasAnnotation(publishedApiAnnotation) || isPlatformSpecificExported()
         val selfExported = speciallyExported || visibility == null || visibility.isPubliclyVisible()
 

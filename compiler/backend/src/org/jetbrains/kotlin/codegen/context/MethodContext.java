@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.context;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.codegen.AsmUtil;
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil;
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil;
 import org.jetbrains.kotlin.codegen.OwnerKind;
 import org.jetbrains.kotlin.codegen.StackValue;
@@ -67,7 +67,7 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
         @SuppressWarnings("ConstantConditions")
         KotlinType kotlinType = getCallableDescriptorWithReceiver().getExtensionReceiverParameter().getType();
         Type asmType = typeMapper.mapType(kotlinType);
-        return StackValue.local(AsmUtil.getReceiverIndex(this, getContextDescriptor()), asmType, kotlinType);
+        return StackValue.local(DescriptorAsmUtil.getReceiverIndex(this, getContextDescriptor()), asmType, kotlinType);
     }
 
     @Override

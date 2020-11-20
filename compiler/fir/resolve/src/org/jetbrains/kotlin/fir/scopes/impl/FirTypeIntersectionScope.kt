@@ -1,27 +1,25 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
+import org.jetbrains.kotlin.fir.originalForIntersectionOverrideAttr
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
-import org.jetbrains.kotlin.utils.addToStdlib.flattenTo
 import java.util.*
 import kotlin.collections.HashSet
 
@@ -29,6 +27,7 @@ class FirTypeIntersectionScope private constructor(
     session: FirSession,
     overrideChecker: FirOverrideChecker,
     private val scopes: List<FirTypeScope>,
+    private val dispatchReceiverType: ConeKotlinType,
 ) : AbstractFirOverrideScope(session, overrideChecker) {
     private val absentFunctions: MutableSet<Name> = mutableSetOf()
     private val absentProperties: MutableSet<Name> = mutableSetOf()
@@ -36,9 +35,10 @@ class FirTypeIntersectionScope private constructor(
 
     private val typeContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = false, session)
 
-    private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<FirCallableSymbol<*>>> = mutableMapOf()
+    private val overriddenSymbols: MutableMap<FirCallableSymbol<*>, Collection<MemberWithBaseScope<out FirCallableSymbol<*>>>> =
+        mutableMapOf()
 
-    private val intersectionOverrides: MutableMap<FirCallableSymbol<*>, FirCallableSymbol<*>> = mutableMapOf()
+    private val intersectionOverrides: MutableMap<FirCallableSymbol<*>, MemberWithBaseScope<out FirCallableSymbol<*>>> = mutableMapOf()
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         if (!processCallablesByName(name, processor, absentFunctions, FirScope::processFunctionsByName)) {
@@ -70,7 +70,9 @@ class FirTypeIntersectionScope private constructor(
                 }
             }
 
-            resultForScope.takeIf { it.isNotEmpty() }
+            resultForScope.takeIf { it.isNotEmpty() }?.let {
+                scope to it
+            }
         }
 
         if (membersByScope.isEmpty()) {
@@ -78,40 +80,47 @@ class FirTypeIntersectionScope private constructor(
             return false
         }
 
-        membersByScope.singleOrNull()?.let { members ->
+        membersByScope.singleOrNull()?.let { (scope, members) ->
             for (member in members) {
-                overriddenSymbols[member] = listOf(member)
+                overriddenSymbols[member] = listOf(MemberWithBaseScope(member, scope))
                 processor(member)
             }
 
             return false
         }
 
-        val allMembers = membersByScope.flattenTo(LinkedList())
+        val allMembersWithScope = membersByScope.flatMapTo(mutableListOf()) { (scope, members) ->
+            members.map { MemberWithBaseScope(it, scope) }
+        }
 
-        while (allMembers.isNotEmpty()) {
-            val maxByVisibility = findMemberWithMaxVisibility(allMembers)
-            val extractedOverrides = extractBothWaysOverridable(maxByVisibility, allMembers)
+        while (allMembersWithScope.isNotEmpty()) {
+            val maxByVisibility = findMemberWithMaxVisibility(allMembersWithScope)
+            val extractBothWaysWithPrivate = extractBothWaysOverridable(maxByVisibility, allMembersWithScope)
+            val extractedOverrides = extractBothWaysWithPrivate.filterNot {
+                Visibilities.isPrivate((it.member.fir as FirMemberDeclaration).visibility)
+            }.takeIf { it.isNotEmpty() } ?: extractBothWaysWithPrivate
 
-            val mostSpecific = selectMostSpecificMember(extractedOverrides)
+            val (mostSpecific, scopeForMostSpecific) = selectMostSpecificMember(extractedOverrides)
             if (extractedOverrides.size > 1) {
                 val intersectionOverride = intersectionOverrides.getOrPut(mostSpecific) {
+                    val newModality = chooseIntersectionOverrideModality(extractedOverrides)
+                    val newVisibility = chooseIntersectionVisibility(extractedOverrides)
                     @Suppress("UNCHECKED_CAST")
                     when (mostSpecific) {
                         is FirNamedFunctionSymbol -> {
-                            createIntersectionOverride(mostSpecific, extractedOverrides as Collection<FirNamedFunctionSymbol>)
+                            createIntersectionOverride(mostSpecific, newModality, newVisibility)
                         }
                         is FirPropertySymbol -> {
-                            createIntersectionOverride(mostSpecific)
+                            createIntersectionOverride(mostSpecific, newModality, newVisibility)
                         }
                         else -> {
                             throw IllegalStateException("Should not be here")
                         }
-                    }
+                    }.withScope(scopeForMostSpecific)
                 }
-                overriddenSymbols[intersectionOverride] = extractedOverrides
+                overriddenSymbols[intersectionOverride.member] = extractedOverrides
                 @Suppress("UNCHECKED_CAST")
-                processor(intersectionOverride as D)
+                processor(intersectionOverride.member as D)
             } else {
                 overriddenSymbols[mostSpecific] = extractedOverrides
                 processor(mostSpecific)
@@ -121,60 +130,191 @@ class FirTypeIntersectionScope private constructor(
         return true
     }
 
-    private fun createIntersectionOverride(
-        mostSpecific: FirNamedFunctionSymbol,
-        extractedOverrides: Collection<FirNamedFunctionSymbol>
-    ): FirNamedFunctionSymbol {
-        val newSymbol = FirNamedFunctionSymbol(mostSpecific.callableId, mostSpecific.isFakeOverride, mostSpecific)
-        val mostSpecificFunction = mostSpecific.fir
-        createFunctionCopy(mostSpecific.fir, newSymbol).apply {
-            resolvePhase = mostSpecificFunction.resolvePhase
-            origin = FirDeclarationOrigin.IntersectionOverride
-            typeParameters += mostSpecificFunction.typeParameters
-            valueParameters += mostSpecificFunction.valueParameters.mapIndexed { index, mostSpecificParameter ->
-                val overriddenWithDefault =
-                    extractedOverrides.firstOrNull {
-                        it.fir.valueParameters.getOrNull(index)?.defaultValue != null
-                    }?.fir
-                if (overriddenWithDefault == null) {
-                    mostSpecificParameter
-                } else {
-                    val overriddenWithDefaultParameter = overriddenWithDefault.valueParameters[index]
-                    createValueParameterCopy(mostSpecificParameter, overriddenWithDefaultParameter.defaultValue).apply {
-                        annotations += mostSpecificParameter.annotations
-                    }.build()
+    private fun <D : FirCallableSymbol<*>> chooseIntersectionOverrideModality(
+        extractedOverridden: Collection<MemberWithBaseScope<D>>
+    ): Modality {
+        var hasOpen = false
+        var hasAbstract = false
+
+        for ((member) in extractedOverridden) {
+            when ((member.fir as FirMemberDeclaration).modality) {
+                Modality.FINAL -> return Modality.FINAL
+                Modality.SEALED -> error("Members should not be sealed: $member")
+                Modality.OPEN -> {
+                    hasOpen = true
+                }
+                Modality.ABSTRACT -> {
+                    hasAbstract = true
+                }
+                null -> {
                 }
             }
-        }.build()
+        }
+
+        if (hasAbstract && !hasOpen) return Modality.ABSTRACT
+        if (!hasAbstract && hasOpen) return Modality.OPEN
+
+        @Suppress("UNCHECKED_CAST")
+        val processDirectOverridden: ProcessOverriddenWithBaseScope<D> = when (extractedOverridden.first().member) {
+            is FirNamedFunctionSymbol -> FirTypeScope::processDirectOverriddenFunctionsWithBaseScope as ProcessOverriddenWithBaseScope<D>
+            is FirPropertySymbol -> FirTypeScope::processDirectOverriddenPropertiesWithBaseScope as ProcessOverriddenWithBaseScope<D>
+            else -> error("Unexpected callable kind: ${extractedOverridden.first().member}")
+        }
+
+        val realOverridden = extractedOverridden.flatMap { realOverridden(it.member, it.baseScope, processDirectOverridden) }
+        val filteredOverridden = filterOutOverridden(realOverridden, processDirectOverridden)
+
+        return filteredOverridden.minOf { (it.member.fir as FirMemberDeclaration).modality ?: Modality.ABSTRACT }
+    }
+
+    private fun <D : FirCallableSymbol<*>> realOverridden(
+        symbol: D,
+        scope: FirTypeScope,
+        processDirectOverridden: ProcessOverriddenWithBaseScope<D>,
+    ): Collection<MemberWithBaseScope<D>> {
+        val result = mutableSetOf<MemberWithBaseScope<D>>()
+
+        collectRealOverridden(symbol, scope, result, mutableSetOf(), processDirectOverridden)
+
+        return result
+    }
+
+    private fun <D : FirCallableSymbol<*>> collectRealOverridden(
+        symbol: D,
+        scope: FirTypeScope,
+        result: MutableCollection<MemberWithBaseScope<D>>,
+        visited: MutableSet<D>,
+        processDirectOverridden: FirTypeScope.(D, (D, FirTypeScope) -> ProcessorAction) -> ProcessorAction,
+    ) {
+        if (!visited.add(symbol)) return
+        if (!symbol.fir.origin.fromSupertypes) {
+            result.add(MemberWithBaseScope(symbol, scope))
+            return
+        }
+
+        scope.processDirectOverridden(symbol) { overridden, baseScope ->
+            collectRealOverridden(overridden, baseScope, result, visited, processDirectOverridden)
+            ProcessorAction.NEXT
+        }
+    }
+
+
+    private fun <D : FirCallableSymbol<*>> filterOutOverridden(
+        extractedOverridden: Collection<MemberWithBaseScope<D>>,
+        processAllOverridden: ProcessOverriddenWithBaseScope<D>,
+    ): Collection<MemberWithBaseScope<D>> {
+        return extractedOverridden.filter { overridden1 ->
+            extractedOverridden.none { overridden2 ->
+                overridden1 !== overridden2 && overrides(
+                    overridden2,
+                    overridden1,
+                    processAllOverridden
+                )
+            }
+        }
+    }
+
+    // Whether f overrides g
+    private fun <D : FirCallableSymbol<*>> overrides(
+        f: MemberWithBaseScope<D>,
+        g: MemberWithBaseScope<D>,
+        processAllOverridden: ProcessOverriddenWithBaseScope<D>,
+    ): Boolean {
+        val (fMember, fScope) = f
+        val (gMember) = g
+
+        var result = false
+
+        fScope.processAllOverridden(fMember) { overridden, _ ->
+            if (overridden == gMember) {
+                result = true
+                ProcessorAction.STOP
+            } else {
+                ProcessorAction.NEXT
+            }
+        }
+
+        return result
+    }
+
+    private fun <D : FirCallableSymbol<*>> chooseIntersectionVisibility(
+        extractedOverrides: Collection<MemberWithBaseScope<D>>
+    ): Visibility {
+        var maxVisibility: Visibility = Visibilities.Private
+        for ((override) in extractedOverrides) {
+            val visibility = (override.fir as FirMemberDeclaration).visibility
+            // TODO: There is more complex logic at org.jetbrains.kotlin.resolve.OverridingUtil.resolveUnknownVisibilityForMember
+            // TODO: and org.jetbrains.kotlin.resolve.OverridingUtil.findMaxVisibility
+            val compare = Visibilities.compare(visibility, maxVisibility) ?: return Visibilities.DEFAULT_VISIBILITY
+            if (compare > 0) {
+                maxVisibility = visibility
+            }
+        }
+        return maxVisibility
+    }
+
+    private fun createIntersectionOverride(
+        mostSpecific: FirNamedFunctionSymbol,
+        newModality: Modality,
+        newVisibility: Visibility,
+    ): FirNamedFunctionSymbol {
+
+        val newSymbol =
+            FirNamedFunctionSymbol(
+                CallableId(
+                    dispatchReceiverType.classId ?: mostSpecific.dispatchReceiverClassOrNull()?.classId!!,
+                    mostSpecific.fir.name
+                )
+            )
+        val mostSpecificFunction = mostSpecific.fir
+        FirFakeOverrideGenerator.createCopyForFirFunction(
+            newSymbol,
+            mostSpecificFunction, session, FirDeclarationOrigin.IntersectionOverride,
+            mostSpecificFunction.isExpect,
+            newDispatchReceiverType = dispatchReceiverType,
+            newModality = newModality,
+            newVisibility = newVisibility,
+        ).apply {
+            originalForIntersectionOverrideAttr = mostSpecific.fir
+        }
         return newSymbol
     }
 
-    private fun createIntersectionOverride(mostSpecific: FirPropertySymbol): FirPropertySymbol {
-        val newSymbol = FirPropertySymbol(mostSpecific.callableId, mostSpecific.isFakeOverride, mostSpecific)
+    private fun createIntersectionOverride(
+        mostSpecific: FirPropertySymbol,
+        newModality: Modality,
+        newVisibility: Visibility,
+    ): FirPropertySymbol {
+        val newSymbol = FirPropertySymbol(mostSpecific.callableId)
         val mostSpecificProperty = mostSpecific.fir
-        createPropertyCopy(mostSpecific.fir, newSymbol).apply {
-            resolvePhase = mostSpecificProperty.resolvePhase
-            origin = FirDeclarationOrigin.IntersectionOverride
-            typeParameters += mostSpecificProperty.typeParameters
-        }.build()
+        FirFakeOverrideGenerator.createCopyForFirProperty(
+            newSymbol, mostSpecificProperty, mostSpecificProperty.session, FirDeclarationOrigin.IntersectionOverride,
+            newModality = newModality,
+            newVisibility = newVisibility,
+            newDispatchReceiverType = dispatchReceiverType,
+        ).apply {
+            originalForIntersectionOverrideAttr = mostSpecific.fir
+        }
         return newSymbol
     }
 
-    private fun <D : FirCallableSymbol<*>> selectMostSpecificMember(overridables: Collection<D>): D {
+    private fun <D : FirCallableSymbol<*>> selectMostSpecificMember(overridables: Collection<MemberWithBaseScope<D>>): MemberWithBaseScope<D> {
         require(overridables.isNotEmpty()) { "Should have at least one overridable symbol" }
         if (overridables.size == 1) {
             return overridables.first()
         }
 
-        val candidates: MutableCollection<D> = ArrayList(2)
-        var transitivelyMostSpecific: D = overridables.first()
+        val candidates: MutableCollection<MemberWithBaseScope<D>> = ArrayList(2)
+        var transitivelyMostSpecific: MemberWithBaseScope<D> = overridables.first()
 
         for (candidate in overridables) {
-            if (overridables.all { isMoreSpecific(candidate, it) }) {
+            if (overridables.all { isMoreSpecific(candidate.member, it.member) }) {
                 candidates.add(candidate)
             }
 
-            if (isMoreSpecific(candidate, transitivelyMostSpecific) && !isMoreSpecific(transitivelyMostSpecific, candidate)) {
+            if (isMoreSpecific(candidate.member, transitivelyMostSpecific.member) &&
+                !isMoreSpecific(transitivelyMostSpecific.member, candidate.member)
+            ) {
                 transitivelyMostSpecific = candidate
             }
         }
@@ -184,7 +324,7 @@ class FirTypeIntersectionScope private constructor(
             candidates.size == 1 -> candidates.first()
             else -> {
                 candidates.firstOrNull {
-                    val type = it.fir.returnTypeRef.coneTypeSafe<ConeKotlinType>()
+                    val type = it.member.fir.returnTypeRef.coneTypeSafe<ConeKotlinType>()
                     type != null && type !is ConeFlexibleType
                 }?.let { return it }
                 candidates.first()
@@ -224,10 +364,10 @@ class FirTypeIntersectionScope private constructor(
     private fun isTypeMoreSpecific(a: ConeKotlinType, b: ConeKotlinType): Boolean =
         AbstractTypeChecker.isSubtypeOf(typeContext as AbstractTypeCheckerContext, a, b)
 
-    private fun <D : FirCallableSymbol<*>> findMemberWithMaxVisibility(members: Collection<D>): D {
+    private fun <D : FirCallableSymbol<*>> findMemberWithMaxVisibility(members: Collection<MemberWithBaseScope<D>>): MemberWithBaseScope<D> {
         assert(members.isNotEmpty())
 
-        var member: D? = null
+        var member: MemberWithBaseScope<D>? = null
         for (candidate in members) {
             if (member == null) {
                 member = candidate
@@ -235,8 +375,8 @@ class FirTypeIntersectionScope private constructor(
             }
 
             val result = Visibilities.compare(
-                (member.fir as FirCallableMemberDeclaration<*>).status.visibility,
-                (candidate.fir as FirCallableMemberDeclaration<*>).status.visibility
+                (member.member.fir as FirCallableMemberDeclaration<*>).status.visibility,
+                (candidate.member.fir as FirCallableMemberDeclaration<*>).status.visibility
             )
             if (result != null && result < 0) {
                 member = candidate
@@ -246,14 +386,14 @@ class FirTypeIntersectionScope private constructor(
     }
 
     private fun <D : FirCallableSymbol<*>> extractBothWaysOverridable(
-        overrider: D,
-        members: MutableCollection<D>
-    ): Collection<D> {
-        val result = mutableListOf<D>().apply { add(overrider) }
+        overrider: MemberWithBaseScope<D>,
+        members: MutableCollection<MemberWithBaseScope<D>>
+    ): Collection<MemberWithBaseScope<D>> {
+        val result = mutableListOf<MemberWithBaseScope<D>>().apply { add(overrider) }
 
         val iterator = members.iterator()
 
-        val overrideCandidate = overrider.fir as FirCallableMemberDeclaration<*>
+        val overrideCandidate = overrider.member.fir as FirCallableMemberDeclaration<*>
         while (iterator.hasNext()) {
             val next = iterator.next()
             if (next == overrider) {
@@ -261,7 +401,7 @@ class FirTypeIntersectionScope private constructor(
                 continue
             }
 
-            if (similarFunctionsOrBothProperties(overrideCandidate, next.fir as FirCallableMemberDeclaration<*>)) {
+            if (similarFunctionsOrBothProperties(overrideCandidate, next.member.fir as FirCallableMemberDeclaration<*>)) {
                 result.add(next)
                 iterator.remove()
             }
@@ -295,55 +435,75 @@ class FirTypeIntersectionScope private constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <S : FirCallableSymbol<*>> getDirectOverriddenSymbols(symbol: S): Collection<S> =
-        overriddenSymbols[symbol].orEmpty() as Collection<S>
+    private fun <S : FirCallableSymbol<*>> getDirectOverriddenSymbols(symbol: S): Collection<MemberWithBaseScope<S>> {
+        val intersectionOverride = intersectionOverrides[symbol]
+        val allDirectOverridden = overriddenSymbols[symbol].orEmpty() + intersectionOverride?.let {
+            overriddenSymbols[it.member]
+        }.orEmpty()
+        return allDirectOverridden as Collection<MemberWithBaseScope<S>>
+    }
 
-    override fun processOverriddenFunctionsWithDepth(
+    override fun processDirectOverriddenFunctionsWithBaseScope(
         functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, Int) -> ProcessorAction
+        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction =
+        processDirectOverriddenCallablesWithBaseScope(
+            functionSymbol, processor,
+            FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
+        )
+
+    override fun processDirectOverriddenPropertiesWithBaseScope(
+        propertySymbol: FirPropertySymbol,
+        processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
+    ): ProcessorAction =
+        processDirectOverriddenCallablesWithBaseScope(
+            propertySymbol, processor,
+            FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
+        )
+
+    private fun <D : FirCallableSymbol<*>> processDirectOverriddenCallablesWithBaseScope(
+        callableSymbol: D,
+        processor: (D, FirTypeScope) -> ProcessorAction,
+        processDirectOverriddenInBaseScope: FirTypeScope.(D, ((D, FirTypeScope) -> ProcessorAction)) -> ProcessorAction
     ): ProcessorAction {
-        for (overridden in getDirectOverriddenSymbols(functionSymbol)) {
-            val overriddenDepth = if (overridden is FirNamedFunctionSymbol && overridden.overriddenSymbol != null) 0 else 1
-            if (!processor(overridden, overriddenDepth)) return ProcessorAction.STOP
-            // TODO: Preserve the scope where directOverridden came from
-            for (scope in scopes) {
-                if (!scope.processOverriddenFunctionsWithDepth(overridden) { symbol, depth ->
-                        processor(symbol, depth + overriddenDepth)
-                    }
-                ) return ProcessorAction.STOP
+        for ((overridden, baseScope) in getDirectOverriddenSymbols(callableSymbol)) {
+            if (overridden === callableSymbol) {
+                if (!baseScope.processDirectOverriddenInBaseScope(callableSymbol, processor)) return ProcessorAction.STOP
+            } else {
+                if (!processor(overridden, baseScope)) return ProcessorAction.STOP
             }
         }
 
         return ProcessorAction.NEXT
     }
 
-    override fun processOverriddenPropertiesWithDepth(
-        propertySymbol: FirPropertySymbol,
-        processor: (FirPropertySymbol, Int) -> ProcessorAction
-    ): ProcessorAction {
-        for (overridden in getDirectOverriddenSymbols(propertySymbol)) {
-            val overriddenDepth = if (overridden.overriddenSymbol != null) 0 else 1
-            if (!processor(overridden, overriddenDepth)) return ProcessorAction.STOP
-            // TODO: Preserve the scope where directOverridden came from
-            for (scope in scopes) {
-                if (!scope.processOverriddenPropertiesWithDepth(overridden) { symbol, depth ->
-                        processor(symbol, depth + overriddenDepth)
-                    }
-                ) return ProcessorAction.STOP
-            }
-        }
+    override fun getCallableNames(): Set<Name> {
+        return scopes.flatMapTo(mutableSetOf()) { it.getCallableNames() }
+    }
 
-        return ProcessorAction.NEXT
+    override fun getClassifierNames(): Set<Name> {
+        return scopes.flatMapTo(hashSetOf()) { it.getClassifierNames() }
     }
 
     companion object {
         fun prepareIntersectionScope(
             session: FirSession,
             overrideChecker: FirOverrideChecker,
-            scopes: List<FirTypeScope>
+            scopes: List<FirTypeScope>,
+            dispatchReceiverType: ConeKotlinType,
         ): FirTypeScope {
             scopes.singleOrNull()?.let { return it }
-            return FirTypeIntersectionScope(session, overrideChecker, scopes)
+            if (scopes.isEmpty()) {
+                return Empty
+            }
+            return FirTypeIntersectionScope(session, overrideChecker, scopes, dispatchReceiverType)
         }
     }
 }
+
+private class MemberWithBaseScope<D : FirCallableSymbol<*>>(val member: D, val baseScope: FirTypeScope) {
+    operator fun component1() = member
+    operator fun component2() = baseScope
+}
+
+private fun <D : FirCallableSymbol<*>> D.withScope(baseScope: FirTypeScope) = MemberWithBaseScope(this, baseScope)

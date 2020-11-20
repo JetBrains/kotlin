@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.CallableReferenceLowering
 import org.jetbrains.kotlin.ir.builders.*
@@ -52,6 +52,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     protected abstract fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression)
 
+    @Suppress("UNUSED_PARAMETER")
     protected fun initializeStateMachine(coroutineConstructors: List<IrConstructor>, coroutineClassThis: IrValueDeclaration) {
         // Do nothing by default
         // TODO find out if Kotlin/Native needs this method.
@@ -333,7 +334,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 endOffset = function.endOffset
                 origin = DECLARATION_ORIGIN_COROUTINE_IMPL
                 name = Name.identifier("create")
-                visibility = Visibilities.PROTECTED
+                visibility = DescriptorVisibilities.PROTECTED
                 returnType = coroutineClass.defaultType
             }.apply {
                 parent = coroutineClass
@@ -437,7 +438,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.superTypes += coroutineBaseClass.defaultType
             }
 
-            coroutineClass.addFakeOverridesViaIncorrectHeuristic(implementedMembers)
+            coroutineClass.addFakeOverrides(context.irBuiltIns, implementedMembers)
 
             // TODO: find out whether Kotlin/Native needs this call
             initializeStateMachine(listOf(coroutineConstructor), coroutineClassThis)
@@ -521,7 +522,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             this.origin = DECLARATION_ORIGIN_COROUTINE_IMPL
             this.name = name
             this.type = type
-            this.visibility = Visibilities.PRIVATE
+            this.visibility = DescriptorVisibilities.PRIVATE
             this.isFinal = !isMutable
         }.also {
             it.parent = this

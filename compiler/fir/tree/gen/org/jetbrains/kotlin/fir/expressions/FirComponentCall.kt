@@ -41,6 +41,8 @@ abstract class FirComponentCall : FirFunctionCall() {
 
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
+    abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirComponentCall
 
     abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirComponentCall

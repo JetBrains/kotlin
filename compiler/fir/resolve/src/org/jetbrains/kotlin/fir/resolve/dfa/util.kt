@@ -79,7 +79,7 @@ internal fun FirFunctionCall.isBooleanNot(): Boolean {
     return symbol.callableId == FirDataFlowAnalyzer.KOTLIN_BOOLEAN_NOT
 }
 
-internal fun ConeConstantReference.toOperation(): Operation = when (this) {
+fun ConeConstantReference.toOperation(): Operation = when (this) {
     ConeConstantReference.NULL -> Operation.EqNull
     ConeConstantReference.NOT_NULL -> Operation.NotEqNull
     ConeBooleanConstantReference.TRUE -> Operation.EqTrue

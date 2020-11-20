@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.Call
 import org.jetbrains.kotlin.psi.ValueArgument
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
 
@@ -102,6 +102,6 @@ class TypeMismatchDiagnostic(
     val callArgument: KotlinCallArgument,
     val expectedType: KotlinType,
     val actualType: KotlinType
-) : KotlinCallDiagnostic(ResolutionCandidateApplicability.INAPPLICABLE) {
+) : KotlinCallDiagnostic(CandidateApplicability.INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCallArgument(callArgument, this)
 }

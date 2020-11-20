@@ -34,19 +34,6 @@ import static org.jetbrains.kotlin.descriptors.Modality.ABSTRACT;
 import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getBuiltIns;
 
 public class DescriptorUtils {
-    public static final Name ENUM_VALUES = Name.identifier("values");
-    public static final Name ENUM_VALUE_OF = Name.identifier("valueOf");
-    public static final FqName COROUTINES_PACKAGE_FQ_NAME_RELEASE = new FqName("kotlin.coroutines");
-    public static final FqName COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL =
-            COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("experimental"));
-    public static final FqName COROUTINES_INTRINSICS_PACKAGE_FQ_NAME_EXPERIMENTAL =
-            COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("intrinsics"));
-    public static final FqName CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL =
-            COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("Continuation"));
-    public static final FqName CONTINUATION_INTERFACE_FQ_NAME_RELEASE =
-            COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("Continuation"));
-    public static final FqName RESULT_FQ_NAME = new FqName("kotlin.Result");
-
     // This JVM-specific class FQ name is declared here only because it's used in MainFunctionDetector which is in frontend
     public static final FqName JVM_NAME = new FqName("kotlin.jvm.JvmName");
 
@@ -78,7 +65,7 @@ public class DescriptorUtils {
 
     public static boolean isDescriptorWithLocalVisibility(DeclarationDescriptor current) {
         return current instanceof DeclarationDescriptorWithVisibility &&
-         ((DeclarationDescriptorWithVisibility) current).getVisibility() == Visibilities.LOCAL;
+         ((DeclarationDescriptorWithVisibility) current).getVisibility() == DescriptorVisibilities.LOCAL;
     }
 
     @NotNull
@@ -393,16 +380,16 @@ public class DescriptorUtils {
     }
 
     @NotNull
-    public static Visibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
+    public static DescriptorVisibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
         ClassKind classKind = classDescriptor.getKind();
         if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton() || isSealedClass(classDescriptor)) {
-            return Visibilities.PRIVATE;
+            return DescriptorVisibilities.PRIVATE;
         }
         if (isAnonymousObject(classDescriptor)) {
-            return Visibilities.DEFAULT_VISIBILITY;
+            return DescriptorVisibilities.DEFAULT_VISIBILITY;
         }
         assert classKind == ClassKind.CLASS || classKind == ClassKind.INTERFACE || classKind == ClassKind.ANNOTATION_CLASS;
-        return Visibilities.PUBLIC;
+        return DescriptorVisibilities.PUBLIC;
     }
 
     // TODO: should be internal

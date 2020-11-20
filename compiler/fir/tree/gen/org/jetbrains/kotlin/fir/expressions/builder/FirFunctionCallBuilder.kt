@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
+import org.jetbrains.kotlin.fir.expressions.builder.FirAbstractFunctionCallBuilder
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
-import org.jetbrains.kotlin.fir.expressions.builder.FirQualifiedAccessBuilder
 import org.jetbrains.kotlin.fir.expressions.impl.FirFunctionCallImpl
-import org.jetbrains.kotlin.fir.expressions.impl.FirModifiableQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -34,7 +32,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 @FirBuilderDsl
-open class FirFunctionCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
+open class FirFunctionCallBuilder : FirAbstractFunctionCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: FirSourceElement? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
@@ -43,7 +41,7 @@ open class FirFunctionCallBuilder : FirQualifiedAccessBuilder, FirCallBuilder, F
     override var dispatchReceiver: FirExpression = FirNoReceiverExpression
     override var extensionReceiver: FirExpression = FirNoReceiverExpression
     override var argumentList: FirArgumentList = FirEmptyArgumentList
-    open lateinit var calleeReference: FirNamedReference
+    override lateinit var calleeReference: FirNamedReference
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirFunctionCall {

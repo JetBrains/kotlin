@@ -4,18 +4,18 @@ FILE: companionInvoke.kt
             super<R|kotlin/Any|>()
         }
 
-        public[internal] final val name: R|kotlin/String| = R|<local>/name|
+        public final val name: R|kotlin/String| = R|<local>/name|
             public get(): R|kotlin/String|
 
-        public[internal] final val signature: R|T| = R|<local>/signature|
+        public final val signature: R|T| = R|<local>/signature|
             public get(): R|T|
 
-        public[internal] final companion object Companion : R|kotlin/Any| {
+        public final companion object Companion : R|kotlin/Any| {
             private constructor(): R|Method.Companion| {
                 super<R|kotlin/Any|>()
             }
 
-            public[internal] final operator fun invoke(name: R|kotlin/String|): R|Method<kotlin/String?>| {
+            public final operator fun invoke(name: R|kotlin/String|): R|Method<kotlin/String?>| {
                 ^invoke R|kotlin/TODO|()
             }
 

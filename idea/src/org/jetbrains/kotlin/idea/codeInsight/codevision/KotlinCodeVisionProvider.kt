@@ -10,8 +10,10 @@ import com.intellij.lang.Language
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.psi.PsiFile
+import com.intellij.ui.layout.panel
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import javax.swing.JPanel
 
 @Suppress("UnstableApiUsage")
 class KotlinCodeVisionProvider : InlayHintsProvider<NoSettings> {
@@ -29,7 +31,13 @@ class KotlinCodeVisionProvider : InlayHintsProvider<NoSettings> {
 
     override fun isLanguageSupported(language: Language): Boolean = language is KotlinLanguage
 
-    override fun createConfigurable(settings: NoSettings): ImmediateConfigurable = createImmediateConfigurable()
+    override fun createConfigurable(settings: NoSettings): ImmediateConfigurable = object : ImmediateConfigurable {
+        override fun createComponent(listener: ChangeListener): JPanel = panel {}
+
+        override val cases: List<ImmediateConfigurable.Case> = emptyList()
+
+        override val mainCheckboxText: String = ""
+    }
 
     override fun createSettings(): NoSettings = NoSettings()
 

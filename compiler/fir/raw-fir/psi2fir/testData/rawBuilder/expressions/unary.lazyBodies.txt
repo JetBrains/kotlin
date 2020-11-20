@@ -1,0 +1,23 @@
+FILE: unary.kt
+    public? final? fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? class X : R|kotlin/Any| {
+        public? constructor(i: Int): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val i: Int = R|<local>/i|
+            public? get(): Int
+
+    }
+    public? final? fun test2(x: X): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? fun test3(arr: Array<Int>): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? class Y : R|kotlin/Any| {
+        public? constructor(arr: Array<Int>): R|Y| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val arr: Array<Int> = R|<local>/arr|
+            public? get(): Array<Int>
+
+    }
+    public? final? fun test4(y: Y): R|kotlin/Unit| { LAZY_BLOCK }

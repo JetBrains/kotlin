@@ -60,7 +60,7 @@ private data class SinceKotlinValue(
 private fun getSinceKotlinVersionByOverridden(descriptor: CallableMemberDescriptor): SinceKotlinValue? {
     // TODO: combine wasExperimentalMarkerClasses in case of several members with the same minimal API version
     return DescriptorUtils.getAllOverriddenDeclarations(descriptor).map { it.getOwnSinceKotlinVersion() ?: return null }
-        .minBy { it.apiVersion }
+        .minByOrNull { it.apiVersion }
 }
 
 /**

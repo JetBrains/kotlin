@@ -61,6 +61,11 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/caseInProperties.kt");
         }
 
+        @TestMetadata("changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt")
+        public void testChangingNullabilityOfOrdinaryClassIsBinaryCompatibleChange() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt");
+        }
+
         @TestMetadata("vararg.kt")
         public void testVararg() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/vararg.kt");
@@ -204,19 +209,19 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/collections.kt");
             }
 
-            @TestMetadata("delegateToTwoTraits_ir.kt")
-            public void testDelegateToTwoTraits_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/delegateToTwoTraits_ir.kt");
+            @TestMetadata("delegateToTwoTraits.kt")
+            public void testDelegateToTwoTraits() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/delegateToTwoTraits.kt");
             }
 
-            @TestMetadata("delegationAndOwnMethod_ir.kt")
-            public void testDelegationAndOwnMethod_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/delegationAndOwnMethod_ir.kt");
+            @TestMetadata("delegationAndOwnMethod.kt")
+            public void testDelegationAndOwnMethod() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/delegationAndOwnMethod.kt");
             }
 
-            @TestMetadata("delegationToTraitImplAndOwnMethod_ir.kt")
-            public void testDelegationToTraitImplAndOwnMethod_ir() throws Exception {
-                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/delegationToTraitImplAndOwnMethod_ir.kt");
+            @TestMetadata("delegationToTraitImplAndOwnMethod.kt")
+            public void testDelegationToTraitImplAndOwnMethod() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure/delegationToTraitImplAndOwnMethod.kt");
             }
 
             @TestMetadata("extensionProperties.kt")

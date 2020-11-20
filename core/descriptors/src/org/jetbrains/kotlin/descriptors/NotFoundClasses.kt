@@ -62,7 +62,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
 
         override fun getKind() = ClassKind.CLASS
         override fun getModality() = Modality.FINAL
-        override fun getVisibility() = Visibilities.PUBLIC
+        override fun getVisibility() = DescriptorVisibilities.PUBLIC
         override fun getTypeConstructor() = typeConstructor
         override fun getDeclaredTypeParameters() = declaredTypeParameters
         override fun isInner() = isInner

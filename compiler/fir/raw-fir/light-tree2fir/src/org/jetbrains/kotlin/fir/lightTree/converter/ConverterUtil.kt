@@ -11,8 +11,8 @@ import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.builder.generateResolvedAccessExpression
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
@@ -123,8 +123,9 @@ fun generateDestructuringBlock(
                 }
                 this.isVar = isVar
                 symbol = FirPropertySymbol(entry.name) // TODO?
+                source = entry.source
                 isLocal = true
-                status = FirDeclarationStatusImpl(Visibilities.LOCAL, Modality.FINAL)
+                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
                 annotations += entry.annotations
             }
         }

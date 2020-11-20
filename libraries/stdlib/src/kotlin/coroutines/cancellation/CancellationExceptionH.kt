@@ -9,7 +9,6 @@ package kotlin.coroutines.cancellation
  * Thrown by cancellable suspending functions if the coroutine is cancelled while it is suspended.
  * It indicates _normal_ cancellation of a coroutine.
  */
-@ExperimentalStdlibApi
 @SinceKotlin("1.4")
 public expect open class CancellationException : IllegalStateException {
     public constructor()
@@ -19,7 +18,6 @@ public expect open class CancellationException : IllegalStateException {
 /**
  * Creates an instance of [CancellationException] with the given [message] and [cause].
  */
-@ExperimentalStdlibApi
 @SinceKotlin("1.4")
 @Suppress("FunctionName", "NO_ACTUAL_FOR_EXPECT")
 public expect fun CancellationException(message: String?, cause: Throwable?): CancellationException
@@ -27,7 +25,6 @@ public expect fun CancellationException(message: String?, cause: Throwable?): Ca
 /**
  * Creates an instance of [CancellationException] with the given [cause].
  */
-@ExperimentalStdlibApi
 @SinceKotlin("1.4")
 @Suppress("FunctionName", "NO_ACTUAL_FOR_EXPECT")
 public expect fun CancellationException(cause: Throwable?): CancellationException

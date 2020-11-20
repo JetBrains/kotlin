@@ -1,3 +1,7 @@
+public final var foo: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+    public set(@R|test/A|() @R|test/B|() value: R|kotlin/Int|): R|kotlin/Unit|
+
 public final annotation class A : R|kotlin/Annotation| {
     public constructor(): R|test/A|
 
@@ -7,3 +11,4 @@ public final annotation class B : R|kotlin/Annotation| {
     public constructor(): R|test/B|
 
 }
+

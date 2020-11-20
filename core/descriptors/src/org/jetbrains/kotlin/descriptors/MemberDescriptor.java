@@ -24,7 +24,7 @@ public interface MemberDescriptor extends DeclarationDescriptorNonRoot, Declarat
 
     @Override
     @NotNull
-    Visibility getVisibility();
+    DescriptorVisibility getVisibility();
 
     boolean isExpect();
 

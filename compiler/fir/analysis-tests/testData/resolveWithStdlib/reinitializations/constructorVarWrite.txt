@@ -1,0 +1,32 @@
+FILE: constructorVarWrite.kt
+    public final class Some : R|kotlin/Any| {
+        public constructor(foo: R|kotlin/Int|): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var foo: R|kotlin/Int| = R|<local>/foo|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        init {
+            when () {
+                CMP(<, this@R|/Some|.R|/Some.foo|.R|kotlin/Int.compareTo|(Int(0))) ->  {
+                    this@R|/Some|.R|/Some.foo| = Int(0)
+                }
+            }
+
+        }
+
+        public final val y: R|kotlin/Int| = this@R|/Some|.R|kotlin/run|<R|Some|, R|kotlin/Int|>(<L> = run@fun R|Some|.<anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|/Some.foo| = Int(1)
+            ^ this@R|special/anonymous|.R|/Some.foo|
+        }
+        )
+            public get(): R|kotlin/Int|
+
+        public constructor(): R|Some| {
+            this<R|Some|>(Int(-1))
+            this@R|/Some|.R|/Some.foo| = Int(2)
+        }
+
+    }

@@ -21,12 +21,12 @@ inline fun case_1(value_1: Int?, block: () -> Unit): Boolean {
 
 // TESTCASE NUMBER: 2
 inline fun <T> T?.case_2(value_1: Int?, value_2: Any?, block: () -> Unit): Boolean? {
-    contract {
+    <!WRONG_IMPLIES_CONDITION!>contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)
         returns(true) implies (value_1 == null && this@case_2 == null && value_2 !is Boolean?)
         returns(false) implies (value_2 is Boolean?)
         returns(null) implies ((value_1 != null || this@case_2 != null) && value_2 !is Boolean?)
-    }
+    }<!>
 
     block()
 
@@ -46,7 +46,7 @@ fun case_1(value_1: Int?) {
     if (contracts.case_1(value_1) { value_2 = 10 }) {
         println(<!UNINITIALIZED_VARIABLE!>value_2<!>)
     } else {
-        value_1.inv()
+        value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>()
         println(<!UNINITIALIZED_VARIABLE!>value_2<!>)
     }
 }
@@ -56,10 +56,10 @@ fun case_2(value_1: Int?, value_2: Int?, value_3: Any?) {
     val value_4: Int
     when (value_1.case_2(value_2, value_3) { value_4 = 10 }) {
         true -> {
-            <!AMBIGUITY!>println<!>(value_3?.xor(true))
+            <!AMBIGUITY!>println<!>(value_3?.<!UNRESOLVED_REFERENCE!>xor<!>(true))
             println(<!UNINITIALIZED_VARIABLE!>value_4<!>)
-            <!AMBIGUITY!>println<!>(value_1.inv())
-            <!AMBIGUITY!>println<!>(value_2.inv())
+            println(value_1.<!INAPPLICABLE_CANDIDATE!>inv<!>())
+            println(value_2.<!INAPPLICABLE_CANDIDATE!>inv<!>())
         }
         false -> {
             println(<!UNINITIALIZED_VARIABLE!>value_4<!>)

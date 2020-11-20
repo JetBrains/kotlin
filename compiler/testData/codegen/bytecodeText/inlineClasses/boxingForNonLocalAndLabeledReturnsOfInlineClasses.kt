@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM_IR
 
 // FILE: utils.kt

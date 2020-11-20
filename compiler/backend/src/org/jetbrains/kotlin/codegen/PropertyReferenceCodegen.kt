@@ -92,8 +92,8 @@ class PropertyReferenceCodegen(
             element,
             state.classFileVersion,
             ACC_FINAL or ACC_SUPER or
-                    AsmUtil.getVisibilityAccessFlagForClass(classDescriptor) or
-                    AsmUtil.getSyntheticAccessFlagForLambdaClass(classDescriptor),
+                    DescriptorAsmUtil.getVisibilityAccessFlagForClass(classDescriptor) or
+                    DescriptorAsmUtil.getSyntheticAccessFlagForLambdaClass(classDescriptor),
             asmType.internalName,
             null,
             superAsmType.internalName,
@@ -108,7 +108,7 @@ class PropertyReferenceCodegen(
         if (JvmCodegenUtil.isConst(closure)) {
             generateConstInstance(asmType, wrapperMethod.returnType)
         } else {
-            AsmUtil.genClosureFields(closure, v, typeMapper, state.languageVersionSettings)
+            DescriptorAsmUtil.genClosureFields(closure, v, typeMapper, state.languageVersionSettings)
         }
 
         generateConstructor()

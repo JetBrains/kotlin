@@ -13,9 +13,7 @@ dependencies {
 
     compileOnly(toolsJarApi())
 
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-    }
+    compileOnly(intellijPluginDep("java"))
 
     compileOnly(intellijDep())
 

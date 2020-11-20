@@ -21,15 +21,15 @@ object Z {
 }
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>A[0] = ""<!>
-    <!INAPPLICABLE_CANDIDATE!>A[0] = 2.72<!>
+    A[0] = ""
+    A[0] = 2.72
 
-    <!INAPPLICABLE_CANDIDATE!>B[0] = ""<!>
-    <!INAPPLICABLE_CANDIDATE!>B[0] = 2.72<!>
-    <!INAPPLICABLE_CANDIDATE!>B[0] = true<!>
+    B[0] = ""
+    B[0] = 2.72
+    B[0] = true
 
-    <!INAPPLICABLE_CANDIDATE!>D[0] = ""<!>
-    <!INAPPLICABLE_CANDIDATE!>D[0] = 2.72<!>
+    D[0] = ""
+    D[0] = 2.72
 
     <!INAPPLICABLE_CANDIDATE!>Z[0] = ""<!>
 }

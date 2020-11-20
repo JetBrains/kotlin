@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
@@ -149,6 +150,16 @@ internal class KotlinCompilationNpmResolver(
         // We don't have `kotlin-js-test-runner` in NPM yet
         all.dependencies.add(nodeJs.versions.kotlinJsTestRunner.createDependency(project))
 
+        npmProject.externalsDir
+            .listFiles()
+            ?.filter { it.isCompatibleArchive }
+            ?.forEach {
+                project.dependencies.add(
+                    all.name,
+                    project.files(it)
+                )
+            }
+
         return all
     }
 
@@ -167,6 +178,7 @@ internal class KotlinCompilationNpmResolver(
         private val internalCompositeDependencies = mutableSetOf<CompositeDependency>()
         private val externalGradleDependencies = mutableSetOf<ExternalGradleDependency>()
         private val externalNpmDependencies = mutableSetOf<NpmDependency>()
+        private val fileCollectionDependencies = mutableSetOf<FileCollectionDependency>()
 
         fun visit(configuration: Configuration) {
             configuration.resolvedConfiguration.firstLevelModuleDependencies.forEach {
@@ -176,6 +188,7 @@ internal class KotlinCompilationNpmResolver(
             configuration.allDependencies.forEach { dependency ->
                 when (dependency) {
                     is NpmDependency -> externalNpmDependencies.add(dependency)
+                    is FileCollectionDependency -> fileCollectionDependencies.add(dependency)
                 }
             }
 
@@ -201,7 +214,8 @@ internal class KotlinCompilationNpmResolver(
                     internalDependencies,
                     internalCompositeDependencies,
                     externalGradleDependencies,
-                    externalNpmDependencies
+                    externalNpmDependencies,
+                    fileCollectionDependencies
                 )
             }
         }
@@ -277,7 +291,8 @@ internal class KotlinCompilationNpmResolver(
             internalDependencies,
             internalCompositeDependencies,
             externalGradleDependencies,
-            externalNpmDependencies
+            externalNpmDependencies,
+            fileCollectionDependencies
         )
     }
 
@@ -292,7 +307,10 @@ internal class KotlinCompilationNpmResolver(
         val externalGradleDependencies: Collection<File>,
 
         @get:Input
-        val externalDependencies: Collection<String>
+        val externalDependencies: Collection<String>,
+
+        @get:Input
+        val fileCollectionDependencies: Collection<File>
     ) : Serializable
 
     @Suppress("MemberVisibilityCanBePrivate")
@@ -300,14 +318,16 @@ internal class KotlinCompilationNpmResolver(
         val internalDependencies: Collection<KotlinCompilationNpmResolver>,
         val internalCompositeDependencies: Collection<CompositeDependency>,
         val externalGradleDependencies: Collection<ExternalGradleDependency>,
-        val externalNpmDependencies: Collection<NpmDependency>
+        val externalNpmDependencies: Collection<NpmDependency>,
+        val fileCollectionDependencies: Collection<FileCollectionDependency>
     ) {
         val inputs: PackageJsonProducerInputs
             get() = PackageJsonProducerInputs(
                 internalDependencies.map { it.npmProject.name },
                 internalCompositeDependencies.flatMap { it.getPackages() },
                 externalGradleDependencies.map { it.artifact.file },
-                externalNpmDependencies.map { it.uniqueRepresentation() }
+                externalNpmDependencies.map { it.uniqueRepresentation() },
+                fileCollectionDependencies.map { it.files }.flatMap { it.files }
             )
 
         fun createPackageJson(skipWriting: Boolean): KotlinCompilationNpmResolution {
@@ -316,14 +336,25 @@ internal class KotlinCompilationNpmResolver(
                     ?: error("Unresolved dependent npm package: ${this@KotlinCompilationNpmResolver} -> $it")
             }
             val importedExternalGradleDependencies = externalGradleDependencies.mapNotNull {
-                resolver.gradleNodeModules.get(it.dependency, it.artifact.file)
-            }
+                resolver.gradleNodeModules.get(it.dependency.moduleName, it.dependency.moduleVersion, it.artifact.file)
+            } + fileCollectionDependencies.flatMap { dependency ->
+                dependency.files
+                    .filter { it.exists() }
+                    .map { file ->
+                        resolver.gradleNodeModules.get(
+                            file.name,
+                            dependency.version ?: "0.0.1",
+                            file
+                        )
+                    }
+            }.filterNotNull()
 
             val compositeDependencies = internalCompositeDependencies.flatMap { dependency ->
                 dependency.getPackages()
                     .map { file ->
                         resolver.compositeNodeModules.get(
-                            dependency.dependency,
+                            dependency.dependency.moduleName,
+                            dependency.dependency.moduleVersion,
                             file
                         )
                     }

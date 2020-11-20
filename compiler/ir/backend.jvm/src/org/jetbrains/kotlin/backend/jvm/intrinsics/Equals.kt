@@ -10,23 +10,21 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.AsmUtil.genAreEqualCall
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genAreEqualCall
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.isEnumEntry
 import org.jetbrains.kotlin.ir.util.isIntegerConst
 import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.isNullable
@@ -83,21 +81,6 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         val rightType = with(codegen) { b.asmType }
         val opToken = expression.origin
 
-        fun loadOther(expression: IrExpression, type: Type): () -> MaterialValue {
-            return if (expression.hasNoSideEffects()) {
-                { expression.accept(codegen, data).materializedAt(type, expression.type) }
-            } else {
-                val aValue = expression.accept(codegen, data).materializedAt(type, expression.type)
-                val local = codegen.frameMap.enterTemp(type)
-                codegen.mv.store(local, type)
-                ({
-                    codegen.mv.load(local, type)
-                    codegen.frameMap.leaveTemp(type)
-                    aValue
-                })
-            }
-        }
-
         // Avoid boxing for `primitive == object` and `boxed primitive == primitive` where we know
         // what comparison means. The optimization does not apply to `object == primitive` as equals
         // could be overridden for the object.
@@ -105,19 +88,9 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
             ((AsmUtil.isIntOrLongPrimitive(leftType) && !AsmUtil.isPrimitive(rightType)) ||
                     (AsmUtil.isIntOrLongPrimitive(rightType) && AsmUtil.isBoxedPrimitiveType(leftType)))
         ) {
-            val leftIsPrimitive = AsmUtil.isIntOrLongPrimitive(leftType)
-            val primitiveType = if (leftIsPrimitive) leftType else rightType
-            val nonPrimitiveType = if (leftIsPrimitive) rightType else leftType
-            val useNullCheck = AsmUtil.isBoxedPrimitiveType(nonPrimitiveType)
-            return if (leftIsPrimitive) {
-                val loadOther = loadOther(a, leftType)
-                val boxedValue = b.accept(codegen, data).materializedAt(rightType, b.type)
-                PrimitiveToObjectComparison(operator, boxedValue, useNullCheck, primitiveType, loadOther)
-            } else {
-                val boxedValue = a.accept(codegen, data).materializedAt(leftType, a.type)
-                val loadOther = loadOther(b, rightType)
-                PrimitiveToObjectComparison(operator, boxedValue, useNullCheck, primitiveType, loadOther)
-            }
+            val aValue = a.accept(codegen, data).materializedAt(leftType, a.type)
+            val bValue = b.accept(codegen, data).materializedAt(rightType, b.type)
+            return PrimitiveToObjectComparison(operator, AsmUtil.isIntOrLongPrimitive(leftType), aValue, bValue)
         }
 
         val aIsEnum = a.type.classOrNull?.owner?.run { isEnumClass || isEnumEntry } == true
@@ -172,11 +145,11 @@ class Ieee754Equals(val operandType: Type) : IntrinsicMethod() {
         val arg0 = expression.getValueArgument(0)!!
         val arg1 = expression.getValueArgument(1)!!
 
-        val arg0Type = arg0.type.toKotlinType()
+        val arg0Type = arg0.type.toIrBasedKotlinType()
         if (!arg0Type.isPrimitiveNumberOrNullableType() && !arg0Type.upperBoundedByPrimitiveNumberOrNullableType())
             throw AssertionError("Should be primitive or nullable primitive type: $arg0Type")
 
-        val arg1Type = arg1.type.toKotlinType()
+        val arg1Type = arg1.type.toIrBasedKotlinType()
         if (!arg1Type.isPrimitiveNumberOrNullableType() && !arg1Type.upperBoundedByPrimitiveNumberOrNullableType())
             throw AssertionError("Should be primitive or nullable primitive type: $arg1Type")
 

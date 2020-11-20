@@ -533,6 +533,15 @@ class Collections {
         }
 
         @Sample
+        fun mapNotNull() {
+            val strings: List<String> = listOf("12a", "45", "", "3")
+            val ints: List<Int> = strings.mapNotNull { it.toIntOrNull() }
+
+            assertPrints(ints, "[45, 3]")
+            assertPrints(ints.sum(), "48")
+        }
+
+        @Sample
         fun flatMap() {
             val list = listOf("123", "45")
             assertPrints(list.flatMap { it.toList() }, "[1, 2, 3, 4, 5]")
@@ -770,6 +779,40 @@ class Collections {
             val emptyList = emptyList<Int>()
             assertPrints(emptyList.elementAtOrElse(0) { "no int" }, "no int")
         }
+
+        @Sample
+        fun find() {
+            val numbers = listOf(1, 2, 3, 4, 5, 6, 7)
+            val firstOdd = numbers.find { it % 2 != 0 }
+            val lastEven = numbers.findLast { it % 2 == 0 }
+
+            assertPrints(firstOdd, "1")
+            assertPrints(lastEven, "6")
+        }
+
+        @Sample
+        fun getOrNull() {
+            val list = listOf(1, 2, 3)
+            assertPrints(list.getOrNull(0), "1")
+            assertPrints(list.getOrNull(2), "3")
+            assertPrints(list.getOrNull(3), "null")
+
+            val emptyList = emptyList<Int>()
+            assertPrints(emptyList.getOrNull(0), "null")
+        }
+
+        @Sample
+        fun last() {
+            val list = listOf(1, 2, 3, 4)
+            assertPrints(list.last(), "4")
+            assertPrints(list.last { it % 2 == 1 }, "3")
+            assertPrints(list.lastOrNull { it < 0 }, "null")
+            assertFails { list.last { it < 0 } }
+
+            val emptyList = emptyList<Int>()
+            assertPrints(emptyList.lastOrNull(), "null")
+            assertFails { emptyList.last() }
+        }
     }
 
     class Sorting {
@@ -829,11 +872,131 @@ class Collections {
         }
 
         @Sample
+        fun filterTo() {
+            val numbers: List<Int> = listOf(1, 2, 3, 4, 5, 6, 7)
+            val evenNumbers = mutableListOf<Int>()
+            val notMultiplesOf3 = mutableListOf<Int>()
+
+            assertPrints(evenNumbers, "[]")
+
+            numbers.filterTo(evenNumbers) { it % 2 == 0 }
+            numbers.filterNotTo(notMultiplesOf3) { number -> number % 3 == 0 }
+
+            assertPrints(evenNumbers, "[2, 4, 6]")
+            assertPrints(notMultiplesOf3, "[1, 2, 4, 5, 7]")
+        }
+
+        @Sample
         fun filterNotNull() {
             val numbers: List<Int?> = listOf(1, 2, null, 4)
             val nonNullNumbers = numbers.filterNotNull()
 
             assertPrints(nonNullNumbers, "[1, 2, 4]")
         }
+
+        @Sample
+        fun filterNotNullTo() {
+            val numbers: List<Int?> = listOf(1, 2, null, 4)
+            val nonNullNumbers = mutableListOf<Int>()
+
+            assertPrints(nonNullNumbers, "[]")
+
+            numbers.filterNotNullTo(nonNullNumbers)
+
+            assertPrints(nonNullNumbers, "[1, 2, 4]")
+        }
+
+        @Sample
+        fun filterIndexed() {
+            val numbers: List<Int> = listOf(0, 1, 2, 3, 4, 8, 6)
+            val numbersOnSameIndexAsValue = numbers.filterIndexed { index, i -> index == i }
+
+            assertPrints(numbersOnSameIndexAsValue, "[0, 1, 2, 3, 4, 6]")
+        }
+
+        @Sample
+        fun filterIndexedTo() {
+            val numbers: List<Int> = listOf(0, 1, 2, 3, 4, 8, 6)
+            val numbersOnSameIndexAsValue = mutableListOf<Int>()
+
+            assertPrints(numbersOnSameIndexAsValue, "[]")
+
+            numbers.filterIndexedTo(numbersOnSameIndexAsValue) { index, i -> index == i }
+
+            assertPrints(numbersOnSameIndexAsValue, "[0, 1, 2, 3, 4, 6]")
+        }
+
+        @Sample
+        fun filterIsInstance() {
+            open class Animal(val name: String) {
+                override fun toString(): String {
+                    return name
+                }
+            }
+            class Dog(name: String): Animal(name)
+            class Cat(name: String): Animal(name)
+
+            val animals: List<Animal> = listOf(Cat("Scratchy"), Dog("Poochie"))
+            val cats = animals.filterIsInstance<Cat>()
+
+            assertPrints(cats, "[Scratchy]")
+        }
+
+        @Sample
+        fun filterIsInstanceJVM() {
+            open class Animal(val name: String) {
+                override fun toString(): String {
+                    return name
+                }
+            }
+            class Dog(name: String): Animal(name)
+            class Cat(name: String): Animal(name)
+
+            val animals: List<Animal> = listOf(Cat("Scratchy"), Dog("Poochie"))
+            val cats = animals.filterIsInstance(Cat::class.java)
+
+            assertPrints(cats, "[Scratchy]")
+        }
+
+        @Sample
+        fun filterIsInstanceTo() {
+            open class Animal(val name: String) {
+                override fun toString(): String {
+                    return name
+                }
+            }
+            class Dog(name: String): Animal(name)
+            class Cat(name: String): Animal(name)
+
+            val animals: List<Animal> = listOf(Cat("Scratchy"), Dog("Poochie"))
+            val cats = mutableListOf<Cat>()
+
+            assertPrints(cats, "[]")
+
+            animals.filterIsInstanceTo<Cat, MutableList<Cat>>(cats)
+
+            assertPrints(cats, "[Scratchy]")
+        }
+
+        @Sample
+        fun filterIsInstanceToJVM() {
+            open class Animal(val name: String) {
+                override fun toString(): String {
+                    return name
+                }
+            }
+            class Dog(name: String): Animal(name)
+            class Cat(name: String): Animal(name)
+
+            val animals: List<Animal> = listOf(Cat("Scratchy"), Dog("Poochie"))
+            val cats = mutableListOf<Cat>()
+
+            assertPrints(cats, "[]")
+
+            animals.filterIsInstanceTo(cats, Cat::class.java)
+
+            assertPrints(cats, "[Scratchy]")
+        }
+
     }
 }

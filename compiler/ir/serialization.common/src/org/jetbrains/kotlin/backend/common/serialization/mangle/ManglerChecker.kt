@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.common.serialization.mangle
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrErrorDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -47,7 +49,9 @@ class ManglerChecker(vararg _manglers: KotlinMangler<IrDeclaration>) : IrElement
         return r
     }
 
-    override fun visitDeclaration(declaration: IrDeclaration) {
+    override fun visitDeclaration(declaration: IrDeclarationBase) {
+
+        if (declaration is IrErrorDeclaration) return
 
         val exported = manglers.checkAllEqual(false, { isExportCheck(declaration) }) { m1, r1, m2, r2 ->
             error("${declaration.render()}\n ${m1.manglerName}: $r1\n ${m2.manglerName}: $r2\n")

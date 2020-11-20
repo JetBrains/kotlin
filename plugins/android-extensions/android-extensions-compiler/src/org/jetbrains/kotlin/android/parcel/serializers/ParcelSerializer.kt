@@ -301,7 +301,7 @@ interface ParcelSerializer {
         private fun Type.isSparseIntArray() = this.descriptor == "Landroid/util/SparseIntArray;"
         private fun Type.isSparseLongArray() = this.descriptor == "Landroid/util/SparseLongArray;"
         private fun Type.isSparseArray() = this.descriptor == "Landroid/util/SparseArray;"
-        private fun KotlinType.isSerializable() = matchesFqNameWithSupertypes("java.io.Serializable")
+        private fun KotlinType.isSerializable() = matchesFqNameWithSupertypes("java.io.Serializable") || matchesFqNameWithSupertypes("kotlin.Function")
         private fun KotlinType.isException() = matchesFqNameWithSupertypes("java.lang.Exception")
         private fun KotlinType.isIBinder() = matchesFqNameWithSupertypes("android.os.IBinder")
         private fun KotlinType.isIInterface() = matchesFqNameWithSupertypes("android.os.IInterface")

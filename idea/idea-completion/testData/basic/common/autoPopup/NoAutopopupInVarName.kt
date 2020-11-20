@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 var <caret>
 
 // INVOCATION_COUNT: 0

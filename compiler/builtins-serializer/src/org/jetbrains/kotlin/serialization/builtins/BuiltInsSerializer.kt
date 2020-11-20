@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
@@ -76,7 +77,13 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
         }
     }
 
-    override fun performSerialization(files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File) {
+    override fun performSerialization(
+        files: Collection<KtFile>,
+        bindingContext: BindingContext,
+        module: ModuleDescriptor,
+        destDir: File,
+        project: Project?
+    ) {
         destDir.deleteRecursively()
         if (!destDir.mkdirs()) {
             throw AssertionError("Could not make directories: " + destDir)
@@ -100,9 +107,9 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
     // Since Kotlin 1.1, we always discard this class during deserialization (see ClassDeserializer.kt).
     private fun createCloneable(module: ModuleDescriptor): ClassDescriptor {
         val factory = JvmBuiltInClassDescriptorFactory(LockBasedStorageManager.NO_LOCKS, module) {
-            EmptyPackageFragmentDescriptor(module, KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME)
+            EmptyPackageFragmentDescriptor(module, StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
         }
-        return factory.createClass(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.cloneable.toSafe()))
+        return factory.createClass(ClassId.topLevel(StandardNames.FqNames.cloneable.toSafe()))
                ?: error("Could not create kotlin.Cloneable in $module")
     }
 }

@@ -4,13 +4,13 @@ const val constConst = nonConst * nonConst + 2
 
 annotation class Ann(val x: Int, val y: String)
 
-@Ann(nonConst, "${nonConst}")
+@Ann(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>nonConst<!>, <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>"${nonConst}"<!>)
 fun foo1() {}
 
-@Ann(nonConst + constConst, "${constConst}")
+@Ann(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>nonConst + constConst<!>, "${constConst}")
 fun foo2() {}
 
 annotation class ArrayAnn(val x: IntArray)
 
-@ArrayAnn(intArrayOf(1, constConst, nonConst))
+@ArrayAnn(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>intArrayOf(1, constConst, <!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>nonConst<!>)<!>)
 fun foo3() {}

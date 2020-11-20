@@ -1,0 +1,20 @@
+@kotlin.Deprecated
+@kotlin.Metadata
+public deprecated final class E {
+    // source: 'deprecatedClass.kt'
+    public method <init>(): void
+}
+
+@kotlin.Deprecated
+@kotlin.Metadata
+public deprecated final class H {
+    // source: 'deprecatedClass.kt'
+    public method <init>(): void
+}
+
+@kotlin.Deprecated
+@kotlin.Metadata
+public deprecated final class W {
+    // source: 'deprecatedClass.kt'
+    public method <init>(): void
+}

@@ -11,13 +11,12 @@ dependencies {
     compile(project(":compiler:serialization"))
     compile(project(":kotlin-util-klib"))
     compile(project(":kotlin-util-klib-metadata"))
-
     compile(project(":compiler:util"))
     compile(project(":compiler:ir.psi2ir"))
     compile(project(":compiler:ir.backend.common"))
+    compileOnly(project(":kotlin-reflect-api"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-
 }
 
 sourceSets {
@@ -29,7 +28,7 @@ tasks {
     val compileKotlin by existing(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
         kotlinOptions {
             freeCompilerArgs += "-Xopt-in=org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
+            freeCompilerArgs += "-Xinline-classes"
         }
     }
 }
-

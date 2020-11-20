@@ -1,9 +1,7 @@
+public final val nonConstVal1: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+
 public final class C : R|kotlin/Any| {
-    public final val nonConstVal2: R|kotlin/Int|
-        public get(): R|kotlin/Int|
-
-    public constructor(): R|test/C|
-
     public final companion object Companion : R|kotlin/Any| {
         public final val nonConstVal3: R|kotlin/Int|
             public get(): R|kotlin/Int|
@@ -11,6 +9,11 @@ public final class C : R|kotlin/Any| {
         private constructor(): R|test/C.Companion|
 
     }
+
+    public final val nonConstVal2: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    public constructor(): R|test/C|
 
 }
 
@@ -24,3 +27,4 @@ public abstract interface I : R|kotlin/Any| {
     }
 
 }
+

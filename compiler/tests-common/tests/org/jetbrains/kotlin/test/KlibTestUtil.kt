@@ -72,7 +72,8 @@ object KlibTestUtil {
         val serializer = KlibMetadataMonolithicSerializer(
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
             metadataVersion = KlibMetadataVersion.INSTANCE,
-            skipExpects = false
+            skipExpects = false,
+            project = null
         )
 
         val serializedMetadata = serializer.serializeModule(module)

@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifierId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirAnnotationFactory
-import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassifierIdFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.AnnotationsCommonizer.Companion.FALLBACK_MESSAGE
 import org.jetbrains.kotlin.descriptors.commonizer.utils.DEPRECATED_ANNOTATION_CID
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapOf
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
 import org.jetbrains.kotlin.name.ClassId
@@ -38,9 +38,7 @@ class AnnotationsCommonizer : AbstractStandardCommonizer<List<CirAnnotation>, Li
     override fun initialize(first: List<CirAnnotation>) = Unit
 
     override fun doCommonizeWith(next: List<CirAnnotation>): Boolean {
-        val nextDeprecatedAnnotation = next.firstOrNull { annotation ->
-            (annotation.type.classifierId as? CirClassifierId.Class)?.classId == DEPRECATED_ANNOTATION_CID
-        } ?: return true
+        val nextDeprecatedAnnotation = next.firstOrNull { it.type.classifierId == DEPRECATED_ANNOTATION_CID } ?: return true
 
         val deprecatedAnnotationCommonizer = deprecatedAnnotationCommonizer
             ?: DeprecatedAnnotationCommonizer().also { this.deprecatedAnnotationCommonizer = it }
@@ -61,23 +59,23 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
 
     override val result: CirAnnotation
         get() {
-            val level: DeprecationLevel = level ?: throw IllegalCommonizerStateException()
+            val level: DeprecationLevel = level ?: failInEmptyState()
             val messageValue: StringValue = message.toDeprecationMessageValue()
 
             val constantValueArguments: Map<Name, ConstantValue<*>> = if (level == WARNING) {
                 // don't populate with the default level value
-                mapOf(PROPERTY_NAME_MESSAGE to messageValue)
+                compactMapOf(PROPERTY_NAME_MESSAGE, messageValue)
             } else
-                hashMapOf(
-                    PROPERTY_NAME_MESSAGE to messageValue,
-                    PROPERTY_NAME_LEVEL to level.toDeprecationLevelValue()
+                compactMapOf(
+                    PROPERTY_NAME_MESSAGE, messageValue,
+                    PROPERTY_NAME_LEVEL, level.toDeprecationLevelValue()
                 )
 
             val annotationValueArguments: Map<Name, CirAnnotation> = if (replaceWithExpression.isEmpty() && replaceWithImports.isEmpty()) {
                 // don't populate with empty (default) ReplaceWith
                 emptyMap()
             } else
-                mapOf(PROPERTY_NAME_REPLACE_WITH to replaceWithExpression.toReplaceWithValue(replaceWithImports))
+                compactMapOf(PROPERTY_NAME_REPLACE_WITH, replaceWithExpression.toReplaceWithValue(replaceWithImports))
 
             return CirAnnotationFactory.create(
                 type = DEPRECATED_ANNOTATION_TYPE,
@@ -160,9 +158,10 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
             it.name to EnumValue(DEPRECATION_LEVEL_CID, Name.identifier(it.name).intern())
         }
 
-        private fun buildAnnotationType(classId: ClassId) = CirTypeFactory.create(
-            classifierId = CirClassifierIdFactory.createForClass(classId),
-            visibility = Visibilities.PUBLIC,
+        private fun buildAnnotationType(classId: ClassId) = CirTypeFactory.createClassType(
+            classId = classId,
+            outerType = null,
+            visibility = DescriptorVisibilities.PUBLIC,
             arguments = emptyList(),
             isMarkedNullable = false
         )
@@ -208,7 +207,7 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
             val elements: List<ConstantValue<*>> = (this[name] as? ArrayValue)?.value ?: return null
             if (elements.isEmpty()) return emptyList()
 
-            val result = mutableListOf<String>()
+            val result = ArrayList<String>(elements.size)
             for (element in elements) {
                 if (element is StringValue) {
                     result += element.value
@@ -222,10 +221,10 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
         private inline fun createReplaceWithAnnotation(expression: String, imports: List<String>): CirAnnotation =
             CirAnnotationFactory.create(
                 type = REPLACE_WITH_ANNOTATION_TYPE,
-                constantValueArguments = mapOf(
-                    PROPERTY_NAME_EXPRESSION to StringValue(expression),
-                    PROPERTY_NAME_IMPORTS to ArrayValue(
-                        value = imports.map { StringValue(it) },
+                constantValueArguments = compactMapOf(
+                    PROPERTY_NAME_EXPRESSION, StringValue(expression),
+                    PROPERTY_NAME_IMPORTS, ArrayValue(
+                        value = imports.compactMap { StringValue(it) },
                         computeType = { it.builtIns.getArrayElementType(it.builtIns.stringType) }
                     )
                 ),

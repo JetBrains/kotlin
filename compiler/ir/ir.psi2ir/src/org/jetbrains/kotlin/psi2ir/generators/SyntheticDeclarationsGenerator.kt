@@ -56,7 +56,7 @@ class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDes
 
     override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: IrDeclarationContainer?) {
         require(data != null)
-        if (descriptor.visibility != Visibilities.INVISIBLE_FAKE) {
+        if (descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE) {
             symbolTable.declareSimpleFunctionIfNotExists(descriptor) {
                 createFunctionStub(descriptor, it).insertDeclaration(data)
             }
@@ -140,7 +140,7 @@ class SyntheticDeclarationsGenerator(context: GeneratorContext) : DeclarationDes
 
     override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: IrDeclarationContainer?) {
         require(data != null)
-        if (descriptor.visibility != Visibilities.INVISIBLE_FAKE) {
+        if (descriptor.visibility != DescriptorVisibilities.INVISIBLE_FAKE) {
             symbolTable.declarePropertyIfNotExists(descriptor) {
                 createPropertyStub(descriptor, it).insertDeclaration(data).also { p ->
                     descriptor.getter?.let { g -> p.getter = declareAccessor(g, p) }

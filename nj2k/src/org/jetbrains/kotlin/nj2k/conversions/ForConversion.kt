@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.types.JKJavaArrayType
 import org.jetbrains.kotlin.nj2k.types.JKJavaPrimitiveType
 import org.jetbrains.kotlin.nj2k.types.JKNoType
+import org.jetbrains.kotlin.utils.NumberWithRadix
 import org.jetbrains.kotlin.utils.extractRadix
-import org.jetbrains.kotlin.utils.radixPrefix
 import kotlin.math.abs
 
 
@@ -230,6 +230,14 @@ class ForConversion(context: NewJ2kConverterContext) : RecursiveApplicableConver
 
         return "${numberWithRadix.radixPrefix}${fixedValue}"
     }
+
+    private val NumberWithRadix.radixPrefix: String
+        get() = when (radix) {
+            2 -> "0b"
+            10 -> ""
+            16 -> "0x"
+            else -> error("Invalid radix for $this")
+        }
 
     private fun indicesIterationRange(
         start: JKExpression,

@@ -724,6 +724,11 @@ public class FindUsagesTestGenerated extends AbstractFindUsagesTest {
                 runTest("idea/testData/findUsages/kotlin/findFunctionUsages/localClassMember.0.kt");
             }
 
+            @TestMetadata("nonBaseDeclarationFunctionAsPropName.0.kt")
+            public void testNonBaseDeclarationFunctionAsPropName() throws Exception {
+                runTest("idea/testData/findUsages/kotlin/findFunctionUsages/nonBaseDeclarationFunctionAsPropName.0.kt");
+            }
+
             @TestMetadata("objectExpressionDeepMember.0.kt")
             public void testObjectExpressionDeepMember() throws Exception {
                 runTest("idea/testData/findUsages/kotlin/findFunctionUsages/objectExpressionDeepMember.0.kt");

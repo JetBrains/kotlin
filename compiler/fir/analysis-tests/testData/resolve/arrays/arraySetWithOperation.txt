@@ -45,18 +45,18 @@ FILE: arraySetWithOperation.kt
 
     }
     public final fun test_1(a: R|A<B>|): R|kotlin/Unit| {
-        R|<local>/a|.R|FakeOverride</A.get: R|B|>|(Int(0)).R|/B.plusAssign|(R|/B.B|())
+        R|<local>/a|.R|SubstitutionOverride</A.get: R|B|>|(Int(0)).R|/B.plusAssign|(R|/B.B|())
     }
     public final fun test_2(a: R|A<C>|): R|kotlin/Unit| {
          {
             lval <<array>>: R|A<C>| = R|<local>/a|
             lval <<index_0>>: R|kotlin/Int| = Int(0)
-            R|<local>/<<array>>|.R|FakeOverride</A.set: R|kotlin/Unit|>|(R|<local>/<<index_0>>|, R|<local>/<<array>>|.R|FakeOverride</A.get: R|C|>|(R|<local>/<<index_0>>|).R|/C.plus|(R|/C.C|()))
+            R|<local>/<<array>>|.R|SubstitutionOverride</A.set: R|kotlin/Unit|>|(R|<local>/<<index_0>>|, R|<local>/<<array>>|.R|SubstitutionOverride</A.get: R|C|>|(R|<local>/<<index_0>>|).R|/C.plus|(R|/C.C|()))
         }
 
     }
     public final fun test_3(a: R|A<D>|): R|kotlin/Unit| {
-        ArraySet:[R|<local>/a|.R|FakeOverride</A.get: R|D|>|(Int(0)).R|/D.plusAssign|(R|/D.D|())]
+        ArraySet:[R|<local>/a|.R|SubstitutionOverride</A.get: R|D|>|(Int(0)).R|/D.plusAssign|(R|/D.D|())]
     }
     public final fun test_4(b: R|B|): R|kotlin/Unit| {
         ArraySet:[R|<local>/b|.<Unresolved name: get>#(Int(0)).<Unresolved name: plusAssign>#(R|/B.B|())]

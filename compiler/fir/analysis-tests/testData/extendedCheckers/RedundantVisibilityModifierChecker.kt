@@ -1,21 +1,20 @@
 fun f() {
-
+    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> <!CAN_BE_VAL!>var<!> <!UNUSED_VARIABLE!>baz<!> = 0
     class LocalClass {
         <!REDUNDANT_VISIBILITY_MODIFIER!>internal<!> var foo = 0
     }
     LocalClass().foo = 1
-    <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> <!CAN_BE_VAL!>var<!> baz = 0
 }
 
 internal inline fun internal() {
     f()
 }
 
-class C {
+<!REDECLARATION!>class C {
     internal val z = object {
         fun foo() = 13
     }
-}
+}<!>
 
 class Foo2<
         T1,
@@ -27,12 +26,12 @@ class Foo2<
     internal inner class B<T,T2,>
 }
 
-<!REDUNDANT_VISIBILITY_MODIFIER!>public<!> class C {
+<!REDECLARATION!><!REDUNDANT_VISIBILITY_MODIFIER!>public<!> class C {
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> val foo: Int = 0
 
     <!REDUNDANT_VISIBILITY_MODIFIER!>public<!> fun bar() {}
 
-}
+}<!>
 
 open class D {
     protected open fun willRemainProtected() {
@@ -76,12 +75,12 @@ open class J {
     }
 
     var buf = 0
-    private get() = 42
-    protected set(value) {
-        field = value
-    }
+        private get() = 42
+        protected set(value) {
+            field = value
+        }
 
     var bar = 0
-    get() = 3.1415926535
-    set(value) {}
+        get() = 3.1415926535
+        set(value) {}
 }

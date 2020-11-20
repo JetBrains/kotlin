@@ -24,7 +24,7 @@ class ScriptProvidedPropertyDescriptor(
     null,
     Annotations.EMPTY,
     Modality.FINAL,
-    Visibilities.PRIVATE,
+    DescriptorVisibilities.PRIVATE,
     isVar,
     name,
     CallableMemberDescriptor.Kind.SYNTHESIZED,

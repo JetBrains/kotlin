@@ -11,6 +11,6 @@ fun main() {
     // Any behaviour is acceptable, as the code is erroneous.
     // At the time of writing this test, we resolve to nearest A, i.e.
     //  'fromBottom' is resolved, and 'fromLeft' is not.
-    A().<!UNRESOLVED_REFERENCE("fromLeft")!>fromLeft<!>()
+    A().<!UNRESOLVED_REFERENCE!>fromLeft<!>()
     A().fromBottom()
 }

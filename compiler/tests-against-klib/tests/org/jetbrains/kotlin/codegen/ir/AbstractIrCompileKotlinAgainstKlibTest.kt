@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.createForTests
 import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
-import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -33,10 +32,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
         val classpath: MutableList<File> = ArrayList()
         classpath.add(KotlinTestUtils.getAnnotationsJar())
         val configuration = createConfiguration(
-            configurationKind, getTestJdkKind(files),
-            classpath,
-            listOf(outputDir),
-            files
+            configurationKind, getTestJdkKind(files), backend, classpath, listOf(outputDir), files
         )
         myEnvironment = createForTests(
             testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES

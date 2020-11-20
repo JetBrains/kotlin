@@ -48,7 +48,7 @@ class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
         // This is a workaround for completion in REPL to provide module dependencies
         if (scriptDefinition.baseClassType.fromClass == Any::class) return null
 
-        if (scriptDefinition is ScriptDefinition.FromConfigurations ||
+        if (scriptDefinition is ScriptDefinition.FromConfigurationsBase ||
             scriptDefinition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>() != null
         ) {
             return GlobalSearchScope.fileScope(project, file).union(

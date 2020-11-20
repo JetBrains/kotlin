@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
+import org.gradle.api.artifacts.FileCollectionDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
+import org.jetbrains.kotlin.gradle.targets.js.npm.isCompatibleArchive
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.CompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
@@ -24,7 +29,9 @@ internal class DukatCompilationResolverPlugin(
     val separateTaskName = npmProject.compilation.disambiguateName("generateExternals")
 
     init {
-        compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
+        val externalsOutputFormat = compilation.externalsOutputFormat
+
+        gradleModelPostProcess(externalsOutputFormat, npmProject)
 
         val integratedTask = project.registerTask<IntegratedDukatTask>(
             integratedTaskName,
@@ -32,10 +39,25 @@ internal class DukatCompilationResolverPlugin(
         ) {
             it.group = DUKAT_TASK_GROUP
             it.description = "Integrated generation Kotlin/JS external declarations for .d.ts files in ${compilation}"
+            it.externalsOutputFormat = externalsOutputFormat
             it.dependsOn(nodeJs.npmInstallTaskProvider, npmProject.packageJsonTask)
         }
 
-        compilation.compileKotlinTaskProvider.dependsOn(integratedTask)
+        val target = compilation.target
+
+        val legacyTargetNotReuseIrTask =
+            target is KotlinJsTarget && (target.irTarget == null || externalsOutputFormat != ExternalsOutputFormat.SOURCE)
+        if (target is KotlinJsIrTarget || legacyTargetNotReuseIrTask) {
+            compilation.compileKotlinTaskProvider.dependsOn(integratedTask)
+        }
+
+        if (target is KotlinJsIrTarget && target.legacyTarget != null) {
+            target.legacyTarget?.compilations?.named(compilation.name) {
+                if (it.externalsOutputFormat == ExternalsOutputFormat.SOURCE) {
+                    it.compileKotlinTaskProvider.dependsOn(integratedTask)
+                }
+            }
+        }
 
         project.registerTask<SeparateDukatTask>(
             separateTaskName,
@@ -51,7 +73,8 @@ internal class DukatCompilationResolverPlugin(
         internalDependencies: Set<KotlinCompilationNpmResolver>,
         internalCompositeDependencies: Set<KotlinCompilationNpmResolver.CompositeDependency>,
         externalGradleDependencies: Set<KotlinCompilationNpmResolver.ExternalGradleDependency>,
-        externalNpmDependencies: Set<NpmDependency>
+        externalNpmDependencies: Set<NpmDependency>,
+        fileCollectionDependencies: Set<FileCollectionDependency>
     ) {
         if (nodeJs.experimental.discoverTypes) {
             // todo: discoverTypes
@@ -64,9 +87,18 @@ internal class DukatCompilationResolverPlugin(
     ) {
         val externalNpmDependencies = resolution[project][compilation].externalNpmDependencies
 
+        val target = compilation.target
+        val externalsOutputFormat = compilation.externalsOutputFormat
+        val legacyTargetReuseIrTask =
+            target is KotlinJsTarget && (target.irTarget != null && externalsOutputFormat == ExternalsOutputFormat.SOURCE)
+        if (legacyTargetReuseIrTask) {
+            return
+        }
+
         DukatExecutor(
             nodeJs,
             DtsResolver(npmProject).getAllDts(externalNpmDependencies),
+            externalsOutputFormat,
             npmProject,
             packageJsonIsUpdated,
             operation = compilation.name + " > " + DukatExecutor.OPERATION,
@@ -75,6 +107,29 @@ internal class DukatCompilationResolverPlugin(
     }
 
     companion object {
-        const val VERSION = "2"
+        const val VERSION = "3"
+    }
+}
+
+internal fun gradleModelPostProcess(
+    externalsOutputFormat: ExternalsOutputFormat,
+    npmProject: NpmProject
+) {
+    val compilation = npmProject.compilation
+    val project = npmProject.project
+    when (externalsOutputFormat) {
+        ExternalsOutputFormat.SOURCE -> compilation.defaultSourceSet.kotlin.srcDir(npmProject.externalsDir)
+        ExternalsOutputFormat.BINARY -> {
+            npmProject.externalsDir
+                .listFiles()
+                ?.filter { it.isCompatibleArchive }
+                ?.forEach {
+                    project.dependencies.add(
+                        compilation.compileDependencyConfigurationName,
+                        project.files(it)
+                    )
+                }
+
+        }
     }
 }

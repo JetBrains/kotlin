@@ -34,6 +34,8 @@ class PersistentMultimap<K, V> private constructor(private val map: PersistentMa
     operator fun get(key: K): List<V> {
         return map[key] ?: emptyList()
     }
+
+    val keys: ImmutableSet<K> get() = map.keys
 }
 
 class PersistentSetMultimap<K, V> private constructor(private val map: PersistentMap<K, PersistentSet<V>>) {

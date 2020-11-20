@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -85,8 +87,22 @@ private class RemoveRedundantWithFix : LocalQuickFix {
 
     override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
         val callExpression = descriptor.psiElement.parent as? KtCallExpression ?: return
-        val lambdaBody = callExpression.valueArguments.getOrNull(1)?.lambdaExpression()?.bodyExpression ?: return
-        val replaced = callExpression.replaced(lambdaBody)
-        replaced.findExistingEditor()?.moveCaret(replaced.startOffset)
+        val lambdaExpression = callExpression.valueArguments.getOrNull(1)?.lambdaExpression() ?: return
+        val lambdaBody = lambdaExpression.bodyExpression ?: return
+        val declaration = callExpression.getStrictParentOfType<KtDeclarationWithBody>()
+        val replaced = if (declaration?.equalsToken != null && KtPsiUtil.deparenthesize(declaration.bodyExpression) == callExpression) {
+            val singleReturnedExpression = (lambdaBody.statements.singleOrNull() as? KtReturnExpression)?.returnedExpression
+            if (singleReturnedExpression != null) {
+                callExpression.replaced(singleReturnedExpression)
+            } else {
+                declaration.equalsToken?.delete()
+                declaration.bodyExpression?.replaced(KtPsiFactory(project).createSingleStatementBlock(lambdaBody))
+            }
+        } else {
+            callExpression.replaced(lambdaBody)
+        }
+        if (replaced != null) {
+            replaced.findExistingEditor()?.moveCaret(replaced.startOffset)
+        }
     }
 }

@@ -8,15 +8,15 @@ annotation class Ann1(val arg: KClass<A>)
 @Ann1(A::class)
 class MyClass1
 
-@Ann1(Any::class)
+<!INAPPLICABLE_CANDIDATE!>@Ann1(Any::class)<!>
 class MyClass1a
 
-@Ann1(B::class)
+<!INAPPLICABLE_CANDIDATE!>@Ann1(B::class)<!>
 class MyClass2
 
 annotation class Ann2(val arg: KClass<B>)
 
-@Ann2(A::class)
+<!INAPPLICABLE_CANDIDATE!>@Ann2(A::class)<!>
 class MyClass3
 
 @Ann2(B::class)

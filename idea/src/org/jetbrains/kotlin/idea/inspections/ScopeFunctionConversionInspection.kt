@@ -80,9 +80,9 @@ private fun getCounterpart(expression: KtCallExpression): String? {
         }
         val bindingContext = callee.analyze(BodyResolveMode.PARTIAL)
         val resolvedCall = callee.getResolvedCall(bindingContext) ?: return null
-        if (resolvedCall.resultingDescriptor.fqNameSafe.asString() == "kotlin.$calleeName" &&
-            nameResolvesToStdlib(expression, bindingContext, counterpartName)
-        ) {
+        val descriptor = resolvedCall.resultingDescriptor
+        if (descriptor.dispatchReceiverParameter == null && descriptor.extensionReceiverParameter == null) return null
+        if (descriptor.fqNameSafe.asString() == "kotlin.$calleeName" && nameResolvesToStdlib(expression, bindingContext, counterpartName)) {
             return counterpartName
         }
     }

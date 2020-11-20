@@ -1,5 +1,5 @@
 // !WITH_NEW_INFERENCE
 fun bar() {
-    fun <T: T?> foo() {}
+    fun <T: <!UNRESOLVED_REFERENCE!>T?<!>> foo() {}
     <!INAPPLICABLE_CANDIDATE!>foo<!>()
 }

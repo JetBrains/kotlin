@@ -177,9 +177,9 @@ abstract class FileRankingCalculator(private val checkClassFqName: Boolean = tru
 
     private fun rankingForVisibility(descriptor: DeclarationDescriptorWithVisibility, accessible: Accessible): Ranking {
         return collect(
-            accessible.isPublic && descriptor.visibility == Visibilities.PUBLIC,
-            accessible.isProtected && descriptor.visibility == Visibilities.PROTECTED,
-            accessible.isPrivate && descriptor.visibility == Visibilities.PRIVATE
+            accessible.isPublic && descriptor.visibility == DescriptorVisibilities.PUBLIC,
+            accessible.isProtected && descriptor.visibility == DescriptorVisibilities.PROTECTED,
+            accessible.isPrivate && descriptor.visibility == DescriptorVisibilities.PRIVATE
         )
     }
 
@@ -342,7 +342,8 @@ abstract class FileRankingCalculator(private val checkClassFqName: Boolean = tru
             bindingContext,
             ClassBuilderMode.LIGHT_CLASSES,
             "debugger",
-            KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT // TODO use proper LanguageVersionSettings
+            KotlinTypeMapper.LANGUAGE_VERSION_SETTINGS_DEFAULT, // TODO use proper LanguageVersionSettings
+            useOldInlineClassesManglingScheme = false
         )
     }
 

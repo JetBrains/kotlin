@@ -64,7 +64,7 @@ internal abstract class AbstractScopeTowerLevel(
 
             val shouldSkipVisibilityCheck = scopeTower.isNewInferenceEnabled
             if (!shouldSkipVisibilityCheck) {
-                Visibilities.findInvisibleMember(
+                DescriptorVisibilities.findInvisibleMember(
                     getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
                     descriptor,
                     scopeTower.lexicalScope.ownerDescriptor

@@ -33,6 +33,7 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
+    var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var name: Name
     lateinit var symbol: FirTypeParameterSymbol
     lateinit var variance: Variance
@@ -46,6 +47,7 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
             session,
             resolvePhase,
             origin,
+            attributes,
             name,
             symbol,
             variance,

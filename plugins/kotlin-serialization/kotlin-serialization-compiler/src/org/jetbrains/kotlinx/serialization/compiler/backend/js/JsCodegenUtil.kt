@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.js
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -171,7 +172,7 @@ internal fun AbstractSerialGenerator.serializerInstance(
                 context.getInnerNameForDescriptor(
                     DescriptorUtils.getFunctionByName(
                         kType.toClassDescriptor!!.staticScope,
-                        DescriptorUtils.ENUM_VALUES
+                        StandardNames.ENUM_VALUES
                     )
                 ).makeRef()
             )

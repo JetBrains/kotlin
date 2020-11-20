@@ -89,7 +89,7 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             owner,
             Annotations.EMPTY,
             Modality.FINAL,
-            Visibilities.PUBLIC,
+            DescriptorVisibilities.PUBLIC,
             true,
             name,
             CallableMemberDescriptor.Kind.DECLARATION,
@@ -132,7 +132,7 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             createValueParameters(functionDescriptor, call),
             dynamicType,
             Modality.FINAL,
-            Visibilities.PUBLIC
+            DescriptorVisibilities.PUBLIC
         )
         functionDescriptor.setHasSynthesizedParameterNames(true)
         functionDescriptor.isOperator = isConventionCall(call)

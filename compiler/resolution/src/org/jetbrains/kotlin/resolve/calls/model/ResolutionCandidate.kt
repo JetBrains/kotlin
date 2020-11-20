@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -62,6 +64,10 @@ fun KotlinDiagnosticsHolder.addDiagnosticIfNotNull(diagnostic: KotlinCallDiagnos
     diagnostic?.let { addDiagnostic(it) }
 }
 
+fun KotlinDiagnosticsHolder.addError(error: ConstraintSystemError) {
+    addDiagnostic(error.asDiagnostic())
+}
+
 /**
  * baseSystem contains all information from arguments, i.e. it is union of all system of arguments
  * Also by convention we suppose that baseSystem has no contradiction
@@ -78,7 +84,7 @@ class KotlinResolutionCandidate(
 ) : Candidate, KotlinDiagnosticsHolder {
     val diagnosticsFromResolutionParts = arrayListOf<KotlinCallDiagnostic>() // TODO: this is mutable list, take diagnostics only once!
     private var newSystem: NewConstraintSystemImpl? = null
-    private var currentApplicability = ResolutionCandidateApplicability.RESOLVED
+    private var currentApplicability = CandidateApplicability.RESOLVED
     private var subResolvedAtoms: MutableList<ResolvedAtom> = arrayListOf()
 
     private val stepCount = resolutionSequence.sumBy { it.run { workCount() } }
@@ -96,7 +102,7 @@ class KotlinResolutionCandidate(
 
     override fun addDiagnostic(diagnostic: KotlinCallDiagnostic) {
         diagnosticsFromResolutionParts.add(diagnostic)
-        currentApplicability = maxOf(diagnostic.candidateApplicability, currentApplicability)
+        currentApplicability = minOf(diagnostic.candidateApplicability, currentApplicability)
     }
 
     fun getSubResolvedAtoms(): List<ResolvedAtom> = subResolvedAtoms
@@ -149,7 +155,7 @@ class KotlinResolutionCandidate(
         get() = callComponents.statelessCallbacks.getVariableCandidateIfInvoke(resolvedCall.atom)
 
     private val variableApplicability
-        get() = variableCandidateIfInvoke?.resultingApplicability ?: ResolutionCandidateApplicability.RESOLVED
+        get() = variableCandidateIfInvoke?.resultingApplicability ?: CandidateApplicability.RESOLVED
 
     override val isSuccessful: Boolean
         get() {
@@ -157,12 +163,12 @@ class KotlinResolutionCandidate(
             return currentApplicability.isSuccess && variableApplicability.isSuccess && !getSystem().hasContradiction
         }
 
-    override val resultingApplicability: ResolutionCandidateApplicability
+    override val resultingApplicability: CandidateApplicability
         get() {
             processParts(stopOnFirstError = false)
 
-            val systemApplicability = getResultApplicability(getSystem().diagnostics)
-            return maxOf(currentApplicability, systemApplicability, variableApplicability)
+            val systemApplicability = getResultApplicability(getSystem().errors)
+            return minOf(currentApplicability, systemApplicability, variableApplicability)
         }
 
     override fun addCompatibilityWarning(other: Candidate) {
@@ -189,7 +195,7 @@ class MutableResolvedCallAtom(
     override lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     override lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     override lateinit var freshVariablesSubstitutor: FreshVariableNewTypeSubstitutor
-    override lateinit var knownParametersSubstitutor: TypeSubstitutor
+    override lateinit var knownParametersSubstitutor: NewTypeSubstitutor
     lateinit var argumentToCandidateParameter: Map<KotlinCallArgument, ValueParameterDescriptor>
     private var samAdapterMap: HashMap<KotlinCallArgument, SamConversionDescription>? = null
     private var suspendAdapterMap: HashMap<KotlinCallArgument, UnwrappedType>? = null
@@ -252,10 +258,10 @@ class MutableResolvedCallAtom(
 
 fun KotlinResolutionCandidate.markCandidateForCompatibilityResolve() {
     if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
-    addDiagnostic(LowerPriorityToPreserveCompatibility)
+    addDiagnostic(LowerPriorityToPreserveCompatibility.asDiagnostic())
 }
 
 fun CallableReferencesCandidateFactory.markCandidateForCompatibilityResolve(diagnostics: SmartList<KotlinCallDiagnostic>) {
     if (callComponents.languageVersionSettings.supportsFeature(LanguageFeature.DisableCompatibilityModeForNewInference)) return
-    diagnostics.add(LowerPriorityToPreserveCompatibility)
+    diagnostics.add(LowerPriorityToPreserveCompatibility.asDiagnostic())
 }

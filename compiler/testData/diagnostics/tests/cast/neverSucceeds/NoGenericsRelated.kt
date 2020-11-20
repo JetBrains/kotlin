@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -WARNING +CAST_NEVER_SUCCEEDS
 interface T1
 interface T2

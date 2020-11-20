@@ -17,7 +17,6 @@ abstract class AbstractDiagnosticCollectorComponent(private val collector: Abstr
 
     override fun visitElement(element: FirElement, data: CheckerContext) {}
 
-    protected fun runCheck(block: (DiagnosticReporter) -> Unit) {
-        collector.runCheck(block)
-    }
+    protected val reporter: DiagnosticReporter
+        get() = collector.reporter
 }

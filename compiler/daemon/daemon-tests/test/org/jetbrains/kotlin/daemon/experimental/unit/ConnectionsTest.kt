@@ -31,11 +31,14 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.PrintStream
+import java.nio.file.Path
 import java.util.*
 import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.schedule
+import kotlin.io.path.*
 
+@OptIn(ExperimentalPathApi::class)
 @RunWith(IgnoreAll::class)
 class ConnectionsTest : KotlinIntegrationTestBase() {
 
@@ -229,7 +232,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
 
     private fun expectNewDaemon(serverType: ServerType, extraAction: (CompileServiceAsync) -> Unit = {}) = expectDaemon(
         getDaemons = ::getNewDaemonsOrAsyncWrappers,
-        chooseDaemon = { daemons -> daemons.maxWith(comparator)!!.daemon },
+        chooseDaemon = { daemons -> daemons.maxWithOrNull(comparator)!!.daemon },
         getInfo = { d -> runBlocking { d.getDaemonInfo() } },
         registerClient = { d -> runBlocking { d.registerClient(generateClient()) } },
         port = { d -> d.serverPort },
@@ -247,15 +250,15 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
         extraAction
     )
 
-    private val clientFiles = arrayListOf<File>()
+    private val clientFiles = mutableListOf<Path>()
     private fun generateClient(): String {
         val file = createTempFile(getTestName(true), ".alive")
         clientFiles.add(file)
-        return file.absolutePath
+        return file.toAbsolutePath().toString()
     }
 
     private fun deleteClients() {
-        clientFiles.forEach { it.delete() }
+        clientFiles.forEach { it.deleteIfExists() }
     }
 
     private fun endTest() {

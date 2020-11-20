@@ -31,6 +31,6 @@ fun test_ann(s: String, arr: Array<String>) {
 
     @Ann("", x = 1)
     foo()
-    @Ann(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR!>""<!>, x = 1)
+    @Ann(s = <!ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION_ERROR, NI;TYPE_MISMATCH!>""<!>, x = 1)
     foo()
 }

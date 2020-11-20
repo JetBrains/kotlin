@@ -18,30 +18,30 @@ package org.jetbrains.kotlin.descriptors
 
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.RESOLUTION_ANCHOR_PROVIDER_CAPABILITY
+import org.jetbrains.kotlin.resolve.getResolutionAnchorIfAny
 
-fun ModuleDescriptor.findClassifierAcrossModuleDependencies(classId: ClassId): ClassifierDescriptor? = withAnchorFallback {
+fun ModuleDescriptor.findClassifierAcrossModuleDependencies(classId: ClassId): ClassifierDescriptor? = withResolutionAnchor {
     val packageViewDescriptor = getPackage(classId.packageFqName)
     val segments = classId.relativeClassName.pathSegments()
     val topLevelClass = packageViewDescriptor.memberScope.getContributedClassifier(
         segments.first(),
         NoLookupLocation.FROM_DESERIALIZATION
-    ) ?: return@withAnchorFallback null
+    ) ?: return@withResolutionAnchor null
     var result = topLevelClass
     for (name in segments.subList(1, segments.size)) {
-        if (result !is ClassDescriptor) return@withAnchorFallback null
+        if (result !is ClassDescriptor) return@withResolutionAnchor null
         result = result.unsubstitutedInnerClassesScope
             .getContributedClassifier(name, NoLookupLocation.FROM_DESERIALIZATION) as? ClassDescriptor
-            ?: return@withAnchorFallback null
+            ?: return@withResolutionAnchor null
     }
-    return@withAnchorFallback result
+    return@withResolutionAnchor result
 }
 
-private inline fun ModuleDescriptor.withAnchorFallback(
-    crossinline doSearch: ModuleDescriptor.() -> ClassifierDescriptor? 
+private inline fun ModuleDescriptor.withResolutionAnchor(
+    crossinline doSearch: ModuleDescriptor.() -> ClassifierDescriptor?
 ): ClassifierDescriptor? {
-    val anchor = getCapability(RESOLUTION_ANCHOR_PROVIDER_CAPABILITY)?.getResolutionAnchor(this)
-    return if (anchor == null) doSearch() else doSearch() ?: anchor.doSearch()
+    val anchor = getResolutionAnchorIfAny()
+    return if (anchor == null) doSearch() else anchor.doSearch() ?: doSearch()
 }
 
 fun ModuleDescriptor.findClassAcrossModuleDependencies(classId: ClassId): ClassDescriptor? =

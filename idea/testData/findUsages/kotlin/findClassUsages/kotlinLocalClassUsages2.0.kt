@@ -1,5 +1,7 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtClass
 // OPTIONS: usages, constructorUsages
+// FIR_COMPARISON
+
 fun foo(): Any {
     if (false) {
         class <caret>Bar
@@ -11,3 +13,5 @@ fun foo(): Any {
 }
 
 val x = Bar()
+
+// DISABLE-ERRORS

@@ -14,7 +14,7 @@ fun case_1(x: Double?, y: Double?) : Double {
     } else if (x == null && y != null) {
         y
     } else {
-        x <!AMBIGUITY!>+<!> y
+        x <!NONE_APPLICABLE!>+<!> y
     }
 }
 

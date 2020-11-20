@@ -11,6 +11,8 @@ public abstract class AbstractModule<S> {
 package module2
 
 import module1.*
+import checkType
+import _
 
 fun <T> javaClass(): Class<T> = null!!
 

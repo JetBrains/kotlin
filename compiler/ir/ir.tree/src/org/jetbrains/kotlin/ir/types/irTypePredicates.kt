@@ -5,23 +5,59 @@
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.hasEqualFqName
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils.getFqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
-private fun IrType.isNotNullClassType(fqName: FqNameUnsafe) = isClassType(fqName, hasQuestionMark = false)
-private fun IrType.isNullableClassType(fqName: FqNameUnsafe) = isClassType(fqName, hasQuestionMark = true)
+@Suppress("ObjectPropertyName")
+object IdSignatureValues {
+    @JvmField val any = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Any")
+    @JvmField val nothing = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Nothing")
+    @JvmField val unit = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Unit")
+    @JvmField val _boolean = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Boolean")
+    @JvmField val _char = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Char")
+    @JvmField val _byte = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Byte")
+    @JvmField val _short = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Short")
+    @JvmField val _int = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Int")
+    @JvmField val _long = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Long")
+    @JvmField val _float = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Float")
+    @JvmField val _double = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Double")
+    @JvmField val number = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Number")
+    @JvmField val uByte = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"UByte")
+    @JvmField val uShort = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"UShort")
+    @JvmField val uInt = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"UInt")
+    @JvmField val uLong = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"ULong")
+    @JvmField val string = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"String")
+    @JvmField val array = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Array")
+    @JvmField val collection = getPublicSignature(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "Collection")
+    @JvmField val kClass = getPublicSignature(StandardNames.KOTLIN_REFLECT_FQ_NAME, "KClass")
+    @JvmField val comparable = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"Comparable")
+    @JvmField val charSequence = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME,"CharSequence")
+    @JvmField val iterable = getPublicSignature(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "Iterable")
+    @JvmField val continuation = getPublicSignature(StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE,"Continuation")
+    @JvmField val result = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Result")
+    @JvmField val sequence = IdSignature.PublicSignature("kotlin.sequences", "Sequence", null, 0)
+}
 
-private fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean? = null): Boolean {
+private fun IrType.isNotNullClassType(signature: IdSignature.PublicSignature) = isClassType(signature, hasQuestionMark = false)
+private fun IrType.isNullableClassType(signature: IdSignature.PublicSignature) = isClassType(signature, hasQuestionMark = true)
+
+fun getPublicSignature(packageFqName: FqName, name: String) =
+    IdSignature.PublicSignature(packageFqName.asString(), name, null, 0)
+
+private fun IrType.isClassType(signature: IdSignature.PublicSignature, hasQuestionMark: Boolean? = null): Boolean {
     if (this !is IrSimpleType) return false
     if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
-    return classifier.isClassWithFqName(fqName)
+    return signature == classifier.signature
 }
 
 fun IrClassifierSymbol.isClassWithFqName(fqName: FqNameUnsafe): Boolean =
@@ -32,65 +68,84 @@ private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Bool
     return classFqNameEquals(symbol.owner, fqName)
 }
 
+private val idSignatureToPrimitiveType: Map<IdSignature.PublicSignature, PrimitiveType> =
+    newHashMapWithExpectedSize<IdSignature.PublicSignature, PrimitiveType>(PrimitiveType.values().size).apply {
+        for (primitiveType in PrimitiveType.values()) {
+            this[getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, primitiveType.typeName.asString())] = primitiveType
+        }
+    }
+
+val primitiveArrayTypesSignatures: Map<PrimitiveType, IdSignature.PublicSignature> =
+    newHashMapWithExpectedSize<PrimitiveType, IdSignature.PublicSignature>(PrimitiveType.values().size).apply {
+        for (primitiveType in PrimitiveType.values()) {
+            this[primitiveType] =
+                getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "${primitiveType.typeName.asString()}Array")
+        }
+    }
+
 private fun classFqNameEquals(declaration: IrClass, fqName: FqNameUnsafe): Boolean =
-    declaration.name == fqName.shortName() && fqName == declaration.fqNameWhenAvailable?.toUnsafe()
+    declaration.hasEqualFqName(fqName.toSafe())
 
-private fun classFqNameEquals(descriptor: ClassDescriptor, fqName: FqNameUnsafe): Boolean =
-    descriptor.name == fqName.shortName() && fqName == getFqName(descriptor)
+fun IrType.isAny(): Boolean = isNotNullClassType(IdSignatureValues.any)
+fun IrType.isNullableAny(): Boolean = isNullableClassType(IdSignatureValues.any)
 
-fun IrType.isAny(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.any)
-fun IrType.isNullableAny(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES.any)
+fun IrType.isString(): Boolean = isNotNullClassType(IdSignatureValues.string)
+fun IrType.isNullableString(): Boolean = isNullableClassType(IdSignatureValues.string)
+fun IrType.isStringClassType(): Boolean = isClassType(IdSignatureValues.string)
+fun IrType.isArray(): Boolean = isNotNullClassType(IdSignatureValues.array)
+fun IrType.isNullableArray(): Boolean = isNullableClassType(IdSignatureValues.array)
+fun IrType.isCollection(): Boolean = isNotNullClassType(IdSignatureValues.collection)
+fun IrType.isNothing(): Boolean = isNotNullClassType(IdSignatureValues.nothing)
 
-fun IrType.isString(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.string)
-fun IrType.isNullableString(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES.string)
-fun IrType.isStringClassType(): Boolean = isClassType(KotlinBuiltIns.FQ_NAMES.string)
-fun IrType.isArray(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.array)
-fun IrType.isNullableArray(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES.array)
-fun IrType.isCollection(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.collection.toUnsafe())
-fun IrType.isNothing(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.nothing)
-fun IrType.isKClass(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.kClass)
+fun IrType.isPrimitiveType(hasQuestionMark: Boolean = false): Boolean =
+    (this is IrSimpleType && hasQuestionMark == this.hasQuestionMark) &&
+            classOrNull?.signature in idSignatureToPrimitiveType
 
-fun IrType.isPrimitiveType(): Boolean = KotlinBuiltIns.FQ_NAMES.fqNameToPrimitiveType.keys.any { isNotNullClassType(it) }
-fun IrType.isNullablePrimitiveType(): Boolean = KotlinBuiltIns.FQ_NAMES.fqNameToPrimitiveType.keys.any { isNullableClassType(it) }
+fun IrType.isNullablePrimitiveType(): Boolean = isPrimitiveType(true)
 
 fun IrType.isMarkedNullable() = (this as? IrSimpleType)?.hasQuestionMark ?: false
 
-fun IrType.isUnit() = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.unit)
-fun IrType.isNullableUnit() = isNullableClassType(KotlinBuiltIns.FQ_NAMES.unit)
-fun IrType.isUnitOrNullableUnit() = this.isUnit() || this.isNullableUnit()
+fun IrType.isUnit() = isNotNullClassType(IdSignatureValues.unit)
 
-fun IrType.isBoolean(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._boolean)
-fun IrType.isChar(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._char)
-fun IrType.isByte(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._byte)
-fun IrType.isShort(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._short)
-fun IrType.isInt(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._int)
-fun IrType.isLong(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._long)
-fun IrType.isUByte(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.uByteFqName.toUnsafe())
-fun IrType.isUShort(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.uShortFqName.toUnsafe())
-fun IrType.isUInt(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.uIntFqName.toUnsafe())
-fun IrType.isULong(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.uLongFqName.toUnsafe())
-fun IrType.isFloat(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._float)
-fun IrType.isDouble(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES._double)
-fun IrType.isNumber(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.number)
+fun IrType.isBoolean(): Boolean = isNotNullClassType(IdSignatureValues._boolean)
+fun IrType.isChar(): Boolean = isNotNullClassType(IdSignatureValues._char)
+fun IrType.isByte(): Boolean = isNotNullClassType(IdSignatureValues._byte)
+fun IrType.isShort(): Boolean = isNotNullClassType(IdSignatureValues._short)
+fun IrType.isInt(): Boolean = isNotNullClassType(IdSignatureValues._int)
+fun IrType.isLong(): Boolean = isNotNullClassType(IdSignatureValues._long)
+fun IrType.isUByte(): Boolean = isNotNullClassType(IdSignatureValues.uByte)
+fun IrType.isUShort(): Boolean = isNotNullClassType(IdSignatureValues.uShort)
+fun IrType.isUInt(): Boolean = isNotNullClassType(IdSignatureValues.uInt)
+fun IrType.isULong(): Boolean = isNotNullClassType(IdSignatureValues.uLong)
+fun IrType.isFloat(): Boolean = isNotNullClassType(IdSignatureValues._float)
+fun IrType.isDouble(): Boolean = isNotNullClassType(IdSignatureValues._double)
+fun IrType.isNumber(): Boolean = isNotNullClassType(IdSignatureValues.number)
 
-fun IrType.isComparable(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.comparable.toUnsafe())
-fun IrType.isCharSequence(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.charSequence)
-fun IrType.isIterable(): Boolean = isNotNullClassType(KotlinBuiltIns.FQ_NAMES.iterable.toUnsafe())
-fun IrType.isSequence(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.sequences.Sequence"))
+fun IrType.isComparable(): Boolean = isNotNullClassType(IdSignatureValues.comparable)
+fun IrType.isCharSequence(): Boolean = isNotNullClassType(IdSignatureValues.charSequence)
+fun IrType.isIterable(): Boolean = isNotNullClassType(IdSignatureValues.iterable)
+fun IrType.isSequence(): Boolean = isNotNullClassType(IdSignatureValues.sequence)
 
-fun IrType.isBooleanArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.BooleanArray"))
-fun IrType.isCharArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.CharArray"))
-fun IrType.isByteArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.ByteArray"))
-fun IrType.isShortArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.ShortArray"))
-fun IrType.isIntArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.IntArray"))
-fun IrType.isLongArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.LongArray"))
-fun IrType.isFloatArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.FloatArray"))
-fun IrType.isDoubleArray(): Boolean = isNotNullClassType(FqNameUnsafe("kotlin.DoubleArray"))
+fun IrType.isBooleanArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignatures[PrimitiveType.BOOLEAN]!!)
+fun IrType.isCharArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignatures[PrimitiveType.CHAR]!!)
+fun IrType.isByteArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignatures[PrimitiveType.BYTE]!!)
+fun IrType.isShortArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignatures[PrimitiveType.SHORT]!!)
+fun IrType.isIntArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignatures[PrimitiveType.INT]!!)
+fun IrType.isLongArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignatures[PrimitiveType.LONG]!!)
+fun IrType.isFloatArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignatures[PrimitiveType.FLOAT]!!)
+fun IrType.isDoubleArray(): Boolean = isNotNullClassType(primitiveArrayTypesSignatures[PrimitiveType.DOUBLE]!!)
 
-fun IrType.isNullableBoolean(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES._boolean)
-fun IrType.isNullableLong(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES._long)
-fun IrType.isNullableChar(): Boolean = isNullableClassType(KotlinBuiltIns.FQ_NAMES._char)
+// TODO: remove this method using FqNames.
+//  Need to refactor declarationBuilders.kt: visibilty is known, need to add info about package in IrFactory.buildClass (similar to name).
+fun IrType.isClassType(fqName: FqNameUnsafe, hasQuestionMark: Boolean): Boolean {
+    if (this !is IrSimpleType) return false
+    if (this.hasQuestionMark != hasQuestionMark) return false
+    return classifier.isClassWithFqName(fqName)
+}
 
-fun IrType.isKotlinResult(): Boolean = isNotNullClassType(DescriptorUtils.RESULT_FQ_NAME.toUnsafe())
-fun IrType.isContinuation(): Boolean = isNotNullClassType(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.toUnsafe())
-fun IrType.isNullableContinuation(): Boolean = isNullableClassType(DescriptorUtils.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.toUnsafe())
+fun IrType.isKotlinResult(): Boolean = isClassType(StandardNames.RESULT_FQ_NAME.toUnsafe(), false)
+
+fun IrType.isNullableContinuation(): Boolean = isClassType(StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE.toUnsafe(), true)
+
+// FIR and backend instances have different mask.
+fun IrType.isKClass(): Boolean = isClassType(StandardNames.FqNames.kClass, false)

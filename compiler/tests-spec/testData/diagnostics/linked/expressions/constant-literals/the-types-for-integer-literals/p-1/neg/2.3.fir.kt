@@ -79,7 +79,7 @@ fun case_4() {
     <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(-2147483649)
     -2147483649 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     -2147483649 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
-    -2147483649 checkType { check<Int>() }
+    -2147483649 checkType { <!NONE_APPLICABLE!>check<!><Int>() }
 }
 
 // TESTCASE NUMBER: 5
@@ -96,7 +96,7 @@ fun case_5() {
     <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(-9223372036854775807)
     -9223372036854775807 checkType { <!NONE_APPLICABLE!>check<!><Byte>() }
     -9223372036854775807 checkType { <!NONE_APPLICABLE!>check<!><Short>() }
-    -9223372036854775807 checkType { check<Int>() }
+    -9223372036854775807 checkType { <!NONE_APPLICABLE!>check<!><Int>() }
 }
 
 // TESTCASE NUMBER: 6

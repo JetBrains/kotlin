@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// SKIP_JDK6
 // FILE: I.java
 interface I {
     default String ifun() { return "fail"; }
@@ -14,6 +13,7 @@ public class Z {
 public class Zz extends Z implements I {}
 
 // FILE: multipleImplFromJava.kt
+// JVM_TARGET: 1.8
 
 class Cc : Zz()
 

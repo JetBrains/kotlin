@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiConstantEvaluationHelper
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.util.CachedValue
 import org.jetbrains.kotlin.asJava.builder.LightClassBuilderResult
@@ -26,9 +28,11 @@ import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 
 typealias LightClassBuilder = (LightClassConstructionContext) -> LightClassBuilderResult
 
@@ -47,16 +51,64 @@ abstract class LightClassGenerationSupport {
 
     abstract fun analyzeWithContent(element: KtClassOrObject): BindingContext
 
-    abstract fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass?
+    protected abstract fun getUltraLightClassSupport(element: KtElement): KtUltraLightSupport
 
-    abstract fun createUltraLightClassForScript(script: KtScript): KtUltraLightClassForScript?
+    fun createConstantEvaluator(expression: KtExpression): ConstantExpressionEvaluator = getUltraLightClassSupport(expression).run {
+        ConstantExpressionEvaluator(moduleDescriptor, languageVersionSettings, expression.project)
+    }
 
-    abstract fun createUltraLightClassForFacade(
+    abstract val useUltraLightClasses: Boolean
+
+    fun createUltraLightClassForFacade(
         manager: PsiManager,
         facadeClassFqName: FqName,
         lightClassDataCache: CachedValue<LightClassDataHolder.ForFacade>,
-        files: Collection<KtFile>
-    ): KtUltraLightClassForFacade?
+        files: Collection<KtFile>,
+    ): KtUltraLightClassForFacade? {
+
+        if (!useUltraLightClasses) return null
+
+        if (files.any { it.isScript() }) return null
+
+        val filesToSupports: List<Pair<KtFile, KtUltraLightSupport>> = files.map {
+            it to getUltraLightClassSupport(it)
+        }
+
+        return KtUltraLightClassForFacade(
+            manager,
+            facadeClassFqName,
+            lightClassDataCache,
+            files,
+            filesToSupports
+        )
+    }
+
+    fun createUltraLightClass(element: KtClassOrObject): KtUltraLightClass? {
+
+        if (!useUltraLightClasses) return null
+
+        if (element.shouldNotBeVisibleAsLightClass()) {
+            return null
+        }
+
+        return getUltraLightClassSupport(element).let { support ->
+            when {
+                element is KtObjectDeclaration && element.isObjectLiteral() ->
+                    KtUltraLightClassForAnonymousDeclaration(element, support)
+
+                element.safeIsLocal() ->
+                    KtUltraLightClassForLocalDeclaration(element, support)
+
+                (element.hasModifier(KtTokens.INLINE_KEYWORD)) ->
+                    KtUltraLightInlineClass(element, support)
+
+                else -> KtUltraLightClass(element, support)
+            }
+        }
+    }
+
+    fun createUltraLightClassForScript(script: KtScript): KtUltraLightClassForScript? =
+        if (useUltraLightClasses) KtUltraLightClassForScript(script, support = getUltraLightClassSupport(script)) else null
 
     companion object {
         @JvmStatic

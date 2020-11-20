@@ -11,7 +11,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.LightPlatformTestCase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.idea.fir.low.level.api.DuplicatedFirSourceElementsException
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.DuplicatedFirSourceElementsException
 import java.io.File
 
 fun <R> executeOnPooledThreadInReadAction(action: () -> R): R =

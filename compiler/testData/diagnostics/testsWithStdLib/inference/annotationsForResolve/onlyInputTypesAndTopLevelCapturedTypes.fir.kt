@@ -5,13 +5,13 @@
 class Inv<T>
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-fun <@kotlin.internal.OnlyInputTypes K> Inv<out K>.onlyOut(e: K) {}
+fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> K> Inv<out K>.onlyOut(e: K) {}
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-fun <@kotlin.internal.OnlyInputTypes K : Number> Inv<out K>.onlyOutUB(e: K) {}
+fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> K : Number> Inv<out K>.onlyOutUB(e: K) {}
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
-fun <@kotlin.internal.OnlyInputTypes K> Inv<in K>.onlyIn(e: K) {}
+fun <<!HIDDEN!>@kotlin.internal.OnlyInputTypes<!> K> Inv<in K>.onlyIn(e: K) {}
 
 fun test(
     invStar: Inv<*>,

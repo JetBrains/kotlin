@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanel
 import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 
-// FIX ME WHEN BUNCH 192 REMOVED
 /** TODO: merge [KotlinNativeABICompatibilityChecker] in the future with [UnsupportedAbiVersionNotificationPanelProvider], KT-34525 */
 class KotlinNativeABICompatibilityChecker : StartupActivity {
     override fun runActivity(project: Project) {

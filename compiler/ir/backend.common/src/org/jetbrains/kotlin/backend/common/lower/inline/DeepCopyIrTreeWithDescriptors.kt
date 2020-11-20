@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.backend.common.lower.inline
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.DescriptorsToIrRemapper
-import org.jetbrains.kotlin.backend.common.WrappedDescriptorPatcher
+import org.jetbrains.kotlin.ir.util.DescriptorsToIrRemapper
+import org.jetbrains.kotlin.ir.util.WrappedDescriptorPatcher
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
+import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
@@ -69,16 +71,31 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
 
         override fun leaveScope() {}
 
-        private fun remapTypeArguments(arguments: List<IrTypeArgument>) =
+        private fun remapTypeArguments(arguments: List<IrTypeArgument>, erase: Boolean) =
             arguments.map { argument ->
-                (argument as? IrTypeProjection)?.let { makeTypeProjection(remapType(it.type), it.variance) }
+                (argument as? IrTypeProjection)?.let { makeTypeProjection(remapTypeAndOptionallyErase(it.type, erase), it.variance) }
                     ?: argument
             }
 
-        override fun remapType(type: IrType): IrType {
+        override fun remapType(type: IrType) = remapTypeAndOptionallyErase(type, erase = false)
+
+        fun remapTypeAndOptionallyErase(type: IrType, erase: Boolean): IrType {
             if (type !is IrSimpleType) return type
 
-            val substitutedType = typeArguments?.get(type.classifier)
+            val classifier = type.classifier
+            val substitutedType = typeArguments?.get(classifier)
+
+            // Erase non-reified type parameter if asked to.
+            if (erase && substitutedType != null && (classifier as? IrTypeParameterSymbol)?.owner?.isReified == false) {
+                // Pick the (necessarily unique) non-interface upper bound if it exists.
+                val superClass = classifier.owner.superTypes.firstOrNull {
+                    it.classOrNull?.owner?.isInterface == false
+                }
+                val erasedUpperBound = superClass
+                    ?: remapTypeAndOptionallyErase(classifier.owner.superTypes.first(), erase = true)
+
+                return if (type.hasQuestionMark) erasedUpperBound.makeNullable() else erasedUpperBound
+            }
 
             if (substitutedType is IrDynamicType) return substitutedType
 
@@ -91,8 +108,8 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
 
             return type.buildSimpleType {
                 kotlinType = null
-                classifier = symbolRemapper.getReferencedClassifier(type.classifier)
-                arguments = remapTypeArguments(type.arguments)
+                this.classifier = symbolRemapper.getReferencedClassifier(classifier)
+                arguments = remapTypeArguments(type.arguments, erase)
                 annotations = type.annotations.map { it.transform(copier, null) as IrConstructorCall }
             }
         }
@@ -117,6 +134,17 @@ internal class DeepCopyIrTreeWithSymbolsForInliner(
     }
 
     private val symbolRemapper = SymbolRemapperImpl(DescriptorsToIrRemapper)
-    private val copier =
-        DeepCopyIrTreeWithSymbols(symbolRemapper, InlinerTypeRemapper(symbolRemapper, typeArguments), InlinerSymbolRenamer())
+    private val typeRemapper = InlinerTypeRemapper(symbolRemapper, typeArguments)
+    private val copier = object : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, InlinerSymbolRenamer()) {
+        private fun IrType.remapTypeAndErase() = typeRemapper.remapTypeAndOptionallyErase(this, erase = true)
+
+        override fun visitTypeOperator(expression: IrTypeOperatorCall) =
+            IrTypeOperatorCallImpl(
+                expression.startOffset, expression.endOffset,
+                expression.type.remapTypeAndErase(),
+                expression.operator,
+                expression.typeOperand.remapTypeAndErase(),
+                expression.argument.transform()
+            ).copyAttributes(expression)
+    }
 }

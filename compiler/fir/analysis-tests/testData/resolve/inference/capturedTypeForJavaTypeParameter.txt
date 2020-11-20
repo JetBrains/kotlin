@@ -4,5 +4,5 @@ FILE: main.kt
     public final fun <D : R|A|> foo(b: R|B<D>|): R|kotlin/Unit| {
     }
     public final fun main(b: R|B<*>|): R|kotlin/Unit| {
-        R|/foo|<R|CapturedType(*)|>(R|<local>/b|)
+        R|/foo|<R|ft<@FlexibleNullability A, A?>!|>(R|<local>/b|)
     }

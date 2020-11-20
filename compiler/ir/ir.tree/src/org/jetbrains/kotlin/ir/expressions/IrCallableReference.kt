@@ -19,12 +19,12 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.name.Name
 
-interface IrCallableReference<S : IrSymbol> : IrMemberAccessExpression<S> {
-    val referencedName: Name
+abstract class IrCallableReference<S : IrSymbol>(typeArgumentsCount: Int) : IrMemberAccessExpression<S>(typeArgumentsCount) {
+    abstract val referencedName: Name
 }
 
-interface IrFunctionReference : IrCallableReference<IrFunctionSymbol> {
-    val reflectionTarget: IrFunctionSymbol?
+abstract class IrFunctionReference(typeArgumentsCount: Int) : IrCallableReference<IrFunctionSymbol>(typeArgumentsCount) {
+    abstract val reflectionTarget: IrFunctionSymbol?
 }
 
 val IrFunctionReference.isWithReflection: Boolean
@@ -33,14 +33,20 @@ val IrFunctionReference.isWithReflection: Boolean
 val IrFunctionReference.isAdapterWithReflection: Boolean
     get() = reflectionTarget != null && reflectionTarget != symbol
 
-interface IrPropertyReference : IrCallableReference<IrPropertySymbol> {
-    val field: IrFieldSymbol?
-    val getter: IrSimpleFunctionSymbol?
-    val setter: IrSimpleFunctionSymbol?
+abstract class IrPropertyReference(typeArgumentsCount: Int) : IrCallableReference<IrPropertySymbol>(typeArgumentsCount) {
+    abstract val field: IrFieldSymbol?
+    abstract val getter: IrSimpleFunctionSymbol?
+    abstract val setter: IrSimpleFunctionSymbol?
+
+    override val valueArgumentsCount: Int
+        get() = 0
 }
 
-interface IrLocalDelegatedPropertyReference : IrCallableReference<IrLocalDelegatedPropertySymbol> {
-    val delegate: IrVariableSymbol
-    val getter: IrSimpleFunctionSymbol
-    val setter: IrSimpleFunctionSymbol?
+abstract class IrLocalDelegatedPropertyReference : IrCallableReference<IrLocalDelegatedPropertySymbol>(0) {
+    abstract val delegate: IrVariableSymbol
+    abstract val getter: IrSimpleFunctionSymbol
+    abstract val setter: IrSimpleFunctionSymbol?
+
+    override val valueArgumentsCount: Int
+        get() = 0
 }

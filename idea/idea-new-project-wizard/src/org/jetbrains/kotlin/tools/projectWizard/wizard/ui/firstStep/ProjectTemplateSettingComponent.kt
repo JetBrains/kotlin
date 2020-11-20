@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.SeparatorWithText
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
@@ -27,7 +28,6 @@ class ProjectTemplateSettingComponent(
     context
 ) {
     override val validationIndicator: ValidationIndicator? get() = null
-    override val forceLabelCenteringOffset: Int? = 4
     private val templateDescriptionComponent = TemplateDescriptionComponent().asSubComponent()
 
     private val templateGroups = setting.type.values
@@ -41,16 +41,24 @@ class ProjectTemplateSettingComponent(
         render = { value ->
             icon = value.icon
             append(value.title)
+            value.projectKind.message?.let { message ->
+                append(" ")
+                append(message, SimpleTextAttributes.GRAYED_ATTRIBUTES)
+            }
         },
         onValueSelected = { value = it }
     )
 
-    private val borderedPanel = list.addBorder(BorderFactory.createLineBorder(JBColor.border()))
+    override val alignment: TitleComponentAlignment
+        get() = TitleComponentAlignment.AlignFormTopWithPadding(4)
+
+    private val scrollPane = ScrollPaneFactory.createScrollPane(list)
 
     override val component: JComponent = borderPanel {
-        addToCenter(borderPanel { addToCenter(list) }.addBorder(JBUI.Borders.empty(0,/*left*/ 3, 0, /*right*/ 3)))
+        addToCenter(borderPanel { addToCenter(scrollPane) }.addBorder(JBUI.Borders.empty(0,/*left*/ 3, 0, /*right*/ 3)))
         addToBottom(templateDescriptionComponent.component.addBorder(JBUI.Borders.empty(/*top*/8,/*left*/ 3, 0, 0)))
     }
+
 
     private fun applySelectedTemplate() = modify {
         value?.let(::applyProjectTemplate)
@@ -72,6 +80,7 @@ class ProjectTemplateSettingComponent(
         if (setting.type.values.isNotEmpty()) {
             list.selectedIndex = 0
             value = setting.type.values.firstOrNull()
+            applySelectedTemplate()
         }
     }
 }
@@ -85,9 +94,12 @@ private val ProjectTemplate.icon: Icon
         FullStackWebApplicationProjectTemplate -> KotlinIcons.Wizard.WEB
         NativeApplicationProjectTemplate -> KotlinIcons.Wizard.NATIVE
         FrontendApplicationProjectTemplate -> KotlinIcons.Wizard.JS
+        ReactApplicationProjectTemplate -> KotlinIcons.Wizard.REACT_JS
         MultiplatformMobileApplicationProjectTemplate -> KotlinIcons.Wizard.MULTIPLATFORM_MOBILE
         MultiplatformMobileLibraryProjectTemplate -> KotlinIcons.Wizard.MULTIPLATFORM_MOBILE_LIBRARY
         NodeJsApplicationProjectTemplate -> KotlinIcons.Wizard.NODE_JS
+        ComposeDesktopApplicationProjectTemplate -> KotlinIcons.Wizard.COMPOSE
+        ComposeMultiplatformApplicationProjectTemplate -> KotlinIcons.Wizard.COMPOSE
     }
 
 class TemplateDescriptionComponent : Component() {

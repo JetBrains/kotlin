@@ -38,11 +38,11 @@ class KotlinLanguageConfiguration : SearchableConfigurable, Configurable.NoScrol
             STABLE(null, KotlinBundle.message("configuration.title.stable")),
             EAP(
                 "https://plugins.jetbrains.com/plugins/eap/${KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString}",
-                KotlinBundle.message("configuration.title.early.access.preview.1.3.x")
+                KotlinBundle.message("configuration.title.early.access.preview.1.4.x")
             ),
             EAP_NEXT(
                 "https://plugins.jetbrains.com/plugins/eap-next/${KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString}",
-                KotlinBundle.message("configuration.title.early.access.preview.1.4.x")
+                KotlinBundle.message("configuration.title.early.access.preview.1.5.x")
             );
 
             fun isInHosts(): Boolean {

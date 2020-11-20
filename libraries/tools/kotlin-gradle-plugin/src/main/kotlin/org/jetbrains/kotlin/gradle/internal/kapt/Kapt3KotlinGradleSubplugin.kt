@@ -10,6 +10,7 @@ import com.android.build.gradle.api.AndroidSourceSet
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.SourceKind
 import com.intellij.openapi.util.SystemInfo
+import com.intellij.util.lang.JavaVersion
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -22,11 +23,12 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.process.CommandLineArgumentProvider
-import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformAction
+import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformLegacyAction
 import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
@@ -34,6 +36,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
@@ -388,6 +391,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         pluginOptions += SubpluginOption("dumpDefaultParameterValues", "${kaptExtension.dumpDefaultParameterValues}")
         pluginOptions += SubpluginOption("mapDiagnosticLocations", "${kaptExtension.mapDiagnosticLocations}")
         pluginOptions += SubpluginOption("strictMode", "${kaptExtension.strictMode}")
+        pluginOptions += SubpluginOption("stripMetadata", "${kaptExtension.stripMetadata}")
         pluginOptions += SubpluginOption("showProcessorTimings", "${kaptExtension.showProcessorTimings}")
         pluginOptions += SubpluginOption("detectMemoryLeaks", kaptExtension.detectMemoryLeaks)
         pluginOptions += SubpluginOption("infoAsWarnings", "${project.isInfoAsWarnings()}")
@@ -446,7 +450,13 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 }
             }
 
-            kaptTask.kaptClasspathConfigurations = kaptClasspathConfigurations
+            val kaptClasspathConfiguration =
+                project.configurations.create("_kaptClasspath_" + kaptTask.name).setExtendsFrom(kaptClasspathConfigurations).also {
+                    it.isVisible = false
+                    it.isCanBeConsumed = false
+                }
+            kaptTask.kaptClasspath.from(kaptClasspathConfiguration)
+            kaptTask.kaptClasspathConfigurationNames.set(kaptClasspathConfigurations.map { it.name })
 
             KaptWithAndroid.androidVariantData(this)?.annotationProcessorOptionProviders?.let {
                 kaptTask.annotationProcessorOptionProviders.add(it)
@@ -474,7 +484,14 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         val dslJavacOptions: Provider<Map<String, String>> = project.provider {
             kaptExtension.getJavacOptions().toMutableMap().also { result ->
                 if (javaCompile != null && "-source" !in result && "--source" !in result && "--release" !in result) {
-                    val sourceOptionKey = if (SystemInfo.isJavaVersionAtLeast(12, 0, 0)) {
+                    val atLeast12Java =
+                        if (isConfigurationCacheAvailable(project.gradle)) {
+                            val currentJavaVersion = JavaVersion.parse(project.providers.systemProperty("java.version").forUseAtConfigurationTime().get())
+                            currentJavaVersion.feature >= 12
+                        } else {
+                            SystemInfo.isJavaVersionAtLeast(12, 0, 0)
+                        }
+                    val sourceOptionKey = if (atLeast12Java) {
                         "--source"
                     } else {
                         "-source"
@@ -507,12 +524,17 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
     private fun maybeRegisterTransform(project: Project) {
         if (!project.extensions.extraProperties.has("KaptStructureTransformAdded")) {
-            project.dependencies.registerTransform(StructureTransformAction::class.java) { transformSpec ->
+            val transformActionClass =
+                if (GradleVersion.current() >= GradleVersion.version("5.4"))
+                    StructureTransformAction::class.java
+                else
+                    StructureTransformLegacyAction::class.java
+            project.dependencies.registerTransform(transformActionClass) { transformSpec ->
                 transformSpec.from.attribute(artifactType, "jar")
                 transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }
 
-            project.dependencies.registerTransform(StructureTransformAction::class.java) { transformSpec ->
+            project.dependencies.registerTransform(transformActionClass) { transformSpec ->
                 transformSpec.from.attribute(artifactType, "directory")
                 transformSpec.to.attribute(artifactType, CLASS_STRUCTURE_ARTIFACT_TYPE)
             }

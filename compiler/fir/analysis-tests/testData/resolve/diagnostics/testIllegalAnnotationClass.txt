@@ -1,0 +1,18 @@
+FILE: KotlinImporterComponent.kt
+    @R|State|(name = String(AutoImportedSourceRoots)) public final class KotlinImporterComponent : R|kotlin/Any| {
+        public constructor(): R|simulation/KotlinImporterComponent| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class State : R|kotlin/Any| {
+            public constructor(directories: R|kotlin/collections/List<kotlin/String>| = R|java/util/ArrayList.ArrayList|<R|ft<kotlin/String, kotlin/String?>!|>()): R|simulation/KotlinImporterComponent.State| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final var directories: R|kotlin/collections/List<kotlin/String>| = R|<local>/directories|
+                public get(): R|kotlin/collections/List<kotlin/String>|
+                public set(value: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
+
+        }
+
+    }

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
+import org.jetbrains.kotlin.resolve.calls.commonSuperType
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceAdaptation
 import org.jetbrains.kotlin.resolve.calls.components.SuspendConversionStrategy
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.shouldBeSubstituted
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class ResolvedAtomCompleter(
@@ -202,6 +204,7 @@ class ResolvedAtomCompleter(
         }
 
     private fun completeLambda(lambda: ResolvedLambdaAtom) {
+        @Suppress("NAME_SHADOWING")
         val lambda = lambda.unwrap()
         val resultArgumentsInfo = lambda.resultArgumentsInfo!!
         val returnType = if (lambda.isCoercedToUnit) {
@@ -210,15 +213,14 @@ class ResolvedAtomCompleter(
             resultSubstitutor.safeSubstitute(lambda.returnType)
         }
 
-        val approximatedValueParameterTypes = lambda.parameters.map {
-            // Do substitution and approximation only for stub types, which can appear from builder inference (as postponed variables)
-            if (it is StubType) {
+        val approximatedValueParameterTypes = lambda.parameters.map { parameterType ->
+            if (parameterType.shouldBeSubstituted()) {
                 typeApproximator.approximateDeclarationType(
-                    resultSubstitutor.safeSubstitute(it),
+                    resultSubstitutor.safeSubstitute(parameterType),
                     local = true,
                     languageVersionSettings = topLevelCallContext.languageVersionSettings
                 )
-            } else it
+            } else parameterType
         }
 
         val approximatedReturnType =
@@ -275,8 +277,7 @@ class ResolvedAtomCompleter(
         functionDescriptor.setReturnType(returnType)
 
         for ((i, valueParameter) in functionDescriptor.valueParameters.withIndex()) {
-            if (valueParameter !is ValueParameterDescriptorImpl || valueParameter.type !is StubType)
-                continue
+            if (valueParameter !is ValueParameterDescriptorImpl || !valueParameter.type.shouldBeSubstituted()) continue
             valueParameter.setOutType(valueParameters[i])
         }
 
@@ -331,7 +332,7 @@ class ResolvedAtomCompleter(
         resolvedAtom: ResolvedCallableReferenceAtom
     ) {
         val callableCandidate = resolvedAtom.candidate
-        if (callableCandidate == null) {
+        if (callableCandidate == null || resolvedAtom.completed) {
             // todo report meanfull diagnostic here
             return
         }
@@ -343,12 +344,11 @@ class ResolvedAtomCompleter(
                 (callableCandidate.candidate.typeParameters.map { it.typeConstructor } zip resultTypeParameters).toMap()
             )
 
-        val firstSubstitution = typeParametersSubstitutor.toOldSubstitution()
-        val secondSubstitution = resultSubstitutor.toOldSubstitution()
-        val resultSubstitutor = TypeSubstitutor.createChainedSubstitutor(
-            firstSubstitution,
-            secondSubstitution
-        )
+        val resultSubstitutor = if (callableCandidate.candidate.isSupportedForCallableReference()) {
+            val firstSubstitution = typeParametersSubstitutor.toOldSubstitution()
+            val secondSubstitution = resultSubstitutor.toOldSubstitution()
+            TypeSubstitutor.createChainedSubstitutor(firstSubstitution, secondSubstitution)
+        } else TypeSubstitutor.EMPTY
 
         val psiCallArgument = resolvedAtom.atom.psiCallArgument as CallableReferenceKotlinCallArgumentImpl
         val callableReferenceExpression = psiCallArgument.ktCallableReferenceExpression
@@ -419,6 +419,7 @@ class ResolvedAtomCompleter(
         )
 
         kotlinToResolvedCallTransformer.runCallCheckers(resolvedCall, topLevelCallCheckerContext)
+        resolvedAtom.completed = true
     }
 
     private fun ReceiverValue.updateReceiverValue(substitutor: TypeSubstitutor): ReceiverValue {

@@ -22,7 +22,8 @@ class AndroidPlugin(context: Context) : Plugin(context) {
     override val path = pluginPath
 
     override val settings: List<PluginSetting<*, *>> = listOf(
-        androidSdkPath
+        androidSdkPath,
+        addAndroidExtensionPlugin,
     )
     override val pipelineTasks: List<PipelineTask> = listOf(
         addAndroidSdkToLocalProperties
@@ -39,6 +40,14 @@ class AndroidPlugin(context: Context) : Plugin(context) {
             isSavable = true
             isAvailable = isAndroidContainingProject
             shouldExists()
+        }
+
+        val addAndroidExtensionPlugin by booleanSetting(
+            "<ADD_ANDROID_EXTENSIONS_PLUGIN>>",
+            neededAtPhase = GenerationPhase.PROJECT_GENERATION,
+        ) {
+            isAvailable = isAndroidContainingProject
+            defaultValue = value(true)
         }
 
         private val isAndroidContainingProject = checker {

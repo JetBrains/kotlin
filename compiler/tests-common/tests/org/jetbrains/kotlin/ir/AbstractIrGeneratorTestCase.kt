@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar
+import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.*
 
@@ -75,7 +76,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
         }
 
         val configuration = createConfiguration(
-            configurationKind, jdkKind,
+            configurationKind, jdkKind, backend,
             listOf<File>(getAnnotationsJar()),
             listOfNotNull(writeJavaFiles(files)),
             files

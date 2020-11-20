@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.tree.generator
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element.Kind.*
 
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 object FirTreeBuilder : AbstractFirTreeBuilder() {
     val annotationContainer = element("AnnotationContainer", Other)
     val typeRef = element("TypeRef", TypeRef, annotationContainer)
@@ -54,7 +55,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val contractDescriptionOwner = element("ContractDescriptionOwner", Declaration)
     val simpleFunction = element("SimpleFunction", Declaration, function, callableMemberDeclaration, contractDescriptionOwner, typeParametersOwner)
-    val propertyAccessor = element("PropertyAccessor", Declaration, function, contractDescriptionOwner, typeParametersOwner)
+    val propertyAccessor = element("PropertyAccessor", Declaration, function, callableMemberDeclaration, contractDescriptionOwner, typeParametersOwner)
     val constructor = element("Constructor", Declaration, function, callableMemberDeclaration, typeParameterRefsOwner)
     val file = element("File", Declaration, annotatedDeclaration)
 
@@ -82,15 +83,14 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val typeProjectionWithVariance = element("TypeProjectionWithVariance", TypeRef, typeProjection)
     val argumentList = element("ArgumentList", Expression)
     val call = element("Call", Expression, statement) // TODO: may smth like `CallWithArguments` or `ElementWithArguments`?
-    val annotationCall = element("AnnotationCall", Expression, expression, call)
+    val annotationCall = element("AnnotationCall", Expression, expression, call, resolvable)
     val comparisonExpression = element("ComparisonExpression", Expression, expression)
     val typeOperatorCall = element("TypeOperatorCall", Expression, expression, call)
     val assignmentOperatorStatement = element("AssignmentOperatorStatement", Expression, statement)
     val equalityOperatorCall = element("EqualityOperatorCall", Expression, expression, call)
     val whenExpression = element("WhenExpression", Expression, expression, resolvable)
     val whenBranch = element("WhenBranch", Expression)
-    val qualifiedAccessWithoutCallee = element("QualifiedAccessWithoutCallee", Expression, statement)
-    val qualifiedAccess = element("QualifiedAccess", Expression, qualifiedAccessWithoutCallee, resolvable)
+    val qualifiedAccess = element("QualifiedAccess", Expression, resolvable, statement)
     val checkNotNullCall = element("CheckNotNullCall", Expression, expression, call, resolvable)
     val elvisExpression = element("ElvisExpression", Expression, expression, resolvable)
 
@@ -102,6 +102,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val errorProperty = element("ErrorProperty", Declaration, variable, diagnosticHolder, typeParametersOwner)
     val qualifiedAccessExpression = element("QualifiedAccessExpression", Expression, expression, qualifiedAccess)
     val functionCall = element("FunctionCall", Expression, qualifiedAccessExpression, call)
+    val implicitInvokeCall = element("ImplicitInvokeCall", Expression, functionCall)
     val delegatedConstructorCall = element("DelegatedConstructorCall", Expression, resolvable, call)
     val componentCall = element("ComponentCall", Expression, functionCall)
     val callableReferenceAccess = element("CallableReferenceAccess", Expression, qualifiedAccessExpression)
@@ -118,6 +119,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val varargArgumentsExpression = element("VarargArgumentsExpression", Expression, expression)
 
     val resolvedQualifier = element("ResolvedQualifier", Expression, expression)
+    val errorResolvedQualifier = element("ErrorResolvedQualifier", Expression, resolvedQualifier, diagnosticHolder)
     val resolvedReifiedParameterReference = element("ResolvedReifiedParameterReference", Expression, expression)
     val returnExpression = element("ReturnExpression", Expression, jump)
     val stringConcatenationCall = element("StringConcatenationCall", Expression, call, expression)
@@ -141,16 +143,16 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val resolvedTypeRef = element("ResolvedTypeRef", TypeRef, typeRef)
     val errorTypeRef = element("ErrorTypeRef", TypeRef, resolvedTypeRef, diagnosticHolder)
-    val delegatedTypeRef = element("DelegatedTypeRef", TypeRef, typeRef)
     val typeRefWithNullability = element("TypeRefWithNullability", TypeRef, typeRef)
     val userTypeRef = element("UserTypeRef", TypeRef, typeRefWithNullability)
     val dynamicTypeRef = element("DynamicTypeRef", TypeRef, typeRefWithNullability)
     val functionTypeRef = element("FunctionTypeRef", TypeRef, typeRefWithNullability)
-    val resolvedFunctionTypeRef = element("ResolvedFunctionTypeRef", TypeRef, resolvedTypeRef, functionTypeRef)
     val implicitTypeRef = element("ImplicitTypeRef", TypeRef, typeRef)
-    val composedSuperTypeRef = element("ComposedSuperTypeRef", TypeRef, typeRef)
+
+    val effectDeclaration = element("EffectDeclaration", Contracts)
 
     val contractDescription = element("ContractDescription", Contracts)
+    val legacyRawContractDescription = element("LegacyRawContractDescription", Contracts, contractDescription)
     val rawContractDescription = element("RawContractDescription", Contracts, contractDescription)
     val resolvedContractDescription = element("ResolvedContractDescription", Contracts, contractDescription)
 }

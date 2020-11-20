@@ -1,0 +1,7 @@
+// "Create enum constant 'RED'" "true"
+enum class SampleEnum { RED }
+
+fun usage(sample: SampleEnum) {
+    if (sample == SampleEnum.RED) {
+    }
+}

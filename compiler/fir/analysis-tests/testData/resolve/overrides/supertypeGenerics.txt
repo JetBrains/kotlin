@@ -19,5 +19,5 @@ FILE: supertypeGenerics.kt
 
     }
     public final fun f(list: R|kotlin/collections/List<kotlin/Int>|, s: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
-        R|/C.C|().R|FakeOverride</C.f: R|kotlin/Unit|>|<R|kotlin/Int|>(R|<local>/list|, R|<local>/s|)
+        R|/C.C|().R|/C.f|<R|kotlin/Int|>(R|<local>/list|, R|<local>/s|)
     }

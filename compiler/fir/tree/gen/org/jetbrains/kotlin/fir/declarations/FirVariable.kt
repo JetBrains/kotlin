@@ -49,6 +49,8 @@ abstract class FirVariable<F : FirVariable<F>> : FirPureAbstractElement(), FirCa
 
     abstract override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?)
 
+    abstract fun replaceInitializer(newInitializer: FirExpression?)
+
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirVariable<F>
 
     abstract override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirVariable<F>

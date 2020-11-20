@@ -286,6 +286,7 @@ internal fun Long.divide(other: Long): Long {
 internal fun Long.modulo(other: Long) = subtract(div(other).multiply(other))
 
 internal fun Long.shiftLeft(numBits: Int): Long {
+    @Suppress("NAME_SHADOWING")
     val numBits = numBits and 63
     if (numBits == 0) {
         return this
@@ -299,6 +300,7 @@ internal fun Long.shiftLeft(numBits: Int): Long {
 }
 
 internal fun Long.shiftRight(numBits: Int): Long {
+    @Suppress("NAME_SHADOWING")
     val numBits = numBits and 63
     if (numBits == 0) {
         return this
@@ -312,6 +314,7 @@ internal fun Long.shiftRight(numBits: Int): Long {
 }
 
 internal fun Long.shiftRightUnsigned(numBits: Int): Long {
+    @Suppress("NAME_SHADOWING")
     val numBits = numBits and 63
     if (numBits == 0) {
         return this

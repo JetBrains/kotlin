@@ -23,13 +23,14 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver;
 import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.model.MutableResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.tower.TowerUtilsKt;
+import org.jetbrains.kotlin.resolve.descriptorUtil.AnnotationsForResolveKt;
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.util.CancellationChecker;
 
 import java.util.*;
@@ -46,10 +47,11 @@ public class ResolutionResultsHandler {
             @NotNull ModuleDescriptor module,
             @NotNull TypeSpecificityComparator specificityComparator,
             @NotNull PlatformOverloadsSpecificityComparator platformOverloadsSpecificityComparator,
-            @NotNull CancellationChecker cancellationChecker
+            @NotNull CancellationChecker cancellationChecker,
+            @NotNull KotlinTypeRefiner kotlinTypeRefiner
     ) {
         overloadingConflictResolver = FlatSignatureForResolvedCallKt.createOverloadingConflictResolver(
-                builtIns, module, specificityComparator, platformOverloadsSpecificityComparator, cancellationChecker
+                builtIns, module, specificityComparator, platformOverloadsSpecificityComparator, cancellationChecker, kotlinTypeRefiner
         );
     }
 
@@ -227,7 +229,7 @@ public class ResolutionResultsHandler {
             specificCalls = specificCalls.stream()
                     .filter((call) ->
                                     !call.getCandidateDescriptor().getAnnotations().hasAnnotation(
-                                            KotlinCallResolver.Companion.getOVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION())
+                                            AnnotationsForResolveKt.getOVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME())
                     ).collect(Collectors.toSet());
         }
 

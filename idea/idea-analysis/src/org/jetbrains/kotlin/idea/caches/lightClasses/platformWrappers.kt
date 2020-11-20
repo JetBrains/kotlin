@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.UserDataProperty
@@ -51,7 +51,7 @@ private val mutableQualifiedNamesToJavaClass = JavaToKotlinClassMap.mutabilityMa
 }
 
 private val membersWithSpecializedSignature: Set<String> =
-    BuiltinMethodsWithSpecialGenericSignature.ERASED_VALUE_PARAMETERS_SIGNATURES.mapTo(LinkedHashSet()) {
+    SpecialGenericSignatures.ERASED_VALUE_PARAMETERS_SIGNATURES.mapTo(LinkedHashSet()) {
         val fqNameString = it.substringBefore('(').replace('/', '.')
         FqName(fqNameString).shortName().asString()
     }
@@ -124,7 +124,7 @@ class KtLightMutabilityPlatformWrapper(
             return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
         }
 
-        if (methodName in BuiltinMethodsWithSpecialGenericSignature.ERASED_COLLECTION_PARAMETER_NAMES) {
+        if (methodName in SpecialGenericSignatures.ERASED_COLLECTION_PARAMETER_NAMES) {
             return emptyList()
         }
 

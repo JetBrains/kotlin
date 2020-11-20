@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -39,7 +39,7 @@ class PatchDeclarationParentsVisitor() : IrElementVisitorVoid {
         declarationParentsStack.pop()
     }
 
-    override fun visitDeclaration(declaration: IrDeclaration) {
+    override fun visitDeclaration(declaration: IrDeclarationBase) {
         patchParent(declaration)
 
         if (declaration is IrDeclarationParent) {

@@ -30,4 +30,8 @@ declare namespace JS_TESTS {
         static delegateToPrimary(y: string): DerivedClassWithSecondaryCtor;
         static delegateToCreateFromInts(y: number, z: number): DerivedClassWithSecondaryCtor;
     }
+    class KotlinGreeter {
+        constructor(greeting: string);
+        readonly greeting: string;
+    }
 }

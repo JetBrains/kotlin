@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.decompiler.stubBuilder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.flags.FlagsToModifiers
 import org.jetbrains.kotlin.idea.stubindex.KotlinFileStubForIde
@@ -50,7 +50,7 @@ fun createPackageFacadeStub(
 ): KotlinFileStubImpl {
     val fileStub = KotlinFileStubForIde.forFile(packageFqName, isScript = false)
     setupFileStub(fileStub, packageFqName)
-    createDeclarationsStubs(
+    createPackageDeclarationsStubs(
         fileStub, c, ProtoContainer.Package(packageFqName, c.nameResolver, c.typeTable, source = null), packageProto
     )
     return fileStub
@@ -68,7 +68,7 @@ fun createFileFacadeStub(
         packageFqName, c.nameResolver, c.typeTable,
         JvmPackagePartSource(JvmClassName.byClassId(ClassId.topLevel(facadeFqName)), null, packageProto, c.nameResolver)
     )
-    createDeclarationsStubs(fileStub, c, container, packageProto)
+    createPackageDeclarationsStubs(fileStub, c, container, packageProto)
     return fileStub
 }
 
@@ -78,7 +78,7 @@ fun createMultifileClassStub(
     facadeFqName: FqName,
     components: ClsStubBuilderComponents
 ): KotlinFileStubImpl {
-    val packageFqName = facadeFqName.parent()
+    val packageFqName = header.packageName?.let { FqName(it) } ?: facadeFqName.parent()
     val partNames = header.data?.asList()?.map { it.substringAfterLast('/') }
     val fileStub = KotlinFileStubForIde.forMultifileClassStub(facadeFqName, partNames)
     setupFileStub(fileStub, packageFqName)
@@ -90,7 +90,7 @@ fun createMultifileClassStub(
             packageFqName, partContext.nameResolver, partContext.typeTable,
             JvmPackagePartSource(partFile, packageProto, nameResolver)
         )
-        createDeclarationsStubs(fileStub, partContext, container, packageProto)
+        createPackageDeclarationsStubs(fileStub, partContext, container, packageProto)
     }
     return fileStub
 }
@@ -139,7 +139,7 @@ fun createStubForTypeName(
 ): KotlinUserTypeStub {
     val substituteWithAny = typeClassId.isLocal
 
-    val fqName = if (substituteWithAny) KotlinBuiltIns.FQ_NAMES.any
+    val fqName = if (substituteWithAny) StandardNames.FqNames.any
     else typeClassId.asSingleFqName().toUnsafe()
 
     val segments = fqName.pathSegments().asReversed()

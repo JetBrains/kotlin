@@ -1,0 +1,19 @@
+FILE: plusAssignNullable.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract val list: R|kotlin/collections/List<kotlin/String>|
+            public get(): R|kotlin/collections/List<kotlin/String>|
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public abstract val list: R|kotlin/collections/MutableList<kotlin/String>|
+            public get(): R|kotlin/collections/MutableList<kotlin/String>|
+
+    }
+    public final fun R|B|.foo(a: R|A?|): R|kotlin/Unit| {
+        this@R|/foo|.R|/B.list|.R|kotlin/collections/plusAssign|<R|kotlin/String|>(R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String())))
+        R|kotlin/with|<R|A?|, R|kotlin/Unit|>(R|<local>/a|, <L> = with@fun R|A?|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
+            this@R|/foo|.R|/B.list|.R|kotlin/collections/plusAssign|<R|kotlin/String|>(R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String())))
+            this@R|/foo|.R|/B.list|.R|kotlin/collections/plusAssign|<R|kotlin/String|>(R|kotlin/collections/mutableListOf|<R|kotlin/String|>(vararg(String())))
+        }
+        )
+    }

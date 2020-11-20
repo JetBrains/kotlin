@@ -84,7 +84,8 @@ class KotlinJavascriptSerializerTest : TestCaseWithTmpdir() {
             )
             val serializedMetadata = KotlinJavascriptSerializationUtil.serializeMetadata(
                     analysisResult.bindingContext, description, configuration.languageVersionSettings,
-                    configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? JsMetadataVersion ?: JsMetadataVersion.INSTANCE
+                    configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? JsMetadataVersion ?: JsMetadataVersion.INSTANCE,
+                    config.project
             )
             FileUtil.writeToFile(metaFile, serializedMetadata.asString())
         }

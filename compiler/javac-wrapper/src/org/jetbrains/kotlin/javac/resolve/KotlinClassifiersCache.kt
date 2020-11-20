@@ -22,17 +22,18 @@ import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.visibilityModifierType
 
 class KotlinClassifiersCache(sourceFiles: Collection<KtFile>,
@@ -100,13 +101,13 @@ class MockKotlinClassifier(override val classId: ClassId,
 
     override val visibility: Visibility
         get() = if (classOrObject == null) {
-            Visibilities.PUBLIC
+            Visibilities.Public
         }
         else when (classOrObject.visibilityModifierType()) {
-            null, KtTokens.PUBLIC_KEYWORD -> Visibilities.PUBLIC
-            KtTokens.PRIVATE_KEYWORD -> Visibilities.PRIVATE
-            KtTokens.PROTECTED_KEYWORD -> Visibilities.PROTECTED
-            else -> JavaVisibilities.PACKAGE_VISIBILITY
+            null, KtTokens.PUBLIC_KEYWORD -> Visibilities.Public
+            KtTokens.PRIVATE_KEYWORD -> Visibilities.Private
+            KtTokens.PROTECTED_KEYWORD -> Visibilities.Protected
+            else -> JavaVisibilities.PackageVisibility
         }
 
     override val supertypes: Collection<JavaClassifierType>
@@ -186,7 +187,7 @@ class MockKotlinField(private val psiField: PsiField) : JavaField {
     override val isAbstract get() = shouldNotBeCalled()
     override val isStatic get() = shouldNotBeCalled()
     override val isFinal get() = shouldNotBeCalled()
-    override val visibility get() = shouldNotBeCalled()
+    override val visibility: Visibility get() = shouldNotBeCalled()
     override val containingClass get() = shouldNotBeCalled()
     override val isEnumEntry get() = shouldNotBeCalled()
     override val type get() = shouldNotBeCalled()

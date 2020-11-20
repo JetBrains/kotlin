@@ -34,8 +34,9 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
   FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      TYPE_OP type=<root>.J<kotlin.String> origin=CAST typeOperand=<root>.J<kotlin.String>
-        GET_VAR 'a: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=<root>.J<kotlin.String> origin=CAST typeOperand=<root>.J<kotlin.String>
+          GET_VAR 'a: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
       CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: kotlin.String?
         j: TYPE_OP type=<root>.J<kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.J<kotlin.String>
@@ -43,8 +44,9 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.String> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.String>
-        GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.String> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.String>
+          GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
       CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: kotlin.String?
         j: TYPE_OP type=<root>.J<X of <root>.H.bar?>? origin=SAM_CONVERSION typeOperand=<root>.J<X of <root>.H.bar?>?
@@ -62,26 +64,27 @@ FILE fqName:<root> fileName:/samConversionToGeneric.kt
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      TYPE_OP type=kotlin.Function1<T of <root>.test7, T of <root>.test7> origin=CAST typeOperand=kotlin.Function1<T of <root>.test7, T of <root>.test7>
-        GET_VAR 'a: kotlin.Any declared in <root>.test7' type=kotlin.Any origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=kotlin.Function1<T of <root>.test7, T of <root>.test7> origin=CAST typeOperand=kotlin.Function1<T of <root>.test7, T of <root>.test7>
+          GET_VAR 'a: kotlin.Any declared in <root>.test7' type=kotlin.Any origin=null
       CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: T of <root>.test7?
         j: TYPE_OP type=<root>.J<X of <root>.H.bar?>? origin=SAM_CONVERSION typeOperand=<root>.J<X of <root>.H.bar?>?
           TYPE_OP type=kotlin.Function1<T of <root>.test7, T of <root>.test7> origin=IMPLICIT_CAST typeOperand=kotlin.Function1<T of <root>.test7, T of <root>.test7>
             GET_VAR 'a: kotlin.Any declared in <root>.test7' type=kotlin.Any origin=null
-  FUN name:test8 visibility:public modality:FINAL <> (efn:kotlin.Function1<kotlin.String, kotlin.String>) returnType:<root>.J<kotlin.String?>
-    VALUE_PARAMETER name:efn index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
+  FUN name:test8 visibility:public modality:FINAL <> (efn:@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String>) returnType:<root>.J<kotlin.String?>
+    VALUE_PARAMETER name:efn index:0 type:@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test8 (efn: kotlin.Function1<kotlin.String, kotlin.String>): <root>.J<kotlin.String?> declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun test8 (efn: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String>): <root>.J<kotlin.String?> declared in <root>'
         TYPE_OP type=<root>.J<kotlin.String?> origin=SAM_CONVERSION typeOperand=<root>.J<kotlin.String?>
-          GET_VAR 'efn: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test8' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
-  FUN name:test9 visibility:public modality:FINAL <> (efn:kotlin.Function1<kotlin.String, kotlin.String>) returnType:kotlin.Unit
-    VALUE_PARAMETER name:efn index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
+          GET_VAR 'efn: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test8' type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String> origin=null
+  FUN name:test9 visibility:public modality:FINAL <> (efn:@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:efn index:0 type:@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String>
     BLOCK_BODY
       CALL 'public open fun bar <X> (j: <root>.J<X of <root>.H.bar?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
         <X>: kotlin.String?
         j: TYPE_OP type=<root>.J<X of <root>.H.bar?>? origin=SAM_CONVERSION typeOperand=<root>.J<X of <root>.H.bar?>?
-          GET_VAR 'efn: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test9' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
+          GET_VAR 'efn: @[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test9' type=@[ExtensionFunctionType] @[ExtensionFunctionType] kotlin.Function1<kotlin.String, kotlin.String> origin=null
   FUN name:test10 visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.String>
     BLOCK_BODY

@@ -10,3 +10,5 @@ fun test() {
     a.<caret>component1()
     val (x, y, z) = a
 }
+
+// FIR_IGNORE

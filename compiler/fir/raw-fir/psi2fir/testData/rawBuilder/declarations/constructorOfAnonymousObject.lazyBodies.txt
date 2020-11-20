@@ -1,0 +1,2 @@
+FILE: constructorOfAnonymousObject.kt
+    private final? fun resolveAccessorCall(suspendPropertyDescriptor: PropertyDescriptor, context: TranslationContext): ResolvedCall<PropertyDescriptor> { LAZY_BLOCK }

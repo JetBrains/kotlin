@@ -24,11 +24,21 @@ internal fun PropertyDescriptor.propertyKind(usageModule: ModuleDescriptor?): Da
     if (!hasDefaultGetter()) return DataFlowValue.Kind.PROPERTY_WITH_GETTER
     if (!isInvisibleFromOtherModules()) {
         val declarationModule = DescriptorUtils.getContainingModule(this)
-        if (usageModule == null || usageModule != declarationModule) {
+        if (!areCompiledTogether(usageModule, declarationModule)) {
             return DataFlowValue.Kind.ALIEN_PUBLIC_PROPERTY
         }
     }
     return DataFlowValue.Kind.STABLE_VALUE
+}
+
+internal fun areCompiledTogether(
+    usageModule: ModuleDescriptor?,
+    declarationModule: ModuleDescriptor,
+): Boolean {
+    if (usageModule == null) return false
+    if (usageModule == declarationModule) return true
+
+    return declarationModule in usageModule.allExpectedByModules
 }
 
 internal fun VariableDescriptor.variableKind(
@@ -130,7 +140,7 @@ private fun isAccessedBeforeAllClosureWriters(
 
 
 private fun DeclarationDescriptorWithVisibility.isInvisibleFromOtherModules(): Boolean {
-    if (Visibilities.INVISIBLE_FROM_OTHER_MODULES.contains(visibility)) return true
+    if (DescriptorVisibilities.INVISIBLE_FROM_OTHER_MODULES.contains(visibility)) return true
 
     val containingDeclaration = containingDeclaration
     return containingDeclaration is DeclarationDescriptorWithVisibility && containingDeclaration.isInvisibleFromOtherModules()

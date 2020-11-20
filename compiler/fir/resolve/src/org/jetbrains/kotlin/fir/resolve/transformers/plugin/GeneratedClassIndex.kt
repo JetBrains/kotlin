@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 import com.google.common.collect.ArrayListMultimap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirPluginKey
@@ -28,6 +29,7 @@ abstract class GeneratedClassIndex : FirSessionComponent {
 
 val FirSession.generatedClassIndex: GeneratedClassIndex by FirSession.sessionComponentAccessor()
 
+@ThreadSafeMutableState
 private class GeneratedClassIndexImpl : GeneratedClassIndex() {
     private val index: ArrayListMultimap<FirPluginKey, GeneratedClass> = ArrayListMultimap.create()
 

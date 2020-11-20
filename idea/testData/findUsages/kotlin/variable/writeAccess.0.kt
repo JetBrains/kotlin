@@ -1,6 +1,8 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtProperty
 // OPTIONS: usages
 // OPTIONS: skipRead
+// FIR_COMPARISON
+
 fun foo() {
     var <caret>v = 1
     (@X v) = 2
@@ -11,3 +13,5 @@ fun foo() {
     v += 1
     (v) -= 1
 }
+// ERROR: This annotation is not applicable to target 'expression'
+// ERROR: Unresolved reference: X

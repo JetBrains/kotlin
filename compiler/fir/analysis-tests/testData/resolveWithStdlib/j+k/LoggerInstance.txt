@@ -1,6 +1,6 @@
 FILE: test.kt
     public final fun test(): R|kotlin/Unit| {
-        lval logger: R|ft<Logger, Logger?>!| = Q|Logger|.R|/Logger.getInstance|(String(test))
+        lval logger: R|ft<@FlexibleNullability Logger, Logger?>!| = Q|Logger|.R|/Logger.getInstance|(String(test))
     }
     public final class MyTest : R|kotlin/Any| {
         public constructor(): R|MyTest| {
@@ -10,7 +10,7 @@ FILE: test.kt
         private final val klass: R|java/lang/Class<MyTest>| = <getClass>(this@R|/MyTest|).R|kotlin/jvm/java|<R|MyTest|>
             private get(): R|java/lang/Class<MyTest>|
 
-        private final val logger: R|ft<Logger, Logger?>!| = Q|Logger|.R|/Logger.getInstance|(this@R|/MyTest|.R|/MyTest.klass|)
-            private get(): R|ft<Logger, Logger?>!|
+        private final val logger: R|ft<@FlexibleNullability Logger, Logger?>!| = Q|Logger|.R|/Logger.getInstance|(this@R|/MyTest|.R|/MyTest.klass|)
+            private get(): R|ft<@FlexibleNullability Logger, Logger?>!|
 
     }

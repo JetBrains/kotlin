@@ -86,4 +86,7 @@ inline fun foo(f: () -> Int): Int {
 
 fun test(i: Int) = i
 
-// STEP_OVER: 32
+// STEP_OVER: 36
+
+// JVM_IR and JVM backends have different heuristics for when to use a table switch.
+// This results is minor differences in step over behavior.

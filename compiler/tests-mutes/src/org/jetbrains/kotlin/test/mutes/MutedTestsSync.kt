@@ -24,8 +24,10 @@ fun syncMutedTestsOnTeamCityWithDatabase() {
     syncMutedTests(remotelyMutedTests.projectTests, locallyMutedTests.projectTests)
 
     for ((originalBunchId, foundBunchId) in bunches) {
-        getBuildTypeId(originalBunchId)?.let { buildTypeId ->
-            syncMutedTests(remotelyMutedTests.getTestsJson(buildTypeId), locallyMutedTests.getTestsJson(foundBunchId, buildTypeId))
+        getBuildTypeIds(originalBunchId)?.let { buildTypeIds ->
+            for (buildTypeId in buildTypeIds.split(",")) {
+                syncMutedTests(remotelyMutedTests.getTestsJson(buildTypeId), locallyMutedTests.getTestsJson(foundBunchId, buildTypeId))
+            }
         }
     }
 }
@@ -70,7 +72,7 @@ object Bunches {
 
 private const val mutesPackageName = "org.jetbrains.kotlin.test.mutes"
 internal val projectId = getMandatoryProperty("$mutesPackageName.tests.project.id")
-internal fun getBuildTypeId(bunchId: String) = System.getProperty("$mutesPackageName.$bunchId")
+internal fun getBuildTypeIds(bunchId: String) = System.getProperty("$mutesPackageName.$bunchId")
 
 class RemotelyMutedTests {
     val tests = getMutedTestsOnTeamcityForRootProject(projectId)

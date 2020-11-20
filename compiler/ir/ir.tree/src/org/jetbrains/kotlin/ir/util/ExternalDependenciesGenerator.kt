@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -32,11 +31,6 @@ class ExternalDependenciesGenerator(
     private val languageVersionSettings: LanguageVersionSettings
 ) {
     fun generateUnboundSymbolsAsDependencies() {
-        if (languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) {
-            require(symbolTable.unboundTypeParameters.isEmpty()) {
-                "Unbound type parameters are forbidden: ${symbolTable.unboundTypeParameters}"
-            }
-        }
         // There should be at most one DeclarationStubGenerator (none in closed world?)
         irProviders.singleOrNull { it is DeclarationStubGenerator }?.let {
             (it as DeclarationStubGenerator).unboundSymbolGeneration = true
@@ -77,7 +71,5 @@ fun generateTypicalIrProviderList(
     val stubGenerator = DeclarationStubGenerator(
         moduleDescriptor, symbolTable, irBuiltins.languageVersionSettings, extensions
     )
-    return listOfNotNull(deserializer, stubGenerator).also {
-        stubGenerator.setIrProviders(it)
-    }
+    return listOfNotNull(deserializer, stubGenerator)
 }

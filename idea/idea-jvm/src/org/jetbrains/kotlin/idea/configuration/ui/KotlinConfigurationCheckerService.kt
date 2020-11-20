@@ -18,23 +18,23 @@ package org.jetbrains.kotlin.idea.configuration.ui
 
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationsConfiguration
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.ModalityState
-import com.intellij.openapi.application.ReadAction.nonBlocking
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
-import com.intellij.openapi.module.Module
+import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.openapi.progress.Task
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
-import com.intellij.util.concurrency.AppExecutorUtil
-import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
+import com.intellij.psi.search.FileTypeIndex
+import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.KotlinJvmBundle
 import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyleUpdateIfNeeded
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.util.application.getServiceSafe
-import org.jetbrains.kotlin.idea.util.application.isUnitTestMode
-import java.util.concurrent.Callable
+import org.jetbrains.kotlin.idea.util.projectStructure.allModules
+import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinConfigurationCheckerStartupActivity : StartupActivity {
@@ -60,33 +60,37 @@ class KotlinConfigurationCheckerService(val project: Project) {
     private val syncDepth = AtomicInteger()
 
     fun performProjectPostOpenActions() {
-        val callable = Callable {
-            return@Callable getModulesWithKotlinFiles(project)
-        }
+        val task = object : Task.Backgroundable(project, KotlinJvmBundle.message("configure.kotlin.language.settings"), true) {
+            override fun run(indicator: ProgressIndicator) {
+                val anyKotlinFileInProject = project.runReadActionInSmartMode {
+                    !project.isDisposed &&
+                            FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, GlobalSearchScope.projectScope(project))
+                }
+                if (!anyKotlinFileInProject) return
 
-        fun continuation(modulesWithKotlinFiles: Collection<Module>) {
-            for (module in modulesWithKotlinFiles) {
-                ProgressManager.checkCanceled()
-                runReadAction {
-                    module.getAndCacheLanguageLevelByDependencies()
+                val modules = runReadAction {
+                    project.allModules()
+                }
+
+                val totalModules = modules.size
+
+                for ((index, module) in modules.withIndex()) {
+                    indicator.fraction = index * 1.0 / totalModules
+
+                    val anyKotlinFileInModule = project.runReadActionInSmartMode {
+                        !project.isDisposed && !module.isDisposed
+                                && FileTypeIndex.containsFileOfType(KotlinFileType.INSTANCE, module.getModuleScope(true))
+                    }
+                    if (anyKotlinFileInModule) {
+                        indicator.text2 = KotlinJvmBundle.message("configure.kotlin.language.settings.0.module", module.name)
+                        runReadAction {
+                            module.getAndCacheLanguageLevelByDependencies()
+                        }
+                    }
                 }
             }
         }
-
-        if (!isUnitTestMode()) {
-            nonBlocking(callable)
-                .inSmartMode(project)
-                .expireWith(project)
-                .coalesceBy(this)
-                .finishOnUiThread(ModalityState.any()) { modulesWithKotlinFiles ->
-                    ApplicationManager.getApplication().executeOnPooledThread {
-                        continuation(modulesWithKotlinFiles)
-                    }
-                }
-                .submit(AppExecutorUtil.getAppExecutorService())
-        } else {
-            continuation(callable.call())
-        }
+        ProgressManager.getInstance().run(task)
     }
 
     val isSyncing: Boolean get() = syncDepth.get() > 0

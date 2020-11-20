@@ -4,5 +4,5 @@ fun bar() {
 
 // See exception in KT-13421
 fun foo() {
-    42 and false
+    42 <!INAPPLICABLE_CANDIDATE!>and<!> false
 }

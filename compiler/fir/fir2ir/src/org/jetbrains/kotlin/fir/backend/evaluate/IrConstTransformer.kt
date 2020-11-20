@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.fir.backend.evaluate
 
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrField
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.interpreter.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.IrCompileTimeChecker
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
-import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
@@ -51,19 +54,23 @@ class IrConstTransformer(irBuiltIns: IrBuiltIns) : IrElementTransformerVoid() {
         return declaration
     }
 
-    override fun visitDeclaration(declaration: IrDeclaration): IrStatement {
+    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
         transformAnnotations(declaration)
         return super.visitDeclaration(declaration)
     }
 
     private fun transformAnnotations(annotationContainer: IrAnnotationContainer) {
         annotationContainer.annotations.forEach { annotation ->
-            for (i in 0 until annotation.valueArgumentsCount) {
-                val arg = annotation.getValueArgument(i) ?: continue
-                when (arg) {
-                    is IrVararg -> annotation.putValueArgument(i, arg.transformVarArg())
-                    else -> annotation.putValueArgument(i, arg.transformSingleArg(annotation.symbol.owner.valueParameters[i].type))
-                }
+            transformAnnotation(annotation)
+        }
+    }
+
+    private fun transformAnnotation(annotation: IrConstructorCall) {
+        for (i in 0 until annotation.valueArgumentsCount) {
+            val arg = annotation.getValueArgument(i) ?: continue
+            when (arg) {
+                is IrVararg -> annotation.putValueArgument(i, arg.transformVarArg())
+                else -> annotation.putValueArgument(i, arg.transformSingleArg(annotation.symbol.owner.valueParameters[i].type))
             }
         }
     }
@@ -89,6 +96,8 @@ class IrConstTransformer(irBuiltIns: IrBuiltIns) : IrElementTransformerVoid() {
         if (this.accept(IrCompileTimeChecker(mode = EvaluationMode.ONLY_BUILTINS), null)) {
             val const = interpreter.interpret(this).replaceIfError(this)
             return const.convertToConstIfPossible(expectedType)
+        } else if (this is IrConstructorCall) {
+            transformAnnotation(this)
         }
         return this
     }

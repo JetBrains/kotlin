@@ -31,7 +31,7 @@ internal class FictitiousArrayConstructor(arrayClass: ClassDescriptor) : SimpleF
             return FictitiousArrayConstructor(arrayClass).apply {
                 this.initialize(
                     null, null, arrayConstructor.typeParameters, arrayConstructor.valueParameters, arrayClass.defaultType,
-                    Modality.FINAL, Visibilities.PUBLIC
+                    Modality.FINAL, DescriptorVisibilities.PUBLIC
                 )
                 this.isInline = true
             }

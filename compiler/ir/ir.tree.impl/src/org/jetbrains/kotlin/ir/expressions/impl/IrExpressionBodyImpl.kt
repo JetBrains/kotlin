@@ -16,17 +16,16 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
 class IrExpressionBodyImpl(
-    startOffset: Int,
-    endOffset: Int,
+    override val startOffset: Int,
+    override val endOffset: Int,
     initializer: (IrExpressionBody.() -> Unit)? = null
-) : IrElementBase(startOffset, endOffset), IrExpressionBody {
+) : IrExpressionBody() {
     init {
         initializer?.invoke(this)
     }

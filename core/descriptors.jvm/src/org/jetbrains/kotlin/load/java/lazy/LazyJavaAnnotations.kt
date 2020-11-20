@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.load.java.components.JavaAnnotationMapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
@@ -38,7 +38,7 @@ class LazyJavaAnnotations(
     override fun iterator() =
         (annotationOwner.annotations.asSequence().map(annotationDescriptors) +
                 JavaAnnotationMapper.findMappedJavaAnnotation(
-                    KotlinBuiltIns.FQ_NAMES.deprecated,
+                    StandardNames.FqNames.deprecated,
                     annotationOwner,
                     c
                 )).filterNotNull().iterator()

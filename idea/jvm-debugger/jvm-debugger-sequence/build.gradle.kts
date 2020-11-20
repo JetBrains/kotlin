@@ -9,9 +9,7 @@ dependencies {
 
     compileOnly(toolsJarApi())
     compileOnly(intellijDep())
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-    }
+    compileOnly(intellijPluginDep("java"))
 
     compileOnly(intellijPluginDep("stream-debugger"))
 

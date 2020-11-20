@@ -7,21 +7,21 @@ package org.jetbrains.kotlin.asJava.classes
 
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 interface KtUltraLightSupport {
     val moduleName: String
-    fun findAnnotation(owner: KtAnnotated, fqName: FqName): Pair<KtAnnotationEntry, AnnotationDescriptor>?
     val deprecationResolver: DeprecationResolver
     val typeMapper: KotlinTypeMapper
     val moduleDescriptor: ModuleDescriptor
     val isReleasedCoroutine: Boolean
+    val languageVersionSettings: LanguageVersionSettings
+
+    fun possiblyHasAlias(file: KtFile, shortName: Name): Boolean
 
     companion object {
         // This property may be removed once IntelliJ versions earlier than 2018.3 become unsupported

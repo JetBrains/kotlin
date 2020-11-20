@@ -9,54 +9,41 @@ interface PerformanceMeasurement {
     fun render(): String
 }
 
-
 class JitCompilationMeasurement(private val milliseconds: Long) : PerformanceMeasurement {
     override fun render(): String = "JIT time is $milliseconds ms"
 }
-
 
 class CompilerInitializationMeasurement(private val milliseconds: Long) : PerformanceMeasurement {
     override fun render(): String = "INIT: Compiler initialized in $milliseconds ms"
 }
 
-
-class CodeAnalysisMeasurement(val files: Int, val lines: Int, val milliseconds: Long, private val description: String?) :
-    PerformanceMeasurement {
-
-    val lps: Double = lines.toDouble() * 1000 / milliseconds
-
-    override fun render(): String =
-        "ANALYZE: $files files ($lines lines) ${description ?: ""}in $milliseconds ms - ${"%.3f".format(lps)} loc/s"
+class CodeAnalysisMeasurement(private val lines: Int?, val milliseconds: Long) : PerformanceMeasurement {
+    override fun render(): String = formatMeasurement("ANALYZE", milliseconds, lines)
 }
 
-
-class CodeGenerationMeasurement(private val files: Int, val lines: Int, private val milliseconds: Long, private val description: String?) :
-    PerformanceMeasurement {
-
-    private val speed: Double = lines.toDouble() * 1000 / milliseconds
-
-    override fun render(): String =
-        "GENERATE: $files files ($lines lines) ${description}in $milliseconds ms - ${"%.3f".format(speed)} loc/s"
+class CodeGenerationMeasurement(private val lines: Int?, private val milliseconds: Long) : PerformanceMeasurement {
+    override fun render(): String = formatMeasurement("GENERATE", milliseconds, lines)
 }
-
 
 class GarbageCollectionMeasurement(val garbageCollectionKind: String, val milliseconds: Long, val count: Long) : PerformanceMeasurement {
     override fun render(): String = "GC time for $garbageCollectionKind is $milliseconds ms, $count collections"
 }
 
-
 class PerformanceCounterMeasurement(private val counterReport: String) : PerformanceMeasurement {
     override fun render(): String = counterReport
 }
 
-class IRMeasurement(val files: Int, val lines: Int, val milliseconds: Long, private val description: String?, val kind: Kind) :
-    PerformanceMeasurement {
-
-    val lps: Double = lines.toDouble() * 1000 / milliseconds
-    override fun render(): String =
-        "IR: $kind $files files ($lines lines) ${description ?: ""}in $milliseconds ms - ${"%.3f".format(lps)} loc/s"
+class IRMeasurement(val lines: Int?, val milliseconds: Long, val kind: Kind) : PerformanceMeasurement {
+    override fun render(): String = formatMeasurement("IR $kind", milliseconds, lines)
 
     enum class Kind {
-        Generation, Translation
+        TRANSLATION, GENERATION
     }
 }
+
+private fun formatMeasurement(name: String, time: Long, lines: Int?): String =
+    "%15s%8s ms".format(name, time) +
+            (lines?.let {
+                val lps = it.toDouble() * 1000 / time
+                "%12.3f loc/s".format(lps)
+            } ?: "")

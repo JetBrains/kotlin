@@ -1,1 +1,4 @@
+public final var R|kotlin/Int|.ggg: R|kotlin/Int|
+    public get(): R|kotlin/Int|
+    public set(p: R|kotlin/Int|): R|kotlin/Unit|
 

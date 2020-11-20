@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 
 class LocalFileKotlinClass private constructor(
-        private val file: File,
-        private val fileContents: ByteArray,
-        className: ClassId,
-        classVersion: Int,
-        classHeader: KotlinClassHeader,
-        innerClasses: InnerClassesInfo
+    private val file: File,
+    private val fileContents: ByteArray,
+    className: ClassId,
+    classVersion: Int,
+    classHeader: KotlinClassHeader,
+    innerClasses: InnerClassesInfo
 ) : FileBasedKotlinClass(className, classVersion, classHeader, innerClasses) {
 
     companion object {

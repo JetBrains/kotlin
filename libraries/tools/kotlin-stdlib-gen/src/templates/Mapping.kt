@@ -141,6 +141,13 @@ object Mapping : TemplateGroupBase() {
             to each ${f.element} in the original ${f.collection}.
             """
         }
+
+        fun sampleClass(f: Family): String = when (f) {
+            Maps -> "samples.collections.Maps.Transformations"
+            else -> "samples.collections.Collections.Transformations"
+        }
+        sample("${sampleClass(f)}.mapNotNull")
+
         body {
             "return mapNotNullTo(ArrayList<R>(), transform)"
         }

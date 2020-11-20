@@ -39,7 +39,7 @@ public interface PropertyAccessorDescriptor extends VariableAccessorDescriptor {
     PropertyAccessorDescriptor copy(
             DeclarationDescriptor newOwner,
             Modality modality,
-            Visibility visibility,
+            DescriptorVisibility visibility,
             Kind kind,
             boolean copyOverrides
     );

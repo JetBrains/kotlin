@@ -3,6 +3,8 @@
 
 package aaa
 
+import checkSubtype
+
 infix fun <T> T.foo(t: T) = t
 
 fun <T> id(t: T) = t

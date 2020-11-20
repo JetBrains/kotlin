@@ -15,7 +15,6 @@ public final class Test$Creator : java/lang/Object, android/os/Parcelable$Creato
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
           IFNE (L2)
           ACONST_NULL
-          CHECKCAST
           GOTO (L3)
         LABEL (L2)
           ALOAD (1)
@@ -119,7 +118,6 @@ public final class TestF$Creator : java/lang/Object, android/os/Parcelable$Creat
           INVOKEVIRTUAL (android/os/Parcel, readInt, ()I)
           IFNE (L2)
           ACONST_NULL
-          CHECKCAST
           GOTO (L3)
         LABEL (L2)
           ALOAD (1)

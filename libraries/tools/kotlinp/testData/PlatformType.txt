@@ -3,7 +3,7 @@
 public final class PlatformType : kotlin/Any {
 
   // signature: <init>()V
-  public /* primary */ constructor()
+  public constructor()
 
   // signature: mutability()Ljava/util/Map;
   public final fun mutability(): kotlin/collections/MutableMap<kotlin/String!, kotlin/collections/MutableList<kotlin/String!>..kotlin/collections/List<kotlin/String!>?>..kotlin/collections/Map<kotlin/String!, kotlin/collections/MutableList<kotlin/String!>..kotlin/collections/List<kotlin/String!>?>?

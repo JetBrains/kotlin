@@ -9,6 +9,8 @@ import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.testFramework.RunAll
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.CODE_STYLE_SETTING_PREFIX
@@ -36,23 +38,22 @@ abstract class AbstractPerformanceCompletionHandlerTests(
     companion object {
         @JvmStatic
         val statsMap: MutableMap<String, Stats> = mutableMapOf()
-
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread(Runnable { statsMap.values.forEach { it.close() } }))
-        }
     }
+
+    protected open val statsPrefix = "completion"
 
     private fun stats(): Stats {
         val suffix = "${defaultCompletionType.toString().toLowerCase()}${if (note.isNotEmpty()) "-$note" else ""}"
         return statsMap.computeIfAbsent(suffix) {
-            Stats("completion-$suffix")
+            Stats("$statsPrefix-$suffix")
         }
     }
 
     override fun tearDown() {
         commitAllDocuments()
-        super.tearDown()
+        RunAll(
+            ThrowableRunnable { super.tearDown() }
+        ).run()
     }
 
     protected open fun doPerfTest(unused: String) {
@@ -112,7 +113,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         completionChars: String
     ) {
         performanceTest<Unit, Unit> {
-            name(getTestName(false))
+            name(testName())
             stats(stats())
             setUp {
                 setUpFixture(testPath)
@@ -125,6 +126,16 @@ abstract class AbstractPerformanceCompletionHandlerTests(
                     myFixture.file.delete()
                 }
             }
+        }
+    }
+
+    private fun testName(): String {
+        val javaClass = this.javaClass
+        val testName = getTestName(false)
+        return if (javaClass.isMemberClass) {
+            "${javaClass.simpleName} - $testName"
+        } else {
+            testName
         }
     }
 

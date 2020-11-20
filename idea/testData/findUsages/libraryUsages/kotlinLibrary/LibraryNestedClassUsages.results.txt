@@ -1,8 +1,8 @@
-[LibraryNestedClassUsages.0.kt] Local variable declaration 16 val a: A.T = A.T()
-[LibraryNestedClassUsages.0.kt] New instance creation 16 val a: A.T = A.T()
-[LibraryNestedClassUsages.0.kt] New instance creation 17 val aa = A.T(1)
-[LibraryNestedClassUsages.0.kt] Supertype 13 class Y(): A.T(1)
-[LibraryNestedClassUsages.0.kt] Supertype 9 class X: A.T {
+[LibraryNestedClassUsages.0.kt] Local variable declaration 18 val a: A.T = A.T()
+[LibraryNestedClassUsages.0.kt] New instance creation 18 val a: A.T = A.T()
+[LibraryNestedClassUsages.0.kt] New instance creation 19 val aa = A.T(1)
+[LibraryNestedClassUsages.0.kt] Supertype 11 class X: A.T {
+[LibraryNestedClassUsages.0.kt] Supertype 15 class Y(): A.T(1)
 [LibraryNestedClassUsages.1.java] Local variable declaration 11 A.T t = new A.T();
 [LibraryNestedClassUsages.1.java] Local variable declaration 12 A.T tt = new A.T(1);
 [LibraryNestedClassUsages.1.java] New instance creation 11 A.T t = new A.T();

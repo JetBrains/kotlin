@@ -1,0 +1,5 @@
+FILE: OrEmptyFake.kt
+    public final val list: R|kotlin/collections/List<kotlin/String>?| = Null(null)
+        public get(): R|kotlin/collections/List<kotlin/String>?|
+    public final val empty: R|kotlin/collections/List<kotlin/String>| = R|/list|.R|kotlin/collections/orEmpty|<R|kotlin/String|>()
+        public get(): R|kotlin/collections/List<kotlin/String>|

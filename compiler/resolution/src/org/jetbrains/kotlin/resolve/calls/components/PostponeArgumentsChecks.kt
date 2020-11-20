@@ -22,9 +22,12 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.convertVariance
+import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.model.TypeVariance
+import org.jetbrains.kotlin.types.model.convertVariance
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -69,7 +72,7 @@ private fun preprocessLambdaArgument(
 
         if (expectedTypeVariableWithConstraints != null) {
             val explicitTypeArgument = expectedTypeVariableWithConstraints.constraints.find {
-                it.kind == ConstraintKind.EQUALITY && it.position.from is ExplicitTypeParameterConstraintPosition
+                it.kind == ConstraintKind.EQUALITY && it.position.from is ExplicitTypeParameterConstraintPosition<*>
             }?.type as? KotlinType
 
             if (explicitTypeArgument == null || explicitTypeArgument.arguments.isNotEmpty()) {
@@ -86,7 +89,7 @@ private fun preprocessLambdaArgument(
             csBuilder.builtIns, Annotations.EMPTY, resolvedArgument.receiver,
             resolvedArgument.parameters, null, resolvedArgument.returnType, resolvedArgument.isSuspend
         )
-        csBuilder.addSubtypeConstraint(lambdaType, expectedType, ArgumentConstraintPosition(argument))
+        csBuilder.addSubtypeConstraint(lambdaType, expectedType, ArgumentConstraintPositionImpl(argument))
     }
 
     return resolvedArgument
@@ -278,7 +281,7 @@ private fun ConstraintSystemBuilder.addConstraintFromLHS(
     val lhsType = lhsResult.unboundDetailedReceiver.stableType
     val expectedTypeProjectionForLHS = expectedType.arguments.first()
     val expectedTypeForLHS = expectedTypeProjectionForLHS.type
-    val constraintPosition = LHSArgumentConstraintPosition(argument, lhsResult.qualifier ?: lhsResult.unboundDetailedReceiver)
+    val constraintPosition = LHSArgumentConstraintPositionImpl(argument, lhsResult.qualifier ?: lhsResult.unboundDetailedReceiver)
     val expectedTypeVariance = expectedTypeProjectionForLHS.projectionKind.convertVariance()
     val effectiveVariance = AbstractTypeChecker.effectiveVariance(
         expectedType.constructor.parameters.first().variance.convertVariance(),

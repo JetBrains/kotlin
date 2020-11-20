@@ -16,7 +16,7 @@ class SimpleSyntheticPropertyDescriptor(
     name: String,
     type: KotlinType,
     isVar: Boolean = false,
-    visibility: Visibility = Visibilities.PRIVATE
+    visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE
 ) : PropertyDescriptorImpl(
     owner,
     null,

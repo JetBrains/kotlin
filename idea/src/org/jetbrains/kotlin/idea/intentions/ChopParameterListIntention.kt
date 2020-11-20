@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
+import com.intellij.psi.codeStyle.CommonCodeStyleSettings
 import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.idea.formatter.kotlinCommonSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
@@ -22,6 +25,11 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
     private val elementClass: Class<TElement>,
     textGetter: () -> String
 ) : SelfTargetingOffsetIndependentIntention<TList>(listClass, textGetter) {
+
+    open fun leftParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean = false
+
+    open fun rightParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean = false
+
     override fun isApplicableTo(element: TList): Boolean {
         val elements = element.elements()
         if (elements.size <= 1) return false
@@ -34,12 +42,18 @@ abstract class AbstractChopListIntention<TList : KtElement, TElement : KtElement
         val document = editor?.document ?: return
         val pointer = element.createSmartPointer()
 
+        val commonCodeStyleSettings = CodeStyle.getSettings(project).kotlinCommonSettings
+        val leftParOnNewLine = leftParOnNewLine(commonCodeStyleSettings)
+        val rightParOnNewLine = rightParOnNewLine(commonCodeStyleSettings)
+
         val elements = element.elements()
-        if (!hasLineBreakAfter(elements.last())) {
+        if (rightParOnNewLine && !hasLineBreakAfter(elements.last())) {
             element.allChildren.lastOrNull { it.node.elementType == KtTokens.RPAR }?.startOffset?.let { document.insertString(it, "\n") }
         }
 
-        for (e in elements.asReversed()) {
+        val maxIndex = elements.size - 1
+        for ((index, e) in elements.asReversed().withIndex()) {
+            if (index == maxIndex && !leftParOnNewLine) break
             if (!hasLineBreakBefore(e)) {
                 document.insertString(e.startOffset, "\n")
             }
@@ -79,10 +93,26 @@ class ChopParameterListIntention : AbstractChopListIntention<KtParameterList, Kt
         if (element.parent is KtFunctionLiteral) return false
         return super.isApplicableTo(element)
     }
+
+    override fun leftParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean {
+        return commonCodeStyleSettings.METHOD_PARAMETERS_LPAREN_ON_NEXT_LINE
+    }
+
+    override fun rightParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean {
+        return commonCodeStyleSettings.METHOD_PARAMETERS_RPAREN_ON_NEXT_LINE
+    }
 }
 
 class ChopArgumentListIntention : AbstractChopListIntention<KtValueArgumentList, KtValueArgument>(
     KtValueArgumentList::class.java,
     KtValueArgument::class.java,
     KotlinBundle.lazyMessage("put.arguments.on.separate.lines")
-)
+) {
+    override fun leftParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean {
+        return commonCodeStyleSettings.CALL_PARAMETERS_LPAREN_ON_NEXT_LINE
+    }
+
+    override fun rightParOnNewLine(commonCodeStyleSettings: CommonCodeStyleSettings): Boolean {
+        return commonCodeStyleSettings.CALL_PARAMETERS_RPAREN_ON_NEXT_LINE
+    }
+}

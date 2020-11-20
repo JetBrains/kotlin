@@ -1,0 +1,18 @@
+FILE: ArrayEqualityCanBeReplacedWithEquals.kt
+    public final fun foo(p: R|kotlin/Int|): R|kotlin/Unit| {
+        lval a: R|kotlin/Array<kotlin/Int>| = R|kotlin/arrayOf|<R|kotlin/Int|>(vararg(Int(1), Int(2), Int(3)))
+        lval b: R|kotlin/Array<kotlin/Int>| = R|kotlin/arrayOf|<R|kotlin/Int|>(vararg(Int(3), Int(2), Int(1)))
+        when () {
+            ==(R|<local>/a|, R|<local>/b|) ->  {
+            }
+        }
+
+    }
+    public final fun testsFromIdea(): R|kotlin/Unit| {
+        lval a: R|kotlin/Array<kotlin/String>| = R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(a)))
+        lval b: R|kotlin/Array<kotlin/String>| = R|<local>/a|
+        lval c: R|kotlin/Any?| = Null(null)
+        ==(R|<local>/a|, R|<local>/b|)
+        ==(R|<local>/a|, R|<local>/c|)
+        !=(R|<local>/a|, R|<local>/b|)
+    }

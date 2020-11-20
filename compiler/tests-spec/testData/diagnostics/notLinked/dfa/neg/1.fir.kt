@@ -103,8 +103,8 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: TypealiasNullableString) {
-    if (x !== null === null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.get(0)
-    if (x !== null != null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.get(0)
+    if (x !== null === null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.<!INAPPLICABLE_CANDIDATE!>get<!>(0)
+    if (x !== null != null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.<!INAPPLICABLE_CANDIDATE!>get<!>(0)
 }
 
 // TESTCASE NUMBER: 9
@@ -179,7 +179,7 @@ fun case_12(x: TypealiasNullableStringIndirect, y: TypealiasNullableStringIndire
     else "-1"
 
 // TESTCASE NUMBER: 13
-fun case_13(x: otherpackage.Case13?) =
+fun case_13(x: <!UNRESOLVED_REFERENCE!>otherpackage.Case13?<!>) =
     <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Can't resolve when expression")!>if ((x == null !is Boolean) !== true) {
         throw Exception()
     } else {
@@ -189,7 +189,7 @@ fun case_13(x: otherpackage.Case13?) =
 
 // TESTCASE NUMBER: 14
 class Case14 {
-    val x: otherpackage.Case14?
+    val x: <!UNRESOLVED_REFERENCE!>otherpackage.Case14?<!>
     init {
         x = <!UNRESOLVED_REFERENCE!>otherpackage<!>.<!UNRESOLVED_REFERENCE!>Case14<!>()
     }

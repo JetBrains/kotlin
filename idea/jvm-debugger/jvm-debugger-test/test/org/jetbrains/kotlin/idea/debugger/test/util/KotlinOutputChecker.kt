@@ -14,6 +14,8 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.openapi.vfs.CharsetToolkit
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.Assert
 import java.io.File
 import kotlin.math.min
@@ -21,7 +23,9 @@ import kotlin.math.min
 internal class KotlinOutputChecker(
     private val testDir: String,
     appPath: String,
-    outputPath: String
+    outputPath: String,
+    private val useIrBackend: Boolean,
+    private val expectedOutputFile: File,
 ) : OutputChecker(appPath, outputPath) {
     companion object {
         @JvmStatic
@@ -41,6 +45,9 @@ internal class KotlinOutputChecker(
 
     private lateinit var myTestName: String
 
+    // True if the underlying test has already failed, but the failure was ignored.
+    var threwException = false
+
     override fun init(testName: String) {
         super.init(testName)
         this.myTestName = Character.toLowerCase(testName[0]) + testName.substring(1)
@@ -55,7 +62,9 @@ internal class KotlinOutputChecker(
         val actual = preprocessBuffer(buildOutputString())
 
         val outDir = File(testDir)
-        var outFile = File(outDir, "$myTestName.out")
+        var outFile = expectedOutputFile
+        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(if (useIrBackend) TargetBackend.JVM_IR else TargetBackend.JVM, outFile)
+
         if (!outFile.exists()) {
             if (SystemInfo.isWindows) {
                 val winOut = File(outDir, "$myTestName.win.out")
@@ -75,7 +84,9 @@ internal class KotlinOutputChecker(
             LOG.error("Test file created ${outFile.path}\n**************** Don't forget to put it into VCS! *******************")
         } else {
             val originalText = FileUtilRt.loadFile(outFile, CharsetToolkit.UTF8)
-            val expected = StringUtilRt.convertLineSeparators(originalText)
+            val expected = StringUtilRt.convertLineSeparators(originalText).split("\n").filter {
+                !it.trim().startsWith(InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX)
+            }.joinToString("\n")
             if (expected != actual) {
                 println("expected:")
                 println(originalText)
@@ -92,7 +103,13 @@ internal class KotlinOutputChecker(
                     println("Rest from actual text is: \"" + actual.substring(len) + "\"")
                 }
 
-                Assert.assertEquals(originalText, actual)
+                // Ignore test failure if marked as ignored.
+                if (isIgnored) return
+
+                Assert.assertEquals(expected, actual)
+            } else if (isIgnored && !threwException) {
+                // Fail if tests are marked as failing, but actually pass.
+                throw AssertionError("Test passes and could be unmuted, remove IGNORE_BACKEND directive from ${outFile.path}")
             }
         }
     }

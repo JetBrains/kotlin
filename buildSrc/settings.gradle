@@ -20,7 +20,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.19")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.21")
     }
 }
 
@@ -46,12 +46,12 @@ if (target_AppCode_Clion) {
 } else if (target_AndroidStudio) {
     logger.info("Including modules for AS (mobile plugin) in buildSrc/settings.gradle")
 
-    include ":prepare-deps:cocoa-common-binaries"
+    include ":prepare-deps:appcode-binaries"
     include ":prepare-deps:lldb-framework"
     include ":prepare-deps:lldb-frontend"
 
-    project(":prepare-deps:cocoa-common-binaries").projectDir =
-            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/cocoa-common-binaries")
+    project(":prepare-deps:appcode-binaries").projectDir =
+            file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/appcode-binaries")
     project(":prepare-deps:lldb-framework").projectDir =
             file("${buildProperties.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/lldb-framework")
     project(":prepare-deps:lldb-frontend").projectDir =

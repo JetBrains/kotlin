@@ -17,7 +17,7 @@ fun useMixedStringArgs3(fn: (String, Array<String>, String) -> Unit) = fn("foo",
 fun useTwoStringArrays(fn: (Array<String>, Array<String>) -> Unit) = fn(arrayOf("foo", "bar"), arrayOf("baz", "boo"))
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>useStrings<!>(<!UNRESOLVED_REFERENCE!>::stringVararg<!>)
+    useStrings(::stringVararg)
     useStringArray(::stringVararg)
     useIntArray(::numberVararg)
     usePrimitiveIntArray(::intVararg)

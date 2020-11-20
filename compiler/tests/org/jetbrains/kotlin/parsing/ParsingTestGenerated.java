@@ -1262,6 +1262,39 @@ public class ParsingTestGenerated extends AbstractParsingTest {
             }
         }
 
+        @TestMetadata("compiler/testData/psi/contracts")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Contracts extends AbstractParsingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInContracts() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contracts"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+            }
+
+            @TestMetadata("FunctionWithMultilineContract.kt")
+            public void testFunctionWithMultilineContract() throws Exception {
+                runTest("compiler/testData/psi/contracts/FunctionWithMultilineContract.kt");
+            }
+
+            @TestMetadata("FunctionsWithTypeConstraintsAndContract.kt")
+            public void testFunctionsWithTypeConstraintsAndContract() throws Exception {
+                runTest("compiler/testData/psi/contracts/FunctionsWithTypeConstraintsAndContract.kt");
+            }
+
+            @TestMetadata("PropertyAccessorsContracts.kt")
+            public void testPropertyAccessorsContracts() throws Exception {
+                runTest("compiler/testData/psi/contracts/PropertyAccessorsContracts.kt");
+            }
+
+            @TestMetadata("SimpleFunctionWithContract.kt")
+            public void testSimpleFunctionWithContract() throws Exception {
+                runTest("compiler/testData/psi/contracts/SimpleFunctionWithContract.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/psi/examples")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

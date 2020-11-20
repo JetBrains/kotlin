@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 abstract class ResolutionDiagnostic(val applicability: CandidateApplicability)
 
@@ -21,7 +21,7 @@ class MixingNamedAndPositionArguments(override val argument: FirExpression) : In
 class TooManyArguments(
     val argument: FirExpression,
     val function: FirFunction<*>
-) : ResolutionDiagnostic(CandidateApplicability.PARAMETER_MAPPING_ERROR)
+) : ResolutionDiagnostic(CandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 class NamedArgumentNotAllowed(
     override val argument: FirExpression,
@@ -44,9 +44,21 @@ class NonVarargSpread(override val argument: FirExpression) : InapplicableArgume
 class NoValueForParameter(
     val valueParameter: FirValueParameter,
     val function: FirFunction<*>
-) : ResolutionDiagnostic(CandidateApplicability.PARAMETER_MAPPING_ERROR)
+) : ResolutionDiagnostic(CandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR)
 
 class NameNotFound(
     override val argument: FirExpression,
     val function: FirFunction<*>
 ) : InapplicableArgumentDiagnostic()
+
+object InapplicableCandidate : ResolutionDiagnostic(CandidateApplicability.INAPPLICABLE)
+
+object HiddenCandidate : ResolutionDiagnostic(CandidateApplicability.HIDDEN)
+
+object ResolvedWithLowPriority : ResolutionDiagnostic(CandidateApplicability.RESOLVED_LOW_PRIORITY)
+
+object InapplicableWrongReceiver : ResolutionDiagnostic(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
+
+object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY)
+
+object CandidateChosenUsingOverloadResolutionByLambdaAnnotation : ResolutionDiagnostic(CandidateApplicability.RESOLVED)

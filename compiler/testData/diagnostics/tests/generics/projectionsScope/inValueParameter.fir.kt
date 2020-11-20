@@ -5,5 +5,5 @@ interface B<E> {
 }
 
 fun foo(x: B<in CharSequence>, y: A<CharSequence>) {
-    x.foo(y)
+    x.<!INAPPLICABLE_CANDIDATE!>foo<!>(y)
 }

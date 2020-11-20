@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.inspections.collections
 
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.util.TextRange
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.quickfix.ReplaceSelectorOfQualifiedExpressionFix
 import org.jetbrains.kotlin.psi.KtExpression
@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -96,5 +96,5 @@ class UselessCallOnCollectionInspection : AbstractUselessCallInspection() {
         }
     }
 
-    private fun KotlinType?.isList() = this?.constructor?.declarationDescriptor?.fqNameSafe == KotlinBuiltIns.FQ_NAMES.list
+    private fun KotlinType?.isList() = this?.constructor?.declarationDescriptor?.fqNameSafe == StandardNames.FqNames.list
 }

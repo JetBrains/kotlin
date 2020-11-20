@@ -86,16 +86,14 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
             declaration.acceptChildren(this, data.makeLocal())
         }
 
-        override fun visitDeclaration(declaration: IrDeclaration, data: Data) {
-            if (declaration !is IrDeclarationWithName) {
-                declaration.acceptChildren(this, data)
-                return
-            }
-
-            // We explicitly skip temporary variables (such as a for loop iterator, or a temporary value for an elvis operator)
-            // because they are not present in the original source code and their names should not affect names of local entities.
-            if (declaration.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR ||
-                declaration.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
+        override fun visitDeclaration(declaration: IrDeclarationBase, data: Data) {
+            if (declaration !is IrDeclarationWithName ||
+                // Skip temporary variables because they are not present in source code, and their names are not particularly
+                // meaningful (e.g. `tmp$1`) in any case.
+                declaration.origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR ||
+                declaration.origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE ||
+                // Skip variables storing delegates for local properties because we already have the name of the property itself.
+                declaration.origin == IrDeclarationOrigin.PROPERTY_DELEGATE
             ) {
                 declaration.acceptChildren(this, data)
                 return
@@ -117,7 +115,7 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
             }
 
             val newData = data.withName(internalName).makeLocal()
-            if (declaration is IrProperty && declaration.isDelegated) {
+            if ((declaration is IrProperty && declaration.isDelegated) || declaration is IrLocalDelegatedProperty) {
                 // Old backend currently reserves a name here, in case a property reference-like anonymous object will need
                 // to be generated in the codegen later, which is now happening for local delegated properties in inline functions.
                 // See CodegenAnnotatingVisitor.visitProperty and ExpressionCodegen.initializePropertyMetadata.

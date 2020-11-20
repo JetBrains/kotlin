@@ -1,0 +1,46 @@
+package
+
+public fun main(/*0*/ aNotNullNotNullNotNull: Test<Derived, Derived, Derived>, /*1*/ aNotNullNotNullNull: Test<Derived, Derived, Derived?>, /*2*/ aNotNullNullNotNull: Test<Derived, Derived?, Derived>, /*3*/ aNotNullNullNull: Test<Derived, Derived?, Derived?>, /*4*/ aAnyNotNullNotNullNotNull: Test<kotlin.Any, kotlin.Any, kotlin.Any>, /*5*/ aAnyNotNullNotNullNull: Test<kotlin.Any, kotlin.Any, kotlin.Any?>, /*6*/ aAnyNotNullNullNotNull: Test<kotlin.Any, kotlin.Any?, kotlin.Any>, /*7*/ aAnyNotNullNullNull: Test<kotlin.Any, kotlin.Any?, kotlin.Any?>, /*8*/ b: AnnotatedBoundsOfWildcard): kotlin.Unit
+
+@org.jspecify.annotations.DefaultNonNull public open class AnnotatedBoundsOfWildcard {
+    public constructor AnnotatedBoundsOfWildcard()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun extendsAsIs(/*0*/ a: Test<out @org.jspecify.annotations.NullnessUnspecified Base!, out @org.jspecify.annotations.NullnessUnspecified Base!, out @org.jspecify.annotations.NullnessUnspecified Base!>!): kotlin.Unit
+    public open fun extendsNotNull(/*0*/ a: Test<out Base!, out Base!, out Base!>!): kotlin.Unit
+    public open fun extendsNullable(/*0*/ a: Test<out @org.jspecify.annotations.Nullable Base!, out @org.jspecify.annotations.Nullable Base!, out @org.jspecify.annotations.Nullable Base!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun noBounds(/*0*/ a: Test<*, *, *>!): kotlin.Unit
+    public open fun superAsIs(/*0*/ a: Test<in @org.jspecify.annotations.NullnessUnspecified Base!, in @org.jspecify.annotations.NullnessUnspecified Base!, in @org.jspecify.annotations.NullnessUnspecified Base!>!): kotlin.Unit
+    public open fun superNotNull(/*0*/ a: Test<in Base!, in Base!, in Base!>!): kotlin.Unit
+    public open fun superNullable(/*0*/ a: Test<in @org.jspecify.annotations.Nullable Base!, in @org.jspecify.annotations.Nullable Base!, in @org.jspecify.annotations.Nullable Base!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Base {
+    public constructor Base()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Derived : Base {
+    public constructor Derived()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@org.jspecify.annotations.DefaultNonNull public open class Test</*0*/ T : kotlin.Any!, /*1*/ E : @org.jspecify.annotations.Nullable kotlin.Any!, /*2*/ F : @org.jspecify.annotations.NullnessUnspecified kotlin.Any!> {
+    public constructor Test</*0*/ T : kotlin.Any!, /*1*/ E : @org.jspecify.annotations.Nullable kotlin.Any!, /*2*/ F : @org.jspecify.annotations.NullnessUnspecified kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@org.jspecify.annotations.DefaultNonNull public open class Use {
+    public constructor Use()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun main(/*0*/ aNotNullNotNullNotNull: Test<Derived!, Derived!, Derived!>!, /*1*/ aNotNullNotNullNull: Test<Derived!, Derived!, @org.jspecify.annotations.Nullable Derived!>!, /*2*/ aNotNullNullNotNull: Test<Derived!, @org.jspecify.annotations.Nullable Derived!, Derived!>!, /*3*/ aNotNullNullNull: Test<Derived!, @org.jspecify.annotations.Nullable Derived!, @org.jspecify.annotations.Nullable Derived!>!, /*4*/ aObjectNotNullNotNullNotNull: Test<kotlin.Any!, kotlin.Any!, kotlin.Any!>!, /*5*/ aObjectNotNullNotNullNull: Test<kotlin.Any!, kotlin.Any!, @org.jspecify.annotations.Nullable kotlin.Any!>!, /*6*/ aObjectNotNullNullNotNull: Test<kotlin.Any!, @org.jspecify.annotations.Nullable kotlin.Any!, kotlin.Any!>!, /*7*/ aObjectNotNullNullNull: Test<kotlin.Any!, @org.jspecify.annotations.Nullable kotlin.Any!, @org.jspecify.annotations.Nullable kotlin.Any!>!, /*8*/ b: AnnotatedBoundsOfWildcard!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

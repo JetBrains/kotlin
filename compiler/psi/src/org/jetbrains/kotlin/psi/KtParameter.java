@@ -140,6 +140,10 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return getParent() instanceof KtForExpression;
     }
 
+    public boolean isCatchParameter() {
+        return getParent().getParent() instanceof KtCatchClause;
+    }
+
     @Nullable
     @Override
     public KtParameterList getValueParameterList() {

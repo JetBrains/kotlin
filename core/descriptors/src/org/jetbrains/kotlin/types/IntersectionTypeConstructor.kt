@@ -23,10 +23,11 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.model.IntersectionTypeConstructorMarker
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import java.util.*
 
-class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : TypeConstructor {
+class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : TypeConstructor, IntersectionTypeConstructorMarker {
     private var alternative: KotlinType? = null
 
     private constructor(

@@ -48,6 +48,7 @@ interface ScriptDefinitionsProvider {
     /**
      * The callback to update/add/remove script definitions after loading, if needed
      */
+    @JvmDefault
     fun provideDefinitions(
         baseHostConfiguration: ScriptingHostConfiguration,
         loadedScriptDefinitions: List<ScriptDefinition>

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.common.serialization.signature
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.overrides.isOverridableFunction
+import org.jetbrains.kotlin.ir.overrides.isOverridableProperty
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.render
@@ -22,7 +24,7 @@ open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSigna
         } else null
     }
 
-    private fun composeSignatureForDeclaration(declaration: IrDeclaration): IdSignature {
+    fun composeSignatureForDeclaration(declaration: IrDeclaration): IdSignature {
         return if (mangler.run { declaration.isExported() }) {
             composePublicIdSignature(declaration)
         } else composeFileLocalIdSignature(declaration)
@@ -30,6 +32,8 @@ open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSigna
 
     private var localIndex: Long = 0
     private var scopeIndex: Int = 0
+
+    // TODO: we need to disentangle signature construction with declaration tables.
     lateinit var table: DeclarationTable
 
     fun reset() {
@@ -122,9 +126,28 @@ open class IdSignatureSerializer(val mangler: KotlinMangler.IrMangler) : IdSigna
                     IdSignature.FileLocalSignature(p, ++localIndex)
                 }
                 is IrSimpleFunction -> {
+                    val parent = declaration.parent
                     val p = declaration.correspondingPropertySymbol?.let { composeSignatureForDeclaration(it.owner) }
-                        ?: composeContainerIdSignature(declaration.parent)
-                    IdSignature.FileLocalSignature(p, ++localIndex)
+                        ?: composeContainerIdSignature(parent)
+                    IdSignature.FileLocalSignature(
+                        p,
+                        if (declaration.isOverridableFunction()) {
+                            mangler.run { declaration.signatureMangle }
+                        } else {
+                            ++localIndex
+                        }
+                    )
+                }
+                is IrProperty -> {
+                    val parent = declaration.parent
+                    IdSignature.FileLocalSignature(
+                        composeContainerIdSignature(parent),
+                        if (declaration.isOverridableProperty()) {
+                            mangler.run { declaration.signatureMangle }
+                        } else {
+                            ++localIndex
+                        }
+                    )
                 }
                 else -> IdSignature.FileLocalSignature(composeContainerIdSignature(declaration.parent), ++localIndex)
             }

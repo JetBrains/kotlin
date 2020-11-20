@@ -1,23 +1,23 @@
 FILE: implicitInAnonymous.kt
     private final val x: R|<anonymous>| = object : R|kotlin/Any| {
-        private[local] constructor(): R|<anonymous>| {
+        private constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 
-        public[local] final fun foo(x: R|kotlin/Int|): R|kotlin/Boolean| {
+        public final fun foo(x: R|kotlin/Int|): R|kotlin/Boolean| {
             ^foo this@R|/<anonymous>|.R|/<anonymous>.bar|(R|<local>/x|)
         }
 
-        public[local] final fun bar(y: R|kotlin/Int|): R|kotlin/Boolean| {
+        public final fun bar(y: R|kotlin/Int|): R|kotlin/Boolean| {
             ^bar CMP(>, this@R|/<anonymous>|.R|kotlin/Any.hashCode|().R|kotlin/Int.plus|(R|<local>/y|).R|kotlin/Int.compareTo|(Int(0)))
         }
 
-        public[local] final val w: R|kotlin/Boolean|
+        public final val w: R|kotlin/Boolean|
             public get(): R|kotlin/Boolean| {
                 ^ this@R|/<anonymous>|.R|/<anonymous>.z|
             }
 
-        public[local] final val z: R|kotlin/Boolean|
+        public final val z: R|kotlin/Boolean|
             public get(): R|kotlin/Boolean| {
                 ^ ==(this@R|/<anonymous>|.R|kotlin/Any.hashCode|(), Int(0))
             }

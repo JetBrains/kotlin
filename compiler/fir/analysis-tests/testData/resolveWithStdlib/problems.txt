@@ -2,14 +2,14 @@ FILE: problems.kt
     public final val sb: R|java/lang/StringBuilder| = R|java/lang/StringBuilder.StringBuilder|()
         public get(): R|java/lang/StringBuilder|
     public final val o: R|<anonymous>| = object : R|kotlin/Any| {
-        private[local] constructor(): R|<anonymous>| {
+        private constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
 
-        public[local] final val name: R|kotlin/String| = String(123)
+        public final val name: R|kotlin/String| = String(123)
             public get(): R|kotlin/String|
 
-        public[local] final fun test(): R|kotlin/Unit| {
+        public final fun test(): R|kotlin/Unit| {
             this@R|/<anonymous>|.R|/<anonymous>.name|
         }
 
@@ -18,7 +18,7 @@ FILE: problems.kt
         public get(): R|<anonymous>|
     public final fun test(): R|kotlin/Unit| {
         local final class Local : R|kotlin/Any| {
-            public[local] constructor(): R|Local| {
+            public constructor(): R|Local| {
                 super<R|kotlin/Any|>()
             }
 
@@ -53,7 +53,7 @@ FILE: problems.kt
         }
 
     }
-    public final val xx: R|kotlin/Int| = R|/Derived.Derived|().R|FakeOverride</Derived.x: R|kotlin/Int|>|.R|kotlin/Int.plus|(Int(1))
+    public final val xx: R|kotlin/Int| = R|/Derived.Derived|().R|SubstitutionOverride</Derived.x: R|kotlin/Int|>|.R|kotlin/Int.plus|(Int(1))
         public get(): R|kotlin/Int|
     public final val t: R|kotlin/Nothing| = throw R|java/lang/AssertionError.AssertionError|(String())
         public get(): R|kotlin/Nothing|

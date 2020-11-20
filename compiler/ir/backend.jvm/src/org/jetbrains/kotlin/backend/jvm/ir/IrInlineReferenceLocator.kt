@@ -5,24 +5,30 @@
 
 package org.jetbrains.kotlin.backend.jvm.ir
 
-import org.jetbrains.kotlin.backend.common.IrElementVisitorVoidWithContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-internal open class IrInlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitorVoidWithContext() {
-    override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
+internal open class IrInlineReferenceLocator(private val context: JvmBackendContext) : IrElementVisitor<Unit, IrDeclaration?> {
+    override fun visitElement(element: IrElement, data: IrDeclaration?) {
+        element.acceptChildren(this, data)
+    }
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration?) {
+        declaration.acceptChildren(this, declaration)
+    }
+
+    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration?) {
         val function = expression.symbol.owner
         if (function.isInlineFunctionCall(context)) {
             for (parameter in function.valueParameters) {
@@ -30,18 +36,17 @@ internal open class IrInlineReferenceLocator(private val context: JvmBackendCont
                     continue
 
                 val valueArgument = expression.getValueArgument(parameter.index) ?: continue
-                if (!isInlineIrExpression(valueArgument))
+                if (!valueArgument.isInlineIrExpression())
                     continue
 
-                if (valueArgument is IrBlock && valueArgument.origin.isLambda) {
-                    val reference = valueArgument.statements.last() as IrFunctionReference
-                    visitInlineLambda(reference, function, parameter, currentScope!!.irElement as IrDeclaration)
+                if (valueArgument is IrBlock) {
+                    visitInlineLambda(valueArgument.statements.last() as IrFunctionReference, function, parameter, data!!)
                 } else if (valueArgument is IrCallableReference<*>) {
                     visitInlineReference(valueArgument)
                 }
             }
         }
-        return super.visitFunctionAccess(expression)
+        return super.visitFunctionAccess(expression, data)
     }
 
     open fun visitInlineReference(argument: IrCallableReference<*>) {}

@@ -24,16 +24,22 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrValueParameter : IrValueDeclaration, IrSymbolDeclaration<IrValueParameterSymbol> {
+abstract class IrValueParameter : IrValueDeclaration(), IrSymbolDeclaration<IrValueParameterSymbol> {
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: ParameterDescriptor
+    abstract override val descriptor: ParameterDescriptor
 
-    val index: Int
-    val varargElementType: IrType?
-    val isCrossinline: Boolean
-    val isNoinline: Boolean
+    abstract val index: Int
+    abstract var varargElementType: IrType?
+    abstract val isCrossinline: Boolean
+    abstract val isNoinline: Boolean
 
-    var defaultValue: IrExpressionBody?
+    // if true parameter is not included into IdSignature.
+    // Skipping hidden params makes IrFunction be look similar to FE.
+    // NOTE: it is introduced to fix KT-40980 because more clear solution was not possible to implement.
+    // Once we are able to load any top-level declaration from klib this hack should be deprecated and removed.
+    abstract val isHidden: Boolean
+
+    abstract var defaultValue: IrExpressionBody?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitValueParameter(this, data)

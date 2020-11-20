@@ -43,11 +43,12 @@ class CompileServiceClientSideImpl(
             } ?: false
 
         override suspend fun clientHandshake(input: ByteReadChannelWrapper, output: ByteWriteChannelWrapper, log: Logger): Boolean {
-            return trySendHandshakeMessage(output, log) && tryAcquireHandshakeMessage(input, log)
+            return trySendHandshakeMessage(output) && tryAcquireHandshakeMessage(input)
         }
 
         override fun startKeepAlives() {
             val keepAliveMessage = Server.KeepAliveMessage<CompileServiceServerSide>()
+            @OptIn(ObsoleteCoroutinesApi::class)
             GlobalScope.async(newSingleThreadContext("keepAliveThread")) {
                 delay(KEEPALIVE_PERIOD * 4)
                 while (true) {
@@ -185,7 +186,7 @@ class CompileServiceClientSideImpl(
     }
 
     override suspend fun clearJarCache() {
-        val id = sendMessage(ClearJarCacheMessage())
+        sendMessage(ClearJarCacheMessage())
     }
 
     override suspend fun releaseReplSession(sessionId: Int): CompileService.CallResult<Nothing> {

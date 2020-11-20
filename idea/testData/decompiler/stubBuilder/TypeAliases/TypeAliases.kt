@@ -15,6 +15,8 @@ annotation class Ann
 
 class TypeAliases {
 
+    class OrderB
+
     @Suppress("TOPLEVEL_TYPEALIASES_ONLY")
     typealias B = (A) -> Unit
 
@@ -28,6 +30,8 @@ class TypeAliases {
 
     fun order(path: String) {}
     fun order(body: Z) {}
+
+    class OrderA
 }
 
 

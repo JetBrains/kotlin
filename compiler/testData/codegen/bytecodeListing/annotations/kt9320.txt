@@ -17,6 +17,7 @@ public annotation class AnnExpr {
 @kotlin.Metadata
 public final class Kt9320Kt$foo$v$1 {
     // source: 'kt9320.kt'
+    enclosing method Kt9320Kt.foo()V
     inner (anonymous) class Kt9320Kt$foo$v$1
     method <init>(): void
 }
@@ -24,6 +25,7 @@ public final class Kt9320Kt$foo$v$1 {
 @kotlin.Metadata
 final class Kt9320Kt$foo$w$1 {
     // source: 'kt9320.kt'
+    enclosing method Kt9320Kt.foo()V
     public final static field INSTANCE: Kt9320Kt$foo$w$1
     inner (anonymous) class Kt9320Kt$foo$w$1
     static method <clinit>(): void

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
@@ -22,11 +23,13 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
-open class IrPluginContextImpl(
+open class IrPluginContextImpl constructor(
     private val module: ModuleDescriptor,
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val bindingContext: BindingContext,
     override val languageVersionSettings: LanguageVersionSettings,
     private val st: ReferenceSymbolTable,
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
     val linker: IrDeserializer,
@@ -35,7 +38,9 @@ open class IrPluginContextImpl(
 
     override val platform: TargetPlatform? = module.platform
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val moduleDescriptor: ModuleDescriptor = module
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val symbolTable: ReferenceSymbolTable = st
 
     private fun resolveMemberScope(fqName: FqName): MemberScope? {

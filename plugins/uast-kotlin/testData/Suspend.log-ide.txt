@@ -8,7 +8,7 @@ UFile (package = test.pkg)
                     UQualifiedReferenceExpression
                         UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                             UIdentifier (Identifier (Context))
-                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = Context)
+                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: Context)
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
                             UIdentifier (Identifier (inner))
                             USimpleNameReferenceExpression (identifier = inner, resolvesTo = null)

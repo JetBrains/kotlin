@@ -9,6 +9,7 @@ final class User$Companion : java/lang/Object, kotlinx/android/parcel/Parceler {
 
     public User[] newArray(int size) {
         LABEL (L0)
+        LINENUMBER (10)
           ALOAD (0)
           ILOAD (1)
           INVOKESTATIC (kotlinx/android/parcel/Parceler$DefaultImpls, newArray, (Lkotlinx/android/parcel/Parceler;I)[Ljava/lang/Object;)

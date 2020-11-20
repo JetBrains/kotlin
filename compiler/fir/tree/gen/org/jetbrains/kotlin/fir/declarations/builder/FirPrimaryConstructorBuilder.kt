@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -40,12 +40,14 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
     override lateinit var session: FirSession
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
+    override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var returnTypeRef: FirTypeRef
     override var receiverTypeRef: FirTypeRef? = null
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override lateinit var status: FirDeclarationStatus
     override var containerSource: DeserializedContainerSource? = null
+    override var dispatchReceiverType: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override lateinit var symbol: FirConstructorSymbol
     override var delegatedConstructor: FirDelegatedConstructorCall? = null
@@ -57,12 +59,14 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
             session,
             resolvePhase,
             origin,
+            attributes,
             returnTypeRef,
             receiverTypeRef,
             typeParameters,
             valueParameters,
             status,
             containerSource,
+            dispatchReceiverType,
             annotations,
             symbol,
             delegatedConstructor,
@@ -72,7 +76,7 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
 
 
     @Deprecated("Modification of 'controlFlowGraphReference' has no impact for FirPrimaryConstructorBuilder", level = DeprecationLevel.HIDDEN)
-    override var controlFlowGraphReference: FirControlFlowGraphReference
+    override var controlFlowGraphReference: FirControlFlowGraphReference?
         get() = throw IllegalStateException()
         set(value) {
             throw IllegalStateException()

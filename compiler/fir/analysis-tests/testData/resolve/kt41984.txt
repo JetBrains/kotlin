@@ -1,0 +1,26 @@
+FILE: main.kt
+    public final class Inv<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Inv<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class B<V> : R|A<kotlin/Any, V>| {
+        public constructor<V>(): R|B<V>| {
+            super<R|A<kotlin/Any, V>|>()
+        }
+
+        public open override fun take(value: R|V|): R|kotlin/String| {
+            ^take String()
+        }
+
+        public open override fun takeInv(value: R|Inv<V>|): R|kotlin/String| {
+            ^takeInv String()
+        }
+
+    }
+    public final fun test_1(b: R|B<kotlin/Int>|, x: R|kotlin/Int|, inv: R|Inv<kotlin/Int>|): R|kotlin/Unit| {
+        R|<local>/b|.R|SubstitutionOverride</B.take: R|kotlin/String|>|(R|<local>/x|)
+        R|<local>/b|.<Inapplicable(INAPPLICABLE): /B.take>#(Null(null))
+        R|<local>/b|.R|SubstitutionOverride</B.takeInv: R|kotlin/String|>|(R|<local>/inv|)
+    }

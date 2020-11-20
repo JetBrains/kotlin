@@ -5,11 +5,16 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:frontend.common"))
-    compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:fir:resolve"))
-    compile(project(":compiler:fir:checkers"))
-    implementation(project(":compiler:fir:jvm"))
+    api(project(":core:compiler.common.jvm"))
+    api(project(":core:metadata.jvm"))
+    api(project(":compiler:resolution.common.jvm"))
+    api(project(":compiler:frontend.common"))
+    api(project(":compiler:fir:resolve"))
+    api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:jvm"))
+    api(project(":compiler:fir:fir-deserialization"))
+
+    implementation(project(":core:deserialization.common.jvm"))
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }

@@ -1,10 +1,10 @@
 // !WITH_NEW_INFERENCE
-fun foo(@varargs f : Int) {}
+fun foo(@<!UNRESOLVED_REFERENCE!>varargs<!> f : Int) {}
 
 var bar : Int = 1
-  set(@varargs v) {}
+  set(@<!UNRESOLVED_REFERENCE!>varargs<!> v) {}
 
-val x : (Int) -> Int = {@varargs x <!SYNTAX!>: Int -> x<!>}
+val x : (Int) -> Int = {@<!UNRESOLVED_REFERENCE!>varargs<!> x <!SYNTAX!>: Int -> x<!>}
 
-class Hello(@varargs args: Any) {
+class Hello(@<!UNRESOLVED_REFERENCE!>varargs<!> args: Any) {
 }

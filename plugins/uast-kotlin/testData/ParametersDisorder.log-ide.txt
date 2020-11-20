@@ -128,7 +128,7 @@ UFile (package = )
                     USimpleNameReferenceExpression (identifier = with, resolvesTo = null)
                     UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                         UIdentifier (Identifier (A))
-                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = A)
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = PsiClass: A)
                     ULambdaExpression
                         UBlockExpression
                             UQualifiedReferenceExpression

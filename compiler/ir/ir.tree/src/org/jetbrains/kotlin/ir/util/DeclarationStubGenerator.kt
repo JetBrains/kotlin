@@ -53,12 +53,6 @@ class DeclarationStubGenerator(
             lazyTable.stubGenerator = if (value) this else null
         }
 
-    private lateinit var irProviders_: List<IrProvider>
-
-    fun setIrProviders(value: List<IrProvider>) {
-        irProviders_ = value
-    }
-
     val typeTranslator =
         TypeTranslator(
             lazyTable,
@@ -83,7 +77,10 @@ class DeclarationStubGenerator(
             return generateStubBySymbol(symbol, symbol.descriptor)
         }
         val descriptor = if (symbol.descriptor is WrappedDeclarationDescriptor<*>)
-            findDescriptorBySignature(symbol.signature)
+            findDescriptorBySignature(
+                symbol.signature
+                    ?: error("Symbol is not public API. Expected signature for symbol: ${symbol.descriptor}")
+            )
         else
             symbol.descriptor
         if (descriptor == null) return null
@@ -198,13 +195,11 @@ class DeclarationStubGenerator(
         }
 
         if (createPropertyIfNeeded && descriptor is PropertyGetterDescriptor) {
-            val propertySymbol = symbolTable.referenceProperty(descriptor.correspondingProperty)
-            val property = irProviders_.getDeclaration(propertySymbol) as IrProperty
+            val property = generatePropertyStub(descriptor.correspondingProperty)
             return property.getter!!
         }
         if (createPropertyIfNeeded && descriptor is PropertySetterDescriptor) {
-            val propertySymbol = symbolTable.referenceProperty(descriptor.correspondingProperty)
-            val property = irProviders_.getDeclaration(propertySymbol) as IrProperty
+            val property = generatePropertyStub(descriptor.correspondingProperty)
             return property.setter!!
         }
 
@@ -250,7 +245,7 @@ class DeclarationStubGenerator(
     internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
         symbolTable.irFactory.createValueParameter(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), name, index, type.toIrType(),
-            varargElementType?.toIrType(), isCrossinline, isNoinline
+            varargElementType?.toIrType(), isCrossinline, isNoinline, false
         ).also { irValueParameter ->
             if (descriptor.declaresDefaultValue()) {
                 irValueParameter.defaultValue =

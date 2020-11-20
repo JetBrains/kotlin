@@ -194,7 +194,7 @@ fun testFunctionLiterals() {
     val endsWithObjectDeclaration : () -> Int = {
         var x = 1
         x = 333
-        object A {}
+        <!LOCAL_OBJECT_NOT_ALLOWED!>object A<!> {}
     }
 
     val expectedUnitReturnType1: () -> Unit = {
@@ -203,7 +203,7 @@ fun testFunctionLiterals() {
 
     val expectedUnitReturnType2: () -> Unit = {
         fun meow() : Unit {}
-        object A {}
+        <!LOCAL_OBJECT_NOT_ALLOWED!>object A<!> {}
     }
 
 }

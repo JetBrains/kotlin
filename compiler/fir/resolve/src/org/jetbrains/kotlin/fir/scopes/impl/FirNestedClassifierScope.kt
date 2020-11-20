@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
 
-class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope() {
+class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope(), FirContainingNamesAwareScope {
     private val classIndex: Map<Name, FirRegularClassSymbol> = run {
         val result = mutableMapOf<Name, FirRegularClassSymbol>()
         for (declaration in klass.declarations) {
@@ -42,7 +43,9 @@ class FirNestedClassifierScope(val klass: FirClass<*>) : FirScope() {
         processor(matchedClass, ConeSubstitutorByMap(substitution))
     }
 
-    fun getClassifierByName(name: Name): FirRegularClassSymbol? = classIndex[name]
+    override fun getClassifierNames(): Set<Name> = classIndex.keys
+
+    override fun getCallableNames(): Set<Name> = emptySet()
 }
 
 fun FirTypeParameterRef.toConeType(): ConeKotlinType = ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(symbol), isNullable = false)

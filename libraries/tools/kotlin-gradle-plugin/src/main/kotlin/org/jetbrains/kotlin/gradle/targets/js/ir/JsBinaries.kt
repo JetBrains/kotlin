@@ -6,24 +6,33 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
+import org.jetbrains.kotlin.gradle.targets.js.subtargets.DefaultDistribution
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 interface JsBinary {
     val compilation: KotlinJsCompilation
     val name: String
     val mode: KotlinJsBinaryMode
+    val distribution: Distribution
 }
 
 sealed class JsIrBinary(
-    override val compilation: KotlinJsCompilation,
-    override val name: String,
+    final override val compilation: KotlinJsCompilation,
+    final override val name: String,
     override val mode: KotlinJsBinaryMode
 ) : JsBinary {
+    override val distribution: Distribution =
+        DefaultDistribution(compilation.target.project, name)
+
     val linkTaskName: String = linkTaskName()
 
     val linkTask: TaskProvider<KotlinJsIrLink>
@@ -39,6 +48,21 @@ sealed class JsIrBinary(
             target.targetName
         )
 
+    val linkSyncTaskName: String = linkSyncTaskName()
+
+    val linkSyncTask: TaskProvider<Copy>
+        get() = target.project.tasks
+            .withType<Copy>()
+            .named(linkSyncTaskName)
+
+    private fun linkSyncTaskName(): String =
+        lowerCamelCaseName(
+            compilation.target.disambiguationClassifier,
+            compilation.name.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            name,
+            COMPILE_SYNC
+        )
+
     val target: KotlinTarget
         get() = compilation.target
 
@@ -47,6 +71,29 @@ sealed class JsIrBinary(
 }
 
 class Executable(
+    compilation: KotlinJsCompilation,
+    name: String,
+    mode: KotlinJsBinaryMode
+) : JsIrBinary(
+    compilation,
+    name,
+    mode
+) {
+    override val distribution: Distribution =
+        DefaultDistribution(
+            compilation.target.project,
+            if (mode == KotlinJsBinaryMode.PRODUCTION) null else super.distribution.name
+        )
+
+    val executeTaskBaseName: String =
+        generateBinaryName(
+            compilation,
+            mode,
+            null
+        )
+}
+
+class Library(
     compilation: KotlinJsCompilation,
     name: String,
     mode: KotlinJsBinaryMode
@@ -70,3 +117,5 @@ internal val JsBinary.executeTaskBaseName: String
         mode,
         null
     )
+
+internal val COMPILE_SYNC = "compileSync"

@@ -10,9 +10,9 @@ class A<T> {
 class Out<out F>
 
 fun test(a: A<out CharSequence>, y: Out<CharSequence>) {
-    a + y
-    a[1] = y
-    a[y]
+    a <!INAPPLICABLE_CANDIDATE!>+<!> y
+    <!INAPPLICABLE_CANDIDATE!>a[1] = y<!>
+    <!INAPPLICABLE_CANDIDATE!>a[y]<!>
 
     a + Out<Nothing>()
     a[1] = Out<Nothing>()

@@ -1,0 +1,5 @@
+FILE: safeString.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval foo: R|kotlin/String?| = Null(null)
+        R|<local>/foo|?.{ $subj$.R|kotlin/Any.toString|() }
+    }

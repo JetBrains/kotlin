@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 interface ResolutionAnchorProvider {
@@ -17,4 +18,7 @@ interface ResolutionAnchorProvider {
     }
 }
 
-val RESOLUTION_ANCHOR_PROVIDER_CAPABILITY = ModuleDescriptor.Capability<ResolutionAnchorProvider>("ResolutionAnchorProvider")
+val RESOLUTION_ANCHOR_PROVIDER_CAPABILITY = ModuleCapability<ResolutionAnchorProvider>("ResolutionAnchorProvider")
+
+fun ModuleDescriptor.getResolutionAnchorIfAny(): ModuleDescriptor? =
+    getCapability(RESOLUTION_ANCHOR_PROVIDER_CAPABILITY)?.getResolutionAnchor(this)

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedComponentResult
@@ -61,6 +60,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
             if (configuration !in resolvedMetadataArtifactByConfiguration) {
                 resolveConfigurationAndSaveVariants(configuration, artifactResolutionMode = ArtifactResolutionMode.METADATA)
             }
+            // At this point the map should contain the result if calculation above succeeded. If not, put null to avoid recalculation.
             resolvedMetadataArtifactByConfiguration.getOrPut(configuration) { null }
         }
     }
@@ -71,6 +71,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
             if (configuration !in resolvedArtifactByConfiguration) {
                 resolveConfigurationAndSaveVariants(configuration, artifactResolutionMode = ArtifactResolutionMode.NORMAL)
             }
+            // At this point the map should contain the result if the calculation above succeeded. If not, put null to avoid recalculation.
             resolvedArtifactByConfiguration.getOrPut(configuration) { null }
         }
 
@@ -79,7 +80,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
 
     private val entriesCache: MutableMap<ModuleDependencyIdentifier, ModuleEntry> = mutableMapOf()
 
-    private val mppComponentIdsByConfiguration: MutableMap<Configuration, Set<ComponentIdentifier>> = mutableMapOf()
+    private val mppComponentsByConfiguration: MutableMap<Configuration, Set<ResolvedComponentResult>> = mutableMapOf()
 
     private enum class ArtifactResolutionMode {
         NONE, NORMAL, METADATA
@@ -89,7 +90,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
         configuration: Configuration,
         artifactResolutionMode: ArtifactResolutionMode
     ) {
-        val mppComponentIds: Set<ComponentIdentifier> = mppComponentIdsByConfiguration.getOrPut(configuration) {
+        val mppComponentIds: Set<ResolvedComponentResult> = mppComponentsByConfiguration.getOrPut(configuration) {
             resolveMppComponents(configuration)
         }
 
@@ -99,7 +100,7 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
         }
     }
 
-    private fun resolveMppComponents(configuration: Configuration): MutableSet<ComponentIdentifier> {
+    private fun resolveMppComponents(configuration: Configuration): Set<ResolvedComponentResult> {
         val result = mutableListOf<ResolvedComponentResult>()
 
         configuration.incoming.resolutionResult.allComponents { component ->
@@ -123,14 +124,16 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
             }
         }
 
-        return result.mapTo(mutableSetOf()) { it.id }
+        return result.toSet()
     }
 
     private fun resolveArtifacts(
         artifactResolutionMode: ArtifactResolutionMode,
         configuration: Configuration,
-        mppComponentIds: Set<ComponentIdentifier>
-    ): Map<ComponentIdentifier, ResolvedArtifactResult> {
+        mppComponents: Set<ResolvedComponentResult>
+    ): Map<ResolvedComponentResult, ResolvedArtifactResult> {
+        val mppComponentById = mppComponents.associateBy { it.id }
+
         val artifactsConfiguration =
             if (
                 artifactResolutionMode == ArtifactResolutionMode.NORMAL ||
@@ -144,21 +147,22 @@ internal class ResolvedMppVariantsProvider private constructor(private val proje
             }
 
         return artifactsConfiguration.incoming.artifactView { view ->
-            view.componentFilter { it in mppComponentIds }
+            view.componentFilter { it in mppComponentById }
             view.attributes { attrs -> attrs.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA)) }
-        }.artifacts.associateBy { it.id.componentIdentifier }
+            view.lenient(true)
+        }.artifacts.associateBy { mppComponentById.getValue(it.id.componentIdentifier) }
     }
 
     private fun matchMppComponentsWithResolvedArtifacts(
-        mppComponentIds: Set<ComponentIdentifier>,
-        artifacts: Map<ComponentIdentifier, ResolvedArtifactResult>,
+        mppComponentIds: Set<ResolvedComponentResult>,
+        artifacts: Map<ResolvedComponentResult, ResolvedArtifactResult>,
         configuration: Configuration,
         artifactResolutionMode: ArtifactResolutionMode
     ) {
-        val mppModuleIds = mppComponentIds.mapTo(mutableSetOf()) { ModuleIds.fromComponentId(project, it) }
+        val mppModuleIds = mppComponentIds.mapTo(mutableSetOf()) { ModuleIds.fromComponent(project, it) }
 
         mppComponentIds.forEach { componentId ->
-            val moduleEntry = getEntryForModule(ModuleIds.fromComponentId(project, componentId))
+            val moduleEntry = getEntryForModule(ModuleIds.fromComponent(project, componentId))
             val artifact = artifacts[componentId]
             when {
                 // With project dependencies, we don't need the host-specific metadata artifacts, as we have the compilation outputs:

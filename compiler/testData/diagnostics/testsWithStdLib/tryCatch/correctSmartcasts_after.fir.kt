@@ -17,7 +17,7 @@ fun test1(s: String?) {
             requireNotNull(s)
         }
         t2.<!INAPPLICABLE_CANDIDATE!>not<!>()
-        s.length
+        s.<!INAPPLICABLE_CANDIDATE!>length<!>
     }
 }
 
@@ -46,7 +46,7 @@ fun test3() {
         s = null
         return
     }
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s.length
 }
 
 fun test4() {
@@ -62,7 +62,7 @@ fun test4() {
     catch (e: ExcB) {
 
     }
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s.length
 }
 
 fun test5(s: String?) {
@@ -75,7 +75,7 @@ fun test5(s: String?) {
     catch (e: ExcB) {
 
     }
-    s.length
+    s.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 fun test6(s: String?) {

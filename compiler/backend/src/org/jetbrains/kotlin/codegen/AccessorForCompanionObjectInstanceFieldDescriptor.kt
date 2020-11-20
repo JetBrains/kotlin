@@ -27,7 +27,7 @@ class AccessorForCompanionObjectInstanceFieldDescriptor(
             null, null, emptyList(), emptyList(),
             companionObjectDescriptor.defaultType,
             Modality.FINAL,
-            Visibilities.LOCAL
+            DescriptorVisibilities.LOCAL
         )
     }
 

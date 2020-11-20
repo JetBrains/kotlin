@@ -21,7 +21,7 @@ object JsIrBuilder {
     object SYNTHESIZED_STATEMENT : IrStatementOriginImpl("SYNTHESIZED_STATEMENT")
     object SYNTHESIZED_DECLARATION : IrDeclarationOriginImpl("SYNTHESIZED_DECLARATION")
 
-    fun buildCall(target: IrFunctionSymbol, type: IrType? = null, typeArguments: List<IrType>? = null): IrCall {
+    fun buildCall(target: IrSimpleFunctionSymbol, type: IrType? = null, typeArguments: List<IrType>? = null): IrCall {
         val owner = target.owner
         return IrCallImpl(
             UNDEFINED_OFFSET,
@@ -59,7 +59,7 @@ object JsIrBuilder {
         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, SYNTHESIZED_STATEMENT)
 
     fun buildSetVariable(symbol: IrVariableSymbol, value: IrExpression, type: IrType) =
-        IrSetVariableImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, value, SYNTHESIZED_STATEMENT)
+        IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, value, SYNTHESIZED_STATEMENT)
 
     fun buildGetField(symbol: IrFieldSymbol, receiver: IrExpression?, superQualifierSymbol: IrClassSymbol? = null, type: IrType? = null) =
         IrGetFieldImpl(

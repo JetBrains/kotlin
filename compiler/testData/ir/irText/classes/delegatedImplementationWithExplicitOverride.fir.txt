@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/delegatedImplementationWithExplicitOverride.kt
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.Unit
       overridden:
         public abstract fun foo (): kotlin.Unit declared in <root>.IFooBar
-      $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.C
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
         CALL 'public abstract fun foo (): kotlin.Unit declared in <root>.IFooBar' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IFooBar visibility:local [final]' type=<root>.IFooBar origin=null

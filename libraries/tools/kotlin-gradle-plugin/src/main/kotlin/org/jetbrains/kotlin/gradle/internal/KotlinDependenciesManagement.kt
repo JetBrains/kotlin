@@ -99,10 +99,14 @@ private fun chooseAndAddStdlibDependency(
 
     val compilations = CompilationSourceSetUtil.compilationsBySourceSets(project).getValue(kotlinSourceSet)
         .filter { it.target !is KotlinMetadataTarget }
+
+    if (compilations.isEmpty())
+    // source set doesn't take part in any compilation; prohibit this in the future; also, this caused KT-40559 in Android libraries
+        return
+
     val platformTypes = compilations.mapTo(mutableSetOf()) { it.platformType }
 
     val sourceSetStdlibPlatformType = when {
-        platformTypes.isEmpty() -> KotlinPlatformType.common
         platformTypes.size == 1 -> platformTypes.single()
         setOf(KotlinPlatformType.jvm, KotlinPlatformType.androidJvm).containsAll(platformTypes) -> KotlinPlatformType.jvm
         else -> KotlinPlatformType.common

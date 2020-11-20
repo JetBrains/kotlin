@@ -136,7 +136,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
         val jvmMethodSignature = state.typeMapper.mapSignatureSkipGeneric(invokeMethodDescriptor)
         val asmMethod = jvmMethodSignature.asmMethod
         val methodNode = MethodNode(
-            Opcodes.API_VERSION, AsmUtil.getMethodAsmFlags(invokeMethodDescriptor, OwnerKind.IMPLEMENTATION, state),
+            Opcodes.API_VERSION, DescriptorAsmUtil.getMethodAsmFlags(invokeMethodDescriptor, OwnerKind.IMPLEMENTATION, state),
             asmMethod.name, asmMethod.descriptor, null, null
         )
         val adapter = wrapWithMaxLocalCalc(methodNode)
@@ -274,7 +274,7 @@ class PsiSourceCompilerForInline(private val codegen: ExpressionCodegen, overrid
 
         val node = MethodNode(
             Opcodes.API_VERSION,
-            AsmUtil.getMethodAsmFlags(callableDescriptor, context.contextKind, state) or if (callDefault) Opcodes.ACC_STATIC else 0,
+            DescriptorAsmUtil.getMethodAsmFlags(callableDescriptor, context.contextKind, state) or if (callDefault) Opcodes.ACC_STATIC else 0,
             asmMethod.name,
             asmMethod.descriptor, null, null
         )

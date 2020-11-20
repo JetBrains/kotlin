@@ -1,6 +1,6 @@
 // FILE: ExceptionTracker.kt
 
-interface ExceptionTracker : LockBasedStorageManager.ExceptionHandlingStrategy {
+interface ExceptionTracker : <!EXPOSED_SUPER_INTERFACE!>LockBasedStorageManager.ExceptionHandlingStrategy<!> {
 }
 
 // FILE: StorageManager.kt

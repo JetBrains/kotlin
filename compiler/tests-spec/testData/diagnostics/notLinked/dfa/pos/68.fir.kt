@@ -6,7 +6,7 @@
 fun case_1(x: Any?) {
     if (x!! is Int) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
@@ -14,14 +14,14 @@ fun case_1(x: Any?) {
 fun case_2(x: Any?) {
     (x as Nothing?)!!
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>.inv()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
 }
 
 // TESTCASE NUMBER: 3
 fun case_3(x: Any?) {
     if (x as Number? is Int) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Any?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Number? & kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
@@ -37,7 +37,7 @@ fun case_4(x: Any?) {
 fun case_5(x: Any?) {
     if (x as Nothing? is Nothing) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>.inv()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing? & kotlin.Any?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>inv<!>()
     }
 }
 

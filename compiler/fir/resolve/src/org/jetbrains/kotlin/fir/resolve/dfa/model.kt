@@ -177,7 +177,7 @@ class MutableTypeStatement(
     override val isEmpty: Boolean
         get() = exactType.isEmpty() && exactType.isEmpty()
 
-    override fun invert(): TypeStatement {
+    override fun invert(): MutableTypeStatement {
         return MutableTypeStatement(
             variable,
             LinkedHashSet(exactNotType),

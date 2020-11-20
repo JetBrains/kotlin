@@ -79,12 +79,12 @@ public class YamlBuildFileGenerationTestGenerated extends AbstractYamlBuildFileG
     }
 
     @TestMetadata("singlePlatformJsBrowser")
-    public void testSingleplatformJsBrowser() throws Exception {
+    public void testSinglePlatformJsBrowser() throws Exception {
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/singlePlatformJsBrowser/");
     }
 
     @TestMetadata("singlePlatformJsNode")
-    public void testSingleplatformJsNode() throws Exception {
+    public void testSinglePlatformJsNode() throws Exception {
         runTest("libraries/tools/new-project-wizard/new-project-wizard-cli/testData/buildFileGeneration/singlePlatformJsNode/");
     }
 }

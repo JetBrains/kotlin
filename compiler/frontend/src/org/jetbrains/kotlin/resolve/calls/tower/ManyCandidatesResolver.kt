@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.*
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -81,15 +82,20 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
         }
 
         fun runCompletion(constraintSystem: NewConstraintSystem, atoms: List<ResolvedAtom>) {
+            val completionMode = ConstraintSystemCompletionMode.FULL
             kotlinConstraintSystemCompleter.runCompletion(
                 constraintSystem.asConstraintSystemCompleterContext(),
-                KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
+                completionMode,
                 atoms,
                 builtIns.unitType,
                 diagnosticHolder
             ) {
                 postponedArgumentsAnalyzer.analyze(
-                    constraintSystem.asPostponedArgumentsAnalyzerContext(), resolutionCallbacks, it, diagnosticHolder
+                    constraintSystem.asPostponedArgumentsAnalyzerContext(),
+                    resolutionCallbacks,
+                    it,
+                    completionMode,
+                    diagnosticHolder
                 )
             }
 
@@ -165,7 +171,7 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
         diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder,
         commonSystem: NewConstraintSystem
     ): CallResolutionResult {
-        val diagnostics = diagnosticsHolder.getDiagnostics() + callResolutionResult.diagnostics + commonSystem.diagnostics
+        val diagnostics = diagnosticsHolder.getDiagnostics() + callResolutionResult.diagnostics + commonSystem.errors.asDiagnostics()
         return CompletedCallResolutionResult(callResolutionResult.resultCallAtom, diagnostics, commonSystem.asReadOnlyStorage())
     }
 }

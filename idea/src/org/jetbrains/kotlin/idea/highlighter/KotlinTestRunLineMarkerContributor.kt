@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.highlighter
@@ -30,7 +19,12 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.platform.tooling
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.projectStructure.module
+import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.platform.SimplePlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.idePlatformKind
+import org.jetbrains.kotlin.platform.konan.NativePlatformWithTarget
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -40,19 +34,46 @@ import javax.swing.Icon
 
 class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
     companion object {
-        fun getTestStateIcon(url: String, project: Project, strict: Boolean): Icon? {
-            val defaultIcon = AllIcons.RunConfigurations.TestState.Run
-            val state = TestStateStorage.getInstance(project).getState(url)
-                ?: return if (strict) null else defaultIcon
+        fun getTestStateIcon(
+            urls: List<String>,
+            project: Project,
+            strict: Boolean,
+            defaultIcon: Icon = AllIcons.RunConfigurations.TestState.Run
+        ): Icon? {
+            for (url in urls) {
+                val state = TestStateStorage.getInstance(project).getState(url) ?: continue
 
-            return when (TestIconMapper.getMagnitude(state.magnitude)) {
-                TestStateInfo.Magnitude.ERROR_INDEX,
-                TestStateInfo.Magnitude.FAILED_INDEX -> AllIcons.RunConfigurations.TestState.Red2
-                TestStateInfo.Magnitude.PASSED_INDEX,
-                TestStateInfo.Magnitude.COMPLETE_INDEX -> AllIcons.RunConfigurations.TestState.Green2
-                else -> defaultIcon
+                return when (TestIconMapper.getMagnitude(state.magnitude)) {
+                    TestStateInfo.Magnitude.ERROR_INDEX,
+                    TestStateInfo.Magnitude.FAILED_INDEX -> AllIcons.RunConfigurations.TestState.Red2
+                    TestStateInfo.Magnitude.PASSED_INDEX,
+                    TestStateInfo.Magnitude.COMPLETE_INDEX -> AllIcons.RunConfigurations.TestState.Green2
+                    else -> defaultIcon
+                }
             }
+
+            return if (strict) null else defaultIcon
         }
+
+        fun SimplePlatform.providesRunnableTests(): Boolean {
+            if (this is NativePlatformWithTarget) {
+                return when {
+                    HostManager.hostIsMac -> target in listOf(
+                        KonanTarget.IOS_X64,
+                        KonanTarget.MACOS_X64,
+                        KonanTarget.WATCHOS_X64, KonanTarget.WATCHOS_X86,
+                        KonanTarget.TVOS_X64
+                    )
+                    HostManager.hostIsLinux -> target == KonanTarget.LINUX_X64
+                    HostManager.hostIsMingw -> target in listOf(KonanTarget.MINGW_X86, KonanTarget.MINGW_X64)
+                    else -> false
+                }
+            }
+
+            return true
+        }
+
+        fun TargetPlatform.providesRunnableTests(): Boolean = componentPlatforms.any { it.providesRunnableTests() }
     }
 
     override fun getInfo(element: PsiElement): Info? {
@@ -67,6 +88,7 @@ class KotlinTestRunLineMarkerContributor : RunLineMarkerContributor() {
         val descriptor = declaration.resolveToDescriptorIfAny() ?: return null
 
         val targetPlatform = declaration.module?.platform ?: return null
+        if (!targetPlatform.providesRunnableTests()) return null
         val icon = targetPlatform.idePlatformKind.tooling.getTestIcon(declaration, descriptor) ?: return null
         return Info(icon, Function { KotlinBundle.message("highlighter.tool.tip.text.run.test") }, *ExecutorAction.getActions())
     }

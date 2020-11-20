@@ -11,21 +11,33 @@ import org.jetbrains.kotlin.name.Name
 interface MetadataSource {
     val name: Name?
 
-    abstract class DescriptorBased<D : DeclarationDescriptor> internal constructor(val descriptor: D) : MetadataSource {
-        override val name: Name
-            get() = descriptor.name
+    interface File : MetadataSource
+    interface Class : MetadataSource
+    interface Function : MetadataSource
+    interface Property : MetadataSource {
+        val isConst: Boolean
+    }
+}
+
+sealed class DescriptorMetadataSource : MetadataSource {
+    open val descriptor: Named?
+        get() = null
+
+    override val name: Name?
+        get() = descriptor?.name
+
+    class File(val descriptors: List<DeclarationDescriptor>) : DescriptorMetadataSource(), MetadataSource.File
+
+    class Class(override val descriptor: ClassDescriptor) : DescriptorMetadataSource(), MetadataSource.Class
+
+    class Function(override val descriptor: FunctionDescriptor) : DescriptorMetadataSource(), MetadataSource.Function
+
+    class Property(override val descriptor: PropertyDescriptor) : DescriptorMetadataSource(), MetadataSource.Property {
+        override val isConst: Boolean get() = descriptor.isConst
     }
 
-    class Class(descriptor: ClassDescriptor) : DescriptorBased<ClassDescriptor>(descriptor)
-
-    open class File(val descriptors: List<DeclarationDescriptor>) : MetadataSource {
-        override val name: Name?
-            get() = null
+    class LocalDelegatedProperty(override val descriptor: VariableDescriptorWithAccessors) : DescriptorMetadataSource(),
+        MetadataSource.Property {
+        override val isConst: Boolean get() = descriptor.isConst
     }
-
-    class Function(descriptor: FunctionDescriptor) : DescriptorBased<FunctionDescriptor>(descriptor)
-
-    class Property(descriptor: PropertyDescriptor) : DescriptorBased<PropertyDescriptor>(descriptor)
-
-    class LocalDelegatedProperty(descriptor: VariableDescriptorWithAccessors) : DescriptorBased<VariableDescriptorWithAccessors>(descriptor)
 }

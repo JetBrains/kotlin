@@ -14,3 +14,8 @@ apply plugin: 'kotlin-multiplatform'
 repositories {
     {{kotlin_plugin_repositories}}
 }
+
+//
+kotlin{
+    jvm()
+}

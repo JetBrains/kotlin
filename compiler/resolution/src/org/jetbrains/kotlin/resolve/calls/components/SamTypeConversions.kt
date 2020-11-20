@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.incremental.record
-import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.jetbrains.kotlin.resolve.sam.getFunctionTypeForPossibleSamType
@@ -31,6 +30,7 @@ object SamTypeConversions : ParameterTypeConversion {
 
         if (generatingAdditionalSamCandidateIsEnabled) return true
         if (expectedParameterType.isNothing()) return true
+        if (expectedParameterType.isFunctionType) return true
 
         val samConversionOracle = callComponents.samConversionOracle
         if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionForKotlinFunctions)) {
@@ -47,6 +47,8 @@ object SamTypeConversions : ParameterTypeConversion {
         return when (argument) {
             is SubKotlinCallArgument -> {
                 val stableType = argument.receiver.stableType
+                if (stableType.isFunctionType) return true
+
                 hasNonAnalyzedLambdaAsReturnType(argument.callResult.subResolvedAtoms, stableType)
             }
             is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
@@ -126,5 +128,26 @@ object SamTypeConversions : ParameterTypeConversion {
 
         // now conversions for Kotlin candidates are possible, so we have to perform compatibility resolve
         return !candidate.callComponents.samConversionOracle.isJavaApplicableCandidate(candidate.resolvedCall.candidateDescriptor)
+    }
+
+    fun isJavaParameterCanBeConverted(
+        candidate: KotlinResolutionCandidate,
+        expectedParameterType: UnwrappedType
+    ): Boolean {
+        val callComponents = candidate.callComponents
+
+        val samConversionOracle = callComponents.samConversionOracle
+        if (!samConversionOracle.isJavaApplicableCandidate(candidate.resolvedCall.candidateDescriptor)) return false
+
+        val declarationDescriptor = expectedParameterType.constructor.declarationDescriptor
+        if (declarationDescriptor is ClassDescriptor && declarationDescriptor.isDefinitelyNotSamInterface) return false
+
+        val convertedType =
+            callComponents.samConversionResolver.getFunctionTypeForPossibleSamType(
+                expectedParameterType,
+                callComponents.samConversionOracle
+            )
+
+        return convertedType != null
     }
 }

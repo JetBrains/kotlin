@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.builder.FirExpressionBuilder
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
@@ -40,10 +39,11 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     override var source: FirSourceElement? = null
     override lateinit var session: FirSession
     override lateinit var origin: FirDeclarationOrigin
+    override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override lateinit var returnTypeRef: FirTypeRef
     var receiverTypeRef: FirTypeRef? = null
-    var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference
+    var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
@@ -58,6 +58,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
             source,
             session,
             origin,
+            attributes,
             annotations,
             returnTypeRef,
             receiverTypeRef,

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
+import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
@@ -671,8 +672,8 @@ public abstract class StackValue {
                 box(fromType, toType, v);
             }
         }
-        else if (fromType.getSort() == Type.OBJECT) {
-            //toType is primitive here
+        else if (fromType.getSort() == Type.OBJECT || fromType.getSort() == Type.ARRAY) {
+            // here toType is primitive and fromType is reference (object or array)
             Type unboxedType = unboxPrimitiveTypeOrNull(fromType);
             if (unboxedType != null) {
                 unbox(fromType, unboxedType, v);
@@ -1543,7 +1544,7 @@ public abstract class StackValue {
 
                 //TODO: try to don't generate defaults at all in CollectionElementReceiver
 
-                List<ResolvedValueArgument> getterArguments = new ArrayList(collectionElementReceiver.valueArguments);
+                List<ResolvedValueArgument> getterArguments = new ArrayList<>(collectionElementReceiver.valueArguments);
                 List<ResolvedValueArgument> getterDefaults = CollectionsKt.takeLastWhile(getterArguments,
                                                                                          argument -> argument instanceof DefaultValueArgument);
 
@@ -1761,7 +1762,7 @@ public abstract class StackValue {
                 // is from a different context), the assertion will be generated on each access, see KT-28331.
                 if (descriptor instanceof AccessorForPropertyBackingField) {
                     PropertyDescriptor property = ((AccessorForPropertyBackingField) descriptor).getCalleeDescriptor();
-                    if (!skipLateinitAssertion && property.isLateInit() && JvmAbi.isPropertyWithBackingFieldInOuterClass(property) &&
+                    if (!skipLateinitAssertion && property.isLateInit() && DescriptorsJvmAbiUtil.isPropertyWithBackingFieldInOuterClass(property) &&
                         !JvmCodegenUtil.couldUseDirectAccessToProperty(property, true, false, codegen.context, false)) {
                         genNonNullAssertForLateinit(v, property.getName().asString());
                     }

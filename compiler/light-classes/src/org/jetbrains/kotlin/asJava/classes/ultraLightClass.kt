@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 
@@ -341,7 +342,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         object : DataClassMethodGenerator(classOrObject, bindingContext) {
             private fun addFunction(descriptor: FunctionDescriptor, declarationForOrigin: KtDeclaration? = null) {
-                result.add(createGeneratedMethodFromDescriptor(descriptor, declarationForOrigin))
+                result.add(createGeneratedMethodFromDescriptor(descriptor, JvmDeclarationOriginKind.OTHER, declarationForOrigin))
             }
 
             override fun generateComponentFunction(function: FunctionDescriptor, parameter: ValueParameterDescriptor) {
@@ -387,9 +388,17 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
             when (delegate) {
 
                 is PropertyDescriptor -> delegate.accessors.mapTo(result) {
-                    createGeneratedMethodFromDescriptor(it)
+                    createGeneratedMethodFromDescriptor(
+                        descriptor = it,
+                        declarationOriginKindForOrigin = JvmDeclarationOriginKind.DELEGATION
+                    )
                 }
-                is FunctionDescriptor -> result.add(createGeneratedMethodFromDescriptor(delegate))
+                is FunctionDescriptor -> result.add(
+                    createGeneratedMethodFromDescriptor(
+                        descriptor = delegate,
+                        declarationOriginKindForOrigin = JvmDeclarationOriginKind.DELEGATION
+                    )
+                )
             }
         }
     }

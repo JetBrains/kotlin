@@ -15,6 +15,6 @@ fun f2() {}
 fun foo(vararg ints: Int) {}
 
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(ints = 1)
+    foo(ints = 1)
     foo(ints = *intArrayOf(1))
 }

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ModuleContext
+import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependencies
@@ -75,8 +76,8 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
     override val allModules: Collection<M> = listOf()
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) = throw IllegalStateException("Should not be called for $infos")
 
-    override fun moduleInfoForModuleDescriptor(descriptor: ModuleDescriptor): M {
-        throw IllegalStateException("$descriptor is not contained in this resolver")
+    override fun moduleInfoForModuleDescriptor(moduleDescriptor: ModuleDescriptor): M {
+        throw IllegalStateException("$moduleDescriptor is not contained in this resolver")
     }
 }
 
@@ -128,29 +129,41 @@ class LazyModuleDependencies<M : ModuleInfo>(
     firstDependency: M? = null,
     private val resolverForProject: AbstractResolverForProject<M>
 ) : ModuleDependencies {
+
     private val dependencies = storageManager.createLazyValue {
+
+        val moduleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
+        firstDependency?.let {
+            moduleDescriptors.add(resolverForProject.descriptorForModule(it))
+        }
         val moduleDescriptor = resolverForProject.descriptorForModule(module)
-        sequence {
-            if (firstDependency != null) {
-                yield(resolverForProject.descriptorForModule(firstDependency))
-            }
-            if (module.dependencyOnBuiltIns() == ModuleInfo.DependencyOnBuiltIns.AFTER_SDK) {
-                yield(moduleDescriptor.builtIns.builtInsModule)
-            }
-            for (dependency in module.dependencies()) {
-                @Suppress("UNCHECKED_CAST")
-                yield(resolverForProject.descriptorForModule(dependency as M))
-            }
-            if (module.dependencyOnBuiltIns() == ModuleInfo.DependencyOnBuiltIns.LAST) {
-                yield(moduleDescriptor.builtIns.builtInsModule)
-            }
-        }.toList()
+        val dependencyOnBuiltIns = module.dependencyOnBuiltIns()
+        if (dependencyOnBuiltIns == ModuleInfo.DependencyOnBuiltIns.AFTER_SDK) {
+            moduleDescriptors.add(moduleDescriptor.builtIns.builtInsModule)
+        }
+        for (dependency in module.dependencies()) {
+            if (dependency == firstDependency) continue
+
+            @Suppress("UNCHECKED_CAST")
+            moduleDescriptors.add(resolverForProject.descriptorForModule(dependency as M))
+        }
+        if (dependencyOnBuiltIns == ModuleInfo.DependencyOnBuiltIns.LAST) {
+            moduleDescriptors.add(moduleDescriptor.builtIns.builtInsModule)
+        }
+        moduleDescriptors.toList()
     }
 
     override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
 
-    override val expectedByDependencies by storageManager.createLazyValue {
+    override val directExpectedByDependencies by storageManager.createLazyValue {
         module.expectedBy.map {
+            @Suppress("UNCHECKED_CAST")
+            resolverForProject.descriptorForModule(it as M)
+        }
+    }
+
+    override val allExpectedByDependencies: Set<ModuleDescriptorImpl> by storageManager.createLazyValue {
+        collectAllExpectedByModules(module).mapTo(HashSet<ModuleDescriptorImpl>()) {
             @Suppress("UNCHECKED_CAST")
             resolverForProject.descriptorForModule(it as M)
         }
@@ -213,4 +226,5 @@ interface ResolverForModuleComputationTracker {
 
 
 @Suppress("UNCHECKED_CAST")
-fun <T> ModuleInfo.getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
+fun <T> ModuleInfo.getCapability(capability: ModuleCapability<T>) = capabilities[capability] as? T
+

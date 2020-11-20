@@ -206,9 +206,9 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.Test1, x:kotlin.Int, s:kotlin.String) returnType:kotlin.Unit
       overridden:
         public abstract fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.IBase
-      $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test1
-      VALUE_PARAMETER DELEGATED_MEMBER name:x index:0 type:kotlin.Int
-      VALUE_PARAMETER DELEGATED_MEMBER name:s index:1 type:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+      VALUE_PARAMETER name:s index:1 type:kotlin.String
       BLOCK_BODY
         CALL 'public abstract fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]' type=<root>.IBase origin=null
@@ -218,20 +218,22 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     FUN DELEGATED_MEMBER name:bar visibility:public modality:OPEN <> ($this:<root>.Test1) returnType:kotlin.Int
       overridden:
         public abstract fun bar (): kotlin.Int declared in <root>.IBase
-      $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.Int declared in <root>.Test1'
           CALL 'public abstract fun bar (): kotlin.Int declared in <root>.IBase' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]' type=<root>.IBase origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.bar' type=<root>.Test1 origin=null
-    FUN DELEGATED_MEMBER name:qux visibility:public modality:OPEN <> ($this:<root>.Test1) returnType:kotlin.Unit
+    FUN DELEGATED_MEMBER name:qux visibility:public modality:OPEN <> ($this:<root>.Test1, $receiver:kotlin.String) returnType:kotlin.Unit
       overridden:
         public abstract fun qux (): kotlin.Unit declared in <root>.IBase
-      $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test1
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test1
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
       BLOCK_BODY
         CALL 'public abstract fun qux (): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]' type=<root>.IBase origin=null
             receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.qux' type=<root>.Test1 origin=null
+          $receiver: GET_VAR '<this>: kotlin.String declared in <root>.Test1.qux' type=kotlin.String origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
@@ -263,9 +265,9 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     FUN DELEGATED_MEMBER name:foo visibility:public modality:OPEN <> ($this:<root>.Test2, x:kotlin.Int, s:kotlin.String) returnType:kotlin.Unit
       overridden:
         public abstract fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.IBase
-      $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
-      VALUE_PARAMETER DELEGATED_MEMBER name:x index:0 type:kotlin.Int
-      VALUE_PARAMETER DELEGATED_MEMBER name:s index:1 type:kotlin.String
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+      VALUE_PARAMETER name:s index:1 type:kotlin.String
       BLOCK_BODY
         CALL 'public abstract fun foo (x: kotlin.Int, s: kotlin.String): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]' type=<root>.IBase origin=null
@@ -275,27 +277,29 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
     FUN DELEGATED_MEMBER name:bar visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:kotlin.Int
       overridden:
         public abstract fun bar (): kotlin.Int declared in <root>.IBase
-      $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun bar (): kotlin.Int declared in <root>.Test2'
           CALL 'public abstract fun bar (): kotlin.Int declared in <root>.IBase' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]' type=<root>.IBase origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.bar' type=<root>.Test2 origin=null
-    FUN DELEGATED_MEMBER name:qux visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:kotlin.Unit
+    FUN DELEGATED_MEMBER name:qux visibility:public modality:OPEN <> ($this:<root>.Test2, $receiver:kotlin.String) returnType:kotlin.Unit
       overridden:
         public abstract fun qux (): kotlin.Unit declared in <root>.IBase
-      $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
+      $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
       BLOCK_BODY
         CALL 'public abstract fun qux (): kotlin.Unit declared in <root>.IBase' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]' type=<root>.IBase origin=null
             receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.qux' type=<root>.Test2 origin=null
+          $receiver: GET_VAR '<this>: kotlin.String declared in <root>.Test2.qux' type=kotlin.String origin=null
     FIELD DELEGATE name:<$$delegate_0> type:<root>.IBase visibility:local [final]
     PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [val]
       FUN DELEGATED_MEMBER name:<get-x> visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:kotlin.String
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:x visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-x> (): kotlin.String declared in <root>.IOther
-        $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-x> (): kotlin.String declared in <root>.Test2'
             CALL 'public abstract fun <get-x> (): kotlin.String declared in <root>.IOther' type=kotlin.String origin=null
@@ -306,7 +310,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:y visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <get-y> (): kotlin.Int declared in <root>.IOther
-        $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-y> (): kotlin.Int declared in <root>.Test2'
             CALL 'public abstract fun <get-y> (): kotlin.Int declared in <root>.IOther' type=kotlin.Int origin=null
@@ -316,45 +320,51 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:y visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <set-y> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IOther
-        $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
-        VALUE_PARAMETER DELEGATED_MEMBER name:<set-?> index:0 type:kotlin.Int
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
           CALL 'public abstract fun <set-y> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IOther' type=kotlin.Unit origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_1> type:<root>.IOther visibility:local [final]' type=<root>.IOther origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<set-y>' type=<root>.Test2 origin=null
             <set-?>: GET_VAR '<set-?>: kotlin.Int declared in <root>.Test2.<set-y>' type=kotlin.Int origin=null
     PROPERTY DELEGATED_MEMBER name:z1 visibility:public modality:OPEN [val]
-      FUN DELEGATED_MEMBER name:<get-z1> visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:kotlin.Int
+      FUN DELEGATED_MEMBER name:<get-z1> visibility:public modality:OPEN <> ($this:<root>.Test2, $receiver:kotlin.Byte) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:z1 visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-z1> (): kotlin.Int declared in <root>.IOther
-        $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Byte
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-z1> (): kotlin.Int declared in <root>.Test2'
             CALL 'public abstract fun <get-z1> (): kotlin.Int declared in <root>.IOther' type=kotlin.Int origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_1> type:<root>.IOther visibility:local [final]' type=<root>.IOther origin=null
                 receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-z1>' type=<root>.Test2 origin=null
+              $receiver: GET_VAR '<this>: kotlin.Byte declared in <root>.Test2.<get-z1>' type=kotlin.Byte origin=null
     PROPERTY DELEGATED_MEMBER name:z2 visibility:public modality:OPEN [var]
-      FUN DELEGATED_MEMBER name:<get-z2> visibility:public modality:OPEN <> ($this:<root>.Test2) returnType:kotlin.Int
+      FUN DELEGATED_MEMBER name:<get-z2> visibility:public modality:OPEN <> ($this:<root>.Test2, $receiver:kotlin.Byte) returnType:kotlin.Int
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:z2 visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <get-z2> (): kotlin.Int declared in <root>.IOther
-        $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Byte
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-z2> (): kotlin.Int declared in <root>.Test2'
             CALL 'public abstract fun <get-z2> (): kotlin.Int declared in <root>.IOther' type=kotlin.Int origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_1> type:<root>.IOther visibility:local [final]' type=<root>.IOther origin=null
                 receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-z2>' type=<root>.Test2 origin=null
-      FUN DELEGATED_MEMBER name:<set-z2> visibility:public modality:OPEN <> ($this:<root>.Test2, <set-?>:kotlin.Int) returnType:kotlin.Unit
+              $receiver: GET_VAR '<this>: kotlin.Byte declared in <root>.Test2.<get-z2>' type=kotlin.Byte origin=null
+      FUN DELEGATED_MEMBER name:<set-z2> visibility:public modality:OPEN <> ($this:<root>.Test2, $receiver:kotlin.Byte, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY DELEGATED_MEMBER name:z2 visibility:public modality:OPEN [var]
         overridden:
           public abstract fun <set-z2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IOther
-        $this: VALUE_PARAMETER DELEGATED_MEMBER name:<this> type:<root>.Test2
-        VALUE_PARAMETER DELEGATED_MEMBER name:<set-?> index:0 type:kotlin.Int
+        $this: VALUE_PARAMETER name:<this> type:<root>.Test2
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Byte
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
           CALL 'public abstract fun <set-z2> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.IOther' type=kotlin.Unit origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_1> type:<root>.IOther visibility:local [final]' type=<root>.IOther origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<set-z2>' type=<root>.Test2 origin=null
+            $receiver: GET_VAR '<this>: kotlin.Byte declared in <root>.Test2.<set-z2>' type=kotlin.Byte origin=null
             <set-?>: GET_VAR '<set-?>: kotlin.Int declared in <root>.Test2.<set-z2>' type=kotlin.Int origin=null
     FIELD DELEGATE name:<$$delegate_1> type:<root>.IOther visibility:local [final]
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

@@ -15,10 +15,10 @@ import java.lang.Comparable as Com
 val l : MutableList<in Int> = ArrayList<Int>()
 
 fun test(l : java.util.List<Int>) {
-  val x : java.List
+  val x : <!UNRESOLVED_REFERENCE!>java.List<!>
   val y : java.util.List<Int>
   val b : java.lang.Object
-  val z : java.utils.List<Int>
+  val z : <!UNRESOLVED_REFERENCE!>java.utils.List<Int><!>
 
   val f : java.io.File? = null
 

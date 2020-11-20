@@ -1,8 +1,8 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
-  -Xdisable-fake-override-validator
-                             Disable IR fake override validator
   -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
+  -Xerror-tolerance-policy   Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)
+  -Xfake-override-validator  Enable IR fake override validator
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
   -Xgenerate-dts             Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only.
@@ -20,6 +20,7 @@ where advanced options include:
   -Xir-produce-klib-file     Generate packed klib into file specified by -output. Disables pre-IR backend
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
+  -Xwasm                     Use experimental WebAssembly compiler backend
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
   -Xcheck-phase-conditions   Check pre- and postconditions on phases
@@ -29,10 +30,10 @@ where advanced options include:
                              Should be a subset of sources passed as free arguments
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
-  -Xdeserialize-fake-overrides Fallback to deserializing fake overrides
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
   -Xdisable-phases           Disable backend phases
+  -Xdisable-ultra-light-classes Do not use the ultra light classes implementation
   -Xdump-directory           Dump backend state into directory
   -Xdump-fqname              FqName of declaration that should be dumped
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file
@@ -42,6 +43,7 @@ where advanced options include:
   -Xexplicit-api={strict|warning|disable}
                              Force compiler to report errors on all public API declarations without explicit visibility or return type.
                              Use 'warning' level to issue warnings instead of errors.
+  -Xinference-compatibility  Enable compatibility changes for generic type inference algorithm
   -Xinline-classes           Enable experimental inline classes
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
   -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block
@@ -70,6 +72,7 @@ where advanced options include:
   -Xskip-prerelease-check    Allow to load pre-release classes
   -Xuse-experimental=<fq.name> Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name
   -Xuse-fir                  Compile using Front-end IR. Warning: this feature is far from being production-ready
+  -Xuse-fir-extended-checkers Use extended analysis mode based on Front-end IR. Warning: this feature is far from being production-ready
   -Xuse-mixed-named-arguments Enable Support named arguments in their own position even if the result appears as mixed
   -Xverbose-phases           Be verbose while performing these backend phases
 

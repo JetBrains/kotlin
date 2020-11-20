@@ -26,5 +26,5 @@ import p.*
 
 fun test() {
     foo(M1().a)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(1) // error type on the declaration site
+    foo(1) // error type on the declaration site
 }

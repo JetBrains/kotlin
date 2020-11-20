@@ -14,9 +14,9 @@ fun test(
     foo1 { "str" }
     foo1(f0)
 
-    <!INAPPLICABLE_CANDIDATE!>foo1<!>(f1)
-    <!INAPPLICABLE_CANDIDATE!>foo2<!>(f2)
-    <!INAPPLICABLE_CANDIDATE!>foo3<!>(f3)
+    foo1(f1)
+    foo2(f2)
+    foo3(f3)
 
     <!INAPPLICABLE_CANDIDATE!>foo1<!>(f2)
     <!INAPPLICABLE_CANDIDATE!>foo1<!>(f3)

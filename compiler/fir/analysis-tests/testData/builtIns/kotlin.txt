@@ -22,9 +22,9 @@ public final fun intArrayOf(vararg elements: R|kotlin/IntArray|): R|kotlin/IntAr
 
 public final fun longArrayOf(vararg elements: R|kotlin/LongArray|): R|kotlin/LongArray|
 
-public final fun shortArrayOf(vararg elements: R|kotlin/ShortArray|): R|kotlin/ShortArray|
-
 public final operator fun R|kotlin/String?|.plus(other: R|kotlin/Any?|): R|kotlin/String|
+
+public final fun shortArrayOf(vararg elements: R|kotlin/ShortArray|): R|kotlin/ShortArray|
 
 public final fun R|kotlin/Any?|.toString(): R|kotlin/String|
 
@@ -43,6 +43,8 @@ public open class Any {
 }
 
 public final class Array<T> : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Serializable| {
+    public final override fun clone(): R|kotlin/Array<T>|
+
     public final operator fun get(index: R|kotlin/Int|): R|T|
 
     public final operator fun iterator(): R|kotlin/collections/Iterator<T>|
@@ -54,11 +56,14 @@ public final class Array<T> : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Seri
 
     public constructor<T>(size: R|kotlin/Int|, init: R|(kotlin/Int) -> T|): R|kotlin/Array<T>|
 
-    public final override fun clone(): R|kotlin/Array<T>|
-
 }
 
 public final class Boolean : R|kotlin/Comparable<kotlin/Boolean>|, R|java/io/Serializable| {
+    @R|kotlin/SinceKotlin|(version = String(1.3)) public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|kotlin/Boolean.Companion|
+
+    }
+
     public final infix fun and(other: R|kotlin/Boolean|): R|kotlin/Boolean|
 
     public open operator fun compareTo(other: R|kotlin/Boolean|): R|kotlin/Int|
@@ -71,14 +76,11 @@ public final class Boolean : R|kotlin/Comparable<kotlin/Boolean>|, R|java/io/Ser
 
     private constructor(): R|kotlin/Boolean|
 
-    @R|kotlin/SinceKotlin|(version = String(1.3)) public final companion object Companion : R|kotlin/Any| {
-        private constructor(): R|kotlin/Boolean.Companion|
-
-    }
-
 }
 
 public final class BooleanArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Serializable| {
+    public final override fun clone(): R|kotlin/BooleanArray|
+
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Boolean|
 
     public final operator fun iterator(): R|kotlin/collections/BooleanIterator|
@@ -92,11 +94,26 @@ public final class BooleanArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/
 
     public constructor(size: R|kotlin/Int|): R|kotlin/BooleanArray|
 
-    public final override fun clone(): R|kotlin/BooleanArray|
-
 }
 
 public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>|, R|java/io/Serializable| {
+    public final companion object Companion : R|kotlin/Any| {
+        public final const val MAX_VALUE: R|kotlin/Byte| = Byte(127)
+            public get(): R|kotlin/Byte|
+
+        public final const val MIN_VALUE: R|kotlin/Byte| = Byte(-128)
+            public get(): R|kotlin/Byte|
+
+        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(8)
+            public get(): R|kotlin/Int|
+
+        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+        private constructor(): R|kotlin/Byte.Companion|
+
+    }
+
     public open operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
     public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
@@ -201,26 +218,11 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>|, R
 
     private constructor(): R|kotlin/Byte|
 
-    public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_VALUE: R|kotlin/Byte| = Byte(127)
-            public get(): R|kotlin/Byte|
-
-        public final const val MIN_VALUE: R|kotlin/Byte| = Byte(-128)
-            public get(): R|kotlin/Byte|
-
-        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(8)
-            public get(): R|kotlin/Int|
-
-        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(1)
-            public get(): R|kotlin/Int|
-
-        private constructor(): R|kotlin/Byte.Companion|
-
-    }
-
 }
 
 public final class ByteArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Serializable| {
+    public final override fun clone(): R|kotlin/ByteArray|
+
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Byte|
 
     public final operator fun iterator(): R|kotlin/collections/ByteIterator|
@@ -234,41 +236,9 @@ public final class ByteArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Ser
 
     public constructor(size: R|kotlin/Int|): R|kotlin/ByteArray|
 
-    public final override fun clone(): R|kotlin/ByteArray|
-
 }
 
 public final class Char : R|kotlin/Comparable<kotlin/Char>|, R|java/io/Serializable| {
-    public open operator fun compareTo(other: R|kotlin/Char|): R|kotlin/Int|
-
-    public final operator fun dec(): R|kotlin/Char|
-
-    public final operator fun inc(): R|kotlin/Char|
-
-    public final operator fun minus(other: R|kotlin/Char|): R|kotlin/Int|
-
-    public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Char|
-
-    public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Char|
-
-    public final operator fun rangeTo(other: R|kotlin/Char|): R|kotlin/ranges/CharRange|
-
-    public final fun toByte(): R|kotlin/Byte|
-
-    public final fun toChar(): R|kotlin/Char|
-
-    public final fun toDouble(): R|kotlin/Double|
-
-    public final fun toFloat(): R|kotlin/Float|
-
-    public final fun toInt(): R|kotlin/Int|
-
-    public final fun toLong(): R|kotlin/Long|
-
-    public final fun toShort(): R|kotlin/Short|
-
-    private constructor(): R|kotlin/Char|
-
     public final companion object Companion : R|kotlin/Any| {
         public final const val MAX_HIGH_SURROGATE: R|kotlin/Char| = Char(56319)
             public get(): R|kotlin/Char|
@@ -304,9 +274,41 @@ public final class Char : R|kotlin/Comparable<kotlin/Char>|, R|java/io/Serializa
 
     }
 
+    public open operator fun compareTo(other: R|kotlin/Char|): R|kotlin/Int|
+
+    public final operator fun dec(): R|kotlin/Char|
+
+    public final operator fun inc(): R|kotlin/Char|
+
+    public final operator fun minus(other: R|kotlin/Char|): R|kotlin/Int|
+
+    public final operator fun minus(other: R|kotlin/Int|): R|kotlin/Char|
+
+    public final operator fun plus(other: R|kotlin/Int|): R|kotlin/Char|
+
+    public final operator fun rangeTo(other: R|kotlin/Char|): R|kotlin/ranges/CharRange|
+
+    public final fun toByte(): R|kotlin/Byte|
+
+    public final fun toChar(): R|kotlin/Char|
+
+    public final fun toDouble(): R|kotlin/Double|
+
+    public final fun toFloat(): R|kotlin/Float|
+
+    public final fun toInt(): R|kotlin/Int|
+
+    public final fun toLong(): R|kotlin/Long|
+
+    public final fun toShort(): R|kotlin/Short|
+
+    private constructor(): R|kotlin/Char|
+
 }
 
 public final class CharArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Serializable| {
+    public final override fun clone(): R|kotlin/CharArray|
+
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Char|
 
     public final operator fun iterator(): R|kotlin/collections/CharIterator|
@@ -320,8 +322,6 @@ public final class CharArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Ser
 
     public constructor(size: R|kotlin/Int|): R|kotlin/CharArray|
 
-    public final override fun clone(): R|kotlin/CharArray|
-
 }
 
 public abstract interface CharSequence : R|kotlin/Any| {
@@ -334,17 +334,12 @@ public abstract interface CharSequence : R|kotlin/Any| {
 
 }
 
-public abstract interface Cloneable : R|kotlin/Any| {
-    protected open fun clone(): R|kotlin/Any|
-
-}
-
 public abstract interface Comparable<in T> : R|kotlin/Any| {
     public abstract operator fun compareTo(other: R|T|): R|kotlin/Int|
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/MustBeDocumented|() public final annotation class Deprecated : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|(), R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.TYPEALIAS|())) @R|kotlin/annotation/MustBeDocumented|() public final annotation class Deprecated : R|kotlin/Annotation| {
     public final val level: R|kotlin/DeprecationLevel|
         public get(): R|kotlin/DeprecationLevel|
 
@@ -358,7 +353,7 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.4)) public final annotation class DeprecatedSinceKotlin : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|(), R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.TYPEALIAS|())) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.4)) public final annotation class DeprecatedSinceKotlin : R|kotlin/Annotation| {
     public final val errorSince: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -373,20 +368,46 @@ public abstract interface Comparable<in T> : R|kotlin/Any| {
 }
 
 public final enum class DeprecationLevel : R|kotlin/Enum<kotlin/DeprecationLevel>| {
+    public final static fun valueOf(value: R|kotlin/String|): R|kotlin/DeprecationLevel| {
+    }
+
+    public final static fun values(): R|kotlin/Array<kotlin/DeprecationLevel>| {
+    }
+
     private constructor(): R|kotlin/DeprecationLevel|
 
     public final static enum entry WARNING: R|kotlin/DeprecationLevel|
     public final static enum entry ERROR: R|kotlin/DeprecationLevel|
     public final static enum entry HIDDEN: R|kotlin/DeprecationLevel|
-    public final static fun values(): R|kotlin/Array<kotlin/DeprecationLevel>| {
-    }
-
-    public final static fun valueOf(value: R|kotlin/String|): R|kotlin/DeprecationLevel| {
-    }
-
 }
 
 public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>|, R|java/io/Serializable| {
+    public final companion object Companion : R|kotlin/Any| {
+        public final const val MAX_VALUE: R|kotlin/Double| = Double(1.7976931348623157E308)
+            public get(): R|kotlin/Double|
+
+        public final const val MIN_VALUE: R|kotlin/Double| = Double(4.9E-324)
+            public get(): R|kotlin/Double|
+
+        public final const val NEGATIVE_INFINITY: R|kotlin/Double| = Double(-Infinity)
+            public get(): R|kotlin/Double|
+
+        public final const val NaN: R|kotlin/Double| = Double(NaN)
+            public get(): R|kotlin/Double|
+
+        public final const val POSITIVE_INFINITY: R|kotlin/Double| = Double(Infinity)
+            public get(): R|kotlin/Double|
+
+        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BITS: R|kotlin/Int| = Int(64)
+            public get(): R|kotlin/Int|
+
+        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(8)
+            public get(): R|kotlin/Int|
+
+        private constructor(): R|kotlin/Double.Companion|
+
+    }
+
     public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
     public open operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
@@ -463,7 +484,7 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     public final operator fun times(other: R|kotlin/Short|): R|kotlin/Double|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toByte())) ) public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toByte())) ) public open fun toByte(): R|kotlin/Byte|
 
     public open fun toChar(): R|kotlin/Char|
 
@@ -475,7 +496,7 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     public open fun toLong(): R|kotlin/Long|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toShort())) ) public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toShort())) ) public open fun toShort(): R|kotlin/Short|
 
     public final operator fun unaryMinus(): R|kotlin/Double|
 
@@ -483,35 +504,11 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     private constructor(): R|kotlin/Double|
 
-    public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_VALUE: R|kotlin/Double| = Double(1.7976931348623157E308)
-            public get(): R|kotlin/Double|
-
-        public final const val MIN_VALUE: R|kotlin/Double| = Double(4.9E-324)
-            public get(): R|kotlin/Double|
-
-        public final const val NEGATIVE_INFINITY: R|kotlin/Double| = Double(-Infinity)
-            public get(): R|kotlin/Double|
-
-        public final const val NaN: R|kotlin/Double| = Double(NaN)
-            public get(): R|kotlin/Double|
-
-        public final const val POSITIVE_INFINITY: R|kotlin/Double| = Double(Infinity)
-            public get(): R|kotlin/Double|
-
-        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BITS: R|kotlin/Int| = Int(64)
-            public get(): R|kotlin/Int|
-
-        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(8)
-            public get(): R|kotlin/Int|
-
-        private constructor(): R|kotlin/Double.Companion|
-
-    }
-
 }
 
 public final class DoubleArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Serializable| {
+    public final override fun clone(): R|kotlin/DoubleArray|
+
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Double|
 
     public final operator fun iterator(): R|kotlin/collections/DoubleIterator|
@@ -525,16 +522,19 @@ public final class DoubleArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/S
 
     public constructor(size: R|kotlin/Int|): R|kotlin/DoubleArray|
 
-    public final override fun clone(): R|kotlin/DoubleArray|
-
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class DslMarker : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class DslMarker : R|kotlin/Annotation| {
     public constructor(): R|kotlin/DslMarker|
 
 }
 
 public abstract class Enum<E> : R|kotlin/Comparable<E>|, R|java/io/Serializable| {
+    public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|kotlin/Enum.Companion|
+
+    }
+
     protected final fun clone(): R|kotlin/Any|
 
     public final operator fun compareTo(other: R|E|): R|kotlin/Int|
@@ -553,19 +553,40 @@ public abstract class Enum<E> : R|kotlin/Comparable<E>|, R|java/io/Serializable|
 
     public constructor<E>(name: R|kotlin/String| = STUB, ordinal: R|kotlin/Int| = STUB): R|kotlin/Enum<E>|
 
-    public final companion object Companion : R|kotlin/Any| {
-        private constructor(): R|kotlin/Enum.Companion|
-
-    }
-
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/MustBeDocumented|() public final annotation class ExtensionFunctionType : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ExtensionFunctionType : R|kotlin/Annotation| {
     public constructor(): R|kotlin/ExtensionFunctionType|
 
 }
 
 public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|, R|java/io/Serializable| {
+    public final companion object Companion : R|kotlin/Any| {
+        public final const val MAX_VALUE: R|kotlin/Float| = Float(3.4028235E38)
+            public get(): R|kotlin/Float|
+
+        public final const val MIN_VALUE: R|kotlin/Float| = Float(1.4E-45)
+            public get(): R|kotlin/Float|
+
+        public final const val NEGATIVE_INFINITY: R|kotlin/Float| = Float(-Infinity)
+            public get(): R|kotlin/Float|
+
+        public final const val NaN: R|kotlin/Float| = Float(NaN)
+            public get(): R|kotlin/Float|
+
+        public final const val POSITIVE_INFINITY: R|kotlin/Float| = Float(Infinity)
+            public get(): R|kotlin/Float|
+
+        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BITS: R|kotlin/Int| = Int(32)
+            public get(): R|kotlin/Int|
+
+        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(4)
+            public get(): R|kotlin/Int|
+
+        private constructor(): R|kotlin/Float.Companion|
+
+    }
+
     public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
     public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
@@ -642,7 +663,7 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|,
 
     public final operator fun times(other: R|kotlin/Short|): R|kotlin/Float|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toByte())) ) public open fun toByte(): R|kotlin/Byte|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toByte())) ) public open fun toByte(): R|kotlin/Byte|
 
     public open fun toChar(): R|kotlin/Char|
 
@@ -654,7 +675,7 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|,
 
     public open fun toLong(): R|kotlin/Long|
 
-    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(expression = String(toInt().toShort())) ) public open fun toShort(): R|kotlin/Short|
+    @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toShort())) ) public open fun toShort(): R|kotlin/Short|
 
     public final operator fun unaryMinus(): R|kotlin/Float|
 
@@ -662,35 +683,11 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|,
 
     private constructor(): R|kotlin/Float|
 
-    public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_VALUE: R|kotlin/Float| = Float(3.4028235E38)
-            public get(): R|kotlin/Float|
-
-        public final const val MIN_VALUE: R|kotlin/Float| = Float(1.4E-45)
-            public get(): R|kotlin/Float|
-
-        public final const val NEGATIVE_INFINITY: R|kotlin/Float| = Float(-Infinity)
-            public get(): R|kotlin/Float|
-
-        public final const val NaN: R|kotlin/Float| = Float(NaN)
-            public get(): R|kotlin/Float|
-
-        public final const val POSITIVE_INFINITY: R|kotlin/Float| = Float(Infinity)
-            public get(): R|kotlin/Float|
-
-        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BITS: R|kotlin/Int| = Int(32)
-            public get(): R|kotlin/Int|
-
-        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.4)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(4)
-            public get(): R|kotlin/Int|
-
-        private constructor(): R|kotlin/Float.Companion|
-
-    }
-
 }
 
 public final class FloatArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Serializable| {
+    public final override fun clone(): R|kotlin/FloatArray|
+
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Float|
 
     public final operator fun iterator(): R|kotlin/collections/FloatIterator|
@@ -704,14 +701,29 @@ public final class FloatArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Se
 
     public constructor(size: R|kotlin/Int|): R|kotlin/FloatArray|
 
-    public final override fun clone(): R|kotlin/FloatArray|
-
 }
 
 public abstract interface Function<out R> : R|kotlin/Any| {
 }
 
 public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>|, R|java/io/Serializable| {
+    public final companion object Companion : R|kotlin/Any| {
+        public final const val MAX_VALUE: R|kotlin/Int| = Int(2147483647)
+            public get(): R|kotlin/Int|
+
+        public final const val MIN_VALUE: R|kotlin/Int| = Int(-2147483648)
+            public get(): R|kotlin/Int|
+
+        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(32)
+            public get(): R|kotlin/Int|
+
+        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(4)
+            public get(): R|kotlin/Int|
+
+        private constructor(): R|kotlin/Int.Companion|
+
+    }
+
     public final infix fun and(other: R|kotlin/Int|): R|kotlin/Int|
 
     public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
@@ -830,26 +842,11 @@ public final class Int : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Int>|, R|j
 
     private constructor(): R|kotlin/Int|
 
-    public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_VALUE: R|kotlin/Int| = Int(2147483647)
-            public get(): R|kotlin/Int|
-
-        public final const val MIN_VALUE: R|kotlin/Int| = Int(-2147483648)
-            public get(): R|kotlin/Int|
-
-        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(32)
-            public get(): R|kotlin/Int|
-
-        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(4)
-            public get(): R|kotlin/Int|
-
-        private constructor(): R|kotlin/Int.Companion|
-
-    }
-
 }
 
 public final class IntArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Serializable| {
+    public final override fun clone(): R|kotlin/IntArray|
+
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Int|
 
     public final operator fun iterator(): R|kotlin/collections/IntIterator|
@@ -863,11 +860,26 @@ public final class IntArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Seri
 
     public constructor(size: R|kotlin/Int|): R|kotlin/IntArray|
 
-    public final override fun clone(): R|kotlin/IntArray|
-
 }
 
 public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R|java/io/Serializable| {
+    public final companion object Companion : R|kotlin/Any| {
+        public final const val MAX_VALUE: R|kotlin/Long| = Long(9223372036854775807)
+            public get(): R|kotlin/Long|
+
+        public final const val MIN_VALUE: R|kotlin/Long| = Long(-9223372036854775808)
+            public get(): R|kotlin/Long|
+
+        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(64)
+            public get(): R|kotlin/Int|
+
+        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(8)
+            public get(): R|kotlin/Int|
+
+        private constructor(): R|kotlin/Long.Companion|
+
+    }
+
     public final infix fun and(other: R|kotlin/Long|): R|kotlin/Long|
 
     public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
@@ -986,26 +998,11 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R
 
     private constructor(): R|kotlin/Long|
 
-    public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_VALUE: R|kotlin/Long| = Long(9223372036854775807)
-            public get(): R|kotlin/Long|
-
-        public final const val MIN_VALUE: R|kotlin/Long| = Long(-9223372036854775808)
-            public get(): R|kotlin/Long|
-
-        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(64)
-            public get(): R|kotlin/Int|
-
-        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(8)
-            public get(): R|kotlin/Int|
-
-        private constructor(): R|kotlin/Long.Companion|
-
-    }
-
 }
 
 public final class LongArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Serializable| {
+    public final override fun clone(): R|kotlin/LongArray|
+
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Long|
 
     public final operator fun iterator(): R|kotlin/collections/LongIterator|
@@ -1018,8 +1015,6 @@ public final class LongArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Ser
     public constructor(size: R|kotlin/Int|, init: R|(kotlin/Int) -> kotlin/Long|): R|kotlin/LongArray|
 
     public constructor(size: R|kotlin/Int|): R|kotlin/LongArray|
-
-    public final override fun clone(): R|kotlin/LongArray|
 
 }
 
@@ -1047,7 +1042,7 @@ public abstract class Number : R|kotlin/Any|, R|java/io/Serializable| {
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class ParameterName : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class ParameterName : R|kotlin/Annotation| {
     public final val name: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1055,12 +1050,12 @@ public abstract class Number : R|kotlin/Any|, R|java/io/Serializable| {
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class PublishedApi : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() @R|kotlin/SinceKotlin|(version = String(1.1)) public final annotation class PublishedApi : R|kotlin/Annotation| {
     public constructor(): R|kotlin/PublishedApi|
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ReplaceWith : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>()) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class ReplaceWith : R|kotlin/Annotation| {
     public final val expression: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1072,6 +1067,23 @@ public abstract class Number : R|kotlin/Any|, R|java/io/Serializable| {
 }
 
 public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>|, R|java/io/Serializable| {
+    public final companion object Companion : R|kotlin/Any| {
+        public final const val MAX_VALUE: R|kotlin/Short| = Short(32767)
+            public get(): R|kotlin/Short|
+
+        public final const val MIN_VALUE: R|kotlin/Short| = Short(-32768)
+            public get(): R|kotlin/Short|
+
+        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(16)
+            public get(): R|kotlin/Int|
+
+        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(2)
+            public get(): R|kotlin/Int|
+
+        private constructor(): R|kotlin/Short.Companion|
+
+    }
+
     public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
     public final operator fun compareTo(other: R|kotlin/Double|): R|kotlin/Int|
@@ -1176,26 +1188,11 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>|,
 
     private constructor(): R|kotlin/Short|
 
-    public final companion object Companion : R|kotlin/Any| {
-        public final const val MAX_VALUE: R|kotlin/Short| = Short(32767)
-            public get(): R|kotlin/Short|
-
-        public final const val MIN_VALUE: R|kotlin/Short| = Short(-32768)
-            public get(): R|kotlin/Short|
-
-        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BITS: R|kotlin/Int| = Int(16)
-            public get(): R|kotlin/Int|
-
-        @PROPERTY:R|kotlin/SinceKotlin|(version = String(1.3)) public final const val SIZE_BYTES: R|kotlin/Int| = Int(2)
-            public get(): R|kotlin/Int|
-
-        private constructor(): R|kotlin/Short.Companion|
-
-    }
-
 }
 
 public final class ShortArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Serializable| {
+    public final override fun clone(): R|kotlin/ShortArray|
+
     public final operator fun get(index: R|kotlin/Int|): R|kotlin/Short|
 
     public final operator fun iterator(): R|kotlin/collections/ShortIterator|
@@ -1209,11 +1206,9 @@ public final class ShortArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Se
 
     public constructor(size: R|kotlin/Int|): R|kotlin/ShortArray|
 
-    public final override fun clone(): R|kotlin/ShortArray|
-
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class SinceKotlin : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|(), R|kotlin/annotation/AnnotationTarget.FIELD|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|(), R|kotlin/annotation/AnnotationTarget.TYPEALIAS|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class SinceKotlin : R|kotlin/Annotation| {
     public final val version: R|kotlin/String|
         public get(): R|kotlin/String|
 
@@ -1222,6 +1217,11 @@ public final class ShortArray : R|kotlin/Any|, R|kotlin/Cloneable|, R|java/io/Se
 }
 
 public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSequence|, R|java/io/Serializable| {
+    public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|kotlin/String.Companion|
+
+    }
+
     public open operator fun compareTo(other: R|kotlin/String|): R|kotlin/Int|
 
     public open operator fun get(index: R|kotlin/Int|): R|kotlin/Char|
@@ -1235,14 +1235,9 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
     public constructor(): R|kotlin/String|
 
-    public final companion object Companion : R|kotlin/Any| {
-        private constructor(): R|kotlin/String.Companion|
-
-    }
-
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|()) public final annotation class Suppress : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|(), R|kotlin/annotation/AnnotationTarget.ANNOTATION_CLASS|(), R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY|(), R|kotlin/annotation/AnnotationTarget.FIELD|(), R|kotlin/annotation/AnnotationTarget.LOCAL_VARIABLE|(), R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|(), R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|(), R|kotlin/annotation/AnnotationTarget.FUNCTION|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|(), R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|(), R|kotlin/annotation/AnnotationTarget.TYPE|(), R|kotlin/annotation/AnnotationTarget.EXPRESSION|(), R|kotlin/annotation/AnnotationTarget.FILE|(), R|kotlin/annotation/AnnotationTarget.TYPEALIAS|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|()) public final annotation class Suppress : R|kotlin/Annotation| {
     public final val names: R|kotlin/Array<out kotlin/String>|
         public get(): R|kotlin/Array<out kotlin/String>|
 
@@ -1274,7 +1269,7 @@ public final object Unit : R|kotlin/Any| {
 
 }
 
-@R|kotlin/annotation/Target|() @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class UnsafeVariance : R|kotlin/Annotation| {
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|())) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.SOURCE|()) @R|kotlin/annotation/MustBeDocumented|() public final annotation class UnsafeVariance : R|kotlin/Annotation| {
     public constructor(): R|kotlin/UnsafeVariance|
 
 }

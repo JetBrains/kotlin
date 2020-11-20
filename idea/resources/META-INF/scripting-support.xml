@@ -3,6 +3,10 @@
     <extensionPoint qualifiedName="org.jetbrains.kotlin.scripting.idea.scriptingSupport"
                     interface="org.jetbrains.kotlin.idea.core.script.configuration.ScriptingSupport"
                     area="IDEA_PROJECT"/>
+
+    <extensionPoint qualifiedName="org.jetbrains.kotlin.scripting.idea.settings.provider"
+                    interface="org.jetbrains.kotlin.idea.script.configuration.ScriptingSupportSpecificSettingsProvider"
+                    area="IDEA_PROJECT"/>
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">

@@ -1,7 +1,6 @@
 public final class Prop /* Prop*/ {
   private final java.lang.Object someProp;
 
-  @null()
   public  Prop();//  .ctor()
 
 }
@@ -12,15 +11,15 @@ final class null /* null*/ {
 }
 
 final class C /* C*/ {
-  private final int y;
-
+  @org.jetbrains.annotations.NotNull()
   private final kotlin.jvm.functions.Function0<java.lang.Object> initChild;
 
-  @null()
-  public  C(int);//  .ctor(int)
+  private final int y;
 
   @org.jetbrains.annotations.NotNull()
   public final kotlin.jvm.functions.Function0<java.lang.Object> getInitChild();//  getInitChild()
+
+  public  C(int);//  .ctor(int)
 
   public final int getY();//  getY()
 
@@ -35,16 +34,16 @@ final class null /* null*/ {
 }
 
 public final class ValidPublicSupertype /* ValidPublicSupertype*/ {
+  @org.jetbrains.annotations.NotNull()
   private final java.lang.Runnable x;
-
-  @null()
-  public  ValidPublicSupertype();//  .ctor()
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.Runnable bar();//  bar()
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.Runnable getX();//  getX()
+
+  public  ValidPublicSupertype();//  .ctor()
 
 }
 
@@ -66,16 +65,16 @@ public abstract interface I /* I*/ {
 }
 
 public final class InvalidPublicSupertype /* InvalidPublicSupertype*/ {
+  @org.jetbrains.annotations.NotNull()
   private final java.lang.Runnable x;
-
-  @null()
-  public  InvalidPublicSupertype();//  .ctor()
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.Runnable bar();//  bar()
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.Runnable getX();//  getX()
+
+  public  InvalidPublicSupertype();//  .ctor()
 
 }
 

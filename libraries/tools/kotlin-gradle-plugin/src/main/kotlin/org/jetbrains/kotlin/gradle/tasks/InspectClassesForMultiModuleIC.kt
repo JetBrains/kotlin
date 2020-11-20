@@ -11,6 +11,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.newProperty
 import java.io.File
 
@@ -27,18 +28,35 @@ internal open class InspectClassesForMultiModuleIC : DefaultTask() {
     @Suppress("MemberVisibilityCanBePrivate")
     @get:OutputFile
     internal val classesListFile: File by lazy {
-        (project.kotlinExtension as KotlinSingleJavaTargetExtension).target.defaultArtifactClassesListFile
+        (project.kotlinExtension as KotlinSingleJavaTargetExtension).target.defaultArtifactClassesListFile.get()
     }
+
+    @get:InputFiles
+    internal val sourceSetOutputClassesDir by lazy {
+        project.convention.findPlugin(JavaPluginConvention::class.java)?.sourceSets?.findByName(sourceSetName)?.output?.classesDirs
+    }
+
+    @get:Internal
+    internal val fileTrees
+        get() = sourceSetOutputClassesDir?.map {
+            if (isGradleVersionAtLeast(6, 0)) {
+                objects.fileTree().from(it).include("**/*.class")
+            } else {
+                project.fileTree(it).include("**/*.class")
+            }
+        }
+
+    @get:Internal
+    internal val objects = project.objects
 
     @Suppress("MemberVisibilityCanBePrivate")
     @get:InputFiles
     internal val classFiles: FileCollection
         get() {
-            val convention = project.convention.findPlugin(JavaPluginConvention::class.java)
-            val sourceSet = convention?.sourceSets?.findByName(sourceSetName) ?: return project.files()
-
-            val fileTrees = sourceSet.output.classesDirs.map { project.fileTree(it).include("**/*.class") }
-            return project.files(fileTrees)
+            if (sourceSetOutputClassesDir != null) {
+                return objects.fileCollection().from(fileTrees)
+            }
+            return objects.fileCollection()
         }
 
     @TaskAction

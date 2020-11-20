@@ -12,3 +12,5 @@ class B extends A {
 
     }
 }
+
+// FIR_COMPARISON

@@ -5,19 +5,23 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
-import org.jetbrains.kotlin.backend.jvm.ir.isLambda
-import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
+import org.jetbrains.kotlin.codegen.IrExpressionLambda
+import org.jetbrains.kotlin.codegen.JvmKotlinType
+import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -37,15 +41,16 @@ class IrInlineCodegen(
     reifiedTypeInliner: ReifiedTypeInliner<IrType>
 ) :
     InlineCodegen<ExpressionCodegen>(
-        codegen, state, function.descriptor, methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
+        codegen, state, function.toIrBasedDescriptor(), methodOwner, signature, typeParameterMappings, sourceCompiler, reifiedTypeInliner
     ),
-    IrCallGenerator {
+    IrInlineCallGenerator {
 
     override fun generateAssertFieldIfNeeded(info: RootInliningContext) {
         if (info.generateAssertField) {
             // May be inlining code into `<clinit>`, in which case it's too late to modify the IR and
             // `generateAssertFieldIfNeeded` will return a statement for which we need to emit bytecode.
-            codegen.classCodegen.generateAssertFieldIfNeeded()?.accept(codegen, BlockInfo())?.discard()
+            val isClInit = info.callSiteInfo.functionName == "<clinit>"
+            codegen.classCodegen.generateAssertFieldIfNeeded(isClInit)?.accept(codegen, BlockInfo())?.discard()
         }
     }
 
@@ -70,25 +75,17 @@ class IrInlineCodegen(
         codegen: ExpressionCodegen,
         blockInfo: BlockInfo
     ) {
-        if (codegen.irFunction.isInvokeSuspendOfContinuation()) {
-            // In order to support java interop of inline suspend functions, we generate continuations for these inline suspend functions.
-            // These functions should behave as ordinary suspend functions, i.e. we should not inline the content of the inline function
-            // into continuation.
-            // Thus, we should put its arguments to stack.
-            super.genValueAndPut(irValueParameter, argumentExpression, parameterType, codegen, blockInfo)
-        }
-
         val isInlineParameter = irValueParameter.isInlineParameter()
-        if (isInlineParameter && isInlineIrExpression(argumentExpression)) {
-            val irReference: IrFunctionReference =
-                (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
-            val boundReceiver = argumentExpression.statements.filterIsInstance<IrVariable>().singleOrNull()
-            val lambdaInfo =
-                rememberClosure(irReference, parameterType, irValueParameter, boundReceiver) as IrExpressionLambdaImpl
-
+        if (isInlineParameter && argumentExpression.isInlineIrExpression()) {
+            val irReference = (argumentExpression as IrBlock).statements.filterIsInstance<IrFunctionReference>().single()
+            val lambdaInfo = IrExpressionLambdaImpl(codegen, irReference, irValueParameter)
+            val closureInfo = invocationParamBuilder.addNextValueParameter(parameterType, true, null, irValueParameter.index)
+            closureInfo.functionalArgument = lambdaInfo
+            expressionMap[closureInfo.index] = lambdaInfo
+            val boundReceiver = irReference.extensionReceiver
             if (boundReceiver != null) {
                 activeLambda = lambdaInfo
-                putCapturedValueOnStack(boundReceiver.initializer!!, lambdaInfo.capturedParamsInDesc.single(), 0)
+                putCapturedValueOnStack(boundReceiver, lambdaInfo.capturedParamsInDesc.single(), 0)
                 activeLambda = null
             }
         } else {
@@ -124,7 +121,7 @@ class IrInlineCodegen(
 
             //TODO support default argument erasure
             if (!processDefaultMaskOrMethodHandler(onStack, kind)) {
-                val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toKotlinType())
+                val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
                 putArgumentOrCapturedToLocalVal(expectedType, onStack, -1, irValueParameter.index, kind)
             }
         }
@@ -132,7 +129,7 @@ class IrInlineCodegen(
 
     private fun putCapturedValueOnStack(argumentExpression: IrExpression, valueType: Type, capturedParamIndex: Int) {
         val onStack = codegen.genOrGetLocal(argumentExpression, BlockInfo())
-        val expectedType = JvmKotlinType(valueType, argumentExpression.type.toKotlinType())
+        val expectedType = JvmKotlinType(valueType, argumentExpression.type.toIrBasedKotlinType())
         putArgumentOrCapturedToLocalVal(expectedType, onStack, capturedParamIndex, capturedParamIndex, ValueKind.CAPTURED)
     }
 
@@ -140,50 +137,24 @@ class IrInlineCodegen(
         invocationParamBuilder.markValueParametersStart()
     }
 
-    override fun genCall(
+    override fun genInlineCall(
         callableMethod: IrCallableMethod,
         codegen: ExpressionCodegen,
-        expression: IrFunctionAccessExpression
+        expression: IrFunctionAccessExpression,
+        isInsideIfCondition: Boolean,
     ) {
-        val element = codegen.context.psiSourceManager.findPsiElement(expression, codegen.irFunction)
-            ?: codegen.context.psiSourceManager.findPsiElement(codegen.irFunction)
-        if (!state.globalInlineContext.enterIntoInlining(expression.symbol.owner.suspendFunctionOriginal().descriptor, element)) {
-            val message = "Call is a part of inline call cycle: ${expression.render()}"
-            AsmUtil.genThrow(codegen.v, "java/lang/UnsupportedOperationException", message)
-            return
-        }
-        try {
-            performInline(
-                expression.symbol.owner.typeParameters.map { it.symbol },
-                function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
-                false,
-                codegen.typeMapper.typeSystem,
-                registerLineNumberAfterwards = false,
-                isCallOfFunctionInCorrespondingDefaultDispatch = codegen.irFunction == codegen.context.mapping.defaultArgumentsDispatchFunction[function]
-            )
-        } finally {
-            state.globalInlineContext.exitFromInlining()
-        }
-    }
-
-    private fun rememberClosure(
-        irReference: IrFunctionReference,
-        type: Type,
-        parameter: IrValueParameter,
-        boundReceiver: IrVariable?
-    ): LambdaInfo {
-        val referencedFunction = irReference.symbol.owner
-        return IrExpressionLambdaImpl(
-            irReference, referencedFunction, codegen.typeMapper, codegen.methodSignatureMapper, codegen.context, parameter.isCrossinline,
-            boundReceiver != null, parameter.type.isExtensionFunctionType
-        ).also { lambda ->
-            val closureInfo = invocationParamBuilder.addNextValueParameter(type, true, null, parameter.index)
-            closureInfo.functionalArgument = lambda
-            expressionMap[closureInfo.index] = lambda
-        }
+        performInline(
+            expression.symbol.owner.typeParameters.map { it.symbol },
+            // Always look for default lambdas to allow custom default argument handling in compiler plugins.
+            true,
+            false,
+            codegen.typeMapper.typeSystem,
+            registerLineNumberAfterwards = isInsideIfCondition,
+        )
     }
 
     override fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda> {
+        if (maskStartIndex == -1) return listOf()
         return expandMaskConditionsAndUpdateVariableNodes(
             node, maskStartIndex, maskValues, methodHandleInDefaultMethodIndex,
             extractDefaultLambdaOffsetAndDescriptor(jvmSignature, function),
@@ -193,15 +164,17 @@ class IrInlineCodegen(
 }
 
 class IrExpressionLambdaImpl(
+    codegen: ExpressionCodegen,
     val reference: IrFunctionReference,
-    val function: IrFunction,
-    private val typeMapper: IrTypeMapper,
-    methodSignatureMapper: MethodSignatureMapper,
-    context: JvmBackendContext,
-    isCrossInline: Boolean,
-    override val isBoundCallableReference: Boolean,
-    override val isExtensionLambda: Boolean
-) : ExpressionLambda(isCrossInline), IrExpressionLambda {
+    irValueParameter: IrValueParameter
+) : ExpressionLambda(irValueParameter.isCrossinline), IrExpressionLambda {
+    override val isExtensionLambda: Boolean = irValueParameter.type.isExtensionFunctionType
+
+    val function: IrFunction
+        get() = reference.symbol.owner
+
+    override val isBoundCallableReference: Boolean
+        get() = reference.extensionReceiver != null
 
     override val isSuspend: Boolean = function.isSuspend
 
@@ -213,17 +186,17 @@ class IrExpressionLambdaImpl(
     // arguments apart from any other scope's. So long as it's unique, any value is fine.
     // This particular string slightly aids in debugging internal compiler errors as it at least
     // points towards the function containing the lambda.
-    override val lambdaClassType: Type =
-        context.getLocalClassType(reference) ?: throw AssertionError("callable reference ${reference.dump()} has no name in context")
+    override val lambdaClassType: Type = codegen.context.getLocalClassType(reference)
+        ?: throw AssertionError("callable reference ${reference.dump()} has no name in context")
 
     private val capturedParameters: Map<CapturedParamDesc, IrValueParameter> =
         reference.getArgumentsWithIr().associate { (param, _) ->
-            capturedParamDesc(param.name.asString(), typeMapper.mapType(param.type)) to param
+            capturedParamDesc(param.name.asString(), codegen.typeMapper.mapType(param.type)) to param
         }
 
     override val capturedVars: List<CapturedParamDesc> = capturedParameters.keys.toList()
 
-    private val loweredMethod = methodSignatureMapper.mapAsmMethod(function)
+    private val loweredMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
 
     val capturedParamsInDesc: List<Type> = if (isBoundCallableReference) {
         loweredMethod.argumentTypes.take(1)
@@ -239,13 +212,12 @@ class IrExpressionLambdaImpl(
         )
     }
 
-    override val invokeMethodDescriptor: FunctionDescriptor =
-        // Need the descriptor without captured parameters here.
-        (function.descriptor as? WrappedSimpleFunctionDescriptor)?.originalDescriptor ?: function.descriptor
+    // Need the descriptor without captured parameters here.
+    override val invokeMethodDescriptor: FunctionDescriptor = function.originalFunction.toIrBasedDescriptor()
 
     override val hasDispatchReceiver: Boolean = false
 
-    override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor = function.descriptor
+    override fun getInlineSuspendLambdaViewDescriptor(): FunctionDescriptor = function.toIrBasedDescriptor()
 
     override fun isCapturedSuspend(desc: CapturedParamDesc): Boolean =
         capturedParameters[desc]?.let { it.isInlineParameter() && it.type.isSuspendFunctionTypeOrSubtype() } == true
@@ -257,7 +229,9 @@ class IrDefaultLambda(
     private val irValueParameter: IrValueParameter,
     offset: Int,
     needReification: Boolean
-) : DefaultLambda(lambdaClassType, capturedArgs, irValueParameter.descriptor as ValueParameterDescriptor, offset, needReification) {
+) : DefaultLambda(
+    lambdaClassType, capturedArgs, irValueParameter.toIrBasedDescriptor() as ValueParameterDescriptor, offset, needReification
+) {
 
     override fun mapAsmSignature(sourceCompiler: SourceCompilerForInline): Method {
         val invoke =
@@ -268,21 +242,22 @@ class IrDefaultLambda(
     override fun findInvokeMethodDescriptor(): FunctionDescriptor =
         (irValueParameter.type.classifierOrFail.owner as IrClass).functions.single {
             it.name == OperatorNameConventions.INVOKE
-        }.descriptor
+        }.toIrBasedDescriptor()
 }
 
-fun isInlineIrExpression(argumentExpression: IrExpression) =
-    when (argumentExpression) {
-        is IrBlock -> argumentExpression.isInlineIrBlock()
+fun IrExpression.isInlineIrExpression() =
+    when (this) {
+        is IrBlock -> origin.isInlineIrExpression()
         is IrCallableReference<*> -> true.also {
-            assert((0 until argumentExpression.valueArgumentsCount).count { argumentExpression.getValueArgument(it) != null } == 0) {
-                "Expecting 0 value arguments for bounded callable reference: ${argumentExpression.dump()}"
+            assert((0 until valueArgumentsCount).count { getValueArgument(it) != null } == 0) {
+                "Expecting 0 value arguments for bounded callable reference: ${dump()}"
             }
         }
         else -> false
     }
 
-fun IrBlock.isInlineIrBlock(): Boolean = origin.isLambda
+fun IrStatementOrigin?.isInlineIrExpression() =
+    isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || this == IrStatementOrigin.SUSPEND_CONVERSION
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext) =
     (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && isInline

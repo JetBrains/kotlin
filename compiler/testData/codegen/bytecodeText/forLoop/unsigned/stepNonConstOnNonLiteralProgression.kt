@@ -3,7 +3,7 @@
 fun one() = 1
 
 fun box(): String {
-    val uintProgression = 1u..7u
+    val uintProgression = 1u..7u step 3  // `step` ensures type is UIntProgression, NOT UIntRange
     for (i in uintProgression step one()) {
     }
 
@@ -17,10 +17,9 @@ fun box(): String {
 // Expected lowered form of loop:
 //
 //   // Additional statements:
-//   val progression = intProgression
-//   val nestedFirst = progression.first
-//   val nestedLast = progression.last
-//   val nestedStep = progression.step
+//   val nestedFirst = uintProgression.first
+//   val nestedLast = uintProgression.last
+//   val nestedStep = uintProgression.step
 //   var stepArg = one()
 //   if (stepArg <= 0) throw IllegalArgumentException("Step must be positive, was: $stepArg.")
 //   if (nestedStep <= 0) stepArg = -stepArg

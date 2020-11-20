@@ -17,15 +17,19 @@
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
 import org.jetbrains.kotlin.backend.jvm.JvmSymbols
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isFileClass
@@ -43,11 +47,11 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private val intrinsicsMap = (
             listOf(
                 Key(kotlinJvm, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
-                Key(kotlinJvm, KotlinBuiltIns.FQ_NAMES.kClass.toSafe(), "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
-                Key(kotlinJvm, KotlinBuiltIns.FQ_NAMES.kClass.toSafe(), "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,
+                Key(kotlinJvm, StandardNames.FqNames.kClass.toSafe(), "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
+                Key(kotlinJvm, StandardNames.FqNames.kClass.toSafe(), "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,
                 Key(
                     kotlinJvm,
-                    KotlinBuiltIns.FQ_NAMES.kClass.toSafe(),
+                    StandardNames.FqNames.kClass.toSafe(),
                     "<get-java>",
                     emptyList()
                 ) to KClassJavaProperty,
@@ -55,49 +59,49 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     kotlinJvmInternalUnsafe,
                     null,
                     "access\$monitorEnter",
-                    listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
+                    listOf(StandardNames.FqNames.any.toSafe())
                 ) to MonitorInstruction.MONITOR_ENTER,
                 Key(
                     kotlinJvmInternalUnsafe,
                     null,
                     "access\$monitorExit",
-                    listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
+                    listOf(StandardNames.FqNames.any.toSafe())
                 ) to MonitorInstruction.MONITOR_EXIT,
                 Key(
                     kotlinJvm,
-                    KotlinBuiltIns.FQ_NAMES.array.toSafe(),
+                    StandardNames.FqNames.array.toSafe(),
                     "isArrayOf",
                     emptyList()
                 ) to IsArrayOf,
                 Key(
-                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
                     null,
                     "arrayOfNulls",
-                    listOf(KotlinBuiltIns.FQ_NAMES._int.toSafe())
+                    listOf(StandardNames.FqNames._int.toSafe())
                 ) to NewArray,
                 Key(
-                    KotlinBuiltIns.FQ_NAMES.cloneable.toSafe(),
+                    StandardNames.FqNames.cloneable.toSafe(),
                     null,
                     "clone",
                     emptyList()
                 ) to Clone,
                 Key(
-                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
                     null,
                     "enumValues",
                     listOf()
                 ) to EnumValues,
                 Key(
-                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
+                    StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
                     null,
                     "enumValueOf",
-                    listOf(KotlinBuiltIns.FQ_NAMES.string.toSafe())
+                    listOf(StandardNames.FqNames.string.toSafe())
                 ) to EnumValueOf,
                 Key(
-                    KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
-                    KotlinBuiltIns.FQ_NAMES.string.toSafe(),
+                    StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
+                    StandardNames.FqNames.string.toSafe(),
                     "plus",
-                    listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
+                    listOf(StandardNames.FqNames.any.toSafe())
                 ) to StringPlus,
                 irBuiltIns.eqeqSymbol.toKey()!! to Equals(KtTokens.EQEQ),
                 irBuiltIns.eqeqeqSymbol.toKey()!! to Equals(KtTokens.EQEQEQ),
@@ -112,8 +116,10 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.dataClassArrayMemberToStringSymbol.toKey()!! to IrDataClassArrayMemberToString,
                 symbols.unsafeCoerceIntrinsic.toKey()!! to UnsafeCoerce,
                 symbols.signatureStringIntrinsic.toKey()!! to SignatureString,
-                symbols.reassignParameterIntrinsic.toKey()!! to ReassignParameter,
-                symbols.ThrowKotlinNothingValueException.toKey()!! to ThrowKotlinNothingValueException
+                symbols.throwNullPointerException.toKey()!! to ThrowException(Type.getObjectType("java/lang/NullPointerException")),
+                symbols.throwTypeCastException.toKey()!! to ThrowException(Type.getObjectType("kotlin/TypeCastException")),
+                symbols.throwUnsupportedOperationException.toKey()!! to ThrowException(Type.getObjectType("java/lang/UnsupportedOperationException")),
+                symbols.throwKotlinNothingValueException.toKey()!! to ThrowKotlinNothingValueException,
             ) +
                     numberConversionMethods() +
                     unaryFunForPrimitives("plus", UnaryPlus) +
@@ -206,11 +212,21 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             createKeyMapping(ArrayIterator, arrayClass, "iterator")
         )
 
+    private fun primitiveComparisonIntrinsics(
+        typeToIrFun: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>,
+        operator: KtSingleValueToken
+    ): List<Pair<Key, PrimitiveComparison>> =
+        PrimitiveType.values().mapNotNull { primitiveType ->
+            val irPrimitiveClassifier = irBuiltIns.primitiveTypeToIrType[primitiveType]!!.classifierOrFail
+            val irFunSymbol = typeToIrFun[irPrimitiveClassifier] ?: return@mapNotNull null
+            irFunSymbol.toKey()!! to PrimitiveComparison(primitiveType, operator)
+        }
+
     data class Key(val owner: FqName, val receiverParameterTypeName: FqName?, val name: String, val valueParameterTypeNames: List<FqName?>)
 
     companion object {
 
-        internal val INTRINSICS_CLASS_NAME = "kotlin/jvm/internal/Intrinsics"
+        internal const val INTRINSICS_CLASS_NAME = "kotlin/jvm/internal/Intrinsics"
         private val INC = Increment(1)
 
         private val DEC = Increment(-1)
@@ -261,12 +277,5 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             }
 
 
-        private fun primitiveComparisonIntrinsics(
-            typeToIrFun: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>,
-            operator: KtSingleValueToken
-        ): List<Pair<Key, PrimitiveComparison>> =
-            typeToIrFun.map { (type, irFunSymbol) ->
-                irFunSymbol.toKey()!! to PrimitiveComparison(type.descriptor.defaultType, operator)
-            }
     }
 }

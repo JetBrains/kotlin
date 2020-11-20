@@ -33,9 +33,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       overridden:
         protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test0>
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test0>) returnType:java.lang.Class<<root>.Test0?>? [fake_override]
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test0>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.Test0?>? [fake_override]
       overridden:
-        public final fun getDeclaringClass (): java.lang.Class<E of kotlin.Enum?>? declared in kotlin.Enum
+        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test0>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test0>, other:<root>.Test0) returnType:kotlin.Int [fake_override,operator]
       overridden:
@@ -110,9 +110,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       overridden:
         protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test1>
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test1>) returnType:java.lang.Class<<root>.Test1?>? [fake_override]
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test1>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.Test1?>? [fake_override]
       overridden:
-        public final fun getDeclaringClass (): java.lang.Class<E of kotlin.Enum?>? declared in kotlin.Enum
+        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test1>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test1>, other:<root>.Test1) returnType:kotlin.Int [fake_override,operator]
       overridden:
@@ -193,9 +193,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
           overridden:
             protected/*protected and package*/ final fun finalize (): kotlin.Unit [fake_override] declared in <root>.Test2
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test2>
-        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test2>) returnType:java.lang.Class<<root>.Test2?>? [fake_override]
+        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test2>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.Test2?>? [fake_override]
           overridden:
-            public final fun getDeclaringClass (): java.lang.Class<<root>.Test2?>? [fake_override] declared in <root>.Test2
+            public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.Test2?>? [fake_override] declared in <root>.Test2
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test2>
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test2>, other:<root>.Test2) returnType:kotlin.Int [fake_override,operator]
           overridden:
@@ -259,9 +259,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
           overridden:
             protected/*protected and package*/ final fun finalize (): kotlin.Unit [fake_override] declared in <root>.Test2
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test2>
-        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test2>) returnType:java.lang.Class<<root>.Test2?>? [fake_override]
+        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test2>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.Test2?>? [fake_override]
           overridden:
-            public final fun getDeclaringClass (): java.lang.Class<<root>.Test2?>? [fake_override] declared in <root>.Test2
+            public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.Test2?>? [fake_override] declared in <root>.Test2
           $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test2>
         FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test2>, other:<root>.Test2) returnType:kotlin.Int [fake_override,operator]
           overridden:
@@ -313,9 +313,9 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
       overridden:
         protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test2>
-    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test2>) returnType:java.lang.Class<<root>.Test2?>? [fake_override]
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test2>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.Test2?>? [fake_override]
       overridden:
-        public final fun getDeclaringClass (): java.lang.Class<E of kotlin.Enum?>? declared in kotlin.Enum
+        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
       $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.Test2>
     FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<<root>.Test2>, other:<root>.Test2) returnType:kotlin.Int [fake_override,operator]
       overridden:

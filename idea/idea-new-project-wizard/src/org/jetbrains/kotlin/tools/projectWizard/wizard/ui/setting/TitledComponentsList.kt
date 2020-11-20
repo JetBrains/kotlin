@@ -53,15 +53,17 @@ open class TitledComponentsList(
             TitledComponentData(
                 label.also { add(it) }.constraints(),
                 component.component.also { add(it) }.constraints(),
-                component.forceLabelCenteringOffset,
+                component.alignment,
                 component.additionalComponentPadding,
                 component.maximumWidth
             )
         }
 
-        fun TitledComponentData.centerConstraint() =
-            if (forceCenteringOffset == null) component.height * .5f - label.height * .5f
-            else forceCenteringOffset.asSpring()
+        fun TitledComponentData.centerConstraint(): Spring = when (alignment) {
+            TitleComponentAlignment.AlignAgainstMainComponent -> component.height * .5f - label.height * .5f
+            is TitleComponentAlignment.AlignAgainstSpecificComponent -> alignment.alignTarget.constraints().height * .5f - label.height * .5f
+            is TitleComponentAlignment.AlignFormTopWithPadding -> alignment.padding.asSpring()
+        }
 
         val labelWidth = componentsWithLabels.fold(componentsWithLabels.first().label.width) { spring, row ->
             Spring.max(spring, row.label.width)
@@ -114,7 +116,7 @@ open class TitledComponentsList(
     private data class TitledComponentData(
         val label: SpringLayout.Constraints,
         val component: SpringLayout.Constraints,
-        val forceCenteringOffset: Int?,
+        val alignment: TitleComponentAlignment,
         val additionalComponentGap: Int,
         val maximumWidth: Int?
     )

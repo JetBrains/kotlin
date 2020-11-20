@@ -1,0 +1,19 @@
+// RUNTIME
+
+class: kotlin/Lazy
+
+// SYMBOLS:
+KtFirClassOrObjectSymbol:
+  annotations: []
+  classIdIfNonLocal: kotlin/Lazy
+  classKind: INTERFACE
+  companionObject: null
+  isInner: false
+  modality: ABSTRACT
+  name: Lazy
+  origin: LIBRARY
+  primaryConstructor: null
+  superTypes: [kotlin/Any]
+  symbolKind: TOP_LEVEL
+  typeParameters: [KtFirTypeParameterSymbol(T)]
+  visibility: PUBLIC

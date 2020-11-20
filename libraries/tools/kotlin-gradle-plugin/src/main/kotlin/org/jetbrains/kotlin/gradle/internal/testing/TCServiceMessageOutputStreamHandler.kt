@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.internal.testing
 
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessage
 import jetbrains.buildServer.messages.serviceMessages.ServiceMessageParserCallback
+import jetbrains.buildServer.messages.serviceMessages.TestFailed
+import org.gradle.api.GradleException
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.MESSAGE_LIMIT_BYTES
 import org.slf4j.Logger
 import java.io.ByteArrayOutputStream
@@ -24,6 +26,7 @@ internal class TCServiceMessageOutputStreamHandler(
     private val client: ServiceMessageParserCallback,
     private val onException: () -> Unit,
     private val logger: Logger,
+    private val ignoreTcsmOverflow: Boolean = false,
     private val messageLimitBytes: Int = MESSAGE_LIMIT_BYTES // for test only
 ) : OutputStream() {
     private var closed: Boolean = false
@@ -40,7 +43,10 @@ internal class TCServiceMessageOutputStreamHandler(
         if (closed) throw IOException("The stream has been closed.")
         var i = off
         var last = off
-        fun bytesToAppend() = i - last
+
+        fun bytesToAppend() =
+            i - last
+
         val end = off + len
 
         fun append(len: Int = bytesToAppend()) {
@@ -82,8 +88,21 @@ internal class TCServiceMessageOutputStreamHandler(
 
         // support messageLimitBytes inside "##teamcity[...]" (including "##teamcity[]").
         val i = if (overflowInsideMessage) {
-            if (!text.endsWith("]")) {
-                logger.warn("Cannot process process output: too long teamcity service message (more then 1Mb). Event was lost. See stdout for more details.")
+            if (!ignoreTcsmOverflow && !text.endsWith("]")) {
+                logger.warn(text)
+                overflowInsideMessage = false
+                buffer.reset()
+                client.serviceMessage(
+                    TestFailed(
+                        "overflow-message",
+                        GradleException(
+                            """
+                            Cannot process output: too long teamcity service message (more than ${MESSAGE_LIMIT_BYTES / 1024 / 1024}Mb). Event was lost.
+                            Build failed to prevent inconsistent behaviour. To ignore it use Gradle property '$IGNORE_TCSM_OVERFLOW=true'
+                            """.trimIndent()
+                        )
+                    )
+                )
             }
             -1
         } else text.indexOf("##teamcity[")
@@ -110,6 +129,7 @@ internal class TCServiceMessageOutputStreamHandler(
     }
 
     companion object {
-        private const val MESSAGE_LIMIT_BYTES = 0x100000 // 1Mb
+        private const val MESSAGE_LIMIT_BYTES = 1024 * 1024 // 1Mb
+        const val IGNORE_TCSM_OVERFLOW = "kotlin.ignore.tcsm.overflow"
     }
 }

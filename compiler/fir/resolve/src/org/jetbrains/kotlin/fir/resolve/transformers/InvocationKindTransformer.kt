@@ -63,7 +63,9 @@ object InvocationKindTransformer : FirTransformer<Nothing?>() {
         val argumentMapping = calleeReference.candidate.argumentMapping ?: return functionCall.compose()
         val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return functionCall.compose()
 
-        val callsEffects = function.contractDescription.effects?.filterIsInstance<ConeCallsEffectDeclaration>() ?: emptyList()
+        val callsEffects = function.contractDescription.effects
+            ?.map { it.effect }
+            ?.filterIsInstance<ConeCallsEffectDeclaration>() ?: emptyList()
 
         val isInline = function.isInline
         if (callsEffects.isEmpty() && !isInline) {

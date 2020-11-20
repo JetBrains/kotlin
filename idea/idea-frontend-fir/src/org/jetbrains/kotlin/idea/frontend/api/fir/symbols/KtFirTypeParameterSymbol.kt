@@ -8,19 +8,26 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.idea.fir.findPsi
-import org.jetbrains.kotlin.idea.frontend.api.ValidityOwner
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.cached
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
+import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
+import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirTypeParameterSymbol(
     fir: FirTypeParameter,
-    override val token: ValidityOwner
+    resolveState: FirModuleResolveState,
+    override val token: ValidityToken
 ) : KtTypeParameterSymbol(), KtFirSymbol<FirTypeParameter> {
-    override val fir: FirTypeParameter by weakRef(fir)
-    override val psi: PsiElement? by cached { fir.findPsi(fir.session) }
+    override val firRef = firRef(fir, resolveState)
+    override val psi: PsiElement? by firRef.withFirAndCache { it.findPsi(fir.session) }
 
-    override val name: Name get() = withValidityAssertion { fir.name }
+    override val name: Name get() = firRef.withFir { it.name }
+
+    override fun createPointer(): KtSymbolPointer<KtTypeParameterSymbol> {
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
+        TODO("Creating symbols for library type parameters is not supported yet")
+    }
 }

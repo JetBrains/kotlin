@@ -26,3 +26,4 @@ public final class A : R|kotlin/Any| {
     public constructor(): R|test/A|
 
 }
+

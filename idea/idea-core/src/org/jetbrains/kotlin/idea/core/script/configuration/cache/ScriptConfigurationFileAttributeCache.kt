@@ -18,9 +18,8 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper.FromCompilationConfiguration
 import java.io.Serializable
-import kotlin.script.experimental.api.ScriptCompilationConfiguration
-import kotlin.script.experimental.api.ScriptDiagnostic
-import kotlin.script.experimental.api.dependencies
+import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.withDefaultsFrom
 import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
 
 internal class ScriptConfigurationFileAttributeCache(
@@ -45,7 +44,13 @@ internal class ScriptConfigurationFileAttributeCache(
             ScriptConfigurationSnapshot(
                 fromFs.inputs,
                 fromFs.reports,
-                FromCompilationConfiguration(KtFileScriptSource(ktFile), fromFs.configuration)
+                FromCompilationConfiguration(
+                    KtFileScriptSource(ktFile),
+                    fromFs.configuration.with {
+                        // should be updated from definition because host configuration is transient
+                        hostConfiguration.update { it.withDefaultsFrom(scriptDefinition.hostConfiguration) }
+                    }
+                )
             )
         )
         return fromFs.inputs.isUpToDate(ktFile.project, virtualFile, ktFile)

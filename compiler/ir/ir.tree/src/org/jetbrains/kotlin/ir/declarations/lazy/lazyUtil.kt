@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.ir.declarations.lazy
 
 import org.jetbrains.kotlin.ir.declarations.withInitialIr
+import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-fun <T> lazyVar(initializer: () -> T): UnsafeLazyVar<T> = UnsafeLazyVar(initializer)
+fun <T> lazyVar(initializer: () -> T): ReadWriteProperty<Any?, T> = UnsafeLazyVar(initializer)
 
-class UnsafeLazyVar<T>(initializer: () -> T) {
-    private var isInitialized = false;
+private class UnsafeLazyVar<T>(initializer: () -> T) : ReadWriteProperty<Any?, T> {
+    private var isInitialized = false
     private var initializer: (() -> T)? = initializer
     private var _value: Any? = null
 
@@ -28,9 +29,9 @@ class UnsafeLazyVar<T>(initializer: () -> T) {
 
     override fun toString(): String = if (isInitialized) value.toString() else "Lazy value not initialized yet."
 
-    operator fun getValue(thisRef: Any?, property: KProperty<*>): T = value
+    override fun getValue(thisRef: Any?, property: KProperty<*>): T = value
 
-    operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+    override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         this._value = value
         isInitialized = true
     }

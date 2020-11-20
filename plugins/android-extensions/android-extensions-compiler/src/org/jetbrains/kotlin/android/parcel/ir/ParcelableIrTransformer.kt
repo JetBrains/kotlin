@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclaration
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -51,7 +50,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
     private fun IrPluginContext.createIrBuilder(symbol: IrSymbol) =
         DeclarationIrBuilder(this, symbol, symbol.owner.startOffset, symbol.owner.endOffset)
 
-    private val symbolMap = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+    private val symbolMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
 
     private val irFactory: IrFactory = IrFactoryImpl
 
@@ -91,7 +90,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
                 // Remap overridden symbols, otherwise the code might break in BridgeLowering
                 declaration.overriddenSymbols = declaration.overriddenSymbols.map { symbol ->
-                    (symbolMap[symbol] ?: symbol) as IrSimpleFunctionSymbol
+                    symbolMap[symbol] ?: symbol
                 }
                 return super.visitSimpleFunction(declaration)
             }
@@ -108,7 +107,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
         val parcelableProperties = declaration.parcelableProperties
 
         // If the companion extends Parceler, it can override parts of the generated implementation.
-        val parcelerObject = declaration.companionObject()?.safeAs<IrClass>()?.takeIf {
+        val parcelerObject = declaration.companionObject()?.takeIf {
             it.isSubclassOfFqName(PARCELER_FQNAME.asString())
         }
 
@@ -124,7 +123,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                     irExprBody(irInt(flags))
                 }
 
-                metadata = MetadataSource.Function(
+                metadata = DescriptorMetadataSource.Function(
                     declaration.descriptor.findFunction(ParcelableSyntheticComponent.ComponentKind.DESCRIBE_CONTENTS)!!
                 )
             }
@@ -179,7 +178,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                     }
                 }
 
-                metadata = MetadataSource.Function(
+                metadata = DescriptorMetadataSource.Function(
                     declaration.descriptor.findFunction(ParcelableSyntheticComponent.ComponentKind.WRITE_TO_PARCEL)!!
                 )
             }
@@ -204,7 +203,7 @@ class ParcelableIrTransformer(private val context: IrPluginContext, private val 
                 val irField = this
                 val creatorClass = irFactory.buildClass {
                     name = Name.identifier("Creator")
-                    visibility = Visibilities.LOCAL
+                    visibility = DescriptorVisibilities.LOCAL
                 }.apply {
                     parent = irField
                     superTypes = listOf(creatorType)

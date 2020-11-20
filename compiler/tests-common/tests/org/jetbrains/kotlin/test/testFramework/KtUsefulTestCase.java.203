@@ -556,10 +556,10 @@ public abstract class KtUsefulTestCase extends TestCase {
         assertOrderedEquals("", actual, expected);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> void assertOrderedEquals(@NotNull String errorMsg,
             @NotNull Iterable<? extends T> actual,
             @NotNull Iterable<? extends T> expected) {
-        //noinspection unchecked
         assertOrderedEquals(errorMsg, actual, expected, Equality.CANONICAL);
     }
 
@@ -1000,8 +1000,8 @@ public abstract class KtUsefulTestCase extends TestCase {
      * @param exceptionCase    Block annotated with some exception type
      * @param expectedErrorMsg expected error message
      */
+    @SuppressWarnings("unchecked")
     protected void assertException(@NotNull AbstractExceptionCase exceptionCase, @Nullable String expectedErrorMsg) {
-        //noinspection unchecked
         assertExceptionOccurred(true, exceptionCase, expectedErrorMsg);
     }
 

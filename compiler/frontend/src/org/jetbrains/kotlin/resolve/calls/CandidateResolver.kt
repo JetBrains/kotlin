@@ -177,14 +177,14 @@ class CandidateResolver(
     }
 
     private fun CallCandidateResolutionContext<*>.checkVisibilityWithoutReceiver() = checkAndReport {
-        checkVisibilityWithDispatchReceiver(Visibilities.ALWAYS_SUITABLE_RECEIVER, null)
+        checkVisibilityWithDispatchReceiver(DescriptorVisibilities.ALWAYS_SUITABLE_RECEIVER, null)
     }
 
     private fun CallCandidateResolutionContext<*>.checkVisibilityWithDispatchReceiver(
         receiverArgument: ReceiverValue?,
         smartCastType: KotlinType?
     ): ResolutionStatus {
-        val invisibleMember = Visibilities.findInvisibleMember(
+        val invisibleMember = DescriptorVisibilities.findInvisibleMember(
             getReceiverValueWithSmartCast(receiverArgument, smartCastType), candidateDescriptor, scope.ownerDescriptor
         )
         return if (invisibleMember != null) {
@@ -204,7 +204,7 @@ class CandidateResolver(
     private fun CallCandidateResolutionContext<*>.isCandidateVisible(
         receiverArgument: ReceiverValue?,
         smartCastType: KotlinType?
-    ) = Visibilities.findInvisibleMember(
+    ) = DescriptorVisibilities.findInvisibleMember(
         getReceiverValueWithSmartCast(receiverArgument, smartCastType),
         candidateDescriptor, scope.ownerDescriptor
     ) == null
@@ -474,7 +474,7 @@ class CandidateResolver(
         if (!context.isDebuggerContext
             && candidateCall.dispatchReceiver != null
             // Do not report error if it's already reported when checked without receiver
-            && context.isCandidateVisible(receiverArgument = Visibilities.ALWAYS_SUITABLE_RECEIVER, smartCastType = null)) {
+            && context.isCandidateVisible(receiverArgument = DescriptorVisibilities.ALWAYS_SUITABLE_RECEIVER, smartCastType = null)) {
             resultStatus = resultStatus.combine(
                 context.checkVisibilityWithDispatchReceiver(
                     candidateCall.dispatchReceiver, candidateCall.smartCastDispatchReceiverType

@@ -11,7 +11,7 @@ import org.junit.runner.RunWith
 import java.io.File
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class FindUsagesMultiModuleTest : AbstractFindUsagesMultiModuleTest() {
+open class FindUsagesMultiModuleTest : AbstractFindUsagesMultiModuleTest() {
 
     fun testFindActualInterface() {
         doTest()

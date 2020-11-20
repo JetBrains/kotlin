@@ -53,6 +53,7 @@ public class Char internal constructor(private val value: Int) : Comparable<Char
     public fun toDouble(): Double = value.toDouble()
 
     override fun equals(other: Any?): Boolean {
+        @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
         if (other === this) return true
         if (other !is Char) return false
 

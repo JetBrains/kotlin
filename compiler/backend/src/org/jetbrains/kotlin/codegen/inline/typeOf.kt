@@ -151,7 +151,8 @@ private fun TypeSystemCommonBackendContext.doesTypeContainTypeParametersWithRecu
         used.remove(typeParameter)
     } else {
         for (i in 0 until type.argumentsCount()) {
-            if (!doesTypeContainTypeParametersWithRecursiveBounds(type.getArgument(i).getType(), used)) return false
+            val argument = type.getArgument(i)
+            if (!argument.isStarProjection() && !doesTypeContainTypeParametersWithRecursiveBounds(argument.getType(), used)) return false
         }
     }
     return true

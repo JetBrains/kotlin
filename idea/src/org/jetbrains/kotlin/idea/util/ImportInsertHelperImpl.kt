@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.util
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
@@ -17,7 +16,7 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.refactoring.fqName.isImported
-import org.jetbrains.kotlin.idea.resolve.frontendService
+import org.jetbrains.kotlin.idea.resolve.getLanguageVersionSettings
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -47,7 +46,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
         get() = ImportPathComparator(codeStyleSettings.PACKAGES_IMPORT_LAYOUT)
 
     override fun isImportedWithDefault(importPath: ImportPath, contextFile: KtFile): Boolean {
-        val languageVersionSettings = contextFile.getResolutionFacade().frontendService<LanguageVersionSettings>()
+        val languageVersionSettings = contextFile.getResolutionFacade().getLanguageVersionSettings()
         val platform = TargetPlatformDetector.getPlatform(contextFile)
         val analyzerServices = platform.findAnalyzerServices(contextFile.project)
         val allDefaultImports = analyzerServices.getDefaultImports(languageVersionSettings, includeLowPriorityImports = true)
@@ -232,7 +231,7 @@ class ImportInsertHelperImpl(private val project: Project) : ImportInsertHelper(
             fun isVisible(descriptor: DeclarationDescriptor): Boolean {
                 if (descriptor !is DeclarationDescriptorWithVisibility) return true
                 val visibility = descriptor.visibility
-                return !visibility.mustCheckInImports() || Visibilities.isVisibleIgnoringReceiver(descriptor, filePackage)
+                return !visibility.mustCheckInImports() || DescriptorVisibilities.isVisibleIgnoringReceiver(descriptor, filePackage)
             }
 
             val kindFilter = DescriptorKindFilter.ALL.withoutKinds(DescriptorKindFilter.PACKAGES_MASK)

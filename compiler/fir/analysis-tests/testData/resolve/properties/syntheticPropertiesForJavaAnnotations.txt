@@ -1,0 +1,5 @@
+FILE: main.kt
+    public final fun test(ann: R|Ann|): R|kotlin/Unit| {
+        R|<local>/ann|.R|/Ann.value|
+        R|<local>/ann|.<Unresolved name: value>#()
+    }

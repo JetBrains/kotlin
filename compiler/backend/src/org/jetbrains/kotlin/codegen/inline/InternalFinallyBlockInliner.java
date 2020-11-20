@@ -171,7 +171,7 @@ public class InternalFinallyBlockInliner extends CoveringTryCatchNodeProcessor {
             checkClusterInvariant(clustersFromInnermost);
 
             int originalDepthIndex = 0;
-            List<TryCatchBlockNodeInfo> nestedUnsplitBlocksWithoutFinally = new ArrayList();
+            List<TryCatchBlockNodeInfo> nestedUnsplitBlocksWithoutFinally = new ArrayList<>();
             while (tryCatchBlockIterator.hasNext()) {
                 TryBlockCluster<TryCatchBlockNodeInfo> clusterToFindFinally = tryCatchBlockIterator.next();
                 List<TryCatchBlockNodeInfo> clusterBlocks = clusterToFindFinally.getBlocks();

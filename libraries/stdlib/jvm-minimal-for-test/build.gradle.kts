@@ -63,13 +63,12 @@ tasks.withType<KotlinCompile> {
     dependsOn(copySources)
     kotlinOptions {
         freeCompilerArgs += listOf(
-            "-module-name",
-            "kotlin-stdlib",
             "-Xallow-kotlin-package",
             "-Xmulti-platform",
             "-Xopt-in=kotlin.RequiresOptIn",
             "-Xopt-in=kotlin.contracts.ExperimentalContracts"
         )
+        moduleName = "kotlin-stdlib"
     }
 }
 

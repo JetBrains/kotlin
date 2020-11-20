@@ -11,7 +11,7 @@ import com.intellij.openapi.actionSystem.ToggleAction
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.impl.XDebuggerUtilImpl
-import org.jetbrains.kotlin.idea.core.KotlinFileTypeFactory
+import org.jetbrains.kotlin.idea.core.KotlinFileTypeFactoryUtils
 
 class ToggleKotlinVariablesState {
     companion object {
@@ -40,7 +40,7 @@ class ToggleKotlinVariablesView : ToggleAction() {
 
     private fun XDebugSession.isInKotlinFile(): Boolean {
         val fileExtension = currentPosition?.file?.extension ?: return false
-        return fileExtension in KotlinFileTypeFactory.KOTLIN_EXTENSIONS
+        return fileExtension in KotlinFileTypeFactoryUtils.KOTLIN_EXTENSIONS
     }
 
     override fun isSelected(e: AnActionEvent) = kotlinVariableViewService.kotlinVariableView

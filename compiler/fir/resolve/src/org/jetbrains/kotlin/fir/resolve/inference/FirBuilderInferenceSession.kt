@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeStubType
@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.CoroutinePosition
@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImp
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 class FirBuilderInferenceSession(
-    components: BodyResolveComponents,
+    resolutionContext: ResolutionContext,
     private val stubsForPostponedVariables: Map<ConeTypeVariable, ConeStubType>,
-) : AbstractManyCandidatesInferenceSession(components) {
+) : AbstractManyCandidatesInferenceSession(resolutionContext) {
     private val commonCalls: MutableList<Pair<FirStatement, Candidate>> = mutableListOf()
 
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
@@ -94,9 +94,9 @@ class FirBuilderInferenceSession(
         @Suppress("UNCHECKED_CAST")
         components.callCompleter.completer.complete(
             context,
-            KotlinConstraintSystemCompleter.ConstraintSystemCompletionMode.FULL,
+            ConstraintSystemCompletionMode.FULL,
             partiallyResolvedCalls.map { it.first as FirStatement },
-            components.session.builtinTypes.unitType.type,
+            components.session.builtinTypes.unitType.type, resolutionContext,
             collectVariablesFromContext = true
         ) {
             error("Shouldn't be called in complete constraint system mode")
@@ -109,7 +109,7 @@ class FirBuilderInferenceSession(
     }
 
     private fun buildCommonSystem(initialStorage: ConstraintStorage): Pair<NewConstraintSystemImpl, Boolean> {
-        val commonSystem = components.inferenceComponents.createConstraintSystem()
+        val commonSystem = components.session.inferenceComponents.createConstraintSystem()
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
         integrateConstraints(commonSystem, initialStorage, nonFixedToVariablesSubstitutor, false)
@@ -136,7 +136,7 @@ class FirBuilderInferenceSession(
     }
 
     private fun createNonFixedTypeToVariableSubstitutor(): ConeSubstitutor {
-        val ctx = components.inferenceComponents.ctx
+        val ctx = components.session.inferenceComponents.ctx
 
         val bindings = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
         for ((variable, nonFixedType) in stubsForPostponedVariables) {
@@ -190,7 +190,7 @@ class FirBuilderInferenceSession(
             for ((variableConstructor, type) in storage.fixedTypeVariables) {
                 val typeVariable = storage.allTypeVariables.getValue(variableConstructor)
                 commonSystem.registerVariable(typeVariable)
-                commonSystem.addEqualityConstraint((typeVariable as ConeTypeVariable).defaultType, type, CoroutinePosition())
+                commonSystem.addEqualityConstraint((typeVariable as ConeTypeVariable).defaultType, type, CoroutinePosition)
                 introducedConstraint = true
             }
         }

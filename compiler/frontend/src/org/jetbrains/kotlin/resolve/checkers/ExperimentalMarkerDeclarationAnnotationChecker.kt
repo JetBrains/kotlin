@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -70,7 +70,7 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
         val targetEntry =
             entries.associate { entry -> entry to trace.bindingContext.get(BindingContext.ANNOTATION, entry) }
                 .entries
-                .firstOrNull { (_, descriptor) -> descriptor != null && descriptor.fqName == KotlinBuiltIns.FQ_NAMES.target }
+                .firstOrNull { (_, descriptor) -> descriptor != null && descriptor.fqName == StandardNames.FqNames.target }
                     ?: return
         val (entry, descriptor) = targetEntry
         val allowedTargets = AnnotationChecker.loadAnnotationTargets(descriptor!!) ?: return

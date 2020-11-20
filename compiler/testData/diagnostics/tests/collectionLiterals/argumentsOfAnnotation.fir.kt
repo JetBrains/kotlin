@@ -24,8 +24,8 @@ val two = 2
 @Foo([ONE], [], [])
 fun test6() {}
 
-@Foo([ONE + two], [], [])
+@Foo(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>ONE + two<!>]<!>, [], [])
 fun test7() {}
 
-@Foo([two], [], [])
+@Foo(<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>[<!NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION!>two<!>]<!>, [], [])
 fun test8() {}

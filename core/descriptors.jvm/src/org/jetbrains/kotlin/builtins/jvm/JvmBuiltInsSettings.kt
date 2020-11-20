@@ -6,6 +6,14 @@
 package org.jetbrains.kotlin.builtins.jvm
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.DROP_LIST_METHOD_SIGNATURES
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.HIDDEN_CONSTRUCTOR_SIGNATURES
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.HIDDEN_METHOD_SIGNATURES
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.VISIBLE_CONSTRUCTOR_SIGNATURES
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.isArrayOrPrimitiveArray
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.isSerializableInJava
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.createDeprecatedAnnotation
@@ -19,14 +27,12 @@ import org.jetbrains.kotlin.load.java.components.JavaResolverCache
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
-import org.jetbrains.kotlin.load.kotlin.signatures
+import org.jetbrains.kotlin.load.kotlin.signature
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
-import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.getName
@@ -37,7 +43,6 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.LazyWrappedType
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartSet
-import java.io.Serializable
 import java.util.*
 
 open class JvmBuiltInsSettings(
@@ -46,7 +51,7 @@ open class JvmBuiltInsSettings(
     deferredOwnerModuleDescriptor: () -> ModuleDescriptor,
     isAdditionalBuiltInsFeatureSupported: () -> Boolean
 ) : AdditionalClassPartsProvider, PlatformDependentDeclarationFilter {
-    private val j2kClassMap = JavaToKotlinClassMap
+    private val j2kClassMapper = JavaToKotlinClassMapper
 
     private val ownerModuleDescriptor: ModuleDescriptor by lazy(deferredOwnerModuleDescriptor)
     private val isAdditionalBuiltInsFeatureSupported: Boolean by lazy(isAdditionalBuiltInsFeatureSupported)
@@ -131,8 +136,8 @@ open class JvmBuiltInsSettings(
 
                 val memberStatus = additionalMember.getJdkMethodStatus()
                 when (memberStatus) {
-                    JDKMemberStatus.BLACK_LIST -> {
-                        // Black list methods in final class can't be overridden or called with 'super'
+                    JDKMemberStatus.HIDDEN -> {
+                        // hidden methods in final class can't be overridden or called with 'super'
                         if (classDescriptor.isFinalClass) return@mapNotNull null
                         setHiddenForResolutionEverywhereBesideSupercalls()
                     }
@@ -143,7 +148,7 @@ open class JvmBuiltInsSettings(
 
                     JDKMemberStatus.DROP -> return@mapNotNull null
 
-                    JDKMemberStatus.WHITE_LIST -> Unit // Do nothing
+                    JDKMemberStatus.VISIBLE -> Unit // Do nothing
                 }
 
             }.build()!!
@@ -163,11 +168,11 @@ open class JvmBuiltInsSettings(
     ): Collection<SimpleFunctionDescriptor> {
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
 
-        val kotlinClassDescriptors = j2kClassMap.mapPlatformClass(javaAnalogueDescriptor.fqNameSafe, FallbackBuiltIns.Instance)
+        val kotlinClassDescriptors = j2kClassMapper.mapPlatformClass(javaAnalogueDescriptor.fqNameSafe, FallbackBuiltIns.Instance)
         val kotlinMutableClassIfContainer = kotlinClassDescriptors.lastOrNull() ?: return emptyList()
         val kotlinVersions = SmartSet.create(kotlinClassDescriptors.map { it.fqNameSafe })
 
-        val isMutable = j2kClassMap.isMutable(classDescriptor)
+        val isMutable = j2kClassMapper.isMutable(classDescriptor)
 
         val fakeJavaClassDescriptor = javaAnalogueClassesWithCustomSupertypeCache.computeIfAbsent(javaAnalogueDescriptor.fqNameSafe) {
             javaAnalogueDescriptor.copy(
@@ -197,7 +202,7 @@ open class JvmBuiltInsSettings(
         cloneFromCloneable: SimpleFunctionDescriptor
     ): SimpleFunctionDescriptor = cloneFromCloneable.newCopyBuilder().apply {
         setOwner(arrayClassDescriptor)
-        setVisibility(Visibilities.PUBLIC)
+        setVisibility(DescriptorVisibilities.PUBLIC)
         setReturnType(arrayClassDescriptor.defaultType)
         setDispatchReceiverParameter(arrayClassDescriptor.thisAsReceiverParameter)
     }.build()!!
@@ -213,7 +218,7 @@ open class JvmBuiltInsSettings(
             { it.original.overriddenDescriptors }
         ) { overridden ->
             overridden.kind == CallableMemberDescriptor.Kind.DECLARATION &&
-                    j2kClassMap.isMutable(overridden.containingDeclaration as ClassDescriptor)
+                    j2kClassMapper.isMutable(overridden.containingDeclaration as ClassDescriptor)
         }
     }
 
@@ -224,7 +229,7 @@ open class JvmBuiltInsSettings(
         return DFS.dfs<ClassDescriptor, JDKMemberStatus>(
             listOf(owner),
             {
-                // Search through mapped supertypes to determine that Set.toArray is in blacklist, while we have only
+                // Search through mapped supertypes to determine that Set.toArray should be invisible, while we have only
                 // Collection.toArray there explicitly
                 // Note, that we can't find j.u.Collection.toArray within overriddenDescriptors of j.u.Set.toArray
                 it.typeConstructor.supertypes.mapNotNull {
@@ -235,8 +240,8 @@ open class JvmBuiltInsSettings(
                 override fun beforeChildren(javaClassDescriptor: ClassDescriptor): Boolean {
                     val signature = SignatureBuildingComponents.signature(javaClassDescriptor, jvmDescriptor)
                     when (signature) {
-                        in BLACK_LIST_METHOD_SIGNATURES -> result = JDKMemberStatus.BLACK_LIST
-                        in WHITE_LIST_METHOD_SIGNATURES -> result = JDKMemberStatus.WHITE_LIST
+                        in HIDDEN_METHOD_SIGNATURES -> result = JDKMemberStatus.HIDDEN
+                        in VISIBLE_METHOD_SIGNATURES -> result = JDKMemberStatus.VISIBLE
                         in DROP_LIST_METHOD_SIGNATURES -> result = JDKMemberStatus.DROP
                     }
 
@@ -248,7 +253,7 @@ open class JvmBuiltInsSettings(
     }
 
     private enum class JDKMemberStatus {
-        BLACK_LIST, WHITE_LIST, NOT_CONSIDERED, DROP
+        HIDDEN, VISIBLE, NOT_CONSIDERED, DROP
     }
 
     private fun ClassDescriptor.getJavaAnalogue(): LazyJavaClassDescriptor? {
@@ -261,7 +266,7 @@ open class JvmBuiltInsSettings(
 
         val fqName = fqNameUnsafe
         if (!fqName.isSafe) return null
-        val javaAnalogueFqName = j2kClassMap.mapKotlinToJava(fqName)?.asSingleFqName() ?: return null
+        val javaAnalogueFqName = JavaToKotlinClassMap.mapKotlinToJava(fqName)?.asSingleFqName() ?: return null
 
         return ownerModuleDescriptor.resolveClassByFqName(javaAnalogueFqName, NoLookupLocation.FROM_BUILTINS) as? LazyJavaClassDescriptor
     }
@@ -272,7 +277,7 @@ open class JvmBuiltInsSettings(
         val javaAnalogueDescriptor = classDescriptor.getJavaAnalogue() ?: return emptyList()
 
         val defaultKotlinVersion =
-            j2kClassMap.mapJavaToKotlin(javaAnalogueDescriptor.fqNameSafe, FallbackBuiltIns.Instance) ?: return emptyList()
+            j2kClassMapper.mapJavaToKotlin(javaAnalogueDescriptor.fqNameSafe, FallbackBuiltIns.Instance) ?: return emptyList()
 
         val substitutor = createMappedTypeParametersSubstitution(defaultKotlinVersion, javaAnalogueDescriptor).buildSubstitutor()
 
@@ -288,7 +293,7 @@ open class JvmBuiltInsSettings(
                     SignatureBuildingComponents.signature(
                         javaAnalogueDescriptor,
                         javaConstructor.computeJvmDescriptor()
-                    ) !in BLACK_LIST_CONSTRUCTOR_SIGNATURES
+                    ) !in HIDDEN_CONSTRUCTOR_SIGNATURES
         }.map { javaConstructor ->
             javaConstructor.newCopyBuilder().apply {
                 setOwner(classDescriptor)
@@ -297,7 +302,7 @@ open class JvmBuiltInsSettings(
                 setSubstitution(substitutor.substitution)
                 if (SignatureBuildingComponents.signature(
                         javaAnalogueDescriptor, javaConstructor.computeJvmDescriptor()
-                    ) !in WHITE_LIST_CONSTRUCTOR_SIGNATURES
+                    ) !in VISIBLE_CONSTRUCTOR_SIGNATURES
                 ) {
                     setAdditionalAnnotations(notConsideredDeprecation)
                 }
@@ -322,175 +327,6 @@ open class JvmBuiltInsSettings(
     private fun ConstructorDescriptor.isTrivialCopyConstructorFor(classDescriptor: ClassDescriptor): Boolean =
         valueParameters.size == 1 &&
                 valueParameters.single().type.constructor.declarationDescriptor?.fqNameUnsafe == classDescriptor.fqNameUnsafe
-
-    companion object {
-        fun isSerializableInJava(fqName: FqNameUnsafe): Boolean {
-            if (isArrayOrPrimitiveArray(fqName)) {
-                return true
-            }
-            val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(fqName) ?: return false
-            val classViaReflection = try {
-                Class.forName(javaClassId.asSingleFqName().asString())
-            } catch (e: ClassNotFoundException) {
-                return false
-            }
-            return Serializable::class.java.isAssignableFrom(classViaReflection)
-        }
-
-        private fun isArrayOrPrimitiveArray(fqName: FqNameUnsafe): Boolean {
-            return fqName == KotlinBuiltIns.FQ_NAMES.array || KotlinBuiltIns.isPrimitiveArray(fqName)
-        }
-
-        val DROP_LIST_METHOD_SIGNATURES: Set<String> =
-            SignatureBuildingComponents.inJavaUtil(
-                "Collection",
-                "toArray()[Ljava/lang/Object;", "toArray([Ljava/lang/Object;)[Ljava/lang/Object;"
-            ) + "java/lang/annotation/Annotation.annotationType()Ljava/lang/Class;"
-
-        val BLACK_LIST_METHOD_SIGNATURES: Set<String> =
-            signatures {
-                buildPrimitiveValueMethodsSet() +
-
-                        inJavaUtil("List", "sort(Ljava/util/Comparator;)V") +
-
-                        inJavaLang(
-                            "String",
-                            "codePointAt(I)I", "codePointBefore(I)I", "codePointCount(II)I", "compareToIgnoreCase(Ljava/lang/String;)I",
-                            "concat(Ljava/lang/String;)Ljava/lang/String;", "contains(Ljava/lang/CharSequence;)Z",
-                            "contentEquals(Ljava/lang/CharSequence;)Z", "contentEquals(Ljava/lang/StringBuffer;)Z",
-                            "endsWith(Ljava/lang/String;)Z", "equalsIgnoreCase(Ljava/lang/String;)Z", "getBytes()[B", "getBytes(II[BI)V",
-                            "getBytes(Ljava/lang/String;)[B", "getBytes(Ljava/nio/charset/Charset;)[B", "getChars(II[CI)V",
-                            "indexOf(I)I", "indexOf(II)I", "indexOf(Ljava/lang/String;)I", "indexOf(Ljava/lang/String;I)I",
-                            "intern()Ljava/lang/String;", "isEmpty()Z", "lastIndexOf(I)I", "lastIndexOf(II)I",
-                            "lastIndexOf(Ljava/lang/String;)I", "lastIndexOf(Ljava/lang/String;I)I", "matches(Ljava/lang/String;)Z",
-                            "offsetByCodePoints(II)I", "regionMatches(ILjava/lang/String;II)Z", "regionMatches(ZILjava/lang/String;II)Z",
-                            "replaceAll(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;", "replace(CC)Ljava/lang/String;",
-                            "replaceFirst(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;",
-                            "replace(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Ljava/lang/String;",
-                            "split(Ljava/lang/String;I)[Ljava/lang/String;", "split(Ljava/lang/String;)[Ljava/lang/String;",
-                            "startsWith(Ljava/lang/String;I)Z", "startsWith(Ljava/lang/String;)Z", "substring(II)Ljava/lang/String;",
-                            "substring(I)Ljava/lang/String;", "toCharArray()[C", "toLowerCase()Ljava/lang/String;",
-                            "toLowerCase(Ljava/util/Locale;)Ljava/lang/String;", "toUpperCase()Ljava/lang/String;",
-                            "toUpperCase(Ljava/util/Locale;)Ljava/lang/String;", "trim()Ljava/lang/String;",
-                            "isBlank()Z", "lines()Ljava/util/stream/Stream;", "repeat(I)Ljava/lang/String;"
-                        ) +
-
-                        inJavaLang("Double", "isInfinite()Z", "isNaN()Z") +
-                        inJavaLang("Float", "isInfinite()Z", "isNaN()Z") +
-
-                        inJavaLang("Enum", "getDeclaringClass()Ljava/lang/Class;", "finalize()V")
-            }
-
-        private fun buildPrimitiveValueMethodsSet(): Set<String> =
-            signatures {
-                listOf(JvmPrimitiveType.BOOLEAN, JvmPrimitiveType.CHAR).flatMapTo(LinkedHashSet()) {
-                    inJavaLang(it.wrapperFqName.shortName().asString(), "${it.javaKeywordName}Value()${it.desc}")
-                }
-            }
-
-        val WHITE_LIST_METHOD_SIGNATURES: Set<String> =
-            signatures {
-                inJavaLang(
-                    "CharSequence",
-                    "codePoints()Ljava/util/stream/IntStream;", "chars()Ljava/util/stream/IntStream;"
-                ) +
-
-                        inJavaUtil(
-                            "Iterator",
-                            "forEachRemaining(Ljava/util/function/Consumer;)V"
-                        ) +
-
-                        inJavaLang(
-                            "Iterable",
-                            "forEach(Ljava/util/function/Consumer;)V", "spliterator()Ljava/util/Spliterator;"
-                        ) +
-
-                        inJavaLang(
-                            "Throwable",
-                            "setStackTrace([Ljava/lang/StackTraceElement;)V", "fillInStackTrace()Ljava/lang/Throwable;",
-                            "getLocalizedMessage()Ljava/lang/String;", "printStackTrace()V", "printStackTrace(Ljava/io/PrintStream;)V",
-                            "printStackTrace(Ljava/io/PrintWriter;)V", "getStackTrace()[Ljava/lang/StackTraceElement;",
-                            "initCause(Ljava/lang/Throwable;)Ljava/lang/Throwable;", "getSuppressed()[Ljava/lang/Throwable;",
-                            "addSuppressed(Ljava/lang/Throwable;)V"
-                        ) +
-
-                        inJavaUtil(
-                            "Collection",
-                            "spliterator()Ljava/util/Spliterator;", "parallelStream()Ljava/util/stream/Stream;",
-                            "stream()Ljava/util/stream/Stream;", "removeIf(Ljava/util/function/Predicate;)Z"
-                        ) +
-
-                        inJavaUtil(
-                            "List",
-                            "replaceAll(Ljava/util/function/UnaryOperator;)V"
-                        ) +
-
-                        inJavaUtil(
-                            "Map",
-                            "getOrDefault(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
-                            "forEach(Ljava/util/function/BiConsumer;)V", "replaceAll(Ljava/util/function/BiFunction;)V",
-                            "merge(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;",
-                            "computeIfPresent(Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;",
-                            "putIfAbsent(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
-                            "replace(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Z",
-                            "replace(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
-                            "computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;",
-                            "compute(Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;"
-                        )
-            }
-
-        val MUTABLE_METHOD_SIGNATURES: Set<String> =
-            signatures {
-                inJavaUtil("Collection", "removeIf(Ljava/util/function/Predicate;)Z") +
-
-                        inJavaUtil("List", "replaceAll(Ljava/util/function/UnaryOperator;)V", "sort(Ljava/util/Comparator;)V") +
-
-                        inJavaUtil(
-                            "Map",
-                            "computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;",
-                            "computeIfPresent(Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;",
-                            "compute(Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;",
-                            "merge(Ljava/lang/Object;Ljava/lang/Object;Ljava/util/function/BiFunction;)Ljava/lang/Object;",
-                            "putIfAbsent(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
-                            "remove(Ljava/lang/Object;Ljava/lang/Object;)Z", "replaceAll(Ljava/util/function/BiFunction;)V",
-                            "replace(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
-                            "replace(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Z"
-                        )
-            }
-
-        val BLACK_LIST_CONSTRUCTOR_SIGNATURES: Set<String> =
-            signatures {
-                buildPrimitiveStringConstructorsSet() +
-                        inJavaLang("Float", *constructors("D")) +
-                        inJavaLang(
-                            "String", *constructors(
-                                "[C", "[CII", "[III", "[BIILjava/lang/String;",
-                                "[BIILjava/nio/charset/Charset;",
-                                "[BLjava/lang/String;",
-                                "[BLjava/nio/charset/Charset;",
-                                "[BII", "[B",
-                                "Ljava/lang/StringBuffer;",
-                                "Ljava/lang/StringBuilder;"
-                            )
-                        )
-            }
-
-        val WHITE_LIST_CONSTRUCTOR_SIGNATURES: Set<String> =
-            signatures {
-                inJavaLang("Throwable", *constructors("Ljava/lang/String;Ljava/lang/Throwable;ZZ"))
-            }
-
-        private fun buildPrimitiveStringConstructorsSet(): Set<String> =
-            signatures {
-                listOf(
-                    JvmPrimitiveType.BOOLEAN, JvmPrimitiveType.BYTE, JvmPrimitiveType.DOUBLE, JvmPrimitiveType.FLOAT,
-                    JvmPrimitiveType.BYTE, JvmPrimitiveType.INT, JvmPrimitiveType.LONG, JvmPrimitiveType.SHORT
-                ).flatMapTo(LinkedHashSet()) {
-                    // java/lang/<Wrapper>.<init>(Ljava/lang/String;)V
-                    inJavaLang(it.wrapperFqName.shortName().asString(), *constructors("Ljava/lang/String;"))
-                }
-            }
-    }
 }
 
 private class FallbackBuiltIns private constructor() : KotlinBuiltIns(LockBasedStorageManager("FallbackBuiltIns")) {

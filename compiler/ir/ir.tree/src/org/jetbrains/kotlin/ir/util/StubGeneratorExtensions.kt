@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -30,6 +31,15 @@ open class StubGeneratorExtensions {
 
         companion object Instance : EnhancedNullability()
     }
+
+    open val flexibleNullabilityAnnotationConstructor: IrConstructor?
+        get() = null
+
+    open val enhancedNullabilityAnnotationConstructor: IrConstructor?
+        get() = null
+
+    open val rawTypeAnnotationConstructor: IrConstructor?
+        get() = null
 
     companion object {
         @JvmField

@@ -28,6 +28,11 @@ public class SymbolsByPsiBuildingTestGenerated extends AbstractSymbolsByPsiBuild
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/symbolsByPsi"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("annotations.kt")
+    public void testAnnotations() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolsByPsi/annotations.kt");
+    }
+
     @TestMetadata("class.kt")
     public void testClass() throws Exception {
         runTest("idea/idea-frontend-fir/testData/symbolsByPsi/class.kt");

@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.fir.resolve.diagnostics
 
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.CandidateApplicability
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 
 class ConeUnresolvedReferenceError(val name: Name? = null) : ConeDiagnostic() {
     override val reason: String get() = "Unresolved reference" + if (name != null) ": ${name.asString()}" else ""
@@ -37,12 +40,12 @@ class ConeHiddenCandidateError(
 class ConeInapplicableCandidateError(
     val applicability: CandidateApplicability,
     val candidateSymbol: AbstractFirBasedSymbol<*>,
-    val diagnostics: List<KotlinCallDiagnostic>
+    val errors: List<ConstraintSystemError>
 ) : ConeDiagnostic() {
     constructor(applicability: CandidateApplicability, candidate: Candidate) : this(
         applicability,
         candidate.symbol,
-        candidate.system.diagnostics
+        candidate.system.errors
     )
 
     override val reason: String get() = "Inapplicable($applicability): ${describeSymbol(candidateSymbol)}"
@@ -66,6 +69,22 @@ class ConeTypeMismatchError(val expectedType: ConeKotlinType, val actualType: Co
 }
 
 class ConeContractDescriptionError(override val reason: String) : ConeDiagnostic()
+
+class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic() {
+    override val reason: String get() = "Not a legal annotation: $name"
+}
+
+class ConeWrongNumberOfTypeArgumentsError(val desiredCount: Int, val type: FirRegularClassSymbol) : ConeDiagnostic() {
+    override val reason: String get() = "Wrong number of type arguments"
+}
+
+class ConeInstanceAccessBeforeSuperCall(val target: String) : ConeDiagnostic() {
+    override val reason: String get() = "Cannot access ''${target}'' before superclass constructor has been called"
+}
+
+class ConeUnsupportedCallableReferenceTarget(val fir: FirCallableDeclaration<*>) : ConeDiagnostic() {
+    override val reason: String get() = "Unsupported declaration for callable reference: ${fir.render()}"
+}
 
 private fun describeSymbol(symbol: AbstractFirBasedSymbol<*>): String {
     return when (symbol) {

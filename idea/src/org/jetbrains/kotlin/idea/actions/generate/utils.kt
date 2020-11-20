@@ -41,8 +41,7 @@ fun getPropertiesToUseInGeneratedMember(classOrObject: KtClassOrObject): List<Kt
         classOrObject.declarations.asSequence().filterIsInstance<KtProperty>().filterTo(this) {
             val descriptor = it.unsafeResolveToDescriptor()
             when (descriptor) {
-                is ValueParameterDescriptor -> true
-                is PropertyDescriptor -> descriptor.getter?.isDefault ?: true
+                is ValueParameterDescriptor, is PropertyDescriptor -> true
                 else -> false
             }
         }

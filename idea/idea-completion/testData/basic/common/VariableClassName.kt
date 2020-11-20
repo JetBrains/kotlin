@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 package some
 
 open class MyClass() {

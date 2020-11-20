@@ -102,9 +102,9 @@ class case_3_class {
     fun case_3(value_1: Any?, value_2: Number?) {
         val o = case_3_class()
         contracts.case_3(value_1, value_2, o.prop_1, this.prop_1)
-        <!AMBIGUITY!>println<!>(value_1.<!AMBIGUITY!>dec<!>())
+        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
         println(value_2?.toByte())
-        <!AMBIGUITY!>println<!>(o.prop_1.<!AMBIGUITY!>plus<!>(3))
+        <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
     }
 }
 
@@ -119,8 +119,8 @@ fun case_4(value_1: Any?, value_2: Any?) {
         println(value_2.toByte())
     }
     if (contracts.case_4_3(value_1, value_2) != null) {
-        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
-        <!AMBIGUITY!>println<!>(value_2.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        println(value_1.length)
+        println(value_2.toByte())
     }
     if (contracts.case_4_4(value_1, value_2) == null) {
         println(value_1.length)
@@ -139,7 +139,7 @@ fun case_5(value_1: Any?, value_2: Any?) {
         <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_5_3(value_1, value_2) != null) {
-        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>length<!>)
+        println(value_1.length)
         <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_5_4(value_1, value_2) == null) {
@@ -154,24 +154,24 @@ class case_6_class {
     fun case_6(value_1: Any?, value_2: Number?) {
         val o = case_6_class()
         if (contracts.case_6_1(value_1, value_2, o.prop_1, this.prop_1)) {
-            <!AMBIGUITY!>println<!>(value_1.<!AMBIGUITY!>dec<!>())
+            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
             println(value_2?.toByte())
-            <!AMBIGUITY!>println<!>(o.prop_1.<!AMBIGUITY!>plus<!>(3))
+            <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
         }
         if (!contracts.case_6_2(value_1, value_2, o.prop_1, this.prop_1)) {
-            <!AMBIGUITY!>println<!>(value_1.<!AMBIGUITY!>dec<!>())
+            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
             println(value_2?.toByte())
-            <!AMBIGUITY!>println<!>(o.prop_1.<!AMBIGUITY!>plus<!>(3))
+            <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
         }
         if (contracts.case_6_3(value_1, value_2, o.prop_1, this.prop_1) != null) {
-            <!AMBIGUITY!>println<!>(value_1.<!AMBIGUITY!>dec<!>())
+            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
             println(value_2?.toByte())
-            <!AMBIGUITY!>println<!>(o.prop_1.<!AMBIGUITY!>plus<!>(3))
+            <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
         }
         if (contracts.case_6_4(value_1, value_2, o.prop_1, this.prop_1) == null) {
-            <!AMBIGUITY!>println<!>(value_1.<!AMBIGUITY!>dec<!>())
+            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
             println(value_2?.toByte())
-            <!AMBIGUITY!>println<!>(o.prop_1.<!AMBIGUITY!>plus<!>(3))
+            <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
         }
     }
 }

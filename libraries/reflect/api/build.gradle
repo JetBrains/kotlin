@@ -47,9 +47,12 @@ compileKotlin {
                             "-Xnormalize-constructor-calls=enable",
                             "-Xno-optimized-callable-references",
                             "-Xno-kotlin-nothing-value-exception",
-                            "-module-name", "kotlin-reflection"]
+                            "-Xopt-in=kotlin.RequiresOptIn"]
+        moduleName = "kotlin-reflection"
     }
 }
+
+configureJvmIrBackend(project)
 
 jar {
     manifestAttributes(manifest, project, "internal")

@@ -35,7 +35,7 @@ FILE: nestedClassContructor.kt
         public final fun foo(): R|kotlin/Unit| {
             lval a: R|A| = R|/A.A|()
             lval ac: R|A.C| = Q|A|.R|/A.C.C|()
-            lval c: <ERROR TYPE REF: Unresolved name: C> = <Unresolved name: C>#()
+            lval c: R|ERROR CLASS: Unresolved name: C| = <Unresolved name: C>#()
         }
 
     }

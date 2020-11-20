@@ -13,18 +13,21 @@ import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.resolve.AnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
-
 class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(
     KtParameter::class.java,
     KotlinBundle.lazyMessage("move.to.class.body")
 ) {
-    override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean =
-        element.isPropertyParameter() && (element.ownerFunction as KtPrimaryConstructor).isNotContainedInAnnotation()
+    override fun isApplicableTo(element: KtParameter, caretOffset: Int): Boolean {
+        if (!element.isPropertyParameter()) return false
+        val containingClass = element.containingClass() ?: return false
+        return !containingClass.isAnnotation() && !containingClass.isData()
+    }
 
     override fun applyTo(element: KtParameter, editor: Editor?) {
         val parentClass = PsiTreeUtil.getParentOfType(element, KtClass::class.java) ?: return
@@ -94,6 +97,4 @@ class MovePropertyToClassBodyIntention : SelfTargetingIntention<KtParameter>(
         nextSibling?.delete() // ':' symbol after use site
         delete()
     }
-
-    private fun KtPrimaryConstructor.isNotContainedInAnnotation() = !getContainingClassOrObject().isAnnotation()
 }

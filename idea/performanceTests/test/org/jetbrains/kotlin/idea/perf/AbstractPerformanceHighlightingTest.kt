@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.ensureIndexesUpToDate
+import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.perf.Stats.Companion.WARM_UP
+import org.jetbrains.kotlin.idea.perf.util.removeInfoMarkers
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
 
@@ -25,10 +28,6 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         @JvmStatic
         val stats: Stats = Stats("highlight")
 
-        init {
-            // there is no @AfterClass for junit3.8
-            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
-        }
     }
 
     override fun setUp() {
@@ -42,7 +41,9 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
 
     override fun tearDown() {
         commitAllDocuments()
-        super.tearDown()
+        RunAll(
+            ThrowableRunnable { super.tearDown() }
+        ).run()
     }
 
     private fun doWarmUpPerfTest() {
@@ -54,13 +55,24 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         }
     }
 
-    protected fun doPerfTest(unused: String) {
+    private fun testName(): String {
+        val javaClass = this.javaClass
         val testName = getTestName(false)
+        return if (javaClass.isMemberClass) {
+            "${javaClass.simpleName} - $testName"
+        } else {
+            testName
+        }
+    }
+
+    protected fun doPerfTest(unused: String) {
+        val testName = testName()
         innerPerfTest(testName) {
             myFixture.configureByFile(fileName())
 
             val project = myFixture.project
             commitAllDocuments()
+            removeInfoMarkers()
 
             val file = myFixture.file
             val offset = file.textOffset

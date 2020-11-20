@@ -34,8 +34,25 @@ class JavaScopeProvider(
         klass: FirClass<*>,
         useSiteSession: FirSession,
         scopeSession: ScopeSession
-    ): FirTypeScope =
-        buildJavaEnhancementScope(useSiteSession, klass.symbol as FirRegularClassSymbol, scopeSession, mutableSetOf())
+    ): FirTypeScope {
+        val symbol = klass.symbol as FirRegularClassSymbol
+        val enhancementScope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, mutableSetOf())
+        if (klass.classKind == ClassKind.ANNOTATION_CLASS) {
+            return buildSyntheticScopeForAnnotations(useSiteSession, symbol, scopeSession, enhancementScope)
+        }
+        return enhancementScope
+    }
+
+    private fun buildSyntheticScopeForAnnotations(
+        session: FirSession,
+        symbol: FirRegularClassSymbol,
+        scopeSession: ScopeSession,
+        enhancementScope: JavaClassMembersEnhancementScope
+    ): FirTypeScope {
+        return scopeSession.getOrBuild(symbol, JAVA_SYNTHETIC_FOR_ANNOTATIONS) {
+            JavaAnnotationSyntheticPropertiesScope(session, symbol, enhancementScope)
+        }
+    }
 
     private fun buildJavaEnhancementScope(
         useSiteSession: FirSession,
@@ -79,7 +96,7 @@ class JavaScopeProvider(
                             val scope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, visitedSymbols)
                             visitedSymbols.remove(symbol)
                             useSiteSuperType.wrapSubstitutionScopeIfNeed(
-                                useSiteSession, scope, symbol.fir, scopeSession, regularClass.classId
+                                useSiteSession, scope, symbol.fir, scopeSession, derivedClass = regularClass
                             )
                         } else {
                             null
@@ -94,7 +111,8 @@ class JavaScopeProvider(
                         if (regularClass is FirJavaClass) regularClass.javaTypeParameterStack
                         else JavaTypeParameterStack.EMPTY
                     ),
-                    superTypeEnhancementScopes
+                    superTypeEnhancementScopes,
+                    regularClass.defaultType(),
                 ), wrappedDeclaredScope
             )
         }
@@ -195,6 +213,7 @@ class JavaScopeProvider(
     }
 }
 
+private val JAVA_SYNTHETIC_FOR_ANNOTATIONS = scopeSessionKey<FirRegularClassSymbol, JavaAnnotationSyntheticPropertiesScope>()
 private val JAVA_ENHANCEMENT_FOR_STATIC = scopeSessionKey<FirRegularClassSymbol, JavaClassStaticEnhancementScope>()
 private val JAVA_ENHANCEMENT = scopeSessionKey<FirRegularClassSymbol, JavaClassMembersEnhancementScope>()
 private val JAVA_USE_SITE = scopeSessionKey<FirRegularClassSymbol, JavaClassUseSiteMemberScope>()

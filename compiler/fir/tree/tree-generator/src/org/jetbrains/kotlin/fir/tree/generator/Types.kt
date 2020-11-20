@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.tree.generator
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.context.type
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
@@ -74,7 +74,7 @@ val firScopeProviderType = type("fir.scopes", "FirScopeProvider")
 val anonymousInitializerSymbolType = type("fir.symbols.impl", "FirAnonymousInitializerSymbol")
 
 val pureAbstractElementType = generatedType("FirPureAbstractElement")
-val effectDeclarationType = type("fir.contracts.description", "ConeEffectDeclaration")
+val coneEffectDeclarationType = type("fir.contracts.description", "ConeEffectDeclaration")
 val emptyContractDescriptionType = generatedType("contracts.impl", "FirEmptyContractDescription")
 val coneDiagnosticType = generatedType("diagnostics", "ConeDiagnostic")
 val coneStubDiagnosticType = generatedType("diagnostics", "ConeStubDiagnostic")

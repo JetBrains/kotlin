@@ -27,7 +27,7 @@ internal class ResettableClockMark {
                 if (hours > 0) append(hours).append("h ")
                 if (minutes > 0 || isNotEmpty()) append(minutes).append("m ")
                 if (seconds > 0 || isNotEmpty()) append(seconds).append("s ")
-                if (millis > 0 || isNotEmpty()) append(millis).append("ms")
+                append(millis).append("ms")
             }
         }
     }

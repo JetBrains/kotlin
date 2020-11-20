@@ -100,6 +100,11 @@ fun CharSequence.isCharAt(offset: Int, c: Char) = offset < length && this[offset
 fun Document.isTextAt(offset: Int, text: String) =
     offset + text.length <= textLength && getText(TextRange(offset, offset + text.length)) == text
 
+private data class KeywordConstructLookupObject(
+    private val keyword: String,
+    private val constructToInsert: String
+) : KeywordLookupObject()
+
 fun createKeywordConstructLookupElement(
     project: Project,
     keyword: String,
@@ -136,7 +141,8 @@ fun createKeywordConstructLookupElement(
             "..." +
             (if (tailAfterCaret.contains('\n')) tailAfterCaret.replace("\n", "").trimStart() else tailAfterCaret)
 
-    return LookupElementBuilder.create(KeywordLookupObject(), keyword)
+    val lookupElement = KeywordConstructLookupObject(keyword, fileTextToReformat)
+    return LookupElementBuilder.create(lookupElement, keyword)
         .bold()
         .withTailText(tailText)
         .withInsertHandler { insertionContext, _ ->

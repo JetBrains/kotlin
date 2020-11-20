@@ -35,5 +35,5 @@ class A {
 // 1 LOCALVARIABLE this LThisAndResultInLvtKt\$c\$1;
 
 // JVM_IR_TEMPLATES
-// <init>, invoke, invokeSuspend
-// 3 LOCALVARIABLE this LThisAndResultInLvtKt\$c\$1; L0 L.* 0
+// <init>, invoke, invoke bridge, invokeSuspend
+// 4 LOCALVARIABLE this LThisAndResultInLvtKt\$c\$1; L0 L.* 0

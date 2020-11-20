@@ -16,11 +16,12 @@ import org.jetbrains.kotlin.ir.builders.irLong
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.name.Name
 
 /** Represents a progression type in the Kotlin stdlib. */
 internal sealed class ProgressionType(
@@ -30,41 +31,24 @@ internal sealed class ProgressionType(
     val maxValueAsLong: Long,
     val getProgressionLastElementFunction: IrSimpleFunctionSymbol?
 ) {
-    abstract fun DeclarationIrBuilder.minValueExpression(): IrExpression
-
     abstract fun DeclarationIrBuilder.zeroStepExpression(): IrExpression
 
     fun IrExpression.asElementType() = castIfNecessary(elementClass)
 
     fun IrExpression.asStepType() = castIfNecessary(stepClass)
 
-    private fun IrExpression.castIfNecessary(targetClass: IrClass) =
-        // This expression's type could be Nothing from an exception throw.
-        if (type == targetClass.defaultType || type.isNothing()) {
-            this
-        } else {
-            val numberCastFunctionName = Name.identifier("to${targetClass.name.asString()}")
-            val castFun = type.getClass()!!.functions.single {
-                it.name == numberCastFunctionName &&
-                        it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
-            }
-            IrCallImpl(
-                startOffset, endOffset,
-                castFun.returnType, castFun.symbol,
-                typeArgumentsCount = 0,
-                valueArgumentsCount = 0
-            ).apply { dispatchReceiver = this@castIfNecessary }
-        }
-
     companion object {
-        fun fromIrType(irType: IrType, symbols: Symbols<CommonBackendContext>): ProgressionType? = when {
-            irType.isSubtypeOfClass(symbols.charProgression) -> CharProgressionType(symbols)
-            irType.isSubtypeOfClass(symbols.intProgression) -> IntProgressionType(symbols)
-            irType.isSubtypeOfClass(symbols.longProgression) -> LongProgressionType(symbols)
-            symbols.uIntProgression != null && irType.isSubtypeOfClass(symbols.uIntProgression) -> UIntProgressionType(symbols)
-            symbols.uLongProgression != null && irType.isSubtypeOfClass(symbols.uLongProgression) -> ULongProgressionType(symbols)
-            else -> null
-        }
+        fun fromIrType(irType: IrType, symbols: Symbols<CommonBackendContext>, allowUnsignedBounds: Boolean): ProgressionType? =
+            when {
+                irType.isSubtypeOfClass(symbols.charProgression) -> CharProgressionType(symbols)
+                irType.isSubtypeOfClass(symbols.intProgression) -> IntProgressionType(symbols)
+                irType.isSubtypeOfClass(symbols.longProgression) -> LongProgressionType(symbols)
+                symbols.uIntProgression != null && irType.isSubtypeOfClass(symbols.uIntProgression) ->
+                    UIntProgressionType(symbols, allowUnsignedBounds)
+                symbols.uLongProgression != null && irType.isSubtypeOfClass(symbols.uLongProgression) ->
+                    ULongProgressionType(symbols, allowUnsignedBounds)
+                else -> null
+            }
     }
 }
 
@@ -77,7 +61,6 @@ internal class IntProgressionType(symbols: Symbols<CommonBackendContext>) :
         // Uses `getProgressionLastElement(Int, Int, Int): Int`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.int]
     ) {
-    override fun DeclarationIrBuilder.minValueExpression() = irInt(Int.MIN_VALUE)
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
 }
@@ -91,7 +74,6 @@ internal class LongProgressionType(symbols: Symbols<CommonBackendContext>) :
         // Uses `getProgressionLastElement(Long, Long, Long): Long`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.long]
     ) {
-    override fun DeclarationIrBuilder.minValueExpression() = irLong(Long.MIN_VALUE)
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irLong(0)
 }
@@ -105,7 +87,6 @@ internal class CharProgressionType(symbols: Symbols<CommonBackendContext>) :
         // Uses `getProgressionLastElement(Int, Int, Int): Int`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.int]
     ) {
-    override fun DeclarationIrBuilder.minValueExpression() = irChar(Char.MIN_VALUE)
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
 }
@@ -189,10 +170,10 @@ internal abstract class UnsignedProgressionType(
     }
 }
 
-internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>) :
+internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>, allowUnsignedBounds: Boolean) :
     UnsignedProgressionType(
         symbols,
-        elementClass = symbols.int.owner,
+        elementClass = if (allowUnsignedBounds) symbols.uInt!!.owner else symbols.int.owner,
         stepClass = symbols.int.owner,
         minValueAsLong = UInt.MIN_VALUE.toLong(),
         maxValueAsLong = UInt.MAX_VALUE.toLong(),
@@ -201,15 +182,14 @@ internal class UIntProgressionType(symbols: Symbols<CommonBackendContext>) :
         unsignedType = symbols.uInt!!.defaultType,
         unsignedConversionFunction = symbols.toUIntByExtensionReceiver.getValue(symbols.int)
     ) {
-    override fun DeclarationIrBuilder.minValueExpression() = irInt(UInt.MIN_VALUE.toInt())
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irInt(0)
 }
 
-internal class ULongProgressionType(symbols: Symbols<CommonBackendContext>) :
+internal class ULongProgressionType(symbols: Symbols<CommonBackendContext>, allowUnsignedBounds: Boolean) :
     UnsignedProgressionType(
         symbols,
-        elementClass = symbols.long.owner,
+        elementClass = if (allowUnsignedBounds) symbols.uLong!!.owner else symbols.long.owner,
         stepClass = symbols.long.owner,
         minValueAsLong = ULong.MIN_VALUE.toLong(),
         maxValueAsLong = ULong.MAX_VALUE.toLong(),
@@ -218,7 +198,6 @@ internal class ULongProgressionType(symbols: Symbols<CommonBackendContext>) :
         unsignedType = symbols.uLong!!.defaultType,
         unsignedConversionFunction = symbols.toULongByExtensionReceiver.getValue(symbols.long)
     ) {
-    override fun DeclarationIrBuilder.minValueExpression() = irLong(ULong.MIN_VALUE.toLong())
 
     override fun DeclarationIrBuilder.zeroStepExpression() = irLong(0)
 }

@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.descriptors.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.InvalidModuleException
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.PackageViewDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -37,10 +34,10 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     override val builtIns: KotlinBuiltIns,
     // May be null in compiler context, should be not-null in IDE context
     override val platform: TargetPlatform? = null,
-    capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
+    capabilities: Map<ModuleCapability<*>, Any?> = emptyMap(),
     override val stableName: Name? = null,
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
-    private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+    private val capabilities: Map<ModuleCapability<*>, Any?>
 
     init {
         if (!moduleName.isSpecial) {
@@ -78,7 +75,10 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allDependencies.filter { it != this }
 
     override val expectedByModules: List<ModuleDescriptor>
-        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.expectedByDependencies
+        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.directExpectedByDependencies
+
+    override val allExpectedByModules: Set<ModuleDescriptor>
+        get() = this.dependencies.sure { "Dependencies of module $id were not set" }.allExpectedByDependencies
 
     override fun getPackage(fqName: FqName): PackageViewDescriptor {
         assertValid()
@@ -121,7 +121,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     }
 
     fun setDependencies(descriptors: List<ModuleDescriptorImpl>, friends: Set<ModuleDescriptorImpl>) {
-        setDependencies(ModuleDependenciesImpl(descriptors, friends, emptyList()))
+        setDependencies(ModuleDependenciesImpl(descriptors, friends, emptyList(), emptySet()))
     }
 
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
@@ -151,17 +151,19 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T> getCapability(capability: ModuleDescriptor.Capability<T>) = capabilities[capability] as? T
+    override fun <T> getCapability(capability: ModuleCapability<T>) = capabilities[capability] as? T
 }
 
 interface ModuleDependencies {
     val allDependencies: List<ModuleDescriptorImpl>
     val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
-    val expectedByDependencies: List<ModuleDescriptorImpl>
+    val directExpectedByDependencies: List<ModuleDescriptorImpl>
+    val allExpectedByDependencies: Set<ModuleDescriptorImpl>
 }
 
 class ModuleDependenciesImpl(
     override val allDependencies: List<ModuleDescriptorImpl>,
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>,
-    override val expectedByDependencies: List<ModuleDescriptorImpl>
+    override val directExpectedByDependencies: List<ModuleDescriptorImpl>,
+    override val allExpectedByDependencies: Set<ModuleDescriptorImpl>,
 ) : ModuleDependencies

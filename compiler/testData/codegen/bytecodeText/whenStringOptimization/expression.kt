@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 fun foo(x : String) : String {
     return when (x) {
         "abc", "cde" -> "abc_cde"

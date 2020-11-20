@@ -30,7 +30,7 @@ open class A<T> : J() {
             foo()
             bar()
             val a: Int = baz()
-            val b: T = baz()
+            val b: <!UNRESOLVED_REFERENCE!>T<!> = baz()
         }
     }
 
@@ -39,14 +39,14 @@ open class A<T> : J() {
             foo()
             bar()
             val a: Int = baz()
-            val b: T = baz()
+            val b: <!UNRESOLVED_REFERENCE!>T<!> = baz()
         }
 
         fun test() {
             foo()
             bar()
             val a: Int = baz()
-            val b: T = baz()
+            val b: <!UNRESOLVED_REFERENCE!>T<!> = baz()
         }
 
         fun bar() {}

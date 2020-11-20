@@ -133,7 +133,7 @@ private fun IncrementalResultsConsumer.reportInlineFunction(
     val psiFile = (descriptor.source.containingFile as? PsiSourceFile)?.psiFile ?: return
     val file = VfsUtilCore.virtualToIoFile(psiFile.virtualFile)
 
-    if (effectiveVisibility(descriptor.visibility, descriptor, true).privateApi) return
+    if (descriptor.visibility.effectiveVisibility(descriptor, true).privateApi) return
 
     val fqName = when (descriptor) {
         is PropertyGetterDescriptor -> {

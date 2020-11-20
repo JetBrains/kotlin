@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultSetterValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.references.impl.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -37,6 +36,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
+    var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var returnTypeRef: FirTypeRef
     var receiverTypeRef: FirTypeRef? = null
     lateinit var symbol: FirVariableSymbol<FirValueParameter>
@@ -59,6 +59,7 @@ class FirDefaultSetterValueParameterBuilder : FirAnnotationContainerBuilder {
             session,
             resolvePhase,
             origin,
+            attributes,
             returnTypeRef,
             receiverTypeRef,
             symbol,

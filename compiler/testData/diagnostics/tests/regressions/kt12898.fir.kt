@@ -10,7 +10,7 @@ class C(override val t: Any?) : B<Any?, Any>
 fun f(b: B<*, Any>) {
     val y = b.t
     if (y is String?) {
-        y.length
+        y.<!INAPPLICABLE_CANDIDATE!>length<!>
     }
 }
 

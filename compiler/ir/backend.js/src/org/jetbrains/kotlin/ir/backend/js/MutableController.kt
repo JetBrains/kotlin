@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrBodyBase
@@ -152,7 +152,7 @@ open class MutableController(val context: JsIrBackendContext, val lowerings: Lis
     }
 
     override fun canAccessDeclarationsOf(irClass: IrClass): Boolean {
-        return !declarationListsRestricted || irClass.visibility == Visibilities.LOCAL && irClass !in context.extractedLocalClasses
+        return !declarationListsRestricted || irClass.visibility == DescriptorVisibilities.LOCAL && irClass !in context.extractedLocalClasses
     }
 
     private var restrictedToDeclaration: IrDeclaration? = null
@@ -161,7 +161,7 @@ open class MutableController(val context: JsIrBackendContext, val lowerings: Lis
     private var restricted: Boolean = false
     private var declarationListsRestricted = false
 
-    private inline fun <T> (() -> T).withRestrictions(
+    private fun <T> (() -> T).withRestrictions(
         newRestrictedToDeclaration: IrDeclaration? = null,
         newBodiesEnabled: Boolean? = null,
         newRestricted: Boolean? = null,

@@ -5,26 +5,22 @@
 
 package org.jetbrains.kotlin.builtins
 
+import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
+import org.jetbrains.kotlin.builtins.StandardNames.K_FUNCTION_PREFIX
+import org.jetbrains.kotlin.builtins.StandardNames.K_SUSPEND_FUNCTION_PREFIX
+import org.jetbrains.kotlin.builtins.StandardNames.PREFIXES
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import kotlin.reflect.KProperty
-
-val KOTLIN_REFLECT_FQ_NAME = FqName("kotlin.reflect")
-val K_PROPERTY_PREFIX = "KProperty"
-val K_MUTABLE_PROPERTY_PREFIX = "KMutableProperty"
-val K_FUNCTION_PREFIX = "KFunction"
-val K_SUSPEND_FUNCTION_PREFIX = "KSuspendFunction"
-
-val PREFIXES = listOf(K_PROPERTY_PREFIX, K_MUTABLE_PROPERTY_PREFIX, K_FUNCTION_PREFIX, K_SUSPEND_FUNCTION_PREFIX)
 
 class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: NotFoundClasses) {
     private val kotlinReflectScope: MemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -116,16 +112,16 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
             hasKCallableTypeFqName(type) || type.constructor.supertypes.any { isKCallableType(it) }
 
         fun hasKCallableTypeFqName(type: KotlinType): Boolean =
-            hasFqName(type.constructor, KotlinBuiltIns.FQ_NAMES.kCallable)
+            hasFqName(type.constructor, StandardNames.FqNames.kCallable)
 
         fun hasKMutablePropertyTypeFqName(type: KotlinType): Boolean =
-            hasFqName(type.constructor, KotlinBuiltIns.FQ_NAMES.kMutablePropertyFqName)
+            hasFqName(type.constructor, StandardNames.FqNames.kMutablePropertyFqName)
 
         fun isNumberedKMutablePropertyType(type: KotlinType): Boolean {
             val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return false
-            return hasFqName(descriptor, KotlinBuiltIns.FQ_NAMES.kMutableProperty0) ||
-                   hasFqName(descriptor, KotlinBuiltIns.FQ_NAMES.kMutableProperty1) ||
-                   hasFqName(descriptor, KotlinBuiltIns.FQ_NAMES.kMutableProperty2)
+            return hasFqName(descriptor, StandardNames.FqNames.kMutableProperty0) ||
+                   hasFqName(descriptor, StandardNames.FqNames.kMutableProperty1) ||
+                   hasFqName(descriptor, StandardNames.FqNames.kMutableProperty2)
         }
 
         fun isNumberedTypeWithOneOrMoreNumber(type: KotlinType): Boolean {
@@ -146,13 +142,13 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
         }
 
         fun hasKPropertyTypeFqName(type: KotlinType): Boolean =
-            hasFqName(type.constructor, KotlinBuiltIns.FQ_NAMES.kPropertyFqName)
+            hasFqName(type.constructor, StandardNames.FqNames.kPropertyFqName)
 
         fun isNumberedKPropertyType(type: KotlinType): Boolean {
             val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return false
-            return hasFqName(descriptor, KotlinBuiltIns.FQ_NAMES.kProperty0) ||
-                   hasFqName(descriptor, KotlinBuiltIns.FQ_NAMES.kProperty1) ||
-                   hasFqName(descriptor, KotlinBuiltIns.FQ_NAMES.kProperty2)
+            return hasFqName(descriptor, StandardNames.FqNames.kProperty0) ||
+                   hasFqName(descriptor, StandardNames.FqNames.kProperty1) ||
+                   hasFqName(descriptor, StandardNames.FqNames.kProperty2)
         }
 
         fun isNumberedKFunctionOrKSuspendFunction(type: KotlinType): Boolean {
@@ -184,7 +180,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
         }
 
         fun createKPropertyStarType(module: ModuleDescriptor): KotlinType? {
-            val kPropertyClass = module.findClassAcrossModuleDependencies(KotlinBuiltIns.FQ_NAMES.kProperty) ?: return null
+            val kPropertyClass = module.findClassAcrossModuleDependencies(StandardNames.FqNames.kProperty) ?: return null
             return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kPropertyClass,
                                                        listOf(StarProjectionImpl(kPropertyClass.typeConstructor.parameters.single())))
         }
@@ -207,7 +203,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
                        || shortName == "KCallable" || shortName == "KAnnotatedElement"
 
             }
-            if (packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME || packageName == COROUTINES_PACKAGE_FQ_NAME_RELEASE) {
+            if (packageName == BUILT_INS_PACKAGE_FQ_NAME || packageName == COROUTINES_PACKAGE_FQ_NAME_RELEASE) {
                 return shortName.startsWith("Function") // FunctionN, Function
                         || shortName.startsWith("SuspendFunction")
             }

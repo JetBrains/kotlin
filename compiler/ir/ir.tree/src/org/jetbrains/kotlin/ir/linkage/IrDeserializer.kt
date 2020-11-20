@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.linkage
 
+import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 interface IrDeserializer : IrProvider {
 
     interface IrLinkerExtension {
-        fun resolveSymbol(symbol: IrSymbol): IrDeclaration? = null
+        fun resolveSymbol(symbol: IrSymbol, context: TranslationPluginContext): IrDeclaration? = null
     }
 
     fun init(moduleFragment: IrModuleFragment?, extensions: Collection<IrLinkerExtension>) {}

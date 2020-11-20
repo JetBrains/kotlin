@@ -20,6 +20,7 @@ import org.jetbrains.plugins.gradle.service.project.DefaultProjectResolverContex
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
 import java.io.File
 
+
 fun saveGradleBuildEnvironment(resolverCtx: ProjectResolverContext) {
     val task = resolverCtx.externalSystemTaskId
     val tasks = KotlinDslSyncListener.instance.tasks
@@ -29,6 +30,7 @@ fun saveGradleBuildEnvironment(resolverCtx: ProjectResolverContext) {
             ?: resolverCtx.settings?.gradleHome
         synchronized(sync) {
             sync.gradleVersion = resolverCtx.projectGradleVersion
+
             sync.javaHome = (resolverCtx as? DefaultProjectResolverContext)
                 ?.buildEnvironment
                 ?.java?.javaHome?.canonicalPath
@@ -45,14 +47,15 @@ fun processScriptModel(
     resolverCtx: ProjectResolverContext,
     model: KotlinDslScriptsModel,
     projectName: String
-) {
-    if (model is BrokenKotlinDslScriptsModel) {
+): Boolean {
+    return if (model is BrokenKotlinDslScriptsModel) {
         LOG.error(
             "Couldn't get KotlinDslScriptsModel for $projectName:\n${model.message}\n${model.stackTrace}"
         )
+        false
     } else {
         val task = resolverCtx.externalSystemTaskId
-        val project = task.findProject() ?: return
+        val project = task.findProject() ?: return false
         val models = model.toListOfScriptModels(project)
 
         val tasks = KotlinDslSyncListener.instance.tasks
@@ -65,9 +68,9 @@ fun processScriptModel(
 
         val errors = models.collectErrors()
         if (errors.isNotEmpty()) {
-            if (sync != null) {
-                synchronized(sync) {
-                    sync.failed = true
+            sync?.let {
+                synchronized(it) {
+                    it.failed = true
                 }
             }
             throw IllegalStateException(
@@ -76,6 +79,7 @@ fun processScriptModel(
                         + errors.joinToString("\n") { it.text + "\n" + it.details }
             )
         }
+        errors.isEmpty()
     }
 }
 

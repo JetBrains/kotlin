@@ -2,10 +2,10 @@
 @Repeatable
 annotation class Ann(vararg val i: Int)
 
-@Ann(i)
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i<!>)
 @Ann(i2)
-@Ann(i3)
-@Ann(i, i2, i3)
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i3<!>)
+@Ann(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i<!>, i2, <!ANNOTATION_ARGUMENT_MUST_BE_CONST!>i3<!>)
 @Ann(*intArrayOf(i))
 @Ann(*intArrayOf(i2))
 @Ann(*intArrayOf(i3))

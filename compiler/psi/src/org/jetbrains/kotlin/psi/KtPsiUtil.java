@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.KtNodeTypes;
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.kdoc.psi.api.KDocElement;
 import org.jetbrains.kotlin.lexer.KtToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -178,7 +178,7 @@ public class KtPsiUtil {
             List<KtAnnotationEntry> annotationEntries = modifierList.getAnnotationEntries();
             for (KtAnnotationEntry annotation : annotationEntries) {
                 Name shortName = annotation.getShortName();
-                if (KotlinBuiltIns.FQ_NAMES.deprecated.shortName().equals(shortName)) {
+                if (StandardNames.FqNames.deprecated.shortName().equals(shortName)) {
                     return true;
                 }
             }

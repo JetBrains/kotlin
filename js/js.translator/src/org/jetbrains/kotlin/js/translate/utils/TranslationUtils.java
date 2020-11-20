@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.builtins.PrimitiveType;
 import org.jetbrains.kotlin.config.CoroutineLanguageVersionSettingsUtilKt;
 import org.jetbrains.kotlin.descriptors.*;
@@ -59,7 +60,7 @@ public final class TranslationUtils {
             new FqNameUnsafe("kotlin.ranges.CharProgression"),
             new FqNameUnsafe("kotlin.js.internal.CharCompanionObject"),
             new FqNameUnsafe("kotlin.Char.Companion"),
-            KotlinBuiltIns.FQ_NAMES.charSequence, KotlinBuiltIns.FQ_NAMES.number
+            StandardNames.FqNames.charSequence, StandardNames.FqNames.number
     ));
 
     private TranslationUtils() {
@@ -105,7 +106,7 @@ public final class TranslationUtils {
     @NotNull
     private static JsPropertyInitializer translateExtensionFunctionAsEcma5DataDescriptor(@NotNull JsExpression functionExpression,
             @NotNull FunctionDescriptor descriptor, @NotNull TranslationContext context) {
-        JsObjectLiteral meta = createDataDescriptor(functionExpression, ModalityKt.isOverridable(descriptor), false);
+        JsObjectLiteral meta = createDataDescriptor(functionExpression, ModalityUtilsKt.isOverridable(descriptor), false);
         return new JsPropertyInitializer(context.getNameForDescriptor(descriptor).makeRef(), meta);
     }
 
@@ -420,9 +421,9 @@ public final class TranslationUtils {
 
     public static boolean isOverridableFunctionWithDefaultParameters(@NotNull FunctionDescriptor descriptor) {
         return hasOrInheritsParametersWithDefaultValue(descriptor) &&
-                !(descriptor instanceof ConstructorDescriptor) &&
-                descriptor.getContainingDeclaration() instanceof ClassDescriptor &&
-                ModalityKt.isOverridable(descriptor);
+               !(descriptor instanceof ConstructorDescriptor) &&
+               descriptor.getContainingDeclaration() instanceof ClassDescriptor &&
+               ModalityUtilsKt.isOverridable(descriptor);
     }
 
     @NotNull
@@ -446,13 +447,14 @@ public final class TranslationUtils {
             }
 
             DeclarationDescriptor container = descriptor.getContainingDeclaration();
-            boolean isPublic = descriptor.getVisibility().effectiveVisibility(descriptor, true).getPublicApi() && !forcePrivate;
+            EffectiveVisibility effectiveVisibility = EffectiveVisibilityUtilsKt.effectiveVisibility(descriptor.getVisibility(), descriptor, true);
+            boolean isPublic = effectiveVisibility.getPublicApi() && !forcePrivate;
             if (KotlinBuiltIns.isCharOrNullableChar(returnType) && container instanceof ClassDescriptor && isPublic) {
                 ClassDescriptor containingClass = (ClassDescriptor) container;
                 FqNameUnsafe containingClassName = DescriptorUtilsKt.getFqNameUnsafe(containingClass);
                 if (!CLASSES_WITH_NON_BOXED_CHARS.contains(containingClassName) &&
                     !KotlinBuiltIns.isPrimitiveType(containingClass.getDefaultType()) &&
-                    !KotlinBuiltIns.isPrimitiveArray(containingClassName)
+                    !StandardNames.isPrimitiveArray(containingClassName)
                 ) {
                     return getAnyTypeFromSameModule(descriptor);
                 }

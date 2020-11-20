@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
 class ResultClassInReturnTypeChecker : DeclarationChecker {
@@ -46,7 +45,7 @@ class ResultClassInReturnTypeChecker : DeclarationChecker {
             }
 
             val visibility = (declarationDescriptor as DeclarationDescriptorWithVisibility).visibility
-            return !Visibilities.isPrivate(visibility) && visibility != Visibilities.LOCAL
+            return !DescriptorVisibilities.isPrivate(visibility) && visibility != DescriptorVisibilities.LOCAL
         }
 
         return true
@@ -60,6 +59,6 @@ internal fun KotlinType.isResultType(): Boolean {
 private fun DeclarationDescriptor.isResultClass(): Boolean {
     val container = containingDeclaration ?: return false
     return container is PackageFragmentDescriptor &&
-            container.fqName == DescriptorUtils.RESULT_FQ_NAME.parent() &&
-            name == DescriptorUtils.RESULT_FQ_NAME.shortName()
+            container.fqName == StandardNames.RESULT_FQ_NAME.parent() &&
+            name == StandardNames.RESULT_FQ_NAME.shortName()
 }

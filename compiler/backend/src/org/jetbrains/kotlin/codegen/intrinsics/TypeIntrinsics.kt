@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -16,7 +16,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.*
-import kotlin.text.Regex
 
 object TypeIntrinsics {
     @JvmStatic
@@ -134,20 +133,20 @@ object TypeIntrinsics {
 
 
     private val MUTABLE_COLLECTION_TYPE_FQ_NAMES = setOf(
-            FQ_NAMES.mutableIterator,
-            FQ_NAMES.mutableIterable,
-            FQ_NAMES.mutableCollection,
-            FQ_NAMES.mutableList,
-            FQ_NAMES.mutableListIterator,
-            FQ_NAMES.mutableMap,
-            FQ_NAMES.mutableSet,
-            FQ_NAMES.mutableMapEntry
+        FqNames.mutableIterator,
+        FqNames.mutableIterable,
+        FqNames.mutableCollection,
+        FqNames.mutableList,
+        FqNames.mutableListIterator,
+        FqNames.mutableMap,
+        FqNames.mutableSet,
+        FqNames.mutableMapEntry
     )
 
     private fun getMutableCollectionMethodName(prefix: String, jetType: KotlinType): String? {
         val fqName = getClassFqName(jetType)
         if (fqName == null || fqName !in MUTABLE_COLLECTION_TYPE_FQ_NAMES) return null
-        val baseName = if (fqName == FQ_NAMES.mutableMapEntry) "MutableMapEntry" else fqName.shortName().asString()
+        val baseName = if (fqName == FqNames.mutableMapEntry) "MutableMapEntry" else fqName.shortName().asString()
         return prefix + baseName
     }
 

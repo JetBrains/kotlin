@@ -13,10 +13,10 @@ class Case1 {
         val y = this
         if (y.x != null) {
             x = null
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int?")!>x<!>
             this.x
             y.x
-            y.x.inv()
+            y.x.<!INAPPLICABLE_CANDIDATE!>inv<!>()
         } else {
             x = 10
         }

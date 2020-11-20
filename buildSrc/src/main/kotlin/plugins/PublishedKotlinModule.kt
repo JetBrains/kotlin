@@ -1,3 +1,4 @@
+@file:Suppress("DEPRECATION")
 package plugins
 
 import org.codehaus.groovy.runtime.InvokerHelper
@@ -16,10 +17,8 @@ import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import kotlin.properties.Delegates
 
-
 /**
  * Configures a Kotlin module for publication.
- *
  */
 open class PublishedKotlinModule : Plugin<Project> {
 
@@ -52,6 +51,7 @@ open class PublishedKotlinModule : Plugin<Project> {
                 configure<SigningExtension> {
                     isRequired = signingRequired
                     sign(configurations["archives"])
+                    useGpgCmd()
                 }
 
                 tasks.named<Sign>("signArchives").configure {
