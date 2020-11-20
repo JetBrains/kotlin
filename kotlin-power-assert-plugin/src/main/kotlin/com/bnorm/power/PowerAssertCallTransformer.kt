@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -48,9 +47,9 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.io.File
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 
 fun FileLoweringPass.runOnFileInOrder(irFile: IrFile) {
   irFile.acceptVoid(object : IrElementVisitorVoid {
@@ -81,8 +80,7 @@ class PowerAssertCallTransformer(
   }
 
   override fun visitCall(expression: IrCall): IrExpression {
-    // TODO expression.symbol.owner.fqNameSafe includes the wrapping ClassKt while descriptor doesn't
-    val fqName = expression.symbol.descriptor.fqNameSafe
+    val fqName = expression.symbol.owner.kotlinFqName
     if (functions.none { fqName == it })
       return super.visitCall(expression)
 
@@ -179,10 +177,10 @@ class PowerAssertCallTransformer(
             object : FunctionDelegate {
               override fun buildCall(builder: IrBuilderWithScope, original: IrCall, message: IrExpression): IrExpression = with(builder) {
                 val scope = this
-                val lambda = buildFun {
+                val lambda = builder.context.irFactory.buildFun {
                   name = Name.special("<anonymous>")
                   returnType = context.irBuiltIns.stringType
-                  visibility = Visibilities.LOCAL
+                  visibility = DescriptorVisibilities.LOCAL
                   origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 }.apply {
                   val bodyBuilder = DeclarationIrBuilder(this@PowerAssertCallTransformer.context, symbol)
