@@ -268,7 +268,7 @@ public abstract class Random {
      * @sample samples.random.Randoms.defaultRandom
      */
     companion object Default : Random(), Serializable {
-        private const val serialVersionUID = 6449517406788167720L
+        private const val serialVersionUID = 0L
 
         private val defaultRandom: Random
             get() = defaultPlatformRandom()

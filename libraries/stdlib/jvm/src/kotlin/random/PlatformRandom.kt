@@ -58,7 +58,7 @@ internal object FallbackThreadLocalRandom : AbstractPlatformRandom() {
 
 private class PlatformRandom(override val impl: java.util.Random) : AbstractPlatformRandom(), Serializable {
     private companion object {
-        private const val serialVersionUID = -6515078090931313608L
+        private const val serialVersionUID: Long = 0L
     }
 }
 
@@ -87,6 +87,6 @@ private class KotlinRandom(val impl: Random) : java.util.Random() {
     }
 
     private companion object {
-        private const val serialVersionUID = 1188431230196828587L
+        private const val serialVersionUID: Long = 0L
     }
 }

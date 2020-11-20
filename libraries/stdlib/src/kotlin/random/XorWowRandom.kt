@@ -54,6 +54,6 @@ internal class XorWowRandom internal constructor(
         nextInt().takeUpperBits(bitCount)
 
     companion object {
-        private const val serialVersionUID = -6943221717878108522L
+        private const val serialVersionUID: Long = 0L
     }
 }
