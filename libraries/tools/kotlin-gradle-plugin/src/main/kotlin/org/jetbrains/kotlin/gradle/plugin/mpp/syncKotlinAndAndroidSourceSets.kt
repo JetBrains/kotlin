@@ -35,10 +35,13 @@ internal fun syncKotlinAndAndroidSourceSets(target: KotlinAndroidTarget) {
 }
 
 internal var AndroidSourceSet.kotlinSourceSet: KotlinSourceSet
-    get() = getConvention(KOTLIN_DSL_NAME) as KotlinSourceSet
+    get() = checkNotNull(kotlinSourceSetOrNull) { "Missing kotlinSourceSet for Android source set $name" }
     private set(value) {
         addConvention(KOTLIN_DSL_NAME, value)
     }
+
+internal val AndroidSourceSet.kotlinSourceSetOrNull: KotlinSourceSet?
+    get() = getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
 
 private fun createDefaultDependsOnEdges(
     target: KotlinAndroidTarget,
