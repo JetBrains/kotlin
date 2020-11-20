@@ -49,9 +49,18 @@ open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
             assertContains("JNI sources: [lib/src/androidTestDebug/jni, lib/src/androidAndroidTestDebug/jni]")
             assertContains("JNI libraries: [lib/src/androidTestDebug/jniLibs, lib/src/androidAndroidTestDebug/jniLibs]")
             assertContains("Java-style resources: [lib/src/androidTestDebug/resources, lib/src/androidAndroidTestDebug/resources]")
+
+            assertContains("Java sources: [lib/betaSrc/paidBeta/java, lib/src/androidPaidBeta/kotlin, lib/src/paidBeta/kotlin]")
+            assertContains("Java sources: [lib/betaSrc/paidBetaDebug/java, lib/src/androidPaidBetaDebug/kotlin, lib/src/paidBetaDebug/kotlin]")
+            assertContains("Java sources: [lib/betaSrc/paidBetaRelease/java, lib/src/androidPaidBetaRelease/kotlin, lib/src/paidBetaRelease/kotlin]")
+
+            assertContains("Java sources: [lib/betaSrc/freeBeta/java, lib/src/androidFreeBeta/kotlin, lib/src/freeBeta/kotlin]")
+            assertContains("Java sources: [lib/betaSrc/freeBetaDebug/java, lib/src/androidFreeBetaDebug/kotlin, lib/src/freeBetaDebug/kotlin]")
+            assertContains("Java sources: [lib/betaSrc/freeBetaRelease/java, lib/src/androidFreeBetaRelease/kotlin, lib/src/freeBetaRelease/kotlin]")
+
         }
 
-        build("testDebug") {
+        build("testFreeBetaDebug") {
             assertFailed()
             assertContains("CommonTest > fail FAILED")
             assertContains("TestKotlin > fail FAILED")
