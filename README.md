@@ -75,8 +75,8 @@ Builds of the Gradle plugin are available through the
 
 ```kotlin
 plugins {
-  kotlin("jvm") version "1.4.20"
-  id("com.bnorm.power.kotlin-power-assert") version "0.5.3"
+  kotlin("multiplatform") version "1.4.20"
+  id("com.bnorm.power.kotlin-power-assert") version "0.6.0"
 }
 ```
 
@@ -87,7 +87,7 @@ form which also takes a String or String producing lambda.
 
 ```kotlin
 configure<com.bnorm.power.PowerAssertGradleExtension> {
-  functions = listOf("kotlin.test.assertTrue", "kotlin.require")
+  functions = listOf("kotlin.assert", "kotlin.test.assertTrue")
 }
 ``` 
 
