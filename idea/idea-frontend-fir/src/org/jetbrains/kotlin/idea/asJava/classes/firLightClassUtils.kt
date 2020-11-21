@@ -58,19 +58,9 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? {
         return null
     }
 
-    if (classOrObject.isLocal) {
-        val nonLocalDeclaration = classOrObject.containingNonLocalDeclaration() ?: return null
-        analyze(nonLocalDeclaration) {
-            (nonLocalDeclaration.getSymbol() as? KtFirSymbol<*>)?.run {
-                this.firRef.withFir(FirResolvePhase.BODY_RESOLVE) {  }
-            }
-        } ?: return null
-    }
-
     return when {
         classOrObject is KtEnumEntry -> lightClassForEnumEntry(classOrObject)
         classOrObject.isObjectLiteral() -> return null //TODO
-        //classOrObject.safeIsLocal() -> return null //TODO
         classOrObject.hasModifier(KtTokens.INLINE_KEYWORD) -> return null //TODO
         else -> {
             analyze(classOrObject) {
