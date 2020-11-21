@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.util.checkCanceled
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 internal class FirLazyDeclarationResolver(
     private val firFileBuilder: FirFileBuilder
@@ -41,14 +40,14 @@ internal class FirLazyDeclarationResolver(
         if (declaration.resolvePhase >= toPhase) return
 
         if (declaration is FirPropertyAccessor || declaration is FirTypeParameter) {
-            val ktContainingProperty = when (val ktDeclaration = declaration.ktDeclaration) {
+            val ktContainingResolvableDeclaration = when (val ktDeclaration = declaration.ktDeclaration) {
                 is KtPropertyAccessor -> ktDeclaration.property
                 is KtProperty -> ktDeclaration
                 is KtParameter, is KtTypeParameter -> ktDeclaration.getNonLocalContainingOrThisDeclaration()
                     ?: error("Cannot find containing declaration for KtParameter")
                 else -> error("Invalid source of property accessor ${ktDeclaration::class}")
             }
-            val containingProperty = ktContainingProperty
+            val containingProperty = ktContainingResolvableDeclaration
                 .findSourceNonLocalFirDeclaration(firFileBuilder, declaration.session.firSymbolProvider, moduleFileCache)
             return lazyResolveDeclaration(containingProperty, moduleFileCache, toPhase, towerDataContextCollector)
         }
