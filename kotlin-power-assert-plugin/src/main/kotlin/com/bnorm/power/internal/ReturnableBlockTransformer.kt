@@ -2,7 +2,7 @@
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  *
- * Copied from https://github.com/JetBrains/kotlin/blob/1.4.0/compiler/ir/backend.common/src/org/jetbrains/kotlin/backend/common/lower/ReturnableBlockLowering.kt
+ * Copied from https://github.com/JetBrains/kotlin/blob/1.4.20/compiler/ir/backend.common/src/org/jetbrains/kotlin/backend/common/lower/ReturnableBlockLowering.kt
  */
 
 package com.bnorm.power.internal
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.transformStatement
 
 // TODO Remove when inlining works correctly on Kotlin/JS and Kotlin/Native
 class ReturnableBlockTransformer(val context: IrGeneratorContext, val containerSymbol: IrSymbol? = null) : IrElementTransformerVoidWithContext() {
@@ -52,7 +53,7 @@ class ReturnableBlockTransformer(val context: IrGeneratorContext, val containerS
     returnMap[expression.symbol] = { returnExpression ->
       hasReturned = true
       builder.irComposite(returnExpression) {
-        +irSetVar(variable.symbol, returnExpression.value)
+        +irSet(variable.symbol, returnExpression.value)
         +irBreak(loop)
       }
     }
@@ -61,10 +62,10 @@ class ReturnableBlockTransformer(val context: IrGeneratorContext, val containerS
       if (i == expression.statements.lastIndex && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
         s.transformChildrenVoid()
         if (!hasReturned) s.value else {
-          builder.irSetVar(variable.symbol, s.value)
+          builder.irSet(variable.symbol, s.value)
         }
       } else {
-        s.transform(this, null)
+        s.transformStatement(this)
       }
     }
 

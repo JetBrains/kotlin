@@ -16,13 +16,13 @@
 
 package com.bnorm.power
 
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irConcat
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -62,11 +62,10 @@ fun IrBuilderWithScope.buildMessage(
     var row = info.startLineNumber - originalInfo.startLineNumber
 
     val columnOffset: Int = when (original) {
-      is IrMemberAccessExpression -> {
-        // TODO IrFunction doesn't have 'isInfix' as a property
-        val descriptor = original.symbol.descriptor
+      is IrMemberAccessExpression<*> -> {
+        val owner = original.symbol.owner
         when {
-          descriptor is FunctionDescriptor && descriptor.isInfix -> source.indexOf(descriptor.name.asString())
+          owner is IrSimpleFunction && owner.isInfix -> source.indexOf(owner.name.asString())
           else -> when (original.origin) {
             // TODO handle equality and comparison better?
             IrStatementOrigin.EQEQ, IrStatementOrigin.EQEQEQ -> source.indexOf("==")

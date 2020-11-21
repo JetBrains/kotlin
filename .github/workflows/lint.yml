@@ -1,0 +1,16 @@
+name: lint
+
+on: [pull_request]
+
+jobs:
+  ktlint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Run ktlint
+        uses: ScaCap/action-ktlint@1.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-check

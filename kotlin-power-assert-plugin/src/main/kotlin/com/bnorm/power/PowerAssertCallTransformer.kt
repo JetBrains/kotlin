@@ -17,6 +17,7 @@
 package com.bnorm.power
 
 import com.bnorm.power.internal.ReturnableBlockTransformer
+import java.io.File
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.asSimpleLambda
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.backend.common.ir.inline
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.cli.common.messages.*
-import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -40,7 +41,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -48,9 +48,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import java.io.File
 
 fun FileLoweringPass.runOnFileInOrder(irFile: IrFile) {
   irFile.acceptVoid(object : IrElementVisitorVoid {
@@ -75,25 +73,22 @@ class PowerAssertCallTransformer(
 
   override fun lower(irFile: IrFile) {
     file = irFile
-    fileSource = File(irFile.path).readText().replace("\r\n", "\n")
+    fileSource = File(irFile.path).readText()
+      .replace("\r\n", "\n") // https://youtrack.jetbrains.com/issue/KT-41888
 
     irFile.transformChildrenVoid()
   }
 
   override fun visitCall(expression: IrCall): IrExpression {
-    // TODO expression.symbol.owner.fqNameSafe includes the wrapping ClassKt while descriptor doesn't
-    val fqName = expression.symbol.descriptor.fqNameSafe
+    val fqName = expression.symbol.owner.kotlinFqName
     if (functions.none { fqName == it })
       return super.visitCall(expression)
 
     // Find a valid delegate function or do not translate
     val delegate = findDelegate(fqName) ?: run {
-      val line = fileSource.substring(expression.startOffset).count { it == '\n' } + 1
-      val location = CompilerMessageLocation.create(file.path, line, -1, null)
-      messageCollector.report(
-        CompilerMessageSeverity.WARNING,
-        "Unable to find overload for function $fqName callable as $fqName(Boolean, String) or $fqName(Boolean, () -> String) for power-assertion transformation",
-        location
+      messageCollector.warn(
+        expression,
+        "Unable to find overload for function $fqName callable as $fqName(Boolean, String) or $fqName(Boolean, () -> String) for power-assert transformation"
       )
       return super.visitCall(expression)
     }
@@ -105,13 +100,7 @@ class PowerAssertCallTransformer(
     // If the tree does not contain any children, the expression is not transformable
     val tree = buildAssertTree(assertionArgument)
     val root = tree.children.singleOrNull() ?: run {
-      val line = fileSource.substring(expression.startOffset).count { it == '\n' } + 1
-      val location = CompilerMessageLocation.create(file.path, line, -1, null)
-      messageCollector.report(
-        CompilerMessageSeverity.INFO,
-        "Expression is constant and will not be power-assertion transformed",
-        location
-      )
+      messageCollector.info(expression, "Expression is constant and will not be power-assert transformed")
       return super.visitCall(expression)
     }
 
@@ -152,7 +141,7 @@ class PowerAssertCallTransformer(
   }
 
   private fun findDelegate(fqName: FqName): FunctionDelegate? {
-    return context.findOverloads(fqName)
+    return context.referenceFunctions(fqName)
       .mapNotNull { overload ->
         // TODO allow other signatures than (Boolean, String) and (Boolean, () -> String)
         val parameters = overload.owner.valueParameters
@@ -179,10 +168,10 @@ class PowerAssertCallTransformer(
             object : FunctionDelegate {
               override fun buildCall(builder: IrBuilderWithScope, original: IrCall, message: IrExpression): IrExpression = with(builder) {
                 val scope = this
-                val lambda = buildFun {
+                val lambda = builder.context.irFactory.buildFun {
                   name = Name.special("<anonymous>")
                   returnType = context.irBuiltIns.stringType
-                  visibility = Visibilities.LOCAL
+                  visibility = DescriptorVisibilities.LOCAL
                   origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                 }.apply {
                   val bodyBuilder = DeclarationIrBuilder(this@PowerAssertCallTransformer.context, symbol)
@@ -220,9 +209,22 @@ class PowerAssertCallTransformer(
 
   private fun isStringSupertype(type: IrType): Boolean =
     context.irBuiltIns.stringType.isSubtypeOf(type, context.irBuiltIns)
-}
 
-// TODO is this the best way to find overload functions?
-private fun IrPluginContext.findOverloads(fqName: FqName): List<IrFunctionSymbol> {
-  return referenceFunctions(fqName).toList()
+  private fun MessageCollector.info(expression: IrElement, message: String) {
+    report(expression, CompilerMessageSeverity.INFO, message)
+  }
+
+  private fun MessageCollector.warn(expression: IrElement, message: String) {
+    report(expression, CompilerMessageSeverity.WARNING, message)
+  }
+
+  private fun MessageCollector.report(expression: IrElement, severity: CompilerMessageSeverity, message: String) {
+    report(severity, message, expression.toCompilerMessageLocation())
+  }
+
+  private fun IrElement.toCompilerMessageLocation(): CompilerMessageLocation {
+    val info = file.info(this)
+    val lineContent = fileSource.substring(this)
+    return CompilerMessageLocation.create(file.path, info.startLineNumber, info.startColumnNumber, lineContent)!!
+  }
 }

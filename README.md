@@ -75,7 +75,7 @@ Builds of the Gradle plugin are available through the
 
 ```kotlin
 plugins {
-  kotlin("jvm") version "1.4.0"
+  kotlin("jvm") version "1.4.20"
   id("com.bnorm.power.kotlin-power-assert") version "0.5.3"
 }
 ```
@@ -94,7 +94,7 @@ configure<com.bnorm.power.PowerAssertGradleExtension> {
 ## Kotlin IR
 
 Using this compiler plugin only works if the code is compiled using Kotlin
-1.4.0 and IR is enabled. This includes all IR based compiler backends: JVM, JS,
+1.4.20 and IR is enabled. This includes all IR based compiler backends: JVM, JS,
 and Native! As Kotlin IR is still experimental, mileage may vary.
 
 ##### Kotlin/JVM
