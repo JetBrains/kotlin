@@ -103,6 +103,7 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<ClassicTypeSystemContextForCS>()
     useImpl<ClassicConstraintSystemUtilContext>()
     useInstance(ProgressManagerBasedCancellationChecker)
+    useInstance(SealedClassInheritorsProviderImpl)
 }
 
 /**
