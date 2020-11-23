@@ -34,6 +34,7 @@ class C : IFooBar {
     <this>.#<$$delegate_0>.foo()
   }
 
-  local /*final field*/ val <$$delegate_0>: IFooBar
+  local /* final field */ val <$$delegate_0>: IFooBar
 
 }
+

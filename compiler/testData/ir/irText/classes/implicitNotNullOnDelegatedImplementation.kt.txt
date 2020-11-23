@@ -54,7 +54,7 @@ class TestJFoo : IFoo {
 
   }
 
-  private /*final field*/ val $$delegate_0: JFoo = JFoo()
+  private /* final field */ val $$delegate_0: JFoo = JFoo()
   override fun foo(): String {
     return <this>.#$$delegate_0.foo() /*!! String */
   }
@@ -68,7 +68,7 @@ class TestK1 : IFoo {
 
   }
 
-  private /*final field*/ val $$delegate_0: K1 = K1()
+  private /* final field */ val $$delegate_0: K1 = K1()
   override fun foo(): String {
     return <this>.#$$delegate_0.foo() /*!! String */
   }
@@ -82,7 +82,7 @@ class TestK2 : IFoo {
 
   }
 
-  private /*final field*/ val $$delegate_0: K2 = K2()
+  private /* final field */ val $$delegate_0: K2 = K2()
   override fun foo(): String {
     return <this>.#$$delegate_0.foo()
   }
@@ -96,7 +96,7 @@ class TestK3 : IFoo {
 
   }
 
-  private /*final field*/ val $$delegate_0: K3 = K3()
+  private /* final field */ val $$delegate_0: K3 = K3()
   override fun foo(): String {
     return <this>.#$$delegate_0.foo()
   }
@@ -110,7 +110,7 @@ class TestK4 : IFoo {
 
   }
 
-  private /*final field*/ val $$delegate_0: K4 = K4()
+  private /* final field */ val $$delegate_0: K4 = K4()
   override fun foo(): String {
     return <this>.#$$delegate_0.foo() /*!! String */
   }

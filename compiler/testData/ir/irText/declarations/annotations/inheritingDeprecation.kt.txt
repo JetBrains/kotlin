@@ -20,7 +20,7 @@ class Delegated : IFoo {
 
   }
 
-  private /*final field*/ val $$delegate_0: IFoo = foo
+  private /* final field */ val $$delegate_0: IFoo = foo
   override val String.extProp: String
     override get(): String {
       return (<this>.#$$delegate_0, <this>).<get-extProp>()

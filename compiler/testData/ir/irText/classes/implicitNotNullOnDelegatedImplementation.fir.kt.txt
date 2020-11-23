@@ -59,7 +59,7 @@ class TestJFoo : IFoo {
     return <this>.#<$$delegate_0>.foo()
   }
 
-  local /*final field*/ val <$$delegate_0>: IFoo
+  local /* final field */ val <$$delegate_0>: IFoo
 
 }
 
@@ -75,7 +75,7 @@ class TestK1 : IFoo {
     return <this>.#<$$delegate_0>.foo()
   }
 
-  local /*final field*/ val <$$delegate_0>: IFoo
+  local /* final field */ val <$$delegate_0>: IFoo
 
 }
 
@@ -91,7 +91,7 @@ class TestK2 : IFoo {
     return <this>.#<$$delegate_0>.foo()
   }
 
-  local /*final field*/ val <$$delegate_0>: IFoo
+  local /* final field */ val <$$delegate_0>: IFoo
 
 }
 
@@ -107,7 +107,7 @@ class TestK3 : IFoo {
     return <this>.#<$$delegate_0>.foo()
   }
 
-  local /*final field*/ val <$$delegate_0>: IFoo
+  local /* final field */ val <$$delegate_0>: IFoo
 
 }
 
@@ -123,6 +123,7 @@ class TestK4 : IFoo {
     return <this>.#<$$delegate_0>.foo()
   }
 
-  local /*final field*/ val <$$delegate_0>: IFoo
+  local /* final field */ val <$$delegate_0>: IFoo
 
 }
+

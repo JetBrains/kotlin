@@ -44,7 +44,7 @@ class KRaw : JRaw {
 
   }
 
-  private /*final field*/ val $$delegate_0: JRaw = j
+  private /* final field */ val $$delegate_0: JRaw = j
   override fun returnsRawGenericIn(): @FlexibleNullability @RawType GenericIn<Number>? {
     return <this>.#$$delegate_0.returnsRawGenericIn()
   }

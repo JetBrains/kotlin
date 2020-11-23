@@ -45,6 +45,7 @@ class DFoo : IFoo {
       return (<this>.#<$$delegate_0>, <this>).<get-testExtVal>()
     }
 
-  local /*final field*/ val <$$delegate_0>: IFoo
+  local /* final field */ val <$$delegate_0>: IFoo
 
 }
+

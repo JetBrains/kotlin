@@ -53,7 +53,7 @@ data class DataClass : Derived, Delegate {
     <this>.#<$$delegate_0>.bar()
   }
 
-  local /*final field*/ val <$$delegate_0>: Delegate
+  local /* final field */ val <$$delegate_0>: Delegate
   override fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
@@ -77,3 +77,4 @@ data class DataClass : Derived, Delegate {
   }
 
 }
+

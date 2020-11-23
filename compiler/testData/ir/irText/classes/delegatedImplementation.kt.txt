@@ -84,7 +84,7 @@ class Test1 : IBase {
 
   }
 
-  private /*final field*/ val $$delegate_0: BaseImpl = BaseImpl
+  private /* final field */ val $$delegate_0: BaseImpl = BaseImpl
   override fun bar(): Int {
     return <this>.#$$delegate_0.bar()
   }
@@ -106,7 +106,7 @@ class Test2 : IBase, IOther {
 
   }
 
-  private /*final field*/ val $$delegate_0: BaseImpl = BaseImpl
+  private /* final field */ val $$delegate_0: BaseImpl = BaseImpl
   override fun bar(): Int {
     return <this>.#$$delegate_0.bar()
   }
@@ -119,7 +119,7 @@ class Test2 : IBase, IOther {
     (<this>.#$$delegate_0, <this>).qux()
   }
 
-  private /*final field*/ val $$delegate_1: IOther = otherImpl(x0 = "", y0 = 42)
+  private /* final field */ val $$delegate_1: IOther = otherImpl(x0 = "", y0 = 42)
   override val Byte.z1: Int
     override get(): Int {
       return (<this>.#$$delegate_1, <this>).<get-z1>()

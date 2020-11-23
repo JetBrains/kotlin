@@ -51,10 +51,11 @@ class Impl : A, B {
       return <this>.#<$$delegate_0>.<get-size>()
     }
 
-  local /*final field*/ val <$$delegate_0>: B
+  local /* final field */ val <$$delegate_0>: B
 
 }
 
 fun box(): String {
   return "OK"
 }
+

@@ -26,7 +26,7 @@ class DFoo : IFoo {
 
   }
 
-  private /*final field*/ val $$delegate_0: IFoo = d
+  private /* final field */ val $$delegate_0: IFoo = d
   @Ann
   override fun String.testExtFun() {
     (<this>.#$$delegate_0, <this>).testExtFun()

@@ -14,7 +14,7 @@ class Test<TT : Any?> : IBase<TT> {
 
   }
 
-  private /*final field*/ val $$delegate_0: IBase<TT> = impl
+  private /* final field */ val $$delegate_0: IBase<TT> = impl
   override fun <X : Any?> qux(t: TT, x: X) {
     <this>.#$$delegate_0.qux<X>(t = t, x = x)
   }

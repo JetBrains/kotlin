@@ -34,6 +34,7 @@ class Test : J {
     return <this>.#<$$delegate_0>.returnsFlexible()
   }
 
-  local /*final field*/ val <$$delegate_0>: J
+  local /* final field */ val <$$delegate_0>: J
 
 }
+

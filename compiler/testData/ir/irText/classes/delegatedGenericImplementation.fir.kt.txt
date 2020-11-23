@@ -34,7 +34,7 @@ class Test1<E : Any?> : IBase<E> {
       (<this>.#<$$delegate_0>, <this>).<set-x></* null */>(<set-?> = <set-?>)
     }
 
-  local /*final field*/ val <$$delegate_0>: IBase<E>
+  local /* final field */ val <$$delegate_0>: IBase<E>
 
 }
 
@@ -68,6 +68,7 @@ class Test2 : IBase<String> {
       (<this>.#<$$delegate_0>, <this>).<set-x></* null */>(<set-?> = <set-?>)
     }
 
-  local /*final field*/ val <$$delegate_0>: IBase<String>
+  local /* final field */ val <$$delegate_0>: IBase<String>
 
 }
+

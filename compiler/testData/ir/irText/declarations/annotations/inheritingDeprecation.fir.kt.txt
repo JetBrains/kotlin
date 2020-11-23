@@ -31,7 +31,7 @@ class Delegated : IFoo {
       return (<this>.#<$$delegate_0>, <this>).<get-extProp>()
     }
 
-  local /*final field*/ val <$$delegate_0>: IFoo
+  local /* final field */ val <$$delegate_0>: IFoo
 
 }
 
@@ -62,3 +62,4 @@ class ExplicitOverride : IFoo {
     }
 
 }
+
