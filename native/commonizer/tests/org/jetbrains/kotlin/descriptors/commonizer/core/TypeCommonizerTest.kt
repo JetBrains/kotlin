@@ -11,12 +11,10 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeAliasFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.CirClassifiersCacheImpl
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildClassNode
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.buildTypeAliasNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockTAType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
@@ -26,11 +24,11 @@ import org.junit.Test
 
 class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
 
-    private lateinit var cache: CirClassifiersCacheImpl
+    private lateinit var cache: CirClassifiersCache
 
     @Before
     fun initialize() {
-        cache = CirClassifiersCacheImpl() // reset cache
+        cache = DefaultCirClassifiersCache() // reset cache
     }
 
     @Test
@@ -467,11 +465,11 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
             when (descriptor) {
                 is ClassDescriptor -> {
                     val classId = descriptor.classId ?: error("No class ID for ${descriptor::class.java}, $descriptor")
-                    val node = cache.classes.getOrPut(classId) {
+                    val node = cache.classNode(classId) {
                         buildClassNode(
                             storageManager = LockBasedStorageManager.NO_LOCKS,
                             size = variants.size,
-                            cacheRW = cache,
+                            cache = cache,
                             parentCommonDeclaration = null,
                             classId = classId
                         )
@@ -479,13 +477,13 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
                     node.targetDeclarations[index] = CirClassFactory.create(descriptor)
                 }
                 is TypeAliasDescriptor -> {
-                    val classId = descriptor.classId ?: error("No class ID for ${descriptor::class.java}, $descriptor")
-                    val node = cache.typeAliases.getOrPut(classId) {
+                    val typeAliasId = descriptor.classId ?: error("No class ID for ${descriptor::class.java}, $descriptor")
+                    val node = cache.typeAliasNode(typeAliasId) {
                         buildTypeAliasNode(
                             storageManager = LockBasedStorageManager.NO_LOCKS,
                             size = variants.size,
-                            cacheRW = cache,
-                            classId = classId
+                            cache = cache,
+                            typeAliasId = typeAliasId
                         )
                     }
                     node.targetDeclarations[index] = CirTypeAliasFactory.create(descriptor)
@@ -526,5 +524,11 @@ class TypeCommonizerTest : AbstractCommonizerTest<CirType, CirType>() {
     companion object {
         fun areEqual(cache: CirClassifiersCache, a: CirType, b: CirType): Boolean =
             TypeCommonizer(cache).run { commonizeWith(a) && commonizeWith(b) }
+
+        private fun CirClassifiersCache.classNode(classId: ClassId, computation: () -> CirClassNode) =
+            classNode(classId) ?: computation()
+
+        private fun CirClassifiersCache.typeAliasNode(typeAliasId: ClassId, computation: () -> CirTypeAliasNode) =
+            typeAliasNode(typeAliasId) ?: computation()
     }
 }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.storage.NullableLazyValue
 
@@ -16,13 +15,7 @@ class CirRootNode(
     override val targetDeclarations: CommonizedGroup<CirRoot>,
     override val commonDeclaration: NullableLazyValue<CirRoot>
 ) : CirNode<CirRoot, CirRoot> {
-    class CirClassifiersCacheImpl : CirClassifiersCache {
-        override val classes = THashMap<ClassId, CirClassNode>()
-        override val typeAliases = THashMap<ClassId, CirTypeAliasNode>()
-    }
-
     val modules: MutableMap<Name, CirModuleNode> = THashMap()
-    val cache = CirClassifiersCacheImpl()
 
     override fun <T, R> accept(visitor: CirNodeVisitor<T, R>, data: T): R =
         visitor.visitRootNode(this, data)

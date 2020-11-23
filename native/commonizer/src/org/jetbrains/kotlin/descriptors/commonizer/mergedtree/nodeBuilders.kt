@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassRecursionMarker
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassifierRecursionMarker
 import org.jetbrains.kotlin.descriptors.commonizer.core.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirRootNode.CirClassifiersCacheImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -80,18 +79,18 @@ internal fun buildFunctionNode(
 internal fun buildClassNode(
     storageManager: StorageManager,
     size: Int,
-    cacheRW: CirClassifiersCacheImpl,
+    cache: CirClassifiersCache,
     parentCommonDeclaration: NullableLazyValue<*>?,
     classId: ClassId
 ): CirClassNode = buildNode(
     storageManager = storageManager,
     size = size,
     parentCommonDeclaration = parentCommonDeclaration,
-    commonizerProducer = { ClassCommonizer(cacheRW) },
+    commonizerProducer = { ClassCommonizer(cache) },
     recursionMarker = CirClassRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
         CirClassNode(targetDeclarations, commonDeclaration, classId).also {
-            cacheRW.classes[classId] = it
+            cache.addClassNode(classId, it)
         }
     }
 )
@@ -112,16 +111,16 @@ internal fun buildClassConstructorNode(
 internal fun buildTypeAliasNode(
     storageManager: StorageManager,
     size: Int,
-    cacheRW: CirClassifiersCacheImpl,
-    classId: ClassId
+    cache: CirClassifiersCache,
+    typeAliasId: ClassId
 ): CirTypeAliasNode = buildNode(
     storageManager = storageManager,
     size = size,
-    commonizerProducer = { TypeAliasCommonizer(cacheRW) },
+    commonizerProducer = { TypeAliasCommonizer(cache) },
     recursionMarker = CirClassifierRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
-        CirTypeAliasNode(targetDeclarations, commonDeclaration, classId).also {
-            cacheRW.typeAliases[classId] = it
+        CirTypeAliasNode(targetDeclarations, commonDeclaration, typeAliasId).also {
+            cache.addTypeAliasNode(typeAliasId, it)
         }
     }
 )

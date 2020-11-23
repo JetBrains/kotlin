@@ -122,8 +122,10 @@ private fun createPackageFragmentForClassifier(classifierFqName: FqName): Packag
     }
 
 internal val EMPTY_CLASSIFIERS_CACHE = object : CirClassifiersCache {
-    override val classes: Map<ClassId, CirClassNode> get() = emptyMap()
-    override val typeAliases: Map<ClassId, CirTypeAliasNode> get() = emptyMap()
+    override fun classNode(classId: ClassId): CirClassNode? = null
+    override fun typeAliasNode(typeAliasId: ClassId): CirTypeAliasNode? = null
+    override fun addClassNode(classId: ClassId, node: CirClassNode) = error("This method should not be called")
+    override fun addTypeAliasNode(typeAliasId: ClassId, node: CirTypeAliasNode) = error("This method should not be called")
 }
 
 internal class MockBuiltInsProvider(private val builtIns: KotlinBuiltIns) : BuiltInsProvider {

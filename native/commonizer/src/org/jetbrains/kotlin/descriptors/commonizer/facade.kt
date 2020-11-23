@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVi
 import org.jetbrains.kotlin.descriptors.commonizer.builder.createGlobalBuilderComponents
 import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizationVisitor
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTreeMerger
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.DefaultCirClassifiersCache
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 fun runCommonization(parameters: Parameters): Result {
@@ -19,11 +20,12 @@ fun runCommonization(parameters: Parameters): Result {
     val storageManager = LockBasedStorageManager("Declaration descriptors commonization")
 
     // build merged tree:
-    val mergeResult = CirTreeMerger(storageManager, parameters).merge()
+    val cache = DefaultCirClassifiersCache()
+    val mergeResult = CirTreeMerger(storageManager, cache, parameters).merge()
 
     // commonize:
     val mergedTree = mergeResult.root
-    mergedTree.accept(CommonizationVisitor(mergedTree), Unit)
+    mergedTree.accept(CommonizationVisitor(cache, mergedTree), Unit)
     parameters.progressLogger?.invoke("Commonized declarations")
 
     // build resulting descriptors:

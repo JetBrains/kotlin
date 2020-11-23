@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNode
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirNodeWithClassId
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
@@ -66,7 +66,7 @@ private class ClassTypeCommonizer(private val cache: CirClassifiersCache) : Abst
         isMarkedNullable == next.isMarkedNullable
                 && classId == next.classifierId
                 && outerType.commonizeWith(next.outerType)
-                && commonizeClassifier(classId, cache.classes).first
+                && commonizeClassifier(classId) { cache.classNode(classId) }.first
                 && arguments.commonizeWith(next.arguments)
 }
 
@@ -102,7 +102,7 @@ private class TypeAliasTypeCommonizer(private val cache: CirClassifiersCache) :
             return false
 
         if (commonizedTypeBuilder == null) {
-            val (commonized, commonClassifier) = commonizeClassifier(typeAliasId, cache.typeAliases)
+            val (commonized, commonClassifier) = commonizeClassifier(typeAliasId) { cache.typeAliasNode(typeAliasId) }
             if (!commonized)
                 return false
 
@@ -218,7 +218,7 @@ private class TypeArgumentListCommonizer(cache: CirClassifiersCache) : AbstractL
 
 private inline fun <reified T : CirClassifier> commonizeClassifier(
     classifierId: ClassId,
-    classifierNodes: Map<ClassId, CirNode<*, T>>,
+    classifierNode: (classifierId: ClassId) -> CirNodeWithClassId<*, T>?
 ): Pair<Boolean, T?> {
     if (classifierId.packageFqName.isUnderStandardKotlinPackages) {
         /* either class or type alias from Kotlin stdlib */
@@ -226,7 +226,7 @@ private inline fun <reified T : CirClassifier> commonizeClassifier(
     }
 
     /* or descriptors themselves can be commonized */
-    return when (val node = classifierNodes[classifierId]) {
+    return when (val node = classifierNode(classifierId)) {
         null -> {
             // No node means that the class or type alias was not subject for commonization at all, probably it lays
             // not in commonized module descriptors but somewhere in their dependencies.

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 
 internal class CommonizationVisitor(
+    private val cache: CirClassifiersCache,
     private val root: CirRootNode
 ) : CirNodeVisitor<Unit, Unit> {
     override fun visitRootNode(node: CirRootNode, data: Unit) {
@@ -87,7 +88,7 @@ internal class CommonizationVisitor(
             val companionObjectName = node.targetDeclarations.mapTo(HashSet()) { it!!.companion }.singleOrNull()
             if (companionObjectName != null) {
                 val companionObjectClassId = internedClassId(node.classId, companionObjectName)
-                val companionObjectNode = root.cache.classes[companionObjectClassId]
+                val companionObjectNode = cache.classNode(companionObjectClassId)
                     ?: error("Can't find companion object with class ID $companionObjectClassId")
 
                 if (companionObjectNode.commonDeclaration() != null) {
@@ -131,7 +132,7 @@ internal class CommonizationVisitor(
             if (expandedClassId.packageFqName.isUnderStandardKotlinPackages)
                 return null // this case is not supported
 
-            val expandedClassNode = root.cache.classes[expandedClassId] ?: return null
+            val expandedClassNode = cache.classNode(expandedClassId) ?: return null
             val expandedClass = expandedClassNode.targetDeclarations[index]
                 ?: error("Can't find expanded class with class ID $expandedClassId and index $index for type alias $classId")
 
@@ -147,7 +148,7 @@ internal class CommonizationVisitor(
             if (supertypesMap.isNullOrEmpty())
                 emptyList()
             else
-                supertypesMap.values.compactMapNotNull { supertypesGroup -> commonize(supertypesGroup, TypeCommonizer(root.cache)) }
+                supertypesMap.values.compactMapNotNull { supertypesGroup -> commonize(supertypesGroup, TypeCommonizer(cache)) }
         )
     }
 }
