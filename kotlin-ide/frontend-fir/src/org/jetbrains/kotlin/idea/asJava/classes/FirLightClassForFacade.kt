@@ -20,18 +20,18 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.isConst
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.asJava.classes.createFields
 import org.jetbrains.kotlin.idea.asJava.classes.createMethods
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.psiUtil.isPrivate
 
 class FirLightClassForFacade(
@@ -40,33 +40,22 @@ class FirLightClassForFacade(
     private val files: Collection<KtFile>
 ) : FirLightClassBase(manager) {
 
-    override val clsDelegate: PsiClass get() = invalidAccess()
-
-    private val isMultiFileClass: Boolean by lazyPub {
-        files.size > 1 || files.any {
-            JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(
-                file = it,
-                shortName = JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT
-            ) != null
-        }
+    init {
+        require(files.isNotEmpty())
     }
 
+    private val firstFileInFacade by lazyPub { files.first() }
+
+    override val clsDelegate: PsiClass get() = invalidAccess()
+
     private val _modifierList: PsiModifierList by lazyPub {
-        if (isMultiFileClass)
+        if (multiFileClass)
             return@lazyPub LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
 
         val modifiers = setOf(PsiModifier.PUBLIC, PsiModifier.FINAL)
 
-//        val annotations = files.flatMap { file ->
-//            file.withFir<FirFile, List<PsiAnnotation>> {
-//                computeAnnotations(
-//                    parent = this@FirLightClassForFacade,
-//                    nullability = ConeNullability.UNKNOWN,
-//                    annotationUseSiteTarget = AnnotationUseSiteTarget.FILE
-//                )
-//            }
-//        }
-        val annotations = emptyList<PsiAnnotation>() //TODO
+        //TODO make annotations for file site
+        val annotations: List<PsiAnnotation> = emptyList()
 
         FirLightClassModifierList(this@FirLightClassForFacade, modifiers, annotations)
     }
@@ -79,7 +68,6 @@ class FirLightClassForFacade(
         file: KtFile,
         result: MutableList<KtLightMethod>
     ) {
-        //it.isHiddenByDeprecation(support)
         val declarations = file.declarations
             .filterIsInstance<KtNamedDeclaration>()
             .filterNot { multiFileClass && it.isPrivate() }
@@ -104,12 +92,7 @@ class FirLightClassForFacade(
     }
 
     private val multiFileClass: Boolean by lazyPub {
-        false //TODO
-//        files.any {
-//            it.withFir<FirFile, Boolean> {
-//                this.hasAnnotation(JvmFileClassUtil.JVM_MULTIFILE_CLASS.asString())
-//            }
-//        }
+        files.size > 1 || files.any { it.hasJvmMultifileClassAnnotation() }
     }
 
     private fun loadFieldsFromFile(
@@ -117,16 +100,16 @@ class FirLightClassForFacade(
         usedFieldNames: MutableSet<String>,
         result: MutableList<KtLightField>
     ) {
+        val properties = file.declarations
+            .filterIsInstance<KtProperty>()
+            .applyIf(multiFileClass) {
+                filter { it.hasModifier(KtTokens.CONST_KEYWORD) }
+            }
 
-        //it.isHiddenByDeprecation(support)
-        val declarations = file.declarations
-            .filterIsInstance<KtNamedDeclaration>()
-            .filterNot { multiFileClass && it is FirProperty && it.isConst }
-
-        if (declarations.isEmpty()) return
+        if (properties.isEmpty()) return
 
         val symbols = analyze(file) {
-            declarations.mapNotNull {
+            properties.mapNotNull {
                 it.getSymbol() as? KtCallableSymbol
             }
         }
@@ -149,8 +132,6 @@ class FirLightClassForFacade(
 
     override fun copy(): FirLightClassForFacade =
         FirLightClassForFacade(manager, facadeClassFqName, files)
-
-    private val firstFileInFacade by lazyPub { files.iterator().next() }
 
     private val packageFqName: FqName =
         facadeClassFqName.parent()
