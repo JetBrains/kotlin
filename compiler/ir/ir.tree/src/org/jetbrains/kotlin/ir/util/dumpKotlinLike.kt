@@ -432,6 +432,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printIndent()
         p.printWithNoIndent(declaration.name)
         declaration.initializerExpression?.let {
+            // it's not valid kotlin
             p.printWithNoIndent(" = ")
             it.accept(this, declaration)
         }
@@ -696,7 +697,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.pushIndent()
 
         // TODO share code with visitField?
-        // TODO it's not valid kotlin
+        // it's not valid kotlin
         declaration.backingField?.initializer?.let {
             p.print("field = ")
             it.accept(this, declaration)
@@ -745,6 +746,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
 
         if (declaration.isStatic || declaration.isFinal) {
+            // it's not valid kotlin unless it's commented
             p.printWithNoIndent(CUSTOM_MODIFIER_START)
             p(declaration.isStatic, "static")
             p(declaration.isFinal, "final")
@@ -828,6 +830,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO inlineFunctionSymbol for IrReturnableBlock
         // TODO no tests for IrReturnableBlock?
         val kind = if (expression is IrReturnableBlock) "RETURNABLE BLOCK" else "BLOCK"
+        // it's not valid kotlin
         expression.printStatementContainer("{ // $kind", "}", data)
     }
 
@@ -852,6 +855,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitSyntheticBody(body: IrSyntheticBody, data: IrDeclaration?) {
+        // it's not valid kotlin
         p.printlnWithNoIndent("/* Synthetic body for ${body.kind} */")
     }
 
@@ -906,6 +910,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             if (superQualifierSymbol == null) it.accept(this@KotlinLikeDumper, data)
             // else assert dispatchReceiver === this
         }
+        // it's not valid kotlin
         p(twoReceivers, ",")
         extensionReceiver?.accept(this@KotlinLikeDumper, data)
         if (twoReceivers) {
@@ -945,7 +950,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printWithNoIndent("(")
 
 // TODO introduce a flag to print receiver this way?
-//
+//        // it's not valid kotlin
 //        expression.extensionReceiver?.let {
 //            p.printWithNoIndent("\$receiver = ")
 //            it.acceptVoid(this)
@@ -987,6 +992,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
         val name = if (data is IrConstructor) {
             when (currentClass) {
+                // it's not valid kotlin, it's fallback for the case when data wasn't provided
                 null -> "delegating/*$delegatingClassName*/"
                 delegatingClass -> "this/*$delegatingClassName*/"
                 else -> "super/*$delegatingClassName*/"
@@ -1036,13 +1042,14 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     private fun IrFieldAccessExpression.printFieldAccess(data: IrDeclaration?) {
-        // TODO is not valid kotlin
+        // it's not valid kotlin
         receiver?.accept(this@KotlinLikeDumper, data)
         superQualifierSymbol?.let {
             // TODO should we print super classifier somehow?
             // TODO which supper? smart mode?
             // TODO super and receiver at the same time:
             //  compiler/testData/ir/irText/types/smartCastOnFieldReceiverOfGenericType.kt
+            // it's not valid kotlin
             p.printWithNoIndent("super")
         }
 
@@ -1050,6 +1057,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             p.printWithNoIndent(".")
         }
 
+        // it's not valid kotlin
         p.printWithNoIndent("#" + symbol.owner.name.asString())
     }
 
@@ -1077,6 +1085,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: IrDeclaration?) {
         // TODO support
         // TODO no test
+        // it's not valid kotlin
         p.printWithNoIndent("&")
         super.visitRawFunctionReference(expression, data)
     }
@@ -1109,7 +1118,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             is IrConstKind.Null -> "" to ""
             is IrConstKind.Boolean -> "" to ""
             is IrConstKind.Char -> "'" to "'"
+            // it's not valid kotlin
             is IrConstKind.Byte -> "" to "B"
+            // it's not valid kotlin
             is IrConstKind.Short -> "" to "S"
             is IrConstKind.Int -> "" to ""
             is IrConstKind.Long -> "" to "L"
@@ -1132,6 +1143,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     override fun visitVararg(expression: IrVararg, data: IrDeclaration?) {
         // TODO better rendering?
         // TODO varargElementType
+        // it's not valid kotlin
         p.printWithNoIndent("[")
         expression.elements.forEachIndexed { i, e ->
             p(i > 0, ",")
@@ -1398,7 +1410,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private fun commentBlock(text: String) = "/* $text */"
 
-    // TODO it's not valid kotlin unless it's commented
+    // it's not valid kotlin unless it's commented
     //  ^^^ it's applied to all usages of this function
     private fun customModifier(text: String): String {
         return CUSTOM_MODIFIER_START + text + CUSTOM_MODIFIER_END
