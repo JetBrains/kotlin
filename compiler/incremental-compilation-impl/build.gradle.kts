@@ -24,6 +24,8 @@ dependencies {
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(intellijDep()) { includeJars("log4j", "jdom") }
+    testRuntime(project(":kotlin-reflect"))
+    testRuntime(project(":core:descriptors.runtime"))
 
     if (Platform.P192.orHigher()) {
         testRuntime(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
