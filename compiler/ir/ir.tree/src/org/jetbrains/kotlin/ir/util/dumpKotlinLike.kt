@@ -235,7 +235,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
         p(modality, defaultModality) { name.toLowerCase() }
         p(isExternal, "external")
-        p(isFakeOverride, "fake")
+        p(isFakeOverride, customModifier("fake"))
         p(isOverride, "override")
         p(isLateinit, "lateinit")
         p(isTailrec, "tailrec")
@@ -272,8 +272,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p(isVararg, "vararg")
         p(isCrossinline, "crossinline")
         p(isNoinline, "noinline")
-        p(isHidden, "hidden")
-        p(isAssignable, "var")
+        p(isHidden, customModifier("hidden"))
+        p(isAssignable, customModifier("var"))
     }
 
     private fun IrTypeParametersContainer.printTypeParametersWithNoIndent(postfix: String = "") {
@@ -436,7 +436,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printIndent()
 
         // TODO no tests, looks like there are no irText tests for isStatic flag
-        p(declaration.isStatic, commentBlock("static"))
+        p(declaration.isStatic, customModifier("static"))
         p.printWithNoIndent("init ")
         declaration.body.accept(this, declaration)
 
@@ -491,7 +491,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         declaration.printValueParametersWithNoIndent()
         declaration.printWhereClauseIfNeededWithNoIndent()
         p.printWithNoIndent(" ")
-        p(declaration.isPrimary, commentBlock("primary"))
+        p(declaration.isPrimary, customModifier("primary"))
         declaration.body?.accept(this, declaration)
         p.printlnWithNoIndent()
     }
@@ -733,10 +733,12 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
 
         if (declaration.isStatic || declaration.isFinal) {
-            p.printWithNoIndent("/*")
+            p.printWithNoIndent(CUSTOM_MODIFIER_START)
             p(declaration.isStatic, "static")
             p(declaration.isFinal, "final")
-            p.printWithNoIndent("field*/ ")
+            p.printWithNoIndent("field")
+            p.printWithNoIndent(CUSTOM_MODIFIER_END)
+            p.printWithNoIndent(" ")
         }
 
         p.printWithNoIndent(if (declaration.isFinal) "val " else "var ")
@@ -1384,8 +1386,16 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private fun commentBlock(text: String) = "/* $text */"
 
+    // TODO it's not valid kotlin unless it's commented
+    //  ^^^ it's applied to all usages of this function
+    private fun customModifier(text: String): String {
+        return CUSTOM_MODIFIER_START + text + CUSTOM_MODIFIER_END
+    }
+
     private companion object {
         private const val INAPPLICABLE = false
         private val INAPPLICABLE_N = null
+        private const val CUSTOM_MODIFIER_START = "/* "
+        private const val CUSTOM_MODIFIER_END = " */"
     }
 }
