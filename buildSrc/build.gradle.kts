@@ -24,7 +24,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.21")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.24-minamoto-1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
         classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:${project.bootstrapKotlinVersion}")
     }
@@ -98,25 +98,42 @@ repositories {
     }
 }
 
+val generateCompilerVersion by tasks.registering(VersionGenerator::class) {}
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    dependsOn(generateCompilerVersion)
+}
+
+tasks.clean {
+    doFirst {
+        val versionSourceDirectory = project.konanVersionGeneratedSrc()
+        if (versionSourceDirectory.exists()) {
+            versionSourceDirectory.delete()
+        }
+    }
+}
+
 sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
     kotlin.srcDir("src/main/kotlin")
-    kotlin.srcDir("src/generated/kotlin")
-    kotlin.srcDir("src/to_bootstrap/kotlin")
     kotlin.srcDir("../kotlin-native/shared/src/library/kotlin")
     kotlin.srcDir("../kotlin-native/shared/src/main/kotlin")
     kotlin.srcDir("../kotlin-native/build-tools/src/main/kotlin")
     kotlin.srcDir("../kotlin-native/build-tools/src/tmp/kotlin")
     kotlin.srcDir("../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
+    kotlin.srcDir(project.konanVersionGeneratedSrc())
 }
 
 tasks.validatePlugins.configure {
     enabled = false
 }
 
+java {
+    disableAutoTargetJvm()
+}
+
 dependencies {
     implementation(kotlin("stdlib", embeddedKotlinVersion))
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.21")
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.24-minamoto-1")
     implementation("com.gradle.publish:plugin-publish-plugin:0.12.0")
 
     implementation("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
