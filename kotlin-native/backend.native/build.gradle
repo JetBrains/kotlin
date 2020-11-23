@@ -32,7 +32,9 @@ sourceSets {
             srcDir 'compiler/ir/backend.native/src/'
             srcDir '../shared/src/main/kotlin'
             srcDir '../shared/src/library/kotlin'
-            srcDir '../../buildSrc/src/generated/kotlin'
+            use(VersionGeneratorKt) {
+                srcDir(project.konanVersionGeneratedSrc())
+            }
         }
         resources.srcDir 'compiler/ir/backend.native/resources/'
     }
