@@ -12,17 +12,13 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_GETTER
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_SETTER
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPropertyGetterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyAccessorSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyGetterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySetterSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.util.ifTrue
-import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
 import org.jetbrains.kotlin.load.java.JvmAbi.setterName
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -38,13 +34,14 @@ internal class FirLightAccessorMethodForSymbol(
     containingClass,
     if (propertyAccessorSymbol is KtPropertyGetterSymbol) METHOD_INDEX_FOR_GETTER else METHOD_INDEX_FOR_SETTER
 ) {
-    private fun String.abiName(firPropertyAccessor: KtPropertyAccessorSymbol) =
-        if (firPropertyAccessor is KtPropertyGetterSymbol) getterName(this)
-        else setterName(this)
+    private val isGetter: Boolean get() = propertyAccessorSymbol is KtPropertyGetterSymbol
+
+    private fun String.abiName() =
+        if (isGetter) getterName(this) else setterName(this)
 
     private val _name: String by lazyPub {
         val defaultName = containingPropertySymbol.name.identifier.let {
-            if (containingClass.isAnnotationType) it else it.abiName(propertyAccessorSymbol)
+            if (containingClass.isAnnotationType) it else it.abiName()
         }
         containingPropertySymbol.computeJvmMethodName(defaultName, containingClass, accessorSite)
     }
@@ -66,8 +63,11 @@ internal class FirLightAccessorMethodForSymbol(
             else AnnotationUseSiteTarget.PROPERTY_SETTER
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
-        val nullabilityType = containingPropertySymbol.type
+
+        val nullabilityType = if (isGetter) containingPropertySymbol.type
             .getTypeNullability(containingPropertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        else NullabilityType.Unknown
+
         containingPropertySymbol.computeAnnotations(
             parent = this,
             nullability = nullabilityType,
@@ -121,7 +121,7 @@ internal class FirLightAccessorMethodForSymbol(
     override fun getNameIdentifier(): PsiIdentifier = _identifier
 
     private val _returnedType: PsiType? by lazyPub {
-        if (propertyAccessorSymbol !is KtPropertyGetterSymbol) return@lazyPub PsiType.VOID
+        if (!isGetter) return@lazyPub PsiType.VOID
         return@lazyPub containingPropertySymbol.type.asPsiType(
             context = containingPropertySymbol,
             parent = this@FirLightAccessorMethodForSymbol,
