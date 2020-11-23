@@ -516,8 +516,12 @@ public class KotlinTestUtils {
     }
 
     public static boolean compileJavaFilesExternallyWithJava9(@NotNull Collection<File> files, @NotNull List<String> options) {
+        return compileJavaFilesExternally(files, options, getJdk9Home());
+    }
+
+    public static boolean compileJavaFilesExternally(@NotNull Collection<File> files, @NotNull List<String> options, @NotNull File jdkHome) {
         List<String> command = new ArrayList<>();
-        command.add(new File(getJdk9Home(), "bin/javac").getPath());
+        command.add(new File(jdkHome, "bin/javac").getPath());
         command.addAll(options);
         for (File file : files) {
             command.add(file.getPath());

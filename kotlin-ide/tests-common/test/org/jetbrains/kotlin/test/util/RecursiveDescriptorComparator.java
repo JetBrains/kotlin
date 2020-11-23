@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.builtins.StandardNames;
 import org.jetbrains.kotlin.contracts.description.*;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SubpackagesScope;
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor;
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.platform.TargetPlatformKt;
 import org.jetbrains.kotlin.renderer.*;
@@ -187,7 +189,24 @@ public class RecursiveDescriptorComparator {
         boolean isPrimaryConstructor = conf.checkPrimaryConstructors &&
                                        descriptor instanceof ConstructorDescriptor && ((ConstructorDescriptor) descriptor).isPrimary();
 
-        printer.print(isPrimaryConstructor ? "/*primary*/ " : "", conf.renderer.render(descriptor));
+        boolean isRecord = descriptor instanceof JavaClassDescriptor && ((JavaClassDescriptor) descriptor).isRecord();
+        boolean isRecordComponent = descriptor instanceof JavaMethodDescriptor && ((JavaMethodDescriptor) descriptor).isForRecordComponent();
+
+        StringBuilder prefix = new StringBuilder();
+
+        if (isPrimaryConstructor) {
+            prefix.append("/*primary*/ ");
+        }
+
+        if (isRecord) {
+            prefix.append("/*record*/ ");
+        }
+
+        if (isRecordComponent) {
+            prefix.append("/*record component*/ ");
+        }
+
+        printer.print(prefix.toString(), conf.renderer.render(descriptor));
 
         if (descriptor instanceof FunctionDescriptor && conf.checkFunctionContracts) {
             printEffectsIfAny((FunctionDescriptor) descriptor, printer);
