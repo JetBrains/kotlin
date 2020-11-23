@@ -35,6 +35,10 @@ class Fir2IrLazyPropertyAccessor(
     override val fir: FirMemberDeclaration
         get() = firAccessor ?: firParentProperty
 
+    // TODO: investigate why some deserialized properties are inline
+    override val isInline: Boolean
+        get() = firAccessor?.isInline == true
+
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
     override val name: Name
