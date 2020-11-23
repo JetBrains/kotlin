@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -356,7 +357,8 @@ object KotlinToJVMBytecodeCompiler {
             performanceManager?.notifyGenerationStarted()
 
             performanceManager?.notifyIRTranslationStarted()
-            val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr()
+            val extensions = JvmGeneratorExtensions()
+            val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr(extensions)
 
             performanceManager?.notifyIRTranslationFinished()
 
@@ -392,7 +394,7 @@ object KotlinToJVMBytecodeCompiler {
             performanceManager?.notifyIRGenerationStarted()
             generationState.beforeCompile()
             codegenFactory.generateModuleInFrontendIRMode(
-                generationState, moduleFragment, symbolTable, sourceManager
+                generationState, moduleFragment, symbolTable, sourceManager, extensions
             ) { context, irClass, _, serializationBindings, parent ->
                 FirMetadataSerializer(session, context, irClass, serializationBindings, parent)
             }
