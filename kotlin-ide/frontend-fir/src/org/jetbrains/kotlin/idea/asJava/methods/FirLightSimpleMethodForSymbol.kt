@@ -94,6 +94,12 @@ internal class FirLightSimpleMethodForSymbol(
         modifiers.add(
             what = PsiModifier.STATIC,
             `if` = functionSymbol.hasJvmStaticAnnotation()
+        ).add(
+            what = PsiModifier.STRICTFP,
+            `if` = functionSymbol.hasAnnotation("kotlin/jvm/Strictfp", null)
+        ).add(
+            what = PsiModifier.SYNCHRONIZED,
+            `if` = functionSymbol.hasAnnotation("kotlin/jvm/Synchronized", null)
         )
     }
 
