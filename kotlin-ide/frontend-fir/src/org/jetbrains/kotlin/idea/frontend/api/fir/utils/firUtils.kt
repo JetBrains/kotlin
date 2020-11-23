@@ -8,7 +8,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
@@ -16,6 +18,8 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 
 internal fun mapAnnotationParameters(annotationCall: FirAnnotationCall, session: FirSession): Map<String, FirExpression> {
 
@@ -53,13 +57,21 @@ private fun FirExpression.convertConstantExpression(): KtConstantValue =
         else -> KtUnsupportedConstantValue
     }
 
+private fun ConeClassLikeType.expandTypeAliasIfNeeded(session: FirSession): ConeClassLikeType {
+    val firTypeAlias = lookupTag.toSymbol(session) as? FirTypeAliasSymbol ?: return this
+    val expandedType = firTypeAlias.fir.expandedTypeRef.coneType
+    return expandedType.fullyExpandedType(session) as? ConeClassLikeType
+        ?: return this
+}
+
 private fun convertAnnotation(
     annotationCall: FirAnnotationCall,
     session: FirSession
 ): KtFirAnnotationCall? {
 
-    val annotationCone = annotationCall.annotationTypeRef.coneType as? ConeClassLikeType ?: return null
-    val classId = annotationCone.classId ?: return null
+    val declaredCone = annotationCall.annotationTypeRef.coneType as? ConeClassLikeType ?: return null
+
+    val classId = declaredCone.expandTypeAliasIfNeeded(session).classId ?: return null
 
     val resultList = mapAnnotationParameters(annotationCall, session).map {
         KtNamedConstantValue(it.key, it.value.convertConstantExpression())
