@@ -11,19 +11,23 @@
 
 using namespace kotlin;
 
-extern "C" struct MemoryState {
-    mm::ThreadRegistry::Node data;
-    // Do not add any other fields: this struct is just a wrapper around ThreadDataNode.
+// Delete all means of creating this type directly as it only serves
+// as a typedef for `mm::ThreadRegistry::Node`.
+extern "C" struct MemoryState : Pinned {
+    MemoryState() = delete;
+    ~MemoryState() = delete;
 };
 
 namespace {
 
+// `reinterpret_cast` to it and back to the same type
+// will yield precisely the same pointer, so it's safe.
 ALWAYS_INLINE MemoryState* ToMemoryState(mm::ThreadRegistry::Node* data) {
-    return wrapper_cast(MemoryState, data, data);
+    return reinterpret_cast<MemoryState*>(data);
 }
 
 ALWAYS_INLINE mm::ThreadRegistry::Node* FromMemoryState(MemoryState* state) {
-    return &state->data;
+    return reinterpret_cast<mm::ThreadRegistry::Node*>(state);
 }
 
 } // namespace

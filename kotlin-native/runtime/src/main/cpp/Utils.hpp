@@ -54,25 +54,6 @@ protected:
     ~Pinned() = default;
 };
 
-// Given
-// struct SomeWrapper {
-//     SomeType value;
-//     ... // (possibly) some other fields
-// };
-// allows to cast from `SomeValue*` to `SomeWrapper*` as no-op. It only works
-// if `SomeWrapper` is standard layout and `value` is the first non-static data member.
-// See https://en.cppreference.com/w/cpp/language/data_members#Standard_layout
-//
-// Useful for exporting SomeType under a different name (e.g. exporting inner C++ class
-// as public C struct).
-#define wrapper_cast(Wrapper, inner, field) \
-    /* With -O2 the lambda is replaced with a cast in the bitcode. */ \
-    [inner]() { \
-        static_assert(std_support::is_standard_layout_v<Wrapper>, #Wrapper " must be standard layout"); \
-        static_assert(offsetof(Wrapper, field) == 0, #field " must be at 0 offset"); \
-        return reinterpret_cast<Wrapper*>(inner); \
-    }()
-
 } // namespace kotlin
 
 #endif // RUNTIME_UTILS_H
