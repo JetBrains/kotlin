@@ -27,7 +27,9 @@ class KotlinLikeDumpOptions(
     val printRegionsPerFile: Boolean = false,
     val printFileName: Boolean = true,
     val printFilePath: Boolean = true,
+    // TODO support
     val useNamedArguments: Boolean = false,
+    // TODO support
     val labelPrintingStrategy: LabelPrintingStrategy = LabelPrintingStrategy.NEVER,
     val printFakeOverridesStrategy: FakeOverridesStrategy = FakeOverridesStrategy.ALL,
     /*
@@ -302,9 +304,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     private fun Variance.printVarianceWithNoIndent() {
-        if (this != Variance.INVARIANT) {
-            p.printWithNoIndent("$label ")
-        }
+        p(this, Variance.INVARIANT) { label }
     }
 
     private fun IrAnnotationContainer.printAnnotationsWithNoIndent() {
@@ -967,6 +967,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     ) {
         // TODO flag to omit comment block?
         val delegatingClass = symbol.owner.parentAsClass
+        // TODO don't crash when parent isn't class
         val currentClass = data?.parentAsClass
         val delegatingClassName = delegatingClass.name.asString()
 
