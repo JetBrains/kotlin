@@ -141,6 +141,9 @@ class ScriptRunner(private val path: String) : RunnerWithCompiler() {
             addClasspathArgIfNeeded(classpath)
             add("-script")
             add(path)
+            if (arguments.isNotEmpty() && arguments.first() != "--") {
+                add("--")
+            }
             addAll(arguments)
         }
         runCompiler(compilerClasspath, compilerArgs)
@@ -153,6 +156,9 @@ class ExpressionRunner(private val code: String) : RunnerWithCompiler() {
             addClasspathArgIfNeeded(classpath)
             add("-expression")
             add(code)
+            if (arguments.isNotEmpty() && arguments.first() != "--") {
+                add("--")
+            }
             addAll(arguments)
         }
         runCompiler(compilerClasspath, compilerArgs)

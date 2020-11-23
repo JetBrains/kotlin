@@ -121,7 +121,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
             }
             bench.buildFiles(lightTree2Fir, allSourceFiles)
         } else {
-            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
+            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
             bench.buildFiles(builder, ktFiles)
         }
 

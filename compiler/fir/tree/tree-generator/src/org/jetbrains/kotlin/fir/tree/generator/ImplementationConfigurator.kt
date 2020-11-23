@@ -113,6 +113,23 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
         }
 
+        impl(block, "FirLazyBlock") {
+            val error = """error("FirLazyBlock should be calculated before accessing")"""
+            default("statements") {
+                value = error
+                withGetter = true
+            }
+            default("annotations") {
+                value = error
+                withGetter = true
+            }
+            default("typeRef") {
+                value = error
+                withGetter = true
+            }
+            publicImplementation()
+        }
+
         impl(errorLoop) {
             default("block", "FirEmptyExpressionBlock()")
             default("condition", "FirErrorExpressionImpl(source, ConeStubDiagnostic(diagnostic))")
@@ -120,6 +137,19 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(expression, "FirExpressionStub") {
+            publicImplementation()
+        }
+
+        impl(expression, "FirLazyExpression") {
+            val error = """error("FirLazyExpression should be calculated before accessing")"""
+            default("typeRef") {
+                value = error
+                withGetter = true
+            }
+            default("annotations") {
+                value = error
+                withGetter = true
+            }
             publicImplementation()
         }
 
@@ -381,8 +411,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultEmptyList("annotations")
         }
 
-        impl(composedSuperTypeRef)
-
         impl(reference, "FirStubReference") {
             default("source") {
                 value = "null"
@@ -471,13 +499,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         ) {
             default(it, "FirImplicitTypeRefImpl(null)")
             useTypes(implicitTypeRefType)
-        }
-
-        configureFieldInAllImplementations(
-            field = "attributes",
-            fieldPredicate = { it.type == declarationAttributesType.type }
-        ) {
-            default(it, "${declarationAttributesType.type}()")
         }
     }
 }

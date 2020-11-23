@@ -824,15 +824,11 @@ class FirElementSerializer private constructor(
 
 
     private fun normalizeVisibility(declaration: FirMemberDeclaration): Visibility {
-        // It can be necessary for Java classes serialization having package-private visibility
-        return if (extension.shouldUseNormalizedVisibility()) declaration.visibility.normalize()
-        else declaration.visibility
+        return declaration.visibility.normalize()
     }
 
     private fun normalizeVisibility(declaration: FirPropertyAccessor): Visibility {
-        // It can be necessary for Java classes serialization having package-private visibility
-        return if (extension.shouldUseNormalizedVisibility()) declaration.visibility.normalize()
-        else declaration.visibility
+        return declaration.visibility.normalize()
     }
 
     private fun getClassifierId(declaration: FirClassLikeDeclaration<*>): Int =

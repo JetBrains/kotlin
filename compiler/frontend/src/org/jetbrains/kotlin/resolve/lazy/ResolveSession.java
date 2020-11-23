@@ -179,7 +179,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
         this.declarationProviderFactory = declarationProviderFactory;
 
-        this.packageFragmentProvider = new PackageFragmentProvider() {
+        this.packageFragmentProvider = new PackageFragmentProviderOptimized() {
             @Override
             public void collectPackageFragments(
                     @NotNull FqName fqName, @NotNull Collection<PackageFragmentDescriptor> packageFragments

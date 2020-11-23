@@ -12,16 +12,11 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 abstract class AbstractParcelizeCheckerTest : AbstractPsiCheckerTest() {
     override fun setUp() {
         super.setUp()
-
-        val androidJar = KotlinTestUtils.findAndroidApiJar()
-        ConfigLibraryUtil.addLibrary(module, "androidJar", androidJar.parentFile.absolutePath, arrayOf(androidJar.name))
-        ConfigLibraryUtil.addLibrary(module, "androidExtensionsRuntime", "dist/kotlinc/lib", arrayOf("parcelize-runtime.jar"))
+        addParcelizeLibraries(module)
     }
 
     override fun tearDown() {
-        ConfigLibraryUtil.removeLibrary(module, "androidJar")
-        ConfigLibraryUtil.removeLibrary(module, "androidExtensionsRuntime")
-
+        removeParcelizeLibraries(module)
         super.tearDown()
     }
 }

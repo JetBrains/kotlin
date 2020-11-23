@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
@@ -40,7 +41,7 @@ class CommonizedTypeParameterDescriptor(
         return if (cirUpperBounds.isEmpty())
             listOf(targetComponents.builtIns.defaultBound)
         else
-            cirUpperBounds.map { it.buildType(targetComponents, typeParameterResolver) }
+            cirUpperBounds.compactMap { it.buildType(targetComponents, typeParameterResolver) }
     }
 
     override fun reportSupertypeLoopError(type: KotlinType) =

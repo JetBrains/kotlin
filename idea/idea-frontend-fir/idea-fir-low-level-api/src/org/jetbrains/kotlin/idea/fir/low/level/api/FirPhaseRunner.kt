@@ -7,16 +7,21 @@ package org.jetbrains.kotlin.idea.fir.low.level.api
 
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 internal class FirPhaseRunner(val transformerProvider: FirTransformerProvider) {
     private val superTypesBodyResolveLock = ReentrantLock()
+    private val statusResolveLock = ReentrantLock()
     private val implicitTypesResolveLock = ReentrantLock()
 
     fun runPhase(firFile: FirFile, phase: FirResolvePhase) = when (phase) {
         FirResolvePhase.SUPER_TYPES -> superTypesBodyResolveLock.withLock {
+            runPhaseWithoutLock(firFile, phase)
+        }
+        FirResolvePhase.STATUS -> statusResolveLock.withLock {
             runPhaseWithoutLock(firFile, phase)
         }
         FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesResolveLock.withLock {
@@ -27,8 +32,33 @@ internal class FirPhaseRunner(val transformerProvider: FirTransformerProvider) {
         }
     }
 
+    inline fun runPhaseWithCustomResolve(phase: FirResolvePhase, crossinline resolve: () -> Unit) = when (phase) {
+        FirResolvePhase.SUPER_TYPES -> superTypesBodyResolveLock.withLock {
+            runPhaseWithCustomResolveWithoutLock(resolve)
+        }
+        FirResolvePhase.STATUS -> statusResolveLock.withLock {
+            runPhaseWithCustomResolveWithoutLock(resolve)
+        }
+        FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesResolveLock.withLock {
+            runPhaseWithCustomResolveWithoutLock(resolve)
+        }
+        else -> {
+            runPhaseWithCustomResolveWithoutLock(resolve)
+        }
+    }
+
+    private inline fun runPhaseWithCustomResolveWithoutLock(crossinline resolve: () -> Unit) {
+        executeWithoutPCE {
+            resolve()
+        }
+    }
+
+
     private fun runPhaseWithoutLock(firFile: FirFile, phase: FirResolvePhase) {
         val phaseProcessor = transformerProvider.getTransformerForPhase(firFile.session, phase)
-        executeWithoutPCE { phaseProcessor.processFile(firFile) }
+        executeWithoutPCE {
+            FirLazyBodiesCalculator.calculateLazyBodiesIfPhaseRequires(firFile, phase)
+            phaseProcessor.processFile(firFile)
+        }
     }
 }

@@ -13,6 +13,7 @@ import java.io.File
 class DukatRunner(
     val compilation: KotlinJsCompilation,
     val dTsFiles: Collection<File>,
+    val externalsOutputFormat: ExternalsOutputFormat,
     val destDir: File,
     val qualifiedPackageName: String? = null,
     val jsInteropJvmEngine: String? = null,
@@ -21,6 +22,10 @@ class DukatRunner(
     fun execute() {
         compilation.target.project.execWithProgress(operation) { exec ->
             val args = mutableListOf<String>()
+
+            if (externalsOutputFormat == ExternalsOutputFormat.BINARY) {
+                args.add("--descriptors-jar")
+            }
 
             val qualifiedPackageName = qualifiedPackageName
             if (qualifiedPackageName != null) {

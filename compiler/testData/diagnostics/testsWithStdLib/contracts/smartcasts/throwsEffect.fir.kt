@@ -45,7 +45,7 @@ fun testTryCatch(x: Any?) {
     } catch (e: kotlin.IllegalArgumentException) {
 
     }
-    x.length
+    x.<!UNRESOLVED_REFERENCE!>length<!>
 }
 
 fun testUncertainFlow(x: Any?) {

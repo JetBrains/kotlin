@@ -54,6 +54,7 @@ import org.gradle.wrapper.GradleWrapperMain
 import org.gradle.wrapper.PathAssembler
 import org.intellij.lang.annotations.Language
 import org.jetbrains.annotations.NonNls
+import org.jetbrains.kotlin.idea.test.GradleProcessOutputInterceptor
 import org.jetbrains.kotlin.idea.test.KotlinSdkCreationChecker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.getProjectJdkTableSafe
@@ -162,6 +163,8 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
             "${jvmHeapArgsByGradleVersion(gradleVersion)} -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${System.getProperty("user.dir")}"
 
         sdkCreationChecker = KotlinSdkCreationChecker()
+
+        GradleProcessOutputInterceptor.install(testRootDisposable)
     }
 
     override fun tearDown() {
@@ -216,12 +219,16 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
     override fun getExternalSystemConfigFileName(): String = "build.gradle"
 
     @Throws(IOException::class)
-    protected open fun importProjectUsingSingeModulePerGradleProject(config: String? = null) {
+    protected open fun importProjectUsingSingeModulePerGradleProject(config: String? = null, skipIndexing: Boolean? = null) {
         currentExternalProjectSettings.isResolveModulePerSourceSet = false
-        importProject(config)
+        importProject(config, skipIndexing)
     }
 
-    override fun importProject() {
+    open fun importProject() {
+        importProject(skipIndexing = null)
+    }
+
+    override fun importProject(skipIndexing: Boolean?) {
         ExternalSystemApiUtil.subscribe(
             myProject,
             GradleConstants.SYSTEM_ID,
@@ -233,14 +240,40 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
                     }
                 }
             })
-        super.importProject()
+        super.importProject(skipIndexing)
     }
 
     @Throws(IOException::class)
-    override fun importProject(@NonNls @Language("Groovy") config: String?) {
+    override fun importProject(@NonNls @Language("Groovy") config: String?, skipIndexing: Boolean?) {
         var config = config
         config = injectRepo(config)
-        super.importProject(config)
+        super.importProject(config, skipIndexing)
+    }
+
+    override fun handleImportFailure(errorMessage: String, errorDetails: String?) {
+        val gradleOutput = GradleProcessOutputInterceptor.getInstance()?.getOutput().orEmpty()
+
+        // Typically Gradle error message consists of a line with the description of the error followed by
+        // a multi-line stacktrace. The idea is to cut off the stacktrace if it is already contained in
+        // the intercepted Gradle process output to avoid unnecessary verbosity.
+        val compactErrorMessage = when (val indexOfNewLine = errorMessage.indexOf('\n')) {
+            -1 -> errorMessage
+            else -> {
+                val compactErrorMessage = errorMessage.substring(0, indexOfNewLine)
+                val theRest = errorMessage.substring(indexOfNewLine + 1)
+                if (theRest in gradleOutput) compactErrorMessage else errorMessage
+            }
+        }
+
+        val failureMessage = buildString {
+            append("Gradle import failed: ").append(compactErrorMessage).append('\n')
+            if (!errorDetails.isNullOrBlank()) append("Error details: ").append(errorDetails).append('\n')
+            append("Gradle process output (BEGIN):\n")
+            append(gradleOutput)
+            if (!gradleOutput.endsWith('\n')) append('\n')
+            append("Gradle process output (END)")
+        }
+        fail(failureMessage)
     }
 
     protected open fun injectRepo(@NonNls @Language("Groovy") config: String?): String {
@@ -356,9 +389,9 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         }.toList()
     }
 
-    protected fun importProjectFromTestData(): List<VirtualFile> {
+    protected fun importProjectFromTestData(skipIndexing: Boolean? = null): List<VirtualFile> {
         val files = configureByFiles()
-        importProject()
+        importProject(skipIndexing)
         return files
     }
 

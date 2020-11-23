@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirSimpleType
+import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirAnnotationFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
@@ -290,7 +290,7 @@ private fun mockAnnotation(
     constantValueArguments: Map<Name, ConstantValue<*>> = emptyMap(),
     annotationValueArguments: Map<Name, CirAnnotation> = emptyMap()
 ): CirAnnotation = CirAnnotationFactory.create(
-    type = CirTypeFactory.create(mockClassType(fqName)) as CirSimpleType,
+    type = CirTypeFactory.create(mockClassType(fqName)) as CirClassType,
     constantValueArguments = constantValueArguments,
     annotationValueArguments = annotationValueArguments
 )

@@ -38,6 +38,7 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
+    var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var name: Name
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
@@ -50,6 +51,7 @@ class FirErrorPropertyBuilder : FirAnnotationContainerBuilder {
             session,
             resolvePhase,
             origin,
+            attributes,
             name,
             annotations,
             diagnostic,

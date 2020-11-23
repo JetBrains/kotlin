@@ -115,21 +115,28 @@ class NewConstraintSystemImpl(
         storage.postponedTypeVariables.clear()
     }
 
-    override fun getRevisedVariableForParameter(expectedType: TypeVariableMarker, index: Int): TypeVariableMarker? {
-        return storage.revisedVariablesForParameters[expectedType to index]
+    override fun putBuiltFunctionalExpectedTypeForPostponedArgument(
+        topLevelVariable: TypeConstructorMarker,
+        pathToExpectedType: List<Pair<TypeConstructorMarker, Int>>,
+        builtFunctionalType: KotlinTypeMarker
+    ) {
+        storage.builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables[topLevelVariable to pathToExpectedType] = builtFunctionalType
     }
 
-    override fun getRevisedVariableForReturnType(expectedType: TypeVariableMarker): TypeVariableMarker? {
-        return storage.revisedReturnTypes[expectedType]
+    override fun putBuiltFunctionalExpectedTypeForPostponedArgument(
+        expectedTypeVariable: TypeConstructorMarker,
+        builtFunctionalType: KotlinTypeMarker
+    ) {
+        storage.builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables[expectedTypeVariable] = builtFunctionalType
     }
 
-    override fun putRevisedVariableForParameter(expectedType: TypeVariableMarker, index: Int, newVariable: TypeVariableMarker) {
-        storage.revisedVariablesForParameters[expectedType to index] = newVariable
-    }
+    override fun getBuiltFunctionalExpectedTypeForPostponedArgument(
+        topLevelVariable: TypeConstructorMarker,
+        pathToExpectedType: List<Pair<TypeConstructorMarker, Int>>
+    ) = storage.builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables[topLevelVariable to pathToExpectedType]
 
-    override fun putRevisedVariableForReturnType(expectedType: TypeVariableMarker, newVariable: TypeVariableMarker) {
-        storage.revisedReturnTypes[expectedType] = newVariable
-    }
+    override fun getBuiltFunctionalExpectedTypeForPostponedArgument(expectedTypeVariable: TypeConstructorMarker) =
+        storage.builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables[expectedTypeVariable]
 
     override fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) =
         constraintInjector.addInitialSubtypeConstraint(

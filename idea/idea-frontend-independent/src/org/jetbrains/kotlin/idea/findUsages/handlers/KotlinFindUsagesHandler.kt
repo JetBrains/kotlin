@@ -55,7 +55,11 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
             elementsToSearch.toTypedArray()
     }
 
-    private fun searchTextOccurrences(element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions): Boolean {
+    private fun searchTextOccurrences(
+        element: PsiElement,
+        processor: Processor<in UsageInfo>,
+        options: FindUsagesOptions
+    ): Boolean {
         if (!options.isSearchForTextOccurrences) return true
 
         val scope = options.searchScope
@@ -71,13 +75,17 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
         return true
     }
 
-    override fun processElementUsages(element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions): Boolean {
+    override fun processElementUsages(
+        element: PsiElement,
+        processor: Processor<in UsageInfo>,
+        options: FindUsagesOptions
+    ): Boolean {
         return searchReferences(element, processor, options, forHighlight = false) && searchTextOccurrences(element, processor, options)
     }
 
     private fun searchReferences(
         element: PsiElement,
-        processor: UsageInfoProcessor,
+        processor: Processor<in UsageInfo>,
         options: FindUsagesOptions,
         forHighlight: Boolean
     ): Boolean {
@@ -86,7 +94,11 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
         return searcher.executeTasks()
     }
 
-    protected abstract fun createSearcher(element: PsiElement, processor: UsageInfoProcessor, options: FindUsagesOptions): Searcher
+    protected abstract fun createSearcher(
+        element: PsiElement,
+        processor: Processor<in UsageInfo>,
+        options: FindUsagesOptions
+    ): Searcher
 
     override fun findReferencesToHighlight(target: PsiElement, searchScope: SearchScope): Collection<PsiReference> {
         val results = Collections.synchronizedList(arrayListOf<PsiReference>())
@@ -102,7 +114,11 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
         return results
     }
 
-    protected abstract class Searcher(val element: PsiElement, val processor: UsageInfoProcessor, val options: FindUsagesOptions) {
+    protected abstract class Searcher(
+        val element: PsiElement,
+        val processor: Processor<in UsageInfo>,
+        val options: FindUsagesOptions
+    ) {
         private val tasks = ArrayList<() -> Boolean>()
 
         /**
@@ -128,7 +144,7 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
     companion object {
         val LOG = Logger.getInstance(KotlinFindUsagesHandler::class.java)
 
-        internal fun processUsage(processor: UsageInfoProcessor, ref: PsiReference): Boolean =
+        internal fun processUsage(processor: Processor<in UsageInfo>, ref: PsiReference): Boolean =
             processor.processIfNotNull {
                 when {
                     ref is LightMemberReference -> KotlinReferencePreservingUsageInfo(ref)
@@ -137,16 +153,19 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
                 }
             }
 
-        internal fun processUsage(processor: UsageInfoProcessor, element: PsiElement): Boolean =
+        internal fun processUsage(
+            processor: Processor<in UsageInfo>,
+            element: PsiElement
+        ): Boolean =
             processor.processIfNotNull { if (element.isValid) UsageInfo(element) else null }
 
-        private fun UsageInfoProcessor.processIfNotNull(callback: () -> UsageInfo?): Boolean {
+        private fun Processor<in UsageInfo>.processIfNotNull(callback: () -> UsageInfo?): Boolean {
             ProgressManager.checkCanceled()
             val usageInfo = runReadAction(callback)
             return if (usageInfo != null) process(usageInfo) else true
         }
 
-        internal fun createReferenceProcessor(usageInfoProcessor: UsageInfoProcessor): Processor<PsiReference> {
+        internal fun createReferenceProcessor(usageInfoProcessor: Processor<in UsageInfo>): Processor<PsiReference> {
             val uniqueProcessor = CommonProcessors.UniqueProcessor(usageInfoProcessor)
 
             return Processor { processUsage(uniqueProcessor, it) }

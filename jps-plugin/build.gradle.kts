@@ -44,9 +44,7 @@ dependencies {
         testRuntime(project(it))
     }
 
-    Platform[192].orHigher {
-        testRuntimeOnly(intellijPluginDep("java"))
-    }
+    testRuntimeOnly(intellijPluginDep("java"))
 
     testRuntimeOnly(toolsJar())
     testRuntime(project(":kotlin-reflect"))

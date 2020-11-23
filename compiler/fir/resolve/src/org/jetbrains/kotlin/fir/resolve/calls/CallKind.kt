@@ -12,8 +12,8 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckExplicitReceiverConsistency,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
-        CheckReceivers.Dispatch,
-        CheckReceivers.Extension,
+        CheckDispatchReceiver,
+        CheckExtensionReceiver,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage
     )
@@ -33,8 +33,8 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckExplicitReceiverConsistency,
         MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
-        CheckReceivers.Dispatch,
-        CheckReceivers.Extension,
+        CheckDispatchReceiver,
+        CheckExtensionReceiver,
         CheckArguments,
         EagerResolveOfCallableReferences,
         CheckLowPriorityInOverloadResolution,
@@ -47,8 +47,8 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckExplicitReceiverConsistency,
         MapTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
-        CheckReceivers.Dispatch,
-        CheckReceivers.Extension,
+        CheckDispatchReceiver,
+        CheckExtensionReceiver,
         CheckArguments,
         EagerResolveOfCallableReferences
     )
@@ -58,9 +58,10 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         DiscriminateSynthetics,
         NoTypeArguments,
         CreateFreshTypeVariableSubstitutorStage,
-        CheckReceivers.Dispatch,
-        CheckReceivers.Extension,
-        CheckCallableReferenceExpectedType
+        CheckDispatchReceiver,
+        CheckExtensionReceiver,
+        CheckCallableReferenceExpectedType,
+        CheckLowPriorityInOverloadResolution
     )
 
     object SyntheticIdForCallableReferencesResolution : CallKind(
@@ -101,8 +102,8 @@ class ResolutionSequenceBuilder(
             if (checkExplicitReceiverConsistency) add(CheckExplicitReceiverConsistency)
             if (mapTypeArguments) add(MapTypeArguments) else add(NoTypeArguments)
             if (checkArguments || checkDispatchReceiver || checkExtensionReceiver) add(CreateFreshTypeVariableSubstitutorStage)
-            if (checkDispatchReceiver) add(CheckReceivers.Dispatch)
-            if (checkExtensionReceiver) add(CheckReceivers.Extension)
+            if (checkDispatchReceiver) add(CheckDispatchReceiver)
+            if (checkExtensionReceiver) add(CheckExtensionReceiver)
             if (checkArguments) add(CheckArguments)
             if (resolveCallableReferenceArguments) add(EagerResolveOfCallableReferences)
             if (checkLowPriorityInOverloadResolution) add(CheckLowPriorityInOverloadResolution)

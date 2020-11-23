@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.fir.java.enhancement
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
-import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 
-class FirJsr305StateContainer(val jsr305State: Jsr305State) : FirSessionComponent {
+class FirJsr305StateContainer(val javaTypeEnhancementState: JavaTypeEnhancementState) : FirSessionComponent {
     companion object {
-        val Default: FirJsr305StateContainer = FirJsr305StateContainer(Jsr305State.DEFAULT)
+        val Default: FirJsr305StateContainer = FirJsr305StateContainer(JavaTypeEnhancementState.DEFAULT)
     }
 }
 

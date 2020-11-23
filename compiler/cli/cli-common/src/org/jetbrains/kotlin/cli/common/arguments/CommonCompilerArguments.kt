@@ -353,12 +353,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var explicitApi: String by FreezableVar(ExplicitApiMode.DISABLED.state)
 
     @Argument(
-        value = "-Xdeserialize-fake-overrides",
-        description = "Fallback to deserializing fake overrides"
-    )
-    var deserializeFakeOverrides: Boolean by FreezableVar(false)
-
-    @Argument(
         value = "-Xinference-compatibility",
         description = "Enable compatibility changes for generic type inference algorithm"
     )

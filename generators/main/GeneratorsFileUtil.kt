@@ -8,10 +8,10 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import java.io.File
 import java.io.IOException
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
+import kotlin.io.path.*
 
 object GeneratorsFileUtil {
+    @OptIn(ExperimentalPathApi::class)
     @JvmStatic
     @JvmOverloads
     @Throws(IOException::class)
@@ -31,13 +31,14 @@ object GeneratorsFileUtil {
             return
         }
         val useTempFile = !SystemInfo.isWindows
+        val targetFile = file.toPath()
         val tempFile =
-            if (useTempFile) File(createTempDir(file.name), file.name + ".tmp") else file
+            if (useTempFile) createTempDirectory(targetFile.name) / "${targetFile.name}.tmp" else targetFile
         tempFile.writeText(newText, Charsets.UTF_8)
-        println("File written: " + tempFile.absolutePath)
+        println("File written: ${tempFile.toAbsolutePath()}")
         if (useTempFile) {
-            Files.move(tempFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING)
-            println("Renamed $tempFile to $file")
+            tempFile.moveTo(targetFile, overwrite = true)
+            println("Renamed $tempFile to $targetFile")
         }
         println()
     }

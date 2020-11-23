@@ -1,6 +1,6 @@
 FILE: cloneArray.kt
     public final fun test_1(array: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
-        R|<local>/array|.R|FakeOverride<kotlin/Array.clone: R|kotlin/Array<kotlin/String>|>|()
+        R|<local>/array|.R|SubstitutionOverride<kotlin/Array.clone: R|kotlin/Array<kotlin/String>|>|()
     }
     public final fun test_2(array: R|kotlin/IntArray|): R|kotlin/Unit| {
         R|<local>/array|.R|kotlin/IntArray.clone|()

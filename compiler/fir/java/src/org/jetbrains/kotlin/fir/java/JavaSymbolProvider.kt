@@ -19,12 +19,14 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.SymbolProviderCache
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -187,6 +189,9 @@ class JavaSymbolProvider(
                     buildOuterClassTypeParameterRef { symbol = it.symbol }
                 }
             }
+
+            val dispatchReceiver = classId.defaultType(typeParameters.map { it.symbol } )
+
             status = FirResolvedDeclarationStatusImpl(
                 javaClass.visibility,
                 javaClass.modality
@@ -200,7 +205,7 @@ class JavaSymbolProvider(
             // TODO: may be we can process fields & methods later.
             // However, they should be built up to override resolve stage
             for (javaField in javaClass.fields) {
-                declarations += convertJavaFieldToFir(javaField, classId, javaTypeParameterStack)
+                declarations += convertJavaFieldToFir(javaField, classId, javaTypeParameterStack, dispatchReceiver)
             }
             val valueParametersForAnnotationConstructor = ValueParametersForAnnotationConstructor()
             val classIsAnnotation = classKind == ClassKind.ANNOTATION_CLASS
@@ -212,7 +217,8 @@ class JavaSymbolProvider(
                     classId,
                     javaTypeParameterStack,
                     classIsAnnotation,
-                    valueParametersForAnnotationConstructor
+                    valueParametersForAnnotationConstructor,
+                    dispatchReceiver
                 )
             }
             val javaClassDeclaredConstructors = javaClass.constructors
@@ -243,11 +249,16 @@ class JavaSymbolProvider(
             }
 
             if (classKind == ClassKind.ENUM_CLASS) {
-                generateValuesFunction(session, classId.packageFqName, classId.relativeClassName)
+                generateValuesFunction(
+                    session,
+                    classId.packageFqName,
+                    classId.relativeClassName
+                )
                 generateValueOfFunction(session, classId.packageFqName, classId.relativeClassName)
             }
             if (classIsAnnotation) {
-                declarations += buildConstructorForAnnotationClass(constructorId, this, valueParametersForAnnotationConstructor)
+                declarations +=
+                    buildConstructorForAnnotationClass(constructorId, this, valueParametersForAnnotationConstructor)
             }
             parentClassTypeParameterStackCache.remove(classSymbol)
         }
@@ -265,7 +276,8 @@ class JavaSymbolProvider(
     private fun convertJavaFieldToFir(
         javaField: JavaField,
         classId: ClassId,
-        javaTypeParameterStack: JavaTypeParameterStack
+        javaTypeParameterStack: JavaTypeParameterStack,
+        dispatchReceiver: ConeClassLikeType
     ): FirDeclaration {
         val fieldName = javaField.name
         val fieldId = CallableId(classId.packageFqName, classId.relativeClassName, fieldName)
@@ -289,6 +301,8 @@ class JavaSymbolProvider(
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 origin = FirDeclarationOrigin.Java
                 addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
+            }.apply {
+                containingClassAttr = ConeClassLikeLookupTagImpl(classId)
             }
             else -> buildJavaField {
                 source = (javaField as? JavaElementImpl<*>)?.psi?.toFirPsiSourceElement()
@@ -311,6 +325,14 @@ class JavaSymbolProvider(
                 isStatic = javaField.isStatic
                 addAnnotationsFrom(this@JavaSymbolProvider.session, javaField, javaTypeParameterStack)
                 initializer = convertJavaInitializerToFir(javaField.initializerValue)
+
+                if (!javaField.isStatic) {
+                    dispatchReceiverType = dispatchReceiver
+                }
+            }.apply {
+                if (javaField.isStatic) {
+                    containingClassAttr = ConeClassLikeLookupTagImpl(classId)
+                }
             }
         }
     }
@@ -325,7 +347,8 @@ class JavaSymbolProvider(
         classId: ClassId,
         javaTypeParameterStack: JavaTypeParameterStack,
         classIsAnnotation: Boolean,
-        valueParametersForAnnotationConstructor: ValueParametersForAnnotationConstructor
+        valueParametersForAnnotationConstructor: ValueParametersForAnnotationConstructor,
+        dispatchReceiver: ConeClassLikeType
     ): FirJavaMethod {
         val methodName = javaMethod.name
         val methodId = CallableId(classId.packageFqName, classId.relativeClassName, methodName)
@@ -364,18 +387,26 @@ class JavaSymbolProvider(
                 isExternal = false
                 isSuspend = false
             }
+
+            if (!javaMethod.isStatic) {
+                dispatchReceiverType = dispatchReceiver
+            }
+        }.apply {
+            if (javaMethod.isStatic) {
+                containingClassAttr = ConeClassLikeLookupTagImpl(classId)
+            }
         }
         if (classIsAnnotation) {
             val parameterForAnnotationConstructor = buildJavaValueParameter {
                 session = this@JavaSymbolProvider.session
                 returnTypeRef = firJavaMethod.returnTypeRef
-                name = firJavaMethod.name
+                name = methodName
                 if (javaMethod.hasAnnotationParameterDefaultValue) {
                     defaultValue = buildExpressionStub()
                 }
-                isVararg = javaMethod.returnType is JavaArrayType
+                isVararg = returnType is JavaArrayType && methodName == VALUE_METHOD_NAME
             }
-            if (firJavaMethod.name == VALUE_METHOD_NAME) {
+            if (methodName == VALUE_METHOD_NAME) {
                 valueParametersForAnnotationConstructor.valueParameterForValue = parameterForAnnotationConstructor
             } else {
                 valueParametersForAnnotationConstructor.valueParameters += parameterForAnnotationConstructor
@@ -425,6 +456,8 @@ class JavaSymbolProvider(
                     )
                 }
             }
+        }.apply {
+            containingClassAttr = ownerClassBuilder.symbol.toLookupTag()
         }
     }
 
@@ -445,6 +478,8 @@ class JavaSymbolProvider(
             visibility = Visibilities.Public
             isInner = false
             isPrimary = true
+        }.apply {
+            containingClassAttr = ownerClassBuilder.symbol.toLookupTag()
         }
     }
 

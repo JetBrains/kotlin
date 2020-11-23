@@ -25,11 +25,11 @@ FILE: inAnonymousObject.kt
             }
 
             public final override fun run(): R|kotlin/Unit| {
-                R|<local>/c|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                R|<local>/c|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
             }
 
         }
 
         R|<local>/obj|.R|/<anonymous>.run|()
-        R|<local>/d|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }

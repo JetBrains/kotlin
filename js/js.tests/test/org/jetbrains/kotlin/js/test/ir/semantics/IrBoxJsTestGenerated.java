@@ -3470,6 +3470,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/inheritance/baseClassDefinedAfterDerived.kt");
         }
 
+        @TestMetadata("childPrototype.kt")
+        public void testChildPrototype() throws Exception {
+            runTest("js/js.translator/testData/box/inheritance/childPrototype.kt");
+        }
+
         @TestMetadata("complexInitializationOrder.kt")
         public void testComplexInitializationOrder() throws Exception {
             runTest("js/js.translator/testData/box/inheritance/complexInitializationOrder.kt");
@@ -7674,6 +7679,16 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("stringPlus.kt")
         public void testStringPlus() throws Exception {
             runTest("js/js.translator/testData/box/standardClasses/stringPlus.kt");
+        }
+
+        @TestMetadata("throwableConsistancy.kt")
+        public void testThrowableConsistancy() throws Exception {
+            runTest("js/js.translator/testData/box/standardClasses/throwableConsistancy.kt");
+        }
+
+        @TestMetadata("throwableCtor.kt")
+        public void testThrowableCtor() throws Exception {
+            runTest("js/js.translator/testData/box/standardClasses/throwableCtor.kt");
         }
     }
 

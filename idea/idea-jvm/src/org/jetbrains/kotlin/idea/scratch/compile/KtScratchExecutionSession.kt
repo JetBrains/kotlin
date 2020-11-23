@@ -16,7 +16,6 @@ import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.concurrency.NonUrgentExecutor
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
 import org.jetbrains.kotlin.codegen.filterClassFiles
@@ -56,41 +55,43 @@ class KtScratchExecutionSession(
         if (!executor.checkForErrors(psiFile, expressions)) return
 
         val project = file.project
-        ReadAction.nonBlocking {
-                when (val result = KtScratchSourceFileProcessor().process(expressions)) {
-                    is KtScratchSourceFileProcessor.Result.Error -> return@nonBlocking executor.errorOccurs(result.message, isFatal = true)
-                    is KtScratchSourceFileProcessor.Result.OK -> {
-                        LOG.printDebugMessage("After processing by KtScratchSourceFileProcessor:\n ${result.code}")
+        when (val result = runReadAction { KtScratchSourceFileProcessor().process(expressions) }) {
+            is KtScratchSourceFileProcessor.Result.Error -> return executor.errorOccurs(result.message, isFatal = true)
+            is KtScratchSourceFileProcessor.Result.OK -> {
+                LOG.printDebugMessage("After processing by KtScratchSourceFileProcessor:\n ${result.code}")
 
-                        object : Task.Backgroundable(psiFile.project, KotlinJvmBundle.message("running.kotlin.scratch"), true) {
-                            override fun run(indicator: ProgressIndicator) {
-                                backgroundProcessIndicator = indicator
+                object : Task.Backgroundable(psiFile.project, KotlinJvmBundle.message("running.kotlin.scratch"), true) {
+                    override fun run(indicator: ProgressIndicator) {
+                        backgroundProcessIndicator = indicator
 
-                                val modifiedScratchSourceFile = runReadAction {
-                                    KtPsiFactory(psiFile.project).createFileWithLightClassSupport("tmp.kt", result.code, psiFile)
-                                }
-
-                                try {
-                                    runCommandLine(project, modifiedScratchSourceFile, expressions, psiFile, result, indicator, callback)
-                                } catch (e: Throwable) {
-                                    if (e is ControlFlowException) throw e
-
-                                    LOG.printDebugMessage(result.code)
-                                    executor.errorOccurs(
-                                        e.message ?: KotlinJvmBundle.message("couldn.t.compile.0", psiFile.name),
-                                        e,
-                                        isFatal = true
-                                    )
-                                }
+                        ReadAction.nonBlocking {
+                            val modifiedScratchSourceFile = runReadAction {
+                                KtPsiFactory(psiFile.project).createFileWithLightClassSupport("tmp.kt", result.code, psiFile)
                             }
-                        }.queue()
+
+                            try {
+                                runCommandLine(project, modifiedScratchSourceFile, expressions, psiFile, result, indicator, callback)
+                            } catch (e: Throwable) {
+                                if (e is ControlFlowException) throw e
+
+                                LOG.printDebugMessage(result.code)
+                                executor.errorOccurs(
+                                    e.message ?: KotlinJvmBundle.message("couldn.t.compile.0", psiFile.name),
+                                    e,
+                                    isFatal = true
+                                )
+                            }
+                        }
+                            .inSmartMode(project)
+                            .wrapProgress(indicator)
+                            .withDocumentsCommitted(project)
+                            .executeSynchronously()
                     }
-                }
+                }.queue()
             }
-            .inSmartMode(project)
-            .expireWith(project)
-            .withDocumentsCommitted(project)
-            .submit(NonUrgentExecutor.getInstance())
+        }
+
+
     }
 
     private fun runCommandLine(

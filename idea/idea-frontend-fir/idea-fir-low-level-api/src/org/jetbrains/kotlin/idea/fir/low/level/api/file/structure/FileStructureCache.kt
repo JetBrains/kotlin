@@ -21,7 +21,7 @@ internal class FileStructureCache(
     private val cache = ConcurrentHashMap<KtFile, FileStructure>()
 
     fun getFileStructure(ktFile: KtFile, moduleFileCache: ModuleFileCache): FileStructure = cache.computeIfAbsent(ktFile) {
-        val firFile = fileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache)
+        val firFile = fileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, lazyBodiesMode = false)
         FileStructure(ktFile, firFile, firLazyDeclarationResolver, fileBuilder, moduleFileCache)
     }
 }

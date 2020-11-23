@@ -80,3 +80,13 @@ fun IrExpression?.isPure(anyVariable: Boolean, checkFields: Boolean = true): Boo
 
     return false
 }
+
+val IrValueDeclaration.isDispatchReceiver: Boolean
+    get() {
+        val parent = this.parent
+        if (parent is IrClass)
+            return true
+        if (parent is IrFunction && parent.dispatchReceiverParameter == this)
+            return true
+        return false
+    }

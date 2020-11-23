@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -42,10 +42,11 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.Variance
 
 class FirCallResolver(
-    private val components: BodyResolveComponents,
+    private val components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     private val qualifiedResolver: FirQualifiedNameResolver,
 ) {
     private val session = components.session
+    private val overloadByLambdaReturnTypeResolver = FirOverloadByLambdaReturnTypeResolver(components)
 
     private lateinit var transformer: FirExpressionsResolveTransformer
 
@@ -57,7 +58,7 @@ class FirCallResolver(
         components, components.resolutionStageRunner,
     )
 
-    private val conflictResolver: ConeCallConflictResolver =
+    val conflictResolver: ConeCallConflictResolver =
         session.callConflictResolverFactory.create(TypeSpecificityComparator.NONE, session.inferenceComponents)
 
     @PrivateForInline
@@ -150,7 +151,7 @@ class FirCallResolver(
         towerResolver.reset()
         val result = towerResolver.runResolver(info, transformer.resolutionContext)
         val bestCandidates = result.bestCandidates()
-        val reducedCandidates = if (!result.currentApplicability.isSuccess) {
+        var reducedCandidates = if (!result.currentApplicability.isSuccess) {
             bestCandidates.toSet()
         } else {
             val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
@@ -158,6 +159,8 @@ class FirCallResolver(
                 bestCandidates, discriminateGenerics = true, discriminateAbstracts = onSuperReference
             )
         }
+
+        reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, bestCandidates, reducedCandidates)
 
         return ResolutionResult(info, result.currentApplicability, reducedCandidates)
     }
@@ -386,13 +389,19 @@ class FirCallResolver(
         callInfo: CallInfo
     ): ResolutionResult? {
         var constructorSymbol: FirConstructorSymbol? = null
-        annotationClassSymbol.fir.unsubstitutedScope(session, components.scopeSession).processDeclaredConstructors {
+        annotationClassSymbol.fir.unsubstitutedScope(
+            session,
+            components.scopeSession,
+            withForcedTypeCalculator = false
+        ).processDeclaredConstructors {
             if (it.fir.isPrimary && constructorSymbol == null) {
                 constructorSymbol = it
             }
         }
         if (constructorSymbol == null) return null
-        val candidate = CandidateFactory(transformer.resolutionContext, callInfo).createCandidate(
+        val candidateFactory = CandidateFactory(transformer.resolutionContext, callInfo)
+        val candidate = candidateFactory.createCandidate(
+            callInfo,
             constructorSymbol!!,
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             scope = null
@@ -463,12 +472,6 @@ class FirCallResolver(
             expectedType,
             outerConstraintSystemBuilder,
             lhs,
-            stubReceiver = if (lhs !is DoubleColonLHS.Type) null else buildExpressionStub {
-                source = callableReferenceAccess.source
-                typeRef = buildResolvedTypeRef {
-                    type = lhs.type
-                }
-            },
         )
     }
 
@@ -539,7 +542,7 @@ class FirCallResolver(
         source: FirSourceElement?,
         name: Name
     ): FirErrorReferenceWithCandidate {
-        val candidate = CandidateFactory(transformer.resolutionContext, callInfo).createErrorCandidate(diagnostic)
+        val candidate = CandidateFactory(transformer.resolutionContext, callInfo).createErrorCandidate(callInfo, diagnostic)
         components.resolutionStageRunner.processCandidate(candidate, transformer.resolutionContext, stopOnFirstError = false)
         return FirErrorReferenceWithCandidate(source, name, candidate, diagnostic)
     }

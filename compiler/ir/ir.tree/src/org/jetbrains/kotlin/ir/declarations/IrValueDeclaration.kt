@@ -16,4 +16,6 @@ abstract class IrValueDeclaration : IrDeclarationBase(), IrDeclarationWithName, 
 
     abstract override val symbol: IrValueSymbol
     abstract var type: IrType
+
+    abstract val isAssignable: Boolean
 }

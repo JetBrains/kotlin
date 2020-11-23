@@ -389,8 +389,8 @@ digraph returns_kt {
         subgraph cluster_37 {
             color=blue
             136 [label="Enter block"];
-            137 [label="Function call: R|<local>/f|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()"];
-            138 [label="Jump: ^runHigherOrder R|<local>/f|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()"];
+            137 [label="Function call: R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
+            138 [label="Jump: ^runHigherOrder R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             139 [label="Stub" style="filled" fillcolor=gray];
             140 [label="Exit block" style="filled" fillcolor=gray];
         }

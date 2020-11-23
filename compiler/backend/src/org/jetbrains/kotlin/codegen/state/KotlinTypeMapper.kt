@@ -83,6 +83,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
     val classBuilderMode: ClassBuilderMode,
     private val moduleName: String,
     val languageVersionSettings: LanguageVersionSettings,
+    private val useOldInlineClassesManglingScheme: Boolean,
     private val incompatibleClassTracker: IncompatibleClassTracker = IncompatibleClassTracker.DoNothing,
     val jvmTarget: JvmTarget = JvmTarget.DEFAULT,
     private val isIrBackend: Boolean = false,
@@ -91,6 +92,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
 ) : KotlinTypeMapperBase() {
     private val isReleaseCoroutines = languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
     val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
+    var useOldManglingRulesForFunctionAcceptingInlineClass: Boolean = useOldInlineClassesManglingScheme
+        set(value) {
+            require(!useOldInlineClassesManglingScheme)
+            field = value
+        }
 
     private val typeMappingConfiguration = object : TypeMappingConfiguration<Type> {
         override fun commonSupertype(types: Collection<KotlinType>): KotlinType {
@@ -636,7 +642,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
         // so that we don't have to repeat the same logic in reflection
         // in case of properties without getter methods.
         if (kind !== OwnerKind.PROPERTY_REFERENCE_SIGNATURE || descriptor.isPropertyWithGetterSignaturePresent()) {
-            val suffix = getManglingSuffixBasedOnKotlinSignature(descriptor, shouldMangleByReturnType)
+            val suffix = getManglingSuffixBasedOnKotlinSignature(
+                descriptor,
+                shouldMangleByReturnType,
+                useOldManglingRulesForFunctionAcceptingInlineClass
+            )
             if (suffix != null) {
                 newName += suffix
             } else if (kind === OwnerKind.ERASED_INLINE_CLASS) {

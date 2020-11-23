@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.backend.jvm.propertiesPhase
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
+import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -21,10 +24,12 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
+import org.jetbrains.kotlin.ir.util.filterOutAnnotations
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 
 internal val moveOrCopyCompanionObjectFieldsPhase = makeIrFilePhase(
     ::MoveOrCopyCompanionObjectFieldsLowering,
@@ -123,6 +128,13 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
                 annotations += oldField.annotations
                 initializer = with(oldField.initializer!!) {
                     IrExpressionBodyImpl(startOffset, endOffset, (expression as IrConst<*>).copy())
+                }
+
+                if (oldProperty.parentAsClass.visibility == DescriptorVisibilities.PRIVATE) {
+                    context.createJvmIrBuilder(this.symbol).run {
+                        annotations = filterOutAnnotations(DeprecationResolver.JAVA_DEPRECATED, annotations) +
+                                irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
+                    }
                 }
             }
         }

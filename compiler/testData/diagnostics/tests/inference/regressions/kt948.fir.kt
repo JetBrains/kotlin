@@ -6,6 +6,7 @@
 package a
 
 import java.util.*
+import checkSubtype
 
 fun <T> emptyList() : List<T>? = ArrayList<T>()
 

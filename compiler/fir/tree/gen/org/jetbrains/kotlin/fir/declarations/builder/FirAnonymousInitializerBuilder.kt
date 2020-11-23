@@ -30,6 +30,7 @@ class FirAnonymousInitializerBuilder {
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
+    var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     var body: FirBlock? = null
     var symbol: FirAnonymousInitializerSymbol = FirAnonymousInitializerSymbol()
 
@@ -39,6 +40,7 @@ class FirAnonymousInitializerBuilder {
             session,
             resolvePhase,
             origin,
+            attributes,
             body,
             symbol,
         )

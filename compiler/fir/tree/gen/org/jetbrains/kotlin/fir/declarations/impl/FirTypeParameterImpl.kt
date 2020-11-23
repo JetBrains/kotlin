@@ -28,6 +28,7 @@ internal class FirTypeParameterImpl(
     override val session: FirSession,
     override var resolvePhase: FirResolvePhase,
     override val origin: FirDeclarationOrigin,
+    override val attributes: FirDeclarationAttributes,
     override val name: Name,
     override val symbol: FirTypeParameterSymbol,
     override val variance: Variance,
@@ -35,8 +36,6 @@ internal class FirTypeParameterImpl(
     override val bounds: MutableList<FirTypeRef>,
     override val annotations: MutableList<FirAnnotationCall>,
 ) : FirTypeParameter() {
-    override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-
     init {
         symbol.bind(this)
     }

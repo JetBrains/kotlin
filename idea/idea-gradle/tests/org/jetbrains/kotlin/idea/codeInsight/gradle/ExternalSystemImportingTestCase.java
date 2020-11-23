@@ -449,13 +449,28 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
         return getRootManager(moduleName).getContentEntries();
     }
 
-    protected void importProject(@NonNls String config) throws IOException {
+    protected void importProject(@NonNls String config, Boolean skipIndexing) throws IOException {
         createProjectConfig(config);
-        importProject();
+        importProject(skipIndexing);
     }
 
-    protected void importProject() {
-        doImportProject();
+    protected void importProject(Boolean skipIndexing) {
+        String indexingPropertyName = "idea.skip.indices.initialization";
+        String previousIndexingState = System.getProperty(indexingPropertyName);
+        try {
+            if (skipIndexing != null) {
+                System.setProperty(indexingPropertyName, skipIndexing.toString());
+            }
+            doImportProject();
+        } finally {
+            if (skipIndexing != null) {
+                if (previousIndexingState == null) {
+                    System.clearProperty(indexingPropertyName);
+                } else {
+                    System.setProperty(indexingPropertyName, previousIndexingState);
+                }
+            }
+        }
     }
 
     public boolean ensureIsNotGradleProxyObject(

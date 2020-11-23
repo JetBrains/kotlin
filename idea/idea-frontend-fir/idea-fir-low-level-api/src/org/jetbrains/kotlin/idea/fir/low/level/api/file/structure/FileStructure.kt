@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.withReadLock
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.withWriteLock
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
@@ -74,9 +78,9 @@ internal class FileStructure(
         val declarations = if (from.symbol.callableId.className == null) {
             firFile.declarations as MutableList<FirDeclaration>
         } else {
-            val classId = from.symbol.callableId.classId
+            val classLikeLookupTag = from.containingClass()
                 ?: error("Class name should not be null for non-top-level & non-local declarations")
-            val containingClass = firIdeProvider.getFirClassifierByFqName(classId) as FirRegularClass
+            val containingClass = classLikeLookupTag.toSymbol(firFile.session)?.fir as FirRegularClass
             containingClass.declarations as MutableList<FirDeclaration>
         }
         declarations.replaceFirst(from, to)
@@ -88,7 +92,10 @@ internal class FileStructure(
     ): WithInBlockModificationFileStructureElement {
         val newFunction = firIdeProvider.buildFunctionWithBody(containerKtFunction) as FirSimpleFunction
         val originalFunction = original.firSymbol.fir as FirSimpleFunction
-        replaceFunction(originalFunction, newFunction)
+
+        moduleFileCache.firFileLockProvider.withWriteLock(firFile) {
+            replaceFunction(originalFunction, newFunction)
+        }
 
         try {
             firLazyDeclarationResolver.lazyResolveDeclaration(
@@ -98,41 +105,52 @@ internal class FileStructure(
                 checkPCE = true,
                 reresolveFile = true,
             )
-            return WithInBlockModificationFileStructureElement(
-                firFile,
-                containerKtFunction,
-                newFunction.symbol,
-                containerKtFunction.modificationStamp,
-            )
+            return moduleFileCache.firFileLockProvider.withReadLock(firFile) {
+                WithInBlockModificationFileStructureElement(
+                    firFile,
+                    containerKtFunction,
+                    newFunction.symbol,
+                    containerKtFunction.modificationStamp,
+                )
+            }
         } catch (e: Throwable) {
-            replaceFunction(newFunction, originalFunction)
+            moduleFileCache.firFileLockProvider.withWriteLock(firFile) {
+                replaceFunction(newFunction, originalFunction)
+            }
             throw e
         }
     }
 
     private fun createDeclarationStructure(declaration: KtDeclaration): FileStructureElement {
-        val firDeclaration = declaration.findSourceNonLocalFirDeclaration(firFileBuilder, firIdeProvider.symbolProvider, moduleFileCache)
+        val firDeclaration = declaration.findSourceNonLocalFirDeclaration(
+            firFileBuilder,
+            firIdeProvider.symbolProvider,
+            moduleFileCache,
+            firFile
+        )
         firLazyDeclarationResolver.lazyResolveDeclaration(
             firDeclaration,
             moduleFileCache,
             FirResolvePhase.BODY_RESOLVE,
             checkPCE = true
         )
-        return when {
-            declaration is KtNamedFunction && declaration.hasExplicitTypeOrUnit -> {
-                WithInBlockModificationFileStructureElement(
-                    firFile,
-                    declaration,
-                    (firDeclaration as FirSimpleFunction).symbol,
-                    declaration.modificationStamp,
-                )
-            }
-            else -> {
-                NonLocalDeclarationFileStructureElement(
-                    firFile,
-                    firDeclaration,
-                    declaration,
-                )
+        return moduleFileCache.firFileLockProvider.withReadLock(firFile) {
+            when {
+                declaration is KtNamedFunction && declaration.hasExplicitTypeOrUnit -> {
+                    WithInBlockModificationFileStructureElement(
+                        firFile,
+                        declaration,
+                        (firDeclaration as FirSimpleFunction).symbol,
+                        declaration.modificationStamp,
+                    )
+                }
+                else -> {
+                    NonLocalDeclarationFileStructureElement(
+                        firFile,
+                        firDeclaration,
+                        declaration,
+                    )
+                }
             }
         }
     }

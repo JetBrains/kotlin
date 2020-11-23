@@ -21,6 +21,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import kotlin.io.FilesKt;
+import kotlin.io.path.PathsKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.checkers.AbstractForeignAnnotationsTestKt;
@@ -37,12 +38,17 @@ import org.jetbrains.kotlin.test.CompilerTestUtil;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.JsMetadataVersion;
 import org.jetbrains.kotlin.utils.PathUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.junit.Assert;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -232,15 +238,20 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
             @NotNull String tempDir
     ) {
         String filePath = kotlin.text.StringsKt.substringAfter(argument, argumentPrefix, argument);
-        File file = new File(filePath);
-        if (!file.exists()) return argument;
+        Path file = Paths.get(filePath);
+        if (!Files.exists(file)) return argument;
 
-        File result = FilesKt.createTempFile(file.getAbsolutePath(), tempFileSuffix, new File(tempDir));
-        String oldContent = FilesKt.readText(file, Charsets.UTF_8);
-        String newContent = replaceTestPaths(oldContent, testDataDir, tempDir);
-        FilesKt.writeText(result, newContent, Charsets.UTF_8);
+        try {
+            Path result = Files.createTempFile(Paths.get(tempDir), file.getFileName().toString(), tempFileSuffix);
+            String oldContent = PathsKt.readText(file, Charsets.UTF_8);
+            String newContent = replaceTestPaths(oldContent, testDataDir, tempDir);
+            PathsKt.writeText(result, newContent, Charsets.UTF_8);
 
-        return argumentPrefix + result.getAbsolutePath();
+            return argumentPrefix + result.toAbsolutePath();
+        }
+        catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
     }
 
     private static String replaceTestPaths(@NotNull String str, @NotNull String testDataDir, @NotNull String tempDir) {

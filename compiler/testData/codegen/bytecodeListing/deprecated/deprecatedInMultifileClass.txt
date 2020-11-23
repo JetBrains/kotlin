@@ -1,0 +1,21 @@
+@kotlin.Metadata
+public final class test/A {
+    // source: 'part.kt'
+    public deprecated final static @kotlin.Deprecated method f(): void
+    public deprecated final static method getExt(p0: int): int
+    public final static method getExtA(p0: int): int
+    public deprecated final static @org.jetbrains.annotations.NotNull method getStr(): java.lang.String
+    public deprecated final static @kotlin.Deprecated method setExtA(p0: int, p1: int): void
+}
+
+@kotlin.Metadata
+synthetic final class test/A__PartKt {
+    // source: 'part.kt'
+    public deprecated final static @kotlin.Deprecated method f(): void
+    public synthetic deprecated static @kotlin.Deprecated method getExt$annotations(p0: int): void
+    public deprecated final static method getExt(p0: int): int
+    public final static method getExtA(p0: int): int
+    public synthetic deprecated static @kotlin.Deprecated method getStr$annotations(): void
+    public deprecated final static @org.jetbrains.annotations.NotNull method getStr(): java.lang.String
+    public deprecated final static @kotlin.Deprecated method setExtA(p0: int, p1: int): void
+}

@@ -4,6 +4,8 @@
 
 package d
 
+import checkSubtype
+
 fun test(numbers: Iterable<Int>) {
     val s = numbers.map{it.toString()}.fold(""){it, it2 -> it + it2}
     checkSubtype<Int>(<!TYPE_MISMATCH!>s<!>)

@@ -661,10 +661,8 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor>() : ResolvedCall<D>
             }
 
             if (varargMappings != null && !needToUseCorrectExecutionOrderForVarargArguments) {
-                if (varargMappings != null) {
-                    for ((parameter, argument) in varargMappings) {
-                        result[parameter] = argument
-                    }
+                for ((parameter, argument) in varargMappings) {
+                    result[parameter] = argument
                 }
             }
         }

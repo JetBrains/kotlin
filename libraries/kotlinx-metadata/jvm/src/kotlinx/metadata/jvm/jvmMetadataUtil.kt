@@ -4,6 +4,7 @@
  */
 
 @file:JvmName("JvmMetadataUtil")
+
 package kotlinx.metadata.jvm
 
 import kotlinx.metadata.ClassName

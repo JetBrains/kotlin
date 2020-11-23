@@ -19,7 +19,7 @@ public final class<<T:Ljava/lang/Number;>Ljava/lang/Object;>  GenericOut {
 @kotlin.Metadata
 public final class<null>  KRaw {
     // source: 'rawTypeInSignature.kt'
-    public <(Ljava/util/List<+Ljava/lang/Object;>;Ljava/util/List;)Ljava/util/List;> method bothRawAndGeneric(p0: java.util.List, p1: java.util.List): java.util.List
+    public <(Ljava/util/List<Ljava/lang/Object;>;Ljava/util/List;)Ljava/util/List;> method bothRawAndGeneric(p0: java.util.List, p1: java.util.List): java.util.List
     public <null> method <init>(@org.jetbrains.annotations.NotNull p0: JRaw): void
     public <null> method returnsRawGenericIn(): GenericIn
     public <null> method returnsRawGenericInv(): GenericInv

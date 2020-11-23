@@ -4,6 +4,7 @@
 package i
 
 import java.util.ArrayList
+import checkSubtype
 
 public infix fun<TItem> Iterable<TItem>.where(predicate : (TItem)->Boolean) : ()->Iterable<TItem> {
 }

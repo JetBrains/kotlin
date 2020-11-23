@@ -96,7 +96,7 @@ class JavaScopeProvider(
                             val scope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, visitedSymbols)
                             visitedSymbols.remove(symbol)
                             useSiteSuperType.wrapSubstitutionScopeIfNeed(
-                                useSiteSession, scope, symbol.fir, scopeSession, regularClass.classId
+                                useSiteSession, scope, symbol.fir, scopeSession, derivedClass = regularClass
                             )
                         } else {
                             null
@@ -112,7 +112,7 @@ class JavaScopeProvider(
                         else JavaTypeParameterStack.EMPTY
                     ),
                     superTypeEnhancementScopes,
-                    regularClass.classId,
+                    regularClass.defaultType(),
                 ), wrappedDeclaredScope
             )
         }

@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
@@ -19,18 +21,21 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.DiagnosticsCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirElementBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
+import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSessionProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.FirElementFinder
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.idea.util.getElementTextInContext
+import org.jetbrains.kotlin.psi.*
 
 internal class FirModuleResolveStateImpl(
+    override val project: Project,
     override val moduleInfo: IdeaModuleInfo,
     private val sessionProvider: FirIdeSessionProvider,
     val firFileBuilder: FirFileBuilder,
@@ -49,13 +54,18 @@ internal class FirModuleResolveStateImpl(
         elementBuilder.getOrBuildFirFor(element, rootModuleSession.cache, fileStructureCache)
 
     override fun getFirFile(ktFile: KtFile): FirFile =
-        firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache)
+        firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, lazyBodiesMode = false)
 
     override fun getDiagnostics(element: KtElement): List<Diagnostic> =
         diagnosticsCollector.getDiagnosticsFor(element)
 
     override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic> =
         diagnosticsCollector.collectDiagnosticsForFile(ktFile)
+
+    override fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile? {
+        val cache = sessionProvider.getModuleCache(ktFile.getModuleInfo() as ModuleSourceInfo)
+        return firFileBuilder.getBuiltFirFileOrNull(ktFile, cache)
+    }
 
     override fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile) {
         error("Should be called only from FirModuleResolveStateForCompletion")
@@ -68,6 +78,37 @@ internal class FirModuleResolveStateImpl(
         rootModuleSession.firIdeProvider.symbolProvider,
         sessionProvider.getModuleCache(ktDeclaration.getModuleInfo() as ModuleSourceInfo)
     )
+
+    override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration =
+        findSourceFirDeclarationByExpression(ktDeclaration)
+
+    override fun findSourceFirDeclaration(ktDeclaration: KtLambdaExpression): FirDeclaration =
+        findSourceFirDeclarationByExpression(ktDeclaration)
+
+    /**
+     * [ktDeclaration] should be either [KtDeclaration] or [KtLambdaExpression]
+     */
+    private fun findSourceFirDeclarationByExpression(ktDeclaration: KtExpression): FirDeclaration {
+        val nonLocalFirDeclaration = ktDeclaration.getNonLocalContainingOrThisDeclaration()
+            ?: error("Declaration should have non-local container${ktDeclaration.getElementTextInContext()}")
+        if (ktDeclaration == nonLocalFirDeclaration) return findNonLocalSourceFirDeclaration(ktDeclaration as KtDeclaration)
+        val container = nonLocalFirDeclaration.findSourceNonLocalFirDeclaration(
+            firFileBuilder,
+            rootModuleSession.firIdeProvider.symbolProvider,
+            sessionProvider.getModuleCache(ktDeclaration.getModuleInfo() as ModuleSourceInfo)
+        )
+        val firDeclaration = FirElementFinder.findElementIn<FirDeclaration>(container) { firDeclaration ->
+            firDeclaration.psi == ktDeclaration
+        }
+        return firDeclaration
+            ?: error("FirDeclaration was not found for\n${ktDeclaration.getElementTextInContext()}")
+    }
+
+    override fun isFirFileBuilt(ktFile: KtFile): Boolean {
+        val moduleSourceInfo = ktFile.getModuleInfo() as? ModuleSourceInfo ?: return true
+        val cache = sessionProvider.getModuleCache(moduleSourceInfo)
+        return firFileBuilder.isFirFileBuilt(ktFile, cache)
+    }
 
     override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
         val fileCache = when (val session = declaration.session) {
@@ -98,4 +139,7 @@ internal class FirModuleResolveStateImpl(
             )
         }
     }
+
+    override fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? =
+        cache.getContainerFirFile(declaration)
 }

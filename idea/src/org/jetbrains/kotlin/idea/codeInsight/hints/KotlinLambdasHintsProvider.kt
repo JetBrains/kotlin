@@ -7,10 +7,21 @@ package org.jetbrains.kotlin.idea.codeInsight.hints
 
 import com.intellij.codeInsight.hints.ImmediateConfigurable
 import com.intellij.codeInsight.hints.InlayHintsSink
+import com.intellij.codeInsight.hints.presentation.InlayPresentation
 import com.intellij.codeInsight.hints.presentation.PresentationRenderer
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.EditorCustomElementRenderer
+import com.intellij.openapi.editor.Inlay
+import com.intellij.openapi.editor.markup.TextAttributes
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.util.application.invokeLater
+import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import java.awt.Graphics
+import java.awt.Rectangle
 
 /**
  * Please note that the executable test class is currently not generated. The thing is that [KotlinLambdasHintsProvider] utilizes a hack
@@ -49,8 +60,31 @@ class KotlinLambdasHintsProvider : KotlinAbstractHintsProvider<KotlinLambdasHint
         // sink should remain empty for the outer infrastructure - we place hints ourselves
         invokeLater {
             presentations.forEach { p ->
-                editor.inlayModel.getAfterLineEndElementsInRange(p.offset, p.offset).singleOrNull()?.dispose()
-                editor.inlayModel.addAfterLineEndElement(p.offset, p.relatesToPrecedingText, PresentationRenderer(p.presentation))
+                val logicalLine = editor.offsetToLogicalPosition(p.offset).line
+                editor.inlayModel.getAfterLineEndElementsForLogicalLine(logicalLine)
+                    .filter { it.renderer is LambdaHintsRenderer }
+                    .forEach { it.dispose() }
+                editor.inlayModel.addAfterLineEndElement(p.offset, p.relatesToPrecedingText, LambdaHintsRenderer(p.presentation))
+            }
+        }
+    }
+
+    override fun handleAfterLineEndHintsRemoval(editor: Editor, resolved: HintType, element: PsiElement) {
+        invokeLater {
+            val offset = when (resolved) {
+                HintType.LAMBDA_IMPLICIT_PARAMETER_RECEIVER -> {
+                    val lambdaExpression = (element as? KtFunctionLiteral)?.parent as? KtLambdaExpression
+                    lambdaExpression?.leftCurlyBrace?.textRange?.endOffset
+                }
+                HintType.LAMBDA_RETURN_EXPRESSION -> (element as? KtExpression)?.endOffset
+                else -> null
+            }
+
+            offset?.let {
+                val logicalLine = editor.offsetToLogicalPosition(offset).line
+                editor.inlayModel.getAfterLineEndElementsForLogicalLine(logicalLine)
+                    .filter { it.renderer is LambdaHintsRenderer }
+                    .forEach { it.dispose() }
             }
         }
     }
@@ -73,4 +107,29 @@ class KotlinLambdasHintsProvider : KotlinAbstractHintsProvider<KotlinLambdasHint
             }
         }
     """.trimIndent()
+
+
+    /**
+     * This renderer is not more than just a filter criterion. [PresentationRenderer] is not extensible, instead delegation is used.
+     */
+    private class LambdaHintsRenderer(presentation: InlayPresentation) : EditorCustomElementRenderer {
+        private val delegate: PresentationRenderer = PresentationRenderer(presentation)
+
+        override fun paint(inlay: Inlay<*>, g: Graphics, targetRegion: Rectangle, textAttributes: TextAttributes) {
+            delegate.paint(inlay, g, targetRegion, textAttributes)
+        }
+
+        override fun calcWidthInPixels(inlay: Inlay<*>): Int {
+            return delegate.calcWidthInPixels(inlay)
+        }
+
+        // this should not be shown anywhere
+        override fun getContextMenuGroupId(inlay: Inlay<*>): String {
+            return "DummyActionGroup"
+        }
+
+        override fun toString(): String {
+            return delegate.toString()
+        }
+    }
 }

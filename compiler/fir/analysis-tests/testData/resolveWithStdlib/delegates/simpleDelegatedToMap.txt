@@ -7,7 +7,7 @@ FILE: simpleDelegatedToMap.kt
         public final val map: R|kotlin/collections/MutableMap<kotlin/String, kotlin/Any>| = R|<local>/map|
             public get(): R|kotlin/collections/MutableMap<kotlin/String, kotlin/Any>|
 
-        public final var foo: R|kotlin/Any|by R|<local>/map|
+        public final var foo: R|kotlin/Any|by this@R|/C|.R|/C.map|
             public get(): R|kotlin/Any| {
                 ^ this@R|/C|.D|/C.foo|.R|kotlin/collections/getValue|<R|kotlin/Any|, R|kotlin/Any|>(this@R|/C|, ::R|/C.foo|)
             }

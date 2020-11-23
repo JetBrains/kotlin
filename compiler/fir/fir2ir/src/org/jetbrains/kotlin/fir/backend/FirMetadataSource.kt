@@ -31,5 +31,7 @@ sealed class FirMetadataSource : MetadataSource {
 
     class Function(override val fir: FirFunction<*>) : FirMetadataSource(), MetadataSource.Function
 
-    class Property(override val fir: FirProperty) : FirMetadataSource(), MetadataSource.Property
+    class Property(override val fir: FirProperty) : FirMetadataSource(), MetadataSource.Property {
+        override val isConst: Boolean get() = fir.isConst
+    }
 }

@@ -20,6 +20,8 @@ fun A.forEach(s: String) {}
 package a
 
 import b.*
+import checkType
+import _
 
 class A {
     fun forEach() = this

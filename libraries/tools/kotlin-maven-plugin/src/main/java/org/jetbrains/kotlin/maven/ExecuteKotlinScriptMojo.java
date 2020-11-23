@@ -53,9 +53,10 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ConfigurationKt;
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar;
 import org.jetbrains.kotlin.utils.ParametersMapKt;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -138,17 +139,17 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
                 buildDirectory.mkdirs();
             }
 
-            File scriptFile = File.createTempFile("kotlin-maven-plugin-inline-script-", ".tmp.kts", buildDirectory);
-            FileOutputStream stream = new FileOutputStream(scriptFile);
-            stream.write(script.getBytes("UTF-8"));
-            stream.close();
+            Path scriptFile = Files.createTempFile(buildDirectory.toPath(), "kotlin-maven-plugin-inline-script-", ".tmp.kts");
+            try (BufferedWriter writer = Files.newBufferedWriter(scriptFile, StandardCharsets.UTF_8)) {
+                writer.write(script);
+            }
 
             try {
-                executeScriptFile(scriptFile);
+                executeScriptFile(scriptFile.toFile());
             } finally {
-                boolean deleted = scriptFile.delete();
+                boolean deleted = Files.deleteIfExists(scriptFile);
                 if (!deleted) {
-                    getLog().warn("Error deleting " + scriptFile.getAbsolutePath());
+                    getLog().warn("Error deleting " + scriptFile.toAbsolutePath());
                 }
             }
         } catch (IOException e) {

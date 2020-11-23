@@ -26,7 +26,7 @@ abstract class AbstractBuildFileGenerationTest : UsefulTestCase() {
 
         val buildSystemsToRunFor = listOfNotNull(
             BuildSystem.GRADLE_KOTLIN_DSL,
-            BuildSystem.GRADLE_GROOVY_DSL,
+            if (testParameters.runForGradleGroovy) BuildSystem.GRADLE_GROOVY_DSL else null,
             if (testParameters.runForMaven) BuildSystem.MAVEN else null
         )
 

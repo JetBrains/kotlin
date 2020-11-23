@@ -15,6 +15,7 @@ import org.junit.After
 import org.junit.Before
 import java.io.File
 import java.lang.IllegalStateException
+import java.nio.file.Files
 import kotlin.test.*
 
 class BuildSessionLoggerTest {
@@ -25,7 +26,7 @@ class BuildSessionLoggerTest {
 
     @Before
     fun prepareFolder() {
-        rootFolder = File.createTempFile("kotlin-stats", "")
+        rootFolder = Files.createTempFile("kotlin-stats", "").toFile()
         rootFolder.delete()
         rootFolder.mkdirs()
     }

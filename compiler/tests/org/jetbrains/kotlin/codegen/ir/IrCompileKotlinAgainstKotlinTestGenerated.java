@@ -118,6 +118,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/defaultLambdaRegeneration2.kt");
     }
 
+    @TestMetadata("defaultWithInlineClassAndReceivers.kt")
+    public void testDefaultWithInlineClassAndReceivers() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/defaultWithInlineClassAndReceivers.kt");
+    }
+
     @TestMetadata("delegatedDefault.kt")
     public void testDelegatedDefault() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/delegatedDefault.kt");
@@ -153,6 +158,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassInlineProperty.kt");
     }
 
+    @TestMetadata("inlineClassesOldMangling.kt")
+    public void testInlineClassesOldMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassesOldMangling.kt");
+    }
+
     @TestMetadata("inlinedConstants.kt")
     public void testInlinedConstants() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlinedConstants.kt");
@@ -171,6 +181,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
     @TestMetadata("internalSetterOverridden.kt")
     public void testInternalSetterOverridden() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/internalSetterOverridden.kt");
+    }
+
+    @TestMetadata("internalWithDefaultArgs.kt")
+    public void testInternalWithDefaultArgs() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/internalWithDefaultArgs.kt");
     }
 
     @TestMetadata("internalWithOtherModuleName.kt")
@@ -383,6 +398,34 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/useDeserializedFunInterface.kt");
     }
 
+    @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/fir")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Fir extends AbstractIrCompileKotlinAgainstKotlinTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInFir() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("AnonymousObjectInProperty.kt")
+        public void testAnonymousObjectInProperty() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/fir/AnonymousObjectInProperty.kt");
+        }
+
+        @TestMetadata("ExistingSymbolInFakeOverride.kt")
+        public void testExistingSymbolInFakeOverride() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/fir/ExistingSymbolInFakeOverride.kt");
+        }
+
+        @TestMetadata("LibraryProperty.kt")
+        public void testLibraryProperty() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/fir/LibraryProperty.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/compileKotlinAgainstKotlin/jvm8")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -543,6 +586,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
                 @TestMetadata("newAndOldSchemes2Compatibility.kt")
                 public void testNewAndOldSchemes2Compatibility() throws Exception {
                     runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes2Compatibility.kt");
+                }
+
+                @TestMetadata("newAndOldSchemes3.kt")
+                public void testNewAndOldSchemes3() throws Exception {
+                    runTest("compiler/testData/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes3.kt");
                 }
 
                 @TestMetadata("newSchemeWithJvmDefault.kt")

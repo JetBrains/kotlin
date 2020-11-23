@@ -13,6 +13,7 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer
 import org.gradle.api.artifacts.maven.MavenResolver
 import org.gradle.api.attributes.Usage
+import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logging
@@ -22,11 +23,10 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.plugins.MavenPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPom
+import org.gradle.api.artifacts.maven.MavenPom as OldMavenPom
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.CompileClasspathNormalizer
-import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.Upload
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
@@ -61,8 +61,8 @@ val KOTLIN_DSL_NAME = "kotlin"
 val KOTLIN_JS_DSL_NAME = "kotlin2js"
 val KOTLIN_OPTIONS_DSL_NAME = "kotlinOptions"
 
-abstract class KotlinCompilationProcessor<out T : AbstractCompile>(
-    open val kotlinCompilation: AbstractKotlinCompilation<*>
+abstract class KotlinCompilationProcessor<out T : SourceTask>(
+    open val kotlinCompilation: KotlinCompilation<*>
 ) {
     abstract val kotlinTask: TaskProvider<out T>
     abstract fun run()
@@ -418,19 +418,32 @@ internal abstract class AbstractKotlinPlugin(
         project.components.addAll(target.components)
     }
 
+    private fun rewritePom(pom: MavenPom, rewriter: PomDependenciesRewriter, shouldRewritePom: Provider<Boolean>) {
+        pom.withXml { xml ->
+            if (shouldRewritePom.get())
+                rewriter.rewritePomMppDependenciesToActualTargetModules(xml)
+        }
+    }
+
+    private fun rewritePom(pom: OldMavenPom, rewriter: PomDependenciesRewriter, shouldRewritePom: Provider<Boolean>) {
+        pom.withXml { xml ->
+            if (shouldRewritePom.get())
+                rewriter.rewritePomMppDependenciesToActualTargetModules(xml)
+        }
+    }
+
     private fun rewriteMppDependenciesInPom(target: AbstractKotlinTarget) {
         val project = target.project
 
-        fun shouldRewritePoms(): Boolean =
+        val shouldRewritePoms = project.provider {
             PropertiesProvider(project).keepMppDependenciesIntactInPoms != true
+        }
 
         project.pluginManager.withPlugin("maven-publish") {
             project.extensions.configure(PublishingExtension::class.java) { publishing ->
+                val pomRewriter = PomDependenciesRewriter(project, target.kotlinComponents.single())
                 publishing.publications.withType(MavenPublication::class.java).all { publication ->
-                    publication.pom.withXml { xml ->
-                        if (shouldRewritePoms())
-                            project.rewritePomMppDependenciesToActualTargetModules(xml, target.kotlinComponents.single())
-                    }
+                    rewritePom(publication.pom, pomRewriter, shouldRewritePoms)
                 }
             }
         }
@@ -438,10 +451,8 @@ internal abstract class AbstractKotlinPlugin(
         project.pluginManager.withPlugin("maven") {
             project.tasks.withType(Upload::class.java).all { uploadTask ->
                 uploadTask.repositories.withType(MavenResolver::class.java).all { mavenResolver ->
-                    mavenResolver.pom.withXml { xml ->
-                        if (shouldRewritePoms())
-                            project.rewritePomMppDependenciesToActualTargetModules(xml, target.kotlinComponents.single())
-                    }
+                    val pomRewriter = PomDependenciesRewriter(project, target.kotlinComponents.single())
+                    rewritePom(mavenResolver.pom, pomRewriter, shouldRewritePoms)
                 }
             }
 
@@ -799,11 +810,6 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         kotlinOptions.noJdk = true
         ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
-        val androidPluginIds = listOf(
-            "android", "com.android.application", "android-library", "com.android.library",
-            "com.android.test", "com.android.feature", "com.android.dynamic-feature", "com.android.instantapp"
-        )
-
         val plugin by lazy {
             androidPluginIds.asSequence()
                 .mapNotNull { project.plugins.findPlugin(it) as? BasePlugin }
@@ -907,6 +913,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
         // Trivial mapping of Android variants to Android source set names is impossible here,
         // because some variants have their dedicated source sets with mismatching names,
+        // because some variants have their dedicated source sets with mismatching names,
         // e.g. variant 'fooBarDebugAndroidTest' <-> source set 'androidTestFooBarDebug'
 
         // In single-platform projects, the Kotlin compilations already reference the Android plugin's configurations by the names,
@@ -977,6 +984,8 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
 
         // Register the source only after the task is created, because the task is required for that:
         compilation.source(defaultSourceSet)
+
+        compilation.androidVariant.forEachKotlinSourceSet { kotlinSourceSet -> compilation.source(kotlinSourceSet) }
     }
 
     private fun postprocessVariant(
@@ -986,7 +995,6 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         androidExt: BaseExtension,
         androidPlugin: BasePlugin
     ) {
-        val javaTask = variantData.getJavaTaskProvider()
 
         getTestedVariantData(variantData)?.let { testedVariant ->
             val testedVariantName = getVariantName(testedVariant)
@@ -994,33 +1002,23 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
             compilation.associateWith(testedCompilation)
         }
 
+        val javaTask = variantData.getJavaTaskProvider()
         val kotlinTask = compilation.compileKotlinTaskProvider
-        processAndroidKotlinAndJavaSources(
-            compilation,
-            addKotlinSources = { kotlinSourceSet -> compilation.source(kotlinSourceSet) },
-            addJavaSources = { sources -> compilation.compileKotlinTaskProvider.configure { it.source(sources) } }
-        )
+        compilation.androidVariant.forEachJavaSourceDir { sources -> kotlinTask.configure { it.source(sources.dir) } }
         wireKotlinTasks(project, compilation, androidPlugin, androidExt, variantData, javaTask, kotlinTask)
     }
 }
 
-private fun getAllJavaSources(variantData: BaseVariant): Iterable<File> =
-    variantData.getSourceFolders(SourceKind.JAVA).map { it.dir }
-
-internal fun processAndroidKotlinAndJavaSources(
-    compilation: KotlinJvmAndroidCompilation,
-    addKotlinSources: (KotlinSourceSet) -> Unit,
-    addJavaSources: (Iterable<File>) -> Unit
-) {
-    val variantData = compilation.androidVariant
-
-    for (provider in variantData.sourceSets) {
-        val kotlinSourceSet = provider.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet ?: continue
-        addKotlinSources(kotlinSourceSet)
-    }
-
-    addJavaSources(getAllJavaSources(variantData))
+internal inline fun BaseVariant.forEachKotlinSourceSet(action: (KotlinSourceSet) -> Unit) {
+    sourceSets
+        .mapNotNull { provider -> provider.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet }
+        .forEach(action)
 }
+
+internal inline fun BaseVariant.forEachJavaSourceDir(action: (ConfigurableFileTree) -> Unit) {
+    getSourceFolders(SourceKind.JAVA).forEach(action)
+}
+
 
 internal fun configureJavaTask(
     kotlinTaskProvider: TaskProvider<out KotlinCompile>,

@@ -14,7 +14,7 @@ abstract class AbstractFirPropertyInitializationChecker {
     abstract fun analyze(
         graph: ControlFlowGraph,
         reporter: DiagnosticReporter,
-        data: Map<CFGNode<*>, PropertyInitializationInfo>,
+        data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
         properties: Set<FirPropertySymbol>
     )
 }

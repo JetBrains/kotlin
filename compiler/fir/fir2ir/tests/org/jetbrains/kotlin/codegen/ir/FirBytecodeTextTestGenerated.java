@@ -1431,6 +1431,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/effectivelyInlineOnly.kt");
         }
 
+        @TestMetadata("mergeLvt.kt")
+        public void testMergeLvt() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/mergeLvt.kt");
+        }
+
         @TestMetadata("nonLocalReturn.kt")
         public void testNonLocalReturn() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/coroutines/nonLocalReturn.kt");
@@ -1759,6 +1764,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         @TestMetadata("simpleConstructorNotRedundantNotOptimizable.kt")
         public void testSimpleConstructorNotRedundantNotOptimizable() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/deadCodeElimination/simpleConstructorNotRedundantNotOptimizable.kt");
+        }
+
+        @TestMetadata("unusedPrimitiveAndObjectEquals.kt")
+        public void testUnusedPrimitiveAndObjectEquals() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/deadCodeElimination/unusedPrimitiveAndObjectEquals.kt");
         }
     }
 
@@ -2105,6 +2115,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         @TestMetadata("forIntInDownTo.kt")
         public void testForIntInDownTo() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/forLoop/forIntInDownTo.kt");
+        }
+
+        @TestMetadata("iincGeneration.kt")
+        public void testIincGeneration() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/forLoop/iincGeneration.kt");
         }
 
         @TestMetadata("intrinsicArrayConstructorsUseCounterLoop.kt")
@@ -2574,21 +2589,6 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             public void testForInUntilLongMinValue() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/forInUntil/forInUntilLongMinValue.kt");
             }
-
-            @TestMetadata("forInUntilWithMixedTypeBoundsBoundCheckNeededForIntRangeIR.kt")
-            public void testForInUntilWithMixedTypeBoundsBoundCheckNeededForIntRangeIR() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInUntil/forInUntilWithMixedTypeBoundsBoundCheckNeededForIntRangeIR.kt");
-            }
-
-            @TestMetadata("forInUntilWithMixedTypeBoundsNoBoundCheckNeededForIntRangeIR.kt")
-            public void testForInUntilWithMixedTypeBoundsNoBoundCheckNeededForIntRangeIR() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInUntil/forInUntilWithMixedTypeBoundsNoBoundCheckNeededForIntRangeIR.kt");
-            }
-
-            @TestMetadata("forInUntilWithMixedTypeBoundsNoBoundCheckNeededForLongRangeIR.kt")
-            public void testForInUntilWithMixedTypeBoundsNoBoundCheckNeededForLongRangeIR() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInUntil/forInUntilWithMixedTypeBoundsNoBoundCheckNeededForLongRangeIR.kt");
-            }
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/stepped")
@@ -2601,11 +2601,6 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
 
             public void testAllFilesPresentInStepped() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/stepped"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-            }
-
-            @TestMetadata("emptyUntilProgressionToMinValue.kt")
-            public void testEmptyUntilProgressionToMinValue() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/stepped/emptyUntilProgressionToMinValue.kt");
             }
 
             @TestMetadata("illegalStepConst.kt")
@@ -2677,11 +2672,6 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             public void testStepThenStepOne() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/stepped/stepThenStepOne.kt");
             }
-
-            @TestMetadata("untilProgressionToNonConst.kt")
-            public void testUntilProgressionToNonConst() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/stepped/untilProgressionToNonConst.kt");
-            }
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/unsigned")
@@ -2694,11 +2684,6 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
 
             public void testAllFilesPresentInUnsigned() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/unsigned"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-            }
-
-            @TestMetadata("emptyUntilProgressionToMinValue.kt")
-            public void testEmptyUntilProgressionToMinValue() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/emptyUntilProgressionToMinValue.kt");
             }
 
             @TestMetadata("forInDownToUIntMinValue.kt")
@@ -2746,11 +2731,6 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/forInUntilULongMinValue.kt");
             }
 
-            @TestMetadata("forInUntilWithMixedTypeBoundsNoBoundCheckNeededForUIntRangeIR.kt")
-            public void testForInUntilWithMixedTypeBoundsNoBoundCheckNeededForUIntRangeIR() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/forInUntilWithMixedTypeBoundsNoBoundCheckNeededForUIntRangeIR.kt");
-            }
-
             @TestMetadata("illegalStepConst.kt")
             public void testIllegalStepConst() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/illegalStepConst.kt");
@@ -2779,11 +2759,6 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             @TestMetadata("stepThenDifferentStep.kt")
             public void testStepThenDifferentStep() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/stepThenDifferentStep.kt");
-            }
-
-            @TestMetadata("untilProgressionToNonConst.kt")
-            public void testUntilProgressionToNonConst() throws Exception {
-                runTest("compiler/testData/codegen/bytecodeText/forLoop/unsigned/untilProgressionToNonConst.kt");
             }
         }
     }
@@ -3190,6 +3165,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         @TestMetadata("noAssertionsForInlineClassesBasedOnNullableTypes.kt")
         public void testNoAssertionsForInlineClassesBasedOnNullableTypes() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noAssertionsForInlineClassesBasedOnNullableTypes.kt");
+        }
+
+        @TestMetadata("noBoxingInMethod.kt")
+        public void testNoBoxingInMethod() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/noBoxingInMethod.kt");
         }
 
         @TestMetadata("noBoxingOnCastOperations.kt")
@@ -4344,6 +4324,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperForNullableInitialization.kt");
         }
 
+        @TestMetadata("samWrapperInInlineLambda.kt")
+        public void testSamWrapperInInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperInInlineLambda.kt");
+        }
+
         @TestMetadata("samWrapperOfLambda.kt")
         public void testSamWrapperOfLambda() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperOfLambda.kt");
@@ -4352,6 +4337,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         @TestMetadata("samWrapperOfReference.kt")
         public void testSamWrapperOfReference() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperOfReference.kt");
+        }
+
+        @TestMetadata("samWrapperRawTypes.kt")
+        public void testSamWrapperRawTypes() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/sam/samWrapperRawTypes.kt");
         }
     }
 
@@ -4506,6 +4496,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicConstants.kt");
         }
 
+        @TestMetadata("concatDynamicDataClass.kt")
+        public void testConcatDynamicDataClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicDataClass.kt");
+        }
+
         @TestMetadata("concatDynamicIndy.kt")
         public void testConcatDynamicIndy() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicIndy.kt");
@@ -4514,6 +4509,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         @TestMetadata("concatDynamicIndy201.kt")
         public void testConcatDynamicIndy201() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicIndy201.kt");
+        }
+
+        @TestMetadata("concatDynamicIndyDataClass.kt")
+        public void testConcatDynamicIndyDataClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/concatDynamicIndyDataClass.kt");
         }
 
         @TestMetadata("concatNotDynamic.kt")
@@ -4549,6 +4549,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         @TestMetadata("kt19037.kt")
         public void testKt19037() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/stringOperations/kt19037.kt");
+        }
+
+        @TestMetadata("kt42457_old.kt")
+        public void testKt42457_old() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/stringOperations/kt42457_old.kt");
         }
 
         @TestMetadata("multipleNestedConcat.kt")
@@ -4756,6 +4761,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         @TestMetadata("exhaustiveWhenReturn.kt")
         public void testExhaustiveWhenReturn() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenReturn.kt");
+        }
+
+        @TestMetadata("exhaustiveWhenSpecialCases.kt")
+        public void testExhaustiveWhenSpecialCases() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/when/exhaustiveWhenSpecialCases.kt");
         }
 
         @TestMetadata("exhaustiveWhenUnit.kt")

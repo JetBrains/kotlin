@@ -18,7 +18,6 @@ interface JvmLoweredDeclarationOrigin : IrDeclarationOrigin {
     object DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY : IrDeclarationOriginImpl("DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY")
     object DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC : IrDeclarationOriginImpl("DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC", isSynthetic = true)
     object DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC : IrDeclarationOriginImpl("DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC", isSynthetic = true)
-    object MULTIFILE_BRIDGE : IrDeclarationOriginImpl("MULTIFILE_BRIDGE")
     object FIELD_FOR_OUTER_THIS : IrDeclarationOriginImpl("FIELD_FOR_OUTER_THIS")
     object LAMBDA_IMPL : IrDeclarationOriginImpl("LAMBDA_IMPL")
     object FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL", isSynthetic = true)

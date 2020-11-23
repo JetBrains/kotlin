@@ -1,0 +1,10 @@
+@kotlin.Metadata
+public final class Foo {
+    // source: 'javaDeprecated.kt'
+    private final @java.lang.Deprecated @org.jetbrains.annotations.NotNull field bar2: java.lang.String
+    private final @java.lang.Deprecated @org.jetbrains.annotations.NotNull field bar: java.lang.String
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method getBar(): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method getBar2(): java.lang.String
+    public final @java.lang.Deprecated method test(): void
+}

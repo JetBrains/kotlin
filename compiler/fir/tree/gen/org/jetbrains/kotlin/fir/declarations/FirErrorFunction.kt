@@ -50,6 +50,8 @@ abstract class FirErrorFunction : FirPureAbstractElement(), FirFunction<FirError
 
     abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
+    abstract override fun replaceBody(newBody: FirBlock?)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction

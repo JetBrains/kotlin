@@ -1,4 +1,4 @@
-public abstract interface SubclassOfMapEntry<K : R|ft<kotlin/Any, kotlin/Any?>!|, V : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/collections/MutableMap.MutableEntry<ft<K, K?>!, ft<V, V?>!>| {
-    public abstract operator fun setValue(value: R|ft<V, V?>!|): R|ft<V, V?>!|
+public abstract interface SubclassOfMapEntry<K : R|ft<kotlin/Any, kotlin/Any?>!|, V : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/collections/MutableMap.MutableEntry<ft<@FlexibleNullability K, K?>!, ft<@FlexibleNullability V, V?>!>| {
+    public abstract operator fun setValue(value: R|ft<@FlexibleNullability V, V?>!|): R|ft<@FlexibleNullability V, V?>!|
 
 }

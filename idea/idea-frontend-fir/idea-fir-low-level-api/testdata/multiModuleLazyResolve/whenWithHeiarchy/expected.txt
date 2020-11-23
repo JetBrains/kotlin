@@ -1,11 +1,11 @@
 FILE: main.kt
-    public final fun R|Y|.test(): R|kotlin/String?| {
-        lval a: R|kotlin/Int| = when (this@R|/test|) {
-            ($subj$ is R|F|) ->  {
-                Int(1)
+    public? final? fun Y.test(): String? {
+        lval a: <implicit> = when (this#) {
+            ($subj$ is F) ->  {
+                IntegerLiteral(1)
             }
-            ($subj$ is R|G|) ->  {
-                Int(2)
+            ($subj$ is G) ->  {
+                IntegerLiteral(2)
             }
             else ->  {
                 ^test Null(null)

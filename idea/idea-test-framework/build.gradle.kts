@@ -15,9 +15,7 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testCompile(commonDep("junit:junit"))
     testCompileOnly(intellijDep())
-    Platform[192].orHigher {
-        testCompileOnly(intellijPluginDep("java"))
-    }
+    testCompileOnly(intellijPluginDep("java"))
 }
 
 sourceSets {

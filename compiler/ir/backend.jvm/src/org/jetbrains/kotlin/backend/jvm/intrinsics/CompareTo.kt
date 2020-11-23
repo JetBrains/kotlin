@@ -135,49 +135,53 @@ class NonIEEE754FloatComparison(val op: IElementType, val a: MaterialValue, val 
 }
 
 class PrimitiveToObjectComparison(
-    val op: IElementType,
-    private val boxedValue: MaterialValue,
-    private val useNullCheck: Boolean,
-    private val primitiveType: Type,
-    private val loadOther: () -> MaterialValue,
-) : BooleanValue(boxedValue.codegen) {
-
-    override fun jumpIfFalse(target: Label) {
+    private val op: IElementType,
+    private val leftIsPrimitive: Boolean,
+    private val left: MaterialValue,
+    private val right: MaterialValue
+) : BooleanValue(left.codegen) {
+    private fun checkTypeAndCompare(onWrongType: Label): BooleanValue {
         val compareLabel = Label()
+        // If it's the left value that needs unboxing, it should be moved to the top of the stack. `AsmUtil.swap`
+        // is theoretically OK, but in practice breaks peephole optimization passes that unbox longs/doubles,
+        // so just storing in a variable is safer.
+        val tmp = if (leftIsPrimitive) -1 else codegen.frameMap.enterTemp(right.type).also { mv.store(it, right.type) }
         mv.dup()
-        if (useNullCheck) {
+        if (AsmUtil.isBoxedPrimitiveType(if (leftIsPrimitive) right.type else left.type)) {
             mv.ifnonnull(compareLabel)
         } else {
-            mv.instanceOf(AsmUtil.boxType(primitiveType))
+            mv.instanceOf(AsmUtil.boxType(if (leftIsPrimitive) left.type else right.type))
             mv.ifne(compareLabel)
         }
-        mv.pop()
-        mv.goTo(target)
+        // Type checking of the object failed, values are irrelevant now:
+        if (leftIsPrimitive) right.discard() // else it's already popped by `mv.store`
+        left.discard()
+        mv.goTo(onWrongType)
         mv.mark(compareLabel)
-        val unboxedValue = boxedValue.materializedAt(primitiveType, boxedValue.irType)
-        BooleanComparison(op, unboxedValue, loadOther()).jumpIfFalse(target)
+        // Type checking OK, can unbox and compare:
+        return if (leftIsPrimitive) {
+            BooleanComparison(op, left, right.materializedAt(left.type, right.irType))
+        } else {
+            val leftUnboxed = left.materializedAt(right.type, left.irType)
+            mv.load(tmp, right.type)
+            codegen.frameMap.leaveTemp(right.type)
+            BooleanComparison(op, leftUnboxed, right)
+        }
+    }
+
+    override fun jumpIfFalse(target: Label) {
+        checkTypeAndCompare(target).jumpIfFalse(target)
     }
 
     override fun jumpIfTrue(target: Label) {
-        val compareLabel = Label()
-        val endLabel = Label()
-        mv.dup()
-        if (useNullCheck) {
-            mv.ifnonnull(compareLabel)
-        } else {
-            mv.instanceOf(AsmUtil.boxType(primitiveType))
-            mv.ifne(compareLabel)
-        }
-        mv.pop()
-        mv.goTo(endLabel)
-        mv.mark(compareLabel)
-        val unboxedValue = boxedValue.materializedAt(primitiveType, boxedValue.irType)
-        BooleanComparison(op, unboxedValue, loadOther()).jumpIfTrue(target)
-        mv.mark(endLabel)
+        val wrongType = Label()
+        checkTypeAndCompare(wrongType).jumpIfTrue(target)
+        mv.mark(wrongType)
     }
 
     override fun discard() {
-        boxedValue.discard()
+        right.discard()
+        left.discard()
     }
 }
 

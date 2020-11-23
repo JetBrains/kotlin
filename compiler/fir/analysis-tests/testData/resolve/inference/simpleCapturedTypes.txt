@@ -19,9 +19,9 @@ FILE: simpleCapturedTypes.kt
             ^ this@R|/idP|
         }
     private final fun getSetterInfos(kc: R|KC<out Ann>|): R|kotlin/Unit| {
-        R|/id|<R|Ann|>(R|<local>/kc|).R|FakeOverride</KC.x: R|CapturedType(out Ann)|>|.R|/Ann.foo|()
-        R|<local>/kc|.R|/idR|<R|Ann|>().R|FakeOverride</KC.x: R|CapturedType(out Ann)|>|.R|/Ann.foo|()
-        R|<local>/kc|.R|/idP|<R|Ann|>.R|FakeOverride</KC.x: R|CapturedType(out Ann)|>|.R|/Ann.foo|()
+        R|/id|<R|Ann|>(R|<local>/kc|).R|SubstitutionOverride</KC.x: R|CapturedType(out Ann)|>|.R|/Ann.foo|()
+        R|<local>/kc|.R|/idR|<R|Ann|>().R|SubstitutionOverride</KC.x: R|CapturedType(out Ann)|>|.R|/Ann.foo|()
+        R|<local>/kc|.R|/idP|<R|Ann|>.R|SubstitutionOverride</KC.x: R|CapturedType(out Ann)|>|.R|/Ann.foo|()
         lval x1: R|KC<out Ann>| = R|/id|<R|Ann|>(R|<local>/kc|)
         lval x2: R|KC<out Ann>| = R|<local>/kc|.R|/idR|<R|Ann|>()
         lval x3: R|KC<out Ann>| = R|<local>/kc|.R|/idP|<R|Ann|>

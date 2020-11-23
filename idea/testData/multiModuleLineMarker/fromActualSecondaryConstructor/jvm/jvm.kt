@@ -1,5 +1,5 @@
-actual class <lineMarker>SecondaryConstructor</lineMarker> {
-    actual <lineMarker>constructor</lineMarker>(name: String, surname: String) {}
+actual class <!LINE_MARKER("descr='Has declaration in common module'")!>SecondaryConstructor<!> {
+    actual <!LINE_MARKER("descr='Has declaration in common module'")!>constructor<!>(name: String, surname: String) {}
 }
 
 

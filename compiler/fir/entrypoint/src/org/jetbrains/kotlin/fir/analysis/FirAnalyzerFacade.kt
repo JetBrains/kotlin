@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
+import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
@@ -28,12 +29,12 @@ import org.jetbrains.kotlin.psi.KtFile
 class FirAnalyzerFacade(val session: FirSession, val languageVersionSettings: LanguageVersionSettings, val ktFiles: List<KtFile>) {
     private var firFiles: List<FirFile>? = null
     private var scopeSession: ScopeSession? = null
-    private var collectedDiagnostics: List<FirDiagnostic<*>>? = null
+    private var collectedDiagnostics: Map<FirFile, List<FirDiagnostic<*>>>? = null
 
     private fun buildRawFir() {
         if (firFiles != null) return
         val firProvider = (session.firProvider as FirProviderImpl)
-        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
+        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
         firFiles = ktFiles.map {
             val firFile = builder.buildFirFile(it)
             firProvider.recordFile(firFile)
@@ -51,13 +52,13 @@ class FirAnalyzerFacade(val session: FirSession, val languageVersionSettings: La
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun runCheckers(): List<FirDiagnostic<*>> {
+    fun runCheckers(): Map<FirFile, List<FirDiagnostic<*>>> {
         if (scopeSession == null) runResolution()
         if (collectedDiagnostics != null) return collectedDiagnostics!!
         val collector = FirDiagnosticsCollector.create(session)
-        collectedDiagnostics = buildList {
+        collectedDiagnostics = buildMap {
             for (file in firFiles!!) {
-                addAll(collector.collectDiagnostics(file))
+                put(file, collector.collectDiagnostics(file))
             }
         }
         return collectedDiagnostics!!
@@ -71,7 +72,8 @@ class FirAnalyzerFacade(val session: FirSession, val languageVersionSettings: La
             session, scopeSession!!, firFiles!!,
             languageVersionSettings, signaturer,
             JvmGeneratorExtensions(generateFacades), FirJvmKotlinMangler(session), IrFactoryImpl,
-            FirJvmVisibilityConverter
+            FirJvmVisibilityConverter,
+            Fir2IrJvmSpecialAnnotationSymbolProvider()
         )
     }
 }

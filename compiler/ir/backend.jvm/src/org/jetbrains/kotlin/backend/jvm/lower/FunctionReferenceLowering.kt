@@ -54,7 +54,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
     // because they are also their own continuation classes.
     // TODO: Currently, origin of callable references explicitly written in source code is null. Do we need to create one?
     private fun IrFunctionReference.isSuspendFunctionReference(): Boolean = isSuspend &&
-            (origin == null || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
+            (origin == null || origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || origin == IrStatementOrigin.SUSPEND_CONVERSION)
 
     override fun lower(irFile: IrFile) {
         ignoredFunctionReferences.addAll(IrInlineReferenceLocator.scan(context, irFile))
@@ -366,12 +366,13 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private fun createInvokeMethod(receiverVar: IrValueDeclaration?): IrSimpleFunction =
             functionReferenceClass.addFunction {
                 setSourceRange(if (isLambda) callee else irFunctionReference)
-                name = if (callee.returnType.erasedUpperBound.isInline && context.state.functionsWithInlineClassReturnTypesMangled) {
-                    // For functions with inline class return type we need to mangle the invoke method.
-                    // Otherwise, bridge lowering may fail to generate bridges for inline class types erasing to Any.
-                    val suffix = InlineClassAbi.returnHashSuffix(callee)
-                    Name.identifier("${superMethod.owner.name.asString()}-${suffix}")
-                } else superMethod.owner.name
+                name =
+                    if (samSuperType == null && callee.returnType.erasedUpperBound.isInline && context.state.functionsWithInlineClassReturnTypesMangled) {
+                        // For functions with inline class return type we need to mangle the invoke method.
+                        // Otherwise, bridge lowering may fail to generate bridges for inline class types erasing to Any.
+                        val suffix = InlineClassAbi.hashReturnSuffix(callee)
+                        Name.identifier("${superMethod.owner.name.asString()}-${suffix}")
+                    } else superMethod.owner.name
                 returnType = callee.returnType
                 isSuspend = callee.isSuspend
             }.apply {
@@ -401,8 +402,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
             body = context.createJvmIrBuilder(symbol, startOffset, endOffset).run {
                 var unboundIndex = 0
                 irExprBody(irCall(callee).apply {
-                    for ((typeParameter, typeArgument) in typeArgumentsMap) {
-                        putTypeArgument(typeParameter.owner.index, typeArgument)
+                    for (typeParameter in irFunctionReference.symbol.owner.allTypeParameters) {
+                        putTypeArgument(typeParameter.index, typeArgumentsMap[typeParameter.symbol])
                     }
 
                     for (parameter in callee.explicitParameters) {
@@ -475,8 +476,12 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     0,
                     //don't pass receivers otherwise LocalDeclarationLowering will create additional captured parameters
                     IrFunctionReferenceImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target, 0, irFunctionReference.reflectionTarget, null
-                    )
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, irFunctionReference.type, target,
+                        irFunctionReference.typeArgumentsCount, target.owner.valueParameters.size,
+                        irFunctionReference.reflectionTarget, null
+                    ).apply {
+                        copyTypeArgumentsFrom(irFunctionReference)
+                    }
                 )
             }
 

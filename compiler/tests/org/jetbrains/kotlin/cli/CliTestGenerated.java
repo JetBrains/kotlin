@@ -425,6 +425,26 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/jdkPathDoesNotExist.args");
         }
 
+        @TestMetadata("jspecifyDefault.args")
+        public void testJspecifyDefault() throws Exception {
+            runTest("compiler/testData/cli/jvm/jspecifyDefault.args");
+        }
+
+        @TestMetadata("jspecifyIgnore.args")
+        public void testJspecifyIgnore() throws Exception {
+            runTest("compiler/testData/cli/jvm/jspecifyIgnore.args");
+        }
+
+        @TestMetadata("jspecifyStrict.args")
+        public void testJspecifyStrict() throws Exception {
+            runTest("compiler/testData/cli/jvm/jspecifyStrict.args");
+        }
+
+        @TestMetadata("jspecifyWarn.args")
+        public void testJspecifyWarn() throws Exception {
+            runTest("compiler/testData/cli/jvm/jspecifyWarn.args");
+        }
+
         @TestMetadata("jsr305AllIgnore.args")
         public void testJsr305AllIgnore() throws Exception {
             runTest("compiler/testData/cli/jvm/jsr305AllIgnore.args");

@@ -7,10 +7,10 @@ FILE: inLocalFunction.kt
      {
         [StubStatement]
         local final fun localFun(): R|kotlin/Unit| {
-            R|<local>/a|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
-            R|<local>/a|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            R|<local>/a|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            R|<local>/a|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
 
         R|<local>/localFun|()
-        R|<local>/b|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/b|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }

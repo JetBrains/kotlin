@@ -550,11 +550,17 @@ fun KtClassOrObject.defaultJavaAncestorQualifiedName(): String? {
 }
 
 fun KtClassOrObject.shouldNotBeVisibleAsLightClass(): Boolean {
+
+    if (containingFile is KtCodeFragment) {
+        // Avoid building light classes for code fragments
+        return true
+    }
+
     if (parentsWithSelf.filterIsInstance<KtClassOrObject>().any { it.hasExpectModifier() }) {
         return true
     }
 
-    if (safeIsLocal()) {
+    if (isLocal) {
         if (containingFile.virtualFile == null) return true
         if (hasParseErrorsAround(this) || PsiUtilCore.hasErrorElementChild(this)) return true
     }

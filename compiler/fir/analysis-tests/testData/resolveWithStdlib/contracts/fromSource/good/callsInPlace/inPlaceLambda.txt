@@ -8,7 +8,7 @@ FILE: inPlaceLambda.kt
         [StubStatement]
         when () {
             Boolean(true) ->  {
-                R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
             }
         }
 
@@ -20,9 +20,9 @@ FILE: inPlaceLambda.kt
         >
      {
         [StubStatement]
-        R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         R|/bar|(<L> = bar@fun <anonymous>(): R|kotlin/Unit| <kind=AT_MOST_ONCE>  {
-            R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
         )
     }

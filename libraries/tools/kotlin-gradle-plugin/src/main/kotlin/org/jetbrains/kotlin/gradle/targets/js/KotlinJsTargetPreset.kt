@@ -51,7 +51,9 @@ open class KotlinJsTargetPreset(
                     name.removeJsCompilerSuffix(KotlinJsCompilerType.LEGACY),
                     KotlinJsCompilerType.IR.lowerName
                 )
-            )
+            )?.also {
+                it.legacyTarget = this
+            }
             this.isMpp = this@KotlinJsTargetPreset.isMpp
 
             project.whenEvaluated {

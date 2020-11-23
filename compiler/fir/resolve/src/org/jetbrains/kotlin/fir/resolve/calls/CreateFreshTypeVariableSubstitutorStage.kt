@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.renderWithType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.TypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeDeclaredUpperBoundConstraintPosition
@@ -68,7 +69,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                         typeArgument.typeRef.coneType,
                         typeParameter,
                         context.session.inferenceComponents.ctx
-                    ),
+                    ).fullyExpandedType(context.session),
                     SimpleConstraintSystemConstraintPosition // TODO
                 )
                 is FirStarProjection -> csBuilder.addEqualityConstraint(

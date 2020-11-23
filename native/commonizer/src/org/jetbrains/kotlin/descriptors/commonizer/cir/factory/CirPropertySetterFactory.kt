@@ -12,13 +12,14 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertySetter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertySetterImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
 object CirPropertySetterFactory {
     private val interner = Interner<CirPropertySetter>()
 
     fun create(source: PropertySetterDescriptor): CirPropertySetter = create(
-        annotations = source.annotations.map(CirAnnotationFactory::create),
-        parameterAnnotations = source.valueParameters[0].annotations.map(CirAnnotationFactory::create),
+        annotations = source.annotations.compactMap(CirAnnotationFactory::create),
+        parameterAnnotations = source.valueParameters[0].annotations.compactMap(CirAnnotationFactory::create),
         visibility = source.visibility,
         isDefault = source.isDefault,
         isExternal = source.isExternal,
@@ -26,12 +27,12 @@ object CirPropertySetterFactory {
     )
 
     fun create(
-            annotations: List<CirAnnotation>,
-            parameterAnnotations: List<CirAnnotation>,
-            visibility: DescriptorVisibility,
-            isDefault: Boolean,
-            isExternal: Boolean,
-            isInline: Boolean
+        annotations: List<CirAnnotation>,
+        parameterAnnotations: List<CirAnnotation>,
+        visibility: DescriptorVisibility,
+        isDefault: Boolean,
+        isExternal: Boolean,
+        isInline: Boolean
     ): CirPropertySetter {
         return interner.intern(
             CirPropertySetterImpl(

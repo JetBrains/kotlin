@@ -153,6 +153,11 @@ public class WriteFlagsTestGenerated extends AbstractWriteFlagsTest {
             public void testSimpleFilePackageFacade() throws Exception {
                 runTest("compiler/testData/writeFlags/class/accessFlags/simpleFilePackageFacade.kt");
             }
+
+            @TestMetadata("syntheticFile.kt")
+            public void testSyntheticFile() throws Exception {
+                runTest("compiler/testData/writeFlags/class/accessFlags/syntheticFile.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/writeFlags/class/deprecatedFlag")

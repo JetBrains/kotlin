@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -37,7 +38,7 @@ private class RemoveDeclarationsThatWouldBeInlinedLowering(val context: JvmBacke
             override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
 
             override fun visitFunctionReference(expression: IrFunctionReference) {
-                if (expression.origin.isLambda || expression.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE) {
+                if (expression.origin.isInlineIrExpression()) {
                     loweredLambdasToDelete.add(expression.symbol.owner)
                 }
 

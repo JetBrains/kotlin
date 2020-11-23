@@ -129,7 +129,7 @@ enum class KotlinTestFramework(
                 MavenArtifact(DefaultRepository.MAVEN_CENTRAL, "org.junit.jupiter", "junit-jupiter-engine"),
                 version = Versions.JUNIT5,
                 dependencyType = DependencyType.TEST,
-                dependencyKind = "runtimeOnly"
+                dependencyKind = DependencyKind.runtimeOnly
             ),
         )
     ),

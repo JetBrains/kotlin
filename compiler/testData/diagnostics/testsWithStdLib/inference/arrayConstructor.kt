@@ -3,6 +3,8 @@
 
 package b
 
+import checkSubtype
+
 fun bar() {
     val a1 = Array(1, {i: Int -> i})
     val a2 = Array(1, {i: Int -> "$i"})

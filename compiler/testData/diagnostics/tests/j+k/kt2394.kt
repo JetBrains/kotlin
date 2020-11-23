@@ -4,6 +4,8 @@
 //KT-2394 java.lang.Iterable<T> should be visible as kotlin.Iterable<out T>
 package d
 
+import checkSubtype
+
 fun foo(iterable: Iterable<Int>, iterator: Iterator<Int>, comparable: Comparable<Any>) {
     checkSubtype<Iterable<Any>>(iterable)
     checkSubtype<Iterator<Any>>(iterator)

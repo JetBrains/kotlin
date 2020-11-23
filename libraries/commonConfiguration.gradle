@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 ext.configureJavaOnlyJvm6Project = { Project project ->
     project.tasks.withType(JavaCompile) {
         sourceCompatibility = 1.6
@@ -190,6 +192,19 @@ ext.configureLegacyPublishing = { Project project ->
         }
 
         task publish(dependsOn: uploadArchives)
+    }
+}
+
+ext.configureJvmIrBackend = { Project project ->
+    project.tasks.withType(KotlinCompile.class) { task ->
+        task.kotlinOptions {
+            if (project.kotlinBuildProperties.useIRForLibraries) {
+                useIR = true
+                freeCompilerArgs += ["-Xir-binary-with-stable-abi"]
+            } else {
+                useIR = false
+            }
+        }
     }
 }
 

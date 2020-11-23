@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -20,8 +17,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
 import org.jetbrains.kotlin.backend.jvm.ir.isInCurrentModule
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -79,9 +76,9 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
                         returnType = jvmStaticFunction.returnType
                     }.apply {
                         copyTypeParametersFrom(jvmStaticFunction)
+                        copyAnnotationsFrom(jvmStaticFunction)
                         extensionReceiverParameter = jvmStaticFunction.extensionReceiverParameter?.copyTo(this)
                         valueParameters = jvmStaticFunction.valueParameters.map { it.copyTo(this) }
-                        annotations = jvmStaticFunction.annotations.map { it.deepCopyWithSymbols() }
                     }
                     companion.declarations.remove(jvmStaticFunction)
                     companion.addProxy(staticExternal, companion, isStatic = false)
@@ -106,12 +103,12 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
             isSuspend = target.isSuspend
         }.apply {
             copyTypeParametersFrom(target)
+            copyAnnotationsFrom(target)
             if (!isStatic) {
                 dispatchReceiverParameter = thisReceiver?.copyTo(this, type = defaultType)
             }
             extensionReceiverParameter = target.extensionReceiverParameter?.copyTo(this)
             valueParameters = target.valueParameters.map { it.copyTo(this) }
-            annotations = target.annotations.map { it.deepCopyWithSymbols() }
 
             val proxy = this
             val companionInstanceField = context.cachedDeclarations.getFieldForObjectInstance(companion)
@@ -130,36 +127,62 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
         }
 }
 
-private class SingletonObjectJvmStaticLowering(
-    val context: JvmBackendContext
-) : ClassLoweringPass {
+private class SingletonObjectJvmStaticLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (!irClass.isObject || irClass.isCompanion) return
 
-        irClass.declarations.filter(::isJvmStaticFunction).forEach {
-            val jvmStaticFunction = it as IrSimpleFunction
+        val jvmStaticFunctionsToReplace = irClass.declarations.filter {
             // dispatch receiver parameter is already null for synthetic property annotation methods
-            jvmStaticFunction.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
-                jvmStaticFunction.dispatchReceiverParameter = null
-                jvmStaticFunction.body = jvmStaticFunction.body?.replaceThisByStaticReference(
-                    context.cachedDeclarations,
-                    irClass,
-                    oldDispatchReceiverParameter
-                )
-            }
+            isJvmStaticFunction(it) && it is IrSimpleFunction && it.dispatchReceiverParameter != null
+        }
+        jvmStaticFunctionsToReplace.forEach { function ->
+            val replacement = createReplacement(context, function as IrSimpleFunction)
+            // Set dispatch receiver parameter for body move operation.
+            replacement.dispatchReceiverParameter = function.dispatchReceiverParameter
+            replacement.body = function.moveBodyTo(replacement)?.replaceThisByStaticReference(
+                context.cachedDeclarations,
+                irClass,
+                function.dispatchReceiverParameter!!
+            )
+            // Clear dispatch receiver parameter again after body move operation.
+            replacement.dispatchReceiverParameter = null
+            irClass.declarations.remove(function)
+            irClass.declarations.add(replacement)
         }
     }
-
 }
+
+private fun createReplacement(
+    context: JvmBackendContext,
+    jvmStaticFunction: IrSimpleFunction
+): IrSimpleFunction =
+    context.jvmStaticObjectFunctionToStaticFunctionMap.getOrPut(jvmStaticFunction) {
+        val irClass = jvmStaticFunction.parentAsClass
+        val newFunction = context.irFactory.buildFun {
+            updateFrom(jvmStaticFunction)
+            name = jvmStaticFunction.name
+            returnType = jvmStaticFunction.returnType
+        }.apply {
+            parent = irClass
+            copyTypeParametersFrom(jvmStaticFunction)
+            copyAnnotationsFrom(jvmStaticFunction)
+            extensionReceiverParameter = jvmStaticFunction.extensionReceiverParameter?.copyTo(this)
+            valueParameters = jvmStaticFunction.valueParameters.map { it.copyTo(this) }
+            copyAttributes(jvmStaticFunction)
+            copyCorrespondingPropertyFrom(jvmStaticFunction)
+            metadata = jvmStaticFunction.metadata
+        }
+        context.jvmStaticObjectFunctionToStaticFunctionMap[jvmStaticFunction] = newFunction
+        newFunction
+    }
+
 
 private fun IrFunction.isJvmStaticInSingleton(): Boolean {
     val parentClass = parent as? IrClass ?: return false
     return isJvmStaticFunction(this) && parentClass.isObject && !parentClass.isCompanion
 }
 
-private class MakeCallsStatic(
-    val context: JvmBackendContext
-) : IrElementTransformerVoid() {
+private class MakeCallsStatic(val context: JvmBackendContext) : IrElementTransformerVoid() {
     override fun visitCall(expression: IrCall): IrExpression {
         if (expression.symbol.owner.isJvmStaticInSingleton() && expression.dispatchReceiver != null) {
             // Imported functions do not have their receiver parameter nulled by SingletonObjectJvmStaticLowering,
@@ -168,7 +191,9 @@ private class MakeCallsStatic(
             val callee = expression.symbol.owner
             val newCallee = if (!callee.isInCurrentModule()) {
                 callee.copyRemovingDispatchReceiver()       // TODO: cache these
-            } else callee
+            } else {
+                createReplacement(context, callee)
+            }
 
             return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
                 // OldReceiver has to be evaluated for its side effects.

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.caches.trackers
 
 import com.intellij.lang.ASTNode
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
@@ -27,6 +28,8 @@ import com.intellij.psi.impl.PsiTreeChangeEventImpl.PsiEventType.PROPERTY_CHANGE
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
 import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.analyzer.ModuleDescriptorListener
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
@@ -38,8 +41,7 @@ val KOTLIN_CONSOLE_KEY = Key.create<Boolean>("kotlin.console")
 /**
  * Tested in OutOfBlockModificationTestGenerated
  */
-// FIX ME WHEN BUNCH 193 REMOVED
-abstract class KotlinCodeBlockModificationListenerCompat(protected val project: Project) : PsiTreeChangePreprocessor {
+abstract class KotlinCodeBlockModificationListenerCompat(protected val project: Project) : PsiTreeChangePreprocessor, Disposable {
     protected val modificationTrackerImpl: PsiModificationTrackerImpl =
         PsiModificationTracker.SERVICE.getInstance(project) as PsiModificationTrackerImpl
 
@@ -62,7 +64,7 @@ abstract class KotlinCodeBlockModificationListenerCompat(protected val project: 
         kotlinOutOfCodeBlockTrackerImpl = kotlinOutOfCodeBlockTrackerProducer()
         kotlinOutOfCodeBlockTracker = kotlinOutOfCodeBlockTrackerImpl
         val model = PomManager.getModel(project)
-        val messageBusConnection = project.messageBus.connect(project)
+        val messageBusConnection = project.messageBus.connect(this)
         model.addModelListener(object : PomModelListener {
             override fun isAspectChangeInteresting(aspect: PomModelAspect): Boolean {
                 return aspect == treeAspect
@@ -125,6 +127,10 @@ abstract class KotlinCodeBlockModificationListenerCompat(protected val project: 
         }
     }
 
+    override fun dispose() {
+        kotlinOutOfCodeBlockTrackerImpl.incModificationCount()
+    }
+
     companion object {
         private fun isReplLine(file: VirtualFile): Boolean {
             return file.getUserData(KOTLIN_CONSOLE_KEY) == true
@@ -176,7 +182,7 @@ abstract class KotlinCodeBlockModificationListenerCompat(protected val project: 
             // dirty scope for whitespaces and comments is the element itself
             if (element is PsiWhiteSpace || element is PsiComment || element is KDoc) return element
 
-            return getInsideCodeBlockModificationScope(element)?.blockDeclaration ?: null
+            return getInsideCodeBlockModificationScope(element)?.blockDeclaration
         }
 
         fun getInsideCodeBlockModificationScope(element: PsiElement): BlockModificationScopeElement? {
@@ -267,7 +273,7 @@ abstract class KotlinCodeBlockModificationListenerCompat(protected val project: 
 
                 is KtSecondaryConstructor -> {
                     blockDeclaration
-                        ?.takeIf {
+                        .takeIf {
                             it.bodyExpression?.isAncestor(element) ?: false || it.getDelegationCallOrNull()?.isAncestor(element) ?: false
                         }?.let { ktConstructor ->
                             PsiTreeUtil.getParentOfType(blockDeclaration, KtClassOrObject::class.java)?.let {

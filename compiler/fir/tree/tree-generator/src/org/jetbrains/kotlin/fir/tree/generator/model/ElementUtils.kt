@@ -92,4 +92,8 @@ fun Field.withTransform(needTransformInOtherChildren: Boolean = false): Field = 
     this.needTransformInOtherChildren = needTransformInOtherChildren
 }
 
+fun Field.withReplace(): Field = copy().apply {
+    withReplace = true
+}
+
 fun FieldSet.withTransform(): FieldSet = this.map { it.withTransform() }

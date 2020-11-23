@@ -42,4 +42,4 @@ internal class FieldCarrierImpl(
     override var initializerField: IrExpressionBody?,
     override var correspondingPropertySymbolField: IrPropertySymbol?,
     override var metadataField: MetadataSource?
-): FieldCarrier
+) : FieldCarrier

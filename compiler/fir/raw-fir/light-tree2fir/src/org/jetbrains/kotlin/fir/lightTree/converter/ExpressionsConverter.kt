@@ -665,18 +665,21 @@ class ExpressionsConverter(
                     if (hasSubject) {
                         val firCondition = entry.toFirWhenCondition()
                         buildWhenBranch {
+                            source = branch.source
                             condition = firCondition
                             result = branch 
                         }
                     } else {
                         val firCondition = entry.toFirWhenConditionWithoutSubject()
                         buildWhenBranch {
+                            source = branch.source
                             condition = firCondition
                             result = branch
                         }
                     }
                 } else {
                     buildWhenBranch {
+                        source = branch.source
                         condition = buildElseIfTrueCondition()
                         result = branch
                     }

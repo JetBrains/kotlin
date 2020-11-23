@@ -35,10 +35,10 @@ FILE: delegateTypeMismatch.kt
 
         public final var classifierNamePolicy: R|ClassifierNamePolicy|by this@R|/A|.R|/A.property|<R|ClassifierNamePolicy|>(Q|ClassifierNamePolicy.SOURCE_CODE_QUALIFIED|)
             public get(): R|ClassifierNamePolicy| {
-                ^ this@R|/A|.D|/A.classifierNamePolicy|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|ClassifierNamePolicy|>|(this@R|/A|, ::R|/A.classifierNamePolicy|)
+                ^ this@R|/A|.D|/A.classifierNamePolicy|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|ClassifierNamePolicy|>|(this@R|/A|, ::R|/A.classifierNamePolicy|)
             }
             public set(<set-?>: R|ClassifierNamePolicy|): R|kotlin/Unit| {
-                this@R|/A|.D|/A.classifierNamePolicy|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.classifierNamePolicy|, R|<local>/classifierNamePolicy|)
+                this@R|/A|.D|/A.classifierNamePolicy|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.classifierNamePolicy|, R|<local>/classifierNamePolicy|)
             }
 
         public final var typeNormalizer: R|(KotlinType) -> KotlinType|by this@R|/A|.R|/A.property|<R|(KotlinType) -> KotlinType|>(property@fun <anonymous>(it: R|KotlinType|): R|KotlinType| {
@@ -46,10 +46,10 @@ FILE: delegateTypeMismatch.kt
         }
         )
             public get(): R|(KotlinType) -> KotlinType| {
-                ^ this@R|/A|.D|/A.typeNormalizer|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|(KotlinType) -> KotlinType|>|(this@R|/A|, ::R|/A.typeNormalizer|)
+                ^ this@R|/A|.D|/A.typeNormalizer|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|(KotlinType) -> KotlinType|>|(this@R|/A|, ::R|/A.typeNormalizer|)
             }
             public set(<set-?>: R|(KotlinType) -> KotlinType|): R|kotlin/Unit| {
-                this@R|/A|.D|/A.typeNormalizer|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.typeNormalizer|, R|<local>/typeNormalizer|)
+                this@R|/A|.D|/A.typeNormalizer|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.typeNormalizer|, R|<local>/typeNormalizer|)
             }
 
     }

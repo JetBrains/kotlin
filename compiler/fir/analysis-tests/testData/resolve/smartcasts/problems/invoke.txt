@@ -2,11 +2,11 @@ FILE: invoke.kt
     public final fun R|kotlin/Any|.withInvoke(f: R|kotlin/String.() -> kotlin/Unit|): R|kotlin/Unit| {
         when () {
             (this@R|/withInvoke| is R|kotlin/String|) ->  {
-                R|<local>/f|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/withInvoke|)
+                R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/withInvoke|)
             }
         }
 
     }
     public final fun R|kotlin/String|.withInvoke(f: R|kotlin/String.() -> kotlin/Unit|): R|kotlin/Unit| {
-        R|<local>/f|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/withInvoke|)
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/withInvoke|)
     }

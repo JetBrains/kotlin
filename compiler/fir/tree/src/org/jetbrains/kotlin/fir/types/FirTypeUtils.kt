@@ -87,16 +87,19 @@ fun ConeClassLikeType.toConstKind(): FirConstKind<*>? = when (lookupTag.classId)
     else -> null
 }
 
-fun List<FirAnnotationCall>.computeTypeAttributes(): ConeAttributes {
+fun List<FirAnnotationCall>.computeTypeAttributes(
+    additionalProcessor: MutableList<ConeAttribute<*>>.(ClassId) -> Unit = {}
+): ConeAttributes {
     if (this.isEmpty()) return ConeAttributes.Empty
     val attributes = mutableListOf<ConeAttribute<*>>()
     for (annotation in this) {
         val type = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>() ?: continue
-        when (type.lookupTag.classId) {
+        when (val classId = type.lookupTag.classId) {
             CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact
             CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
             CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.ExtensionFunctionType
             CompilerConeAttributes.UnsafeVariance.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.UnsafeVariance
+            else -> additionalProcessor.invoke(attributes, classId)
         }
     }
     return ConeAttributes.create(attributes)
@@ -135,3 +138,21 @@ private fun ConeTypeParameterType.hasNotNullUpperBound(): Boolean {
         }
     }
 }
+
+val FirTypeRef.canBeNull: Boolean
+    // TODO: replace with coneType (for some reason, implicit type still can arise here)
+    get() = coneTypeSafe<ConeKotlinType>()?.canBeNull == true
+
+val ConeKotlinType.canBeNull: Boolean
+    get() {
+        if (isMarkedNullable) {
+            return true
+        }
+        return when (this) {
+            is ConeFlexibleType -> upperBound.canBeNull
+            is ConeDefinitelyNotNullType -> false
+            is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.fir.bounds.any { it.canBeNull }
+            is ConeIntersectionType -> intersectedTypes.any { it.canBeNull }
+            else -> isNullable
+        }
+    }

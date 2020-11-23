@@ -80,7 +80,7 @@ class IrBuiltIns(
                 val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
                 irFactory.createValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, valueParameterSymbol, Name.identifier("arg$i"), i,
-                    valueParameterType, null, isCrossinline = false, isNoinline = false
+                    valueParameterType, null, isCrossinline = false, isNoinline = false, isAssignable = false
                 ).apply {
                     parent = operator
                 }
@@ -165,7 +165,7 @@ class IrBuiltIns(
             val valueParameterSymbol = IrValueParameterSymbolImpl(valueParameterDescriptor)
             val valueParameter = irFactory.createValueParameter(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, BUILTIN_OPERATOR, valueParameterSymbol, Name.identifier("arg0"), 0,
-                valueIrType, null, isCrossinline = false, isNoinline = false
+                valueIrType, null, isCrossinline = false, isNoinline = false, isAssignable = false
             )
 
             valueParameter.parent = operator

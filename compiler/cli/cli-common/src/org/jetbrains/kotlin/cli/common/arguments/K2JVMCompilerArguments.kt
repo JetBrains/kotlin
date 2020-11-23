@@ -71,7 +71,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
-        description = "Target version of the generated JVM bytecode (1.6, 1.8, 9, 10, 11, 12, 13 or 14), default is 1.6"
+        description = "Target version of the generated JVM bytecode (1.6, 1.8, 9, 10, 11, 12, 13, 14 or 15), default is 1.6"
     )
     var jvmTarget: String? by NullableStringFreezableVar(JvmTarget.DEFAULT.description)
 
@@ -107,6 +107,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                 "The author is responsible for verifying that the resulting binaries do indeed have the correct ABI"
     )
     var isIrWithStableAbi: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xir-do-not-clear-binding-context",
+        description = "When using the IR backend, do not clear BindingContext between psi2ir and lowerings"
+    )
+    var doNotClearBindingContext: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
     var javaModulePath: String? by NullableStringFreezableVar(null)
@@ -264,6 +270,14 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var supportCompatqualCheckerFrameworkAnnotations: String? by NullableStringFreezableVar(null)
 
     @Argument(
+        value = "-Xjspecify-annotations",
+        valueDescription = "ignore|strict|warn",
+        description = "Specify behavior for jspecify annotations.\n" +
+                "Default value is 'warn'"
+    )
+    var jspecifyAnnotations: String? by FreezableVar(null)
+
+    @Argument(
         value = "-Xno-exception-on-explicit-equals-for-boxed-null",
         description = "Do not throw NPE on explicit 'equals' call for null receiver of platform boxed primitive type"
     )
@@ -335,14 +349,14 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var emitJvmTypeAnnotations: Boolean by FreezableVar(false)
 
     @Argument(
-        value = "-Xruntime-string-concat",
-        valueDescription = "{disable|enable|indy}",
+        value = "-Xstring-concat",
+        valueDescription = "{indy-with-constants|indy|inline}",
         description = """Switch a way in which string concatenation is performed.
--Xruntime-string-concat=enable          Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater  
--Xruntime-string-concat=indy            Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater                                 
--Xruntime-string-concat=disable         Performs string concatenation via `StringBuilder`"""
+-Xstring-concat=indy-with-constants   Performs string concatenation via `invokedynamic` 'makeConcatWithConstants'. Works only with `-jvm-target 9` or greater
+-Xstring-concat=indy                Performs string concatenation via `invokedynamic` 'makeConcat'. Works only with `-jvm-target 9` or greater
+-Xstring-concat=inline              Performs string concatenation via `StringBuilder`"""
     )
-    var runtimeStringConcat: String? by NullableStringFreezableVar(JvmRuntimeStringConcat.DISABLE.name.toLowerCase())
+    var stringConcat: String? by NullableStringFreezableVar(JvmStringConcat.INLINE.description)
 
     @Argument(
         value = "-Xklib",
@@ -362,6 +376,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         description = "Do not use KotlinNothingValueException available since 1.4"
     )
     var noKotlinNothingValueException: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xno-reset-jar-timestamps",
+        description = "Do not reset jar entry timestamps to a fixed date"
+    )
+    var noResetJarTimestamps: Boolean by FreezableVar(false)
 
     @Argument(
         value = "-Xno-unified-null-checks",
@@ -392,12 +412,19 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var useOldSpilledVarTypeAnalysis: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xuse-14-inline-classes-mangling-scheme",
+        description = "Use 1.4 inline classes mangling scheme instead of 1.4.30 one"
+    )
+    var useOldInlineClassesManglingScheme: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
-        result[JvmAnalysisFlags.jsr305] = Jsr305Parser(collector).parse(
+        result[JvmAnalysisFlags.javaTypeEnhancementState] = JavaTypeEnhancementStateParser(collector).parse(
             jsr305,
-            supportCompatqualCheckerFrameworkAnnotations
+            supportCompatqualCheckerFrameworkAnnotations,
+            jspecifyAnnotations
         )
         result[AnalysisFlags.ignoreDataFlowInAssert] = JVMAssertionsMode.fromString(assertionsMode) != JVMAssertionsMode.LEGACY
         JvmDefaultMode.fromStringOrNull(jvmDefault)?.let {

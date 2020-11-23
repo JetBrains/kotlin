@@ -9,6 +9,7 @@ import com.intellij.codeInsight.completion.*
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.patterns.PsiJavaPatterns
 import com.intellij.util.ProcessingContext
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.getAnalysisSessionFor
@@ -71,9 +72,16 @@ private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatch
         lookupElementFactory.createLookupElement(symbol)?.let(::addElement)
     }
 
+    private fun recordOriginalFile(completionParameters: CompletionParameters) {
+        val originalFile = completionParameters.originalFile as? KtFile ?: return
+        val fakeFile = completionParameters.position.containingFile as? KtFile ?: return
+        fakeFile.originalKtFile = originalFile
+    }
+
     @OptIn(InvalidWayOfUsingAnalysisSession::class)
     fun addCompletions(parameters: CompletionParameters, result: CompletionResultSet) {
         val originalFile = parameters.originalFile as? KtFile ?: return
+        recordOriginalFile(parameters)
 
         val reference = (parameters.position.parent as? KtSimpleNameExpression)?.mainReference ?: return
         val nameExpression = reference.expression.takeIf { it !is KtLabelReferenceExpression } ?: return

@@ -1,5 +1,5 @@
 public/*package*/ open class AnnotatedTypeInFun : R|kotlin/Any| {
-    public/*package*/ open fun foo(@R|test/AnnotatedTypeInFun.Anno|(String(a)) a: @R|test/AnnotatedTypeInFun.Anno|(String(a)) R|ft<kotlin/String, kotlin/String?>!|, @R|test/AnnotatedTypeInFun.Anno|(String(b)) b: @R|test/AnnotatedTypeInFun.Anno|(String(b)) R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
+    public/*package*/ open fun foo(@R|test/AnnotatedTypeInFun.Anno|(String(a)) a: @R|test/AnnotatedTypeInFun.Anno|(String(a)) R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|, @R|test/AnnotatedTypeInFun.Anno|(String(b)) b: @R|test/AnnotatedTypeInFun.Anno|(String(b)) R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
 
     public/*package*/ constructor(): R|test/AnnotatedTypeInFun|
 

@@ -260,7 +260,12 @@ private fun argumentTypeWithSuspendConversion(
     // We want to check the argument type against non-suspend functional type.
     val expectedFunctionalType = expectedType.suspendFunctionTypeToFunctionType(session)
     if (argumentType.isSubtypeOfFunctionalType(session, expectedFunctionalType)) {
-        return argumentType.findContributedInvokeSymbol(session, scopeSession, expectedFunctionalType)?.let { invokeSymbol ->
+        return argumentType.findContributedInvokeSymbol(
+            session,
+            scopeSession,
+            expectedFunctionalType,
+            shouldCalculateReturnTypesOfFakeOverrides = false
+        )?.let { invokeSymbol ->
             createFunctionalType(
                 invokeSymbol.fir.valueParameters.map { it.returnTypeRef.coneType },
                 null,
@@ -360,7 +365,7 @@ private fun Candidate.prepareExpectedType(
     context: ResolutionContext
 ): ConeKotlinType? {
     if (parameter == null) return null
-    val basicExpectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
+    val basicExpectedType = argument.getExpectedTypeForSAMConversion(parameter/*, LanguageVersionSettings*/)
     val expectedType = getExpectedTypeWithSAMConversion(session, argument, basicExpectedType, context) ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
 }
@@ -391,8 +396,7 @@ fun FirExpression.isFunctional(session: FirSession): Boolean =
         else -> typeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true
     }
 
-internal fun FirExpression.getExpectedType(
-    session: FirSession,
+fun FirExpression.getExpectedTypeForSAMConversion(
     parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/
 ): ConeKotlinType {
     val shouldUnwrapVarargType = when (this) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.jvm
 
+import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractConeCallConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -31,10 +32,10 @@ class ConeEquivalentCallConflictResolver(
         val result = mutableSetOf<Candidate>()
         outerLoop@ for (myCandidate in candidates) {
             val me = myCandidate.symbol.fir
-            if (me is FirCallableMemberDeclaration<*> && me.symbol.callableId.className == null) {
+            if (me is FirCallableMemberDeclaration<*> && me.symbol.containingClass() == null) {
                 for (otherCandidate in result) {
                     val other = otherCandidate.symbol.fir
-                    if (other is FirCallableMemberDeclaration<*> && other.symbol.callableId.className == null) {
+                    if (other is FirCallableMemberDeclaration<*> && other.symbol.containingClass() == null) {
                         if (areEquivalentTopLevelCallables(me, myCandidate, other, otherCandidate)) {
                             continue@outerLoop
                         }

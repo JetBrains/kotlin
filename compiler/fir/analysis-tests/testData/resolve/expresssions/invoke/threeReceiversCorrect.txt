@@ -23,18 +23,18 @@ FILE: threeReceiversCorrect.kt
 
     }
     public final fun <T, R> with(arg: R|T|, f: R|T.() -> R|): R|R| {
-        ^with R|<local>/f|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/arg|)
+        ^with R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/arg|)
     }
     public final fun test(a: R|A|, b: R|B|, c: R|C|): R|kotlin/Unit| {
         R|/with|<R|A|, R|kotlin/Unit|>(R|<local>/a|, <L> = with@fun R|A|.<anonymous>(): R|kotlin/Unit| {
             R|/with|<R|C|, R|kotlin/Unit|>(R|<local>/c|, <L> = with@fun R|C|.<anonymous>(): R|kotlin/Unit| {
-                (this@R|special/anonymous|, R|<local>/b|).R|/A.foo|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/c|)
+                (this@R|special/anonymous|, R|<local>/b|).R|/A.foo|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/c|)
             }
             )
             ^ R|/with|<R|B|, R|kotlin/Unit|>(R|<local>/b|, <L> = with@fun R|B|.<anonymous>(): R|kotlin/Unit| {
-                (this@R|special/anonymous|, this@R|special/anonymous|).R|/A.foo|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/c|)
+                (this@R|special/anonymous|, this@R|special/anonymous|).R|/A.foo|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/c|)
                 ^ R|/with|<R|C|, R|kotlin/Unit|>(R|<local>/c|, <L> = with@fun R|C|.<anonymous>(): R|kotlin/Unit| {
-                    (this@R|special/anonymous|, this@R|special/anonymous|).R|/A.foo|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|special/anonymous|)
+                    (this@R|special/anonymous|, this@R|special/anonymous|).R|/A.foo|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|special/anonymous|)
                 }
                 )
             }

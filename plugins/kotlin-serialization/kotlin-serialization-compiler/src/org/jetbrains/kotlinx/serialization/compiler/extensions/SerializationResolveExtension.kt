@@ -34,7 +34,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations.serialInfoFqName
 import java.util.*
 
-open class SerializationResolveExtension : SyntheticResolveExtension {
+open class SerializationResolveExtension @JvmOverloads constructor(val metadataPlugin: SerializationDescriptorSerializerPlugin? = null) : SyntheticResolveExtension {
     override fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = when {
         thisDescriptor.annotations.hasAnnotation(serialInfoFqName) && thisDescriptor.platform?.isJvm() == true -> listOf(SerialEntityNames.IMPL_NAME)
         (thisDescriptor.shouldHaveGeneratedSerializer) && !thisDescriptor.hasCompanionObjectAsSerializer ->
@@ -87,7 +87,7 @@ open class SerializationResolveExtension : SyntheticResolveExtension {
         if (thisDescriptor.isInternalSerializable) {
             // do not add synthetic deserialization constructor if .deserialize method is customized
             if (thisDescriptor.hasCompanionObjectAsSerializer && SerializerCodegen.getSyntheticLoadMember(thisDescriptor.companionObjectDescriptor!!) == null) return
-            result.add(KSerializerDescriptorResolver.createLoadConstructorDescriptor(thisDescriptor, bindingContext))
+            result.add(KSerializerDescriptorResolver.createLoadConstructorDescriptor(thisDescriptor, bindingContext, metadataPlugin))
         }
     }
 

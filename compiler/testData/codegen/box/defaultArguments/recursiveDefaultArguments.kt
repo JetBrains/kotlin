@@ -1,4 +1,6 @@
-// IGNORE_BACKEND: JS, JS_IR
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: IGNORED_IN_JS
+// IGNORE_BACKEND: JS
 @Suppress("RECURSION_IN_INLINE")
 inline fun test(p: String = test("OK")): String {
     return p

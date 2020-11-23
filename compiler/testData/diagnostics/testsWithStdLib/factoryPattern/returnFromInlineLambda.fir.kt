@@ -25,10 +25,10 @@ inline fun <T, R> Array<out T>.myFlatMap(transform: (T) -> Sequence<R>): List<R>
 fun String.toList(): List<String> = null!!
 
 fun test_1(a: Array<String>, b: Boolean) {
-    a.<!AMBIGUITY!>myFlatMap<!> { <!UNRESOLVED_REFERENCE!>it<!>.toList().ifEmpty { return } }
-    a.<!AMBIGUITY!>myFlatMap<!> {
+    a.myFlatMap { it.toList().ifEmpty { return } }
+    a.myFlatMap {
         if (b) return
-        <!UNRESOLVED_REFERENCE!>it<!>.toList()
+        it.toList()
     }
 }
 
@@ -43,9 +43,9 @@ fun <T, R> Array<out T>.noInlineFlatMap(transform: (T) -> Sequence<R>): List<R> 
 }
 
 fun test_2(a: Array<String>, b: Boolean) {
-    a.<!AMBIGUITY!>noInlineFlatMap<!> { <!UNRESOLVED_REFERENCE!>it<!>.toList().ifEmpty { return } }
-    a.<!AMBIGUITY!>noInlineFlatMap<!> {
+    a.noInlineFlatMap { it.toList().ifEmpty { return } }
+    a.noInlineFlatMap {
         if (b) return
-        <!UNRESOLVED_REFERENCE!>it<!>.toList()
+        it.toList()
     }
 }

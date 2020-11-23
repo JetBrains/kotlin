@@ -20,6 +20,8 @@ import com.intellij.openapi.application.ApplicationManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class PluginStartupApplicationService {
 
@@ -32,9 +34,9 @@ public class PluginStartupApplicationService {
     public synchronized String getAliveFlagPath() {
         if (this.aliveFlagPath == null) {
             try {
-                File flagFile = File.createTempFile("kotlin-idea-", "-is-running");
-                flagFile.deleteOnExit();
-                this.aliveFlagPath = flagFile.getAbsolutePath();
+                Path flagFile = Files.createTempFile("kotlin-idea-", "-is-running");
+                flagFile.toFile().deleteOnExit();
+                this.aliveFlagPath = flagFile.toAbsolutePath().toString();
             }
             catch (IOException e) {
                 this.aliveFlagPath = "";

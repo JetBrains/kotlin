@@ -1,6 +1,6 @@
 FILE: extensionGenericGetValue.kt
     public final inline fun <L> runLogged(action: R|() -> L|): R|L| {
-        ^runLogged R|<local>/action|.R|FakeOverride<kotlin/Function0.invoke: R|L|>|()
+        ^runLogged R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|L|>|()
     }
     public final operator fun <V> R|V|.getValue(receiver: R|kotlin/Any?|, p: R|kotlin/Any|): R|V| {
         ^getValue R|/runLogged|<R|V|>(<L> = runLogged@fun <anonymous>(): R|V| <kind=UNKNOWN>  {

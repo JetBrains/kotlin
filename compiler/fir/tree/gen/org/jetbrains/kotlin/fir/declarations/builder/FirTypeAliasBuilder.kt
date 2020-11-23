@@ -35,6 +35,7 @@ class FirTypeAliasBuilder : FirTypeParametersOwnerBuilder, FirAnnotationContaine
     lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     lateinit var origin: FirDeclarationOrigin
+    var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var status: FirDeclarationStatus
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     lateinit var name: Name
@@ -48,6 +49,7 @@ class FirTypeAliasBuilder : FirTypeParametersOwnerBuilder, FirAnnotationContaine
             session,
             resolvePhase,
             origin,
+            attributes,
             status,
             typeParameters,
             name,

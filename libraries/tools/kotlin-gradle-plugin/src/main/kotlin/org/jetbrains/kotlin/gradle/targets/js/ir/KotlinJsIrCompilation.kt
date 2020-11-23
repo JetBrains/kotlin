@@ -9,12 +9,15 @@ import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 class KotlinJsIrCompilation(
     target: KotlinTarget,
     name: String
 ) : KotlinJsCompilation(target, name) {
+
+    override val externalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.SOURCE
 
     internal val allSources: MutableSet<SourceDirectorySet> = mutableSetOf()
 

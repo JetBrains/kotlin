@@ -4,6 +4,7 @@ package i
 
 //+JDK
 import java.util.*
+import checkSubtype
 
 fun <T, R> Collection<T>.map1(<!UNUSED_PARAMETER!>f<!> : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun <T, R> <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Iterable<T><!>.map1(<!UNUSED_PARAMETER!>f<!> : (T) -> R) : List<R> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

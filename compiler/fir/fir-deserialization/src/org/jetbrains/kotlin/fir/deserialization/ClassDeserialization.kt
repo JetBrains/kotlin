@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeAttributes
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -161,6 +162,8 @@ fun deserializeClassToSymbol(
                         isStatic = true
                     }
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+                }.apply {
+                    containingClassAttr = context.dispatchReceiver!!.lookupTag
                 }
 
                 property
@@ -168,11 +171,15 @@ fun deserializeClassToSymbol(
         )
 
         if (classKind == ClassKind.ENUM_CLASS) {
-            generateValuesFunction(session, classId.packageFqName, classId.relativeClassName)
+            generateValuesFunction(
+                session,
+                classId.packageFqName,
+                classId.relativeClassName
+            )
             generateValueOfFunction(session, classId.packageFqName, classId.relativeClassName)
         }
 
-        addCloneForArrayIfNeeded(classId)
+        addCloneForArrayIfNeeded(classId, context.dispatchReceiver)
         addSerializableIfNeeded(classId)
 
         declarations.sortWith(object : Comparator<FirDeclaration> {
@@ -224,7 +231,7 @@ private fun FirRegularClassBuilder.addSerializableIfNeeded(classId: ClassId) {
     }
 }
 
-private fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId) {
+private fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchReceiver: ConeClassLikeType?) {
     if (classId.packageFqName != StandardNames.BUILT_INS_PACKAGE_FQ_NAME) return
     if (classId.shortClassName !in ARRAY_CLASSES) return
     superTypeRefs += buildResolvedTypeRef {
@@ -259,5 +266,6 @@ private fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId) {
         }
         name = CLONE
         symbol = FirNamedFunctionSymbol(CallableId(classId, CLONE))
+        dispatchReceiverType = dispatchReceiver!!
     }
 }

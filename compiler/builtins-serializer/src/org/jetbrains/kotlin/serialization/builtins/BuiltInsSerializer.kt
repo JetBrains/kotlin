@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization.builtins
 
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInClassDescriptorFactory
@@ -76,7 +77,13 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
         }
     }
 
-    override fun performSerialization(files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File) {
+    override fun performSerialization(
+        files: Collection<KtFile>,
+        bindingContext: BindingContext,
+        module: ModuleDescriptor,
+        destDir: File,
+        project: Project?
+    ) {
         destDir.deleteRecursively()
         if (!destDir.mkdirs()) {
             throw AssertionError("Could not make directories: " + destDir)

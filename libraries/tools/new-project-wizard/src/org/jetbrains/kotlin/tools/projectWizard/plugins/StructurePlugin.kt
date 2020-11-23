@@ -72,6 +72,14 @@ class StructurePlugin(context: Context) : Plugin(context) {
             validate(StringValidators.shouldBeValidIdentifier(title, ALLOWED_SPECIAL_CHARS_IN_VERSION))
             defaultValue = value("1.0-SNAPSHOT")
         }
+
+        val renderPomIR by booleanSetting(
+            "<RENDER_POM_IR>",
+            GenerationPhase.FIRST_STEP,
+        ) {
+            defaultValue = value(true)
+        }
+
         val createProjectDir by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             withAction {
                 service<FileSystemWizardService>().createDirectory(StructurePlugin.projectPath.settingValue)
@@ -85,7 +93,8 @@ class StructurePlugin(context: Context) : Plugin(context) {
             name,
             groupId,
             artifactId,
-            version
+            version,
+            renderPomIR
         )
     override val pipelineTasks: List<PipelineTask> =
         listOf(createProjectDir)
@@ -99,7 +108,7 @@ val Reader.projectName
     get() = StructurePlugin.name.settingValue
 
 
-fun Writer.pomIR() = PomIR(
+fun Reader.pomIR() = PomIR(
     artifactId = StructurePlugin.artifactId.settingValue,
     groupId = StructurePlugin.groupId.settingValue,
     version = Version.fromString(StructurePlugin.version.settingValue)

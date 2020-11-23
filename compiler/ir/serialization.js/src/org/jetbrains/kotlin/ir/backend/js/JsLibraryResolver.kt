@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.util.Logger
 class JsLibraryResolver(
     repositories: List<String>,
     directLibs: List<String>,
-    knownAbiVersions: List<KotlinAbiVersion>?,
-    knownCompilerVersions: List<CompilerVersion>?,
     distributionKlib: String?,
     localKotlinDir: String?,
     skipCurrentDir: Boolean,
@@ -28,8 +26,6 @@ class JsLibraryResolver(
 ) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
     repositories,
     directLibs,
-    knownAbiVersions,
-    knownCompilerVersions,
     distributionKlib,
     localKotlinDir,
     skipCurrentDir,
@@ -48,8 +44,6 @@ fun jsResolveLibraries(libraries: List<String>, logger: Logger): KotlinLibraryRe
     val libraryResolver = JsLibraryResolver(
         repositories = emptyList(),
         directLibs = libraryAbsolutePaths,
-        knownAbiVersions = listOf(KotlinAbiVersion.CURRENT),
-        knownCompilerVersions = emptyList<CompilerVersion>(),
         distributionKlib = null,
         localKotlinDir = null,
         skipCurrentDir = false,

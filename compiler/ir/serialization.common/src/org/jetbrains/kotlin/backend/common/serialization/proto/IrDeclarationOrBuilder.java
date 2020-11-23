@@ -114,4 +114,13 @@ public interface IrDeclarationOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias ir_type_alias = 12;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias getIrTypeAlias();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorDeclaration ir_error_declaration = 13;</code>
+   */
+  boolean hasIrErrorDeclaration();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorDeclaration ir_error_declaration = 13;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorDeclaration getIrErrorDeclaration();
 }

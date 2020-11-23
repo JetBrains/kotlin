@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.builtins.jvm
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.BLACK_LIST_CONSTRUCTOR_SIGNATURES
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.BLACK_LIST_METHOD_SIGNATURES
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.DROP_LIST_METHOD_SIGNATURES
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.HIDDEN_CONSTRUCTOR_SIGNATURES
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.HIDDEN_METHOD_SIGNATURES
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.WHITE_LIST_CONSTRUCTOR_SIGNATURES
-import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.WHITE_LIST_METHOD_SIGNATURES
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.VISIBLE_CONSTRUCTOR_SIGNATURES
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.isArrayOrPrimitiveArray
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.isSerializableInJava
 import org.jetbrains.kotlin.descriptors.*
@@ -136,8 +136,8 @@ open class JvmBuiltInsSettings(
 
                 val memberStatus = additionalMember.getJdkMethodStatus()
                 when (memberStatus) {
-                    JDKMemberStatus.BLACK_LIST -> {
-                        // Black list methods in final class can't be overridden or called with 'super'
+                    JDKMemberStatus.HIDDEN -> {
+                        // hidden methods in final class can't be overridden or called with 'super'
                         if (classDescriptor.isFinalClass) return@mapNotNull null
                         setHiddenForResolutionEverywhereBesideSupercalls()
                     }
@@ -148,7 +148,7 @@ open class JvmBuiltInsSettings(
 
                     JDKMemberStatus.DROP -> return@mapNotNull null
 
-                    JDKMemberStatus.WHITE_LIST -> Unit // Do nothing
+                    JDKMemberStatus.VISIBLE -> Unit // Do nothing
                 }
 
             }.build()!!
@@ -229,7 +229,7 @@ open class JvmBuiltInsSettings(
         return DFS.dfs<ClassDescriptor, JDKMemberStatus>(
             listOf(owner),
             {
-                // Search through mapped supertypes to determine that Set.toArray is in blacklist, while we have only
+                // Search through mapped supertypes to determine that Set.toArray should be invisible, while we have only
                 // Collection.toArray there explicitly
                 // Note, that we can't find j.u.Collection.toArray within overriddenDescriptors of j.u.Set.toArray
                 it.typeConstructor.supertypes.mapNotNull {
@@ -240,8 +240,8 @@ open class JvmBuiltInsSettings(
                 override fun beforeChildren(javaClassDescriptor: ClassDescriptor): Boolean {
                     val signature = SignatureBuildingComponents.signature(javaClassDescriptor, jvmDescriptor)
                     when (signature) {
-                        in BLACK_LIST_METHOD_SIGNATURES -> result = JDKMemberStatus.BLACK_LIST
-                        in WHITE_LIST_METHOD_SIGNATURES -> result = JDKMemberStatus.WHITE_LIST
+                        in HIDDEN_METHOD_SIGNATURES -> result = JDKMemberStatus.HIDDEN
+                        in VISIBLE_METHOD_SIGNATURES -> result = JDKMemberStatus.VISIBLE
                         in DROP_LIST_METHOD_SIGNATURES -> result = JDKMemberStatus.DROP
                     }
 
@@ -253,7 +253,7 @@ open class JvmBuiltInsSettings(
     }
 
     private enum class JDKMemberStatus {
-        BLACK_LIST, WHITE_LIST, NOT_CONSIDERED, DROP
+        HIDDEN, VISIBLE, NOT_CONSIDERED, DROP
     }
 
     private fun ClassDescriptor.getJavaAnalogue(): LazyJavaClassDescriptor? {
@@ -293,7 +293,7 @@ open class JvmBuiltInsSettings(
                     SignatureBuildingComponents.signature(
                         javaAnalogueDescriptor,
                         javaConstructor.computeJvmDescriptor()
-                    ) !in BLACK_LIST_CONSTRUCTOR_SIGNATURES
+                    ) !in HIDDEN_CONSTRUCTOR_SIGNATURES
         }.map { javaConstructor ->
             javaConstructor.newCopyBuilder().apply {
                 setOwner(classDescriptor)
@@ -302,7 +302,7 @@ open class JvmBuiltInsSettings(
                 setSubstitution(substitutor.substitution)
                 if (SignatureBuildingComponents.signature(
                         javaAnalogueDescriptor, javaConstructor.computeJvmDescriptor()
-                    ) !in WHITE_LIST_CONSTRUCTOR_SIGNATURES
+                    ) !in VISIBLE_CONSTRUCTOR_SIGNATURES
                 ) {
                     setAdditionalAnnotations(notConsideredDeprecation)
                 }

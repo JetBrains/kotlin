@@ -55,7 +55,6 @@ class JavaNullabilityChecker : AdditionalTypeChecker {
         if (isWrongTypeParameterNullabilityForSubtyping(expressionType, c) { dataFlowValue }) {
             c.trace.report(ErrorsJvm.NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER.on(expression, c.expectedType, expressionType))
         }
-
         doCheckType(
             expressionType,
             c.expectedType,

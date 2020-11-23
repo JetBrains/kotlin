@@ -38,15 +38,15 @@ internal interface ClassCarrier : DeclarationCarrier {
 }
 
 internal class ClassCarrierImpl(
-        override val lastModified: Int,
-        override var parentField: IrDeclarationParent?,
-        override var originField: IrDeclarationOrigin,
-        override var annotationsField: List<IrConstructorCall>,
-        override var thisReceiverField: IrValueParameter?,
-        override var metadataField: MetadataSource?,
-        override var visibilityField: DescriptorVisibility,
-        override var modalityField: Modality,
-        override var attributeOwnerIdField: IrAttributeContainer,
-        override var typeParametersField: List<IrTypeParameter>,
-        override var superTypesField: List<IrType>
+    override val lastModified: Int,
+    override var parentField: IrDeclarationParent?,
+    override var originField: IrDeclarationOrigin,
+    override var annotationsField: List<IrConstructorCall>,
+    override var thisReceiverField: IrValueParameter?,
+    override var metadataField: MetadataSource?,
+    override var visibilityField: DescriptorVisibility,
+    override var modalityField: Modality,
+    override var attributeOwnerIdField: IrAttributeContainer,
+    override var typeParametersField: List<IrTypeParameter>,
+    override var superTypesField: List<IrType>
 ) : ClassCarrier

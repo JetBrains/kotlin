@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: SPREAD_OPERATOR
 fun join(x: Array<out String>): String {
     var result = ""
     for (i in x) {

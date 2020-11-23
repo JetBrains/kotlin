@@ -60,7 +60,7 @@ class JvmStandardLibraryBuiltInsLowering(val context: JvmBackendContext) : FileL
     // Originals are so far only instance methods, and the replacements are
     // statics, so we copy dispatch receivers to a value argument if needed.
     private fun IrCall.replaceWithCallTo(replacement: IrSimpleFunctionSymbol) =
-        IrCallImpl(
+        IrCallImpl.fromSymbolOwner(
             startOffset,
             endOffset,
             type,
@@ -77,7 +77,7 @@ class JvmStandardLibraryBuiltInsLowering(val context: JvmBackendContext) : FileL
         }
 
     private fun IrExpression.coerceTo(target: IrType): IrExpression =
-        IrCallImpl(
+        IrCallImpl.fromSymbolOwner(
             startOffset,
             endOffset,
             target,

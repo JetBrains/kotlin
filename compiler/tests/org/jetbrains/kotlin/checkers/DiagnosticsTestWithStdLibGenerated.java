@@ -39,6 +39,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         runTest("compiler/testData/diagnostics/testsWithStdLib/ArrayOfNothing.kt");
     }
 
+    @TestMetadata("assignedInSynchronized.kt")
+    public void testAssignedInSynchronized() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithStdLib/assignedInSynchronized.kt");
+    }
+
     @TestMetadata("CallCompanionProtectedNonStatic.kt")
     public void testCallCompanionProtectedNonStatic() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithStdLib/CallCompanionProtectedNonStatic.kt");
@@ -493,6 +498,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/javaOverride.kt");
             }
 
+            @TestMetadata("javaOverrideAll.kt")
+            public void testJavaOverrideAll() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/javaOverrideAll.kt");
+            }
+
             @TestMetadata("jvmDefaultInInheritance.kt")
             public void testJvmDefaultInInheritance() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultInInheritance.kt");
@@ -797,6 +807,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("mainInObject.kt")
             public void testMainInObject() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/mainInObject.kt");
+            }
+
+            @TestMetadata("privateCompanionObject.kt")
+            public void testPrivateCompanionObject() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/privateCompanionObject.kt");
             }
 
             @TestMetadata("property.kt")
@@ -3153,6 +3168,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt38801.kt");
         }
 
+        @TestMetadata("kt42620.kt")
+        public void testKt42620() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt42620.kt");
+        }
+
         @TestMetadata("kt4975.kt")
         public void testKt4975() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/kt4975.kt");
@@ -3161,6 +3181,29 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
         @TestMetadata("recursiveFlexibleAssertions.kt")
         public void testRecursiveFlexibleAssertions() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/inference/recursiveFlexibleAssertions.kt");
+        }
+
+        @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/addEqualityConstraintsWithoutSubtyping")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class AddEqualityConstraintsWithoutSubtyping extends AbstractDiagnosticsTestWithStdLib {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInAddEqualityConstraintsWithoutSubtyping() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/addEqualityConstraintsWithoutSubtyping"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @TestMetadata("kt41741.kt")
+            public void testKt41741() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/addEqualityConstraintsWithoutSubtyping/kt41741.kt");
+            }
+
+            @TestMetadata("kt42195.kt")
+            public void testKt42195() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/addEqualityConstraintsWithoutSubtyping/kt42195.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve")
@@ -3379,6 +3422,49 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
                 public void testSuspendFunctions() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/suspendFunctions.kt");
                 }
+
+                @TestMetadata("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Performance extends AbstractDiagnosticsTestWithStdLib {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInPerformance() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @TestMetadata("reuseBuiltFunctionalTypesForIdLambdas.kt")
+                    public void testReuseBuiltFunctionalTypesForIdLambdas() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance/reuseBuiltFunctionalTypesForIdLambdas.kt");
+                    }
+
+                    @TestMetadata("reuseBuiltFunctionalTypesForLambdas.kt")
+                    public void testReuseBuiltFunctionalTypesForLambdas() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance/reuseBuiltFunctionalTypesForLambdas.kt");
+                    }
+
+                    @TestMetadata("reuseBuiltFunctionalTypesForPairOfLambdas.kt")
+                    public void testReuseBuiltFunctionalTypesForPairOfLambdas() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance/reuseBuiltFunctionalTypesForPairOfLambdas.kt");
+                    }
+
+                    @TestMetadata("reuseBuiltFunctionalTypesForPairsOfDeepLambdas.kt")
+                    public void testReuseBuiltFunctionalTypesForPairsOfDeepLambdas() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance/reuseBuiltFunctionalTypesForPairsOfDeepLambdas.kt");
+                    }
+
+                    @TestMetadata("reuseBuiltFunctionalTypesForPairsOfDeepMixedLambdas.kt")
+                    public void testReuseBuiltFunctionalTypesForPairsOfDeepMixedLambdas() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance/reuseBuiltFunctionalTypesForPairsOfDeepMixedLambdas.kt");
+                    }
+
+                    @TestMetadata("reuseBuiltFunctionalTypesForPairsOfIdLambdas.kt")
+                    public void testReuseBuiltFunctionalTypesForPairsOfIdLambdas() throws Exception {
+                        runTest("compiler/testData/diagnostics/testsWithStdLib/inference/completion/postponedArgumentsAnalysis/performance/reuseBuiltFunctionalTypesForPairsOfIdLambdas.kt");
+                    }
+                }
             }
         }
 
@@ -3425,6 +3511,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             @TestMetadata("dontInferToNullableNothingInDelegates.kt")
             public void testDontInferToNullableNothingInDelegates() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/inference/nothingType/dontInferToNullableNothingInDelegates.kt");
+            }
+
+            @TestMetadata("dontSpreadWarningToNotReturningNothingSubResolvedAtoms.kt")
+            public void testDontSpreadWarningToNotReturningNothingSubResolvedAtoms() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/inference/nothingType/dontSpreadWarningToNotReturningNothingSubResolvedAtoms.kt");
             }
         }
     }

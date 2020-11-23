@@ -1,0 +1,63 @@
+@kotlin.Metadata
+public interface StrS {
+    // source: 'memberExtensionProperty.kt'
+    public abstract method getS(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
+}
+
+@kotlin.Metadata
+public final class Z1 {
+    // source: 'memberExtensionProperty.kt'
+    private final field s: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): Z1
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final static method getExt-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public final method getS(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class Z2 {
+    // source: 'memberExtensionProperty.kt'
+    private final field s: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): Z2
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getS(): int
+    public final static method getS-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class Z3 {
+    // source: 'memberExtensionProperty.kt'
+    private final field s: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): Z3
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getS(): int
+    public method getS(@org.jetbrains.annotations.NotNull p0: java.lang.String): int
+    public static method getS-impl(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}

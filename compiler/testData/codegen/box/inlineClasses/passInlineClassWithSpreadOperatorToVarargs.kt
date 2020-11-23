@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: SPREAD_OPERATOR
 // !LANGUAGE: +InlineClasses
 
 inline class UInt(val value: Int)

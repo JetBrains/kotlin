@@ -23,7 +23,7 @@ internal fun getMutedTestsOnTeamcityForRootProject(rootScopeId: String): List<Mu
     val jsonResponses = traverseAll(requestHref, requestParams)
 
     val alreadyMutedTestsOnTeamCity = jsonResponses.flatMap {
-        it.get("mute").filter { jn -> jn.get("assignment").get("text").textValue().startsWith(TAG) }
+        it.get("mute").filter { jn -> jn.get("assignment").get("text")?.textValue().toString().startsWith(TAG) }
     }
 
     return alreadyMutedTestsOnTeamCity.mapNotNull { jsonObjectMapper.treeToValue<MuteTestJson>(it) }

@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.*
-import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compact
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapIndexed
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -22,7 +24,7 @@ internal fun List<CirTypeParameter>.buildDescriptorsAndTypeParameterResolver(
     containingDeclaration: DeclarationDescriptor,
     typeParametersIndexOffset: Int = 0
 ): Pair<List<TypeParameterDescriptor>, TypeParameterResolver> {
-    val ownTypeParameters = mutableListOf<TypeParameterDescriptor>()
+    val ownTypeParameters = ArrayList<TypeParameterDescriptor>(size)
 
     val typeParameterResolver = TypeParameterResolverImpl(
         ownTypeParameters = ownTypeParameters,
@@ -50,7 +52,7 @@ internal fun List<CirValueParameter>.buildDescriptors(
     targetComponents: TargetDeclarationsBuilderComponents,
     typeParameterResolver: TypeParameterResolver,
     containingDeclaration: CallableDescriptor
-): List<ValueParameterDescriptor> = mapIndexed { index, param ->
+): List<ValueParameterDescriptor> = compactMapIndexed { index, param ->
     ValueParameterDescriptorImpl(
         containingDeclaration,
         null,
@@ -67,10 +69,7 @@ internal fun List<CirValueParameter>.buildDescriptors(
 }
 
 internal fun List<CirAnnotation>.buildDescriptors(targetComponents: TargetDeclarationsBuilderComponents): Annotations =
-    if (isEmpty())
-        Annotations.EMPTY
-    else
-        Annotations.create(map { CommonizedAnnotationDescriptor(targetComponents, it) })
+    Annotations.create(compactMap { CommonizedAnnotationDescriptor(targetComponents, it) })
 
 internal fun CirExtensionReceiver.buildExtensionReceiver(
     targetComponents: TargetDeclarationsBuilderComponents,
@@ -87,66 +86,93 @@ internal fun buildDispatchReceiver(callableDescriptor: CallableDescriptor) =
 
 internal fun CirType.buildType(
     targetComponents: TargetDeclarationsBuilderComponents,
-    typeParameterResolver: TypeParameterResolver
+    typeParameterResolver: TypeParameterResolver,
+    expandTypeAliases: Boolean = true
 ): UnwrappedType = when (this) {
-    is CirSimpleType -> buildType(targetComponents, typeParameterResolver)
+    is CirSimpleType -> buildType(targetComponents, typeParameterResolver, expandTypeAliases)
     is CirFlexibleType -> flexibleType(
-        lowerBound = lowerBound.buildType(targetComponents, typeParameterResolver),
-        upperBound = upperBound.buildType(targetComponents, typeParameterResolver)
+        lowerBound = lowerBound.buildType(targetComponents, typeParameterResolver, expandTypeAliases),
+        upperBound = upperBound.buildType(targetComponents, typeParameterResolver, expandTypeAliases)
     )
 }
 
 internal fun CirSimpleType.buildType(
     targetComponents: TargetDeclarationsBuilderComponents,
-    typeParameterResolver: TypeParameterResolver
-): SimpleType {
-    val classifier: ClassifierDescriptor = when (val classifierId = classifierId) {
-        is CirClassifierId.Class -> {
-            targetComponents.findClassOrTypeAlias(classifierId.classId).checkClassifierType<ClassDescriptor>()
-        }
-        is CirClassifierId.TypeAlias -> {
-            val classId = classifierId.classId
-            val classOrTypeAlias: ClassifierDescriptorWithTypeParameters = targetComponents.findClassOrTypeAlias(classId)
+    typeParameterResolver: TypeParameterResolver,
+    expandTypeAliases: Boolean
+): SimpleType = when (this) {
+    is CirClassType -> buildSimpleType(
+        classifier = targetComponents.findClassOrTypeAlias(classifierId).checkClassifierType<ClassDescriptor>(),
+        arguments = collectArguments(targetComponents, typeParameterResolver, expandTypeAliases),
+        isMarkedNullable = isMarkedNullable
+    )
+    is CirTypeAliasType -> {
+        val typeAliasDescriptor = targetComponents.findClassOrTypeAlias(classifierId).checkClassifierType<TypeAliasDescriptor>()
+        val arguments = this.arguments.compactMap { it.buildArgument(targetComponents, typeParameterResolver, expandTypeAliases) }
 
-            if (classId.packageFqName.isUnderStandardKotlinPackages || !targetComponents.isCommon) {
-                // classifier type could be only type alias
-                classOrTypeAlias.checkClassifierType<TypeAliasDescriptor>()
-            } else {
-                // classifier could be class or type alias
-                classOrTypeAlias
-            }
-        }
-        is CirClassifierId.TypeParameter -> {
-            typeParameterResolver.resolve(classifierId.index)
-                ?: error("Type parameter $classifierId not found in ${typeParameterResolver::class.java}, $typeParameterResolver for ${targetComponents.target}")
-        }
+        if (expandTypeAliases)
+            buildExpandedType(typeAliasDescriptor, arguments, isMarkedNullable)
+        else
+            buildSimpleType(typeAliasDescriptor, arguments, isMarkedNullable)
     }
+    is CirTypeParameterType -> buildSimpleType(
+        classifier = typeParameterResolver.resolve(index)
+            ?: error("Type parameter with index=$index not found in ${typeParameterResolver::class.java}, $typeParameterResolver for ${targetComponents.target}"),
+        arguments = emptyList(),
+        isMarkedNullable = isMarkedNullable
+    )
+}
 
-    val simpleType = simpleType(
+@Suppress("NOTHING_TO_INLINE")
+private inline fun buildSimpleType(classifier: ClassifierDescriptor, arguments: List<TypeProjection>, isMarkedNullable: Boolean) =
+    simpleType(
         annotations = Annotations.EMPTY,
         constructor = classifier.typeConstructor,
-        arguments = arguments.map { it.buildArgument(targetComponents, typeParameterResolver) },
+        arguments = arguments,
         nullable = isMarkedNullable,
         kotlinTypeRefiner = null
     )
 
-    return if (classifier is TypeAliasDescriptor)
-        classifier.underlyingType.makeNullableAsSpecified(simpleType.isMarkedNullable).withAbbreviation(simpleType)
-    else
-        simpleType
-}
+@Suppress("NOTHING_TO_INLINE")
+private inline fun buildExpandedType(classifier: TypeAliasDescriptor, arguments: List<TypeProjection>, isMarkedNullable: Boolean) =
+    TypeAliasExpander.NON_REPORTING.expand(
+        TypeAliasExpansion.create(null, classifier, arguments),
+        Annotations.EMPTY
+    ).makeNullableAsSpecified(isMarkedNullable)
+
 
 private inline fun <reified T : ClassifierDescriptorWithTypeParameters> ClassifierDescriptorWithTypeParameters.checkClassifierType(): T {
     check(this is T) { "Mismatched classifier kinds.\nFound: ${this::class.java}, $this\nShould be: ${T::class.java}" }
     return this
 }
 
+private fun CirClassType.collectArguments(
+    targetComponents: TargetDeclarationsBuilderComponents,
+    typeParameterResolver: TypeParameterResolver,
+    expandTypeAliases: Boolean
+): List<TypeProjection> {
+    return if (outerType == null) {
+        arguments.compactMap { it.buildArgument(targetComponents, typeParameterResolver, expandTypeAliases) }
+    } else {
+        val allTypes = generateSequence(this) { it.outerType }.toList()
+        val arguments = mutableListOf<TypeProjection>()
+
+        for (index in allTypes.size - 1 downTo 0) {
+            allTypes[index].arguments.mapTo(arguments) { it.buildArgument(targetComponents, typeParameterResolver, expandTypeAliases) }
+        }
+
+        arguments.compact()
+    }
+}
+
 private fun CirTypeProjection.buildArgument(
     targetComponents: TargetDeclarationsBuilderComponents,
-    typeParameterResolver: TypeParameterResolver
-): TypeProjection =
-    if (isStarProjection) {
-        StarProjectionForAbsentTypeParameter(targetComponents.builtIns)
-    } else {
-        TypeProjectionImpl(projectionKind, type.buildType(targetComponents, typeParameterResolver))
-    }
+    typeParameterResolver: TypeParameterResolver,
+    expandTypeAliases: Boolean
+): TypeProjection = when (this) {
+    is CirStarTypeProjection -> StarProjectionForAbsentTypeParameter(targetComponents.builtIns)
+    is CirTypeProjectionImpl -> TypeProjectionImpl(
+        projectionKind,
+        type.buildType(targetComponents, typeParameterResolver, expandTypeAliases)
+    )
+}

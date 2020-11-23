@@ -131,6 +131,20 @@ fun PsiMethod.forEachImplementation(
             && FunctionalExpressionSearch.search(this, scope.excludeKotlinSources()).forEach(processor)
 }
 
+@Deprecated(
+    "This method is obsolete and will be removed",
+    ReplaceWith(
+        "OverridersSearchUtilsKt.forEachOverridingMethod",
+        "org.jetbrains.kotlin.idea.search.declarationsSearch.OverridersSearchUtilsKt"
+    ),
+    DeprecationLevel.ERROR
+)
+@JvmName("forEachOverridingMethod")
+fun PsiMethod.forEachOverridingMethodCompat(
+    scope: SearchScope = runReadAction { useScope },
+    processor: (PsiMethod) -> Boolean
+): Boolean = forEachOverridingMethod(scope, processor)
+
 fun PsiClass.forEachDeclaredMemberOverride(processor: (superMember: PsiElement, overridingMember: PsiElement) -> Boolean) {
     val scope = runReadAction { useScope }
 

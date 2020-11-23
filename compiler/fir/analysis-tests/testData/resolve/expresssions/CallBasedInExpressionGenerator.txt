@@ -29,7 +29,7 @@ FILE: CallBasedInExpressionGenerator.kt
         public final val codegen: R|org/jetbrains/kotlin/codegen/range/inExpression/ExpressionCodegen| = R|<local>/codegen|
             public get(): R|org/jetbrains/kotlin/codegen/range/inExpression/ExpressionCodegen|
 
-        private final val resolvedCall: R|ERROR CLASS: Unresolved name: getResolvedCallWithAssert| = R|<local>/operatorReference|.<Unresolved name: getResolvedCallWithAssert>#(R|<local>/codegen|.<Unresolved name: bindingContext>#)
+        private final val resolvedCall: R|ERROR CLASS: Unresolved name: getResolvedCallWithAssert| = R|<local>/operatorReference|.<Unresolved name: getResolvedCallWithAssert>#(this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.codegen|.<Unresolved name: bindingContext>#)
             private get(): R|ERROR CLASS: Unresolved name: getResolvedCallWithAssert|
 
         private final val isInverted: R|kotlin/Boolean| = ==(R|<local>/operatorReference|.<Unresolved name: getReferencedNameElementType>#(), <Unresolved name: KtTokens>#.<Unresolved name: NOT_IN>#)

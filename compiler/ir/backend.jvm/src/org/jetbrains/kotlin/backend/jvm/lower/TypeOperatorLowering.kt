@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.isInlined
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -125,10 +126,15 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                         IrStatementOrigin.SAFE_CALL,
                         irType = context.irBuiltIns.anyNType
                     ) { valueSymbol ->
+                        val thenPart =
+                            if (valueSymbol.owner.type.isInlined())
+                                lowerCast(irGet(valueSymbol.owner), expression.typeOperand)
+                            else
+                                irGet(valueSymbol.owner)
                         irIfThenElse(
                             expression.type,
                             lowerInstanceOf(irGet(valueSymbol.owner), expression.typeOperand.makeNotNull()),
-                            irGet(valueSymbol.owner),
+                            thenPart,
                             irNull(expression.type)
                         )
                     }

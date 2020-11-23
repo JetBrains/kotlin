@@ -1,5 +1,5 @@
 enum class X {
-    Y, Z;
+  Y, Z;
 }
 
 // SYMBOLS:
@@ -18,10 +18,16 @@ KtFirEnumEntrySymbol:
   type: X
 
 KtFirClassOrObjectSymbol:
+  annotations: []
   classIdIfNonLocal: X
   classKind: ENUM_CLASS
+  companionObject: null
+  isInner: false
   modality: FINAL
   name: X
   origin: SOURCE
+  primaryConstructor: KtFirConstructorSymbol(<constructor>)
+  superTypes: [kotlin/Enum<X>]
   symbolKind: TOP_LEVEL
   typeParameters: []
+  visibility: PUBLIC

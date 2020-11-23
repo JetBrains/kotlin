@@ -9,7 +9,7 @@
  * ISSUES: KT-39129
  */
 fun case1() {
-    C1.<!INAPPLICABLE_CANDIDATE!>V<!>()
+    C1.<!UNRESOLVED_REFERENCE!>V<!>()
 
     C1.Companion.<!DEBUG_INFO_CALL("fqName: C1.Companion.V.V; typeCall: function")!>V()<!>
 

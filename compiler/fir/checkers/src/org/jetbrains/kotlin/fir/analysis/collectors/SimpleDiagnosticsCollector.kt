@@ -17,7 +17,7 @@ class SimpleDiagnosticsCollector(session: FirSession) : AbstractDiagnosticCollec
         reporter = SimpleDiagnosticReporter()
     }
 
-    override fun getCollectedDiagnostics(): Iterable<FirDiagnostic<*>> {
+    override fun getCollectedDiagnostics(): List<FirDiagnostic<*>> {
         return reporter.diagnostics
     }
 }

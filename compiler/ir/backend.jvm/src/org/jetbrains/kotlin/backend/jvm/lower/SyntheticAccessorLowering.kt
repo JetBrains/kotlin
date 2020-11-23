@@ -279,7 +279,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     }
 
     private fun createConstructorCall(accessor: IrConstructor, targetSymbol: IrConstructorSymbol) =
-        IrDelegatingConstructorCallImpl(
+        IrDelegatingConstructorCallImpl.fromSymbolOwner(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             context.irBuiltIns.unitType,
             targetSymbol, targetSymbol.owner.parentAsClass.typeParameters.size + targetSymbol.owner.typeParameters.size
@@ -314,7 +314,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
     }
 
     private fun createSimpleFunctionCall(accessor: IrFunction, targetSymbol: IrSimpleFunctionSymbol, superQualifierSymbol: IrClassSymbol?) =
-        IrCallImpl(
+        IrCallImpl.fromSymbolOwner(
             accessor.startOffset,
             accessor.endOffset,
             accessor.returnType,
@@ -412,19 +412,19 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         accessorSymbol: IrFunctionSymbol
     ): IrFunctionAccessExpression {
         val newExpression = when (oldExpression) {
-            is IrCall -> IrCallImpl(
+            is IrCall -> IrCallImpl.fromSymbolOwner(
                 oldExpression.startOffset, oldExpression.endOffset,
                 oldExpression.type,
                 accessorSymbol as IrSimpleFunctionSymbol, oldExpression.typeArgumentsCount,
-                oldExpression.origin
+                origin = oldExpression.origin
             )
-            is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl(
+            is IrDelegatingConstructorCall -> IrDelegatingConstructorCallImpl.fromSymbolOwner(
                 oldExpression.startOffset, oldExpression.endOffset,
                 context.irBuiltIns.unitType,
                 accessorSymbol as IrConstructorSymbol, oldExpression.typeArgumentsCount
             )
             is IrConstructorCall ->
-                IrConstructorCallImpl.fromSymbolDescriptor(
+                IrConstructorCallImpl.fromSymbolOwner(
                     oldExpression.startOffset, oldExpression.endOffset,
                     oldExpression.type,
                     accessorSymbol as IrConstructorSymbol
@@ -457,7 +457,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         val call = IrCallImpl(
             oldExpression.startOffset, oldExpression.endOffset,
             oldExpression.type,
-            accessorSymbol, 0,
+            accessorSymbol, 0, accessorSymbol.owner.valueParameters.size,
             oldExpression.origin
         )
         oldExpression.receiver?.let {
@@ -473,7 +473,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         val call = IrCallImpl(
             oldExpression.startOffset, oldExpression.endOffset,
             oldExpression.type,
-            accessorSymbol, 0,
+            accessorSymbol, 0, accessorSymbol.owner.valueParameters.size,
             oldExpression.origin
         )
         oldExpression.receiver?.let {
@@ -576,7 +576,7 @@ internal class SyntheticAccessorLowering(val context: JvmBackendContext) : IrEle
         val symbolOwner = owner
         val declarationRaw = symbolOwner as IrDeclarationWithVisibility
         val declaration =
-            (declarationRaw as? IrSimpleFunction)?.resolveFakeOverride() ?: declarationRaw
+            (declarationRaw as? IrSimpleFunction)?.resolveFakeOverride(allowAbstract = true) ?: declarationRaw
 
         // There is never a problem with visibility of inline functions, as those don't end up as Java entities
         if (declaration is IrFunction && declaration.isInline) return true

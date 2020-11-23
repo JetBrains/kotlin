@@ -107,13 +107,33 @@ fun Properties.resolvablePropertyString(
  */
 private fun String.resolveValue(properties: Properties, visitedProperties: MutableSet<String> = mutableSetOf()): List<String> =
     when {
-        startsWith("$") -> {
-            val property = this.substringAfter('$')
+        contains("$") -> {
+            val prefix = this.substringBefore('$', missingDelimiterValue = "")
+            val withoutSigil = this.substringAfter('$')
+            val property = withoutSigil.substringBefore('/')
+            val relative = withoutSigil.substringAfter('/', missingDelimiterValue = "")
             // Keep track of visited properties to avoid running in circles.
             if (!visitedProperties.add(property)) {
                 error("Circular dependency: ${visitedProperties.joinToString()}")
             }
-            properties.resolvablePropertyList(property, visitedProperties = visitedProperties)
+            val substitutionResult = properties.resolvablePropertyList(property, visitedProperties = visitedProperties)
+            when {
+                substitutionResult.size > 1 -> when {
+                    relative.isNotEmpty() ->
+                        error("Cannot append `/$relative` to multiple values: ${substitutionResult.joinToString()}")
+                    prefix.isNotEmpty() ->
+                        error("Cannot add prefix `$prefix` to multiple values: ${substitutionResult.joinToString()}")
+                    else -> substitutionResult
+                }
+                else -> substitutionResult.map {
+                    // Avoid repeated '/' at the end.
+                    if (relative.isNotEmpty()) {
+                        "$prefix${it.dropLastWhile { it == '/' }}/$relative"
+                    } else {
+                        "$prefix$it"
+                    }
+                }
+            }
         }
         else -> listOf(this)
     }

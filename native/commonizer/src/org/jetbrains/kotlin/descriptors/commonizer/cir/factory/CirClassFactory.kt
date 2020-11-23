@@ -11,17 +11,17 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirClassImpl
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 
 object CirClassFactory {
     fun create(source: ClassDescriptor): CirClass = create(
-        annotations = source.annotations.map(CirAnnotationFactory::create),
+        annotations = source.annotations.compactMap(CirAnnotationFactory::create),
         name = source.name.intern(),
-        typeParameters = source.declaredTypeParameters.map(CirTypeParameterFactory::create),
+        typeParameters = source.declaredTypeParameters.compactMap(CirTypeParameterFactory::create),
         visibility = source.visibility,
         modality = source.modality,
         kind = source.kind,
@@ -30,25 +30,25 @@ object CirClassFactory {
         isData = source.isData,
         isInline = source.isInline,
         isInner = source.isInner,
-        isExternal = source.isExternal,
-        supertypes = source.typeConstructor.supertypes.mapTo(mutableListOf()) { CirTypeFactory.create(it) }
-    )
+        isExternal = source.isExternal
+    ).apply {
+        setSupertypes(source.typeConstructor.supertypes.compactMap { CirTypeFactory.create(it) })
+    }
 
     @Suppress("NOTHING_TO_INLINE")
     inline fun create(
-            annotations: List<CirAnnotation>,
-            name: Name,
-            typeParameters: List<CirTypeParameter>,
-            visibility: DescriptorVisibility,
-            modality: Modality,
-            kind: ClassKind,
-            companion: Name?,
-            isCompanion: Boolean,
-            isData: Boolean,
-            isInline: Boolean,
-            isInner: Boolean,
-            isExternal: Boolean,
-            supertypes: MutableCollection<CirType>
+        annotations: List<CirAnnotation>,
+        name: Name,
+        typeParameters: List<CirTypeParameter>,
+        visibility: DescriptorVisibility,
+        modality: Modality,
+        kind: ClassKind,
+        companion: Name?,
+        isCompanion: Boolean,
+        isData: Boolean,
+        isInline: Boolean,
+        isInner: Boolean,
+        isExternal: Boolean
     ): CirClass {
         return CirClassImpl(
             annotations = annotations,
@@ -62,8 +62,7 @@ object CirClassFactory {
             isData = isData,
             isInline = isInline,
             isInner = isInner,
-            isExternal = isExternal,
-            supertypes = supertypes
+            isExternal = isExternal
         )
     }
 }

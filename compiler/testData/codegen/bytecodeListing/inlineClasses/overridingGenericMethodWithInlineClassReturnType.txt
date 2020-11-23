@@ -1,0 +1,26 @@
+@kotlin.Metadata
+public interface A {
+    // source: 'overridingGenericMethodWithInlineClassReturnType.kt'
+    public abstract method foo(): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class Foo {
+    // source: 'overridingGenericMethodWithInlineClassReturnType.kt'
+    private final field x: long
+    private synthetic method <init>(p0: long): void
+    public synthetic final static method box-impl(p0: long): Foo
+    public static method constructor-impl(p0: long): long
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: long, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: long, p1: long): boolean
+    public synthetic bridge method foo(): java.lang.Object
+    public method foo-qUNOhfQ(): long
+    public static method foo-qUNOhfQ(p0: long): long
+    public final method getX(): long
+    public method hashCode(): int
+    public static method hashCode-impl(p0: long): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: long): java.lang.String
+    public synthetic final method unbox-impl(): long
+}

@@ -18,13 +18,28 @@ internal class FirRefWithValidityCheck<D : FirDeclaration>(fir: D, resolveState:
     private val firWeakRef = WeakReference(fir)
     private val resolveStateWeakRef = WeakReference(resolveState)
 
-    inline fun <R> withFir(phase: FirResolvePhase = FirResolvePhase.RAW_FIR, action: (fir: D) -> R): R {
+    inline fun <R> withFir(phase: FirResolvePhase = FirResolvePhase.RAW_FIR, crossinline action: (fir: D) -> R): R {
         token.assertIsValid()
-        val fir = firWeakRef.get() ?: error("FirElement was garbage collected while analysis session is still valid")
+        val fir = firWeakRef.get()
+            ?: error("FirElement was garbage collected while analysis session is still valid")
         val resolveState =
             resolveStateWeakRef.get() ?: error("FirModuleResolveState was garbage collected while analysis session is still valid")
-        return action(LowLevelFirApiFacade.resolvedFirToPhase(fir, phase, resolveState))
+        LowLevelFirApiFacade.resolvedFirToPhase(fir, phase, resolveState)
+        return resolveState.withFirDeclaration(fir) { action(it) }
     }
+
+    inline fun <R> withFirResolvedToBodyResolve(action: (fir: D) -> R): R {
+        token.assertIsValid()
+        val fir = firWeakRef.get()
+            ?: error("FirElement was garbage collected while analysis session is still valid")
+        val resolveState =
+            resolveStateWeakRef.get() ?: error("FirModuleResolveState was garbage collected while analysis session is still valid")
+        LowLevelFirApiFacade.resolvedFirToPhase(fir, FirResolvePhase.BODY_RESOLVE, resolveState)
+        return action(resolveState.withFirDeclaration(fir) { it })
+    }
+
+    val resolveState
+        get() = resolveStateWeakRef.get() ?: error("FirModuleResolveState was garbage collected while analysis session is still valid")
 
     inline fun <R> withFirAndCache(phase: FirResolvePhase = FirResolvePhase.RAW_FIR, crossinline createValue: (fir: D) -> R) =
         ValidityAwareCachedValue(token) {

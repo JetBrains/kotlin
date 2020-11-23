@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
+import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.scripting.compiler.test.linesSplitTrim
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -81,6 +84,31 @@ class ScriptingWithCliCompilerTest {
                 "println(javax.sql.DataSource::class.java)"
             ),
             listOf("interface javax.sql.DataSource")
+        )
+    }
+
+    @Test
+    fun testExceptionWithCause() {
+        val (_, err, _) = captureOutErrRet {
+            CLITool.doMainNoExit(
+                K2JVMCompiler(),
+                arrayOf(
+                    "-script",
+                    "$TEST_DATA_DIR/integration/exceptionWithCause.kts"
+                )
+            )
+        }
+        val filteredErr = err.linesSplitTrim().filterNot { it.startsWith("WARN: ") }
+        Assert.assertEquals(
+            """
+                java.lang.Exception: Top
+	                    at ExceptionWithCause.<init>(exceptionWithCause.kts:8)
+                Caused by: java.lang.Exception: Oh no
+	                    at ExceptionWithCause.<init>(exceptionWithCause.kts:5)
+                Caused by: java.lang.Exception: Error!
+	                    at ExceptionWithCause.<init>(exceptionWithCause.kts:3)
+            """.trimIndent().linesSplitTrim(),
+            filteredErr
         )
     }
 

@@ -10,8 +10,8 @@ interface A
 interface TypeConstructor
 
 class Refiner {
-    val memoizedFunctionLambda = createMemoizedFunction { it.<!INAPPLICABLE_CANDIDATE!>foo<!>() } // error type infered, no diagnostic, BAD, backend fails
-    val memoizedFunctionReference = <!INAPPLICABLE_CANDIDATE!>createMemoizedFunction<!>(<!UNRESOLVED_REFERENCE!>TypeConstructor::foo<!>) // EXTENSION_IN_CLASS_REFERENCE_IS_NOT_ALLOWED, fine
+    val memoizedFunctionLambda = createMemoizedFunction { it.foo() } // error type infered, no diagnostic, BAD, backend fails
+    val memoizedFunctionReference = createMemoizedFunction(TypeConstructor::foo) // EXTENSION_IN_CLASS_REFERENCE_IS_NOT_ALLOWED, fine
     val memoizedFunctionTypes = createMemoizedFunction<TypeConstructor, Boolean> { it.foo() } // works fine
 
     private fun TypeConstructor.foo(): Boolean = true

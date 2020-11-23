@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializerCodegen
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.getSerialTypeInfo
+import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESCRIPTOR_CLASS_IMPL
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.typeArgPrefix
@@ -32,8 +33,9 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ty
 open class SerializerJsTranslator(
     descriptor: ClassDescriptor,
     val translator: DeclarationBodyVisitor,
-    val context: TranslationContext
-) : SerializerCodegen(descriptor, context.bindingContext()) {
+    val context: TranslationContext,
+    metadataPlugin: SerializationDescriptorSerializerPlugin?
+) : SerializerCodegen(descriptor, context.bindingContext(), metadataPlugin) {
 
     internal fun generateFunction(descriptor: FunctionDescriptor, bodyGen: JsBlockBuilder.(JsFunction, TranslationContext) -> Unit) {
         val f = context.buildFunction(descriptor, bodyGen)
@@ -351,7 +353,11 @@ open class SerializerJsTranslator(
 
         // deserialization constructor call
         // todo: external deserialization with primary constructor and setters calls after resolution of KT-11586
-        val constrDesc = KSerializerDescriptorResolver.createLoadConstructorDescriptor(serializableDescriptor, context.bindingContext())
+        val constrDesc = KSerializerDescriptorResolver.createLoadConstructorDescriptor(
+            serializableDescriptor,
+            context.bindingContext(),
+            null
+        )
         val constrRef = context.getInnerNameForDescriptor(constrDesc).makeRef()
         val args: MutableList<JsExpression> = bitMasks.toMutableList()
         args += localProps
@@ -363,13 +369,14 @@ open class SerializerJsTranslator(
         fun translate(
             descriptor: ClassDescriptor,
             translator: DeclarationBodyVisitor,
-            context: TranslationContext
+            context: TranslationContext,
+            metadataPlugin: SerializationDescriptorSerializerPlugin?
         ) {
             val serializableDesc = getSerializableClassDescriptorBySerializer(descriptor) ?: return
             if (serializableDesc.isSerializableEnum()) {
                 SerializerForEnumsTranslator(descriptor, translator, context).generate()
             } else {
-                SerializerJsTranslator(descriptor, translator, context).generate()
+                SerializerJsTranslator(descriptor, translator, context, metadataPlugin).generate()
             }
         }
     }

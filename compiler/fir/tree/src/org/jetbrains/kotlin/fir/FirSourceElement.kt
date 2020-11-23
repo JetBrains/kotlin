@@ -133,7 +133,7 @@ sealed class FirFakeSourceElementKind : FirSourceElementKind() {
     // `a > b` will be wrapped in FirComparisonExpression
     // with real source which points to initial `a > b` expression
     // and inner FirFunctionCall will refer to a fake source
-    object GeneratedCompararisonExpression : FirFakeSourceElementKind()
+    object GeneratedComparisonExpression : FirFakeSourceElementKind()
 
     // a ?: b --> when(val $subj = a) { .... }
     // where `val $subj = a` has a fake source

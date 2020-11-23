@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.CheckersComponent
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
@@ -26,7 +27,7 @@ import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 // -------------------------- Required components --------------------------
 
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerCommonComponents() {
+fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersionSettings) {
     register(FirDeclaredMemberScopeProvider::class, FirDeclaredMemberScopeProvider())
     register(FirCorrespondingSupertypesCache::class, FirCorrespondingSupertypesCache(this))
     register(FirDefaultParametersResolver::class, FirDefaultParametersResolver())
@@ -35,7 +36,7 @@ fun FirSession.registerCommonComponents() {
     register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.create(this))
     register(FirPredicateBasedProvider::class, FirPredicateBasedProvider.create(this))
     register(GeneratedClassIndex::class, GeneratedClassIndex.create())
-    register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(this))
+    register(FirLanguageSettingsComponent::class, FirLanguageSettingsComponent(languageVersionSettings))
     register(InferenceComponents::class, InferenceComponents(this))
 }
 

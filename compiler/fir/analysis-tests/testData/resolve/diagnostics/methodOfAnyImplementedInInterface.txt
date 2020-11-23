@@ -4,7 +4,7 @@ FILE: methodOfAnyImplementedInInterface.kt
             ^toString String(Hello)
         }
 
-        public open override fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals Boolean(true)
         }
 
@@ -16,7 +16,7 @@ FILE: methodOfAnyImplementedInInterface.kt
     public abstract interface B : R|kotlin/Any| {
         public abstract override fun toString(): R|kotlin/String|
 
-        public abstract override fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+        public abstract override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
         public abstract override fun hashCode(): R|kotlin/Int|
 

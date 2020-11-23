@@ -27,7 +27,11 @@ sealed class KtVariableSymbol : KtVariableLikeSymbol() {
     abstract override fun createPointer(): KtSymbolPointer<KtVariableSymbol>
 }
 
-abstract class KtJavaFieldSymbol : KtVariableSymbol(), KtSymbolWithModality<KtCommonSymbolModality>, KtSymbolWithKind {
+abstract class KtJavaFieldSymbol :
+    KtVariableSymbol(),
+    KtSymbolWithModality<KtCommonSymbolModality>,
+    KtSymbolWithVisibility,
+    KtSymbolWithKind {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
 
     abstract val callableIdIfNonLocal: FqName?
@@ -35,13 +39,23 @@ abstract class KtJavaFieldSymbol : KtVariableSymbol(), KtSymbolWithModality<KtCo
     abstract override fun createPointer(): KtSymbolPointer<KtJavaFieldSymbol>
 }
 
-// TODO getters & setters
 abstract class KtPropertySymbol : KtVariableSymbol(),
     KtPossibleExtensionSymbol,
     KtSymbolWithModality<KtCommonSymbolModality>,
+    KtSymbolWithVisibility,
+    KtAnnotatedSymbol,
     KtSymbolWithKind {
 
     abstract val callableIdIfNonLocal: FqName?
+
+    abstract val getter: KtPropertyGetterSymbol?
+    abstract val setter: KtPropertySetterSymbol?
+
+    abstract val hasBackingField: Boolean
+
+    abstract val isConst: Boolean
+
+    abstract val isOverride: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtPropertySymbol>
 }
@@ -50,15 +64,15 @@ abstract class KtLocalVariableSymbol : KtVariableSymbol(), KtSymbolWithKind {
     abstract override fun createPointer(): KtSymbolPointer<KtLocalVariableSymbol>
 }
 
-sealed class KtParameterSymbol : KtVariableLikeSymbol(), KtSymbolWithKind {
+sealed class KtParameterSymbol : KtVariableLikeSymbol(), KtSymbolWithKind, KtAnnotatedSymbol {
     abstract val hasDefaultValue: Boolean
+
+    abstract val isVararg: Boolean
 
     abstract override fun createPointer(): KtSymbolPointer<KtParameterSymbol>
 }
 
 abstract class KtFunctionParameterSymbol : KtParameterSymbol() {
-    abstract val isVararg: Boolean
-
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.NON_PROPERTY_PARAMETER
 
     abstract override fun createPointer(): KtSymbolPointer<KtFunctionParameterSymbol>

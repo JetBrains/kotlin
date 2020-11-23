@@ -24,5 +24,7 @@ abstract class FirWrappedExpression : FirExpression() {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract fun replaceExpression(newExpression: FirExpression)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedExpression
 }

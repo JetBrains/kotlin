@@ -6,13 +6,12 @@
 package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifierId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapNotNull
 import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal class CommonizationVisitor(
     private val root: CirRootNode
@@ -128,7 +127,7 @@ internal class CommonizationVisitor(
     private fun CirTypeAliasNode.collectCommonSupertypes(): Map<CirType, CommonizedGroup<CirType>>? {
         val supertypesMap: MutableMap<CirType, CommonizedGroup<CirType>> = linkedMapOf() // preserve supertype order
         for ((index, typeAlias) in targetDeclarations.withIndex()) {
-            val expandedClassId = typeAlias!!.expandedType.classifierId.cast<CirClassifierId.Class>().classId
+            val expandedClassId = typeAlias!!.expandedType.classifierId
             if (expandedClassId.packageFqName.isUnderStandardKotlinPackages)
                 return null // this case is not supported
 
@@ -144,11 +143,11 @@ internal class CommonizationVisitor(
     }
 
     private fun CirClass.commonizeSupertypes(supertypesMap: Map<CirType, CommonizedGroup<CirType>>?) {
-        supertypesMap ?: return
-        for ((_, supertypesGroup) in supertypesMap) {
-            val commonSupertype = commonize(supertypesGroup, TypeCommonizer(root.cache))
-            if (commonSupertype != null)
-                supertypes.add(commonSupertype)
-        }
+        setSupertypes(
+            if (supertypesMap.isNullOrEmpty())
+                emptyList()
+            else
+                supertypesMap.values.compactMapNotNull { supertypesGroup -> commonize(supertypesGroup, TypeCommonizer(root.cache)) }
+        )
     }
 }

@@ -8,7 +8,7 @@ FILE: main.kt
             ^ R|<local>/x|.R|kotlin/Any.toString|()
         }
         )
-        R|/MyFunction|<R|kotlin/Any?|, R|ft<kotlin/String, kotlin/String?>!|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Any?, kotlin/Any?>?|): R|kotlin/String| {
+        R|/MyFunction|<R|kotlin/Nothing|, R|kotlin/Any?|>(<L> = MyFunction@fun <anonymous>(x: R|ft<kotlin/Nothing, kotlin/Nothing?>!|): R|kotlin/Any?| {
             ^ String()
         }
         )

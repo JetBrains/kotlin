@@ -31,10 +31,8 @@ dependencies {
 
     testRuntime(project(":idea:idea-android")) { isTransitive = false }
 
-    Platform[192].orHigher {
-        testCompileOnly(intellijPluginDep("java"))
-        testRuntime(intellijPluginDep("java"))
-    }
+    testCompileOnly(intellijPluginDep("java"))
+    testRuntime(intellijPluginDep("java"))
 
     testRuntimeOnly(toolsJar())
     testRuntime(project(":kotlin-reflect"))

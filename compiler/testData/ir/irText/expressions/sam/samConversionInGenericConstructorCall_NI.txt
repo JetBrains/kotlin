@@ -4,9 +4,9 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
     VALUE_PARAMETER name:f2 index:1 type:kotlin.Function1<kotlin.Int, kotlin.String>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (f1: kotlin.Function1<kotlin.String, kotlin.String>, f2: kotlin.Function1<kotlin.Int, kotlin.String>): <root>.C.D<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> (jxy: @[FlexibleNullability] <root>.J<X of <root>.C?, Y of <root>.C.D?>?) declared in <root>.C.D' type=<root>.C.D<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?> origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> (jxy: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.C?, @[FlexibleNullability] Y of <root>.C.D?>?) declared in <root>.C.D' type=<root>.C.D<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?> origin=null
           <class: Y>: @[FlexibleNullability] kotlin.Int?
-          $outer: CONSTRUCTOR_CALL 'public constructor <init> (jxx: @[FlexibleNullability] <root>.J<X of <root>.C?, X of <root>.C?>?) declared in <root>.C' type=<root>.C<@[FlexibleNullability] kotlin.String?> origin=null
+          $outer: CONSTRUCTOR_CALL 'public constructor <init> (jxx: @[FlexibleNullability] <root>.J<@[FlexibleNullability] X of <root>.C?, @[FlexibleNullability] X of <root>.C?>?) declared in <root>.C' type=<root>.C<@[FlexibleNullability] kotlin.String?> origin=null
             <class: X>: @[FlexibleNullability] kotlin.String?
             jxx: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.String?, @[FlexibleNullability] kotlin.String?>?
               GET_VAR 'f1: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test3' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
@@ -94,7 +94,7 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
     VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.Int>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testGenericJavaCtor1 (f: kotlin.Function1<kotlin.String, kotlin.Int>): <root>.G<@[FlexibleNullability] kotlin.String?> declared in <root>'
-        CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: @[FlexibleNullability] <root>.J<TCtor of <root>.G.<init>?, TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<@[FlexibleNullability] kotlin.String?> origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: @[FlexibleNullability] <root>.J<@[FlexibleNullability] TCtor of <root>.G.<init>?, @[FlexibleNullability] TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<@[FlexibleNullability] kotlin.String?> origin=null
           <class: TClass>: @[FlexibleNullability] kotlin.String?
           <TCtor>: @[FlexibleNullability] kotlin.Int?
           x: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?>?
@@ -106,7 +106,7 @@ FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
         TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.Int> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.Int>
           GET_VAR 'x: kotlin.Any declared in <root>.testGenericJavaCtor2' type=kotlin.Any origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: @[FlexibleNullability] <root>.J<TCtor of <root>.G.<init>?, TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<@[FlexibleNullability] kotlin.String?> origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: @[FlexibleNullability] <root>.J<@[FlexibleNullability] TCtor of <root>.G.<init>?, @[FlexibleNullability] TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<@[FlexibleNullability] kotlin.String?> origin=null
           <class: TClass>: @[FlexibleNullability] kotlin.String?
           <TCtor>: @[FlexibleNullability] kotlin.Int?
           x: TYPE_OP type=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?>? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] <root>.J<@[FlexibleNullability] kotlin.Int?, @[FlexibleNullability] kotlin.String?>?

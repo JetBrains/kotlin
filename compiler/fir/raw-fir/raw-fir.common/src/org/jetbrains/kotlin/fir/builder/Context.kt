@@ -6,9 +6,14 @@
 package org.jetbrains.kotlin.fir.builder
 
 import kotlinx.collections.immutable.persistentListOf
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirFunctionTarget
+import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.FirLoopTarget
+import org.jetbrains.kotlin.fir.FirSourceElementKind
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -27,4 +32,5 @@ class Context<T> {
     val arraySetArgument = mutableMapOf<T, FirExpression>()
 
     var forcedElementSourceKind: FirSourceElementKind? = null
+    val dispatchReceiverTypesStack = mutableListOf<ConeClassLikeType>()
 }

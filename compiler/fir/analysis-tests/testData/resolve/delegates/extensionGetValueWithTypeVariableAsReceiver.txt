@@ -1,6 +1,6 @@
 FILE: extensionGetValueWithTypeVariableAsReceiver.kt
     public final inline fun <L> runLogged(action: R|() -> L|): R|L| {
-        ^runLogged R|<local>/action|.R|FakeOverride<kotlin/Function0.invoke: R|L|>|()
+        ^runLogged R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|L|>|()
     }
     public final operator fun R|kotlin/String|.getValue(receiver: R|kotlin/Any?|, p: R|kotlin/Any|): R|kotlin/String| {
         ^getValue R|/runLogged|<R|kotlin/String|>(<L> = runLogged@fun <anonymous>(): R|kotlin/String| <kind=UNKNOWN>  {

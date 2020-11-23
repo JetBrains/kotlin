@@ -10,7 +10,7 @@ digraph contractsUsage_kt {
             color=blue
             1 [label="Enter block"];
             2 [label="Access variable R|<local>/x|"];
-            3 [label="Function call: R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            3 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             4 [label="Exit block"];
         }
         5 [label="Exit function bar" style="filled" fillcolor=red];
@@ -42,7 +42,7 @@ digraph contractsUsage_kt {
                     color=blue
                     14 [label="Enter block"];
                     15 [label="Access variable this@R|/baz|"];
-                    16 [label="Function call: this@R|/baz|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                    16 [label="Function call: this@R|/baz|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
                     17 [label="Exit block"];
                 }
                 18 [label="Exit when branch result"];
@@ -89,7 +89,7 @@ digraph contractsUsage_kt {
                     color=blue
                     30 [label="Enter block"];
                     31 [label="Access variable R|<local>/x|"];
-                    32 [label="Function call: R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                    32 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
                     33 [label="Access variable R|<local>/y|"];
                     34 [label="Function call: R|<local>/y|.R|/baz|()"];
                     35 [label="Jump: ^foo Unit"];

@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -45,7 +43,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
 
         val fir: FirCallableDeclaration<*> = candidate.symbol.fir
 
-        val (rawResultingType, callableReferenceAdaptation) = buildReflectionType(fir, resultingReceiverType, callInfo, context)
+        val (rawResultingType, callableReferenceAdaptation) = buildReflectionType(fir, resultingReceiverType, candidate, context)
         val resultingType = candidate.substitutor.substituteOrSelf(rawResultingType)
 
         if (callableReferenceAdaptation.needCompatibilityResolveForCallableReference()) {
@@ -89,17 +87,10 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
     }
 }
 
-
-/*
-val resultingReceiverType = when (callInfo.lhs) {
-    is DoubleColonLHS.Type -> callInfo.lhs.type.takeIf { callInfo.explicitReceiver !is FirResolvedQualifier }
-    else -> null
-}
- */
 private fun buildReflectionType(
     fir: FirCallableDeclaration<*>,
     receiverType: ConeKotlinType?,
-    callInfo: CallInfo,
+    candidate: Candidate,
     context: ResolutionContext
 ): Pair<ConeKotlinType, CallableReferenceAdaptation?> {
     val returnTypeRef = context.bodyResolveComponents.returnTypeCalculator.tryCalculateReturnType(fir)
@@ -108,7 +99,7 @@ private fun buildReflectionType(
             val unboundReferenceTarget = if (receiverType != null) 1 else 0
             val callableReferenceAdaptation =
                 context.bodyResolveComponents
-                    .getCallableReferenceAdaptation(context.session, fir, callInfo.expectedType, unboundReferenceTarget)
+                    .getCallableReferenceAdaptation(context.session, fir, candidate.callInfo.expectedType, unboundReferenceTarget)
 
             val parameters = mutableListOf<ConeKotlinType>()
 
@@ -133,7 +124,7 @@ private fun buildReflectionType(
                 isSuspend = isSuspend
             ) to callableReferenceAdaptation
         }
-        is FirVariable -> createKPropertyType(fir, receiverType, returnTypeRef) to null
+        is FirVariable -> createKPropertyType(fir, receiverType, returnTypeRef, candidate) to null
         else -> ConeClassErrorType(ConeUnsupportedCallableReferenceTarget(fir)) to null
     }
 }
@@ -396,10 +387,20 @@ fun ConeKotlinType.isKCallableType(): Boolean {
 private fun createKPropertyType(
     propertyOrField: FirVariable<*>,
     receiverType: ConeKotlinType?,
-    returnTypeRef: FirResolvedTypeRef
+    returnTypeRef: FirResolvedTypeRef,
+    candidate: Candidate,
 ): ConeKotlinType {
     val propertyType = returnTypeRef.type
     return org.jetbrains.kotlin.fir.resolve.createKPropertyType(
-        receiverType, propertyType, isMutable = propertyOrField.isVar
+        receiverType,
+        propertyType,
+        isMutable = propertyOrField.canBeMutableReference(candidate)
     )
+}
+
+private fun FirVariable<*>.canBeMutableReference(candidate: Candidate): Boolean {
+    if (!isVar) return false
+    if (this is FirField) return true
+    return source?.kind == FirFakeSourceElementKind.PropertyFromParameter ||
+            (setter is FirMemberDeclaration && candidate.callInfo.session.visibilityChecker.isVisible(setter!!, candidate))
 }

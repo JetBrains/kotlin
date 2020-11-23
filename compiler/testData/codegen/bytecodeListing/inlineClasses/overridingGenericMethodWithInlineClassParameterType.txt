@@ -1,0 +1,44 @@
+@kotlin.Metadata
+public final class CFoo {
+    // source: 'overridingGenericMethodWithInlineClassParameterType.kt'
+    private final field x: long
+    private synthetic method <init>(p0: long): void
+    public synthetic final static method box-impl(p0: long): CFoo
+    public static method constructor-impl(p0: long): long
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: long, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: long, p1: long): boolean
+    public synthetic bridge method foo(p0: java.lang.Object): void
+    public method foo-IQRRRT4(p0: int): void
+    public static method foo-IQRRRT4(p0: long, p1: int): void
+    public final method getX(): long
+    public method hashCode(): int
+    public static method hashCode-impl(p0: long): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: long): java.lang.String
+    public synthetic final method unbox-impl(): long
+}
+
+@kotlin.Metadata
+public interface IFoo {
+    // source: 'overridingGenericMethodWithInlineClassParameterType.kt'
+    public abstract method foo(p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class Z {
+    // source: 'overridingGenericMethodWithInlineClassParameterType.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): Z
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}

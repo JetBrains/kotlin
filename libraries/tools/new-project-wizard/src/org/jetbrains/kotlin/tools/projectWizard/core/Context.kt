@@ -10,6 +10,12 @@ import org.jetbrains.kotlin.tools.projectWizard.core.service.ServicesManager
 import org.jetbrains.kotlin.tools.projectWizard.core.service.SettingSavingWizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.service.WizardService
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.allIRModules
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.path
+import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.allModulesPaths
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Module
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.ModuleReference
+import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.path
 import kotlin.reflect.KClass
 
 
@@ -238,6 +244,11 @@ fun Reader.getUnspecifiedSettings(phases: Set<GenerationPhase>): List<AnySetting
         }.toSet()
     val provided = pluginSettings.map(PluginSetting<*, *>::path).toSet()
     return required.filterNot { it.path in provided }
+}
+
+fun Reader.moduleByReference(reference: ModuleReference): Module = when (reference) {
+    is ModuleReference.ByModule -> reference.module
+    is ModuleReference.ByPath -> allIRModules.first { it.originalModule.path == reference.path }.originalModule
 }
 
 

@@ -32,7 +32,7 @@ class GeneratorContext(
     val constantValueGenerator: ConstantValueGenerator,
     override val irBuiltIns: IrBuiltIns
 ) : IrGeneratorContext {
-    val callToSubstitutedDescriptorMap = mutableMapOf<IrDeclarationReference, CallableDescriptor>()
+    internal val callToSubstitutedDescriptorMap = mutableMapOf<IrDeclarationReference, CallableDescriptor>()
 
     val sourceManager = PsiSourceManager()
 

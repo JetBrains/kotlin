@@ -22,19 +22,19 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class IrLazyConstructor(
-        override val startOffset: Int,
-        override val endOffset: Int,
-        override var origin: IrDeclarationOrigin,
-        override val symbol: IrConstructorSymbol,
-        override val descriptor: ClassConstructorDescriptor,
-        override val name: Name,
-        override var visibility: DescriptorVisibility,
-        override val isInline: Boolean,
-        override val isExternal: Boolean,
-        override val isPrimary: Boolean,
-        override val isExpect: Boolean,
-        override val stubGenerator: DeclarationStubGenerator,
-        override val typeTranslator: TypeTranslator,
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override var origin: IrDeclarationOrigin,
+    override val symbol: IrConstructorSymbol,
+    override val descriptor: ClassConstructorDescriptor,
+    override val name: Name,
+    override var visibility: DescriptorVisibility,
+    override val isInline: Boolean,
+    override val isExternal: Boolean,
+    override val isPrimary: Boolean,
+    override val isExpect: Boolean,
+    override val stubGenerator: DeclarationStubGenerator,
+    override val typeTranslator: TypeTranslator,
 ) : IrConstructor(), IrLazyFunctionBase {
     override var parent: IrDeclarationParent by createLazyParent()
 

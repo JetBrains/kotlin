@@ -13,7 +13,7 @@ FILE: arrayFirstOrNull.kt
                 Null(null)
             }
             else ->  {
-                this@R|/firstOrNullX|.R|FakeOverride<kotlin/Array.get: R|CapturedType(out T)|>|(Int(0))
+                this@R|/firstOrNullX|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out T)|>|(Int(0))
             }
         }
 

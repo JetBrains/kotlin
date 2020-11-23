@@ -13,7 +13,7 @@ FILE: delegateWithLambda.kt
 
     }
     public final fun <T> lazy(block: R|() -> T|): R|LazyDelegate<T>| {
-        ^lazy R|/LazyDelegate.LazyDelegate|<R|T|>(R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|())
+        ^lazy R|/LazyDelegate.LazyDelegate|<R|T|>(R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|())
     }
     public final fun getAny(): R|kotlin/Any?| {
         ^getAny Null(null)
@@ -29,7 +29,7 @@ FILE: delegateWithLambda.kt
         }
         )
             public get(): R|kotlin/String| {
-                ^ this@R|/Test|.D|/Test.x|.R|FakeOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.x|)
+                ^ this@R|/Test|.D|/Test.x|.R|SubstitutionOverride</LazyDelegate.getValue: R|kotlin/String|>|(this@R|/Test|, ::R|/Test.x|)
             }
 
     }

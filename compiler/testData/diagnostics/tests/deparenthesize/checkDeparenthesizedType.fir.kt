@@ -3,6 +3,8 @@
 
 package m
 
+import checkSubtype
+
 fun test(i: Int?) {
     if (i != null) {
         foo(l1@ i)

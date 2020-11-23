@@ -6,6 +6,7 @@
 package kotlin.script.experimental.test
 
 import java.io.File
+import java.nio.file.Files
 import kotlin.contracts.ExperimentalContracts
 import kotlin.script.experimental.dependencies.*
 import kotlin.script.experimental.api.ResultWithDiagnostics
@@ -17,8 +18,7 @@ import kotlin.script.experimental.dependencies.impl.makeResolveFailureResult
 class ResolversTest : ResolversTestBase() {
 
     private fun <T> withTempFile(body: (file: File) -> T): T {
-        createTempFile()
-        val file = createTempFile()
+        val file = Files.createTempFile(null, null).toFile()
         file.deleteOnExit()
         try {
             return body(file)

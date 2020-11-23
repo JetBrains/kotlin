@@ -23,6 +23,7 @@ import com.intellij.openapi.startup.StartupManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.testFramework.ExtensionTestUtil
+import com.intellij.testFramework.TestApplicationManager
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.perf.util.logMessage
@@ -84,8 +85,7 @@ fun TestApplicationManager.closeProject(project: Project) {
     logMessage { "project '$name' is about to be closed" }
     dispatchAllInvocationEvents()
     val projectManagerEx = ProjectManagerEx.getInstanceEx()
-    projectManagerEx.forceCloseProjectEx(project, true)
-
+    projectManagerEx.forceCloseProject(project)
     logMessage { "project '$name' successfully closed" }
 }
 

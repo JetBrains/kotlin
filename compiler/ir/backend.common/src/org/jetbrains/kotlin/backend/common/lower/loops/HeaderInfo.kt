@@ -67,10 +67,10 @@ internal sealed class NumericHeaderInfo(
     val first: IrExpression,
     val last: IrExpression,
     val step: IrExpression,
+    val isLastInclusive: Boolean,
     val canCacheLast: Boolean,
     val isReversed: Boolean,
-    val direction: ProgressionDirection,
-    val additionalNotEmptyCondition: IrExpression?
+    val direction: ProgressionDirection
 ) : HeaderInfo()
 
 /** Information about a for-loop over a progression. */
@@ -79,17 +79,16 @@ internal class ProgressionHeaderInfo(
     first: IrExpression,
     last: IrExpression,
     step: IrExpression,
+    isLastInclusive: Boolean = true,
     isReversed: Boolean = false,
     canOverflow: Boolean? = null,
     direction: ProgressionDirection,
-    additionalNotEmptyCondition: IrExpression? = null,
     val additionalStatements: List<IrStatement> = listOf()
 ) : NumericHeaderInfo(
-    progressionType, first, last, step,
+    progressionType, first, last, step, isLastInclusive,
     canCacheLast = true,
     isReversed = isReversed,
-    direction = direction,
-    additionalNotEmptyCondition = additionalNotEmptyCondition
+    direction = direction
 ) {
 
     val canOverflow: Boolean by lazy {
@@ -152,16 +151,21 @@ internal class ProgressionHeaderInfo(
         }
     }
 
-    override fun asReversed() = ProgressionHeaderInfo(
-        progressionType = progressionType,
-        first = last,
-        last = first,
-        step = step.negate(),
-        isReversed = !isReversed,
-        direction = direction.asReversed(),
-        additionalNotEmptyCondition = additionalNotEmptyCondition,
-        additionalStatements = additionalStatements
-    )
+    override fun asReversed() = if (isLastInclusive) {
+        ProgressionHeaderInfo(
+            progressionType = progressionType,
+            first = last,
+            last = first,
+            step = step.negate(),
+            isReversed = !isReversed,
+            direction = direction.asReversed(),
+            additionalStatements = additionalStatements
+        )
+    } else {
+        // If reversed, we would have a "first-exclusive" loop. We are currently not supporting this since it would add more complexity
+        // due to possible overflow when pre-incrementing the loop variable (see KT-42533).
+        null
+    }
 }
 
 /**
@@ -177,14 +181,11 @@ internal class IndexedGetHeaderInfo(
     val objectVariable: IrVariable,
     val expressionHandler: IndexedGetIterationHandler
 ) : NumericHeaderInfo(
-    IntProgressionType(symbols),
-    first,
-    last,
-    step,
+    IntProgressionType(symbols), first, last, step,
+    isLastInclusive = false,
     canCacheLast = canCacheLast,
     isReversed = false,
-    direction = ProgressionDirection.INCREASING,
-    additionalNotEmptyCondition = null
+    direction = ProgressionDirection.INCREASING
 ) {
     // Technically one can easily iterate over an array in reverse by swapping first/last and
     // negating the step. However, Array.reversed() and Array.reversedArray() return a collection

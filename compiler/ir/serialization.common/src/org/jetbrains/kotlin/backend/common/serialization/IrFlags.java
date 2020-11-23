@@ -30,6 +30,7 @@ public class IrFlags extends Flags {
     // Parameters
 
     public static final BooleanFlagField IS_HIDDEN = FlagField.booleanAfter(IS_NOINLINE);
+    public static final BooleanFlagField IS_ASSIGNABLE = FlagField.booleanAfter(IS_HIDDEN);
 
     // Local variables
     public static final BooleanFlagField IS_LOCAL_VAR = FlagField.booleanAfter(HAS_ANNOTATIONS);
@@ -88,13 +89,15 @@ public class IrFlags extends Flags {
             boolean declaresDefaultValue,
             boolean isCrossinline,
             boolean isNoinline,
-            boolean isHidden
+            boolean isHidden,
+            boolean isAssignable
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
                | DECLARES_DEFAULT_VALUE.toFlags(declaresDefaultValue)
                | IS_CROSSINLINE.toFlags(isCrossinline)
                | IS_NOINLINE.toFlags(isNoinline)
                | IS_HIDDEN.toFlags(isHidden)
+               | IS_ASSIGNABLE.toFlags(isAssignable)
                 ;
     }
 

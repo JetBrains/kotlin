@@ -4,10 +4,10 @@ class A {
     fun A.extA(x: String) = x
     
     fun main() {
-        <!UNRESOLVED_REFERENCE!>Int::extInt<!>
+        Int::extInt
         A::extA
 
-        <!INAPPLICABLE_CANDIDATE!>eat<!>(<!UNRESOLVED_REFERENCE!>Int::extInt<!>)
+        eat(Int::extInt)
         eat(A::extA)
     }
 }

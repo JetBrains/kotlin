@@ -99,24 +99,13 @@ abstract class DeserializedMemberScope protected constructor(
         return impl.getContributedVariables(name, location)
     }
 
-    /**
-     * N.B. Currently the order of declarations here and in the [MemberComparator] is intentionally different:
-     * [MemberComparator] places classes first and typealiases second.
-     *
-     * However, `ClassClsStubBuilder` places typealiases first and classes second. This leads to
-     * Stub vs Psi mismatch error, when we have a class which have both inner typealiases and inner classes.
-     * This is unintentional and should be fixed.
-     *
-     * We do not want to update stubs versions prematurely, so we temporary mitigate the issue by making sure that
-     * order in stubs (in `ClassClsStubBuilder`) and here (in [DeserializedMemberScope]) is the same. As soon as the
-     * opportunity to bump the stubs version arises, we should fix the bug in the `ClassClsStubBuilder`, and
-     * fix the order here accordingly.
-     */
     protected fun computeDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
         location: LookupLocation
     ): Collection<DeclarationDescriptor> {
+        //NOTE: descriptors should be in the same order they were serialized in
+        // see MemberComparator
         val result = ArrayList<DeclarationDescriptor>(0)
 
         if (kindFilter.acceptsKinds(DescriptorKindFilter.SINGLETON_CLASSIFIERS_MASK)) {
@@ -125,18 +114,18 @@ abstract class DeserializedMemberScope protected constructor(
 
         impl.addFunctionsAndPropertiesTo(result, kindFilter, nameFilter, location)
 
-        if (kindFilter.acceptsKinds(DescriptorKindFilter.TYPE_ALIASES_MASK)) {
-            for (typeAliasName in impl.typeAliasNames) {
-                if (nameFilter(typeAliasName)) {
-                    result.addIfNotNull(impl.getTypeAliasByName(typeAliasName))
-                }
-            }
-        }
-
         if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) {
             for (className in classNames) {
                 if (nameFilter(className)) {
                     result.addIfNotNull(deserializeClass(className))
+                }
+            }
+        }
+
+        if (kindFilter.acceptsKinds(DescriptorKindFilter.TYPE_ALIASES_MASK)) {
+            for (typeAliasName in impl.typeAliasNames) {
+                if (nameFilter(typeAliasName)) {
+                    result.addIfNotNull(impl.getTypeAliasByName(typeAliasName))
                 }
             }
         }

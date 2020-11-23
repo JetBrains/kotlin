@@ -100,7 +100,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SUPER_NOT_AVAILABLE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SYNTAX_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SYNTAX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_ENUM
@@ -127,13 +127,18 @@ class FirDefaultErrorMessages : DefaultErrorMessages.Extension {
     }
 
     companion object {
+        fun getRendererForDiagnostic(diagnostic: FirDiagnostic<*>): FirDiagnosticRenderer<*> {
+            val factory = diagnostic.factory
+            return MAP[factory] ?: factory.defaultRenderer
+        }
+
         // * - The old FE reports these diagnostics with additional parameters
         // & - New diagnostic that has no analogues in the old FE
         // + - Better message required
         // # - The new diagnostic differs from the old FE's one
         val MAP = FirDiagnosticFactoryToRendererMap("FIR").also { map ->
             // Miscellaneous
-            map.put(SYNTAX_ERROR, "Syntax error")
+            map.put(SYNTAX, "Syntax error")
             map.put(OTHER_ERROR, "Unknown (other) error")
 
             // General syntax

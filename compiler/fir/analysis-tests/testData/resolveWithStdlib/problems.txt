@@ -53,7 +53,7 @@ FILE: problems.kt
         }
 
     }
-    public final val xx: R|kotlin/Int| = R|/Derived.Derived|().R|FakeOverride</Derived.x: R|kotlin/Int|>|.R|kotlin/Int.plus|(Int(1))
+    public final val xx: R|kotlin/Int| = R|/Derived.Derived|().R|SubstitutionOverride</Derived.x: R|kotlin/Int|>|.R|kotlin/Int.plus|(Int(1))
         public get(): R|kotlin/Int|
     public final val t: R|kotlin/Nothing| = throw R|java/lang/AssertionError.AssertionError|(String())
         public get(): R|kotlin/Nothing|

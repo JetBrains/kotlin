@@ -1,11 +1,12 @@
 // !LANGUAGE: -ForbidReferencingToUnderscoreNamedParameterOfCatchBlock
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_ANONYMOUS_PARAMETER -UNUSED_EXPRESSION
+// FULL_JDK
 
 fun foo() {
     try {
         TODO()
     } catch (_: Exception) {
-        `_`.<!UNRESOLVED_REFERENCE!>stackTrace<!>
+        `_`.stackTrace
     }
     try {
         TODO()
@@ -27,7 +28,7 @@ fun foo() {
             }
         }
     } catch (_: Exception) {
-        `_`.<!UNRESOLVED_REFERENCE!>stackTrace<!>
+        `_`.stackTrace
         val y1 = _
         val y2 = (`_`)
     }
@@ -37,21 +38,21 @@ fun foo() {
         try {
             TODO()
         } catch (x: Exception) {
-            `_`.<!UNRESOLVED_REFERENCE!>stackTrace<!>
+            `_`.stackTrace
         }
     }
     val boo1 = { `_`: Exception ->
         try {
             TODO()
         } catch (x: Exception) {
-            `_`.<!UNRESOLVED_REFERENCE!>stackTrace<!>
+            `_`.stackTrace
         }
     }
     val boo2 = { _: Exception ->
         try {
             TODO()
         } catch (x: Exception) {
-            `_`.<!UNRESOLVED_REFERENCE!>stackTrace<!>
+            `_`.stackTrace
         }
     }
 }

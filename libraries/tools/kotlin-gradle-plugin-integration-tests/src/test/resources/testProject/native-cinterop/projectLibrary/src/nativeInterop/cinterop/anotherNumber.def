@@ -1,0 +1,11 @@
+compilerOpts.osx = -D_ANSI_SOURCE
+---
+
+int getAnotherNumber()
+{
+    #ifdef EVEN_NUMBER
+        return 4;
+    #else
+        return 3;
+    #endif
+}

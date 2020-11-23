@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.ir.types.impl
 
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -63,3 +65,7 @@ object IrUninitializedType : IrType {
 
     override fun hashCode(): Int = System.identityHashCode(this)
 }
+
+class ReturnTypeIsNotInitializedException(function: IrFunction) : IllegalStateException(
+    "Return type is not initialized for function '${function.name}'"
+)

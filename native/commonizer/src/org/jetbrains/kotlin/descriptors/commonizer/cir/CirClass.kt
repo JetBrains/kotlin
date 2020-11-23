@@ -16,5 +16,7 @@ interface CirClass : CirClassifier, CirHasModality {
     val isInline: Boolean
     val isInner: Boolean
     val isExternal: Boolean
-    val supertypes: MutableCollection<CirType>
+    val supertypes: Collection<CirType>
+
+    fun setSupertypes(supertypes: Collection<CirType>)
 }

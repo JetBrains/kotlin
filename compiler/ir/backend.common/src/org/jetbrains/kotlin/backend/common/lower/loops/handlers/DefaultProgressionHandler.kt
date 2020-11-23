@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
 
 /** Builds a [HeaderInfo] for progressions not handled by more specialized handlers. */
@@ -34,27 +33,27 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Directly use the `first/last/step` properties of the progression.
             val (progressionVar, progressionExpression) = createTemporaryVariableIfNecessary(expression, nameHint = "progression")
-            val progressionClass = progressionExpression.type.getClass()!!
+            val progressionClass = expression.type.getClass()!!
             val first = irCall(progressionClass.symbol.getPropertyGetter("first")!!).apply {
-                dispatchReceiver = progressionExpression
+                dispatchReceiver = progressionExpression.copy()
             }
             val last = irCall(progressionClass.symbol.getPropertyGetter("last")!!).apply {
-                dispatchReceiver = progressionExpression.deepCopyWithSymbols()
+                dispatchReceiver = progressionExpression.copy()
             }
 
             // *Ranges (e.g., IntRange) have step == 1 and is always increasing.
-            val isRange = progressionExpression.type in rangeClassesTypes
+            val isRange = expression.type in rangeClassesTypes
             val step = if (isRange) {
                 irInt(1)
             } else {
                 irCall(progressionClass.symbol.getPropertyGetter("step")!!).apply {
-                    dispatchReceiver = progressionExpression.deepCopyWithSymbols()
+                    dispatchReceiver = progressionExpression.copy()
                 }
             }
             val direction = if (isRange) ProgressionDirection.INCREASING else ProgressionDirection.UNKNOWN
 
             ProgressionHeaderInfo(
-                ProgressionType.fromIrType(progressionExpression.type, symbols, allowUnsignedBounds)!!,
+                ProgressionType.fromIrType(expression.type, symbols, allowUnsignedBounds)!!,
                 first,
                 last,
                 step,

@@ -47,8 +47,8 @@ object FieldSets {
     fun symbol(symbolClassName: String, argument: String? = null): Field =
         symbolWithPackage("fir.symbols.impl", symbolClassName, argument)
 
-    fun body(nullable: Boolean = false) =
-        field("body", block, nullable)
+    fun body(nullable: Boolean = false, withReplace: Boolean = false) =
+        field("body", block, nullable, withReplace = withReplace)
 
     val returnTypeRef =
         field("returnTypeRef", typeRef)

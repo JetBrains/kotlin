@@ -672,8 +672,8 @@ public abstract class StackValue {
                 box(fromType, toType, v);
             }
         }
-        else if (fromType.getSort() == Type.OBJECT) {
-            //toType is primitive here
+        else if (fromType.getSort() == Type.OBJECT || fromType.getSort() == Type.ARRAY) {
+            // here toType is primitive and fromType is reference (object or array)
             Type unboxedType = unboxPrimitiveTypeOrNull(fromType);
             if (unboxedType != null) {
                 unbox(fromType, unboxedType, v);

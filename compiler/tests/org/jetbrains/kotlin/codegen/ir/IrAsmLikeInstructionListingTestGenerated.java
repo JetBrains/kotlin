@@ -81,11 +81,6 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
             runTest("compiler/testData/codegen/asmLike/receiverMangling/inlineReceivers.kt");
         }
 
-        @TestMetadata("innerClass.kt")
-        public void testInnerClass() throws Exception {
-            runTest("compiler/testData/codegen/asmLike/receiverMangling/innerClass.kt");
-        }
-
         @TestMetadata("localFunctions.kt")
         public void testLocalFunctions() throws Exception {
             runTest("compiler/testData/codegen/asmLike/receiverMangling/localFunctions.kt");
@@ -104,11 +99,6 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
         @TestMetadata("nonInlineReceivers_before.kt")
         public void testNonInlineReceivers_before() throws Exception {
             runTest("compiler/testData/codegen/asmLike/receiverMangling/nonInlineReceivers_before.kt");
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple() throws Exception {
-            runTest("compiler/testData/codegen/asmLike/receiverMangling/simple.kt");
         }
     }
 

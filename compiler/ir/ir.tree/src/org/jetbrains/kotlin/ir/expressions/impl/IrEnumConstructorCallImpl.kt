@@ -34,16 +34,18 @@ class IrEnumConstructorCallImpl(
     override val origin: IrStatementOrigin?
         get() = null
 
-    @ObsoleteDescriptorBasedAPI
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        symbol: IrConstructorSymbol,
-        typeArgumentsCount: Int
-    ) : this(startOffset, endOffset, type, symbol, typeArgumentsCount, symbol.descriptor.valueParameters.size)
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitEnumConstructorCall(this, data)
+    }
+
+    companion object {
+        @ObsoleteDescriptorBasedAPI
+        fun fromSymbolDescriptor(
+            startOffset: Int,
+            endOffset: Int,
+            type: IrType,
+            symbol: IrConstructorSymbol,
+            typeArgumentsCount: Int
+        ) = IrEnumConstructorCallImpl(startOffset, endOffset, type, symbol, typeArgumentsCount, symbol.descriptor.valueParameters.size)
     }
 }

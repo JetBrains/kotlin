@@ -1,5 +1,6 @@
 // JVM_TARGET: 1.8
 // WITH_RUNTIME
+// IGNORE_BACKEND_FIR: JVM_IR
 
 val ua = 1234UL
 val ub = 5678UL

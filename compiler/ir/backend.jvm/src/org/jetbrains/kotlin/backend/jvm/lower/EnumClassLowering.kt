@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.typeWith
@@ -161,6 +162,13 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                 loweredEnumConstructorParameters[expression.symbol]?.let {
                     IrGetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.origin)
                 } ?: expression
+
+            override fun visitSetValue(expression: IrSetValue): IrExpression {
+                expression.transformChildrenVoid()
+                return loweredEnumConstructorParameters[expression.symbol]?.let {
+                    IrSetValueImpl(expression.startOffset, expression.endOffset, it.type, it.symbol, expression.value, expression.origin)
+                } ?: expression
+            }
 
             override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
                 expression.transformChildrenVoid(this)

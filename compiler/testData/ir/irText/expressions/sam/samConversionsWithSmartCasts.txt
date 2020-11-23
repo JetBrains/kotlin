@@ -107,7 +107,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
         $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
         r: TYPE_OP type=@[FlexibleNullability] java.lang.Runnable? origin=SAM_CONVERSION typeOperand=@[FlexibleNullability] java.lang.Runnable?
           TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_NOTNULL typeOperand=kotlin.Function0<kotlin.Unit>
-            CALL 'public open fun id <T> (x: T of <root>.J.id?): T of <root>.J.id? declared in <root>.J' type=@[FlexibleNullability] kotlin.Function0<kotlin.Unit>? origin=null
+            CALL 'public open fun id <T> (x: @[FlexibleNullability] T of <root>.J.id?): @[FlexibleNullability] T of <root>.J.id? declared in <root>.J' type=@[FlexibleNullability] kotlin.Function0<kotlin.Unit>? origin=null
               <T>: @[FlexibleNullability] kotlin.Function0<kotlin.Unit>?
               x: GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test8' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test9 visibility:public modality:FINAL <> () returnType:kotlin.Unit

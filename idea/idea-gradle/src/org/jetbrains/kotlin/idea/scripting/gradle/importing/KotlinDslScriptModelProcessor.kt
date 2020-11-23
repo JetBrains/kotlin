@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.scripting.gradle.importing
 
-import com.intellij.build.BuildContentManager
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
@@ -13,9 +12,9 @@ import com.intellij.openapi.vfs.VfsUtil
 import org.gradle.tooling.model.kotlin.dsl.EditorReportSeverity
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslScriptsModel
 import org.jetbrains.kotlin.gradle.BrokenKotlinDslScriptsModel
+import org.jetbrains.kotlin.idea.KotlinIdeaGradleBundle
 import org.jetbrains.kotlin.idea.scripting.gradle.getGradleScriptInputsStamp
 import org.jetbrains.kotlin.idea.scripting.gradle.roots.GradleBuildRootsManager
-import org.jetbrains.kotlin.idea.util.application.invokeLater
 import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel
 import org.jetbrains.plugins.gradle.service.project.DefaultProjectResolverContext
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
@@ -74,9 +73,11 @@ fun processScriptModel(
                     it.failed = true
                 }
             }
-            invokeLater(project.disposed) {
-                BuildContentManager.getInstance(project).orCreateToolWindow.activate(null, false, false)
-            }
+            throw IllegalStateException(
+                KotlinIdeaGradleBundle.message("title.kotlin.build.script")
+                        + ":\n"
+                        + errors.joinToString("\n") { it.text + "\n" + it.details }
+            )
         }
         errors.isEmpty()
     }

@@ -165,6 +165,9 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
                 throw e
             }
         }
+        if (fileResult == null) {
+            file.clearInBlockModifications()
+        }
         return fileResult
     }
 
@@ -228,6 +231,7 @@ internal class PerFileAnalysisCache(val file: KtFile, componentProvider: Compone
             return AnalysisResult.EMPTY
         }
 
+        moduleDescriptor.assertValid()
         try {
             return KotlinResolveDataProvider.analyze(
                 project,

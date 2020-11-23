@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.ir.copyAnnotationsFrom
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -67,9 +67,9 @@ class JvmInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSup
             updateFrom(oldConstructor)
             returnType = oldConstructor.returnType
         }.apply {
-            annotations = oldConstructor.annotations.map { it.deepCopyWithSymbols(this) }
             parent = oldConstructor.parent
             returnType = oldConstructor.returnType
+            copyAnnotationsFrom(oldConstructor)
             copyTypeParametersFrom(oldConstructor)
 
             val outerThisValueParameter = buildValueParameter(this) {

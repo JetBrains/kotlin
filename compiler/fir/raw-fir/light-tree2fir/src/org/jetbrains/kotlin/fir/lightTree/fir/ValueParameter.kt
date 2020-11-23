@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.copyWithNewSourceKind
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -45,14 +43,20 @@ class ValueParameter(
         }
 
         return buildProperty {
-            source = firValueParameter.source
+            val parameterSource = firValueParameter.source as? FirLightSourceElement
+            val parameterNode = parameterSource?.lightNode
+            source = parameterNode?.toFirLightSourceElement(
+                parameterSource.startOffset, parameterSource.endOffset, parameterSource.tree,
+                FirFakeSourceElementKind.PropertyFromParameter
+            )
             this.session = session
             origin = FirDeclarationOrigin.Source
             returnTypeRef = type.copyWithNewSourceKind(FirFakeSourceElementKind.PropertyFromParameter)
             this.name = name
             initializer = buildQualifiedAccessExpression {
+                source = firValueParameter.source
                 calleeReference = buildPropertyFromParameterResolvedNamedReference {
-                    this.name =  name
+                    this.name = name
                     resolvedSymbol = this@ValueParameter.firValueParameter.symbol
                 }
             }
