@@ -38,7 +38,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
 
             $unchecked
         """.trimIndent(),
-        dumpTree
+        dumpTree = dumpTree
     )
 
     @Test

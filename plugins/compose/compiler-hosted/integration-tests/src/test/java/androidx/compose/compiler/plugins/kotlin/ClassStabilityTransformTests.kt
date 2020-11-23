@@ -1009,6 +1009,6 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
         checked,
         expectedTransformed,
         unchecked,
-        dumpTree
+        dumpTree = dumpTree
     )
 }

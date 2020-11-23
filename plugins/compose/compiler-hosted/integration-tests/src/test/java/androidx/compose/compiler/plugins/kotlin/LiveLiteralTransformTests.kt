@@ -660,6 +660,6 @@ class LiveLiteralTransformTests : AbstractIrTransformTest() {
             import androidx.compose.runtime.Composable
             $unchecked
         """.trimIndent(),
-        dumpTree
+        dumpTree = dumpTree
     )
 }
