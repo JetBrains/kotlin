@@ -85,11 +85,13 @@ interface JavaClass : JavaClassifier, JavaTypeParameterListOwner, JavaModifierLi
     val isInterface: Boolean
     val isAnnotationType: Boolean
     val isEnum: Boolean
+    val isRecord: Boolean
     val lightClassOriginKind: LightClassOriginKind?
 
     val methods: Collection<JavaMethod>
     val fields: Collection<JavaField>
     val constructors: Collection<JavaConstructor>
+    val recordComponents: Collection<JavaRecordComponent>
     fun hasDefaultConstructor(): Boolean
 }
 
@@ -129,6 +131,11 @@ interface JavaConstructor : JavaMember, JavaTypeParameterListOwner {
 
 interface JavaValueParameter : JavaAnnotationOwner {
     val name: Name?
+    val type: JavaType
+    val isVararg: Boolean
+}
+
+interface JavaRecordComponent : JavaMember {
     val type: JavaType
     val isVararg: Boolean
 }

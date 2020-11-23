@@ -84,6 +84,8 @@ class LazyJavaClassDescriptor(
     override fun getKind() = kind
     override fun getModality() = modality
 
+    override fun isRecord(): Boolean = jClass.isRecord
+
     // To workaround a problem with Scala compatibility (KT-9700),
     // we consider private visibility of a Java top level class as package private
     // Shortly: Scala plugin introduces special kind of "private in package" classes

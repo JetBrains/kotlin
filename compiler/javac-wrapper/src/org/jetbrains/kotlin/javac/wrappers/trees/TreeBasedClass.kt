@@ -114,6 +114,10 @@ class TreeBasedClass(
     override val isEnum: Boolean
         get() = tree.modifiers.flags and Flags.ENUM.toLong() != 0L
 
+    // TODO: Support
+    override val isRecord: Boolean
+        get() = false
+
     override val lightClassOriginKind: LightClassOriginKind?
         get() = null
 
@@ -133,6 +137,9 @@ class TreeBasedClass(
                 .map { constructor ->
                     TreeBasedConstructor(constructor as JCTree.JCMethodDecl, compilationUnit, this, javac)
                 }
+
+    override val recordComponents: Collection<JavaRecordComponent>
+        get() = emptyList()
 
     override fun hasDefaultConstructor() = !isInterface && constructors.isEmpty()
 

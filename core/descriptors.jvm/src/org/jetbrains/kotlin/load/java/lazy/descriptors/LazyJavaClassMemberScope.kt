@@ -39,10 +39,7 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.childForMethod
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.lazy.types.toAttributes
-import org.jetbrains.kotlin.load.java.structure.JavaArrayType
-import org.jetbrains.kotlin.load.java.structure.JavaClass
-import org.jetbrains.kotlin.load.java.structure.JavaConstructor
-import org.jetbrains.kotlin.load.java.structure.JavaMethod
+import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -79,21 +76,77 @@ class LazyJavaClassMemberScope(
             it.memberScope.getFunctionNames()
         }.apply {
             addAll(declaredMemberIndex().getMethodNames())
+            addAll(declaredMemberIndex().getRecordComponentNames())
             addAll(computeClassNames(kindFilter, nameFilter))
         }
 
     internal val constructors = c.storageManager.createLazyValue {
         val constructors = jClass.constructors
-        val result = ArrayList<JavaClassConstructorDescriptor>(constructors.size)
+        val result = ArrayList<ClassConstructorDescriptor>(constructors.size)
         for (constructor in constructors) {
             val descriptor = resolveConstructor(constructor)
             result.add(descriptor)
+        }
+
+        if (jClass.isRecord) {
+            val defaultConstructor = createDefaultRecordConstructor()
+            val jvmDescriptor = defaultConstructor.computeJvmDescriptor(withReturnType = false)
+
+            if (result.none { it.computeJvmDescriptor(withReturnType = false) == jvmDescriptor }) {
+                result.add(defaultConstructor)
+                c.components.javaResolverCache.recordConstructor(jClass, defaultConstructor)
+            }
         }
 
         c.components.signatureEnhancement.enhanceSignatures(
             c,
             result.ifEmpty { listOfNotNull(createDefaultConstructor()) }
         ).toList()
+    }
+
+    private fun createDefaultRecordConstructor(): ClassConstructorDescriptor {
+        val classDescriptor = ownerDescriptor
+        val constructorDescriptor = JavaClassConstructorDescriptor.createJavaConstructor(
+            classDescriptor, Annotations.EMPTY, /* isPrimary = */ true, c.components.sourceElementFactory.source(jClass)
+        )
+        val valueParameters = createRecordConstructorParameters(constructorDescriptor)
+        constructorDescriptor.setHasSynthesizedParameterNames(false)
+
+        constructorDescriptor.initialize(valueParameters, getConstructorVisibility(classDescriptor))
+        constructorDescriptor.setHasStableParameterNames(false)
+        constructorDescriptor.returnType = classDescriptor.defaultType
+        return constructorDescriptor
+    }
+
+    private fun createRecordConstructorParameters(constructor: ClassConstructorDescriptorImpl): List<ValueParameterDescriptor> {
+        val components = jClass.recordComponents
+        val result = ArrayList<ValueParameterDescriptor>(components.size)
+
+        val attr = TypeUsage.COMMON.toAttributes(isForAnnotationParameter = false)
+
+        for ((index, component) in components.withIndex()) {
+            val parameterType = c.typeResolver.transformJavaType(component.type, attr)
+            val varargElementType =
+                if (component.isVararg) c.components.module.builtIns.getArrayElementType(parameterType) else null
+
+            result.add(
+                ValueParameterDescriptorImpl(
+                    constructor,
+                    null,
+                    index,
+                    Annotations.EMPTY,
+                    component.name,
+                    parameterType,
+                    /* deeclaresDefaultValue = */false,
+                    /* isCrossinline = */ false,
+                    /* isNoinline = */ false,
+                    varargElementType,
+                    c.components.sourceElementFactory.source(component)
+                )
+            )
+        }
+
+        return result
     }
 
     override fun JavaMethodDescriptor.isVisibleAsFunction(): Boolean {
@@ -438,6 +491,42 @@ class LazyJavaClassMemberScope(
                 it.memberScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS)
             }
     }
+
+    override fun computeImplicitlyDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
+        if (jClass.isRecord && declaredMemberIndex().findRecordComponentByName(name) != null && result.none { it.valueParameters.isEmpty() }) {
+            result.add(resolveRecordComponentToFunctionDescriptor(declaredMemberIndex().findRecordComponentByName(name)!!))
+        }
+    }
+
+    private fun resolveRecordComponentToFunctionDescriptor(recordComponent: JavaRecordComponent): JavaMethodDescriptor {
+        val annotations = c.resolveAnnotations(recordComponent)
+        val functionDescriptorImpl = JavaMethodDescriptor.createJavaMethod(
+            ownerDescriptor, annotations, recordComponent.name, c.components.sourceElementFactory.source(recordComponent), true
+        )
+
+        val returnTypeAttrs = TypeUsage.COMMON.toAttributes(isForAnnotationParameter = false)
+        val returnType = c.typeResolver.transformJavaType(recordComponent.type, returnTypeAttrs)
+
+        functionDescriptorImpl.initialize(
+            null,
+            getDispatchReceiverParameter(),
+            emptyList(),
+            emptyList(),
+            returnType,
+            // Those functions are generated as open in bytecode
+            // Actually, it should not be important because the class is final anyway, but leaving them open is convenient for consistency
+            Modality.convertFromFlags(abstract = false, open = true),
+            DescriptorVisibilities.PUBLIC,
+            null,
+        )
+
+        functionDescriptorImpl.setParameterNamesStatus(false, false)
+
+        c.components.javaResolverCache.recordMethod(recordComponent, functionDescriptorImpl)
+
+        return functionDescriptorImpl
+    }
+
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
         if (jClass.isAnnotationType) {

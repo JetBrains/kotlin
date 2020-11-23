@@ -47,6 +47,8 @@ class BinaryJavaClass(
     override val methods = arrayListOf<JavaMethod>()
     override val fields = arrayListOf<JavaField>()
     override val constructors = arrayListOf<JavaConstructor>()
+    override val recordComponents = arrayListOf<JavaRecordComponent>()
+
     override fun hasDefaultConstructor() = false // never: all constructors explicit in bytecode
 
     override val annotationsByFqName by buildLazyValueForMap()
@@ -63,6 +65,9 @@ class BinaryJavaClass(
     override val isInterface get() = isSet(Opcodes.ACC_INTERFACE)
     override val isAnnotationType get() = isSet(Opcodes.ACC_ANNOTATION)
     override val isEnum get() = isSet(Opcodes.ACC_ENUM)
+
+    override val isRecord get() = isSet(Opcodes.ACC_RECORD)
+
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = false
@@ -182,6 +187,16 @@ class BinaryJavaClass(
                         null
             }
         }
+    }
+
+
+    override fun visitRecordComponent(name: String, descriptor: String, signature: String?): RecordComponentVisitor? {
+        val type = signatureParser.parseTypeString(StringCharacterIterator(signature ?: descriptor), context)
+        // TODO: Read isVararg properly
+        val isVararg = false
+        recordComponents.add(BinaryJavaRecordComponent(Name.identifier(name), this, type, isVararg))
+
+        return null
     }
 
     /**

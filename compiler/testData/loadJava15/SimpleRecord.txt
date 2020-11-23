@@ -1,0 +1,9 @@
+package test
+
+/*record*/ public final class SimpleRecord : java.lang.Record {
+    public constructor SimpleRecord(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.CharSequence!)
+    /*record component*/ public open fun x(): kotlin.Int
+    /*record component*/ public open fun y(): kotlin.CharSequence!
+    public open fun y(/*0*/ n: kotlin.Int): kotlin.CharSequence!
+    public open fun z(): kotlin.Double
+}

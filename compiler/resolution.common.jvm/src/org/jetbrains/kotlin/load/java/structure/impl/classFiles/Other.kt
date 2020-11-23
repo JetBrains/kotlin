@@ -64,6 +64,22 @@ class BinaryJavaValueParameter(
     }
 }
 
+class BinaryJavaRecordComponent(
+    override val name: Name,
+    override val containingClass: JavaClass,
+    override val type: JavaType,
+    override val isVararg: Boolean,
+) : JavaRecordComponent, BinaryJavaModifierListOwner {
+    override val annotations: Collection<JavaAnnotation>
+        get() = emptyList()
+
+    override val access: Int
+        get() = 0
+
+    override val annotationsByFqName: Map<FqName?, JavaAnnotation>
+        get() = emptyMap()
+}
+
 fun isNotTopLevelClass(classContent: ByteArray): Boolean {
     var isNotTopLevelClass = false
     ClassReader(classContent).accept(

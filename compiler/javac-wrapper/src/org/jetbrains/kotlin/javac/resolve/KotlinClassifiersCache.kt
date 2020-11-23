@@ -157,9 +157,12 @@ class MockKotlinClassifier(override val classId: ClassId,
     override val isInterface get() = shouldNotBeCalled()
     override val isAnnotationType get() = shouldNotBeCalled()
     override val isEnum get() = shouldNotBeCalled()
+    override val isRecord get() = shouldNotBeCalled()
     override val methods get() = shouldNotBeCalled()
     override val fields get() = shouldNotBeCalled()
     override val constructors get() = shouldNotBeCalled()
+    override val recordComponents get() = shouldNotBeCalled()
+
     override fun hasDefaultConstructor() = shouldNotBeCalled()
     override val annotations get() = shouldNotBeCalled()
     override val isDeprecatedInJavaDoc get() = shouldNotBeCalled()

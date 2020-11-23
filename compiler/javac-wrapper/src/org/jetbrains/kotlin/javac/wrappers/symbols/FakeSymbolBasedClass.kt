@@ -65,6 +65,9 @@ class FakeSymbolBasedClass(
 
     override val isEnum: Boolean get() = false
 
+    override val isRecord: Boolean get() = false
+
+    override val recordComponents: Collection<JavaRecordComponent> get() = emptyList()
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
     override val methods: Collection<JavaMethod> get() = emptyList()

@@ -59,6 +59,9 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
     override val isEnum: Boolean
         get() = psi.isEnum
 
+    override val isRecord: Boolean
+        get() = psi.isRecord
+
     override val outerClass: JavaClassImpl?
         get() {
             val outer = psi.containingClass
@@ -98,6 +101,13 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
             // See for example org.jetbrains.plugins.scala.lang.psi.light.ScFunctionWrapper,
             // which is present in getConstructors(), but its isConstructor() returns false
             return constructors(psi.constructors.filter { method -> method.isConstructor })
+        }
+
+    override val recordComponents: Collection<JavaRecordComponent>
+        get() {
+            assertNotLightClass()
+
+            return psi.recordComponents.convert(::JavaRecordComponentImpl)
         }
 
     override fun hasDefaultConstructor() = !isInterface && constructors.isEmpty()
