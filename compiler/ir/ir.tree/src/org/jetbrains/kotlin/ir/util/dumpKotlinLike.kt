@@ -70,6 +70,11 @@ enum class FakeOverridesStrategy {
     NONE
 }
 
+// TODO_ conventions:
+// TODO support -- for unsupported nodes
+// TODO no test -- for the cases with no test(s)
+// it's not valid kotlin -- for the cases when used some syntax which is invalid in Kotlin, maybe they are worth to reconsider
+
 /* TODO:
     * don't crash on unbound symbols
     * origin : class, function, property, ...
