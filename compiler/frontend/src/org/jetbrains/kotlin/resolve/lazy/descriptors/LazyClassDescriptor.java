@@ -270,9 +270,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 )
         );
 
-        // TODO: only consider classes from the same file, not the whole package fragment
         boolean freedomForSealedInterfacesSupported = c.getLanguageVersionSettings().supportsFeature(LanguageFeature.FreedomForSealedClasses);
-        this.sealedSubclasses = storageManager.createLazyValue(() -> DescriptorUtilsKt.computeSealedSubclasses(this, freedomForSealedInterfacesSupported));
+        this.sealedSubclasses = storageManager.createLazyValue(() -> c.getSealedClassInheritorsProvider().computeSealedSubclasses(this, freedomForSealedInterfacesSupported));
     }
 
     private static boolean isIllegalInner(@NotNull DeclarationDescriptor descriptor) {

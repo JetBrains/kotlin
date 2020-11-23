@@ -374,43 +374,6 @@ fun ClassifierDescriptor.getAllSuperClassifiers(): Sequence<ClassifierDescriptor
     return doGetAllSuperClassesAndInterfaces()
 }
 
-// Note this is a generic and slow implementation which would work almost for any subclass of ClassDescriptor.
-// Please avoid using it in new code.
-// TODO: do something more clever instead at call sites of this function
-fun computeSealedSubclasses(sealedClass: ClassDescriptor, freedomForSealedInterfacesSupported: Boolean): Collection<ClassDescriptor> {
-    if (sealedClass.modality != Modality.SEALED) return emptyList()
-
-    val result = linkedSetOf<ClassDescriptor>()
-
-    fun collectSubclasses(scope: MemberScope, collectNested: Boolean) {
-        for (descriptor in scope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS)) {
-            if (descriptor !is ClassDescriptor) continue
-
-            if (DescriptorUtils.isDirectSubclass(descriptor, sealedClass)) {
-                result.add(descriptor)
-            }
-
-            if (collectNested) {
-                collectSubclasses(descriptor.unsubstitutedInnerClassesScope, collectNested)
-            }
-        }
-    }
-
-    val container = if (!freedomForSealedInterfacesSupported) {
-        sealedClass.containingDeclaration
-    } else {
-        sealedClass.parents.firstOrNull { it is PackageFragmentDescriptor }
-    }
-    if (container is PackageFragmentDescriptor) {
-        collectSubclasses(
-            container.getMemberScope(),
-            collectNested = freedomForSealedInterfacesSupported
-        )
-    }
-    collectSubclasses(sealedClass.unsubstitutedInnerClassesScope, collectNested = true)
-    return result
-}
-
 fun DeclarationDescriptor.isPublishedApi(): Boolean {
     val descriptor = if (this is CallableMemberDescriptor) DescriptorUtils.getDirectMember(this) else this
     return descriptor.annotations.hasAnnotation(StandardNames.FqNames.publishedApi)
