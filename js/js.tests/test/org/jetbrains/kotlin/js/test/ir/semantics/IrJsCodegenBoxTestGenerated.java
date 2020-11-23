@@ -18568,11 +18568,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/ranges/expression/emptyRange.kt");
             }
 
-            @TestMetadata("inexactDownToMinValue.kt")
-            public void testInexactDownToMinValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/expression/inexactDownToMinValue.kt");
-            }
-
             @TestMetadata("inexactSteppedDownTo.kt")
             public void testInexactSteppedDownTo() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/expression/inexactSteppedDownTo.kt");
@@ -18581,11 +18576,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("inexactSteppedRange.kt")
             public void testInexactSteppedRange() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/expression/inexactSteppedRange.kt");
-            }
-
-            @TestMetadata("inexactToMaxValue.kt")
-            public void testInexactToMaxValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/expression/inexactToMaxValue.kt");
             }
 
             @TestMetadata("maxValueMinusTwoToMaxValue.kt")
@@ -18618,39 +18608,9 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/ranges/expression/openRange.kt");
             }
 
-            @TestMetadata("overflowZeroDownToMaxValue.kt")
-            public void testOverflowZeroDownToMaxValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/expression/overflowZeroDownToMaxValue.kt");
-            }
-
-            @TestMetadata("overflowZeroToMinValue.kt")
-            public void testOverflowZeroToMinValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/expression/overflowZeroToMinValue.kt");
-            }
-
-            @TestMetadata("progressionDownToMinValue.kt")
-            public void testProgressionDownToMinValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/expression/progressionDownToMinValue.kt");
-            }
-
-            @TestMetadata("progressionMaxValueMinusTwoToMaxValue.kt")
-            public void testProgressionMaxValueMinusTwoToMaxValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/expression/progressionMaxValueMinusTwoToMaxValue.kt");
-            }
-
             @TestMetadata("progressionMaxValueToMaxValue.kt")
             public void testProgressionMaxValueToMaxValue() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/expression/progressionMaxValueToMaxValue.kt");
-            }
-
-            @TestMetadata("progressionMaxValueToMinValue.kt")
-            public void testProgressionMaxValueToMinValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/expression/progressionMaxValueToMinValue.kt");
-            }
-
-            @TestMetadata("progressionMinValueToMinValue.kt")
-            public void testProgressionMinValueToMinValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/expression/progressionMinValueToMinValue.kt");
             }
 
             @TestMetadata("reversedBackSequence.kt")
@@ -19265,11 +19225,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 runTest("compiler/testData/codegen/box/ranges/literal/emptyRange.kt");
             }
 
-            @TestMetadata("inexactDownToMinValue.kt")
-            public void testInexactDownToMinValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/literal/inexactDownToMinValue.kt");
-            }
-
             @TestMetadata("inexactSteppedDownTo.kt")
             public void testInexactSteppedDownTo() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/literal/inexactSteppedDownTo.kt");
@@ -19278,11 +19233,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("inexactSteppedRange.kt")
             public void testInexactSteppedRange() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/literal/inexactSteppedRange.kt");
-            }
-
-            @TestMetadata("inexactToMaxValue.kt")
-            public void testInexactToMaxValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/literal/inexactToMaxValue.kt");
             }
 
             @TestMetadata("maxValueMinusTwoToMaxValue.kt")
@@ -19313,21 +19263,6 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("openRange.kt")
             public void testOpenRange() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/literal/openRange.kt");
-            }
-
-            @TestMetadata("overflowZeroDownToMaxValue.kt")
-            public void testOverflowZeroDownToMaxValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/literal/overflowZeroDownToMaxValue.kt");
-            }
-
-            @TestMetadata("overflowZeroToMinValue.kt")
-            public void testOverflowZeroToMinValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/literal/overflowZeroToMinValue.kt");
-            }
-
-            @TestMetadata("progressionDownToMinValue.kt")
-            public void testProgressionDownToMinValue() throws Exception {
-                runTest("compiler/testData/codegen/box/ranges/literal/progressionDownToMinValue.kt");
             }
 
             @TestMetadata("progressionMaxValueMinusTwoToMaxValue.kt")

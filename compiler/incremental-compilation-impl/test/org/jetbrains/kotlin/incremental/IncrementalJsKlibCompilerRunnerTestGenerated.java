@@ -572,6 +572,16 @@ public class IncrementalJsKlibCompilerRunnerTestGenerated extends AbstractIncrem
             runTest("jps-plugin/testData/incremental/pureKotlin/returnTypeChanged/");
         }
 
+        @TestMetadata("sealedClassesAddInheritor")
+        public void testSealedClassesAddInheritor() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/sealedClassesAddInheritor/");
+        }
+
+        @TestMetadata("sealedClassesRemoveInheritor")
+        public void testSealedClassesRemoveInheritor() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/sealedClassesRemoveInheritor/");
+        }
+
         @TestMetadata("secondaryConstructorInlined")
         public void testSecondaryConstructorInlined() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/secondaryConstructorInlined/");
