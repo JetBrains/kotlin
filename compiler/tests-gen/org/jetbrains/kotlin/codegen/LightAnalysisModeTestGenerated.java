@@ -12916,6 +12916,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/functions/max.kt");
         }
 
+        @TestMetadata("mutualInline.kt")
+        public void testMutualInline() throws Exception {
+            runTest("compiler/testData/codegen/box/functions/mutualInline.kt");
+        }
+
         @TestMetadata("nothisnoclosure.kt")
         public void testNothisnoclosure() throws Exception {
             runTest("compiler/testData/codegen/box/functions/nothisnoclosure.kt");
