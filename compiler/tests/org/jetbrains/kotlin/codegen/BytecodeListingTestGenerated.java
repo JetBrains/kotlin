@@ -241,6 +241,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/kt27895.kt");
         }
 
+        @TestMetadata("kt43399.kt")
+        public void testKt43399() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/annotations/kt43399.kt");
+        }
+
         @TestMetadata("kt9320.kt")
         public void testKt9320() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/annotations/kt9320.kt");

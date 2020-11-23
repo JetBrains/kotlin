@@ -26,9 +26,8 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.coerceToUnit
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
@@ -69,7 +68,13 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
     }
 
     private fun IrBuilderWithScope.substituteSetter(irProperty: IrProperty, expression: IrCall): IrExpression =
-        patchReceiver(irSetField(expression.dispatchReceiver, irProperty.resolveFakeOverride()!!.backingField!!, expression.getValueArgument(0)!!))
+        patchReceiver(
+            irSetField(
+                expression.dispatchReceiver,
+                irProperty.resolveFakeOverride()!!.backingField!!,
+                expression.getValueArgument(0)!!
+            )
+        )
 
     private fun IrBuilderWithScope.substituteGetter(irProperty: IrProperty, expression: IrCall): IrExpression {
         val backingField = irProperty.resolveFakeOverride()!!.backingField!!
@@ -131,8 +136,10 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             returnType = backendContext.irBuiltIns.unitType
         }.apply {
             declaration.getter?.extensionReceiverParameter?.let { extensionReceiver ->
-                // Use raw type of extension receiver to avoid generic signature, which would be useless for this method.
-                extensionReceiverParameter = extensionReceiver.copyTo(this, type = extensionReceiver.type.classifierOrFail.typeWith())
+                extensionReceiverParameter = extensionReceiver.copyTo(
+                    this,
+                    type = extensionReceiver.type.erasePropertyAnnotationsExtensionReceiverType()
+                )
             }
 
             body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
@@ -141,6 +148,30 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
             annotations = declaration.annotations
             metadata = declaration.metadata
         }
+
+    private fun IrType.erasePropertyAnnotationsExtensionReceiverType(): IrType {
+        // Use raw type of extension receiver to avoid generic signature,
+        // which should not be generated for '...$annotations' method.
+        val classifier = classifierOrFail
+        return if (this is IrSimpleType && isArray()) {
+            when (val arg0 = arguments[0]) {
+                is IrStarProjection -> {
+                    // 'Array<*>' becomes 'Array<*>'
+                    this
+                }
+                is IrTypeProjection -> {
+                    // 'Array<VARIANCE TYPE>' becomes 'Array<VARIANCE erase(TYPE)>'
+                    classifier.typeWithArguments(
+                        listOf(makeTypeProjection(arg0.type.erasePropertyAnnotationsExtensionReceiverType(), arg0.variance))
+                    )
+                }
+                else ->
+                    throw AssertionError("Unexpected type argument: $arg0")
+            }
+        } else {
+            classifier.typeWith()
+        }
+    }
 
     private fun computeSyntheticMethodName(property: IrProperty): String {
         val baseName =
