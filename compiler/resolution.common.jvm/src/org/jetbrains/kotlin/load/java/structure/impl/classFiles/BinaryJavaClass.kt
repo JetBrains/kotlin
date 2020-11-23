@@ -77,7 +77,7 @@ class BinaryJavaClass(
         try {
             ClassReader(classContent ?: virtualFile.contentsToByteArray()).accept(
                 this,
-                ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
+                ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES
             )
         } catch (e: Throwable) {
             throw IllegalStateException("Could not read class: $virtualFile", e)
