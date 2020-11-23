@@ -233,12 +233,16 @@ public expect fun CharSequence.repeat(n: Int): String
 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
+ * 
+ * @sample samples.text.Strings.replace
  */
 expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String
 
 /**
  * Returns a new string obtained by replacing all occurrences of the [oldValue] substring in this string
  * with the specified [newValue] string.
+ *
+ * @sample samples.text.Strings.replace
  */
 expect fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String
 
