@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
@@ -196,21 +197,16 @@ class FirBuilderInferenceSession(
         return introducedConstraint
     }
 
+    // TODO: besides calls, perhaps use the stub type substitutor for all top-level expressions inside the lambda
     private fun updateCalls(commonSystem: NewConstraintSystemImpl) {
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
         val commonSystemSubstitutor = commonSystem.buildCurrentSubstitutor() as ConeSubstitutor
         val nonFixedTypesToResultSubstitutor = ConeComposedSubstitutor(commonSystemSubstitutor, nonFixedToVariablesSubstitutor)
         val completionResultsWriter = components.callCompleter.createCompletionResultsWriter(nonFixedTypesToResultSubstitutor)
 
+        val stubTypeSubstitutor = FirStubTypeTransformer(nonFixedTypesToResultSubstitutor)
         for ((completedCall, _) in commonCalls) {
-            // TODO: Only update return type? Should we need to visit all appearances of unsubstituted postponed variables in types?
-            //  [transformSingle] bails out very early since the completed call is literally completed, and not a named reference.
-            (completedCall as? FirFunctionCall)?.let { call ->
-                val resultType = call.typeRef.substituteTypeRef(nonFixedTypesToResultSubstitutor)
-                if (resultType != call.typeRef) {
-                    call.replaceTypeRef(resultType)
-                }
-            }
+            completedCall.transformSingle(stubTypeSubstitutor, null)
             // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
         }
 
@@ -219,15 +215,6 @@ class FirBuilderInferenceSession(
             // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
         }
     }
-
-    private fun FirTypeRef.substituteTypeRef(
-        substitutor: ConeSubstitutor,
-    ): FirTypeRef =
-        (this as? FirResolvedTypeRef)?.let {
-            substitutor.substituteOrNull(this.type)?.let {
-                this.withReplacedConeType(it)
-            }
-        } ?: this
 }
 
 class ConeComposedSubstitutor(val left: ConeSubstitutor, val right: ConeSubstitutor) : ConeSubstitutor() {
@@ -235,4 +222,22 @@ class ConeComposedSubstitutor(val left: ConeSubstitutor, val right: ConeSubstitu
         val rightSubstitution = right.substituteOrNull(type)
         return left.substituteOrNull(rightSubstitution ?: type)
     }
+}
+
+class FirStubTypeTransformer(
+    private val substitutor: ConeSubstitutor
+) : FirDefaultTransformer<Nothing?>() {
+
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
+        @Suppress("UNCHECKED_CAST")
+        return (element.transformChildren(this, data) as E).compose()
+    }
+
+    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: Nothing?): CompositeTransformResult<FirTypeRef> =
+        substitutor.substituteOrNull(resolvedTypeRef.type)?.let {
+            resolvedTypeRef.withReplacedConeType(it).compose()
+        } ?: resolvedTypeRef.compose()
+
+    override fun transformArgumentList(argumentList: FirArgumentList, data: Nothing?): CompositeTransformResult<FirArgumentList> =
+        argumentList.transformArguments(this, data).compose()
 }
