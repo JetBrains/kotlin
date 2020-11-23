@@ -80,6 +80,11 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
     }
 
     override fun getExtraProjectModelClasses(): Set<Class<out Any>> {
+        val isAndroidPluginRequestingKotlinGradleModelKey = Key.findKeyByName("IS_ANDROID_PLUGIN_REQUESTING_KOTLIN_GRADLE_MODEL_KEY")
+        if (isAndroidPluginRequestingKotlinGradleModelKey != null && resolverCtx.getUserData(isAndroidPluginRequestingKotlinGradleModelKey) != null) {
+            return emptySet()
+        }
+
         return setOf(KotlinGradleModel::class.java)
     }
 
