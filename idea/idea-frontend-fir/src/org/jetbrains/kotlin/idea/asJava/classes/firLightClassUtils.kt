@@ -10,29 +10,24 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
-import org.jetbrains.kotlin.asJava.classes.safeIsLocal
 import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.asJava.*
-import org.jetbrains.kotlin.idea.asJava.FirLightClassForSymbol
 import org.jetbrains.kotlin.idea.asJava.fields.FirLightFieldForEnumEntry
 import org.jetbrains.kotlin.idea.frontend.api.analyze
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtCodeFragment
+import org.jetbrains.kotlin.psi.KtEnumEntry
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.isLambdaOutsideParentheses
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
-import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 import java.util.*
 
 fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightClass? =
@@ -199,6 +194,7 @@ internal fun FirLightClassBase.createMethods(
 
 internal fun FirLightClassBase.createFields(
     declarations: Sequence<KtCallableSymbol>,
+    usedNames: MutableSet<String>,
     isTopLevel: Boolean,
     result: MutableList<KtLightField>
 ) {
@@ -211,7 +207,6 @@ internal fun FirLightClassBase.createFields(
         return property.hasBackingField
     }
 
-    //TODO isHiddenByDeprecation
     for (declaration in declarations) {
         if (declaration !is KtPropertySymbol) continue
         if (!hasBackingField(declaration)) continue
@@ -219,6 +214,7 @@ internal fun FirLightClassBase.createFields(
         result.add(
             FirLightFieldForPropertySymbol(
                 propertySymbol = declaration,
+                usedNames = usedNames,
                 containingClass = this@createFields,
                 lightMemberOrigin = null,
                 isTopLevel = isTopLevel

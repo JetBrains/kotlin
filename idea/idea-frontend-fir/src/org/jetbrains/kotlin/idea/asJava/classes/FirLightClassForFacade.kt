@@ -114,6 +114,7 @@ class FirLightClassForFacade(
 
     private fun loadFieldsFromFile(
         file: KtFile,
+        usedFieldNames: MutableSet<String>,
         result: MutableList<KtLightField>
     ) {
 
@@ -130,13 +131,14 @@ class FirLightClassForFacade(
             }
         }
 
-        createFields(symbols.asSequence(), isTopLevel = true, result)
+        createFields(symbols.asSequence(), usedFieldNames, isTopLevel = true, result)
     }
 
     private val _ownFields: List<KtLightField> by lazyPub {
         val result = mutableListOf<KtLightField>()
+        val usedFieldNames = mutableSetOf<String>()
         for (file in files) {
-            loadFieldsFromFile(file, result)
+            loadFieldsFromFile(file, usedFieldNames, result)
         }
         result
     }

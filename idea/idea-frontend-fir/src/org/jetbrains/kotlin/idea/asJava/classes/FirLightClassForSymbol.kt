@@ -133,6 +133,8 @@ internal class FirLightClassForSymbol(
 
         result.addCompanionObjectFieldIfNeeded()
 
+        val usedNames = mutableSetOf<String>()
+
         classOrObjectSymbol.companionObject?.run {
             analyzeWithSymbolAsContext(this) {
                 getDeclaredMemberScope().getCallableSymbols()
@@ -141,6 +143,7 @@ internal class FirLightClassForSymbol(
                     .mapTo(result) {
                         FirLightFieldForPropertySymbol(
                             propertySymbol = it,
+                            usedNames = usedNames,
                             containingClass = this@FirLightClassForSymbol,
                             lightMemberOrigin = null,
                             isTopLevel = false,
@@ -161,7 +164,7 @@ internal class FirLightClassForSymbol(
                 .applyIf(classOrObjectSymbol.classKind == KtClassKind.COMPANION_OBJECT) {
                     filterNot { it.hasJvmFieldAnnotation() || it.isConst }
                 }
-            createFields(propertySymbols, isTopLevel = false, result)
+            createFields(propertySymbols, usedNames, isTopLevel = false, result)
 
             if (isEnum) {
                 classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()

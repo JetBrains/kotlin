@@ -16,11 +16,14 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 
 internal class FirLightFieldForPropertySymbol(
     private val propertySymbol: KtPropertySymbol,
+    usedNames: MutableSet<String>,
     containingClass: FirLightClassBase,
     lightMemberOrigin: LightMemberOrigin?,
     isTopLevel: Boolean,
     forceStatic: Boolean = false
 ) : FirLightField(containingClass, lightMemberOrigin) {
+
+    private val _name: String = generateUniqueFieldName(usedNames, propertySymbol.name.asString())
 
     override val kotlinOrigin: KtDeclaration? = propertySymbol.psi as? KtDeclaration
 
@@ -46,7 +49,6 @@ internal class FirLightFieldForPropertySymbol(
 
     override fun getType(): PsiType = _returnedType
 
-    private val _name = propertySymbol.name.asString()
     override fun getName(): String = _name
 
     private val _modifierList: PsiModifierList by lazyPub {
@@ -105,4 +107,16 @@ internal class FirLightFieldForPropertySymbol(
                         propertySymbol == other.propertySymbol)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
+
+    companion object {
+        private fun generateUniqueFieldName(usedNames: MutableSet<String>, base: String): String {
+            if (usedNames.add(base)) return base
+            var i = 1
+            while (true) {
+                val suggestion = "$base$$i"
+                if (usedNames.add(suggestion)) return suggestion
+                i++
+            }
+        }
+    }
 }
