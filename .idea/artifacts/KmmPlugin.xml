@@ -16,14 +16,15 @@
           <element id="module-source" name="intellij.cidr.xcodeModel.core" />
         </element>
         <element id="archive" name="kmm.jar">
-          <element id="module-output" name="kotlin-ultimate.android-studio-native" />
-          <element id="module-source" name="kotlin-ultimate.android-studio-native" />
+          <element id="module-output" name="kotlin-ultimate.kmm-plugin" />
+          <element id="module-source" name="kotlin-ultimate.kmm-plugin" />
           <element id="module-output" name="kotlin-ultimate.common-noncidr-native" />
           <element id="module-source" name="kotlin-ultimate.common-noncidr-native" />
           <element id="module-output" name="kotlin-ultimate.common-cidr-mobile" />
           <element id="module-source" name="kotlin-ultimate.common-cidr-mobile" />
           <element id="module-output" name="kotlin-ultimate.common-native" />
           <element id="module-source" name="kotlin-ultimate.common-native" />
+          <element id="module-output" name="kotlin.project-wizard.core" />
         </element>
         <element id="archive" name="cidr-core.jar">
           <element id="module-output" name="intellij.cidr.core" />
