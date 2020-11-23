@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.FirSourceElement
 sealed class FirDiagnostic<out E : FirSourceElement> : UnboundDiagnostic {
     abstract val element: E
     abstract override val severity: Severity
-    abstract override val factory: AbstractFirDiagnosticFactory<*, *>
+    abstract override val factory: AbstractFirDiagnosticFactory<*, *, *>
 
     override val textRanges: List<TextRange>
         get() = factory.getTextRanges(this)

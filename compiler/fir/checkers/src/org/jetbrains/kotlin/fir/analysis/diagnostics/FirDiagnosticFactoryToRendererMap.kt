@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 import org.jetbrains.kotlin.fir.FirSourceElement
 
 class FirDiagnosticFactoryToRendererMap(val name: String) {
-    private val renderersMap: MutableMap<AbstractFirDiagnosticFactory<*, *>, FirDiagnosticRenderer<*>> = mutableMapOf()
+    private val renderersMap: MutableMap<AbstractFirDiagnosticFactory<*, *, *>, FirDiagnosticRenderer<*>> = mutableMapOf()
     val psiDiagnosticMap: DiagnosticFactoryToRendererMap = DiagnosticFactoryToRendererMap()
 
-    operator fun get(factory: AbstractFirDiagnosticFactory<*, *>): FirDiagnosticRenderer<*>? = renderersMap[factory]
+    operator fun get(factory: AbstractFirDiagnosticFactory<*, *, *>): FirDiagnosticRenderer<*>? = renderersMap[factory]
 
     fun <E : FirSourceElement> put(factory: FirDiagnosticFactory0<E, *>, message: String) {
         put(factory, SimpleFirDiagnosticRenderer<E>(message))
@@ -46,7 +46,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
         put(factory, FirDiagnosticWithParameters3Renderer<E, A, B, C>(message, rendererA, rendererB, rendererC))
     }
 
-    private fun put(factory: AbstractFirDiagnosticFactory<*, *>, renderer: FirDiagnosticRenderer<*>) {
+    private fun put(factory: AbstractFirDiagnosticFactory<*, *, *>, renderer: FirDiagnosticRenderer<*>) {
         renderersMap[factory] = renderer
         psiDiagnosticMap.put(factory, renderer)
     }

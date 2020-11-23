@@ -66,16 +66,16 @@ object FirErrors {
     val SEALED_SUPERTYPE_IN_LOCAL_CLASS by error0<FirSourceElement, PsiElement>()
 
     // Constructor problems
-    val CONSTRUCTOR_IN_OBJECT by error0<FirSourceElement, KtDeclaration>(LightTreePositioningStrategies.DECLARATION_SIGNATURE)
-    val CONSTRUCTOR_IN_INTERFACE by error0<FirSourceElement, KtDeclaration>(LightTreePositioningStrategies.DECLARATION_SIGNATURE)
+    val CONSTRUCTOR_IN_OBJECT by error0<FirSourceElement, KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val CONSTRUCTOR_IN_INTERFACE by error0<FirSourceElement, KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val NON_PRIVATE_CONSTRUCTOR_IN_ENUM by existing0<FirSourceElement, PsiElement>()
     val NON_PRIVATE_CONSTRUCTOR_IN_SEALED by existing0<FirSourceElement, PsiElement>()
     val CYCLIC_CONSTRUCTOR_DELEGATION_CALL by warning0<FirSourceElement, PsiElement>()
-    val PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED by warning0<FirSourceElement, PsiElement>(LightTreePositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
+    val PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED by warning0<FirSourceElement, PsiElement>(SourceElementPositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
     val SUPERTYPE_INITIALIZED_WITHOUT_PRIMARY_CONSTRUCTOR by warning0<FirSourceElement, PsiElement>()
     val DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR by warning0<FirSourceElement, PsiElement>()
     val PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS by warning0<FirSourceElement, PsiElement>()
-    val EXPLICIT_DELEGATION_CALL_REQUIRED by warning0<FirSourceElement, PsiElement>(LightTreePositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
+    val EXPLICIT_DELEGATION_CALL_REQUIRED by warning0<FirSourceElement, PsiElement>(SourceElementPositioningStrategies.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
     val SEALED_CLASS_CONSTRUCTOR_CALL by error0<FirSourceElement, PsiElement>()
 
     // Annotations
@@ -91,17 +91,17 @@ object FirErrors {
     val NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION by existing0<FirSourceElement, KtExpression>()
     val NOT_AN_ANNOTATION_CLASS by error1<FirSourceElement, PsiElement, String>()
     val NULLABLE_TYPE_OF_ANNOTATION_MEMBER by existing0<FirSourceElement, KtTypeReference>()
-    val VAR_ANNOTATION_PARAMETER by error0<FirSourceElement, KtParameter>(LightTreePositioningStrategies.VAL_OR_VAR_NODE)
+    val VAR_ANNOTATION_PARAMETER by error0<FirSourceElement, KtParameter>(SourceElementPositioningStrategies.VAL_OR_VAR_NODE)
 
     // Exposed visibility group
-    val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
-    val EXPOSED_FUNCTION_RETURN_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
-    val EXPOSED_RECEIVER_TYPE by error3<FirSourceElement, KtTypeReference, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
-    val EXPOSED_PROPERTY_TYPE by error3<FirSourceElement, PsiElement, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_TYPEALIAS_EXPANDED_TYPE by error3<FirSourceElement, KtNamedDeclaration, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_FUNCTION_RETURN_TYPE by error3<FirSourceElement, KtNamedDeclaration, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_RECEIVER_TYPE by error3<FirSourceElement, KtTypeReference, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
+    val EXPOSED_PROPERTY_TYPE by error3<FirSourceElement, KtNamedDeclaration, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val EXPOSED_PARAMETER_TYPE by error3<FirSourceElement, KtParameter, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(/* // NB: for parameter FE 1.0 reports not on a name for some reason */)
-    val EXPOSED_SUPER_INTERFACE by error3<FirSourceElement, KtSuperTypeListEntry, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
-    val EXPOSED_SUPER_CLASS by error3<FirSourceElement, KtSuperTypeListEntry, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
-    val EXPOSED_TYPE_PARAMETER_BOUND by error3<FirSourceElement, KtTypeParameter, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>(LightTreePositioningStrategies.DECLARATION_NAME)
+    val EXPOSED_SUPER_INTERFACE by error3<FirSourceElement, KtTypeReference, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
+    val EXPOSED_SUPER_CLASS by error3<FirSourceElement, KtTypeReference, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
+    val EXPOSED_TYPE_PARAMETER_BOUND by error3<FirSourceElement, KtTypeReference, FirEffectiveVisibility, FirMemberDeclaration, FirEffectiveVisibility>()
 
     // Modifiers
     val INAPPLICABLE_INFIX_MODIFIER by existing1<FirSourceElement, PsiElement, String>()
@@ -144,11 +144,11 @@ object FirErrors {
     val ANY_METHOD_IMPLEMENTED_IN_INTERFACE by error0<FirSourceElement, PsiElement>()
 
     // Invalid local declarations
-    val LOCAL_OBJECT_NOT_ALLOWED by error1<FirSourceElement, PsiElement, Name>(LightTreePositioningStrategies.DECLARATION_NAME)
-    val LOCAL_INTERFACE_NOT_ALLOWED by error1<FirSourceElement, PsiElement, Name>(LightTreePositioningStrategies.DECLARATION_NAME)
+    val LOCAL_OBJECT_NOT_ALLOWED by error1<FirSourceElement, KtNamedDeclaration, Name>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val LOCAL_INTERFACE_NOT_ALLOWED by error1<FirSourceElement, KtNamedDeclaration, Name>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     // Control flow diagnostics
-    val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>(LightTreePositioningStrategies.DECLARATION_SIGNATURE)
+    val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>()
     val WRONG_INVOCATION_KIND by warning3<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>, EventOccurrencesRange, EventOccurrencesRange>()
     val LEAKED_IN_PLACE_LAMBDA by error1<FirSourceElement, PsiElement, AbstractFirBasedSymbol<*>>()
     val WRONG_IMPLIES_CONDITION by error0<FirSourceElement, PsiElement>()

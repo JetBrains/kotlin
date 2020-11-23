@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 
-sealed class AbstractFirDiagnosticFactory<out E : FirSourceElement, D : FirDiagnostic<E>>(
+sealed class AbstractFirDiagnosticFactory<out E : FirSourceElement, D : FirDiagnostic<E>, P : PsiElement>(
     override var name: String?,
     override val severity: Severity,
-    val positioningStrategy: LightTreePositioningStrategy,
+    val positioningStrategy: SourceElementPositioningStrategy<P>,
 ) : DiagnosticFactory<D>(name, severity) {
     abstract val firRenderer: FirDiagnosticRenderer<D>
 
@@ -32,15 +32,15 @@ sealed class AbstractFirDiagnosticFactory<out E : FirSourceElement, D : FirDiagn
 
     fun isValid(diagnostic: FirDiagnostic<*>): Boolean {
         val element = diagnostic.element
-        return positioningStrategy.isValid(element.lighterASTNode, element.treeStructure)
+        return positioningStrategy.isValid(element)
     }
 }
 
 class FirDiagnosticFactory0<E : FirSourceElement, P : PsiElement>(
     name: String,
     severity: Severity,
-    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT,
-) : AbstractFirDiagnosticFactory<E, FirSimpleDiagnostic<E>>(name, severity, positioningStrategy) {
+    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
+) : AbstractFirDiagnosticFactory<E, FirSimpleDiagnostic<E>, P>(name, severity, positioningStrategy) {
     override val firRenderer: FirDiagnosticRenderer<FirSimpleDiagnostic<E>> = SimpleFirDiagnosticRenderer("")
 
     fun on(element: E): FirSimpleDiagnostic<E> {
@@ -57,8 +57,8 @@ class FirDiagnosticFactory0<E : FirSourceElement, P : PsiElement>(
 class FirDiagnosticFactory1<E : FirSourceElement, P : PsiElement, A : Any>(
     name: String,
     severity: Severity,
-    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT,
-) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters1<E, A>>(name, severity, positioningStrategy) {
+    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
+) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters1<E, A>, P>(name, severity, positioningStrategy) {
     override val firRenderer: FirDiagnosticRenderer<FirDiagnosticWithParameters1<E, A>> = FirDiagnosticWithParameters1Renderer(
         "{0}",
         FirDiagnosticRenderers.TO_STRING
@@ -78,8 +78,8 @@ class FirDiagnosticFactory1<E : FirSourceElement, P : PsiElement, A : Any>(
 class FirDiagnosticFactory2<E : FirSourceElement, P : PsiElement, A : Any, B : Any>(
     name: String,
     severity: Severity,
-    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT,
-) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters2<E, A, B>>(name, severity, positioningStrategy) {
+    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
+) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters2<E, A, B>, P>(name, severity, positioningStrategy) {
     override val firRenderer: FirDiagnosticRenderer<FirDiagnosticWithParameters2<E, A, B>> = FirDiagnosticWithParameters2Renderer(
         "{0}, {1}",
         FirDiagnosticRenderers.TO_STRING,
@@ -100,8 +100,8 @@ class FirDiagnosticFactory2<E : FirSourceElement, P : PsiElement, A : Any, B : A
 class FirDiagnosticFactory3<E : FirSourceElement, P : PsiElement, A : Any, B : Any, C : Any>(
     name: String,
     severity: Severity,
-    positioningStrategy: LightTreePositioningStrategy = LightTreePositioningStrategy.DEFAULT,
-) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters3<E, A, B, C>>(name, severity, positioningStrategy) {
+    positioningStrategy: SourceElementPositioningStrategy<P> = SourceElementPositioningStrategy.DEFAULT,
+) : AbstractFirDiagnosticFactory<E, FirDiagnosticWithParameters3<E, A, B, C>, P>(name, severity, positioningStrategy) {
     override val firRenderer: FirDiagnosticRenderer<FirDiagnosticWithParameters3<E, A, B, C>> = FirDiagnosticWithParameters3Renderer(
         "{0}, {1}, {2}",
         FirDiagnosticRenderers.TO_STRING,
