@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.jetbrains.kotlin.checkers
 
-package org.jetbrains.kotlin.load.java.descriptors;
+import org.jetbrains.kotlin.test.TestJdkKind
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+abstract class AbstractDiagnosticsWithJdk15Test : AbstractDiagnosticsTest() {
 
-public interface JavaClassDescriptor extends ClassDescriptor {
-    boolean isRecord();
+    override fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
+        return TestJdkKind.FULL_JDK_15
+    }
 }

@@ -142,7 +142,12 @@ public class LoadDescriptorUtil {
         return Pair.create(packageView, analysisResult.getBindingContext());
     }
 
-    public static void compileJavaWithAnnotationsJar(@NotNull Collection<File> javaFiles, @NotNull File outDir) throws IOException {
+    public static void compileJavaWithAnnotationsJar(
+            @NotNull Collection<File> javaFiles,
+            @NotNull File outDir,
+            @NotNull List<String> additionalArgs,
+            @Nullable File customJdkHomeForJavac
+    ) throws IOException {
         List<String> args = new ArrayList<>(Arrays.asList(
                 "-sourcepath", "compiler/testData/loadJava/include",
                 "-d", outDir.getPath())
@@ -170,7 +175,14 @@ public class LoadDescriptorUtil {
         args.add("-classpath");
         args.add(classpath.stream().map(File::getPath).collect(Collectors.joining(File.pathSeparator)));
 
-        KotlinTestUtils.compileJavaFiles(javaFiles, args);
+        args.addAll(additionalArgs);
+
+        if (customJdkHomeForJavac != null) {
+            KotlinTestUtils.compileJavaFilesExternally(javaFiles, args, customJdkHomeForJavac);
+        }
+        else {
+            KotlinTestUtils.compileJavaFiles(javaFiles, args);
+        }
     }
 
     @NotNull

@@ -123,6 +123,10 @@ fun main(args: Array<String>) {
                 model("diagnostics/testsWithJava9")
             }
 
+            testClass<AbstractDiagnosticsWithJdk15Test> {
+                model("diagnostics/testsWithJava15")
+            }
+
             testClass<AbstractDiagnosticsWithUnsignedTypes> {
                 model("diagnostics/testsWithUnsignedTypes")
             }
@@ -312,6 +316,15 @@ fun main(args: Array<String>) {
 
             testClass<AbstractLoadJavaWithPsiClassReadingTest> {
                 model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
+            }
+
+            testClass<AbstractLoadJava15Test> {
+                model("loadJava15", extension = "java", testMethod = "doTestCompiledJava", testClassName = "CompiledJava")
+                model("loadJava15", extension = "java", testMethod = "doTestSourceJava", testClassName = "SourceJava")
+            }
+
+            testClass<AbstractLoadJava15WithPsiClassReadingTest> {
+                model("loadJava15", extension = "java", testMethod = "doTestCompiledJava")
             }
 
             testClass<AbstractCompileJavaAgainstKotlinTest> {

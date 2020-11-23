@@ -125,7 +125,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
                     },
                     ""
                 )
-                LoadDescriptorUtil.compileJavaWithAnnotationsJar(sources, tmpdir)
+                LoadDescriptorUtil.compileJavaWithAnnotationsJar(sources, tmpdir, emptyList(), null)
             }
             fileName.endsWith(".kt") -> {
                 val environment = KotlinTestUtils.createEnvironmentWithJdkAndNullabilityAnnotationsFromIdea(
