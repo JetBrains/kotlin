@@ -1101,7 +1101,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             is IrConstKind.Long -> "" to "L"
             is IrConstKind.String -> "\"" to "\""
             is IrConstKind.Float -> "" to "F"
-            is IrConstKind.Double -> "" to "D"
+            is IrConstKind.Double -> "" to ""
         }
 
         val value = expression.value.toString()
