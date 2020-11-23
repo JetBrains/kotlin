@@ -44,9 +44,12 @@ import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.util.JpsPathUtil
+import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.idea.test.runAll
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
@@ -57,6 +60,7 @@ import org.jetbrains.kotlin.jps.incremental.CacheVersionManager
 import org.jetbrains.kotlin.jps.incremental.CompositeLookupsCacheAttributesManager
 import org.jetbrains.kotlin.jps.incremental.getKotlinCache
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
+import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinFacet
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.platform.idePlatformKind
@@ -82,11 +86,23 @@ abstract class AbstractIncrementalJpsTest(
         private val TEMP_DIRECTORY_TO_USE = File(FileUtilRt.getTempDirectory())
 
         private val DEBUG_LOGGING_ENABLED = System.getProperty("debug.logging.enabled") == "true"
+
+        private const val ARGUMENTS_FILE_NAME = "args.txt"
+
+        private fun parseAdditionalArgs(testDir: File): List<String> {
+            return File(testDir, ARGUMENTS_FILE_NAME)
+                .takeIf { it.exists() }
+                ?.readText()
+                ?.split(" ", "\n")
+                ?.filter { it.isNotBlank() }
+                ?: emptyList()
+        }
     }
 
     protected lateinit var testDataDir: File
     protected lateinit var workDir: File
     protected lateinit var projectDescriptor: ProjectDescriptor
+    protected lateinit var additionalCommandLineArguments: List<String>
     // is used to compare lookup dumps in a human readable way (lookup symbols are hashed in an actual lookup storage)
     protected lateinit var lookupsDuringTest: MutableSet<LookupSymbol>
     private var isJvmICEnabledBackup: Boolean = false
@@ -184,6 +200,9 @@ abstract class AbstractIncrementalJpsTest(
             val buildResult = BuildResult()
             builder.addMessageHandler(buildResult)
             val finalScope = scope.build()
+            projectDescriptor.project.kotlinCommonCompilerArguments = projectDescriptor.project.kotlinCommonCompilerArguments.apply {
+                updateCommandLineArguments(this)
+            }
 
             builder.build(finalScope, false)
 
@@ -238,6 +257,10 @@ abstract class AbstractIncrementalJpsTest(
 
     private fun rebuild(): MakeResult {
         return build(null, CompileScopeTestBuilder.rebuild().allModules())
+    }
+
+    private fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
+        parseCommandLineArguments(additionalCommandLineArguments, arguments)
     }
 
     private fun rebuildAndCheckOutput(makeOverallResult: MakeResult) {
@@ -308,6 +331,7 @@ abstract class AbstractIncrementalJpsTest(
     protected open fun doTest(testDataPath: String) {
         testDataDir = File(testDataPath)
         workDir = FileUtilRt.createTempDirectory(TEMP_DIRECTORY_TO_USE, "aijt-jps-build", null)
+        additionalCommandLineArguments = parseAdditionalArgs(File(testDataPath))
         val buildLogFile = buildLogFinder.findBuildLog(testDataDir)
         Disposer.register(testRootDisposable, Disposable { FileUtilRt.delete(workDir) })
 
