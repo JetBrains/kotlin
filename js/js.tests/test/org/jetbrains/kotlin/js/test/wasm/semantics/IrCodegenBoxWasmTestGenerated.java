@@ -11807,6 +11807,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testAllFilesPresentInForInProgressionWithIndex() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ranges/forInProgressionWithIndex"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
+
+            @TestMetadata("kt42909.kt")
+            public void testKt42909() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInProgressionWithIndex/kt42909.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/ranges/forInReversed")

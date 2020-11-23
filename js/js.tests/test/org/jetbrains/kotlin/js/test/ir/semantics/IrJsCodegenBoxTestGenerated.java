@@ -18946,6 +18946,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             public void testForInWithIndexWithIndex() throws Exception {
                 runTest("compiler/testData/codegen/box/ranges/forInProgressionWithIndex/forInWithIndexWithIndex.kt");
             }
+
+            @TestMetadata("kt42909.kt")
+            public void testKt42909() throws Exception {
+                runTest("compiler/testData/codegen/box/ranges/forInProgressionWithIndex/kt42909.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/ranges/forInReversed")
