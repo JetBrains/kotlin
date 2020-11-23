@@ -47,7 +47,7 @@ fun test1() {
   { // BLOCK
     val <<array>>: A = A
     val <<index_0>>: KFunction1<IntArray, Int> = ::withVararg
-    error("") /* ERROR CALL */<<index_0>>; error("") /* ERROR CALL */<<index_0>>; .plus(other = 1);
+    error("") /* ErrorCallExpression */<<index_0>>; error("") /* ErrorCallExpression */<<index_0>>; .plus(other = 1);
   }
 }
 
@@ -55,7 +55,7 @@ fun test2() {
   { // BLOCK
     val <<array>>: B = B
     val <<index_0>>: KFunction1<IntArray, Int> = ::withVararg
-    error("") /* ERROR CALL */<<index_0>>; error("") /* ERROR CALL */<<index_0>>; .plus(other = 1);
+    error("") /* ErrorCallExpression */<<index_0>>; error("") /* ErrorCallExpression */<<index_0>>; .plus(other = 1);
   }
 }
 
@@ -95,3 +95,4 @@ fun test6(a: Any) {
     <<array>>.set(i = <<index_0>>, newValue = <<array>>.get(i = <<index_0>>).plus(other = 1))
   }
 }
+

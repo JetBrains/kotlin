@@ -16,7 +16,7 @@ fun test1(a: Any) {
 }
 
 fun test2(a: Any) {
-  error("") /* ERROR CALL */
+  error("") /* ErrorCallExpression */
 }
 
 fun test3(a: Any) {
@@ -29,3 +29,4 @@ fun test3(a: Any) {
   <array>.set(index = <index0>, value = <unary>.inc())
   <unary> /*~> Unit */
 }
+

@@ -1,12 +1,12 @@
 fun test1() {
-  error("") /* ERROR EXPRESSION */
-  error("") /* ERROR EXPRESSION */
+  error("") /* ErrorExpression */
+  error("") /* ErrorExpression */
 }
 
 fun test2() {
   L1@ while (true) { // BLOCK
-    error("") /* ERROR EXPRESSION */
-    error("") /* ERROR EXPRESSION */
+    error("") /* ErrorExpression */
+    error("") /* ErrorExpression */
   }
 }
 
@@ -21,8 +21,9 @@ fun test3() {
 }
 
 fun test4() {
-  while (error("") /* ERROR EXPRESSION */) { // BLOCK
+  while (error("") /* ErrorExpression */) { // BLOCK
   }
-  while (error("") /* ERROR EXPRESSION */) { // BLOCK
+  while (error("") /* ErrorExpression */) { // BLOCK
   }
 }
+

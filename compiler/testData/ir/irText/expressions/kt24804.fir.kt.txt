@@ -10,7 +10,7 @@ fun run(x: Boolean, y: Boolean): String {
     greater(arg0 = z, arg1 = 100) -> return "NOT_OK"
   }
   when {
-    x -> error("") /* ERROR EXPRESSION */
+    x -> error("") /* ErrorExpression */
   }
   when {
     y -> continue@l2
@@ -22,3 +22,4 @@ fun run(x: Boolean, y: Boolean): String {
 fun box(): String {
   return run(x = true, y = true)
 }
+

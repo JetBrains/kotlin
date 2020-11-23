@@ -1,16 +1,16 @@
-val test1: ErrorType /* ERROR */
-  field = error("") /* ERROR CALL */
+val test1: ErrorType
+  field = error("") /* ErrorCallExpression */
   get
 
-val test2: ErrorType /* ERROR */
-  field = error("") /* ERROR CALL */
+val test2: ErrorType
+  field = error("") /* ErrorCallExpression */
   get
 
-val test3: ErrorType /* ERROR */
-  field = error("") /* ERROR CALL */42; 56; 
+val test3: ErrorType
+  field = error("") /* ErrorCallExpression */42; 56;
   get
 
-val test4: ErrorType /* ERROR */
-  field = error("") /* ERROR EXPRESSION */
+val test4: ErrorType
+  field = error("") /* ErrorExpression */
   get
 

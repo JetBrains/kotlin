@@ -47,11 +47,12 @@ fun takeLong(@ImplicitIntegerCoercion l: Long) {
 }
 
 fun test() {
-  error("") /* ERROR CALL */255;
-  error("") /* ERROR CALL */255;
-  error("") /* ERROR CALL */255;
-  error("") /* ERROR CALL */256;
-  error("") /* ERROR CALL */255;
-  error("") /* ERROR CALL */255;
-  error("") /* ERROR CALL */255; 255; 42;
+  error("") /* ErrorCallExpression */255;
+  error("") /* ErrorCallExpression */255;
+  error("") /* ErrorCallExpression */255;
+  error("") /* ErrorCallExpression */256;
+  error("") /* ErrorCallExpression */255;
+  error("") /* ErrorCallExpression */255;
+  error("") /* ErrorCallExpression */255; 255; 42;
 }
+

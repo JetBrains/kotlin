@@ -1,7 +1,7 @@
 @OptIn(markerClass = [ExperimentalTypeInference::class])
 fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction2<CoroutineScope, FlowCollector<R>, Unit>): Flow<R> {
   return flow<R>(block = local suspend fun FlowCollector<R>.<anonymous>() {
-    val collector: FlowCollector<ErrorType /* ERROR */> = <this>
+    val collector: FlowCollector<ErrorType> = <this>
     flowScope<Unit>(block = local suspend fun CoroutineScope.<anonymous>() {
       block.invoke(p1 = <this>, p2 = collector)
     }
@@ -12,7 +12,7 @@ fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType @Exten
 
 fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, Throwable?, Unit>): Flow<T> {
   return unsafeFlow<T>(block = local suspend fun FlowCollector<T>.<anonymous>() {
-    val safeCollector: SafeCollector<ErrorType /* ERROR */> = SafeCollector<ErrorType /* ERROR */>(collector = <this>)
+    val safeCollector: SafeCollector<ErrorType> = SafeCollector<ErrorType>(collector = <this>)
     safeCollector.invokeSafely<T>(action = action)
   }
 )
@@ -27,9 +27,9 @@ inline fun <T : Any?> unsafeFlow(@BuilderInference crossinline block: @Extension
 }
 
 @Deprecated(message = "binary compatibility with a version w/o FlowCollector receiver", level = DeprecationLevel.HIDDEN)
-fun <T : Any?> Flow<T>.onCompletion(action: SuspendFunction1<Throwable?, Unit>): ErrorType /* ERROR */ {
-  return error("") /* ERROR CALL */local fun <anonymous>() {
-    action.invoke(p1 = error("") /* ERROR CALL */)
+fun <T : Any?> Flow<T>.onCompletion(action: SuspendFunction1<Throwable?, Unit>): ErrorType {
+  return error("") /* ErrorCallExpression */local fun <anonymous>() {
+    action.invoke(p1 = error("") /* ErrorCallExpression */)
   }
 ;
 }
@@ -141,3 +141,4 @@ interface SendChannel<in E : Any?> {
   abstract suspend fun send(e: E)
 
 }
+

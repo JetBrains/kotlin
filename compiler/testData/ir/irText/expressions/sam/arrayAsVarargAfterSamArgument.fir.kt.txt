@@ -1,5 +1,5 @@
 fun test(fn: Function0<Unit>, r: Runnable, arr: Array<String>) {
-  error("") /* ERROR CALL */local fun <anonymous>() {
+  error("") /* ErrorCallExpression */local fun <anonymous>() {
     return Unit
   }
 ; arr;
@@ -7,13 +7,13 @@ fun test(fn: Function0<Unit>, r: Runnable, arr: Array<String>) {
     return Unit
   }
  /*-> Runnable? */, strs = [*arr]) /*~> Unit */
-  error("") /* ERROR CALL */fn; arr;
+  error("") /* ErrorCallExpression */fn; arr;
   foo1(r = fn /*-> Runnable? */, strs = [*arr]) /*~> Unit */
   foo1(r = r, strs = [""]) /*~> Unit */
-  error("") /* ERROR CALL */fn; arr;
+  error("") /* ErrorCallExpression */fn; arr;
   foo1(r = fn /*-> Runnable? */, strs = [*arr]) /*~> Unit */
   foo1(r = r, strs = [*arr]) /*~> Unit */
-  val i1: ErrorType /* ERROR */ = error("") /* ERROR CALL */local fun <anonymous>() {
+  val i1: ErrorType = error("") /* ErrorCallExpression */local fun <anonymous>() {
     return Unit
   }
 ; arr;
@@ -21,7 +21,7 @@ fun test(fn: Function0<Unit>, r: Runnable, arr: Array<String>) {
     return Unit
   }
  /*-> Runnable? */, strs = [*arr])
-  val i3: ErrorType /* ERROR */ = error("") /* ERROR CALL */local fun <anonymous>() {
+  val i3: ErrorType = error("") /* ErrorCallExpression */local fun <anonymous>() {
     return Unit
   }
 ; local fun <anonymous>() {
@@ -43,26 +43,27 @@ fun test(fn: Function0<Unit>, r: Runnable, arr: Array<String>) {
     return Unit
   }
  /*-> Runnable? */, strs = [*arr])
-  error("") /* ERROR CALL */local fun <anonymous>() {
+  error("") /* ErrorCallExpression */local fun <anonymous>() {
     return Unit
   }
 ; local fun <anonymous>() {
     return Unit
   }
 ; arr;
-  error("") /* ERROR CALL */r; local fun <anonymous>() {
+  error("") /* ErrorCallExpression */r; local fun <anonymous>() {
     return Unit
   }
 ; "";
-  error("") /* ERROR CALL */local fun <anonymous>() {
+  error("") /* ErrorCallExpression */local fun <anonymous>() {
     return Unit
   }
 ; local fun <anonymous>() {
     return Unit
   }
 ; arr;
-  error("") /* ERROR CALL */r; local fun <anonymous>() {
+  error("") /* ErrorCallExpression */r; local fun <anonymous>() {
     return Unit
   }
 ; arr;
 }
+
