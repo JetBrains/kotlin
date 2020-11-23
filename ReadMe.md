@@ -5,7 +5,10 @@
 
 # Kotlin Programming Language
 
-Welcome to [Kotlin](https://kotlinlang.org/)! Some handy links:
+Welcome to [Kotlin](https://kotlinlang.org/)!   
+It is an open-source, statically typed programming language supported and developed by [JetBrains](https://www.jetbrains.com/).
+
+Some handy links:
 
  * [Kotlin Site](https://kotlinlang.org/)
  * [Getting Started Guide](https://kotlinlang.org/docs/tutorials/getting-started.html)
