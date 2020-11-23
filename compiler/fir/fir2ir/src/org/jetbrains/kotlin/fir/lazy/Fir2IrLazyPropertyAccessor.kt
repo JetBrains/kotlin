@@ -5,26 +5,15 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
-import org.jetbrains.kotlin.fir.backend.generateOverriddenAccessorSymbols
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.Fir2IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.isNonCompanionObject
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class Fir2IrLazyPropertyAccessor(
@@ -38,7 +27,7 @@ class Fir2IrLazyPropertyAccessor(
     firParentClass: FirRegularClass,
     override val symbol: Fir2IrSimpleFunctionSymbol,
     override val isFakeOverride: Boolean
-) : IrSimpleFunction(), AbstractFir2IrLazyDeclaration<FirMemberDeclaration, IrSimpleFunction>, Fir2IrComponents by components {
+) : AbstractFir2IrLazyFunction<FirMemberDeclaration>(components, startOffset, endOffset, origin, symbol, isFakeOverride) {
     init {
         symbol.bind(this)
     }
@@ -47,81 +36,25 @@ class Fir2IrLazyPropertyAccessor(
         get() = firAccessor ?: firParentProperty
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
-    override lateinit var typeParameters: List<IrTypeParameter>
-    override lateinit var parent: IrDeclarationParent
-    override var correspondingPropertySymbol: IrPropertySymbol? = null
-
-    override val isTailrec: Boolean
-        get() = fir.isTailRec
-
-    override val isSuspend: Boolean
-        get() = fir.isSuspend
-
-    override val isOperator: Boolean
-        get() = fir.isOperator
-
-    override val isInfix: Boolean
-        get() = fir.isInfix
-
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: FunctionDescriptor
-        get() = symbol.descriptor
-
-    override val isInline: Boolean
-        get() = fir.isInline
-
-    override val isExternal: Boolean
-        get() = fir.isExternal
-
-    override val isExpect: Boolean
-        get() = fir.isExpect
-
-    override var body: IrBody? = null
 
     override val name: Name
         get() = Name.special("<${if (isSetter) "set" else "get"}-${firParentProperty.name}>")
 
-    @Suppress("SetterBackingFieldAssignment")
-    override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
-
-    override val modality: Modality
-        get() = fir.modality!!
-
-    override var attributeOwnerId: IrAttributeContainer = this
-
     override var returnType: IrType by lazyVar {
-        if (isSetter) irBuiltIns.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter)
+        if (isSetter) irBuiltIns.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter, conversionTypeContext)
     }
 
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar {
         val containingClass = parent as? IrClass
-        if (containingClass != null && !firParentProperty.isStatic &&
-            !(containingClass.isNonCompanionObject && firParentProperty.hasAnnotation(ClassId.topLevel(JVM_STATIC_ANNOTATION_FQ_NAME)))
+        if (containingClass != null && shouldHaveDispatchReceiver(containingClass, firParentProperty)
         ) {
-            declarationStorage.enterScope(this)
-            declareThisReceiverParameter(
-                symbolTable,
-                thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"),
-                thisOrigin = origin
-            ).apply {
-                declarationStorage.leaveScope(this@Fir2IrLazyPropertyAccessor)
-            }
+            createThisReceiverParameter(thisType = containingClass.thisReceiver?.type ?: error("No this receiver for containing class"))
         } else null
     }
 
     override var extensionReceiverParameter: IrValueParameter? by lazyVar {
         firParentProperty.receiverTypeRef?.let {
-            declarationStorage.enterScope(this)
-            declareThisReceiverParameter(
-                symbolTable,
-                thisType = it.toIrType(typeConverter),
-                thisOrigin = origin,
-            ).apply {
-                declarationStorage.leaveScope(this@Fir2IrLazyPropertyAccessor)
-            }
+            createThisReceiverParameter(it.toIrType(typeConverter, conversionTypeContext))
         }
     }
 
@@ -133,9 +66,9 @@ class Fir2IrLazyPropertyAccessor(
                 declarationStorage.createDefaultSetterParameter(
                     startOffset, endOffset, origin,
                     (firAccessor?.valueParameters?.firstOrNull()?.returnTypeRef ?: firParentProperty.returnTypeRef).toIrType(
-                        typeConverter, ConversionTypeContext.DEFAULT.inSetter()
+                        typeConverter, conversionTypeContext
                     ),
-                    this@Fir2IrLazyPropertyAccessor
+                    parent = this@Fir2IrLazyPropertyAccessor
                 )
             ).apply {
                 declarationStorage.leaveScope(this@Fir2IrLazyPropertyAccessor)
@@ -147,11 +80,8 @@ class Fir2IrLazyPropertyAccessor(
         firParentProperty.generateOverriddenAccessorSymbols(firParentClass, !isSetter, session, scopeSession, declarationStorage)
     }
 
-    override var metadata: MetadataSource?
-        get() = null
-        set(_) = error("We should never need to store metadata of external declarations.")
-
     override val containerSource: DeserializedContainerSource?
         get() = firParentProperty.containerSource
 
+    private val conversionTypeContext = if (isSetter) ConversionTypeContext.DEFAULT.inSetter() else ConversionTypeContext.DEFAULT
 }
