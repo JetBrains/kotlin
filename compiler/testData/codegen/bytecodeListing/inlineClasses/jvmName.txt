@@ -1,0 +1,35 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'jvmName.kt'
+    public method <init>(): void
+    public final @kotlin.jvm.JvmName @org.jetbrains.annotations.NotNull method test(): java.lang.Object
+    public final @kotlin.jvm.JvmName @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class Foo {
+    // source: 'jvmName.kt'
+    private final @org.jetbrains.annotations.NotNull field a: java.lang.Object
+    private synthetic method <init>(p0: java.lang.Object): void
+    public synthetic final static method box-impl(p0: java.lang.Object): Foo
+    public static @org.jetbrains.annotations.NotNull method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getA(): java.lang.Object
+    public method hashCode(): int
+    public static method hashCode-impl(p0: java.lang.Object): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: java.lang.Object): java.lang.String
+    public synthetic final method unbox-impl(): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class JvmNameKt {
+    // source: 'jvmName.kt'
+    public final static @kotlin.jvm.JvmName method bar(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public final static @kotlin.jvm.JvmName method baz(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public final static @kotlin.jvm.JvmName method extensionFun(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+    public final static @kotlin.jvm.JvmName @org.jetbrains.annotations.NotNull method test(): java.lang.Object
+    public final static @kotlin.jvm.JvmName @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}

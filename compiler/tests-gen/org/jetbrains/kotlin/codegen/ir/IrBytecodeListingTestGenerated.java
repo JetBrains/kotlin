@@ -952,6 +952,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassWithManyKindsOfMembers.kt");
         }
 
+        @TestMetadata("jvmName.kt")
+        public void testJvmName() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/jvmName.kt");
+        }
+
         @TestMetadata("jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt")
         public void testJvmOverloadsOnTopLevelFunctionReturningInlineClassValue() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt");

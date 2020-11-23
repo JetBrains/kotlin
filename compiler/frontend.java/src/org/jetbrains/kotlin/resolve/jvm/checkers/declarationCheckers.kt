@@ -152,10 +152,7 @@ class JvmNameAnnotationChecker : DeclarationChecker {
         if (descriptor is CallableMemberDescriptor) {
             if (DescriptorUtils.isOverride(descriptor) || descriptor.isOverridable) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
-            } else if (descriptor.containingDeclaration.isInlineClassThatRequiresMangling() ||
-                requiresFunctionNameManglingForParameterTypes(descriptor) ||
-                requiresFunctionNameManglingForReturnType(descriptor)
-            ) {
+            } else if (descriptor.containingDeclaration.isInlineClassThatRequiresMangling()) {
                 diagnosticHolder.report(ErrorsJvm.INAPPLICABLE_JVM_NAME.on(annotationEntry))
             }
         }
