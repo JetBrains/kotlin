@@ -8,4 +8,4 @@ package org.jetbrains.kotlin.codegen.optimization.common
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
-typealias TypeAnnotatedFrames = Array<Frame<BasicValue>?>
+typealias TypeAnnotatedFrames = Array<Frame<BasicValue>>
