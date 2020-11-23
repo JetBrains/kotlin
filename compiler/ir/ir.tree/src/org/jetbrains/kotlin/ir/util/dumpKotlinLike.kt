@@ -17,6 +17,18 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
 
+/**
+ * Conventions:
+ * * For unsupported cases (node, type) it prints a block comment which starts with "/* ERROR:"               (*/<- hack for parser)
+ * * Conventions for some operators:
+ *     * IMPLICIT_CAST -- expr /*as Type */
+ *     * IMPLICIT_NOTNULL -- expr /*!! Type */
+ *     * IMPLICIT_COERCION_TO_UNIT -- expr /*~> Unit */
+ *     * IMPLICIT_INTEGER_COERCION -- expr /*~> IntType */
+ *     * SAM_CONVERSION -- expr /*-> SamType */
+ *     * IMPLICIT_DYNAMIC_CAST -- expr /*~> dynamic */
+ *     * REINTERPRET_CAST -- expr /*=> Type */
+ */
 fun IrElement.dumpKotlinLike(options: KotlinLikeDumpOptions = KotlinLikeDumpOptions()): String {
     val sb = StringBuilder()
     accept(KotlinLikeDumper(Printer(sb, 1, "  "), options), null)
