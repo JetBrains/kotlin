@@ -5416,6 +5416,11 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             runTest("js/js.translator/testData/box/kotlin.test/ignore.kt");
         }
 
+        @TestMetadata("illegalParameters.kt")
+        public void testIllegalParameters() throws Exception {
+            runTest("js/js.translator/testData/box/kotlin.test/illegalParameters.kt");
+        }
+
         @TestMetadata("incremental.kt")
         public void testIncremental() throws Exception {
             runTest("js/js.translator/testData/box/kotlin.test/incremental.kt");
