@@ -2,7 +2,7 @@ fun testSimple(x: Double): Int {
   return { // BLOCK
     val tmp0_subject: Double = x
     when {
-      ieee754equals(arg0 = tmp0_subject, arg1 = 0.0D) -> 0
+      ieee754equals(arg0 = tmp0_subject, arg1 = 0.0) -> 0
       else -> 1
     }
   }
@@ -15,7 +15,7 @@ fun testSmartCastInWhenSubject(x: Any): Int {
   return { // BLOCK
     val tmp1_subject: Double = x /*as Double */
     when {
-      ieee754equals(arg0 = tmp1_subject, arg1 = 0.0D) -> 0
+      ieee754equals(arg0 = tmp1_subject, arg1 = 0.0) -> 0
       else -> 1
     }
   }
@@ -39,7 +39,7 @@ fun testSmartCastInWhenConditionInBranch(x: Any): Int {
     val tmp3_subject: Any = x
     when {
       tmp3_subject !is Double -> -1
-      EQEQ(arg0 = tmp3_subject, arg1 = 0.0D) -> 0
+      EQEQ(arg0 = tmp3_subject, arg1 = 0.0) -> 0
       else -> 1
     }
   }
@@ -77,3 +77,4 @@ fun testWithPrematureExitInConditionSubexpression(x: Any): Int {
     }
   }
 }
+

@@ -31,11 +31,11 @@ val test8: Long
   get
 
 val test9: Double
-  field = 1.0D
+  field = 1.0
   get
 
 val test10: Double
-  field = 1.0D.unaryMinus()
+  field = 1.0.unaryMinus()
   get
 
 val test11: Float
@@ -65,3 +65,4 @@ val testI: Int
 val testL: Long
   field = 1L
   get
+

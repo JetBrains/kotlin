@@ -3,11 +3,11 @@ fun JavaClass.testPlatformEqualsPlatform(): Boolean {
 }
 
 fun JavaClass.testPlatformEqualsKotlin(): Boolean {
-  return <this>.null0().equals(other = 0.0D)
+  return <this>.null0().equals(other = 0.0)
 }
 
 fun JavaClass.testKotlinEqualsPlatform(): Boolean {
-  return 0.0D.equals(other = <this>.null0())
+  return 0.0.equals(other = <this>.null0())
 }
 
 fun JavaClass.testPlatformCompareToPlatform(): Int {
@@ -15,9 +15,10 @@ fun JavaClass.testPlatformCompareToPlatform(): Int {
 }
 
 fun JavaClass.testPlatformCompareToKotlin(): Int {
-  return <this>.null0().compareTo(other = 0.0D)
+  return <this>.null0().compareTo(other = 0.0)
 }
 
 fun JavaClass.testKotlinCompareToPlatform(): Int {
-  return 0.0D.compareTo(other = <this>.null0() /*!! Double */)
+  return 0.0.compareTo(other = <this>.null0() /*!! Double */)
 }
+
