@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.TestsCompiletimeError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
