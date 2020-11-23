@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact build-on-make="true" name="KmmPlugin.zip">
+    <output-path>$PROJECT_DIR$/out/artifacts/KmmPlugin_zip</output-path>
+    <root id="root">
+      <element id="archive" name="KmmPlugin.zip">
+        <element id="directory" name="kmm">
+          <element id="artifact" artifact-name="KmmPlugin" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
