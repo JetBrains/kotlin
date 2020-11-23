@@ -389,7 +389,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
             is IrDynamicType ->
                 p.printWithNoIndent("dynamic")
             is IrErrorType ->
-                p.printWithNoIndent("ErrorType /* ERROR */")
+                p.printWithNoIndent("ErrorType")
             else ->
                 p.printWithNoIndent("??? /* ERROR: unknown type: ${this.javaClass.simpleName} */")
         }
@@ -1339,18 +1339,18 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: IrDeclaration?) {
         // TODO declaration.printlnAnnotations()
-        p.println("/* ERROR DECLARATION */")
+        p.println("/* ErrorDeclaration */")
     }
 
     override fun visitErrorExpression(expression: IrErrorExpression, data: IrDeclaration?) {
         // TODO description
-        p.printWithNoIndent("error(\"\") /* ERROR EXPRESSION */")
+        p.printWithNoIndent("error(\"\") /* ErrorExpression */")
     }
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: IrDeclaration?) {
         // TODO description
         // TODO better rendering
-        p.printWithNoIndent("error(\"\") /* ERROR CALL */")
+        p.printWithNoIndent("error(\"\") /* ErrorCallExpression */")
         expression.explicitReceiver?.let {
             it.accept(this, data)
             p.printWithNoIndent("; ")
