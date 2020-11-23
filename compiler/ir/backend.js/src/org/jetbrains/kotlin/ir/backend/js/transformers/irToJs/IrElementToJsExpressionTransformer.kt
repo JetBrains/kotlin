@@ -160,7 +160,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                     if (varargParameterIndex == -1) {
                         JsNew(refForExternalClass, arguments)
                     } else {
-                        val argumentsAsSingleArray = argumentsAsSingleArray(
+                        val argumentsAsSingleArray = argumentsWithVarargAsSingleArray(
                             JsNullLiteral(),
                             arguments,
                             varargParameterIndex
