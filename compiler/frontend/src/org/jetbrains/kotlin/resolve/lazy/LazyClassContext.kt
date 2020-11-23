@@ -48,4 +48,5 @@ interface LazyClassContext {
     val kotlinTypeChecker: NewKotlinTypeChecker
     val samConversionResolver: SamConversionResolver
     val additionalClassPartsProvider: AdditionalClassPartsProvider
+    val sealedClassInheritorsProvider: SealedClassInheritorsProvider
 }

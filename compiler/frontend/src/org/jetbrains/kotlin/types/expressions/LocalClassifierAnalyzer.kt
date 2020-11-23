@@ -71,6 +71,7 @@ class LocalClassifierAnalyzer(
     private val kotlinTypeChecker: NewKotlinTypeChecker,
     private val samConversionResolver: SamConversionResolver,
     private val additionalClassPartsProvider: AdditionalClassPartsProvider,
+    private val sealedClassInheritorsProvider: SealedClassInheritorsProvider
 ) {
     fun processClassOrObject(
         scope: LexicalWritableScope?,
@@ -107,6 +108,7 @@ class LocalClassifierAnalyzer(
                 kotlinTypeChecker,
                 samConversionResolver,
                 additionalClassPartsProvider,
+                sealedClassInheritorsProvider
             ),
             analyzerServices
         )
@@ -138,6 +140,7 @@ class LocalClassDescriptorHolder(
     val kotlinTypeChecker: NewKotlinTypeChecker,
     val samConversionResolver: SamConversionResolver,
     val additionalClassPartsProvider: AdditionalClassPartsProvider,
+    val sealedClassInheritorsProvider: SealedClassInheritorsProvider
 ) {
     // We do not need to synchronize here, because this code is used strictly from one thread
     private var classDescriptor: ClassDescriptor? = null
@@ -181,6 +184,7 @@ class LocalClassDescriptorHolder(
                     override val samConversionResolver: SamConversionResolver = this@LocalClassDescriptorHolder.samConversionResolver
                     override val additionalClassPartsProvider: AdditionalClassPartsProvider =
                         this@LocalClassDescriptorHolder.additionalClassPartsProvider
+                    override val sealedClassInheritorsProvider: SealedClassInheritorsProvider = this@LocalClassDescriptorHolder.sealedClassInheritorsProvider
                 },
                 containingDeclaration,
                 classOrObject.nameAsSafeName,

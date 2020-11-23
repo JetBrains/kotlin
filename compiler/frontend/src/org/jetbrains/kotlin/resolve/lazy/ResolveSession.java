@@ -85,6 +85,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private WrappedTypeFactory wrappedTypeFactory;
     private PlatformDiagnosticSuppressor platformDiagnosticSuppressor;
     private SamConversionResolver samConversionResolver;
+    private SealedClassInheritorsProvider sealedClassInheritorsProvider;
 
     private AdditionalClassPartsProvider additionalClassPartsProvider;
 
@@ -162,6 +163,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setAdditionalClassPartsProvider(@NotNull AdditionalClassPartsProvider additionalClassPartsProvider) {
         this.additionalClassPartsProvider = additionalClassPartsProvider;
+    }
+
+    @Inject
+    public void setSealedClassInheritorsProvider(@NotNull SealedClassInheritorsProvider sealedClassInheritorsProvider) {
+        this.sealedClassInheritorsProvider = sealedClassInheritorsProvider;
     }
 
     // Only calls from injectors expected
@@ -512,5 +518,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public AdditionalClassPartsProvider getAdditionalClassPartsProvider() {
         return additionalClassPartsProvider;
+    }
+
+    @NotNull
+    @Override
+    public SealedClassInheritorsProvider getSealedClassInheritorsProvider() {
+        return sealedClassInheritorsProvider;
     }
 }
