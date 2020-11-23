@@ -133,7 +133,7 @@ internal fun FirLightClassBase.createMethods(
                                 containingClass = this@createMethods,
                                 isTopLevel = isTopLevel,
                                 methodIndex = methodIndex++,
-                                argumentsSkipMask = skipMask
+                                argumentsSkipMask = skipMask.clone() as BitSet
                             )
                         )
                     }
