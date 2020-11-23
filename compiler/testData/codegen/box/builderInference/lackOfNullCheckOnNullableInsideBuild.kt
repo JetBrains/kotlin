@@ -1,6 +1,5 @@
 // !LANGUAGE: +NewInference
 // WITH_RUNTIME
-// IGNORE_BACKEND_FIR: JVM_IR
 // Issue: KT-36371
 
 import kotlin.experimental.ExperimentalTypeInference
