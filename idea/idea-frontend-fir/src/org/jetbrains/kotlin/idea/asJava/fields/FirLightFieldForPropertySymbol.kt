@@ -72,6 +72,12 @@ internal class FirLightFieldForPropertySymbol(
         val modifiers = modifiersWithVisibility.add(
             what = PsiModifier.FINAL,
             `if` = !suppressFinal
+        ).add(
+            what = PsiModifier.TRANSIENT,
+            `if` = propertySymbol.hasAnnotation("kotlin/jvm/Transient", null)
+        ).add(
+            what = PsiModifier.VOLATILE,
+            `if` = propertySymbol.hasAnnotation("kotlin/jvm/Volatile", null)
         )
 
         val nullability = if (visibility != PsiModifier.PRIVATE)
