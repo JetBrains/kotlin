@@ -15613,6 +15613,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("mutualInline.kt")
+        public void testMutualInline() throws Exception {
+            runTest("compiler/testData/codegen/box/functions/mutualInline.kt");
+        }
+
+        @Test
         @TestMetadata("nothisnoclosure.kt")
         public void testNothisnoclosure() throws Exception {
             runTest("compiler/testData/codegen/box/functions/nothisnoclosure.kt");

@@ -132,6 +132,8 @@ class JvmBackendContext(
 
     internal val continuationClassesVarsCountByType: MutableMap<IrAttributeContainer, Map<Type, Int>> = hashMapOf()
 
+    val inlineMethodGenerationLock = Any()
+
     init {
         state.mapInlineClass = { descriptor ->
             typeMapper.mapType(referenceClass(descriptor).defaultType)
