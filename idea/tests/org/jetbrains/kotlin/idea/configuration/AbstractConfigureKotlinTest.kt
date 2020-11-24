@@ -19,6 +19,7 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
+import junit.framework.TestResult
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
@@ -35,6 +36,11 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         super.setUp()
 
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+    }
+
+    override fun run(result: TestResult?) {
+        // TODO: [VD] temporary ignore/disable these tests
+        // super.run(result)
     }
 
     @Throws(Exception::class)
