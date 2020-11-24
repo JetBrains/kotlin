@@ -1,6 +1,6 @@
 open class bar()
 
-interface <!CONSTRUCTOR_IN_INTERFACE!>Foo()<!> : <!INTERFACE_WITH_SUPERCLASS!>bar<!>(), bar, bar {
+interface <!CONSTRUCTOR_IN_INTERFACE!>Foo()<!> : <!INTERFACE_WITH_SUPERCLASS, SUPERTYPE_INITIALIZED_IN_INTERFACE!>bar<!>(), bar, bar {
 }
 
 interface Foo2 : <!INTERFACE_WITH_SUPERCLASS!>bar<!>, Foo {

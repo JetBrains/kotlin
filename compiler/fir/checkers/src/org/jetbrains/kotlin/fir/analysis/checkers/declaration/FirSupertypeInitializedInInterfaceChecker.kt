@@ -5,22 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import com.intellij.lang.LighterASTNode
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiErrorElement
-import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirLightSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.psi.KtSuperTypeCallEntry
 
 object FirSupertypeInitializedInInterfaceChecker : FirMemberDeclarationChecker() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -28,42 +20,11 @@ object FirSupertypeInitializedInInterfaceChecker : FirMemberDeclarationChecker()
             return
         }
 
-        declaration.source?.findSuperTypeCall()?.let {
-            reporter.report(declaration.superTypeRefs.getOrNull(it)?.source)
-        }
-    }
-
-    private fun FirSourceElement.findSuperTypeCall(): Int {
-        val localPsi = psi
-        val localLightNode = lighterASTNode
-
-        if (localPsi != null && localPsi !is PsiErrorElement) {
-            return localPsi.findSuperTypeCall()
-        } else if (this is FirLightSourceElement) {
-            return localLightNode.findSuperTypeCall(treeStructure)
-        }
-
-        return -1
-    }
-
-    private fun PsiElement.findSuperTypeCall(): Int {
-        val children = this.children // this is a method call and it collects children
-        return if (children.isNotEmpty() && children[0] !is PsiErrorElement) {
-            children[0].children.indexOfFirst { it is KtSuperTypeCallEntry }
-        } else {
-            -1
-        }
-    }
-
-    private fun LighterASTNode.findSuperTypeCall(tree: FlyweightCapableTreeStructure<LighterASTNode>): Int {
-        val children = getChildren(tree)
-        return if (children.isNotEmpty()) {
-            children.find { it?.tokenType == KtNodeTypes.SUPER_TYPE_LIST }
-                ?.getChildren(tree)
-                ?.indexOfFirst { it?.tokenType == KtNodeTypes.SUPER_TYPE_CALL_ENTRY }
-                ?: -1
-        } else {
-            -1
+        for (superTypeRef in declaration.superTypeRefs) {
+            val source = superTypeRef.source ?: continue
+            if (source.treeStructure.getParent(source.lighterASTNode)?.tokenType == KtNodeTypes.CONSTRUCTOR_CALLEE) {
+                reporter.report(source)
+            }
         }
     }
 
