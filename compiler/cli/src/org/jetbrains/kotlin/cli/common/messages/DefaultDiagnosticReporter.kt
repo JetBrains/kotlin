@@ -31,6 +31,6 @@ interface MessageCollectorBasedReporter : DiagnosticMessageReporter {
     override fun report(diagnostic: Diagnostic, file: PsiFile, render: String) = messageCollector.report(
         AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity),
         render,
-        MessageUtil.psiFileToMessageLocation(file, file.name, DiagnosticUtils.getLineAndColumn(diagnostic))
+        MessageUtil.psiFileToMessageLocation(file, file.name, DiagnosticUtils.getLineAndColumnRange(diagnostic))
     )
 }
