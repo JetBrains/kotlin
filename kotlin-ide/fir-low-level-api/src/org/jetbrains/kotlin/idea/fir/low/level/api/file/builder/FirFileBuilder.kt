@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.psi.KtFile
@@ -81,10 +82,11 @@ internal class FirFileBuilder(
             "Trying to resolve file ${firFile.name} from $fromPhase to $toPhase"
         }
         var currentPhase = fromPhase
+        val scopeSession = ScopeSession()
         while (currentPhase < toPhase) {
             if (checkPCE) checkCanceled()
             currentPhase = currentPhase.next
-            firPhaseRunner.runPhase(firFile, currentPhase)
+            firPhaseRunner.runPhase(firFile, currentPhase, scopeSession)
         }
     }
 
