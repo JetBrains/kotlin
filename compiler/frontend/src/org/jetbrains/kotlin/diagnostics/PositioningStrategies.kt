@@ -477,11 +477,12 @@ object PositioningStrategies {
     }
 
     @JvmField
-    val VAL_OR_VAR_NODE: PositioningStrategy<KtNamedDeclaration> = object : PositioningStrategy<KtNamedDeclaration>() {
-        override fun mark(element: KtNamedDeclaration): List<TextRange> {
+    val VAL_OR_VAR_NODE: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
             return when (element) {
                 is KtParameter -> markElement(element.valOrVarKeyword ?: element)
                 is KtProperty -> markElement(element.valOrVarKeyword)
+                is KtDestructuringDeclaration -> markElement(element.valOrVarKeyword ?: element)
                 else -> error("Declaration is neither a parameter nor a property: " + element.getElementTextWithContext())
             }
         }
