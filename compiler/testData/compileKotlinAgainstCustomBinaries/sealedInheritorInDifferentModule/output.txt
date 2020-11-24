@@ -1,0 +1,20 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+FreedomForSealedClasses
+-XXLanguage:+SealedInterfaces
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+compiler/testData/compileKotlinAgainstCustomBinaries/sealedInheritorInDifferentModule/main.kt:5:11: error: cannot access '<init>': it is internal in 'Base'
+class B : Base(), IBase
+          ^
+compiler/testData/compileKotlinAgainstCustomBinaries/sealedInheritorInDifferentModule/main.kt:5:11: error: inheritance of sealed classes or interfaces from different module is prohibited
+class B : Base(), IBase
+          ^
+compiler/testData/compileKotlinAgainstCustomBinaries/sealedInheritorInDifferentModule/main.kt:5:19: error: inheritance of sealed classes or interfaces from different module is prohibited
+class B : Base(), IBase
+                  ^
+COMPILATION_ERROR

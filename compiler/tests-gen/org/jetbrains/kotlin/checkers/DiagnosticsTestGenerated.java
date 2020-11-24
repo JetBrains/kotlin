@@ -20850,6 +20850,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
                 runTest("compiler/testData/diagnostics/tests/sealed/ExhaustiveWithFreedom.kt");
             }
 
+            @TestMetadata("inheritorInDifferentModule.kt")
+            public void testInheritorInDifferentModule() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/sealed/inheritorInDifferentModule.kt");
+            }
+
             @TestMetadata("Local.kt")
             public void testLocal() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/sealed/Local.kt");
@@ -20985,6 +20990,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTestWithFirVali
 
                 public void testAllFilesPresentInInterfaces() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/sealed/interfaces"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @TestMetadata("inheritorInDifferentModule.kt")
+                public void testInheritorInDifferentModule() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/sealed/interfaces/inheritorInDifferentModule.kt");
                 }
 
                 @TestMetadata("sealedInterfacesDisabled.kt")
