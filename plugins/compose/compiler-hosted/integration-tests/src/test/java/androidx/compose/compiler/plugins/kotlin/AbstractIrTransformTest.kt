@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.EmptyLoggingContext
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrLinker
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmManglerDesc
@@ -150,7 +151,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
             source,
             expectedTransformed,
             "",
-            dumpTree
+            dumpTree = dumpTree
         )
     }
 
@@ -158,6 +159,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         source: String,
         expectedTransformed: String,
         extra: String = "",
+        validator: (element: IrElement) -> Unit = { },
         dumpTree: Boolean = false
     ) {
         val files = listOf(
@@ -166,8 +168,10 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         )
         val irModule = generateIrModuleWithJvmResolve(files)
         val keySet = mutableListOf<Int>()
+        fun IrElement.validate(): IrElement = this.also { validator(it) }
         val actualTransformed = irModule
             .files[0]
+            .validate()
             .dumpSrc()
             .replace('$', '%')
             // replace source keys for start group calls

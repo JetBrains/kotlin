@@ -16,12 +16,18 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.junit.Test
 
 class ComposerParamTransformTests : ComposeIrTransformTest() {
     private fun composerParam(
         source: String,
         expectedTransformed: String,
+        validator: (element: IrElement) -> Unit = { },
         dumpTree: Boolean = false
     ) = verifyComposeIrTransform(
         """
@@ -42,6 +48,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
         """.trimIndent(),
         expectedTransformed,
         "",
+        validator,
         dumpTree
     )
 
@@ -330,6 +337,126 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             }
         """
     )
+
+    @Test
+    fun testKeyCall() {
+        composerParam(
+            """
+                import androidx.compose.runtime.key
+
+                @Composable
+                fun Wrapper(block: @Composable () -> Unit) {
+                    block()
+                }
+
+                @Composable
+                fun Leaf(text: String) { }
+
+                @Composable
+                fun Test(value: Int) {
+                    key(value) {
+                        Wrapper {
+                            Leaf("Value ${'$'}value")
+                        }
+                    }
+                }
+            """,
+            """
+                @Composable
+                fun Wrapper(block: Function2<Composer<*>, Int, Unit>, %composer: Composer<*>?, %changed: Int) {
+                  %composer.startRestartGroup(<>, "C(Wrapper)<block(...>:Test.kt#2487m")
+                  val %dirty = %changed
+                  if (%changed and 0b1110 === 0) {
+                    %dirty = %dirty or if (%composer.changed(block)) 0b0100 else 0b0010
+                  }
+                  if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                    block(%composer, 0b1110 and %dirty)
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                    Wrapper(block, %composer, %changed or 0b0001)
+                  }
+                }
+                @Composable
+                fun Leaf(text: String, %composer: Composer<*>?, %changed: Int) {
+                  %composer.startRestartGroup(<>, "C(Leaf):Test.kt#2487m")
+                  val %dirty = %changed
+                  if (%changed and 0b1110 === 0) {
+                    %dirty = %dirty or if (%composer.changed(text)) 0b0100 else 0b0010
+                  }
+                  if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                    Leaf(text, %composer, %changed or 0b0001)
+                  }
+                }
+                @Composable
+                fun Test(value: Int, %composer: Composer<*>?, %changed: Int) {
+                  %composer.startRestartGroup(<>, "C(Test):Test.kt#2487m")
+                  val %dirty = %changed
+                  if (%changed and 0b1110 === 0) {
+                    %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0b0010
+                  }
+                  if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                    %composer.startMovableGroup(<>, value, "<Wrappe...>")
+                    Wrapper(composableLambda(%composer, <>, true, "C<Leaf("...>:Test.kt#2487m") { %composer: Composer<*>?, %changed: Int ->
+                      if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                        Leaf("Value %value", %composer, 0)
+                      } else {
+                        %composer.skipToGroupEnd()
+                      }
+                    }, %composer, 0b0110)
+                    %composer.endMovableGroup()
+                  } else {
+                    %composer.skipToGroupEnd()
+                  }
+                  %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                    Test(value, %composer, %changed or 0b0001)
+                  }
+                }
+            """,
+            validator = { element ->
+                // Validate that no composers are captured by nested lambdas
+                var currentComposer: IrValueParameter? = null
+                element.accept(
+                    object : IrElementVisitorVoid {
+                        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+                            val composer = declaration.valueParameters.firstOrNull {
+                                it.name == KtxNameConventions.COMPOSER_PARAMETER
+                            }
+                            val oldComposer = currentComposer
+                            if (composer != null) currentComposer = composer
+                            super.visitSimpleFunction(declaration)
+                            currentComposer = oldComposer
+                        }
+
+                        override fun visitElement(element: IrElement) {
+                            element.acceptChildren(this, null)
+                        }
+
+                        override fun visitGetValue(expression: IrGetValue) {
+                            super.visitGetValue(expression)
+                            val value = expression.symbol.owner
+                            if (
+                                value is IrValueParameter && value.name ==
+                                KtxNameConventions.COMPOSER_PARAMETER
+                            ) {
+                                assertEquals(
+                                    "Composer unexpectedly captured",
+                                    currentComposer,
+                                    value
+                                )
+                            }
+                        }
+                    },
+                    null
+                )
+            }
+        )
+    }
 
     @Test
     fun testComposableNestedCall() {
