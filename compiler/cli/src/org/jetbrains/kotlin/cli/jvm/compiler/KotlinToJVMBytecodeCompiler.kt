@@ -463,6 +463,10 @@ object KotlinToJVMBytecodeCompiler {
                 environment.updateClasspath(result.additionalJavaRoots.map { JavaSourceRoot(it, null) })
             }
 
+            if (result.additionalClassPathRoots.isNotEmpty()) {
+                environment.updateClasspath(result.additionalClassPathRoots.map { JvmClasspathRoot(it, false) })
+            }
+
             if (result.additionalKotlinRoots.isNotEmpty()) {
                 environment.addKotlinSourceRoots(result.additionalKotlinRoots)
             }
