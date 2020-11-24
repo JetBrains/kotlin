@@ -25,14 +25,6 @@ open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
     fun testAndroidMppSourceSets(): Unit = with(Project("new-mpp-android-source-sets", GradleVersionRequired.FOR_MPP_SUPPORT)) {
         build("sourceSets") {
             assertSuccessful()
-            assertContains("Java sources: [lib/src/androidTest/java, lib/src/androidAndroidTest/kotlin]")
-            assertContains("Java sources: [lib/src/androidTestDebug/java, lib/src/androidAndroidTestDebug/kotlin]")
-            assertContains("Java sources: [lib/src/debug/java, lib/src/androidDebug/kotlin, lib/src/debug/kotlin]")
-            assertContains("Java sources: [lib/src/main/java, lib/src/androidMain/kotlin, lib/src/main/kotlin]")
-            assertContains("Java sources: [lib/src/release/java, lib/src/androidRelease/kotlin, lib/src/release/kotlin]")
-            assertContains("Java sources: [lib/src/test/java, lib/src/androidTest/kotlin, lib/src/test/kotlin]")
-            assertContains("Java sources: [lib/src/testDebug/java, lib/src/androidTestDebug/kotlin, lib/src/testDebug/kotlin]")
-            assertContains("Java sources: [lib/src/testRelease/java, lib/src/androidTestRelease/kotlin, lib/src/testRelease/kotlin]")
 
             assertContains("Android resources: [lib/src/main/res, lib/src/androidMain/res]")
             assertContains("Assets: [lib/src/main/assets, lib/src/androidMain/assets]")
@@ -50,14 +42,13 @@ open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
             assertContains("JNI libraries: [lib/src/androidTestDebug/jniLibs, lib/src/androidAndroidTestDebug/jniLibs]")
             assertContains("Java-style resources: [lib/src/androidTestDebug/resources, lib/src/androidAndroidTestDebug/resources]")
 
-            assertContains("Java sources: [lib/betaSrc/paidBeta/java, lib/src/androidPaidBeta/kotlin, lib/src/paidBeta/kotlin]")
-            assertContains("Java sources: [lib/betaSrc/paidBetaDebug/java, lib/src/androidPaidBetaDebug/kotlin, lib/src/paidBetaDebug/kotlin]")
-            assertContains("Java sources: [lib/betaSrc/paidBetaRelease/java, lib/src/androidPaidBetaRelease/kotlin, lib/src/paidBetaRelease/kotlin]")
+            assertContains("Java-style resources: [lib/betaSrc/paidBeta/resources, lib/src/androidPaidBeta/resources]")
+            assertContains("Java-style resources: [lib/betaSrc/paidBetaDebug/resources, lib/src/androidPaidBetaDebug/resources]")
+            assertContains("Java-style resources: [lib/betaSrc/paidBetaRelease/resources, lib/src/androidPaidBetaRelease/resources]")
 
-            assertContains("Java sources: [lib/betaSrc/freeBeta/java, lib/src/androidFreeBeta/kotlin, lib/src/freeBeta/kotlin]")
-            assertContains("Java sources: [lib/betaSrc/freeBetaDebug/java, lib/src/androidFreeBetaDebug/kotlin, lib/src/freeBetaDebug/kotlin]")
-            assertContains("Java sources: [lib/betaSrc/freeBetaRelease/java, lib/src/androidFreeBetaRelease/kotlin, lib/src/freeBetaRelease/kotlin]")
-
+            assertContains("Java-style resources: [lib/betaSrc/freeBeta/resources, lib/src/androidFreeBeta/resources]")
+            assertContains("Java-style resources: [lib/betaSrc/freeBetaDebug/resources, lib/src/androidFreeBetaDebug/resources]")
+            assertContains("Java-style resources: [lib/betaSrc/freeBetaRelease/resources, lib/src/androidFreeBetaRelease/resources]")
         }
 
         build("testFreeBetaDebug") {
@@ -73,10 +64,13 @@ open class KotlinAndroid36GradleIT : KotlinAndroid33GradleIT() {
         }
 
         // Test for KT-35016: MPP should recognize android instrumented tests correctly
+        // TODO: https://issuetracker.google.com/issues/173770818 enable after fix in AGP
+        /*
         build("connectedAndroidTest") {
             assertFailed()
             assertContains("No connected devices!")
         }
+         */
     }
 
     @Test
