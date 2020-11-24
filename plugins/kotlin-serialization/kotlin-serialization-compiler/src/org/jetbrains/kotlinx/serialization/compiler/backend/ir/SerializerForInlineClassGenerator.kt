@@ -80,7 +80,7 @@ class SerializerForInlineClassGenerator(
         }, {
             decoderClass.referenceMethod("${CallingConventions.decode}${it.elementMethodPrefix}") to listOf()
         }, returnTypeHint = inlinedType)
-        val value = coerceToBox(actualCall, inlinedType, loadFunc.returnType)
+        val value = coerceToBox(actualCall, loadFunc.returnType)
         +irReturn(value)
     }
 
@@ -101,7 +101,7 @@ class SerializerForInlineClassGenerator(
 
     // Compiler will elide these in corresponding inline class lowerings (when serialize/deserialize functions will be split in two)
 
-    private fun IrBlockBodyBuilder.coerceToBox(expression: IrExpression, propertyType: IrType, inlineClassBoxType: IrType): IrExpression =
+    private fun IrBlockBodyBuilder.coerceToBox(expression: IrExpression, inlineClassBoxType: IrType): IrExpression =
         irInvoke(
             null,
             serializableIrClass.constructors.single { it.isPrimary }.symbol,
