@@ -634,6 +634,7 @@ public class DefaultErrorMessages {
         MAP.put(SEALED_SUPERTYPE, "This type is sealed, so it can be inherited by only its own nested classes or objects");
         MAP.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "Local class cannot extend a sealed class");
         MAP.put(SEALED_INHERITOR_IN_DIFFERENT_PACKAGE, "Inheritor of sealed class or interface declared in package {1} but it must be in package {2} where base class is declared", TO_STRING, TO_STRING);
+        MAP.put(SEALED_INHERITOR_IN_DIFFERENT_MODULE, "Inheritance of sealed classes or interfaces from different module is prohibited");
         MAP.put(CLASS_INHERITS_JAVA_SEALED_CLASS, "Inheritance of java sealed classes is prohibited");
         MAP.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton");
         MAP.put(CLASS_CANNOT_BE_EXTENDED_DIRECTLY, "Class {0} cannot be extended directly", NAME);
