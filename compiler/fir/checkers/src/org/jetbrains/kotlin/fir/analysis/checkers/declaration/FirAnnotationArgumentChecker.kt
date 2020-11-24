@@ -37,7 +37,7 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
                 val expression = (arg as? FirNamedArgumentExpression)?.expression ?: arg
 
                 checkAnnotationArgumentWithSubElements(expression, context.session, reporter)
-                    ?.let { reporter.report(getFirSourceElement(expression), it) }
+                    ?.let { reporter.report(expression.source, it) }
             }
         }
     }
@@ -52,7 +52,7 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
                 var usedNonConst = false
 
                 for (arg in expression.argumentList.arguments) {
-                    val sourceForReport = getFirSourceElement(arg)
+                    val sourceForReport = arg.source
 
                     when (val err = checkAnnotationArgumentWithSubElements(arg, session, reporter)) {
                         null -> {
@@ -70,7 +70,7 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments)
                     checkAnnotationArgumentWithSubElements(arg, session, reporter)
-                        ?.let { reporter.report(getFirSourceElement(arg), it) }
+                        ?.let { reporter.report(arg.source, it) }
             }
             else ->
                 return checkAnnotationArgument(expression, session)
@@ -223,31 +223,6 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
             ?.lookupTag
             ?.toSymbol(session)
             ?.fir
-
-    private fun getFirSourceElement(expression: FirExpression): FirSourceElement? =
-        when {
-            expression is FirFunctionCall && expression.calleeReference.name == TO_STRING ->
-                getParentOfFirSourceElement(getParentOfFirSourceElement(expression.source))
-            expression is FirFunctionCall ->
-                expression.source
-            (expression as? FirQualifiedAccess)?.explicitReceiver != null ->
-                getParentOfFirSourceElement(expression.source)
-            else ->
-                expression.source
-        }
-
-    private fun getParentOfFirSourceElement(source: FirSourceElement?): FirSourceElement? =
-        when (source) {
-            is FirPsiSourceElement<*> ->
-                source.psi.parent.toFirPsiSourceElement()
-            is FirLightSourceElement -> {
-                val elementOfParent = source.treeStructure.getParent(source.lighterASTNode) ?: source.lighterASTNode
-
-                elementOfParent.toFirLightSourceElement(source.treeStructure)
-            }
-            else ->
-                source
-        }
 
     private inline fun <reified T : FirSourceElement, P : PsiElement> DiagnosticReporter.report(
         source: T?,
