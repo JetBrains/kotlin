@@ -13,13 +13,8 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
     x_param + y_param
 }
 
-// Parameters (including anonymous destructuring parameters) are moved to fields in the Continuation class for the suspend lambda class.
-// However, in non-IR, the fields are first stored in local variables, and they are not read directly (even for destructuring components).
-// In IR, the fields are directly read from.
+// TODO: The backends disagree on the local variables in invoke/invokeSuspend methods
 
-// The local variable for destructuring suspend lambda arguments, in this case
-// `$dstr$x_param$_u24__u24$y_param`, is moved to a field in the IR backend,
-// so does not figure in the LVT.
 
 // LOCAL VARIABLES
 // test.kt:12 box: $completion:kotlin.coroutines.Continuation=helpers.ResultContinuation
@@ -41,16 +36,14 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
 // LOCAL VARIABLES
 // test.kt:12 invokeSuspend:
 // test.kt:5 component1:
+// test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit, $dstr$x_param$_u24__u24$y_param:A=A
+// test.kt:7 component3:
 
 // LOCAL VARIABLES JVM
 // test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit, $dstr$x_param$_u24__u24$y_param:A=A
-// test.kt:7 component3:
-// test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit, $dstr$x_param$_u24__u24$y_param:A=A
 
 // LOCAL VARIABLES JVM_IR
-// test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit
-// test.kt:7 component3:
-// test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit, x_param:java.lang.String="O":java.lang.String
+// test.kt:12 invokeSuspend: $result:java.lang.Object=kotlin.Unit, $dstr$x_param$_u24__u24$y_param:A=A, x_param:java.lang.String="O":java.lang.String
 
 // LOCAL VARIABLES
 // test.kt:13 invokeSuspend: $result:java.lang.Object=kotlin.Unit, x_param:java.lang.String="O":java.lang.String, y_param:java.lang.String="K":java.lang.String

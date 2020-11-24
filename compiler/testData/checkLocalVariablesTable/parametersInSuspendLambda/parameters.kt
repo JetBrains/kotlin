@@ -11,9 +11,7 @@ suspend fun foo(data: Data, body: suspend Long.(String, Data, Int) -> Unit) {
     1L.body("OK", data, 1)
 }
 
-// Parameters (including anonymous destructuring parameters) are moved to fields in the Continuation class for the suspend lambda class.
-// However, in non-IR, the fields are first stored in local variables, and they are not read directly (even for destructuring components).
-// In IR, the fields are directly read from.
+// The JVM and IR backend differ in naming scheme of captured receiver paramters in suspend lambdas
 
 // METHOD : ParametersKt$test$2.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
 
@@ -28,7 +26,11 @@ suspend fun foo(data: Data, body: suspend Long.(String, Data, Int) -> Unit) {
 // VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=1
 
 // JVM_IR_TEMPLATES
-// VARIABLE : NAME=x TYPE=Ljava/lang/String; INDEX=2
-// VARIABLE : NAME=z TYPE=I INDEX=3
-// VARIABLE : NAME=this TYPE=LParametersKt$test$2; INDEX=0
-// VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=1
+// VARIABLE : NAME=$dstr$x$_u24__u24$z TYPE=LData; INDEX=*
+// VARIABLE : NAME=$result TYPE=Ljava/lang/Object; INDEX=*
+// VARIABLE : NAME=i TYPE=I INDEX=*
+// VARIABLE : NAME=p$ TYPE=J INDEX=*
+// VARIABLE : NAME=str TYPE=Ljava/lang/String; INDEX=*
+// VARIABLE : NAME=this TYPE=LParametersKt$test$2; INDEX=*
+// VARIABLE : NAME=x TYPE=Ljava/lang/String; INDEX=*
+// VARIABLE : NAME=z TYPE=I INDEX=*
