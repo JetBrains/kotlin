@@ -151,7 +151,7 @@ object UnusedChecker : FirControlFlowChecker() {
         private val localProperties: Set<FirPropertySymbol>
     ) : ControlFlowGraphVisitor<PathAwareVariableStatusInfo, Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>>() {
         fun getData(graph: ControlFlowGraph): Map<CFGNode<*>, PathAwareVariableStatusInfo> {
-            return graph.collectPathAwareDataForNode(TraverseDirection.Backward, PathAwareVariableStatusInfo.EMPTY, this)
+            return graph.collectDataForNode(TraverseDirection.Backward, PathAwareVariableStatusInfo.EMPTY, this)
         }
 
         override fun visitNode(
