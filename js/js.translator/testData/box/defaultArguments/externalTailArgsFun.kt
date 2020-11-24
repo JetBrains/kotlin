@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1237
 // FILE: main.kt
 external fun create(
     p0: String = definedExternally,

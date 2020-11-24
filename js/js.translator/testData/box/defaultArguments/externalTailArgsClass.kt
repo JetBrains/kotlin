@@ -1,3 +1,4 @@
+// EXPECTED_REACHABLE_NODES: 1239
 // FILE: main.kt
 external class TailArgs(
     p0: String = definedExternally,
