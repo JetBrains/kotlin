@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
@@ -119,6 +120,8 @@ internal class FirLazyDeclarationResolver(
         }
 
         var currentPhase = nonLazyPhase
+        val scopeSession = ScopeSession()
+
         while (currentPhase < toPhase) {
             currentPhase = currentPhase.next
             if (currentPhase.pluginPhase) continue
@@ -129,6 +132,7 @@ internal class FirLazyDeclarationResolver(
                 moduleFileCache,
                 provider,
                 currentPhase,
+                scopeSession,
                 towerDataContextCollector
             )
         }
@@ -140,6 +144,7 @@ internal class FirLazyDeclarationResolver(
         moduleFileCache: ModuleFileCache,
         provider: FirProvider,
         phase: FirResolvePhase,
+        scopeSession: ScopeSession,
         towerDataContextCollector: FirTowerDataContextCollector?,
     ) {
         val nonLocalDeclarationToResolve = firDeclarationToResolve.getNonLocalDeclarationToResolve(provider, moduleFileCache)
@@ -160,7 +165,6 @@ internal class FirLazyDeclarationResolver(
         if (designation.all { it.resolvePhase >= phase }) {
             return
         }
-        val scopeSession = firFileBuilder.firPhaseRunner.transformerProvider.getScopeSession(containerFirFile.session)
         val transformer = when (phase) {
             FirResolvePhase.CONTRACTS -> FirDesignatedContractsResolveTransformerForIDE(
                 designation.iterator(),
