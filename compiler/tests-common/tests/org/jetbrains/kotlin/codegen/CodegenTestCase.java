@@ -58,6 +58,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
@@ -529,8 +530,22 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
             javaClassesOutputDirectory = getJavaClassesOutputDirectory();
             List<String> javacOptions = extractJavacOptions(files, configuration.get(JVMConfigurationKeys.JVM_TARGET));
-            compileJava(findJavaSourcesInDirectory(javaSourceDir), javaClasspath, javacOptions, javaClassesOutputDirectory);
+            List<String> finalJavacOptions = prepareJavacOptions(javaClasspath, javacOptions, javaClassesOutputDirectory);
+
+            try {
+                runJavacTask(
+                        findJavaSourcesInDirectory(javaSourceDir).stream().map(File::new).collect(Collectors.toList()),
+                        finalJavacOptions
+                );
+            }
+            catch (IOException e) {
+                throw ExceptionUtilsKt.rethrow(e);
+            }
         }
+    }
+
+    protected void runJavacTask(@NotNull Collection<File> files, @NotNull List<String> options) throws IOException {
+        KotlinTestUtils.compileJavaFiles(files, options);
     }
 
     protected void updateJavaClasspath(@NotNull List<String> javaClasspath) {}
