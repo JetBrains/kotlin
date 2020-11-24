@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import com.intellij.lang.jvm.source.JvmDeclarationSearch
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.common.ir.isSuspend
-import org.jetbrains.kotlin.backend.common.ir.moveBodyTo
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
@@ -29,12 +27,12 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
+import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -43,6 +41,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 
 internal val suspendLambdaPhase = makeIrFilePhase(
     ::SuspendLambdaLowering,
@@ -191,7 +190,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
             }
             val invokeSuspend = addInvokeSuspendForLambda(function, suspendLambda, parametersFields)
             if (function.capturesCrossinline()) {
-                addInvokeSuspendForInlineForLambda(invokeSuspend)
+                addInvokeSuspendForInlineLambda(invokeSuspend)
             }
             if (createToOverride != null) {
                 addInvokeCallingCreate(addCreate(constructor, createToOverride, parametersFields), invokeSuspend, invokeToOverride)
@@ -209,19 +208,37 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                     it.valueParameters[0].type.isKotlinResult()
         }
         return addFunctionOverride(superMethod, irFunction.startOffset, irFunction.endOffset).apply {
-            body = irFunction.moveBodyTo(this, mapOf())?.transform(object : IrElementTransformerVoid() {
-                override fun visitGetValue(expression: IrGetValue): IrExpression {
-                    val parameter = (expression.symbol.owner as? IrValueParameter)?.takeIf { it.parent == irFunction }
-                        ?: return expression
-                    val field = fields[parameter.index + if (irFunction.extensionReceiverParameter != null) 1 else 0]
+            val localVals: List<IrVariable> = fields.mapIndexed { index, field ->
+                buildVariable(
+                    parent = this,
+                    startOffset = UNDEFINED_OFFSET,
+                    endOffset = UNDEFINED_OFFSET,
+                    origin = IrDeclarationOrigin.DEFINED,
+                    name = field.name,
+                    type = field.type
+                ).apply {
                     val receiver = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, dispatchReceiverParameter!!.symbol)
-                    return IrGetFieldImpl(expression.startOffset, expression.endOffset, field.symbol, field.type, receiver)
+                    val initializerBlock = IrBlockImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.type)
+                    initializerBlock.statements += IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, field.symbol, field.type, receiver)
+                    initializer = initializerBlock
                 }
-            }, null)
+            }
+
+            body = irFunction.moveBodyTo(this, mapOf())?.let { body ->
+                body.transform(object : IrElementTransformerVoid() {
+                    override fun visitGetValue(expression: IrGetValue): IrExpression {
+                        val parameter = (expression.symbol.owner as? IrValueParameter)?.takeIf { it.parent == irFunction }
+                            ?: return expression
+                        val lvar = localVals[parameter.index + if (irFunction.extensionReceiverParameter != null) 1 else 0]
+                        return IrGetValueImpl(expression.startOffset, expression.endOffset, lvar.symbol)
+                    }
+                }, null)
+                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, localVals + body.statements)
+            }
         }
     }
 
-    private fun IrClass.addInvokeSuspendForInlineForLambda(invokeSuspend: IrSimpleFunction): IrSimpleFunction {
+    private fun IrClass.addInvokeSuspendForInlineLambda(invokeSuspend: IrSimpleFunction): IrSimpleFunction {
         return addFunction(
             INVOKE_SUSPEND_METHOD_NAME + FOR_INLINE_SUFFIX,
             context.irBuiltIns.anyNType,
