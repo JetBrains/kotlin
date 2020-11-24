@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.ACTUAL_WITHOUT_EXPECT
 import org.jetbrains.kotlin.diagnostics.Errors.NO_ACTUAL_FOR_EXPECT
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
@@ -405,12 +406,10 @@ object PositioningStrategies {
     @JvmField
     val VISIBILITY_MODIFIER: PositioningStrategy<KtModifierListOwner> = object : PositioningStrategy<KtModifierListOwner>() {
         override fun mark(element: KtModifierListOwner): List<TextRange> {
-            val visibilityTokens =
-                listOf(KtTokens.PRIVATE_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PUBLIC_KEYWORD, KtTokens.INTERNAL_KEYWORD)
             val modifierList = element.modifierList
 
-            val result = visibilityTokens.mapNotNull { modifierList?.getModifier(it)?.textRange }
-            if (!result.isEmpty()) return result
+            val result = VISIBILITY_MODIFIERS.types.mapNotNull { modifierList?.getModifier(it as KtModifierKeywordToken)?.textRange }
+            if (result.isNotEmpty()) return result
 
             // Try to resolve situation when there's no visibility modifiers written before element
             if (element is PsiNameIdentifierOwner) {

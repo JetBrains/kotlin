@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -56,7 +55,7 @@ object RedundantVisibilityModifierChecker : FirBasicDeclarationChecker() {
             && declaration.setter?.visibility == Visibilities.Public
         ) return
 
-        reporter.report(declaration.source?.getChild(KtTokens.VISIBILITY_MODIFIERS), FirErrors.REDUNDANT_VISIBILITY_MODIFIER)
+        reporter.report(declaration.source, FirErrors.REDUNDANT_VISIBILITY_MODIFIER)
     }
 
     private fun FirDeclaration.implicitVisibility(context: CheckerContext): Visibility {

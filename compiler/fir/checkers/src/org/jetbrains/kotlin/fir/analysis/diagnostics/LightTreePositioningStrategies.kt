@@ -143,6 +143,22 @@ object LightTreePositioningStrategies {
         }
     }
 
+    val VISIBILITY_MODIFIER: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
+            tree.visibilityModifier(node)?.let { return markElement(it, tree) }
+            tree.nameIdentifier(node)?.let { return markElement(it, tree) }
+            return when (node.tokenType) {
+                KtNodeTypes.OBJECT_DECLARATION -> {
+                    markElement(tree.objectKeyword(node)!!, tree)
+                }
+                KtNodeTypes.PROPERTY_ACCESSOR -> {
+                    markElement(tree.accessorNamePlaceholder(node), tree)
+                }
+                else -> markElement(node, tree)
+            }
+        }
+    }
+
     val OPERATOR: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
             return markElement(tree.operationReference(node) ?: node, tree)
@@ -179,6 +195,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.objectKeyword(node: Li
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.valOrVarKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, VAL_VAR_TOKEN_SET)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.visibilityModifier(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtTokens.VISIBILITY_MODIFIERS)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.accessorNamePlaceholder(node: LighterASTNode): LighterASTNode =
     findChildByType(node, KtTokens.GET_KEYWORD) ?: findChildByType(node, KtTokens.SET_KEYWORD)!!

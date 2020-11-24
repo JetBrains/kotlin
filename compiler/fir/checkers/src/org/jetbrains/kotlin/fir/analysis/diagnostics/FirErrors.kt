@@ -154,7 +154,7 @@ object FirErrors {
     val WRONG_IMPLIES_CONDITION by error0<FirSourceElement, PsiElement>()
 
     // Extended checkers group
-    val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, PsiElement>()
+    val REDUNDANT_VISIBILITY_MODIFIER by warning0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val REDUNDANT_MODALITY_MODIFIER by warning0<FirSourceElement, PsiElement>()
     val REDUNDANT_RETURN_UNIT_TYPE by warning0<FirSourceElement, PsiTypeElement>()
     val REDUNDANT_EXPLICIT_TYPE by warning0<FirSourceElement, PsiElement>()
