@@ -386,7 +386,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             source = base?.toFirSourceElement()
             // Fast-pass if there is no non-const string expressions
             if (!hasExpressions) return buildConstExpression(source, FirConstKind.String, sb.toString())
-            argumentList.arguments.singleOrNull()?.let { return it }
         }
     }
 

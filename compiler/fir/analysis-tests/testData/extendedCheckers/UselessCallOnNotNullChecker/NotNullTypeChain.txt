@@ -2,7 +2,7 @@ FILE: NotNullTypeChain.kt
     public final val list1: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1))
         public get(): R|kotlin/collections/List<kotlin/Int>|
     public final val list: R|kotlin/collections/List<kotlin/String>| = R|/list1|.R|kotlin/collections/orEmpty|<R|kotlin/Int|>().R|kotlin/collections/map|<R|kotlin/Int|, R|kotlin/String|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/String| <kind=UNKNOWN>  {
-        ^ R|<local>/it|.R|kotlin/Any.toString|()
+        ^ <strcat>(R|<local>/it|.R|kotlin/Any.toString|())
     }
     )
         public get(): R|kotlin/collections/List<kotlin/String>|

@@ -1,9 +1,9 @@
 FILE: RedundantSingleExpressionStringTemplateChecker.kt
     public final val x: R|kotlin/String| = String(Hello)
         public get(): R|kotlin/String|
-    public final val y: R|kotlin/String| = R|/x|.R|kotlin/Any.toString|()
+    public final val y: R|kotlin/String| = <strcat>(R|/x|.R|kotlin/Any.toString|())
         public get(): R|kotlin/String|
-    public final val z: R|kotlin/String| = R|/y|.R|kotlin/Any.hashCode|().R|kotlin/Any.toString|()
+    public final val z: R|kotlin/String| = <strcat>(R|/y|.R|kotlin/Any.hashCode|().R|kotlin/Any.toString|())
         public get(): R|kotlin/String|
     public final fun toString(x: R|kotlin/String|): R|kotlin/String| {
         ^toString <strcat>(String(IC), R|<local>/x|.R|kotlin/Any.toString|())
