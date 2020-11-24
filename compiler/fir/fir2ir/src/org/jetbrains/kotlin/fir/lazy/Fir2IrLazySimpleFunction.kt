@@ -18,13 +18,13 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class Fir2IrLazySimpleFunction(
     components: Fir2IrComponents,
-    override val startOffset: Int,
-    override val endOffset: Int,
-    override var origin: IrDeclarationOrigin,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
     override val fir: FirSimpleFunction,
     firParent: FirRegularClass,
-    override val symbol: Fir2IrSimpleFunctionSymbol,
-    override val isFakeOverride: Boolean
+    symbol: Fir2IrSimpleFunctionSymbol,
+    isFakeOverride: Boolean
 ) : AbstractFir2IrLazyFunction<FirSimpleFunction>(components, startOffset, endOffset, origin, symbol, isFakeOverride) {
     init {
         symbol.bind(this)

@@ -59,7 +59,9 @@ abstract class AbstractFir2IrLazyFunction<F : FirMemberDeclaration>(
     override val isExpect: Boolean
         get() = fir.isExpect
 
-    override var body: IrBody? = null
+    override var body: IrBody?
+        get() = null
+        set(_) = error("We should never need to store body of external functions.")
 
     override var visibility: DescriptorVisibility by lazyVar {
         components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
