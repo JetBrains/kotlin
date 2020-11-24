@@ -47,8 +47,10 @@ class PropertyLazyInitLowering(
             return
         }
 
-        if (container !is IrSimpleFunction && container !is IrField && container !is IrProperty)
+        if (container !is IrField && container !is IrSimpleFunction && container !is IrProperty)
             return
+
+        if (container.origin !in compatibleOrigins) return
 
         val file = container.parent as? IrFile
             ?: return
@@ -224,6 +226,8 @@ class RemoveInitializersForLazyProperties(
 
         if (declaration !is IrField) return null
 
+        if (!declaration.isCompatibleDeclaration()) return null
+
         val file = declaration.parent as? IrFile ?: return null
 
         if (fileToInitializerPureness[file] == true) return null
@@ -257,6 +261,7 @@ class RemoveInitializersForLazyProperties(
 private fun calculateFieldToExpression(declarations: Collection<IrDeclaration>): Map<IrField, IrExpression> =
     declarations
         .asSequence()
+        .filter { it.isCompatibleDeclaration() }
         .map { it.correspondingProperty }
         .filterNotNull()
         .filter { it.isForLazyInit() }
@@ -289,3 +294,13 @@ private fun IrDeclaration.propertyWithPersistentSafe(transform: IrDeclaration.()
     if (((this as? PersistentIrElementBase<*>)?.createdOn ?: 0) <= stageController.currentStage) {
         transform()
     } else null
+
+private fun IrDeclaration.isCompatibleDeclaration() =
+    origin in compatibleOrigins
+
+private val compatibleOrigins = listOf(
+    IrDeclarationOrigin.DEFINED,
+    IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
+    IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR,
+    IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
+)

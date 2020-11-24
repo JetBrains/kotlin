@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS
+// TARGET_BACKEND: JS_IR
 // PROPERTY_LAZY_INITIALIZATION
 
 // FILE: A.kt
@@ -6,12 +6,16 @@
 val a = "A"
 
 // FILE: B.kt
-val b = "B".apply {}
+val b = "B".let {
+    it + "B"
+}
 
 val c = b
 
 // FILE: C.kt
-val d = "D".apply {}
+val d = "D".let {
+    it + "D"
+}
 
 val e = d
 
@@ -24,8 +28,8 @@ fun box(): String {
         js("a") === "A" &&
         js("typeof b") == "undefined" &&
         js("typeof c") == "undefined" &&
-        js("d") === "D" &&
-        js("e") === "D"
+        js("d") === "DD" &&
+        js("e") === "DD"
     )
         "OK"
     else "a = ${js("a")}; typeof b = ${js("typeof b")}; typeof c = ${js("typeof c")}; d = ${js("d")}; e = ${js("e")}"
