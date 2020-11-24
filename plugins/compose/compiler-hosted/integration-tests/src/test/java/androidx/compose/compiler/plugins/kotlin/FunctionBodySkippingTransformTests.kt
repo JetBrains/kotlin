@@ -37,7 +37,7 @@ class FunctionBodySkippingTransformTests : ComposeIrTransformTest() {
 
             $unchecked
         """.trimIndent(),
-        dumpTree
+        dumpTree = dumpTree
     )
 
     @Test

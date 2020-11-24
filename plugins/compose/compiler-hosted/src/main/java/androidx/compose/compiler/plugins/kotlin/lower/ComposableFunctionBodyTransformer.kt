@@ -2766,8 +2766,16 @@ class ComposableFunctionBodyTransformer(
         }
 
         // now after the inner block is extracted, the $composer parameter used in the block needs
-        // to be remapped to the outer composer instead.
+        // to be remapped to the outer composer instead for the expression and any inlined lambdas.
         block.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitFunction(declaration: IrFunction): IrStatement {
+                if (declaration.isInlinedLambda()) {
+                    return super.visitFunction(declaration)
+                } else {
+                    return declaration
+                }
+            }
+
             override fun visitGetValue(expression: IrGetValue): IrExpression {
                 super.visitGetValue(expression)
 
