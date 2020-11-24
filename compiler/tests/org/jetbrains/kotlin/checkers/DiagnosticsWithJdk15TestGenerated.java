@@ -49,5 +49,15 @@ public class DiagnosticsWithJdk15TestGenerated extends AbstractDiagnosticsWithJd
         public void testJavaSealedInterfaceExhaustiveness() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJava15/sealedClasses/javaSealedInterfaceExhaustiveness.kt");
         }
+
+        @TestMetadata("kotlinInheritsJavaClass.kt")
+        public void testKotlinInheritsJavaClass() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJava15/sealedClasses/kotlinInheritsJavaClass.kt");
+        }
+
+        @TestMetadata("kotlinInheritsJavaInterface.kt")
+        public void testKotlinInheritsJavaInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJava15/sealedClasses/kotlinInheritsJavaInterface.kt");
+        }
     }
 }
