@@ -175,6 +175,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val resolvedLibraries = jsResolveLibraries(
             libraries,
+            configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
             messageCollectorLogger(configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY] ?: error("Could not find message collector"))
         )
 
