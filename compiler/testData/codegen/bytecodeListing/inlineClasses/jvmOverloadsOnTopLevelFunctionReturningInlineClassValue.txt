@@ -1,0 +1,25 @@
+@kotlin.Metadata
+public final class JvmOverloadsOnTopLevelFunctionReturningInlineClassValueKt {
+    // source: 'jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt'
+    public synthetic static method testTopLevelFunction$default(p0: int, p1: int, p2: java.lang.Object): int
+    public final static @kotlin.jvm.JvmOverloads method testTopLevelFunction(): int
+    public final static @kotlin.jvm.JvmOverloads method testTopLevelFunction(p0: int): int
+}
+
+@kotlin.Metadata
+public final class Z {
+    // source: 'jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): Z
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}

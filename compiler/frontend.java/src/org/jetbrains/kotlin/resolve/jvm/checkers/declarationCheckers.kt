@@ -44,13 +44,15 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.isInlineClassThatRequiresMangling
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
+import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToInlineClassTypeValueParameters
 
 class LocalFunInlineChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (InlineUtil.isInline(descriptor) &&
             declaration is KtNamedFunction &&
             descriptor is FunctionDescriptor &&
-            descriptor.visibility == DescriptorVisibilities.LOCAL) {
+            descriptor.visibility == DescriptorVisibilities.LOCAL
+        ) {
             context.trace.report(Errors.NOT_YET_SUPPORTED_IN_INLINE.on(declaration, "Local inline functions"))
         }
     }
@@ -66,7 +68,8 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
             if (declaration is KtNamedFunction ||
                 declaration is KtProperty ||
                 declaration is KtPropertyAccessor ||
-                declaration is KtParameter) {
+                declaration is KtParameter
+            ) {
                 checkDeclaration(declaration, descriptor, context.trace)
             }
         }
@@ -85,7 +88,8 @@ class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVe
         if (!insideObject || insideCompanionObjectInInterface) {
             if (insideCompanionObjectInInterface &&
                 supportJvmStaticInInterface &&
-                descriptor is DeclarationDescriptorWithVisibility) {
+                descriptor is DeclarationDescriptorWithVisibility
+            ) {
                 checkVisibility(descriptor, diagnosticHolder, declaration)
                 if (isLessJVM18) {
                     diagnosticHolder.report(ErrorsJvm.JVM_STATIC_IN_INTERFACE_1_6.on(declaration))
@@ -201,7 +205,7 @@ class SynchronizedAnnotationChecker : DeclarationChecker {
                         (descriptor.hasJvmStaticAnnotation() || descriptor.propertyIfAccessor.hasJvmStaticAnnotation()))
 }
 
-class OverloadsAnnotationChecker: DeclarationChecker {
+class OverloadsAnnotationChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         descriptor.findJvmOverloadsAnnotation()?.let { annotation ->
             val annotationEntry = DescriptorToSourceUtils.getSourceFromAnnotation(annotation)
@@ -218,26 +222,40 @@ class OverloadsAnnotationChecker: DeclarationChecker {
     ) {
         val diagnosticHolder = context.trace
 
-        if (descriptor !is CallableDescriptor) {
-            return
-        } else if ((descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE) {
-            diagnosticHolder.report(ErrorsJvm.OVERLOADS_INTERFACE.on(annotationEntry))
-        } else if (descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT) {
-            diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(annotationEntry))
-        } else if (DescriptorUtils.isLocal(descriptor)) {
-            diagnosticHolder.report(ErrorsJvm.OVERLOADS_LOCAL.on(annotationEntry))
-        } else if (descriptor.isAnnotationConstructor()) {
-            val diagnostic =
-                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses))
-                    ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR
-                else
-                    ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_WARNING
+        if (descriptor !is CallableDescriptor) return
 
-            diagnosticHolder.report(diagnostic.on(annotationEntry))
-        } else if (!descriptor.visibility.isPublicAPI && descriptor.visibility != DescriptorVisibilities.INTERNAL) {
-            diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(annotationEntry))
-        } else if (descriptor.valueParameters.none { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault }) {
-            diagnosticHolder.report(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.on(annotationEntry))
+        when {
+            (descriptor.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.INTERFACE ->
+                diagnosticHolder.report(ErrorsJvm.OVERLOADS_INTERFACE.on(annotationEntry))
+
+            descriptor is FunctionDescriptor && descriptor.modality == Modality.ABSTRACT ->
+                diagnosticHolder.report(ErrorsJvm.OVERLOADS_ABSTRACT.on(annotationEntry))
+
+            DescriptorUtils.isLocal(descriptor) ->
+                diagnosticHolder.report(ErrorsJvm.OVERLOADS_LOCAL.on(annotationEntry))
+
+            descriptor.isAnnotationConstructor() -> {
+                val diagnostic =
+                    if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses))
+                        ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR
+                    else
+                        ErrorsJvm.OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR_WARNING
+
+                diagnosticHolder.report(diagnostic.on(annotationEntry))
+            }
+
+            !descriptor.visibility.isPublicAPI && descriptor.visibility != DescriptorVisibilities.INTERNAL ->
+                diagnosticHolder.report(ErrorsJvm.OVERLOADS_PRIVATE.on(annotationEntry))
+
+            descriptor.valueParameters.none { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault } ->
+                diagnosticHolder.report(ErrorsJvm.OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS.on(annotationEntry))
+
+            descriptor is SimpleFunctionDescriptor &&
+                    (requiresFunctionNameManglingForParameterTypes(descriptor) || requiresFunctionNameManglingForReturnType(descriptor)) ->
+                diagnosticHolder.report(ErrorsJvm.OVERLOADS_ANNOTATION_MANGLED_FUNCTION.on(annotationEntry))
+
+            descriptor is ClassConstructorDescriptor && shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor) ->
+                diagnosticHolder.report(ErrorsJvm.OVERLOADS_ANNOTATION_HIDDEN_CONSTRUCTOR.on(annotationEntry))
         }
     }
 }
@@ -245,8 +263,8 @@ class OverloadsAnnotationChecker: DeclarationChecker {
 class TypeParameterBoundIsNotArrayChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val typeParameters = (descriptor as? CallableDescriptor)?.typeParameters
-                ?: (descriptor as? ClassDescriptor)?.declaredTypeParameters
-                ?: return
+            ?: (descriptor as? ClassDescriptor)?.declaredTypeParameters
+            ?: return
 
         for (typeParameter in typeParameters) {
             if (typeParameter.upperBounds.any { KotlinBuiltIns.isArray(it) || KotlinBuiltIns.isPrimitiveArray(it) }) {

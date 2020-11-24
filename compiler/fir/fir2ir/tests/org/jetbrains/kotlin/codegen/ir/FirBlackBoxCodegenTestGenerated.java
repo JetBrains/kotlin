@@ -13862,6 +13862,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/inlineClasses/jvmFieldInInlineClassCompanion.kt");
         }
 
+        @TestMetadata("jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt")
+        public void testJvmOverloadsOnTopLevelFunctionReturningInlineClassValue() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt");
+        }
+
         @TestMetadata("jvmStaticFunInInlineClassCompanion.kt")
         public void testJvmStaticFunInInlineClassCompanion() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticFunInInlineClassCompanion.kt");
