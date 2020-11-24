@@ -80,7 +80,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
             }
         }
 
-        val invocationData = graph.collectPathAwareDataForNode(
+        val invocationData = graph.collectDataForNode(
             TraverseDirection.Forward,
             PathAwareLambdaInvocationInfo.EMPTY,
             InvocationDataCollector(functionalTypeEffects.keys.filterTo(mutableSetOf()) { it !in leakedSymbols })

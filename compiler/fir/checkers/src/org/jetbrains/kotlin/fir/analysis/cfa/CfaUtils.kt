@@ -112,7 +112,7 @@ class PropertyInitializationInfoCollector(private val localProperties: Set<FirPr
     }
 
     fun getData(graph: ControlFlowGraph) =
-        graph.collectPathAwareDataForNode(
+        graph.collectDataForNode(
             TraverseDirection.Forward,
             PathAwarePropertyInitializationInfo.EMPTY,
             this
