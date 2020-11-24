@@ -32,4 +32,9 @@ object SourceElementPositioningStrategies {
         LightTreePositioningStrategies.DECLARATION_SIGNATURE,
         PositioningStrategies.DECLARATION_SIGNATURE
     )
+
+    val OPERATOR = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.OPERATOR,
+        PositioningStrategies.OPERATOR
+    )
 }

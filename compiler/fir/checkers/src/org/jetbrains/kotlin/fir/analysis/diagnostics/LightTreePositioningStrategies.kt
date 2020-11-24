@@ -142,6 +142,12 @@ object LightTreePositioningStrategies {
             return super.mark(node, tree)
         }
     }
+
+    val OPERATOR: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+        override fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
+            return markElement(tree.operationReference(node) ?: node, tree)
+        }
+    }
 }
 
 fun FirSourceElement.hasValOrVar(): Boolean =
@@ -161,6 +167,9 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.initKeyword(node: Ligh
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.nameIdentifier(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.IDENTIFIER)
+
+private fun FlyweightCapableTreeStructure<LighterASTNode>.operationReference(node: LighterASTNode): LighterASTNode? =
+    findChildByType(node, KtNodeTypes.OPERATION_REFERENCE)
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.rightParenthesis(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, KtTokens.RPAR)
