@@ -41,7 +41,8 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         JvmMultifileClassStateChecker,
         SynchronizedOnInlineMethodChecker,
         DefaultCheckerInTailrec,
-        FunctionDelegateMemberNameClashChecker
+        FunctionDelegateMemberNameClashChecker,
+        ClassInheritsJavaSealedClassChecker
     ),
 
     additionalCallCheckers = listOf(
