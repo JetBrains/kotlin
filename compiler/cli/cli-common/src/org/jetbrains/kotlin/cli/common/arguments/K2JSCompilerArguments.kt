@@ -33,6 +33,13 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var libraries: String? by NullableStringFreezableVar(null)
 
+    @Argument(
+        value = "-Xrepositories",
+        valueDescription = "<path>",
+        description = "Paths to additional places where libriraries could be found"
+    )
+    var repositries: String? by NullableStringFreezableVar(null)
+
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-source-map", description = "Generate source map")
     var sourceMap: Boolean by FreezableVar(false)
