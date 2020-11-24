@@ -16,14 +16,14 @@ public sealed class B extends Base permits B.C, B.D {
 
 // FILE: main.kt
 fun test_ok_1(base: Base) {
-    val x = when (base) {
+    val x = <!NO_ELSE_IN_WHEN!>when<!> (base) {
         is A -> 1
         is B -> 2
     }
 }
 
 fun test_ok_2(base: Base) {
-    val x = when (base) {
+    val x = <!NO_ELSE_IN_WHEN!>when<!> (base) {
         is A -> 1
         is B.C -> 2
         is B.D -> 3
