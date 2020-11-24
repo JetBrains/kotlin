@@ -12,7 +12,7 @@ public final class A : Base {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public sealed class B : Base {
+public abstract class B : Base {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -33,7 +33,7 @@ public sealed class B : Base {
     }
 }
 
-public sealed class Base {
+public abstract class Base {
     public constructor Base()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
