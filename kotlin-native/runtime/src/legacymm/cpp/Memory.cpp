@@ -3470,7 +3470,7 @@ KBoolean Kotlin_native_internal_GC_getTuneThreshold(KRef) {
 
 OBJ_GETTER(Kotlin_native_internal_GC_detectCycles, KRef) {
 #if USE_CYCLE_DETECTOR
-  if (!KonanNeedDebugInfo || !Kotlin_memoryLeakCheckerEnabled()) RETURN_OBJ(nullptr);
+  if (!KonanNeedDebugInfo && !Kotlin_memoryLeakCheckerEnabled()) RETURN_OBJ(nullptr);
   RETURN_RESULT_OF0(detectCyclicReferences);
 #else
   RETURN_OBJ(nullptr);
