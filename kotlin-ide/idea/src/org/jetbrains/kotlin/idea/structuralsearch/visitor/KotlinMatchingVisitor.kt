@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
 import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
+import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
@@ -311,10 +312,16 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
             }
         }
 
-        myMatchingVisitor.result = matchTextOrVariable(
+        // Match Int::class with X.Int::class
+        val skipReceiver = other.parent is KtDoubleColonExpression
+                && other is KtDotQualifiedExpression
+                && myMatchingVisitor.match(expression, other.selectorExpression)
+
+        myMatchingVisitor.result = skipReceiver || matchTextOrVariable(
             expression.getReferencedNameElement(),
             if (other is KtSimpleNameExpression) other.getReferencedNameElement() else other
         )
+
         val handler = getHandler(expression.getReferencedNameElement())
         if (myMatchingVisitor.result && handler is SubstitutionHandler) {
             handler.handle(
@@ -455,8 +462,7 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
 
             // Match '_?.'_()
             myMatchingVisitor.result = selector is KtCallExpression == other is KtCallExpression
-                    && handler is SubstitutionHandler
-                    && handler.minOccurs == 0
+                    && (handler is SubstitutionHandler && handler.minOccurs == 0 || other.parent is KtDoubleColonExpression)
                     && other.parent !is KtDotQualifiedExpression
                     && other.parent !is KtReferenceExpression
                     && myMatchingVisitor.match(selector, other)
@@ -1151,6 +1157,12 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
     override fun visitThrowExpression(expression: KtThrowExpression) {
         val other = getTreeElementDepar<KtThrowExpression>() ?: return
         myMatchingVisitor.result = myMatchingVisitor.match(expression.referenceExpression(), other.referenceExpression())
+    }
+
+    override fun visitClassLiteralExpression(expression: KtClassLiteralExpression) {
+        val other = getTreeElementDepar<KtClassLiteralExpression>() ?: return
+        myMatchingVisitor.result = myMatchingVisitor.match(expression.firstChild, other.firstChild)
+                || myMatchingVisitor.matchText(expression.text, other.resolveType().arguments.first().type.fqName.toString())
     }
 
     override fun visitComment(comment: PsiComment) {
