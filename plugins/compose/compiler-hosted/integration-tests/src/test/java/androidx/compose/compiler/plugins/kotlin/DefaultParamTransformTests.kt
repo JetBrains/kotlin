@@ -38,7 +38,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
 
             $unchecked
         """.trimIndent(),
-        dumpTree
+        dumpTree = dumpTree
     )
 
     @Test

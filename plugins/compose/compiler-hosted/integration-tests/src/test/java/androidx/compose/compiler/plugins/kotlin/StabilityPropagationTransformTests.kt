@@ -39,7 +39,7 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
 
             $unchecked
         """.trimIndent(),
-        dumpTree
+        dumpTree = dumpTree
     )
 
     @Test

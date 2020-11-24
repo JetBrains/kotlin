@@ -53,6 +53,6 @@ abstract class AbstractControlFlowTransformTests : ComposeIrTransformTest() {
             var b = 2
             var c = 3
         """.trimIndent(),
-        dumpTree
+        dumpTree = dumpTree
     )
 }
