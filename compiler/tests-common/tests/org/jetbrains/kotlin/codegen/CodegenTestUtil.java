@@ -101,24 +101,34 @@ public class CodegenTestUtil {
             @NotNull File outDirectory
     ) {
         try {
-            List<String> classpath = new ArrayList<>();
-            classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
-            classpath.add(ForTestCompileRuntime.reflectJarForTests().getPath());
-            classpath.add(KotlinTestUtils.getAnnotationsJar().getPath());
-            classpath.addAll(additionalClasspath);
-
-            List<String> options = new ArrayList<>(Arrays.asList(
-                    "-classpath", StringsKt.join(classpath, File.pathSeparator),
-                    "-d", outDirectory.getPath()
-            ));
-            options.addAll(additionalOptions);
-
+            List<String> options = prepareJavacOptions(additionalClasspath, additionalOptions, outDirectory);
             KotlinTestUtils.compileJavaFiles(CollectionsKt.map(fileNames, File::new), options);
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
     }
+
+    @NotNull
+    public static List<String> prepareJavacOptions(
+            @NotNull List<String> additionalClasspath,
+            @NotNull List<String> additionalOptions,
+            @NotNull File outDirectory
+    ) {
+        List<String> classpath = new ArrayList<>();
+        classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
+        classpath.add(ForTestCompileRuntime.reflectJarForTests().getPath());
+        classpath.add(KotlinTestUtils.getAnnotationsJar().getPath());
+        classpath.addAll(additionalClasspath);
+
+        List<String> options = new ArrayList<>(Arrays.asList(
+                "-classpath", StringsKt.join(classpath, File.pathSeparator),
+                "-d", outDirectory.getPath()
+        ));
+        options.addAll(additionalOptions);
+        return options;
+    }
+
 
     @NotNull
     public static Method findTheOnlyMethod(@NotNull Class<?> aClass) {

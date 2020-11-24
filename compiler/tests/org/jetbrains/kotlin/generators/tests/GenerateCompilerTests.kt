@@ -216,6 +216,10 @@ fun main(args: Array<String>) {
                 model("codegen/boxAgainstJava")
             }
 
+            testClass<AbstractJdk15BlackBoxCodegenTest> {
+                model("codegen/java15/box")
+            }
+
             testClass<AbstractScriptCodegenTest> {
                 model("codegen/script", extension = "kts")
             }

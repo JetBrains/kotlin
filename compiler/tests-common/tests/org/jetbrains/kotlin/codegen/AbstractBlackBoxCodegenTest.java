@@ -136,7 +136,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     @Nullable
-    private static String getFacadeFqName(@NotNull KtFile file) {
+    protected static String getFacadeFqName(@NotNull KtFile file) {
         return CodegenUtil.getMemberDeclarationsToGenerate(file).isEmpty()
                ? null
                : JvmFileClassUtil.getFileClassInfoNoResolve(file).getFacadeClassFqName().asString();
