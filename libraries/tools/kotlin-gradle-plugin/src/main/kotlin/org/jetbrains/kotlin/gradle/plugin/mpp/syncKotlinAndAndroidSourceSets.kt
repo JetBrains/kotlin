@@ -79,7 +79,6 @@ private fun syncKotlinAndAndroidSourceDirs(
     }
 
     kotlinSourceSet.kotlin.srcDirs(*androidSourceSet.java.srcDirs.toTypedArray())
-    androidSourceSet.java.srcDirs(*kotlinSourceSet.kotlin.srcDirs.toTypedArray())
 
     /*
     Make sure to include user configuration as well.
@@ -88,7 +87,6 @@ private fun syncKotlinAndAndroidSourceDirs(
      */
     target.project.whenEvaluated {
         kotlinSourceSet.kotlin.srcDirs(*androidSourceSet.java.srcDirs.toTypedArray())
-        androidSourceSet.java.srcDirs(*kotlinSourceSet.kotlin.srcDirs.toTypedArray())
     }
 }
 
