@@ -16,7 +16,3 @@ fun box(): String {
     return if (result.length != 200)
         "fail: ${result.length}" else "OK"
 }
-
-fun main() {
-    box().let { if (it != "OK") throw AssertionError(it) }
-}
