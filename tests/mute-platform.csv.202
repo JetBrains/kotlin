@@ -2,7 +2,7 @@ Test key, Issue, State (optional: MUTE or FAIL), Status (optional: FLAKY)
 "org.jetbrains.kotlin.gradle.HierarchicalMultiplatformProjectImportingTest.testJvmWithJavaOnHMPP", No module dependency found,,
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.simpleAndroidAppWithCommonModule, KT-35225,,
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testDependenciesReachableViaImpl, Gradle Tests in 201,,
-org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testJsTestOutputFileInProjectWithAndroid, NPE - no facet configured,, FLAKY
+org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testJsTestOutputFileInProjectWithAndroid, NPE - no facet configured,,
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplementWithAndroid, KT-35225,,
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplementWithNonDefaultConfig, Gradle Tests in 201,,
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplement, Gradle Tests in 201,,
