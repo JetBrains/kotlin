@@ -31,20 +31,21 @@ class VersionChecker(val context: IrPluginContext) {
         1600 to "0.1.0-dev16",
         1700 to "1.0.0-alpha06",
         1800 to "1.0.0-alpha07",
-        1900 to "1.0.0-alpha08"
+        1900 to "1.0.0-alpha08",
+        2000 to "1.0.0-alpha09"
     )
 
     /**
      * The minimum version int that this compiler is guaranteed to be compatible with. Typically
      * this will match the version int that is in ComposeVersion.kt in the runtime.
      */
-    private val minimumRuntimeVersionInt: Int = 1900
+    private val minimumRuntimeVersionInt: Int = 2000
 
     /**
      * The maven version string of this compiler. This string should be updated before/after every
      * release.
      */
-    private val compilerVersion: String = "1.0.0-alpha08"
+    private val compilerVersion: String = "1.0.0-alpha09"
     private val minimumRuntimeVersion: String
         get() = versionTable[minimumRuntimeVersionInt] ?: "unknown"
 
