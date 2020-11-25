@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.analysis.cfa.*
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
@@ -17,16 +17,17 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
 import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.lexer.KtTokens
 
 object UnusedChecker : FirControlFlowChecker() {
     override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, checkerContext: CheckerContext) {
-        if ((graph.declaration as? FirSymbolOwner<*>)?.getContainingClass(checkerContext)?.takeIf { !it.symbol.classId.isLocal }!= null) return
+        if ((graph.declaration as? FirSymbolOwner<*>)?.getContainingClass(checkerContext)?.takeIf {
+                !it.symbol.classId.isLocal
+            } != null
+        ) return
         val properties = LocalPropertyCollector.collect(graph)
         if (properties.isEmpty()) return
 
@@ -55,11 +56,11 @@ object UnusedChecker : FirControlFlowChecker() {
             if (variableSymbol.isLoopIterator) return
             val data = data[node]?.get(variableSymbol) ?: return
 
+            val variableSource = variableSymbol.fir.source.takeIf { it?.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION }
             when {
                 data == VariableStatus.UNUSED -> {
                     if ((node.fir.initializer as? FirFunctionCall)?.isIterator != true) {
-                        val source = variableSymbol.identifierSource
-                        reporter.report(source, FirErrors.UNUSED_VARIABLE)
+                        reporter.report(variableSource, FirErrors.UNUSED_VARIABLE)
                     }
                 }
                 data.isRedundantInit -> {
@@ -67,8 +68,7 @@ object UnusedChecker : FirControlFlowChecker() {
                     reporter.report(source, FirErrors.VARIABLE_INITIALIZER_IS_REDUNDANT)
                 }
                 data == VariableStatus.ONLY_WRITTEN_NEVER_READ -> {
-                    val source = variableSymbol.identifierSource
-                    reporter.report(source, FirErrors.VARIABLE_NEVER_READ)
+                    reporter.report(variableSource, FirErrors.VARIABLE_NEVER_READ)
                 }
                 else -> {
                 }
@@ -203,7 +203,4 @@ object UnusedChecker : FirControlFlowChecker() {
 
     private val FirPropertySymbol.isLoopIterator
         get() = fir.initializer?.source?.kind == FirFakeSourceElementKind.DesugaredForLoop
-
-    private val FirPropertySymbol.identifierSource: FirSourceElement?
-        get() = fir.source?.getChild(KtTokens.IDENTIFIER, 0, 1)
 }

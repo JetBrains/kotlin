@@ -165,9 +165,9 @@ object FirErrors {
     val ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS by warning0<FirSourceElement, KtExpression>(SourceElementPositioningStrategies.OPERATOR)
     val EMPTY_RANGE by warning0<FirSourceElement, PsiElement>()
     val REDUNDANT_SETTER_PARAMETER_TYPE by warning0<FirSourceElement, PsiElement>()
-    val UNUSED_VARIABLE by warning0<FirSourceElement, PsiElement>()
+    val UNUSED_VARIABLE by warning0<FirSourceElement, KtNamedDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val ASSIGNED_VALUE_IS_NEVER_READ by warning0<FirSourceElement, PsiElement>()
     val VARIABLE_INITIALIZER_IS_REDUNDANT by warning0<FirSourceElement, PsiElement>()
-    val VARIABLE_NEVER_READ by warning0<FirSourceElement, PsiElement>()
+    val VARIABLE_NEVER_READ by warning0<FirSourceElement, KtNamedDeclaration>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val USELESS_CALL_ON_NOT_NULL by warning0<FirSourceElement, PsiElement>()
 }
