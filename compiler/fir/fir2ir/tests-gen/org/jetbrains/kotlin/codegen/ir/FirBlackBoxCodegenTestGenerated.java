@@ -5164,6 +5164,29 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/companion")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Companion extends AbstractFirBlackBoxCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
+        }
+
+        public void testAllFilesPresentInCompanion() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/companion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("delegatedPropertyOnCompanion.kt")
+        public void testDelegatedPropertyOnCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/companion/delegatedPropertyOnCompanion.kt");
+        }
+
+        @TestMetadata("inlineFunctionCompanionPropertyAccess.kt")
+        public void testInlineFunctionCompanionPropertyAccess() throws Exception {
+            runTest("compiler/testData/codegen/box/companion/inlineFunctionCompanionPropertyAccess.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/compatibility")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

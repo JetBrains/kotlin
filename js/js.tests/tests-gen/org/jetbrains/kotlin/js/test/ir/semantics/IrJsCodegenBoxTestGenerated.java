@@ -4139,6 +4139,29 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/companion")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Companion extends AbstractIrJsCodegenBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCompanion() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/companion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @TestMetadata("delegatedPropertyOnCompanion.kt")
+        public void testDelegatedPropertyOnCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/companion/delegatedPropertyOnCompanion.kt");
+        }
+
+        @TestMetadata("inlineFunctionCompanionPropertyAccess.kt")
+        public void testInlineFunctionCompanionPropertyAccess() throws Exception {
+            runTest("compiler/testData/codegen/box/companion/inlineFunctionCompanionPropertyAccess.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/compatibility")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
