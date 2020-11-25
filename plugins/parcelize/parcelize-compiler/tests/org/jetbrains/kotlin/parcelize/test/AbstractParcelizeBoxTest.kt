@@ -32,6 +32,7 @@ abstract class AbstractParcelizeIrBoxTest : AbstractParcelizeBoxTest() {
 abstract class AbstractParcelizeBoxTest : CodegenTestCase() {
     companion object {
         val LIBRARY_KT = File("plugins/parcelize/parcelize-compiler/testData/boxLib.kt")
+        private const val ANDROID_TOOLS_PREFIX = "studio.android.sdktools."
 
         private val androidPluginPath: String by lazy {
             System.getProperty("ideaSdk.androidPlugin.path")?.takeIf { File(it).isDirectory }
@@ -39,7 +40,7 @@ abstract class AbstractParcelizeBoxTest : CodegenTestCase() {
         }
 
         private fun getLayoutLibFile(pattern: String): File {
-            val nameRegex = "^$pattern-[0-9\\.]+\\.jar$".toRegex()
+            val nameRegex = "^($ANDROID_TOOLS_PREFIX)?$pattern-[0-9\\.]+\\.jar$".toRegex()
             return File(androidPluginPath).listFiles().orEmpty().singleOrNull { it.name.matches(nameRegex) }
                 ?: error("Can't find file for pattern $nameRegex in $androidPluginPath. " +
                                  "Available files: \n${File(androidPluginPath).list().orEmpty().asList()}")
