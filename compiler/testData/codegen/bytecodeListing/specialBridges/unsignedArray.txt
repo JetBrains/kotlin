@@ -1,0 +1,38 @@
+public final class UIntArray {
+    // source: 'unsignedArray.kt'
+    private final field storage: int[]
+    private synthetic method <init>(p0: int[]): void
+    public synthetic method add(p0: java.lang.Object): boolean
+    public method add-WZ4Q5Ns(p0: int): boolean
+    public method addAll(p0: java.util.Collection): boolean
+    public synthetic final static method box-impl(p0: int[]): UIntArray
+    public method clear(): void
+    public static method constructor-impl(p0: int[]): int[]
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public method contains-WZ4Q5Ns(p0: int): boolean
+    public static method contains-WZ4Q5Ns(p0: int[], p1: int): boolean
+    public method containsAll(p0: java.util.Collection): boolean
+    public static method containsAll-impl(p0: int[], p1: java.util.Collection): boolean
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int[], p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int[], p1: int[]): boolean
+    public method getSize(): int
+    public static method getSize-impl(p0: int[]): int
+    public synthetic deprecated static method getStorage$annotations(): void
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int[]): int
+    public method isEmpty(): boolean
+    public static method isEmpty-impl(p0: int[]): boolean
+    public method iterator(): java.lang.Void
+    public synthetic bridge method iterator(): java.util.Iterator
+    public static method iterator-impl(p0: int[]): java.lang.Void
+    public method remove(p0: java.lang.Object): boolean
+    public method removeAll(p0: java.util.Collection): boolean
+    public method retainAll(p0: java.util.Collection): boolean
+    public bridge final method size(): int
+    public method toArray(): java.lang.Object[]
+    public method toArray(p0: java.lang.Object[]): java.lang.Object[]
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int[]): java.lang.String
+    public synthetic final method unbox-impl(): int[]
+}

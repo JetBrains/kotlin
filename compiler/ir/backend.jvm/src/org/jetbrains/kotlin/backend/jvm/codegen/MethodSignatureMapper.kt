@@ -427,8 +427,14 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         return current
     }
 
-    private fun getJvmMethodNameIfSpecial(irFunction: IrSimpleFunction): String? =
-        irFunction.getBuiltinSpecialPropertyGetterName() ?: irFunction.getDifferentNameForJvmBuiltinFunction()
+    private fun getJvmMethodNameIfSpecial(irFunction: IrSimpleFunction): String? {
+        if (irFunction.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT) {
+            return null
+        }
+
+        return irFunction.getBuiltinSpecialPropertyGetterName()
+            ?: irFunction.getDifferentNameForJvmBuiltinFunction()
+    }
 
     private val IrSimpleFunction.isBuiltIn: Boolean
         get() = getPackageFragment()?.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME ||

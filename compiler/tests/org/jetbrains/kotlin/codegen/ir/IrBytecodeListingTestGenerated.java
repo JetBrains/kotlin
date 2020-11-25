@@ -1480,6 +1480,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/specialBridges/removeAtTwoSpecialBridges.kt");
         }
 
+        @TestMetadata("unsignedArray.kt")
+        public void testUnsignedArray() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/specialBridges/unsignedArray.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/bytecodeListing/specialBridges/signatures")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -26012,6 +26012,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             runTest("compiler/testData/codegen/box/unsignedTypes/nullableUnsignedEqualsLiteral.kt");
         }
 
+        @TestMetadata("unsignedArraySize.kt")
+        public void testUnsignedArraySize() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArraySize.kt");
+        }
+
         @TestMetadata("unsignedIntCompare.kt")
         public void testUnsignedIntCompare() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedIntCompare.kt");
