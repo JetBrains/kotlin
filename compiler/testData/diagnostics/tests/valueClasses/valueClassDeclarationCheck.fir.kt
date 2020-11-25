@@ -48,4 +48,4 @@ open value class D1(val x: Int)
 abstract value class D2(val x: Int)
 sealed value class D3(val x: Int)
 
-<!INCOMPATIBLE_MODIFIERS!>value<!> <!INCOMPATIBLE_MODIFIERS!>data<!> class D4(val x: String)
+value data class D4(val x: String)
