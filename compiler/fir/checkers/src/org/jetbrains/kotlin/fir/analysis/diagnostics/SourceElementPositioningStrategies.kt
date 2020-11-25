@@ -38,6 +38,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.VISIBILITY_MODIFIER
     )
 
+    val MODALITY_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.MODALITY_MODIFIER,
+        PositioningStrategies.MODALITY_MODIFIER
+    )
+
     val OPERATOR = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.OPERATOR,
         PositioningStrategies.OPERATOR

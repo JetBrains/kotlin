@@ -14,6 +14,8 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
+import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 
 object LightTreePositioningStrategies {
@@ -143,9 +145,9 @@ object LightTreePositioningStrategies {
         }
     }
 
-    val VISIBILITY_MODIFIER: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
+    private class ModifierSetBasedLightTreePositioningStrategy(private val modifierSet: TokenSet) : LightTreePositioningStrategy() {
         override fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
-            tree.visibilityModifier(node)?.let { return markElement(it, tree) }
+            tree.findChildByType(node, modifierSet)?.let { return markElement(it, tree) }
             tree.nameIdentifier(node)?.let { return markElement(it, tree) }
             return when (node.tokenType) {
                 KtNodeTypes.OBJECT_DECLARATION -> {
@@ -158,6 +160,10 @@ object LightTreePositioningStrategies {
             }
         }
     }
+
+    val VISIBILITY_MODIFIER: LightTreePositioningStrategy = ModifierSetBasedLightTreePositioningStrategy(VISIBILITY_MODIFIERS)
+
+    val MODALITY_MODIFIER: LightTreePositioningStrategy = ModifierSetBasedLightTreePositioningStrategy(MODALITY_MODIFIERS)
 
     val OPERATOR: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
@@ -196,8 +202,11 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.objectKeyword(node: Li
 private fun FlyweightCapableTreeStructure<LighterASTNode>.valOrVarKeyword(node: LighterASTNode): LighterASTNode? =
     findChildByType(node, VAL_VAR_TOKEN_SET)
 
-private fun FlyweightCapableTreeStructure<LighterASTNode>.visibilityModifier(node: LighterASTNode): LighterASTNode? =
-    findChildByType(node, KtTokens.VISIBILITY_MODIFIERS)
+internal fun FlyweightCapableTreeStructure<LighterASTNode>.visibilityModifier(declaration: LighterASTNode): LighterASTNode? =
+    modifierList(declaration)?.let { findChildByType(it, VISIBILITY_MODIFIERS) }
+
+internal fun FlyweightCapableTreeStructure<LighterASTNode>.modalityModifier(declaration: LighterASTNode): LighterASTNode? =
+    modifierList(declaration)?.let { findChildByType(it, MODALITY_MODIFIERS) }
 
 private fun FlyweightCapableTreeStructure<LighterASTNode>.accessorNamePlaceholder(node: LighterASTNode): LighterASTNode =
     findChildByType(node, KtTokens.GET_KEYWORD) ?: findChildByType(node, KtTokens.SET_KEYWORD)!!

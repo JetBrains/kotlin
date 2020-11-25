@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.diagnostics.Errors.ACTUAL_WITHOUT_EXPECT
 import org.jetbrains.kotlin.diagnostics.Errors.NO_ACTUAL_FOR_EXPECT
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
 import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -403,12 +404,11 @@ object PositioningStrategies {
         }
     }
 
-    @JvmField
-    val VISIBILITY_MODIFIER: PositioningStrategy<KtModifierListOwner> = object : PositioningStrategy<KtModifierListOwner>() {
+    private class ModifierSetBasedPositioningStrategy(private val modifierSet: TokenSet) : PositioningStrategy<KtModifierListOwner>() {
         override fun mark(element: KtModifierListOwner): List<TextRange> {
             val modifierList = element.modifierList
 
-            val result = VISIBILITY_MODIFIERS.types.mapNotNull { modifierList?.getModifier(it as KtModifierKeywordToken)?.textRange }
+            val result = modifierSet.types.mapNotNull { modifierList?.getModifier(it as KtModifierKeywordToken)?.textRange }
             if (result.isNotEmpty()) return result
 
             // Try to resolve situation when there's no visibility modifiers written before element
@@ -430,6 +430,12 @@ object PositioningStrategies {
             return markElement(elementToMark)
         }
     }
+
+    @JvmField
+    val VISIBILITY_MODIFIER: PositioningStrategy<KtModifierListOwner> = ModifierSetBasedPositioningStrategy(VISIBILITY_MODIFIERS)
+
+    @JvmField
+    val MODALITY_MODIFIER: PositioningStrategy<KtModifierListOwner> = ModifierSetBasedPositioningStrategy(MODALITY_MODIFIERS)
 
     @JvmField
     val VARIANCE_IN_PROJECTION: PositioningStrategy<KtTypeProjection> = object : PositioningStrategy<KtTypeProjection>() {
