@@ -49,5 +49,10 @@ public class DiagnosticsWithJdk15TestGenerated extends AbstractDiagnosticsWithJd
         public void testDisabledFeature() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJava15/jvmRecord/disabledFeature.kt");
         }
+
+        @TestMetadata("supertypesCheck.kt")
+        public void testSupertypesCheck() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJava15/jvmRecord/supertypesCheck.kt");
+        }
     }
 }

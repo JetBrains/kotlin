@@ -1,0 +1,54 @@
+package
+
+@kotlin.jvm.JvmRecord public final class A1 : Abstract, I, java.lang.Record {
+    public constructor A1(/*0*/ x: kotlin.String)
+    public final val x: kotlin.String
+    public open override /*3*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*3*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*3*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.jvm.JvmRecord public final class A2 : kotlin.Any, I, java.lang.Record {
+    public constructor A2(/*0*/ x: kotlin.String)
+    public final val x: kotlin.String
+    public open override /*3*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*3*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*3*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.jvm.JvmRecord public final class A3 : java.lang.Record, I {
+    public constructor A3(/*0*/ x: kotlin.String)
+    public final val x: kotlin.String
+    public open override /*2*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.jvm.JvmRecord public final class A4 : java.lang.Record, I {
+    public constructor A4(/*0*/ x: kotlin.String)
+    public final val x: kotlin.String
+    public open override /*2*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.jvm.JvmRecord public final class A5 : I, java.lang.Record {
+    public constructor A5(/*0*/ x: kotlin.String)
+    public final val x: kotlin.String
+    public open override /*2*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public abstract class Abstract {
+    public constructor Abstract()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
