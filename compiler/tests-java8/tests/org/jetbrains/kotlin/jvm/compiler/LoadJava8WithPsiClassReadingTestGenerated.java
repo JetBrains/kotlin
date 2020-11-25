@@ -43,13 +43,54 @@ public class LoadJava8WithPsiClassReadingTestGenerated extends AbstractLoadJava8
         runTest("compiler/testData/loadJava8/compiledJava/ParameterNames.java");
     }
 
-    @TestMetadata("TypeAnnotations.java")
-    public void testTypeAnnotations() throws Exception {
-        runTest("compiler/testData/loadJava8/compiledJava/TypeAnnotations.java");
+    @TestMetadata("compiler/testData/loadJava8/compiledJava/typeParameterAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeParameterAnnotations extends AbstractLoadJava8WithPsiClassReadingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTypeParameterAnnotations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava/typeParameterAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
+        }
+
+        @TestMetadata("Basic.java")
+        public void testBasic() throws Exception {
+            runTest("compiler/testData/loadJava8/compiledJava/typeParameterAnnotations/Basic.java");
+        }
     }
 
-    @TestMetadata("TypeParameterAnnotations.java")
-    public void testTypeParameterAnnotations() throws Exception {
-        runTest("compiler/testData/loadJava8/compiledJava/TypeParameterAnnotations.java");
+    @TestMetadata("compiler/testData/loadJava8/compiledJava/typeUseAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class TypeUseAnnotations extends AbstractLoadJava8WithPsiClassReadingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTypeUseAnnotations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava/typeUseAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
+        }
+
+        @TestMetadata("Basic.java")
+        public void testBasic() throws Exception {
+            runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/Basic.java");
+        }
+
+        @TestMetadata("ClassTypeParameterUpperBounds.java")
+        public void testClassTypeParameterUpperBounds() throws Exception {
+            runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/ClassTypeParameterUpperBounds.java");
+        }
+
+        @TestMetadata("ReturnType.java")
+        public void testReturnType() throws Exception {
+            runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/ReturnType.java");
+        }
+
+        @TestMetadata("ValueArguments.java")
+        public void testValueArguments() throws Exception {
+            runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/ValueArguments.java");
+        }
     }
 }

@@ -1,0 +1,14 @@
+package test
+
+public/*package*/ interface Basic {
+    public abstract fun f8(): test.Basic.G1<in test.Basic.G0!>!
+
+    public interface G0 {
+    }
+
+    public interface G1</*0*/ T : kotlin.Any!> {
+    }
+
+    public interface G2</*0*/ A : kotlin.Any!, /*1*/ B : kotlin.Any!> {
+    }
+}

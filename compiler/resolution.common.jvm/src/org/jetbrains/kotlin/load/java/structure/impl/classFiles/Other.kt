@@ -42,9 +42,18 @@ class BinaryJavaTypeParameter(
         override val name: Name,
         override val upperBounds: Collection<JavaClassifierType>
 ) : JavaTypeParameter {
-    // TODO: support annotations on type parameters
-    override val annotations get() = emptyList<JavaAnnotation>()
-    override fun findAnnotation(fqName: FqName) = null
+    override val annotations get() = _annotations
+    override fun findAnnotation(fqName: FqName) = annotations.find { it.classId?.asSingleFqName() == fqName }
+
+    private var _annotations = emptyList<JavaAnnotation>()
+
+    internal fun addAnnotation(annotation: JavaAnnotation) {
+        if (_annotations.isEmpty()) {
+            _annotations = SmartList()
+        }
+
+        (_annotations as MutableList).add(annotation)
+    }
 
     override val isDeprecatedInJavaDoc get() = false
 }

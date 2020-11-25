@@ -405,6 +405,8 @@ internal class DescriptorRendererImpl(
     private fun StringBuilder.renderAnnotations(annotated: Annotated, target: AnnotationUseSiteTarget? = null) {
         if (DescriptorRendererModifier.ANNOTATIONS !in modifiers) return
 
+        // value-parameter vararg p0: (@test.A kotlin.String..@test.A kotlin.String?) defined in test.ReturnType.f20[ValueParameterDescriptorImpl@43186826]
+        // [@test.ReturnType.Anno] Array<(kotlin.String..kotlin.String?)>
         val excluded = if (annotated is KotlinType) excludedTypeAnnotationClasses else excludedAnnotationClasses
 
         val annotationFilter = annotationFilter

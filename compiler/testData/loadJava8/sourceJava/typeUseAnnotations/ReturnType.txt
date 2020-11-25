@@ -1,0 +1,22 @@
+package test
+
+public/*package*/ interface TypeAnnotations {
+    public abstract fun f0(): test.TypeAnnotations.G1<@test.TypeAnnotations.Anno test.TypeAnnotations.G0!>!
+    public abstract fun f1(): test.TypeAnnotations.G1<test.TypeAnnotations.G1<test.TypeAnnotations.G1<test.TypeAnnotations.G1<@test.TypeAnnotations.Anno test.TypeAnnotations.G0!>!>!>!>!
+    public abstract fun f2(): test.TypeAnnotations.G1<@test.TypeAnnotations.Anno kotlin.String!>!
+    public abstract fun f3(): test.TypeAnnotations.G2<@test.TypeAnnotations.Anno kotlin.String!, test.TypeAnnotations.G2<@test.TypeAnnotations.Anno kotlin.Int!, test.TypeAnnotations.G2<@test.TypeAnnotations.Anno test.TypeAnnotations.G2<kotlin.Int!, @test.TypeAnnotations.Anno kotlin.Int!>!, @test.TypeAnnotations.Anno kotlin.Int!>!>!>!
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Anno : kotlin.Annotation {
+        public constructor Anno(/*0*/ value: kotlin.String = ...)
+        public final val value: kotlin.String
+    }
+
+    public interface G0 {
+    }
+
+    public interface G1</*0*/ T : kotlin.Any!> {
+    }
+
+    public interface G2</*0*/ A : kotlin.Any!, /*1*/ B : kotlin.Any!> {
+    }
+}

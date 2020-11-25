@@ -67,6 +67,49 @@ class BinaryJavaClass(
 
     override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = false
 
+    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, descriptor: String?, visible: Boolean): AnnotationVisitor? {
+        val typeReference = TypeReference(typeRef)
+        if (descriptor == null)
+            return null
+
+        return when (typeReference.sort) {
+            TypeReference.CLASS_TYPE_PARAMETER -> {
+                BinaryJavaAnnotation.addTypeAnnotation(
+                    typeParameters[typeReference.typeParameterIndex],
+                    descriptor, context, signatureParser
+                )
+            }
+            TypeReference.CLASS_TYPE_PARAMETER_BOUND -> {
+                val isThereImplicitObjectUpperBound =
+                    typeParameters[typeReference.typeParameterIndex].upperBounds.none { it.classifierQualifiedName == "java.lang.Object" } &&
+                            typeParameters[typeReference.typeParameterIndex].upperBounds.none {
+                                (it.classifier as? BinaryJavaClass)?.constructors?.size != 0
+                            }
+                val typeParameterBoundIndex =
+                    if (isThereImplicitObjectUpperBound) typeReference.typeParameterBoundIndex - 1 else typeReference.typeParameterBoundIndex
+                val bound = typeParameters[typeReference.typeParameterIndex].upperBounds.toList()[typeParameterBoundIndex]
+
+                if (typePath == null) {
+                    BinaryJavaAnnotation.addTypeAnnotation(bound, descriptor, context, signatureParser)
+                } else {
+                    val translatedPath = BinaryJavaAnnotation.translatePath(typePath)
+                    var baseType = bound
+
+                    for (element in translatedPath) {
+                        when (element.first) {
+                            AnnotationsAndParameterCollectorMethodVisitor.PathElementType.TYPE_ARGUMENT -> {
+                                baseType = (baseType.typeArguments[element.second!!] as JavaClassifierType?)!!
+                            }
+                        }
+                    }
+
+                    return BinaryJavaAnnotation.addTypeAnnotation(baseType, descriptor, context, signatureParser)
+                }
+            }
+            else -> null
+        }
+    }
+
     override fun visitEnd() {
         methods.trimToSize()
         fields.trimToSize()

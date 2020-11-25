@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnotation.Companion.translatePath
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -25,11 +26,11 @@ import org.jetbrains.org.objectweb.asm.*
 import java.lang.reflect.Array
 
 internal class AnnotationsAndParameterCollectorMethodVisitor(
-        private val member: BinaryJavaMethodBase,
-        private val context: ClassifierResolutionContext,
-        private val signatureParser: BinaryClassSignatureParser,
-        private val parametersToSkipNumber: Int,
-        private val parametersCountInMethodDesc: Int
+    private val member: BinaryJavaMethodBase,
+    private val context: ClassifierResolutionContext,
+    private val signatureParser: BinaryClassSignatureParser,
+    private val parametersToSkipNumber: Int,
+    private val parametersCountInMethodDesc: Int
 ) : MethodVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
     private var parameterIndex = 0
 
@@ -57,8 +58,8 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
 
     override fun visitAnnotation(desc: String, visible: Boolean) =
             BinaryJavaAnnotation.addAnnotation(
-                    member.annotations as MutableCollection<JavaAnnotation>,
-                    desc, context, signatureParser
+                member.annotations as MutableCollection<JavaAnnotation>,
+                desc, context, signatureParser
             )
 
     @Suppress("NOTHING_TO_OVERRIDE")
@@ -77,15 +78,75 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
         if (index < 0) return null
 
         val annotations =
-                member.valueParameters[index].annotations as MutableCollection<JavaAnnotation>?
+            member.valueParameters[index].annotations as MutableCollection<JavaAnnotation>?
                 ?: return null
 
         return BinaryJavaAnnotation.addAnnotation(annotations, desc, context, signatureParser)
     }
 
     override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, desc: String, visible: Boolean): AnnotationVisitor? {
-        // TODO: support annotations on type arguments
-        if (typePath != null) return null
+        if (typePath != null) {
+            val typeReference = TypeReference(typeRef)
+            val translatedPath = translatePath(typePath)
+
+            when (typeReference.sort) {
+                TypeReference.METHOD_RETURN -> {
+                    var baseType = member.safeAs<BinaryJavaMethod>()?.returnType ?: return null
+
+                    for (element in translatedPath) {
+                        when (element.first) {
+                            PathElementType.TYPE_ARGUMENT -> {
+                                if (baseType is JavaClassifierType) {
+                                    baseType = baseType.typeArguments[element.second!!]!!
+                                }
+                            }
+                            PathElementType.WILDCARD_BOUND -> {
+                                if (baseType is JavaWildcardType) {
+                                    baseType = baseType.bound!!
+                                }
+                            }
+                            PathElementType.ARRAY_ELEMENT -> {
+                                if (baseType is JavaArrayType) {
+                                    baseType = baseType.componentType
+                                }
+                            }
+                        }
+                    }
+
+                    return BinaryJavaAnnotation.addTypeAnnotation(baseType, desc, context, signatureParser)
+                }
+
+                TypeReference.METHOD_FORMAL_PARAMETER -> {
+                    var baseType = member.valueParameters[typeReference.formalParameterIndex].type
+
+                    for (element in translatedPath) {
+                        when (element.first) {
+                            PathElementType.TYPE_ARGUMENT -> {
+                                if (baseType is JavaClassifierType) {
+                                    baseType = baseType.typeArguments[element.second!!]!!
+                                }
+                            }
+                            PathElementType.WILDCARD_BOUND -> {
+                                if (baseType is JavaWildcardType) {
+                                    baseType = baseType.bound!!
+                                }
+                            }
+                            PathElementType.ARRAY_ELEMENT -> {
+                                if (baseType is JavaArrayType) {
+                                    baseType = baseType.componentType
+                                }
+                            }
+                        }
+                    }
+
+                    return BinaryJavaAnnotation.addTypeAnnotation(
+                        baseType,
+                        desc, context, signatureParser
+                    )
+                }
+            }
+            return null
+        }
 
         val typeReference = TypeReference(typeRef)
 
@@ -94,29 +155,105 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
                 BinaryJavaAnnotation.addTypeAnnotation(it, desc, context, signatureParser)
             }
 
+            TypeReference.METHOD_TYPE_PARAMETER -> {
+                BinaryJavaAnnotation.addTypeAnnotation(
+                    member.typeParameters[typeReference.typeParameterIndex],
+                    desc, context, signatureParser
+                )
+            }
+
             TypeReference.METHOD_FORMAL_PARAMETER ->
-                    BinaryJavaAnnotation.addTypeAnnotation(
-                            member.valueParameters[typeReference.formalParameterIndex].type,
-                            desc, context, signatureParser
-                    )
+                BinaryJavaAnnotation.addTypeAnnotation(
+                    member.valueParameters[typeReference.formalParameterIndex].type,
+                    desc, context, signatureParser
+                )
 
             else -> null
         }
     }
+
+    enum class PathElementType { ARRAY_ELEMENT, WILDCARD_BOUND, ENCLOSING_CLASS, TYPE_ARGUMENT }
+
+//    private fun translatePath(path: TypePath?): ByteArray? {
+//        var typeText: String = myTypeInfo.text
+//        var arrayLevel: Int = myTypeInfo.arrayCount + if (myTypeInfo.isEllipsis) 1 else 0
+//        var qualifiedName = PsiNameHelper.getQualifiedClassName(typeText, false)
+//        var depth: Int = myFirstPassData.getInnerDepth(qualifiedName)
+//        var atWildcard = false
+//        if (path == null) {
+//            if (depth == 0 || arrayLevel > 0) {
+//                return ArrayUtil.EMPTY_BYTE_ARRAY
+//            }
+//            val result = ByteArray(depth)
+//            Arrays.fill(result, TypeAnnotationContainer.Collector.ENCLOSING_CLASS)
+//            return result
+//        }
+//        val result = ByteArrayOutputStream()
+//        val length = path.length
+//        for (i in 0 until length) {
+//            val step = path.getStep(i).toByte()
+//            when (step) {
+//                TypePath.INNER_TYPE -> {
+//                    if (depth == 0) return null
+//                    depth--
+//                }
+//                TypePath.ARRAY_ELEMENT -> {
+//                    if (arrayLevel <= 0 || atWildcard) return null
+//                    arrayLevel--
+//                    result.write(TypeAnnotationContainer.Collector.ARRAY_ELEMENT)
+//                }
+//                TypePath.WILDCARD_BOUND -> {
+//                    if (!atWildcard) return null
+//                    atWildcard = false
+//                    result.write(TypeAnnotationContainer.Collector.WILDCARD_BOUND)
+//                }
+//                TypePath.TYPE_ARGUMENT -> {
+//                    if (atWildcard || arrayLevel > 0) return null
+//                    while (depth-- > 0) {
+//                        result.write(TypeAnnotationContainer.Collector.ENCLOSING_CLASS)
+//                        typeText = PsiNameHelper.getOuterClassReference(typeText)
+//                    }
+//                    val argumentIndex = path.getStepArgument(i)
+//                    val arguments = PsiNameHelper.getClassParametersText(typeText)
+//                    if (argumentIndex >= arguments.size) return null
+//                    val argument = TypeInfo.fromString(arguments[argumentIndex], false)
+//                    arrayLevel = argument.arrayCount.toInt()
+//                    typeText = argument.text
+//                    if (typeText.startsWith("? extends ")) {
+//                        typeText = typeText.substring("? extends ".length)
+//                        atWildcard = true
+//                    } else if (typeText.startsWith("? super ")) {
+//                        typeText = typeText.substring("? super ".length)
+//                        atWildcard = true
+//                    }
+//                    qualifiedName = PsiNameHelper.getQualifiedClassName(typeText, false)
+//                    depth = myFirstPassData.getInnerDepth(qualifiedName)
+//                    result.write(TypeAnnotationContainer.Collector.TYPE_ARGUMENT)
+//                    result.write(argumentIndex)
+//                }
+//            }
+//        }
+//        if (!atWildcard && arrayLevel == 0) {
+//            while (depth-- > 0) {
+//                result.write(TypeAnnotationContainer.Collector.ENCLOSING_CLASS)
+//            }
+//        }
+//        return result.toByteArray()
+//    }
 }
 
 class BinaryJavaAnnotation private constructor(
-        desc: String,
-        private val context: ClassifierResolutionContext,
-        override val arguments: Collection<JavaAnnotationArgument>
+    desc: String,
+    private val context: ClassifierResolutionContext,
+    override val arguments: Collection<JavaAnnotationArgument>
 ) : JavaAnnotation {
 
     companion object {
 
         fun createAnnotationAndVisitor(
-                desc: String,
-                context: ClassifierResolutionContext,
-                signatureParser: BinaryClassSignatureParser
+            desc: String,
+            context: ClassifierResolutionContext,
+            signatureParser: BinaryClassSignatureParser
         ): Pair<JavaAnnotation, AnnotationVisitor> {
             val arguments = mutableListOf<JavaAnnotationArgument>()
             val annotation = BinaryJavaAnnotation(desc, context, arguments)
@@ -125,10 +262,10 @@ class BinaryJavaAnnotation private constructor(
         }
 
         fun addAnnotation(
-                annotations: MutableCollection<JavaAnnotation>,
-                desc: String,
-                context: ClassifierResolutionContext,
-                signatureParser: BinaryClassSignatureParser
+            annotations: MutableCollection<JavaAnnotation>,
+            desc: String,
+            context: ClassifierResolutionContext,
+            signatureParser: BinaryClassSignatureParser
         ): AnnotationVisitor {
             val (javaAnnotation, annotationVisitor) = createAnnotationAndVisitor(desc, context, signatureParser)
             annotations.add(javaAnnotation)
@@ -137,17 +274,60 @@ class BinaryJavaAnnotation private constructor(
         }
 
         fun addTypeAnnotation(
-                type: JavaType,
-                desc: String,
-                context: ClassifierResolutionContext,
-                signatureParser: BinaryClassSignatureParser
+            type: JavaType,
+            desc: String,
+            context: ClassifierResolutionContext,
+            signatureParser: BinaryClassSignatureParser
         ): AnnotationVisitor? {
-            type as? PlainJavaClassifierType ?: return null
+            return when (type) {
+                is PlainJavaClassifierType -> {
+                    val (javaAnnotation, annotationVisitor) = createAnnotationAndVisitor(desc, context, signatureParser)
+                    type.addAnnotation(javaAnnotation)
+                    annotationVisitor
+                }
+                is PlainJavaArrayType -> {
+                    val (javaAnnotation, annotationVisitor) = createAnnotationAndVisitor(desc, context, signatureParser)
+                    type.addAnnotation(javaAnnotation)
+                    annotationVisitor
+                }
+                else -> null
+            }
+        }
+
+        fun addTypeAnnotation(
+            type: JavaTypeParameter,
+            desc: String,
+            context: ClassifierResolutionContext,
+            signatureParser: BinaryClassSignatureParser
+        ): AnnotationVisitor? {
+            if (type !is BinaryJavaTypeParameter) return null
 
             val (javaAnnotation, annotationVisitor) = createAnnotationAndVisitor(desc, context, signatureParser)
             type.addAnnotation(javaAnnotation)
 
             return annotationVisitor
+        }
+
+        internal fun translatePath(path: TypePath): List<Pair<AnnotationsAndParameterCollectorMethodVisitor.PathElementType, Int?>> {
+            val length = path.length
+            val list = mutableListOf<Pair<AnnotationsAndParameterCollectorMethodVisitor.PathElementType, Int?>>()
+            for (i in 0 until length) {
+                when (path.getStep(i)) {
+                    TypePath.INNER_TYPE -> {
+                        continue
+                    }
+                    TypePath.ARRAY_ELEMENT -> {
+                        list.add(AnnotationsAndParameterCollectorMethodVisitor.PathElementType.ARRAY_ELEMENT to null)
+                    }
+                    TypePath.WILDCARD_BOUND -> {
+                        list.add(AnnotationsAndParameterCollectorMethodVisitor.PathElementType.WILDCARD_BOUND to null)
+                    }
+                    TypePath.TYPE_ARGUMENT -> {
+                        list.add(AnnotationsAndParameterCollectorMethodVisitor.PathElementType.TYPE_ARGUMENT to path.getStepArgument(i))
+                    }
+                }
+            }
+            return list
         }
     }
 
@@ -224,37 +404,37 @@ abstract class PlainJavaAnnotationArgument(name: String?) : JavaAnnotationArgume
 }
 
 class PlainJavaLiteralAnnotationArgument(
-        name: String?,
-        override val value: Any?
+    name: String?,
+    override val value: Any?
 ) : PlainJavaAnnotationArgument(name), JavaLiteralAnnotationArgument
 
 class PlainJavaClassObjectAnnotationArgument(
-        name: String?,
-        private val type: Type,
-        private val signatureParser: BinaryClassSignatureParser,
-        private val context: ClassifierResolutionContext
+    name: String?,
+    private val type: Type,
+    private val signatureParser: BinaryClassSignatureParser,
+    private val context: ClassifierResolutionContext
 ) : PlainJavaAnnotationArgument(name), JavaClassObjectAnnotationArgument {
     override fun getReferencedType() = signatureParser.mapAsmType(type, context)
 }
 
 class PlainJavaArrayAnnotationArgument(
-        name: String?,
-        private val elements: List<JavaAnnotationArgument>
+    name: String?,
+    private val elements: List<JavaAnnotationArgument>
 ) : PlainJavaAnnotationArgument(name), JavaArrayAnnotationArgument {
     override fun getElements(): List<JavaAnnotationArgument> = elements
 }
 
 class PlainJavaAnnotationAsAnnotationArgument(
-        name: String?,
-        private val annotation: JavaAnnotation
+    name: String?,
+    private val annotation: JavaAnnotation
 ) : PlainJavaAnnotationArgument(name), JavaAnnotationAsAnnotationArgument {
     override fun getAnnotation() = annotation
 }
 
 class PlainJavaEnumValueAnnotationArgument(
-        name: String?,
-        override val enumClassId: ClassId,
-        entryName: String
+    name: String?,
+    override val enumClassId: ClassId,
+    entryName: String
 ) : PlainJavaAnnotationArgument(name), JavaEnumValueAnnotationArgument {
     override val entryName = Name.identifier(entryName)
 }

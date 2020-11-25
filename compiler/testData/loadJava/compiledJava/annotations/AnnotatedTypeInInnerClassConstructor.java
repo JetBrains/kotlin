@@ -9,14 +9,10 @@ class AnnotatedParameterInInnerClassConstructor {
 
     @Target(ElementType.TYPE_USE)
     public @interface Anno {
-        String value();
-    }
-
-    class Inner {
-        Inner(@Anno("a") String a , @Anno("b")  String b) {}
     }
 
     class InnerGeneric<T> {
-        InnerGeneric(@Anno("a") String a , @Anno("b")  String b) {}
     }
+
+    @Anno Integer foo(@Anno InnerGeneric<@Anno String> a) { return 11; }
 }

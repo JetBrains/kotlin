@@ -1,0 +1,43 @@
+package test
+
+public open class ClassTypeParameterUpperBounds {
+    public constructor ClassTypeParameterUpperBounds()
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public/*package*/ final annotation class Anno : kotlin.Annotation {
+        public/*package*/ constructor Anno(/*0*/ value: kotlin.String = ...)
+        public final val value: kotlin.String
+    }
+
+    public/*package*/ interface G1</*0*/ T : @test.ClassTypeParameterUpperBounds.Anno kotlin.Any!> {
+    }
+
+    public/*package*/ open inner class G2</*0*/ A : kotlin.Any!, /*1*/ B : @test.ClassTypeParameterUpperBounds.Anno kotlin.Int!> {
+        public/*package*/ constructor G2</*0*/ A : kotlin.Any!, /*1*/ B : @test.ClassTypeParameterUpperBounds.Anno kotlin.Int!>()
+    }
+
+    public/*package*/ interface G3</*0*/ A : kotlin.Any!, /*1*/ B : kotlin.Any!> where B : @test.ClassTypeParameterUpperBounds.Anno test.ClassTypeParameterUpperBounds.I1! {
+    }
+
+    public/*package*/ open inner class G4</*0*/ A : @test.ClassTypeParameterUpperBounds.Anno B!, /*1*/ B : kotlin.Any!> {
+        public/*package*/ constructor G4</*0*/ A : @test.ClassTypeParameterUpperBounds.Anno B!, /*1*/ B : kotlin.Any!>()
+    }
+
+    public/*package*/ interface G5</*0*/ A : kotlin.Any!, /*1*/ B : @test.ClassTypeParameterUpperBounds.Anno A!> {
+    }
+
+    public/*package*/ open inner class G6</*0*/ A : @test.ClassTypeParameterUpperBounds.Anno test.ClassTypeParameterUpperBounds.I1!, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : @test.ClassTypeParameterUpperBounds.Anno E!, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!> {
+        public/*package*/ constructor G6</*0*/ A : @test.ClassTypeParameterUpperBounds.Anno test.ClassTypeParameterUpperBounds.I1!, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : @test.ClassTypeParameterUpperBounds.Anno E!, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!>()
+    }
+
+    public/*package*/ interface G7</*0*/ A : kotlin.Any!> where A : test.ClassTypeParameterUpperBounds.I2<@test.ClassTypeParameterUpperBounds.Anno kotlin.Int!>!, A : @test.ClassTypeParameterUpperBounds.Anno test.ClassTypeParameterUpperBounds.I3<kotlin.String!>! {
+    }
+
+    public/*package*/ interface I1 {
+    }
+
+    public/*package*/ interface I2</*0*/ T : kotlin.Any!> {
+    }
+
+    public/*package*/ interface I3</*0*/ T : kotlin.Any!> {
+    }
+}

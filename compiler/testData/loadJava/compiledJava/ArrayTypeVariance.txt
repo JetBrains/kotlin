@@ -2,5 +2,13 @@ package test
 
 public final class ArrayTypeVariance {
     public constructor ArrayTypeVariance()
-    public final fun toArray(/*0*/ p0: kotlin.Array<(out) kotlin.Any!>!): kotlin.Array<(out) kotlin.Any!>!
+    public final fun toArray(/*0*/ p0: test.ArrayTypeVariance.Foo<@test.ArrayTypeVariance.NotNull kotlin.Int!>!): kotlin.Array<(out) kotlin.Any!>!
+
+    public/*package*/ open inner class Foo</*0*/ T : kotlin.Any!> {
+        public/*package*/ constructor Foo</*0*/ T : kotlin.Any!>()
+    }
+
+    @kotlin.annotation.MustBeDocumented @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class NotNull : kotlin.Annotation {
+        public constructor NotNull()
+    }
 }

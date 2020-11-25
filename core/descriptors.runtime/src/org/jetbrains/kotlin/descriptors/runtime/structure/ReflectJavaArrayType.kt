@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.structure
 
+import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaArrayType
+import org.jetbrains.kotlin.name.FqName
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.Type
 
@@ -28,4 +30,8 @@ class ReflectJavaArrayType(override val reflectType: Type) : ReflectJavaType(), 
             else -> throw IllegalArgumentException("Not an array type (${reflectType::class.java}): $reflectType")
         }
     }
+
+    override val annotations: Collection<JavaAnnotation> = emptyList()
+    override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
+    override val isDeprecatedInJavaDoc = false
 }

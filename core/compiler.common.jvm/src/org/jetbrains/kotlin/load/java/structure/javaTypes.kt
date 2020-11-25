@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 
 interface JavaType
 
-interface JavaArrayType : JavaType {
+interface JavaArrayType : JavaType, JavaAnnotationOwner {
     val componentType: JavaType
 }
 

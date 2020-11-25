@@ -67,6 +67,7 @@ public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter>
     @NotNull
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
+        // here there is a problem
         return JavaElementUtil.getRegularAndExternalAnnotations(this);
     }
 

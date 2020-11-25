@@ -653,9 +653,14 @@ public abstract class KotlinBuiltIns {
     }
 
     @NotNull
-    public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument) {
+    public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument, @NotNull Annotations annotations) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
-        return KotlinTypeFactory.simpleNotNullType(Annotations.Companion.getEMPTY(), getArray(), types);
+        return KotlinTypeFactory.simpleNotNullType(annotations, getArray(), types);
+    }
+
+    @NotNull
+    public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument) {
+        return getArrayType(projectionType, argument, Annotations.Companion.getEMPTY());
     }
 
     @NotNull
