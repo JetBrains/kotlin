@@ -10,6 +10,7 @@ import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.utilities.DokkaLogger
 import org.jetbrains.dokka.utilities.report
 import kotlinx.coroutines.*
+import org.jetbrains.dokka.transformers.sources.AsyncSourceToDocumentableTranslator
 import org.jetbrains.dokka.utilities.parallelMap
 
 
@@ -149,8 +150,11 @@ class DokkaGenerator(
     }
 
     private suspend fun translateSources(sourceSet: DokkaSourceSet, context: DokkaContext) =
-        context[CoreExtensions.sourceToDocumentableTranslator].parallelMap {
-            it.invoke(sourceSet, context)
+        context[CoreExtensions.sourceToDocumentableTranslator].parallelMap { translator ->
+            when(translator){
+                is AsyncSourceToDocumentableTranslator -> translator.invokeSuspending(sourceSet, context)
+                else -> translator.invoke(sourceSet, context)
+            }
         }
 }
 
