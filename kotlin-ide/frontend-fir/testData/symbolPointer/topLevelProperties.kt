@@ -7,8 +7,10 @@ KtFirPropertySymbol:
   callableIdIfNonLocal: x
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
+  initializer: 10
   isConst: false
   isExtension: false
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: FINAL
@@ -21,6 +23,7 @@ KtFirPropertySymbol:
   visibility: PUBLIC
 
 KtFirPropertyGetterSymbol:
+  hasBody: true
   isDefault: false
   isInline: false
   isOverride: false
@@ -35,8 +38,10 @@ KtFirPropertySymbol:
   callableIdIfNonLocal: y
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: false
+  initializer: null
   isConst: false
   isExtension: true
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: FINAL

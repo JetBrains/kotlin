@@ -10,8 +10,10 @@ KtFirPropertySymbol:
   callableIdIfNonLocal: A.a
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
+  initializer: 10
   isConst: false
   isExtension: false
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: FINAL

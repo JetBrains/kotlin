@@ -386,8 +386,10 @@ KtFirPropertySymbol:
   callableIdIfNonLocal: kotlin.collections.List.size
   getter: null
   hasBackingField: false
+  initializer: null
   isConst: false
   isExtension: false
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: ABSTRACT

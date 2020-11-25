@@ -6,10 +6,12 @@ class A<T, R> {
 KtFirTypeParameterSymbol:
   name: T
   origin: SOURCE
+  upperBounds: [kotlin/Any?]
 
 KtFirTypeParameterSymbol:
   name: R
   origin: SOURCE
+  upperBounds: [kotlin/Any?]
 
 KtFirClassOrObjectSymbol:
   annotations: []

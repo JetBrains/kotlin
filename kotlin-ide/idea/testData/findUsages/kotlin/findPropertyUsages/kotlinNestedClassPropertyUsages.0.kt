@@ -7,3 +7,5 @@ public open class Outer() {
         var <caret>foo: Int = 1
     }
 }
+
+// FIR_COMPARISON

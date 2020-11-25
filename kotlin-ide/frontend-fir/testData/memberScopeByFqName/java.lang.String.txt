@@ -74,8 +74,10 @@ KtFirPropertySymbol:
   callableIdIfNonLocal: kotlin.CharSequence.length
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
+  initializer: null
   isConst: false
   isExtension: false
+  isLateInit: false
   isOverride: false
   isVal: true
   modality: ABSTRACT
@@ -1112,6 +1114,176 @@ KtFirFunctionSymbol:
   typeParameters: []
   valueParameters: []
   visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: []
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(original)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(value)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(value), KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(count)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(codePoints), KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(count)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: [java/lang/Deprecated()]
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(ascii), KtFirConstructorValueParameterSymbol(hibyte), KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(count)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: [java/lang/Deprecated()]
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(ascii), KtFirConstructorValueParameterSymbol(hibyte)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(bytes), KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(length), KtFirConstructorValueParameterSymbol(charsetName)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(bytes), KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(length), KtFirConstructorValueParameterSymbol(charset)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(bytes), KtFirConstructorValueParameterSymbol(charsetName)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(bytes), KtFirConstructorValueParameterSymbol(charset)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(bytes), KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(length)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(bytes)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(buffer)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(builder)]
+  visibility: PUBLIC
+
+KtFirConstructorSymbol:
+  annotations: []
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(value), KtFirConstructorValueParameterSymbol(share)]
+  visibility: UNKNOWN
+
+KtFirConstructorSymbol:
+  annotations: [java/lang/Deprecated()]
+  containingClassIdIfNonLocal: java/lang/String
+  isPrimary: false
+  origin: JAVA
+  symbolKind: MEMBER
+  type: java/lang/String
+  valueParameters: [KtFirConstructorValueParameterSymbol(offset), KtFirConstructorValueParameterSymbol(count), KtFirConstructorValueParameterSymbol(value)]
+  visibility: UNKNOWN
 
 KtFirFunctionSymbol:
   annotations: []
