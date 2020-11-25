@@ -229,7 +229,11 @@ open class KotlinLibraryImpl(
 ) : KotlinLibrary,
     BaseKotlinLibrary by base,
     MetadataLibrary by metadata,
-    IrLibrary by ir
+    IrLibrary by ir {
+    override fun toString(): String {
+        return "[Klib: ${base.libraryFile.name}, file: ${base.libraryFile.path}]"
+    }
+}
 
 fun createKotlinLibrary(
     libraryFile: File,
