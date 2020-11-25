@@ -18,13 +18,13 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 internal class FirLightFieldForObjectSymbol(
     private val objectSymbol: KtClassOrObjectSymbol,
     containingClass: KtLightClass,
+    private val name: String,
     lightMemberOrigin: LightMemberOrigin?,
 ) : FirLightField(containingClass, lightMemberOrigin) {
 
     override val kotlinOrigin: KtDeclaration? = objectSymbol.psi as? KtDeclaration
 
-    private val _name = if (objectSymbol.classKind == KtClassKind.COMPANION_OBJECT) objectSymbol.name.asString() else "INSTANCE"
-    override fun getName(): String = _name
+    override fun getName(): String = name
 
     private val _modifierList: PsiModifierList by lazyPub {
         val modifiers = setOf(objectSymbol.computeVisibility(isTopLevel = false), PsiModifier.STATIC, PsiModifier.FINAL)
@@ -58,8 +58,8 @@ internal class FirLightFieldForObjectSymbol(
     override fun equals(other: Any?): Boolean =
         this === other ||
                 (other is FirLightFieldForObjectSymbol &&
-                 kotlinOrigin == other.kotlinOrigin &&
-                 objectSymbol == other.objectSymbol)
+                        kotlinOrigin == other.kotlinOrigin &&
+                        objectSymbol == other.objectSymbol)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 }

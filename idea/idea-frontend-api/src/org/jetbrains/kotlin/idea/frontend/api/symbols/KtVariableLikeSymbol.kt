@@ -59,6 +59,8 @@ abstract class KtPropertySymbol : KtVariableSymbol(),
 
     abstract val isOverride: Boolean
 
+    abstract val initializer: KtConstantValue?
+
     abstract override fun createPointer(): KtSymbolPointer<KtPropertySymbol>
 }
 

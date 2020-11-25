@@ -5,29 +5,33 @@
 
 package org.jetbrains.kotlin.idea.asJava.classes
 
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
+import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.shouldNotBeVisibleAsLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.idea.asJava.*
 import org.jetbrains.kotlin.idea.asJava.fields.FirLightFieldForEnumEntry
 import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
+import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtCodeFragment
-import org.jetbrains.kotlin.psi.KtEnumEntry
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import java.util.*
 
 fun getOrCreateFirLightClass(classOrObject: KtClassOrObject): KtLightClass? =
@@ -53,10 +57,17 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? {
         return null
     }
 
+    val anonymousObject = classOrObject.parent as? KtObjectLiteralExpression
+    if (anonymousObject != null) {
+        return analyze(anonymousObject) {
+            FirLightAnonymousClassForSymbol(anonymousObject.getAnonymousObjectSymbol(), anonymousObject.manager)
+        }
+    }
+
     return when {
         classOrObject is KtEnumEntry -> lightClassForEnumEntry(classOrObject)
-        classOrObject.isObjectLiteral() -> return null //TODO
         classOrObject.hasModifier(KtTokens.INLINE_KEYWORD) -> return null //TODO
+
         else -> {
             analyze(classOrObject) {
                 val symbol = classOrObject.getClassOrObjectSymbol()
@@ -192,10 +203,12 @@ internal fun FirLightClassBase.createMethods(
     }
 }
 
-internal fun FirLightClassBase.createFields(
-    declarations: Sequence<KtCallableSymbol>,
-    usedNames: MutableSet<String>,
+internal fun FirLightClassBase.createField(
+    declaration: KtPropertySymbol,
+    nameGenerator: FirLightField.FieldNameGenerator,
     isTopLevel: Boolean,
+    forceStatic: Boolean,
+    takePropertyVisibility: Boolean,
     result: MutableList<KtLightField>
 ) {
     fun hasBackingField(property: KtPropertySymbol): Boolean {
@@ -207,18 +220,73 @@ internal fun FirLightClassBase.createFields(
         return property.hasBackingField
     }
 
-    for (declaration in declarations) {
-        if (declaration !is KtPropertySymbol) continue
-        if (!hasBackingField(declaration)) continue
+    if (!hasBackingField(declaration)) return
 
-        result.add(
-            FirLightFieldForPropertySymbol(
-                propertySymbol = declaration,
-                usedNames = usedNames,
-                containingClass = this@createFields,
-                lightMemberOrigin = null,
-                isTopLevel = isTopLevel
-            )
+    result.add(
+        FirLightFieldForPropertySymbol(
+            propertySymbol = declaration,
+            nameGenerator = nameGenerator,
+            containingClass = this,
+            lightMemberOrigin = null,
+            isTopLevel = isTopLevel,
+            forceStatic = forceStatic,
+            takePropertyVisibility = takePropertyVisibility
         )
+    )
+}
+
+internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, superTypes: List<KtType>): PsiReferenceList {
+
+    val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
+
+    val listBuilder = KotlinSuperTypeListBuilder(
+        kotlinOrigin = kotlinOrigin?.getSuperTypeList(),
+        manager = manager,
+        language = language,
+        role = role
+    )
+
+    fun KtType.needToAddTypeIntoList(): Boolean {
+        if (this !is KtClassType) return false
+
+        // Do not add redundant "extends java.lang.Object" anywhere
+        if (this.classId == StandardClassIds.Any) return false
+
+        // We don't have Enum among enums supertype in sources neither we do for decompiled class-files and light-classes
+        if (isEnum && this.classId == StandardClassIds.Enum) return false
+
+        val isInterfaceType =
+            (this.classSymbol as? KtClassOrObjectSymbol)?.classKind == KtClassKind.INTERFACE
+
+        return forExtendsList == !isInterfaceType
     }
+
+    //TODO Add support for kotlin.collections.
+    superTypes
+        .filterIsInstance<KtClassType>()
+        .filter { it.needToAddTypeIntoList() }
+        .mapNotNull { it.mapSupertype(this, kotlinCollectionAsIs = true) }
+        .forEach { listBuilder.addReference(it) }
+
+    return listBuilder
+}
+
+internal fun KtSymbolWithDeclarations.createInnerClasses(manager: PsiManager): List<FirLightClassForSymbol> {
+    val result = ArrayList<FirLightClassForSymbol>()
+
+    // workaround for ClassInnerStuffCache not supporting classes with null names, see KT-13927
+    // inner classes with null names can't be searched for and can't be used from java anyway
+    // we can't prohibit creating light classes with null names either since they can contain members
+
+    analyzeWithSymbolAsContext(this) {
+        getDeclaredMemberScope().getAllSymbols().filterIsInstance<KtClassOrObjectSymbol>().mapTo(result) {
+            FirLightClassForSymbol(it, manager)
+        }
+    }
+
+    //TODO
+    //if (classOrObject.hasInterfaceDefaultImpls) {
+    //    result.add(KtLightClassForInterfaceDefaultImpls(classOrObject))
+    //}
+    return result
 }

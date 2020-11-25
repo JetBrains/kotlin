@@ -18,7 +18,11 @@ internal abstract class FirLightInterfaceOrAnnotationClassSymbol(
 ) : FirLightClassForClassOrObjectSymbol(classOrObjectSymbol, manager) {
 
     init {
-        require(classOrObjectSymbol.classKind == KtClassKind.INTERFACE || classOrObjectSymbol.classKind == KtClassKind.ANNOTATION_CLASS)
+        require(
+            classOrObjectSymbol.classKind == KtClassKind.OBJECT ||
+                    classOrObjectSymbol.classKind == KtClassKind.INTERFACE ||
+                    classOrObjectSymbol.classKind == KtClassKind.ANNOTATION_CLASS
+        )
     }
 
     private val _modifierList: PsiModifierList? by lazyPub {

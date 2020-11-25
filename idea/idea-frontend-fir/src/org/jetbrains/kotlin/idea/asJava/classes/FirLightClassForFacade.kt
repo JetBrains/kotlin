@@ -21,10 +21,11 @@ import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.asJava.classes.createFields
+import org.jetbrains.kotlin.idea.asJava.classes.createField
 import org.jetbrains.kotlin.idea.asJava.classes.createMethods
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
@@ -97,7 +98,7 @@ class FirLightClassForFacade(
 
     private fun loadFieldsFromFile(
         file: KtFile,
-        usedFieldNames: MutableSet<String>,
+        nameGenerator: FirLightField.FieldNameGenerator,
         result: MutableList<KtLightField>
     ) {
         val properties = file.declarations
@@ -108,20 +109,31 @@ class FirLightClassForFacade(
 
         if (properties.isEmpty()) return
 
-        val symbols = analyze(file) {
+        val propertySymbols = analyze(file) {
             properties.mapNotNull {
-                it.getSymbol() as? KtCallableSymbol
+                it.getSymbol() as? KtPropertySymbol
             }
         }
 
-        createFields(symbols.asSequence(), usedFieldNames, isTopLevel = true, result)
+        for (propertySymbol in propertySymbols) {
+            val forceStaticAndPropertyVisibility = propertySymbol.hasJvmStaticAnnotation()
+            createField(
+                propertySymbol,
+                nameGenerator,
+                isTopLevel = true,
+                forceStatic = forceStaticAndPropertyVisibility,
+                takePropertyVisibility = forceStaticAndPropertyVisibility,
+                result
+            )
+        }
+
     }
 
     private val _ownFields: List<KtLightField> by lazyPub {
         val result = mutableListOf<KtLightField>()
-        val usedFieldNames = mutableSetOf<String>()
+        val nameGenerator = FirLightField.FieldNameGenerator()
         for (file in files) {
-            loadFieldsFromFile(file, usedFieldNames, result)
+            loadFieldsFromFile(file, nameGenerator, result)
         }
         result
     }

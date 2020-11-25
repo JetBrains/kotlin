@@ -31,16 +31,15 @@ internal class FirLightAnnotationClassSymbol(
     override fun isAnnotationType(): Boolean = true
 
     private val _ownFields: List<KtLightField> by lazyPub {
-//TODO
         mutableListOf<KtLightField>().also {
-            it.addCompanionObjectFieldIfNeeded()
+            addCompanionObjectFieldIfNeeded(it)
         }
     }
 
     override fun getOwnFields(): List<KtLightField> = _ownFields
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {
-//TODO
+
         val result = mutableListOf<KtLightMethod>()
 
         analyzeWithSymbolAsContext(classOrObjectSymbol) {

@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
-import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class FirLightAnnotationForAnnotationCall(
@@ -46,36 +44,4 @@ internal class FirLightAnnotationForAnnotationCall(
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
         basicIsEquivalentTo(this, another as? PsiAnnotation)
-}
-
-private fun escapeString(str: String): String = buildString {
-    str.forEach { char ->
-        val escaped = when (char) {
-            '\n' -> "\\n"
-            '\r' -> "\\r"
-            '\t' -> "\\t"
-            '\"' -> "\\\""
-            '\\' -> "\\\\"
-            else -> "$char"
-        }
-        append(escaped)
-    }
-}
-
-private fun KtSimpleConstantValue<*>.asStringForPsiLiteral(parent: PsiElement): String =
-    when (val value = this.constant) {
-        is String -> "\"${escapeString(value)}\""
-        is Long -> "${value}L"
-        is Float -> "${value}f"
-        else -> value?.toString() ?: "null"
-    }
-
-internal fun KtSimpleConstantValue<*>.createPsiLiteral(parent: PsiElement): PsiExpression? {
-    val asString = asStringForPsiLiteral(parent)
-    val instance = PsiElementFactory.getInstance(parent.project)
-    return try {
-        instance.createExpressionFromText(asString, parent)
-    } catch (_: IncorrectOperationException) {
-        null
-    }
 }

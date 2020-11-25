@@ -87,7 +87,14 @@ internal class KtFirSymbolProvider(
         }
     }
 
+    override fun getAnonymousObjectSymbol(psi: KtObjectLiteralExpression): KtAnonymousObjectSymbol = withValidityAssertion {
+        psi.objectDeclaration.withFirDeclarationOfType<FirAnonymousObject, KtAnonymousObjectSymbol>(resolveState) {
+            firSymbolBuilder.buildAnonymousObjectSymbol(it)
+        }
+    }
+
     override fun getClassOrObjectSymbol(psi: KtClassOrObject): KtClassOrObjectSymbol = withValidityAssertion {
+        check(psi !is KtObjectDeclaration || psi.parent !is KtObjectLiteralExpression)
         psi.withFirDeclarationOfType<FirRegularClass, KtClassOrObjectSymbol>(resolveState) {
             firSymbolBuilder.buildClassSymbol(it)
         }

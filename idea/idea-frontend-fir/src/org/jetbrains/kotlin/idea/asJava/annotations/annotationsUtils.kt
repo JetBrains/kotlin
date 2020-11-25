@@ -10,20 +10,14 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirAnnotatedDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirAnnotationCall
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.mapAnnotationParameters
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
-import org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
 import org.jetbrains.kotlin.psi.KtFile
 
 internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget?): Boolean =
@@ -42,8 +36,6 @@ internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget:
 }
 
 internal fun KtAnnotatedSymbol.isHiddenByDeprecation(annotationUseSiteTarget: AnnotationUseSiteTarget?): Boolean {
-
-    //TODO Move it to HL API
     require(this is KtFirSymbol<*>)
 
     return this.firRef.withFir(FirResolvePhase.TYPES) {

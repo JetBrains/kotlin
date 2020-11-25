@@ -80,4 +80,18 @@ internal abstract class FirLightField protected constructor(
             visitor.visitElement(this)
         }
     }
+
+    internal class FieldNameGenerator {
+        private val usedNames: MutableSet<String> = mutableSetOf()
+
+        fun generateUniqueFieldName(base: String): String {
+            if (usedNames.add(base)) return base
+            var i = 1
+            while (true) {
+                val suggestion = "$base$$i"
+                if (usedNames.add(suggestion)) return suggestion
+                i++
+            }
+        }
+    }
 }

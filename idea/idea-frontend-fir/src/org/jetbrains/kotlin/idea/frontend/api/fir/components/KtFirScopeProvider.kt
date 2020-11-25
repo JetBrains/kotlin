@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.idea.frontend.api.components.KtScopeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.*
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirEnumEntrySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
@@ -59,6 +60,7 @@ internal class KtFirScopeProvider(
 
     private inline fun <T> KtSymbolWithDeclarations.withFirForScope(crossinline body: (FirClass<*>) -> T): T? = when (this) {
         is KtFirClassOrObjectSymbol -> firRef.withFir(FirResolvePhase.SUPER_TYPES, body)
+        is KtFirAnonymousObjectSymbol -> firRef.withFir(FirResolvePhase.SUPER_TYPES, body)
         is KtFirEnumEntrySymbol -> firRef.withFir(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
             val initializer = it.initializer
             check(initializer is FirAnonymousObject)
