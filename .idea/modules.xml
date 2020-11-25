@@ -2216,6 +2216,7 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/generators/kotlin.generators.iml" filepath="$PROJECT_DIR$/kotlin/generators/kotlin.generators.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/git/kotlin.git.iml" filepath="$PROJECT_DIR$/kotlin/git/kotlin.git.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/gradle/gradle-idea/kotlin.gradle.gradle-idea.iml" filepath="$PROJECT_DIR$/kotlin/gradle/gradle-idea/kotlin.gradle.gradle-idea.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-tests-with-android-plugin/gradle-idea-importing-tests/kotlin.gradle.gradle-idea-importing-tests.iml" filepath="$PROJECT_DIR$/kotlin-tests-with-android-plugin/gradle-idea-importing-tests/kotlin.gradle.gradle-idea-importing-tests.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/gradle/gradle-native/kotlin.gradle.gradle-native.iml" filepath="$PROJECT_DIR$/kotlin/gradle/gradle-native/kotlin.gradle.gradle-native.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/gradle/gradle-tooling/kotlin.gradle.gradle-tooling.iml" filepath="$PROJECT_DIR$/kotlin/gradle/gradle-tooling/kotlin.gradle.gradle-tooling.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/idea/kotlin.idea.iml" filepath="$PROJECT_DIR$/kotlin/idea/kotlin.idea.iml" />
@@ -2253,6 +2254,7 @@
       <module fileurl="file://$PROJECT_DIR$/tools/kotlin-artifact-dependencies/util.kotlin-compiler-dependencies.iml" filepath="$PROJECT_DIR$/tools/kotlin-artifact-dependencies/util.kotlin-compiler-dependencies.iml" />
       <module fileurl="file://$PROJECT_DIR$/tools/kotlin-maven-artifacts-publishing/util.kotlin-maven-artifacts-publishing.iml" filepath="$PROJECT_DIR$/tools/kotlin-maven-artifacts-publishing/util.kotlin-maven-artifacts-publishing.iml" />
       <module fileurl="file://$PROJECT_DIR$/tools/project-model-updater/util.project-model-updater.iml" filepath="$PROJECT_DIR$/tools/project-model-updater/util.project-model-updater.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin-tests-with-android-plugin/kotlin-tests-with-android-plugin.iml" filepath="$PROJECT_DIR$/kotlin-tests-with-android-plugin/kotlin-tests-with-android-plugin.iml" />
     </modules>
   </component>
 </project>

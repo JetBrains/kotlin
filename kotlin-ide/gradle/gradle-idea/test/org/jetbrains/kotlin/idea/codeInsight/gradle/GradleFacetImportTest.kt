@@ -60,15 +60,15 @@ import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Ignore
 import org.junit.Test
 
-internal fun KotlinGradleImportingTestCase.facetSettings(moduleName: String): KotlinFacetSettings {
+fun KotlinGradleImportingTestCase.facetSettings(moduleName: String): KotlinFacetSettings {
     val facet = KotlinFacet.get(getModule(moduleName)) ?: error("Kotlin facet not found in module $moduleName")
     return facet.configuration.settings
 }
 
-internal val KotlinGradleImportingTestCase.facetSettings: KotlinFacetSettings
+val KotlinGradleImportingTestCase.facetSettings: KotlinFacetSettings
     get() = facetSettings("project.main")
 
-internal val KotlinGradleImportingTestCase.testFacetSettings: KotlinFacetSettings
+val KotlinGradleImportingTestCase.testFacetSettings: KotlinFacetSettings
     get() = facetSettings("project.test")
 
 class GradleFacetImportTest : KotlinGradleImportingTestCase() {
