@@ -309,8 +309,8 @@ internal fun resolveToPsiMethod(
         is KtFunction ->
             if (source.isLocal)
                 getContainingLightClass(source)?.let { UastFakeLightMethod(source, it) }
-            else
-                LightClassUtil.getLightClassMethod(source)
+            else // UltraLightMembersCreator.createMethods() returns nothing for JVM-invisible methods, so fake it if we get null here
+                LightClassUtil.getLightClassMethod(source) ?: getContainingLightClass(source)?.let { UastFakeLightMethod(source, it) }
         is PsiMethod -> source
         null -> resolveDeserialized(context, descriptor) as? PsiMethod
         else -> null

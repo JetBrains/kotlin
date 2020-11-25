@@ -37,6 +37,9 @@ class KotlinUastResolveEverythingTest : AbstractKotlinUastTest(), ResolveEveryth
     fun testImports() = doTest("Imports")
 
     @Test
+    fun testReifiedResolve() = doTest("ReifiedResolve")
+
+    @Test
     fun testResolve() = doTest("Resolve")
 
     @Test
