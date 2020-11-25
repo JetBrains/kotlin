@@ -704,7 +704,7 @@ public class DefaultErrorMessages {
         MAP.put(NON_PRIVATE_CONSTRUCTOR_IN_ENUM, "Constructor must be private in enum class");
         MAP.put(NON_PRIVATE_CONSTRUCTOR_IN_SEALED, "Constructor must be private in sealed class");
 
-        MAP.put(INLINE_CLASS_NOT_TOP_LEVEL, "Inline classes are only allowed on top level");
+        MAP.put(INLINE_CLASS_NOT_TOP_LEVEL, "Inline classes cannot be local or inner");
         MAP.put(INLINE_CLASS_NOT_FINAL, "Inline classes can be only final");
         MAP.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_INLINE_CLASS, "Primary constructor is required for inline class");
         MAP.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter");

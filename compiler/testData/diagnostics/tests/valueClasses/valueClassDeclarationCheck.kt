@@ -30,16 +30,16 @@ value class A9(final val x: Int)
 class B1 {
     companion object {
         @JvmInline
-        <!INLINE_CLASS_NOT_TOP_LEVEL!>value<!> class C1(val x: Int)
+        value class C1(val x: Int)
     }
 
     @JvmInline
-    <!INLINE_CLASS_NOT_TOP_LEVEL!>value<!> class C2(val x: Int)
+    value class C2(val x: Int)
 }
 
 object B2 {
     @JvmInline
-    <!INLINE_CLASS_NOT_TOP_LEVEL!>value<!> class C3(val x: Int)
+    value class C3(val x: Int)
 }
 
 @JvmInline
