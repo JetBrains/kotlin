@@ -15,12 +15,15 @@ apply plugin: "kotlin-kapt"
 repositories {
     jcenter()
     mavenLocal()
+    maven {
+        url "https://jetbrains.bintray.com/intellij-third-party-dependencies/"
+    }
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
     kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
-    kapt "org.ow2.asm:asm:9.0"
+    kapt "org.jetbrains.intellij.deps:asm-all:9.0"
     testImplementation 'junit:junit:4.12'
 }

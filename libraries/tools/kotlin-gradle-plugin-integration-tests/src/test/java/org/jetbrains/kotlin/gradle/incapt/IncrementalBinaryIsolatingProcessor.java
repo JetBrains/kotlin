@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.incapt;
 
-import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.Type;
+import org.jetbrains.org.objectweb.asm.ClassWriter;
+import org.jetbrains.org.objectweb.asm.Opcodes;
+import org.jetbrains.org.objectweb.asm.Type;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.RoundEnvironment;
@@ -20,8 +20,8 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.objectweb.asm.Opcodes.ACC_PUBLIC;
-import static org.objectweb.asm.Opcodes.ACC_SUPER;
+import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_PUBLIC;
+import static org.jetbrains.org.objectweb.asm.Opcodes.ACC_SUPER;
 
 /** Simple processor that generates a class for every annotated element (class, field, method). */
 public class IncrementalBinaryIsolatingProcessor extends AbstractProcessor {

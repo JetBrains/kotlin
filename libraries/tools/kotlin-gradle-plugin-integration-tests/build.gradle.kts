@@ -45,7 +45,7 @@ dependencies {
     // Workaround for missing transitive import of the common(project `kotlin-test-common`
     // for `kotlin-test-jvm` into the IDE:
     testCompileOnly(project(":kotlin-test:kotlin-test-common")) { isTransitive = false }
-    testCompileOnly("org.ow2.asm:asm:9.0")
+    testCompileOnly("org.jetbrains.intellij.deps:asm-all:9.0")
 }
 
 // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
