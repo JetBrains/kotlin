@@ -1119,7 +1119,7 @@ fun SymbolTable.noUnboundLeft(message: String) {
     assert(unbound.isEmpty()) {
         "$message\n" +
                 unbound.joinToString("\n") {
-                    "$it ${it.signature?.toString() ?: "NON-PUBLIC API $it"}"
+                    "$it ${it.signature?.toString() ?: "(NON-PUBLIC API)"}"
                 }
     }
 }
