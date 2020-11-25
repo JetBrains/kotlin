@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotate
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.host.*
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.createScriptDefinitionFromTemplate
 import kotlin.script.experimental.jvm.baseClassLoader
 import kotlin.script.experimental.jvm.jvm
 
@@ -139,8 +140,9 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         }
 
         override fun isScript(script: SourceCode): Boolean {
+            val extension = ".$fileExtension"
             val location = script.locationId ?: return false
-            return location.endsWith(".$fileExtension") && filePathPattern?.let {
+            return (script.name?.endsWith(extension) == true || location.endsWith(extension)) && filePathPattern?.let {
                 Regex(it).matches(FileUtilRt.toSystemIndependentName(location))
             } != false
         }
