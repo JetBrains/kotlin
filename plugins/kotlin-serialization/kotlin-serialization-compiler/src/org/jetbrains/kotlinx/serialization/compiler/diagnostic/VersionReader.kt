@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
@@ -48,6 +49,11 @@ object VersionReader {
         val versions = getVersionsForCurrentModule(module) ?: return null
         trace.record(VERSIONS_SLICE, module, versions)
         return versions
+    }
+
+    fun getVersionsForCurrentModuleFromContext(module: ModuleDescriptor, context: BindingContext): RuntimeVersions? {
+        context.get(VERSIONS_SLICE, module)?.let { return it }
+        return getVersionsForCurrentModule(module)
     }
 
     fun getVersionsForCurrentModule(module: ModuleDescriptor): RuntimeVersions? {
