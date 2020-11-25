@@ -308,6 +308,13 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var jvmDefault: String by FreezableVar(JvmDefaultMode.DEFAULT.description)
 
+    @Argument(
+        value = "-Xdefault-script-extension",
+        valueDescription = "<script filename extension>",
+        description = "Compile expressions and unrecognized scripts passed with the -script argument as scripts with given filename extension"
+    )
+    var defaultScriptExtension: String? by FreezableVar(null)
+
     @Argument(value = "-Xdisable-standard-script", description = "Disable standard kotlin script support")
     var disableStandardScript: Boolean by FreezableVar(false)
 

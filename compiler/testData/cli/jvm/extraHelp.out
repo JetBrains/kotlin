@@ -23,6 +23,8 @@ where advanced options include:
                              default is 'disable' in language version 1.2 and below,
                              'enable' since language version 1.3
   -Xdump-declarations-to=<path> Path to JSON file to dump Java to Kotlin declaration mappings
+  -Xdefault-script-extension=<script filename extension>
+                             Compile expressions and unrecognized scripts passed with the -script argument as scripts with given filename extension
   -Xdisable-standard-script  Disable standard kotlin script support
   -Xir-do-not-clear-binding-context
                              When using the IR backend, do not clear BindingContext between psi2ir and lowerings
