@@ -163,7 +163,7 @@ class KotlinGradleAppEnvProvider : GradleExecutionEnvironmentProvider {
                 val rootProjectName = (extModuleData.parent?.data as? ProjectData)?.externalName ?: ""
                 rootProjectName + projectPath
             } else {
-                projectPath // includes rootProject.name already
+                projectPath.takeIf { ':' in it } ?: "$projectPath:" // includes rootProject.name already, for top level projects has no ':'
             }
 
             val workingDir = ProgramParametersUtil.getWorkingDir(applicationConfiguration, project, module)?.let {
