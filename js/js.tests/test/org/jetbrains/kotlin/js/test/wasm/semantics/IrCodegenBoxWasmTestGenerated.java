@@ -14305,6 +14305,16 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/unsignedTypes/iterateOverListOfBoxedUnsignedValues.kt");
         }
 
+        @TestMetadata("kt43286.kt")
+        public void testKt43286() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/kt43286.kt");
+        }
+
+        @TestMetadata("kt43286a.kt")
+        public void testKt43286a() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/kt43286a.kt");
+        }
+
         @TestMetadata("literalEqualsNullableUnsigned.kt")
         public void testLiteralEqualsNullableUnsigned() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/literalEqualsNullableUnsigned.kt");

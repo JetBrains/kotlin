@@ -35,8 +35,8 @@ class JvmStandardLibraryBuiltInsLowering(val context: JvmBackendContext) : FileL
 
                 val parentClass = expression.symbol.owner.parent.fqNameForIrSerialization.asString()
                 val functionName = expression.symbol.owner.name.asString()
-                Jvm8builtInReplacements[parentClass to functionName]?.let {
-                    return expression.replaceWithCallTo(it)
+                jvm8builtInReplacements[parentClass to functionName]?.let { replacement ->
+                    return expression.replaceWithCallTo(replacement)
                 }
 
                 return expression
@@ -46,7 +46,7 @@ class JvmStandardLibraryBuiltInsLowering(val context: JvmBackendContext) : FileL
         irFile.transformChildren(transformer, null)
     }
 
-    private val Jvm8builtInReplacements = mapOf(
+    private val jvm8builtInReplacements = mapOf(
         ("kotlin.UInt" to "compareTo") to context.ir.symbols.compareUnsignedInt,
         ("kotlin.UInt" to "div") to context.ir.symbols.divideUnsignedInt,
         ("kotlin.UInt" to "rem") to context.ir.symbols.remainderUnsignedInt,
@@ -59,7 +59,8 @@ class JvmStandardLibraryBuiltInsLowering(val context: JvmBackendContext) : FileL
 
     // Originals are so far only instance methods, and the replacements are
     // statics, so we copy dispatch receivers to a value argument if needed.
-    private fun IrCall.replaceWithCallTo(replacement: IrSimpleFunctionSymbol) =
+    // If we can't coerce arguments to required types, keep original expression (see below).
+    private fun IrCall.replaceWithCallTo(replacement: IrSimpleFunctionSymbol): IrCall =
         IrCallImpl.fromSymbolOwner(
             startOffset,
             endOffset,
@@ -68,23 +69,30 @@ class JvmStandardLibraryBuiltInsLowering(val context: JvmBackendContext) : FileL
         ).also { newCall ->
             var valueArgumentOffset = 0
             this.dispatchReceiver?.let {
-                newCall.putValueArgument(valueArgumentOffset, it.coerceTo(replacement.owner.valueParameters[valueArgumentOffset].type))
+                val coercedDispatchReceiver = it.coerceIfPossible(replacement.owner.valueParameters[valueArgumentOffset].type)
+                    ?: return this@replaceWithCallTo
+                newCall.putValueArgument(valueArgumentOffset, coercedDispatchReceiver)
                 valueArgumentOffset++
             }
-            (0 until valueArgumentsCount).forEach {
-                newCall.putValueArgument(it + valueArgumentOffset, getValueArgument(it)!!.coerceTo(replacement.owner.valueParameters[it].type))
+            for (index in 0 until valueArgumentsCount) {
+                val coercedValueArgument = getValueArgument(index)!!.coerceIfPossible(replacement.owner.valueParameters[index].type)
+                    ?: return this@replaceWithCallTo
+                newCall.putValueArgument(index + valueArgumentOffset, coercedValueArgument)
             }
         }
 
-    private fun IrExpression.coerceTo(target: IrType): IrExpression =
-        IrCallImpl.fromSymbolOwner(
-            startOffset,
-            endOffset,
-            target,
-            context.ir.symbols.unsafeCoerceIntrinsic
-        ).also { call ->
-            call.putTypeArgument(0, type)
-            call.putTypeArgument(1, target)
-            call.putValueArgument(0, this)
-        }
+    private fun IrExpression.coerceIfPossible(toType: IrType): IrExpression? {
+        // TODO maybe UnsafeCoerce could handle types with different, but coercible underlying representations.
+        // See KT-43286 and related tests for details.
+        val fromJvmType = context.typeMapper.mapType(type)
+        val toJvmType = context.typeMapper.mapType(toType)
+        return if (fromJvmType != toJvmType)
+            null
+        else
+            IrCallImpl.fromSymbolOwner(startOffset, endOffset, toType, context.ir.symbols.unsafeCoerceIntrinsic).also { call ->
+                call.putTypeArgument(0, type)
+                call.putTypeArgument(1, toType)
+                call.putValueArgument(0, this)
+            }
+    }
 }
