@@ -5,50 +5,37 @@
       <element id="directory" name="lib">
         <element id="archive" name="cidr-cocoa.jar">
           <element id="module-output" name="intellij.cidr.cocoa" />
-          <element id="module-source" name="intellij.cidr.cocoa" />
         </element>
         <element id="archive" name="cidr-cocoa-common.jar">
           <element id="module-output" name="intellij.cidr.cocoaCommon" />
-          <element id="module-source" name="intellij.cidr.cocoaCommon" />
         </element>
         <element id="archive" name="cidr-xcode-model-core.jar">
           <element id="module-output" name="intellij.cidr.xcodeModel.core" />
-          <element id="module-source" name="intellij.cidr.xcodeModel.core" />
         </element>
         <element id="archive" name="kmm.jar">
           <element id="module-output" name="kotlin-ultimate.kmm-plugin" />
-          <element id="module-source" name="kotlin-ultimate.kmm-plugin" />
           <element id="module-output" name="kotlin-ultimate.common-noncidr-native" />
-          <element id="module-source" name="kotlin-ultimate.common-noncidr-native" />
           <element id="module-output" name="kotlin-ultimate.common-cidr-mobile" />
-          <element id="module-source" name="kotlin-ultimate.common-cidr-mobile" />
           <element id="module-output" name="kotlin-ultimate.common-native" />
-          <element id="module-source" name="kotlin-ultimate.common-native" />
           <element id="module-output" name="kotlin.project-wizard.core" />
         </element>
         <element id="archive" name="cidr-core.jar">
           <element id="module-output" name="intellij.cidr.core" />
-          <element id="module-source" name="intellij.cidr.core" />
         </element>
         <element id="archive" name="cidr-debugger.jar">
           <element id="module-output" name="intellij.cidr.debugger" />
-          <element id="module-source" name="intellij.cidr.debugger" />
         </element>
         <element id="archive" name="cidr-util.jar">
           <element id="module-output" name="intellij.cidr.util" />
-          <element id="module-source" name="intellij.cidr.util" />
         </element>
         <element id="archive" name="cidr-debugger-backend.jar">
           <element id="module-output" name="intellij.cidr.debugger.backend" />
-          <element id="module-source" name="intellij.cidr.debugger.backend" />
         </element>
         <element id="archive" name="apple-sdk.jar">
           <element id="module-output" name="intellij.apple.sdk" />
-          <element id="module-source" name="intellij.apple.sdk" />
         </element>
         <element id="archive" name="cidr-execution.jar">
           <element id="module-output" name="intellij.cidr.execution" />
-          <element id="module-source" name="intellij.cidr.execution" />
         </element>
       </element>
       <element id="directory" name="bin">
