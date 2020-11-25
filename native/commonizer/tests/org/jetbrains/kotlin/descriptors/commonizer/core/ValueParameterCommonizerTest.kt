@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestValueParameter.Companion.areEqual
 import org.jetbrains.kotlin.descriptors.commonizer.core.TypeCommonizerTest.Companion.areEqual
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
+import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS_CACHE
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.name.Name
 import org.junit.Test
@@ -141,10 +141,10 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
         mockValueParam("kotlin.String", declaresDefaultValue = true)
     )
 
-    override fun createCommonizer() = ValueParameterCommonizer(EMPTY_CLASSIFIERS_CACHE)
+    override fun createCommonizer() = ValueParameterCommonizer(MOCK_CLASSIFIERS_CACHE)
 
     override fun isEqual(a: CirValueParameter?, b: CirValueParameter?) =
-        (a === b) || (a != null && b != null && areEqual(EMPTY_CLASSIFIERS_CACHE, a, b))
+        (a === b) || (a != null && b != null && areEqual(MOCK_CLASSIFIERS_CACHE, a, b))
 
     internal companion object {
         fun mockValueParam(

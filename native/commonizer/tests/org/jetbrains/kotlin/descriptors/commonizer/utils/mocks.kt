@@ -14,11 +14,13 @@ import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.builder.*
+import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassNode
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTypeAliasNode
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -121,9 +123,32 @@ private fun createPackageFragmentForClassifier(classifierFqName: FqName): Packag
         override fun toString() = "package $name"
     }
 
-internal val EMPTY_CLASSIFIERS_CACHE = object : CirClassifiersCache {
-    override fun classNode(classId: ClassId): CirClassNode? = null
-    override fun typeAliasNode(typeAliasId: ClassId): CirTypeAliasNode? = null
+internal val MOCK_CLASSIFIERS_CACHE = object : CirClassifiersCache {
+    private val MOCK_CLASS_NODE = CirClassNode(
+        CommonizedGroup(0),
+        LockBasedStorageManager.NO_LOCKS.createNullableLazyValue {
+            CirClassFactory.create(
+                annotations = emptyList(),
+                name = Name.identifier("kotlin.Any"),
+                typeParameters = emptyList(),
+                visibility = DescriptorVisibilities.PUBLIC,
+                modality = Modality.OPEN,
+                kind = ClassKind.CLASS,
+                companion = null,
+                isCompanion = false,
+                isData = false,
+                isInline = false,
+                isInner = false,
+                isExternal = false
+            )
+        },
+        ClassId.fromString("kotlin/Any")
+    )
+
+    override fun isExportedForwardDeclaration(classId: ClassId) = false
+    override fun classNode(classId: ClassId) = MOCK_CLASS_NODE
+    override fun typeAliasNode(typeAliasId: ClassId) = error("This method should not be called")
+    override fun addExportedForwardDeclaration(classId: ClassId) = error("This method should not be called")
     override fun addClassNode(classId: ClassId, node: CirClassNode) = error("This method should not be called")
     override fun addTypeAliasNode(typeAliasId: ClassId, node: CirTypeAliasNode) = error("This method should not be called")
 }
@@ -150,5 +175,5 @@ internal class MockModulesProvider : ModulesProvider {
     override fun loadModuleInfos() = moduleInfos
     override fun loadModules() = modules
 
-    private fun fakeModuleInfo(name: String) = ModuleInfo(name, File("/tmp/commonizer/mocks/$name"))
+    private fun fakeModuleInfo(name: String) = ModuleInfo(name, File("/tmp/commonizer/mocks/$name"), null)
 }

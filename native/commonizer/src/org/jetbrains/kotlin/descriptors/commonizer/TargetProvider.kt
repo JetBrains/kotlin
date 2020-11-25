@@ -28,7 +28,16 @@ interface BuiltInsProvider {
 }
 
 interface ModulesProvider {
-    class ModuleInfo(val name: String, val originalLocation: File)
+    class ModuleInfo(
+        val name: String,
+        val originalLocation: File,
+        val cInteropAttributes: CInteropModuleAttributes?
+    )
+
+    class CInteropModuleAttributes(
+        val mainPackageFqName: String,
+        val exportForwardDeclarations: Collection<String>
+    )
 
     fun loadModuleInfos(): Map<String, ModuleInfo>
     fun loadModules(): Map<String, ModuleDescriptor>

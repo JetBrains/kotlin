@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestValueParameter.Companion.areEqual
-import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
+import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS_CACHE
 import org.junit.Test
 
 class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValueParameter>, List<CirValueParameter>>() {
@@ -150,7 +150,7 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
         )
     )
 
-    override fun createCommonizer() = ValueParameterListCommonizer(EMPTY_CLASSIFIERS_CACHE)
+    override fun createCommonizer() = ValueParameterListCommonizer(MOCK_CLASSIFIERS_CACHE)
 
     override fun isEqual(a: List<CirValueParameter>?, b: List<CirValueParameter>?): Boolean {
         if (a === b)
@@ -159,7 +159,7 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
             return false
 
         for (i in a.indices) {
-            if (!areEqual(EMPTY_CLASSIFIERS_CACHE, a[i], b[i]))
+            if (!areEqual(MOCK_CLASSIFIERS_CACHE, a[i], b[i]))
                 return false
         }
 

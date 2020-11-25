@@ -46,7 +46,8 @@ internal val FqName.isUnderKotlinNativeSyntheticPackages: Boolean
 internal val FqName.isUnderDarwinPackage: Boolean
     get() = asString().hasPrefix(DARWIN_PACKAGE)
 
-private fun FqName.hasAnyPrefix(prefixes: List<String>): Boolean =
+@Suppress("NOTHING_TO_INLINE")
+private inline fun FqName.hasAnyPrefix(prefixes: List<String>): Boolean =
     asString().let { fqName -> prefixes.any(fqName::hasPrefix) }
 
 private fun String.hasPrefix(prefix: String): Boolean {

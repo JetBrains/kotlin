@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
+import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.CInteropModuleAttributes
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.utils.NativeFactories
 import org.jetbrains.kotlin.descriptors.commonizer.utils.createKotlinNativeForwardDeclarationsModule
@@ -36,10 +37,20 @@ internal class NativeDistributionModulesProvider(
 
     override fun loadModuleInfos(): Map<String, ModuleInfo> {
         return libraries.platformLibs.associate { library ->
-            val name = library.manifestData.uniqueName
+            val manifestData = library.manifestData
+
+            val name = manifestData.uniqueName
             val location = File(library.library.libraryFile.path)
 
-            name to ModuleInfo(name, location)
+            val cInteropAttributes = if (manifestData.isInterop) {
+                val packageFqName = manifestData.packageFqName
+                    ?: manifestData.shortName?.let { "platform.$it" }
+                    ?: manifestData.uniqueName.substringAfter("platform.").let { "platform.$it" }
+
+                CInteropModuleAttributes(packageFqName, manifestData.exportForwardDeclarations)
+            } else null
+
+            name to ModuleInfo(name, location, cInteropAttributes)
         }
     }
 
