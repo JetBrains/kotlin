@@ -39,9 +39,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.UN
 
 object SERIALIZABLE_PLUGIN_ORIGIN : IrDeclarationOriginImpl("SERIALIZER", true)
 
-// TODO: use in places where elements need to have ACC_SYNTHETIC on JVM
-object SERIALIZABLE_SYNTHETIC_ORIGIN : IrDeclarationOriginImpl("SERIALIZER")
-
 open class SerializerIrGenerator(
     val irClass: IrClass,
     final override val compilerContext: SerializationPluginContext,

@@ -68,7 +68,7 @@ class SerialInfoImplJvmIrGenerator(
             generateSimplePropertyWithBackingField(property.descriptor, irClass, Name.identifier("_" + property.name.asString()))
 
             val getter = property.getter!!
-            getter.origin = SERIALIZABLE_SYNTHETIC_ORIGIN
+            getter.origin = SERIALIZABLE_PLUGIN_ORIGIN
             // Add JvmName annotation to property getters to force the resulting JVM method name for 'x' be 'x', instead of 'getX',
             // and to avoid having useless bridges for it generated in BridgeLowering.
             // Unfortunately, this results in an extra `@JvmName` annotation in the bytecode, but it shouldn't matter very much.
@@ -76,7 +76,7 @@ class SerialInfoImplJvmIrGenerator(
 
             val field = property.backingField!!
             field.visibility = DescriptorVisibilities.PRIVATE
-            field.origin = SERIALIZABLE_SYNTHETIC_ORIGIN
+            field.origin = SERIALIZABLE_PLUGIN_ORIGIN
 
             val parameter = ctor.addValueParameter(property.name.asString(), getter.returnType)
             ctorBody.statements += IrSetFieldImpl(
