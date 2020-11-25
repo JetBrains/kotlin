@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -14,6 +15,8 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_RECORD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.isJvmRecord
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
@@ -62,6 +65,15 @@ object JvmRecordApplicabilityChecker : DeclarationChecker {
                 context.trace.report(ErrorsJvm.JVM_RECORD_NOT_LAST_VARARG_PARAMETER.on(parameter))
                 return
             }
+        }
+
+        for (supertype in descriptor.typeConstructor.supertypes) {
+            val classDescriptor = supertype.constructor.declarationDescriptor as? ClassDescriptor ?: continue
+            if (classDescriptor.kind == ClassKind.INTERFACE || classDescriptor.fqNameSafe == JAVA_LANG_RECORD_FQ_NAME) continue
+
+            val reportSupertypeOn = declaration.nameIdentifier ?: declaration
+            context.trace.report(ErrorsJvm.JVM_RECORD_EXTENDS_CLASS.on(reportSupertypeOn, supertype))
+            return
         }
     }
 }
