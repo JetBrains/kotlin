@@ -33,7 +33,7 @@ class NativeDep extends DefaultTask {
     KonanPropertiesLoader konanPropertiesLoader = null
 
     final File getBaseOutDir() {
-        final File res = rootProject.project(":kotlin-native").ext.dependenciesDir
+        final File res = project.rootProject.project(":kotlin-native").ext.dependenciesDir
         res.mkdirs()
         return res
     }
