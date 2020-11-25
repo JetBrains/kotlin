@@ -1,3 +1,6 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: PROPERTY_REFERENCES
+
 class Delegate {
     operator fun getValue(t: Any?, p: Any): String = "OK"
 }
