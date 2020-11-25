@@ -3,16 +3,20 @@
  * that can be found in the LICENSE file.
  */
 @file:OptIn(ExperimentalCli::class)
+@file:Suppress("UNUSED_VARIABLE")
+
 package kotlinx.cli
 
-import kotlinx.cli.ArgParser
-import kotlinx.cli.ArgType
-import kotlinx.cli.ExperimentalCli
-import kotlinx.cli.Subcommand
-import kotlin.math.exp
 import kotlin.test.*
 
 class HelpTests {
+    enum class Renders {
+        TEXT,
+        HTML,
+        TEAMCITY,
+        STATISTICS,
+        METRICS
+    }
     @Test
     fun testHelpMessage() {
         val argParser = ArgParser("test")
@@ -23,8 +27,10 @@ class HelpTests {
         val epsValue by argParser.option(ArgType.Double, "eps", "e", "Meaningful performance changes").default(1.0)
         val useShortForm by argParser.option(ArgType.Boolean, "short", "s",
                 "Show short version of report").default(false)
-        val renders by argParser.option(ArgType.Choice(listOf("text", "html", "teamcity", "statistics", "metrics")),
+        val renders by argParser.option(ArgType.Choice(listOf("text", "html", "teamcity", "statistics", "metrics"), { it }),
                 shortName = "r", description = "Renders for showing information").multiple().default(listOf("text"))
+        val sources by argParser.option(ArgType.Choice<DataSourceEnum>(),
+                "sources", "ds", "Data sources").multiple().default(listOf(DataSourceEnum.PRODUCTION))
         val user by argParser.option(ArgType.String, shortName = "u", description = "User access information for authorization")
         argParser.parse(arrayOf("main.txt"))
         val helpOutput = argParser.makeUsage().trimIndent()
@@ -40,32 +46,46 @@ Options:
     --eps, -e [$epsDefault] -> Meaningful performance changes { Double }
     --short, -s [false] -> Show short version of report 
     --renders, -r [text] -> Renders for showing information { Value should be one of [text, html, teamcity, statistics, metrics] }
+    --sources, -ds [production] -> Data sources { Value should be one of [local, staging, production] }
     --user, -u -> User access information for authorization { String }
     --help, -h -> Usage info 
         """.trimIndent()
         assertEquals(expectedOutput, helpOutput)
     }
 
+    enum class MetricType {
+        SAMPLES,
+        GEOMEAN;
+
+        override fun toString() = name.toLowerCase()
+    }
+
     @Test
     fun testHelpForSubcommands() {
         class Summary: Subcommand("summary", "Get summary information") {
-            val exec by option(ArgType.Choice(listOf("samples", "geomean")),
-                    description = "Execution time way of calculation").default("geomean")
+            val exec by option(ArgType.Choice<MetricType>(),
+                    description = "Execution time way of calculation").default(MetricType.GEOMEAN)
             val execSamples by option(ArgType.String, "exec-samples",
                     description = "Samples used for execution time metric (value 'all' allows use all samples)").delimiter(",")
             val execNormalize by option(ArgType.String, "exec-normalize",
                     description = "File with golden results which should be used for normalization")
-            val compile by option(ArgType.Choice(listOf("samples", "geomean")),
-                    description = "Compile time way of calculation").default("geomean")
+            val compile by option(ArgType.Choice<MetricType>(),
+                    description = "Compile time way of calculation").default(MetricType.GEOMEAN)
             val compileSamples by option(ArgType.String, "compile-samples",
                     description = "Samples used for compile time metric (value 'all' allows use all samples)").delimiter(",")
             val compileNormalize by option(ArgType.String, "compile-normalize",
                     description = "File with golden results which should be used for normalization")
-            val codesize by option(ArgType.Choice(listOf("samples", "geomean")),
-                    description = "Code size way of calculation").default("geomean")
+            val codesize by option(ArgType.Choice<MetricType>(),
+                    description = "Code size way of calculation").default(MetricType.GEOMEAN)
             val codesizeSamples by option(ArgType.String, "codesize-samples",
                     description = "Samples used for code size metric (value 'all' allows use all samples)").delimiter(",")
             val codesizeNormalize by option(ArgType.String, "codesize-normalize",
+                    description = "File with golden results which should be used for normalization")
+            val source by option(ArgType.Choice<DataSourceEnum>(),
+                    description = "Data source").default(DataSourceEnum.PRODUCTION)
+            val sourceSamples by option(ArgType.String, "source-samples",
+                    description = "Samples used for code size metric (value 'all' allows use all samples)").delimiter(",")
+            val sourceNormalize by option(ArgType.String, "source-normalize",
                     description = "File with golden results which should be used for normalization")
             val user by option(ArgType.String, shortName = "u", description = "User access information for authorization")
             val mainReport by argument(ArgType.String, description = "Main report for analysis")
@@ -94,6 +114,9 @@ Options:
     --codesize [geomean] -> Code size way of calculation { Value should be one of [samples, geomean] }
     --codesize-samples -> Samples used for code size metric (value 'all' allows use all samples) { String }
     --codesize-normalize -> File with golden results which should be used for normalization { String }
+    --source [production] -> Data source { Value should be one of [local, staging, production] }
+    --source-samples -> Samples used for code size metric (value 'all' allows use all samples) { String }
+    --source-normalize -> File with golden results which should be used for normalization { String }
     --user, -u -> User access information for authorization { String }
     --help, -h -> Usage info 
 """.trimIndent()
