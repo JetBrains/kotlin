@@ -22,10 +22,12 @@ class Test : J {
     <this>.#<$$delegate_0>.takeFlexible(x = x)
   }
 
+  @NotNull
   override fun returnNotNull(): @EnhancedNullability String {
     return <this>.#<$$delegate_0>.returnNotNull()
   }
 
+  @Nullable
   override fun returnNullable(): @FlexibleNullability String? {
     return <this>.#<$$delegate_0>.returnNullable()
   }

@@ -3,7 +3,7 @@ fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType @Exten
   return flow<R>(block = local suspend fun FlowCollector<R>.<anonymous>() {
     val collector: FlowCollector<ErrorType> = <this>
     flowScope<Unit>(block = local suspend fun CoroutineScope.<anonymous>() {
-      block.invoke(p1 = <this>, p2 = collector)
+      block.invoke(p1 = <this>, p2 = collector /*as FlowCollector<ErrorType> */)
     }
 )
   }
@@ -12,7 +12,7 @@ fun <R : Any?> scopedFlow(@BuilderInference block: @ExtensionFunctionType @Exten
 
 fun <T : Any?> Flow<T>.onCompletion(action: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction2<FlowCollector<T>, Throwable?, Unit>): Flow<T> {
   return unsafeFlow<T>(block = local suspend fun FlowCollector<T>.<anonymous>() {
-    val safeCollector: SafeCollector<ErrorType> = SafeCollector<ErrorType>(collector = <this>)
+    val safeCollector: SafeCollector<ErrorType> = SafeCollector<T>(collector = <this>)
     safeCollector.invokeSafely<T>(action = action)
   }
 )
