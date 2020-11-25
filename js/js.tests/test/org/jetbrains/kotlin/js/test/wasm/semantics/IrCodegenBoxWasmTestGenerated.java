@@ -7440,6 +7440,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testAllFilesPresentInPropertyDelegation() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/propertyDelegation"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
+
+            @TestMetadata("kt42933.kt")
+            public void testKt42933() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter")

@@ -16555,6 +16555,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testKt27070() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070.kt");
             }
+
+            @TestMetadata("kt42933.kt")
+            public void testKt42933() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter")
