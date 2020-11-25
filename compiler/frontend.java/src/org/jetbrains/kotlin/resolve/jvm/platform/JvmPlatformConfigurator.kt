@@ -110,6 +110,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<JvmPlatformOverloadsSpecificityComparator>()
         container.useImpl<JvmDefaultSuperCallChecker>()
         container.useImpl<JvmSamConversionOracle>()
+        container.useImpl<JvmAdditionalClassPartsProvider>()
         container.useInstance(FunctionWithBigAritySupport.LanguageVersionDependent)
         container.useInstance(GenericArrayClassLiteralSupport.Enabled)
         container.useInstance(JavaActualAnnotationArgumentExtractor())

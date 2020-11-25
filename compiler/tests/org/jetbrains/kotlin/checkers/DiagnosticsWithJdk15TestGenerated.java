@@ -50,6 +50,11 @@ public class DiagnosticsWithJdk15TestGenerated extends AbstractDiagnosticsWithJd
             runTest("compiler/testData/diagnostics/testsWithJava15/jvmRecord/disabledFeature.kt");
         }
 
+        @TestMetadata("jvmRecordDescriptorStructure.kt")
+        public void testJvmRecordDescriptorStructure() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJava15/jvmRecord/jvmRecordDescriptorStructure.kt");
+        }
+
         @TestMetadata("simpleRecords.kt")
         public void testSimpleRecords() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJava15/jvmRecord/simpleRecords.kt");
