@@ -15,11 +15,16 @@
  */
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 
 abstract class AbstractDiagnosticsWithJdk15Test : AbstractDiagnosticsTest() {
 
     override fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
         return TestJdkKind.FULL_JDK_15
+    }
+
+    override fun extractConfigurationKind(files: List<TestFile>): ConfigurationKind {
+        return ConfigurationKind.ALL
     }
 }

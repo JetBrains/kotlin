@@ -115,6 +115,11 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtDeclaration> JVM_DEFAULT_THROUGH_INHERITANCE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<PsiElement> USAGE_OF_JVM_DEFAULT_THROUGH_SUPER_CALL = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> LOCAL_JVM_RECORD = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> JVM_RECORD_NOT_VAL_PARAMETER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> JVM_RECORD_NOT_LAST_VARARG_PARAMETER = DiagnosticFactory0.create(ERROR);
+
     DiagnosticFactory0<KtDeclaration> NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<KtAnnotationEntry> EXPLICIT_METADATA_IS_DISALLOWED = DiagnosticFactory0.create(ERROR);

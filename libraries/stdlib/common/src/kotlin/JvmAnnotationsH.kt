@@ -114,6 +114,14 @@ public expect annotation class JvmWildcard()
 public expect annotation class JvmInline()
 
 /**
+ * Instructs compiler to mark the class as a record and generate relevant toString/equals/hashCode methods
+ */
+@Target(AnnotationTarget.CLASS)
+@MustBeDocumented
+@OptionalExpectation
+public expect annotation class JvmRecord
+
+/**
  * Marks the JVM backing field of the annotated property as `volatile`, meaning that writes to this field
  * are immediately made visible to other threads.
  */
@@ -158,3 +166,4 @@ public expect annotation class Synchronized()
 @SinceKotlin("1.2")
 @OptionalExpectation
 internal expect annotation class JvmPackageName(val name: String)
+
