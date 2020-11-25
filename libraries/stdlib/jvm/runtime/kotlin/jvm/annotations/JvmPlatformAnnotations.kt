@@ -145,3 +145,11 @@ public actual annotation class JvmWildcard
 @MustBeDocumented
 @SinceKotlin("1.5")
 public actual annotation class JvmInline
+
+/**
+ * Instructs compiler to mark the class as a record and generate relevant toString/equals/hashCode methods
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+public actual annotation class JvmRecord

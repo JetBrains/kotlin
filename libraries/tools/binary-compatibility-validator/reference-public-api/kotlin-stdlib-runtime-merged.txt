@@ -3250,6 +3250,9 @@ public abstract interface annotation class kotlin/jvm/JvmName : java/lang/annota
 public abstract interface annotation class kotlin/jvm/JvmOverloads : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/jvm/JvmRecord : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/jvm/JvmStatic : java/lang/annotation/Annotation {
 }
 

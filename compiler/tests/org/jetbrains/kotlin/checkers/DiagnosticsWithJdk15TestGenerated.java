@@ -28,8 +28,26 @@ public class DiagnosticsWithJdk15TestGenerated extends AbstractDiagnosticsWithJd
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava15"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @TestMetadata("simpleRecords.kt")
-    public void testSimpleRecords() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithJava15/simpleRecords.kt");
+    @TestMetadata("compiler/testData/diagnostics/testsWithJava15/jvmRecord")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JvmRecord extends AbstractDiagnosticsWithJdk15Test {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJvmRecord() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJava15/jvmRecord"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("diagnostics.kt")
+        public void testDiagnostics() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJava15/jvmRecord/diagnostics.kt");
+        }
+
+        @TestMetadata("disabledFeature.kt")
+        public void testDisabledFeature() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJava15/jvmRecord/disabledFeature.kt");
+        }
     }
 }
