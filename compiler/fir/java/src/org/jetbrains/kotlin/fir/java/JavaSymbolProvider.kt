@@ -50,7 +50,7 @@ class JavaSymbolProvider(
     private val searchScope: GlobalSearchScope,
 ) : FirSymbolProvider(session) {
     companion object {
-        private val VALUE_METHOD_NAME = Name.identifier("value")
+        internal val VALUE_METHOD_NAME = Name.identifier("value")
     }
 
     private val classCache = SymbolProviderCache<ClassId, FirRegularClassSymbol>()
