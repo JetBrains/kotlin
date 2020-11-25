@@ -81,8 +81,11 @@ abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase
 
     private fun lazinessModeByFileText(): LightClassLazinessChecker.Mode {
         return testDataFile().readText().run {
-            val argument = substringAfter("LAZINESS:", "").substringBefore(" ")
-            LightClassLazinessChecker.Mode.values().firstOrNull { it.name == argument } ?: LightClassLazinessChecker.Mode.AllChecks
+            val argument = substringAfter("LAZINESS:", "").substringBefore('\n').substringBefore(' ')
+            if (argument == "") LightClassLazinessChecker.Mode.AllChecks
+            else requireNotNull(LightClassLazinessChecker.Mode.values().firstOrNull { it.name == argument }) {
+                "Invalid LAZINESS testdata parameter $argument"
+            }
         }
     }
 
