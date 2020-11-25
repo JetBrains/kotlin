@@ -19,7 +19,6 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.testFramework.PlatformTestCase
 import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
-import junit.framework.TestResult
 import org.jetbrains.kotlin.idea.configuration.KotlinWithLibraryConfigurator.FileState
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase.*
@@ -36,11 +35,6 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         super.setUp()
 
         VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
-    }
-
-    override fun run(result: TestResult?) {
-        // TODO: [VD] temporary ignore/disable these tests
-        // super.run(result)
     }
 
     @Throws(Exception::class)
@@ -111,9 +105,10 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         get() = ModuleManager.getInstance(myProject).modules
 
     override fun getProjectDirOrFile(): Path {
-        val projectFilePath = projectRoot + "/projectFile.ipr"
-        TestCase.assertTrue("Project file should exists " + projectFilePath, File(projectFilePath).exists())
-        return File(projectFilePath).toPath()
+        val projectFilePath = "$projectRoot/projectFile.ipr"
+        val file = File(projectFilePath).absoluteFile
+        TestCase.assertTrue("Project file should exists $projectFilePath", file.exists())
+        return file.toPath()
     }
 
     override fun doCreateProject(projectFile: Path): Project {

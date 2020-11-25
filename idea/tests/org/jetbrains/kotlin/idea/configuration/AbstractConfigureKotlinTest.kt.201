@@ -105,9 +105,10 @@ abstract class AbstractConfigureKotlinTest : PlatformTestCase() {
         get() = ModuleManager.getInstance(myProject).modules
 
     override fun getProjectDirOrFile(): Path {
-        val projectFilePath = projectRoot + "/projectFile.ipr"
-        TestCase.assertTrue("Project file should exists " + projectFilePath, File(projectFilePath).exists())
-        return File(projectFilePath).toPath()
+        val projectFilePath = "$projectRoot/projectFile.ipr"
+        val file = File(projectFilePath).absoluteFile
+        TestCase.assertTrue("Project file should exists $projectFilePath", file.exists())
+        return file.toPath()
     }
 
     override fun doCreateProject(projectFile: Path): Project {
