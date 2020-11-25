@@ -120,6 +120,7 @@ public interface ErrorsJvm {
     DiagnosticFactory0<PsiElement> JVM_RECORD_NOT_VAL_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JVM_RECORD_NOT_LAST_VARARG_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, KotlinType> JVM_RECORD_EXTENDS_CLASS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> JVM_RECORD_REQUIRES_JDK15 = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtDeclaration> NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
 

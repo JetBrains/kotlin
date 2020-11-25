@@ -201,6 +201,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/explicitMetadata.kt");
         }
 
+        @TestMetadata("jvmRecordWithoutJdk15.kt")
+        public void testJvmRecordWithoutJdk15() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmRecordWithoutJdk15.kt");
+        }
+
         @TestMetadata("JvmSyntheticOnDelegate.kt")
         public void testJvmSyntheticOnDelegate() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/JvmSyntheticOnDelegate.kt");

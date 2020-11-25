@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_RECORD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.isJvmRecord
@@ -28,6 +30,11 @@ object JvmRecordApplicabilityChecker : DeclarationChecker {
         val reportOn =
             declaration.annotationEntries.firstOrNull { it.shortName == JVM_RECORD_ANNOTATION_FQ_NAME.shortName() }
                 ?: declaration
+
+        if (context.moduleDescriptor.resolveTopLevelClass(JAVA_LANG_RECORD_FQ_NAME, NoLookupLocation.FOR_DEFAULT_IMPORTS) == null) {
+            context.trace.report(ErrorsJvm.JVM_RECORD_REQUIRES_JDK15.on(reportOn))
+            return
+        }
 
         if (!context.languageVersionSettings.supportsFeature(LanguageFeature.JvmRecordSupport)) {
             context.trace.report(
