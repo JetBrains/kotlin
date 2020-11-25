@@ -20,13 +20,13 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/noarg/noarg-cli/testData/bytecodeListing")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class BytecodeListingTestForNoArgGenerated extends AbstractBytecodeListingTestForNoArg {
+public class IrBytecodeListingTestForNoArgGenerated extends AbstractIrBytecodeListingTestForNoArg {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
     public void testAllFilesPresentInBytecodeListing() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/noarg-cli/testData/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/noarg-cli/testData/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @TestMetadata("annoOnNotClass.kt")

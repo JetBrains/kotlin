@@ -78,17 +78,17 @@ import org.jetbrains.kotlin.idea.editor.AbstractMultiLineStringIndentTest
 import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.AbstractSessionsInvalidationTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
 import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractMemberScopeByFqNameTest
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
@@ -167,12 +167,12 @@ import org.jetbrains.kotlin.nj2k.inference.common.AbstractCommonConstraintCollec
 import org.jetbrains.kotlin.nj2k.inference.mutability.AbstractMutabilityInferenceTest
 import org.jetbrains.kotlin.nj2k.inference.nullability.AbstractNullabilityInferenceTest
 import org.jetbrains.kotlin.noarg.*
+import org.jetbrains.kotlin.pacelize.ide.test.AbstractParcelizeCheckerTest
+import org.jetbrains.kotlin.pacelize.ide.test.AbstractParcelizeQuickFixTest
 import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeBoxTest
 import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeBytecodeListingTest
 import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeIrBoxTest
 import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeIrBytecodeListingTest
-import org.jetbrains.kotlin.pacelize.ide.test.AbstractParcelizeCheckerTest
-import org.jetbrains.kotlin.pacelize.ide.test.AbstractParcelizeQuickFixTest
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
@@ -1666,12 +1666,14 @@ fun main(args: Array<String>) {
             testClass<AbstractDiagnosticsTestForNoArg> { model("diagnostics", extension = "kt") }
 
             testClass<AbstractBytecodeListingTestForNoArg> {
-                model("bytecodeListing", extension = "kt")
+                model("bytecodeListing", extension = "kt", targetBackend = TargetBackend.JVM)
+            }
+            testClass<AbstractIrBytecodeListingTestForNoArg> {
+                model("bytecodeListing", extension = "kt", targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractBlackBoxCodegenTestForNoArg> {
-                model("box", targetBackend = TargetBackend.JVM)
-            }
+            testClass<AbstractBlackBoxCodegenTestForNoArg> { model("box", targetBackend = TargetBackend.JVM) }
+            testClass<AbstractIrBlackBoxCodegenTestForNoArg> { model("box", targetBackend = TargetBackend.JVM_IR) }
         }
 
         testGroup("plugins/sam-with-receiver/sam-with-receiver-cli/test", "plugins/sam-with-receiver/sam-with-receiver-cli/testData") {

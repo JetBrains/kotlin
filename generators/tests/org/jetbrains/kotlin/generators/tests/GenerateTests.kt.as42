@@ -1114,12 +1114,14 @@ fun main(args: Array<String>) {
         testClass<AbstractDiagnosticsTestForNoArg> { model("diagnostics", extension = "kt") }
 
         testClass<AbstractBytecodeListingTestForNoArg> {
-            model("bytecodeListing", extension = "kt")
+            model("bytecodeListing", extension = "kt", targetBackend = TargetBackend.JVM)
+        }
+        testClass<AbstractIrBytecodeListingTestForNoArg> {
+            model("bytecodeListing", extension = "kt", targetBackend = TargetBackend.JVM_IR)
         }
 
-        testClass<AbstractBlackBoxCodegenTestForNoArg> {
-            model("box", targetBackend = TargetBackend.JVM)
-        }
+        testClass<AbstractBlackBoxCodegenTestForNoArg> { model("box", targetBackend = TargetBackend.JVM) }
+        testClass<AbstractIrBlackBoxCodegenTestForNoArg> { model("box", targetBackend = TargetBackend.JVM_IR) }
     }
 
     testGroup("plugins/sam-with-receiver/sam-with-receiver-cli/test", "plugins/sam-with-receiver/sam-with-receiver-cli/testData") {
