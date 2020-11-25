@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.diagnostics
 import org.jetbrains.kotlin.diagnostics.PositioningStrategies
 
 object SourceElementPositioningStrategies {
-    internal val DEFAULT = SourceElementPositioningStrategy(
+    val DEFAULT = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.DEFAULT,
         PositioningStrategies.DEFAULT
     )

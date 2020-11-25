@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 
 object LightTreePositioningStrategies {
-    internal val DEFAULT = object : LightTreePositioningStrategy() {
+    val DEFAULT = object : LightTreePositioningStrategy() {
         override fun mark(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
             when (node.tokenType) {
                 KtNodeTypes.OBJECT_DECLARATION -> {

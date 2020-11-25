@@ -27,10 +27,6 @@ open class LightTreePositioningStrategy {
     open fun isValid(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): Boolean {
         return !hasSyntaxErrors(node, tree)
     }
-
-    companion object {
-        val DEFAULT = LightTreePositioningStrategies.DEFAULT
-    }
 }
 
 fun markElement(node: LighterASTNode, tree: FlyweightCapableTreeStructure<LighterASTNode>): List<TextRange> {
