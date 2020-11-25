@@ -6,10 +6,10 @@
 {
   "note": "May https://vega.github.io/vega/docs/ be with you",
   "$schema": "https://vega.github.io/schema/vega/v4.3.0.json",
-  "description": "TestData highlight",
-  "title": "TestData highlight",
+  "description": "TestData completion-basic-charFilter",
+  "title": "TestData completion-basic-charFilter",
   "width": 800,
-  "height": 400,
+  "height": 500,
   "padding": 5,
   "autosize": {"type": "pad", "resize": true},
   "signals": [
@@ -37,29 +37,6 @@
       "on": [
         {
           "events": "@legendSymbol:click, @legendLabel:click",
-          "comment": "note: here `datum` is `selected` data set",
-          "update": "{value: datum.value}",
-          "force": true
-        }
-      ]
-    },
-    {
-      "name": "branchShift",
-      "value": false,
-      "on": [
-        {
-          "events": "@branchLegendSymbol:click, @branchLegendLabel:click",
-          "update": "event.shiftKey",
-          "force": true
-        }
-      ]
-    },
-    {
-      "name": "branchClicked",
-      "value": null,
-      "on": [
-        {
-          "events": "@branchLegendSymbol:click, @branchLegendLabel:click",
           "comment": "note: here `datum` is `selected` data set",
           "update": "{value: datum.value}",
           "force": true
@@ -227,7 +204,7 @@
                      ]
                    }
                 },
-                {"term": {"benchmark.keyword": "highlight"}},
+                {"term": {"benchmark.keyword": "completion-basic-charFilter"}},
                 {"range": {"buildTimestamp": {"%timefilter%": true}}}
               ]
             }
@@ -236,18 +213,18 @@
             "benchmark": {
               "terms": {
                 "field": "benchmark.keyword",
-                "size": 500
+                "size": 50
               },
               "aggs": {
                 "name": {
                   "terms": {
                     "field": "name.keyword",
-                    "size": 500
+                    "size": 50
                   },
                   "aggs": {
                     "values": {
                       "auto_date_histogram": {
-                          "buckets": 500,
+                          "buckets": 30,
                           "field": "buildTimestamp",
                           "minimum_interval": "hour"
                       },
@@ -256,12 +233,6 @@
                           "terms": {
                             "size": 1,
                             "field": "buildId"
-                          }
-                        },
-                        "branch": {
-                          "terms": {
-                            "size": 1,
-                            "field": "buildBranch.keyword"
                           }
                         },
                         "avgValue":{
@@ -293,13 +264,11 @@
         {"type": "flatten", "fields": ["benchmark_buckets_name.buckets"], "as": ["name_buckets"]},
         {"type": "project", "fields": ["benchmark", "name_buckets.key", "name_buckets.values"], "as": ["benchmark", "name", "name_values"]},
         {"type": "flatten", "fields": ["name_values.buckets"], "as": ["name_values_buckets"]},
-        {"type": "project", "fields": ["benchmark", "name", "name_values_buckets.key", "name_values_buckets.key_as_string", "name_values_buckets.avgError", "name_values_buckets.avgValue", "name_values_buckets.buildId.buckets", "name_values_buckets.branch.buckets"], "as": ["benchmark", "metricName", "buildTimestamp", "timestamp_value", "avgError", "avgValue", "buildId_buckets", "branch_buckets"]},
+        {"type": "project", "fields": ["benchmark", "name", "name_values_buckets.key", "name_values_buckets.key_as_string", "name_values_buckets.avgError", "name_values_buckets.avgValue", "name_values_buckets.buildId.buckets"], "as": ["benchmark", "metricName", "buildTimestamp", "timestamp_value", "avgError", "avgValue", "buildId_buckets"]},
         {"type": "formula", "as": "metricError", "expr": "datum.avgError.value"},
         {"type": "formula", "as": "metricValue", "expr": "datum.avgValue.value"},
         {"type": "flatten", "fields": ["buildId_buckets"], "as": ["buildId_values"]},
-        {"type": "flatten", "fields": ["branch_buckets"], "as": ["branch_values"]},
         {"type": "formula", "as": "buildId", "expr": "datum.buildId_values.key"},
-        {"type": "formula", "as": "branch", "expr": "datum.branch_values.key"},
         {
           "type": "formula",
           "as": "timestamp",
@@ -322,15 +291,6 @@
         {"trigger": "!shift && clicked", "insert": "clicked"},
         {"trigger": "shift && clicked", "toggle": "clicked"}
       ]
-    },
-    {
-        "name": "selectedBranch",
-        "on": [
-         {"trigger": "clear", "remove": true},
-         {"trigger": "!branchShift", "remove": true},
-         {"trigger": "!branchShift && branchClicked", "insert": "branchClicked"},
-         {"trigger": "branchShift && branchClicked", "toggle": "branchClicked"}
-        ]
     }
   ],
   "axes": [
@@ -391,12 +351,6 @@
       "zero": true,
       "domain": {"data": "table", "field": "metricError"},
       "range": [1, 100]
-    },
-    {
-      "name": "branchColor",
-      "type": "ordinal",
-      "domain": {"data": "table", "field": "branch"},
-      "range": "category"
     }
   ],
   "legends": [
@@ -407,7 +361,6 @@
       "padding": 8,
       "cornerRadius": 4,
       "symbolLimit": 50,
-      "labelLimit": 300,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
@@ -441,48 +394,6 @@
           }
         }
       }
-    },
-    {
-      "title": "Branches",
-      "stroke": "branchColor",
-      "fill": "branchColor",
-      "strokeColor": "#ccc",
-      "padding": 8,
-      "cornerRadius": 4,
-      "symbolLimit": 50,
-      "labelLimit": 300,
-      "encode": {
-        "symbols": {
-          "name": "branchLegendSymbol",
-          "interactive": true,
-          "update": {
-            "strokeWidth": {"value": 2},
-            "opacity": [
-              {
-                "comment": "here `datum` is `selectedBranch` data set",
-                "test": "!length(data('selectedBranch')) || indata('selectedBranch', 'value', datum.value)",
-                "value": 0.7
-              },
-              {"value": 0.15}
-            ],
-            "size": {"value": 64}
-          }
-        },
-        "labels": {
-          "name": "branchLegendLabel",
-          "interactive": true,
-          "update": {
-            "opacity": [
-              {
-                "comment": "here `datum` is `selectedBranch` data set",
-                "test": "!length(data('selectedBranch')) || indata('selectedBranch', 'value', datum.value)",
-                "value": 1
-              },
-              {"value": 0.25}
-            ]
-          }
-        }
-      }
     }
   ],
   "marks": [
@@ -492,42 +403,6 @@
         "facet": {"name": "series", "data": "table", "groupby": "metricName"}
       },
       "marks": [
-        {
-          "type": "text",
-          "from": {"data": "series"},
-          "encode": {
-            "update": {
-              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}},
-              "align": {"value": "center"},
-              "y": {"value": -10},
-              "angle": {"value": 90},
-              "fill": {"value": "#000"},
-              "text": [{"test": "datum.branch != 'master'", "field": "branch"}, {"value": ""}],
-              "fontSize": {"value": 10},
-              "font": {"value": "monospace"}
-            }
-          }
-        },
-        {
-          "type": "rect",
-          "from": {"data": "series"},
-          "encode": {
-            "update": {
-              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}, "offset":-5},
-              "x2": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}, "offset": 5},
-              "y": {"value": 0},
-              "y2": {"signal": "height"},
-              "fill": [{"test": "datum.branch != 'master'", "scale": "branchColor", "field": "branch"}, {"value": ""}],
-              "opacity": [
-                  {
-                    "test": "(!domain || inrange(datum.branch, domain)) && (!length(data('selectedBranch')) || indata('selectedBranch', 'value', datum.branch))",
-                    "value": 0.1
-                  },
-                  {"value": 0.01}
-                ]
-            }
-          }
-        },
         {
           "type": "line",
           "from": {"data": "series"},
