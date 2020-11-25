@@ -128,9 +128,6 @@
         <element id="archive" name="kotlin-eval4j.jar">
           <element id="module-output" name="kotlin.eval4j" />
         </element>
-        <element id="archive" name="kotlin-fir.jar">
-          <element id="module-output" name="kotlin.fir" />
-        </element>
         <element id="archive" name="kotlin-formatter.jar">
           <element id="module-output" name="kotlin.formatter" />
         </element>
