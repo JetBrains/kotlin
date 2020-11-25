@@ -1807,6 +1807,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/FirBuilder.kt");
         }
 
+        @TestMetadata("inapplicableCollectionSet.kt")
+        public void testInapplicableCollectionSet() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/inapplicableCollectionSet.kt");
+        }
+
         @TestMetadata("InnerClassInAnonymous.kt")
         public void testInnerClassInAnonymous() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/InnerClassInAnonymous.kt");
