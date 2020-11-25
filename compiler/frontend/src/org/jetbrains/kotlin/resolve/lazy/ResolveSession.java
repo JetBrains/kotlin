@@ -86,6 +86,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private PlatformDiagnosticSuppressor platformDiagnosticSuppressor;
     private SamConversionResolver samConversionResolver;
 
+    private AdditionalClassPartsProvider additionalClassPartsProvider;
+
     private final SyntheticResolveExtension syntheticResolveExtension;
 
     private final NewKotlinTypeChecker kotlinTypeChecker;
@@ -155,6 +157,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Inject
     public void setSamConversionResolver(@NotNull SamConversionResolver samConversionResolver) {
         this.samConversionResolver = samConversionResolver;
+    }
+
+    @Inject
+    public void setAdditionalClassPartsProvider(@NotNull AdditionalClassPartsProvider additionalClassPartsProvider) {
+        this.additionalClassPartsProvider = additionalClassPartsProvider;
     }
 
     // Only calls from injectors expected
@@ -499,5 +506,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public SamConversionResolver getSamConversionResolver() {
         return samConversionResolver;
+    }
+
+    @NotNull
+    @Override
+    public AdditionalClassPartsProvider getAdditionalClassPartsProvider() {
+        return additionalClassPartsProvider;
     }
 }
