@@ -308,17 +308,17 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
 
     @TestMetadata("ResolvePackageInTheEndInProperty.kt")
     public void testResolvePackageInTheEndInProperty() throws Exception {
-        runTest("idea/testData/resolve/references/ResolvePackageInTheEndInProperty.kt");
+        runTest("../idea/testData/resolve/references/ResolvePackageInTheEndInProperty.kt");
     }
 
     @TestMetadata("ResolvePackageInTheMiddleInProperty.kt")
     public void testResolvePackageInTheMiddleInProperty() throws Exception {
-        runTest("idea/testData/resolve/references/ResolvePackageInTheMiddleInProperty.kt");
+        runTest("../idea/testData/resolve/references/ResolvePackageInTheMiddleInProperty.kt");
     }
 
     @TestMetadata("ResolvePackageInTheTypeNameInProperty.kt")
     public void testResolvePackageInTheTypeNameInProperty() throws Exception {
-        runTest("idea/testData/resolve/references/ResolvePackageInTheTypeNameInProperty.kt");
+        runTest("../idea/testData/resolve/references/ResolvePackageInTheTypeNameInProperty.kt");
     }
 
     @TestMetadata("SamAdapter.kt")
@@ -416,49 +416,39 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
         runTest("../idea/testData/resolve/references/WrongNumberOfTypeArgumentsInSupertype.kt");
     }
 
-    @TestMetadata("idea/testData/resolve/references/arrayAccess")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("../idea/testData/resolve/references/arrayAccess")
     public static class ArrayAccess extends AbstractFirReferenceResolveTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInArrayAccess() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/arrayAccess"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
         @TestMetadata("get.kt")
         public void testGet() throws Exception {
-            runTest("idea/testData/resolve/references/arrayAccess/get.kt");
+            runTest("../idea/testData/resolve/references/arrayAccess/get.kt");
         }
 
         @TestMetadata("set.kt")
         public void testSet() throws Exception {
-            runTest("idea/testData/resolve/references/arrayAccess/set.kt");
+            runTest("../idea/testData/resolve/references/arrayAccess/set.kt");
         }
     }
 
-    @TestMetadata("idea/testData/resolve/references/constructorDelegatingReference")
-    @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
+    @TestMetadata("../idea/testData/resolve/references/constructorDelegatingReference")
     public static class ConstructorDelegatingReference extends AbstractFirReferenceResolveTest {
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInConstructorDelegatingReference() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/constructorDelegatingReference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
         @TestMetadata("toPrimary.kt")
         public void testToPrimary() throws Exception {
-            runTest("idea/testData/resolve/references/constructorDelegatingReference/toPrimary.kt");
+            runTest("../idea/testData/resolve/references/constructorDelegatingReference/toPrimary.kt");
         }
 
         @TestMetadata("toSecondary.kt")
         public void testToSecondary() throws Exception {
-            runTest("idea/testData/resolve/references/constructorDelegatingReference/toSecondary.kt");
+            runTest("../idea/testData/resolve/references/constructorDelegatingReference/toSecondary.kt");
         }
     }
 
@@ -602,7 +592,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
 
         @TestMetadata("lambdaAndParensIncorrectVararg.kt")
         public void testLambdaAndParensIncorrectVararg() throws Exception {
-            runTest("idea/testData/resolve/references/invoke/lambdaAndParensIncorrectVararg.kt");
+            runTest("../idea/testData/resolve/references/invoke/lambdaAndParensIncorrectVararg.kt");
         }
 
         @TestMetadata("lambdaNoPar.kt")
@@ -612,7 +602,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
 
         @TestMetadata("lambdaNoParIncorrectVararg.kt")
         public void testLambdaNoParIncorrectVararg() throws Exception {
-            runTest("idea/testData/resolve/references/invoke/lambdaNoParIncorrectVararg.kt");
+            runTest("../idea/testData/resolve/references/invoke/lambdaNoParIncorrectVararg.kt");
         }
 
         @TestMetadata("lambdaNoParLabel.kt")
@@ -622,7 +612,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
 
         @TestMetadata("lambdaNoParLabelIncorrectVararg.kt")
         public void testLambdaNoParLabelIncorrectVararg() throws Exception {
-            runTest("idea/testData/resolve/references/invoke/lambdaNoParLabelIncorrectVararg.kt");
+            runTest("../idea/testData/resolve/references/invoke/lambdaNoParLabelIncorrectVararg.kt");
         }
 
         @TestMetadata("lambdaNoParRCurly.kt")
@@ -632,7 +622,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
 
         @TestMetadata("lambdaNoParRCurlyIncorrectVararg.kt")
         public void testLambdaNoParRCurlyIncorrectVararg() throws Exception {
-            runTest("idea/testData/resolve/references/invoke/lambdaNoParRCurlyIncorrectVararg.kt");
+            runTest("../idea/testData/resolve/references/invoke/lambdaNoParRCurlyIncorrectVararg.kt");
         }
 
         @TestMetadata("noParams.kt")
@@ -652,7 +642,7 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
 
         @TestMetadata("nonemptyLambdaRParIncorrectVararg.kt")
         public void testNonemptyLambdaRParIncorrectVararg() throws Exception {
-            runTest("idea/testData/resolve/references/invoke/nonemptyLambdaRParIncorrectVararg.kt");
+            runTest("../idea/testData/resolve/references/invoke/nonemptyLambdaRParIncorrectVararg.kt");
         }
 
         @TestMetadata("oneParam.kt")

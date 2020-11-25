@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightFacadeClassTest
 import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightScriptLoadingTest
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.copyright.AbstractUpdateKotlinCopyrightTest
-import org.jetbrains.kotlin.findUsages.AbstractFindUsagesTest
-import org.jetbrains.kotlin.findUsages.AbstractFindUsagesWithDisableComponentSearchTest
-import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithLibraryTest
-import org.jetbrains.kotlin.findUsages.AbstractKotlinFindUsagesWithStdlibTest
+import org.jetbrains.kotlin.findUsages.*
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractTypingIndentationTestBase
 import org.jetbrains.kotlin.idea.AbstractExpressionSelectionTest
@@ -36,6 +33,7 @@ import org.jetbrains.kotlin.idea.codeInsight.moveUpDown.AbstractMoveStatementTes
 import org.jetbrains.kotlin.idea.codeInsight.postfix.AbstractPostfixTemplateProviderTest
 import org.jetbrains.kotlin.idea.codeInsight.surroundWith.AbstractSurroundWithTest
 import org.jetbrains.kotlin.idea.codeInsight.unwrap.AbstractUnwrapRemoveTest
+import org.jetbrains.kotlin.idea.completion.AbstractHighLevelJvmBasicCompletionTest
 import org.jetbrains.kotlin.idea.completion.test.*
 import org.jetbrains.kotlin.idea.completion.test.handlers.*
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractBasicCompletionWeigherTest
@@ -1022,14 +1020,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
     /*
 
-    testGroup("idea/idea-fir/tests", "idea") {
-        testClass<AbstractFirHighlightingTest> {
-            model("testData/highlighter")
-            model("idea-fir/testData/highlighterFir", pattern = KT_WITHOUT_DOTS_IN_NAME)
-        }
-    }
-
-    testGroup("idea/idea-fir-performance-tests/tests", "idea") {
+   /* testGroup("idea/idea-fir-performance-tests/tests", "idea") {
         testClass<AbstractFirHighlightingPerformanceTest> {
             model("testData/highlighter")
         }
@@ -1039,9 +1030,14 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         testClass<AbstractHighLevelPerformanceBasicCompletionHandlerTest> {
             model("handlers/basic", testMethod = "doPerfTest", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
-    }
+    }*/
 
-    testGroup("idea/idea-fir/tests", "idea/testData") {
+    testGroup("fir", testDataPath = "../idea/testData") {
+        testClass<AbstractFirHighlightingTest> {
+            model("highlighter")
+            model("../../fir/testData/highlighterFir", pattern = KT_WITHOUT_DOTS)
+        }
+
         testClass<AbstractFirReferenceResolveTest> {
             model("resolve/references", pattern = KT_WITHOUT_DOTS)
         }
@@ -1056,38 +1052,36 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
-    testGroup("idea/idea-fir/tests", "idea/idea-completion/testData") {
+    testGroup("fir", testDataPath = "../completion/testData") {
         testClass<AbstractHighLevelJvmBasicCompletionTest> {
             model("basic/common")
             model("basic/java")
         }
 
         testClass<AbstractHighLevelBasicCompletionHandlerTest> {
-            model("handlers/basic", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("handlers/basic", pattern = KT_WITHOUT_DOTS)
         }
     }
 
-    testGroup("idea/idea-fir/tests", "idea/testData/findUsages") {
-
+    testGroup("fir", testDataPath = "../idea/testData/findUsages") {
         testClass<AbstractFindUsagesFirTest> {
-            model("kotlin", pattern = """^(.+)\.0\.(kt|kts)$""")
-            model("java", pattern = """^(.+)\.0\.java$""")
-            model("propertyFiles", pattern = """^(.+)\.0\.properties$""")
+            model("kotlin", pattern = """^(.+)\.0\.(kt|kts)$""".toRegex())
+            model("java", pattern = """^(.+)\.0\.java$""".toRegex())
+            model("propertyFiles", pattern = """^(.+)\.0\.properties$""".toRegex())
         }
 
         testClass<AbstractFindUsagesWithDisableComponentSearchFirTest> {
-            model("kotlin/conventions/components", pattern = """^(.+)\.0\.(kt|kts)$""")
+            model("kotlin/conventions/components", pattern = """^(.+)\.0\.(kt|kts)$""".toRegex())
         }
 
         testClass<AbstractKotlinFindUsagesWithLibraryFirTest> {
-            model("libraryUsages", pattern = """^(.+)\.0\.kt$""")
+            model("libraryUsages", pattern = """^(.+)\.0\.kt$""".toRegex())
         }
 
         testClass<AbstractKotlinFindUsagesWithStdlibFirTest> {
-            model("stdlibUsages", pattern = """^(.+)\.0\.kt$""")
+            model("stdlibUsages", pattern = """^(.+)\.0\.kt$""".toRegex())
         }
     }
-    */
 
     testGroup("scripting-support") {
         testClass<AbstractScratchRunActionTest> {
