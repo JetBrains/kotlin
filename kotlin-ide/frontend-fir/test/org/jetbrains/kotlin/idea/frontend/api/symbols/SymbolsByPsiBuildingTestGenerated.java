@@ -31,6 +31,11 @@ public class SymbolsByPsiBuildingTestGenerated extends AbstractSymbolsByPsiBuild
         runTest("idea/idea-frontend-fir/testData/symbolsByPsi/annotations.kt");
     }
 
+    @TestMetadata("anonymousObject.kt")
+    public void testAnonymousObject() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/symbolsByPsi/anonymousObject.kt");
+    }
+
     @TestMetadata("class.kt")
     public void testClass() throws Exception {
         runTest("testData/symbolsByPsi/class.kt");

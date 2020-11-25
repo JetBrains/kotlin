@@ -51,7 +51,7 @@ internal fun mapAnnotationParameters(annotationCall: FirAnnotationCall, session:
     return resultSet
 }
 
-private fun FirExpression.convertConstantExpression(): KtConstantValue =
+internal fun FirExpression.convertConstantExpression(): KtConstantValue =
     when (this) {
         is FirConstExpression<*> -> KtSimpleConstantValue(value)
         else -> KtUnsupportedConstantValue

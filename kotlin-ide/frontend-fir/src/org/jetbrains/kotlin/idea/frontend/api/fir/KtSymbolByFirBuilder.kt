@@ -87,6 +87,7 @@ internal class KtSymbolByFirBuilder private constructor(
             is FirField -> buildFieldSymbol(fir)
             is FirAnonymousFunction -> buildAnonymousFunctionSymbol(fir)
             is FirPropertyAccessor -> buildPropertyAccessorSymbol(fir)
+            is FirAnonymousObject -> buildAnonymousObjectSymbol(fir)
             else ->
                 TODO(fir::class.toString())
         }
@@ -111,6 +112,9 @@ internal class KtSymbolByFirBuilder private constructor(
 
     fun buildClassSymbol(fir: FirRegularClass) = symbolsCache.cache(fir) { KtFirClassOrObjectSymbol(fir, resolveState, token, this) }
 
+    fun buildAnonymousObjectSymbol(fir: FirAnonymousObject) =
+        symbolsCache.cache(fir) { KtFirAnonymousObjectSymbol(fir, resolveState, token, this) }
+
     // TODO it can be a constructor parameter, which may be split into parameter & property
     // we should handle them both
     fun buildParameterSymbol(fir: FirValueParameter) =
@@ -127,7 +131,8 @@ internal class KtSymbolByFirBuilder private constructor(
     }
 
     fun buildConstructorSymbol(fir: FirConstructor) = symbolsCache.cache(fir) { KtFirConstructorSymbol(fir, resolveState, token, this) }
-    fun buildTypeParameterSymbol(fir: FirTypeParameter) = symbolsCache.cache(fir) { KtFirTypeParameterSymbol(fir, resolveState, token, this) }
+    fun buildTypeParameterSymbol(fir: FirTypeParameter) =
+        symbolsCache.cache(fir) { KtFirTypeParameterSymbol(fir, resolveState, token, this) }
 
     fun buildTypeAliasSymbol(fir: FirTypeAlias) = symbolsCache.cache(fir) { KtFirTypeAliasSymbol(fir, resolveState, token) }
     fun buildEnumEntrySymbol(fir: FirEnumEntry) = symbolsCache.cache(fir) { KtFirEnumEntrySymbol(fir, resolveState, token, this) }

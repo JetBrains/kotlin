@@ -12,18 +12,20 @@ import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.psi.KtDeclaration
 
 internal class FirLightFieldForPropertySymbol(
     private val propertySymbol: KtPropertySymbol,
-    usedNames: MutableSet<String>,
+    nameGenerator: FieldNameGenerator,
     containingClass: FirLightClassBase,
     lightMemberOrigin: LightMemberOrigin?,
     isTopLevel: Boolean,
-    forceStatic: Boolean = false
+    forceStatic: Boolean,
+    takePropertyVisibility: Boolean
 ) : FirLightField(containingClass, lightMemberOrigin) {
 
-    private val _name: String = generateUniqueFieldName(usedNames, propertySymbol.name.asString())
+    private val _name: String = nameGenerator.generateUniqueFieldName(propertySymbol.name.asString())
 
     override val kotlinOrigin: KtDeclaration? = propertySymbol.psi as? KtDeclaration
 
@@ -53,7 +55,6 @@ internal class FirLightFieldForPropertySymbol(
 
     private val _modifierList: PsiModifierList by lazyPub {
 
-        val isJvmField = propertySymbol.hasJvmFieldAnnotation()
         val suppressFinal = !propertySymbol.isVal
 
         val modifiersFromSymbol = propertySymbol.computeModalityForMethod(
@@ -67,7 +68,7 @@ internal class FirLightFieldForPropertySymbol(
         )
 
         val visibility =
-            if (isJvmField) propertySymbol.computeVisibility(isTopLevel = false) else PsiModifier.PRIVATE
+            if (takePropertyVisibility) propertySymbol.computeVisibility(isTopLevel = false) else PsiModifier.PRIVATE
 
         val modifiersWithVisibility = basicModifiers + visibility
 
@@ -95,10 +96,13 @@ internal class FirLightFieldForPropertySymbol(
         FirLightClassModifierList(this, modifiers, annotations)
     }
 
-    override fun getModifierList(): PsiModifierList? = _modifierList
+    override fun getModifierList(): PsiModifierList = _modifierList
 
+    private val _initializer by lazyPub {
+        (propertySymbol.initializer as? KtSimpleConstantValue<*>)?.createPsiLiteral(this)
+    }
 
-    override fun getInitializer(): PsiExpression? = null //TODO
+    override fun getInitializer(): PsiExpression? = _initializer
 
     override fun equals(other: Any?): Boolean =
         this === other ||
@@ -107,16 +111,4 @@ internal class FirLightFieldForPropertySymbol(
                         propertySymbol == other.propertySymbol)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
-
-    companion object {
-        private fun generateUniqueFieldName(usedNames: MutableSet<String>, base: String): String {
-            if (usedNames.add(base)) return base
-            var i = 1
-            while (true) {
-                val suggestion = "$base$$i"
-                if (usedNames.add(suggestion)) return suggestion
-                i++
-            }
-        }
-    }
 }

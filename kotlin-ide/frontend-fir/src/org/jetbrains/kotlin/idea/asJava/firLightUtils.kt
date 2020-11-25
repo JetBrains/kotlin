@@ -10,24 +10,24 @@ import com.intellij.psi.impl.cache.TypeInfo
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.impl.compiled.SignatureParsing
 import com.intellij.psi.impl.compiled.StubBuildingVisitor
-import org.jetbrains.annotations.NotNull
+import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.cfa.FirReturnsImpliesAnalyzer.isSupertypeOf
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.isPrimitiveNumberOrUnsignedNumberType
 import org.jetbrains.kotlin.fir.isPrimitiveType
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.typeCheckerContext
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirClassType
@@ -37,10 +37,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
-import org.jetbrains.kotlin.types.model.typeConstructor
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import java.text.StringCharacterIterator
 
 internal fun <L : Any> L.invalidAccess(): Nothing =
@@ -60,9 +57,8 @@ internal fun KtType.asPsiType(
 ): PsiType {
     require(this is KtFirType)
     require(context is KtFirSymbol<*>)
-
     val session = context.firRef.withFir(phase) { it.session }
-    return coneType.asPsiType(session, TypeMappingMode.DEFAULT, parent)
+    return coneType.asPsiType(session, context.firRef.resolveState, TypeMappingMode.DEFAULT, parent)
 }
 
 internal fun KtClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElement): PsiType {
@@ -74,33 +70,53 @@ internal fun KtClassOrObjectSymbol.typeForClassSymbol(psiElement: PsiElement): P
             isNullable = false
         )
     }
-    return type.asPsiType(session, TypeMappingMode.DEFAULT, psiElement)
+    return type.asPsiType(session, this.firRef.resolveState, TypeMappingMode.DEFAULT, psiElement)
 }
+
+private class AnonymousTypesSubstitutor(private val session: FirSession, private val state: FirModuleResolveState) :
+    AbstractConeSubstitutor() {
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+
+        if (type !is ConeClassLikeType) return null
+
+        val isAnonymous = type.classId.let { it?.shortClassName?.asString() == SpecialNames.ANONYMOUS }
+        if (!isAnonymous) return null
+
+        val firstSuperType = (type.lookupTag.toSymbol(session) as? FirClassSymbol)?.fir
+            ?.withFirDeclaration(state, FirResolvePhase.SUPER_TYPES) {
+                (it as? FirClass)?.superConeTypes?.firstOrNull()
+            }
+
+        if (firstSuperType != null) return firstSuperType
+
+        return if (type.nullability.isNullable) session.builtinTypes.nullableAnyType.type
+        else session.builtinTypes.anyType.type
+    }
+}
+
 
 private fun ConeKotlinType.asPsiType(
     session: FirSession,
+    state: FirModuleResolveState,
     mode: TypeMappingMode,
     psiContext: PsiElement,
 ): PsiType {
 
     if (this is ConeClassErrorType || this !is SimpleTypeMarker) return psiContext.nonExistentType()
     if (this.typeArguments.any { it is ConeClassErrorType }) return psiContext.nonExistentType()
-    if (this is ConeClassLikeType) {
-        val classId = classId
-        //TODO make anonymous type deriving
-        if (classId != null && classId.shortClassName.asString() == SpecialNames.ANONYMOUS) return PsiType.NULL
-    }
+
+    val correctedType = AnonymousTypesSubstitutor(session, state).substituteOrSelf(this)
 
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
     //TODO Check thread safety
-    session.jvmTypeMapper.mapType(this, mode, signatureWriter)
+    session.jvmTypeMapper.mapType(correctedType, mode, signatureWriter)
 
     val canonicalSignature = signatureWriter.toString()
 
     if (canonicalSignature.contains("L<error>")) return psiContext.nonExistentType()
-    //TODO Fix it in typemapper
-    val patchedCanonicalSignature = canonicalSignature.replace(SpecialNames.ANONYMOUS, "java.lang.Object")
-    val signature = StringCharacterIterator(patchedCanonicalSignature)
+    require(!canonicalSignature.contains(SpecialNames.ANONYMOUS))
+
+    val signature = StringCharacterIterator(canonicalSignature)
     val javaType = SignatureParsing.parseTypeString(signature, StubBuildingVisitor.GUESSING_MAPPER)
     val typeInfo = TypeInfo.fromString(javaType, false)
     val typeText = TypeInfo.createTypeText(typeInfo) ?: return psiContext.nonExistentType()
@@ -109,9 +125,16 @@ private fun ConeKotlinType.asPsiType(
     return typeElement.type
 }
 
-private fun mapSupertype(psiContext: PsiElement, session: FirSession, supertype: ConeKotlinType, kotlinCollectionAsIs: Boolean = false) =
+private fun mapSupertype(
+    psiContext: PsiElement,
+    session: FirSession,
+    firResolvePhase: FirModuleResolveState,
+    supertype: ConeKotlinType,
+    kotlinCollectionAsIs: Boolean = false
+) =
     supertype.asPsiType(
         session,
+        firResolvePhase,
         if (kotlinCollectionAsIs) TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS else TypeMappingMode.SUPER_TYPE,
         psiContext
     ) as? PsiClassType
@@ -129,6 +152,7 @@ internal fun KtClassType.mapSupertype(
     return mapSupertype(
         psiContext,
         session,
+        contextSymbol.firRef.resolveState,
         this.coneType,
         kotlinCollectionAsIs,
     )
@@ -278,6 +302,39 @@ internal fun KtType.getTypeNullability(context: KtSymbol, phase: FirResolvePhase
     val isNotPrimitiveType = canonicalSignature.startsWith("L") || canonicalSignature.startsWith("[")
 
     return if (isNotPrimitiveType) NullabilityType.NotNull else NullabilityType.Unknown
+}
+
+
+private fun escapeString(str: String): String = buildString {
+    str.forEach { char ->
+        val escaped = when (char) {
+            '\n' -> "\\n"
+            '\r' -> "\\r"
+            '\t' -> "\\t"
+            '\"' -> "\\\""
+            '\\' -> "\\\\"
+            else -> "$char"
+        }
+        append(escaped)
+    }
+}
+
+private fun KtSimpleConstantValue<*>.asStringForPsiLiteral(): String =
+    when (val value = this.constant) {
+        is String -> "\"${escapeString(value)}\""
+        is Long -> "${value}L"
+        is Float -> "${value}f"
+        else -> value?.toString() ?: "null"
+    }
+
+internal fun KtSimpleConstantValue<*>.createPsiLiteral(parent: PsiElement): PsiExpression? {
+    val asString = asStringForPsiLiteral()
+    val instance = PsiElementFactory.getInstance(parent.project)
+    return try {
+        instance.createExpressionFromText(asString, parent)
+    } catch (_: IncorrectOperationException) {
+        null
+    }
 }
 
 internal fun <T> Set<T>.add(what: T, `if`: Boolean): Set<T> =

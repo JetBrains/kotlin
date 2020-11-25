@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_DEFAULT_CTOR
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.idea.asJava.classes.createFields
+import org.jetbrains.kotlin.idea.asJava.classes.*
+import org.jetbrains.kotlin.idea.asJava.classes.createInheritanceList
+import org.jetbrains.kotlin.idea.asJava.classes.createInnerClasses
 import org.jetbrains.kotlin.idea.asJava.classes.createMethods
 import org.jetbrains.kotlin.idea.asJava.fields.FirLightFieldForEnumEntry
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
@@ -19,7 +21,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 
-internal class FirLightClassForSymbol(
+internal open class FirLightClassForSymbol(
     private val classOrObjectSymbol: KtClassOrObjectSymbol,
     manager: PsiManager
 ) : FirLightClassForClassOrObjectSymbol(classOrObjectSymbol, manager) {
@@ -73,28 +75,14 @@ internal class FirLightClassForSymbol(
     override fun getExtendsList(): PsiReferenceList? = _extendsList
     override fun getImplementsList(): PsiReferenceList? = _implementsList
 
-    override fun getOwnInnerClasses(): List<PsiClass> {
-        val result = ArrayList<PsiClass>()
-
-        // workaround for ClassInnerStuffCache not supporting classes with null names, see KT-13927
-        // inner classes with null names can't be searched for and can't be used from java anyway
-        // we can't prohibit creating light classes with null names either since they can contain members
-
-        analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            classOrObjectSymbol.getDeclaredMemberScope().getAllSymbols().filterIsInstance<KtClassOrObjectSymbol>().mapTo(result) {
-                FirLightClassForSymbol(it, manager)
-            }
-        }
-
-        //TODO
-        //if (classOrObject.hasInterfaceDefaultImpls) {
-        //    result.add(KtLightClassForInterfaceDefaultImpls(classOrObject))
-        //}
-        return result
+    private val _ownInnerClasses: List<FirLightClassForSymbol> by lazyPub {
+        classOrObjectSymbol.createInnerClasses(manager)
     }
 
-    private val _extendsList by lazyPub { createInheritanceList(forExtendsList = true) }
-    private val _implementsList by lazyPub { createInheritanceList(forExtendsList = false) }
+    override fun getOwnInnerClasses(): List<PsiClass> = _ownInnerClasses
+
+    private val _extendsList by lazyPub { createInheritanceList(forExtendsList = true, classOrObjectSymbol.superTypes) }
+    private val _implementsList by lazyPub { createInheritanceList(forExtendsList = false, classOrObjectSymbol.superTypes) }
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {
 
@@ -105,6 +93,10 @@ internal class FirLightClassForSymbol(
             val visibleDeclarations = callableSymbols.applyIf(isEnum) {
                 filterNot { function ->
                     function is KtFunctionSymbol && function.name.asString().let { it == "values" || it == "valueOf" }
+                }
+            }.applyIf(classOrObjectSymbol.classKind == KtClassKind.OBJECT) {
+                filterNot {
+                    it is KtPropertySymbol && it.isConst
                 }
             }
 
@@ -127,14 +119,7 @@ internal class FirLightClassForSymbol(
         result
     }
 
-    private val _ownFields: List<KtLightField> by lazyPub {
-
-        val result = mutableListOf<KtLightField>()
-
-        result.addCompanionObjectFieldIfNeeded()
-
-        val usedNames = mutableSetOf<String>()
-
+    private fun addFieldsFromCompanionIfNeeded(result: MutableList<KtLightField>, nameGenerator: FirLightField.FieldNameGenerator) {
         classOrObjectSymbol.companionObject?.run {
             analyzeWithSymbolAsContext(this) {
                 getDeclaredMemberScope().getCallableSymbols()
@@ -143,36 +128,96 @@ internal class FirLightClassForSymbol(
                     .mapTo(result) {
                         FirLightFieldForPropertySymbol(
                             propertySymbol = it,
-                            usedNames = usedNames,
+                            nameGenerator = nameGenerator,
                             containingClass = this@FirLightClassForSymbol,
                             lightMemberOrigin = null,
                             isTopLevel = false,
-                            forceStatic = true
+                            forceStatic = true,
+                            takePropertyVisibility = true
                         )
                     }
             }
         }
+    }
 
+
+    private fun addObjectFields(result: MutableList<KtLightField>, nameGenerator: FirLightField.FieldNameGenerator) {
+        analyzeWithSymbolAsContext(classOrObjectSymbol) {
+            classOrObjectSymbol.getDeclaredMemberScope().getAllSymbols()
+                .filterIsInstance<KtClassOrObjectSymbol>()
+                .filter { it.classKind == KtClassKind.OBJECT }
+                .mapTo(result) {
+                    FirLightFieldForObjectSymbol(
+                        objectSymbol = it,
+                        containingClass = this@FirLightClassForSymbol,
+                        name = nameGenerator.generateUniqueFieldName(it.name.asString()),
+                        lightMemberOrigin = null
+                    )
+                }
+        }
+    }
+
+    private fun addInstanceFieldIfNeeded(result: MutableList<KtLightField>) {
         val isNamedObject = classOrObjectSymbol.classKind == KtClassKind.OBJECT
         if (isNamedObject && classOrObjectSymbol.symbolKind != KtSymbolKind.LOCAL) {
-            result.add(FirLightFieldForObjectSymbol(classOrObjectSymbol, this@FirLightClassForSymbol, null))
+            result.add(
+                FirLightFieldForObjectSymbol(
+                    objectSymbol = classOrObjectSymbol,
+                    containingClass = this@FirLightClassForSymbol,
+                    name = "INSTANCE",
+                    lightMemberOrigin = null
+                )
+            )
         }
+    }
 
+    private fun addPropertyBackingFields(result: MutableList<KtLightField>, nameGenerator: FirLightField.FieldNameGenerator) {
         analyzeWithSymbolAsContext(classOrObjectSymbol) {
             val propertySymbols = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
                 .filterIsInstance<KtPropertySymbol>()
                 .applyIf(classOrObjectSymbol.classKind == KtClassKind.COMPANION_OBJECT) {
                     filterNot { it.hasJvmFieldAnnotation() || it.isConst }
                 }
-            createFields(propertySymbols, usedNames, isTopLevel = false, result)
+
+            val isObject = classOrObjectSymbol.classKind == KtClassKind.OBJECT
+
+            for (propertySymbol in propertySymbols) {
+                val isJvmStatic = propertySymbol.hasJvmStaticAnnotation()
+                val forceStatic = isObject || isJvmStatic
+                val takePropertyVisibility = (isObject && propertySymbol.isConst) || isJvmStatic
+
+                createField(
+                    declaration = propertySymbol,
+                    nameGenerator = nameGenerator,
+                    isTopLevel = false,
+                    forceStatic = forceStatic,
+                    takePropertyVisibility = takePropertyVisibility,
+                    result = result
+                )
+            }
+
+
 
             if (isEnum) {
                 classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
                     .filterIsInstance<KtEnumEntrySymbol>()
                     .mapTo(result) { FirLightFieldForEnumEntry(it, this@FirLightClassForSymbol, null) }
             }
-
         }
+    }
+
+    private val _ownFields: List<KtLightField> by lazyPub {
+
+        val result = mutableListOf<KtLightField>()
+
+        addCompanionObjectFieldIfNeeded(result)
+        addInstanceFieldIfNeeded(result)
+
+        val nameGenerator = FirLightField.FieldNameGenerator()
+
+        addObjectFields(result, nameGenerator)
+        addFieldsFromCompanionIfNeeded(result, nameGenerator)
+        addPropertyBackingFields(result, nameGenerator)
 
         result
     }

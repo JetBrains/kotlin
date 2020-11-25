@@ -29,7 +29,7 @@ internal class FirLightInterfaceClassSymbol(
 
     private val _ownFields: List<KtLightField> by lazyPub {
         mutableListOf<KtLightField>().also {
-            it.addCompanionObjectFieldIfNeeded()
+            addCompanionObjectFieldIfNeeded(it)
         }
     }
 
@@ -62,7 +62,7 @@ internal class FirLightInterfaceClassSymbol(
         FirLightInterfaceClassSymbol(classOrObjectSymbol, manager)
 
     private val _extendsList: PsiReferenceList by lazyPub {
-        createInheritanceList(forExtendsList = false)
+        createInheritanceList(forExtendsList = false, classOrObjectSymbol.superTypes)
     }
 
     override fun getExtendsList(): PsiReferenceList? = _extendsList

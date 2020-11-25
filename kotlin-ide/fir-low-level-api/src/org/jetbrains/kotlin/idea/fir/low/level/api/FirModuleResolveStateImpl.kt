@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
@@ -106,7 +107,10 @@ internal class FirModuleResolveStateImpl(
             firLazyDeclarationResolver.lazyResolveDeclaration(container, cache, FirResolvePhase.BODY_RESOLVE, checkPCE = false /*TODO*/)
         }
         val firDeclaration = FirElementFinder.findElementIn<FirDeclaration>(container) { firDeclaration ->
-            firDeclaration.psi == ktDeclaration
+            when (val realPsi = firDeclaration.realPsi) {
+                is KtObjectLiteralExpression -> realPsi.objectDeclaration == ktDeclaration
+                else -> realPsi == ktDeclaration
+            }
         }
         return firDeclaration
             ?: error("FirDeclaration was not found for\n${ktDeclaration.getElementTextInContext()}")

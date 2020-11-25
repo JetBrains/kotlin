@@ -13,18 +13,15 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.idea.asJava.classes.getOrCreateFirLightClass
 import org.jetbrains.kotlin.idea.asJava.elements.FirLightTypeParameterListForSymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.util.ifFalse
 import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -61,7 +58,6 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
     abstract override fun getExtendsList(): PsiReferenceList?
     abstract override fun getImplementsList(): PsiReferenceList?
 
-
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
         hasTypeParameters().ifTrue {
             val shiftCount = classOrObjectSymbol.isInner.ifTrue {
@@ -90,45 +86,16 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
     override fun isWritable() = false
     override val kotlinOrigin: KtClassOrObject? = classOrObjectSymbol.psi as? KtClassOrObject
 
-    protected fun createInheritanceList(forExtendsList: Boolean): PsiReferenceList {
-
-        val role = if (forExtendsList) PsiReferenceList.Role.EXTENDS_LIST else PsiReferenceList.Role.IMPLEMENTS_LIST
-
-        val listBuilder = KotlinSuperTypeListBuilder(
-            kotlinOrigin = kotlinOrigin?.getSuperTypeList(),
-            manager = manager,
-            language = language,
-            role = role
-        )
-
-        fun KtType.needToAddTypeIntoList(): Boolean {
-            if (this !is KtClassType) return false
-
-            // Do not add redundant "extends java.lang.Object" anywhere
-            if (this.classId == StandardClassIds.Any) return false
-
-            // We don't have Enum among enums supertype in sources neither we do for decompiled class-files and light-classes
-            if (isEnum && this.classId == StandardClassIds.Enum) return false
-
-            val isInterfaceType =
-                (this.classSymbol as? KtClassOrObjectSymbol)?.classKind == KtClassKind.INTERFACE
-            
-            return forExtendsList == !isInterfaceType
-        }
-
-        //TODO Add support for kotlin.collections.
-        classOrObjectSymbol.superTypes
-            .filterIsInstance<KtClassType>()
-            .filter { it.needToAddTypeIntoList() }
-            .mapNotNull { it.mapSupertype(this, kotlinCollectionAsIs = true) }
-            .forEach { listBuilder.addReference(it) }
-
-        return listBuilder
-    }
-
-    protected fun MutableList<KtLightField>.addCompanionObjectFieldIfNeeded() {
+    protected fun addCompanionObjectFieldIfNeeded(result: MutableList<KtLightField>) {
         classOrObjectSymbol.companionObject?.run {
-            add(FirLightFieldForObjectSymbol(this, this@FirLightClassForClassOrObjectSymbol, null))
+            result.add(
+                FirLightFieldForObjectSymbol(
+                    objectSymbol = this,
+                    containingClass = this@FirLightClassForClassOrObjectSymbol,
+                    name = name.asString(),
+                    lightMemberOrigin = null
+                )
+            )
         }
     }
 
@@ -153,7 +120,7 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
 
     abstract override fun hashCode(): Int
 
-    override fun getName(): String = classOrObjectSymbol.name.asString()
+    override fun getName(): String? = classOrObjectSymbol.name.asString()
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
