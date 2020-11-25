@@ -966,9 +966,24 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/companion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("directAccessToBackingField.kt")
+        public void testDirectAccessToBackingField() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/companion/directAccessToBackingField.kt");
+        }
+
         @TestMetadata("floatingPointCompanionAccess.kt")
         public void testFloatingPointCompanionAccess() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/companion/floatingPointCompanionAccess.kt");
+        }
+
+        @TestMetadata("inlineFunctionCompanionPropertyAccess.kt")
+        public void testInlineFunctionCompanionPropertyAccess() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/companion/inlineFunctionCompanionPropertyAccess.kt");
+        }
+
+        @TestMetadata("inlineFunctionObjectCompanionPropertyAccess.kt")
+        public void testInlineFunctionObjectCompanionPropertyAccess() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/companion/inlineFunctionObjectCompanionPropertyAccess.kt");
         }
 
         @TestMetadata("kt14258_1.kt")
@@ -994,6 +1009,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         @TestMetadata("kt14258_5.kt")
         public void testKt14258_5() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/companion/kt14258_5.kt");
+        }
+
+        @TestMetadata("nonDefaultAccessors.kt")
+        public void testNonDefaultAccessors() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/companion/nonDefaultAccessors.kt");
         }
 
         @TestMetadata("privateCompanionObjectAccessors_after.kt")

@@ -2982,6 +2982,29 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/companion")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Companion extends AbstractIrCodegenBoxWasmTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCompanion() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/companion"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @TestMetadata("delegatedPropertyOnCompanion.kt")
+        public void testDelegatedPropertyOnCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/companion/delegatedPropertyOnCompanion.kt");
+        }
+
+        @TestMetadata("inlineFunctionCompanionPropertyAccess.kt")
+        public void testInlineFunctionCompanionPropertyAccess() throws Exception {
+            runTest("compiler/testData/codegen/box/companion/inlineFunctionCompanionPropertyAccess.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/compatibility")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
