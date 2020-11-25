@@ -20,13 +20,13 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/noarg/noarg-cli/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class BlackBoxCodegenTestForNoArgGenerated extends AbstractBlackBoxCodegenTestForNoArg {
+public class IrBlackBoxCodegenTestForNoArgGenerated extends AbstractIrBlackBoxCodegenTestForNoArg {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
     public void testAllFilesPresentInBox() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/noarg-cli/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/noarg-cli/testData/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @TestMetadata("initializers.kt")
