@@ -67,10 +67,17 @@ import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandle
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.externalAnnotations.AbstractExternalAnnotationTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
+import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
+import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
+import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractMemberScopeByFqNameTest
+import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolFromLibraryPointerRestoreTest
+import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolFromSourcePointerRestoreTest
+import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByFqNameBuildingTest
+import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByPsiBuildingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
@@ -150,6 +157,7 @@ import org.jetbrains.kotlin.testGenerator.model.Patterns.KT_OR_KTS
 import org.jetbrains.kotlin.testGenerator.model.Patterns.KT_OR_KTS_WITHOUT_DOTS
 import org.jetbrains.kotlin.testGenerator.model.Patterns.KT_WITHOUT_DOTS
 import org.jetbrains.kotlin.testGenerator.model.Patterns.TEST
+import org.jetbrains.kotlin.testGenerator.model.Patterns.TXT
 import org.jetbrains.kotlin.testGenerator.model.Patterns.WS_KTS
 import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractProjectTemplateBuildFileGenerationTest
 import org.jetbrains.kotlin.tools.projectWizard.cli.AbstractYamlBuildFileGenerationTest
@@ -923,7 +931,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
-    /*testGroup("frontend-fir") {
+    testGroup("frontend-fir") {
         testClass<AbstractKtDeclarationAndFirDeclarationEqualityChecker> {
             model("ktDeclarationAndFirDeclarationEqualityChecker")
         }
@@ -937,11 +945,11 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
 
         testClass<AbstractSymbolsByFqNameBuildingTest> {
-            model("symbolsByFqName", extension = "txt")
+            model("symbolsByFqName", pattern = TXT)
         }
 
         testClass<AbstractMemberScopeByFqNameTest> {
-            model("memberScopeByFqName", extension = "txt")
+            model("memberScopeByFqName", pattern = TXT)
         }
 
         testClass<AbstractSymbolFromSourcePointerRestoreTest> {
@@ -949,7 +957,7 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
 
         testClass<AbstractSymbolFromLibraryPointerRestoreTest> {
-            model("resoreSymbolFromLibrary", extension = "txt")
+            model("resoreSymbolFromLibrary", pattern = TXT)
         }
 
         testClass<AbstractMemoryLeakInSymbolsTest> {
@@ -970,8 +978,6 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             model("asJava/ultraLightFacades", pattern = KT_OR_KTS)
         }
     }
-
-    */
 
     testGroup("fir-low-level-api", testDataPath = "testdata") {
         testClass<AbstractFirLazyDeclarationResolveTest> {

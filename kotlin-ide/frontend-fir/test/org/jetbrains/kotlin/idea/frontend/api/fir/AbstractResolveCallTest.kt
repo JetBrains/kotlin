@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 
 import com.intellij.openapi.editor.CaretState
 import com.intellij.openapi.util.TextRange
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
+import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightTestCase
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -28,16 +30,16 @@ import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.primaryConstructor
 import kotlin.reflect.jvm.javaGetter
 
-abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") KotlinLightCodeInsightTestCase() {
+abstract class AbstractResolveCallTest : KotlinLightCodeInsightFixtureTestCase() {
     protected fun doTest(path: String) {
-        addExternalTestFiles(path)
-        configureByFile(path)
+        val file = File(path)
+        val ktFile = myFixture.configureByText(file.name, FileUtil.loadFile(file)) as KtFile
         val elements = editor.caretModel.caretsAndSelections.map { selection ->
             getSingleSelectedElement(selection)
         }
 
         val actualText = executeOnPooledThreadInReadAction {
-            val callInfos = analyze(file as KtFile) {
+            val callInfos = analyze(ktFile) {
                 elements.map { element ->
                     when (element) {
                         is KtCallExpression -> element.resolveCall()
