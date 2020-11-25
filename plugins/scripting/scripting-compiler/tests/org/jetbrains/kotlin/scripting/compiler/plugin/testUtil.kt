@@ -157,8 +157,9 @@ fun runWithK2JVMCompiler(
 
 fun runWithK2JVMCompiler(
     args: Array<String>,
-    expectedOutPatterns: List<String> = emptyList(),
-    expectedExitCode: Int = 0
+    expectedAllOutPatterns: List<String> = emptyList(),
+    expectedExitCode: Int = 0,
+    expectedSomeErrPatterns: List<String>? = null
 ) {
     val (out, err, ret) = captureOutErrRet {
         CLITool.doMainNoExit(
@@ -169,14 +170,24 @@ fun runWithK2JVMCompiler(
     try {
         val outLines = out.lines()
         Assert.assertEquals(
-            "Expecting pattern:\n  ${expectedOutPatterns.joinToString("\n  ")}\nGot:\n  ${outLines.joinToString("\n  ")}",
-            expectedOutPatterns.size, outLines.size
+            "Expecting pattern:\n  ${expectedAllOutPatterns.joinToString("\n  ")}\nGot:\n  ${outLines.joinToString("\n  ")}",
+            expectedAllOutPatterns.size, outLines.size
         )
-        for ((expectedPattern, actualLine) in expectedOutPatterns.zip(outLines)) {
+        for ((expectedPattern, actualLine) in expectedAllOutPatterns.zip(outLines)) {
             Assert.assertTrue(
                 "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
                 Regex(expectedPattern).matches(actualLine)
             )
+        }
+        if (expectedSomeErrPatterns != null) {
+            val errLines = err.lines()
+            for (expectedPattern in expectedSomeErrPatterns) {
+                val re = Regex(expectedPattern)
+                Assert.assertTrue(
+                    "Expected pattern \"$expectedPattern\" is not found in the stderr:\n${errLines.joinToString("\n")}",
+                    errLines.any { re.find(it) != null }
+                )
+            }
         }
         Assert.assertEquals(expectedExitCode, ret.code)
     } catch (e: Throwable) {
@@ -185,7 +196,6 @@ fun runWithK2JVMCompiler(
         throw e
     }
 }
-
 
 internal fun <T> captureOutErrRet(body: () -> T): Triple<String, String, T> {
     val outStream = ByteArrayOutputStream()
