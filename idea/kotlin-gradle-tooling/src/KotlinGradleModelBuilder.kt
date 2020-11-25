@@ -9,7 +9,11 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ProjectDependency
-import org.jetbrains.annotations.NotNull
+import org.gradle.tooling.BuildController
+import org.gradle.tooling.model.Model
+import org.gradle.tooling.model.ProjectModel
+import org.gradle.tooling.model.gradle.GradleBuild
+import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
@@ -96,6 +100,8 @@ abstract class AbstractKotlinGradleModelBuilder : ModelBuilderService {
 
         val kotlinPluginWrapper = "org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapperKt"
 
+        val androidBasePluginId = "com.android.base"
+
         fun Task.getSourceSetName(): String = try {
             javaClass.methods.firstOrNull { it.name.startsWith("getSourceSetName") && it.parameterTypes.isEmpty() }?.invoke(this) as? String
         } catch (e: InvocationTargetException) {
@@ -103,6 +109,8 @@ abstract class AbstractKotlinGradleModelBuilder : ModelBuilderService {
         } ?: "main"
     }
 }
+
+private const val NON_ANDROID_GRADLE_PROJECT_ONOLY_MARKER = "#"
 
 class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder(), ModelBuilderService.Ex {
     override fun getErrorMessageBuilder(project: Project, e: Exception): ErrorMessageBuilder {
@@ -164,21 +172,45 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder(), ModelBuilde
         }
     }
 
-    override fun buildAll(modelName: String, project: Project): KotlinGradleModelImpl {
+    override fun buildAll(modelName: String, project: Project): KotlinGradleModelImpl? {
         return buildAll(project, null)
     }
 
-    override fun buildAll(modelName: String, project: Project, builderContext: ModelBuilderContext): KotlinGradleModelImpl {
+    override fun buildAll(modelName: String, project: Project, builderContext: ModelBuilderContext): KotlinGradleModelImpl? {
         return buildAll(project, builderContext)
     }
 
-    private fun buildAll(project: Project, builderContext: ModelBuilderContext?): KotlinGradleModelImpl {
+    private fun buildAll(project: Project, builderContext: ModelBuilderContext?): KotlinGradleModelImpl? {
         // When running in Android Studio, Android Studio would request specific source sets only to avoid syncing
         // currently not active build variants. We convert names to the lower case to avoid ambiguity with build variants
-        // accidentally named starting with upper case.
-        val requestedVariants: Set<String>? = builderContext?.parameter?.splitToSequence(',')?.map { it.toLowerCase() }?.toSet()
+        // accidentally named starting with upper case. In this mode, Kotlin plugin requests models with the parameter set to
+        // NON_ANDROID_GRADLE_PROJECT_ONLY_MARKER signaling that no model should be built for Android modules.
+
         val kotlinPluginId = kotlinPluginIds.singleOrNull { project.plugins.findPlugin(it) != null }
         val platformPluginId = platformPluginIds.singleOrNull { project.plugins.findPlugin(it) != null }
+
+        val requestedAndroidSourceSetsString = builderContext?.parameter
+        val shouldAndroidSourceSetFilterApply =
+            requestedAndroidSourceSetsString != null && requestedAndroidSourceSetsString != NON_ANDROID_GRADLE_PROJECT_ONOLY_MARKER
+
+        fun isAndroidPluginApplied() = project.plugins.findPlugin(androidBasePluginId) != null
+
+        val requestedAndroidSourceSets: Set<String>? =
+            when {
+                // No Android IDE plugin is present.
+                requestedAndroidSourceSetsString == null -> null
+
+                // Android IDE plugin is requesting the model for an Android Gradle project.
+                shouldAndroidSourceSetFilterApply ->
+                    requestedAndroidSourceSetsString.splitToSequence(',').map { it.toLowerCase() }.toSet()
+
+                // Kotlin IDE plugin is requesting the model for non a non-Android Gradle project but the the project is an Android one.
+                // Skip processing and let Android IDE plugin request the model with proper filters applied.
+                !shouldAndroidSourceSetFilterApply && isAndroidPluginApplied() -> return null
+
+                // Android IDE plugin is present but Kotlin IDE plugin is requesting the model and the project is not an Android one.
+                else -> null
+            }
 
         val compilerArgumentsBySourceSet = LinkedHashMap<String, ArgsInfo>()
         val extraProperties = HashMap<String, KotlinTaskProperties>()
@@ -186,7 +218,7 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder(), ModelBuilde
         project.getAllTasks(false)[project]?.forEach { compileTask ->
             if (compileTask.javaClass.name !in kotlinCompileTaskClasses) return@forEach
             val sourceSetName = compileTask.getSourceSetName()
-            if (requestedVariants != null && !requestedVariants.contains(sourceSetName.toLowerCase())) return@forEach
+            if (requestedAndroidSourceSets != null && !requestedAndroidSourceSets.contains(sourceSetName.toLowerCase())) return@forEach
             val currentArguments = compileTask.getCompilerArguments("getSerializedCompilerArguments")
                 ?: compileTask.getCompilerArguments("getSerializedCompilerArgumentsIgnoreClasspathIssues") ?: emptyList()
             val defaultArguments = compileTask.getCompilerArguments("getDefaultSerializedCompilerArguments").orEmpty()
@@ -208,5 +240,30 @@ class KotlinGradleModelBuilder : AbstractKotlinGradleModelBuilder(), ModelBuilde
             extraProperties,
             project.gradle.gradleUserHomeDir.absolutePath
         )
+    }
+}
+
+/**
+ * A [ProjectImportModelProvider] for [KotlinGradleModel] when running in the IDE with the Android IDE plugin present and
+ * requesting [KotlinGradleModel]'s by itself to reduce the set of source sets processed to the currently selected build variant only.
+ */
+class KotlinWithAndroidPluginProjectImportModelProvider : ProjectImportModelProvider {
+    override fun populateBuildModels(
+        buildController: BuildController,
+        gladleBuild: GradleBuild,
+        consumer: ProjectImportModelProvider.BuildModelConsumer
+    ) = Unit
+
+    override fun populateProjectModels(
+        buildController: BuildController,
+        gradleModel: Model,
+        consumer: ProjectImportModelProvider.ProjectModelConsumer
+    ) {
+        val model = buildController.findModel(gradleModel, KotlinGradleModel::class.java, ModelBuilderService.Parameter::class.java) {
+            it.value = NON_ANDROID_GRADLE_PROJECT_ONOLY_MARKER // This marker tells the builder to build the model, only, if requested for a non-Android module.
+        }
+        if (model != null) {
+            consumer.consume(model, KotlinGradleModel::class.java)
+        }
     }
 }

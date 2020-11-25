@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.statistics.KotlinGradleFUSLogger
 import org.jetbrains.plugins.gradle.model.ExternalProjectDependency
 import org.jetbrains.plugins.gradle.model.ExternalSourceSet
 import org.jetbrains.plugins.gradle.model.FileCollectionDependency
+import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
@@ -79,12 +80,24 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         return setOf(KotlinGradleModelBuilder::class.java, Unit::class.java)
     }
 
-    override fun getExtraProjectModelClasses(): Set<Class<out Any>> {
+    private fun isAndroidPluginRequestingKotlinGradleModel(): Boolean {
         val isAndroidPluginRequestingKotlinGradleModelKey = Key.findKeyByName("IS_ANDROID_PLUGIN_REQUESTING_KOTLIN_GRADLE_MODEL_KEY")
-        if (isAndroidPluginRequestingKotlinGradleModelKey != null && resolverCtx.getUserData(isAndroidPluginRequestingKotlinGradleModelKey) != null) {
+        return isAndroidPluginRequestingKotlinGradleModelKey != null &&
+                resolverCtx.getUserData(isAndroidPluginRequestingKotlinGradleModelKey) != null
+    }
+
+    override fun getExtraProjectModelClasses(): Set<Class<out Any>> {
+        if (isAndroidPluginRequestingKotlinGradleModel()) {
             return emptySet()
         }
         return setOf(KotlinGradleModel::class.java)
+    }
+
+    override fun getModelProvider(): ProjectImportModelProvider? {
+        if (isAndroidPluginRequestingKotlinGradleModel()) {
+            return KotlinWithAndroidPluginProjectImportModelProvider()
+        }
+        return null;
     }
 
     private fun useModulePerSourceSet(): Boolean {
