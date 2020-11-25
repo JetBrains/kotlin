@@ -294,7 +294,7 @@ class CoroutineCodegenForLambda private constructor(
             functionCodegen.generateMethod(JvmDeclarationOrigin.NO_ORIGIN, funDescriptor,
                                            object : FunctionGenerationStrategy.CodegenBased(state) {
                                                override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
-                                                   codegen.v.generateInvokeMethod(signature)
+                                                   codegen.v.generateInvokeMethod(signature, funDescriptor)
                                                }
                                            })
         }
@@ -316,13 +316,13 @@ class CoroutineCodegenForLambda private constructor(
         )
         mv.visitCode()
         with(InstructionAdapter(mv)) {
-            generateInvokeMethod(jvmMethodSignature)
+            generateInvokeMethod(jvmMethodSignature, untypedDescriptor)
         }
 
         FunctionCodegen.endVisit(mv, "invoke", element)
     }
 
-    private fun InstructionAdapter.generateInvokeMethod(signature: JvmMethodSignature) {
+    private fun InstructionAdapter.generateInvokeMethod(signature: JvmMethodSignature, descriptor: FunctionDescriptor) {
         // this
         load(0, AsmTypes.OBJECT_TYPE)
         val parameterTypes = signature.valueParameters.map { it.asmType }
@@ -348,16 +348,23 @@ class CoroutineCodegenForLambda private constructor(
             load(arraySlot, AsmTypes.OBJECT_TYPE)
         } else {
             var index = 0
+            val fromKotlinTypes =
+                if (!generateErasedCreate && doNotGenerateInvokeBridge) funDescriptor.allValueParameterTypes()
+                else funDescriptor.allValueParameterTypes().map { funDescriptor.module.builtIns.nullableAnyType }
+            val toKotlinTypes =
+                if (!generateErasedCreate && doNotGenerateInvokeBridge) createCoroutineDescriptor.allValueParameterTypes()
+                else descriptor.allValueParameterTypes()
             parameterTypes.withVariableIndices().forEach { (varIndex, type) ->
                 load(varIndex + 1, type)
-                StackValue.coerce(type, createArgumentTypes[index++], this)
+                StackValue.coerce(type, fromKotlinTypes[index], createArgumentTypes[index], toKotlinTypes[index], this)
+                index++
             }
         }
 
         // this.create(..)
         invokevirtual(
             v.thisName,
-            createCoroutineDescriptor.name.identifier,
+            typeMapper.mapFunctionName(createCoroutineDescriptor, null),
             Type.getMethodDescriptor(
                 languageVersionSettings.continuationAsmType(),
                 *createArgumentTypes.toTypedArray()
@@ -831,3 +838,6 @@ private object FailingFunctionGenerationStrategy : FunctionGenerationStrategy() 
 fun reportSuspensionPointInsideMonitor(element: KtElement, state: GenerationState, stackTraceElement: String) {
     state.diagnostics.report(ErrorsJvm.SUSPENSION_POINT_INSIDE_MONITOR.on(element, stackTraceElement))
 }
+
+private fun FunctionDescriptor.allValueParameterTypes(): List<KotlinType> =
+    (listOfNotNull(extensionReceiverParameter?.type)) + valueParameters.map { it.type }

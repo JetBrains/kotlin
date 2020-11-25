@@ -6498,6 +6498,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/covariantOverrideSuspendFun_Int.kt");
                 }
 
+                @TestMetadata("createMangling.kt")
+                public void testCreateMangling() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/createMangling.kt");
+                }
+
                 @TestMetadata("genericOverrideSuspendFun.kt")
                 public void testGenericOverrideSuspendFun() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/genericOverrideSuspendFun.kt");
@@ -6715,6 +6720,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/covariantOverrideSuspendFun_Int.kt");
                 }
 
+                @TestMetadata("createMangling.kt")
+                public void testCreateMangling() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/createMangling.kt");
+                }
+
                 @TestMetadata("genericOverrideSuspendFun.kt")
                 public void testGenericOverrideSuspendFun() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/genericOverrideSuspendFun.kt");
@@ -6925,6 +6935,11 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 @TestMetadata("covariantOverrideSuspendFun_Int.kt")
                 public void testCovariantOverrideSuspendFun_Int() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/covariantOverrideSuspendFun_Int.kt");
+                }
+
+                @TestMetadata("createMangling.kt")
+                public void testCreateMangling() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/createMangling.kt");
                 }
 
                 @TestMetadata("genericOverrideSuspendFun.kt")
