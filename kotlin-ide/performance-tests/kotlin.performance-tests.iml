@@ -61,5 +61,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-  </component>
+    <orderEntry type="module" module-name="kotlin.resources-descriptors" scope="TEST" />
+ </component>
 </module>

@@ -2239,6 +2239,8 @@
       <module fileurl="file://$PROJECT_DIR$/kotlin/project-wizard/core/kotlin.project-wizard.core.iml" filepath="$PROJECT_DIR$/kotlin/project-wizard/core/kotlin.project-wizard.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/project-wizard/idea/kotlin.project-wizard.idea.iml" filepath="$PROJECT_DIR$/kotlin/project-wizard/idea/kotlin.project-wizard.idea.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/repl/kotlin.repl.iml" filepath="$PROJECT_DIR$/kotlin/repl/kotlin.repl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin/kotlin.resources-descriptors.iml" filepath="$PROJECT_DIR$/kotlin/kotlin.resources-descriptors.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin/kotlin.resources-fir.iml" filepath="$PROJECT_DIR$/kotlin/kotlin.resources-fir.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/scripting/kotlin.scripting.iml" filepath="$PROJECT_DIR$/kotlin/scripting/kotlin.scripting.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/scripting-support/kotlin.scripting-support.iml" filepath="$PROJECT_DIR$/kotlin/scripting-support/kotlin.scripting-support.iml" />
       <module fileurl="file://$PROJECT_DIR$/kotlin/test-framework/kotlin.test-framework.iml" filepath="$PROJECT_DIR$/kotlin/test-framework/kotlin.test-framework.iml" />

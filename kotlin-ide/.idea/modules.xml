@@ -893,6 +893,8 @@
       <module fileurl="file://$PROJECT_DIR$/project-wizard/core/kotlin.project-wizard.core.iml" filepath="$PROJECT_DIR$/project-wizard/core/kotlin.project-wizard.core.iml" />
       <module fileurl="file://$PROJECT_DIR$/project-wizard/idea/kotlin.project-wizard.idea.iml" filepath="$PROJECT_DIR$/project-wizard/idea/kotlin.project-wizard.idea.iml" />
       <module fileurl="file://$PROJECT_DIR$/repl/kotlin.repl.iml" filepath="$PROJECT_DIR$/repl/kotlin.repl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin.resources-descriptors.iml" filepath="$PROJECT_DIR$/kotlin.resources-descriptors.iml" />
+      <module fileurl="file://$PROJECT_DIR$/kotlin.resources-fir.iml" filepath="$PROJECT_DIR$/kotlin.resources-fir.iml" />
       <module fileurl="file://$PROJECT_DIR$/scripting/kotlin.scripting.iml" filepath="$PROJECT_DIR$/scripting/kotlin.scripting.iml" />
       <module fileurl="file://$PROJECT_DIR$/scripting-support/kotlin.scripting-support.iml" filepath="$PROJECT_DIR$/scripting-support/kotlin.scripting-support.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-framework/kotlin.test-framework.iml" filepath="$PROJECT_DIR$/test-framework/kotlin.test-framework.iml" />

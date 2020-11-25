@@ -38,5 +38,6 @@
     <orderEntry type="module" module-name="intellij.java.psi" />
     <orderEntry type="module" module-name="intellij.java.ui" />
     <orderEntry type="module" module-name="intellij.gradle.common" />
-  </component>
+    <orderEntry type="module" module-name="kotlin.resources-descriptors" scope="TEST" />
+ </component>
 </module>

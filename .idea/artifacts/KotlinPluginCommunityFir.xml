@@ -210,6 +210,9 @@
         <element id="archive" name="kotlin.frontend-fir.jar">
           <element id="module-output" name="kotlin.fir.frontend-fir" />
         </element>
+        <element id="archive" name="kotlin-resources-fir.jar">
+          <element id="module-output" name="kotlin.resources-fir" />
+        </element>
       </element>
       <element id="directory" name="kotlinc">
         <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4.30-dev-local-2/kotlin-dist-for-ide-1.4.30-dev-local-2.jar" path-in-jar="/" />
