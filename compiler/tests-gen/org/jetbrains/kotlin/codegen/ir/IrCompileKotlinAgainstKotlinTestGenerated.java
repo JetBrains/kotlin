@@ -148,6 +148,11 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         runTest("compiler/testData/compileKotlinAgainstKotlin/expectClassActualTypeAlias.kt");
     }
 
+    @TestMetadata("importCompanion.kt")
+    public void testImportCompanion() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/importCompanion.kt");
+    }
+
     @TestMetadata("inlineClassFromBinaryDependencies.kt")
     public void testInlineClassFromBinaryDependencies() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassFromBinaryDependencies.kt");
