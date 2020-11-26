@@ -390,9 +390,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 }
 
-fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {
+fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
     val result = mutableListOf<IrTypeParameter>()
-    var current: IrDeclarationParent? = klass
+    var current: IrDeclarationParent? = parent
     while (current != null) {
         (current as? IrTypeParametersContainer)?.let { result += it.typeParameters }
         current =
@@ -404,9 +404,11 @@ fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {
                     else -> null
                 }
                 is IrConstructor -> current.parent as IrClass
-                is IrFunction -> if (current.visibility == DescriptorVisibilities.LOCAL || current.dispatchReceiverParameter != null) {
-                    current.parent
-                } else null
+                is IrFunction ->
+                    if (current.visibility == DescriptorVisibilities.LOCAL || current.dispatchReceiverParameter != null)
+                        current.parent
+                    else
+                        null
                 else -> null
             }
     }

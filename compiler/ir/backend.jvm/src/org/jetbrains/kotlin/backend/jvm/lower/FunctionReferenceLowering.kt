@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
@@ -74,7 +74,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         expression.transformChildrenVoid(this)
-        return if (expression.isIgnored) expression else FunctionReferenceBuilder(expression).build()
+        return if (expression.isIgnored)
+            expression
+        else
+            FunctionReferenceBuilder(expression).build()
     }
 
     // Handle SAM conversions which wrap a function reference:

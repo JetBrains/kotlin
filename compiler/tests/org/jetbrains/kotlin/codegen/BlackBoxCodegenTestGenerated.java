@@ -2058,6 +2058,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/callableReference/genericConstructorReference.kt");
         }
 
+        @TestMetadata("genericLocalClassConstructorReference.kt")
+        public void testGenericLocalClassConstructorReference() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/genericLocalClassConstructorReference.kt");
+        }
+
         @TestMetadata("javaField.kt")
         public void testJavaField() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/javaField.kt");

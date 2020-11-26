@@ -1499,6 +1499,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/funWithDefaultParametersAsKCallableStar.kt");
             }
 
+            @TestMetadata("genericLocalClassConstructorReference.kt")
+            public void testGenericLocalClassConstructorReference() throws Exception {
+                runTest("compiler/testData/ir/irText/expressions/callableReferences/genericLocalClassConstructorReference.kt");
+            }
+
             @TestMetadata("genericMember.kt")
             public void testGenericMember() throws Exception {
                 runTest("compiler/testData/ir/irText/expressions/callableReferences/genericMember.kt");

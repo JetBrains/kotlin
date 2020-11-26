@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyProperty
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -1078,18 +1077,37 @@ private fun makeKotlinType(
     classifier: IrClassifierSymbol,
     arguments: List<IrTypeArgument>,
     hasQuestionMark: Boolean
-): SimpleType = when (classifier) {
-    is IrTypeParameterSymbol -> classifier.owner.toIrBasedDescriptor().defaultType
-    is IrClassSymbol -> {
-        val classDescriptor = classifier.owner.toIrBasedDescriptor()
-        val kotlinTypeArguments = arguments.mapIndexed { index, it ->
-            when (it) {
-                is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toIrBasedKotlinType())
-                is IrStarProjection -> StarProjectionImpl(classDescriptor.typeConstructor.parameters[index])
-                else -> error(it)
+): SimpleType =
+    when (classifier) {
+        is IrTypeParameterSymbol -> classifier.owner.toIrBasedDescriptor().defaultType
+        is IrClassSymbol -> {
+            val classDescriptor = classifier.owner.toIrBasedDescriptor()
+            val kotlinTypeArguments = arguments.mapIndexed { index, it ->
+                when (it) {
+                    is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toIrBasedKotlinType())
+                    is IrStarProjection -> StarProjectionImpl(classDescriptor.typeConstructor.parameters[index])
+                    else -> error(it)
+                }
+            }
+
+            try {
+                classDescriptor.defaultType.replace(newArguments = kotlinTypeArguments).makeNullableAsSpecified(hasQuestionMark)
+            } catch (e: Throwable) {
+                throw RuntimeException(
+                    "Classifier: $classDescriptor\n" +
+                            "Type parameters:\n" +
+                            classDescriptor.defaultType.constructor.parameters.withIndex()
+                                .joinToString(separator = "\n") {
+                                    "${it.index}: ${(it.value as IrBasedTypeParameterDescriptor).owner.render()}"
+                                } +
+                            "\nType arguments:\n" +
+                            arguments.withIndex()
+                                .joinToString(separator = "\n") {
+                                    "${it.index}: ${it.value.render()}"
+                                },
+                    e
+                )
             }
         }
-        classDescriptor.defaultType.replace(newArguments = kotlinTypeArguments).makeNullableAsSpecified(hasQuestionMark)
+        else -> error("unknown classifier kind $classifier")
     }
-    else -> error("unknown classifier kind $classifier")
-}
