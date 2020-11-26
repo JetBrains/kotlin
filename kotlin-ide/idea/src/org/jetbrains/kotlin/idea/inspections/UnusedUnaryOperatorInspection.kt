@@ -9,11 +9,14 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
+import com.intellij.psi.util.parentsWithSelf
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.KotlinBundle
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPrefixExpression
 import org.jetbrains.kotlin.psi.prefixExpressionVisitor
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -26,7 +29,9 @@ class UnusedUnaryOperatorInspection : AbstractKotlinInspection() {
         val operationToken = prefix.operationToken
         if (operationToken != KtTokens.PLUS && operationToken != KtTokens.MINUS) return
 
-        val context = prefix.analyze()
+        // hack to fix KTIJ-196 (unstable `USED_AS_EXPRESSION` marker for KtAnnotationEntry)
+        if (prefix.isInAnnotationEntry) return
+        val context = prefix.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         if (prefix.isUsedAsExpression(context)) return
         val operatorDescriptor = prefix.operationReference.getResolvedCall(context)?.resultingDescriptor as? DeclarationDescriptor ?: return
         if (!KotlinBuiltIns.isUnderKotlinPackage(operatorDescriptor)) return
@@ -46,3 +51,6 @@ class UnusedUnaryOperatorInspection : AbstractKotlinInspection() {
         }
     }
 }
+
+private val KtPrefixExpression.isInAnnotationEntry: Boolean
+    get() = parentsWithSelf.takeWhile { it is KtExpression }.last().parent?.parent?.parent is KtAnnotationEntry
