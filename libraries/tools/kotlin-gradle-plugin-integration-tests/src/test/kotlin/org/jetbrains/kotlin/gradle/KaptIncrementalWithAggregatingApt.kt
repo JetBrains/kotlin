@@ -27,6 +27,7 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
             incremental = true,
+            debug=false,
             kaptOptions = KaptOptions(
                 verbose = true,
                 useWorkers = true,
@@ -171,7 +172,7 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
         }
         project.build("build") {
             assertSuccessful()
-            assertTrue(getProcessedSources(output).isEmpty())
+            assertTrue(output.contains("Skipping annotation processing as all sources are up-to-date."))
         }
     }
 
@@ -275,8 +276,9 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
             assertEquals(
                 setOf(
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/NoAnnotationsKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
-                ), getProcessedSources(output)
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath,
+                    fileInWorkingDir("build/generated/source/kapt/main/bar/WithAnnotationGenerated.java").canonicalPath.takeUnless { isBinary },
+                ).filterNotNull().toSet(), getProcessedSources(output)
             )
 
             checkAggregatingResource { lines ->
@@ -302,9 +304,9 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
             assertEquals(
                 setOf(
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/BazClass.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
-                ),
-                getProcessedSources(output)
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath,
+                    fileInWorkingDir("build/generated/source/kapt/main/bar/WithAnnotationGenerated.java").canonicalPath.takeUnless { isBinary },
+                ).filterNotNull().toSet(), getProcessedSources(output)
             )
 
             checkAggregatingResource { lines ->
@@ -330,9 +332,9 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
             assertEquals(
                 setOf(
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/BazClass.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
-                ),
-                getProcessedSources(output)
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath,
+                    fileInWorkingDir("build/generated/source/kapt/main/bar/WithAnnotationGenerated.java").canonicalPath.takeUnless { isBinary },
+                ).filterNotNull().toSet(), getProcessedSources(output)
             )
 
             checkAggregatingResource { lines ->
@@ -351,8 +353,30 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
             assertEquals(
                 setOf(
                     fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/NoAnnotationsKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
-                ), getProcessedSources(output)
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath,
+                    fileInWorkingDir("build/generated/source/kapt/main/bar/WithAnnotationGenerated.java").canonicalPath.takeUnless { isBinary },
+                    fileInWorkingDir("build/generated/source/kapt/main/BazClass/BazNestedGenerated.java").canonicalPath.takeUnless { isBinary },
+                ).filterNotNull().toSet(), getProcessedSources(output)
+            )
+
+            checkAggregatingResource { lines ->
+                assertEquals(2, lines.size)
+                assertTrue(lines.contains("WithAnnotationGenerated"))
+                assertTrue(lines.contains("BazNestedGenerated"))
+            }
+        }
+
+        // make sure that changing the origin of isolating that produced
+        project.projectFile("withAnnotation.kt").modify { current -> current.substringBeforeLast("}") + "\nfun otherFunction() {} }" }
+        project.build("build", options = buildOptions) {
+            assertSuccessful()
+
+            assertEquals(
+                setOf(
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/WithAnnotation.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath,
+                    fileInWorkingDir("build/generated/source/kapt/main/BazClass/BazNestedGenerated.java").canonicalPath.takeUnless { isBinary },
+                ).filterNotNull().toSet(), getProcessedSources(output)
             )
 
             checkAggregatingResource { lines ->

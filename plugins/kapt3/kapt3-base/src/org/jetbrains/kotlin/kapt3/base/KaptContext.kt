@@ -60,10 +60,16 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
             JavaClassCacheManager(it)
         }
         if (options.flags[KaptFlag.INCREMENTAL_APT]) {
-            sourcesToReprocess =
+            sourcesToReprocess = run {
+                val start = System.currentTimeMillis()
                 cacheManager?.invalidateAndGetDirtyFiles(
                     options.changedFiles, options.classpathChanges
-                ) ?: SourcesToReprocess.FullRebuild
+                ).also {
+                    if (logger.isVerbose) {
+                        logger.info("Computing sources to reprocess took ${System.currentTimeMillis() - start}[ms].")
+                    }
+                }
+            }?: SourcesToReprocess.FullRebuild
 
             if (sourcesToReprocess == SourcesToReprocess.FullRebuild) {
                 // remove all generated sources and classes
