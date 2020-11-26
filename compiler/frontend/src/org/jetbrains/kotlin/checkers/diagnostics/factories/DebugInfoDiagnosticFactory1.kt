@@ -21,9 +21,8 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
     DebugInfoDiagnosticFactory {
     private val privateName: String
 
-    override var name: String?
+    override val name: String
         get() = "DEBUG_INFO_$privateName"
-        set(_) {}
 
     override val withExplicitDefinitionOnly: Boolean
 

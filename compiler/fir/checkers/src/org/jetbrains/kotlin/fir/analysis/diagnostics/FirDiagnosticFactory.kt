@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.FirPsiSourceElement
 import org.jetbrains.kotlin.fir.FirSourceElement
 
 sealed class AbstractFirDiagnosticFactory<out E : FirSourceElement, D : FirDiagnostic<E>, P : PsiElement>(
-    override var name: String?,
+    override val name: String,
     override val severity: Severity,
     val positioningStrategy: SourceElementPositioningStrategy<P>,
 ) : DiagnosticFactory<D>(name, severity) {

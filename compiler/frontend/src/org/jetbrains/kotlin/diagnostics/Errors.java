@@ -1199,7 +1199,7 @@ public interface Errors {
                         Object value = field.get(null);
                         if (value instanceof DiagnosticFactory) {
                             DiagnosticFactory<?> factory = (DiagnosticFactory<?>)value;
-                            factory.setName(field.getName());
+                            factory.initializeName(field.getName());
 
                             factory.setDefaultRenderer((DiagnosticRenderer) diagnosticToRendererMap.get(factory));
                         }

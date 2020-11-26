@@ -9,9 +9,15 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer
 import java.lang.IllegalArgumentException
 
 abstract class DiagnosticFactory<D : UnboundDiagnostic> protected constructor(
-    open var name: String?,
+    private var _name: String?,
     open val severity: Severity
 ) {
+    open val name: String
+        get() = _name!!
+
+    fun initializeName(name: String) {
+        _name = name
+    }
 
     open var defaultRenderer: DiagnosticRenderer<D>? = null
 
@@ -29,7 +35,7 @@ abstract class DiagnosticFactory<D : UnboundDiagnostic> protected constructor(
     }
 
     override fun toString(): String {
-        return name ?: "<Anonymous DiagnosticFactory>"
+        return _name ?: "<Anonymous DiagnosticFactory>"
     }
 
     companion object {

@@ -34,9 +34,8 @@ class DebugInfoDiagnosticFactory0 private constructor(
         return DebugInfoDiagnostic(expression, this)
     }
 
-    override var name: String?
+    override val name: String
         get() = "DEBUG_INFO_$privateName"
-        set(_) {}
 
     companion object {
         val SMARTCAST = DebugInfoDiagnosticFactory0("SMARTCAST", Severity.INFO)
