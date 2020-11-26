@@ -7,13 +7,16 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.ktDeclaration
+import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -86,6 +89,31 @@ inline fun <reified F : FirDeclaration, R> KtLambdaExpression.withFirDeclaration
     val firDeclaration = resolveState.findSourceFirDeclaration(this)
     if (firDeclaration !is F) throw InvalidFirElementTypeException(this, F::class, firDeclaration::class)
     return action(firDeclaration)
+}
+
+/**
+ * Executes [action] with given [FirDeclaration]
+ * [FirDeclaration] passed to [action] will be resolved at least to [phase] when executing [action] on it
+ */
+fun <D : FirDeclaration, R> D.withFirDeclaration(
+    resolveState: FirModuleResolveState,
+    phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    action: (D) -> R,
+): R {
+    resolvedFirToPhase(phase, resolveState)
+    val originalDeclaration = (this as? FirCallableDeclaration<*>)?.unwrapFakeOverrides() ?: this
+    val session = originalDeclaration.session
+    return when {
+        originalDeclaration.origin == FirDeclarationOrigin.Source
+                && session is FirIdeSourcesSession
+        -> {
+            val cache = session.cache
+            val file = resolveState.getFirFile(this, cache)
+                ?: error("Fir file was not found for\n${render()}\n${ktDeclaration.getElementTextInContext()}")
+            cache.firFileLockProvider.withReadLock(file) { action(this) }
+        }
+        else -> action(this)
+    }
 }
 
 /**

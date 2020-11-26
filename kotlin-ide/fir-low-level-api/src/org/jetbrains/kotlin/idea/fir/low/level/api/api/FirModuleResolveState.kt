@@ -85,20 +85,4 @@ abstract class FirModuleResolveState {
     )
 
     internal abstract fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile?
-
-    fun <D : FirDeclaration, R> withFirDeclaration(declaration: D, action: (D) -> R): R {
-        val originalDeclaration = (declaration as? FirCallableDeclaration<*>)?.unwrapFakeOverrides() ?: declaration
-        val session = originalDeclaration.session
-        return when {
-            originalDeclaration.origin == FirDeclarationOrigin.Source
-                    && session is FirIdeSourcesSession
-            -> {
-                val cache = session.cache
-                val file = getFirFile(declaration, cache)
-                    ?: error("Fir file was not found for\n${declaration.render()}\n${declaration.ktDeclaration.getElementTextInContext()}")
-                cache.firFileLockProvider.withReadLock(file) { action(declaration) }
-            }
-            else -> action(declaration)
-        }
-    }
 }

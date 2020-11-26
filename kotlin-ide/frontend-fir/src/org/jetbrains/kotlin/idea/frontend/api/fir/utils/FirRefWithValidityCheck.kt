@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.resolvedFirToPhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
@@ -24,16 +25,15 @@ internal class FirRefWithValidityCheck<D : FirDeclaration>(fir: D, resolveState:
             ?: throw EntityWasGarbageCollectedException("FirElement")
         val resolveState = resolveStateWeakRef.get()
             ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
-        fir.resolvedFirToPhase(phase, resolveState)
         return when (phase) {
             FirResolvePhase.BODY_RESOLVE -> {
                 /*
                  The BODY_RESOLVE phase is the maximum possible phase we can resolve our declaration to
                  So there is not need to run whole `action` under read lock
                  */
-                action(resolveState.withFirDeclaration(fir) { it })
+                action(fir.withFirDeclaration(resolveState, phase) { it })
             }
-            else -> resolveState.withFirDeclaration(fir) { action(it) }
+            else -> fir.withFirDeclaration(resolveState, phase) { action(it) }
         }
     }
 
