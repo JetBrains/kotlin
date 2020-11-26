@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptDiagnosticsMessageCollector
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.createCompilationContextFromEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.getScriptKtFile
+import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.resolve.InvalidScriptResolverAnnotation
 import org.jetbrains.kotlin.scripting.resolve.getScriptCollectedData
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -99,6 +100,7 @@ class ConstructAnnotationTest : TestCase() {
     private fun annotations(filename: String, vararg classes: KClass<out Annotation>): ResultWithDiagnostics<List<Annotation>> {
         val file = File(testDataPath, filename)
         val compilationConfiguration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.MOCK_JDK).apply {
+            updateWithBaseCompilerArguments()
             addKotlinSourceRoot(file.path)
             loadScriptingPlugin(this)
         }

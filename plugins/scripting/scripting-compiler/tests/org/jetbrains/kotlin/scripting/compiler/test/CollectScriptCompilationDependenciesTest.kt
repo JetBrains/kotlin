@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
+import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -58,6 +59,7 @@ class CollectScriptCompilationDependenciesTest : TestCase() {
 
     private fun runTest(scriptFile: String, expectedDependencies: List<String>, classPath: List<File> = emptyList()) {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.MOCK_JDK).apply {
+            updateWithBaseCompilerArguments()
             add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
                 ScriptDefinition.FromTemplate(

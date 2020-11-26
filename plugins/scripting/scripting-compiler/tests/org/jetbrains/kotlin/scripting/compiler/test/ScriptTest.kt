@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.script.loadScriptingPlugin
+import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -118,6 +119,7 @@ class ScriptTest : TestCase() {
         val rootDisposable = Disposer.newDisposable()
         try {
             val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.FULL_JDK)
+            configuration.updateWithBaseCompilerArguments()
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             configuration.add(
                 ScriptingConfigurationKeys.SCRIPT_DEFINITIONS,
