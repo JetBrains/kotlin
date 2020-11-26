@@ -73,6 +73,7 @@ class FirDiagnosticCodeMetaRenderConfiguration(
 
         val diagnostic = codeMetaInfo.diagnostic
 
+        @Suppress("UNCHECKED_CAST")
         val renderer = FirDefaultErrorMessages.getRendererForDiagnostic(diagnostic) as FirDiagnosticRenderer<FirDiagnostic<*>>
         params.add(renderer.render(diagnostic))
 

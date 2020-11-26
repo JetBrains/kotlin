@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codeMetaInfo.renderConfigurations
 
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory1
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
@@ -39,8 +38,7 @@ open class DiagnosticCodeMetaInfoRenderConfiguration(
             else -> DefaultErrorMessages.getRendererForDiagnostic(codeMetaInfo.diagnostic)
         }
         if (renderer is AbstractDiagnosticWithParametersRenderer) {
-            val renderParameters = renderer.renderParameters(codeMetaInfo.diagnostic)
-            params.addAll(ContainerUtil.map(renderParameters) { it.toString() })
+            renderer.renderParameters(codeMetaInfo.diagnostic).mapTo(params, Any::toString)
         }
         if (renderSeverity)
             params.add("severity='${codeMetaInfo.diagnostic.severity}'")

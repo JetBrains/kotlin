@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isEnumClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -370,7 +373,7 @@ class NameTables(
         }
 
         override fun visitDeclaration(declaration: IrDeclarationBase) {
-            if (declaration is IrDeclarationWithName && declaration is IrSymbolOwner) {
+            if (declaration is IrDeclarationWithName) {
                 table.declareFreshName(declaration, declaration.name.asString())
             }
             super.visitDeclaration(declaration)

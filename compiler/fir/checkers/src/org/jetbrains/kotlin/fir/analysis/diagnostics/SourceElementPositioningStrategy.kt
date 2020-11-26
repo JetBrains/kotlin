@@ -18,6 +18,7 @@ open class SourceElementPositioningStrategy<in E : PsiElement>(
     fun markDiagnostic(diagnostic: FirDiagnostic<*>): List<TextRange> {
         val element = diagnostic.element
         if (element is FirPsiSourceElement<*>) {
+            @Suppress("UNCHECKED_CAST")
             return psiStrategy.mark(element.psi as E)
         }
         return lightTreeStrategy.mark(element.lighterASTNode, element.treeStructure)
@@ -25,6 +26,7 @@ open class SourceElementPositioningStrategy<in E : PsiElement>(
 
     fun isValid(element: FirSourceElement): Boolean {
         if (element is FirPsiSourceElement<*>) {
+            @Suppress("UNCHECKED_CAST")
             return psiStrategy.isValid(element.psi as E)
         }
         return lightTreeStrategy.isValid(element.lighterASTNode, element.treeStructure)

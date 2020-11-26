@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.wasm.ir.*
 
-
 class WasmModuleCodegenContextImpl(
     override val backendContext: WasmBackendContext,
     private val wasmFragment: WasmCompiledModuleFragment
@@ -100,8 +99,8 @@ class WasmModuleCodegenContextImpl(
         wasmFragment.globals.define(irField, wasmGlobal)
     }
 
-    override fun defineGcType(irClass: IrClassSymbol, wasmStruct: WasmTypeDeclaration) {
-        wasmFragment.gcTypes.define(irClass, wasmStruct)
+    override fun defineGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration) {
+        wasmFragment.gcTypes.define(irClass, wasmType)
     }
 
     override fun defineRTT(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {

@@ -65,7 +65,7 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Custom
 
     @Test
     fun testParameterNames() {
-        test("DefaultParameterValues", "test.Anno") { set, roundEnv, env ->
+        test("DefaultParameterValues", "test.Anno") { set, roundEnv, _ ->
             val user = roundEnv.getElementsAnnotatedWith(set.single()).single() as TypeElement
             val nameField = user.enclosedElements.filterIsInstance<VariableElement>().single()
             assertEquals("John", nameField.constantValue)

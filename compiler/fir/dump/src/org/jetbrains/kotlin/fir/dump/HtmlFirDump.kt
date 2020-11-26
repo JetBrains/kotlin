@@ -767,6 +767,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             }
         }
 
+        @OptIn(ExperimentalUnsignedTypes::class)
         when (expression.kind) {
             FirConstKind.Null -> keyword("null")
             FirConstKind.Boolean -> keyword(value.toString())

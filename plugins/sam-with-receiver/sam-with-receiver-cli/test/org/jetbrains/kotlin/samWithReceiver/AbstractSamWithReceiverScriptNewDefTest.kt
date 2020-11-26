@@ -28,7 +28,10 @@ import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.junit.Assert
 import java.io.File
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.ResultWithDiagnostics
+import kotlin.script.experimental.api.ScriptCompilationConfiguration
+import kotlin.script.experimental.api.compilerOptions
+import kotlin.script.experimental.api.fileExtension
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
@@ -52,7 +55,7 @@ abstract class AbstractSamWithReceiverScriptNewDefTest : AbstractDiagnosticsTest
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
         val definition = createJvmScriptDefinitionFromTemplate<ScriptForSamWithReceiversNewDef>()
         val scriptCompiler = ScriptJvmCompilerFromEnvironment(environment)
-        val (scripts, regular) = files.partition {
+        val scripts = files.filter {
             it.ktFile?.virtualFile?.extension == definition.compilationConfiguration[ScriptCompilationConfiguration.fileExtension]
         }
         super.analyzeAndCheck(testDataFile, files)

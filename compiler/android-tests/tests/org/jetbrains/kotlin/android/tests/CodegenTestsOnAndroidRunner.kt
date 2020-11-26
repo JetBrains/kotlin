@@ -160,7 +160,6 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
                 val item = testCases.item(i) as Element
                 val failure = item.getElementsByTagName("failure")
                 val name = item.getAttribute("name")
-                val clazz = item.getAttribute("classname")
 
                 if (failure.length == 0) {
                     object : TestCase(name) {

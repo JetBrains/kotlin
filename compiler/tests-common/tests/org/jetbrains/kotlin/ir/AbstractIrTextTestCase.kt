@@ -184,12 +184,10 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
 
         @OptIn(ObsoleteDescriptorBasedAPI::class)
         override fun visitDeclaration(declaration: IrDeclarationBase) {
-            if (declaration is IrSymbolOwner) {
-                declaration.symbol.checkBinding("decl", declaration)
+            declaration.symbol.checkBinding("decl", declaration)
 
-                require(declaration.symbol.owner == declaration) {
-                    "Symbol is not bound to declaration: ${declaration.render()}"
-                }
+            require(declaration.symbol.owner == declaration) {
+                "Symbol is not bound to declaration: ${declaration.render()}"
             }
 
             val containingDeclarationDescriptor = declaration.descriptor.containingDeclaration

@@ -135,6 +135,7 @@ inline fun <reified T : PsiElement, reified V : PsiElement, reified U : PsiEleme
 }
 
 inline fun <reified T : PsiElement> PsiElement.getParentOfType(strict: Boolean, vararg stopAt: Class<out PsiElement>): T? {
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     return PsiTreeUtil.getParentOfType(this, T::class.java, strict, *stopAt)
 }
 

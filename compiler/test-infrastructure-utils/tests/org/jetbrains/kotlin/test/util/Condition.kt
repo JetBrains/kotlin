@@ -75,9 +75,7 @@ object Conditions {
     fun <T> not(c: Condition<T>): Condition<T> {
         if (c === alwaysTrue<Any>()) return alwaysFalse()
         if (c === alwaysFalse<Any>()) return alwaysTrue()
-        return if (c is Not<*>) {
-            (c as Not<T>).c as Condition<T>
-        } else Not(c)
+        return if (c is Not<*>) (c as Not<T>).c else Not(c)
     }
 
     fun <T> and(c1: Condition<T>, c2: Condition<T>): Condition<T> {
