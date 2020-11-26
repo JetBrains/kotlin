@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.element.builder
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureElement
@@ -104,6 +101,9 @@ internal fun PsiElement.getNonLocalContainingInBodyDeclarationWith(): KtNamedDec
     getNonLocalContainingOrThisDeclaration { declaration ->
         when (declaration) {
             is KtNamedFunction -> declaration.bodyExpression?.isAncestor(this) == true
+            is KtProperty -> declaration.initializer?.isAncestor(this) == true ||
+                    declaration.getter?.isAncestor(this) == true ||
+                    declaration.setter?.isAncestor(this) == true
             else -> false
         }
     }
