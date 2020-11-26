@@ -5,14 +5,19 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.isFinalClass
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
@@ -22,6 +27,7 @@ import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_RECORD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.isJvmRecord
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 object JvmRecordApplicabilityChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -43,6 +49,26 @@ object JvmRecordApplicabilityChecker : DeclarationChecker {
                     LanguageFeature.JvmRecordSupport to context.languageVersionSettings
                 )
             )
+            return
+        }
+
+        if (descriptor.kind == ClassKind.ENUM_CLASS) {
+            val modifierOrName =
+                declaration.modifierList?.getModifier(KtTokens.ENUM_KEYWORD)
+                    ?: declaration.nameIdentifier
+                    ?: declaration
+
+            context.trace.report(ErrorsJvm.ENUM_JVM_RECORD.on(modifierOrName))
+            return
+        }
+
+        if (!descriptor.isFinalClass) {
+            val modifierOrName =
+                declaration.modifierList?.findOneOfModifiers(KtTokens.ABSTRACT_KEYWORD, KtTokens.OPEN_KEYWORD, KtTokens.SEALED_KEYWORD)
+                    ?: declaration.nameIdentifier
+                    ?: declaration
+
+            context.trace.report(ErrorsJvm.NON_FINAL_JVM_RECORD.on(modifierOrName))
             return
         }
 
@@ -84,3 +110,6 @@ object JvmRecordApplicabilityChecker : DeclarationChecker {
         }
     }
 }
+
+private fun KtModifierList.findOneOfModifiers(vararg modifierTokens: KtModifierKeywordToken): PsiElement? =
+    modifierTokens.firstNotNullResult(this::getModifier)

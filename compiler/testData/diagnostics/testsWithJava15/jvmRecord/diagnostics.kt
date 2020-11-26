@@ -22,7 +22,21 @@ class A4(<!JVM_RECORD_NOT_VAL_PARAMETER!>var name: String<!>)
 class A5(vararg val name: String, <!JVM_RECORD_NOT_VAL_PARAMETER!><!UNUSED_PARAMETER!>y<!>: Int<!>)
 
 @JvmRecord
-class A6(
+<!NON_FINAL_JVM_RECORD!>open<!> class A6(val x: String)
+
+@JvmRecord
+<!NON_FINAL_JVM_RECORD!>abstract<!> class A7(val x: String)
+
+@JvmRecord
+<!NON_FINAL_JVM_RECORD!>sealed<!> class A8(val x: String)
+
+@JvmRecord
+<!ENUM_JVM_RECORD!>enum<!> class A9(val x: String) {
+    X("");
+}
+
+@JvmRecord
+class A10(
     val x: String,
     val y: Int,
     vararg val z: Double,
