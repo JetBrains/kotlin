@@ -14,6 +14,7 @@ import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.kapt3.base.incremental.*
+import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaCompiler
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
@@ -40,6 +41,13 @@ fun KaptContext.doAnnotationProcessing(
 
     val compilerAfterAP: JavaCompiler
     try {
+        if (javaSourceFiles.isEmpty() && aggregatedTypes.isEmpty()) {
+            if (logger.isVerbose) {
+                logger.info("Skipping annotation processing as all sources are up-to-date.")
+            }
+            return
+        }
+
         if (isJava9OrLater()) {
             val initProcessAnnotationsMethod = JavaCompiler::class.java.declaredMethods.single { it.name == "initProcessAnnotations" }
             initProcessAnnotationsMethod.invoke(compiler, wrappedProcessors, emptyList<JavaFileObject>(), emptyList<String>())
@@ -66,11 +74,6 @@ fun KaptContext.doAnnotationProcessing(
                 CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources)
             )
 
-            val generatedSourcesListener = sourcesStructureListener?.let {
-                compiler.getTaskListeners().remove(it)
-                GeneratedTypesTaskListener(cacheManager!!.javaCache)
-            }?.also { compiler.getTaskListeners().add(it) }
-
             val additionalClassNames = JavacList.from(aggregatedTypes)
             if (isJava9OrLater()) {
                 val processAnnotationsMethod =
@@ -78,13 +81,12 @@ fun KaptContext.doAnnotationProcessing(
                 processAnnotationsMethod.invoke(compiler, analyzedFiles, additionalClassNames)
                 compiler
             } else {
-                compiler.processAnnotations(analyzedFiles, additionalClassNames).also {
-                    generatedSourcesListener?.let { compiler.getTaskListeners().remove(it) }
-                }
+                compiler.processAnnotations(analyzedFiles, additionalClassNames)
             }
         } catch (e: AnnotationProcessingError) {
             throw KaptBaseError(KaptBaseError.Kind.EXCEPTION, e.cause ?: e)
         }
+        sourcesStructureListener?.let { compiler.getTaskListeners().remove(it) }
 
         cacheManager?.updateCache(processors, sourcesStructureListener?.failureReason != null)
 

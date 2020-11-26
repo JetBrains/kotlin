@@ -70,11 +70,17 @@ class IncrementalProcessor(private val processor: Processor, private val kind: D
     }
 
     fun isUnableToRunIncrementally() = !kind.canRunIncrementally
-    fun getGeneratedToSources() = dependencyCollector.value.getGeneratedToSources()
-    fun getGeneratedToSourcesAll() = dependencyCollector.value.getGeneratedToSourcesAll()
-    fun getAggregatedTypes() = dependencyCollector.value.getAggregatedTypes()
-    fun getRuntimeType(): RuntimeProcType = dependencyCollector.value.getRuntimeType()
 
+    /** Mapping fromm generated file to type that were used as originating elements. For aggregating APs types will be [null]. */
+    fun getGeneratedToSources(): Map<File, String?> = dependencyCollector.value.getGeneratedToSources()
+
+    /** All top-level types that were processed by aggregating APs. */
+    fun getAggregatedTypes() = dependencyCollector.value.getAggregatedTypes()
+
+    /** Mapping from generated class file to type defined in that file. */
+    fun getGeneratedClassFilesToTypes(): Map<File, String> = dependencyCollector.value.getGeneratedClassFilesToTypes()
+
+    fun getRuntimeType(): RuntimeProcType = dependencyCollector.value.getRuntimeType()
 
     override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
         if (getRuntimeType() == RuntimeProcType.AGGREGATING) {
@@ -122,8 +128,9 @@ internal class AnnotationProcessorDependencyCollector(
     private val runtimeProcType: RuntimeProcType,
     private val warningCollector: (String) -> Unit
 ) {
-    private val generatedToSource = mutableMapOf<File, Pair<String?, File?>?>()
+    private val generatedToSource = mutableMapOf<File, String?>()
     private val aggregatedTypes = mutableSetOf<String>()
+    private val generatedClassFilesToTypes = mutableMapOf<File, String>()
 
     private var isFullRebuild = !runtimeProcType.isIncremental
 
@@ -131,7 +138,7 @@ internal class AnnotationProcessorDependencyCollector(
         if (isFullRebuild) return
 
         if (supportedAnnotationTypes.contains("*")) {
-            aggregatedTypes.addAll(getTopLevelClassNames(roundEnv.rootElements?.filterNotNull() ?: emptyList()))
+            aggregatedTypes.addAll(getTopLevelClassNames(roundEnv.rootElements?.filterNotNull() ?: emptySet()))
         } else {
             for (annotation in annotations) {
                 aggregatedTypes.addAll(
@@ -149,30 +156,39 @@ internal class AnnotationProcessorDependencyCollector(
         if (isFullRebuild) return
 
         val generatedFile = File(createdFile)
+        if (generatedFile.extension == "class") {
+            if (classId == null) {
+                isFullRebuild = true
+                warningCollector.invoke(
+                    "Unable to determine type defined in $generatedFile."
+                )
+                return
+            }
+            generatedClassFilesToTypes[generatedFile] = classId
+        }
+
         if (runtimeProcType == RuntimeProcType.AGGREGATING) {
-            generatedToSource[generatedFile] = classId to null
+            generatedToSource[generatedFile] = null
         } else {
-            val srcFiles = getSrcFiles(originatingElements)
-            if (srcFiles.size != 1) {
+            val srcClasses = getTopLevelClassNames(originatingElements.filterNotNull())
+            if (srcClasses.size != 1) {
                 isFullRebuild = true
                 warningCollector.invoke(
                     "Expected 1 originating source file when generating $generatedFile, " +
-                            "but detected ${srcFiles.size}: [${srcFiles.joinToString()}]."
+                            "but detected ${srcClasses.size}: [${srcClasses.joinToString()}]."
                 )
             } else {
-                generatedToSource[generatedFile] = classId to srcFiles.single()
+                generatedToSource[generatedFile] = srcClasses.single()
             }
         }
     }
 
-    internal fun getGeneratedToSources(): Map<File, File?> = if (isFullRebuild) emptyMap() else generatedToSource.mapValues { (_, value) ->
-        value?.second
-    }
-
-    internal fun getGeneratedToSourcesAll(): Map<File, Pair<String?, File?>?> =
-        if (isFullRebuild) emptyMap() else generatedToSource
+    /** Mapping from generated files to top level class names that cause that file generation. */
+    internal fun getGeneratedToSources(): Map<File, String?> = if (isFullRebuild) emptyMap() else generatedToSource
 
     internal fun getAggregatedTypes(): Set<String> = if (isFullRebuild) emptySet() else aggregatedTypes
+
+    internal fun getGeneratedClassFilesToTypes(): Map<File, String> = if (isFullRebuild) emptyMap() else generatedClassFilesToTypes
 
     internal fun getRuntimeType(): RuntimeProcType {
         return if (isFullRebuild) {
@@ -181,17 +197,6 @@ internal class AnnotationProcessorDependencyCollector(
             runtimeProcType
         }
     }
-}
-
-private fun getSrcFiles(elements: Array<out Element?>): Set<File> {
-    return elements.filterNotNull().mapNotNull { elem ->
-        var origin = elem
-        while (origin.enclosingElement != null && origin.enclosingElement !is PackageElement) {
-            origin = origin.enclosingElement
-        }
-        val uri = (origin as? Symbol.ClassSymbol)?.sourcefile?.toUri()?.takeIf { it.isAbsolute }
-        uri?.let { File(it).canonicalFile }
-    }.toSet()
 }
 
 private const val PACKAGE_TYPE_NAME = "package-info"
@@ -211,8 +216,8 @@ fun getElementName(current: Element?): String? {
     return null
 }
 
-private fun getTopLevelClassNames(elements: Collection<Element>): Collection<String> {
-    return elements.mapNotNull { elem ->
+private fun getTopLevelClassNames(elements: Collection<Element>): Set<String> {
+    return elements.mapNotNullTo(HashSet()) { elem ->
         var origin = elem
         while (origin.enclosingElement != null && origin.enclosingElement !is PackageElement) {
             origin = origin.enclosingElement

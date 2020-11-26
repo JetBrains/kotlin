@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
+import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessorReferencingClasspath
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert.assertEquals
 import org.junit.Assume
 import org.junit.Test
+import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.Opcodes
+import org.objectweb.asm.Type
 import test.kt33617.MyClass
 import java.io.File
 import java.util.zip.ZipEntry
@@ -190,6 +194,59 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
 
         project.build("clean", "kaptKotlin", options = options) {
             assertSuccessful()
+        }
+    }
+
+    /** Regression test for https://youtrack.jetbrains.com/issue/KT-42182. */
+    @Test
+    fun testGeneratedSourcesImpactedByClasspathChanges() {
+        val project = Project(
+            "kaptIncrementalCompilationProject",
+            GradleVersionRequired.None
+        ).apply {
+            setupIncrementalAptProject("ISOLATING", procClass = IncrementalProcessorReferencingClasspath::class.java)
+        }
+        project.gradleSettingsScript().writeText("include ':', ':lib'")
+        val classpathTypeSource = project.projectDir.resolve("lib").run {
+            mkdirs()
+            resolve("build.gradle").writeText("apply plugin: 'java'")
+            val source = resolve("src/main/java/" + IncrementalProcessorReferencingClasspath.CLASSPATH_TYPE.replace(".", "/") + ".java")
+            source.parentFile.mkdirs()
+
+            source.writeText(
+                """
+                package ${IncrementalProcessorReferencingClasspath.CLASSPATH_TYPE.substringBeforeLast(".")};
+                public class ${IncrementalProcessorReferencingClasspath.CLASSPATH_TYPE.substringAfterLast(".")} {}
+            """.trimIndent()
+            )
+            return@run source
+        }
+        project.gradleBuildScript().appendText(
+            """
+                
+            dependencies {
+                implementation project(':lib')
+            }
+        """.trimIndent()
+        )
+        project.build("clean", "kaptKotlin") {
+            assertSuccessful()
+        }
+
+        // change type that all generated sources reference
+        classpathTypeSource.writeText(classpathTypeSource.readText().replace("}", "int i = 10;\n}"))
+        project.build("build") {
+            assertSuccessful()
+            assertEquals(
+                setOf(
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").canonicalPath,
+                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
+                ),
+                getProcessedSources(output)
+            )
         }
     }
 }
