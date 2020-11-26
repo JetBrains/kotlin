@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestMessageCollector
+import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -67,6 +68,7 @@ class ScriptCliCompilationTest : TestCase() {
         val collector = TestMessageCollector()
 
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
+            updateWithBaseCompilerArguments()
             put(MESSAGE_COLLECTOR_KEY, collector)
             if (scriptDef != null) {
                 val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
