@@ -164,28 +164,39 @@ private fun CompilerConfiguration.updateWithCompilerOptions(
     ignoredOptionsReportingState: IgnoredOptionsReportingState,
     isRefinement: Boolean
 ) {
+    updateWithCompilerOptions(compilerOptions) {
+        validateArguments(it.errors)?.let { error ->
+            messageCollector.report(CompilerMessageSeverity.ERROR, error)
+            false
+        } ?: run {
+            messageCollector.reportArgumentParseProblems(it)
+            reportArgumentsIgnoredGenerally(
+                it,
+                messageCollector,
+                ignoredOptionsReportingState
+            )
+            if (isRefinement) {
+                reportArgumentsIgnoredFromRefinement(
+                    it,
+                    messageCollector,
+                    ignoredOptionsReportingState
+                )
+            }
+            true
+        }
+    }
+}
+
+internal fun CompilerConfiguration.updateWithCompilerOptions(
+    compilerOptions: List<String>,
+    validate: (K2JVMCompilerArguments) -> Boolean = {
+        validateArguments(it.errors)?.let { throw Exception("Error parsing arguments: $it") } ?: true
+    }
+) {
     val compilerArguments = K2JVMCompilerArguments()
     parseCommandLineArguments(compilerOptions, compilerArguments)
 
-    validateArguments(compilerArguments.errors)?.let {
-        messageCollector.report(CompilerMessageSeverity.ERROR, it)
-        return
-    }
-
-    messageCollector.reportArgumentParseProblems(compilerArguments)
-
-    reportArgumentsIgnoredGenerally(
-        compilerArguments,
-        messageCollector,
-        ignoredOptionsReportingState
-    )
-    if (isRefinement) {
-        reportArgumentsIgnoredFromRefinement(
-            compilerArguments,
-            messageCollector,
-            ignoredOptionsReportingState
-        )
-    }
+    if (!validate(compilerArguments)) return
 
     processPluginsCommandLine(compilerArguments)
 

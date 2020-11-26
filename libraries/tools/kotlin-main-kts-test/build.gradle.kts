@@ -24,3 +24,9 @@ projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
 }
+
+projectTest(taskName = "testWithIr", parallel = true) {
+    dependsOn(":dist")
+    workingDir = rootDir
+    systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-ir")
+}

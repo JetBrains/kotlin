@@ -9,6 +9,8 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.CLITool
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.updateWithCompilerOptions
 import org.junit.Assert
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -17,6 +19,11 @@ import java.io.PrintStream
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
+
+const val SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY = "kotlin.script.test.base.compiler.arguments"
+
+private fun getBaseCompilerArgumentsFromProperty(): List<String>? =
+    System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.takeIf { it.isNotBlank() }?.split(' ')
 
 // TODO: partially copypasted from LauncherReplTest, consider extracting common parts to some (new) test util module
 fun runWithKotlinc(
@@ -52,6 +59,7 @@ fun runWithKotlinLauncherScript(
             add("-cp")
             add(classpath.joinToString(File.pathSeparator))
         }
+        getBaseCompilerArgumentsFromProperty()?.let { addAll(it) }
         addAll(compilerArgs)
     }
 
@@ -161,10 +169,11 @@ fun runWithK2JVMCompiler(
     expectedExitCode: Int = 0,
     expectedSomeErrPatterns: List<String>? = null
 ) {
+    val argsWithBasefromProp = getBaseCompilerArgumentsFromProperty()?.let { (it + args).toTypedArray() } ?: args
     val (out, err, ret) = captureOutErrRet {
         CLITool.doMainNoExit(
             K2JVMCompiler(),
-            args
+            argsWithBasefromProp
         )
     }
     try {
@@ -243,4 +252,9 @@ class TestDisposable : Disposable {
     }
 }
 
+fun CompilerConfiguration.updateWithBaseCompilerArguments() {
+    getBaseCompilerArgumentsFromProperty()?.let {
+        updateWithCompilerOptions(it)
+    }
+}
 
