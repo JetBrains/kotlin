@@ -9,7 +9,8 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.util.sourceRoots
 import org.jetbrains.kotlin.psi.KtFile
@@ -38,12 +39,12 @@ abstract class AbstractFirMultiModuleLazyResolveTest : AbstractMultiModuleTest()
         val virtualFileToAnalyse = VirtualFileManager.getInstance().findFileByUrl(fileToAnalysePath)
             ?: error("File ${testStructure.fileToResolve.filePath} not found")
         val ktFileToAnalyse = PsiManager.getInstance(project).findFile(virtualFileToAnalyse) as KtFile
-        val resolveState = LowLevelFirApiFacade.getResolveStateFor(ktFileToAnalyse)
+        val resolveState = ktFileToAnalyse.getResolveState()
 
         val fails = testStructure.fails
 
         try {
-            val fir = LowLevelFirApiFacade.getOrBuildFirFor(ktFileToAnalyse, resolveState)
+            val fir = ktFileToAnalyse.getOrBuildFir(resolveState)
             KotlinTestUtils.assertEqualsToFile(File("$path/expected.txt"), fir.render())
         } catch (e: Throwable) {
             if (!fails) throw e

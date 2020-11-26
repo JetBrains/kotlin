@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.idea.frontend.api.fir
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacadeForCompletion
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.ReadActionConfinementValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
@@ -60,7 +60,7 @@ private constructor(
     companion object {
         @Deprecated("Please use org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProviderKt.analyze")
         internal fun createForElement(element: KtElement): KtFirAnalysisSession {
-            val firResolveState = LowLevelFirApiFacade.getResolveStateFor(element)
+            val firResolveState = element.getResolveState()
             return createAnalysisSessionByResolveState(firResolveState)
         }
 

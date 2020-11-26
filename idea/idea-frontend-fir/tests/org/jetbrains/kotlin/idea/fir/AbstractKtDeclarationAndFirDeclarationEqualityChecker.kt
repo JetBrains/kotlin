@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.idea.fir
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFunction
@@ -19,9 +20,9 @@ abstract class AbstractKtDeclarationAndFirDeclarationEqualityChecker : KotlinLig
     protected fun doTest(path: String) {
         val file = File(path)
         val ktFile = myFixture.configureByText(file.name, FileUtil.loadFile(file)) as KtFile
-        val resolveState = LowLevelFirApiFacade.getResolveStateFor(ktFile)
+        val resolveState = ktFile.getResolveState()
         ktFile.forEachDescendantOfType<KtFunction> { ktFunction ->
-            val firFunction = LowLevelFirApiFacade.getOrBuildFirFor(ktFunction, resolveState) as FirFunction<*>
+            val firFunction = ktFunction.getOrBuildFirOfType<FirFunction<*>>(resolveState)
             if (!KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(ktFunction, firFunction)) {
                 throw FileComparisonFailure(
                     /* message= */          null,

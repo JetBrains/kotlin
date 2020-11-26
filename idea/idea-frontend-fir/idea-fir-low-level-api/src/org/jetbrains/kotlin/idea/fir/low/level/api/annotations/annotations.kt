@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api.annotations
 
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.CLASS)
 @RequiresOptIn
 annotation class PrivateForInline
+
+@RequiresOptIn
+annotation class InternalForInline
