@@ -61,7 +61,7 @@ internal class KtFirCompletionCandidateChecker(
 
     private inline fun <reified T : KtFirSymbol<F>, F : FirDeclaration, R> KtCallableSymbol.withResolvedFirOfType(
         noinline action: (F) -> R,
-    ): R? = this.safeAs<T>()?.firRef?.withFirResolvedToBodyResolve(action)
+    ): R? = this.safeAs<T>()?.firRef?.withFir(phase = FirResolvePhase.BODY_RESOLVE, action)
 
     private fun checkExtension(
         candidateSymbol: FirCallableDeclaration<*>,

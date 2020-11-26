@@ -25,17 +25,16 @@ internal class FirRefWithValidityCheck<D : FirDeclaration>(fir: D, resolveState:
         val resolveState = resolveStateWeakRef.get()
             ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
         fir.resolvedFirToPhase(phase, resolveState)
-        return resolveState.withFirDeclaration(fir) { action(it) }
-    }
-
-    inline fun <R> withFirResolvedToBodyResolve(action: (fir: D) -> R): R {
-        token.assertIsValid()
-        val fir = firWeakRef.get()
-            ?: throw EntityWasGarbageCollectedException("FirElement")
-        val resolveState = resolveStateWeakRef.get()
-            ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
-        fir.resolvedFirToPhase(FirResolvePhase.BODY_RESOLVE, resolveState)
-        return action(resolveState.withFirDeclaration(fir) { it })
+        return when (phase) {
+            FirResolvePhase.BODY_RESOLVE -> {
+                /*
+                 The BODY_RESOLVE phase is the maximum possible phase we can resolve our declaration to
+                 So there is not need to run whole `action` under read lock
+                 */
+                action(resolveState.withFirDeclaration(fir) { it })
+            }
+            else -> resolveState.withFirDeclaration(fir) { action(it) }
+        }
     }
 
     val resolveState
