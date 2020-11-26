@@ -375,22 +375,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         FunctionDescriptor functionDescriptor = (FunctionDescriptor) descriptor;
         if (!functionDescriptor.isSuspend()) return stackValue;
 
+        // When we call suspend operator fun invoke using parens, we cannot box receiver as return type inline class
+        if (resolvedCall instanceof VariableAsFunctionResolvedCall &&
+            functionDescriptor.isOperator() && functionDescriptor.getName().getIdentifier().equals("invoke")
+        ) return stackValue;
+
         KotlinType unboxedInlineClass = CoroutineCodegenUtilKt
                 .originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(functionDescriptor, typeMapper);
 
         StackValue stackValueToWrap = stackValue;
-        KotlinType originalKotlinType;
-        if (unboxedInlineClass != null) {
-            originalKotlinType = unboxedInlineClass;
-        } else {
-            originalKotlinType = stackValueToWrap.kotlinType;
-        }
-        Type originalType;
-        if (unboxedInlineClass != null) {
-            originalType = typeMapper.mapType(unboxedInlineClass);
-        } else {
-            originalType = stackValueToWrap.type;
-        }
+        KotlinType originalKotlinType = unboxedInlineClass != null ? unboxedInlineClass : stackValueToWrap.kotlinType;
+        Type originalType = unboxedInlineClass != null ? typeMapper.mapType(unboxedInlineClass) : stackValueToWrap.type;
 
         stackValue = new StackValue(originalType, originalKotlinType) {
             @Override

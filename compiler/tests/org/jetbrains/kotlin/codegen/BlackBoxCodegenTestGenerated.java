@@ -8573,6 +8573,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/interfaceDelegateWithInlineClass.kt", "kotlin.coroutines");
                 }
 
+                @TestMetadata("invokeOperator.kt")
+                public void testInvokeOperator() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/invokeOperator.kt");
+                }
+
                 @TestMetadata("overrideSuspendFun.kt")
                 public void testOverrideSuspendFun_1_2() throws Exception {
                     runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun.kt", "kotlin.coroutines.experimental");
@@ -8885,6 +8890,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/interfaceDelegateWithInlineClass.kt", "kotlin.coroutines");
                 }
 
+                @TestMetadata("invokeOperator.kt")
+                public void testInvokeOperator() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/invokeOperator.kt");
+                }
+
                 @TestMetadata("overrideSuspendFun.kt")
                 public void testOverrideSuspendFun_1_2() throws Exception {
                     runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun.kt", "kotlin.coroutines.experimental");
@@ -9180,6 +9190,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 @TestMetadata("interfaceDelegateWithInlineClass.kt")
                 public void testInterfaceDelegateWithInlineClass_1_3() throws Exception {
                     runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/interfaceDelegateWithInlineClass.kt", "kotlin.coroutines");
+                }
+
+                @TestMetadata("invokeOperator.kt")
+                public void testInvokeOperator() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/invokeOperator.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun.kt")
