@@ -7748,6 +7748,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/createMangling.kt");
                 }
 
+                @TestMetadata("createOverride.kt")
+                public void testCreateOverride() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/createOverride.kt");
+                }
+
                 @TestMetadata("genericOverrideSuspendFun.kt")
                 public void testGenericOverrideSuspendFun() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/genericOverrideSuspendFun.kt");
@@ -7970,6 +7975,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/createMangling.kt");
                 }
 
+                @TestMetadata("createOverride.kt")
+                public void testCreateOverride() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/createOverride.kt");
+                }
+
                 @TestMetadata("genericOverrideSuspendFun.kt")
                 public void testGenericOverrideSuspendFun() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/genericOverrideSuspendFun.kt");
@@ -8185,6 +8195,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 @TestMetadata("createMangling.kt")
                 public void testCreateMangling() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/createMangling.kt");
+                }
+
+                @TestMetadata("createOverride.kt")
+                public void testCreateOverride() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/createOverride.kt");
                 }
 
                 @TestMetadata("genericOverrideSuspendFun.kt")
