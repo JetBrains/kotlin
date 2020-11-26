@@ -166,8 +166,7 @@ import org.jetbrains.kotlin.nj2k.AbstractTextNewJavaToKotlinCopyPasteConversionT
 import org.jetbrains.kotlin.nj2k.inference.common.AbstractCommonConstraintCollectorTest
 import org.jetbrains.kotlin.nj2k.inference.mutability.AbstractMutabilityInferenceTest
 import org.jetbrains.kotlin.nj2k.inference.nullability.AbstractNullabilityInferenceTest
-import org.jetbrains.kotlin.noarg.AbstractBlackBoxCodegenTestForNoArg
-import org.jetbrains.kotlin.noarg.AbstractBytecodeListingTestForNoArg
+import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeBoxTest
 import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeBytecodeListingTest
 import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeIrBoxTest
@@ -1664,6 +1663,8 @@ fun main(args: Array<String>) {
         }
 
         testGroup("plugins/noarg/noarg-cli/test", "plugins/noarg/noarg-cli/testData") {
+            testClass<AbstractDiagnosticsTestForNoArg> { model("diagnostics", extension = "kt") }
+
             testClass<AbstractBytecodeListingTestForNoArg> {
                 model("bytecodeListing", extension = "kt")
             }

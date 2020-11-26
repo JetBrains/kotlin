@@ -20,10 +20,15 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.diagnostics.Errors;
 
+import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;
 import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
 
 public interface ErrorsNoArg {
     DiagnosticFactory0<PsiElement> NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> NOARG_ON_INNER_CLASS = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> NOARG_ON_INNER_CLASS_ERROR = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> NOARG_ON_LOCAL_CLASS = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> NOARG_ON_LOCAL_CLASS_ERROR = DiagnosticFactory0.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
@@ -31,5 +36,4 @@ public interface ErrorsNoArg {
             Errors.Initializer.initializeFactoryNamesAndDefaultErrorMessages(ErrorsNoArg.class, DefaultErrorMessagesNoArg.INSTANCE);
         }
     };
-
 }

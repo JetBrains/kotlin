@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -88,24 +89,29 @@ class NoArgComponentRegistrar : ComponentRegistrar {
             SUPPORTED_PRESETS[preset]?.let { annotations += it }
         }
         if (annotations.isNotEmpty()) {
-            registerNoArgComponents(project, annotations, configuration.getBoolean(INVOKE_INITIALIZERS))
+            registerNoArgComponents(
+                project, annotations, configuration.getBoolean(JVMConfigurationKeys.IR), configuration.getBoolean(INVOKE_INITIALIZERS),
+            )
         }
     }
 
     internal companion object {
-        fun registerNoArgComponents(project: Project, annotations: List<String>, invokeInitializers: Boolean) {
-            StorageComponentContainerContributor.registerExtension(project, CliNoArgComponentContainerContributor(annotations))
+        fun registerNoArgComponents(project: Project, annotations: List<String>, useIr: Boolean, invokeInitializers: Boolean) {
+            StorageComponentContainerContributor.registerExtension(project, CliNoArgComponentContainerContributor(annotations, useIr))
             ExpressionCodegenExtension.registerExtension(project, CliNoArgExpressionCodegenExtension(annotations, invokeInitializers))
         }
     }
 }
 
-class CliNoArgComponentContainerContributor(val annotations: List<String>) : StorageComponentContainerContributor {
+private class CliNoArgComponentContainerContributor(
+    private val annotations: List<String>,
+    private val useIr: Boolean,
+) : StorageComponentContainerContributor {
     override fun registerModuleComponents(
         container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
     ) {
         if (!platform.isJvm()) return
 
-        container.useInstance(CliNoArgDeclarationChecker(annotations))
+        container.useInstance(CliNoArgDeclarationChecker(annotations, useIr))
     }
 }
