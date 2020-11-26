@@ -53,7 +53,7 @@ public class JvmDecompiledTextTestGenerated extends AbstractJvmDecompiledTextTes
 
     @TestMetadata("PrivateConstField")
     public void testPrivateConstField() throws Exception {
-        runTest("idea/testData/decompiler/decompiledTextJvm/PrivateConstField/");
+        runTest("testData/decompiler/decompiledTextJvm/PrivateConstField/");
     }
 
     @TestMetadata("TestKt")

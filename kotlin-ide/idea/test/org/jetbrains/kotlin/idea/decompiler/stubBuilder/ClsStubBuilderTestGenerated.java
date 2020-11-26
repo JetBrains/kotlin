@@ -163,7 +163,7 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
 
     @TestMetadata("PrivateConstField")
     public void testPrivateConstField() throws Exception {
-        runTest("idea/testData/decompiler/stubBuilder/PrivateConstField/");
+        runTest("testData/decompiler/stubBuilder/PrivateConstField/");
     }
 
     @TestMetadata("PrivateToThis")
