@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -92,14 +94,17 @@ internal class FirModuleResolveStateForCompletion(
         error("Diagnostics should not be retrieved in completion")
     }
 
+    @OptIn(InternalForInline::class)
     override fun findNonLocalSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
         error("Should not be used in completion")
     }
 
+    @OptIn(InternalForInline::class)
     override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
         error("Should not be used in completion")
     }
 
+    @OptIn(InternalForInline::class)
     override fun findSourceFirDeclaration(ktDeclaration: KtLambdaExpression): FirDeclaration {
         error("Should not be used in completion")
     }

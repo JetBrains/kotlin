@@ -15,7 +15,7 @@ import com.intellij.psi.util.parentOfType
 import junit.framework.Assert
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.search.getKotlinFqName
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
@@ -70,7 +70,7 @@ abstract class AbstractFileStructureTest : KotlinLightCodeInsightFixtureTestCase
     }
 
     private fun KtFile.getFileStructure(): FileStructure {
-        val moduleResolveState = LowLevelFirApiFacade.getResolveStateFor(this) as FirModuleResolveStateImpl
+        val moduleResolveState = getResolveState() as FirModuleResolveStateImpl
         return moduleResolveState.fileStructureCache.getFileStructure(
             ktFile = this,
             moduleFileCache = moduleResolveState.rootModuleSession.cache

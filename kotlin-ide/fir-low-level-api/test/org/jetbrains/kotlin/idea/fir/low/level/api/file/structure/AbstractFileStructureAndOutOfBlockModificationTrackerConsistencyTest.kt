@@ -11,7 +11,7 @@ import com.intellij.psi.util.parentOfType
 import junit.framework.Assert
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.psi.KtElement
@@ -57,7 +57,7 @@ abstract class AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyT
         findElementAt(myFixture.caretOffset)!!.parentOfType()!!
 
     private fun getStructureElementForKtElement(element: KtElement): Triple<FileStructureElement, FileStructure, FirModuleResolveState> {
-        val moduleResolveState = LowLevelFirApiFacade.getResolveStateFor(element) as FirModuleResolveStateImpl
+        val moduleResolveState = element.getResolveState() as FirModuleResolveStateImpl
         val fileStructure =
             moduleResolveState.fileStructureCache.getFileStructure(element.containingKtFile, moduleResolveState.rootModuleSession.cache)
         val fileStructureElement = fileStructure.getStructureElementFor(element)

@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirTransformerProvider
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.PrivateForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
@@ -52,14 +54,17 @@ abstract class FirModuleResolveState {
     @TestOnly
     internal abstract fun getBuiltFirFileOrNull(ktFile: KtFile): FirFile?
 
+    @InternalForInline
     abstract fun findNonLocalSourceFirDeclaration(
         ktDeclaration: KtDeclaration,
     ): FirDeclaration
 
+    @InternalForInline
     abstract fun findSourceFirDeclaration(
         ktDeclaration: KtDeclaration,
     ): FirDeclaration
 
+    @InternalForInline
     abstract fun findSourceFirDeclaration(
         ktDeclaration: KtLambdaExpression,
     ): FirDeclaration

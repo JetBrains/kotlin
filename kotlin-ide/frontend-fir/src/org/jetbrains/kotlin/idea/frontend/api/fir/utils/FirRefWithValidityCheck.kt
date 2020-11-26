@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.resolvedFirToPhase
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
@@ -24,7 +24,7 @@ internal class FirRefWithValidityCheck<D : FirDeclaration>(fir: D, resolveState:
             ?: throw EntityWasGarbageCollectedException("FirElement")
         val resolveState = resolveStateWeakRef.get()
             ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
-        LowLevelFirApiFacade.resolvedFirToPhase(fir, phase, resolveState)
+        fir.resolvedFirToPhase(phase, resolveState)
         return resolveState.withFirDeclaration(fir) { action(it) }
     }
 
@@ -34,7 +34,7 @@ internal class FirRefWithValidityCheck<D : FirDeclaration>(fir: D, resolveState:
             ?: throw EntityWasGarbageCollectedException("FirElement")
         val resolveState = resolveStateWeakRef.get()
             ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
-        LowLevelFirApiFacade.resolvedFirToPhase(fir, FirResolvePhase.BODY_RESOLVE, resolveState)
+        fir.resolvedFirToPhase(FirResolvePhase.BODY_RESOLVE, resolveState)
         return action(resolveState.withFirDeclaration(fir) { it })
     }
 

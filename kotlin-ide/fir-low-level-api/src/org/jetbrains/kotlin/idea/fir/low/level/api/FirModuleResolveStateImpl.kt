@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.InternalForInline
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.diagnostics.DiagnosticsCollector
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirElementBuilder
@@ -71,6 +72,7 @@ internal class FirModuleResolveStateImpl(
         error("Should be called only from FirModuleResolveStateForCompletion")
     }
 
+    @OptIn(InternalForInline::class)
     override fun findNonLocalSourceFirDeclaration(
         ktDeclaration: KtDeclaration,
     ): FirDeclaration = ktDeclaration.findSourceNonLocalFirDeclaration(
@@ -79,9 +81,11 @@ internal class FirModuleResolveStateImpl(
         sessionProvider.getModuleCache(ktDeclaration.getModuleInfo() as ModuleSourceInfo)
     )
 
+    @OptIn(InternalForInline::class)
     override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration =
         findSourceFirDeclarationByExpression(ktDeclaration)
 
+    @OptIn(InternalForInline::class)
     override fun findSourceFirDeclaration(ktDeclaration: KtLambdaExpression): FirDeclaration =
         findSourceFirDeclarationByExpression(ktDeclaration)
 
