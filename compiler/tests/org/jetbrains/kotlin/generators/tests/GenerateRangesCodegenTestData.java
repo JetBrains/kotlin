@@ -74,35 +74,9 @@ public class GenerateRangesCodegenTestData {
 
     private static final List<String> JVM_IR_FAILING_UNSIGNED_EXPRESSION_TESTS = Collections.emptyList();
 
-    private static final List<String> USE_OLD_MANGLING_IN_UNSIGNED_LITERAL_TESTS = new ArrayList<String>() {{
-        add("inexactDownToMinValue");
-        add("progressionMaxValueMinusTwoToMaxValue");
-        add("inexactToMaxValue");
-        add("simpleRangeWithNonConstantEnds");
-        add("maxValueMinusTwoToMaxValue");
-        add("progressionDownToMinValue");
-        add("overflowZeroToMinValue");
-    }};
+    private static final List<String> USE_OLD_MANGLING_IN_UNSIGNED_LITERAL_TESTS = Collections.emptyList();
 
-    private static final List<String> USE_OLD_MANGLING_IN_UNSIGNED_EXPRESSION_TESTS = new ArrayList<String>() {{
-        add("inexactDownToMinValue");
-        add("progressionMaxValueMinusTwoToMaxValue");
-        add("inexactToMaxValue");
-        add("simpleRangeWithNonConstantEnds");
-        add("maxValueMinusTwoToMaxValue");
-        add("progressionDownToMinValue");
-        add("openRange");
-        add("overflowZeroDownToMaxValue");
-        add("reversedBackSequence");
-        add("overflowZeroToMinValue");
-        add("simpleDownTo");
-        add("emptyDownto");
-        add("reversedInexactSteppedDownTo");
-        add("simpleSteppedDownTo");
-        add("oneElementDownTo");
-        add("reversedEmptyBackSequence");
-        add("inexactSteppedDownTo");
-    }};
+    private static final List<String> USE_OLD_MANGLING_IN_UNSIGNED_EXPRESSION_TESTS = Collections.emptyList();
 
     static {
         for (String integerType : INTEGER_PRIMITIVES) {
