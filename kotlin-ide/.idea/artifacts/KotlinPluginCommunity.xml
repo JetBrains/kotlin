@@ -202,6 +202,12 @@
           <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-coroutines-experimental-compat/1.4.10-202-1/kotlin-coroutines-experimental-compat-1.4.10-202-1.jar" path-in-jar="/" />
         </element>
         <element id="library" level="project" name="completion-ranking-kotlin" />
+        <element id="archive" name="kotlin-parcelize.jar">
+          <element id="module-output" name="kotlin.compiler-plugins.parcelize" />
+        </element>
+        <element id="archive" name="parcelize-compiler-plugin-for-ide.jar">
+          <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/parcelize-compiler-plugin-for-ide/1.4.10-202-1/parcelize-compiler-plugin-for-ide-1.4.10-202-1.jar" path-in-jar="/" />
+        </element>
       </element>
       <element id="directory" name="kotlinc">
         <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/jetbrains/kotlin/kotlin-dist-for-ide/1.4.10-202-1/kotlin-dist-for-ide-1.4.10-202-1.jar" path-in-jar="/" />

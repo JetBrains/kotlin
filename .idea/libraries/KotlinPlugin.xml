@@ -45,6 +45,7 @@
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-live-templates.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-maven.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-native.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-parcelize.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-plugin.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-project-wizard-cli.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-project-wizard-core.jar!/" />
@@ -73,6 +74,7 @@
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlinx-coroutines-jdk8-1.3.9.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlinx-serialization-compiler-plugin-for-ide.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/noarg-compiler-plugin-for-ide.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/parcelize-compiler-plugin-for-ide.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/sam-with-receiver-compiler-plugin-for-ide.jar!/" />
     </CLASSES>
     <JAVADOC />
@@ -121,6 +123,7 @@
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-live-templates.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-maven.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-native.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-parcelize.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-plugin.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-project-wizard-cli.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlin-project-wizard-core.jar!/" />
@@ -149,6 +152,7 @@
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlinx-coroutines-jdk8-1.3.9.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/kotlinx-serialization-compiler-plugin-for-ide.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/noarg-compiler-plugin-for-ide.jar!/" />
+      <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/parcelize-compiler-plugin-for-ide.jar!/" />
       <root url="jar://$PROJECT_DIR$/out/artifacts/KotlinPlugin/lib/sam-with-receiver-compiler-plugin-for-ide.jar!/" />
     </excluded>
   </library>
