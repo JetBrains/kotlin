@@ -2024,6 +2024,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("compilerPhase.kt")
+        public void testCompilerPhase() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/compilerPhase.kt");
+        }
+
         @TestMetadata("complexLambdaWithTypeVariableAsExpectedType.kt")
         public void testComplexLambdaWithTypeVariableAsExpectedType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/complexLambdaWithTypeVariableAsExpectedType.kt");

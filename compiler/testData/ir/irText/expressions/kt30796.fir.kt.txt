@@ -70,7 +70,7 @@ fun <T : Any?> test(value: T, value2: T) {
     }
   }
   val x7: Any = { // BLOCK
-    val <elvis>: T? = { // BLOCK
+    val <elvis>: T = { // BLOCK
       val <elvis>: T? = magic<T?>()
       when {
         EQEQ(arg0 = <elvis>, arg1 = null) -> value
@@ -79,7 +79,7 @@ fun <T : Any?> test(value: T, value2: T) {
     }
     when {
       EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis> /*as T */
+      else -> <elvis>
     }
   }
 }

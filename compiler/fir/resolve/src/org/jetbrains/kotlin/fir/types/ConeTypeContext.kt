@@ -584,7 +584,7 @@ class ConeTypeCheckerContext(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
     ): AbstractTypeCheckerContext =
-        if (this.isErrorTypeEqualsToAnything == errorTypesEqualToAnything)
+        if (this.isErrorTypeEqualsToAnything == errorTypesEqualToAnything && this.isStubTypeEqualsToAnything == stubTypesEqualToAnything)
             this
         else
             ConeTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything, session)
