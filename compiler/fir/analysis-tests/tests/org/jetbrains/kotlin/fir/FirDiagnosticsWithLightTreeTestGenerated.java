@@ -2074,6 +2074,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/objectDerivedFromInnerClass.kt");
         }
 
+        @TestMetadata("questionableSmartCast.kt")
+        public void testQuestionableSmartCast() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/questionableSmartCast.kt");
+        }
+
         @TestMetadata("safeCallInvoke.kt")
         public void testSafeCallInvoke() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/safeCallInvoke.kt");
