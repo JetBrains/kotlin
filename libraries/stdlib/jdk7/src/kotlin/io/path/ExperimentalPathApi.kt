@@ -13,9 +13,9 @@ import kotlin.annotation.AnnotationTarget.*
  * > Beware using the annotated API especially if you're developing a library, since your library might become binary incompatible
  * with the future versions of the standard library.
  *
- * Any usage of a declaration annotated with `@ExperimentalPathAPI` must be accepted either by
- * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalPathAPI::class)`,
- * or by using the compiler argument `-Xopt-in=kotlin.io.path.ExperimentalPathAPI`.
+ * Any usage of a declaration annotated with `@ExperimentalPathApi` must be accepted either by
+ * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalPathApi::class)`,
+ * or by using the compiler argument `-Xopt-in=kotlin.io.path.ExperimentalPathApi`.
  */
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 @Retention(AnnotationRetention.BINARY)
