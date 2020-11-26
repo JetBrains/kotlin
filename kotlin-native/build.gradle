@@ -320,6 +320,7 @@ task detectJarCollision(type: CollisionDetector) {
     resolvingRules["org/jetbrains/kotlin/resolve/konan/platform/NativeInliningRule.class"] = "kotlin-compiler"
     resolvingRules["org/jetbrains/kotlin/resolve/konan/platform/NativePlatformAnalyzerServices.class"] = "kotlin-compiler"
     resolvingRules["org/jetbrains/annotations/Nls.class"] = "kotlin-compiler"
+    resolvingRules["META-INF/extensions/core.xml"] = "kotlin-compiler"
     librariesWithIgnoredClassCollisions.addAll(["kotlin-util-klib", "kotlin-util-io", "kotlinx-metadata-klib", "kotlin-native-utils"])
     if (project.hasProperty('kotlinProjectPath')) {
         resolvingRulesWithRegexes[new Regex("META-INF/.+\\.kotlin_module")] = "kotlin-compiler"
