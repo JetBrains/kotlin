@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.codegen.SourceInfo
 import org.jetbrains.kotlin.codegen.classFileContainsMethod
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -36,6 +33,8 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
@@ -379,12 +378,20 @@ val IrMemberAccessExpression<*>.psiElement: PsiElement?
 fun IrSimpleType.isRawType(): Boolean =
     hasAnnotation(JvmGeneratorExtensions.RAW_TYPE_ANNOTATION_FQ_NAME)
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 internal fun classFileContainsMethod(function: IrFunction, context: JvmBackendContext, name: String): Boolean? {
+    val classId = (function.parent as? IrClass)?.classId ?: (function.containerSource as? JvmPackagePartSource)?.classId ?: return null
     val originalDescriptor = context.methodSignatureMapper.mapSignatureWithGeneric(function).asmMethod.descriptor
     val descriptor = if (function.isSuspend)
         listOf(*Type.getArgumentTypes(originalDescriptor), Type.getObjectType("kotlin/coroutines/Continuation"))
             .joinToString(prefix = "(", postfix = ")", separator = "") + AsmTypes.OBJECT_TYPE
     else originalDescriptor
-    return classFileContainsMethod(function.descriptor, context.state, Method(name, descriptor))
+    return classFileContainsMethod(classId, context.state, Method(name, descriptor))
 }
+
+// Translated into IR-based terms from classifierDescriptor?.classId
+val IrClass.classId: ClassId?
+    get() = when (val parent = parent) {
+        is IrExternalPackageFragment -> ClassId(parent.fqName, name)
+        is IrClass -> parent.classId?.createNestedClassId(name)
+        else -> null
+    }

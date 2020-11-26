@@ -56,6 +56,10 @@ fun classFileContainsMethod(descriptor: FunctionDescriptor, state: GenerationSta
         }
     }
 
+    return classFileContainsMethod(classId, state, method)
+}
+
+fun classFileContainsMethod(classId: ClassId, state: GenerationState, method: Method): Boolean? {
     val bytes = VirtualFileFinder.getInstance(state.project, state.module).findVirtualFileWithHeader(classId)
         ?.contentsToByteArray() ?: return null
     var found = false
