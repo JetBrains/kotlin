@@ -27,9 +27,10 @@ import java.util.function.Function
 import java.util.function.UnaryOperator
 import java.util.regex.Pattern
 import java.util.stream.Collectors
+import java.io.File
 
 class RunExternalTestGroup extends JavaExec implements CompilerRunner {
-    def platformManager = project.rootProject.platformManager
+    def platformManager = project.project(":kotlin-native").platformManager
     def target = platformManager.targetManager(project.testTarget).target
     def dist = UtilsKt.getKotlinNativeDist(project)
 
@@ -206,12 +207,14 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
     @Input
     def groupDirectory = "."
 
+    def ignoredTests = []
+
     String filter = project.findProperty("filter")
 
     def testGroupReporter = new KonanTestGroupReportEnvironment(project)
 
     void parseLanguageFlags(String src) {
-        def text = project.buildDir.toPath().resolve(src).text
+        def text = project.rootProject.file(src).text
         def languageSettings = findLinesWithPrefixesRemoved(text, "// !LANGUAGE: ")
         if (languageSettings.size() != 0) {
             languageSettings.forEach { line ->
@@ -266,14 +269,13 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
         def boxPattern = ~/(?m)fun\s+box\s*\(\s*\)/
         def classPattern = ~/.*(class|object|enum|interface)\s+(${identifier}*).*/
 
-        def sourceName = "_" + normalize(project.buildDir.toPath().resolve(src).toFile().name)
+        def sourceName = "_" + normalize(project.rootProject.file(src).name)
         def packages = new LinkedHashSet<String>()
         def imports = []
         def classes = []
         def vars = new HashSet<String>()  // variables that has the same name as a package
         TestModule mainModule = null
-
-        def testFiles = TestDirectivesKt.buildCompileList(project.file("build/$src").toPath(), "$outputDirectory/$src")
+        def testFiles = TestDirectivesKt.buildCompileList(project.rootProject.file(src).toPath(), "$outputDirectory/${project.rootProject.file(src).name}")
         for (TestFile testFile: testFiles) {
             def text = testFile.text
             def filePath = testFile.path
@@ -296,7 +298,7 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
             }
 
             // Find mutable objects that should be marked as ThreadLocal
-            if (filePath != "$outputDirectory/$src/helpers.kt") {
+            if (filePath != "$outputDirectory/${project.rootProject.file(src).name}/helpers.kt") {
                 text = markMutableObjects(text)
             }
             testFile.text = text
@@ -366,13 +368,13 @@ class RunExternalTestGroup extends JavaExec implements CompilerRunner {
             testFile.text = res
         }
         def launcherText = createLauncherFileText(src, imports)
-        testFiles.add(new TestFile("_launcher.kt", "$outputDirectory/$src/_launcher.kt".toString(),
+        testFiles.add(new TestFile("_launcher.kt", "$outputDirectory/${project.rootProject.file(src).name}/_launcher.kt".toString(),
                 launcherText, mainModule != null ? mainModule : TestModule.default))
         return testFiles
     }
 
     String normalize(String name) {
-        name.replace('.kt', '')
+        return name.replace('.kt', '')
                 .replace('-','_')
                 .replace('.', '_')
     }
@@ -412,18 +414,22 @@ fun runTest() {
     }
 
     static def excludeList = [
-            "external/compiler/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt", // KT-36880
-            "external/compiler/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt",         // KT-42723
-            "external/compiler/codegen/box/collections/kt41123.kt",                                 // KT-42723
-            "external/compiler/codegen/box/multiplatform/multiModule/expectActualTypealiasLink.kt", // KT-40137
-            "external/compiler/codegen/box/multiplatform/multiModule/expectActualMemberLink.kt",    // KT-33091
-            "external/compiler/codegen/box/multiplatform/multiModule/expectActualLink.kt",          // KT-41901
-            "external/compiler/codegen/box/coroutines/multiModule/",                                // KT-40121
-            "external/compiler/codegen/box/defaultArguments/recursiveDefaultArguments.kt"           // KT-42684
+            "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt", // KT-36880
+            "compiler/testData/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt",         // KT-42723
+            "compiler/testData/codegen/box/collections/kt41123.kt",                                 // KT-42723
+            "compiler/testData/codegen/box/multiplatform/multiModule/expectActualTypealiasLink.kt", // KT-40137
+            "compiler/testData/codegen/box/multiplatform/multiModule/expectActualMemberLink.kt",    // KT-33091
+            "compiler/testData/codegen/box/multiplatform/multiModule/expectActualLink.kt",          // KT-41901
+            "compiler/testData/codegen/box/coroutines/multiModule/",                                // KT-40121
+            "compiler/testData/codegen/box/defaultArguments/recursiveDefaultArguments.kt"           // KT-42684
     ]
 
     boolean isEnabledForNativeBackend(String fileName) {
-        def text = project.buildDir.toPath().resolve(fileName).text
+        def testFile = project.rootProject.file(fileName)
+        def text = testFile.text
+
+        if (testFile.name in ignoredTests)
+            return false
 
         if (excludeList.any { fileName.replace(File.separator, "/").contains(it) }) return false
 
@@ -473,7 +479,7 @@ fun runTest() {
     void executeTest() {
         createOutputDirectory()
         // Form the test list.
-        List<File> ktFiles = project.buildDir.toPath().resolve(groupDirectory).toFile()
+        def ktFiles = project.rootProject.projectDir.toPath().resolve(groupDirectory).toFile()
                 .listFiles({
                     it.isFile() && it.name.endsWith(".kt")
                 } as FileFilter)
@@ -489,10 +495,9 @@ fun runTest() {
             flags = (flags ?: []) + "-tr"
             List<TestFile> compileList = []
             ktFiles.each {
-                def src = project.buildDir.relativePath(it)
+                def src = project.rootProject.relativePath(it)
                 if (isEnabledForNativeBackend(src)) {
                     // Create separate output directory for each test in the group.
-                    project.file("$outputDirectory/${it.name}").mkdirs()
                     parseLanguageFlags(src)
                     compileList.addAll(createTestFiles(src))
                 }
@@ -540,7 +545,7 @@ fun runTest() {
             // Run the tests.
             arguments = (arguments ?: []) + "--ktest_logger=SILENT"
             ktFiles.each { file ->
-                def src = project.buildDir.relativePath(file)
+                def src = project.rootProject.relativePath(file)
                 def savedArgs = arguments
                 arguments += "--ktest_filter=_${normalize(file.name)}.*"
                 use(KonanTestSuiteReportKt) {
