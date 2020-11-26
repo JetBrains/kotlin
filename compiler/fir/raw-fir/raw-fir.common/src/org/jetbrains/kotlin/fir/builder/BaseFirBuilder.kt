@@ -405,17 +405,15 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
      *
      * result:
      * {
-     *     val <unary-result> = argument.inc()
-     *     argument = <unary-result>
-     *     ^<unary-result>
+     *     argument = argument.inc()
+     *     argument.inc()
      * }
      *
      */
 
     // TODO:
-    // 1. Support receiver capturing for `array.b++` (elementType == ARRAY_ACCESS_EXPRESSION).
-    // 2. Support receiver capturing for `a?.b++` (elementType == SAFE_ACCESS_EXPRESSION).
-    // 3. Add box test cases for #1 and #2 where receiver expression has side effects.
+    // 1. Support receiver capturing for `a?.b++` (elementType == SAFE_ACCESS_EXPRESSION).
+    // 2. Add box test cases for #1 where receiver expression has side effects.
     fun generateIncrementOrDecrementBlock(
         baseExpression: T,
         operationReference: T?,
@@ -491,21 +489,10 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 }
             }
 
-            // resultVar is only used for prefix increment/decrement.
-            val resultVar = generateTemporaryVariable(
-                this@BaseFirBuilder.baseSession,
-                desugaredSource,
-                Name.special("<unary-result>"),
-                resultInitializer
-            )
-
             val assignment = unwrappedArgument.generateAssignment(
                 desugaredSource,
                 null,
-                if (prefix && unwrappedArgument.elementType != REFERENCE_EXPRESSION)
-                    generateResolvedAccessExpression(source, resultVar)
-                else
-                    resultInitializer,
+                resultInitializer,
                 FirOperation.ASSIGN, convert
             )
 
@@ -519,9 +506,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
             if (prefix) {
                 if (unwrappedArgument.elementType != REFERENCE_EXPRESSION) {
-                    statements += resultVar
                     appendAssignment()
-                    statements += generateResolvedAccessExpression(desugaredSource, resultVar)
+                    statements += unwrappedArgument.convert()
                 } else {
                     appendAssignment()
                     statements += generateAccessExpression(desugaredSource, desugaredSource, unwrappedArgument.getReferencedNameAsName())
@@ -552,9 +538,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
      * result:
      * {
      *     val <receiver> = a
-     *     val <unary-result> = <receiver>.b.inc()
-     *     <receiver>.b = <unary-result>
-     *     ^<unary-result>
+     *     <receiver>.b = <receiver>.b.inc()
+     *     <receiver>.b
      * }
      *
      */
@@ -584,15 +569,17 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 }
             ).also { statements += it }
 
-            val firArgument = generateResolvedAccessExpression(argumentReceiverVariable.source, argumentReceiverVariable).let { receiver ->
-                val firArgumentSelector = argumentSelector?.convert() ?: buildErrorExpression {
-                    source = argument.toFirSourceElement()
-                    diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
+            fun getArgument() =
+                generateResolvedAccessExpression(argumentReceiverVariable.source, argumentReceiverVariable).let { receiver ->
+                    val firArgumentSelector = argumentSelector?.convert() ?: buildErrorExpression {
+                        source = argument.toFirSourceElement()
+                        diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
+                    }
+                    firArgumentSelector.also { if (it is FirQualifiedAccessExpression) it.replaceExplicitReceiver(receiver) }
                 }
-                firArgumentSelector.also { if (it is FirQualifiedAccessExpression) it.replaceExplicitReceiver(receiver) }
-            }
 
             // initialValueVar is only used for postfix increment/decrement (stores the argument value before increment/decrement).
+            val firArgument = getArgument()
             val initialValueVar = generateTemporaryVariable(
                 this@BaseFirBuilder.baseSession,
                 desugaredSource,
@@ -614,23 +601,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 }
             }
 
-            // resultVar is only used for prefix increment/decrement.
-            val resultVar = generateTemporaryVariable(
-                this@BaseFirBuilder.baseSession,
-                desugaredSource,
-                Name.special("<unary-result>"),
-                resultInitializer
-            )
-
             fun appendAssignment() {
                 if (firArgument is FirQualifiedAccessExpression) {
                     statements += buildVariableAssignment {
                         source = desugaredSource
-                        rValue = if (prefix) {
-                            generateResolvedAccessExpression(source, resultVar)
-                        } else {
-                            resultInitializer
-                        }
+                        rValue = resultInitializer
                         explicitReceiver = generateResolvedAccessExpression(argumentReceiverVariable.source, argumentReceiverVariable)
                         calleeReference = buildSimpleNamedReference {
                             source = firArgument.calleeReference.source
@@ -641,9 +616,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
 
             if (prefix) {
-                statements += resultVar
                 appendAssignment()
-                statements += generateResolvedAccessExpression(desugaredSource, resultVar)
+                statements += getArgument()
             } else {
                 statements += initialValueVar
                 appendAssignment()
@@ -674,9 +648,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
      *     val <array> = a
      *     val <index0> = b
      *     val <index1> = c
-     *     val <unary-result> = <array>.get(b, c).inc()
-     *     <array>.set(b, c, <unary-result>)
-     *     ^<unary-result>
+     *     <array>.set(b, c, <array>.get(b, c).inc())
+     *     <array>.get(b, c)
      * }
      *
      */
@@ -716,7 +689,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 ).also { statements += it }
             }
 
-            val firArgument = buildFunctionCall {
+            fun getArgument() = buildFunctionCall {
                 source = desugaredSource
                 calleeReference = buildSimpleNamedReference {
                     source = argument?.toFirSourceElement()
@@ -731,6 +704,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
 
             // initialValueVar is only used for postfix increment/decrement (stores the argument value before increment/decrement).
+            val firArgument = getArgument()
             val initialValueVar = generateTemporaryVariable(
                 this@BaseFirBuilder.baseSession,
                 desugaredSource,
@@ -752,14 +726,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 }
             }
 
-            // resultVar is only used for prefix increment/decrement.
-            val resultVar = generateTemporaryVariable(
-                this@BaseFirBuilder.baseSession,
-                desugaredSource,
-                Name.special("<unary-result>"),
-                resultInitializer
-            )
-
             fun appendAssignment() {
                 statements += buildFunctionCall {
                     source = desugaredSource
@@ -772,19 +738,14 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         for (indexVar in indexVariables) {
                             arguments += generateResolvedAccessExpression(indexVar.source, indexVar)
                         }
-                        arguments += if (prefix) {
-                            generateResolvedAccessExpression(source, resultVar)
-                        } else {
-                            resultInitializer
-                        }
+                        arguments += resultInitializer
                     }
                 }
             }
 
             if (prefix) {
-                statements += resultVar
                 appendAssignment()
-                statements += generateResolvedAccessExpression(desugaredSource, resultVar)
+                statements += getArgument()
             } else {
                 statements += initialValueVar
                 appendAssignment()

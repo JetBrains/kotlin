@@ -11490,6 +11490,11 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public void testPrefixNullableIncrement() throws Exception {
             runTest("compiler/testData/codegen/box/increment/prefixNullableIncrement.kt");
         }
+
+        @TestMetadata("prefixVersusPostfixEvaluationOrder.kt")
+        public void testPrefixVersusPostfixEvaluationOrder() throws Exception {
+            runTest("compiler/testData/codegen/box/increment/prefixVersusPostfixEvaluationOrder.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/inference")

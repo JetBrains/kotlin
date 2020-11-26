@@ -38,7 +38,7 @@ fun testMismatchingArities() {
     <!INAPPLICABLE_CANDIDATE!>MismatchingArities1[0]<!>++
     MismatchingArities1[0] += 1
 
-    ++<!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!>
+    ++<!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!>
     <!INAPPLICABLE_CANDIDATE!>MismatchingArities2[0]<!>++
     MismatchingArities2[0] += 1
 }
