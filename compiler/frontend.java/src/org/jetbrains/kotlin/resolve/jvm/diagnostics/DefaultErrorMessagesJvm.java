@@ -153,6 +153,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(SUSPENSION_POINT_INSIDE_CRITICAL_SECTION, "The ''{0}'' suspension point is inside a critical section", NAME);
 
         MAP.put(LOCAL_JVM_RECORD, "Local @JvmRecord classes are not allowed");
+        MAP.put(NON_FINAL_JVM_RECORD, "@JvmRecord class should be final");
+        MAP.put(ENUM_JVM_RECORD, "@JvmRecord class should not be an enum");
         MAP.put(JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS, "Primary constructor with parameters is required for @JvmRecord class");
         MAP.put(JVM_RECORD_NOT_VAL_PARAMETER, "Constructor parameter of @JvmRecord class should be a val");
         MAP.put(JVM_RECORD_NOT_LAST_VARARG_PARAMETER, "Only the last constructor parameter of @JvmRecord may be a vararg");
