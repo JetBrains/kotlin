@@ -52,24 +52,6 @@ configurations {
 dependencies {
     compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
     cli_bc project(path: ':kotlin-native:backend.native', configuration: 'cli_bc')
-    def updateTestData = true
-    if (project.hasProperty("kotlinProjectPath")) {
-        def kotlinProj = project.property("kotlinProjectPath").toString()
-        def testDataZip = Paths.get(kotlinProj, "dist", "kotlin-test-data.zip").toFile()
-        if (testDataZip.exists()) {
-            update_tests files(testDataZip)
-            updateTestData = false
-        } else {
-            println("WARN: using tests provided by gradle.properties. Please execute :kotlin:zipTestData")
-        }
-        def stdlibTestsZip = Paths.get(kotlinProj, "dist", "kotlin-stdlib-tests.zip").toFile()
-        if (stdlibTestsZip.exists()) {
-            update_stdlib_tests files(stdlibTestsZip)
-            updateTestData = false
-        } else {
-            println("WARNING: using stdlib tests provided by gradle.properties. Please execute :kotlin:zipTestData")
-        }
-    }
 }
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
 ext.externalTestsDir = project.file("build/external")
@@ -182,43 +164,6 @@ def installTestLib = tasks.register("installTestLibrary", KlibInstall) {
     }
 }
 
-// Gets tests from the same Kotlin compiler build
-def update_external_tests() {
-    // Copy only used tests into the test directory.
-    if (externalTestsDir.exists()) {
-        delete(externalTestsDir)
-    }
-    externalTestsDir.mkdirs()
-
-    def compilerTestsFiles = configurations.update_tests.asFileTree
-    copy {
-        compilerTestsFiles.each {
-            from(zipTree(it))
-            into(externalTestsDir)
-            include 'compiler/codegen/box/**'
-            include 'compiler/codegen/boxInline/**'
-            include 'compiler/compileKotlinAgainstKotlin/**'
-            include 'compiler/binaryCompatibility/klibEvolution/**'
-            exclude 'stdlib/**'
-        }
-    }
-
-    if (externalStdlibTestsDir.exists()) {
-        delete(externalStdlibTestsDir)
-    }
-    externalStdlibTestsDir.mkdirs()
-    def stdlibTestsFiles = configurations.update_stdlib_tests.asFileTree
-    copy {
-        stdlibTestsFiles.each {
-            into(externalStdlibTestsDir)
-            include 'common/**'
-            include 'test/**'
-            exclude 'test/js/**'
-            include 'kotlin-test/**'
-        }
-    }
-}
-
 void konanc(String[] args) {
    def konancScript = isWindows() ? "konanc.bat" : "konanc"
    def konanc = "$dist/bin/$konancScript"
@@ -229,7 +174,7 @@ void konanc(String[] args) {
 
 clean {
     doLast {
-        delete(rootProject.file(testOutputRoot))
+        delete(project(":kotlin-native").file(testOutputRoot))
     }
 }
 
@@ -303,33 +248,13 @@ boolean isExcluded(String dir) {
     return result
 }
 
-def createTestTasks(File testRoot, Class<Task> taskType) {
-    testRoot.eachDirRecurse {
-        // Skip build directory and directories without *.kt files.
-        if (it.name == "build" || it.listFiles().count { it.name.endsWith(".kt") && it.isFile() } == 0) {
-            return
-        }
-
-        def taskDirectory = project.relativePath(it).substring("build/".length())
-        if (!isExcluded(taskDirectory)) {
-            def taskName = taskDirectory.replaceAll("[-/\\\\]", '_')
-            project.tasks.register(taskName, taskType) {
-                it.groupDirectory = taskDirectory
-                it.finalizedBy resultsTask
-            }
-        } else {
-            println("$taskDirectory is excluded")
-        }
-    }
-}
-
 void dependsOnPlatformLibs(Task t) {
     if (!useCustomDist) {
         def testTarget = project.target
         if (testTarget != project.platformManager.Companion.host) {
             t.dependsOn(":${testTarget}PlatformLibs")
         } else {
-            t.dependsOn(':distPlatformLibs')
+            t.dependsOn(':kotlin-native:distPlatformLibs')
         }
     }
 }
@@ -418,14 +343,28 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
     }
 }
 
-task run_external () {
-    // Set this property to disable auto update tests
-    if (!project.hasProperty("test.disable_update")) {
-        update_external_tests()
-    }
+def ignoredTests = [
+        "compiler_testData_codegen_box_callableReference" : ["genericConstructorReference.kt"]
+]
 
-    // Create tasks for external tests.
-    createTestTasks(externalTestsDir, RunExternalTestGroup)
+task run_external () {
+    outputs.upToDateWhen{ false }
+
+    rootProject.files(
+            'compiler/testData/codegen/box',
+            'compiler/codegen/boxInline',
+            'compiler/compileKotlinAgainstKotlin'
+    ).asFileTree.visit { file ->
+        if (!file.isDirectory() || !file.file.list().any{ it.endsWith(".kt")})
+            return
+        def taskPath = rootProject.relativePath(file.file)
+        def taskName = taskPath.split(System.properties["file.separator"]).join('_')
+        project.tasks.register(taskName, RunExternalTestGroup) {
+            it.groupDirectory = taskPath
+            it.finalizedBy resultsTask
+            it.ignoredTests = ignoredTests[taskName]
+        }
+    }
 
     // Set up dependencies.
     dependsOn(tasksOf(RunExternalTestGroup))
