@@ -63,6 +63,7 @@ import java.io.File
 import java.io.PrintStream
 import java.lang.Boolean.getBoolean
 import java.nio.charset.Charset
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 abstract class BasicBoxTest(
@@ -85,6 +86,7 @@ abstract class BasicBoxTest(
 
     protected open val runMinifierByDefault: Boolean = false
     protected open val skipMinification = getBoolean("kotlin.js.skipMinificationTest")
+    protected open val overwriteReachableNodes = getBoolean(overwriteReachableNodesProperty)
 
     protected open val skipRegularMode: Boolean = false
     protected open val runIrDce: Boolean = false
@@ -297,27 +299,12 @@ abstract class BasicBoxTest(
                 (runMinifierByDefault || expectedReachableNodesFound) &&
                 !SKIP_MINIFICATION.matcher(fileContent).find()
             ) {
-                val thresholdChecker: (Int) -> Unit = { reachableNodesCount ->
-                    val replacement = "// $EXPECTED_REACHABLE_NODES_DIRECTIVE: $reachableNodesCount"
-                    if (!expectedReachableNodesFound) {
-                        file.writeText("$replacement\n$fileContent")
-                        fail("The number of expected reachable nodes was not set. Actual reachable nodes: $reachableNodesCount")
-                    }
-                    else {
-                        val expectedReachableNodes = expectedReachableNodesMatcher.group(1).toInt()
-                        val minThreshold = expectedReachableNodes * 9 / 10
-                        val maxThreshold = expectedReachableNodes * 11 / 10
-                        if (reachableNodesCount < minThreshold || reachableNodesCount > maxThreshold) {
-
-                            val newText = fileContent.substring(0, expectedReachableNodesMatcher.start()) +
-                                          replacement +
-                                          fileContent.substring(expectedReachableNodesMatcher.end())
-                            file.writeText(newText)
-                            fail("Number of reachable nodes ($reachableNodesCount) does not fit into expected range " +
-                                 "[$minThreshold; $maxThreshold]")
-                        }
-                    }
-                }
+                val thresholdChecker: (Int) -> Unit = reachableNodesThresholdChecker(
+                    expectedReachableNodesFound,
+                    expectedReachableNodesMatcher,
+                    fileContent,
+                    file
+                )
 
                 val outputDirForMinification = getOutputDir(file, testGroupOutputDirForMinification)
 
@@ -333,6 +320,48 @@ abstract class BasicBoxTest(
                         withModuleSystem = withModuleSystem,
                         minificationThresholdChecker =  thresholdChecker)
                 }
+            }
+        }
+    }
+
+    private fun reachableNodesThresholdChecker(
+        expectedReachableNodesFound: Boolean,
+        expectedReachableNodesMatcher: Matcher,
+        fileContent: String,
+        file: File
+    ) = { reachableNodesCount: Int ->
+        val replacement = "// $EXPECTED_REACHABLE_NODES_DIRECTIVE: $reachableNodesCount"
+        val enablingMessage = "To set expected reachable nodes use '$replacement'\n" +
+                "To enable automatic overwriting reachable nodes use property '-Pfd.$overwriteReachableNodesProperty=true'"
+        if (expectedReachableNodesFound) {
+            val expectedReachableNodes = expectedReachableNodesMatcher.group(1).toInt()
+            val minThreshold = expectedReachableNodes * 9 / 10
+            val maxThreshold = expectedReachableNodes * 11 / 10
+            if (reachableNodesCount < minThreshold || reachableNodesCount > maxThreshold) {
+
+                val message = "Number of reachable nodes ($reachableNodesCount) does not fit into expected range " +
+                        "[$minThreshold; $maxThreshold]"
+                val additionalMessage: String =
+                    if (overwriteReachableNodes) {
+                        val newText = fileContent.substring(0, expectedReachableNodesMatcher.start()) +
+                                replacement +
+                                fileContent.substring(expectedReachableNodesMatcher.end())
+                        file.writeText(newText)
+                        ""
+                    } else {
+                        "\n$enablingMessage"
+                    }
+
+                fail("$message$additionalMessage")
+            }
+        } else {
+            val baseMessage = "The number of expected reachable nodes was not set. Actual reachable nodes: $reachableNodesCount."
+
+            if (overwriteReachableNodes) {
+                file.writeText("$replacement\n$fileContent")
+                fail(baseMessage)
+            } else {
+                println("$baseMessage\n$enablingMessage")
             }
         }
     }
@@ -1041,6 +1070,8 @@ abstract class BasicBoxTest(
         private val engineForMinifier =
             if (runTestInNashorn) ScriptEngineNashorn()
             else ScriptEngineV8Lazy(KotlinTestUtils.tmpDirForReusableFolder("j2v8_library_path").path)
+
+        const val overwriteReachableNodesProperty = "kotlin.js.overwriteReachableNodes"
     }
 }
 
