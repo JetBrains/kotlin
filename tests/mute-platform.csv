@@ -7,6 +7,7 @@ org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImpl
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplementWithNonDefaultConfig, Gradle Tests in 201,,
 org.jetbrains.kotlin.gradle.MultiplatformProjectImportingTest.testTransitiveImplement, Gradle Tests in 201,,
 "org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testAndroidDependencyOnMPP", Gradle Import Tests,,
+"org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testDetectAndroidSources", Gradle Import Tests,,
 "org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testDependencyOnRoot", Gradle Tests in 201,,
 "org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testImportBeforeBuild", Gradle Tests in 201,,
 "org.jetbrains.kotlin.gradle.NewMultiplatformProjectImportingTest.testJavaTransitiveOnMPP", Gradle Tests in 201,,
@@ -19,6 +20,7 @@ org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testValAndClass,,, FLAKY
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Order.testValOrder,,, FLAKY
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Val.testValWithTypeWoInitializer,,, FLAKY
+org.jetbrains.kotlin.idea.codeInsight.gradle.GradleFacetImportTest.testAndroidGradleJsDetection, Gradle import Tests,,
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Common.StaticMembers.testJavaStaticMethodsFromImports, KT-32919,,
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testNonPredictableSmartCast1, KT-32919,,
 org.jetbrains.kotlin.idea.completion.test.JvmBasicCompletionTestGenerated.Java.BoldOrGrayed.testNonPredictableSmartCast2, KT-32919,,
