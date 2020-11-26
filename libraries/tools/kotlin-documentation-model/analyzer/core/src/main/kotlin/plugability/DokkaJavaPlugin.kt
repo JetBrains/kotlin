@@ -20,7 +20,7 @@ class ProvidedExtension<T: Any> internal constructor(val ext: ExtensionPoint<T>)
 
     private fun createBuilder(action: LazyEvaluated<T>) =
         ExtensionBuilder(defaultName, ext, action,
-            OrderingKind.None,
+            emptyList(), emptyList(),
             OverrideKind.None, emptyList())
 }
 
@@ -28,7 +28,8 @@ data class ExtensionBuilder<T: Any> internal constructor(
     private val name: String,
     private val ext: ExtensionPoint<T>,
     private val action: LazyEvaluated<T>,
-    private val ordering: OrderingKind = OrderingKind.None,
+    private val before: List<out Extension<*, *, *>>,
+    private val after: List<out Extension<*, *, *>>,
     private val override: OverrideKind = OverrideKind.None,
     private val conditions: List<(DokkaConfiguration) -> Boolean>
 ){
@@ -37,19 +38,22 @@ data class ExtensionBuilder<T: Any> internal constructor(
         javaClass.name,
         name,
         action,
-        ordering,
+        OrderingKind.ByDsl {
+            before(*before.toTypedArray())
+            after(*after.toTypedArray())
+        },
         override,
         conditions
     )
 
     fun overrideExtension(extension: Extension<T, *, *>) = copy(override = OverrideKind.Present(extension))
 
-    fun newOrdering(before: Array<Extension<*, *, *>>, after: Array<Extension<*, *, *>>) {
-        copy(ordering = OrderingKind.ByDsl {
-            before(*before)
-            after(*after)
-        })
-    }
+    fun newOrdering(before: Array<out Extension<*, *, *>>, after: Array<out Extension<*, *, *>>) =
+        copy(before = this.before + before, after = this.after + after)
+
+    fun before(vararg exts: Extension<*, *, *>) = copy(before = this.before + exts)
+
+    fun after(vararg exts: Extension<*, *, *>) = copy(after = this.after + exts)
 
     fun addCondition(c: (DokkaConfiguration) -> Boolean) = copy(conditions = conditions + c)
 
