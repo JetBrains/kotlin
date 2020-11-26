@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -446,12 +447,24 @@ class CoroutineCodegenForLambda private constructor(
                         )
                     } else {
                         if (generateErasedCreate) {
-                            load(index, AsmTypes.OBJECT_TYPE)
-                            StackValue.coerce(
-                                AsmTypes.OBJECT_TYPE, builtIns.nullableAnyType,
-                                fieldInfoForCoroutineLambdaParameter.fieldType, fieldInfoForCoroutineLambdaParameter.fieldKotlinType,
-                                this
-                            )
+                            if (parameter.type.isInlineClassType()) {
+                                load(cloneIndex, fieldInfoForCoroutineLambdaParameter.ownerType)
+                                load(index, AsmTypes.OBJECT_TYPE)
+                                StackValue.unboxInlineClass(AsmTypes.OBJECT_TYPE, parameter.type, this)
+                                putfield(
+                                    fieldInfoForCoroutineLambdaParameter.ownerInternalName,
+                                    fieldInfoForCoroutineLambdaParameter.fieldName,
+                                    fieldInfoForCoroutineLambdaParameter.fieldType.descriptor
+                                )
+                                continue
+                            } else {
+                                load(index, AsmTypes.OBJECT_TYPE)
+                                StackValue.coerce(
+                                    AsmTypes.OBJECT_TYPE, builtIns.nullableAnyType,
+                                    fieldInfoForCoroutineLambdaParameter.fieldType, fieldInfoForCoroutineLambdaParameter.fieldKotlinType,
+                                    this
+                                )
+                            }
                         } else {
                             load(index, fieldInfoForCoroutineLambdaParameter.fieldType)
                         }
