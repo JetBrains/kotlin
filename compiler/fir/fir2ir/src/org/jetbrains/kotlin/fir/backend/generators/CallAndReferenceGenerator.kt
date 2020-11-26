@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedTypeForSAMConversion
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
@@ -445,8 +446,14 @@ class CallAndReferenceGenerator(
                             is FirDelegatedConstructorCall -> call.calleeReference
                             is FirAnnotationCall -> call.calleeReference
                             else -> null
-                        } as? FirResolvedNamedReference
-                        val function = (calleeReference?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
+                        }
+                        val function = if (calleeReference == FirReferencePlaceholderForResolvedAnnotations) {
+                            val coneClassLikeType = (call as FirAnnotationCall).annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
+                            val firClass = (coneClassLikeType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol)?.fir
+                            firClass?.declarations?.filterIsInstance<FirConstructor>()?.firstOrNull()
+                        } else {
+                            ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol as? FirFunctionSymbol<*>)?.fir
+                        }
                         val valueParameters = function?.valueParameters
                         val argumentMapping = call.argumentMapping
                         if (argumentMapping != null && (annotationMode || argumentMapping.isNotEmpty())) {
@@ -559,11 +566,13 @@ class CallAndReferenceGenerator(
             }
         }
         with(adapterGenerator) {
-            irArgument = irArgument.applySuspendConversionIfNeeded(argument, parameter)
+            if (parameter?.returnTypeRef is FirResolvedTypeRef) {
+                // Java type case (from annotations)
+                irArgument = irArgument.applySuspendConversionIfNeeded(argument, parameter)
+                irArgument = irArgument.applySamConversionIfNeeded(argument, parameter)
+            }
         }
-        return irArgument
-            .applySamConversionIfNeeded(argument, parameter)
-            .applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
+        return irArgument.applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
     }
 
     private fun IrExpression.applySamConversionIfNeeded(
