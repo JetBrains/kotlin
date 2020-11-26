@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.collectDiagnosticsForFile
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.getDiagnosticsFor
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getDiagnostics
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtDiagnosticProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -20,7 +20,7 @@ internal class KtFirDiagnosticProvider(
     override val token: ValidityToken,
 ) : KtDiagnosticProvider(), KtFirAnalysisSessionComponent {
     override fun getDiagnosticsForElement(element: KtElement): Collection<Diagnostic> = withValidityAssertion {
-        getDiagnosticsFor(element, firResolveState)
+        element.getDiagnostics(firResolveState)
     }
 
     override fun collectDiagnosticsForFile(ktFile: KtFile): Collection<Diagnostic> =
