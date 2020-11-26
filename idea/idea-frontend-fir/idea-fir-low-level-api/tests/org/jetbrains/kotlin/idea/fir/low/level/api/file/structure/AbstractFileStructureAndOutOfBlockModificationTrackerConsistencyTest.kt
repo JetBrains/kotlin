@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiDocumentManager
+import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.parentOfType
 import junit.framework.Assert
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirModuleResolveStateImpl
@@ -53,8 +54,13 @@ abstract class AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyT
         )
     }
 
-    private fun KtFile.findElementAtCaret(): KtElement =
-        findElementAt(myFixture.caretOffset)!!.parentOfType()!!
+    private fun KtFile.findElementAtCaret(): KtElement {
+        val element = when (val elementAtOffset = findElementAt(myFixture.caretOffset)) {
+            is PsiWhiteSpace -> findElementAt((myFixture.caretOffset - 1).coerceAtLeast(0))
+            else -> elementAtOffset
+        }
+        return element!!.parentOfType()!!
+    }
 
     private fun getStructureElementForKtElement(element: KtElement): Triple<FileStructureElement, FileStructure, FirModuleResolveState> {
         val moduleResolveState = element.getResolveState() as FirModuleResolveStateImpl
