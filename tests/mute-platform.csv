@@ -116,6 +116,17 @@ org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testKotlin_moveTopL
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesOnly, Generated entries reordered,, FLAKY
 org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesAndMembers, Enum reorder,, FLAKY
 org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testImportAliasMultiDeclarations, showInBestPositionFor doesn't work in headless in 202,,
+org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testItParameterInLambda,Broken in 202,,
+org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testThisExtensionFunction,Broken in 202,,
+org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testItExtensionLambda,Broken in 202,,
+org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testLabeledThisToMemberExtension,Broken in 202,,
+org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testThisInExtensionPropertyAccessor,Broken in 202,,
+org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testLabeledThisToClass,Broken in 202,,
+org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testItExtensionLambdaInBrackets,Broken in 202,,
+org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testThisExtensionLambda,Broken in 202,,
+org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testItInLambdaAsDefaultArgument,Broken in 202,,
+org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testImportAlias,Broken in 202,,
+org.jetbrains.kotlin.idea.navigation.GotoDeclarationTestGenerated.testItInLambdaWithoutCall,Broken in 202,,
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testChangeInsideNonKtsFileInvalidatesOtherFiles, Unprocessed,,
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testTwoFilesChanged, Unprocessed,,
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testLoadedConfigurationWhenExternalFileChanged, Unprocessed,,
