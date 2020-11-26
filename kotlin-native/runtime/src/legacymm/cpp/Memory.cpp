@@ -131,7 +131,6 @@ typedef KStdUnorderedSet<KRef> KRefSet;
 typedef KStdUnorderedMap<KRef, KInt> KRefIntMap;
 typedef KStdDeque<KRef> KRefDeque;
 typedef KStdDeque<KRefList> KRefListDeque;
-typedef KStdUnorderedMap<void**, std::pair<KRef*,int>> KThreadLocalStorageMap;
 
 // A little hack that allows to enable -O2 optimizations
 // Prevents clang from replacing FrameOverlay struct
@@ -584,15 +583,78 @@ private:
   }
 };
 
+namespace {
+
+class ThreadLocalStorage {
+public:
+    using Key = void**;
+
+    void Init() noexcept { map_ = konanConstructInstance<Map>(); }
+
+    void Deinit() noexcept {
+        RuntimeAssert(map_->size() == 0, "Must be already cleared");
+        konanDestructInstance(map_);
+    }
+
+    void Add(Key key, int size) noexcept {
+        RuntimeAssert(storage_ == nullptr, "Storage must not be committed");
+        auto it = map_->find(key);
+        if (it != map_->end()) {
+            RuntimeAssert(it->second.second == size, "Attempt to add TLS record with the same key and different size");
+            return;
+        }
+        map_->emplace(key, std::make_pair(size_, size));
+        size_ += size;
+    }
+
+    void Commit() noexcept {
+        RuntimeAssert(storage_ == nullptr, "Cannot commit storage twice");
+        storage_ = reinterpret_cast<KRef*>(konanAllocMemory(size_ * sizeof(KRef)));
+    }
+
+    void Clear() noexcept {
+        RuntimeAssert(storage_ != nullptr, "Storage must be committed");
+        for (int i = 0; i < size_; ++i) {
+            UpdateHeapRef(storage_ + i, nullptr);
+        }
+        konanFreeMemory(storage_);
+        map_->clear();
+    }
+
+    KRef* Lookup(Key key, int index) noexcept {
+        RuntimeAssert(storage_ != nullptr, "Storage must be committed");
+        // In many cases there is only one module, so this is one element cache.
+        if (lastKey_ == key) {
+            return storage_ + lastOffset_ + index;
+        }
+        auto it = map_->find(key);
+        RuntimeAssert(it != map_->end(), "Must be there");
+        int offset = it->second.first;
+        RuntimeAssert(offset + index < size_, "Out of bound in TLS access");
+        lastKey_ = key;
+        lastOffset_ = offset;
+        return storage_ + offset + index;
+    }
+
+private:
+    using Map = KStdUnorderedMap<Key, std::pair<int, int>>;
+
+    Map* map_ = nullptr;
+    KRef* storage_ = nullptr;
+    int size_ = 0;
+    int lastOffset_ = 0;
+    Key lastKey_ = nullptr;
+};
+
+} // namespace
+
 struct MemoryState {
 #if TRACE_MEMORY
   // Set of all containers.
   ContainerHeaderSet* containers;
 #endif
 
-  KThreadLocalStorageMap* tlsMap;
-  KRef* tlsMapLastStart;
-  void* tlsMapLastKey;
+  ThreadLocalStorage tls;
 
 #if USE_GC
   // Finalizer queue - linked list of containers scheduled for finalization.
@@ -1995,7 +2057,7 @@ MemoryState* initMemory(bool firstRuntime) {
   memoryState->allocSinceLastGcThreshold = kMaxGcAllocThreshold;
   memoryState->gcErgonomics = true;
 #endif
-  memoryState->tlsMap = konanConstructInstance<KThreadLocalStorageMap>();
+  memoryState->tls.Init();
   memoryState->foreignRefManager = ForeignRefManager::create();
   bool firstMemoryState = atomicAdd(&aliveMemoryStatesCount, 1) == 1;
   switch (Kotlin_getDestroyRuntimeMode()) {
@@ -2051,8 +2113,7 @@ void deinitMemory(MemoryState* memoryState, bool destroyRuntime) {
   konanDestructInstance(memoryState->toFree);
   konanDestructInstance(memoryState->roots);
   konanDestructInstance(memoryState->toRelease);
-  RuntimeAssert(memoryState->tlsMap->size() == 0, "Must be already cleared");
-  konanDestructInstance(memoryState->tlsMap);
+  memoryState->tls.Deinit();
   RuntimeAssert(memoryState->finalizerQueue == nullptr, "Finalizer queue must be empty");
   RuntimeAssert(memoryState->finalizerQueueSize == 0, "Finalizer queue must be empty");
 #endif // USE_GC
@@ -3535,44 +3596,19 @@ void Kotlin_Any_share(ObjHeader* obj) {
 }
 
 RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, void** key, int size) {
-  auto* tlsMap = memory->tlsMap;
-  auto it = tlsMap->find(key);
-  if (it != tlsMap->end()) {
-    RuntimeAssert(it->second.second == size, "Size must be consistent");
-    return;
-  }
-  KRef* start = reinterpret_cast<KRef*>(konanAllocMemory(size * sizeof(KRef)));
-  tlsMap->emplace(key, std::make_pair(start, size));
+    memory->tls.Add(key, size);
 }
 
-RUNTIME_NOTHROW void ClearTLSRecord(MemoryState* memory, void** key) {
-  auto* tlsMap = memory->tlsMap;
-  auto it = tlsMap->find(key);
-  if (it != tlsMap->end()) {
-    KRef* start = it->second.first;
-    int count = it->second.second;
-    for (int i = 0; i < count; i++) {
-      UpdateHeapRef(start + i, nullptr);
-    }
-    konanFreeMemory(start);
-    tlsMap->erase(it);
-  }
+RUNTIME_NOTHROW void CommitTLSStorage(MemoryState* memory) {
+    memory->tls.Commit();
+}
+
+RUNTIME_NOTHROW void ClearTLS(MemoryState* memory) {
+    memory->tls.Clear();
 }
 
 RUNTIME_NOTHROW KRef* LookupTLS(void** key, int index) {
-  auto* state = memoryState;
-  auto* tlsMap = state->tlsMap;
-  // In many cases there is only one module, so this one element cache.
-  if (state->tlsMapLastKey == key) {
-    return state->tlsMapLastStart + index;
-  }
-  auto it = tlsMap->find(key);
-  RuntimeAssert(it != tlsMap->end(), "Must be there");
-  RuntimeAssert(index < it->second.second, "Out of bound in TLS access");
-  KRef* start = it->second.first;
-  state->tlsMapLastKey = key;
-  state->tlsMapLastStart = start;
-  return start + index;
+    return memoryState->tls.Lookup(key, index);
 }
 
 

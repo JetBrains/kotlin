@@ -55,10 +55,11 @@ struct RuntimeState {
     RuntimeStatus status = RuntimeStatus::kUninitialized;
 };
 
+// Must be synchronized with IrToBitcode.kt
 enum {
-  INIT_GLOBALS = 0,
-  INIT_THREAD_LOCAL_GLOBALS = 1,
-  DEINIT_THREAD_LOCAL_GLOBALS = 2,
+  ALLOC_THREAD_LOCAL_GLOBALS = 0,
+  INIT_GLOBALS = 1,
+  INIT_THREAD_LOCAL_GLOBALS = 2,
   DEINIT_GLOBALS = 3
 };
 
@@ -120,6 +121,8 @@ RuntimeState* initRuntime() {
           result->worker = WorkerInit(true);
   }
 
+  InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, result->memoryState);
+  CommitTLSStorage(result->memoryState);
   // Keep global variables in state as well.
   if (firstRuntime) {
     konan::consoleInit();
@@ -148,7 +151,7 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
       // Nothing to do.
       break;
   }
-  InitOrDeinitGlobalVariables(DEINIT_THREAD_LOCAL_GLOBALS, state->memoryState);
+  ClearTLS(state->memoryState);
   if (destroyRuntime)
     InitOrDeinitGlobalVariables(DEINIT_GLOBALS, state->memoryState);
   auto workerId = GetWorkerId(state->worker);

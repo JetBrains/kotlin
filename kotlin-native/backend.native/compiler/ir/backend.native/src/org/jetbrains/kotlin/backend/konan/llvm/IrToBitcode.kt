@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentation
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleFragmentImpl
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -37,7 +35,6 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal enum class FieldStorageKind {
     GLOBAL, // In the old memory model these are only accessible from the "main" thread.
@@ -385,9 +382,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
 
-    val INIT_GLOBALS = 0
-    val INIT_THREAD_LOCAL_GLOBALS = 1
-    val DEINIT_THREAD_LOCAL_GLOBALS = 2
+    // Must be synchronized with Runtime.cpp
+    val ALLOC_THREAD_LOCAL_GLOBALS = 0
+    val INIT_GLOBALS = 1
+    val INIT_THREAD_LOCAL_GLOBALS = 2
     val DEINIT_GLOBALS = 3
 
     private fun createInitBody(): LLVMValueRef {
@@ -397,7 +395,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             using(FunctionScope(initFunction, "init_body", it)) {
                 val bbInit = basicBlock("init", null)
                 val bbLocalInit = basicBlock("local_init", null)
-                val bbLocalDeinit = basicBlock("local_deinit", null)
+                val bbLocalAlloc = basicBlock("local_alloc", null)
                 val bbGlobalDeinit = basicBlock("global_deinit", null)
                 val bbDefault = basicBlock("default", null) {
                     unreachable()
@@ -406,18 +404,12 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 switch(LLVMGetParam(initFunction, 0)!!,
                         listOf(Int32(INIT_GLOBALS).llvm                to bbInit,
                                Int32(INIT_THREAD_LOCAL_GLOBALS).llvm   to bbLocalInit,
-                               Int32(DEINIT_THREAD_LOCAL_GLOBALS).llvm to bbLocalDeinit,
+                               Int32(ALLOC_THREAD_LOCAL_GLOBALS).llvm  to bbLocalAlloc,
                                Int32(DEINIT_GLOBALS).llvm              to bbGlobalDeinit),
                         bbDefault)
 
                 // Globals initalizers may contain accesses to objects, so visit them first.
                 appendingTo(bbInit) {
-                    // Bit clumsy, global init may need access to TLS, thus it has to be ready to that point.
-                    if (context.llvm.tlsCount > 0) {
-                        val memory = LLVMGetParam(initFunction, 1)!!
-                        call(context.llvm.addTLSRecord, listOf(memory, context.llvm.tlsKey,
-                                Int32(context.llvm.tlsCount).llvm))
-                    }
                     context.llvm.fileInitializers
                             .forEach { irField ->
                                 if (irField.initializer?.expression !is IrConst<*>?) {
@@ -436,11 +428,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 }
 
                 appendingTo(bbLocalInit) {
-                    if (context.llvm.tlsCount > 0) {
-                        val memory = LLVMGetParam(initFunction, 1)!!
-                        call(context.llvm.addTLSRecord, listOf(memory, context.llvm.tlsKey,
-                                Int32(context.llvm.tlsCount).llvm))
-                    }
                     context.llvm.fileInitializers
                             .forEach { irField ->
                                 if (irField.initializer != null && irField.storageKind == FieldStorageKind.THREAD_LOCAL) {
@@ -454,10 +441,11 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                     ret(null)
                 }
 
-                appendingTo(bbLocalDeinit) {
+                appendingTo(bbLocalAlloc) {
                     if (context.llvm.tlsCount > 0) {
                         val memory = LLVMGetParam(initFunction, 1)!!
-                        call(context.llvm.clearTLSRecord, listOf(memory, context.llvm.tlsKey))
+                        call(context.llvm.addTLSRecord, listOf(memory, context.llvm.tlsKey,
+                                Int32(context.llvm.tlsCount).llvm))
                     }
                     ret(null)
                 }

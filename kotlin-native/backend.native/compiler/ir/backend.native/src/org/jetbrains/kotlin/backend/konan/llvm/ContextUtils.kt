@@ -515,7 +515,6 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val throwExceptionFunction = importRtFunction("ThrowException")
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail")
     val addTLSRecord = importRtFunction("AddTLSRecord")
-    val clearTLSRecord = importRtFunction("ClearTLSRecord")
     val lookupTLS = importRtFunction("LookupTLS")
     val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded")
     val mutationCheck = importRtFunction("MutationCheck")
