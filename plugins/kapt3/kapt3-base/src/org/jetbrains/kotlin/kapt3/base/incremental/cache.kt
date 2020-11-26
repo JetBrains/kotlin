@@ -19,8 +19,18 @@ class JavaClassCacheManager(val file: File) : Closeable {
     private var closed = false
 
     fun updateCache(processors: List<IncrementalProcessor>, failedToAnalyzeSources: Boolean) {
-        if (failedToAnalyzeSources || !aptCache.updateCache(processors)) {
+        if (!aptCache.updateCache(processors, failedToAnalyzeSources)) {
             javaCache.invalidateAll()
+            return
+        }
+        // Compilation is fully incremental, record types defined in generated .class files
+        processors.forEach { processor ->
+            processor.getGeneratedClassFilesToTypes().forEach { (classFile, type) ->
+                val typeInformation = SourceFileStructure(classFile.toURI()).also {
+                    it.addDeclaredType(type)
+                }
+                javaCache.addSourceStructure(typeInformation)
+            }
         }
     }
 
@@ -39,38 +49,93 @@ class JavaClassCacheManager(val file: File) : Closeable {
         }
 
         val changes = Changes(changedSources, dirtyClasspathFqNames.toSet())
-        val filesToReprocess = javaCache.invalidateEntriesForChangedFiles(changes)
+        val aggregatingGeneratedTypes = aptCache.getAggregatingGeneratedTypes(javaCache::getTypesForFiles)
+        val impactedTypes = getAllImpactedTypes(changes, aggregatingGeneratedTypes)
+        val isolatingGeneratedTypes = aptCache.getIsolatingGeneratedTypes(javaCache::getTypesForFiles)
 
-        return when (filesToReprocess) {
-            is SourcesToReprocess.FullRebuild -> SourcesToReprocess.FullRebuild
-            is SourcesToReprocess.Incremental -> {
-                val toReprocess = filesToReprocess.toReprocess.toMutableSet()
+        val sourcesToReprocess = changedSources.toMutableSet()
+        val classNamesToReprocess = mutableListOf<String>()
+        var shouldProcessAggregating = false
 
-                val (invalidatedIsolatingGenerated, invalidatedIsolatingId) = aptCache.invalidateIsolatingGenerated(toReprocess)
-                val generatedDirtyTypes = javaCache.invalidateGeneratedTypes(invalidatedIsolatingGenerated).toMutableSet() /*+*/
-
-                val aggregatedTypes = mutableListOf<String>()
-                if (!toReprocess.isEmpty()) {
-                    // only if there are some files to reprocess we should invalidate the aggregating ones
-                    val (aggregatingGenerated, aggregatedTypes1) = aptCache.invalidateAggregating()
-                    aggregatedTypes.addAll(aggregatedTypes1)
-                    generatedDirtyTypes.addAll(javaCache.invalidateGeneratedTypes(aggregatingGenerated))
-
-                    toReprocess.addAll(
-                        javaCache.invalidateEntriesAnnotatedWith(aptCache.getAggregatingClaimedAnnotations())
-                    )
+        for (impactedType in impactedTypes) {
+            if (impactedType !in isolatingGeneratedTypes && impactedType !in aggregatingGeneratedTypes) {
+                // Reprocess only if original source
+                javaCache.getSourceForType(impactedType)?.let {
+                    sourcesToReprocess.add(it)
                 }
-
-                SourcesToReprocess.Incremental(
-                    toReprocess.toList(),
-                    generatedDirtyTypes,
-                    aggregatedTypes.also {
-                        it.removeAll(filesToReprocess.dirtyTypes)
-                        it.removeAll(generatedDirtyTypes)
-                        it.removeAll(invalidatedIsolatingId)
-                    })
+            } else if (impactedType in isolatingGeneratedTypes) {
+                // this is a generated type by isolating AP
+                val isolatingOrigin = aptCache.getOriginForGeneratedIsolatingType(impactedType, javaCache::getSourceForType)
+                if (isolatingOrigin in impactedTypes) {
+                    // we'll process origin, no need to do it now
+                    continue
+                }
+                val originSource = javaCache.getSourceForType(isolatingOrigin)
+                if (originSource?.extension == "java") {
+                    sourcesToReprocess.add(originSource)
+                } else if (originSource?.extension == "class") {
+                    // This is a generated .class file that we need to reprocess.
+                    classNamesToReprocess.add(isolatingOrigin)
+                } else {
+                    // This is a type from classpath that was used as origin, just ignore it. It is used just to remove the generated file.
+                }
+            } else {
+                // processed separately
+                shouldProcessAggregating = true
             }
         }
+
+        if (shouldProcessAggregating || sourcesToReprocess.isNotEmpty() || classNamesToReprocess.isNotEmpty()) {
+            for (aggregatingOrigin in aptCache.getAggregatingOrigins()) {
+                if (aggregatingOrigin in impactedTypes) continue
+
+                val originSource = javaCache.getSourceForType(aggregatingOrigin)
+                if (originSource?.extension == "java") {
+                    sourcesToReprocess.add(originSource)
+                } else if (originSource?.extension == "class") {
+                    // This is a generated .class file that we need to reprocess.
+                    classNamesToReprocess.add(aggregatingOrigin)
+                }
+            }
+
+            // Invalidate state only if there are some files that will be reprocessed
+            javaCache.invalidateDataForTypes(impactedTypes)
+            aptCache.invalidateAggregating()
+            // for isolating, invalidate both own types and classpath types
+            aptCache.invalidateIsolatingForOriginTypes(impactedTypes)
+            aptCache.invalidateIsolatingForOriginTypes(dirtyClasspathFqNames)
+        }
+
+        return SourcesToReprocess.Incremental(sourcesToReprocess.toList(), impactedTypes, classNamesToReprocess)
+    }
+
+    private fun getAllImpactedTypes(changes: Changes, aggregatingGeneratedTypes: Set<String>): MutableSet<String> {
+        val impactedTypes = javaCache.getAllImpactedTypes(changes)
+
+        /**
+         * In order to find all impacted types we do the following:
+         * - impacted types is a set of types that have changed from the previous compilation
+         * - if there is a changed source or a source file that is impacted by type changes, we'll need to run aggregating APs, so we
+         * invalidate all aggregating generated types, and add them to set of impacted types.
+         * - using this new impacted types set, we find all types generated by isolating APs with origins in those types
+         * - if there are some generated types by isolating APs, we'll need to run aggregating APs, so we invalidate all aggregating types
+         * and add them to impacted types.
+         * - using the final value of impacted types we get all generated types by isolating APs and add them to impacted types
+         */
+        if (changes.sourceChanges.isNotEmpty() || impactedTypes.isNotEmpty()) {
+            // Any source change or any source impacted by type change invalidates aggregating APs generated types
+            impactedTypes.addAll(aggregatingGeneratedTypes)
+        }
+        aptCache.getIsolatingGeneratedTypesForOrigins(changes.dirtyFqNamesFromClasspath, javaCache::getTypesForFiles).let {
+            if (it.isNotEmpty()) {
+                impactedTypes.addAll(it)
+                impactedTypes.addAll(aggregatingGeneratedTypes)
+            }
+        }
+        aptCache.getIsolatingGeneratedTypesForOrigins(impactedTypes, javaCache::getTypesForFiles).let {
+            impactedTypes.addAll(it)
+        }
+        return impactedTypes
     }
 
     private fun maybeGetAptCacheFromFile(): IncrementalAptCache {
