@@ -13,9 +13,12 @@ import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.ValueKind
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBasedPropertyDescriptor
+import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
@@ -161,6 +164,13 @@ class IrInlineCodegen(
             ::IrDefaultLambda
         )
     }
+
+    override fun isLoadedFromBytecode(memberDescriptor: CallableMemberDescriptor): Boolean =
+        when (memberDescriptor) {
+            is IrBasedSimpleFunctionDescriptor -> memberDescriptor.owner.classId != null
+            is IrBasedPropertyDescriptor -> memberDescriptor.owner.classId != null
+            else -> false
+        }
 }
 
 class IrExpressionLambdaImpl(

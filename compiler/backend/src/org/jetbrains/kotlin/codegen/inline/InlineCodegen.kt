@@ -136,9 +136,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     ) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
-            nodeAndSmap = createInlineMethodNode(
-                functionDescriptor, methodOwner, jvmSignature, mapDefaultSignature, typeArguments, typeSystem, state, sourceCompiler
-            )
+            nodeAndSmap = createInlineMethodNode(mapDefaultSignature, typeArguments, typeSystem)
             endCall(inlineCall(nodeAndSmap, inlineDefaultLambdas), registerLineNumberAfterwards)
         } catch (e: CompilationException) {
             throw e
@@ -273,6 +271,8 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
     abstract fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda>
+
+    abstract fun isLoadedFromBytecode(memberDescriptor: CallableMemberDescriptor): Boolean
 
     fun generateAndInsertFinallyBlocks(
         intoNode: MethodNode,
@@ -512,37 +512,32 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     }
 
 
-    companion object {
-
-        internal fun createInlineMethodNode(
-            functionDescriptor: FunctionDescriptor,
-            methodOwner: Type,
-            jvmSignature: JvmMethodSignature,
-            callDefault: Boolean,
-            typeArguments: List<TypeParameterMarker>?,
-            typeSystem: TypeSystemCommonBackendContext,
-            state: GenerationState,
-            sourceCompilerForInline: SourceCompilerForInline
-        ): SMAPAndMethodNode {
-            val intrinsic = generateInlineIntrinsic(state, functionDescriptor, typeArguments, typeSystem)
-            if (intrinsic != null) {
-                return SMAPAndMethodNode(intrinsic, createDefaultFakeSMAP())
-            }
-
-            val asmMethod = if (callDefault)
-                state.typeMapper.mapDefaultMethod(functionDescriptor, sourceCompilerForInline.contextKind)
-            else
-                mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
-
-            val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
-            if (!isBuiltInArrayIntrinsic(functionDescriptor) && directMember !is DescriptorWithContainerSource) {
-                val node = sourceCompilerForInline.doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, callDefault, asmMethod)
-                node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
-                return node
-            }
-
-            return getCompiledMethodNodeInner(functionDescriptor, directMember, asmMethod, methodOwner, state, jvmSignature)
+    internal fun createInlineMethodNode(
+        callDefault: Boolean,
+        typeArguments: List<TypeParameterMarker>?,
+        typeSystem: TypeSystemCommonBackendContext
+    ): SMAPAndMethodNode {
+        val intrinsic = generateInlineIntrinsic(state, functionDescriptor, typeArguments, typeSystem)
+        if (intrinsic != null) {
+            return SMAPAndMethodNode(intrinsic, createDefaultFakeSMAP())
         }
+
+        val asmMethod = if (callDefault)
+            state.typeMapper.mapDefaultMethod(functionDescriptor, sourceCompiler.contextKind)
+        else
+            mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
+
+        val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
+        if (!isBuiltInArrayIntrinsic(functionDescriptor) && !isLoadedFromBytecode(directMember)) {
+            val node = sourceCompiler.doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, callDefault, asmMethod)
+            node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
+            return node
+        }
+
+        return getCompiledMethodNodeInner(functionDescriptor, directMember, asmMethod, methodOwner, state, jvmSignature)
+    }
+
+    companion object {
 
         internal fun createSpecialInlineMethodNodeFromBinaries(functionDescriptor: FunctionDescriptor, state: GenerationState): MethodNode {
             val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)

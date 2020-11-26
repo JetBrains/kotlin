@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getMethodAsmFlags
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinableParameterExpres
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -208,4 +210,7 @@ class PsiInlineCodegen(
             ::PsiDefaultLambda
         )
     }
+
+    override fun isLoadedFromBytecode(memberDescriptor: CallableMemberDescriptor): Boolean =
+        memberDescriptor is DescriptorWithContainerSource
 }
