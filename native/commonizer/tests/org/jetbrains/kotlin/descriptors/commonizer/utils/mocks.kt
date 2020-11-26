@@ -46,8 +46,7 @@ internal fun mockClassType(
         storageManager = LockBasedStorageManager.NO_LOCKS,
         target = InputTarget("Arbitrary target"),
         builtIns = DefaultBuiltIns.Instance,
-        lazyModulesLookupTable = LockBasedStorageManager.NO_LOCKS.createLazyValue { mutableMapOf() },
-        isCommon = false,
+        lazyClassifierLookupTable = LockBasedStorageManager.NO_LOCKS.createLazyValue { LazyClassifierLookupTable(emptyMap()) },
         index = 0,
         cache = DeclarationsBuilderCache(1)
     )
@@ -173,7 +172,7 @@ internal class MockModulesProvider : ModulesProvider {
     }
 
     override fun loadModuleInfos() = moduleInfos
-    override fun loadModules() = modules
+    override fun loadModules(dependencies: Collection<ModuleDescriptor>): Map<String, ModuleDescriptor> = modules
 
     private fun fakeModuleInfo(name: String) = ModuleInfo(name, File("/tmp/commonizer/mocks/$name"), null)
 }

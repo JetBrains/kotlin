@@ -59,14 +59,26 @@ class CirTreeMerger(
     private val size = parameters.targetProviders.size
 
     fun merge(): CirTreeMergeResult {
+        val result = processRoot()
+        System.gc()
+        return result
+    }
+
+    private fun processRoot(): CirTreeMergeResult {
         val rootNode: CirRootNode = buildRootNode(storageManager, size)
+
+        // remember any exported forward declarations from common fragments of dependee modules
+        parameters.dependeeModulesProvider?.loadModuleInfos()?.values?.forEach(::processCInteropModuleAttributes)
+
+        // load common dependencies
+        val dependeeModules = parameters.dependeeModulesProvider?.loadModules(emptyList())?.values.orEmpty()
 
         val allModuleInfos: List<Map<String, ModuleInfo>> = parameters.targetProviders.map { it.modulesProvider.loadModuleInfos() }
         val commonModuleNames = allModuleInfos.map { it.keys }.reduce { a, b -> a intersect b }
 
         parameters.targetProviders.forEachIndexed { targetIndex, targetProvider ->
             val commonModuleInfos = allModuleInfos[targetIndex].filterKeys { it in commonModuleNames }
-            processTarget(rootNode, targetIndex, targetProvider, commonModuleInfos)
+            processTarget(rootNode, targetIndex, targetProvider, commonModuleInfos, dependeeModules)
             parameters.progressLogger?.invoke("Loaded declarations for [${targetProvider.target.name}]")
             System.gc()
         }
@@ -87,7 +99,8 @@ class CirTreeMerger(
         rootNode: CirRootNode,
         targetIndex: Int,
         targetProvider: TargetProvider,
-        commonModuleInfos: Map<String, ModuleInfo>
+        commonModuleInfos: Map<String, ModuleInfo>,
+        dependeeModules: Collection<ModuleDescriptor>
     ) {
         rootNode.targetDeclarations[targetIndex] = CirRootFactory.create(
             targetProvider.target,
@@ -95,7 +108,10 @@ class CirTreeMerger(
             targetProvider.builtInsProvider
         )
 
-        val moduleDescriptors: Map<String, ModuleDescriptor> = targetProvider.modulesProvider.loadModules()
+        val targetDependeeModules = targetProvider.dependeeModulesProvider?.loadModules(dependeeModules)?.values.orEmpty()
+        val allDependeeModules = targetDependeeModules + dependeeModules
+
+        val moduleDescriptors: Map<String, ModuleDescriptor> = targetProvider.modulesProvider.loadModules(allDependeeModules)
         val modules: MutableMap<Name, CirModuleNode> = rootNode.modules
 
         moduleDescriptors.forEach { (name, moduleDescriptor) ->
@@ -110,16 +126,7 @@ class CirTreeMerger(
         moduleInfo: ModuleInfo,
         moduleDescriptor: ModuleDescriptor
     ) {
-        moduleInfo.cInteropAttributes?.let { cInteropAttributes ->
-            val exportForwardDeclarations = cInteropAttributes.exportForwardDeclarations.takeIf { it.isNotEmpty() } ?: return@let
-            val mainPackageFqName = FqName(cInteropAttributes.mainPackageFqName).intern()
-
-            exportForwardDeclarations.forEach { classFqName ->
-                // Class has synthetic package FQ name (cnames/objcnames). Need to transfer it to the main package.
-                val className = Name.identifier(classFqName.substringAfterLast('.')).intern()
-                cache.addExportedForwardDeclaration(internedClassId(mainPackageFqName, className))
-            }
-        }
+        processCInteropModuleAttributes(moduleInfo)
 
         val moduleName: Name = moduleDescriptor.name.intern()
         val moduleNode: CirModuleNode = modules.getOrPut(moduleName) {
@@ -257,5 +264,17 @@ class CirTreeMerger(
             buildTypeAliasNode(storageManager, size, cache, typeAliasClassId)
         }
         typeAliasNode.targetDeclarations[targetIndex] = CirTypeAliasFactory.create(typeAliasDescriptor)
+    }
+
+    private fun processCInteropModuleAttributes(moduleInfo: ModuleInfo) {
+        val cInteropAttributes = moduleInfo.cInteropAttributes ?: return
+        val exportForwardDeclarations = cInteropAttributes.exportForwardDeclarations.takeIf { it.isNotEmpty() } ?: return
+        val mainPackageFqName = FqName(cInteropAttributes.mainPackageFqName).intern()
+
+        exportForwardDeclarations.forEach { classFqName ->
+            // Class has synthetic package FQ name (cnames/objcnames). Need to transfer it to the main package.
+            val className = Name.identifier(classFqName.substringAfterLast('.')).intern()
+            cache.addExportedForwardDeclaration(internedClassId(mainPackageFqName, className))
+        }
     }
 }

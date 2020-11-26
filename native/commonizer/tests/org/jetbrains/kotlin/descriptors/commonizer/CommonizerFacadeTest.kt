@@ -67,7 +67,8 @@ class CommonizerFacadeTest {
                         target = InputTarget(targetName),
                         builtInsClass = DefaultBuiltIns::class.java,
                         builtInsProvider = BuiltInsProvider.defaultBuiltInsProvider,
-                        modulesProvider = MockModulesProvider(moduleNames)
+                        modulesProvider = MockModulesProvider(moduleNames),
+                        dependeeModulesProvider = null
                     )
                 )
             }

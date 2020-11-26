@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 
+import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ClassifierAliasingPackageFragmentDescriptor
 import org.jetbrains.kotlin.backend.common.serialization.metadata.impl.ExportedForwardDeclarationsPackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.*
@@ -69,12 +70,9 @@ internal fun ModuleDescriptor.collectNonEmptyPackageMemberScopes(collector: (FqN
     val packageFragmentProvider = this.packageFragmentProvider
 
     fun recurse(packageFqName: FqName) {
-        if (packageFqName.isUnderStandardKotlinPackages || packageFqName.isUnderKotlinNativeSyntheticPackages)
-            return
-
         val ownPackageFragments = packageFragmentProvider.packageFragments(packageFqName)
         val ownPackageMemberScopes = ownPackageFragments.asSequence()
-            .filter { it !is ExportedForwardDeclarationsPackageFragmentDescriptor }
+            .filter { it !is ExportedForwardDeclarationsPackageFragmentDescriptor && it !is ClassifierAliasingPackageFragmentDescriptor }
             .map { it.getMemberScope() }
             .filter { it != MemberScope.Empty }
             .toList(ownPackageFragments.size)

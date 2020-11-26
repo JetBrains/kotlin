@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.builder
 
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.Parameters
 import org.jetbrains.kotlin.descriptors.commonizer.Target
@@ -133,68 +134,84 @@ class TargetDeclarationsBuilderComponents(
     val storageManager: StorageManager,
     val target: Target,
     val builtIns: KotlinBuiltIns,
-    val lazyModulesLookupTable: NotNullLazyValue<MutableMap<String, ModuleDescriptor?>>,
-    val isCommon: Boolean,
+    val lazyClassifierLookupTable: NotNullLazyValue<LazyClassifierLookupTable>,
     val index: Int,
     private val cache: DeclarationsBuilderCache
 ) {
-    // only for test purposes
-    internal var extendedLookupForBuiltInsClassifiers: Boolean = false
-
     // N.B. this function may create new classifiers for types from Kotlin/Native forward declarations packages
-    fun findClassOrTypeAlias(classId: ClassId): ClassifierDescriptorWithTypeParameters {
-        return when {
-            classId.packageFqName.isUnderStandardKotlinPackages -> {
-                // look up for classifier in built-ins module:
-                val builtInsModule = builtIns.builtInsModule
-
-                // TODO: this works fine for Native as far as built-ins module contains full Native stdlib, but this is not enough for JVM and JS
-                val classifier = builtInsModule.resolveClassOrTypeAlias(classId)
-                if (classifier != null)
-                    return classifier
-
-                if (extendedLookupForBuiltInsClassifiers) {
-                    return findOriginalClassOrTypeAlias(classId)
-                        ?: error("Classifier ${classId.asString()} not found neither in built-ins module $builtInsModule nor in original modules for $target")
-                }
-
-                error("Classifier ${classId.asString()} not found in built-ins module $builtInsModule for $target")
-            }
-            classId.packageFqName.isUnderKotlinNativeSyntheticPackages -> {
-                // that's a synthetic Kotlin/Native classifier that was exported as forward declaration in one or more modules,
-                // but did not match any existing class or typealias
-                cache.getOrPutForwardDeclarationsModule(index) {
-                    // N.B. forward declarations module is created only on demand
-                    createKotlinNativeForwardDeclarationsModule(
-                        storageManager = storageManager,
-                        builtIns = builtIns
-                    )
-                }.resolveClassOrTypeAlias(classId)
-                    ?: error("Classifier ${classId.asString()} not found for $target")
-            }
-            else -> {
-                cache.getCachedClassifier(classId, index) // first, look up in created descriptors cache
-                    ?: findOriginalClassOrTypeAlias(classId) // then, attempt to load the original classifier
-                    ?: error("Classifier ${classId.asString()} not found for $target")
-            }
+    fun findClassOrTypeAlias(classifierId: ClassId): ClassifierDescriptorWithTypeParameters {
+        return if (classifierId.packageFqName.isUnderKotlinNativeSyntheticPackages) {
+            // that's a synthetic Kotlin/Native classifier that was exported as forward declaration in one or more modules,
+            // but did not match any existing class or typealias
+            cache.getOrPutForwardDeclarationsModule(index) {
+                // N.B. forward declarations module is created only on demand
+                createKotlinNativeForwardDeclarationsModule(
+                    storageManager = storageManager,
+                    builtIns = builtIns
+                )
+            }.resolveClassOrTypeAlias(classifierId)
+                ?: error("Classifier ${classifierId.asString()} not found for $target")
+        } else {
+            cache.getCachedClassifier(classifierId, index) // first, look up in created descriptors cache
+                ?: lazyClassifierLookupTable().resolveClassOrTypeAlias(classifierId) // then, attempt to load the original classifier
+                ?: error("Classifier ${classifierId.asString()} not found for $target")
         }
     }
+}
 
-    private fun findOriginalClassOrTypeAlias(classId: ClassId): ClassifierDescriptorWithTypeParameters? {
-        if (classId.packageFqName.isRoot)
-            return null
+class LazyClassifierLookupTable(lazyModules: Map<String, List<ModuleDescriptor>>) {
+    private val table = THashMap<String, List<ModuleDescriptor>>()
+    private val allModules: Collection<ModuleDescriptor>
 
-        // first, guess containing module and look up in it
-        val classifier = lazyModulesLookupTable()
-            .guessModuleByPackageFqName(classId.packageFqName)
-            ?.resolveClassOrTypeAlias(classId)
+    init {
+        // add "module:" prefix for each key representing a module name, not a package name
+        lazyModules.forEach { (moduleName, modules) -> table[MODULE_NAME_PREFIX + moduleName.toLowerCase()] = modules }
+        allModules = lazyModules.values.flatten()
+    }
 
-        // if failed, then look up though all modules
-        return classifier
-            ?: lazyModulesLookupTable().values
-                .asSequence()
-                .mapNotNull { it?.resolveClassOrTypeAlias(classId) }
-                .firstOrNull()
+    fun resolveClassOrTypeAlias(classifierId: ClassId): ClassifierDescriptorWithTypeParameters? {
+        if (table.isEmpty) return null
+
+        val packageFqName = classifierId.packageFqName
+        if (packageFqName.isRoot) return null
+
+        val packageFqNameRaw = packageFqName.asString()
+        table[packageFqNameRaw]?.let { modules ->
+            for (module in modules)
+                return module.resolveClassOrTypeAlias(classifierId) ?: continue
+        }
+
+        val packageFqNameFragments = packageFqNameRaw.split('.')
+        val moduleNameForLookup = when (packageFqNameFragments[0]) {
+            "kotlin" -> "kotlin"
+            "platform" -> if (packageFqNameFragments.size == 2) packageFqNameFragments[1].toLowerCase() else null
+            else -> null
+        }
+
+        // try to find the classifier by guessing its container module
+        if (moduleNameForLookup != null) {
+            table[MODULE_NAME_PREFIX + moduleNameForLookup]?.let { modules ->
+                for (module in modules) {
+                    val classifier = module.resolveClassOrTypeAlias(classifierId) ?: continue
+                    table[packageFqNameRaw] = modules // cache to speed-up the further look-ups
+                    return classifier
+                }
+            }
+        }
+
+        // last resort: brute force
+        for (module in allModules) {
+            val classifier = module.resolveClassOrTypeAlias(classifierId) ?: continue
+            table[packageFqNameRaw] = listOf(module) // cache to speed-up the further look-ups
+            return classifier
+        }
+
+        table[packageFqNameRaw] = null // cache to speed-up the further look-ups
+        return null
+    }
+
+    companion object {
+        private const val MODULE_NAME_PREFIX = "module:"
     }
 }
 
@@ -203,6 +220,10 @@ fun CirRootNode.createGlobalBuilderComponents(
     parameters: Parameters
 ): GlobalDeclarationsBuilderComponents {
     val cache = DeclarationsBuilderCache(dimension)
+
+    val lazyCommonDependeeModules = storageManager.createLazyValue {
+        parameters.dependeeModulesProvider?.loadModules(emptyList()).orEmpty()
+    }
 
     val targetContexts = (0 until dimension).map { index ->
         val isCommon = index == indexOfCommon
@@ -216,24 +237,38 @@ fun CirRootNode.createGlobalBuilderComponents(
         }
 
         val lazyModulesLookupTable = storageManager.createLazyValue {
-            val source = if (isCommon)
-                parameters.commonModulesProvider?.loadModules() ?: emptyMap()
-            else
-                parameters.targetProviders[index].modulesProvider.loadModules()
-            THashMap(source)
+            val result = mutableMapOf<String, MutableList<ModuleDescriptor>>()
+
+            val commonDependeeModules: Map<String, ModuleDescriptor> = lazyCommonDependeeModules()
+
+            if (!isCommon) {
+                with(parameters.targetProviders[index]) {
+                    val targetDependeeModules: Map<String, ModuleDescriptor> =
+                        dependeeModulesProvider?.loadModules(commonDependeeModules.values).orEmpty()
+
+                    val targetModules: Map<String, ModuleDescriptor> =
+                        modulesProvider.loadModules(targetDependeeModules.values + commonDependeeModules.values)
+
+                    targetModules.forEach { (moduleName, module) -> result.getOrPut(moduleName) { mutableListOf() } += module }
+                    targetDependeeModules.forEach { (moduleName, module) -> result.getOrPut(moduleName) { mutableListOf() } += module }
+                }
+            }
+
+            commonDependeeModules.forEach { (moduleName, module) -> result.getOrPut(moduleName) { mutableListOf() } += module }
+
+            result.getOrPut(StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString()) { mutableListOf() } += builtIns.builtInsModule
+
+            LazyClassifierLookupTable(result)
         }
 
         TargetDeclarationsBuilderComponents(
             storageManager = storageManager,
             target = root.target,
             builtIns = builtIns,
-            lazyModulesLookupTable = lazyModulesLookupTable,
-            isCommon = isCommon,
+            lazyClassifierLookupTable = lazyModulesLookupTable,
             index = index,
             cache = cache
-        ).also {
-            it.extendedLookupForBuiltInsClassifiers = parameters.extendedLookupForBuiltInsClassifiers
-        }
+        )
     }
 
     return GlobalDeclarationsBuilderComponents(storageManager, targetContexts, cache, parameters.statsCollector)

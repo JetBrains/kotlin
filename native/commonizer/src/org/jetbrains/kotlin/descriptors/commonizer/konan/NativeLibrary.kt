@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
 import gnu.trove.THashMap
+import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 internal interface NativeManifestDataProvider {
@@ -13,33 +14,34 @@ internal interface NativeManifestDataProvider {
 }
 
 /**
- * A separate Kotlin/Native library from the distribution.
+ * A separate Kotlin/Native library.
  */
-internal class NativeDistributionLibrary(
+internal class NativeLibrary(
     val library: KotlinLibrary
 ) {
     val manifestData = NativeSensitiveManifestData.readFrom(library)
 }
 
 /**
- * A collection of Kotlin/Native libraries for a certain Native target + stdlib from the distribution.
+ * A collection of Kotlin/Native libraries for a certain Native target.
  */
-internal class NativeDistributionLibraries(
-    val stdlib: NativeDistributionLibrary,
-    val platformLibs: List<NativeDistributionLibrary>
-) : NativeManifestDataProvider {
-    constructor(stdlib: KotlinLibrary, platformLibs: List<KotlinLibrary>) : this(
-        NativeDistributionLibrary(stdlib),
-        platformLibs.map(::NativeDistributionLibrary)
-    )
-
+internal class NativeLibrariesToCommonize(val libraries: List<NativeLibrary>) : NativeManifestDataProvider {
     private val manifestIndex: Map<String, NativeSensitiveManifestData> = buildManifestIndex()
 
     override fun getManifest(libraryName: String) = manifestIndex.getValue(libraryName)
+
+    companion object {
+        fun create(libraries: List<KotlinLibrary>) = NativeLibrariesToCommonize(libraries.map(::NativeLibrary))
+    }
 }
 
+internal class AllNativeLibraries(
+    val stdlib: NativeLibrary,
+    val librariesByTargets: Map<InputTarget, NativeLibrariesToCommonize>
+)
+
 internal class CommonNativeManifestDataProvider(
-    libraryGroups: Collection<NativeDistributionLibraries>
+    libraryGroups: Collection<NativeLibrariesToCommonize>
 ) : NativeManifestDataProvider {
     private val manifestIndex: Map<String, NativeSensitiveManifestData>
 
@@ -66,5 +68,5 @@ internal class CommonNativeManifestDataProvider(
     override fun getManifest(libraryName: String) = manifestIndex.getValue(libraryName)
 }
 
-private fun NativeDistributionLibraries.buildManifestIndex(): MutableMap<String, NativeSensitiveManifestData> =
-    (platformLibs + stdlib).map { it.manifestData }.associateByTo(THashMap()) { it.uniqueName }
+private fun NativeLibrariesToCommonize.buildManifestIndex(): MutableMap<String, NativeSensitiveManifestData> =
+    libraries.map { it.manifestData }.associateByTo(THashMap()) { it.uniqueName }

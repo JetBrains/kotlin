@@ -16,15 +16,12 @@ class Parameters(
 
     val targetProviders: List<TargetProvider> get() = _targetProviders.values.toList()
 
-    // only for test purposes
-    internal var extendedLookupForBuiltInsClassifiers: Boolean = false
+    // common module dependencies (ex: Kotlin stdlib)
+    var dependeeModulesProvider: ModulesProvider? = null
         set(value) {
-            check(!field || value)
+            check(field == null)
             field = value
         }
-
-    // only for test purposes
-    internal var commonModulesProvider: ModulesProvider? = null
 
     fun addTarget(targetProvider: TargetProvider): Parameters {
         require(targetProvider.target !in _targetProviders) { "Target ${targetProvider.target} is already added" }
