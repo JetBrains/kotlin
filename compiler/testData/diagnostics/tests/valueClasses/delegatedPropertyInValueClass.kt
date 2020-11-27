@@ -26,8 +26,8 @@ object VarObject {
 @JvmInline
 value class Z(val data: Int) {
     val testVal <!DELEGATED_PROPERTY_INSIDE_INLINE_CLASS!>by Val()<!>
-    var testVar <!DELEGATED_PROPERTY_INSIDE_INLINE_CLASS!>by Var()<!>
+    <!RESERVED_VAR_PROPERTY_OF_VALUE_CLASS!>var<!> testVar <!DELEGATED_PROPERTY_INSIDE_INLINE_CLASS!>by Var()<!>
 
     val testValBySingleton <!DELEGATED_PROPERTY_INSIDE_INLINE_CLASS!>by ValObject<!>
-    var testVarBySingleton <!DELEGATED_PROPERTY_INSIDE_INLINE_CLASS!>by VarObject<!>
+    <!RESERVED_VAR_PROPERTY_OF_VALUE_CLASS!>var<!> testVarBySingleton <!DELEGATED_PROPERTY_INSIDE_INLINE_CLASS!>by VarObject<!>
 }
