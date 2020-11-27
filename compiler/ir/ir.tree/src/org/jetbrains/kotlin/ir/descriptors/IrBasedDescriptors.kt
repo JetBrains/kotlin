@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -34,7 +32,8 @@ import org.jetbrains.kotlin.types.*
 
 /* Descriptors that serve purely as a view into IR structures.
    Created each time at the borderline between IR-based and descriptor-based code (such as inliner).
-   Compared to WrappedDescriptors, no method calls ever return true descriptors.
+   Compared to WrappedDescriptors, no method calls ever return true descriptors, except when
+   unbound symbols are encountered (see `Ir...Symbol.toIrBasedDescriptorIfPossible()`).
  */
 
 abstract class IrBasedDeclarationDescriptor<T : IrDeclaration>(val owner: T) : DeclarationDescriptor {
@@ -108,6 +107,7 @@ fun IrDeclaration.toIrBasedDescriptor(): DeclarationDescriptor = when (this) {
     is IrLocalDelegatedProperty -> toIrBasedDescriptor()
     is IrFunction -> toIrBasedDescriptor()
     is IrClass -> toIrBasedDescriptor()
+    is IrAnonymousInitializer -> parentAsClass.toIrBasedDescriptor()
     is IrEnumEntry -> toIrBasedDescriptor()
     is IrProperty -> toIrBasedDescriptor()
     is IrField -> toIrBasedDescriptor()
@@ -1060,9 +1060,9 @@ private fun makeKotlinType(
     hasQuestionMark: Boolean
 ): SimpleType =
     when (classifier) {
-        is IrTypeParameterSymbol -> classifier.owner.toIrBasedDescriptor().defaultType
+        is IrTypeParameterSymbol -> classifier.toIrBasedDescriptorIfPossible().defaultType
         is IrClassSymbol -> {
-            val classDescriptor = classifier.owner.toIrBasedDescriptor()
+            val classDescriptor = classifier.toIrBasedDescriptorIfPossible()
             val kotlinTypeArguments = arguments.mapIndexed { index, it ->
                 when (it) {
                     is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toIrBasedKotlinType())
@@ -1094,3 +1094,20 @@ private fun makeKotlinType(
         }
         else -> error("unknown classifier kind $classifier")
     }
+
+/* When IR-based descriptors are used from Psi2Ir, symbols may be unbound, thus we may need to resort to real descriptors. */
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private fun IrClassSymbol.toIrBasedDescriptorIfPossible(): ClassDescriptor =
+    if (isBound) owner.toIrBasedDescriptor() else descriptor
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private fun IrTypeParameterSymbol.toIrBasedDescriptorIfPossible(): TypeParameterDescriptor =
+    if (isBound) owner.toIrBasedDescriptor() else descriptor
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private fun IrSimpleFunctionSymbol.toIrBasedDescriptorIfPossible(): FunctionDescriptor =
+    if (isBound) owner.toIrBasedDescriptor() else descriptor
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+private fun IrPropertySymbol.toIrBasedDescriptorIfPossible(): PropertyDescriptor =
+    if (isBound) owner.toIrBasedDescriptor() else descriptor
