@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="space-idea-sdk" type="repository">
-    <properties maven-id="com.jetbrains:space-idea-sdk:1.1.59097">
+    <properties maven-id="com.jetbrains:space-idea-sdk:1.1.59855">
       <exclude>
         <dependency maven-id="org.jetbrains.kotlin:kotlin-stdlib" />
         <dependency maven-id="org.jetbrains.kotlin:kotlin-reflect" />
@@ -33,7 +33,7 @@
       </exclude>
     </properties>
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/space-idea-sdk/1.1.59097/space-idea-sdk-1.1.59097.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/space-idea-sdk/1.1.59855/space-idea-sdk-1.1.59855.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/io/reactivex/rxkotlin/0.55.0/rxkotlin-0.55.0.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/io/reactivex/rxjava/1.1.1/rxjava-1.1.1.jar!/" />
     </CLASSES>
