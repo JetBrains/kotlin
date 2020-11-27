@@ -62,8 +62,9 @@ class CompileTimeFibonacciTest : TestCase() {
             is ResultWithDiagnostics.Failure -> {
                 val error = result.reports.first()
 
+                val expectedFile = File("plugins/scripting/scripting-compiler/testData/compiler/compileTimeFibonacci/unsupported.fib.kts")
                 val expectedErrorMessage = """
-                    (plugins/scripting/scripting-compiler/testData/compiler/compileTimeFibonacci/unsupported.fib.kts:3:1) Fibonacci of non-positive numbers like 0 are not supported
+                    ($expectedFile:3:1) Fibonacci of non-positive numbers like 0 are not supported
                 """.trimIndent()
                 Assert.assertEquals(expectedErrorMessage, error.message)
                 // TODO: the location is not in the diagnostics because the `MessageCollector` defined in KotlinTestUtils,
