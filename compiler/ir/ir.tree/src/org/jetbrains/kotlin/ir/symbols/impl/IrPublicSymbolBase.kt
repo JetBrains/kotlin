@@ -9,15 +9,22 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 
 abstract class IrPublicSymbolBase<out D : DeclarationDescriptor> @OptIn(ObsoleteDescriptorBasedAPI::class) constructor(
-    @ObsoleteDescriptorBasedAPI
-    override val descriptor: D,
+    private val _descriptor: D,
     override val signature: IdSignature
 ) : IrSymbol {
+    @ObsoleteDescriptorBasedAPI
+    override val descriptor: D
+        get() = if (isBound && _descriptor is WrappedDeclarationDescriptor<*>)
+            (owner as IrDeclaration).toIrBasedDescriptor() as D
+        else
+            _descriptor
+
     override fun toString(): String {
         if (isBound) return owner.render()
         return "Unbound public symbol for $signature"
