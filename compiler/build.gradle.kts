@@ -10,6 +10,8 @@ plugins {
 val compilerModules: Array<String> by rootProject.extra
 val otherCompilerModules = compilerModules.filter { it != path }
 
+val tasksWithWarnings: List<String> by rootProject.extra
+
 val effectSystemEnabled: Boolean by rootProject.extra
 val newInferenceEnabled: Boolean by rootProject.extra
 
@@ -84,6 +86,16 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     apply(plugin = "idea")
     idea {
         this.module.generatedSourceDirs.add(generationRoot)
+    }
+} else {
+    allprojects {
+        tasks.withType<KotlinCompile<*>> {
+            if (path !in tasksWithWarnings) {
+                kotlinOptions {
+                    allWarningsAsErrors = true
+                }
+            }
+        }
     }
 }
 
