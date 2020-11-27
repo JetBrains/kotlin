@@ -1,0 +1,6 @@
+package test
+
+fun f(x: Any, y: String = "D") {
+    println("f(x: Any, $y)")
+}
+
