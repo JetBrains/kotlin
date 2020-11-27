@@ -13,5 +13,4 @@ import java.lang.annotation.*;
 public @interface PluginTargetVersions {
     String gradleVersion() default "4.0+";
     String pluginVersion() default "1.3.50+";
-    String gradleVersionForLatestPlugin() default "";
 }

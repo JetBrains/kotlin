@@ -11,6 +11,8 @@ package org.jetbrains.kotlin.idea.codeInsight.gradle
 
 import org.junit.runners.Parameterized
 
+/*
+TODO?
 abstract class MasterPluginVersionGradleImportingTestCase : MultiplePluginVersionGradleImportingTestCase() {
     companion object {
         @JvmStatic
@@ -23,3 +25,5 @@ abstract class MasterPluginVersionGradleImportingTestCase : MultiplePluginVersio
         }
     }
 }
+
+ */

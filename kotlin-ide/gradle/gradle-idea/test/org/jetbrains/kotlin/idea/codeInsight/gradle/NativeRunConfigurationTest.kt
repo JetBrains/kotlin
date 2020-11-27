@@ -15,7 +15,7 @@ import org.jetbrains.plugins.gradle.service.execution.GradleRunConfiguration
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
 import org.junit.Test
 
-class NativeRunConfigurationTest : MasterPluginVersionGradleImportingTestCase() {
+class NativeRunConfigurationTest : MultiplePluginVersionGradleImportingTestCase() {
     override fun testDataDirName(): String = "nativeRunConfiguration"
 
     @Test

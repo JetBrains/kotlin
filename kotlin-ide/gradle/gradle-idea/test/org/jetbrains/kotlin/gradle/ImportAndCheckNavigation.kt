@@ -12,7 +12,6 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.testFramework.runInEdtAndGet
 import org.jetbrains.kotlin.idea.codeInsight.gradle.MultiplePluginVersionGradleImportingTestCase
-import org.jetbrains.kotlin.idea.codeInsight.gradle.mppImportTestMinVersionForMaster
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
@@ -24,7 +23,7 @@ import org.junit.Test
 class ImportAndCheckNavigation : MultiplePluginVersionGradleImportingTestCase() {
     @Test
     @Ignore // PSI reference "FILE" in src/linuxArm64Main/kotlin/arm64.kt can't be resolved
-    @PluginTargetVersions(gradleVersion = "6.0+", pluginVersion = "1.4+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    @PluginTargetVersions(gradleVersion = "6.0+", pluginVersion = "1.4+")
     fun testNavigationToCommonizedLibrary() {
         val files = importProjectFromTestData()
 
