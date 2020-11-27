@@ -96,7 +96,8 @@ class FakeOverrideCopier(
             declaration.varargElementType?.remapType(),
             declaration.isCrossinline,
             declaration.isNoinline,
-            false
+            declaration.isHidden,
+            declaration.isAssignable
         ).apply {
             transformAnnotations(declaration)
             // Don't set the default value for fake overrides.

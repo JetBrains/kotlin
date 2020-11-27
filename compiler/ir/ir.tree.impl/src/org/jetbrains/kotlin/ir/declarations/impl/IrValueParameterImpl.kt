@@ -39,8 +39,8 @@ class IrValueParameterImpl(
     override var varargElementType: IrType?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,
-    override val isHidden: Boolean = false,
-    override val isAssignable: Boolean = false
+    override val isHidden: Boolean,
+    override val isAssignable: Boolean
 ) : IrValueParameter() {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ParameterDescriptor

@@ -295,7 +295,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             ) { symbol ->
                 components.irFactory.createValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, name, index, type, null,
-                    isCrossinline = false, isNoinline = false, isAssignable = false
+                    isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
                 )
             }.apply {
                 parent = irFunction

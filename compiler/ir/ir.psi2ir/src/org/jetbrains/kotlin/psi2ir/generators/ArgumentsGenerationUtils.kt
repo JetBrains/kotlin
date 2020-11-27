@@ -386,7 +386,8 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
         ) {
             context.irFactory.createValueParameter(
                 startOffset, endOffset, IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION,
-                it, Name.identifier(name), index, type, varargElementType = null, isCrossinline = false, isNoinline = false
+                it, Name.identifier(name), index, type, varargElementType = null, isCrossinline = false, isNoinline = false,
+                isHidden = false, isAssignable = false
             )
         }.also {
             descriptor.bind(it)
