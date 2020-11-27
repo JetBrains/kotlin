@@ -707,7 +707,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/visualizer/tests", "compiler/fir/raw-fir/psi2fir/testData") {
+        testGroup("compiler/visualizer/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractPsiVisualizer>("PsiVisualizerForRawFirDataGenerated") {
                 model("rawBuilder", testMethod = "doFirBuilderDataTest")
             }
@@ -717,7 +717,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/visualizer/tests", "compiler/visualizer/testData") {
+        testGroup("compiler/visualizer/tests-gen", "compiler/visualizer/testData") {
             testClass<AbstractPsiVisualizer>("PsiVisualizerForUncommonCasesGenerated") {
                 model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
             }
