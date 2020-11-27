@@ -352,8 +352,8 @@ fun getScriptCollectedData(
     val hostConfiguration =
         compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
     val getScriptingClass = hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
-    val jvmGetScriptingClass = (getScriptingClass as? JvmGetScriptingClass)
-        ?: throw IllegalArgumentException("Expecting JvmGetScriptingClass in the hostConfiguration[getScriptingClass], got $getScriptingClass")
+    val jvmGetScriptingClass = (getScriptingClass as? GetScriptingClassByClassLoader)
+        ?: throw IllegalArgumentException("Expecting class implementing GetScriptingClassByClassLoader in the hostConfiguration[getScriptingClass], got $getScriptingClass")
     val acceptedAnnotations =
         compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.flatMap {
             it.annotations.mapNotNull { ann ->

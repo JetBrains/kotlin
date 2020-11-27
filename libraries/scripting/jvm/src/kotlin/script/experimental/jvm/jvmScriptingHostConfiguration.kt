@@ -45,7 +45,11 @@ val defaultJvmScriptingHostConfiguration
         getScriptingClass(JvmGetScriptingClass())
     }
 
-class JvmGetScriptingClass : GetScriptingClass, Serializable {
+interface GetScriptingClassByClassLoader : GetScriptingClass {
+    operator fun invoke(classType: KotlinType, contextClassLoader: ClassLoader?, hostConfiguration: ScriptingHostConfiguration): KClass<*>
+}
+
+class JvmGetScriptingClass : GetScriptingClassByClassLoader, Serializable {
 
     @Transient
     private var dependencies: List<ScriptDependency>? = null
@@ -64,7 +68,11 @@ class JvmGetScriptingClass : GetScriptingClass, Serializable {
         invoke(classType, contextClass.java.classLoader, hostConfiguration)
 
     @Synchronized
-    operator fun invoke(classType: KotlinType, contextClassLoader: ClassLoader?, hostConfiguration: ScriptingHostConfiguration): KClass<*> {
+    override operator fun invoke(
+        classType: KotlinType,
+        contextClassLoader: ClassLoader?,
+        hostConfiguration: ScriptingHostConfiguration
+    ): KClass<*> {
 
         // checking if class already loaded in the same context
         val fromClass = classType.fromClass
