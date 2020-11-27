@@ -18,6 +18,7 @@ import com.intellij.pom.event.PomModelEvent
 import com.intellij.pom.event.PomModelListener
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.pom.tree.events.TreeChangeEvent
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.getNonLocalContainingInBodyDeclarationWith
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileElementFactory
@@ -44,6 +45,12 @@ internal class KotlinFirModificationTrackerService(project: Project) : Disposabl
         projectGlobalOutOfBlockInKotlinFilesModificationCount++
         moduleModificationsState.increaseModificationCountForAllModules()
     }
+
+    @TestOnly
+    fun increaseModificationCountForModule(module: Module) {
+        moduleModificationsState.increaseModificationCountForModule(module)
+    }
+
 
     private fun subscribeForRootChanges(project: Project) {
         project.messageBus.connect(this).subscribe(
