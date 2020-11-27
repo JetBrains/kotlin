@@ -1109,6 +1109,16 @@ public class IncrementalJvmJpsTestGenerated extends AbstractIncrementalJvmJpsTes
             runTest("jps-plugin/testData/incremental/pureKotlin/packageRemoved/");
         }
 
+        @TestMetadata("parameterWithDefaultValueAdded")
+        public void testParameterWithDefaultValueAdded() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/parameterWithDefaultValueAdded/");
+        }
+
+        @TestMetadata("parameterWithDefaultValueRemoved")
+        public void testParameterWithDefaultValueRemoved() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/parameterWithDefaultValueRemoved/");
+        }
+
         @TestMetadata("privateConstantsChanged")
         public void testPrivateConstantsChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/privateConstantsChanged/");
