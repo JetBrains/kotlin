@@ -105,8 +105,8 @@ class BinaryClassSignatureParser {
     }
 
     private fun parseParameterizedClassRefSignature(
-            signature: CharacterIterator,
-            context: ClassifierResolutionContext
+        signature: CharacterIterator,
+        context: ClassifierResolutionContext
     ): JavaClassifierType {
         val canonicalName = StringBuilder()
 
@@ -120,12 +120,10 @@ class BinaryClassSignatureParser {
                 signature.next()
                 do {
                     group.add(parseClassOrTypeVariableElement(signature, context))
-                }
-                while (signature.current() != '>')
+                } while (signature.current() != '>')
 
                 argumentGroups.add(group)
-            }
-            else if (c != ' ') {
+            } else if (c != ' ') {
                 canonicalName.append(c)
             }
             signature.next()
@@ -199,21 +197,21 @@ class BinaryClassSignatureParser {
     fun mapAsmType(type: Type, context: ClassifierResolutionContext) = parseTypeString(StringCharacterIterator(type.descriptor), context)
 
     private fun parseTypeWithoutVarianceAndArray(signature: CharacterIterator, context: ClassifierResolutionContext) =
-            when (signature.current()) {
-                'L' -> parseParameterizedClassRefSignature(signature, context)
-                'T' -> parseTypeVariableRefSignature(signature, context)
+        when (signature.current()) {
+            'L' -> parseParameterizedClassRefSignature(signature, context)
+            'T' -> parseTypeVariableRefSignature(signature, context)
 
-                'B' -> parsePrimitiveType(signature, PrimitiveType.BYTE)
-                'C' -> parsePrimitiveType(signature, PrimitiveType.CHAR)
-                'D' -> parsePrimitiveType(signature, PrimitiveType.DOUBLE)
-                'F' -> parsePrimitiveType(signature, PrimitiveType.FLOAT)
-                'I' -> parsePrimitiveType(signature, PrimitiveType.INT)
-                'J' -> parsePrimitiveType(signature, PrimitiveType.LONG)
-                'Z' -> parsePrimitiveType(signature, PrimitiveType.BOOLEAN)
-                'S' -> parsePrimitiveType(signature, PrimitiveType.SHORT)
-                'V' -> parsePrimitiveType(signature, null)
-                else -> null
-            }
+            'B' -> parsePrimitiveType(signature, PrimitiveType.BYTE)
+            'C' -> parsePrimitiveType(signature, PrimitiveType.CHAR)
+            'D' -> parsePrimitiveType(signature, PrimitiveType.DOUBLE)
+            'F' -> parsePrimitiveType(signature, PrimitiveType.FLOAT)
+            'I' -> parsePrimitiveType(signature, PrimitiveType.INT)
+            'J' -> parsePrimitiveType(signature, PrimitiveType.LONG)
+            'Z' -> parsePrimitiveType(signature, PrimitiveType.BOOLEAN)
+            'S' -> parsePrimitiveType(signature, PrimitiveType.SHORT)
+            'V' -> parsePrimitiveType(signature, null)
+            else -> null
+        }
 
     private fun parsePrimitiveType(signature: CharacterIterator, primitiveType: PrimitiveType?): JavaType {
         signature.next()
