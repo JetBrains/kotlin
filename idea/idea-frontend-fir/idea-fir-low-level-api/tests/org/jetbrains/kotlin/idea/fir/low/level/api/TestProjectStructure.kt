@@ -13,46 +13,22 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import java.nio.file.Path
 
-sealed class TestProjectStructure {
-    abstract val modules: List<TestProjectModule>
-    abstract val fileToResolve: FileToResolve
-    abstract val fails: Boolean
-
+internal data class TestProjectStructure(
+    val modules: List<TestProjectModule>,
+    val json: JsonObject,
+) {
     companion object {
         fun parse(json: JsonElement): TestProjectStructure {
             require(json is JsonObject)
-            val fails = if (json.has(FAILS_FIELD)) json.get(FAILS_FIELD).asBoolean else false
 
-            return MultiModuleTestProjectStructure(
-                json.getAsJsonArray("modules").map { TestProjectModule.parse(it) },
-                FileToResolve.parse(json.getAsJsonObject("fileToResolve")),
-                fails
-            )
-        }
-
-        private const val FAILS_FIELD = "fails"
-    }
-}
-
-data class FileToResolve(val moduleName: String, val relativeFilePath: String) {
-    val filePath get() = "$moduleName/$relativeFilePath"
-
-    companion object {
-        fun parse(json: JsonElement): FileToResolve {
-            require(json is JsonObject)
-            return FileToResolve(
-                moduleName = json.getString("module"),
-                relativeFilePath = json.getString("file")
+            return TestProjectStructure(
+                json.getAsJsonArray("modules").map(TestProjectModule::parse),
+                json,
             )
         }
     }
 }
 
-data class MultiModuleTestProjectStructure(
-    override val modules: List<TestProjectModule>,
-    override val fileToResolve: FileToResolve,
-    override val fails: Boolean
-) : TestProjectStructure()
 
 data class TestProjectModule(val name: String, val dependsOnModules: List<String>) {
     companion object {
@@ -71,7 +47,7 @@ data class TestProjectModule(val name: String, val dependsOnModules: List<String
     }
 }
 
-object TestProjectStructureReader {
+internal object TestProjectStructureReader {
     fun read(testDirectory: Path, jsonFileName: String = "structure.json"): TestProjectStructure {
         val jsonFile = testDirectory.resolve(jsonFileName)
 

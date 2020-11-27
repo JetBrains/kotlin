@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
+import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
+import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.util.sourceRoots
 import org.jetbrains.kotlin.psi.KtFile
@@ -23,7 +25,7 @@ abstract class AbstractFirMultiModuleLazyResolveTest : AbstractMultiModuleTest()
         "${KotlinTestUtils.getHomeDirectory()}/idea/idea-frontend-fir/idea-fir-low-level-api/testdata/multiModuleLazyResolve/"
 
     fun doTest(path: String) {
-        val testStructure = TestProjectStructureReader.read(Paths.get(path))
+        val testStructure = MultiModuleTestProjectStructure.fromTestProjectStructure(TestProjectStructureReader.read(Paths.get(path)))
         val modulesByNames = testStructure.modules.associate { moduleData ->
             moduleData.name to module(moduleData.name)
         }
@@ -53,5 +55,42 @@ abstract class AbstractFirMultiModuleLazyResolveTest : AbstractMultiModuleTest()
         if (fails) {
             throw AssertionError("Looks like test is passing, please remove `\"fails\": true` from structure.json")
         }
+    }
+}
+
+private data class FileToResolve(val moduleName: String, val relativeFilePath: String) {
+    val filePath get() = "$moduleName/$relativeFilePath"
+
+    companion object {
+        fun parse(json: JsonElement): FileToResolve {
+            require(json is JsonObject)
+            return FileToResolve(
+                moduleName = json.getString("module"),
+                relativeFilePath = json.getString("file")
+            )
+        }
+    }
+}
+
+private data class MultiModuleTestProjectStructure(
+    val modules: List<TestProjectModule>,
+    val fileToResolve: FileToResolve,
+    val fails: Boolean
+) {
+    companion object {
+        fun fromTestProjectStructure(testProjectStructure: TestProjectStructure): MultiModuleTestProjectStructure {
+            val json = testProjectStructure.json
+
+            val fails = if (json.has(FAILS_FIELD)) json.get(FAILS_FIELD).asBoolean else false
+            val fileToResolve = FileToResolve.parse(json.getAsJsonObject("fileToResolve"))
+
+            return MultiModuleTestProjectStructure(
+                testProjectStructure.modules,
+                fileToResolve,
+                fails
+            )
+        }
+
+        private const val FAILS_FIELD = "fails"
     }
 }
