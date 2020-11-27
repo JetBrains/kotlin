@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 interface IrSymbolOwner : IrElement {
     val symbol: IrSymbol
@@ -65,4 +66,8 @@ interface IrDeclarationWithName : IrDeclaration {
 
 interface IrOverridableMember : IrDeclarationWithVisibility, IrDeclarationWithName, IrSymbolOwner {
     val modality: Modality
+}
+
+interface IrMemberWithContainerSource : IrDeclarationWithName {
+    val containerSource: DeserializedContainerSource?
 }

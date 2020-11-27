@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBasedPropertyDescriptor
-import org.jetbrains.kotlin.ir.descriptors.IrBasedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
+import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -165,12 +162,8 @@ class IrInlineCodegen(
         )
     }
 
-    override fun isLoadedFromBytecode(memberDescriptor: CallableMemberDescriptor): Boolean =
-        when (memberDescriptor) {
-            is IrBasedSimpleFunctionDescriptor -> memberDescriptor.owner.classId != null
-            is IrBasedPropertyDescriptor -> memberDescriptor.owner.classId != null
-            else -> false
-        }
+    override fun descriptorIsDeserialized(memberDescriptor: CallableMemberDescriptor): Boolean =
+        ((memberDescriptor as IrBasedDeclarationDescriptor<*>).owner as IrMemberWithContainerSource).parentClassId != null
 }
 
 class IrExpressionLambdaImpl(

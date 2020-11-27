@@ -211,6 +211,6 @@ class PsiInlineCodegen(
         )
     }
 
-    override fun isLoadedFromBytecode(memberDescriptor: CallableMemberDescriptor): Boolean =
+    override fun descriptorIsDeserialized(memberDescriptor: CallableMemberDescriptor): Boolean =
         memberDescriptor is DescriptorWithContainerSource
 }

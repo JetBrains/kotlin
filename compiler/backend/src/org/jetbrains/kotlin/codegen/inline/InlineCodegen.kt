@@ -272,7 +272,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
 
     abstract fun extractDefaultLambdas(node: MethodNode): List<DefaultLambda>
 
-    abstract fun isLoadedFromBytecode(memberDescriptor: CallableMemberDescriptor): Boolean
+    abstract fun descriptorIsDeserialized(memberDescriptor: CallableMemberDescriptor): Boolean
 
     fun generateAndInsertFinallyBlocks(
         intoNode: MethodNode,
@@ -528,7 +528,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             mangleSuspendInlineFunctionAsmMethodIfNeeded(functionDescriptor, jvmSignature.asmMethod)
 
         val directMember = getDirectMemberAndCallableFromObject(functionDescriptor)
-        if (!isBuiltInArrayIntrinsic(functionDescriptor) && !isLoadedFromBytecode(directMember)) {
+        if (!isBuiltInArrayIntrinsic(functionDescriptor) && !descriptorIsDeserialized(directMember)) {
             val node = sourceCompiler.doCreateMethodNodeFromSource(functionDescriptor, jvmSignature, callDefault, asmMethod)
             node.node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
             return node
