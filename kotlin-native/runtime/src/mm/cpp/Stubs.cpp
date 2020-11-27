@@ -59,11 +59,7 @@ OBJ_GETTER(AllocArrayInstance, const TypeInfo* type_info, int32_t elements) {
     RuntimeCheck(false, "Unimplemented");
 }
 
-OBJ_GETTER(InitInstance, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-OBJ_GETTER(InitSharedInstance, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+OBJ_GETTER(InitThreadLocalSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
     RuntimeCheck(false, "Unimplemented");
 }
 

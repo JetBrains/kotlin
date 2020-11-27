@@ -412,15 +412,28 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 appendingTo(bbInit) {
                     context.llvm.fileInitializers
                             .forEach { irField ->
-                                if (irField.initializer?.expression !is IrConst<*>?) {
-                                    if (irField.storageKind != FieldStorageKind.THREAD_LOCAL) {
+                                if (irField.storageKind != FieldStorageKind.THREAD_LOCAL) {
+                                    val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
+                                            functionGenerationContext
+                                    )
+                                    val initialValue = if (irField.initializer?.expression !is IrConst<*>?) {
                                         val initialization = evaluateExpression(irField.initializer!!.expression)
-                                        val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
-                                                functionGenerationContext
-                                        )
                                         if (irField.storageKind == FieldStorageKind.SHARED_FROZEN)
                                             freeze(initialization, currentCodeContext.exceptionHandler)
-                                        storeAny(initialization, address, false)
+                                        initialization
+                                    } else {
+                                        null
+                                    }
+                                    val needRegistration =
+                                            context.memoryModel == MemoryModel.EXPERIMENTAL && // only for the new MM
+                                                    irField.type.binaryTypeIsReference() && // only for references
+                                                    (initialValue != null || // which are initialized from heap object
+                                                            !irField.isFinal) // or are not final
+                                    if (needRegistration) {
+                                        call(context.llvm.initAndRegisterGlobalFunction, listOf(address, initialValue
+                                                ?: kNullObjHeaderPtr))
+                                    } else if (initialValue != null) {
+                                        storeAny(initialValue, address, false)
                                     }
                                 }
                             }

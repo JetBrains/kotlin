@@ -309,15 +309,11 @@ OBJ_GETTER(AllocInstanceRelaxed, const TypeInfo* type_info) RUNTIME_NOTHROW;
 OBJ_GETTER(AllocArrayInstanceStrict, const TypeInfo* type_info, int32_t elements);
 OBJ_GETTER(AllocArrayInstanceRelaxed, const TypeInfo* type_info, int32_t elements);
 
-OBJ_GETTER(InitInstanceStrict,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
-OBJ_GETTER(InitInstanceRelaxed,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitThreadLocalSingletonStrict, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitThreadLocalSingletonRelaxed, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
 
-OBJ_GETTER(InitSharedInstanceStrict,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
-OBJ_GETTER(InitSharedInstanceRelaxed,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitSingletonStrict, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
+OBJ_GETTER(InitSingletonRelaxed, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*));
 
 MODEL_VARIANTS(void, SetStackRef, ObjHeader** location, const ObjHeader* object);
 MODEL_VARIANTS(void, SetHeapRef, ObjHeader** location, const ObjHeader* object);

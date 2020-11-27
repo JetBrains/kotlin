@@ -8,6 +8,7 @@
 
 #include <pthread.h>
 
+#include "GlobalsRegistry.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {
@@ -23,8 +24,16 @@ public:
 
     pthread_t threadId() const noexcept { return threadId_; }
 
+    bool isWaitingForGC() const noexcept {
+        // TODO: Implement.
+        return false;
+    }
+
+    GlobalsRegistry::ThreadQueue* globalsThreadQueue() noexcept { return &globalsThreadQueue_; }
+
 private:
     const pthread_t threadId_;
+    GlobalsRegistry::ThreadQueue globalsThreadQueue_;
 };
 
 } // namespace mm

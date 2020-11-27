@@ -1092,9 +1092,9 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         val ctor = codegen.llvmFunction(defaultConstructor)
         val initFunction =
                 if (storageKind == ObjectStorageKind.SHARED && context.config.threadsAreAllowed) {
-                    context.llvm.initSharedInstanceFunction
+                    context.llvm.initSingletonFunction
                 } else {
-                    context.llvm.initInstanceFunction
+                    context.llvm.initThreadLocalSingleton
                 }
         val args = listOf(objectPtr, typeInfo, ctor)
         val newValue = call(initFunction, args, Lifetime.GLOBAL, exceptionHandler)

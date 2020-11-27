@@ -2320,7 +2320,7 @@ OBJ_GETTER(allocArrayInstance, const TypeInfo* type_info, int32_t elements) {
 }
 
 template <bool Strict>
-OBJ_GETTER(initInstance,
+OBJ_GETTER(initThreadLocalSingleton,
     ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
   ObjHeader* value = *location;
   if (value != nullptr) {
@@ -2345,8 +2345,7 @@ OBJ_GETTER(initInstance,
 }
 
 template <bool Strict>
-OBJ_GETTER(initSharedInstance,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+OBJ_GETTER(initSingleton, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
 #if KONAN_NO_THREADS
   ObjHeader* value = *location;
   if (value != nullptr) {
@@ -3328,22 +3327,22 @@ OBJ_GETTER(AllocArrayInstanceRelaxed, const TypeInfo* typeInfo, int32_t elements
   RETURN_RESULT_OF(allocArrayInstance<false>, typeInfo, elements);
 }
 
-OBJ_GETTER(InitInstanceStrict,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-  RETURN_RESULT_OF(initInstance<true>, location, typeInfo, ctor);
+OBJ_GETTER(InitThreadLocalSingletonStrict, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+    RETURN_RESULT_OF(initThreadLocalSingleton<true>, location, typeInfo, ctor);
 }
-OBJ_GETTER(InitInstanceRelaxed,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-  RETURN_RESULT_OF(initInstance<false>, location, typeInfo, ctor);
+OBJ_GETTER(InitThreadLocalSingletonRelaxed, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+    RETURN_RESULT_OF(initThreadLocalSingleton<false>, location, typeInfo, ctor);
 }
 
-OBJ_GETTER(InitSharedInstanceStrict,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-  RETURN_RESULT_OF(initSharedInstance<true>, location, typeInfo, ctor);
+OBJ_GETTER(InitSingletonStrict, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+    RETURN_RESULT_OF(initSingleton<true>, location, typeInfo, ctor);
 }
-OBJ_GETTER(InitSharedInstanceRelaxed,
-    ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
-  RETURN_RESULT_OF(initSharedInstance<false>, location, typeInfo, ctor);
+OBJ_GETTER(InitSingletonRelaxed, ObjHeader** location, const TypeInfo* typeInfo, void (*ctor)(ObjHeader*)) {
+    RETURN_RESULT_OF(initSingleton<false>, location, typeInfo, ctor);
+}
+
+void RUNTIME_NOTHROW InitAndRegisterGlobal(ObjHeader** location, const ObjHeader* initialValue) {
+    RuntimeCheck(false, "Global registration is impossible in legacy MM");
 }
 
 RUNTIME_NOTHROW void SetStackRefStrict(ObjHeader** location, const ObjHeader* object) {
