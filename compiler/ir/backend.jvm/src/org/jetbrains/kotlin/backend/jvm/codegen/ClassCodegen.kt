@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_RECORD_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.VOLATILE_ANNOTATION_FQ_NAME
@@ -306,6 +307,11 @@ class ClassCodegen private constructor(
         (field.metadata as? MetadataSource.Property)?.let {
             metadataSerializer.bindFieldMetadata(it, fieldType to fieldName)
         }
+
+        if (irClass.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) && !field.isStatic) {
+            // TODO: Write annotations to the component
+            visitor.newRecordComponent(fieldName, fieldType.descriptor, fieldSignature)
+        }
     }
 
     private val generatedInlineMethods = mutableMapOf<IrFunction, SMAPAndMethodNode>()
@@ -452,6 +458,7 @@ private val IrClass.flags: Int
                 isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
+                hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) -> Opcodes.ACC_RECORD or Opcodes.ACC_SUPER or modality.flags
                 else -> Opcodes.ACC_SUPER or modality.flags
             }
 

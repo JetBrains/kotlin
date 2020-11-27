@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature;
@@ -219,6 +220,10 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 }
             }
             access |= ACC_ENUM;
+        }
+
+        if (JvmAnnotationUtilKt.isJvmRecord(descriptor)) {
+            access |= ACC_RECORD;
         }
 
         v.defineClass(
