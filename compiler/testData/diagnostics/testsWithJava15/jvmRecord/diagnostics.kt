@@ -46,3 +46,8 @@ fun main() {
     <!LOCAL_JVM_RECORD!>@JvmRecord<!>
     class Local
 }
+
+class Outer {
+    @JvmRecord
+    <!INNER_JVM_RECORD!>inner<!> class Inner(val name: String)
+}
