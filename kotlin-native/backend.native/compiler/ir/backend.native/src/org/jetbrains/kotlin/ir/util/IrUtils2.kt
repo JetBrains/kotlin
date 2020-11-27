@@ -374,7 +374,8 @@ fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter 
     return IrValueParameterImpl(
         startOffset, endOffset, IrDeclarationOrigin.DEFINED, IrValueParameterSymbolImpl(newDescriptor),
         newDescriptor.name, newDescriptor.indexOrMinusOne, type, varargElementType,
-        newDescriptor.isCrossinline, newDescriptor.isNoinline, false, false
+        newDescriptor.isCrossinline, newDescriptor.isNoinline,
+        isHidden = false, isAssignable = false
     )
 }
 
