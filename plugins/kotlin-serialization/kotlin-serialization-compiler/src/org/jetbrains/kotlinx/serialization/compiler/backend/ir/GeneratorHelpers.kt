@@ -418,7 +418,8 @@ interface IrBuilderExtension {
         fun irValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
             factory.createValueParameter(
                 function.startOffset, function.endOffset, SERIALIZABLE_PLUGIN_ORIGIN, IrValueParameterSymbolImpl(this),
-                name, indexOrMinusOne, type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline, false
+                name, indexOrMinusOne, type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline,
+                isHidden = false, isAssignable = false
             ).also {
                 it.parent = function
             }

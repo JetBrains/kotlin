@@ -144,7 +144,8 @@ fun IrValueParameter.copyTo(
     }
     return factory.createValueParameter(
         startOffset, endOffset, origin, symbol,
-        name, index, type, varargElementType, isCrossinline, isNoinline, isAssignable = isAssignable
+        name, index, type, varargElementType, isCrossinline = isCrossinline,
+        isNoinline = isNoinline, isHidden = false, isAssignable = isAssignable
     ).also {
         descriptor.bind(it)
         it.parent = irFunction
@@ -173,7 +174,8 @@ fun IrFunction.copyReceiverParametersFrom(from: IrFunction, substitutionMap: Map
             name, index,
             type.substitute(substitutionMap),
             varargElementType?.substitute(substitutionMap),
-            isCrossinline, isNoinline
+            isCrossinline, isNoinline,
+            isHidden, isAssignable
         ).also { parameter ->
             parameter.parent = this@copyReceiverParametersFrom
             newDescriptor.bind(this)
@@ -428,7 +430,9 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
         parentAsClass.defaultType,
         null,
         isCrossinline = false,
-        isNoinline = false
+        isNoinline = false,
+        isHidden = false,
+        isAssignable = false
     ).apply {
         parent = this@createDispatchReceiverParameter
         newDescriptor.bind(this)

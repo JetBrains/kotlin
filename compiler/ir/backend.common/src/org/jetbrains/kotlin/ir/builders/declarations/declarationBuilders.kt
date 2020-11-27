@@ -211,7 +211,8 @@ fun <D> buildReceiverParameter(
     parent.factory.createValueParameter(
         startOffset, endOffset, origin,
         IrValueParameterSymbolImpl(wrappedDescriptor),
-        RECEIVER_PARAMETER_NAME, -1, type, null, isCrossinline = false, isNoinline = false, isAssignable = false
+        RECEIVER_PARAMETER_NAME, -1, type, null, isCrossinline = false, isNoinline = false,
+        isHidden = false, isAssignable = false
     ).also {
         wrappedDescriptor.bind(it)
         it.parent = parent
