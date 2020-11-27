@@ -1,4 +1,4 @@
-depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreML CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal Security darwin libkern osx posix
+depends = ApplicationServices CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreML CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon Security darwin libkern osx posix
 language = Objective-C
 package = platform.Vision
 modules = Vision

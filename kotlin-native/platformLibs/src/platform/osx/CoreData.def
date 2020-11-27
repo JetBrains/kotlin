@@ -1,4 +1,4 @@
-depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
+depends = ApplicationServices CFNetwork CloudKit CoreFoundation CoreGraphics CoreLocation CoreServices CoreText DiskArbitration Foundation IOKit ImageIO Security darwin libkern osx posix
 language = Objective-C
 package = platform.CoreData
 modules = CoreData

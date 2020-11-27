@@ -1,4 +1,4 @@
-depends = AppKit ApplicationServices CFNetwork Cocoa CoreData CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation GLKit GameController GameplayKit IOKit IOSurface ImageIO Metal MetalKit ModelIO OpenGLCommon QuartzCore SceneKit Security SpriteKit darwin libkern osx posix
+depends = AppKit ApplicationServices CFNetwork CloudKit Cocoa Contacts CoreData CoreFoundation CoreGraphics CoreImage CoreLocation CoreServices CoreText CoreVideo DiskArbitration Foundation GLKit GameController GameplayKit IOKit IOSurface ImageIO Metal MetalKit ModelIO OpenGLCommon QuartzCore SceneKit Security SpriteKit darwin libkern osx posix
 language = Objective-C
 package = platform.GameKit
 modules = GameKit

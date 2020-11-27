@@ -1,4 +1,4 @@
-depends = ApplicationServices AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreMIDI CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO MediaToolbox Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
+depends = ApplicationServices AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreMIDI CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO MediaToolbox Metal OpenGLCommon QuartzCore Security UniformTypeIdentifiers darwin libkern osx posix
 language = Objective-C
 package = platform.AVFoundation
 modules = AVFoundation

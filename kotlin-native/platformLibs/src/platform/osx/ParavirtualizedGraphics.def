@@ -1,0 +1,7 @@
+depends = AppKit ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO Metal OpenGLCommon Security darwin libkern osx posix
+language = Objective-C
+package = platform.ParavirtualizedGraphics
+
+modules = ParavirtualizedGraphics
+compilerOpts = -framework ParavirtualizedGraphics
+linkerOpts = -framework ParavirtualizedGraphics

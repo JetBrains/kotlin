@@ -1,4 +1,4 @@
-depends = AVFoundation ApplicationServices AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreLocation CoreMIDI CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO MediaToolbox Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
+depends = AVFoundation ApplicationServices AudioToolbox CFNetwork CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreImage CoreLocation CoreMIDI CoreMedia CoreServices CoreText CoreVideo DiskArbitration Foundation IOKit IOSurface ImageIO MediaToolbox Metal OpenGLCommon QuartzCore Security UniformTypeIdentifiers darwin libkern osx posix
 language = Objective-C
 package = platform.Photos
 modules = Photos

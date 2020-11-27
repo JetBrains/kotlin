@@ -36,7 +36,8 @@ excludedFunctions = __tg_promote KERNEL_AUDIT_TOKEN KERNEL_SECURITY_TOKEN \
                     DebugStr Debugger SysBreak SysBreakFunc SysBreakStr clock_get_res clock_set_res \
                     mach_vm_region_info mach_vm_region_info_64 os_trace_info_with_payload safe_gets \
                     task_wire vm_map_64 vm_map_exec_lockdown vm_mapped_pages_info vm_region vm_region_recurse \
-                    xpc_debugger_api_misuse_info
+                    xpc_debugger_api_misuse_info \
+                    vm_stats
 
 compilerOpts = -D_XOPEN_SOURCE -DSHARED_LIBBIND -D_DARWIN_NO_64_BIT_INODE -DSYSCTL_DEF_ENABLED
 linkerOpts = -ldl -lz -lcurses -lbz2 -lcompression -late -lbsm
