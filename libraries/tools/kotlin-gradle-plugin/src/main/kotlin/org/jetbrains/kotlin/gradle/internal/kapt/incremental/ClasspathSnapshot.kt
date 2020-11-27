@@ -128,8 +128,10 @@ open class ClasspathSnapshot protected constructor(
 
     private fun loadEntriesFor(file: Iterable<File>) {
         for (f in file) {
-            if (dataForFiles[f] == null) {
-                dataForFiles[f] = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(f)
+            if (f.isFile) {
+                if (dataForFiles[f] == null) {
+                    dataForFiles[f] = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(f)
+                }
             }
         }
     }
