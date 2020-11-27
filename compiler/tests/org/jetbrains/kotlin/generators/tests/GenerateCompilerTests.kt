@@ -69,7 +69,7 @@ fun main(args: Array<String>) {
     val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
     testGroupSuite(args) {
-        testGroup("compiler/tests", "compiler/testData") {
+        testGroup("compiler/tests-gen", "compiler/testData") {
             testClass<AbstractDiagnosticsTestWithFirValidation>(suiteTestClassName = "DiagnosticsTestGenerated") {
                 model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern)
                 model("codegen/box/diagnostics")
@@ -590,7 +590,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup(
-            "compiler/tests", "compiler/testData",
+            "compiler/tests-gen", "compiler/testData",
             testRunnerMethodName = "runTestWithCustomIgnoreDirective",
             additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_MULTI_MODULE: \"")
         ) {
