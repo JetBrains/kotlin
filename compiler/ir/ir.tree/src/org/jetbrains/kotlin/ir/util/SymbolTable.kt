@@ -1025,24 +1025,24 @@ class SymbolTable(
     fun wrappedTopLevelCallableDescriptors(): Set<DescriptorWithContainerSource> {
         val result = mutableSetOf<DescriptorWithContainerSource>()
         for (descriptor in simpleFunctionSymbolTable.descriptorToSymbol.keys) {
-            if (descriptor is WrappedSimpleFunctionDescriptor && descriptor.owner.parent !is IrClass) {
+            if (descriptor is WrappedSimpleFunctionDescriptor && descriptor.owner.parent is IrPackageFragment) {
                 result.add(descriptor)
             }
         }
         for (symbol in simpleFunctionSymbolTable.idSigToSymbol.values) {
             val descriptor = symbol.descriptor
-            if (descriptor is WrappedSimpleFunctionDescriptor && symbol.owner.parent !is IrClass) {
+            if (descriptor is WrappedSimpleFunctionDescriptor && symbol.owner.parent is IrPackageFragment) {
                 result.add(descriptor)
             }
         }
         for (descriptor in propertySymbolTable.descriptorToSymbol.keys) {
-            if (descriptor is WrappedPropertyDescriptor && descriptor.owner.parent !is IrClass) {
+            if (descriptor is WrappedPropertyDescriptor && descriptor.owner.parent is IrPackageFragment) {
                 result.add(descriptor)
             }
         }
         for (symbol in propertySymbolTable.idSigToSymbol.values) {
             val descriptor = symbol.descriptor
-            if (descriptor is WrappedPropertyDescriptor && symbol.owner.parent !is IrClass) {
+            if (descriptor is WrappedPropertyDescriptor && symbol.owner.parent is IrPackageFragment) {
                 result.add(descriptor)
             }
         }
