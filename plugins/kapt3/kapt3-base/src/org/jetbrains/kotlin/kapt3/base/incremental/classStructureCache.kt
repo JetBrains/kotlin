@@ -10,6 +10,7 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.lang.IllegalArgumentException
+import java.lang.IllegalStateException
 import java.net.URI
 
 /**
@@ -147,13 +148,13 @@ class JavaClassCache() : Serializable {
         sourceCache.clear()
     }
 
-    fun getSourceForType(type: String): File? {
+    fun getSourceForType(type: String): File {
         sourceCache.forEach { (fileUri, typeInfo) ->
             if (type in typeInfo.getDeclaredTypes()) {
                 return File(fileUri)
             }
         }
-        return null
+        throw IllegalStateException("Unable to find source file for type $type")
     }
 
     fun invalidateDataForTypes(impactedTypes: MutableSet<String>) {
