@@ -12919,6 +12919,11 @@ public class DiagnosticsUsingJavacTestGenerated extends AbstractDiagnosticsUsing
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/inlineClassesInsideAnnotations.kt");
             }
 
+            @TestMetadata("innerClassInsideInlineClass.kt")
+            public void testInnerClassInsideInlineClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/innerClassInsideInlineClass.kt");
+            }
+
             @TestMetadata("lateinitInlineClasses.kt")
             public void testLateinitInlineClasses() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/lateinitInlineClasses.kt");

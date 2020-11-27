@@ -124,6 +124,18 @@ class PropertiesWithBackingFieldsInsideInlineClass : DeclarationChecker {
     }
 }
 
+class InnerClassInsideInlineClass : DeclarationChecker {
+    override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
+        if (declaration !is KtClass) return
+        if (descriptor !is ClassDescriptor) return
+        if (!descriptor.isInner) return
+
+        if (!descriptor.containingDeclaration.isInlineClass()) return
+
+        context.trace.report(Errors.INNER_CLASS_INSIDE_INLINE_CLASS.on(declaration.modifierList!!.getModifier(KtTokens.INNER_KEYWORD)!!))
+    }
+}
+
 class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
 
     companion object {
