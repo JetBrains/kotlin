@@ -205,9 +205,6 @@ class FirElementSerializer private constructor(
         var hasGetter = false
         var hasSetter = false
 
-        //val compileTimeConstant = property.compileTimeInitializer
-        val hasConstant = false // TODO: compileTimeConstant != null && compileTimeConstant !is NullValue
-
         val hasAnnotations = property.nonSourceAnnotations(session).isNotEmpty()
         // TODO: hasAnnotations(descriptor) || hasAnnotations(descriptor.backingField) || hasAnnotations(descriptor.delegateField)
 
@@ -247,6 +244,7 @@ class FirElementSerializer private constructor(
             }
         }
 
+        val hasConstant = property.isConst // TODO: this is only correct with LanguageFeature.NoConstantValueAttributeForNonConstVals
         val flags = Flags.getPropertyFlags(
             hasAnnotations,
             ProtoEnumFlags.visibility(normalizeVisibility(property)),
