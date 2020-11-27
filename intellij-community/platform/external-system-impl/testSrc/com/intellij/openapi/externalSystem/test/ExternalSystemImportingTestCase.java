@@ -522,8 +522,7 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     ExternalSystemTaskNotificationListenerAdapter listener = new ExternalSystemTaskNotificationListenerAdapter() {
       @Override
       public void onTaskOutput(@NotNull ExternalSystemTaskId id, @NotNull String text, boolean stdOut) {
-        if (StringUtil.isEmptyOrSpaces(text)) return;
-        (stdOut ? System.out : System.err).print(text);
+        printOutput(text, stdOut);
       }
     };
     notificationManager.addNotificationListener(listener);
@@ -537,6 +536,11 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
     if (!error.isNull()) {
       handleImportFailure(error.get().first, error.get().second);
     }
+  }
+
+  protected void printOutput(@NotNull String text, boolean stdOut) {
+    if (StringUtil.isEmptyOrSpaces(text)) return;
+    (stdOut ? System.out : System.err).print(text);
   }
 
   protected void handleImportFailure(@NotNull String errorMessage, @Nullable String errorDetails) {
