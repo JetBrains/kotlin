@@ -74,7 +74,8 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                         origin, symbol, context.symbolTable.nameProvider.nameForDeclaration(descriptor),
                         if (index != -1) index else descriptor.indexOrMinusOne,
                         type, varargElementType,
-                        descriptor.isCrossinline, descriptor.isNoinline, false
+                        descriptor.isCrossinline, descriptor.isNoinline,
+                        isHidden = false, isAssignable = false
                     )
                 } .also { it.parent = irScript }
             }
