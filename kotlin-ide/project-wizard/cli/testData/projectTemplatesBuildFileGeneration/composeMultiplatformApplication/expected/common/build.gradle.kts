@@ -2,13 +2,13 @@ import org.jetbrains.compose.compose
 
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.1.0-dev106"
+    id("org.jetbrains.compose") version "0.2.0-build132"
     id("com.android.library")
     id("kotlin-android-extensions")
 }
 
 group = "me.user"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 repositories {
     google()
