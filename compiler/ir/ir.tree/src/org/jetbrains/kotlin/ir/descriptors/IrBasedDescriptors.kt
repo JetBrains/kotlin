@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyProperty
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -371,7 +369,9 @@ open class IrBasedVariableDescriptorWithAccessor(owner: IrLocalDelegatedProperty
 
 fun IrLocalDelegatedProperty.toIrBasedDescriptor() = IrBasedVariableDescriptorWithAccessor(this)
 
-open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunctionDescriptor,
+// We make all IR-based function descriptors instances of DescriptorWithContainerSource, and use .parentClassId to
+// check whether declaration is deserialized. See IrInlineCodegen.descriptorIsDeserialized
+open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunctionDescriptor, DescriptorWithContainerSource,
     IrBasedCallableDescriptor<IrSimpleFunction>(owner) {
 
     override fun getOverriddenDescriptors(): List<FunctionDescriptor> = owner.overriddenSymbols.map { it.owner.toIrBasedDescriptor() }
@@ -401,6 +401,9 @@ open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunc
     override fun isActual() = false
     override fun isInfix() = false
     override fun isOperator() = false
+
+    override val containerSource: DeserializedContainerSource?
+        get() = owner.containerSource
 
     override fun getOriginal() = this
     override fun substitute(substitutor: TypeSubstitutor): SimpleFunctionDescriptor {
@@ -444,19 +447,8 @@ open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunc
     }
 }
 
-class IrBasedFunctionDescriptorWithContainerSource(owner: IrSimpleFunction) : IrBasedSimpleFunctionDescriptor(owner),
-    DescriptorWithContainerSource {
-    override val containerSource: DeserializedContainerSource? get() = owner.containerSource
-}
-
 fun IrSimpleFunction.toIrBasedDescriptor() =
-    if (originalFunction is IrLazyFunction || containerSource != null)
-        when {
-            isGetter -> IrBasedPropertyGetterDescriptorWithContainerSource(this)
-            isSetter -> IrBasedPropertySetterDescriptorWithContainerSource(this)
-            else -> IrBasedFunctionDescriptorWithContainerSource(this)
-        }
-    else when {
+    when {
         isGetter -> IrBasedPropertyGetterDescriptor(this)
         isSetter -> IrBasedPropertySetterDescriptor(this)
         else -> IrBasedSimpleFunctionDescriptor(this)
@@ -759,7 +751,8 @@ open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrB
 
 fun IrEnumEntry.toIrBasedDescriptor() = IrBasedEnumEntryDescriptor(this)
 
-open class IrBasedPropertyDescriptor(owner: IrProperty) : PropertyDescriptor, IrBasedDeclarationDescriptor<IrProperty>(owner) {
+open class IrBasedPropertyDescriptor(owner: IrProperty) :
+    PropertyDescriptor, DescriptorWithContainerSource, IrBasedDeclarationDescriptor<IrProperty>(owner) {
     override fun getModality() = owner.modality
 
     override fun setOverriddenDescriptors(overriddenDescriptors: MutableCollection<out CallableMemberDescriptor>) {
@@ -805,6 +798,8 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) : PropertyDescriptor, Ir
     override fun getVisibility() = owner.visibility
 
     override val setter: PropertySetterDescriptor? get() = owner.setter?.toIrBasedDescriptor() as? PropertySetterDescriptor
+
+    override val containerSource: DeserializedContainerSource? = owner.containerSource
 
     override fun getOriginal() = this
 
@@ -861,16 +856,7 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) : PropertyDescriptor, Ir
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
-class IrBasedPropertyDescriptorWithContainerSource(
-    owner: IrProperty
-) : IrBasedPropertyDescriptor(owner), DescriptorWithContainerSource {
-    override val containerSource: DeserializedContainerSource? = owner.containerSource
-}
-
-fun IrProperty.toIrBasedDescriptor() = if (originalProperty is IrLazyProperty || containerSource != null)
-    IrBasedPropertyDescriptorWithContainerSource(this)
-else
-    IrBasedPropertyDescriptor(this)
+fun IrProperty.toIrBasedDescriptor() = IrBasedPropertyDescriptor(this)
 
 abstract class IrBasedPropertyAccessorDescriptor(owner: IrSimpleFunction) : IrBasedSimpleFunctionDescriptor(owner),
     PropertyAccessorDescriptor {
@@ -891,20 +877,10 @@ open class IrBasedPropertyGetterDescriptor(owner: IrSimpleFunction) : IrBasedPro
     override fun getOriginal(): IrBasedPropertyGetterDescriptor = this
 }
 
-class IrBasedPropertyGetterDescriptorWithContainerSource(owner: IrSimpleFunction) : IrBasedPropertyGetterDescriptor(owner),
-    DescriptorWithContainerSource {
-    override val containerSource: DeserializedContainerSource? get() = owner.containerSource
-}
-
 open class IrBasedPropertySetterDescriptor(owner: IrSimpleFunction) : IrBasedPropertyAccessorDescriptor(owner), PropertySetterDescriptor {
     override fun getOverriddenDescriptors() = super.getOverriddenDescriptors().map { it as PropertySetterDescriptor }
 
     override fun getOriginal(): IrBasedPropertySetterDescriptor = this
-}
-
-class IrBasedPropertySetterDescriptorWithContainerSource(owner: IrSimpleFunction) : IrBasedPropertySetterDescriptor(owner),
-    DescriptorWithContainerSource {
-    override val containerSource: DeserializedContainerSource? get() = owner.containerSource
 }
 
 open class IrBasedTypeAliasDescriptor(owner: IrTypeAlias) : IrBasedDeclarationDescriptor<IrTypeAlias>(owner), TypeAliasDescriptor {

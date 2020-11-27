@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyProperty
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -77,9 +75,7 @@ fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: Desc
 
 @PublishedApi
 internal fun IrFactory.buildProperty(builder: IrPropertyBuilder): IrProperty = with(builder) {
-    val wrappedDescriptor = if (originalDeclaration is IrLazyProperty || containerSource != null)
-        WrappedPropertyDescriptorWithContainerSource()
-    else WrappedPropertyDescriptor()
+    val wrappedDescriptor = WrappedPropertyDescriptor()
 
     createProperty(
         startOffset, endOffset, origin,
@@ -117,9 +113,7 @@ inline fun IrProperty.addGetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
 
 @PublishedApi
 internal fun IrFactory.buildFunction(builder: IrFunctionBuilder): IrSimpleFunction = with(builder) {
-    val wrappedDescriptor = if (originalDeclaration is IrLazyFunction || containerSource != null)
-        WrappedFunctionDescriptorWithContainerSource()
-    else WrappedSimpleFunctionDescriptor()
+    val wrappedDescriptor = WrappedSimpleFunctionDescriptor()
     createFunction(
         startOffset, endOffset, origin,
         IrSimpleFunctionSymbolImpl(wrappedDescriptor),

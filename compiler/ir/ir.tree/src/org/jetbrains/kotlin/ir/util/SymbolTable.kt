@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
 import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedFunctionDescriptorWithContainerSource
-import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptorWithContainerSource
+import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
@@ -1025,24 +1025,24 @@ class SymbolTable(
     fun wrappedTopLevelCallableDescriptors(): Set<DescriptorWithContainerSource> {
         val result = mutableSetOf<DescriptorWithContainerSource>()
         for (descriptor in simpleFunctionSymbolTable.descriptorToSymbol.keys) {
-            if (descriptor is WrappedFunctionDescriptorWithContainerSource && descriptor.owner.parent !is IrClass) {
+            if (descriptor is WrappedSimpleFunctionDescriptor && descriptor.owner.parent !is IrClass) {
                 result.add(descriptor)
             }
         }
         for (symbol in simpleFunctionSymbolTable.idSigToSymbol.values) {
             val descriptor = symbol.descriptor
-            if (descriptor is WrappedFunctionDescriptorWithContainerSource && symbol.owner.parent !is IrClass) {
+            if (descriptor is WrappedSimpleFunctionDescriptor && symbol.owner.parent !is IrClass) {
                 result.add(descriptor)
             }
         }
         for (descriptor in propertySymbolTable.descriptorToSymbol.keys) {
-            if (descriptor is WrappedPropertyDescriptorWithContainerSource && descriptor.owner.parent !is IrClass) {
+            if (descriptor is WrappedPropertyDescriptor && descriptor.owner.parent !is IrClass) {
                 result.add(descriptor)
             }
         }
         for (symbol in propertySymbolTable.idSigToSymbol.values) {
             val descriptor = symbol.descriptor
-            if (descriptor is WrappedPropertyDescriptorWithContainerSource && symbol.owner.parent !is IrClass) {
+            if (descriptor is WrappedPropertyDescriptor && symbol.owner.parent !is IrClass) {
                 result.add(descriptor)
             }
         }

@@ -497,9 +497,7 @@ fun IrFactory.createStaticFunctionWithReceivers(
         copyMetadata: Boolean = true,
         typeParametersFromContext: List<IrTypeParameter> = listOf()
 ): IrSimpleFunction {
-    val descriptor = (oldFunction.descriptor as? DescriptorWithContainerSource)?.let {
-        WrappedFunctionDescriptorWithContainerSource()
-    } ?: WrappedSimpleFunctionDescriptor()
+    val descriptor = WrappedSimpleFunctionDescriptor()
     return createFunction(
         oldFunction.startOffset, oldFunction.endOffset,
         origin,
