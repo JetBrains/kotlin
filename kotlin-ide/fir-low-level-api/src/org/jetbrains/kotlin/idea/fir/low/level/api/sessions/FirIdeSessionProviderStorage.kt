@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirTransformerProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirOutOfBlockModificationTrackerFactory
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.addValueFor
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.executeWithoutPCE
 import java.util.concurrent.ConcurrentHashMap
 
@@ -71,35 +72,41 @@ private class FromModuleViewSessionCache(
     @OptIn(ExperimentalStdlibApi::class)
     private fun getSessions(): Map<ModuleSourceInfo, FirIdeSourcesSession> = buildMap {
         val sessions = mappings.values
-        val sessionToValidity = hashMapOf<FirSessionWithModificationTracker, Boolean>()
+        val wasSessionInvalidated = sessions.associateWithTo(hashMapOf()) { false }
 
-        var isValid = true
-        fun dfs(session: FirSessionWithModificationTracker) {
-            sessionToValidity[session]?.let { valid ->
-                if (!valid) isValid = false
+        val reversedDependencies = sessions.reversedDependencies { session ->
+            session.firSession.dependencies.mapNotNull { mappings[it] }
+        }
+
+        fun markAsInvalidWithDfs(session: FirSessionWithModificationTracker) {
+            if (wasSessionInvalidated.getValue(session)) {
+                // we already was in that branch
                 return
             }
-            sessionToValidity[session] = session.isValid
-            session.firSession.dependencies.forEach { dependency ->
-                mappings[dependency]?.let(::dfs)
-            }
-            if (!session.isValid) {
-                isValid = false
-            }
-            if (!isValid) {
-                sessionToValidity[session] = false
+            wasSessionInvalidated[session] = true
+            reversedDependencies[session]?.forEach { dependsOn ->
+                markAsInvalidWithDfs(dependsOn)
             }
         }
 
         for (session in sessions) {
-            if (session !in sessionToValidity) {
-                isValid = true
-                dfs(session)
+            if (!session.isValid) {
+                markAsInvalidWithDfs(session)
             }
         }
-        return sessionToValidity.entries
-            .mapNotNull { (session, valid) -> session.takeIf { valid } }
+        return wasSessionInvalidated.entries
+            .mapNotNull { (session, wasInvalidated) -> session.takeUnless { wasInvalidated } }
             .associate { session -> session.firSession.moduleInfo to session.firSession }
+    }
+
+    private fun <T> Collection<T>.reversedDependencies(getDependencies: (T) -> List<T>): Map<T, List<T>> {
+        val result = hashMapOf<T, MutableList<T>>()
+        forEach { from ->
+            getDependencies(from).forEach { to ->
+                result.addValueFor(to, from)
+            }
+        }
+        return result
     }
 }
 
