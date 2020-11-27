@@ -7,13 +7,11 @@ package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessorReferencingClasspath
+import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert.assertEquals
 import org.junit.Assume
 import org.junit.Test
-import org.objectweb.asm.ClassWriter
-import org.objectweb.asm.Opcodes
-import org.objectweb.asm.Type
 import test.kt33617.MyClass
 import java.io.File
 import java.util.zip.ZipEntry
@@ -229,7 +227,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             }
         """.trimIndent()
         )
-        project.build("clean", "kaptKotlin") {
+        project.build("clean", "build") {
             assertSuccessful()
         }
 
@@ -249,13 +247,41 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             )
         }
     }
+
+    /** Regression test for KT-34340. */
+    @Test
+    fun testIsolatingWithOriginsInClasspath() {
+        val project = Project("kaptIncrementalWithParceler", GradleVersionRequired.None).apply {
+            setupWorkingDir()
+        }
+        val options = defaultBuildOptions().copy(androidGradlePluginVersion = AGPVersion.v3_4_1)
+        project.build("clean", ":mylibrary:assembleDebug", options = options) {
+            assertSuccessful()
+        }
+
+        project.projectFile("BaseClassParcel.java").modify { current ->
+            current.replace("protected FieldClassParcel", "private FieldClassParcel")
+        }
+
+        project.build(":mylibrary:assembleDebug", options = options) {
+            assertSuccessful()
+            assertEquals(
+                setOf(
+                    fileInWorkingDir("mylibrary/src/main/java/com/example/lib/ExampleParcel.java").canonicalPath,
+                    fileInWorkingDir("baseLibrary/src/main/java/com/example/lib2/basemodule/BaseClassParcel.java").canonicalPath,
+                ),
+                getProcessedSources(output)
+            )
+        }
+    }
 }
 
 private const val patternApt = "Processing java sources with annotation processors:"
 fun getProcessedSources(output: String): Set<String> {
-    val logging = output.lines().single { it.contains(patternApt) }
-    val indexOf = logging.indexOf(patternApt) + patternApt.length
-    return logging.drop(indexOf).split(",").map { it.trim() }.filter { !it.isEmpty() }.toSet()
+    return output.lines().filter { it.contains(patternApt) }.flatMapTo(HashSet()) { logging ->
+        val indexOf = logging.indexOf(patternApt) + patternApt.length
+        logging.drop(indexOf).split(",").map { it.trim() }.filter { !it.isEmpty() }.toSet()
+    }
 }
 
 fun BaseGradleIT.Project.setupIncrementalAptProject(

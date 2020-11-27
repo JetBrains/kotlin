@@ -27,7 +27,6 @@ class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
             incremental = true,
-            debug=false,
             kaptOptions = KaptOptions(
                 verbose = true,
                 useWorkers = true,
