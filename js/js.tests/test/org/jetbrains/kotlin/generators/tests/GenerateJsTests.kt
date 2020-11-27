@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
     //generateTestDataForReservedWords()
 
     testGroupSuite(args) {
-        testGroup("js/js.tests/test", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
+        testGroup("js/js.tests/test-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractBoxJsTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
             }
@@ -64,7 +64,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("js/js.tests/test", "compiler/testData", testRunnerMethodName = "runTest0") {
+        testGroup("js/js.tests/test-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractJsCodegenBoxTest> {
                 model("codegen/box", targetBackend = TargetBackend.JS)
             }
