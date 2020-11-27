@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.sessions
 
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toPersistentMap
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirPhaseRunner
@@ -50,7 +53,7 @@ private class FromModuleViewSessionCache(
     val root: ModuleSourceInfo,
 ) {
     @Volatile
-    private var mappings: Map<ModuleSourceInfo, FirSessionWithModificationTracker> = emptyMap()
+    private var mappings: PersistentMap<ModuleSourceInfo, FirSessionWithModificationTracker> = persistentMapOf()
 
     val sessionInvalidator: FirSessionInvalidator = FirSessionInvalidator { session ->
         mappings[session.moduleInfo]?.invalidate()
@@ -61,7 +64,7 @@ private class FromModuleViewSessionCache(
         action: (Map<ModuleSourceInfo, FirIdeSourcesSession>) -> Pair<Map<ModuleSourceInfo, FirIdeSourcesSession>, R>
     ): Pair<Map<ModuleSourceInfo, FirIdeSourcesSession>, R> {
         val (newMappings, result) = action(getSessions().mapValues { it.value })
-        mappings = newMappings.mapValues { FirSessionWithModificationTracker(it.value) }
+        mappings = newMappings.mapValues { FirSessionWithModificationTracker(it.value) }.toPersistentMap()
         return newMappings to result
     }
 
