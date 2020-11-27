@@ -564,7 +564,7 @@ fun main(args: Array<String>) {
         }
 
         testGroup(
-            "compiler/fir/fir2ir/tests", "compiler/testData",
+            "compiler/fir/fir2ir/tests-gen", "compiler/testData",
             testRunnerMethodName = "runTestWithCustomIgnoreDirective",
             additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
         ) {
@@ -612,7 +612,7 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/fir/raw-fir/psi2fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
+        testGroup("compiler/fir/raw-fir/psi2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractRawFirBuilderTestCase> {
                 model("rawBuilder", testMethod = "doRawFirTest")
             }
@@ -626,19 +626,19 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/fir/raw-fir/psi2fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
+        testGroup("compiler/fir/raw-fir/psi2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractPartialRawFirBuilderTestCase> {
                 model("partialRawBuilder", testMethod = "doRawFirTest")
             }
         }
 
-        testGroup("compiler/fir/raw-fir/light-tree2fir/tests", "compiler/fir/raw-fir/psi2fir/testData") {
+        testGroup("compiler/fir/raw-fir/light-tree2fir/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
             testClass<AbstractLightTree2FirConverterTestCase> {
                 model("rawBuilder")
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractFirDiagnosticsTest> {
                 model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
@@ -653,31 +653,31 @@ fun main(args: Array<String>) {
 
         }
 
-        testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractFirDiagnosticsWithStdlibTest> {
                 model("resolveWithStdlib", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests", "compiler/testData") {
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/testData") {
             testClass<AbstractFirLoadCompiledKotlin> {
                 model("loadJava/compiledKotlin", extension = "kt")
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests", "compiler/testData") {
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/testData") {
             testClass<AbstractFirTypeEnhancementTest> {
                 model("loadJava/compiledJava", extension = "java")
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractOwnFirTypeEnhancementTest> {
                 model("enhancement", extension = "java")
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests", "compiler/testData") {
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/testData") {
             testClass<AbstractFirOldFrontendDiagnosticsTest> {
                 model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
             }
@@ -691,14 +691,14 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractFirOldFrontendLightClassesTest> {
                 model("lightClasses")
             }
         }
 
         testGroup(
-            "compiler/fir/fir2ir/tests", "compiler/testData",
+            "compiler/fir/fir2ir/tests-gen", "compiler/testData",
             testRunnerMethodName = "runTestWithCustomIgnoreDirective",
             additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_FIR: \"")
         ) {
@@ -727,13 +727,13 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractExtendedFirDiagnosticsTest> {
                 model("extendedCheckers", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }
         }
 
-        testGroup("compiler/fir/analysis-tests/tests", "compiler/fir/analysis-tests/testData") {
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractExtendedFirWithLightTreeDiagnosticsTest> {
                 model("extendedCheckers", pattern = KT_WITHOUT_DOTS_IN_NAME)
             }

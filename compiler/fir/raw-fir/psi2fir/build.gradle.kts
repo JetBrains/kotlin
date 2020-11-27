@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.ideaExt.idea
+
 /*
  * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
@@ -31,9 +33,21 @@ dependencies {
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
+val generationRoot = projectDir.resolve("tests-gen")
+
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        this.java.srcDir(generationRoot.name)
+    }
+}
+
+if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    apply(plugin = "idea")
+    idea {
+        this.module.generatedSourceDirs.add(generationRoot)
+    }
 }
 
 projectTest(parallel = true) {
