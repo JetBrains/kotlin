@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
@@ -68,10 +69,6 @@ class JvmSignatureClashDetector(
         origin in SPECIAL_BRIDGES_AND_OVERRIDES
 
     fun reportErrors(classOrigin: JvmDeclarationOrigin) {
-        // Class IFoo$DefaultImpls has conflicting signatures if and only if corresponding interface IFoo has conflicting signatures.
-        // Do not report these diagnostics twice.
-        if (irClass.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) return
-
         reportMethodSignatureConflicts(classOrigin)
         reportPredefinedMethodSignatureConflicts(classOrigin)
         reportFieldSignatureConflicts(classOrigin)
@@ -89,25 +86,36 @@ class JvmSignatureClashDetector(
 
             when {
                 realMethodsCount == 0 && (fakeOverridesCount > 1 || specialOverridesCount > 1) ->
-                    reportJvmSignatureClash(
-                        ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS,
-                        listOf(irClass),
-                        conflictingJvmDeclarationsData
-                    )
+                    if (irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
+                        reportJvmSignatureClash(
+                            ErrorsJvm.CONFLICTING_INHERITED_JVM_DECLARATIONS,
+                            listOf(irClass),
+                            conflictingJvmDeclarationsData
+                        )
+                    }
 
-                fakeOverridesCount == 0 && specialOverridesCount == 0 ->
-                    reportJvmSignatureClash(
-                        ErrorsJvm.CONFLICTING_JVM_DECLARATIONS,
-                        methods,
-                        conflictingJvmDeclarationsData
-                    )
+                fakeOverridesCount == 0 && specialOverridesCount == 0 -> {
+                    // In IFoo$DefaultImpls we should report errors only if there are private methods among conflicting ones
+                    // (otherwise such errors would be reported twice: once for IFoo and once for IFoo$DefaultImpls).
+                    if (irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS ||
+                        methods.any { DescriptorVisibilities.isPrivate(it.visibility) }
+                    ) {
+                        reportJvmSignatureClash(
+                            ErrorsJvm.CONFLICTING_JVM_DECLARATIONS,
+                            methods,
+                            conflictingJvmDeclarationsData
+                        )
+                    }
+                }
 
                 else ->
-                    reportJvmSignatureClash(
-                        ErrorsJvm.ACCIDENTAL_OVERRIDE,
-                        methods.filter { !it.isFakeOverride && !it.isSpecialOverride() },
-                        conflictingJvmDeclarationsData
-                    )
+                    if (irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
+                        reportJvmSignatureClash(
+                            ErrorsJvm.ACCIDENTAL_OVERRIDE,
+                            methods.filter { !it.isFakeOverride && !it.isSpecialOverride() },
+                            conflictingJvmDeclarationsData
+                        )
+                    }
             }
         }
     }

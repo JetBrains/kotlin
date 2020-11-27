@@ -552,6 +552,11 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/defaultVsNonDefault_ir.kt");
             }
 
+            @TestMetadata("kt43611.kt")
+            public void testKt43611() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/kt43611.kt");
+            }
+
             @TestMetadata("oneTrait_ir.kt")
             public void testOneTrait_ir() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/oneTrait_ir.kt");
