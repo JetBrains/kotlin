@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
-import com.jetbrains.rd.util.getOrCreate
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue

@@ -28,7 +28,7 @@ public class SymbolsByPsiBuildingTestGenerated extends AbstractSymbolsByPsiBuild
 
     @TestMetadata("annotations.kt")
     public void testAnnotations() throws Exception {
-        runTest("idea/idea-frontend-fir/testData/symbolsByPsi/annotations.kt");
+        runTest("testData/symbolsByPsi/annotations.kt");
     }
 
     @TestMetadata("anonymousObject.kt")
@@ -73,6 +73,6 @@ public class SymbolsByPsiBuildingTestGenerated extends AbstractSymbolsByPsiBuild
 
     @TestMetadata("localDeclarations.kt")
     public void testLocalDeclarations() throws Exception {
-        runTest("idea/idea-frontend-fir/testData/symbolsByPsi/localDeclarations.kt");
+        runTest("testData/symbolsByPsi/localDeclarations.kt");
     }
 }

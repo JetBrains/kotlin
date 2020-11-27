@@ -19,12 +19,13 @@ import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.idea.util.sourceRoots
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import java.io.File
 import java.nio.file.Files
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.writeText
 
 class KotlinModuleOutOfBlockTrackerTest : AbstractMultiModuleTest() {
-    override fun getTestDataPath(): String = error("Should not be called")
+    override fun getTestDataDirectory(): File = error("Should not be called")
 
     fun testThatModuleOutOfBlockChangeInfluenceOnlySingleModule() {
         val moduleA = createModuleWithModificationTracker("a") {

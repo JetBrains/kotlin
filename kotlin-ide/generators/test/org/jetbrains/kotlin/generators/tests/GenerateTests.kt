@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.testGenerator
 import org.jetbrains.kotlin.AbstractDataFlowValueRenderingTest
 import org.jetbrains.kotlin.addImport.AbstractAddImportTest
 import org.jetbrains.kotlin.addImportAlias.AbstractAddImportAliasTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassLoadingTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassSanityTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightFacadeClassTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightScriptLoadingTest
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.copyright.AbstractUpdateKotlinCopyrightTest
 import org.jetbrains.kotlin.findUsages.*
@@ -69,13 +66,13 @@ import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqual
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
 import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractMemberScopeByFqNameTest
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolFromLibraryPointerRestoreTest
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolFromSourcePointerRestoreTest
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByFqNameBuildingTest
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByPsiBuildingTest
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
@@ -963,17 +960,17 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         }
     }
 
-    testGroup("idea/idea-fir/tests", "compiler/testData") {
+    testGroup("fir", testDataPath = "../compiler/testData") {
         testClass<AbstractFirLightClassTest> {
-            model("asJava/lightClasses", excludeDirs = listOf("delegation", "script"), pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("compiler/asJava/lightClasses", excludedDirectories = listOf("delegation", "script"), pattern = KT_WITHOUT_DOTS)
         }
 
         testClass<AbstractFirClassLoadingTest> {
-            model("asJava/ultraLightClasses", pattern = KT_OR_KTS)
+            model("compiler/asJava//ultraLightClasses", pattern = KT_OR_KTS)
         }
 
         testClass<AbstractFirLightFacadeClassTest> {
-            model("asJava/ultraLightFacades", pattern = KT_OR_KTS)
+            model("compiler/asJava//ultraLightFacades", pattern = KT_OR_KTS)
         }
     }
 
@@ -993,32 +990,22 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         testClass<AbstractFirMultiModuleLazyResolveTest> {
             model("multiModuleLazyResolve", pattern = DIRECTORY, isRecursive = false)
         }
-    }
-
-    /*
-     testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/idea-frontend-fir/idea-fir-low-level-api/testdata") {
-            testClass<AbstractFirMultiModuleLazyResolveTest> {
-                model("multiModuleLazyResolve", recursive = false, extension = null)
-            }
-            testClass<AbstractFirLazyDeclarationResolveTest> {
-                model("lazyResolve")
-            }
-            testClass<AbstractProjectWideOutOfBlockKotlinModificationTrackerTest> {
-                model("outOfBlockProjectWide")
-            }
-            testClass<AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest> {
-                model("outOfBlockProjectWide")
-            }
-            testClass<AbstractFileStructureTest> {
-                model("fileStructure")
-            }
-            testClass<AbstractSessionsInvalidationTest> {
-                model("sessionInvalidation", recursive = false, extension = null)
-            }
+        testClass<AbstractFirLazyDeclarationResolveTest> {
+            model("lazyResolve")
         }
-     */
+        testClass<AbstractProjectWideOutOfBlockKotlinModificationTrackerTest> {
+            model("outOfBlockProjectWide")
+        }
+        testClass<AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest> {
+            model("outOfBlockProjectWide")
+        }
+        testClass<AbstractFileStructureTest> {
+            model("fileStructure")
+        }
+    testClass<AbstractSessionsInvalidationTest> {
+                model("sessionInvalidation", recursive = false, extension = null)
+            }}
 
-    /*
 
    /* testGroup("idea/idea-fir-performance-tests/tests", "idea") {
         testClass<AbstractFirHighlightingPerformanceTest> {
