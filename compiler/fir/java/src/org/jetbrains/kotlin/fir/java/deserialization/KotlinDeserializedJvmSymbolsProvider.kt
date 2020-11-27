@@ -126,7 +126,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                 FirDeserializationContext.createForPackage(
                     packageFqName, packageProto, nameResolver, session,
                     JvmBinaryAnnotationDeserializer(session, kotlinJvmBinaryClass, byteContent),
-                    FirConstDeserializer(session, kotlinJvmBinaryClass, facadeBinaryClass),
+                    FirConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass),
                     source
                 ),
                 source,
