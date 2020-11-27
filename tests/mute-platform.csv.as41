@@ -64,14 +64,11 @@ org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveB
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testIf, KT-34408,,
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testNotSingleLineStatement, KT-34408,,
 org.jetbrains.kotlin.idea.intentions.declarations.JoinLinesTestGenerated.RemoveBraces.testWhenEntry, KT-34408,,
-org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testWithNonObjectInheritors, Enum reorder,, FLAKY
 org.jetbrains.kotlin.idea.navigation.KotlinGotoImplementationMultiModuleTestGenerated.testExpectClassSuperclassFun,,, FLAKY
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib1.testUseJavaFromLib, KT-34542, FAIL,
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib2.testUseJavaSAMFromLib, KT-34542, FAIL,
 org.jetbrains.kotlin.idea.parameterInfo.ParameterInfoTestGenerated.WithLib3.testUseJavaSAMFromLib, KT-34542, FAIL,
 org.jetbrains.kotlin.idea.quickfix.QuickFixMultiFileTestGenerated.ChangeSignature.Jk.testJkKeepValOnParameterTypeChange, Unprocessed,,
-org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.Other.testConvertActualSealedClassToEnum, Enum reorder,,
-org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated.Other.testConvertExpectSealedClassToEnum, Enum reorder,,
 org.jetbrains.kotlin.idea.refactoring.inline.InlineTestGenerated.Function.ExpressionBody.testMultipleInExpression, Unstable order of usages,,FLAKY
 org.jetbrains.kotlin.idea.refactoring.introduce.ExtractionTestGenerated.IntroduceJavaParameter.testJavaMethodOverridingKotlinFunctionWithUsages, Unprocessed,, FLAKY
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testJava_moveClass_moveInnerToTop_moveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda_MoveNestedClassToTopLevelInTheSamePackageAndAddOuterInstanceWithLambda, final modifier added,,
@@ -113,8 +110,6 @@ org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedI
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Var.testVarWithTypeWoInitializer, Unprocessed,, FLAKY
 org.jetbrains.kotlin.idea.refactoring.pullUp.PullUpTestGenerated.K2K.testAccidentalOverrides, Unprocessed,, FLAKY
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testKotlin_moveTopLevelDeclarations_moveFunctionToPackage_MoveFunctionToPackage, fail on TeamCity but works well locally,, FLAKY
-org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesOnly, Generated entries reordered,, FLAKY
-org.jetbrains.kotlin.idea.intentions.IntentionTestGenerated.ConvertSealedClassToEnum.testInstancesAndMembers, Enum reorder,, FLAKY
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testChangeInsideNonKtsFileInvalidatesOtherFiles, Unprocessed,,
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testTwoFilesChanged, Unprocessed,,
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testLoadedConfigurationWhenExternalFileChanged, Unprocessed,,
