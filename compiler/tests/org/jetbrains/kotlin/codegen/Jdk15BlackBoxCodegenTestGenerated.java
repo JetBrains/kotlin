@@ -28,18 +28,36 @@ public class Jdk15BlackBoxCodegenTestGenerated extends AbstractJdk15BlackBoxCode
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/java15/box"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
-    @TestMetadata("recordDifferentPropertyOverride.kt")
-    public void testRecordDifferentPropertyOverride() throws Exception {
-        runTest("compiler/testData/codegen/java15/box/recordDifferentPropertyOverride.kt");
-    }
+    @TestMetadata("compiler/testData/codegen/java15/box/records")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Records extends AbstractJdk15BlackBoxCodegenTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
 
-    @TestMetadata("recordDifferentSyntheticProperty.kt")
-    public void testRecordDifferentSyntheticProperty() throws Exception {
-        runTest("compiler/testData/codegen/java15/box/recordDifferentSyntheticProperty.kt");
-    }
+        public void testAllFilesPresentInRecords() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/java15/box/records"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
 
-    @TestMetadata("recordPropertyAccess.kt")
-    public void testRecordPropertyAccess() throws Exception {
-        runTest("compiler/testData/codegen/java15/box/recordPropertyAccess.kt");
+        @TestMetadata("bytecodeShapeForJava.kt")
+        public void testBytecodeShapeForJava() throws Exception {
+            runTest("compiler/testData/codegen/java15/box/records/bytecodeShapeForJava.kt");
+        }
+
+        @TestMetadata("recordDifferentPropertyOverride.kt")
+        public void testRecordDifferentPropertyOverride() throws Exception {
+            runTest("compiler/testData/codegen/java15/box/records/recordDifferentPropertyOverride.kt");
+        }
+
+        @TestMetadata("recordDifferentSyntheticProperty.kt")
+        public void testRecordDifferentSyntheticProperty() throws Exception {
+            runTest("compiler/testData/codegen/java15/box/records/recordDifferentSyntheticProperty.kt");
+        }
+
+        @TestMetadata("recordPropertyAccess.kt")
+        public void testRecordPropertyAccess() throws Exception {
+            runTest("compiler/testData/codegen/java15/box/records/recordPropertyAccess.kt");
+        }
     }
 }

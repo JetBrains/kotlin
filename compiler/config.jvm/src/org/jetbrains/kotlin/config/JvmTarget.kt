@@ -29,6 +29,7 @@ enum class JvmTarget(override val description: String) : TargetPlatformVersion {
     JVM_13("13"),
     JVM_14("14"),
     JVM_15("15"),
+    JVM_15_PREVIEW("15_PREVIEW"),
     ;
 
     val bytecodeVersion: Int by lazy {
@@ -39,9 +40,10 @@ enum class JvmTarget(override val description: String) : TargetPlatformVersion {
             JVM_10 -> Opcodes.V10
             JVM_11 -> Opcodes.V11
             JVM_12 -> Opcodes.V12
-            JVM_13 -> Opcodes.V12 + 1
-            JVM_14 -> Opcodes.V12 + 2
-            JVM_15 -> Opcodes.V12 + 3
+            JVM_13 -> Opcodes.V13
+            JVM_14 -> Opcodes.V14
+            JVM_15 -> Opcodes.V15
+            JVM_15_PREVIEW -> Opcodes.V15 + (0xffff shl 16)
         }
     }
 

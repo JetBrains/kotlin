@@ -17,4 +17,6 @@ abstract class AbstractJdk15BlackBoxCodegenTest : AbstractCustomJDKBlackBoxCodeg
 
     override fun getAdditionalJavacArgs(): List<String> = ADDITIONAL_JAVAC_ARGS_FOR_15
     override fun getAdditionalJvmArgs(): List<String> = listOf("--enable-preview")
+
+    override fun verifyWithDex(): Boolean = false
 }
