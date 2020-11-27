@@ -85,6 +85,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationRes
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.AbstractSessionsInvalidationTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
@@ -1048,6 +1049,9 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractFileStructureTest> {
                 model("fileStructure")
+            }
+            testClass<AbstractSessionsInvalidationTest> {
+                model("sessionInvalidation", recursive = false, extension = null)
             }
         }
 

@@ -55,4 +55,10 @@ internal object TestProjectStructureReader {
         val json = JsonParser().parse(FileUtil.loadFile(jsonFile.toFile(), /*convertLineSeparators=*/true))
         return TestProjectStructure.parse(json)
     }
+
+    fun <T> readToTestStructure(
+        testDirectory: Path,
+        jsonFileName: String = "structure.json",
+        toTestStructure: (TestProjectStructure) -> T,
+    ): T = read(testDirectory, jsonFileName).let(toTestStructure)
 }

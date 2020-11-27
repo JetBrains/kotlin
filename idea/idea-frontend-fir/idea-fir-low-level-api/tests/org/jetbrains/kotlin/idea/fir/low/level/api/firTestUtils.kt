@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
+import com.intellij.openapi.components.service
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
+import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.KotlinFirModificationTrackerService
 import org.jetbrains.kotlin.psi.KtElement
 
 internal fun Project.allModules() = ModuleManager.getInstance(this).modules.toList()
@@ -16,4 +19,8 @@ internal fun Project.allModules() = ModuleManager.getInstance(this).modules.toLi
 inline fun resolveWithClearCaches(context: KtElement, action: (FirModuleResolveState) -> Unit) {
     val resolveState = createResolveStateForNoCaching(context.getModuleInfo())
     action(resolveState)
+}
+
+internal fun Module.incModificationTracker() {
+    project.service<KotlinFirModificationTrackerService>().increaseModificationCountForModule(this)
 }
