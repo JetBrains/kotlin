@@ -7,17 +7,13 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.isFinalClass
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtModifierList
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
@@ -72,6 +68,16 @@ object JvmRecordApplicabilityChecker : DeclarationChecker {
             return
         }
 
+        if (descriptor.isInner) {
+            val modifierOrName =
+                declaration.modifierList?.getModifier(KtTokens.INNER_KEYWORD)
+                    ?: declaration.nameIdentifier
+                    ?: declaration
+
+            context.trace.report(ErrorsJvm.INNER_JVM_RECORD.on(modifierOrName))
+            return
+        }
+
         if (DescriptorUtils.isLocal(descriptor)) {
             context.trace.report(ErrorsJvm.LOCAL_JVM_RECORD.on(reportOn))
             return
@@ -98,6 +104,23 @@ object JvmRecordApplicabilityChecker : DeclarationChecker {
                 context.trace.report(ErrorsJvm.JVM_RECORD_NOT_LAST_VARARG_PARAMETER.on(parameter))
                 return
             }
+        }
+
+        for (member in declaration.declarations) {
+            if (member !is KtProperty) continue
+
+            val propertyDescriptor = context.trace[BindingContext.DECLARATION_TO_DESCRIPTOR, member] as? PropertyDescriptor ?: continue
+            if (context.trace.bindingContext[BindingContext.BACKING_FIELD_REQUIRED, propertyDescriptor] != true && member.delegate == null) continue
+
+            context.trace.report(ErrorsJvm.FIELD_IN_JVM_RECORD.on(member))
+            return
+        }
+
+        for (superTypeEntry in declaration.superTypeListEntries) {
+            if (superTypeEntry !is KtDelegatedSuperTypeEntry) continue
+
+            context.trace.report(ErrorsJvm.DELEGATION_BY_IN_JVM_RECORD.on(superTypeEntry))
+            return
         }
 
         for (supertype in descriptor.typeConstructor.supertypes) {
