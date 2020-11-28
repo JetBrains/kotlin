@@ -12,8 +12,11 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
@@ -25,14 +28,17 @@ import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
+import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirCallCompleter(
@@ -52,9 +58,7 @@ class FirCallCompleter(
 
         val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return CompletionResult(call, true)
         val candidate = reference.candidate
-        val initialSubstitutor = candidate.substitutor
-
-        val initialType = initialSubstitutor.substituteOrSelf(typeRef.type)
+        val initialType = components.initialTypeOfCandidate(candidate, call)
 
         if (call is FirExpression) {
             call.resultType = typeRef.resolvedTypeFromPrototype(initialType)
@@ -72,15 +76,7 @@ class FirCallCompleter(
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {
                 if (inferenceSession.shouldRunCompletion(call)) {
-                    completer.complete(
-                        candidate.system.asConstraintSystemCompleterContext(),
-                        completionMode,
-                        listOf(call),
-                        initialType,
-                        transformer.resolutionContext
-                    ) {
-                        analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it, candidate)
-                    }
+                    runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
                     val finalSubstitutor = candidate.system.asReadOnlyStorage()
                         .buildAbstractResultingSubstitutor(session.inferenceComponents.ctx) as ConeSubstitutor
                     val completedCall = call.transformSingle(
@@ -99,21 +95,54 @@ class FirCallCompleter(
             }
 
             ConstraintSystemCompletionMode.PARTIAL -> {
-                completer.complete(
-                    candidate.system.asConstraintSystemCompleterContext(),
-                    completionMode,
-                    listOf(call),
-                    initialType,
-                    transformer.resolutionContext
-                ) {
-                    analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it, candidate)
-                }
+                runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
                 inferenceSession.addPartiallyResolvedCall(call)
                 CompletionResult(call, false)
             }
 
             ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA -> throw IllegalStateException()
         }
+    }
+
+    fun <T> runCompletionForCall(
+        candidate: Candidate,
+        completionMode: ConstraintSystemCompletionMode,
+        call: T,
+        initialType: ConeKotlinType,
+        analyzer: PostponedArgumentsAnalyzer? = null
+    ) where T : FirResolvable, T : FirStatement {
+        @Suppress("NAME_SHADOWING")
+        val analyzer = analyzer ?: createPostponedArgumentsAnalyzer(transformer.resolutionContext)
+        completer.complete(
+            candidate.system.asConstraintSystemCompleterContext(),
+            completionMode,
+            listOf(call),
+            initialType,
+            transformer.resolutionContext
+        ) {
+            analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it, candidate)
+        }
+    }
+
+    fun prepareLambdaAtomForFactoryPattern(
+        atom: ResolvedLambdaAtom,
+        candidate: Candidate
+    ) {
+        val returnVariable = ConeTypeVariableForLambdaReturnType(atom.atom, "_R")
+        val csBuilder = candidate.system.getBuilder()
+        csBuilder.registerVariable(returnVariable)
+        val functionalType = csBuilder.buildCurrentSubstitutor()
+            .safeSubstitute(csBuilder.asConstraintSystemCompleterContext(), atom.expectedType!!) as ConeClassLikeType
+        val size = functionalType.typeArguments.size
+        val expectedType = ConeClassLikeTypeImpl(
+            functionalType.lookupTag,
+            Array(size) { index -> if (index != size - 1) functionalType.typeArguments[index] else returnVariable.defaultType },
+            isNullable = functionalType.isNullable,
+            functionalType.attributes
+        )
+        csBuilder.addSubtypeConstraint(expectedType, functionalType, ConeArgumentConstraintPosition())
+        atom.replaceExpectedType(expectedType)
+        atom.replaceTypeVariableForLambdaReturnType(returnVariable)
     }
 
     fun createCompletionResultsWriter(

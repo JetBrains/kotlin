@@ -31,8 +31,9 @@
 #include "Natives.h"
 #include "ObjCInterop.h"
 #include "ObjCExportPrivate.h"
+#include "ObjCMMAPI.h"
 #include "Types.h"
-#include "Utils.h"
+#include "Mutex.hpp"
 
 // Replaced in ObjCExportCodeGenerator.
 __attribute__((weak)) const char* Kotlin_ObjCInterop_uniquePrefix = nullptr;
@@ -308,6 +309,13 @@ void objc_autoreleasePoolPop(void* ptr);
 id objc_allocWithZone(Class clazz);
 id objc_retain(id ptr);
 void objc_release(id ptr);
+
+konan::AutoreleasePool::AutoreleasePool()
+  : handle(objc_autoreleasePoolPush()) {}
+
+konan::AutoreleasePool::~AutoreleasePool() {
+  objc_autoreleasePoolPop(handle);
+}
 
 void* Kotlin_objc_autoreleasePoolPush() {
   return objc_autoreleasePoolPush();

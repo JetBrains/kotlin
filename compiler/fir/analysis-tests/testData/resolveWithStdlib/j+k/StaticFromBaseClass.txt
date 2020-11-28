@@ -1,5 +1,5 @@
 FILE: main.kt
     public final fun test(): R|kotlin/Unit| {
-        lval project: R|ft<kotlin/String, kotlin/String?>!| = Q|PlatformDataKeys|.R|/CommonDataKeys.PROJECT|
-        lval member: R|ft<kotlin/String, kotlin/String?>!| = R|/PlatformDataKeys.PlatformDataKeys|().R|/CommonDataKeys.MEMBER|
+        lval project: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = Q|PlatformDataKeys|.R|/CommonDataKeys.PROJECT|
+        lval member: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = R|/PlatformDataKeys.PlatformDataKeys|().R|/CommonDataKeys.MEMBER|
     }

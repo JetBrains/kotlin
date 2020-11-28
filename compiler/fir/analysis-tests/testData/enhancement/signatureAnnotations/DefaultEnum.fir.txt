@@ -1,17 +1,17 @@
 public/*package*/ open class A : R|kotlin/Any| {
-    public open fun a(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(HELLO)) arg: R|ft<Signs, Signs?>!| = R|/Signs.HELLO|): R|ft<Signs, Signs?>!|
+    public open fun a(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(HELLO)) arg: R|ft<@FlexibleNullability Signs, Signs?>!| = R|/Signs.HELLO|): R|ft<@FlexibleNullability Signs, Signs?>!|
 
-    public open fun bar(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(X)) arg: R|ft<Signs, Signs?>!| = R|/Signs.X|): R|ft<Signs, Signs?>!|
+    public open fun bar(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(X)) arg: R|ft<@FlexibleNullability Signs, Signs?>!| = R|/Signs.X|): R|ft<@FlexibleNullability Signs, Signs?>!|
 
-    public open fun baz(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(NOT_ENTRY_EITHER)) arg: R|ft<Signs, Signs?>!|): R|ft<Signs, Signs?>!|
+    public open fun baz(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(NOT_ENTRY_EITHER)) arg: R|ft<@FlexibleNullability Signs, Signs?>!|): R|ft<@FlexibleNullability Signs, Signs?>!|
 
-    public open fun bam(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(NOT_ENTRY_EITHER)) arg: R|ft<Mixed, Mixed?>!| = R|/Mixed.NOT_ENTRY_EITHER|): R|ft<Mixed, Mixed?>!|
+    public open fun bam(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(NOT_ENTRY_EITHER)) arg: R|ft<@FlexibleNullability Mixed, Mixed?>!| = R|/Mixed.NOT_ENTRY_EITHER|): R|ft<@FlexibleNullability Mixed, Mixed?>!|
 
     public/*package*/ constructor(): R|A|
 
 }
-public final enum class Mixed : R|kotlin/Enum<ft<Mixed, Mixed?>!>| {
-    public final static enum entry NOT_ENTRY_EITHER: R|Mixed|
+public final enum class Mixed : R|kotlin/Enum<ft<@FlexibleNullability Mixed, Mixed?>!>| {
+    public final static enum entry NOT_ENTRY_EITHER: R|@FlexibleNullability Mixed|
     public final static fun values(): R|kotlin/Array<Mixed>| {
     }
 
@@ -19,10 +19,10 @@ public final enum class Mixed : R|kotlin/Enum<ft<Mixed, Mixed?>!>| {
     }
 
 }
-public final enum class Signs : R|kotlin/Enum<ft<Signs, Signs?>!>| {
-    public final static enum entry HELLO: R|Signs|
-    public final static enum entry WORLD: R|Signs|
-    public final static field X: R|ft<Signs, Signs?>!|
+public final enum class Signs : R|kotlin/Enum<ft<@FlexibleNullability Signs, Signs?>!>| {
+    public final static enum entry HELLO: R|@FlexibleNullability Signs|
+    public final static enum entry WORLD: R|@FlexibleNullability Signs|
+    public final static field X: R|ft<@FlexibleNullability Signs, Signs?>!|
 
     public final static fun values(): R|kotlin/Array<Signs>| {
     }

@@ -154,7 +154,7 @@ fun Project.projectTest(
 
     var subProjectTempRoot: Path? = null
     doFirst {
-        val teamcity = rootProject.findProperty("teamcity") as? Map<Any?, *>
+        val teamcity = rootProject.findProperty("teamcity") as? Map<*, *>
         val systemTempRoot =
             // TC by default doesn't switch `teamcity.build.tempDir` to 'java.io.tmpdir' so it could cause to wasted disk space
             // Should be fixed soon on Teamcity side
@@ -180,7 +180,7 @@ fun Project.projectTest(
     if (parallel) {
         maxParallelForks =
             project.findProperty("kotlin.test.maxParallelForks")?.toString()?.toInt()
-                ?: Math.max(Runtime.getRuntime().availableProcessors() / if (kotlinBuildProperties.isTeamcityBuild) 2 else 4, 1)
+                ?: (Runtime.getRuntime().availableProcessors() / if (kotlinBuildProperties.isTeamcityBuild) 2 else 4).coerceAtLeast(1)
     }
     body()
 }

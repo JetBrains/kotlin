@@ -8,15 +8,8 @@ package org.jetbrains.kotlin.idea.asJava
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
-import com.intellij.psi.impl.light.AbstractLightClass
-import com.intellij.psi.impl.light.LightMethod
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightElement
-import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.search.KotlinSearchUsagesSupport
-import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
 interface LightClassProvider {
 

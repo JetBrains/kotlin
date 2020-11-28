@@ -66,6 +66,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/classes/classes.kt");
         }
 
+        @TestMetadata("cloneable.kt")
+        public void testCloneable() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/cloneable.kt");
+        }
+
         @TestMetadata("companionObject.kt")
         public void testCompanionObject() throws Exception {
             runTest("compiler/testData/ir/irText/classes/companionObject.kt");
@@ -189,6 +194,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         @TestMetadata("kt31649.kt")
         public void testKt31649() throws Exception {
             runTest("compiler/testData/ir/irText/classes/kt31649.kt");
+        }
+
+        @TestMetadata("kt43217.kt")
+        public void testKt43217() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/kt43217.kt");
         }
 
         @TestMetadata("lambdaInDataClassDefaultParameter.kt")
@@ -401,6 +411,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
                 runTest("compiler/testData/ir/irText/declarations/annotations/annotationsInAnnotationArguments.kt");
             }
 
+            @TestMetadata("annotationsOnDelegatedMembers.kt")
+            public void testAnnotationsOnDelegatedMembers() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/annotationsOnDelegatedMembers.kt");
+            }
+
             @TestMetadata("annotationsWithDefaultParameterValues.kt")
             public void testAnnotationsWithDefaultParameterValues() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/annotationsWithDefaultParameterValues.kt");
@@ -469,6 +484,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             @TestMetadata("functionsWithAnnotations.kt")
             public void testFunctionsWithAnnotations() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/annotations/functionsWithAnnotations.kt");
+            }
+
+            @TestMetadata("inheritingDeprecation.kt")
+            public void testInheritingDeprecation() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/annotations/inheritingDeprecation.kt");
             }
 
             @TestMetadata("javaAnnotation.kt")
@@ -1172,6 +1192,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/objectAsCallable.kt");
         }
 
+        @TestMetadata("objectByNameInsideObject.kt")
+        public void testObjectByNameInsideObject() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/objectByNameInsideObject.kt");
+        }
+
         @TestMetadata("objectClassReference.kt")
         public void testObjectClassReference() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/objectClassReference.kt");
@@ -1752,9 +1777,19 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/ClashResolutionDescriptor.kt");
         }
 
+        @TestMetadata("coercionToUnitForNestedWhen.kt")
+        public void testCoercionToUnitForNestedWhen() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/coercionToUnitForNestedWhen.kt");
+        }
+
         @TestMetadata("DeepCopyIrTree.kt")
         public void testDeepCopyIrTree() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/DeepCopyIrTree.kt");
+        }
+
+        @TestMetadata("DelegationAndInheritanceFromJava.kt")
+        public void testDelegationAndInheritanceFromJava() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/DelegationAndInheritanceFromJava.kt");
         }
 
         @TestMetadata("deprecated.kt")
@@ -1772,9 +1807,19 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/InnerClassInAnonymous.kt");
         }
 
+        @TestMetadata("MultiList.kt")
+        public void testMultiList() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/MultiList.kt");
+        }
+
         @TestMetadata("putIfAbsent.kt")
         public void testPutIfAbsent() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/putIfAbsent.kt");
+        }
+
+        @TestMetadata("recursiveCapturedTypeInPropertyReference.kt")
+        public void testRecursiveCapturedTypeInPropertyReference() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/recursiveCapturedTypeInPropertyReference.kt");
         }
 
         @TestMetadata("SameJavaFieldReferences.kt")
@@ -1787,9 +1832,19 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/SignatureClash.kt");
         }
 
+        @TestMetadata("throwableStackTrace.kt")
+        public void testThrowableStackTrace() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/throwableStackTrace.kt");
+        }
+
         @TestMetadata("V8ArrayToList.kt")
         public void testV8ArrayToList() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/V8ArrayToList.kt");
+        }
+
+        @TestMetadata("VarInInit.kt")
+        public void testVarInInit() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/VarInInit.kt");
         }
     }
 

@@ -53,6 +53,10 @@ interface Configurables : TargetableExternalStorage {
     val absoluteTargetToolchain get() = absolute(targetToolchain)
     val absoluteLlvmHome get() = absolute(llvmHome)
 
+    val targetCpu get() = targetString("targetCpu")
+    val targetCpuFeatures get() = targetString("targetCpuFeatures")
+    val llvmInlineThreshold get() = targetString("llvmInlineThreshold")
+
     val runtimeDefinitions get() = targetList("runtimeDefinitions")
 }
 
@@ -77,6 +81,7 @@ interface GccConfigurables : TargetableConfigurables, ClangFlags {
     val libGcc get() = targetString("libGcc")!!
     val dynamicLinker get() = targetString("dynamicLinker")!!
     val abiSpecificLibraries get() = targetList("abiSpecificLibraries")
+    val linkerGccFlags get() = targetList("linkerGccFlags")
 }
 
 interface AndroidConfigurables : TargetableConfigurables, ClangFlags
@@ -85,6 +90,5 @@ interface WasmConfigurables : TargetableConfigurables, ClangFlags, LldFlags
 
 interface ZephyrConfigurables : TargetableConfigurables, ClangFlags {
     val boardSpecificClangFlags get() = targetList("boardSpecificClangFlags")
-    val targetCpu get() = targetString("targetCpu")
     val targetAbi get() = targetString("targetAbi")
 }

@@ -11,8 +11,8 @@ fun case_1() {
     var x: String?
     x = "Test"
     println("${if (true) x = null else 1}")
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String & kotlin.String?")!>x<!>.length
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 /*
@@ -24,8 +24,8 @@ fun case_2() {
     var x: String?
     x = "Test"
     println("${try { x = null } finally { }}")
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 /*
@@ -37,8 +37,8 @@ fun case_3() {
     var x: String?
     x = "Test"
     println("${try {  } finally { x = null }}")
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 /*
@@ -50,8 +50,8 @@ fun case_4() {
     var x: String?
     x = "Test"
     println("${try { x = null } catch (e: Exception) { } finally { }}")
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 /*
@@ -63,8 +63,8 @@ fun case_5() {
     var x: String?
     x = "Test"
     println("${try { } catch (e: Exception) { x = null } finally {  }}")
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 /*
@@ -76,8 +76,8 @@ fun case_6() {
     var x: String?
     x = "Test"
     println("${try { } catch (e: Exception) { } finally { x = null }}")
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 /*
@@ -89,8 +89,8 @@ fun case_7() {
     var x: String?
     x = "Test"
     println("${try { x = null } catch (e: Exception) { }}")
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 /*
@@ -102,8 +102,8 @@ fun case_8() {
     var x: String?
     x = "Test"
     println("${try { } catch (e: Exception) { x = null }}")
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
 }
 
 /*
@@ -115,6 +115,6 @@ fun case_9() {
     var x: String?
     x = "Test"
     println("${when (null) { else -> x = null } }")
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>length<!>
 }

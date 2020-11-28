@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_ENUM
 import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
 import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
@@ -124,19 +125,25 @@ internal class EnumUsageLowering(val context: Context)
     }
 }
 
-internal class EnumClassLowering(val context: Context) : ClassLoweringPass {
+internal class EnumClassLowering(val context: Context) : FileLoweringPass {
 
     fun run(irFile: IrFile) {
         // EnumWhenLowering should be performed before EnumUsageLowering because
         // the latter performs lowering of IrGetEnumValue
         EnumWhenLowering(context).lower(irFile)
-        runOnFilePostfix(irFile)
+        lower(irFile)
         EnumUsageLowering(context).lower(irFile)
     }
 
-    override fun lower(irClass: IrClass) {
-        if (irClass.kind != ClassKind.ENUM_CLASS) return
-        EnumClassTransformer(irClass).run()
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitClass(declaration: IrClass): IrStatement {
+                declaration.transformChildrenVoid()
+                if (declaration.kind == ClassKind.ENUM_CLASS)
+                    EnumClassTransformer(declaration).run()
+                return declaration
+            }
+        })
     }
 
     private inner class EnumClassTransformer(val irClass: IrClass) {

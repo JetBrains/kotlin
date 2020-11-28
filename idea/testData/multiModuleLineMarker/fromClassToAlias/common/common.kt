@@ -1,4 +1,4 @@
-expect class <lineMarker>Header</lineMarker> {
+expect class <!LINE_MARKER("descr='Has actuals in JVM'")!>Header<!> {
 
 }
 

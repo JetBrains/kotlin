@@ -184,6 +184,7 @@ fun createTestTask(
                 excludeFiles = emptyList()
                 includeFiles = listOf("**/*Test.cpp", "**/*Test.mm")
                 dependsOn(it)
+                dependsOn("downloadGoogleTest")
                 compilerArgs.addAll(it.compilerArgs)
                 headersDirs += googleTestExtension.headersDirs
                 this.configureCompileToBitcode()

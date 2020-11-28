@@ -158,6 +158,11 @@ public class JvmOldAgainstIrBoxTestGenerated extends AbstractJvmOldAgainstIrBoxT
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassInlineProperty.kt");
     }
 
+    @TestMetadata("inlineClassesOldMangling.kt")
+    public void testInlineClassesOldMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassesOldMangling.kt");
+    }
+
     @TestMetadata("inlinedConstants.kt")
     public void testInlinedConstants() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlinedConstants.kt");
@@ -403,6 +408,16 @@ public class JvmOldAgainstIrBoxTestGenerated extends AbstractJvmOldAgainstIrBoxT
 
         public void testAllFilesPresentInFir() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin/fir"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR, true);
+        }
+
+        @TestMetadata("AnonymousObjectInProperty.kt")
+        public void testAnonymousObjectInProperty() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/fir/AnonymousObjectInProperty.kt");
+        }
+
+        @TestMetadata("ExistingSymbolInFakeOverride.kt")
+        public void testExistingSymbolInFakeOverride() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/fir/ExistingSymbolInFakeOverride.kt");
         }
 
         @TestMetadata("LibraryProperty.kt")

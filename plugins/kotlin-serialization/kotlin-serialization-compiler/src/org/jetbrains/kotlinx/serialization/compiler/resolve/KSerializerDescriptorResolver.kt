@@ -588,13 +588,12 @@ object KSerializerDescriptorResolver {
     ) {
         if (isSerialInfoImpl(thisDescriptor)) {
             result.add(
-                fromSupertypes[0].copy(
-                    thisDescriptor,
-                    Modality.FINAL,
-                    DescriptorVisibilities.PUBLIC,
-                    CallableMemberDescriptor.Kind.SYNTHESIZED,
-                    true
-                ) as PropertyDescriptor
+                fromSupertypes.first().newCopyBuilder().apply {
+                    setOwner(thisDescriptor)
+                    setModality(Modality.FINAL)
+                    setKind(CallableMemberDescriptor.Kind.SYNTHESIZED)
+                    setDispatchReceiverParameter(thisDescriptor.thisAsReceiverParameter)
+                }.build()!!
             )
         }
     }

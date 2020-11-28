@@ -7,6 +7,5 @@ package org.jetbrains.kotlin.idea.test
 
 import com.intellij.openapi.project.Project
 
-// FIX ME WHEN BUNCH 193 REMOVED
 fun runPostStartupActivitiesOnce(project: Project) {
 }

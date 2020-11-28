@@ -23,6 +23,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
+import org.jetbrains.kotlin.gradle.util.createTempDir
 import kotlin.test.assertEquals
 
 private val DEFAULT_GRADLE_VERSION = GradleVersionRequired.AtLeast("5.6.4")

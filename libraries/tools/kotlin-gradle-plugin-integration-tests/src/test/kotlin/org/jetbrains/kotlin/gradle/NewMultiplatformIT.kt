@@ -4,6 +4,8 @@
  */
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.checkNativeCommandLineArguments
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.native.configureMemoryInGradleProperties
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProject
@@ -123,14 +125,6 @@ class NewMultiplatformIT : BaseGradleIT() {
             // we use `maven { setUrl(...) }` because this syntax actually works both for Groovy and Kotlin DSLs in Gradle
             gradleBuildScript().appendText("\nrepositories { maven { setUrl(\"$libLocalRepoUri\") } }")
 
-            fun CompiledProject.checkProgramCompilationCommandLine(check: (String) -> Unit) {
-                output.lineSequence().filter {
-                    it.contains("Run tool: \"konanc\"") && it.contains("-p program")
-                }.toList().also {
-                    assertTrue(it.isNotEmpty())
-                }.forEach(check)
-            }
-
             fun CompiledProject.checkAppBuild() {
                 assertSuccessful()
                 assertTasksExecuted(*compileTasksNames.toTypedArray())
@@ -159,8 +153,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertFileExists("build/bin/linux64/mainDebugExecutable/$nativeExeName")
 
                 // Check that linker options were correctly passed to the K/N compiler.
-                checkProgramCompilationCommandLine {
-                    assertTrue(it.contains("-linker-option -L."))
+                checkNativeCommandLineArguments(":linkMainDebugExecutableLinux64") { arguments ->
+                    assertTrue(arguments.containsSequentially("-linker-option", "-L."))
                 }
             }
 
@@ -712,7 +706,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertTasksExecuted(":$it")
                 assertContains(
                     "-XXLanguage:+InlineClasses",
-                    " -progressive", "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
+                    "-progressive", "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
                     "-Xopt-in=kotlin.contracts.ExperimentalContracts",
                     "-Xno-inline"
                 )

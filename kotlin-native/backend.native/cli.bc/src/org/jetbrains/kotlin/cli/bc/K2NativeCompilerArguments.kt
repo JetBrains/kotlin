@@ -121,9 +121,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xcheck-dependencies", deprecatedName = "--check_dependencies", description = "Check dependencies and download the missing ones")
     var checkDependencies: Boolean = false
 
-    @Argument(value="-Xcompatible-compiler-version", valueDescription = "<version>", description = "Assume the given compiler version to be binary compatible")
-    var compatibleCompilerVersions: Array<String>? = null
-
     @Argument(value = EMBED_BITCODE_FLAG, description = "Embed LLVM IR bitcode as data")
     var embedBitcode: Boolean = false
 
@@ -145,8 +142,8 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var exportedLibraries: Array<String>? = null
 
-    @Argument(value="-Xdisable-fake-override-validator", description = "Disable IR fake override validator")
-    var disableFakeOverrideValidator: Boolean = false
+    @Argument(value="-Xfake-override-validator", description = "Enable IR fake override validator")
+    var fakeOverrideValidator: Boolean = false
 
     @Argument(
             value = "-Xframework-import-header",
@@ -228,6 +225,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xverify-bitcode", deprecatedName = "--verify_bitcode", description = "Verify llvm bitcode after each method")
     var verifyBitCode: Boolean = false
 
+    @Argument(value = "-Xverify-ir", description = "Verify IR")
+    var verifyIr: Boolean = false
+
     @Argument(value = "-Xverify-compiler", description = "Verify compiler")
     var verifyCompiler: String? = null
 
@@ -277,6 +277,19 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
             description = "Perform caches pre-link"
     )
     var preLinkCaches: String? = null
+
+    // We use `;` as delimiter because properties may contain comma-separated values.
+    // For example, target cpu features.
+    @Argument(
+            value = "-Xoverride-konan-properties",
+            valueDescription = "key1=value1;key2=value2;...",
+            description = "Override konan.properties.values",
+            delimiter = ";"
+    )
+    var overrideKonanProperties: Array<String>? = null
+
+    @Argument(value="-Xdestroy-runtime-mode", valueDescription = "<mode>", description = "When to destroy runtime. 'legacy' and 'on-shutdown' are currently supported. NOTE: 'legacy' mode is deprecated and will be removed.")
+    var destroyRuntimeMode: String? = "on-shutdown"
 
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> =
             super.configureAnalysisFlags(collector).also {

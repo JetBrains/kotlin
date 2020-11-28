@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: Context) {
-    if (!context.config.needCompilerVerification) return
+    if (!context.config.needVerifyIr) return
 
     val validatorConfig = IrValidatorConfig(
         abortOnError = false,
@@ -438,7 +438,8 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
                                 unitSink()
                 ) then
                 objectFilesPhase then
-                linkerPhase
+                linkerPhase then
+                freeNativeMemPhase
 )
 
 internal fun PhaseConfig.disableIf(phase: AnyNamedPhase, condition: Boolean) {
@@ -475,5 +476,6 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disableIf(psiToIrPhase, isDescriptorsOnlyLibrary)
         disableIf(destroySymbolTablePhase, isDescriptorsOnlyLibrary)
         disableIf(copyDefaultValuesToActualPhase, isDescriptorsOnlyLibrary)
+        disableIf(specialBackendChecksPhase, isDescriptorsOnlyLibrary)
     }
 }

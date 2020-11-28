@@ -1,0 +1,11 @@
+depends = darwin posix
+language = Objective-C
+package = platform.Hypervisor
+modules = Hypervisor
+
+compilerOpts = -framework Hypervisor
+linkerOpts = -framework Hypervisor
+#Disabled: doesn't work with macOS 11.0 SDK (Xcode 12.2).
+#Fixing this requires to switch this lib from modules to headers,
+#but previous versions don't have an umbrella header.
+#TODO: fix and enable after updating to Xcode 12.2.

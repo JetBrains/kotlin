@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -89,9 +90,11 @@ class FirTypeDeserializer(
         }
     }
 
-    private fun computeClassifier(fqNameIndex: Int): ConeClassLikeLookupTag? {
+    private fun computeClassifier(fqNameIndex: Int): ConeClassLikeLookupTag {
         try {
-            val id = nameResolver.getClassId(fqNameIndex)
+            // We can't just load local types as is, because later we will get an exception
+            // while trying to get corresponding FIR class
+            val id = nameResolver.getClassId(fqNameIndex).takeIf { !it.isLocal } ?: StandardClassIds.Any
             return ConeClassLikeLookupTagImpl(id)
         } catch (e: Throwable) {
             throw RuntimeException("Looking up for ${nameResolver.getClassId(fqNameIndex)}", e)

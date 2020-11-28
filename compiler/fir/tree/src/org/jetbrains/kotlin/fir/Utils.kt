@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.*
 import org.jetbrains.kotlin.fir.types.impl.*
 
@@ -38,9 +41,6 @@ fun <R : FirTypeRef> R.copyWithNewSourceKind(newKind: FirFakeSourceElementKind):
             annotations += typeRef.annotations
         }
         is FirImplicitTypeRef -> buildImplicitTypeRefCopy(typeRef) {
-            source = newSource
-        }
-        is FirComposedSuperTypeRef -> buildComposedSuperTypeRefCopy(typeRef) {
             source = newSource
         }
         is FirFunctionTypeRefImpl -> buildFunctionTypeRefCopy(typeRef) {

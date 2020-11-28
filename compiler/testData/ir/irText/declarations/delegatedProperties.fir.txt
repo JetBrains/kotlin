@@ -60,7 +60,8 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
     PROPERTY name:test3 visibility:public modality:FINAL [delegated,var]
       FIELD PROPERTY_DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]
         EXPRESSION_BODY
-          GET_VAR 'map: kotlin.collections.MutableMap<kotlin.String, kotlin.Any> declared in <root>.C.<init>' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
+          CALL 'public final fun <get-map> (): kotlin.collections.MutableMap<kotlin.String, kotlin.Any> declared in <root>.C' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=GET_PROPERTY
+            $this: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Any
         correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [delegated,var]
         $this: VALUE_PARAMETER name:<this> type:<root>.C

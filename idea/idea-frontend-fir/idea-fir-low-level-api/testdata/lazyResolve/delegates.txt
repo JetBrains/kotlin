@@ -27,7 +27,7 @@ FILE: delegates.kt
         }
     public final [IMPLICIT_TYPES_BODY_RESOLVE] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
         public get(): R|kotlin/Int| {
-            ^ D|/valueWithImplicitType|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
+            ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
         }
     public final [STATUS] var variableWithExplicitType: R|kotlin/Int|by LAZY_EXPRESSION
         public get(): <implicit> {
@@ -38,8 +38,8 @@ FILE: delegates.kt
         }
     public final [IMPLICIT_TYPES_BODY_RESOLVE] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
         public get(): R|kotlin/Int| {
-            ^ D|/variableWithImplicitType|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
+            ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
         }
         public set(<set-?>: R|kotlin/Int|): R|kotlin/Unit| {
-            D|/variableWithImplicitType|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
+            D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
         }

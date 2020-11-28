@@ -27,7 +27,7 @@ class ImportAndCheckHighlighting : MultiplePluginVersionGradleImportingTestCase(
 
     private fun importAndCheckHighlighting(testLineMarkers: Boolean = true, checkWarnings: Boolean = true) {
         val files = configureByFiles()
-        importProject()
+        importProject(skipIndexing = false)
         val project = myTestFixture.project
         checkFiles(
             files.filter { it.extension == "kt" || it.extension == "java" },

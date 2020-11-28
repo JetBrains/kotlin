@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -63,8 +65,10 @@ import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
 import java.io.File
+import kotlin.io.path.*
 import org.jetbrains.kotlin.konan.file.File as KonanFile
 
+@OptIn(ExperimentalPathApi::class)
 @Ignore
 class GenerateIrRuntime {
     private val lookupTracker: LookupTracker = LookupTracker.DO_NOTHING
@@ -249,7 +253,7 @@ class GenerateIrRuntime {
         val irVersion = KlibIrVersion.INSTANCE.toString()
 
         val versions = KotlinLibraryVersioning(libraryVersion, compilerVersion, abiVersion, metadataVersion, irVersion)
-        val file = createTempFile(directory = workingDir)
+        val file = createTempFile(directory = workingDir.toPath()).toFile()
         val writer = KotlinLibraryOnlyIrWriter(file.absolutePath, "", versions, BuiltInsPlatform.JS, emptyList(), false)
         val files = fullRuntimeSourceSet
         val analysisResult = doFrontEnd(files)
@@ -271,7 +275,7 @@ class GenerateIrRuntime {
         val irVersion = KlibIrVersion.INSTANCE.toString()
 
         val versions = KotlinLibraryVersioning(libraryVersion, compilerVersion, abiVersion, metadataVersion, irVersion)
-        val file = createTempFile(directory = workingDir)
+        val file = createTempFile(directory = workingDir.toPath()).toFile()
         val writer = KotlinLibraryOnlyIrWriter(file.absolutePath, "", versions, BuiltInsPlatform.JS, emptyList(), true)
         val files = fullRuntimeSourceSet
         val analysisResult = doFrontEnd(files)
@@ -316,7 +320,7 @@ class GenerateIrRuntime {
         withJsIC {
             val buildHistoryFile = File(cachesDir, "build-history.bin")
             val compiler = IncrementalJsCompilerRunner(
-                cachesDir, EmptyICReporter,
+                cachesDir, BuildReporter(EmptyICReporter, DoNothingBuildMetricsReporter),
                 buildHistoryFile = buildHistoryFile,
                 modulesApiHistory = EmptyModulesApiHistory
             )
@@ -360,7 +364,7 @@ class GenerateIrRuntime {
             withJsIC {
                 val buildHistoryFile = File(cachesDir, "build-history.bin")
                 val compiler = IncrementalJsCompilerRunner(
-                    cachesDir, EmptyICReporter,
+                    cachesDir, BuildReporter(EmptyICReporter, DoNothingBuildMetricsReporter),
                     buildHistoryFile = buildHistoryFile,
                     modulesApiHistory = EmptyModulesApiHistory
                 )
@@ -471,15 +475,16 @@ class GenerateIrRuntime {
         return psi2IrTranslator.generateModuleFragment(psi2IrContext, files, irProviders, emptyList(), null)
     }
 
+    @OptIn(ExperimentalPathApi::class)
     private fun doSerializeModule(moduleFragment: IrModuleFragment, bindingContext: BindingContext, files: List<KtFile>, perFile: Boolean = false): String {
-        val tmpKlibDir = createTempDir().also { it.deleteOnExit() }
+        val tmpKlibDir = createTempDirectory().also { it.toFile().deleteOnExit() }.toString()
         serializeModuleIntoKlib(
             moduleName,
             project,
             configuration,
             bindingContext,
             files,
-            tmpKlibDir.path,
+            tmpKlibDir,
             emptyList(),
             moduleFragment,
             mutableMapOf(),
@@ -488,7 +493,7 @@ class GenerateIrRuntime {
             perFile
         )
 
-        return tmpKlibDir.path
+        return tmpKlibDir
     }
 
     private fun doDeserializeModuleMetadata(moduleRef: KotlinLibrary): ModuleDescriptorImpl {

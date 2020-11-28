@@ -52,8 +52,7 @@ abstract class KotlinIrLinker(
     val logger: LoggingContext,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
-    private val exportedDependencies: List<ModuleDescriptor>,
-    private val deserializeFakeOverrides: Boolean
+    private val exportedDependencies: List<ModuleDescriptor>
 ) : IrDeserializer, FileLocalAwareLinker {
 
     // Kotlin-MPP related data. Consider some refactoring
@@ -173,7 +172,6 @@ abstract class KotlinIrLinker(
                     fileIndex,
                     !strategy.needBodies,
                     strategy.inlineBodies,
-                    deserializeFakeOverrides,
                     moduleDeserializer, allowErrorNodes
                 ).apply {
 
@@ -236,7 +234,6 @@ abstract class KotlinIrLinker(
         private val fileIndex: Int,
         onlyHeaders: Boolean,
         inlineBodies: Boolean,
-        deserializeFakeOverrides: Boolean,
         private val moduleDeserializer: IrModuleDeserializer,
         allowErrorNodes: Boolean
     ) :
@@ -245,7 +242,6 @@ abstract class KotlinIrLinker(
             builtIns,
             symbolTable,
             !onlyHeaders,
-            deserializeFakeOverrides,
             fakeOverrideBuilder,
             allowErrorNodes
         )

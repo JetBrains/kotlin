@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.name.FqName
 
 interface BackendContext {
@@ -33,8 +30,6 @@ interface BackendContext {
     val irBuiltIns: IrBuiltIns
     val sharedVariablesManager: SharedVariablesManager
     val internalPackageFqn: FqName
-    val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
-    val lateinitNullableFields: MutableMap<IrField, IrField>
     val extractedLocalClasses: MutableSet<IrClass>
     val irFactory: IrFactory
 }

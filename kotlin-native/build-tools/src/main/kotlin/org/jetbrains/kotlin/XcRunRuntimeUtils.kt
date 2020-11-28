@@ -10,14 +10,14 @@ import kotlin.math.min
  * Examples of numeric version strings: "12.4.1.2", "9", "0.5".
  */
 private fun compareStringsAsVersions(version1: String, version2: String): Int {
-    val version1 = version1.split('.').map { it.toInt() }
-    val version2 = version2.split('.').map { it.toInt() }
-    val minimalLength = min(version1.size, version2.size)
+    val splitVersion1 = version1.split('.').map { it.toInt() }
+    val splitVersion2 = version2.split('.').map { it.toInt() }
+    val minimalLength = min(splitVersion1.size, splitVersion2.size)
     for (index in 0 until minimalLength) {
-        if (version1[index] < version2[index]) return -1
-        if (version1[index] > version2[index]) return 1
+        if (splitVersion1[index] < splitVersion2[index]) return -1
+        if (splitVersion1[index] > splitVersion2[index]) return 1
     }
-    return version1.size.compareTo(version2.size)
+    return splitVersion1.size.compareTo(splitVersion2.size)
 }
 
 /**

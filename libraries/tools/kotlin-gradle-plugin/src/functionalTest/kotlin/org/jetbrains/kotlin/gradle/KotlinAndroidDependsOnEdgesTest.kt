@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 // TODO KT-34102
-@file:Suppress("invisible_reference", "invisible_member")
+@file:Suppress("invisible_reference", "invisible_member", "FunctionName")
 package org.jetbrains.kotlin.gradle
 
 import com.android.build.gradle.LibraryExtension

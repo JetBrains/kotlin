@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClassAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.scopes.impl.hasTypeOf
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
@@ -28,7 +30,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
@@ -44,6 +45,7 @@ val SAM_PARAMETER_NAME = Name.identifier("block")
 class FirSamResolverImpl(
     private val firSession: FirSession,
     private val scopeSession: ScopeSession,
+    private val outerClassManager: FirOuterClassManager,
 ) : FirSamResolver() {
 
     private val resolvedFunctionType: MutableMap<FirRegularClass, Any> = mutableMapOf()
@@ -51,7 +53,7 @@ class FirSamResolverImpl(
 
     override fun getFunctionTypeForPossibleSamType(type: ConeKotlinType): ConeKotlinType? {
         return when (type) {
-            is ConeClassLikeType -> getFunctionTypeForPossibleSamType(type)
+            is ConeClassLikeType -> getFunctionTypeForPossibleSamType(type.fullyExpandedType(firSession))
             is ConeFlexibleType -> ConeFlexibleType(
                 getFunctionTypeForPossibleSamType(type.lowerBound) ?: return null,
                 getFunctionTypeForPossibleSamType(type.upperBound) ?: return null,
@@ -75,17 +77,26 @@ class FirSamResolverImpl(
                 ?: return null
 
         val unsubstitutedFunctionType = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
+
+        if (firRegularClass.typeParameters.isEmpty()) {
+            return unsubstitutedFunctionType.withNullability(ConeNullability.create(type.isMarkedNullable), firSession.typeContext)
+        }
+
         val substitutor =
             substitutorByMap(
                 firRegularClass.typeParameters
                     .map { it.symbol }
                     .zip(
-                        type.typeArguments.map {
-                            (it as? ConeKotlinTypeProjection)?.type
+                        type.typeArguments,
+                    ).map { (parameterSymbol, projection) ->
+                        val typeArgument =
+                            (projection as? ConeKotlinTypeProjection)?.type
+                            // TODO: Consider using `parameterSymbol.fir.bounds.first().coneType` once sure that it won't fail with exception
+                                ?: parameterSymbol.fir.bounds.firstOrNull()?.coneTypeSafe()
                                 ?: firSession.builtinTypes.nullableAnyType.type
-                            //ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(StandardClassIds.Any), emptyArray(), isNullable = true)
-                        },
-                    )
+
+                        Pair(parameterSymbol, typeArgument)
+                    }
                     .toMap(),
             )
 
@@ -145,7 +156,7 @@ class FirSamResolverImpl(
 
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
             val declared = oldTypeParameter.symbol.fir // TODO: or really declared?
-            newTypeParameter.bounds += declared.bounds.mapNotNull { typeRef ->
+            newTypeParameter.bounds += declared.bounds.map { typeRef ->
                 buildResolvedTypeRef {
                     source = typeRef.source
                     type = substitutor.substituteOrSelf(typeRef.coneType)
@@ -197,17 +208,19 @@ class FirSamResolverImpl(
             }
 
             resolvePhase = FirResolvePhase.BODY_RESOLVE
+        }.apply {
+            containingClassAttr = outerClassManager.outerClass(firRegularClass.symbol)?.toLookupTag()
         }
     }
 
-    private fun resolveFunctionTypeIfSamInterface(firRegularClass: FirRegularClass): ConeKotlinType? {
+    private fun resolveFunctionTypeIfSamInterface(firRegularClass: FirRegularClass): ConeLookupTagBasedType? {
         return resolvedFunctionType.getOrPut(firRegularClass) {
             if (!firRegularClass.status.isFun) return@getOrPut NULL_STUB
             val abstractMethod = firRegularClass.getSingleAbstractMethodOrNull(firSession, scopeSession) ?: return@getOrPut NULL_STUB
             // TODO: val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
 
             abstractMethod.getFunctionTypeForAbstractMethod()
-        } as? ConeKotlinType
+        } as? ConeLookupTagBasedType
     }
 
     override fun shouldRunSamConversionForFunction(firFunction: FirFunction<*>): Boolean {
@@ -331,17 +344,6 @@ fun FirSimpleFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
         }
         else -> error("Unexpected method name: $name")
     }
-}
-
-private fun FirValueParameter.hasTypeOf(classId: ClassId, allowNullable: Boolean): Boolean {
-    val classLike = when (val type = returnTypeRef.coneType) {
-        is ConeClassLikeType -> type
-        is ConeFlexibleType -> type.upperBound as? ConeClassLikeType ?: return false
-        else -> return false
-    }
-
-    if (classLike.isMarkedNullable && !allowNullable) return false
-    return classLike.lookupTag.classId == classId
 }
 
 private val PUBLIC_METHOD_NAMES_IN_OBJECT = setOf("equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString")

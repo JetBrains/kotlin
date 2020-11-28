@@ -2,7 +2,7 @@ FILE: flowFromInplaceLambda.kt
     public final fun takeInt(x: R|kotlin/Int|): R|kotlin/Unit| {
     }
     public final fun <K> select(vararg x: R|kotlin/Array<out K>|): R|K| {
-        ^select R|<local>/x|.R|FakeOverride<kotlin/Array.get: R|CapturedType(out K)|>|(Int(0))
+        ^select R|<local>/x|.R|SubstitutionOverride<kotlin/Array.get: R|CapturedType(out K)|>|(Int(0))
     }
     public final fun <T> id(x: R|T|): R|T| {
         ^id R|<local>/x|
@@ -11,7 +11,7 @@ FILE: flowFromInplaceLambda.kt
         ^materialize Null(null)!!
     }
     public final fun <R> myRun(block: R|() -> R|): R|R| {
-        ^myRun R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|R|>|()
+        ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
     }
     public final fun test_1(x: R|kotlin/Any|): R|kotlin/Unit| {
         R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <kind=EXACTLY_ONCE>  {

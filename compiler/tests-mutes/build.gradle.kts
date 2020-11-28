@@ -17,6 +17,9 @@ sourceSets {
     "test" {}
 }
 
+val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
+compileKotlin.kotlinOptions.freeCompilerArgs += "-Xskip-runtime-version-check"
+
 val mutesPackageName = "org.jetbrains.kotlin.test.mutes"
 
 application {

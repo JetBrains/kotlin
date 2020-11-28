@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
@@ -221,7 +222,7 @@ internal class AdapterGenerator(
                             createAdapterParameter(
                                 irAdapterFunction,
                                 Name.identifier("receiver"),
-                                index = -1,
+                                index = UNDEFINED_PARAMETER_INDEX,
                                 boundReceiver.type,
                                 IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE
                             )
@@ -474,7 +475,7 @@ internal class AdapterGenerator(
                 irAdapterFunction.extensionReceiverParameter = createAdapterParameter(
                     irAdapterFunction,
                     Name.identifier("callee"),
-                    -1,
+                    UNDEFINED_PARAMETER_INDEX,
                     argumentType,
                     IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION
                 )

@@ -1,4 +1,3 @@
-@kotlin.ExperimentalStdlibApi
 @kotlin.SinceKotlin(version = "1.4")
 public open class CancellationException : kotlin.IllegalStateException {
     public constructor CancellationException()

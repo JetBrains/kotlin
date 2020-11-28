@@ -1,6 +1,6 @@
 FILE: withGenericFun.kt
     public final fun <T, R> apply(x: R|T|, f: R|(T) -> R|): R|R| {
-        ^apply R|<local>/f|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/x|)
+        ^apply R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/x|)
     }
     public final fun foo(i: R|kotlin/Int|): R|kotlin/Unit| {
     }

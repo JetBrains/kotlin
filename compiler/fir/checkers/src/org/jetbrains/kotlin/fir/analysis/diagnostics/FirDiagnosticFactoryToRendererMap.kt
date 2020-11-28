@@ -10,15 +10,15 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticParameterRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer
 
 class FirDiagnosticFactoryToRendererMap(val name: String) {
-    private val diagnosticsMap: MutableMap<AbstractFirDiagnosticFactory<*, *>, DiagnosticRenderer<*>> = mutableMapOf()
-    val psiDiagnosticMap: DiagnosticFactoryToRendererMap =
-        DiagnosticFactoryToRendererMap()
+    private val classicRenderersMap: MutableMap<AbstractFirDiagnosticFactory<*, *>, DiagnosticRenderer<*>> = mutableMapOf()
+    private val renderersMap: MutableMap<AbstractFirDiagnosticFactory<*, *>, FirDiagnosticRenderer<*>> = mutableMapOf()
+    val psiDiagnosticMap: DiagnosticFactoryToRendererMap = DiagnosticFactoryToRendererMap()
 
-    operator fun get(factory: AbstractFirDiagnosticFactory<*, *>): DiagnosticRenderer<*>? = diagnosticsMap[factory]
+    operator fun get(factory: AbstractFirDiagnosticFactory<*, *>): FirDiagnosticRenderer<*>? = renderersMap[factory]
+    fun getClassicRenderer(factory: AbstractFirDiagnosticFactory<*, *>): DiagnosticRenderer<*>? = classicRenderersMap[factory]
 
     fun put(factory: FirDiagnosticFactory0<*, *>, message: String) {
-        psiDiagnosticMap.put(factory.psiDiagnosticFactory, message)
-        putToFirMap(factory)
+        put(factory, SimpleFirDiagnosticRenderer(message))
     }
 
     fun <A : Any> put(
@@ -26,8 +26,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
         message: String,
         rendererA: DiagnosticParameterRenderer<A>?
     ) {
-        psiDiagnosticMap.put(factory.psiDiagnosticFactory, message, rendererA)
-        putToFirMap(factory)
+        put(factory, FirDiagnosticWithParameters1Renderer(message, rendererA))
     }
 
     fun <A : Any, B : Any> put(
@@ -36,8 +35,7 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
         rendererA: DiagnosticParameterRenderer<A>?,
         rendererB: DiagnosticParameterRenderer<B>?
     ) {
-        psiDiagnosticMap.put(factory.psiDiagnosticFactory, message, rendererA, rendererB)
-        putToFirMap(factory)
+        put(factory, FirDiagnosticWithParameters2Renderer(message, rendererA, rendererB))
     }
 
     fun <A : Any, B : Any, C : Any> put(
@@ -47,13 +45,13 @@ class FirDiagnosticFactoryToRendererMap(val name: String) {
         rendererB: DiagnosticParameterRenderer<B>?,
         rendererC: DiagnosticParameterRenderer<C>?
     ) {
-        psiDiagnosticMap.put(factory.psiDiagnosticFactory, message, rendererA, rendererB, rendererC)
-        putToFirMap(factory)
+        put(factory, FirDiagnosticWithParameters3Renderer(message, rendererA, rendererB, rendererC))
     }
 
-    private fun putToFirMap(factory: AbstractFirDiagnosticFactory<*, *>) {
-        psiDiagnosticMap[factory.psiDiagnosticFactory]?.let {
-            diagnosticsMap[factory] = it
-        }
+    private fun put(factory: AbstractFirDiagnosticFactory<*, *>, renderer: FirDiagnosticRenderer<*>) {
+        val classicRenderer = renderer.toClassicDiagnosticRenderer()
+        renderersMap[factory] = renderer
+        classicRenderersMap[factory] = classicRenderer
+        psiDiagnosticMap.put(factory.psiDiagnosticFactory, classicRenderer)
     }
 }

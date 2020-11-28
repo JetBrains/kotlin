@@ -121,13 +121,14 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             dataFlowAnalyzer.enterProperty(property)
             withFullBodyResolve {
                 withLocalScopeCleanup {
+                    val primaryConstructorParametersScope = context.getPrimaryConstructorPureParametersScope()
                     context.withContainer(property) {
                         if (property.delegate != null) {
-                            addLocalScope(context.getPrimaryConstructorParametersScope())
+                            addLocalScope(primaryConstructorParametersScope)
                             transformPropertyWithDelegate(property)
                         } else {
                             withLocalScopeCleanup {
-                                addLocalScope(context.getPrimaryConstructorParametersScope())
+                                addLocalScope(primaryConstructorParametersScope)
                                 property.transformChildrenWithoutAccessors(returnTypeRef)
                             }
                             if (property.initializer != null) {
@@ -577,7 +578,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
 
             val scopeWithValueParameters = if (constructor.isPrimary) {
-                context.getPrimaryConstructorParametersScope()
+                context.getPrimaryConstructorAllParametersScope()
             } else {
                 constructor.scopeWithParameters()
             }
@@ -624,7 +625,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (implicitTypeOnly) return anonymousInitializer.compose()
         return withLocalScopeCleanup {
             dataFlowAnalyzer.enterInitBlock(anonymousInitializer)
-            addLocalScope(context.getPrimaryConstructorParametersScope())
+            addLocalScope(
+                context.getPrimaryConstructorPureParametersScope()
+            )
             addNewLocalScope()
             val result =
                 transformDeclarationContent(anonymousInitializer, ResolutionMode.ContextIndependent).single as FirAnonymousInitializer
@@ -841,17 +844,20 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 staticsAndCompanion
 
         val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
-        val primaryConstructorParametersScope =
+        val (primaryConstructorPureParametersScope, primaryConstructorAllParametersScope) =
             if (constructor?.isPrimary == true) {
-                constructor.scopeWithParameters()
-            } else null
+                constructor.scopesWithPrimaryConstructorParameters(owner)
+            } else {
+                null to null
+            }
 
         components.context.replaceTowerDataContext(forMembersResolution)
 
         val newContexts = FirTowerDataContextsForClassParts(
             newTowerDataContextForStaticNestedClasses,
             scopeForConstructorHeader,
-            primaryConstructorParametersScope
+            primaryConstructorPureParametersScope,
+            primaryConstructorAllParametersScope
         )
 
         context.withNewTowerDataForClassParts(newContexts) {
@@ -861,6 +867,22 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     private fun FirConstructor.scopeWithParameters(): FirLocalScope {
         return valueParameters.fold(FirLocalScope()) { acc, param -> acc.storeVariable(param) }
+    }
+
+    private fun FirConstructor.scopesWithPrimaryConstructorParameters(
+        ownerClass: FirClass<*>
+    ): Pair<FirLocalScope, FirLocalScope> {
+        var parameterScope = FirLocalScope()
+        var allScope = FirLocalScope()
+        val properties = ownerClass.declarations.filterIsInstance<FirProperty>().associateBy { it.name }
+        for (parameter in valueParameters) {
+            allScope = allScope.storeVariable(parameter)
+            val property = properties[parameter.name]
+            if (property?.source?.kind != FirFakeSourceElementKind.PropertyFromParameter) {
+                parameterScope = parameterScope.storeVariable(parameter)
+            }
+        }
+        return parameterScope to allScope
     }
 
     protected inline fun <T> withLabelAndReceiverType(

@@ -378,6 +378,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var noKotlinNothingValueException: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xno-reset-jar-timestamps",
+        description = "Do not reset jar entry timestamps to a fixed date"
+    )
+    var noResetJarTimestamps: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xno-unified-null-checks",
         description = "Use pre-1.4 exception types in null checks instead of java.lang.NPE. See KT-22275 for more details"
     )
@@ -405,6 +411,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         description = "Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines"
     )
     var useOldSpilledVarTypeAnalysis: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xuse-14-inline-classes-mangling-scheme",
+        description = "Use 1.4 inline classes mangling scheme instead of 1.4.30 one"
+    )
+    var useOldInlineClassesManglingScheme: Boolean by FreezableVar(false)
 
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)

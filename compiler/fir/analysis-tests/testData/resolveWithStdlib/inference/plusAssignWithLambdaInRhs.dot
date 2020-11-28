@@ -110,8 +110,8 @@ digraph plusAssignWithLambdaInRhs_kt {
                         subgraph cluster_13 {
                             color=blue
                             47 [label="Enter block"];
-                            48 [label="Function call: R|<local>/computation|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()"];
-                            49 [label="Function call: R|<local>/resolve|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(...)"];
+                            48 [label="Function call: R|<local>/computation|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
+                            49 [label="Function call: R|<local>/resolve|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(...)"];
                             50 [label="Exit block"];
                         }
                         51 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
@@ -126,7 +126,7 @@ digraph plusAssignWithLambdaInRhs_kt {
             33 [label="Function call: R|/A.A|<R|T|>(...)"];
             34 [label="Jump: ^postpone R|/A.A|<R|T|>(<L> = A@fun <anonymous>(resolve: R|(T) -> kotlin/Unit|): R|kotlin/Unit| {
     R|<local>/queue|.R|kotlin/collections/plusAssign|<R|() -> kotlin/Unit|>(A@fun <anonymous>(): R|kotlin/Unit| <kind=UNKNOWN>  {
-        R|<local>/resolve|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/computation|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|())
+        R|<local>/resolve|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/computation|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|())
     }
     )
 }

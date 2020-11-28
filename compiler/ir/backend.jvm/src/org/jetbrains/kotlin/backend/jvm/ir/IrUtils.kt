@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
@@ -307,10 +308,10 @@ fun firstSuperMethodFromKotlin(
     override: IrSimpleFunction,
     implementation: IrSimpleFunction
 ): IrSimpleFunctionSymbol {
-    return override.overriddenSymbols.first {
+    return override.overriddenSymbols.firstOrNull {
         val owner = it.owner
         owner.modality != Modality.ABSTRACT && owner.overrides(implementation)
-    }
+    } ?: error("No super method found for: ${override.render()}")
 }
 
 // MethodSignatureMapper uses the corresponding property of a function to determine correct names
@@ -319,11 +320,12 @@ fun IrSimpleFunction.copyCorrespondingPropertyFrom(source: IrSimpleFunction) {
     val property = source.correspondingPropertySymbol?.owner ?: return
     val target = this
 
-    correspondingPropertySymbol = factory.buildProperty() {
+    correspondingPropertySymbol = factory.buildProperty {
         name = property.name
         updateFrom(property)
     }.apply {
         parent = target.parent
+        annotations = property.annotations
         when {
             source.isGetter -> getter = target
             source.isSetter -> setter = target
@@ -348,3 +350,47 @@ val IrDeclaration.isStaticInlineClassReplacement: Boolean
 fun IrDeclaration.isFromJava(): Boolean =
     origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB ||
             parent is IrDeclaration && (parent as IrDeclaration).isFromJava()
+
+val IrType.upperBound: IrType
+    get() = erasedUpperBound.symbol.starProjectedType
+
+fun IrType.eraseToScope(scopeOwner: IrTypeParametersContainer): IrType = eraseToScope(collectVisibleTypeParameters(scopeOwner))
+
+fun IrType.eraseToScope(visibleTypeParameters: Set<IrTypeParameter>): IrType {
+    require(this is IrSimpleType) { error("Unexpected IrType kind: ${render()}") }
+    return when (classifier) {
+        is IrClassSymbol -> IrSimpleTypeImpl(classifier, hasQuestionMark, arguments.map { it.eraseToScope(visibleTypeParameters) }, annotations)
+        is IrTypeParameterSymbol -> if (classifier.owner in visibleTypeParameters) this else upperBound
+        else -> error("unknown IrType classifier kind: ${classifier.owner.render()}")
+    }
+}
+
+private fun IrTypeArgument.eraseToScope(visibleTypeParameters: Set<IrTypeParameter>): IrTypeArgument = when (this) {
+    is IrStarProjection -> this
+    is IrTypeProjection -> makeTypeProjection(type.eraseToScope(visibleTypeParameters), variance)
+    else -> error("unknown type projection kind: ${render()}")
+}
+
+fun collectVisibleTypeParameters(scopeOwner: IrTypeParametersContainer): Set<IrTypeParameter> =
+    generateSequence(scopeOwner) { current ->
+        val parent = current.parent as? IrTypeParametersContainer
+        parent.takeUnless { parent is IrClass && current is IrClass && !current.isInner && !current.isLocal }
+    }
+        .flatMap { it.typeParameters }
+        .toSet()
+
+fun IrClassSymbol.rawType(context: JvmBackendContext): IrSimpleType {
+    // On the IR backend we represent raw types as star projected types with a special synthetic annotation.
+    // See `TypeTranslator.translateTypeAnnotations`.
+    val rawTypeAnnotation = IrConstructorCallImpl.fromSymbolOwner(
+        context.generatorExtensions.rawTypeAnnotationConstructor!!.constructedClassType,
+        context.generatorExtensions.rawTypeAnnotationConstructor.symbol
+    )
+
+    return IrSimpleTypeImpl(
+        this,
+        hasQuestionMark = false,
+        arguments = owner.typeParameters.map { IrStarProjectionImpl },
+        annotations = listOf(rawTypeAnnotation)
+    )
+}

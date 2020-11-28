@@ -4,16 +4,27 @@ import org.jetbrains.kotlin.BuildRegister
 import org.jetbrains.kotlin.MPPTools
 
 buildscript {
-    apply from: "$rootProject.projectDir/gradle/kotlinGradlePlugin.gradle"
+    ext.rootBuildDirectory = file('..')
+
+    apply from: "$rootBuildDirectory/gradle/loadRootProperties.gradle"
+    apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
     repositories {
-        maven {
-            url 'https://cache-redirector.jetbrains.com/jcenter'
-        }
+        maven { url 'https://cache-redirector.jetbrains.com/jcenter'}
+        maven { url 'https://cache-redirector.jetbrains.com/maven-central' }
+        mavenCentral()
+        maven { url buildKotlinCompilerRepo }
+        maven { url kotlinCompilerRepo }
         jcenter()
+        maven { url "https://kotlin.bintray.com/kotlinx" }
+        maven { url "https://dl.bintray.com/kotlin/kotlin-dev" }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-build-tools:$konanVersion"
     }
 }
 
-def rootBuildDirectory = rootProject.projectDir
+def rootBuildDirectory = projectDir.parentFile
 
 task konanRun {
     subprojects.each {
@@ -48,7 +59,7 @@ private static String getAnalyzerTargetName() {
 }
 
 private String findAnalyzerBinary() {
-    String result = "${rootProject.projectDir}/${analyzerToolDirectory}/${getAnalyzerTargetName()}/" +
+    String result = "${projectDir}/../${analyzerToolDirectory}/${getAnalyzerTargetName()}/" +
             "${analyzerTool}ReleaseExecutable/${analyzerTool}${MPPTools.getNativeProgramExtension()}"
 
     if (file(result).exists()) return result

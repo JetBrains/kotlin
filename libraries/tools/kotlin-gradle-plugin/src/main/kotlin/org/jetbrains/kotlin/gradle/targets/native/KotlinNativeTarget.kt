@@ -64,7 +64,8 @@ open class KotlinNativeTarget @Inject constructor(
                     metadataJar.archiveAppendix.set(project.provider { disambiguationClassifier.orEmpty().toLowerCase() })
                     metadataJar.archiveClassifier.set("metadata")
 
-                    metadataJar.onlyIf { this@KotlinNativeTarget.publishable }
+                    val publishable = this@KotlinNativeTarget.publishable
+                    metadataJar.onlyIf { publishable }
 
                     val metadataCompilations = hostSpecificSourceSets.mapNotNull {
                         project.getMetadataCompilationForSourceSet(it)

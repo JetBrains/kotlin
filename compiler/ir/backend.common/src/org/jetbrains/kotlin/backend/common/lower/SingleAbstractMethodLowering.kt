@@ -66,6 +66,13 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
     abstract fun getSuperTypeForWrapper(typeOperand: IrType): IrType
 
+    protected open fun getWrappedFunctionType(klass: IrClass): IrType =
+        klass.defaultType
+
+    protected open fun IrFunctionBuilder.setConstructorSourceRange(createFor: IrElement) {
+        setSourceRange(createFor)
+    }
+
     abstract val IrType.needEqualsHashCodeMethods: Boolean
 
     open val inInlineFunctionScope get() = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
@@ -161,7 +168,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
                 context.ir.symbols.suspendFunctionN(superMethod.valueParameters.size + extensionReceiversCount).owner
             else
                 context.ir.symbols.functionN(superMethod.valueParameters.size + extensionReceiversCount).owner
-        val wrappedFunctionType = wrappedFunctionClass.defaultType
+        val wrappedFunctionType = getWrappedFunctionType(wrappedFunctionClass)
 
         val subclass = context.irFactory.buildClass {
             name = wrapperName
@@ -177,16 +184,17 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         val field = subclass.addField {
             name = Name.identifier(FUNCTION_FIELD_NAME)
             type = wrappedFunctionType
-            origin = subclass.origin
+            origin = IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION
             visibility = DescriptorVisibilities.PRIVATE
+            isFinal = true
             setSourceRange(createFor)
         }
 
         subclass.addConstructor {
-            origin = subclass.origin
+            origin = IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
             isPrimary = true
             visibility = wrapperVisibility
-            setSourceRange(createFor)
+            setConstructorSourceRange(createFor)
         }.apply {
             val parameter = addValueParameter {
                 name = field.name
@@ -205,7 +213,8 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             name = superMethod.name
             returnType = superMethod.returnType
             visibility = superMethod.visibility
-            origin = subclass.origin
+            modality = Modality.FINAL
+            origin = IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION
             isSuspend = superMethod.isSuspend
             setSourceRange(createFor)
         }.apply {

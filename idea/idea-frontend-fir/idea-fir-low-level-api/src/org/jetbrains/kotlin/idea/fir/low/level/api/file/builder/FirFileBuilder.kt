@@ -54,8 +54,8 @@ internal class FirFileBuilder(
         val needResolve = toPhase > FirResolvePhase.RAW_FIR
         val firFile = buildRawFirFileWithCaching(ktFile, cache, lazyBodiesMode = !needResolve)
         if (needResolve) {
-            cache.firFileLockProvider.withLock(firFile) {
-                if (firFile.resolvePhase >= toPhase) return@withLock
+            cache.firFileLockProvider.withWriteLock(firFile) {
+                if (firFile.resolvePhase >= toPhase) return@withWriteLock
                 runResolveWithoutLock(firFile, fromPhase = firFile.resolvePhase, toPhase = toPhase, checkPCE = checkPCE)
             }
         }
@@ -66,11 +66,11 @@ internal class FirFileBuilder(
      * Runs [resolve] function (which is considered to do some resolve on [firFile]) under a lock for [firFile]
      */
     inline fun <R> runCustomResolveUnderLock(firFile: FirFile, cache: ModuleFileCache, resolve: () -> R): R =
-        cache.firFileLockProvider.withLock(firFile) { resolve() }
+        cache.firFileLockProvider.withWriteLock(firFile) { resolve() }
 
     inline fun <R : Any> runCustomResolveWithPCECheck(firFile: FirFile, cache: ModuleFileCache, resolve: () -> R): R {
         val lock = cache.firFileLockProvider.getLockFor(firFile)
-        return lock.lockWithPCECheck(LOCKING_INTERVAL_MS) { resolve() }
+        return lock.writeLock().lockWithPCECheck(LOCKING_INTERVAL_MS) { resolve() }
     }
 
     fun runResolveWithoutLock(

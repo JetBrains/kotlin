@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.containingClassAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -64,6 +66,7 @@ class FirDeserializationContext(
     )
 
     val memberDeserializer: FirMemberDeserializer = FirMemberDeserializer(this)
+    val dispatchReceiver = relativeClassName?.let { ClassId(packageFqName, it, false).defaultType(allTypeParameters) }
 
     companion object {
         fun createForPackage(
@@ -225,6 +228,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                         isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(getterFlags)
                     }
                     this.symbol = FirPropertyAccessorSymbol()
+                    dispatchReceiverType = c.dispatchReceiver
                 }.apply {
                     versionRequirementsTable = c.versionRequirementTable
                 }
@@ -256,6 +260,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                         isExternal = Flags.IS_EXTERNAL_ACCESSOR.get(setterFlags)
                     }
                     this.symbol = FirPropertyAccessorSymbol()
+                    dispatchReceiverType = c.dispatchReceiver
                     valueParameters += local.memberDeserializer.valueParameters(
                         listOf(proto.setterValueParameter),
                         proto,
@@ -288,6 +293,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             name = callableName
             this.isVar = isVar
             this.symbol = symbol
+            dispatchReceiverType = c.dispatchReceiver
             isLocal = false
             status = FirResolvedDeclarationStatusImpl(
                 ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags)),
@@ -365,6 +371,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isSuspend = Flags.IS_SUSPEND.get(flags)
             }
             this.symbol = symbol
+            dispatchReceiverType = c.dispatchReceiver
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             valueParameters += local.memberDeserializer.valueParameters(
@@ -443,6 +450,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             annotations +=
                 c.annotationDeserializer.loadConstructorAnnotations(c.containerSource, proto, local.nameResolver, local.typeTable)
         }.build().apply {
+            containingClassAttr = c.dispatchReceiver!!.lookupTag
             versionRequirementsTable = c.versionRequirementTable
         }
     }

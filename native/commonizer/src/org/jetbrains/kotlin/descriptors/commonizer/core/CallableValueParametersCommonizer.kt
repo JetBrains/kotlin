@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 
 import com.intellij.util.containers.FactoryMap
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirCallableMemberWithParameters
-import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClassifierId
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirHasAnnotations
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirValueParameterFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.CallableValueParametersCommonizer.CallableToPatch.Companion.doNothing
 import org.jetbrains.kotlin.descriptors.commonizer.core.CallableValueParametersCommonizer.CallableToPatch.Companion.patchCallables
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapIndexed
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.descriptors.commonizer.utils.isObjCInteropCallableAnnotation
 import org.jetbrains.kotlin.name.Name
@@ -49,7 +49,7 @@ class CallableValueParametersCommonizer(
                     callablesToPatch.forEach { callableToPatch ->
                         val callable = callableToPatch.callable
                         callable.hasStableParameterNames = false
-                        callable.valueParameters = callable.valueParameters.mapIndexed { index, valueParameter ->
+                        callable.valueParameters = callable.valueParameters.compactMapIndexed { index, valueParameter ->
                             val newName = newNames[index]
                             if (valueParameter.name != newName) {
                                 CirValueParameterFactory.create(
@@ -229,9 +229,7 @@ class CallableValueParametersCommonizer(
         }
 
         private fun CirCallableMemberWithParameters.canNamesBeOverwritten(): Boolean {
-            return (this as CirHasAnnotations).annotations.none { annotation ->
-                (annotation.type.classifierId as? CirClassifierId.ClassOrTypeAlias)?.classId?.isObjCInteropCallableAnnotation == true
-            }
+            return (this as CirHasAnnotations).annotations.none { it.type.classifierId.isObjCInteropCallableAnnotation }
         }
 
         private fun failIllegalState(current: ValueParameterNames?, next: ValueParameterNames): Nothing =

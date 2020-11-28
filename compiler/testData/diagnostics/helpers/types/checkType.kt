@@ -1,7 +1,5 @@
-package tests._checkType
-
 fun <T> checkSubtype(t: T) = t
-class Inv<T>
-fun <E> Inv<E>._() {}
+class CheckTypeInv<T>
+fun <E> CheckTypeInv<E>._() {}
 
-infix fun <T> T.checkType(f: Inv<T>.() -> Unit) {}
+infix fun <T> T.checkType(f: CheckTypeInv<T>.() -> Unit) {}

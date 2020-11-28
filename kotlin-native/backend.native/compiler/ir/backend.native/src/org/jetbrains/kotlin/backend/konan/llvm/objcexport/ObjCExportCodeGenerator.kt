@@ -474,6 +474,7 @@ private fun ObjCExportCodeGenerator.replaceExternalWeakOrCommonGlobal(
         value: ConstValue,
         origin: CompiledKlibModuleOrigin
 ) {
+    // TODO: A similar mechanism is used in `IrToBitcode.overrideRuntimeGlobal`. Consider merging them.
     if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
         val global = codegen.importGlobal(name, value.llvmType, origin)
         externalGlobalInitializers[global] = value
@@ -1123,11 +1124,9 @@ private fun ObjCExportCodeGenerator.createMethodVirtualAdapter(
     val selector = namer.getSelector(baseMethod.descriptor)
 
     val methodBridge = mapper.bridgeMethod(baseMethod.descriptor)
-    val objCToKotlin = constPointer(generateObjCImp(baseMethod, baseMethod, methodBridge, isVirtual = true))
+    val imp = generateObjCImp(baseMethod, baseMethod, methodBridge, isVirtual = true)
 
-    selectorsToDefine[selector] = methodBridge
-
-    return ObjCToKotlinMethodAdapter(selector, getEncoding(methodBridge), objCToKotlin)
+    return objCToKotlinMethodAdapter(selector, methodBridge, imp)
 }
 
 private fun ObjCExportCodeGenerator.createMethodAdapter(
@@ -1148,12 +1147,10 @@ private fun ObjCExportCodeGenerator.createMethodAdapter(
 
     val selectorName = namer.getSelector(request.base.descriptor)
     val methodBridge = mapper.bridgeMethod(request.base.descriptor)
-    val objCEncoding = getEncoding(methodBridge)
-    val objCToKotlin = constPointer(generateObjCImp(request.implementation, request.base, methodBridge))
 
-    selectorsToDefine[selectorName] = methodBridge
+    val imp = generateObjCImp(request.implementation, request.base, methodBridge)
 
-    ObjCToKotlinMethodAdapter(selectorName, objCEncoding, objCToKotlin)
+    objCToKotlinMethodAdapter(selectorName, methodBridge, imp)
 }
 
 private fun ObjCExportCodeGenerator.createConstructorAdapter(
@@ -1165,12 +1162,9 @@ private fun ObjCExportCodeGenerator.createArrayConstructorAdapter(
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
     val selectorName = namer.getSelector(irConstructor.descriptor)
     val methodBridge = mapper.bridgeMethod(irConstructor.descriptor)
-    val objCEncoding = getEncoding(methodBridge)
-    val objCToKotlin = constPointer(generateObjCImpForArrayConstructor(irConstructor, methodBridge))
+    val imp = generateObjCImpForArrayConstructor(irConstructor, methodBridge)
 
-    selectorsToDefine[selectorName] = methodBridge
-
-    return ObjCToKotlinMethodAdapter(selectorName, objCEncoding, objCToKotlin)
+    return objCToKotlinMethodAdapter(selectorName, methodBridge, imp)
 }
 
 private fun ObjCExportCodeGenerator.vtableIndex(irFunction: IrSimpleFunction): Int? {
@@ -1235,6 +1229,9 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
             }
             is ObjCGetterForKotlinEnumEntry -> {
                 classAdapters += createEnumEntryAdapter(it.irEnumEntrySymbol.owner)
+            }
+            is ObjCClassMethodForKotlinEnumValues -> {
+                classAdapters += createEnumValuesAdapter(it.valuesFunctionSymbol.owner, it.selector)
             }
             is ObjCMethodForKotlinMethod -> {} // Handled below.
         }.let {} // Force exhaustive.
@@ -1424,16 +1421,23 @@ private inline fun ObjCExportCodeGenerator.generateObjCToKotlinSyntheticGetter(
             MethodBridgeReceiver.Static, valueParameters = emptyList()
     )
 
-    val encoding = getEncoding(methodBridge)
     val imp = generateFunction(codegen, objCFunctionType(context, methodBridge), "objc2kotlin") {
         block()
     }
 
     LLVMSetLinkage(imp, LLVMLinkage.LLVMPrivateLinkage)
 
+    return objCToKotlinMethodAdapter(selector, methodBridge, imp)
+}
+
+private fun ObjCExportCodeGenerator.objCToKotlinMethodAdapter(
+        selector: String,
+        methodBridge: MethodBridge,
+        imp: LLVMValueRef
+): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
     selectorsToDefine[selector] = methodBridge
 
-    return ObjCToKotlinMethodAdapter(selector, encoding, constPointer(imp))
+    return ObjCToKotlinMethodAdapter(selector, getEncoding(methodBridge), constPointer(imp))
 }
 
 private fun ObjCExportCodeGenerator.createUnitInstanceAdapter() =
@@ -1471,6 +1475,21 @@ private fun ObjCExportCodeGenerator.createEnumEntryAdapter(
         val value = getEnumEntry(irEnumEntry, ExceptionHandler.Caller)
         ret(kotlinToObjC(value, ReferenceBridge))
     }
+}
+
+private fun ObjCExportCodeGenerator.createEnumValuesAdapter(
+        valuesFunction: IrFunction,
+        selector: String
+): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
+    val methodBridge = MethodBridge(
+            returnBridge = MethodBridge.ReturnValue.Mapped(ReferenceBridge),
+            receiver = MethodBridgeReceiver.Static,
+            valueParameters = emptyList()
+    )
+
+    val imp = generateObjCImp(valuesFunction, valuesFunction, methodBridge, isVirtual = false)
+
+    return objCToKotlinMethodAdapter(selector, methodBridge, imp)
 }
 
 private fun List<CallableMemberDescriptor>.toMethods(): List<FunctionDescriptor> = this.flatMap {
@@ -1591,7 +1610,8 @@ private fun Context.is64BitNSInteger(): Boolean = when (val target = this.config
     KonanTarget.IOS_ARM64,
     KonanTarget.TVOS_ARM64,
     KonanTarget.TVOS_X64,
-    KonanTarget.MACOS_X64 -> true
+    KonanTarget.MACOS_X64,
+    KonanTarget.WATCHOS_X64 -> true
     KonanTarget.WATCHOS_ARM64,
     KonanTarget.WATCHOS_ARM32,
     KonanTarget.WATCHOS_X86,
@@ -1609,10 +1629,9 @@ private fun Context.is64BitNSInteger(): Boolean = when (val target = this.config
     KonanTarget.LINUX_MIPSEL32,
     KonanTarget.WASM32,
     is KonanTarget.ZEPHYR -> error("Target $target has no support for NSInteger type.")
-    KonanTarget.WATCHOS_X64 -> error("Target $target is not supported.")
 }
 
-internal fun Context.is64BitLong(): Boolean = when (val target = this.config.target) {
+internal fun Context.is64BitLong(): Boolean = when (this.config.target) {
     KonanTarget.IOS_X64,
     KonanTarget.IOS_ARM64,
     KonanTarget.TVOS_ARM64,
@@ -1622,7 +1641,8 @@ internal fun Context.is64BitLong(): Boolean = when (val target = this.config.tar
     KonanTarget.LINUX_ARM64,
     KonanTarget.MINGW_X64,
     KonanTarget.LINUX_X64,
-    KonanTarget.MACOS_X64 -> true
+    KonanTarget.MACOS_X64,
+    KonanTarget.WATCHOS_X64 -> true
     KonanTarget.WATCHOS_ARM64,
     KonanTarget.WATCHOS_ARM32,
     KonanTarget.ANDROID_X86,
@@ -1635,5 +1655,4 @@ internal fun Context.is64BitLong(): Boolean = when (val target = this.config.tar
     KonanTarget.WASM32,
     is KonanTarget.ZEPHYR,
     KonanTarget.IOS_ARM32 -> false
-    KonanTarget.WATCHOS_X64 -> error("Target $target is not supported.")
 }

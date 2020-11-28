@@ -9,3 +9,17 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 val ModuleDescriptor.moduleInfo: ModuleInfo?
     get() = getCapability(ModuleInfo.Capability)
+
+internal fun collectAllExpectedByModules(entryModule: ModuleInfo): Set<ModuleInfo> {
+    val unprocessedModules = ArrayDeque<ModuleInfo>().apply { addAll(entryModule.expectedBy) }
+    val expectedByModules = HashSet<ModuleInfo>()
+
+    while (unprocessedModules.isNotEmpty()) {
+        val nextImplemented = unprocessedModules.removeFirst()
+        if (expectedByModules.add(nextImplemented)) {
+            unprocessedModules.addAll(nextImplemented.expectedBy)
+        }
+    }
+
+    return expectedByModules
+}

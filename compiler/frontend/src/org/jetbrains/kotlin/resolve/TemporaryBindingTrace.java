@@ -39,7 +39,7 @@ public class TemporaryBindingTrace extends DelegatingBindingTrace {
     protected final BindingTrace trace;
 
     protected TemporaryBindingTrace(@NotNull BindingTrace trace, String debugName, BindingTraceFilter filter) {
-        super(trace.getBindingContext(), debugName, true, filter, false);
+        super(trace.getBindingContext(), debugName, true, filter, false, null);
         this.trace = trace;
     }
 

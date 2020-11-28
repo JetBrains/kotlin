@@ -129,9 +129,15 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> NO_KOTLIN_NOTHING_VALUE_EXCEPTION =
             CompilerConfigurationKey.create("Do not use KotlinNothingValueException available since 1.4");
 
+    public static final CompilerConfigurationKey<Boolean> NO_RESET_JAR_TIMESTAMPS =
+            CompilerConfigurationKey.create("Do not reset timestamps in jar entries");
+
     public static final CompilerConfigurationKey<Boolean> NO_UNIFIED_NULL_CHECKS =
             CompilerConfigurationKey.create("Use pre-1.4 exception types in null checks instead of java.lang.NPE");
 
     public static final CompilerConfigurationKey<Boolean> USE_OLD_SPILLED_VAR_TYPE_ANALYSIS =
             CompilerConfigurationKey.create("Use old, SourceInterpreter-based analysis for fields, used for spilled variables in coroutines");
+
+    public static final CompilerConfigurationKey<Boolean> USE_OLD_INLINE_CLASSES_MANGLING_SCHEME =
+            CompilerConfigurationKey.create("Use old, 1.4 version of inline classes mangling scheme");
 }

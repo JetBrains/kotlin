@@ -28,7 +28,11 @@ fun runTopLevelPhases(konanConfig: KonanConfig, environment: KotlinCoreEnvironme
     try {
         toplevelPhase.cast<CompilerPhase<Context, Unit, Unit>>().invokeToplevel(context.phaseConfig, context, Unit)
     } finally {
-        context.disposeLlvm()
+        try {
+            context.disposeLlvm()
+        } finally {
+            context.freeNativeMem()
+        }
     }
 }
 

@@ -372,7 +372,6 @@ open class SerializerCodegenImpl(
             for ((index, property) in serializableProperties.withIndex()) {
                 val propertyType = codegen.typeMapper.mapType(property.type)
                 if (!property.transient) {
-                    val propertyAddressInBitMask = bitMaskOff(index)
                     // labelI:
                     visitLabel(labels[labelNum + 1])
                     callReadProperty(property, propertyType, index, inputVar, descVar, propVar)

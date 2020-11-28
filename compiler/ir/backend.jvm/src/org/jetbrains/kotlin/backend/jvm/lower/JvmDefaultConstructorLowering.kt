@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.hasMangledParameters
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
@@ -40,6 +41,9 @@ private class JvmDefaultConstructorLowering(val context: JvmBackendContext) : Cl
 
         val primaryConstructor = irClass.constructors.firstOrNull { it.isPrimary } ?: return
         if (DescriptorVisibilities.isPrivate(primaryConstructor.visibility))
+            return
+
+        if (primaryConstructor.hasMangledParameters)
             return
 
         if (primaryConstructor.valueParameters.isEmpty() || !primaryConstructor.valueParameters.all { it.hasDefaultValue() })

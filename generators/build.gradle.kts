@@ -27,7 +27,7 @@ val (interpreterSourceSet, interpreterApi) = extraSourceSet("interpreter")
 
 dependencies {
     // for GeneratorsFileUtil
-    compile(kotlinStdlib())
+    compile(kotlinStdlib("jdk8"))
     compile(intellijDep()) { includeJars("util") }
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }

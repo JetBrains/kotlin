@@ -31,11 +31,14 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 
 interface ReferenceSymbolTable {
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol
+
+    fun referenceScript(descriptor: ScriptDescriptor): IrScriptSymbol
 
     fun referenceConstructor(descriptor: ClassConstructorDescriptor): IrConstructorSymbol
 
@@ -83,7 +86,7 @@ class SymbolTable(
     @Suppress("LeakingThis")
     val lazyWrapper = IrLazySymbolTable(this)
 
-    private abstract inner class SymbolTableBase<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> {
+    private abstract class SymbolTableBase<D : DeclarationDescriptor, B : IrSymbolOwner, S : IrBindableSymbol<D, B>> {
         val unboundSymbols = linkedSetOf<S>()
 
         abstract fun get(d: D): S?
@@ -397,7 +400,19 @@ class SymbolTable(
         )
     }
 
-    fun referenceScript(descriptor: ScriptDescriptor): IrScriptSymbol {
+    fun declareScript(
+        sig: IdSignature,
+        symbolFactory: () -> IrScriptSymbol,
+        classFactory: (IrScriptSymbol) -> IrScript
+    ): IrScript {
+        return scriptSymbolTable.declare(
+            sig,
+            symbolFactory,
+            classFactory
+        )
+    }
+
+    override fun referenceScript(descriptor: ScriptDescriptor): IrScriptSymbol {
         return scriptSymbolTable.referenced(descriptor) { IrScriptSymbolImpl(descriptor) }
     }
 
@@ -893,9 +908,10 @@ class SymbolTable(
         descriptor: ParameterDescriptor,
         type: IrType,
         varargElementType: IrType? = null,
+        name: Name? = null,
         valueParameterFactory: (IrValueParameterSymbol) -> IrValueParameter = {
             irFactory.createValueParameter(
-                startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(descriptor),
+                startOffset, endOffset, origin, it, name ?: nameProvider.nameForDeclaration(descriptor),
                 descriptor.indexOrMinusOne, type, varargElementType, descriptor.isCrossinline, descriptor.isNoinline, false
             )
         }

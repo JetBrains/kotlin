@@ -63,9 +63,7 @@ import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
-import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxMethodOrNull;
-import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
-import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.runBoxMethod;
+import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.*;
 
 public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.TestFile> {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
@@ -487,7 +485,6 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
                 it -> InTextDirectivesUtils.isDirectiveDefined(it.content, "ANDROID_ANNOTATIONS")
         );
 
-        List<String> javacOptions = extractJavacOptions(files);
         List<File> classpath = new ArrayList<>();
         classpath.add(getAnnotationsJar());
 
@@ -531,6 +528,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             updateJavaClasspath(javaClasspath);
 
             javaClassesOutputDirectory = getJavaClassesOutputDirectory();
+            List<String> javacOptions = extractJavacOptions(files, configuration.get(JVMConfigurationKeys.JVM_TARGET));
             compileJava(findJavaSourcesInDirectory(javaSourceDir), javaClasspath, javacOptions, javaClassesOutputDirectory);
         }
     }
@@ -538,22 +536,33 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     protected void updateJavaClasspath(@NotNull List<String> javaClasspath) {}
 
     @NotNull
-    protected static List<String> extractJavacOptions(@NotNull List<TestFile> files) {
+    protected static List<String> extractJavacOptions(@NotNull List<TestFile> files, @Nullable JvmTarget kotlinTarget) {
         List<String> javacOptions = new ArrayList<>(0);
         for (TestFile file : files) {
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
         }
-        updateJavacOptions(javacOptions);
+        String javaTarget = computeJavaTarget(javacOptions, kotlinTarget);
+        if (javaTarget != null) {
+            javacOptions.add("-source");
+            javacOptions.add(javaTarget);
+            javacOptions.add("-target");
+            javacOptions.add(javaTarget);
+        }
         return javacOptions;
     }
 
-    private static void updateJavacOptions(@NotNull List<String> javacOptions) {
-        if (JAVA_COMPILATION_TARGET != null && !javacOptions.contains("-target")) {
-            javacOptions.add("-source");
-            javacOptions.add(JAVA_COMPILATION_TARGET);
-            javacOptions.add("-target");
-            javacOptions.add(JAVA_COMPILATION_TARGET);
-        }
+    private static final boolean IS_SOURCE_6_STILL_SUPPORTED =
+            // JDKs up to 11 do support -source/target 1.6, but later -- don't.
+            Arrays.asList("1.6", "1.7", "1.8", "9", "10", "11").contains(System.getProperty("java.specification.version"));
+
+    private static String computeJavaTarget(@NotNull List<String> javacOptions, @Nullable JvmTarget kotlinTarget) {
+        if (JAVA_COMPILATION_TARGET != null && !javacOptions.contains("-target"))
+            return JAVA_COMPILATION_TARGET;
+        if (kotlinTarget != null && kotlinTarget.compareTo(JvmTarget.JVM_1_6) > 0)
+            return kotlinTarget.getDescription();
+        if (IS_SOURCE_6_STILL_SUPPORTED)
+            return "1.6";
+        return null;
     }
 
     @NotNull

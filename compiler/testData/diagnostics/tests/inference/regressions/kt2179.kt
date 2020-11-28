@@ -5,6 +5,7 @@ package i
 
 //+JDK
 import java.util.*
+import checkSubtype
 
 fun test() {
     val sample1: List<List<Int?>> = arrayList(arrayList<Int?>(1, 7, null, 8))

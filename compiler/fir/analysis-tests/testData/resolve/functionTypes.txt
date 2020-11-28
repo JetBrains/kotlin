@@ -1,11 +1,11 @@
 FILE: functionTypes.kt
     public final fun <T> simpleRun(f: R|(T) -> kotlin/Unit|): R|kotlin/Unit| {
-        ^simpleRun R|<local>/f|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(^simpleRun Unit)
+        ^simpleRun R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(^simpleRun Unit)
     }
     public final fun <T, R> R|kotlin/collections/List<T>|.simpleMap(f: R|(T) -> R|): R|R| {
     }
     public final fun <T> simpleWith(t: R|T|, f: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
-        ^simpleWith R|<local>/f|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/t|)
+        ^simpleWith R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/t|)
     }
     public abstract interface KMutableProperty1<T, R> : R|KProperty1<T, R>|, R|KMutableProperty<R>| {
     }

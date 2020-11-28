@@ -6,6 +6,8 @@
 
 import kotlin.native.internal.*
 
+fun ensureInitialized() {}
+
 fun createCleaner() {
     createCleaner(42) {
         println(it)

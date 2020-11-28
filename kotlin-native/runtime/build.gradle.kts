@@ -149,7 +149,9 @@ targetList.forEach { targetName ->
                 "${targetName}Mimalloc",
                 "${targetName}OptAlloc"
             )
-    )
+    ) {
+        includeRuntime()
+    }
 
     tasks.register("${targetName}RuntimeTests") {
         dependsOn("${targetName}StdAllocRuntimeTests")

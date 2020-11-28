@@ -118,14 +118,22 @@ internal object nativeMemUtils {
     }
 
     fun alloc(size: Long, align: Int): NativePointed {
+        return interpretOpaquePointed(allocRaw(size, align))
+    }
+
+    fun free(mem: NativePtr) {
+        freeRaw(mem)
+    }
+
+    internal fun allocRaw(size: Long, align: Int): NativePtr {
         val ptr = malloc(size, align)
         if (ptr == nativeNullPtr) {
             throw OutOfMemoryError("unable to allocate native memory")
         }
-        return interpretOpaquePointed(ptr)
+        return ptr
     }
 
-    fun free(mem: NativePtr) {
+    internal fun freeRaw(mem: NativePtr) {
         cfree(mem)
     }
 }
@@ -143,7 +151,7 @@ public fun CPointer<UShortVar>.toKStringFromUtf16(): String {
         chars[index] = nativeBytes[index].toShort().toChar()
         ++index
     }
-    return String(chars)
+    return chars.concatToString()
 }
 
 public fun CPointer<ShortVar>.toKString(): String = this.toKStringFromUtf16()

@@ -1,8 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND_MULTI_MODULE: JVM_IR, JVM_MULTI_MODULE_IR_AGAINST_OLD
-
 // FILE: inline.kt
 
 inline class IC(val value: String) {

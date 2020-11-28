@@ -24,7 +24,7 @@
 #import "ObjCExport.h"
 #import "Porting.h"
 #import "Runtime.h"
-#import "Utils.h"
+#import "Mutex.hpp"
 
 #import "ObjCExportErrors.h"
 

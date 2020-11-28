@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.PostponedResolvedAtom
@@ -31,6 +30,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 data class CallInfo(
     val callKind: CallKind,
@@ -51,15 +52,11 @@ data class CallInfo(
     // Four properties for callable references only
     val expectedType: ConeKotlinType? = null,
     val outerCSBuilder: ConstraintSystemBuilder? = null,
-    val lhs: DoubleColonLHS? = null,
-    val stubReceiver: FirExpression? = null
+    val lhs: DoubleColonLHS? = null
 ) {
     val arguments: List<FirExpression> get() = argumentList.arguments
 
     val argumentCount get() = arguments.size
-
-    fun noStubReceiver(): CallInfo =
-        if (stubReceiver == null) this else copy(stubReceiver = null)
 
     fun replaceWithVariableAccess(): CallInfo =
         copy(callKind = CallKind.VariableAccess, typeArguments = emptyList(), argumentList = FirEmptyArgumentList)
@@ -79,7 +76,7 @@ data class CallInfo(
 class Candidate(
     val symbol: AbstractFirBasedSymbol<*>,
     val dispatchReceiverValue: ReceiverValue?,
-    val implicitExtensionReceiverValue: ImplicitReceiverValue<*>?,
+    val extensionReceiverValue: ReceiverValue?,
     val explicitReceiverKind: ExplicitReceiverKind,
     val constraintSystemFactory: InferenceComponents.ConstraintSystemFactory,
     private val baseSystem: ConstraintStorage,
@@ -107,22 +104,30 @@ class Candidate(
     lateinit var typeArgumentMapping: TypeArgumentMapping
     val postponedAtoms = mutableListOf<PostponedResolvedAtom>()
 
-    val diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
+    var currentApplicability = CandidateApplicability.RESOLVED
+        private set
+
+    private val _diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
+    val diagnostics: List<ResolutionDiagnostic>
+        get() = _diagnostics
+
+    fun addDiagnostic(diagnostic: ResolutionDiagnostic) {
+        _diagnostics += diagnostic
+        if (diagnostic.applicability < currentApplicability) {
+            currentApplicability = diagnostic.applicability
+        }
+    }
+
+    val isSuccessful: Boolean
+        get() = currentApplicability.isSuccess && (!systemInitialized || !system.hasContradiction)
 
     var passedStages: Int = 0
 
-    fun dispatchReceiverExpression(): FirExpression = when (explicitReceiverKind) {
-        ExplicitReceiverKind.DISPATCH_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS ->
-            callInfo.explicitReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
-        else -> dispatchReceiverValue?.receiverExpression ?: FirNoReceiverExpression
-    }
+    fun dispatchReceiverExpression(): FirExpression =
+        dispatchReceiverValue?.receiverExpression?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
 
-    fun extensionReceiverExpression(): FirExpression = when (explicitReceiverKind) {
-        ExplicitReceiverKind.EXTENSION_RECEIVER, ExplicitReceiverKind.BOTH_RECEIVERS ->
-            callInfo.explicitReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
-        else ->
-            implicitExtensionReceiverValue?.receiverExpression ?: FirNoReceiverExpression
-    }
+    fun extensionReceiverExpression(): FirExpression =
+        extensionReceiverValue?.receiverExpression?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

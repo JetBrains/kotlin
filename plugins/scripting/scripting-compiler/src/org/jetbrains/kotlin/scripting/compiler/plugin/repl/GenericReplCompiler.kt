@@ -119,7 +119,7 @@ open class GenericReplCompiler(
                 classes,
                 generationState.scriptSpecific.resultFieldName != null,
                 classpathAddendum ?: emptyList(),
-                generationState.scriptSpecific.resultType?.let {
+                generationState.scriptSpecific.resultTypeString ?: generationState.scriptSpecific.resultType?.let {
                     DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(it)
                 },
                 null

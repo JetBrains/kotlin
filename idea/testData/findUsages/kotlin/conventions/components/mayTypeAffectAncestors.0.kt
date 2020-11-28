@@ -1,6 +1,5 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
 // OPTIONS: usages
-// FIR_IGNORE
 
 data class A(val <caret>n: Int, val s: String)
 
@@ -34,3 +33,5 @@ fun y2(a: A): Boolean = condition(a)
 fun y3(a: A) {
     condition(a)
 }
+
+// FIR_IGNORE

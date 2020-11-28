@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -46,6 +47,7 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override lateinit var status: FirDeclarationStatus
     override var containerSource: DeserializedContainerSource? = null
+    override var dispatchReceiverType: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override lateinit var symbol: FirConstructorSymbol
     override var delegatedConstructor: FirDelegatedConstructorCall? = null
@@ -64,6 +66,7 @@ open class FirConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotationC
             valueParameters,
             status,
             containerSource,
+            dispatchReceiverType,
             annotations,
             symbol,
             delegatedConstructor,
@@ -98,13 +101,14 @@ inline fun buildConstructorCopy(original: FirConstructor, init: FirConstructorBu
     copyBuilder.session = original.session
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes
+    copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverTypeRef = original.receiverTypeRef
     copyBuilder.typeParameters.addAll(original.typeParameters)
     copyBuilder.valueParameters.addAll(original.valueParameters)
     copyBuilder.status = original.status
     copyBuilder.containerSource = original.containerSource
+    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.annotations.addAll(original.annotations)
     copyBuilder.symbol = original.symbol
     copyBuilder.delegatedConstructor = original.delegatedConstructor

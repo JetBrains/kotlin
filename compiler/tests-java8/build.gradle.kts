@@ -13,9 +13,7 @@ dependencies {
     testRuntime(project(":kotlin-reflect"))
     testRuntimeOnly(toolsJar())
     testRuntime(intellijDep())
-    Platform[192].orHigher {
-        testRuntimeOnly(intellijPluginDep("java"))
-    }
+    testRuntimeOnly(intellijPluginDep("java"))
     if (System.getProperty("idea.active") != null) testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
 }
 

@@ -13,9 +13,7 @@ dependencies {
     compileOnly(intellijCoreDep())
     compileOnly(intellijDep())
     compileOnly(intellijPluginDep("gradle"))
-    Platform[193].orHigher {
-        compileOnly(intellijPluginDep("gradle-java"))
-    }
+    compileOnly(intellijPluginDep("gradle-java"))
 
     testImplementation(projectTests(":idea"))
     testImplementation(project(":libraries:tools:new-project-wizard:new-project-wizard-cli"))

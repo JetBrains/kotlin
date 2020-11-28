@@ -11,31 +11,27 @@ import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 
-interface SearchPathResolverWithTarget<L: KotlinLibrary>: SearchPathResolverWithAttributes<L> {
+interface SearchPathResolverWithTarget<L: KotlinLibrary>: SearchPathResolver<L> {
     val target: KonanTarget
 }
 
 fun defaultResolver(
         repositories: List<String>,
         target: KonanTarget,
-        distribution: Distribution,
-        compatibleCompilerVersions: List<CompilerVersion> = emptyList()
-): SearchPathResolverWithTarget<KonanLibrary> = defaultResolver(repositories, emptyList(), target, distribution, compatibleCompilerVersions)
+        distribution: Distribution
+): SearchPathResolverWithTarget<KonanLibrary> = defaultResolver(repositories, emptyList(), target, distribution)
 
 fun defaultResolver(
     repositories: List<String>,
     directLibs: List<String>,
     target: KonanTarget,
     distribution: Distribution,
-    compatibleCompilerVersions: List<CompilerVersion> = emptyList(),
     logger: Logger = DummyLogger,
     skipCurrentDir: Boolean = false
 ): SearchPathResolverWithTarget<KonanLibrary> = KonanLibraryProperResolver(
         repositories,
         directLibs,
         target,
-        listOf(KotlinAbiVersion.CURRENT),
-        compatibleCompilerVersions,
         distribution.klib,
         distribution.localKonanDir.absolutePath,
         skipCurrentDir,
@@ -65,16 +61,12 @@ internal class KonanLibraryProperResolver(
     repositories: List<String>,
     directLibs: List<String>,
     override val target: KonanTarget,
-    knownAbiVersions: List<KotlinAbiVersion>?,
-    knownCompilerVersions: List<CompilerVersion>?,
     distributionKlib: String?,
     localKonanDir: String?,
     skipCurrentDir: Boolean,
     override val logger: Logger
 ) : KotlinLibraryProperResolverWithAttributes<KonanLibrary>(
     repositories, directLibs,
-    knownAbiVersions,
-    knownCompilerVersions,
     distributionKlib,
     localKonanDir,
     skipCurrentDir,

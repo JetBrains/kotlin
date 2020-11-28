@@ -1,4 +1,3 @@
-// SKIP_JDK6
 // TARGET_BACKEND: JVM
 // FILE: Simple.java
 
@@ -9,6 +8,7 @@ public interface Simple {
 }
 
 // FILE: main.kt
+// JVM_TARGET: 1.8
 
 interface KInterface: Simple {
     override fun test(s: String): String {

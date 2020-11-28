@@ -390,11 +390,29 @@ private class CString(val bytes: ByteArray): CValues<ByteVar>() {
     }
 }
 
+private object EmptyCString: CValues<ByteVar>() {
+    override val size get() = 1
+    override val align get() = 1
+
+    private val placement =
+            interpretCPointer<ByteVar>(nativeMemUtils.allocRaw(1, 1))!!.also {
+                it[0] = 0.toByte()
+            }
+
+    override fun getPointer(scope: AutofreeScope): CPointer<ByteVar> {
+        return placement
+    }
+    override fun place(placement: CPointer<ByteVar>): CPointer<ByteVar> {
+        placement[0] = 0.toByte()
+        return placement
+    }
+}
+
 /**
  * @return the value of zero-terminated UTF-8-encoded C string constructed from given [kotlin.String].
  */
 public val String.cstr: CValues<ByteVar>
-    get() = CString(encodeToUtf8(this))
+    get() = if (isEmpty()) EmptyCString else CString(encodeToUtf8(this))
 
 /**
  * @return the value of zero-terminated UTF-8-encoded C string constructed from given [kotlin.String].
@@ -523,7 +541,7 @@ public fun CPointer<ShortVar>.toKStringFromUtf16(): String {
         chars[index] = nativeBytes[index].toChar()
         ++index
     }
-    return String(chars)
+    return chars.concatToString()
 }
 
 /**
@@ -555,7 +573,7 @@ public fun CPointer<IntVar>.toKStringFromUtf32(): String {
             chars[toIndex++] = value.toChar()
         }
     }
-    return String(chars)
+    return chars.concatToString()
 }
 
 /**

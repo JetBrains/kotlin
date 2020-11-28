@@ -33,7 +33,6 @@ internal class FirIdeResolveStateService(project: Project) {
         ConcurrentHashMap<IdeaModuleInfo, FirModuleResolveStateImpl>()
     }
 
-
     fun getResolveState(moduleInfo: IdeaModuleInfo): FirModuleResolveStateImpl =
         stateCache.computeIfAbsent(moduleInfo) { createResolveStateFor(moduleInfo, sessionProviderStorage) }
 
@@ -48,6 +47,7 @@ internal class FirIdeResolveStateService(project: Project) {
             val sessionProvider = sessionProviderStorage.getSessionProvider(moduleInfo)
             val firFileBuilder = sessionProvider.rootModuleSession.firFileBuilder
             return FirModuleResolveStateImpl(
+                moduleInfo.project,
                 moduleInfo,
                 sessionProvider,
                 firFileBuilder,

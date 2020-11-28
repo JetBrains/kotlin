@@ -38,11 +38,12 @@
 #include "Exceptions.h"
 #include "ExecFormat.h"
 #include "Memory.h"
+#include "Mutex.hpp"
 #include "Natives.h"
 #include "KString.h"
 #include "SourceInfo.h"
 #include "Types.h"
-#include "Utils.h"
+#include "Utils.hpp"
 #include "ObjCExceptions.h"
 
 namespace {
@@ -279,7 +280,8 @@ RUNTIME_NORETURN void TerminateWithUnhandledException(KRef throwable) {
 #if KONAN_HAS_CXX11_EXCEPTION_FUNCTIONS
 
 namespace {
-class TerminateHandler {
+// Copy, move and assign would be safe, but not much useful, so let's delete all (rule of 5)
+class TerminateHandler : private kotlin::Pinned {
 
   // In fact, it's safe to call my_handler directly from outside: it will do the job and then invoke original handler,
   // even if it has not been initialized yet. So one may want to make it public and/or not the class member
@@ -313,11 +315,6 @@ class TerminateHandler {
     return singleton;
   }
 
-  // Copy, move and assign would be safe, but not much useful, so let's delete all (rule of 5)
-  TerminateHandler(const TerminateHandler&) = delete;
-  TerminateHandler(TerminateHandler&&) = delete;
-  TerminateHandler& operator=(const TerminateHandler&) = delete;
-  TerminateHandler& operator=(TerminateHandler&&) = delete;
   // Dtor might be in use to restore original handler. However, consequent install
   // will not reconstruct handler anyway, so let's keep dtor deleted to avoid confusion.
   ~TerminateHandler() = delete;

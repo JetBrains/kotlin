@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.parcelize
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.backend.common.serialization.findPackage
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -36,23 +37,10 @@ import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
-class ParcelizeAnnotationChecker : CallChecker {
+open class ParcelizeAnnotationChecker : CallChecker {
     @Suppress("DEPRECATION")
     companion object {
-        val TYPE_PARCELER_FQ_NAMES = listOf(
-            FqName(kotlinx.parcelize.TypeParceler::class.java.name),
-            FqName(kotlinx.android.parcel.TypeParceler::class.java.name)
-        )
-
-        val WRITE_WITH_FQ_NAMES = listOf(
-            FqName(kotlinx.parcelize.WriteWith::class.java.name),
-            FqName(kotlinx.android.parcel.WriteWith::class.java.name)
-        )
-
-        val IGNORED_ON_PARCEL_FQ_NAMES = listOf(
-            FqName(kotlinx.parcelize.IgnoredOnParcel::class.java.name),
-            FqName(kotlinx.android.parcel.IgnoredOnParcel::class.java.name)
-        )
+        val DEPRECATED_RUNTIME_PACKAGE = FqName("kotlinx.android.parcel")
     }
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
@@ -64,14 +52,34 @@ class ParcelizeAnnotationChecker : CallChecker {
 
         if (annotationClass.fqNameSafe in TYPE_PARCELER_FQ_NAMES) {
             checkTypeParcelerUsage(resolvedCall, annotationEntry, context, annotationOwner)
+            checkDeprecatedAnnotations(resolvedCall, annotationEntry, context, isForbidden = true)
         }
 
         if (annotationClass.fqNameSafe in WRITE_WITH_FQ_NAMES) {
             checkWriteWithUsage(resolvedCall, annotationEntry, context, annotationOwner)
+            checkDeprecatedAnnotations(resolvedCall, annotationEntry, context, isForbidden = true)
         }
 
         if (annotationClass.fqNameSafe in IGNORED_ON_PARCEL_FQ_NAMES) {
             checkIgnoredOnParcelUsage(annotationEntry, context, annotationOwner)
+            checkDeprecatedAnnotations(resolvedCall, annotationEntry, context, isForbidden = false)
+        }
+
+        if (annotationClass.fqNameSafe in PARCELIZE_CLASS_FQ_NAMES || annotationClass.fqNameSafe in RAW_VALUE_ANNOTATION_FQ_NAMES) {
+            checkDeprecatedAnnotations(resolvedCall, annotationEntry, context, isForbidden = false)
+        }
+    }
+
+    private fun checkDeprecatedAnnotations(
+        resolvedCall: ResolvedCall<*>,
+        annotationEntry: KtAnnotationEntry,
+        context: CallCheckerContext,
+        isForbidden: Boolean
+    ) {
+        val descriptorPackage = resolvedCall.resultingDescriptor.findPackage()
+        if (descriptorPackage.fqName == DEPRECATED_RUNTIME_PACKAGE) {
+            val factory = if (isForbidden) ErrorsParcelize.FORBIDDEN_DEPRECATED_ANNOTATION else ErrorsParcelize.DEPRECATED_ANNOTATION
+            context.trace.report(factory.on(annotationEntry))
         }
     }
 

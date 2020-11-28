@@ -29,43 +29,43 @@ OBJ_GETTER(InitSharedInstance,
   RETURN_RESULT_OF(InitSharedInstanceRelaxed, location, typeInfo, ctor);
 }
 
-void ReleaseHeapRef(const ObjHeader* object) {
+RUNTIME_NOTHROW void ReleaseHeapRef(const ObjHeader* object) {
   ReleaseHeapRefRelaxed(object);
 }
 
-void ReleaseHeapRefNoCollect(const ObjHeader* object) {
+RUNTIME_NOTHROW void ReleaseHeapRefNoCollect(const ObjHeader* object) {
   ReleaseHeapRefNoCollectRelaxed(object);
 }
 
-void ZeroStackRef(ObjHeader** location) {
+RUNTIME_NOTHROW void ZeroStackRef(ObjHeader** location) {
   ZeroStackRefRelaxed(location);
 }
 
-void SetStackRef(ObjHeader** location, const ObjHeader* object) {
+RUNTIME_NOTHROW void SetStackRef(ObjHeader** location, const ObjHeader* object) {
   SetStackRefRelaxed(location, object);
 }
 
-void SetHeapRef(ObjHeader** location, const ObjHeader* object) {
+RUNTIME_NOTHROW void SetHeapRef(ObjHeader** location, const ObjHeader* object) {
   SetHeapRefRelaxed(location, object);
 }
 
-void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
+RUNTIME_NOTHROW void UpdateHeapRef(ObjHeader** location, const ObjHeader* object) {
   UpdateHeapRefRelaxed(location, object);
 }
 
-void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
+RUNTIME_NOTHROW void UpdateReturnRef(ObjHeader** returnSlot, const ObjHeader* object) {
   UpdateReturnRefRelaxed(returnSlot, object);
 }
 
-void EnterFrame(ObjHeader** start, int parameters, int count) {
+RUNTIME_NOTHROW void EnterFrame(ObjHeader** start, int parameters, int count) {
   EnterFrameRelaxed(start, parameters, count);
 }
 
-void LeaveFrame(ObjHeader** start, int parameters, int count) {
+RUNTIME_NOTHROW void LeaveFrame(ObjHeader** start, int parameters, int count) {
   LeaveFrameRelaxed(start, parameters, count);
 }
 
-void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
+RUNTIME_NOTHROW void UpdateStackRef(ObjHeader** location, const ObjHeader* object) {
     UpdateStackRefRelaxed(location, object);
 }
 

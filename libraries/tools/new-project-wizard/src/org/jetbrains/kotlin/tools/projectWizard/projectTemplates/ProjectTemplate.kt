@@ -515,6 +515,7 @@ object ComposeMultiplatformApplicationProjectTemplate : ProjectTemplate() {
                         subModules = emptyList()
                     ).withConfiguratorSettings(JvmTargetConfigurator) {
                         ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+                        JvmModuleConfigurator.targetJvmVersion withValue TargetJvmVersion.JVM_11
                     }
                 )
             )
@@ -530,14 +531,23 @@ object ComposeMultiplatformApplicationProjectTemplate : ProjectTemplate() {
             }
             +Module(
                 "desktop",
-                JvmSinglePlatformModuleConfigurator,
-                template = ComposeJvmDesktopTemplate(),
+                MppModuleConfigurator,
+                template = null,
                 sourcesets = createDefaultSourcesets(),
-                subModules = emptyList(),
-                dependencies = mutableListOf(ModuleReference.ByModule(common))
-            ).withConfiguratorSettings(JvmSinglePlatformModuleConfigurator) {
-                ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
-            }
+                subModules = listOf(
+                    Module(
+                        "jvm",
+                        JvmTargetConfigurator,
+                        template = ComposeJvmDesktopTemplate(),
+                        sourcesets = createDefaultSourcesets(),
+                        subModules = emptyList(),
+                        dependencies = mutableListOf(ModuleReference.ByModule(common))
+                    ).withConfiguratorSettings(JvmTargetConfigurator) {
+                        ModuleConfiguratorWithTests.testFramework withValue KotlinTestFramework.NONE
+                        JvmModuleConfigurator.targetJvmVersion withValue TargetJvmVersion.JVM_11
+                    }
+                ),
+            )
             +common
         }
 }

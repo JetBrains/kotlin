@@ -1,5 +1,5 @@
-[dataClass.0.kt] Value read 18 val (x, y) = getThis()
-[dataClass.0.kt] Value read 26 val (x, y) = get(0)
+[dataClass.0.kt] Value read 17 val (x, y) = getThis()
+[dataClass.0.kt] Value read 25 val (x, y) = get(0)
 [dataClass.1.kt] Function call 6 a.component1()
 [dataClass.1.kt] Value read 10 val (x2, y2, z2) = g()
 [dataClass.1.kt] Value read 11 val (x3, y3, z3) = h()

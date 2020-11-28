@@ -24,7 +24,7 @@ import java.net.URL
 import java.net.URLClassLoader
 import javax.inject.Inject
 
-open class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor: WorkerExecutor) : KaptTask() {
+abstract class KaptWithoutKotlincTask @Inject constructor(private val workerExecutor: WorkerExecutor) : KaptTask() {
     @get:InputFiles
     @get:Classpath
     @Suppress("unused")

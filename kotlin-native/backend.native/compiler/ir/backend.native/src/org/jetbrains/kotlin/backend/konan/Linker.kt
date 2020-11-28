@@ -114,7 +114,7 @@ internal class Linker(val context: Context) {
             additionalLinkerArgs = if (target.family.isAppleFamily) {
                 when (context.config.produce) {
                     CompilerOutputKind.DYNAMIC_CACHE ->
-                        listOf("-install_name", context.config.outputFiles.mainFile)
+                        listOf("-install_name", context.config.outputFiles.dynamicCacheInstallName)
                     else -> listOf("-dead_strip")
                 }
             } else {

@@ -101,6 +101,6 @@ fun test6(s1: String?, s2: String?) {
         requireNotNull(s2)
     }
     s.<!INAPPLICABLE_CANDIDATE!>length<!>
-    s1.length
+    s1.<!INAPPLICABLE_CANDIDATE!>length<!>
     s2.length
 }

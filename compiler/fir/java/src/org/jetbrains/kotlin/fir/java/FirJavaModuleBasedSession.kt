@@ -29,7 +29,7 @@ class FirLibrarySession @PrivateSessionConstructor constructor(
     }
 }
 
-open class FirProjectSessionProvider(override val project: Project) : FirSessionProvider {
+open class FirProjectSessionProvider : FirSessionProvider {
     override fun getSession(moduleInfo: ModuleInfo): FirSession? {
         return sessionCache[moduleInfo]
     }

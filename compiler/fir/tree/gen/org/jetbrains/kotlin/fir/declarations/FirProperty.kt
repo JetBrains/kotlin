@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -43,6 +44,7 @@ abstract class FirProperty : FirVariable<FirProperty>(), FirTypeParametersOwner,
     abstract override val typeParameters: List<FirTypeParameter>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val containerSource: DeserializedContainerSource?
+    abstract override val dispatchReceiverType: ConeKotlinType?
     abstract override val symbol: FirPropertySymbol
     abstract val backingFieldSymbol: FirBackingFieldSymbol
     abstract val isLocal: Boolean

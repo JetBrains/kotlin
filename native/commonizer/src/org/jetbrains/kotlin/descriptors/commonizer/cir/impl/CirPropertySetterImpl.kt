@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertySetter
 
 data class CirPropertySetterImpl(
-        override val annotations: List<CirAnnotation>,
-        override val parameterAnnotations: List<CirAnnotation>,
-        override val visibility: DescriptorVisibility,
-        override val isDefault: Boolean,
-        override val isExternal: Boolean,
-        override val isInline: Boolean
+    override val annotations: List<CirAnnotation>,
+    override val parameterAnnotations: List<CirAnnotation>,
+    override val visibility: DescriptorVisibility,
+    override val isDefault: Boolean,
+    override val isExternal: Boolean,
+    override val isInline: Boolean
 ) : CirPropertySetter

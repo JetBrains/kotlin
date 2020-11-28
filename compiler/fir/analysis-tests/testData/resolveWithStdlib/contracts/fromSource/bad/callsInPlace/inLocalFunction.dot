@@ -11,7 +11,7 @@ digraph inLocalFunction_kt {
             1 [label="Enter block"];
             2 [label="Local function declaration foo"];
             3 [label="Function call: R|<local>/localFun|()"];
-            4 [label="Function call: R|<local>/b|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            4 [label="Function call: R|<local>/b|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             5 [label="Exit block"];
         }
         6 [label="Exit function foo" style="filled" fillcolor=red];
@@ -23,8 +23,8 @@ digraph inLocalFunction_kt {
             color=blue
             8 [label="Enter block"];
             9 [label="Access variable R|<local>/a|"];
-            10 [label="Function call: R|<local>/a|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
-            11 [label="Function call: R|<local>/a|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            10 [label="Function call: R|<local>/a|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            11 [label="Function call: R|<local>/a|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             12 [label="Exit block"];
         }
         13 [label="Exit function localFun" style="filled" fillcolor=red];

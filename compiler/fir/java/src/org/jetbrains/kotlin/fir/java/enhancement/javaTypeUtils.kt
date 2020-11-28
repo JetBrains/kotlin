@@ -88,22 +88,29 @@ private fun ConeKotlinType.enhanceConeKotlinType(
 ): ConeKotlinType {
     return when (this) {
         is ConeFlexibleType -> {
+            val needsFlexibleNullabilityAttribute = lowerBound.nullability != upperBound.nullability && !lowerBound.hasEnhancedNullability
             val lowerResult = lowerBound.enhanceInflexibleType(
-                session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index
+                session, TypeComponentPosition.FLEXIBLE_LOWER, qualifiers, index,
+                attributes = if (needsFlexibleNullabilityAttribute)
+                    lowerBound.attributes.withFlexible()
+                else
+                    lowerBound.attributes
             )
             val upperResult = upperBound.enhanceInflexibleType(
-                session, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index
+                session, TypeComponentPosition.FLEXIBLE_UPPER, qualifiers, index, upperBound.attributes
             )
 
             when {
-                lowerResult === lowerBound && upperResult === upperBound -> this
+                !needsFlexibleNullabilityAttribute && lowerResult === lowerBound && upperResult === upperBound -> this
                 this is ConeRawType -> ConeRawType(lowerResult, upperResult)
                 else -> coneFlexibleOrSimpleType(
                     session, lowerResult, upperResult, isNotNullTypeParameter = qualifiers(index).isNotNullTypeParameter
                 )
             }
         }
-        is ConeSimpleKotlinType -> enhanceInflexibleType(session, TypeComponentPosition.INFLEXIBLE, qualifiers, index)
+        is ConeSimpleKotlinType -> enhanceInflexibleType(
+            session, TypeComponentPosition.INFLEXIBLE, qualifiers, index, attributes
+        )
         else -> this
     }
 }
@@ -158,7 +165,8 @@ private fun ConeKotlinType.enhanceInflexibleType(
     session: FirSession,
     position: TypeComponentPosition,
     qualifiers: IndexedJavaTypeQualifiers,
-    index: Int
+    index: Int,
+    attributes: ConeAttributes = this.attributes
 ): ConeKotlinType {
     require(this !is ConeFlexibleType) {
         "$this should not be flexible"
@@ -198,7 +206,7 @@ private fun ConeKotlinType.enhanceInflexibleType(
 
     if (!wereChangesInArgs && originalTag == enhancedTag && enhancedNullability == isNullable) return this
 
-    val enhancedType = enhancedTag.constructType(enhancedArguments, enhancedNullability)
+    val enhancedType = enhancedTag.constructType(enhancedArguments, enhancedNullability, attributes)
 
     // TODO: why all of these is needed
 //    val enhancement = if (effectiveQualifiers.isNotNullTypeParameter) NotNullTypeParameter(enhancedType) else enhancedType
@@ -328,7 +336,11 @@ internal fun List<FirAnnotationCall>.computeTypeAttributesForJavaType(): ConeAtt
     computeTypeAttributes { classId ->
         when (classId) {
             CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID -> add(CompilerConeAttributes.EnhancedNullability)
-            // TODO: Need to handle others too? E.g., COMPATQUAL_NONNULL_ANNOTATION_ID
             in NOT_NULL_ANNOTATION_IDS -> add(CompilerConeAttributes.EnhancedNullability)
+            JAVAX_NONNULL_ANNOTATION_ID,
+            JAVAX_CHECKFORNULL_ANNOTATION_ID,
+            COMPATQUAL_NONNULL_ANNOTATION_ID,
+            ANDROIDX_RECENTLY_NON_NULL_ANNOTATION_ID
+            -> add(CompilerConeAttributes.EnhancedNullability)
         }
     }

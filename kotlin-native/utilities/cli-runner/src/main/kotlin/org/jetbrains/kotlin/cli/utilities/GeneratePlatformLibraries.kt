@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion
 import org.jetbrains.kotlin.native.interop.tool.SHORT_MODULE_NAME
 import java.io.PrintWriter
 import java.io.StringWriter
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
 import java.io.File as JFile
@@ -175,11 +177,11 @@ private class DefFile(val name: String, val depends: MutableList<DefFile>) {
 }
 
 private fun createTempDir(prefix: String, parent: File): File =
-        File(createTempDir(prefix, directory = JFile(parent.absolutePath)).absolutePath)
+        File(Files.createTempDirectory(Paths.get(parent.absolutePath), prefix).toString())
 
 private fun File.deleteAtomicallyIfPossible(tmpDirectory: File) {
     // Try to atomically delete the old directory.
-    val tmpToDelete = createTempFile(directory = JFile(tmpDirectory.absolutePath))
+    val tmpToDelete = Files.createTempFile(Paths.get(tmpDirectory.absolutePath), null, null).toFile()
     if (renameAtomic(this.absolutePath, tmpToDelete.absolutePath, replaceExisting = true)) {
         tmpToDelete.deleteRecursively()
     } else {

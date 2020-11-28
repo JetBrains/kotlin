@@ -401,14 +401,16 @@ fun irCall(
     newFunction: IrSimpleFunction,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false,
-    newSuperQualifierSymbol: IrClassSymbol? = null
+    newSuperQualifierSymbol: IrClassSymbol? = null,
+    newReturnType: IrType? = null
 ): IrCall =
     irCall(
         call,
         newFunction.symbol,
         receiversAsArguments,
         argumentsAsReceivers,
-        newSuperQualifierSymbol
+        newSuperQualifierSymbol,
+        newReturnType
     )
 
 fun irCall(
@@ -416,13 +418,14 @@ fun irCall(
     newSymbol: IrSimpleFunctionSymbol,
     receiversAsArguments: Boolean = false,
     argumentsAsReceivers: Boolean = false,
-    newSuperQualifierSymbol: IrClassSymbol? = null
+    newSuperQualifierSymbol: IrClassSymbol? = null,
+    newReturnType: IrType? = null
 ): IrCall =
     call.run {
         IrCallImpl(
             startOffset,
             endOffset,
-            type,
+            newReturnType ?: type,
             newSymbol,
             typeArgumentsCount,
             valueArgumentsCount = newSymbol.owner.valueParameters.size,
@@ -512,10 +515,27 @@ val IrFunction.allTypeParameters: List<IrTypeParameter>
     else
         typeParameters
 
-fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): Map<IrTypeParameterSymbol, IrType> =
-    irFunction.allTypeParameters.withIndex().associate {
+
+fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): Map<IrTypeParameterSymbol, IrType> {
+    val typeParameters = irFunction.allTypeParameters
+    val dispatchReceiverTypeArguments = (dispatchReceiver?.type as? IrSimpleType)?.arguments ?: emptyList()
+    if (typeParameters.isEmpty() && dispatchReceiverTypeArguments.isEmpty()) {
+        return emptyMap()
+    }
+
+    val result = mutableMapOf<IrTypeParameterSymbol, IrType>()
+    if (dispatchReceiverTypeArguments.isNotEmpty()) {
+        val parentTypeParameters = extractTypeParameters(irFunction.parentClassOrNull!!)
+        parentTypeParameters.withIndex().forEach { (index, typeParam) ->
+            dispatchReceiverTypeArguments[index].typeOrNull?.let {
+                result[typeParam.symbol] = it
+            }
+        }
+    }
+    return typeParameters.withIndex().associateTo(result) {
         it.value.symbol to getTypeArgument(it.index)!!
     }
+}
 
 val IrFunctionReference.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
     get() = getTypeSubstitutionMap(symbol.owner)
@@ -524,7 +544,10 @@ val IrFunctionAccessExpression.typeSubstitutionMap: Map<IrTypeParameterSymbol, I
     get() = getTypeSubstitutionMap(symbol.owner)
 
 val IrDeclaration.isFileClass: Boolean
-    get() = origin == IrDeclarationOrigin.FILE_CLASS || origin == IrDeclarationOrigin.SYNTHETIC_FILE_CLASS
+    get() =
+        origin == IrDeclarationOrigin.FILE_CLASS ||
+                origin == IrDeclarationOrigin.SYNTHETIC_FILE_CLASS ||
+                origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS
 
 val IrValueDeclaration.isImmutable: Boolean
     get() = this is IrValueParameter || this is IrVariable && !isVar

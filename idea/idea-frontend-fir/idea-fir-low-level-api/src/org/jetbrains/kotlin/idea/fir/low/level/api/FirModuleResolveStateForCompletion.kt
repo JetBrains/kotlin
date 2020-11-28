@@ -5,22 +5,29 @@
 
 package org.jetbrains.kotlin.idea.fir.low.level.api
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.element.builder.FirTowerDataContextCollector
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FirElementsRecorder
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.containingKtFileIfAny
+import org.jetbrains.kotlin.idea.fir.low.level.api.util.originalKtFile
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 
 internal class FirModuleResolveStateForCompletion(
+    override val project: Project,
     private val originalState: FirModuleResolveStateImpl
 ) : FirModuleResolveState() {
     override val moduleInfo: IdeaModuleInfo get() = originalState.moduleInfo
@@ -35,7 +42,8 @@ internal class FirModuleResolveStateForCompletion(
         originalState.getSessionFor(moduleInfo)
 
     override fun getOrBuildFirFor(element: KtElement): FirElement {
-        completionMapping[originalState.elementBuilder.getPsiAsFirElementSource(element)]?.let { return it }
+        val psi = originalState.elementBuilder.getPsiAsFirElementSource(element)
+        synchronized(completionMapping) { completionMapping[psi] }?.let { return it }
         return originalState.elementBuilder.getOrBuildFirFor(
             element,
             originalState.rootModuleSession.cache,
@@ -51,7 +59,7 @@ internal class FirModuleResolveStateForCompletion(
     }
 
     override fun recordPsiToFirMappingsForCompletionFrom(fir: FirDeclaration, firFile: FirFile, ktFile: KtFile) {
-        fir.accept(FirElementsRecorder(), completionMapping)
+        synchronized(completionMapping) { fir.accept(FirElementsRecorder(), completionMapping) }
     }
 
     override fun <D : FirDeclaration> resolvedFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
@@ -68,6 +76,14 @@ internal class FirModuleResolveStateForCompletion(
         originalState.lazyResolveDeclarationForCompletion(firFunction, containerFirFile, firIdeProvider, toPhase, towerDataContextCollector)
     }
 
+    override fun getFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? {
+        val ktFile = declaration.containingKtFileIfAny ?: return null
+        cache.getCachedFirFile(ktFile)?.let { return it }
+        ktFile.originalKtFile?.let(cache::getCachedFirFile)?.let { return it }
+        return null
+    }
+
+
     override fun getDiagnostics(element: KtElement): List<Diagnostic> {
         error("Diagnostics should not be retrieved in completion")
     }
@@ -77,6 +93,14 @@ internal class FirModuleResolveStateForCompletion(
     }
 
     override fun findNonLocalSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
+        error("Should not be used in completion")
+    }
+
+    override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
+        error("Should not be used in completion")
+    }
+
+    override fun findSourceFirDeclaration(ktDeclaration: KtLambdaExpression): FirDeclaration {
         error("Should not be used in completion")
     }
 

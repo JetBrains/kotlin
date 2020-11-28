@@ -49,7 +49,7 @@ digraph boundSmartcastsInBranches_kt {
             13 [label="Const: Null(null)"];
             14 [label="Variable declaration: lvar goodA: R|A?|"];
             15 [label="Access variable R|<local>/list|"];
-            16 [label="Function call: R|<local>/list|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()"];
+            16 [label="Function call: R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<A>|>|()"];
             17 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<A>|"];
             subgraph cluster_6 {
                 color=blue
@@ -68,7 +68,7 @@ digraph boundSmartcastsInBranches_kt {
                         color=blue
                         24 [label="Enter block"];
                         25 [label="Access variable R|<local>/<iterator>|"];
-                        26 [label="Function call: R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|A|>|()"];
+                        26 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|A|>|()"];
                         27 [label="Variable declaration: lval a: R|A|"];
                         subgraph cluster_10 {
                             color=blue

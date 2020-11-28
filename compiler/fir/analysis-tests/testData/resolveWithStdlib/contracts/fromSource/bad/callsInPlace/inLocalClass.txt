@@ -19,7 +19,7 @@ FILE: inLocalClass.kt
 
             public constructor(): R|LocalClass| {
                 super<R|kotlin/Any|>()
-                R|<local>/b|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                R|<local>/b|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
             }
 
             init {
@@ -27,11 +27,11 @@ FILE: inLocalClass.kt
             }
 
             public final fun run(): R|kotlin/Unit| {
-                R|<local>/d|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
             }
 
         }
 
         R|/LocalClass.LocalClass|().R|/LocalClass.run|()
-        R|<local>/e|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/e|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }

@@ -51,8 +51,7 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
     override fun tearDown() {
         commitAllDocuments()
         RunAll(
-            ThrowableRunnable { super.tearDown() },
-            ThrowableRunnable { stats.flush() }
+            ThrowableRunnable { super.tearDown() }
         ).run()
     }
 

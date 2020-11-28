@@ -884,7 +884,10 @@ public inline fun UShortArray.indexOfLast(predicate: (UShort) -> Boolean): Int {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -895,7 +898,10 @@ public inline fun UIntArray.last(): UInt {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -906,7 +912,10 @@ public inline fun ULongArray.last(): ULong {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -917,7 +926,10 @@ public inline fun UByteArray.last(): UByte {
 
 /**
  * Returns the last element.
- * @throws [NoSuchElementException] if the array is empty.
+ * 
+ * @throws NoSuchElementException if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -928,7 +940,10 @@ public inline fun UShortArray.last(): UShort {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -943,7 +958,10 @@ public inline fun UIntArray.last(predicate: (UInt) -> Boolean): UInt {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -958,7 +976,10 @@ public inline fun ULongArray.last(predicate: (ULong) -> Boolean): ULong {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -973,7 +994,10 @@ public inline fun UByteArray.last(predicate: (UByte) -> Boolean): UByte {
 
 /**
  * Returns the last element matching the given [predicate].
- * @throws [NoSuchElementException] if no such element is found.
+ * 
+ * @throws NoSuchElementException if no such element is found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1028,6 +1052,8 @@ public inline fun UShortArray.lastIndexOf(element: UShort): Int {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1037,6 +1063,8 @@ public fun UIntArray.lastOrNull(): UInt? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1046,6 +1074,8 @@ public fun ULongArray.lastOrNull(): ULong? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1055,6 +1085,8 @@ public fun UByteArray.lastOrNull(): UByte? {
 
 /**
  * Returns the last element, or `null` if the array is empty.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1064,6 +1096,8 @@ public fun UShortArray.lastOrNull(): UShort? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1078,6 +1112,8 @@ public inline fun UIntArray.lastOrNull(predicate: (UInt) -> Boolean): UInt? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1092,6 +1128,8 @@ public inline fun ULongArray.lastOrNull(predicate: (ULong) -> Boolean): ULong? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -1106,6 +1144,8 @@ public inline fun UByteArray.lastOrNull(predicate: (UByte) -> Boolean): UByte? {
 
 /**
  * Returns the last element matching the given [predicate], or `null` if no such element was found.
+ * 
+ * @sample samples.collections.Collections.Elements.last
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5902,7 +5942,7 @@ public inline fun UShortArray.forEachIndexed(action: (index: Int, UShort) -> Uni
     for (item in this) action(index++, item)
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5910,7 +5950,7 @@ public fun UIntArray.max(): UInt? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5918,7 +5958,7 @@ public fun ULongArray.max(): ULong? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5926,7 +5966,7 @@ public fun UByteArray.max(): UByte? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxOrNull instead.", ReplaceWith("maxOrNull()"))
+@Deprecated("Use maxOrNull instead.", ReplaceWith("this.maxOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5934,7 +5974,7 @@ public fun UShortArray.max(): UShort? {
     return maxOrNull()
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5943,7 +5983,7 @@ public inline fun <R : Comparable<R>> UIntArray.maxBy(selector: (UInt) -> R): UI
     return maxByOrNull(selector)
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5952,7 +5992,7 @@ public inline fun <R : Comparable<R>> ULongArray.maxBy(selector: (ULong) -> R): 
     return maxByOrNull(selector)
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -5961,7 +6001,7 @@ public inline fun <R : Comparable<R>> UByteArray.maxBy(selector: (UByte) -> R): 
     return maxByOrNull(selector)
 }
 
-@Deprecated("Use maxByOrNull instead.", ReplaceWith("maxByOrNull(selector)"))
+@Deprecated("Use maxByOrNull instead.", ReplaceWith("this.maxByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6834,7 +6874,7 @@ public fun UShortArray.maxOrNull(): UShort? {
     return max
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6842,7 +6882,7 @@ public fun UIntArray.maxWith(comparator: Comparator<in UInt>): UInt? {
     return maxWithOrNull(comparator)
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6850,7 +6890,7 @@ public fun ULongArray.maxWith(comparator: Comparator<in ULong>): ULong? {
     return maxWithOrNull(comparator)
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6858,7 +6898,7 @@ public fun UByteArray.maxWith(comparator: Comparator<in UByte>): UByte? {
     return maxWithOrNull(comparator)
 }
 
-@Deprecated("Use maxWithOrNull instead.", ReplaceWith("maxWithOrNull(comparator)"))
+@Deprecated("Use maxWithOrNull instead.", ReplaceWith("this.maxWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6926,7 +6966,7 @@ public fun UShortArray.maxWithOrNull(comparator: Comparator<in UShort>): UShort?
     return max
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6934,7 +6974,7 @@ public fun UIntArray.min(): UInt? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6942,7 +6982,7 @@ public fun ULongArray.min(): ULong? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6950,7 +6990,7 @@ public fun UByteArray.min(): UByte? {
     return minOrNull()
 }
 
-@Deprecated("Use minOrNull instead.", ReplaceWith("minOrNull()"))
+@Deprecated("Use minOrNull instead.", ReplaceWith("this.minOrNull()"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6958,7 +6998,7 @@ public fun UShortArray.min(): UShort? {
     return minOrNull()
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6967,7 +7007,7 @@ public inline fun <R : Comparable<R>> UIntArray.minBy(selector: (UInt) -> R): UI
     return minByOrNull(selector)
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6976,7 +7016,7 @@ public inline fun <R : Comparable<R>> ULongArray.minBy(selector: (ULong) -> R): 
     return minByOrNull(selector)
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -6985,7 +7025,7 @@ public inline fun <R : Comparable<R>> UByteArray.minBy(selector: (UByte) -> R): 
     return minByOrNull(selector)
 }
 
-@Deprecated("Use minByOrNull instead.", ReplaceWith("minByOrNull(selector)"))
+@Deprecated("Use minByOrNull instead.", ReplaceWith("this.minByOrNull(selector)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -7858,7 +7898,7 @@ public fun UShortArray.minOrNull(): UShort? {
     return min
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -7866,7 +7906,7 @@ public fun UIntArray.minWith(comparator: Comparator<in UInt>): UInt? {
     return minWithOrNull(comparator)
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -7874,7 +7914,7 @@ public fun ULongArray.minWith(comparator: Comparator<in ULong>): ULong? {
     return minWithOrNull(comparator)
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -7882,7 +7922,7 @@ public fun UByteArray.minWith(comparator: Comparator<in UByte>): UByte? {
     return minWithOrNull(comparator)
 }
 
-@Deprecated("Use minWithOrNull instead.", ReplaceWith("minWithOrNull(comparator)"))
+@Deprecated("Use minWithOrNull instead.", ReplaceWith("this.minWithOrNull(comparator)"))
 @DeprecatedSinceKotlin(warningSince = "1.4")
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

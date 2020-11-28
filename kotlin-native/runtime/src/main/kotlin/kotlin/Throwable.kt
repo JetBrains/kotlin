@@ -69,7 +69,7 @@ public open class Throwable(open val message: String?, open val cause: Throwable
                 println(this)
                 clear()
             } else {
-                appendln()
+                appendLine()
             }
         }
 

@@ -29,8 +29,16 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:$gradlePluginVersion"
     }
-    ext.useCustomDist = project.hasProperty("konan.home")
+    ext.useCustomDist = project.hasProperty("kotlin.native.home") ||
+            project.hasProperty("org.jetbrains.kotlin.native.home") ||
+            project.hasProperty("konan.home")
+    ext.kotlinNativeDist = project.findProperty("kotlin.native.home")
+            ?: project.findProperty("org.jetbrains.kotlin.native.home")
+            ?: project.findProperty("konan.home")
+            ?: distDir.absolutePath
     if (!useCustomDist) {
+        ext.setProperty("kotlin.native.home", distDir.absolutePath)
+        ext.setProperty("org.jetbrains.kotlin.native.home", distDir.absolutePath)
         ext.setProperty("konan.home", distDir.absolutePath)
     }
 }
@@ -96,7 +104,7 @@ externalStdlibTestsDir.mkdirs()
 ext.platformManager = project.rootProject.platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
 
-ext.testLibraryDir = "${project.property("konan.home")}/klib/platform/${project.target.name}"
+ext.testLibraryDir = "${ext.kotlinNativeDist}/klib/platform/${project.target.name}"
 
 // Add executor to run tests depending on a target
 project.convention.plugins.executor = ExecutorServiceKt.create(project)
@@ -113,8 +121,16 @@ ext.konanNoRun = true
 
 final CacheTesting cacheTesting = CacheTestingKt.configureCacheTesting(project)
 if (cacheTesting != null) {
-    // Note: can't do this in [CacheTesting.configure] since task classes aren't accessible there.
+    // Check for debug build and set the -g option.
+    if (project.globalTestArgs.contains("-opt")) {
+        throw new IllegalArgumentException("Cache testing should be run with debug build. " +
+                "Remove -opt options from the test args")
+    }
+    if (!project.globalTestArgs.contains("-g")) {
+        project.globalTestArgs.add("-g")
+    }
 
+    // Note: can't do this in [CacheTesting.configure] since task classes aren't accessible there.
     tasks.withType(KonanCompileNativeBinary.class).configureEach {
         dependsOn cacheTesting.buildCacheTask
         extraOpts cacheTesting.compilerArgs
@@ -1044,6 +1060,12 @@ task worker11(type: KonanLocalTest) {
     source = "runtime/workers/worker11.kt"
 }
 
+standaloneTest("worker_threadlocal_no_leak") {
+    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build and pthreads.
+    source = "runtime/workers/worker_threadlocal_no_leak.kt"
+    flags = ['-g']
+}
+
 task freeze0(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // No workers on WASM.
     goldValue = "frozen bit is true\n" +
@@ -1532,6 +1554,10 @@ linkTest("bridges_linkTest2") {
 task bridges_special(type: KonanLocalTest) {
     goldValue = "Ok\n"
     source = "codegen/bridges/special.kt"
+}
+
+task bridges_specialGeneric(type: KonanLocalTest) {
+    source = "codegen/bridges/specialGeneric.kt"
 }
 
 task bridges_nativePointed(type: KonanLocalTest) {
@@ -2151,7 +2177,7 @@ standaloneTest("link_default_libs") {
 
 standaloneTest("link_testLib_explicitly") {
     // there are no testLibrary for cross targets yet.
-    enabled = project.testTarget == null || project.testTarget == project.hostName
+    enabled = project.target.name == project.hostName
 
     dependsOn 'installTestLibrary'
     goldValue = "This is a side effect of a test library linked into the binary.\nYou should not be seeing this.\n\nHello\n"
@@ -3257,6 +3283,10 @@ task deserialized_listof0(type: KonanLocalTest) {
     source = "serialization/deserialized_listof0.kt"
 }
 
+task deserialized_fields(type: KonanLocalTest) {
+    source = "serialization/deserialized_fields.kt"
+}
+
 task genKt39548 {
     doFirst {
         GenTestKT39548Kt.genTestKT39548(file("$buildDir/kt39548/kt39548.kt"))
@@ -3714,6 +3744,10 @@ createInterop("embedStaticLibraries") {
     it.extraOpts '-staticLibrary', "2.a"
 }
 
+createInterop("kt43265") {
+    it.defFile 'interop/kt43265/kt43265.def'
+}
+
 if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
@@ -4014,6 +4048,12 @@ interopTest("interop_array_pointers") {
     source = "interop/basics/arrayPointers.kt"
 }
 
+interopTest("interop_kt43265") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    interop = 'kt43265'
+    source = "interop/kt43265/usage.kt"
+}
+
 standaloneTest("interop_pinning") {
     disabled = (project.testTarget == 'wasm32') // Uses exceptions.
     source = "interop/basics/pinning.kt"
@@ -4022,6 +4062,10 @@ standaloneTest("interop_pinning") {
 
 task interop_convert(type: KonanLocalTest) {
     source = "codegen/intrinsics/interop_convert.kt"
+}
+
+task interop_sourceCodeStruct(type: KonanLocalTest) {
+    source = "codegen/intrinsics/interop_sourceCodeStruct.kt"
 }
 
 /*
@@ -4250,7 +4294,7 @@ standaloneTest("interop_objc_illegal_sharing") {
 }
 
 dynamicTest("produce_dynamic") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    disabled = (project.target.name != project.hostName)
     source = "produce_dynamic/simple/hello.kt"
     cSource = "$projectDir/produce_dynamic/simple/main.c"
     goldValue = "Hello, dynamic!\n" +
@@ -4276,7 +4320,8 @@ dynamicTest("produce_dynamic") {
 }
 
 dynamicTest("interop_concurrentRuntime") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    disabled = (project.target.name != project.hostName)
+    disabled = true  // KT-43180
     source = "interop/concurrentTerminate/reverseInterop.kt"
     cSource = "$projectDir/interop/concurrentTerminate/main.cpp"
     clangTool = "clang++"
@@ -4286,8 +4331,7 @@ dynamicTest("interop_concurrentRuntime") {
 }
 
 dynamicTest("interop_kt42397") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName) ||
-            project.globalTestArgs.contains('-opt')
+    disabled = project.target.name != project.hostName || project.globalTestArgs.contains('-opt')
     source = "interop/kt42397/knlibrary.kt"
     cSource = "$projectDir/interop/kt42397/test.cpp"
     clangTool = "clang++"
@@ -4295,7 +4339,7 @@ dynamicTest("interop_kt42397") {
 }
 
 dynamicTest("interop_cleaners_main_thread") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    disabled = (project.target.name != project.hostName)
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/main_thread.cpp"
     clangTool = "clang++"
@@ -4304,7 +4348,7 @@ dynamicTest("interop_cleaners_main_thread") {
 }
 
 dynamicTest("interop_cleaners_second_thread") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    disabled = (project.target.name != project.hostName)
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/second_thread.cpp"
     clangTool = "clang++"
@@ -4313,12 +4357,40 @@ dynamicTest("interop_cleaners_second_thread") {
 }
 
 dynamicTest("interop_cleaners_leak") {
-    disabled = (project.testTarget != null && project.testTarget != project.hostName)
+    disabled = (project.target.name != project.hostName)
     source = "interop/cleaners/cleaners.kt"
     cSource = "$projectDir/interop/cleaners/leak.cpp"
     clangTool = "clang++"
     goldValue = ""
     flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
+}
+
+dynamicTest("interop_migrating_main_thread_legacy") {
+    disabled = (project.target.name != project.hostName)
+    source = "interop/migrating_main_thread/lib.kt"
+    flags = ['-Xdestroy-runtime-mode=legacy']
+    clangFlags = ['-DIS_LEGACY']
+    cSource = "$projectDir/interop/migrating_main_thread/main.cpp"
+    clangTool = "clang++"
+}
+
+dynamicTest("interop_migrating_main_thread") {
+    disabled = (project.target.name != project.hostName)
+    source = "interop/migrating_main_thread/lib.kt"
+    flags = ['-Xdestroy-runtime-mode=on-shutdown']
+    cSource = "$projectDir/interop/migrating_main_thread/main.cpp"
+    clangTool = "clang++"
+}
+
+dynamicTest("interop_memory_leaks") {
+    disabled = (project.target.name != project.hostName) ||
+            project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
+    source = "interop/memory_leaks/lib.kt"
+    cSource = "$projectDir/interop/memory_leaks/main.cpp"
+    clangTool = "clang++"
+    flags = ['-g', '-Xdestroy-runtime-mode=legacy'] // Runtime cannot be destroyed with interop with on-shutdown.
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { s -> s.contains("Memory leaks detected, 1 objects leaked!") }
 }
 
 task library_mismatch(type: KonanDriverTest) {
@@ -4495,7 +4567,7 @@ if (isAppleTarget(project)) {
         framework(frameworkName) {
             sources = ['objcexport']
             library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xopt-in=kotlin.ExperimentalStdlibApi"]
+            opts = ["-Xemit-lazy-objc-header=$lazyHeader"]
         }
         swiftSources = ['objcexport']
     }
@@ -4526,7 +4598,6 @@ if (isAppleTarget(project)) {
             artifact = frameworkArtifactName
             library = libraryName
             isStatic = true
-            opts = ['-Xstatic-framework', "-Xopt-in=kotlin.ExperimentalStdlibApi"]
         }
         swiftSources = ['objcexport']
     }
@@ -4761,12 +4832,36 @@ standaloneTest("local_ea_arraysfieldwrite") {
     source = "codegen/localEscapeAnalysis/arraysFieldWrite.kt"
 }
 
+task override_konan_properties0(type: KonanDriverTest) {
+
+    def overrides = PlatformInfo.isWindows()
+            ? '-Xoverride-konan-properties="llvmInlineThreshold=76"'
+            : '-Xoverride-konan-properties=llvmInlineThreshold=76'
+    flags = [
+            "-opt",
+            "-Xverbose-phases=BitcodeOptimization",
+            overrides
+    ]
+    compilerMessages = true
+    source = "link/ir_providers/hello.kt"
+    def messages =
+            "inline_threshold: 76\n" +
+            "hello\n"
+    goldValue = PlatformInfo.isWindows() ? messages.replaceAll('\\/', '\\\\') : messages
+    outputChecker = { out ->
+        goldValue.split("\n")
+                .collect { line -> out.contains(line) }
+                .every { it == true }
+    }
+}
+
 /**
  * Creates tasks to build and execute stdlib tests.
  */
 KotlinNativeTestKt.createTest(project, 'stdlibTest', KonanGTest) { task ->
     def sources = UtilsKt.getFilesToCompile(project,
             [ 'build/stdlib_external/stdlib', 'stdlib_external/utils.kt',
+                                 'stdlib_external/collections',
                                  'stdlib_external/jsCollectionFactoriesActuals.kt',
                                  'stdlib_external/text/StringEncodingTestNative.kt'],
             [ 'build/stdlib_external/stdlib/test/internalAnnotations.kt' ])
@@ -4777,6 +4872,7 @@ KotlinNativeTestKt.createTest(project, 'stdlibTest', KonanGTest) { task ->
             baseDir "$testOutputStdlib/stdlibTest"
             enableMultiplatform true
             extraOpts '-tr',
+                    '-Xverify-ir',
                     '-Xopt-in=kotlin.RequiresOptIn,kotlin.ExperimentalStdlibApi',
                     "-friend-modules", project.rootProject.file("${project.properties['konan.home']}/klib/common/stdlib").absolutePath
             extraOpts project.globalTestArgs
@@ -4816,6 +4912,7 @@ task buildKonanTests { t ->
             srcFiles sources
             baseDir testOutputLocal
             extraOpts '-tr'
+            extraOpts '-Xverify-ir'
             extraOpts project.globalTestArgs
         }
     }

@@ -27,12 +27,12 @@ buildscript {
         }
     }
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.20")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.21")
     }
 }
 
 plugins {
-    id "com.gradle.enterprise" version "3.4.1"
+    id "com.gradle.enterprise" version "3.5"
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
@@ -153,7 +153,6 @@ include ":benchmarks",
         ":idea:idea-jvm",
         ":idea:idea-maven",
         ":idea:idea-gradle",
-        ":idea:idea-gradle-tooling-api",
         ":idea:idea-git",
         ":idea:idea-jps-common",
         ":idea:formatter",
@@ -241,6 +240,7 @@ include ":benchmarks",
         ":kotlin-gradle-plugin-dsl-codegen",
         ":kotlin-gradle-plugin-npm-versions-codegen",
         ":kotlin-gradle-statistics",
+        ":kotlin-gradle-build-metrics",
         ":kotlin-gradle-plugin",
         ":kotlin-gradle-plugin-model",
         ":kotlin-gradle-plugin-test-utils-embeddable",
@@ -301,7 +301,9 @@ include ":benchmarks",
         ":kotlinx-serialization-compiler-plugin",
         ":kotlinx-serialization-ide-plugin",
         ":kotlin-serialization",
-        ":kotlin-serialization-unshaded"
+        ":kotlin-serialization-unshaded",
+        ":wasm:wasm.ir"
+
 
 include ":compiler:fir:cones",
         ":compiler:fir:tree",
@@ -500,6 +502,7 @@ project(':kotlin-gradle-plugin-api').projectDir = "$rootDir/libraries/tools/kotl
 project(':kotlin-gradle-plugin-dsl-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-dsl-codegen" as File
 project(':kotlin-gradle-plugin-npm-versions-codegen').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen" as File
 project(':kotlin-gradle-statistics').projectDir = "$rootDir/libraries/tools/kotlin-gradle-statistics" as File
+project(':kotlin-gradle-build-metrics').projectDir = "$rootDir/libraries/tools/kotlin-gradle-build-metrics" as File
 project(':kotlin-gradle-plugin').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin" as File
 project(':kotlin-gradle-plugin-model').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-model" as File
 project(':kotlin-gradle-plugin-test-utils-embeddable').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-test-utils-embeddable" as File

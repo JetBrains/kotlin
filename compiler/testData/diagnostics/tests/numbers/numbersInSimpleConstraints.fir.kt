@@ -2,6 +2,10 @@
 // !CHECK_TYPE
 package a
 
+import checkType
+import _
+import checkSubtype
+
 fun <T> id(t: T): T = t
 
 fun <T> either(t1: T, t2: T): T = t1

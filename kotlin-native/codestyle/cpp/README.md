@@ -4,8 +4,23 @@
 
 ## Headers
 
-* Headers should live in the same folder with it's implementation counterpart (if there's one)
+* Headers should live in the same folder with it's implementation counterpart (if there's one) **TODO**: This does not work with multiple implementations of a single header.
 * Headers should use header guards
+* Headers that are designed to be included into both `.cpp`/`.mm` and `.c`/`.m` should have extension `.h`
+* Headers that are designed to be included into `.cpp`/`.mm` only should have extension `.hpp`
+
+## Namespace usage
+
+* Do not use namespace blocks inside implementation files (`*.c`, `*.cpp`, `*.m`, `*.mm`). Use fully qualified names for definitions.
+* Do not use `extern "C"` blocks inside implementation files.
+
+### Runtime-specific
+
+* Put main module inside `namespace kotlin`
+* Put other modules under `namespace kotlin` in a nested `namespace [module_name]`
+* Put implementation details inside `.h`/`.hpp` into a nested `namespace internal` (e.g. implementation details of module `mm` go into `namespace kotlin { namespace mm { namespace internal { ... } } }`)
+* Put implementation details inside `.cpp`/`.mm` into a global anonymous `namespace`
+* For `extern "C"` declarations emulate namespaces with `Kotlin_[module_name]_` prefixes.
 
 ## Naming
 

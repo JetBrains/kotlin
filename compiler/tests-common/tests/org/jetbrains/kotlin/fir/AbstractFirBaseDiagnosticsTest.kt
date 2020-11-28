@@ -69,7 +69,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
 
         val modules = createModules(groupedByModule)
 
-        val sessionProvider = FirProjectSessionProvider(project)
+        val sessionProvider = FirProjectSessionProvider()
 
         //For BuiltIns, registered in sessionProvider automatically
         val allProjectScope = GlobalSearchScope.allScope(project)
@@ -84,7 +84,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
             val scope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(
                 project,
                 moduleFiles.mapNotNull { it.ktFile })
-            FirSessionFactory.createJavaModuleBasedSession(info, sessionProvider, scope) {
+            FirSessionFactory.createJavaModuleBasedSession(info, sessionProvider, scope, project) {
                 configureSession()
                 getFirExtensions()?.let {
                     registerExtensions(it)

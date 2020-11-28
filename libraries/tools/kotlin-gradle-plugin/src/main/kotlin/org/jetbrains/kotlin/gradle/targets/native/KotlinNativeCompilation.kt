@@ -29,11 +29,10 @@ abstract class AbstractKotlinNativeCompilation(
     compilationName: String
 ) : AbstractKotlinCompilation<KotlinCommonOptions>(target, compilationName) {
 
-    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions()
+    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions { defaultSourceSet.languageSettings }
 
-    private inner class NativeCompileOptions : KotlinCommonOptions {
-        private val languageSettings: LanguageSettingsBuilder
-            get() = defaultSourceSet.languageSettings
+    private class NativeCompileOptions(languageSettingsProvider: () -> LanguageSettingsBuilder) : KotlinCommonOptions {
+        private val languageSettings: LanguageSettingsBuilder by lazy(languageSettingsProvider)
 
         override var apiVersion: String?
             get() = languageSettings.apiVersion

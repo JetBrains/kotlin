@@ -13,6 +13,7 @@ import java.util.ArrayList
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 data class Benchmark(
+    val version: Int = 4,
     @set:JsonProperty("agentName")
     var agentName: String?,
     @set:JsonProperty("benchmark")
@@ -21,10 +22,16 @@ data class Benchmark(
     var name: String? = null,
     @set:JsonProperty("synthetic")
     var synthetic: Boolean? = null,
+    @set:JsonProperty("index")
+    var index: Int? = null,
+    @set:JsonProperty("warmUp")
+    var warmUp: Boolean? = null,
     @set:JsonProperty("buildTimestamp")
     var buildTimestamp: String,
     @set:JsonProperty("buildBranch")
     var buildBranch: String?,
+    @set:JsonProperty("commit")
+    var commit: String? = null,
     @set:JsonProperty("buildId")
     var buildId: Int?,
     @set:JsonProperty("metricValue")
@@ -41,18 +48,16 @@ data class Benchmark(
         hasError = if (metrics.any { it.ifHasError() == true }) true else null
     }
 
-    fun resetValue() {
-        buildId = null
-        metricValue = null
-        metricError = null
-        buildBranch = null
-        metrics.forEach { it.resetValue() }
-    }
+    private fun String?.escapeName() = this?.replace(Regex("[^A-Za-z0-9]"), "")
 
-    private fun String?.escapeName() = this?.replace(Regex("[^A-Za-z0-9_]"), "_")
-
-    fun fileName(): String =
-        listOfNotNull(benchmark?.escapeName(), name?.escapeName(), buildId?.toString()).joinToString(separator = "_")
+    fun id(): String =
+        listOfNotNull(
+            benchmark?.escapeName(),
+            name?.escapeName(),
+            buildId?.toString(),
+            warmUp?.let { "warmUp" } ?: null,
+            index?.toString()
+        ).joinToString(separator = "_")
 
     fun cleanUp() {
         metrics?.forEach { it.cleanUp() }
@@ -86,6 +91,10 @@ data class Benchmark(
 data class Metric(
     @set:JsonProperty("metricName")
     var metricName: String,
+    @set:JsonProperty("index")
+    var index: Int? = null,
+    @set:JsonProperty("warmUp")
+    var warmUp: Boolean? = null,
     @set:JsonProperty("legacyName")
     var legacyName: String? = null,
     @set:JsonProperty("metricValue")

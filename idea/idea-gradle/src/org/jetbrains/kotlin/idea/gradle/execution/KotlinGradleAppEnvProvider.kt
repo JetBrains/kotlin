@@ -19,6 +19,7 @@ import com.intellij.execution.util.ExecutionErrorDialog
 import com.intellij.execution.util.JavaParametersUtil
 import com.intellij.execution.util.ProgramParametersUtil
 import com.intellij.openapi.externalSystem.model.execution.ExternalSystemTaskExecutionSettings
+import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemRunConfiguration
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
@@ -102,7 +103,6 @@ class KotlinGradleAppEnvProvider : GradleExecutionEnvironmentProvider {
         val runnerAndConfigurationSettings = environment.runnerAndConfigurationSettings ?: return null
         val gradleRunConfiguration = runnerAndConfigurationSettings.configuration as ExternalSystemRunConfiguration
 
-        val gradlePath = GradleProjectResolverUtil.getGradlePath(module) ?: return null
         val sourceSetName = when {
             GradleConstants.GRADLE_SOURCE_SET_MODULE_TYPE_KEY == ExternalSystemApiUtil.getExternalModuleType(
                 module
@@ -112,8 +112,8 @@ class KotlinGradleAppEnvProvider : GradleExecutionEnvironmentProvider {
         } ?: return null
 
         val initScript = generateInitScript(
-            applicationConfiguration, project, module, params, gradlePath,
-            runAppTaskName, mainClass, javaExePath, sourceSetName, javaModuleName
+            applicationConfiguration, project, module, params, runAppTaskName,
+            mainClass, javaExePath, sourceSetName, javaModuleName
         )
         gradleRunConfiguration.putUserData<String>(GradleTaskManager.INIT_SCRIPT_KEY, initScript)
         gradleRunConfiguration.putUserData<String>(GradleTaskManager.INIT_SCRIPT_PREFIX_KEY, runAppTaskName)
@@ -145,9 +145,26 @@ class KotlinGradleAppEnvProvider : GradleExecutionEnvironmentProvider {
 
         private fun generateInitScript(
             applicationConfiguration: KotlinRunConfiguration, project: Project, module: Module,
-            params: JavaParameters, gradlePath: String, runAppTaskName: String, mainClass: PsiClass,
-            javaExePath: String, sourceSetName: String, javaModuleName: String?
-        ): String {
+            params: JavaParameters, runAppTaskName: String, mainClass: PsiClass, javaExePath: String,
+            sourceSetName: String, javaModuleName: String?
+        ): String? {
+            // Init script creates the run task only for the project matching 'applicationConfiguration'.
+            // To find the proper one we compare identifiers: the one provided by Gradle and the one we generate based on our project import
+            // data (external module data).
+
+            val extProjectPath = ExternalSystemApiUtil.getExternalProjectPath(module) ?: return null
+            val extProjectInfo = ExternalSystemUtil.getExternalProjectInfo(project, GradleConstants.SYSTEM_ID, extProjectPath) ?: return null
+            val extModuleData = GradleProjectResolverUtil.findModule(extProjectInfo.externalProjectStructure, extProjectPath) ?: return null
+
+            // Pair of 'project.rootProject.name' and 'project.path' is a unique project id in Gradle (including composite builds).
+            // So our one is built using the same principle.
+            val projectPath = extModuleData.data.id
+            val gradleProjectId = if (projectPath.startsWith(':')) { // shortening (is unique project id)
+                val rootProjectName = (extModuleData.parent?.data as? ProjectData)?.externalName ?: ""
+                rootProjectName + projectPath
+            } else {
+                projectPath // includes rootProject.name already
+            }
 
             val workingDir = ProgramParametersUtil.getWorkingDir(applicationConfiguration, project, module)?.let {
                 FileUtil.toSystemIndependentName(it)
@@ -160,7 +177,7 @@ class KotlinGradleAppEnvProvider : GradleExecutionEnvironmentProvider {
             @Suppress("UnnecessaryVariable")
 //      @Language("Groovy")
             val initScript = """
-    def gradlePath = '$gradlePath'
+    def gradleProjectId = '$gradleProjectId'
     def runAppTaskName = '$runAppTaskName'
     def mainClass = '${mainClass.qualifiedName}'
     def javaExePath = '$javaExePath'
@@ -170,7 +187,7 @@ class KotlinGradleAppEnvProvider : GradleExecutionEnvironmentProvider {
 
     allprojects {
         afterEvaluate { project ->
-            if (project.path == gradlePath) {
+            if (project.rootProject.name + project.path == gradleProjectId) {
                 def overwrite = project.tasks.findByName(runAppTaskName) != null
                 project.tasks.create(name: runAppTaskName, overwrite: overwrite, type: JavaExec) {
                     if (javaExePath) executable = javaExePath

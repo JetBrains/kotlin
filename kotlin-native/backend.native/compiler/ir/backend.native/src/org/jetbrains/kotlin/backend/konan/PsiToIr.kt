@@ -8,12 +8,11 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
-import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
+import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
-import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.CleanableBindingContext
 import org.jetbrains.kotlin.utils.DFS
 
 internal fun Context.psiToIr(
@@ -72,8 +72,6 @@ internal fun Context.psiToIr(
         val irProviderForCEnumsAndCStructs =
                 IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
 
-        val deserializeFakeOverrides = config.configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
-
         val translationContext = object : TranslationPluginContext {
             override val moduleDescriptor: ModuleDescriptor
                 get() = generatorContext.moduleDescriptor
@@ -98,7 +96,6 @@ internal fun Context.psiToIr(
                 stubGenerator,
                 irProviderForCEnumsAndCStructs,
                 exportedDependencies,
-                deserializeFakeOverrides,
                 config.cachedLibraries
         ).also { linker ->
 
@@ -120,10 +117,12 @@ internal fun Context.psiToIr(
                     val kotlinLibrary = dependency.getCapability(KlibModuleOrigin.CAPABILITY)?.let {
                         (it as? DeserializedKlibModuleOrigin)?.library
                     }
-                    if (isProducingLibrary)
-                        linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
-                    else
-                        linker.deserializeIrModuleHeader(dependency, kotlinLibrary)
+                    when {
+                        isProducingLibrary -> linker.deserializeOnlyHeaderModule(dependency, kotlinLibrary)
+                        kotlinLibrary != null && config.cachedLibraries.isLibraryCached(kotlinLibrary) ->
+                            linker.deserializeHeadersWithInlineBodies(dependency, kotlinLibrary)
+                        else -> linker.deserializeIrModuleHeader(dependency, kotlinLibrary)
+                    }
                 }
                 if (dependencies.size == dependenciesCount) break
                 dependenciesCount = dependencies.size
@@ -153,7 +152,7 @@ internal fun Context.psiToIr(
     }
 
     expectDescriptorToSymbol = mutableMapOf()
-    val module = translator.generateModuleFragment(
+    val mainModule = translator.generateModuleFragment(
             generatorContext,
             environment.getSourceFiles(),
             irProviders = listOf(irDeserializer),
@@ -163,7 +162,7 @@ internal fun Context.psiToIr(
             // how ExpectedActualResolver is implemented.
             // Need to fix ExpectActualResolver to either cache expects or somehow reduce the member scope searches.
             expectDescriptorToSymbol = if (expectActualLinker) expectDescriptorToSymbol else null
-    )
+    ).toKonanModule()
 
     irDeserializer.postProcess()
 
@@ -172,16 +171,16 @@ internal fun Context.psiToIr(
 
     symbolTable.noUnboundLeft("Unbound symbols left after linker")
 
-    module.acceptVoid(ManglerChecker(KonanManglerIr, Ir2DescriptorManglerAdapter(KonanManglerDesc)))
+    mainModule.acceptVoid(ManglerChecker(KonanManglerIr, Ir2DescriptorManglerAdapter(KonanManglerDesc)))
 
     val modules = if (isProducingLibrary) emptyMap() else (irDeserializer as KonanIrLinker).modules
 
-    if (!config.configuration.getBoolean(KonanConfigKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR)) {
+    if (config.configuration.getBoolean(KonanConfigKeys.FAKE_OVERRIDE_VALIDATOR)) {
         val fakeOverrideChecker = FakeOverrideChecker(KonanManglerIr, KonanManglerDesc)
         modules.values.forEach { fakeOverrideChecker.check(it) }
     }
 
-    irModule = module
+    irModule = mainModule
 
     // Note: coupled with [shouldLower] below.
     irModules = modules.filterValues { llvmModuleSpecification.containsModule(it) }
@@ -194,4 +193,15 @@ internal fun Context.psiToIr(
         internalAbi.init(irModules.values + irModule!!)
         functionIrClassFactory.module = (modules.values + irModule!!).single { it.descriptor.isNativeStdlib() }
     }
+
+    mainModule.files.forEach { it.metadata = KonanFileMetadataSource(mainModule) }
+    modules.values.forEach { module ->
+        module.files.forEach { it.metadata = KonanFileMetadataSource(module as KonanIrModuleFragmentImpl) }
+    }
+
+    val originalBindingContext = bindingContext as? CleanableBindingContext
+            ?: error("BindingContext should be cleanable in K/N IR to avoid leaking memory: $bindingContext")
+    originalBindingContext.clear()
+
+    this.bindingContext = BindingContext.EMPTY
 }

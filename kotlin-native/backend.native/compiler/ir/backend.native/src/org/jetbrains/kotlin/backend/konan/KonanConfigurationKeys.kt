@@ -14,12 +14,10 @@ class KonanConfigKeys {
         // Keep the list lexically sorted.
         val CHECK_DEPENDENCIES: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("check dependencies and download the missing ones")
-        val COMPATIBLE_COMPILER_VERSIONS: CompilerConfigurationKey<List<String>>
-                = CompilerConfigurationKey.create("compatible compiler versions")
         val DEBUG: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("add debug information")
-        val DISABLE_FAKE_OVERRIDE_VALIDATOR: CompilerConfigurationKey<Boolean>
-                = CompilerConfigurationKey.create("disable fake override validator")
+        val FAKE_OVERRIDE_VALIDATOR: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("fake override validator")
         val DISABLED_PHASES: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("disable backend phases")
         val BITCODE_EMBEDDING_MODE: CompilerConfigurationKey<BitcodeEmbedding.Mode>
@@ -128,6 +126,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("directory for temporary files")
         val VERIFY_BITCODE: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("verify bitcode")
+        val VERIFY_IR: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("verify IR")
         val VERIFY_COMPILER: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("verify compiler")
         val DEBUG_INFO_VERSION: CompilerConfigurationKey<Int>
@@ -144,6 +144,10 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("remap file source paths in debug info")
         val PRE_LINK_CACHES: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("perform compiler caches pre-link")
+        val OVERRIDE_KONAN_PROPERTIES: CompilerConfigurationKey<Map<String, String>>
+                = CompilerConfigurationKey.create("override konan.properties values")
+        val DESTROY_RUNTIME_MODE: CompilerConfigurationKey<DestroyRuntimeMode>
+                = CompilerConfigurationKey.create("when to destroy runtime")
     }
 }
 

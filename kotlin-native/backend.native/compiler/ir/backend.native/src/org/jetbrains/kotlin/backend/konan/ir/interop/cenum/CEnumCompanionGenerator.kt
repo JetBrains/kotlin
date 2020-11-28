@@ -54,9 +54,7 @@ internal class CEnumCompanionGenerator(
             it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                         startOffset, endOffset, context.irBuiltIns.unitType,
-                        superConstructorSymbol,
-                        superConstructorSymbol.owner.typeParameters.size,
-                        superConstructorSymbol.owner.valueParameters.size
+                        superConstructorSymbol
                 )
                 +irInstanceInitializer(symbolTable.referenceClass(companionObjectDescriptor))
             }
@@ -80,17 +78,17 @@ internal class CEnumCompanionGenerator(
                 .single { it.name.identifier == enumEntryName }.symbol
     }
 
-    private fun generateAliasGetterBody(getter: IrSimpleFunction, entrySymbol: IrEnumEntrySymbol): IrBody =
+    private fun generateAliasGetterBody(getter: IrSimpleFunction, entrySymbol: IrEnumEntrySymbol, enumClass: IrClass): IrBody =
             irBuilder(irBuiltIns, getter.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                 +irReturn(
-                        IrGetEnumValueImpl(startOffset, endOffset, entrySymbol.owner.parentAsClass.defaultType, entrySymbol)
+                        IrGetEnumValueImpl(startOffset, endOffset, enumClass.defaultType, entrySymbol)
                 )
             }
 
     private fun declareEntryAliasProperty(propertyDescriptor: PropertyDescriptor, enumClass: IrClass): IrProperty {
         val entrySymbol = fundCorrespondingEnumEntrySymbol(propertyDescriptor, enumClass)
         return createProperty(propertyDescriptor).also {
-            it.getter!!.body = generateAliasGetterBody(it.getter!!, entrySymbol)
+            it.getter!!.body = generateAliasGetterBody(it.getter!!, entrySymbol, enumClass)
         }
     }
 }

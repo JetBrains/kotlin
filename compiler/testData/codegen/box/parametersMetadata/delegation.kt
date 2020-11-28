@@ -1,10 +1,9 @@
-// SKIP_JDK6
 // TARGET_BACKEND: JVM
 // WITH_RUNTIME
 // FULL_JDK
 // JAVAC_OPTIONS: -parameters
 // KOTLIN_CONFIGURATION_FLAGS: +JVM.PARAMETERS_METADATA
-
+// JVM_TARGET: 1.8
 // FILE: JavaInterface.java
 
 public interface JavaInterface {

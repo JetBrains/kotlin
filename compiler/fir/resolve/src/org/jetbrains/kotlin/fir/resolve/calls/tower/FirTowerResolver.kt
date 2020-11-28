@@ -52,7 +52,6 @@ class FirTowerResolver(
             TowerDataElementsForName(info.name, components.towerDataContext),
             candidateFactoriesAndCollectors.resultCollector,
             candidateFactoriesAndCollectors.candidateFactory,
-            candidateFactoriesAndCollectors.stubReceiverCandidateFactory
         )
         when (val receiver = info.explicitReceiver) {
             is FirResolvedQualifier -> {
@@ -65,9 +64,8 @@ class FirTowerResolver(
             }
             else -> {
                 if (receiver is FirQualifiedAccessExpression) {
-                    val calleeReference = receiver.calleeReference
-                    if (calleeReference is FirSuperReference) {
-                        manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver.typeRef) }
+                    if (receiver.calleeReference is FirSuperReference) {
+                        manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver) }
                         return
                     }
                 }
@@ -104,11 +102,12 @@ class FirTowerResolver(
             resultCollector.consumeCandidate(
                 TowerGroup.Member,
                 candidateFactory.createCandidate(
+                    info,
                     it,
                     ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
                     scope,
                     dispatchReceiver,
-                    implicitExtensionReceiverValue = null,
+                    extensionReceiverValue = null,
                     builtInExtensionFunctionReceiverValue = null
                 ),
                 context
@@ -124,16 +123,10 @@ class FirTowerResolver(
         context: ResolutionContext
     ): CandidateFactoriesAndCollectors {
         val candidateFactory = CandidateFactory(context, info)
-        val stubReceiverCandidateFactory =
-            if (info.callKind == CallKind.CallableReference && info.stubReceiver != null)
-                candidateFactory.replaceCallInfo(info.replaceExplicitReceiver(info.stubReceiver))
-            else
-                null
 
         return CandidateFactoriesAndCollectors(
             candidateFactory,
-            collector,
-            stubReceiverCandidateFactory
+            collector
         )
     }
 

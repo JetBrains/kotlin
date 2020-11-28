@@ -1,0 +1,15 @@
+@kotlin.Metadata
+public abstract class AMListD {
+    // source: 'inheritingFromAbstractMutableList.kt'
+    public method <init>(): void
+    public bridge method contains(p0: double): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public bridge method indexOf(p0: double): int
+    public bridge final method indexOf(p0: java.lang.Object): int
+    public bridge method lastIndexOf(p0: double): int
+    public bridge final method lastIndexOf(p0: java.lang.Object): int
+    public bridge method remove(p0: double): boolean
+    public bridge final method remove(p0: int): double
+    public bridge final method remove(p0: java.lang.Object): boolean
+    public synthetic bridge method removeAt(p0: int): java.lang.Object
+}

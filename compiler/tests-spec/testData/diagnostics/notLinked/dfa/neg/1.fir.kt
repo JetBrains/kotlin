@@ -103,8 +103,8 @@ fun case_7() {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: TypealiasNullableString) {
-    if (x !== null === null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.get(0)
-    if (x !== null != null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.get(0)
+    if (x !== null === null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null != null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.<!INAPPLICABLE_CANDIDATE!>get<!>(0)
+    if (x !== null != null && <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!> != null === null) <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableString")!>x<!>.<!INAPPLICABLE_CANDIDATE!>get<!>(0)
 }
 
 // TESTCASE NUMBER: 9

@@ -20,9 +20,9 @@ FILE: enumValues.kt
     }
     public final fun foo(): R|kotlin/Unit| {
         lval values: R|kotlin/Array<MyEnum>| = Q|MyEnum|.R|/MyEnum.values|()
-        lval <iterator>: R|kotlin/collections/Iterator<MyEnum>| = R|<local>/values|.R|FakeOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<MyEnum>|>|()
+        lval <iterator>: R|kotlin/collections/Iterator<MyEnum>| = R|<local>/values|.R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<MyEnum>|>|()
         while(R|<local>/<iterator>|.R|kotlin/collections/Iterator.hasNext|()) {
-            lval value: R|MyEnum| = R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|MyEnum|>|()
+            lval value: R|MyEnum| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|MyEnum|>|()
             R|<local>/value|.R|/MyEnum.bar|()
         }
 

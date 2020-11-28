@@ -21,7 +21,7 @@ FILE: intersectionOverrideWithImplicitTypes.kt
     }
     public abstract interface B : R|Common| {
         public open override fun <T, R> foo(value: R|T|, producer: R|(T) -> R|): R|R| {
-            ^foo R|<local>/producer|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/value|)
+            ^foo R|<local>/producer|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(R|<local>/value|)
         }
 
     }

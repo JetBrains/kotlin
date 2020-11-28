@@ -15,6 +15,7 @@
  */
 
 #include <math.h>
+#include "pi.h"
 
 /* uncomment the following line to use 'long long' integers */
 #define HAS_LONG_LONG

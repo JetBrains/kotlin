@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 fun isEap(version: String): Boolean {
-    return version.contains("rc") || version.contains("eap") || version.contains("-M")
+    return version.contains("rc") || version.contains("eap") || version.contains("-M") || version.contains("RC")
 }
 
 fun isDev(version: String): Boolean {

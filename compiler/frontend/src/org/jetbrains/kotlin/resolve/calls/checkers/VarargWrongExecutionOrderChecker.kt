@@ -12,11 +12,14 @@ import org.jetbrains.kotlin.psi.KtValueArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 
 object VarargWrongExecutionOrderChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val isCorrectExecutionOrderForVarargArgumentsAlreadyUsed =
             context.languageVersionSettings.getFeatureSupport(LanguageFeature.UseCorrectExecutionOrderForVarargArguments) == LanguageFeature.State.ENABLED
+
+        if (resolvedCall.candidateDescriptor.isAnnotationConstructor()) return
 
         if (isCorrectExecutionOrderForVarargArgumentsAlreadyUsed) return
 

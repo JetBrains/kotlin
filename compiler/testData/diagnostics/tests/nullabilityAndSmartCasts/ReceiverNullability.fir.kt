@@ -30,7 +30,7 @@ fun A.test2() {
 }
 
 fun A?.test3() {
-    foo() // error
+    <!INAPPLICABLE_CANDIDATE!>foo<!>() // error
     <!INAPPLICABLE_CANDIDATE!>bar<!>() // error
     buzz()
 

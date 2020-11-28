@@ -114,13 +114,14 @@ open class DeepCopyIrTreeWithSymbols(
 
     override fun visitScript(declaration: IrScript): IrStatement {
         return IrScriptImpl(
-            //TODO: something may go wrong, because expected using symbolRemapper
-            IrScriptSymbolImpl(declaration.descriptor as ScriptDescriptor),
+            symbolRemapper.getDeclaredScript(declaration.symbol),
             declaration.name
-        ).also {
-            it.thisReceiver = declaration.thisReceiver.transform()
-            declaration.transformDeclarationsTo(it)
-            it.statements.addAll(declaration.statements.map { it.transform() })
+        ).also { scriptCopy ->
+            scriptCopy.thisReceiver = declaration.thisReceiver.transform()
+            declaration.statements.mapTo(scriptCopy.statements) { it.transform() }
+            scriptCopy.explicitCallParameters = declaration.explicitCallParameters.map { it.transform() }
+            scriptCopy.implicitReceiversParameters = declaration.implicitReceiversParameters.map { it.transform() }
+            scriptCopy.providedProperties = declaration.providedProperties.map { it.first.transform() to it.second }
         }
     }
 
@@ -227,6 +228,7 @@ open class DeepCopyIrTreeWithSymbols(
             containerSource = declaration.containerSource,
         ).apply {
             transformAnnotations(declaration)
+            copyAttributes(declaration)
             this.backingField = declaration.backingField?.transform()?.also {
                 it.correspondingPropertySymbol = symbol
             }

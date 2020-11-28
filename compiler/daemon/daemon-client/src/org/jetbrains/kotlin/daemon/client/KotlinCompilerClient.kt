@@ -26,6 +26,7 @@ import java.io.File
 import java.io.OutputStream
 import java.io.PrintStream
 import java.net.SocketException
+import java.nio.file.Files
 import java.rmi.ConnectException
 import java.rmi.ConnectIOException
 import java.rmi.UnmarshalException
@@ -347,7 +348,7 @@ object KotlinCompilerClient {
 
     private fun tryFindSuitableDaemonOrNewOpts(registryDir: File, compilerId: CompilerId, daemonJVMOptions: DaemonJVMOptions, report: (DaemonReportCategory, String) -> Unit): Pair<CompileService?, DaemonJVMOptions> {
         registryDir.mkdirs()
-        val timestampMarker = createTempFile("kotlin-daemon-client-tsmarker", directory = registryDir)
+        val timestampMarker = Files.createTempFile(registryDir.toPath(), "kotlin-daemon-client-tsmarker", null).toFile()
         val aliveWithMetadata = try {
             walkDaemons(registryDir, compilerId, timestampMarker, report = report).toList()
         }

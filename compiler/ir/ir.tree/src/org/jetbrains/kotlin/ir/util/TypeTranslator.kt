@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
@@ -119,6 +117,9 @@ class TypeTranslator(
                     annotations = translateTypeAnnotations(upperType, approximatedType)
                 }
 
+                is ScriptDescriptor -> {
+                    classifier = symbolTable.referenceScript(upperTypeDescriptor)
+                }
                 is ClassDescriptor -> {
                     // Types such as 'java.util.Collection<? extends CharSequence>' are treated as
                     // '( kotlin.collections.MutableCollection<out kotlin.CharSequence!>

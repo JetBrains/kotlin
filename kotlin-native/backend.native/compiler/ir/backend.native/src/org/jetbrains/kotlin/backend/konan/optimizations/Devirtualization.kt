@@ -820,7 +820,7 @@ internal object Devirtualization {
                 val value = fromId.toLong() or (toId.toLong() shl 32)
                 // This is 64-bit extension of a hashing method from Knuth's "The Art of Computer Programming".
                 // The magic constant is the closest prime to 2^64 * phi, where phi is the golden ratio.
-                val bucketIdx = ((value.toULong() * 11400714819323198393UL) % bagOfEdges.size.toUInt()).toInt()
+                val bucketIdx = ((value.toULong() * 11400714819323198393UL) % bagOfEdges.size.toULong()).toInt()
                 val bucket = bagOfEdges[bucketIdx] ?: LongArrayList().also { bagOfEdges[bucketIdx] = it }
                 for (x in bucket)
                     if (x == value) return

@@ -920,6 +920,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/annotations/deprecatedRepeatable.kt");
         }
 
+        @TestMetadata("dontReportWarningAboutChangingExecutionOrderForVararg.kt")
+        public void testDontReportWarningAboutChangingExecutionOrderForVararg() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/annotations/dontReportWarningAboutChangingExecutionOrderForVararg.kt");
+        }
+
         @TestMetadata("extensionFunctionType.kt")
         public void testExtensionFunctionType() throws Exception {
             runTest("compiler/testData/diagnostics/tests/annotations/extensionFunctionType.kt");
@@ -12386,6 +12391,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/inline/kt19679.kt");
         }
 
+        @TestMetadata("kt21177.kt")
+        public void testKt21177() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inline/kt21177.kt");
+        }
+
         @TestMetadata("kt4869.kt")
         public void testKt4869() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inline/kt4869.kt");
@@ -12825,6 +12835,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
         @TestMetadata("basicInlineClassDeclarationDisabled.kt")
         public void testBasicInlineClassDeclarationDisabled() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inlineClasses/basicInlineClassDeclarationDisabled.kt");
+        }
+
+        @TestMetadata("changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt")
+        public void testChangingNullabilityOfOrdinaryClassIsBinaryCompatibleChange() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inlineClasses/changingNullabilityOfOrdinaryClassIsBinaryCompatibleChange.kt");
         }
 
         @TestMetadata("constructorsJvmSignaturesClash.kt")
@@ -14546,6 +14561,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/modifiers/NoLocalVisibility.kt");
         }
 
+        @TestMetadata("openInExpectInterface.kt")
+        public void testOpenInExpectInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/modifiers/openInExpectInterface.kt");
+        }
+
         @TestMetadata("openInInterface.kt")
         public void testOpenInInterface() throws Exception {
             runTest("compiler/testData/diagnostics/tests/modifiers/openInInterface.kt");
@@ -15003,6 +15023,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
 
         public void testAllFilesPresentInMultiplatform() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+        }
+
+        @TestMetadata("expectInterfaceApplicability.kt")
+        public void testExpectInterfaceApplicability() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/expectInterfaceApplicability.kt");
         }
 
         @TestMetadata("headerFunInNonHeaderClass.kt")
@@ -21908,6 +21933,16 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             @TestMetadata("basicOn.kt")
             public void testBasicOn() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/castchecks/basicOn.kt");
+            }
+
+            @TestMetadata("castInTryWithCatch.kt")
+            public void testCastInTryWithCatch() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/castchecks/castInTryWithCatch.kt");
+            }
+
+            @TestMetadata("castInTryWithoutCatch.kt")
+            public void testCastInTryWithoutCatch() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/castchecks/castInTryWithoutCatch.kt");
             }
 
             @TestMetadata("impossible.kt")

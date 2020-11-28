@@ -26,5 +26,5 @@ FILE: smartSet.kt
     }
     public final fun foo(x: R|kotlin/Any|): R|kotlin/Unit| {
         lval s: R|SmartSet<kotlin/Any>| = R|/SmartSet.SmartSet|<R|kotlin/Any|>()
-        R|<local>/s|.R|FakeOverride</SmartSet.add: R|kotlin/Boolean|>|(R|<local>/x|)
+        R|<local>/s|.R|SubstitutionOverride</SmartSet.add: R|kotlin/Boolean|>|(R|<local>/x|)
     }

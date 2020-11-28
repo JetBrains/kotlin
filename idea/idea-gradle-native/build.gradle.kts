@@ -23,9 +23,7 @@ dependencies {
     testCompile(projectTests(":idea:idea-gradle"))
 
     compileOnly(intellijPluginDep("gradle"))
-    Platform[193].orHigher {
-        compileOnly(intellijPluginDep("gradle-java"))
-    }
+    compileOnly(intellijPluginDep("gradle-java"))
     compileOnly(intellijPluginDep("Groovy"))
     compileOnly(intellijDep())
 
@@ -36,11 +34,10 @@ dependencies {
     testCompileOnly(intellijPluginDep("Groovy"))
     testCompileOnly(intellijDep())
 
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-    }
+    compileOnly(intellijPluginDep("java"))
 
     testRuntimeOnly(toolsJar())
+    testRuntimeOnly(project(":kotlin-gradle-statistics"))
     testRuntime(project(":kotlin-reflect"))
     testRuntime(project(":idea:idea-jvm"))
     testRuntime(project(":idea:idea-android"))
@@ -61,9 +58,7 @@ dependencies {
     testRuntime(intellijPluginDep("testng"))
     testRuntime(intellijPluginDep("properties"))
     testRuntime(intellijPluginDep("gradle"))
-    Platform[193].orHigher {
-        testRuntime(intellijPluginDep("gradle-java"))
-    }
+    testRuntime(intellijPluginDep("gradle-java"))
     testRuntime(intellijPluginDep("Groovy"))
     testRuntime(intellijPluginDep("coverage"))
     if (Ide.IJ()) {

@@ -326,6 +326,11 @@ private class MappingExtensions(
                 Flag.Type.IS_NULLABLE.takeIf { nullable }
         )
 
+    val AbbreviatedType.expandedTypeFlags: Flags
+        get() = flagsOfNotNull(
+                Flag.Type.IS_NULLABLE.takeIf { isEffectivelyNullable() }
+        )
+
     val TypealiasStub.flags: Flags
         get() = flagsOfNotNull(
                 Flag.IS_PUBLIC
@@ -356,6 +361,13 @@ private class MappingExtensions(
                 Flag.Constructor.IS_SECONDARY.takeIf { !isPrimary },
                 Flag.HAS_ANNOTATIONS.takeIf { annotations.isNotEmpty() }
         ) or visibility.flags
+
+    private tailrec fun StubType.isEffectivelyNullable(): Boolean =
+            when {
+                nullable -> true
+                this !is AbbreviatedType -> false
+                else -> underlyingType.isEffectivelyNullable()
+            }
 
     fun AnnotationStub.map(): KmAnnotation {
         fun Pair<String, String>.asAnnotationArgument() =
@@ -467,8 +479,7 @@ private class MappingExtensions(
                 km.arguments += typeArguments
             }
             if (shouldExpandTypeAliases) {
-                // Abbreviated and expanded types have the same nullability.
-                KmType(flags).also { km ->
+                KmType(expandedTypeFlags).also { km ->
                     km.abbreviatedType = abbreviatedType
                     val kmUnderlyingType = underlyingType.map(true)
                     km.arguments += kmUnderlyingType.arguments

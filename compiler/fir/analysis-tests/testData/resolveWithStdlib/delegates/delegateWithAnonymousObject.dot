@@ -155,8 +155,8 @@ digraph delegateWithAnonymousObject_kt {
             55 [label="Enter block"];
             56 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
             57 [label="Access variable this@R|/IssuesListUserProfile|"];
-            58 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(...)"];
-            59 [label="Jump: ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
+            58 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(...)"];
+            59 [label="Jump: ^ this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|IssueListView|>|(this@R|/IssuesListUserProfile|, ::R|/IssuesListUserProfile.issueListView|)"];
             60 [label="Stub" style="filled" fillcolor=gray];
             61 [label="Exit block" style="filled" fillcolor=gray];
         }
@@ -181,7 +181,7 @@ digraph delegateWithAnonymousObject_kt {
             65 [label="Access variable D|/IssuesListUserProfile.issueListView|"];
             66 [label="Access variable this@R|/IssuesListUserProfile|"];
             67 [label="Access variable R|<local>/issueListView|"];
-            68 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|FakeOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(...)"];
+            68 [label="Function call: this@R|/IssuesListUserProfile|.D|/IssuesListUserProfile.issueListView|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(...)"];
             69 [label="Exit block"];
         }
         70 [label="Exit function setter" style="filled" fillcolor=red];

@@ -81,6 +81,7 @@ void launchMain() {
     Konan_start(args.obj());
   }
 
+  // TODO: Can we shutdown runtime here?
   Kotlin_deinitRuntimeIfNeeded();
 }
 

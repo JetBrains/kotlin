@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -47,6 +48,7 @@ open class FirFieldBuilder : FirAnnotationContainerBuilder {
     open val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
     open lateinit var status: FirDeclarationStatus
     open var containerSource: DeserializedContainerSource? = null
+    open var dispatchReceiverType: ConeKotlinType? = null
 
     override fun build(): FirField {
         return FirFieldImpl(
@@ -63,6 +65,7 @@ open class FirFieldBuilder : FirAnnotationContainerBuilder {
             typeParameters,
             status,
             containerSource,
+            dispatchReceiverType,
         )
     }
 

@@ -27,8 +27,9 @@ buildscript {
     dependencies {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.20")
+        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:0.0.21")
         classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
+        classpath(kotlin("serialization", bootstrapKotlinVersion))
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:0.9.17")
         classpath("org.jfrog.buildinfo:build-info-extractor-gradle:4.17.2")
     }
@@ -167,9 +168,8 @@ extra["versions.junit"] = "4.12"
 extra["versions.javaslang"] = "2.0.6"
 extra["versions.ant"] = "1.8.2"
 extra["versions.android"] = "2.3.1"
-val coroutinesVersion = if (Platform[192].orHigher()) "1.3.7" else "1.1.1"
-extra["versions.kotlinx-coroutines-core"] = coroutinesVersion
-extra["versions.kotlinx-coroutines-jdk8"] = coroutinesVersion
+extra["versions.kotlinx-coroutines-core"] = "1.3.8"
+extra["versions.kotlinx-coroutines-jdk8"] = "1.3.8"
 extra["versions.json"] = "20160807"
 extra["versions.native-platform"] = "0.14"
 extra["versions.ant-launcher"] = "1.8.0"
@@ -188,13 +188,13 @@ extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
 extra["versions.ktor-network"] = "1.0.1"
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.4.30-dev-16766"
+    extra["versions.kotlin-native"] = "1.4.30-dev-17200"
 }
 
 val intellijUltimateEnabled by extra(project.kotlinBuildProperties.intellijUltimateEnabled)
 val effectSystemEnabled by extra(project.getBooleanProperty("kotlin.compiler.effectSystemEnabled") ?: false)
 val newInferenceEnabled by extra(project.getBooleanProperty("kotlin.compiler.newInferenceEnabled") ?: false)
-val useJvmIrBackend by extra(project.getBooleanProperty("kotlin.build.useIR") ?: false)
+val useJvmIrBackend by extra(project.kotlinBuildProperties.useIR)
 
 val intellijSeparateSdks = project.getBooleanProperty("intellijSeparateSdks") ?: false
 
@@ -292,7 +292,8 @@ extra["compilerModules"] = arrayOf(
     ":compiler:fir:jvm",
     ":compiler:fir:checkers",
     ":compiler:fir:entrypoint",
-    ":compiler:fir:analysis-tests"
+    ":compiler:fir:analysis-tests",
+    ":wasm:wasm.ir"
 )
 
 extra["compilerModulesForJps"] = listOf(
@@ -650,8 +651,11 @@ tasks {
     }
 
     register("wasmCompilerTest") {
-//  TODO: fix once
-//        dependsOn(":js:js.tests:wasmTest")
+        dependsOn(":js:js.tests:wasmTest")
+        // Windows WABT release requires Visual C++ Redistributable
+        if (!kotlinBuildProperties.isTeamcityBuild || !org.gradle.internal.os.OperatingSystem.current().isWindows) {
+            dependsOn(":wasm:wasm.ir:test")
+        }
     }
 
     register("nativeCompilerTest") {
@@ -781,9 +785,10 @@ tasks {
     }
 
     register("idea-plugin-performance-tests") {
-        dependsOn("dist")
         dependsOn(
-            ":idea:performanceTests:performanceTest"
+            "dist",
+            ":idea:performanceTests:performanceTest",
+            ":idea:performanceTests:aggregateResults"
         )
     }
 
@@ -865,8 +870,8 @@ tasks {
             ":compiler:test",
             ":js:js.tests:test"
         )
-        if (Ide.IJ193.orHigher())
-            dependsOn(":kotlin-gradle-plugin-integration-tests:test")
+
+        dependsOn(":kotlin-gradle-plugin-integration-tests:test")
         if (Ide.AS40.orHigher())
             dependsOn(":kotlin-ultimate:ide:android-studio-native:test")
 
@@ -900,7 +905,6 @@ tasks {
                 ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-build-common-tests-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-compiler-for-ide:publish",
-                ":prepare:ide-plugin-dependencies:kotlin-dist-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlin-gradle-statistics-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:kotlinx-serialization-compiler-plugin-for-ide:publish",
                 ":prepare:ide-plugin-dependencies:noarg-compiler-plugin-for-ide:publish",
@@ -921,7 +925,8 @@ tasks {
                 ":kotlin-reflect:publish",
                 ":kotlin-main-kts:publish",
                 ":kotlin-stdlib-js:publish",
-                ":kotlin-test:kotlin-test-js:publish"
+                ":kotlin-test:kotlin-test-js:publish",
+                ":kotlin-coroutines-experimental-compat:publish"
             )
         }
     }

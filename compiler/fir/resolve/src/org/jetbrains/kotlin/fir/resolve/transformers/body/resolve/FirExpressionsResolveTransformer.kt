@@ -760,7 +760,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             context.withTowerDataCleanup {
                 if ((context.containerIfAny as? FirConstructor)?.isPrimary == true) {
                     context.replaceTowerDataContext(context.getTowerDataContextForConstructorResolution())
-                    context.getPrimaryConstructorParametersScope()?.let(context::addLocalScope)
+                    context.getPrimaryConstructorAllParametersScope()?.let(context::addLocalScope)
                 }
 
                 // it's just a constructor parameters scope created in

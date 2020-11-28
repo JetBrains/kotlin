@@ -79,8 +79,8 @@ class LldbTests {
         > r
         > fr var
         (ObjHeader *) args = []
-        (ObjHeader *) point = {'x': 1, 'y': 2}
-        (ObjHeader *) person = {}
+        (ObjHeader *) point = [x: ..., y: ...]
+        (ObjHeader *) person = []
     """)
 
     @Test
@@ -101,8 +101,8 @@ class LldbTests {
         > r
         > fr var
         (ObjHeader *) args = []
-        (ObjHeader *) xs = [1, 2, 3]
-        (ObjHeader *) ys = [{'x': 1, 'y': 2}, 'null']
+        (ObjHeader *) xs = [..., ..., ...]
+        (ObjHeader *) ys = [..., ...]
     """)
 
     @Test
@@ -117,7 +117,7 @@ class LldbTests {
         > b main.kt:3
         > r
         > fr var xs
-        (ObjHeader *) xs = [3, 5, 8]
+        (ObjHeader *) xs = [..., ..., ...]
     """)
 
     @Test

@@ -1,5 +1,5 @@
 public final class MethosWithPRefTP : R|kotlin/Any| {
-    public final fun <P : R|ft<kotlin/Any, kotlin/Any?>!|> f(p: R|ft<P, P?>!|): R|kotlin/Unit|
+    public final fun <P : R|ft<kotlin/Any, kotlin/Any?>!|> f(p: R|ft<@FlexibleNullability P, P?>!|): R|kotlin/Unit|
 
     public constructor(): R|test/MethosWithPRefTP|
 

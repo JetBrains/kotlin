@@ -30,5 +30,5 @@ fun innerTryCatchFinally() {
         }
     }
 
-    <!UNINITIALIZED_VARIABLE!>x<!>.inc()
+    x.inc()
 }

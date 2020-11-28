@@ -14,7 +14,9 @@ interface MetadataSource {
     interface File : MetadataSource
     interface Class : MetadataSource
     interface Function : MetadataSource
-    interface Property : MetadataSource
+    interface Property : MetadataSource {
+        val isConst: Boolean
+    }
 }
 
 sealed class DescriptorMetadataSource : MetadataSource {
@@ -30,8 +32,12 @@ sealed class DescriptorMetadataSource : MetadataSource {
 
     class Function(override val descriptor: FunctionDescriptor) : DescriptorMetadataSource(), MetadataSource.Function
 
-    class Property(override val descriptor: PropertyDescriptor) : DescriptorMetadataSource(), MetadataSource.Property
+    class Property(override val descriptor: PropertyDescriptor) : DescriptorMetadataSource(), MetadataSource.Property {
+        override val isConst: Boolean get() = descriptor.isConst
+    }
 
     class LocalDelegatedProperty(override val descriptor: VariableDescriptorWithAccessors) : DescriptorMetadataSource(),
-        MetadataSource.Property
+        MetadataSource.Property {
+        override val isConst: Boolean get() = descriptor.isConst
+    }
 }

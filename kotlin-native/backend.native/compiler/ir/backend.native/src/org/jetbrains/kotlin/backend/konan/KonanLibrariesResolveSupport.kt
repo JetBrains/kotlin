@@ -53,15 +53,11 @@ class KonanLibrariesResolveSupport(
                 }
             }
 
-    private val compatibleCompilerVersions: List<CompilerVersion> =
-            configuration.getList(KonanConfigKeys.COMPATIBLE_COMPILER_VERSIONS).map { it.parseCompilerVersion() }
-
     private val resolver = defaultResolver(
             repositories,
             libraryNames.filter { it.contains(File.separator) },
             target,
             distribution,
-            compatibleCompilerVersions,
             resolverLogger
     ).libraryResolver()
 

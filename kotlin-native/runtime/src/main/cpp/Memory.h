@@ -122,8 +122,8 @@ extern "C" {
 
 struct MemoryState;
 
-MemoryState* InitMemory();
-void DeinitMemory(MemoryState*);
+MemoryState* InitMemory(bool firstRuntime);
+void DeinitMemory(MemoryState*, bool destroyRuntime);
 void RestoreMemory(MemoryState*);
 
 //
@@ -236,7 +236,7 @@ void GC_UnregisterWorker(void* worker) RUNTIME_NOTHROW;
 void GC_CollectorCallback(void* worker) RUNTIME_NOTHROW;
 
 bool Kotlin_Any_isShareable(ObjHeader* thiz);
-void PerformFullGC() RUNTIME_NOTHROW;
+void PerformFullGC(MemoryState* memory) RUNTIME_NOTHROW;
 
 bool TryAddHeapRef(const ObjHeader* object);
 
@@ -253,6 +253,8 @@ bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context);
 // Should be used when reference is read from a possibly shared variable,
 // and there's nothing else keeping the object alive.
 void AdoptReferenceFromSharedVariable(ObjHeader* object);
+
+void CheckGlobalsAccessible();
 
 #ifdef __cplusplus
 }

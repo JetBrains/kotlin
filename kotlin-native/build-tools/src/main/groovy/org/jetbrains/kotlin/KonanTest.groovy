@@ -34,6 +34,7 @@ class RunExternalTestGroup extends JavaExec {
     def dist = UtilsKt.getKotlinNativeDist(project)
 
     def enableKonanAssertions = true
+    def verifyIr = true
     String outputDirectory = null
     String goldValue = null
     // Checks test's output against gold value and returns true if the output matches the expectation
@@ -99,6 +100,9 @@ class RunExternalTestGroup extends JavaExec {
             }
             if (enableKonanAssertions) {
                 args "-ea"
+            }
+            if (verifyIr) {
+                args "-Xverify-ir"
             }
             if (project.hasProperty("test_verbose")) {
                 println("Files to compile: $filesToCompile")

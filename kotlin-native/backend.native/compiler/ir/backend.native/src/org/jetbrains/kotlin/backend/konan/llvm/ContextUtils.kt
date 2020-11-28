@@ -521,7 +521,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val mutationCheck = importRtFunction("MutationCheck")
     val checkLifetimesConstraint = importRtFunction("CheckLifetimesConstraint")
     val freezeSubgraph = importRtFunction("FreezeSubgraph")
-    val checkMainThread = importRtFunction("CheckIsMainThread")
+    val checkGlobalsAccessible = importRtFunction("CheckGlobalsAccessible")
 
     val kRefSharedHolderInitLocal = importRtFunction("KRefSharedHolder_initLocal")
     val kRefSharedHolderInit = importRtFunction("KRefSharedHolder_init")
@@ -636,4 +636,4 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
     val llvmVector128 = vector128Type
 }
 
-class IrStaticInitializer(val module: ModuleDescriptor, val initializer: LLVMValueRef)
+class IrStaticInitializer(val konanLibrary: KotlinLibrary?, val initializer: LLVMValueRef)

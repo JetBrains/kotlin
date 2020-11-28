@@ -197,7 +197,11 @@ private fun ClassId.toConeFlexibleType(
     typeArgumentsForUpper: Array<ConeTypeProjection> = typeArguments,
     attributes: ConeAttributes = ConeAttributes.Empty
 ) = ConeFlexibleType(
-    toConeKotlinType(typeArguments, isNullable = false, attributes),
+    toConeKotlinType(
+        typeArguments,
+        isNullable = false,
+        attributes.withFlexibleUnless { it.hasEnhancedNullability }
+    ),
     toConeKotlinType(typeArgumentsForUpper, isNullable = true, attributes)
 )
 
@@ -233,7 +237,15 @@ private fun JavaClassifierType.toConeKotlinTypeWithoutEnhancement(
             attributes = attributes
         )
 
-    return if (isRaw) ConeRawType(lowerBound, upperBound) else ConeFlexibleType(lowerBound, upperBound)
+    return if (isRaw)
+        ConeRawType(lowerBound, upperBound)
+    else
+        ConeFlexibleType(
+            lowerBound.withAttributes(
+                lowerBound.attributes.withFlexibleUnless { it.hasEnhancedNullability }
+            ),
+            upperBound
+        )
 }
 
 private fun computeRawProjection(
@@ -303,7 +315,9 @@ private fun getErasedVersionOfFirstUpperBound(
             if (firstUpperBound.upperBound is ConeTypeParameterType) {
                 // Avoid exponential complexity
                 ConeFlexibleType(
-                    lowerBound,
+                    lowerBound.withAttributes(
+                        lowerBound.attributes.withFlexibleUnless { it.hasEnhancedNullability }
+                    ),
                     lowerBound.withNullability(ConeNullability.NULLABLE)
                 )
             } else {

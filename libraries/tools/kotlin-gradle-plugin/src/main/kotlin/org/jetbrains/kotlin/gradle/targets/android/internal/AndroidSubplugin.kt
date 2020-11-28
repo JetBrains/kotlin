@@ -40,9 +40,10 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
         project.plugins.apply(AndroidSubplugin::class.java)
 
         project.logger.warn(
-            "'kotlin-android-extensions' plugin is deprecated. " +
-                    "Use 'kotlin-parcelize' for the @Parcelize functionality, " +
-                    "and View Binding (https://developer.android.com/topic/libraries/view-binding) instead of synthetic view accessors."
+            "Warning: The 'kotlin-android-extensions' Gradle plugin is deprecated. " +
+                    "Please use this migration guide (https://goo.gle/kotlin-android-extensions-deprecation) to start " +
+                    "working with View Binding (https://developer.android.com/topic/libraries/view-binding) " +
+                    "and the 'kotlin-parcelize' plugin."
         )
     }
 

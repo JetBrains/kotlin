@@ -8,15 +8,21 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.api
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
 import org.jetbrains.kotlin.idea.fir.low.level.api.FirIdeResolveStateService
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.FirIdeSourcesSession
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import kotlin.reflect.KClass
 
 object LowLevelFirApiFacade {
@@ -29,24 +35,15 @@ object LowLevelFirApiFacade {
     fun getSessionFor(element: KtElement): FirSession =
         getResolveStateFor(element).getSessionFor(element.getModuleInfo())
 
-    @Deprecated("Consider using withFirElement")
     fun getOrBuildFirFor(element: KtElement, resolveState: FirModuleResolveState): FirElement =
         resolveState.getOrBuildFirFor(element)
 
-    @Suppress("DEPRECATION")
-    inline fun <R> withFirElement(element: KtElement, resolveState: FirModuleResolveState, action: (FirElement) -> R): R =
-        action(getOrBuildFirFor(element, resolveState))
-
-    @Deprecated("Consider using withFirFile")
     fun getFirFile(ktFile: KtFile, resolveState: FirModuleResolveState) =
         resolveState.getFirFile(ktFile)
 
-    @Suppress("DEPRECATION")
-    inline fun <R> withFirFile(ktFile: KtFile, resolveState: FirModuleResolveState, action: (FirFile) -> R): R =
-        action(getFirFile(ktFile, resolveState))
-
     /**
      * Creates [FirDeclaration] by [KtDeclaration] and runs an [action] with it
+     * [ktDeclaration]
      * [FirDeclaration] passed to [action] should not be leaked outside [action] lambda
      * [FirDeclaration] passed to [action] will be resolved at least to [phase]
      * Otherwise, some threading problems may arise,
@@ -59,8 +56,28 @@ object LowLevelFirApiFacade {
         phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
         action: (FirDeclaration) -> R
     ): R {
-        val firDeclaration = resolveState.findNonLocalSourceFirDeclaration(ktDeclaration)
+        val firDeclaration = resolveState.findSourceFirDeclaration(ktDeclaration)
         resolvedFirToPhase(firDeclaration, phase, resolveState)
+        return action(firDeclaration)
+    }
+
+    inline fun <reified F : FirDeclaration, R> withFirDeclarationOfType(
+        ktDeclaration: KtDeclaration,
+        resolveState: FirModuleResolveState,
+        action: (F) -> R
+    ): R {
+        val firDeclaration = resolveState.findSourceFirDeclaration(ktDeclaration)
+        if (firDeclaration !is F) throw InvalidFirElementTypeException(ktDeclaration, F::class, firDeclaration::class)
+        return action(firDeclaration)
+    }
+
+    inline fun <reified F : FirDeclaration, R> withFirDeclarationOfType(
+        ktDeclaration: KtLambdaExpression,
+        resolveState: FirModuleResolveState,
+        action: (F) -> R
+    ): R {
+        val firDeclaration = resolveState.findSourceFirDeclaration(ktDeclaration)
+        if (firDeclaration !is F) throw InvalidFirElementTypeException(ktDeclaration, F::class, firDeclaration::class)
         return action(firDeclaration)
     }
 
@@ -83,17 +100,16 @@ object LowLevelFirApiFacade {
         resolveState.resolvedFirToPhase(firDeclaration, phase)
 }
 
-@Deprecated("Consider using withFir")
+
+
 fun KtElement.getOrBuildFir(
     resolveState: FirModuleResolveState,
 ) = LowLevelFirApiFacade.getOrBuildFirFor(this, resolveState)
 
-@Deprecated("Consider using withFirSafe")
 inline fun <reified E : FirElement> KtElement.getOrBuildFirSafe(
     resolveState: FirModuleResolveState,
 ) = LowLevelFirApiFacade.getOrBuildFirFor(this, resolveState) as? E
 
-@Deprecated("Consider using withFirOfType")
 inline fun <reified E : FirElement> KtElement.getOrBuildFirOfType(
     resolveState: FirModuleResolveState,
 ): E {
@@ -101,25 +117,6 @@ inline fun <reified E : FirElement> KtElement.getOrBuildFirOfType(
     if (fir is E) return fir
     throw InvalidFirElementTypeException(this, E::class, fir::class)
 }
-
-inline fun <R> KtElement.withFir(
-    resolveState: FirModuleResolveState,
-    action: (FirElement) -> R,
-) = LowLevelFirApiFacade.withFirElement(this, resolveState, action)
-
-
-inline fun <R : Any, reified E : FirElement> KtElement.withFirSafe(
-    resolveState: FirModuleResolveState,
-    action: (E) -> R?
-) = LowLevelFirApiFacade.withFirElement(this, resolveState) { element -> (element as? E)?.let(action) }
-
-
-@Suppress("DEPRECATION")
-inline fun <R, reified E : FirElement> KtElement.withFirOfType(
-    resolveState: FirModuleResolveState,
-    action: (E) -> R
-): R = action(getOrBuildFirOfType(resolveState))
-
 
 class InvalidFirElementTypeException(
     ktElement: KtElement,

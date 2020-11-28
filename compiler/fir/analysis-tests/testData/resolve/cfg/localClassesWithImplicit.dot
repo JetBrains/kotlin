@@ -9,8 +9,8 @@ digraph localClassesWithImplicit_kt {
         subgraph cluster_1 {
             color=blue
             1 [label="Enter block"];
-            2 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()"];
-            3 [label="Jump: ^myRun R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()"];
+            2 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
+            3 [label="Jump: ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()"];
             4 [label="Stub" style="filled" fillcolor=gray];
             5 [label="Exit block" style="filled" fillcolor=gray];
         }

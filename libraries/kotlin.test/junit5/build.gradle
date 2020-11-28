@@ -41,7 +41,8 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
 }
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package", "-module-name", project.name]
+    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.moduleName = project.name
 }
 
 compileTestKotlin {

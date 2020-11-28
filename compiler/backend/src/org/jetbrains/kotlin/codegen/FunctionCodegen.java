@@ -85,7 +85,6 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class FunctionCodegen {
-    private static final String JAVA_LANG_DEPRECATED = Type.getType(Deprecated.class).getDescriptor();
 
     public final GenerationState state;
     private final KotlinTypeMapper typeMapper;
@@ -225,7 +224,7 @@ public class FunctionCodegen {
                 InlineClassDescriptorResolver.isSpecializedEqualsMethod(functionDescriptor);
         generateMethodAnnotationsIfRequired(
                 functionDescriptor, asmMethod, jvmSignature, mv,
-                isCompatibilityStubInDefaultImpls ? Collections.singletonList(JAVA_LANG_DEPRECATED) : Collections.emptyList(),
+                isCompatibilityStubInDefaultImpls ? Collections.singletonList(CodegenUtilKt.JAVA_LANG_DEPRECATED) : Collections.emptyList(),
                 skipNullabilityAnnotations
         );
         GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, jvmSignature, state, (flags & ACC_SYNTHETIC) != 0);

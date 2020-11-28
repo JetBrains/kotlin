@@ -53,6 +53,10 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
     private fun buildWorkerBridges(declaration: IrDeclaration): List<IrFunction> {
         val bridges = mutableListOf<IrFunction>()
         declaration.transformChildrenVoid(object: IrElementTransformerVoid() {
+            override fun visitClass(declaration: IrClass): IrStatement {
+                // Skip nested.
+                return declaration
+            }
 
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
@@ -133,20 +137,24 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         val builtBridges = mutableSetOf<IrSimpleFunction>()
 
-        irClass.simpleFunctions()
-                .forEach { function ->
-                    function.allOverriddenFunctions
-                            .map { OverriddenFunctionInfo(function, it) }
-                            .filter { !it.bridgeDirections.allNotNeeded() }
-                            .filter { it.canBeCalledVirtually }
-                            .filter { !it.inheritsBridge }
-                            .distinctBy { it.bridgeDirections }
-                            .forEach {
-                                buildBridge(it, irClass)
-                                builtBridges += it.function
-                            }
+        for (function in irClass.simpleFunctions()) {
+            val set = mutableSetOf<BridgeDirections>()
+            for (overriddenFunction in function.allOverriddenFunctions) {
+                val overriddenFunctionInfo = OverriddenFunctionInfo(function, overriddenFunction)
+                val bridgeDirections = overriddenFunctionInfo.bridgeDirections
+                if (!bridgeDirections.allNotNeeded() && overriddenFunctionInfo.canBeCalledVirtually
+                        && !overriddenFunctionInfo.inheritsBridge && set.add(bridgeDirections)) {
+                    buildBridge(overriddenFunctionInfo, irClass)
+                    builtBridges += function
                 }
+            }
+        }
         irClass.transformChildrenVoid(object: IrElementTransformerVoid() {
+            override fun visitClass(declaration: IrClass): IrStatement {
+                // Skip nested.
+                return declaration
+            }
+
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 declaration.transformChildrenVoid(this)
 
@@ -207,7 +215,12 @@ private fun IrBlockBodyBuilder.buildTypeSafeBarrier(function: IrFunction,
     for (i in valueParameters.indices) {
         if (!typeSafeBarrierDescription.checkParameter(i))
             continue
-        val type = originalValueParameters[i].type
+
+        val type = originalValueParameters[i].type.erasureForTypeOperation()
+        // Note: erasing to single type is not entirely correct if type parameter has multiple upper bounds.
+        // In this case the compiler could generate multiple type checks, one for each upper bound.
+        // But let's keep it simple here for now; JVM backend doesn't do this anyway.
+
         if (!type.isNullableAny()) {
             +returnIfBadType(irGet(valueParameters[i]), type,
                     if (typeSafeBarrierDescription == SpecialGenericSignatures.TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT)

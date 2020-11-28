@@ -84,15 +84,20 @@ class SourceMapper(val sourceInfo: SourceInfo?) {
     val resultMappings: List<FileMapping>
         get() = fileMappings.values.toList()
 
+    companion object {
+        const val FAKE_FILE_NAME = "fake.kt"
+        const val FAKE_PATH = "kotlin/jvm/internal/FakeKt"
+    }
+
     init {
         sourceInfo?.let { sourceInfo ->
-            // If 'sourceFileName' is null, this class doesn't have debug information
-            // (e.g., multi-file class facade with multiple parts).
-            sourceInfo.sourceFileName?.let { sourceFileName ->
-                // Explicitly map the file to itself -- we'll probably need a lot of lines from it, so this will produce fewer ranges.
-                getOrRegisterNewSource(sourceFileName, sourceInfo.pathOrCleanFQN)
-                    .mapNewInterval(1, 1, sourceInfo.linesInFile)
-            }
+            // If 'sourceFileName' is null we are dealing with a synthesized class
+            // (e.g., multi-file class facade with multiple parts). Such classes
+            // only have synthetic debug information and we use a fake file name.
+            val sourceFileName = sourceInfo.sourceFileName ?: FAKE_FILE_NAME
+            // Explicitly map the file to itself -- we'll probably need a lot of lines from it, so this will produce fewer ranges.
+            getOrRegisterNewSource(sourceFileName, sourceInfo.pathOrCleanFQN)
+                .mapNewInterval(1, 1, sourceInfo.linesInFile)
         }
     }
 
@@ -110,7 +115,7 @@ class SourceMapper(val sourceInfo: SourceInfo?) {
     }
 
     fun mapSyntheticLineNumber(id: Int): Int {
-        return mapLineNumber(SourcePosition(id, "fake.kt", "kotlin/jvm/internal/FakeKt"), null)
+        return mapLineNumber(SourcePosition(id, FAKE_FILE_NAME, FAKE_PATH), null)
     }
 }
 

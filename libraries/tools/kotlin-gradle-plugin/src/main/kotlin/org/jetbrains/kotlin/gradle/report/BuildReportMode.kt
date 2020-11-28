@@ -5,7 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.report
 
-enum class BuildReportMode {
+import java.io.Serializable
+
+enum class BuildReportMode : Serializable {
+    NONE,
     SIMPLE,
-    VERBOSE
+    VERBOSE;
+
+    companion object {
+        const val serialVersionUID: Long = 0
+    }
 }

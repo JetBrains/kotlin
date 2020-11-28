@@ -44,9 +44,6 @@ open class CompileToBitcode @Inject constructor(
     var headersDirs: FileCollection = project.files(srcRoot.resolve("headers"))
 
     @Input
-    var skipLinkagePhase = false
-
-    @Input
     var language = Language.CPP
 
     private val targetDir by lazy { project.buildDir.resolve("bitcode/$outputGroup/$target") }
@@ -92,10 +89,35 @@ open class CompileToBitcode @Inject constructor(
             }
         }
 
+    private fun outputFileForInputFile(file: File, extension: String) = objDir.resolve("${file.nameWithoutExtension}.${extension}")
+    private fun bitcodeFileForInputFile(file: File) = outputFileForInputFile(file, "bc")
+
     @get:InputFiles
     protected val headers: Iterable<File>
         get() {
-            return headersDirs.files.flatMap { dir ->
+            // Not using clang's -M* flags because there's a problem with our current include system:
+            // We allow includes relative to the current directory and also pass -I for each imported module
+            // Given file tree:
+            // a:
+            //  header.hpp
+            // b:
+            //  impl.cpp
+            // Assume module b adds a to its include path.
+            // If b/impl.cpp has #include "header.hpp", it'll be included from a/header.hpp. If we add another file
+            // header.hpp into b/, the next compilation of b/impl.cpp will include b/header.hpp. -M flags, however,
+            // won't generate a dependency on b/header.hpp, so incremental compilation will be broken.
+            // TODO: Apart from dependency generation this also makes it awkward to have two files with
+            //       the same name (e.g. Utils.h) in directories a/ and b/: For the b/impl.cpp to include a/header.hpp
+            //       it needs to have #include "../a/header.hpp"
+
+            val dirs = mutableSetOf<File>()
+            // First add dirs with sources, as clang by default adds directory with the source to the include path.
+            inputFiles.forEach {
+                dirs.add(it.parentFile)
+            }
+            // Now add manually given header dirs.
+            dirs.addAll(headersDirs.files)
+            return dirs.flatMap { dir ->
                 project.fileTree(dir) {
                     val includePatterns = when (language) {
                         Language.C -> arrayOf("**/.h")
@@ -120,15 +142,13 @@ open class CompileToBitcode @Inject constructor(
             it.args = compilerFlags + inputFiles.map { it.absolutePath }
         }
 
-        if (!skipLinkagePhase) {
-            project.exec {
-                val llvmDir = project.findProperty("llvmDir")
-                it.executable = "$llvmDir/bin/llvm-link"
-                it.args = listOf("-o", outFile.absolutePath) + linkerArgs +
-                        project.fileTree(objDir) {
-                            it.include("**/*.bc")
-                        }.files.map { it.absolutePath }
-            }
+        project.exec {
+            val llvmDir = project.findProperty("llvmDir")
+            it.executable = "$llvmDir/bin/llvm-link"
+            it.args = listOf("-o", outFile.absolutePath) + linkerArgs +
+                    inputFiles.map {
+                        bitcodeFileForInputFile(it).absolutePath
+                    }
         }
     }
 }

@@ -74,15 +74,71 @@ public class IrLocalVariableTestGenerated extends AbstractIrLocalVariableTest {
     }
 
     @Test
-    @TestMetadata("receiverParameter.kt")
-    public void testReceiverParameter() throws Exception {
-        runTest("compiler/testData/debug/localVariables/receiverParameter.kt");
-    }
-
-    @Test
     @TestMetadata("underscoreNames.kt")
     public void testUnderscoreNames() throws Exception {
         runTest("compiler/testData/debug/localVariables/underscoreNames.kt");
+    }
+
+    @TestMetadata("compiler/testData/debug/localVariables/receiverMangling")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(BlockJUnit4ClassRunner.class)
+    public static class ReceiverMangling extends AbstractIrLocalVariableTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        @Test
+        public void testAllFilesPresentInReceiverMangling() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/receiverMangling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("capturedThisField.kt")
+        public void testCapturedThisField() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/capturedThisField.kt");
+        }
+
+        @Test
+        @TestMetadata("labeledThisParameterLabel.kt")
+        public void testLabeledThisParameterLabel() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/labeledThisParameterLabel.kt");
+        }
+
+        @Test
+        @TestMetadata("lambdaWithExtensionReceiver.kt")
+        public void testLambdaWithExtensionReceiver() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/lambdaWithExtensionReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("receiverParameter.kt")
+        public void testReceiverParameter() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/receiverParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleCapturedReceiver.kt")
+        public void testSimpleCapturedReceiver() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simpleCapturedReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleCapturedReceiverWithLabel.kt")
+        public void testSimpleCapturedReceiverWithLabel() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simpleCapturedReceiverWithLabel.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleCapturedReceiverWithParenthesis.kt")
+        public void testSimpleCapturedReceiverWithParenthesis() throws Exception {
+            runTest("compiler/testData/debug/localVariables/receiverMangling/simpleCapturedReceiverWithParenthesis.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/debug/localVariables/suspend")

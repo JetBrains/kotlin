@@ -197,10 +197,12 @@ Process 4985 launched: './program.kexe' (x86_64)
 (lldb) fr var
 (int) x = 1
 (int) y = 2
-(ObjHeader *) p = Point(x=1, y=2)
+(ObjHeader *) p = [x: ..., y: ...]
 (lldb) p p
-(ObjHeader *) $2 = Point(x=1, y=2)
-(lldb) 
+(ObjHeader *) $2 = [x: ..., y: ...]
+(lldb) script lldb.frame.FindVariable("p").GetChildMemberWithName("x").Dereference().GetValue()
+'1'
+(lldb)
 ```
 
 </div>
@@ -245,8 +247,8 @@ Process 80496 stopped
    12   }
 
 Process 80496 launched: './program.kexe' (x86_64)
-(lldb) expression -- Konan_DebugPrint(a_variable)
-(a_variable) one is 1(KInt) $0 = 0
+(lldb) expression -- (int32_t)Konan_DebugPrint(a_variable)
+(a_variable) one is 1(int32_t) $0 = 0
 (lldb)
 
 ```

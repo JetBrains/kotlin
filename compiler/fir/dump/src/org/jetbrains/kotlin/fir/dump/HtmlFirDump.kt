@@ -841,7 +841,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is ConeClassErrorType -> error { +type.diagnostic.reason }
             is ConeClassLikeType -> return generate(type)
             is ConeTypeParameterType -> resolved {
-                symbolRef(type.lookupTag.toSymbol()) {
+                symbolRef(type.lookupTag.symbol) {
                     simpleName(type.lookupTag.name)
                 }
             }

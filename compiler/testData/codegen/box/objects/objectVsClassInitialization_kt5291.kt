@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: STDLIB_STRING_BUILDER
 // KJS_WITH_FULL_RUNTIME
 public inline fun <T> T.with(f: T.() -> Unit): T {
     this.f()

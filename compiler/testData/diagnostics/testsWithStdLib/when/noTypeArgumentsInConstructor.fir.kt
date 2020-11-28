@@ -23,21 +23,21 @@ val test3: MutableList<Int> =
         }
 
 val test4: Collection<Int> =
-        listOf(1, 2, 3).<!AMBIGUITY!>flatMapTo<!>(LinkedHashSet()) {
-            <!NONE_APPLICABLE!>listOf<!>(<!UNRESOLVED_REFERENCE!>it<!>)
+        listOf(1, 2, 3).flatMapTo(LinkedHashSet()) {
+            listOf(it)
         }
 
 val test5: Collection<Int> =
-        listOf(1, 2, 3).<!AMBIGUITY!>flatMapTo<!>(LinkedHashSet()) { // TODO
-            if (true) <!NONE_APPLICABLE!>listOf<!>(<!UNRESOLVED_REFERENCE!>it<!>) else <!NONE_APPLICABLE!>listOf<!>(<!UNRESOLVED_REFERENCE!>it<!>)
+        listOf(1, 2, 3).flatMapTo(LinkedHashSet()) { // TODO
+            if (true) listOf(it) else listOf(it)
         }
 
 val test6: Collection<Int> =
-        listOf(1, 2, 3).<!AMBIGUITY!>flatMapTo<!>(LinkedHashSet<Int>()) {
-            if (true) <!NONE_APPLICABLE!>listOf<!>(<!UNRESOLVED_REFERENCE!>it<!>) else <!NONE_APPLICABLE!>listOf<!>(<!UNRESOLVED_REFERENCE!>it<!>)
+        listOf(1, 2, 3).flatMapTo(LinkedHashSet<Int>()) {
+            if (true) listOf(it) else listOf(it)
         }
 
 val test7: Collection<Int> =
-        listOf(1, 2, 3).<!AMBIGUITY!>flatMapTo<!>(LinkedHashSet()) {
-            <!INAPPLICABLE_CANDIDATE!>select<!>(<!NONE_APPLICABLE!>listOf<!>(<!UNRESOLVED_REFERENCE!>it<!>), <!NONE_APPLICABLE!>listOf<!>(<!UNRESOLVED_REFERENCE!>it<!>))
+        listOf(1, 2, 3).flatMapTo(LinkedHashSet()) {
+            select(listOf(it), listOf(it))
         }

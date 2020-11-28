@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
@@ -35,6 +36,7 @@ abstract class FirPropertyAccessor : FirPureAbstractElement(), FirFunction<FirPr
     abstract override val body: FirBlock?
     abstract override val status: FirDeclarationStatus
     abstract override val containerSource: DeserializedContainerSource?
+    abstract override val dispatchReceiverType: ConeKotlinType?
     abstract override val contractDescription: FirContractDescription
     abstract override val symbol: FirPropertyAccessorSymbol
     abstract val isGetter: Boolean

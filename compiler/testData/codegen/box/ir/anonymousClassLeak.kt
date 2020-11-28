@@ -1,3 +1,6 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: PROPERTY_REFERENCES
+// WITH_RUNTIME
 
 // MODULE: lib
 // FILE: lib.kt
@@ -51,6 +54,16 @@ object FunTest {
     fun bbb() = qqq().biq().also { it.caz() }
 }
 
+object DelegateTest {
+    var result = ""
+
+    val f by lazy {
+        object { }.also { result += "OK" }
+    }
+
+    fun bbb() = f
+}
+
 // MODULE: lib2(lib)
 // FILE: lib2.kt
 fun test1(): String {
@@ -62,11 +75,16 @@ fun test2(): String {
     return FunTest.result
 }
 
+fun test3(): String {
+    DelegateTest.bbb()
+    return DelegateTest.result
+}
+
 // MODULE: main(lib2)
 // FILE: main.kt
 
 fun box(): String {
     if (test1() != "!abcd") return "FAIL 1: ${test1()}"
     if (test2() != "zyxw") return "FAIL 2: ${test2()}"
-    return "OK"
+    return test3()
 }

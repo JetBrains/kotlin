@@ -81,6 +81,7 @@ class IDELightClassGenerationSupport(project: Project) : LightClassGenerationSup
             KotlinTypeMapper(
                 BindingContext.EMPTY, ClassBuilderMode.LIGHT_CLASSES,
                 moduleName, languageVersionSettings,
+                useOldInlineClassesManglingScheme = false,
                 jvmTarget = JvmTarget.JVM_1_8,
                 typePreprocessor = KotlinType::cleanFromAnonymousTypes,
                 namePreprocessor = ::tryGetPredefinedName

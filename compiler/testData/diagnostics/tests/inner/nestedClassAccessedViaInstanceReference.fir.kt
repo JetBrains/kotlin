@@ -25,29 +25,29 @@ object Obj {
 
 fun test(with: WithClassObject, without: WithoutClassObject, obj: Obj) {
     with.<!UNRESOLVED_REFERENCE!>Nested<!>()
-    with.NestedWithClassObject
+    with.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>
     with.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>()
-    with.NestedWithClassObject.foo()
-    with.NestedEnum.A
-    with.NestedObj
-    with.NestedObj()
-    with.NestedObj.foo()
+    with.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+    with.<!UNRESOLVED_REFERENCE!>NestedEnum<!>.<!UNRESOLVED_REFERENCE!>A<!>
+    with.<!UNRESOLVED_REFERENCE!>NestedObj<!>
+    with.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
+    with.<!UNRESOLVED_REFERENCE!>NestedObj<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
 
     without.<!UNRESOLVED_REFERENCE!>Nested<!>()
-    without.NestedWithClassObject
+    without.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>
     without.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>()
-    without.NestedWithClassObject.foo()
-    without.NestedEnum.A
-    without.NestedObj
-    without.NestedObj()
-    without.NestedObj.foo()
+    without.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+    without.<!UNRESOLVED_REFERENCE!>NestedEnum<!>.<!UNRESOLVED_REFERENCE!>A<!>
+    without.<!UNRESOLVED_REFERENCE!>NestedObj<!>
+    without.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
+    without.<!UNRESOLVED_REFERENCE!>NestedObj<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
 
     obj.<!UNRESOLVED_REFERENCE!>Nested<!>()
-    obj.NestedWithClassObject
+    obj.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>
     obj.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>()
-    obj.NestedWithClassObject.foo()
-    obj.NestedEnum.A
-    obj.NestedObj
-    obj.NestedObj()
-    obj.NestedObj.foo()
+    obj.<!UNRESOLVED_REFERENCE!>NestedWithClassObject<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
+    obj.<!UNRESOLVED_REFERENCE!>NestedEnum<!>.<!UNRESOLVED_REFERENCE!>A<!>
+    obj.<!UNRESOLVED_REFERENCE!>NestedObj<!>
+    obj.<!UNRESOLVED_REFERENCE!>NestedObj<!>()
+    obj.<!UNRESOLVED_REFERENCE!>NestedObj<!>.<!UNRESOLVED_REFERENCE!>foo<!>()
 }

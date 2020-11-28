@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentation
+import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleFragmentImpl
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -32,14 +33,15 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 internal enum class FieldStorageKind {
-    MAIN_THREAD,
-    SHARED,
+    GLOBAL, // In the old memory model these are only accessible from the "main" thread.
+    SHARED_FROZEN,
     THREAD_LOCAL
 }
 
@@ -55,12 +57,12 @@ internal val IrField.storageKind: FieldStorageKind get() {
     val annotations = correspondingPropertySymbol?.owner?.annotations ?: annotations
     return when {
         annotations.hasAnnotation(KonanFqNames.threadLocal) -> FieldStorageKind.THREAD_LOCAL
-        !isFinal -> FieldStorageKind.MAIN_THREAD
-        annotations.hasAnnotation(KonanFqNames.sharedImmutable) -> FieldStorageKind.SHARED
+        !isFinal -> FieldStorageKind.GLOBAL
+        annotations.hasAnnotation(KonanFqNames.sharedImmutable) -> FieldStorageKind.SHARED_FROZEN
         // TODO: simplify, once IR types are fully there.
         (type.classifierOrNull?.owner as? IrAnnotationContainer)
-                ?.annotations?.hasAnnotation(KonanFqNames.frozen) == true -> FieldStorageKind.SHARED
-        else -> FieldStorageKind.MAIN_THREAD
+                ?.annotations?.hasAnnotation(KonanFqNames.frozen) == true -> FieldStorageKind.SHARED_FROZEN
+        else -> FieldStorageKind.GLOBAL
     }
 }
 
@@ -71,9 +73,9 @@ internal fun IrClass.storageKind(context: Context): ObjectStorageKind = when {
     else -> ObjectStorageKind.SHARED
 }
 
-val IrField.isMainOnlyNonPrimitive get() = when  {
+val IrField.isGlobalNonPrimitive get() = when  {
         type.computePrimitiveBinaryTypeOrNull() != null -> false
-        else -> storageKind == FieldStorageKind.MAIN_THREAD
+        else -> storageKind == FieldStorageKind.GLOBAL
     }
 
 internal class RTTIGeneratorVisitor(context: Context) : IrElementVisitorVoid {
@@ -323,7 +325,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         context.cAdapterGenerator.generateBindings(codegen)
     }
 
-    private fun runAndProcessInitializers(module: ModuleDescriptor, f: () -> Unit) {
+    private fun runAndProcessInitializers(konanLibrary: KotlinLibrary?, f: () -> Unit) {
         // TODO: collect those two in one place.
         context.llvm.fileInitializers.clear()
         context.llvm.fileUsesThreadLocalObjects = false
@@ -337,7 +339,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         // Create global initialization records.
         val initNode = createInitNode(createInitBody())
-        context.llvm.irStaticInitializers.add(IrStaticInitializer(module, createInitCtor(initNode)))
+        context.llvm.irStaticInitializers.add(IrStaticInitializer(konanLibrary, createInitCtor(initNode)))
     }
 
     //-------------------------------------------------------------------------//
@@ -355,7 +357,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         initializeCachedBoxes(context)
         declaration.acceptChildrenVoid(this)
 
-        runAndProcessInitializers(declaration.descriptor) {
+        runAndProcessInitializers(null) {
             // Note: it is here because it also generates some bitcode.
             context.objCExport.generate(codegen)
 
@@ -363,6 +365,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
             context.coverage.writeRegionInfo()
             appendDebugSelector()
+            overrideRuntimeGlobals()
             appendLlvmUsed("llvm.used", context.llvm.usedFunctions + context.llvm.usedGlobals)
             appendLlvmUsed("llvm.compiler.used", context.llvm.compilerUsedGlobals)
             if (context.isNativeLibrary) {
@@ -423,7 +426,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                                         val address = context.llvmDeclarations.forStaticField(irField).storageAddressAccess.getAddress(
                                                 functionGenerationContext
                                         )
-                                        if (irField.storageKind == FieldStorageKind.SHARED)
+                                        if (irField.storageKind == FieldStorageKind.SHARED_FROZEN)
                                             freeze(initialization, currentCodeContext.exceptionHandler)
                                         storeAny(initialization, address, false)
                                     }
@@ -510,7 +513,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     override fun visitFile(declaration: IrFile) {
         @Suppress("UNCHECKED_CAST")
         using(FileScope(declaration)) {
-            runAndProcessInitializers(declaration.packageFragmentDescriptor.module) {
+            runAndProcessInitializers(declaration.konanLibrary) {
                 declaration.acceptChildrenVoid(this)
             }
         }
@@ -1459,7 +1462,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         } else {
             // E.g. when generating type operation with reified type parameter in the original body of inline function.
             kTrue
-            // TODO: this code should be unreachable, however [BridgesBuilding] generates IR with such type checks.
+            // TODO: this code should be unreachable, recheck.
         }
         functionGenerationContext.br(bbExit)
         val bbInstanceOfResult = functionGenerationContext.currentBlock
@@ -1573,8 +1576,8 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             if (value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true) {
                 evaluateConst(value.symbol.owner.initializer?.expression as IrConst<*>)
             } else {
-                if (context.config.threadsAreAllowed && value.symbol.owner.isMainOnlyNonPrimitive) {
-                    functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
+                if (context.config.threadsAreAllowed && value.symbol.owner.isGlobalNonPrimitive) {
+                    functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
                 }
                 val ptr = context.llvmDeclarations.forStaticField(value.symbol.owner).storageAddressAccess.getAddress(
                         functionGenerationContext
@@ -1642,9 +1645,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             val globalAddress = context.llvmDeclarations.forStaticField(value.symbol.owner).storageAddressAccess.getAddress(
                     functionGenerationContext
             )
-            if (context.config.threadsAreAllowed && value.symbol.owner.storageKind == FieldStorageKind.MAIN_THREAD)
-                functionGenerationContext.checkMainThread(currentCodeContext.exceptionHandler)
-            if (value.symbol.owner.storageKind == FieldStorageKind.SHARED)
+            if (context.config.threadsAreAllowed && value.symbol.owner.storageKind == FieldStorageKind.GLOBAL)
+                functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
+            if (value.symbol.owner.storageKind == FieldStorageKind.SHARED_FROZEN)
                 functionGenerationContext.freeze(valueToAssign, currentCodeContext.exceptionHandler)
             functionGenerationContext.storeAny(valueToAssign, globalAddress, false)
         }
@@ -2378,6 +2381,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata")
     }
 
+    // TODO: Consider migrating `KonanNeedDebugInfo` to the `overrideRuntimeGlobal` mechanism from below.
     private fun appendDebugSelector() {
         if (!context.producedLlvmModuleContainsStdlib) return
         val llvmDebugSelector =
@@ -2385,6 +2389,39 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                         Int32(if (context.shouldContainDebugInfo()) 1 else 0))
         llvmDebugSelector.setConstant(true)
         llvmDebugSelector.setLinkage(LLVMLinkage.LLVMExternalLinkage)
+    }
+
+    private fun overrideRuntimeGlobal(name: String, value: ConstValue) {
+        // TODO: A similar mechanism is used in `ObjCExportCodeGenerator`. Consider merging them.
+        if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
+            // When some dynamic caches are used, we consider that stdlib is in the dynamic cache as well.
+            // Runtime is linked into stdlib module only, so import runtime global from it.
+            val global = codegen.importGlobal(name, value.llvmType, context.standardLlvmSymbolsOrigin)
+            val initializer = generateFunction(codegen, functionType(voidType, false), "") {
+                store(value.llvm, global)
+                ret(null)
+            }
+
+            LLVMSetLinkage(initializer, LLVMLinkage.LLVMPrivateLinkage)
+
+            context.llvm.otherStaticInitializers += initializer
+        } else {
+            context.llvmImports.add(context.standardLlvmSymbolsOrigin)
+            // Define a strong runtime global. It'll overrule a weak global defined in a statically linked runtime.
+            val global = context.llvm.staticData.placeGlobal(name, value, true)
+
+            if (context.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
+                context.llvm.usedGlobals += global.llvmGlobal
+                LLVMSetVisibility(global.llvmGlobal, LLVMVisibility.LLVMHiddenVisibility)
+            }
+        }
+    }
+
+    private fun overrideRuntimeGlobals() {
+        if (!context.config.produce.isFinalBinary)
+            return
+
+        overrideRuntimeGlobal("Kotlin_destroyRuntimeMode", Int32(context.config.destroyRuntimeMode.value))
     }
 
     //-------------------------------------------------------------------------//
@@ -2424,7 +2461,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
 
         context.llvm.irStaticInitializers.forEach {
-            val library = it.module.konanLibrary
+            val library = it.konanLibrary
             val initializers = libraryToInitializers[library]
                     ?: error("initializer for not included library ${library?.libraryFile}")
 

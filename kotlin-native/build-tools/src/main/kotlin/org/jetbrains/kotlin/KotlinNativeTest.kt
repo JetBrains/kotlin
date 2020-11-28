@@ -15,12 +15,14 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.process.ExecSpec
+import org.jetbrains.kotlin.konan.exec.Command
 
 import java.io.File
 import java.io.ByteArrayOutputStream
 import java.util.regex.Pattern
 
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 
 abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     enum class Logger {
@@ -331,11 +333,21 @@ open class KonanStandaloneTest : KonanLocalTest() {
     @Input @Optional
     var enableKonanAssertions = true
 
+    @Input @Optional
+    var verifyIr = true
+
     /**
      * Compiler flags used to build a test.
      */
     var flags: List<String> = listOf()
-        get() = if (enableKonanAssertions) field + "-ea" else field
+        get() {
+            val result = field.toMutableList()
+            if (enableKonanAssertions)
+                result += "-ea"
+            if (verifyIr)
+                result += "-Xverify-ir"
+            return result
+        }
 
     fun getSources(): Provider<List<String>> = project.provider {
         val sources = buildCompileList(project.file(source).toPath(), outputDirectory)
@@ -380,7 +392,7 @@ open class KonanDriverTest : KonanStandaloneTest() {
             it.print("Konanc compiler execution:")
             project.file("$executable.compilation.log").run {
                 writeText(it.stdOut)
-                writeText(it.stdErr)
+                appendText(it.stdErr)
             }
             check(it.exitCode == 0) { "Compiler failed with exit code ${it.exitCode}" }
         }
@@ -418,7 +430,11 @@ open class KonanDynamicTest : KonanStandaloneTest() {
     @Input
     lateinit var cSource: String
 
+    @Input
     var clangTool = "clang"
+
+    @Input
+    var clangFlags: List<String> = listOf()
 
     // Replace testlib_api.h and all occurrences of the testlib with the actual name of the test
     private fun processCSource(): String {
@@ -439,25 +455,49 @@ open class KonanDynamicTest : KonanStandaloneTest() {
     private fun clang() {
         val log = ByteArrayOutputStream()
         val plugin = project.convention.getPlugin(ExecClang::class.java)
-        val execResult = plugin.execKonanClang(project.testTarget, Action<ExecSpec> {
+        val artifactsDir = "$outputDirectory/${project.testTarget}"
+
+        fun flagsContain(opt: String) = project.globalTestArgs.contains(opt) || flags.contains(opt)
+        val isOpt = flagsContain("-opt")
+        val isDebug = flagsContain("-g")
+
+        val execResult = plugin.execKonanClang(project.testTarget) {
             it.workingDir = File(outputDirectory)
             it.executable = clangTool
-            val artifactsDir = "$outputDirectory/${project.testTarget}"
             it.args = listOf(processCSource(),
-                    "-o", executable,
-                    "-I", artifactsDir,
-                    "-L", artifactsDir,
-                    "-l", name,
-                    "-Wl,-rpath,$artifactsDir")
-
+                    "-c",
+                    "-o", "$executable.o",
+                    "-I", artifactsDir
+            ) + clangFlags
             it.standardOutput = log
             it.errorOutput = log
             it.isIgnoreExitValue = true
-        })
+        }
         log.toString("UTF-8").also {
             project.file("$executable.compilation.log").writeText(it)
             println(it)
         }
         execResult.assertNormalExitValue()
+
+        val linker = project.platformManager.platform(project.testTarget).linker
+        val commands = linker.finalLinkCommands(
+                objectFiles = listOf("$executable.o"),
+                executable = executable,
+                libraries = listOf("-l$name"),
+                linkerArgs = listOf("-L", artifactsDir, "-rpath", artifactsDir),
+                optimize = isOpt,
+                debug = isDebug,
+                kind = LinkerOutputKind.EXECUTABLE,
+                outputDsymBundle = "",
+                needsProfileLibrary = false,
+                mimallocEnabled = false
+        )
+        commands.map { cmd ->
+            // Filter out linker option that defines __cxa_demangle because Konan_cxa_demangle is not defined in tests.
+            Command(cmd.argsWithExecutable.filterNot { it.contains("--defsym") || it.contains("Konan_cxa_demangle") })
+        }.forEach {
+            it.logWith { message -> project.file("$executable.compilation.log").appendText(message()) }
+            it.execute()
+        }
     }
 }

@@ -44,8 +44,10 @@ import org.jetbrains.kotlin.codegen.when.SwitchCodegen;
 import org.jetbrains.kotlin.codegen.when.SwitchCodegenProvider;
 import org.jetbrains.kotlin.config.ApiVersion;
 import org.jetbrains.kotlin.config.JVMAssertionsMode;
+import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
@@ -1705,26 +1707,38 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             Type returnType;
             KotlinType returnKotlinType;
             if (isNonLocalReturn) {
-                // This is inline lambda. Find inline-site and check, whether it is suspend functions returning unboxed inline class
-                CodegenContext<?> inlineSiteContext = this.context.getFirstCrossInlineOrNonInlineContext();
-                KotlinType originalInlineClass = null;
-                boolean invokeSuspendOfLambda = false;
-                FunctionDescriptor inlineSiteDescriptor = null;
-                if (inlineSiteContext instanceof MethodContext) {
-                    inlineSiteDescriptor = ((MethodContext) inlineSiteContext).getFunctionDescriptor();
-                    originalInlineClass = CoroutineCodegenUtilKt
-                            .originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(inlineSiteDescriptor, typeMapper);
-                    invokeSuspendOfLambda = CoroutineCodegenUtilKt.isInvokeSuspendOfLambda(inlineSiteDescriptor);
-                }
-                if (originalInlineClass != null) {
-                    returnType = typeMapper.mapType(originalInlineClass);
-                    returnKotlinType = originalInlineClass;
-                } else if (!invokeSuspendOfLambda) {
-                    returnType = nonLocalReturn.returnType.getType();
-                    returnKotlinType = nonLocalReturn.returnType.getKotlinType();
-                } else {
+                FunctionDescriptor returnTarget =
+                        nonLocalReturn.descriptor instanceof FunctionDescriptor
+                        ? (FunctionDescriptor) nonLocalReturn.descriptor
+                        : null;
+                if (returnTarget == null || !returnTarget.isSuspend()) {
+                    JvmKotlinType jvmKotlinType = nonLocalReturn.getJvmKotlinType(typeMapper);
+                    returnType = jvmKotlinType.getType();
+                    returnKotlinType = jvmKotlinType.getKotlinType();
+                } else if (returnTarget instanceof AnonymousFunctionDescriptor) {
+                    // Suspend lambdas always return Any?
                     returnType = OBJECT_TYPE;
-                    returnKotlinType = inlineSiteDescriptor.getReturnType();
+                    returnKotlinType = state.getModule().getBuiltIns().getNullableAnyType();
+                } else {
+                    // This is inline lambda, but return target is ordinary, yet suspend, function.
+                    // Find inline-site and check, whether it is suspend functions returning unboxed inline class
+                    CodegenContext<?> inlineSiteContext = this.context.getFirstCrossInlineOrNonInlineContext();
+                    KotlinType originalInlineClass = null;
+                    if (inlineSiteContext instanceof MethodContext) {
+                        FunctionDescriptor view = CoroutineCodegenUtilKt.getOrCreateJvmSuspendFunctionView(returnTarget, state);
+                        originalInlineClass =
+                                CoroutineCodegenUtilKt.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass(view, typeMapper);
+                    }
+                    if (originalInlineClass != null) {
+                        // As an optimization, suspend functions, returning inline classes with reference underlying
+                        // type return unboxed inline class. Save the type so the coercer will not box it.
+                        returnType = typeMapper.mapType(originalInlineClass);
+                        returnKotlinType = originalInlineClass;
+                    } else {
+                        JvmKotlinType jvmKotlinType = nonLocalReturn.getJvmKotlinType(typeMapper);
+                        returnType = jvmKotlinType.getType();
+                        returnKotlinType = jvmKotlinType.getKotlinType();
+                    }
                 }
             }
             else {
@@ -1788,13 +1802,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     FunctionDescriptor containingFunction =
                             BindingContextUtils.getContainingFunctionSkipFunctionLiterals(descriptor, true).getFirst();
                     //FIRST_FUN_LABEL to prevent clashing with existing labels
-                    return new NonLocalReturnInfo(
-                            new JvmKotlinType(
-                                    typeMapper.mapReturnType(containingFunction),
-                                    containingFunction.getReturnType()
-                            ),
-                            FIRST_FUN_LABEL
-                    );
+                    return new NonLocalReturnInfo(containingFunction, FIRST_FUN_LABEL);
                 } else {
                     //local
                     return null;
@@ -1807,10 +1815,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 assert element != null : "Expression should be not null " + expression.getText();
                 assert elementDescriptor != null : "Descriptor should be not null: " + element.getText();
                 CallableDescriptor function = (CallableDescriptor) elementDescriptor;
-                return new NonLocalReturnInfo(
-                        new JvmKotlinType(typeMapper.mapReturnType(function), function.getReturnType()),
-                        expression.getLabelName()
-                );
+                return new NonLocalReturnInfo(function, expression.getLabelName());
             }
         }
         return null;
@@ -2680,7 +2685,21 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             fd = ArgumentGeneratorKt.getFunctionWithDefaultArguments(fd);
         }
 
-        return typeMapper.mapToCallableMethod(fd, superCall, null, resolvedCall);
+        CallableMethod method = typeMapper.mapToCallableMethod(fd, superCall, null, resolvedCall);
+
+        if (method.getAsmMethod().getName().contains("-") &&
+            !state.getConfiguration().getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
+        ) {
+            Boolean classFileContainsMethod =
+                    InlineClassesCodegenUtilKt.classFileContainsMethod(fd, state, method.getAsmMethod());
+            if (classFileContainsMethod != null && !classFileContainsMethod) {
+                typeMapper.setUseOldManglingRulesForFunctionAcceptingInlineClass(true);
+                method = typeMapper.mapToCallableMethod(fd, superCall, null, resolvedCall);
+                typeMapper.setUseOldManglingRulesForFunctionAcceptingInlineClass(false);
+            }
+        }
+
+        return method;
     }
 
     public void invokeMethodWithArguments(
@@ -2896,6 +2915,17 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         sourceCompiler.initializeInlineFunctionContext(functionDescriptor);
         JvmMethodSignature signature = typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompiler.getContextKind());
+        if (signature.getAsmMethod().getName().contains("-") &&
+            !state.getConfiguration().getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME)
+        ) {
+            Boolean classFileContainsMethod =
+                    InlineClassesCodegenUtilKt.classFileContainsMethod(functionDescriptor, state, signature.getAsmMethod());
+            if (classFileContainsMethod != null && !classFileContainsMethod) {
+                typeMapper.setUseOldManglingRulesForFunctionAcceptingInlineClass(true);
+                signature = typeMapper.mapSignatureWithGeneric(functionDescriptor, sourceCompiler.getContextKind());
+                typeMapper.setUseOldManglingRulesForFunctionAcceptingInlineClass(false);
+            }
+        }
         Type methodOwner = typeMapper.mapImplementationOwner(functionDescriptor);
         if (isDefaultCompilation) {
             return new InlineCodegenForDefaultBody(functionDescriptor, this, state, methodOwner, signature, sourceCompiler);
@@ -5427,13 +5457,17 @@ The "returned" value of try expression with no finally is either the last expres
 
     private static class NonLocalReturnInfo {
 
-        private final JvmKotlinType returnType;
+        private final CallableDescriptor descriptor;
 
         private final String labelName;
 
-        private NonLocalReturnInfo(@NotNull JvmKotlinType type, @NotNull String name) {
-            returnType = type;
+        private NonLocalReturnInfo(@NotNull CallableDescriptor descriptor, @NotNull String name) {
+            this.descriptor = descriptor;
             labelName = name;
+        }
+
+        private JvmKotlinType getJvmKotlinType(@NotNull KotlinTypeMapper typeMapper) {
+            return new JvmKotlinType(typeMapper.mapReturnType(descriptor), descriptor.getReturnType());
         }
     }
 

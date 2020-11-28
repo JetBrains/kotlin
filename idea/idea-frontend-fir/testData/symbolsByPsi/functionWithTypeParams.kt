@@ -7,6 +7,7 @@ KtFirTypeParameterSymbol:
   origin: SOURCE
 
 KtFirFunctionValueParameterSymbol:
+  annotations: []
   hasDefaultValue: false
   isVararg: false
   name: x
@@ -15,9 +16,13 @@ KtFirFunctionValueParameterSymbol:
   type: X
 
 KtFirFunctionSymbol:
+  annotations: []
   callableIdIfNonLocal: foo
   isExtension: false
+  isExternal: false
+  isInline: false
   isOperator: false
+  isOverride: false
   isSuspend: false
   modality: FINAL
   name: foo
@@ -27,4 +32,5 @@ KtFirFunctionSymbol:
   type: kotlin/Unit
   typeParameters: [KtFirTypeParameterSymbol(X)]
   valueParameters: [KtFirFunctionValueParameterSymbol(x)]
+  visibility: PUBLIC
 */

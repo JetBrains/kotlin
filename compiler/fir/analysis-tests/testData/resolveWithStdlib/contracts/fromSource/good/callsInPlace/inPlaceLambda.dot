@@ -23,7 +23,7 @@ digraph inPlaceLambda_kt {
                 subgraph cluster_4 {
                     color=blue
                     8 [label="Enter block"];
-                    9 [label="Function call: R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                    9 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
                     10 [label="Exit block"];
                 }
                 11 [label="Exit when branch result"];
@@ -54,7 +54,7 @@ digraph inPlaceLambda_kt {
         subgraph cluster_6 {
             color=blue
             16 [label="Enter block"];
-            17 [label="Function call: R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            17 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             18 [label="Postponed enter to lambda"];
             subgraph cluster_7 {
                 color=blue
@@ -62,7 +62,7 @@ digraph inPlaceLambda_kt {
                 subgraph cluster_8 {
                     color=blue
                     24 [label="Enter block"];
-                    25 [label="Function call: R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                    25 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
                     26 [label="Exit block"];
                 }
                 27 [label="Exit function anonymousFunction" style="filled" fillcolor=red];

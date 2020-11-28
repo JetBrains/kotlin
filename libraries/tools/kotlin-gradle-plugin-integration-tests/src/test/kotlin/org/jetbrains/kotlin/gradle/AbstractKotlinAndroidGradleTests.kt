@@ -681,7 +681,7 @@ fun getSomething() = 10
 
         project.build("assembleDebug", options = options) {
             assertSuccessful()
-            assertContains("'kotlin-android-extensions' plugin is deprecated")
+            assertContains("The 'kotlin-android-extensions' Gradle plugin is deprecated")
         }
     }
 

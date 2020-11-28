@@ -22,7 +22,7 @@
 #import "ObjCExportInit.h"
 #import "ObjCExportPrivate.h"
 #import "Runtime.h"
-#import "Utils.h"
+#import "Mutex.hpp"
 #import "Exceptions.h"
 
 extern "C" id objc_retainAutoreleaseReturnValue(id self);

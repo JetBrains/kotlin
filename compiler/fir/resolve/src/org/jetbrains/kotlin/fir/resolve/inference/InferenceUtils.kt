@@ -9,17 +9,17 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -29,12 +29,22 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 @OptIn(ExperimentalContracts::class)
-private fun ConeKotlinType.functionClassKind(session: FirSession): FunctionClassKind? {
+private fun ConeKotlinType.classId(session: FirSession): ClassId? {
     contract {
-        returns(true) implies (this@functionClassKind is ConeClassLikeType)
+        returns(true) implies (this@classId is ConeClassLikeType)
     }
     if (this !is ConeClassLikeType) return null
-    val classId = fullyExpandedType(session).lookupTag.classId
+    return fullyExpandedType(session).lookupTag.classId
+}
+
+fun ConeKotlinType.isKMutableProperty(session: FirSession): Boolean {
+    val classId = classId(session) ?: return false
+    return classId.packageFqName == StandardClassIds.BASE_REFLECT_PACKAGE &&
+            classId.shortClassName.identifier.startsWith("KMutableProperty")
+}
+
+private fun ConeKotlinType.functionClassKind(session: FirSession): FunctionClassKind? {
+    val classId = classId(session) ?: return null
     return FunctionClassKind.byClassNamePrefix(classId.packageFqName, classId.relativeClassName.asString())
 }
 
@@ -44,6 +54,11 @@ fun ConeKotlinType.isBuiltinFunctionalType(session: FirSession): Boolean {
             kind == FunctionClassKind.KFunction ||
             kind == FunctionClassKind.SuspendFunction ||
             kind == FunctionClassKind.KSuspendFunction
+}
+
+fun ConeKotlinType.isFunctionalType(session: FirSession): Boolean {
+    val kind = functionClassKind(session) ?: return false
+    return kind == FunctionClassKind.Function
 }
 
 fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
@@ -122,7 +137,7 @@ fun ConeKotlinType.findContributedInvokeSymbol(
     if (declaredInvoke != null) {
         // Make sure the user-contributed or type-substituted invoke we just found above is an override of base invoke.
         scope.processOverriddenFunctions(declaredInvoke!!) { functionSymbol ->
-            if (functionSymbol == baseInvokeSymbol || functionSymbol.overriddenSymbol == baseInvokeSymbol) {
+            if (functionSymbol == baseInvokeSymbol || functionSymbol.originalForSubstitutionOverride == baseInvokeSymbol) {
                 overriddenInvoke = functionSymbol
                 ProcessorAction.STOP
             } else {

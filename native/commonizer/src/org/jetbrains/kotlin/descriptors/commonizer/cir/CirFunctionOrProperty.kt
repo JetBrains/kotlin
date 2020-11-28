@@ -23,9 +23,6 @@ interface CirFunctionOrProperty :
     val returnType: CirType
     val kind: CallableMemberDescriptor.Kind
 
-    fun isNonAbstractMemberInInterface(): Boolean =
-        modality != Modality.ABSTRACT && containingClassDetails?.kind == ClassKind.INTERFACE
-
     fun isVirtual(): Boolean =
         visibility != DescriptorVisibilities.PRIVATE
                 && modality != Modality.FINAL

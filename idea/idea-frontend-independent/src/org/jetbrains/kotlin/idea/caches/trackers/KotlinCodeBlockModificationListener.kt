@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.idea.util.application.getServiceSafe
 /**
  * Tested in OutOfBlockModificationTestGenerated
  */
-// FIX ME WHEN BUNCH 193 REMOVED
 class KotlinCodeBlockModificationListener(project: Project) : KotlinCodeBlockModificationListenerCompat(project) {
 
     init {

@@ -5,6 +5,7 @@ plugins {
 }
 
 dependencies {
+    testCompile(kotlinStdlib("jdk8"))
     testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":core:descriptors"))
     testCompile(project(":core:descriptors.jvm"))
@@ -92,13 +93,8 @@ dependencies {
         isTransitive = false
     }
 
-    Platform[192].orHigher {
-        testCompile(intellijDep()) { includeJars("platform-util-ui", "platform-concurrency", "platform-objectSerializer") }
-    }
-
-    Platform[193].orHigher {
-        testCompile(intellijDep()) { includeJars("platform-ide-util-io") }
-    }
+    testCompile(intellijDep()) { includeJars("platform-util-ui", "platform-concurrency", "platform-objectSerializer") }
+    testCompile(intellijDep()) { includeJars("platform-ide-util-io") }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {

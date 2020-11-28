@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.codegen.inline.GENERATE_SMAP
 import org.jetbrains.kotlin.codegen.inline.remove
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
@@ -712,6 +711,28 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             stdlib.getInputStream(classFromStdlib).readBytes(),
             KotlinCompilerVersion.isPreRelease()
         )
+    }
+
+    fun testInlineClassesManglingAgainstLV13() {
+        val library = compileLibrary(
+            "library",
+            additionalOptions = listOf("-language-version", "1.3", "-Xinline-classes"),
+            checkKotlinOutput = {}
+        )
+        compileKotlin(
+            "source.kt",
+            tmpdir,
+            listOf(library),
+            additionalOptions = listOf("-XXLanguage:-MangleClassMembersReturningInlineClasses", "-Xinline-classes")
+        )
+        // Difference in mangling becomes apparent only on load time as NSME, so, to check the mangling we need to load the classfile
+        loadClassFile("SourceKt", tmpdir, library)
+    }
+
+    private fun loadClassFile(className: String, dir: File, library: File) {
+        val classLoader = URLClassLoader(arrayOf(dir.toURI().toURL(), library.toURI().toURL()))
+        val mainClass = classLoader.loadClass(className)
+        mainClass.getDeclaredMethod("main", Array<String>::class.java).invoke(null, arrayOf<String>())
     }
 
     companion object {

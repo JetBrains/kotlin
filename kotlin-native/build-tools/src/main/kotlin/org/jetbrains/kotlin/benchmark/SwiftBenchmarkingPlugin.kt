@@ -79,7 +79,7 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
         val nativeTarget = kotlin.targets.getByName(NATIVE_TARGET_NAME) as KotlinNativeTarget
         // Build executable from swift code.
         framework = nativeTarget.binaries.getFramework(nativeFrameworkName, benchmark.buildType)
-        val buildSwift = tasks.create("buildSwift") { task ->
+        tasks.create("buildSwift") { task ->
             task.dependsOn(framework.linkTaskName)
             task.doLast {
                 val frameworkParentDirPath = framework.outputDirectory.absolutePath

@@ -13,7 +13,7 @@ object JvmAnalysisFlags {
     val strictMetadataVersionSemantics by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val javaTypeEnhancementState by AnalysisFlag.Delegates.JavaTypeEnhancementStateWarnByDefault
+    val javaTypeEnhancementState by Delegates.JavaTypeEnhancementStateWarnByDefault
 
     @JvmStatic
     val jvmDefaultMode by Delegates.JvmDefaultModeDisabledByDefault
@@ -34,7 +34,7 @@ object JvmAnalysisFlags {
     val disableUltraLightClasses by AnalysisFlag.Delegates.Boolean
 
     private object Delegates {
-        object Jsr305StateWarnByDefault {
+        object JavaTypeEnhancementStateWarnByDefault {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>): AnalysisFlag.Delegate<JavaTypeEnhancementState> =
                 AnalysisFlag.Delegate(property.name, JavaTypeEnhancementState.DEFAULT)
         }

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.symbols
 
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
@@ -14,8 +12,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 
 fun FirClassSymbol<*>.constructStarProjectedType(typeParameterNumber: Int): ConeClassLikeType {
     return ConeClassLikeTypeImpl(
-        if (classId.isLocal) ConeClassLookupTagWithFixedSymbol(classId, this)
-        else ConeClassLikeLookupTagImpl(classId),
+        toLookupTag(),
         Array(typeParameterNumber) { ConeStarProjection },
         isNullable = false
     )

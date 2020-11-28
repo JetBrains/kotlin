@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
@@ -35,6 +36,7 @@ abstract class FirConstructor : FirPureAbstractElement(), FirFunction<FirConstru
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val status: FirDeclarationStatus
     abstract override val containerSource: DeserializedContainerSource?
+    abstract override val dispatchReceiverType: ConeKotlinType?
     abstract override val annotations: List<FirAnnotationCall>
     abstract override val symbol: FirConstructorSymbol
     abstract val delegatedConstructor: FirDelegatedConstructorCall?

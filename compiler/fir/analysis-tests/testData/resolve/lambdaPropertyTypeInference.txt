@@ -24,16 +24,16 @@ FILE: KotlinClass.kt
             }
         }
 
-        R|<local>/validType|.R|tests/_checkType/checkType|<R|(JavaClass) -> kotlin/Boolean|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function1<JavaClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
-            this@R|special/anonymous|.R|tests/_checkType/_|<R|(JavaClass) -> kotlin/Boolean|>()
+        R|<local>/validType|.R|/checkType|<R|(JavaClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function1<JavaClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|/_|<R|(JavaClass) -> kotlin/Boolean|>()
         }
         )
-        R|<local>/invalidType|.R|tests/_checkType/checkType|<R|(JavaClass) -> kotlin/Boolean|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function1<JavaClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
-            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): tests/_checkType/_>#<R|(kotlin/Nothing) -> kotlin/Boolean|>()
+        R|<local>/invalidType|.R|/checkType|<R|(JavaClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function1<JavaClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /_>#<R|(kotlin/Nothing) -> kotlin/Boolean|>()
         }
         )
-        R|/Case1.Case1|(R|<local>/javaClass|).R|/Case1.x|.R|tests/_checkType/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
-            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): tests/_checkType/_>#<R|(kotlin/Nothing) -> kotlin/Boolean|>()
+        R|/Case1.Case1|(R|<local>/javaClass|).R|/Case1.x|.R|/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /_>#<R|(kotlin/Nothing) -> kotlin/Boolean|>()
         }
         )
     }
@@ -46,9 +46,9 @@ FILE: KotlinClass.kt
             public get(): R|JavaClass?|
 
         public final val x: R|(KotlinClass) -> kotlin/Boolean| = when () {
-            !=(R|<local>/javaClass|, Null(null)) ->  {
+            !=(this@R|/Case1|.R|/Case1.javaClass|, Null(null)) ->  {
                 fun <anonymous>(it: R|KotlinClass|): R|kotlin/Boolean| {
-                    ^ ==(R|<local>/it|, R|<local>/javaClass|)
+                    ^ ==(R|<local>/it|, this@R|/Case1|.R|/Case1.javaClass|)
                 }
 
             }
@@ -117,16 +117,16 @@ FILE: KotlinClass.kt
             }
         }
 
-        R|<local>/validType|.R|tests/_checkType/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
-            this@R|special/anonymous|.R|tests/_checkType/_|<R|(KotlinClass) -> kotlin/Boolean|>()
+        R|<local>/validType|.R|/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|/_|<R|(KotlinClass) -> kotlin/Boolean|>()
         }
         )
-        R|<local>/invalidType|.R|tests/_checkType/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
-            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): tests/_checkType/_>#<R|(kotlin/Nothing) -> kotlin/Boolean|>()
+        R|<local>/invalidType|.R|/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /_>#<R|(kotlin/Nothing) -> kotlin/Boolean|>()
         }
         )
-        R|/Case2.Case2|(R|<local>/kotlinClass|).R|/Case2.x|.R|tests/_checkType/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|tests/_checkType/Inv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
-            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): tests/_checkType/_>#<R|(kotlin/Nothing) -> kotlin/Boolean|>()
+        R|/Case2.Case2|(R|<local>/kotlinClass|).R|/Case2.x|.R|/checkType|<R|(KotlinClass) -> kotlin/Boolean|>(<L> = checkType@fun R|CheckTypeInv<kotlin/Function1<KotlinClass, kotlin/Boolean>>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE_WRONG_RECEIVER): /_>#<R|(kotlin/Nothing) -> kotlin/Boolean|>()
         }
         )
     }
@@ -139,9 +139,9 @@ FILE: KotlinClass.kt
             public get(): R|KotlinClass?|
 
         public final val x: R|(KotlinClass) -> kotlin/Boolean| = when () {
-            !=(R|<local>/kotlinClass|, Null(null)) ->  {
+            !=(this@R|/Case2|.R|/Case2.kotlinClass|, Null(null)) ->  {
                 fun <anonymous>(it: R|KotlinClass|): R|kotlin/Boolean| {
-                    ^ ==(R|<local>/it|, R|<local>/kotlinClass|)
+                    ^ ==(R|<local>/it|, this@R|/Case2|.R|/Case2.kotlinClass|)
                 }
 
             }
@@ -176,13 +176,13 @@ FILE: CHECK_TYPE.kt
     public final fun <T> checkSubtype(t: R|T|): R|T| {
         ^checkSubtype R|<local>/t|
     }
-    public final class Inv<T> : R|kotlin/Any| {
-        public constructor<T>(): R|tests/_checkType/Inv<T>| {
+    public final class CheckTypeInv<T> : R|kotlin/Any| {
+        public constructor<T>(): R|CheckTypeInv<T>| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final fun <E> R|tests/_checkType/Inv<E>|._(): R|kotlin/Unit| {
+    public final fun <E> R|CheckTypeInv<E>|._(): R|kotlin/Unit| {
     }
-    public final infix fun <T> R|T|.checkType(f: R|tests/_checkType/Inv<T>.() -> kotlin/Unit|): R|kotlin/Unit| {
+    public final infix fun <T> R|T|.checkType(f: R|CheckTypeInv<T>.() -> kotlin/Unit|): R|kotlin/Unit| {
     }

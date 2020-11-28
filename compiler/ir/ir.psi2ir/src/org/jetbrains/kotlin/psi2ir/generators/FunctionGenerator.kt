@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -19,6 +20,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.Name.isValidIdentifier
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
 import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
@@ -26,6 +29,7 @@ import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
@@ -100,7 +104,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     fun generatePropertyAccessor(
         descriptor: PropertyAccessorDescriptor,
-        ktProperty: KtProperty,
+        ktProperty: KtVariableDeclaration,
         ktAccessor: KtPropertyAccessor?
     ): IrSimpleFunction =
         declareSimpleFunctionInner(
@@ -121,9 +125,9 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     fun generateDefaultAccessorForPrimaryConstructorParameter(
         descriptor: PropertyAccessorDescriptor,
-        ktParameter: KtParameter
+        ktElement: KtElement
     ): IrSimpleFunction =
-        declareSimpleFunctionInner(descriptor, ktParameter, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR).buildWithScope { irAccessor ->
+        declareSimpleFunctionInner(descriptor, ktElement, IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR).buildWithScope { irAccessor ->
             declarationGenerator.generateScopedTypeParameterDeclarations(irAccessor, descriptor.typeParameters)
             irAccessor.returnType = descriptor.returnType!!.toIrType()
             FunctionGenerator(declarationGenerator).generateSyntheticFunctionParameterDeclarations(irAccessor)
@@ -328,17 +332,50 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         receiverParameterDescriptor: ReceiverParameterDescriptor,
         ktElement: KtPureElement?,
         irOwnerElement: IrElement
-    ): IrValueParameter =
-        declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement)
+    ): IrValueParameter {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
+            if (ktElement is KtFunctionLiteral) {
+                val name = getCallLabelForLambdaArgument(ktElement, this.context.bindingContext)?.let {
+                    it.takeIf(Name::isValidIdentifier) ?: "\$receiver"
+                }
+                return declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement, name = Name.identifier("\$this\$$name"))
+            }
+        }
+        return declareParameter(receiverParameterDescriptor, ktElement, irOwnerElement)
+    }
 
-    private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement) =
+    private fun getCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingContext: BindingContext): String? {
+        val lambdaExpression = declaration.parent as? KtLambdaExpression ?: return null
+        val lambdaExpressionParent = lambdaExpression.parent
+
+        if (lambdaExpressionParent is KtLabeledExpression) {
+            lambdaExpressionParent.name?.let { return it }
+        }
+
+        val callExpression = when (val argument = lambdaExpression.parent) {
+            is KtLambdaArgument -> {
+                argument.parent as? KtCallExpression ?: return null
+            }
+            is KtValueArgument -> {
+                val valueArgumentList = argument.parent as? KtValueArgumentList ?: return null
+                valueArgumentList.parent as? KtCallExpression ?: return null
+            }
+            else -> return null
+        }
+
+        val call = callExpression.getResolvedCall(bindingContext) ?: return null
+        return call.resultingDescriptor.name.asString()
+    }
+
+    private fun declareParameter(descriptor: ParameterDescriptor, ktElement: KtPureElement?, irOwnerElement: IrElement, name: Name? = null) =
         context.symbolTable.declareValueParameter(
             ktElement?.pureStartOffset ?: irOwnerElement.startOffset,
             ktElement?.pureEndOffset ?: irOwnerElement.endOffset,
             IrDeclarationOrigin.DEFINED,
             descriptor, descriptor.type.toIrType(),
-            (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType()
-        )
+            (descriptor as? ValueParameterDescriptor)?.varargElementType?.toIrType(),
+            name
+            )
 
     private fun generateDefaultAnnotationParameterValue(
         valueExpression: KtExpression,

@@ -107,7 +107,7 @@ class TextDiagnostic(
                 extractDataBefore(matcher.group(2), ":")
 
             val name = matcher.group(3)
-            val parameters = matcher.group(4) ?: return TextDiagnostic(
+            val parameters = matcher.group(5) ?: return TextDiagnostic(
                 name,
                 platform,
                 null,

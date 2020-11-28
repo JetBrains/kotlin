@@ -9,23 +9,21 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "CppSupport.hpp"
 #include "Types.h"
+#include "Utils.hpp"
 
 template <class F>
-class ScopedStrictMockFunction {
+class ScopedStrictMockFunction : private kotlin::MoveOnly {
 public:
     using Mock = testing::StrictMock<testing::MockFunction<F>>;
 
     explicit ScopedStrictMockFunction(Mock** globalMockLocation) : globalMockLocation_(globalMockLocation) {
         RuntimeCheck(globalMockLocation != nullptr, "ScopedStrictMockFunction needs non-null global mock location");
         RuntimeCheck(*globalMockLocation == nullptr, "ScopedStrictMockFunction needs null global mock");
-        // TODO: Use make_unique when sysroots on Linux get updated.
-        mock_ = std::unique_ptr<Mock>(new Mock());
+        mock_ = kotlin::std_support::make_unique<Mock>();
         *globalMockLocation_ = mock_.get();
     }
-
-    ScopedStrictMockFunction(const ScopedStrictMockFunction&) = delete;
-    ScopedStrictMockFunction& operator=(const ScopedStrictMockFunction&) = delete;
 
     ScopedStrictMockFunction(ScopedStrictMockFunction&& rhs) : globalMockLocation_(rhs.globalMockLocation_), mock_(std::move(rhs.mock_)) {
         rhs.globalMockLocation_ = nullptr;

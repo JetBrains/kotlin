@@ -38,6 +38,7 @@ class ComposeJvmDesktopTemplate : Template() {
 
     override fun isApplicableTo(reader: Reader, module: Module): Boolean =
         module.kind == ModuleKind.singleplatformJvm
+                || module.kind == ModuleKind.target
 
     override fun Writer.getIrsToAddToBuildFile(
         module: ModuleIR
@@ -51,7 +52,7 @@ class ComposeJvmDesktopTemplate : Template() {
     }
 
     override fun Writer.getRequiredLibraries(module: ModuleIR): List<DependencyIR> = listOf(
-        CustomGradleDependencyDependencyIR("compose.desktop.all", dependencyType = DependencyType.MAIN, DependencyKind.implementation)
+        CustomGradleDependencyDependencyIR("compose.desktop.currentOs", dependencyType = DependencyType.MAIN, DependencyKind.implementation)
     )
 
     override fun Writer.runArbitratyTask(module: ModuleIR): TaskResult<Unit> =

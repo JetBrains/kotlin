@@ -1,9 +1,9 @@
 public open class Simple : R|kotlin/Any| {
-    @R|javax/annotation/Nullable|() public open field field: R|kotlin/String?|
+    @R|javax/annotation/Nullable|() public open field field: R|@FlexibleNullability kotlin/String?|
 
-    @R|javax/annotation/Nullable|() public open fun foo(@R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|kotlin/String?|
+    @R|javax/annotation/Nullable|() public open fun foo(@R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|@FlexibleNullability kotlin/CharSequence?|): R|@FlexibleNullability kotlin/String?|
 
-    @R|javax/annotation/Nonnull|() public open fun bar(): R|kotlin/String|
+    @R|javax/annotation/Nonnull|() public open fun bar(): R|@EnhancedNullability kotlin/String|
 
     public constructor(): R|Simple|
 

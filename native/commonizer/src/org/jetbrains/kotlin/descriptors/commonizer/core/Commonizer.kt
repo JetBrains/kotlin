@@ -56,7 +56,7 @@ fun Commonizer<*, *>.failInEmptyState(): Nothing = throw IllegalCommonizerStateE
 @Suppress("unused")
 fun Commonizer<*, *>.failInErrorState(): Nothing = throw IllegalCommonizerStateException("empty")
 
-fun <T : Any> Commonizer<*, *>.checkState(value: T?, error: Boolean): T = when {
+inline fun <reified T : Any> Commonizer<*, *>.checkState(value: T?, error: Boolean): T = when {
     value == null -> failInEmptyState()
     error -> failInErrorState()
     else -> value

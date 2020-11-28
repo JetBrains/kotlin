@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtClass
 // OPTIONS: usages
-// FIR_IGNORE
+// FIR_COMPARISON
 
 class <caret>A<T>
 

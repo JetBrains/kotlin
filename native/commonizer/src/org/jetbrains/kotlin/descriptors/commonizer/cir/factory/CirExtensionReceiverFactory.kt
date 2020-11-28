@@ -10,10 +10,11 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirExtensionReceiver
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirExtensionReceiverImpl
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
 object CirExtensionReceiverFactory {
     fun create(source: ReceiverParameterDescriptor): CirExtensionReceiver = create(
-        annotations = source.annotations.map(CirAnnotationFactory::create),
+        annotations = source.annotations.compactMap(CirAnnotationFactory::create),
         type = CirTypeFactory.create(source.type)
     )
 

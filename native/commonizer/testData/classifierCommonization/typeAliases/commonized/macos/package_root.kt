@@ -21,6 +21,8 @@ typealias X = U // different nullability of the RHS TA
 actual typealias FILE = __sFILE
 final class __sFILE : kotlinx.cinterop.CStructVar {}
 
+actual val uuid: uuid_t get() = TODO()
+
 // Type alias chain that is present in one target only:
 class AA
 typealias BB = AA

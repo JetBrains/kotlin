@@ -4,6 +4,9 @@
 package g
 
 import java.util.HashSet
+import checkType
+import _
+
 fun <T, C: Collection<T>> convert(src: Collection<T>, dest: C): C = throw Exception("$src $dest")
 
 fun test(l: List<Int>) {

@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.java.declarations
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -53,6 +54,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     containerSource: DeserializedContainerSource?,
     symbol: FirFunctionSymbol<FirSimpleFunction>,
     annotations: MutableList<FirAnnotationCall>,
+    dispatchReceiverType: ConeKotlinType?,
 ) : FirSimpleFunctionImpl(
     source,
     session,
@@ -65,6 +67,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     body,
     status,
     containerSource,
+    dispatchReceiverType = dispatchReceiverType,
     contractDescription = FirEmptyContractDescription,
     name,
     symbol,
@@ -107,6 +110,7 @@ class FirJavaMethodBuilder : FirSimpleFunctionBuilder() {
             containerSource,
             symbol,
             annotations,
+            dispatchReceiverType,
         )
     }
 }

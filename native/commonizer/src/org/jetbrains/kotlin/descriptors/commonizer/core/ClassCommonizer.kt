@@ -33,8 +33,7 @@ class ClassCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<C
         isData = false,
         isInline = isInline,
         isInner = isInner,
-        isExternal = false,
-        supertypes = mutableListOf()
+        isExternal = false
     )
 
     override fun initialize(first: CirClass) {

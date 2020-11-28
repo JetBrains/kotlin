@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.perf.util.ProfileTools.Companion.initDefaultPro
 import org.jetbrains.kotlin.idea.perf.util.logMessage
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.testFramework.*
-import org.jetbrains.kotlin.idea.testFramework.TestApplicationManager
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.cleanupCaches
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.close
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.isAKotlinScriptFile

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -16,19 +17,17 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
@@ -46,12 +45,43 @@ internal val inheritedDefaultMethodsOnClassesPhase = makeIrFilePhase(
 private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendContext) : ClassLoweringPass {
     override fun lower(irClass: IrClass) {
         if (!irClass.isJvmInterface) {
-            irClass.declarations.transformInPlace { declaration ->
-                (declaration as? IrSimpleFunction)?.findInterfaceImplementation(context.state.jvmDefaultMode)?.let { implementation ->
-                    generateDelegationToDefaultImpl(implementation, declaration)
-                } ?: declaration
+            irClass.declarations.transformInPlace {
+                transformMemberDeclaration(it)
             }
         }
+    }
+
+    private fun transformMemberDeclaration(declaration: IrDeclaration): IrDeclaration {
+        if (declaration !is IrSimpleFunction) return declaration
+
+        if (declaration.isFakeOverride && declaration.name.asString() == "clone") {
+            val overriddenFunctions = declaration.allOverridden(false)
+            val cloneFun = overriddenFunctions.find { it.parentAsClass.hasEqualFqName(StandardNames.FqNames.cloneable.toSafe()) }
+            if (cloneFun != null && overriddenFunctions.all { it.isFakeOverride || it == cloneFun }) {
+                return generateCloneImplementation(declaration, cloneFun)
+            }
+        }
+
+        val implementation = declaration.findInterfaceImplementation(context.state.jvmDefaultMode)
+            ?: return declaration
+        return generateDelegationToDefaultImpl(implementation, declaration)
+    }
+
+    private fun generateCloneImplementation(fakeOverride: IrSimpleFunction, cloneFun: IrSimpleFunction): IrSimpleFunction {
+        assert(fakeOverride.isFakeOverride)
+        val irFunction = context.cachedDeclarations.getDefaultImplsRedirection(fakeOverride)
+        val irClass = fakeOverride.parentAsClass
+        val classStartOffset = irClass.startOffset
+        context.createJvmIrBuilder(irFunction.symbol, classStartOffset, classStartOffset).apply {
+            irFunction.body = irBlockBody {
+                +irReturn(
+                    irCall(cloneFun, origin = null, superQualifierSymbol = cloneFun.parentAsClass.symbol).apply {
+                        dispatchReceiver = irGet(irFunction.dispatchReceiverParameter!!)
+                    }
+                )
+            }
+        }
+        return irFunction
     }
 
     private fun generateDelegationToDefaultImpl(

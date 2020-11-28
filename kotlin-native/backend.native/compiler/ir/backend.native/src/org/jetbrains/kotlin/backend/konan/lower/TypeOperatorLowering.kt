@@ -25,30 +25,33 @@ import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.isSimpleTypeWithQuestionMark
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
+internal fun IrType.erasureForTypeOperation(): IrType {
+    if (this !is IrSimpleType) return this
+
+    return when (val classifier = classifier) {
+        is IrClassSymbol -> this
+        is IrTypeParameterSymbol -> {
+            val upperBound = classifier.owner.superTypes.firstOrNull()
+                    ?: TODO("${classifier.descriptor} : ${classifier.descriptor.upperBounds}")
+
+            if (this.hasQuestionMark) {
+                // `T?`
+                upperBound.erasureForTypeOperation().makeNullable()
+            } else {
+                upperBound.erasureForTypeOperation()
+            }
+        }
+        else -> TODO(classifier.toString())
+    }
+}
+
 internal class TypeOperatorLowering(val context: CommonBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
+
     override fun lower(irFile: IrFile) {
         irFile.transformChildren(this, null)
     }
 
-    private fun IrType.erasure(): IrType {
-        if (this !is IrSimpleType) return this
-
-        return when (val classifier = classifier) {
-            is IrClassSymbol -> this
-            is IrTypeParameterSymbol -> {
-                val upperBound = classifier.owner.superTypes.firstOrNull() ?:
-                        TODO("${classifier.descriptor} : ${classifier.descriptor.upperBounds}")
-
-                if (this.hasQuestionMark) {
-                    // `T?`
-                    upperBound.erasure().makeNullable()
-                } else {
-                    upperBound.erasure()
-                }
-            }
-            else -> TODO(classifier.toString())
-        }
-    }
+    private fun IrType.erasure(): IrType = this.erasureForTypeOperation()
 
     private fun lowerCast(expression: IrTypeOperatorCall): IrExpression {
         builder.at(expression)

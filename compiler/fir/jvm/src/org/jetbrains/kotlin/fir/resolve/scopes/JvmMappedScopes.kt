@@ -28,12 +28,13 @@ fun wrapScopeWithJvmMapped(
     scopeSession: ScopeSession
 ): FirScope {
     val classId = klass.classId
-    val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(classId.asSingleFqName().toUnsafe())
+    val kotlinUnsafeFqName = classId.asSingleFqName().toUnsafe()
+    val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(kotlinUnsafeFqName)
         ?: return declaredMemberScope
     val symbolProvider = useSiteSession.firSymbolProvider
     val javaClass = symbolProvider.getClassLikeSymbolByFqName(javaClassId)?.fir as? FirRegularClass
         ?: return declaredMemberScope
-    val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass)
+    val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass, JavaToKotlinClassMap.isMutable(kotlinUnsafeFqName))
     return if (preparedSignatures.isNotEmpty()) {
         javaClass.unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false).let { javaClassUseSiteScope ->
             val jvmMappedScope = JvmMappedScope(declaredMemberScope, javaClassUseSiteScope, preparedSignatures)
@@ -45,7 +46,10 @@ fun wrapScopeWithJvmMapped(
                 (klass.symbol.constructType(
                     klass.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                     false
-                ) as ConeClassLikeType).wrapSubstitutionScopeIfNeed(useSiteSession, jvmMappedScope, klass, scopeSession, klass.classId)
+                ) as ConeClassLikeType).wrapSubstitutionScopeIfNeed(
+                    useSiteSession, jvmMappedScope, klass, scopeSession,
+                    derivedClass = klass,
+                )
             }
         }
     } else {

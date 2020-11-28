@@ -1,6 +1,6 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtProperty
 // OPTIONS: usages
-// FIR_IGNORE
+// FIR_COMPARISON
 
 class P
 

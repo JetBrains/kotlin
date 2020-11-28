@@ -6,9 +6,9 @@ FILE: K1.kt
 
     }
     public final fun main(k: R|KSub|, vString: R|SuperClass.NestedInSuperClass<kotlin/String>|, vInt: R|SuperClass.NestedInSuperClass<kotlin/Int>|): R|kotlin/Unit| {
-        R|<local>/k|.R|/J1.getImpl|().R|FakeOverride</J1.NestedIImpl.nestedI: R|kotlin/Unit|>|(R|<local>/vString|)
+        R|<local>/k|.R|/J1.getImpl|().R|SubstitutionOverride</J1.NestedIImpl.nestedI: R|kotlin/Unit|>|(R|<local>/vString|)
         R|<local>/k|.R|/J1.getImpl|().<Inapplicable(INAPPLICABLE): /J1.NestedIImpl.nestedI>#(R|<local>/vInt|)
-        R|<local>/k|.R|/J1.getNestedSubClass|().R|FakeOverride</J1.NestedSubClass.nested: R|kotlin/Unit|>|(String())
+        R|<local>/k|.R|/J1.getNestedSubClass|().R|SubstitutionOverride</J1.NestedSubClass.nested: R|kotlin/Unit|>|(String())
         R|<local>/k|.R|/J1.getNestedSubClass|().<Inapplicable(INAPPLICABLE): /J1.NestedSubClass.nested>#(Int(1))
     }
 FILE: K2.kt

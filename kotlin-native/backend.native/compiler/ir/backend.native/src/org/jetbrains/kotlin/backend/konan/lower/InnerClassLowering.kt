@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.callsSuper
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -87,6 +88,11 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
 
         private fun lowerOuterThisReferences() {
             irClass.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+                override fun visitClassNew(declaration: IrClass): IrStatement {
+                    // Skip nested.
+                    return declaration
+                }
+
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     expression.transformChildrenVoid(this)
 

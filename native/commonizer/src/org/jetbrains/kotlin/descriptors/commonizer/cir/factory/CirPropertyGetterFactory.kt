@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirPropertyGetter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirPropertyGetterImpl
 import org.jetbrains.kotlin.descriptors.commonizer.utils.Interner
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 
 object CirPropertyGetterFactory {
     private val interner = Interner<CirPropertyGetter>()
@@ -27,7 +28,7 @@ object CirPropertyGetterFactory {
             DEFAULT_NO_ANNOTATIONS
         else
             create(
-                annotations = source.annotations.map(CirAnnotationFactory::create),
+                annotations = source.annotations.compactMap(CirAnnotationFactory::create),
                 isDefault = source.isDefault,
                 isExternal = source.isExternal,
                 isInline = source.isInline

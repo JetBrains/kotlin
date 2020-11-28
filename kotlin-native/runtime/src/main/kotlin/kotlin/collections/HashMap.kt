@@ -630,30 +630,53 @@ internal class HashMapValues<V> internal constructor(
     }
 }
 
-internal class HashMapEntrySet<K, V> internal constructor(
+/**
+ * Note: intermediate class with [E] `: Map.Entry<K, V>` is required to support
+ * [contains] for values that are [Map.Entry] but not [MutableMap.MutableEntry],
+ * and probably same for other functions.
+ * This is important because an instance of this class can be used as a result of [Map.entries],
+ * which should support [contains] for [Map.Entry].
+ * For example, this happens when upcasting [MutableMap] to [Map].
+ *
+ * The compiler enables special type-safe barriers to methods like [contains], which has [UnsafeVariance].
+ * Changing type from [MutableMap.MutableEntry] to [E] makes the compiler generate barriers checking that
+ * argument `is` [E] (so technically `is` [Map.Entry]) instead of `is` [MutableMap.MutableEntry].
+ *
+ * See also [KT-42248](https://youtrack.jetbrains.com/issue/KT-42428).
+ */
+internal abstract class HashMapEntrySetBase<K, V, E : Map.Entry<K, V>> internal constructor(
         val backing: HashMap<K, V>
-) : MutableSet<MutableMap.MutableEntry<K, V>>, kotlin.native.internal.KonanSet<MutableMap.MutableEntry<K, V>>, AbstractMutableSet<MutableMap.MutableEntry<K, V>>() {
+) : MutableSet<E>, kotlin.native.internal.KonanSet<E>, AbstractMutableSet<E>() {
 
     override val size: Int get() = backing.size
     override fun isEmpty(): Boolean = backing.isEmpty()
-    override fun contains(element: MutableMap.MutableEntry<K, V>): Boolean = backing.containsEntry(element)
-    override fun getElement(element: MutableMap.MutableEntry<K, V>): MutableMap.MutableEntry<K, V>? = backing.getEntry(element)
+    override fun contains(element: E): Boolean = backing.containsEntry(element)
+    override fun getElement(element: E): E? = getEntry(element)
+    protected abstract fun getEntry(element: Map.Entry<K, V>): E?
     override fun clear() = backing.clear()
-    override fun add(element: MutableMap.MutableEntry<K, V>): Boolean = throw UnsupportedOperationException()
-    override fun addAll(elements: Collection<MutableMap.MutableEntry<K, V>>): Boolean = throw UnsupportedOperationException()
-    override fun remove(element: MutableMap.MutableEntry<K, V>): Boolean = backing.removeEntry(element)
-    override fun iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> = backing.entriesIterator()
-    override fun containsAll(elements: Collection<MutableMap.MutableEntry<K, V>>): Boolean = backing.containsAllEntries(elements)
+    override fun add(element: E): Boolean = throw UnsupportedOperationException()
+    override fun addAll(elements: Collection<E>): Boolean = throw UnsupportedOperationException()
+    override fun remove(element: E): Boolean = backing.removeEntry(element)
+    override fun containsAll(elements: Collection<E>): Boolean = backing.containsAllEntries(elements)
 
-    override fun removeAll(elements: Collection<MutableMap.MutableEntry<K, V>>): Boolean {
+    override fun removeAll(elements: Collection<E>): Boolean {
         backing.checkIsMutable()
         return super.removeAll(elements)
     }
 
-    override fun retainAll(elements: Collection<MutableMap.MutableEntry<K, V>>): Boolean {
+    override fun retainAll(elements: Collection<E>): Boolean {
         backing.checkIsMutable()
         return super.retainAll(elements)
     }
+}
+
+internal class HashMapEntrySet<K, V> internal constructor(
+        backing: HashMap<K, V>
+) : HashMapEntrySetBase<K, V, MutableMap.MutableEntry<K, V>>(backing) {
+
+    override fun getEntry(element: Map.Entry<K, V>): MutableMap.MutableEntry<K, V>? = backing.getEntry(element)
+
+    override fun iterator(): MutableIterator<MutableMap.MutableEntry<K, V>> = backing.entriesIterator()
 }
 
 // This hash map keeps insertion order.

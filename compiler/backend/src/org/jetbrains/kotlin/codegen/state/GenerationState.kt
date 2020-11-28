@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
+import org.jetbrains.kotlin.resolve.diagnostics.PrecomputedSuppressCache
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
@@ -178,7 +179,11 @@ class GenerationState private constructor(
     }
 
     val extraJvmDiagnosticsTrace: BindingTrace =
-        DelegatingBindingTrace(originalFrontendBindingContext, "For extra diagnostics in ${this::class.java}", false)
+        DelegatingBindingTrace(
+            originalFrontendBindingContext, "For extra diagnostics in ${this::class.java}", false,
+            customSuppressCache = if (isIrBackend) PrecomputedSuppressCache(originalFrontendBindingContext, files) else null,
+        )
+
     private val interceptedBuilderFactory: ClassBuilderFactory
     private var used = false
 
@@ -189,6 +194,10 @@ class GenerationState private constructor(
     }
 
     val languageVersionSettings = configuration.languageVersionSettings
+
+    val useOldManglingSchemeForFunctionsWithInlineClassesInSignatures =
+        configuration.getBoolean(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME) ||
+                languageVersionSettings.languageVersion.run { major == 1 && minor < 4 }
 
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     val runtimeStringConcat =
@@ -209,6 +218,7 @@ class GenerationState private constructor(
         classBuilderMode,
         this.moduleName,
         languageVersionSettings,
+        useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
         IncompatibleClassTrackerImpl(extraJvmDiagnosticsTrace),
         target,
         isIrBackend
@@ -242,6 +252,7 @@ class GenerationState private constructor(
         var earlierScriptsForReplInterpreter: List<ScriptDescriptor>? = null
         // and the rest is an output from the codegen
         var resultFieldName: String? = null
+        var resultTypeString: String? = null
         var resultType: KotlinType? = null
     }
 
@@ -312,6 +323,7 @@ class GenerationState private constructor(
                     else
                         BuilderFactoryForDuplicateSignatureDiagnostics(
                             it, bindingContext, diagnostics, this.moduleName, languageVersionSettings,
+                            useOldManglingSchemeForFunctionsWithInlineClassesInSignatures,
                             shouldGenerate = { origin -> !shouldOnlyCollectSignatures(origin) },
                         ).apply { duplicateSignatureFactory = this }
                 },

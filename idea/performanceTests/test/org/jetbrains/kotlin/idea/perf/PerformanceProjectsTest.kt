@@ -54,8 +54,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
     override fun tearDown() {
         RunAll(
-            ThrowableRunnable { super.tearDown() },
-            ThrowableRunnable { hwStats.flush() }
+            ThrowableRunnable { super.tearDown() }
         ).run()
     }
 

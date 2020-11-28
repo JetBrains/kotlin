@@ -20,7 +20,7 @@ FILE: main.kt
 
     }
     public final fun test_1(b: R|B<kotlin/Int>|, x: R|kotlin/Int|, inv: R|Inv<kotlin/Int>|): R|kotlin/Unit| {
-        R|<local>/b|.R|FakeOverride</B.take: R|kotlin/String|>|(R|<local>/x|)
+        R|<local>/b|.R|SubstitutionOverride</B.take: R|kotlin/String|>|(R|<local>/x|)
         R|<local>/b|.<Inapplicable(INAPPLICABLE): /B.take>#(Null(null))
-        R|<local>/b|.R|FakeOverride</B.takeInv: R|kotlin/String|>|(R|<local>/inv|)
+        R|<local>/b|.R|SubstitutionOverride</B.takeInv: R|kotlin/String|>|(R|<local>/inv|)
     }

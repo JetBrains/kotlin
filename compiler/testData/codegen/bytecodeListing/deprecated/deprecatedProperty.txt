@@ -44,3 +44,18 @@ public final class DeprecatedPropertyKt {
     public deprecated final static method setTextExtVar(@org.jetbrains.annotations.NotNull p0: java.lang.Object, p1: int): void
     public deprecated final static method setTextGenExtVar(@org.jetbrains.annotations.NotNull p0: java.util.List, p1: int): void
 }
+
+@kotlin.Metadata
+public final class I$DefaultImpls {
+    // source: 'deprecatedProperty.kt'
+    public synthetic deprecated static @kotlin.Deprecated method getId$annotations(p0: java.lang.Object): void
+    public deprecated static method getId(@org.jetbrains.annotations.NotNull p0: I, p1: java.lang.Object): java.lang.Object
+    public final inner class I$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface I {
+    // source: 'deprecatedProperty.kt'
+    public deprecated abstract method getId(p0: java.lang.Object): java.lang.Object
+    public final inner class I$DefaultImpls
+}

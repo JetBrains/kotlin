@@ -179,10 +179,8 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                 val result = IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                         startOffset, endOffset,
                         context.irBuiltIns.unitType,
-                        enumConstructorCall.symbol,
-                        enumConstructorCall.symbol.owner.typeParameters.size,
-                        enumConstructorCall.symbol.owner.valueParameters.size)
-
+                        enumConstructorCall.symbol
+                )
                 assert(result.symbol.owner.valueParameters.size == 2) {
                     "Enum(String, Int) constructor call expected:\n${result.dump()}"
                 }
@@ -216,10 +214,8 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                 val result = IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
                         startOffset, endOffset,
                         context.irBuiltIns.unitType,
-                        loweredDelegatingConstructor.symbol,
-                        loweredDelegatingConstructor.symbol.owner.typeParameters.size,
-                        loweredDelegatingConstructor.symbol.owner.valueParameters.size)
-
+                        loweredDelegatingConstructor.symbol
+                )
                 val firstParameter = enumClassConstructor.valueParameters[0]
                 result.putValueArgument(0,
                         IrGetValueImpl(startOffset, endOffset, firstParameter.type, firstParameter.symbol))

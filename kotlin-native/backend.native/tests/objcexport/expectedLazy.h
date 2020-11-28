@@ -331,6 +331,52 @@ __attribute__((swift_name("DeallocRetainKt")))
 + (KtKotlinWeakReference<id> *)createWeakReferenceValue:(id)value __attribute__((swift_name("createWeakReference(value:)")));
 @end;
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("EnumLeftRightUpDown")))
+@interface KtEnumLeftRightUpDown : KtKotlinEnum<KtEnumLeftRightUpDown *>
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (class, readonly) KtEnumLeftRightUpDown *left __attribute__((swift_name("left")));
+@property (class, readonly) KtEnumLeftRightUpDown *right __attribute__((swift_name("right")));
+@property (class, readonly) KtEnumLeftRightUpDown *up __attribute__((swift_name("up")));
+@property (class, readonly) KtEnumLeftRightUpDown *down __attribute__((swift_name("down")));
++ (KtKotlinArray<KtEnumLeftRightUpDown *> *)values __attribute__((swift_name("values()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("EnumOneTwoThreeValues")))
+@interface KtEnumOneTwoThreeValues : KtKotlinEnum<KtEnumOneTwoThreeValues *>
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (class, readonly) KtEnumOneTwoThreeValues *one __attribute__((swift_name("one")));
+@property (class, readonly) KtEnumOneTwoThreeValues *two __attribute__((swift_name("two")));
+@property (class, readonly) KtEnumOneTwoThreeValues *three __attribute__((swift_name("three")));
+@property (class, readonly) KtEnumOneTwoThreeValues *values __attribute__((swift_name("values")));
++ (KtKotlinArray<KtEnumOneTwoThreeValues *> *)values __attribute__((swift_name("values()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("EnumValuesValues_")))
+@interface KtEnumValuesValues_ : KtKotlinEnum<KtEnumValuesValues_ *>
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
+@property (class, readonly) KtEnumValuesValues_ *values __attribute__((swift_name("values")));
+@property (class, readonly) KtEnumValuesValues_ *values __attribute__((swift_name("values")));
++ (KtKotlinArray<KtEnumValuesValues_ *> *)values __attribute__((swift_name("values()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("EmptyEnum")))
+@interface KtEmptyEnum : KtKotlinEnum<KtEmptyEnum *>
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)initWithName:(NSString *)name ordinal:(int32_t)ordinal __attribute__((swift_name("init(name:ordinal:)"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
++ (KtKotlinArray<KtEmptyEnum *> *)values __attribute__((swift_name("values()")));
+@end;
+
 __attribute__((swift_name("FHolder")))
 @interface KtFHolder : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
@@ -696,6 +742,7 @@ __attribute__((swift_name("Enumeration")))
 @property (class, readonly) KtEnumeration *answer __attribute__((swift_name("answer")));
 @property (class, readonly) KtEnumeration *year __attribute__((swift_name("year")));
 @property (class, readonly) KtEnumeration *temperature __attribute__((swift_name("temperature")));
++ (KtKotlinArray<KtEnumeration *> *)values __attribute__((swift_name("values()")));
 @property (readonly) int32_t enumValue __attribute__((swift_name("enumValue")));
 @end;
 
@@ -1407,6 +1454,7 @@ __attribute__((swift_name("TestInvalidIdentifiers.E")))
 @property (class, readonly) KtTestInvalidIdentifiersE *_5_ __attribute__((swift_name("_5_")));
 @property (class, readonly) KtTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
 @property (class, readonly) KtTestInvalidIdentifiersE *__ __attribute__((swift_name("__")));
++ (KtKotlinArray<KtTestInvalidIdentifiersE *> *)values __attribute__((swift_name("values()")));
 @property (readonly) int32_t value __attribute__((swift_name("value")));
 @end;
 

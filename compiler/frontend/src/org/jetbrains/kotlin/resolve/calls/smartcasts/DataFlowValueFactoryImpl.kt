@@ -89,11 +89,11 @@ class DataFlowValueFactoryImpl constructor(private val languageVersionSettings: 
             KotlinBuiltIns.isNullableNothing(type) ->
                 DataFlowValue.nullValue(containingDeclarationOrModule.builtIns) // 'null' is the only inhabitant of 'Nothing?'
 
-        // In most cases type of `E!!`-expression is strictly not nullable and we could get proper Nullability
-        // by calling `getImmanentNullability` (as it happens below).
-        //
-        // But there are some problem with types built on type parameters, e.g.
-        // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
+            // In most cases type of `E!!`-expression is strictly not nullable and we could get proper Nullability
+            // by calling `getImmanentNullability` (as it happens below).
+            //
+            // But there are some problem with types built on type parameters, e.g.
+            // fun <T : Any?> foo(x: T) = x!!.hashCode() // there no way in type system to denote that `x!!` is not nullable
             ExpressionTypingUtils.isExclExclExpression(KtPsiUtil.deparenthesize(expression)) ->
                 DataFlowValue(IdentifierInfo.Expression(expression), type, Nullability.NOT_NULL)
 

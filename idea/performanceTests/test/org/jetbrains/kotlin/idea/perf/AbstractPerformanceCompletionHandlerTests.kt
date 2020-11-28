@@ -52,8 +52,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
     override fun tearDown() {
         commitAllDocuments()
         RunAll(
-            ThrowableRunnable { super.tearDown() },
-            ThrowableRunnable { statsMap.values.forEach(Stats::flush) }
+            ThrowableRunnable { super.tearDown() }
         ).run()
     }
 

@@ -40,8 +40,8 @@ import java.io.File
 @CacheableTask
 open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
 
-    override val kotlinOptions: KotlinMultiplatformCommonOptions
-        get() = taskData.compilation.kotlinOptions as KotlinMultiplatformCommonOptionsImpl
+    override val kotlinOptions: KotlinMultiplatformCommonOptions =
+        taskData.compilation.kotlinOptions as KotlinMultiplatformCommonOptionsImpl
 
     override fun createCompilerArgs(): K2MetadataCompilerArguments =
         K2MetadataCompilerArguments()
@@ -99,7 +99,7 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
         val compilerRunner = compilerRunner
         val environment = GradleCompilerEnvironment(
             computedCompilerClasspath, messageCollector, outputItemCollector,
-            buildReportMode = buildReportMode,
+            reportingSettings = reportingSettings,
             outputFiles = allOutputFiles()
         )
         compilerRunner.runMetadataCompilerAsync(sourceRoots.kotlinSourceFiles, args, environment)

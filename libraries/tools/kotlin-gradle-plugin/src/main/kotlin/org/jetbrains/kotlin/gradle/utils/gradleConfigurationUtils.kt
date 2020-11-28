@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
+import java.lang.RuntimeException
 
 fun Project.addExtendsFromRelation(extendingConfigurationName: String, extendsFromConfigurationName: String, forced: Boolean = true) {
-    if (extendingConfigurationName != extendsFromConfigurationName) {
-        if (forced || configurations.findByName(extendingConfigurationName) != null) {
-            project.dependencies.add(extendingConfigurationName, project.configurations.getByName(extendsFromConfigurationName))
-        }
-    }
+    if (extendingConfigurationName == extendsFromConfigurationName) return
+
+    val extending = configurations.findByName(extendingConfigurationName)
+        ?: if (forced) throw RuntimeException("Configuration $extendingConfigurationName does not exist.")
+        else return
+
+    extending.extendsFrom(configurations.getByName(extendsFromConfigurationName))
 }

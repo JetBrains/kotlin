@@ -1,6 +1,5 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtParameter
 // OPTIONS: usages
-// FIR_COMPARISON
 
 data class A(val <caret>x: Int, val y: Int) {
     companion object {
@@ -15,3 +14,4 @@ fun foo() {
 }
 
 // DISABLE-ERRORS
+// FIR_COMPARISON

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.jvm.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideControl
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
@@ -41,9 +40,8 @@ class JvmIrLinker(
     override val functionalInterfaceFactory: IrAbstractFunctionFactory,
     override val translationPluginContext: TranslationPluginContext?,
     private val stubGenerator: DeclarationStubGenerator,
-    private val manglerDesc: JvmManglerDesc,
-    deserializeFakeOverrides: Boolean = FakeOverrideControl.deserializeFakeOverrides
-) : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, emptyList(), deserializeFakeOverrides) {
+    private val manglerDesc: JvmManglerDesc
+) : KotlinIrLinker(currentModule, logger, builtIns, symbolTable, emptyList()) {
 
     override val fakeOverrideBuilder = FakeOverrideBuilder(this, symbolTable, IdSignatureSerializer(JvmManglerIr), builtIns)
 

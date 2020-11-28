@@ -956,3 +956,14 @@ abstract class BasicBoxTest(
             else ScriptEngineV8Lazy(KotlinTestUtils.tmpDirForReusableFolder("j2v8_library_path").path)
     }
 }
+
+fun KotlinTestWithEnvironment.createPsiFile(fileName: String): KtFile {
+    val psiManager = PsiManager.getInstance(project)
+    val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+
+    val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
+
+    return psiManager.findFile(file) as KtFile
+}
+
+fun KotlinTestWithEnvironment.createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)

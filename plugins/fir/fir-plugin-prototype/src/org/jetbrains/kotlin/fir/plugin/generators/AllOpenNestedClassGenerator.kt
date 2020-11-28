@@ -81,7 +81,7 @@ class AllOpenNestedClassGenerator(session: FirSession) : FirDeclarationGeneratio
                 Modality.FINAL
             )
             name = Name.identifier("hello")
-            symbol = FirNamedFunctionSymbol(CallableId(classId, name), isFakeOverride = false)
+            symbol = FirNamedFunctionSymbol(CallableId(classId, name))
         }
         return listOf(constructor, function)
     }

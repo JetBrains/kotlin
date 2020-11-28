@@ -215,15 +215,7 @@ dependencies {
         fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-3") }
     }
 
-    if (Platform.P192.orHigher()) {
-        fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
-    } else {
-        fatJarContents(intellijDep()) { includeJars("lz4-1.3.0") }
-    }
-    
-    if (Platform.P183.orHigher() && Platform.P191.orLower()) {
-        fatJarContents(intellijCoreDep()) { includeJars("java-compatibility-1.0.1") }
-    }
+    fatJarContents(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
 
     fatJarContents(intellijDep()) {
         includeIntellijCoreJarDependencies(project) {

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.idea.KotlinIconProviderBase
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
 
-// FIX ME WHEN BUNCH 193 REMOVED
 abstract class AbstractNavBarModelExtensionCompatBase : StructureAwareNavBarModelExtension() {
 
     protected abstract fun adjustElementImpl(psiElement: PsiElement?): PsiElement?

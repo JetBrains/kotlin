@@ -1,0 +1,37 @@
+FILE: innerTypes.kt
+    public final class Outer<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Outer<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner<K, T> : R|kotlin/Any| {
+            public constructor<K>(): R|Outer.Inner<K, T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Boxed<Q> : R|kotlin/Any| {
+        public constructor<Q>(): R|Boxed<Q>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun substitute(): R|Outer.Inner<kotlin/Int, Q>| {
+            ^substitute R|/Outer.Outer|<R|Q|>().R|SubstitutionOverride</Outer.Inner.Inner>|<R|kotlin/Int|>()
+        }
+
+    }
+    public final fun accept(p: R|Outer.Inner<kotlin/Int, kotlin/String>|): R|kotlin/Unit| {
+    }
+    public final val rr: R|Outer.Inner<kotlin/Int, kotlin/String>| = R|/Outer.Outer|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Inner.Inner>|<R|kotlin/Int|>()
+        public get(): R|Outer.Inner<kotlin/Int, kotlin/String>|
+    public final val rrq: R|Outer.Inner<kotlin/Int, kotlin/String>| = R|/Boxed.Boxed|<R|kotlin/String|>().R|SubstitutionOverride</Boxed.substitute: R|Outer.Inner<kotlin/Int, kotlin/String>|>|()
+        public get(): R|Outer.Inner<kotlin/Int, kotlin/String>|
+    public final fun check(): R|kotlin/Unit| {
+        <Inapplicable(INAPPLICABLE): /accept>#(R|/Outer.Outer|<R|kotlin/Int|>().R|SubstitutionOverride</Outer.Inner.Inner>|<R|kotlin/Int|>())
+        <Inapplicable(INAPPLICABLE): /accept>#(R|/Outer.Outer|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Inner.Inner>|<R|kotlin/String|>())
+        R|/accept|(R|/Outer.Outer|<R|kotlin/String|>().R|SubstitutionOverride</Outer.Inner.Inner>|<R|kotlin/Int|>())
+        <Inapplicable(INAPPLICABLE): /accept>#(R|/Boxed.Boxed|<R|kotlin/Int|>().R|SubstitutionOverride</Boxed.substitute: R|Outer.Inner<kotlin/Int, kotlin/Int>|>|())
+        R|/accept|(R|/Boxed.Boxed|<R|kotlin/String|>().R|SubstitutionOverride</Boxed.substitute: R|Outer.Inner<kotlin/Int, kotlin/String>|>|())
+    }

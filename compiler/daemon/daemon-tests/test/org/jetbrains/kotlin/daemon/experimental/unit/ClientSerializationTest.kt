@@ -24,6 +24,7 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.net.InetSocketAddress
 import java.util.logging.Logger
+import kotlin.io.path.*
 
 @OptIn(KtorExperimentalAPI::class)
 class TestServer(val serverPort: Int = 6999) {
@@ -44,6 +45,7 @@ val testServer = TestServer()
 
 @RunWith(IgnoreAll::class)
 @Suppress("UNCHECKED_CAST")
+@OptIn(ExperimentalPathApi::class)
 class ClientSerializationTest : KotlinIntegrationTestBase() {
 
     val file = createTempFile()

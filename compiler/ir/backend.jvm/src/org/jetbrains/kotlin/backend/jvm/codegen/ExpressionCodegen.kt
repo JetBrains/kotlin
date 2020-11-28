@@ -14,10 +14,11 @@ import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
+import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
-import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.*
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getNameForReceiverParameter
 import org.jetbrains.kotlin.codegen.coroutines.SuspensionPointKind
 import org.jetbrains.kotlin.codegen.coroutines.generateCoroutineSuspendedCheck
 import org.jetbrains.kotlin.codegen.inline.*
@@ -47,7 +48,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -213,8 +215,14 @@ class ExpressionCodegen(
     fun generate() {
         mv.visitCode()
         val startLabel = markNewLabel()
+        if (irFunction.isMultifileBridge()) {
+            // Multifile bridges need to have line number 1 to be filtered out by the intellij debugging filters.
+            mv.visitLineNumber(1, startLabel)
+        }
         val info = BlockInfo()
-        val body = irFunction.body!!
+        val body = irFunction.body
+            ?: error("Function has no body: ${irFunction.render()}")
+
         generateNonNullAssertions()
         generateFakeContinuationConstructorIfNeeded()
         val result = body.accept(this, info)
@@ -273,23 +281,24 @@ class ExpressionCodegen(
         if (state.isParamAssertionsDisabled)
             return
 
-        val notCallableFromJava = inlinedInto != null ||
-                (DescriptorVisibilities.isPrivate(irFunction.visibility) && !(irFunction is IrSimpleFunction && irFunction.isOperator)) ||
-                irFunction.origin.isSynthetic ||
-                // TODO: refine this condition to not generate nullability assertions on parameters
-                //       corresponding to captured variables and anonymous object super constructor arguments
-                (irFunction is IrConstructor && irFunction.parentAsClass.isAnonymousObject) ||
-                // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
-                irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
-                // Although these are accessible from Java, the functions they bridge to already have the assertions.
-                irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE ||
-                irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
-                irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
-
-        if (notCallableFromJava)
+        if (inlinedInto != null ||
+            (DescriptorVisibilities.isPrivate(irFunction.visibility) && !(irFunction is IrSimpleFunction && irFunction.isOperator)) ||
+            irFunction.origin.isSynthetic ||
+            // TODO: refine this condition to not generate nullability assertions on parameters
+            //       corresponding to captured variables and anonymous object super constructor arguments
+            (irFunction is IrConstructor &&
+                    (irFunction.parentAsClass.isAnonymousObject ||
+                            irFunction.parentAsClass.origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION)) ||
+            // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
+            irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
+            // Although these are accessible from Java, the functions they bridge to already have the assertions.
+            irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
+            irFunction.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
+            irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
+            irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
+            irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
+            irFunction.isMultifileBridge()
+        )
             return
 
         // Do not generate non-null checks for suspend functions. When resumed the arguments
@@ -299,7 +308,12 @@ class ExpressionCodegen(
             return
 
         irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
-        irFunction.valueParameters.forEach(::generateNonNullAssertion)
+
+        // Private operator functions don't have null checks on value parameters,
+        // see `DescriptorAsmUtil.genNotNullAssertionsForParameters`.
+        if (!DescriptorVisibilities.isPrivate(irFunction.visibility) || irFunction !is IrSimpleFunction || !irFunction.isOperator) {
+            irFunction.valueParameters.forEach(::generateNonNullAssertion)
+        }
     }
 
     private fun generateNonNullAssertion(param: IrValueParameter) {
@@ -406,8 +420,11 @@ class ExpressionCodegen(
         visitStatementContainer(expression, data)
 
     override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
-        classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
-            ?.invoke(expression, this, data)?.let { return it }
+        val intrinsic = classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
+        if (intrinsic != null) {
+            intrinsic.invoke(expression, this, data)
+                ?.let { return it }
+        }
 
         val callee = expression.symbol.owner
         require(callee.parent is IrClass) { "Unhandled intrinsic in ExpressionCodegen: ${callee.render()}" }

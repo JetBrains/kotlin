@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import com.intellij.testFramework.TestDataFile
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.intellij.lang.annotations.Language
@@ -213,7 +214,8 @@ abstract class BaseGradleIT {
         val parallelTasksInProject: Boolean? = null,
         val jsCompilerType: KotlinJsCompilerType? = null,
         val configurationCache: Boolean = false,
-        val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL
+        val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
+        val warningMode: WarningMode = WarningMode.Summary
     )
 
     enum class ConfigurationCacheProblems {
@@ -828,6 +830,16 @@ Finished executing task ':$taskName'|
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")
+            //The feature of failing the build on deprecation warnings is introduced in gradle 5.6
+            val supportFailingBuildOnWarning =
+                GradleVersion.version(chooseWrapperVersionOrFinishTest()) >= GradleVersion.version("5.6")
+            // Agp uses Gradle internal API constructor DefaultDomainObjectSet(Class<T>) until Agp 3.6.0 which is deprecated by Gradle,
+            // so we don't run with --warning-mode=fail when Agp 3.6 or less is used.
+            val notUsingAgpWithWarnings =
+                options.androidGradlePluginVersion == null || options.androidGradlePluginVersion > AGPVersion.v3_6_0
+            if (supportFailingBuildOnWarning && notUsingAgpWithWarnings && options.warningMode == WarningMode.Fail) {
+                add("--warning-mode=${WarningMode.Fail.name.toLowerCase()}")
+            }
             addAll(options.freeCommandLineArgs)
         }
 

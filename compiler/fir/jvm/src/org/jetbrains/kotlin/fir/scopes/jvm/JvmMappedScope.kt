@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JvmMappedScope(
     private val declaredMemberScope: FirScope,
@@ -21,14 +22,23 @@ class JvmMappedScope(
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
         val visibleMethods = signatures.visibleMethodSignaturesByName[name]
             ?: return declaredMemberScope.processFunctionsByName(name, processor)
+
+        val declared = mutableListOf<FirNamedFunctionSymbol>()
+        declaredMemberScope.processFunctionsByName(name) { symbol ->
+            declared.addIfNotNull(symbol as FirNamedFunctionSymbol)
+            processor(symbol)
+        }
+
+        val declaredSignatures by lazy {
+            declared.mapTo(mutableSetOf()) { it.fir.computeJvmDescriptorReplacingKotlinToJava() }
+        }
+
         javaMappedClassUseSiteScope.processFunctionsByName(name) { symbol ->
             val jvmSignature = symbol.fir.computeJvmDescriptorReplacingKotlinToJava()
-            if (jvmSignature in visibleMethods) {
+            if (jvmSignature in visibleMethods && jvmSignature !in declaredSignatures) {
                 processor(symbol)
             }
         }
-
-        declaredMemberScope.processFunctionsByName(name, processor)
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
@@ -104,12 +114,13 @@ class JvmMappedScope(
             ).mapTo(this) { arguments -> "java/lang/Throwable.<init>($arguments)V" }
         }
 
-        fun prepareSignatures(klass: FirRegularClass): Signatures {
+        fun prepareSignatures(klass: FirRegularClass, isMutable: Boolean): Signatures {
 
             val signaturePrefix = klass.symbol.classId.toString()
             val visibleMethodsByName = mutableMapOf<Name, MutableSet<String>>()
             JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES.filter { signature ->
-                signature.startsWith(signaturePrefix)
+                signature in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES == isMutable &&
+                        signature.startsWith(signaturePrefix)
             }.map { signature ->
                 // +1 to delete dot before function name
                 signature.substring(signaturePrefix.length + 1)

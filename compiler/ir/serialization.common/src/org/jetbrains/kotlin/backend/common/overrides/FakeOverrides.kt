@@ -63,17 +63,6 @@ object DefaultFakeOverrideClassFilter : FakeOverrideClassFilter {
     override fun needToConstructFakeOverrides(clazz: IrClass): Boolean = true
 }
 
-object FakeOverrideControl {
-    // If set to true: all fake overrides go to klib serialized IR.
-    // If set to false: eligible fake overrides are not serialized.
-    val serializeFakeOverrides: Boolean = true
-
-    // If set to true: fake overrides are deserialized from klib serialized IR.
-    // If set to false: eligible fake overrides are constructed within IR linker.
-    // This is the default in the absence of -Xdeserialize-fake-overrides flag.
-    val deserializeFakeOverrides: Boolean = false
-}
-
 class FakeOverrideBuilder(
     val linker: FileLocalAwareLinker,
     val symbolTable: SymbolTable,

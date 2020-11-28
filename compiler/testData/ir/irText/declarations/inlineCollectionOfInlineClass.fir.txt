@@ -92,7 +92,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-size> (): kotlin.Int declared in <root>.InlineMutableSet'
-            CALL 'public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.Set' type=kotlin.Int origin=GET_PROPERTY
+            CALL 'public abstract fun <get-size> (): kotlin.Int [fake_override] declared in kotlin.collections.MutableSet' type=kotlin.Int origin=GET_PROPERTY
               $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.<get-size>' type=<root>.InlineMutableSet origin=null
     FUN name:contains visibility:public modality:FINAL <> ($this:<root>.InlineMutableSet, element:<root>.IT) returnType:kotlin.Boolean [operator]
