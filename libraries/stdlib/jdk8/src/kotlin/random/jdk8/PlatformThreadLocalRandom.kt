@@ -8,7 +8,7 @@ package kotlin.random.jdk8
 import java.util.concurrent.ThreadLocalRandom
 
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
-internal object PlatformThreadLocalRandom : kotlin.random.AbstractPlatformRandom() {
+internal class PlatformThreadLocalRandom : kotlin.random.AbstractPlatformRandom() {
     // TODO no bridge generated for covariant override
     override val impl: java.util.Random get() = ThreadLocalRandom.current()
 

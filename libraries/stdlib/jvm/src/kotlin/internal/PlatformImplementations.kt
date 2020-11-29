@@ -42,8 +42,7 @@ internal open class PlatformImplementations {
         throw UnsupportedOperationException("Retrieving groups by name is not supported on this platform.")
     }
 
-    public open val defaultPlatformRandom: Random
-        get() = FallbackThreadLocalRandom
+    public open fun defaultPlatformRandom(): Random = FallbackThreadLocalRandom()
 }
 
 

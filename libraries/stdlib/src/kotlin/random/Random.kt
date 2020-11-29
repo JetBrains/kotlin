@@ -6,6 +6,7 @@
 package kotlin.random
 
 import kotlin.math.nextDown
+import kotlin.jvm.Transient
 
 /**
  * An abstract class that is implemented by random number generator algorithms.
@@ -270,8 +271,8 @@ public abstract class Random {
     companion object Default : Random(), Serializable {
         private const val serialVersionUID = 0L
 
-        private val defaultRandom: Random
-            get() = defaultPlatformRandom()
+        @Transient
+        private val defaultRandom: Random = defaultPlatformRandom()
 
         private fun readResolve(): Any = Default
 

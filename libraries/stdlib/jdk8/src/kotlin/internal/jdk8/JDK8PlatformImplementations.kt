@@ -19,6 +19,7 @@ package kotlin.internal.jdk8
 
 import java.util.regex.MatchResult
 import java.util.regex.Matcher
+import kotlin.internal.PlatformImplementations
 import kotlin.internal.jdk7.JDK7PlatformImplementations
 import kotlin.random.Random
 import kotlin.random.jdk8.PlatformThreadLocalRandom
@@ -35,6 +36,6 @@ internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() 
             null
     }
 
-    override val defaultPlatformRandom: Random
-        get() = PlatformThreadLocalRandom
+    override fun defaultPlatformRandom(): Random = PlatformThreadLocalRandom()
+
 }
