@@ -13,6 +13,7 @@ import kotlin.random.asKotlinRandom
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class RandomSerializationTest {
     @Test
@@ -28,7 +29,7 @@ class RandomSerializationTest {
         assertEquals(first.nextInt(), second.nextInt())
         assertEquals(first.nextDouble(), second.nextDouble())
         assertEquals(first.nextLong(), second.nextLong())
-        assertEquals(first.nextBytes(64), second.nextBytes(64))
+        assertTrue(first.nextBytes(64).contentEquals(second.nextBytes(64)))
     }
 
     @Test
