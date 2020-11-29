@@ -48,7 +48,7 @@ class RandomSerializationTest {
     fun wrapperOfKotlinRandomIsSerializable() {
         val java = Random(0).asJavaRandom()
         val deserialized = serializeAndDeserialize(java)
-        testRandomsHaveSameState(java, deserialized)
+        testRandomsHaveSameState(java.asKotlinRandom(), deserialized.asKotlinRandom())
     }
 
     @Test
