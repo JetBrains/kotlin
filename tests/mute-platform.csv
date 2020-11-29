@@ -130,3 +130,20 @@ org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testTwoFiles
 org.jetbrains.kotlin.idea.scripting.gradle.GradleScriptListenerTest.testLoadedConfigurationWhenExternalFileChanged, Unprocessed,,
 org.jetbrains.kotlin.idea.debugger.test.IrKotlinSteppingTestGenerated.Custom.testFunctionBreakpointInStdlib,Unprocessed,,
 org.jetbrains.kotlin.idea.debugger.test.KotlinSteppingTestGenerated.Custom.testFunctionBreakpointInStdlib,Unprocessed,,
+org.jetbrains.kotlin.idea.externalAnnotations.ExternalAnnotationTest.testNotNullMethod,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.externalAnnotations.ExternalAnnotationTest.testNullableMethodParameter,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.externalAnnotations.ExternalAnnotationTest.testNullableField,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.externalAnnotations.ExternalAnnotationTest.testNullableMethod,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.QuickFixMultiModuleTestGenerated$Other.testConvertActualSealedClassToEnum,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.UpdateConfigurationQuickFixTest.testEnableCoroutinesFacet,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.UpdateConfigurationQuickFixTest.testEnableInlineClasses,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.UpdateConfigurationQuickFixTest.testIncreaseLangLevelFacet,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.UpdateConfigurationQuickFixTest.testIncreaseLangAndApiLevel,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.UpdateConfigurationQuickFixTest.testIncreaseLangLevel,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.UpdateConfigurationQuickFixTest.testDisableCoroutines,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.UpdateConfigurationQuickFixTest.testIncreaseLangLevelFacet_10,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.UpdateConfigurationQuickFixTest.testEnableCoroutines_UpdateRuntime,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.UpdateConfigurationQuickFixTest.testDisableInlineClasses,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.UpdateConfigurationQuickFixTest.testAddKotlinReflect,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.UpdateConfigurationQuickFixTest.testEnableCoroutines,Unprocessed,, FLAKY
+org.jetbrains.kotlin.idea.quickfix.UpdateConfigurationQuickFixTest.testIncreaseLangAndApiLevel_10,Unprocessed,, FLAKY
