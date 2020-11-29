@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirTargetElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -14,15 +13,18 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
 import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTransformer) :
     FirPartialBodyResolveTransformer(transformer) {
@@ -95,13 +97,28 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
             }
             whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
             dataFlowAnalyzer.exitWhenExpression(whenExpression)
-            whenExpression = whenExpression.replaceReturnTypeIfNotExhaustive()
+            whenExpression = whenExpression.refineReturnType()
             whenExpression.compose()
         }
     }
 
-    private fun FirWhenExpression.replaceReturnTypeIfNotExhaustive(): FirWhenExpression {
-        if (!isExhaustive) {
+    private fun FirWhenExpression.refineReturnType(): FirWhenExpression {
+        if (isExhaustive) {
+            val types = branches.map { it.result.typeRef.coneType }
+            val ctx = session.inferenceComponents.ctx
+            // Note that we can't use, e.g., `ConeTypeIntersector.intersectTypes(ctx, types)`, directly due to cases like these:
+            // 1) else -> throw ... // which is of `Nothing` type, and the intersection would be dominated by it, i.e., `Nothing`.
+            // 2) else -> null // which is of `Nothing?` type, and it(T, Nothing?) == Nothing, not T?.
+            // Therefore, very conservative condition: only if all branches have the same type
+            val branchesHaveTheSameType = types.size >= 2 && types.toSet().size == 1
+            if (branchesHaveTheSameType) {
+                val theSameType = types.first()
+                // Additional conservative condition: only if the newly inferred type from branches is known to be _narrower_
+                if (AbstractTypeChecker.isSubtypeOf(ctx, theSameType, resultType.coneType, isFromNullabilityConstraint = true)) {
+                    resultType = resultType.resolvedTypeFromPrototype(theSameType)
+                }
+            }
+        } else {
             resultType = resultType.resolvedTypeFromPrototype(session.builtinTypes.unitType.type)
         }
         return this

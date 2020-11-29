@@ -39,14 +39,14 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data : Any?> : Compi
     private get
 
   override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, input: Data): Data {
-    val output: Data? = when {
+    val output: Data = when {
       phaseConfig.<get-needProfiling>() -> <this>.runAndProfile(phaseConfig = phaseConfig, phaserState = phaserState, context = context, source = input)
       else -> phaserState.downlevel<Data, Data>(nlevels = 1, block = local fun <anonymous>(): Data {
         return <this>.<get-lower>().invoke(phaseConfig = phaseConfig, phaserState = phaserState, context = context, input = input)
       }
 )
     }
-    error("") /* ErrorCallExpression */phaseConfig; phaserState; context; output;
+    <this>.runAfter(phaseConfig = phaseConfig, phaserState = phaserState, context = context, output = output)
     return output
   }
 
@@ -58,3 +58,4 @@ class NamedCompilerPhase<in Context : CommonBackendContext, Data : Any?> : Compi
   }
 
 }
+

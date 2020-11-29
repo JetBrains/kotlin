@@ -134,8 +134,8 @@ FILE fqName:<root> fileName:/NamedCompilerPhase.kt
       VALUE_PARAMETER name:context index:2 type:Context of <root>.NamedCompilerPhase
       VALUE_PARAMETER name:input index:3 type:Data of <root>.NamedCompilerPhase
       BLOCK_BODY
-        VAR name:output type:Data of <root>.NamedCompilerPhase? [val]
-          WHEN type=Data of <root>.NamedCompilerPhase? origin=IF
+        VAR name:output type:Data of <root>.NamedCompilerPhase [val]
+          WHEN type=Data of <root>.NamedCompilerPhase origin=IF
             BRANCH
               if: CALL 'public abstract fun <get-needProfiling> (): kotlin.Boolean declared in <root>.PhaseConfig' type=kotlin.Boolean origin=GET_PROPERTY
                 $this: GET_VAR 'phaseConfig: <root>.PhaseConfig declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaseConfig origin=null
@@ -163,13 +163,14 @@ FILE fqName:<root> fileName:/NamedCompilerPhase.kt
                           phaserState: GET_VAR 'phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaserState<Data of <root>.NamedCompilerPhase> origin=null
                           context: GET_VAR 'context: Context of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase.invoke' type=Context of <root>.NamedCompilerPhase origin=null
                           input: GET_VAR 'input: Data of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase.invoke' type=Data of <root>.NamedCompilerPhase origin=null
-        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): /NamedCompilerPhase.runAfter>#' type=kotlin.Unit
-          GET_VAR 'phaseConfig: <root>.PhaseConfig declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaseConfig origin=null
-          GET_VAR 'phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaserState<Data of <root>.NamedCompilerPhase> origin=null
-          GET_VAR 'context: Context of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase.invoke' type=Context of <root>.NamedCompilerPhase origin=null
-          GET_VAR 'val output: Data of <root>.NamedCompilerPhase? [val] declared in <root>.NamedCompilerPhase.invoke' type=Data of <root>.NamedCompilerPhase? origin=null
+        CALL 'private final fun runAfter (phaseConfig: <root>.PhaseConfig, phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase>, context: Context of <root>.NamedCompilerPhase, output: Data of <root>.NamedCompilerPhase): kotlin.Unit declared in <root>.NamedCompilerPhase' type=kotlin.Unit origin=null
+          $this: GET_VAR '<this>: <root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.invoke' type=<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> origin=null
+          phaseConfig: GET_VAR 'phaseConfig: <root>.PhaseConfig declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaseConfig origin=null
+          phaserState: GET_VAR 'phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaserState<Data of <root>.NamedCompilerPhase> origin=null
+          context: GET_VAR 'context: Context of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase.invoke' type=Context of <root>.NamedCompilerPhase origin=null
+          output: GET_VAR 'val output: Data of <root>.NamedCompilerPhase [val] declared in <root>.NamedCompilerPhase.invoke' type=Data of <root>.NamedCompilerPhase origin=null
         RETURN type=kotlin.Nothing from='public final fun invoke (phaseConfig: <root>.PhaseConfig, phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase>, context: Context of <root>.NamedCompilerPhase, input: Data of <root>.NamedCompilerPhase): Data of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase'
-          GET_VAR 'val output: Data of <root>.NamedCompilerPhase? [val] declared in <root>.NamedCompilerPhase.invoke' type=Data of <root>.NamedCompilerPhase? origin=null
+          GET_VAR 'val output: Data of <root>.NamedCompilerPhase [val] declared in <root>.NamedCompilerPhase.invoke' type=Data of <root>.NamedCompilerPhase origin=null
     FUN name:runAfter visibility:private modality:FINAL <> ($this:<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>, phaseConfig:<root>.PhaseConfig, phaserState:<root>.PhaserState<Data of <root>.NamedCompilerPhase>, context:Context of <root>.NamedCompilerPhase, output:Data of <root>.NamedCompilerPhase) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>
       VALUE_PARAMETER name:phaseConfig index:0 type:<root>.PhaseConfig
