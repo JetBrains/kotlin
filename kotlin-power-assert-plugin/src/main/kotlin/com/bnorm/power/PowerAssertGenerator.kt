@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irTemporary
 import org.jetbrains.kotlin.ir.builders.parent
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrWhen
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 abstract class PowerAssertGenerator {
@@ -87,15 +87,15 @@ abstract class PowerAssertGenerator {
     private val stack: MutableList<IrStackVariable>,
     private val transform: List<IrExpression>
   ) : IrElementTransformerVoid() {
-    private fun push(expression: IrExpression): IrGetValue = with(builder) {
-      val variable = irTemporary(expression)
-      stack.add(IrStackVariable(variable, expression))
-      irGet(variable)
-    }
 
     override fun visitExpression(expression: IrExpression): IrExpression {
       return if (expression in transform) {
-        push(super.visitExpression(expression))
+        with(builder) {
+          val copy = expression.deepCopyWithSymbols(scope.getLocalDeclarationParent())
+          val variable = irTemporary(super.visitExpression(expression))
+          stack.add(IrStackVariable(variable, copy))
+          irGet(variable)
+        }
       } else {
         super.visitExpression(expression)
       }
