@@ -28,6 +28,12 @@ open class KotlinApiBuildTask : DefaultTask() {
     @OutputDirectory
     lateinit var outputApiDir: File
 
+    @get:Input
+    val ignoredPackages : Set<String> get() = extension.ignoredPackages
+
+    @get:Input
+    val nonPublicMarkers : Set<String> get() = extension.nonPublicMarkers
+
     @TaskAction
     fun generate() {
         cleanup(outputApiDir)
@@ -39,8 +45,8 @@ open class KotlinApiBuildTask : DefaultTask() {
             }
             .map { it.inputStream() }
             .loadApiFromJvmClasses()
-            .filterOutNonPublic(extension.ignoredPackages)
-            .filterOutAnnotated(extension.nonPublicMarkers.map { it.replace(".", "/") }.toSet())
+            .filterOutNonPublic(ignoredPackages)
+            .filterOutAnnotated(nonPublicMarkers.map { it.replace(".", "/") }.toSet())
 
         outputApiDir.resolve("${project.name}.api").bufferedWriter().use { writer ->
             signatures
