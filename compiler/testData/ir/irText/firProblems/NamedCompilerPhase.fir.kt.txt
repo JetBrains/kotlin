@@ -1,0 +1,60 @@
+interface CommonBackendContext {
+
+}
+
+interface PhaserState<Data : Any?> {
+  abstract var depth: Int
+    abstract get
+    abstract set
+
+}
+
+interface PhaseConfig {
+  abstract val needProfiling: Boolean
+    abstract get
+
+}
+
+inline fun <R : Any?, D : Any?> PhaserState<D>.downlevel(nlevels: Int, block: Function0<R>): R {
+  <this>.<set-depth>(<set-?> = <this>.<get-depth>().plus(other = nlevels))
+  val result: R = block.invoke()
+  <this>.<set-depth>(<set-?> = <this>.<get-depth>().minus(other = nlevels))
+  return result
+}
+
+interface CompilerPhase<in Context : CommonBackendContext, Input : Any?, Output : Any?> {
+  abstract fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Input>, context: Context, input: Input): Output
+
+}
+
+class NamedCompilerPhase<in Context : CommonBackendContext, Data : Any?> : CompilerPhase<Context, Data, Data> {
+  constructor(lower: CompilerPhase<Context, Data, Data>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  private val lower: CompilerPhase<Context, Data, Data>
+    field = lower
+    private get
+
+  override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, input: Data): Data {
+    val output: Data? = when {
+      phaseConfig.<get-needProfiling>() -> <this>.runAndProfile(phaseConfig = phaseConfig, phaserState = phaserState, context = context, source = input)
+      else -> phaserState.downlevel<Data, Data>(nlevels = 1, block = local fun <anonymous>(): Data {
+        return <this>.<get-lower>().invoke(phaseConfig = phaseConfig, phaserState = phaserState, context = context, input = input)
+      }
+)
+    }
+    error("") /* ErrorCallExpression */phaseConfig; phaserState; context; output;
+    return output
+  }
+
+  private fun runAfter(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, output: Data) {
+  }
+
+  private fun runAndProfile(phaseConfig: PhaseConfig, phaserState: PhaserState<Data>, context: Context, source: Data): Data {
+    return source
+  }
+
+}

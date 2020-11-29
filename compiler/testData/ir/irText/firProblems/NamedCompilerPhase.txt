@@ -1,0 +1,210 @@
+FILE fqName:<root> fileName:/NamedCompilerPhase.kt
+  CLASS INTERFACE name:CommonBackendContext modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CommonBackendContext
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS INTERFACE name:PhaserState modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PhaserState<Data of <root>.PhaserState>
+    TYPE_PARAMETER name:Data index:0 variance: superTypes:[kotlin.Any?]
+    PROPERTY name:depth visibility:public modality:ABSTRACT [var]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-depth> visibility:public modality:ABSTRACT <> ($this:<root>.PhaserState<Data of <root>.PhaserState>) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:depth visibility:public modality:ABSTRACT [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.PhaserState<Data of <root>.PhaserState>
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-depth> visibility:public modality:ABSTRACT <> ($this:<root>.PhaserState<Data of <root>.PhaserState>, <set-?>:kotlin.Int) returnType:kotlin.Unit
+        correspondingProperty: PROPERTY name:depth visibility:public modality:ABSTRACT [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.PhaserState<Data of <root>.PhaserState>
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS INTERFACE name:PhaseConfig modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.PhaseConfig
+    PROPERTY name:needProfiling visibility:public modality:ABSTRACT [val]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-needProfiling> visibility:public modality:ABSTRACT <> ($this:<root>.PhaseConfig) returnType:kotlin.Boolean
+        correspondingProperty: PROPERTY name:needProfiling visibility:public modality:ABSTRACT [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.PhaseConfig
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:downlevel visibility:public modality:FINAL <R, D> ($receiver:<root>.PhaserState<D of <root>.downlevel>, nlevels:kotlin.Int, block:kotlin.Function0<R of <root>.downlevel>) returnType:R of <root>.downlevel [inline]
+    TYPE_PARAMETER name:R index:0 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:D index:1 variance: superTypes:[kotlin.Any?]
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.PhaserState<D of <root>.downlevel>
+    VALUE_PARAMETER name:nlevels index:0 type:kotlin.Int
+    VALUE_PARAMETER name:block index:1 type:kotlin.Function0<R of <root>.downlevel>
+    BLOCK_BODY
+      BLOCK type=kotlin.Unit origin=PLUSEQ
+        VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.PhaserState<D of <root>.downlevel> [val]
+          GET_VAR '<this>: <root>.PhaserState<D of <root>.downlevel> declared in <root>.downlevel' type=<root>.PhaserState<D of <root>.downlevel> origin=null
+        CALL 'public abstract fun <set-depth> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.PhaserState' type=kotlin.Unit origin=PLUSEQ
+          $this: GET_VAR 'val tmp_0: <root>.PhaserState<D of <root>.downlevel> [val] declared in <root>.downlevel' type=<root>.PhaserState<D of <root>.downlevel> origin=null
+          <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUSEQ
+            $this: CALL 'public abstract fun <get-depth> (): kotlin.Int declared in <root>.PhaserState' type=kotlin.Int origin=PLUSEQ
+              $this: GET_VAR 'val tmp_0: <root>.PhaserState<D of <root>.downlevel> [val] declared in <root>.downlevel' type=<root>.PhaserState<D of <root>.downlevel> origin=null
+            other: GET_VAR 'nlevels: kotlin.Int declared in <root>.downlevel' type=kotlin.Int origin=null
+      VAR name:result type:R of <root>.downlevel [val]
+        CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=R of <root>.downlevel origin=INVOKE
+          $this: GET_VAR 'block: kotlin.Function0<R of <root>.downlevel> declared in <root>.downlevel' type=kotlin.Function0<R of <root>.downlevel> origin=VARIABLE_AS_FUNCTION
+      BLOCK type=kotlin.Unit origin=MINUSEQ
+        VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.PhaserState<D of <root>.downlevel> [val]
+          GET_VAR '<this>: <root>.PhaserState<D of <root>.downlevel> declared in <root>.downlevel' type=<root>.PhaserState<D of <root>.downlevel> origin=null
+        CALL 'public abstract fun <set-depth> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.PhaserState' type=kotlin.Unit origin=MINUSEQ
+          $this: GET_VAR 'val tmp_1: <root>.PhaserState<D of <root>.downlevel> [val] declared in <root>.downlevel' type=<root>.PhaserState<D of <root>.downlevel> origin=null
+          <set-?>: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MINUSEQ
+            $this: CALL 'public abstract fun <get-depth> (): kotlin.Int declared in <root>.PhaserState' type=kotlin.Int origin=MINUSEQ
+              $this: GET_VAR 'val tmp_1: <root>.PhaserState<D of <root>.downlevel> [val] declared in <root>.downlevel' type=<root>.PhaserState<D of <root>.downlevel> origin=null
+            other: GET_VAR 'nlevels: kotlin.Int declared in <root>.downlevel' type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun downlevel <R, D> (nlevels: kotlin.Int, block: kotlin.Function0<R of <root>.downlevel>): R of <root>.downlevel [inline] declared in <root>'
+        GET_VAR 'val result: R of <root>.downlevel [val] declared in <root>.downlevel' type=R of <root>.downlevel origin=null
+  CLASS INTERFACE name:CompilerPhase modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.CompilerPhase<Context of <root>.CompilerPhase, Input of <root>.CompilerPhase, Output of <root>.CompilerPhase>
+    TYPE_PARAMETER name:Context index:0 variance:in superTypes:[<root>.CommonBackendContext]
+    TYPE_PARAMETER name:Input index:1 variance: superTypes:[kotlin.Any?]
+    TYPE_PARAMETER name:Output index:2 variance: superTypes:[kotlin.Any?]
+    FUN name:invoke visibility:public modality:ABSTRACT <> ($this:<root>.CompilerPhase<Context of <root>.CompilerPhase, Input of <root>.CompilerPhase, Output of <root>.CompilerPhase>, phaseConfig:<root>.PhaseConfig, phaserState:<root>.PhaserState<Input of <root>.CompilerPhase>, context:Context of <root>.CompilerPhase, input:Input of <root>.CompilerPhase) returnType:Output of <root>.CompilerPhase
+      $this: VALUE_PARAMETER name:<this> type:<root>.CompilerPhase<Context of <root>.CompilerPhase, Input of <root>.CompilerPhase, Output of <root>.CompilerPhase>
+      VALUE_PARAMETER name:phaseConfig index:0 type:<root>.PhaseConfig
+      VALUE_PARAMETER name:phaserState index:1 type:<root>.PhaserState<Input of <root>.CompilerPhase>
+      VALUE_PARAMETER name:context index:2 type:Context of <root>.CompilerPhase
+      VALUE_PARAMETER name:input index:3 type:Input of <root>.CompilerPhase
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:NamedCompilerPhase modality:FINAL visibility:public superTypes:[<root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>
+    TYPE_PARAMETER name:Context index:0 variance:in superTypes:[<root>.CommonBackendContext]
+    TYPE_PARAMETER name:Data index:1 variance: superTypes:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (lower:<root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>) returnType:<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> [primary]
+      VALUE_PARAMETER name:lower index:0 type:<root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:NamedCompilerPhase modality:FINAL visibility:public superTypes:[<root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>]'
+    PROPERTY name:lower visibility:private modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:lower type:<root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 'lower: <root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.<init>' type=<root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-lower> visibility:private modality:FINAL <> ($this:<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>) returnType:<root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>
+        correspondingProperty: PROPERTY name:lower visibility:private modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='private final fun <get-lower> (): <root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:lower type:<root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> visibility:private [final]' type=<root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> origin=null
+              receiver: GET_VAR '<this>: <root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.<get-lower>' type=<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> origin=null
+    FUN name:invoke visibility:public modality:OPEN <> ($this:<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>, phaseConfig:<root>.PhaseConfig, phaserState:<root>.PhaserState<Data of <root>.NamedCompilerPhase>, context:Context of <root>.NamedCompilerPhase, input:Data of <root>.NamedCompilerPhase) returnType:Data of <root>.NamedCompilerPhase
+      overridden:
+        public abstract fun invoke (phaseConfig: <root>.PhaseConfig, phaserState: <root>.PhaserState<Input of <root>.CompilerPhase>, context: Context of <root>.CompilerPhase, input: Input of <root>.CompilerPhase): Output of <root>.CompilerPhase declared in <root>.CompilerPhase
+      $this: VALUE_PARAMETER name:<this> type:<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>
+      VALUE_PARAMETER name:phaseConfig index:0 type:<root>.PhaseConfig
+      VALUE_PARAMETER name:phaserState index:1 type:<root>.PhaserState<Data of <root>.NamedCompilerPhase>
+      VALUE_PARAMETER name:context index:2 type:Context of <root>.NamedCompilerPhase
+      VALUE_PARAMETER name:input index:3 type:Data of <root>.NamedCompilerPhase
+      BLOCK_BODY
+        VAR name:output type:Data of <root>.NamedCompilerPhase [val]
+          WHEN type=Data of <root>.NamedCompilerPhase origin=IF
+            BRANCH
+              if: CALL 'public abstract fun <get-needProfiling> (): kotlin.Boolean declared in <root>.PhaseConfig' type=kotlin.Boolean origin=GET_PROPERTY
+                $this: GET_VAR 'phaseConfig: <root>.PhaseConfig declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaseConfig origin=null
+              then: BLOCK type=Data of <root>.NamedCompilerPhase origin=null
+                CALL 'private final fun runAndProfile (phaseConfig: <root>.PhaseConfig, phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase>, context: Context of <root>.NamedCompilerPhase, source: Data of <root>.NamedCompilerPhase): Data of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase' type=Data of <root>.NamedCompilerPhase origin=null
+                  $this: GET_VAR '<this>: <root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.invoke' type=<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> origin=null
+                  phaseConfig: GET_VAR 'phaseConfig: <root>.PhaseConfig declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaseConfig origin=null
+                  phaserState: GET_VAR 'phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaserState<Data of <root>.NamedCompilerPhase> origin=null
+                  context: GET_VAR 'context: Context of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase.invoke' type=Context of <root>.NamedCompilerPhase origin=null
+                  source: GET_VAR 'input: Data of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase.invoke' type=Data of <root>.NamedCompilerPhase origin=null
+            BRANCH
+              if: CONST Boolean type=kotlin.Boolean value=true
+              then: BLOCK type=Data of <root>.NamedCompilerPhase origin=null
+                CALL 'public final fun downlevel <R, D> (nlevels: kotlin.Int, block: kotlin.Function0<R of <root>.downlevel>): R of <root>.downlevel [inline] declared in <root>' type=Data of <root>.NamedCompilerPhase origin=null
+                  <R>: Data of <root>.NamedCompilerPhase
+                  <D>: Data of <root>.NamedCompilerPhase
+                  $receiver: GET_VAR 'phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaserState<Data of <root>.NamedCompilerPhase> origin=null
+                  nlevels: CONST Int type=kotlin.Int value=1
+                  block: FUN_EXPR type=kotlin.Function0<Data of <root>.NamedCompilerPhase> origin=LAMBDA
+                    FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:Data of <root>.NamedCompilerPhase
+                      BLOCK_BODY
+                        RETURN type=kotlin.Nothing from='local final fun <anonymous> (): Data of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase.invoke'
+                          CALL 'public abstract fun invoke (phaseConfig: <root>.PhaseConfig, phaserState: <root>.PhaserState<Input of <root>.CompilerPhase>, context: Context of <root>.CompilerPhase, input: Input of <root>.CompilerPhase): Output of <root>.CompilerPhase declared in <root>.CompilerPhase' type=Data of <root>.NamedCompilerPhase origin=null
+                            $this: CALL 'private final fun <get-lower> (): <root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase' type=<root>.CompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> origin=GET_PROPERTY
+                              $this: GET_VAR '<this>: <root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.invoke' type=<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> origin=null
+                            phaseConfig: GET_VAR 'phaseConfig: <root>.PhaseConfig declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaseConfig origin=null
+                            phaserState: GET_VAR 'phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaserState<Data of <root>.NamedCompilerPhase> origin=null
+                            context: GET_VAR 'context: Context of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase.invoke' type=Context of <root>.NamedCompilerPhase origin=null
+                            input: GET_VAR 'input: Data of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase.invoke' type=Data of <root>.NamedCompilerPhase origin=null
+        CALL 'private final fun runAfter (phaseConfig: <root>.PhaseConfig, phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase>, context: Context of <root>.NamedCompilerPhase, output: Data of <root>.NamedCompilerPhase): kotlin.Unit declared in <root>.NamedCompilerPhase' type=kotlin.Unit origin=null
+          $this: GET_VAR '<this>: <root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.invoke' type=<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase> origin=null
+          phaseConfig: GET_VAR 'phaseConfig: <root>.PhaseConfig declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaseConfig origin=null
+          phaserState: GET_VAR 'phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase> declared in <root>.NamedCompilerPhase.invoke' type=<root>.PhaserState<Data of <root>.NamedCompilerPhase> origin=null
+          context: GET_VAR 'context: Context of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase.invoke' type=Context of <root>.NamedCompilerPhase origin=null
+          output: GET_VAR 'val output: Data of <root>.NamedCompilerPhase [val] declared in <root>.NamedCompilerPhase.invoke' type=Data of <root>.NamedCompilerPhase origin=null
+        RETURN type=kotlin.Nothing from='public open fun invoke (phaseConfig: <root>.PhaseConfig, phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase>, context: Context of <root>.NamedCompilerPhase, input: Data of <root>.NamedCompilerPhase): Data of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase'
+          GET_VAR 'val output: Data of <root>.NamedCompilerPhase [val] declared in <root>.NamedCompilerPhase.invoke' type=Data of <root>.NamedCompilerPhase origin=null
+    FUN name:runAfter visibility:private modality:FINAL <> ($this:<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>, phaseConfig:<root>.PhaseConfig, phaserState:<root>.PhaserState<Data of <root>.NamedCompilerPhase>, context:Context of <root>.NamedCompilerPhase, output:Data of <root>.NamedCompilerPhase) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>
+      VALUE_PARAMETER name:phaseConfig index:0 type:<root>.PhaseConfig
+      VALUE_PARAMETER name:phaserState index:1 type:<root>.PhaserState<Data of <root>.NamedCompilerPhase>
+      VALUE_PARAMETER name:context index:2 type:Context of <root>.NamedCompilerPhase
+      VALUE_PARAMETER name:output index:3 type:Data of <root>.NamedCompilerPhase
+      BLOCK_BODY
+    FUN name:runAndProfile visibility:private modality:FINAL <> ($this:<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>, phaseConfig:<root>.PhaseConfig, phaserState:<root>.PhaserState<Data of <root>.NamedCompilerPhase>, context:Context of <root>.NamedCompilerPhase, source:Data of <root>.NamedCompilerPhase) returnType:Data of <root>.NamedCompilerPhase
+      $this: VALUE_PARAMETER name:<this> type:<root>.NamedCompilerPhase<Context of <root>.NamedCompilerPhase, Data of <root>.NamedCompilerPhase>
+      VALUE_PARAMETER name:phaseConfig index:0 type:<root>.PhaseConfig
+      VALUE_PARAMETER name:phaserState index:1 type:<root>.PhaserState<Data of <root>.NamedCompilerPhase>
+      VALUE_PARAMETER name:context index:2 type:Context of <root>.NamedCompilerPhase
+      VALUE_PARAMETER name:source index:3 type:Data of <root>.NamedCompilerPhase
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='private final fun runAndProfile (phaseConfig: <root>.PhaseConfig, phaserState: <root>.PhaserState<Data of <root>.NamedCompilerPhase>, context: Context of <root>.NamedCompilerPhase, source: Data of <root>.NamedCompilerPhase): Data of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase'
+          GET_VAR 'source: Data of <root>.NamedCompilerPhase declared in <root>.NamedCompilerPhase.runAndProfile' type=Data of <root>.NamedCompilerPhase origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.CompilerPhase
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.CompilerPhase
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.CompilerPhase
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

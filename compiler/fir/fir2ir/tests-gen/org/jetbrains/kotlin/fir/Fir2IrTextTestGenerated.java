@@ -1817,6 +1817,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/firProblems/MultiList.kt");
         }
 
+        @TestMetadata("NamedCompilerPhase.kt")
+        public void testNamedCompilerPhase() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/NamedCompilerPhase.kt");
+        }
+
         @TestMetadata("putIfAbsent.kt")
         public void testPutIfAbsent() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/putIfAbsent.kt");

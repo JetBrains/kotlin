@@ -1816,6 +1816,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/MultiList.kt");
         }
 
+        @TestMetadata("NamedCompilerPhase.kt")
+        public void testNamedCompilerPhase() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/NamedCompilerPhase.kt");
+        }
+
         @TestMetadata("putIfAbsent.kt")
         public void testPutIfAbsent() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/putIfAbsent.kt");
