@@ -9,6 +9,9 @@ dependencies {
 
     testCompile(commonDep("junit:junit"))
     testCompileOnly(toolsJarApi())
+    testRuntimeOnly(toolsJar())
+
+    testCompileOnly(toolsJarApi())
 }
 
 sourceSets {
