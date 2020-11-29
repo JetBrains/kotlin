@@ -276,6 +276,20 @@ assert(text?.length?.minus(2) == 1)
     assertMessage(
       """
 fun main() {
+  assert(1.shl(1) == 4)
+}""",
+      """
+Assertion failed
+assert(1.shl(1) == 4)
+         |      |
+         |      false
+         2
+""".trimIndent()
+    )
+
+    assertMessage(
+      """
+fun main() {
   assert(1 shl 1 == 4)
 }""",
       """
@@ -412,34 +426,5 @@ fun main() {
 Assertion failed
 """.trimIndent()
     )
-  }
-}
-
-fun assertMessage(
-  @Language("kotlin") source: String,
-  message: String,
-  vararg plugins: ComponentRegistrar = arrayOf(PowerAssertComponentRegistrar(setOf(FqName("kotlin.assert"))))
-) {
-  val result = KotlinCompilation().apply {
-    sources = listOf(SourceFile.kotlin("main.kt", source, trimIndent = false))
-    useIR = true
-    messageOutputStream = System.out
-    compilerPlugins = plugins.toList()
-    inheritClassPath = true
-  }.compile()
-
-  assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
-
-  val kClazz = result.classLoader.loadClass("MainKt")
-  val main = kClazz.declaredMethods.single { it.name == "main" && it.parameterCount == 0 }
-  try {
-    try {
-      main.invoke(null)
-    } catch (t: InvocationTargetException) {
-      throw t.cause!!
-    }
-    fail("should have thrown assertion")
-  } catch (t: Throwable) {
-    assertEquals(message, t.message)
   }
 }

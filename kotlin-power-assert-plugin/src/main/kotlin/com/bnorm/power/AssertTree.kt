@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrContainerExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhen
@@ -91,6 +92,13 @@ class RootNode : Node() {
 fun buildAssertTree(expression: IrExpression): RootNode {
   val tree = RootNode()
   expression.accept(object : IrElementVisitor<Unit, Node> {
+    val INCREMENT_DECREMENT_OPERATORS = setOf(
+      IrStatementOrigin.PREFIX_INCR,
+      IrStatementOrigin.PREFIX_DECR,
+      IrStatementOrigin.POSTFIX_INCR,
+      IrStatementOrigin.POSTFIX_DECR
+    )
+
     override fun visitElement(element: IrElement, data: Node) {
       element.acceptChildren(this, data)
     }
@@ -99,6 +107,16 @@ fun buildAssertTree(expression: IrExpression): RootNode {
       val node = data as? ExpressionNode ?: ExpressionNode(data)
       node.add(expression)
       expression.acceptChildren(this, node)
+    }
+
+    override fun visitContainerExpression(expression: IrContainerExpression, data: Node) {
+      if (expression.origin in INCREMENT_DECREMENT_OPERATORS) {
+        val node = data as? ExpressionNode ?: ExpressionNode(data)
+        node.add(expression)
+        return // Skip the internals of increment/decrement operations
+      }
+
+      super.visitContainerExpression(expression, data)
     }
 
     override fun visitCall(expression: IrCall, data: Node) {
