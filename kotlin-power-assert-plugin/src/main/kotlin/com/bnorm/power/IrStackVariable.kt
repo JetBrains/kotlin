@@ -66,30 +66,34 @@ fun IrBuilderWithScope.buildMessage(
       val rowValues = valuesByRow[row]?.let { values -> values.sortedBy { it.indent } } ?: emptyList()
       val indentations = rowValues.map { it.indent }
 
-      addArgument(irString {
-        appendLine()
-        append(rowSource)
-        if (indentations.isNotEmpty()) {
+      addArgument(
+        irString {
           appendLine()
-          var last = -1
-          for (i in indentations) {
-            if (i > last) indent(i - last - 1).append("|")
-            last = i
+          append(rowSource)
+          if (indentations.isNotEmpty()) {
+            appendLine()
+            var last = -1
+            for (i in indentations) {
+              if (i > last) indent(i - last - 1).append("|")
+              last = i
+            }
           }
         }
-      })
+      )
 
       for (tmp in rowValues.asReversed()) {
-        addArgument(irString {
-          appendLine()
-          var last = -1
-          for (i in indentations) {
-            if (i == tmp.indent) break
-            if (i > last) indent(i - last - 1).append("|")
-            last = i
+        addArgument(
+          irString {
+            appendLine()
+            var last = -1
+            for (i in indentations) {
+              if (i == tmp.indent) break
+              if (i > last) indent(i - last - 1).append("|")
+              last = i
+            }
+            indent(tmp.indent - last - 1)
           }
-          indent(tmp.indent - last - 1)
-        })
+        )
         addArgument(irGet(tmp.value))
       }
     }

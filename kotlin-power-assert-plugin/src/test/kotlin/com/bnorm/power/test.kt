@@ -16,15 +16,8 @@
 
 package com.bnorm.power
 
-import com.tschuchort.compiletesting.KotlinCompilation
-import com.tschuchort.compiletesting.SourceFile
-import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.name.FqName
 import org.junit.Test
-import java.lang.reflect.InvocationTargetException
-import kotlin.test.assertEquals
-import kotlin.test.fail
 
 class CompilerTest {
   @Test
@@ -279,12 +272,12 @@ fun main() {
   assert(1.shl(1) == 4)
 }""",
       """
-Assertion failed
-assert(1.shl(1) == 4)
-         |      |
-         |      false
-         2
-""".trimIndent()
+      Assertion failed
+      assert(1.shl(1) == 4)
+               |      |
+               |      false
+               2
+      """.trimIndent()
     )
 
     assertMessage(

@@ -9,13 +9,13 @@ import java.lang.reflect.InvocationTargetException
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-val DEFAULT_COMPONENT_REGISTRARS = arrayOf(
-  PowerAssertComponentRegistrar(setOf(FqName("kotlin.assert"))),
+private val DEFAULT_COMPONENT_REGISTRARS = arrayOf(
+  PowerAssertComponentRegistrar(setOf(FqName("kotlin.assert")))
 )
 
 fun compile(
   list: List<SourceFile>,
-  vararg plugins: ComponentRegistrar = DEFAULT_COMPONENT_REGISTRARS,
+  vararg plugins: ComponentRegistrar = DEFAULT_COMPONENT_REGISTRARS
 ): KotlinCompilation.Result {
   return KotlinCompilation().apply {
     sources = list
