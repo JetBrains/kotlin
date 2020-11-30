@@ -76,7 +76,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             }
 
     private val specificClangArgs: List<String> = when (target) {
-        KonanTarget.LINUX_X64 -> listOf()
+        KonanTarget.LINUX_X64 -> emptyList()
 
         KonanTarget.LINUX_ARM32_HFP -> listOf(
                 "-mfpu=vfp", "-mfloat-abi=hard",
@@ -100,9 +100,7 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
                 "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4/mipsel-unknown-linux-gnu"
         )
 
-        KonanTarget.MINGW_X64, KonanTarget.MINGW_X86 -> listOf(
-                "-Xclang", "-flto-visibility-public-std"
-        )
+        KonanTarget.MINGW_X64, KonanTarget.MINGW_X86 -> emptyList()
 
         KonanTarget.MACOS_X64 -> listOf(
                 "-mmacosx-version-min=$osVersionMin"
