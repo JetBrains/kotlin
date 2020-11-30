@@ -33,6 +33,7 @@ import com.intellij.openapi.projectRoots.ex.JavaSdkUtil
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiJavaModule
@@ -50,7 +51,10 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
  */
 class KotlinGradleAppEnvProvider : GradleExecutionEnvironmentProvider {
 
-    override fun isApplicable(task: ExecuteRunConfigurationTask): Boolean = task.runProfile is KotlinRunConfiguration
+    override fun isApplicable(task: ExecuteRunConfigurationTask): Boolean {
+        val enabled = Registry.`is`("kotlin.gradle-run.enabled", false)
+        return enabled && task.runProfile is KotlinRunConfiguration
+    }
 
     override fun createExecutionEnvironment(
         project: Project, executeRunConfigurationTask: ExecuteRunConfigurationTask, executor: Executor?
