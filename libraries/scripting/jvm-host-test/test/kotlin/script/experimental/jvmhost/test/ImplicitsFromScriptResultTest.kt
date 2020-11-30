@@ -89,7 +89,7 @@ class CompilerHost {
     }
 
     private val myHostConfiguration = defaultJvmScriptingHostConfiguration.with {
-        getScriptingClass(GetScriptClassForImplicits(::getImplicitsClasses))
+        getScriptingClass(GetScriptClassForImplicits { getImplicitsClasses() })
     }
 
     private val compileConfiguration = ScriptCompilationConfiguration {
