@@ -109,6 +109,8 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         myEnvironment = KotlinCoreEnvironment.createForTests(
                 getTestRootDisposable(), configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         );
+
+        setupEnvironment(myEnvironment);
     }
 
     @Override

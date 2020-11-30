@@ -436,6 +436,10 @@ fun main(args: Array<String>) {
                 model("codegen/composeLike", targetBackend = TargetBackend.JVM_IR)
             }
 
+            testClass<AbstractComposeLikeIrBytecodeTextTest> {
+                model("codegen/composeLikeBytecodeText", targetBackend = TargetBackend.JVM_IR)
+            }
+
             testClass<AbstractIrBlackBoxCodegenTest> {
                 model("codegen/box", targetBackend = TargetBackend.JVM_IR, excludeDirs = listOf("oldLanguageVersions"))
             }
