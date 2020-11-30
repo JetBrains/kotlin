@@ -339,7 +339,7 @@ internal class KotlinCompilationNpmResolver(
                 resolver.gradleNodeModules.get(it.dependency.moduleName, it.dependency.moduleVersion, it.artifact.file)
             } + fileCollectionDependencies.flatMap { dependency ->
                 dependency.files
-                    .filter { it.exists() }
+                    .filter { it.exists() && it.isFile }
                     .map { file ->
                         resolver.gradleNodeModules.get(
                             file.name,
