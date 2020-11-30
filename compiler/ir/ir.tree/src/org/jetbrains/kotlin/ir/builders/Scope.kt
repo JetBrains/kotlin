@@ -61,12 +61,10 @@ class Scope(val scopeOwnerSymbol: IrSymbol) {
         endOffset: Int = UNDEFINED_OFFSET
     ): IrVariable {
         val name = Name.identifier(getNameForTemporary(nameHint))
-        val descriptor = WrappedVariableDescriptor()
         return IrVariableImpl(
-            startOffset, endOffset, origin, IrVariableSymbolImpl(descriptor), name,
+            startOffset, endOffset, origin, IrVariableSymbolImpl(), name,
             irType, isMutable, isConst = false, isLateinit = false
         ).apply {
-            descriptor.bind(this)
             parent = getLocalDeclarationParent()
         }
     }

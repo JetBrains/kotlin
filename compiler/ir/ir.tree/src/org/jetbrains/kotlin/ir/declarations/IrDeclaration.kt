@@ -35,7 +35,7 @@ interface IrMetadataSourceOwner : IrElement {
     var metadata: MetadataSource?
 }
 
-interface IrDeclaration : IrStatement, IrMutableAnnotationContainer {
+interface IrDeclaration : IrStatement, IrSymbolOwner, IrMutableAnnotationContainer {
     @ObsoleteDescriptorBasedAPI
     val descriptor: DeclarationDescriptor
 
@@ -48,7 +48,7 @@ interface IrDeclaration : IrStatement, IrMutableAnnotationContainer {
 
 abstract class IrDeclarationBase : IrElementBase(), IrDeclaration
 
-interface IrSymbolDeclaration<out S : IrSymbol> : IrDeclaration, IrSymbolOwner {
+interface IrSymbolDeclaration<out S : IrSymbol> : IrDeclaration {
     override val symbol: S
 }
 

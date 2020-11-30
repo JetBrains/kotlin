@@ -340,7 +340,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
             ).also { irAdapterFun ->
                 adapterFunctionDescriptor.bind(irAdapterFun)
 
-                context.symbolTable.withScope(adapterFunctionDescriptor) {
+                context.symbolTable.withScope(irAdapterFun) {
                     irAdapterFun.metadata = DescriptorMetadataSource.Function(adapteeDescriptor)
 
                     irAdapterFun.dispatchReceiverParameter = null

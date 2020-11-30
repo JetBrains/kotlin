@@ -377,7 +377,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
     }
     adapterFunctionDescriptor.bind(irAdapterFun)
 
-    context.symbolTable.enterScope(adapterFunctionDescriptor)
+    context.symbolTable.enterScope(irAdapterFun)
 
     fun createValueParameter(name: String, index: Int, type: IrType): IrValueParameter {
         val descriptor = WrappedValueParameterDescriptor()
@@ -434,7 +434,7 @@ private fun StatementGenerator.createFunctionForSuspendConversion(
         }
     }
 
-    context.symbolTable.leaveScope(adapterFunctionDescriptor)
+    context.symbolTable.leaveScope(irAdapterFun)
 
     return irAdapterFun
 }

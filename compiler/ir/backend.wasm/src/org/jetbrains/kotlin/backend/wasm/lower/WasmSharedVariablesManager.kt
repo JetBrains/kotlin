@@ -54,19 +54,17 @@ class WasmSharedVariablesManager(val context: JsCommonBackendContext, val builtI
                     putValueArgument(0, initializer)
                 }
 
-        val descriptor = WrappedVariableDescriptor()
         return IrVariableImpl(
             originalDeclaration.startOffset,
             originalDeclaration.endOffset,
             originalDeclaration.origin,
-            IrVariableSymbolImpl(descriptor),
+            IrVariableSymbolImpl(),
             originalDeclaration.name,
             irCall.type,
             false,
             false,
             false
         ).also {
-            descriptor.bind(it)
             it.parent = originalDeclaration.parent
             it.initializer = irCall
         }
@@ -165,8 +163,7 @@ class WasmSharedVariablesManager(val context: JsCommonBackendContext, val builtI
     }
 
     private fun createClosureBoxPropertyDeclaration(): IrField {
-        val descriptor = WrappedFieldDescriptor()
-        val symbol = IrFieldSymbolImpl(descriptor)
+        val symbol = IrFieldSymbolImpl()
         val fieldName = Name.identifier("v")
         return context.irFactory.createField(
             UNDEFINED_OFFSET,
@@ -180,15 +177,13 @@ class WasmSharedVariablesManager(val context: JsCommonBackendContext, val builtI
             isExternal = false,
             isStatic = false,
         ).also {
-            descriptor.bind(it)
             it.parent = closureBoxClassDeclaration
             closureBoxClassDeclaration.declarations += it
         }
     }
 
     private fun createClosureBoxConstructorDeclaration(): IrConstructor {
-        val descriptor = WrappedClassConstructorDescriptor()
-        val symbol = IrConstructorSymbolImpl(descriptor)
+        val symbol = IrConstructorSymbolImpl()
 
         val declaration = context.irFactory.createConstructor(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, JsLoweredDeclarationOrigin.JS_CLOSURE_BOX_CLASS_DECLARATION, symbol,
@@ -196,7 +191,6 @@ class WasmSharedVariablesManager(val context: JsCommonBackendContext, val builtI
             isInline = false, isExternal = false, isPrimary = true, isExpect = false
         )
 
-        descriptor.bind(declaration)
         declaration.parent = closureBoxClassDeclaration
 
         val parameterDeclaration = createClosureBoxConstructorParameterDeclaration(declaration)
