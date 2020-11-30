@@ -91,7 +91,7 @@ class NativeDistributionCommonizer(
         val stdlib = NativeLibrary(loadLibrary(stdlibPath))
 
         val librariesByTargets = targets.associate { target ->
-            val leafTarget = InputTarget(target.name, target)
+            val leafTarget = LeafTarget(target.name, target)
 
             val platformLibs = leafTarget.platformLibrariesSource
                 .takeIf { it.isDirectory }
@@ -213,11 +213,11 @@ class NativeDistributionCommonizer(
                     val manifestProvider: NativeManifestDataProvider
                     val starredTarget: String?
                     when (target) {
-                        is InputTarget -> {
+                        is LeafTarget -> {
                             manifestProvider = originalLibraries.librariesByTargets.getValue(target)
                             starredTarget = target.name
                         }
-                        is OutputTarget -> {
+                        is SharedTarget -> {
                             manifestProvider = CommonNativeManifestDataProvider(originalLibraries.librariesByTargets.values)
                             starredTarget = null
                         }
@@ -255,7 +255,7 @@ class NativeDistributionCommonizer(
         }
     }
 
-    private fun copyTargetAsIs(leafTarget: InputTarget, librariesCount: Int) {
+    private fun copyTargetAsIs(leafTarget: LeafTarget, librariesCount: Int) {
         val librariesDestination = leafTarget.librariesDestination
         librariesDestination.mkdirs() // always create an empty directory even if there is nothing to copy
 
@@ -318,15 +318,15 @@ class NativeDistributionCommonizer(
         library.commit()
     }
 
-    private val InputTarget.platformLibrariesSource: File
+    private val LeafTarget.platformLibrariesSource: File
         get() = repository.resolve(KONAN_DISTRIBUTION_KLIB_DIR)
             .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
             .resolve(name)
 
     private val Target.librariesDestination: File
         get() = when (this) {
-            is InputTarget -> destination.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(name)
-            is OutputTarget -> destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
+            is LeafTarget -> destination.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(name)
+            is SharedTarget -> destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
         }
 
     private companion object {

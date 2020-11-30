@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.io.File
 
 class TargetProvider(
-    val target: InputTarget,
+    val target: LeafTarget,
     val builtInsClass: Class<out KotlinBuiltIns>,
     val builtInsProvider: BuiltInsProvider,
     val modulesProvider: ModulesProvider,

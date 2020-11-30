@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
-import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
+import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
 import org.jetbrains.kotlin.descriptors.commonizer.Target
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirRootImpl
@@ -18,7 +18,7 @@ object CirRootFactory {
         builtInsClass: String,
         builtInsProvider: BuiltInsProvider
     ): CirRoot {
-        if (target is InputTarget) {
+        if (target is LeafTarget) {
             check((target.konanTarget != null) == (builtInsClass == KonanBuiltIns::class.java.name))
         }
 

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
-import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
+import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.descriptors.commonizer.builder.*
@@ -44,7 +44,7 @@ internal fun mockClassType(
 
     val targetComponents = TargetDeclarationsBuilderComponents(
         storageManager = LockBasedStorageManager.NO_LOCKS,
-        target = InputTarget("Arbitrary target"),
+        target = LeafTarget("Arbitrary target"),
         builtIns = DefaultBuiltIns.Instance,
         lazyClassifierLookupTable = LockBasedStorageManager.NO_LOCKS.createLazyValue { LazyClassifierLookupTable(emptyMap()) },
         index = 0,

@@ -40,7 +40,7 @@ fun runCommonization(parameters: Parameters): Result {
 
         val commonizedModules: List<ModuleResult.Commonized> = components.cache.getAllModules(component.index).map(ModuleResult::Commonized)
 
-        val absentModules: List<ModuleResult.Absent> = if (target is InputTarget)
+        val absentModules: List<ModuleResult.Absent> = if (target is LeafTarget)
             mergeResult.absentModuleInfos.getValue(target).map { ModuleResult.Absent(it.originalLocation) }
         else emptyList()
 

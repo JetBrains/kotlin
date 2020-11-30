@@ -12,7 +12,7 @@ class Parameters(
     val progressLogger: ((String) -> Unit)? = null
 ) {
     // use linked hash map to preserve order
-    private val _targetProviders = LinkedHashMap<InputTarget, TargetProvider>()
+    private val _targetProviders = LinkedHashMap<LeafTarget, TargetProvider>()
 
     val targetProviders: List<TargetProvider> get() = _targetProviders.values.toList()
 

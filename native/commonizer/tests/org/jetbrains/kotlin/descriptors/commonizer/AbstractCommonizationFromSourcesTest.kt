@@ -68,7 +68,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         val result: Result = runCommonization(analyzedModules.toCommonizationParameters())
         assertCommonizationPerformed(result)
 
-        val sharedTarget: OutputTarget = analyzedModules.sharedTarget
+        val sharedTarget: SharedTarget = analyzedModules.sharedTarget
         assertEquals(sharedTarget, result.sharedTarget)
 
         val sharedModuleAsExpected: ModuleDescriptor = analyzedModules.commonizedModules.getValue(sharedTarget)
@@ -79,7 +79,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         assertValidModule(sharedModuleByCommonizer)
         assertModulesAreEqual(sharedModuleAsExpected, sharedModuleByCommonizer, "\"$sharedTarget\" target")
 
-        val leafTargets: Set<InputTarget> = analyzedModules.leafTargets
+        val leafTargets: Set<LeafTarget> = analyzedModules.leafTargets
         assertEquals(leafTargets, result.leafTargets)
 
         for (leafTarget in leafTargets) {
@@ -113,18 +113,18 @@ private data class SourceModuleRoot(
 }
 
 private class SourceModuleRoots(
-    val originalRoots: Map<InputTarget, SourceModuleRoot>,
+    val originalRoots: Map<LeafTarget, SourceModuleRoot>,
     val commonizedRoots: Map<Target, SourceModuleRoot>,
     val dependeeRoots: Map<Target, SourceModuleRoot>
 ) {
-    val leafTargets: Set<InputTarget> = originalRoots.keys
-    val sharedTarget: OutputTarget
+    val leafTargets: Set<LeafTarget> = originalRoots.keys
+    val sharedTarget: SharedTarget
 
     init {
         check(leafTargets.size >= 2)
         check(leafTargets.none { it.name == SHARED_TARGET_NAME })
 
-        val sharedTargets = commonizedRoots.keys.filterIsInstance<OutputTarget>()
+        val sharedTargets = commonizedRoots.keys.filterIsInstance<SharedTarget>()
         check(sharedTargets.size == 1)
 
         sharedTarget = sharedTargets.single()
@@ -137,10 +137,10 @@ private class SourceModuleRoots(
 
     companion object {
         fun load(dataDir: File): SourceModuleRoots = try {
-            val originalRoots = listRoots(dataDir, ORIGINAL_ROOTS_DIR).mapKeys { InputTarget(it.key) }
+            val originalRoots = listRoots(dataDir, ORIGINAL_ROOTS_DIR).mapKeys { LeafTarget(it.key) }
 
             val leafTargets = originalRoots.keys
-            val sharedTarget = OutputTarget(leafTargets)
+            val sharedTarget = SharedTarget(leafTargets)
 
             fun getTarget(targetName: String): Target =
                 if (targetName == SHARED_TARGET_NAME) sharedTarget else leafTargets.first { it.name == targetName }
@@ -185,18 +185,18 @@ private class AnalyzedModules(
     val commonizedModules: Map<Target, ModuleDescriptor>,
     val dependeeModules: Map<Target, ModuleDescriptor>
 ) {
-    val leafTargets: Set<InputTarget>
-    val sharedTarget: OutputTarget
+    val leafTargets: Set<LeafTarget>
+    val sharedTarget: SharedTarget
 
     init {
         originalModules.keys.let { targets ->
             check(targets.isNotEmpty())
 
-            leafTargets = targets.filterIsInstance<InputTarget>().toSet()
+            leafTargets = targets.filterIsInstance<LeafTarget>().toSet()
             check(targets.size == leafTargets.size)
         }
 
-        sharedTarget = OutputTarget(leafTargets)
+        sharedTarget = SharedTarget(leafTargets)
         val allTargets = leafTargets + sharedTarget
 
         check(commonizedModules.keys == allTargets)
@@ -247,7 +247,7 @@ private class AnalyzedModules(
         }
 
         private fun createModules(
-            sharedTarget: OutputTarget,
+            sharedTarget: SharedTarget,
             moduleRoots: Map<out Target, SourceModuleRoot>,
             dependencies: AnalyzedModuleDependencies,
             parentDisposable: Disposable,
@@ -274,7 +274,7 @@ private class AnalyzedModules(
         }
 
         private fun createModule(
-            sharedTarget: OutputTarget,
+            sharedTarget: SharedTarget,
             currentTarget: Target,
             moduleRoot: SourceModuleRoot,
             dependencies: AnalyzedModuleDependencies,
@@ -322,7 +322,7 @@ private class AnalyzedModules(
 }
 
 private class DependenciesContainerImpl(
-    sharedTarget: OutputTarget,
+    sharedTarget: SharedTarget,
     currentTarget: Target,
     dependencies: AnalyzedModuleDependencies
 ) : CommonDependenciesContainer {

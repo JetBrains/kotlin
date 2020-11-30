@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.konan
 
 import gnu.trove.THashMap
-import org.jetbrains.kotlin.descriptors.commonizer.InputTarget
+import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
 import org.jetbrains.kotlin.library.KotlinLibrary
 
 internal interface NativeManifestDataProvider {
@@ -37,7 +37,7 @@ internal class NativeLibrariesToCommonize(val libraries: List<NativeLibrary>) : 
 
 internal class AllNativeLibraries(
     val stdlib: NativeLibrary,
-    val librariesByTargets: Map<InputTarget, NativeLibrariesToCommonize>
+    val librariesByTargets: Map<LeafTarget, NativeLibrariesToCommonize>
 )
 
 internal class CommonNativeManifestDataProvider(
