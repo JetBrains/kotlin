@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.codegen.ir
 
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 abstract class AbstractComposeLikeIrBytecodeTextTest : AbstractBytecodeTextTest() {
     override val backend = TargetBackend.JVM_IR
+
+    override fun setupEnvironment(environment: KotlinCoreEnvironment) {
+        ComposeLikeExtensionRegistrar.registerComponents(environment.project)
+        super.setupEnvironment(environment)
+    }
 }
