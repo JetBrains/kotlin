@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
-import kotlin.test.assertEquals
 import kotlin.test.fail
 
 class MessageCollector {
@@ -161,8 +160,20 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
         checkReport("Additional arguments", arguments, actualArguments)
     }
 
+    fun libraryDependency(libraryName: Regex, scope: DependencyScope) {
+        val libraryEntries = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>()
+            .filter { it.libraryName.orEmpty().matches(libraryName) }
+
+        if (libraryEntries.size > 1) {
+            report("Multiple root entries for library $libraryName")
+        }
+
+        checkLibrary(libraryEntries.singleOrNull(), libraryName.toString(), scope)
+    }
+
     fun libraryDependency(libraryName: String, scope: DependencyScope) {
-        val libraryEntries = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().filter { it.libraryName == libraryName }
+        val libraryEntries =
+            rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().filter { it.libraryName == libraryName }
         if (libraryEntries.size > 1) {
             report("Multiple root entries for library $libraryName")
         }
@@ -206,7 +217,12 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
         expectedDependencyNames += libraryEntry.debugText
     }
 
-    fun moduleDependency(moduleName: String, scope: DependencyScope, productionOnTest: Boolean? = null, allowMultiple: Boolean = false) {
+    fun moduleDependency(
+        moduleName: String,
+        scope: DependencyScope,
+        productionOnTest: Boolean? = null,
+        allowMultiple: Boolean = false
+    ) {
         val moduleEntries = rootModel.orderEntries.asList()
             .filterIsInstanceWithChecker<ModuleOrderEntry> { it.moduleName == moduleName && it.scope == scope }
 
@@ -233,7 +249,11 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
 
     private val ANY_PACKAGE_PREFIX = "any_package_prefix"
 
-    fun sourceFolder(pathInProject: String, rootType: JpsModuleSourceRootType<*>, packagePrefix: String? = ANY_PACKAGE_PREFIX) {
+    fun sourceFolder(
+        pathInProject: String,
+        rootType: JpsModuleSourceRootType<*>,
+        packagePrefix: String? = ANY_PACKAGE_PREFIX
+    ) {
         val sourceFolder = sourceFolderByPath[pathInProject]
         if (sourceFolder == null) {
             report("No source root found: '$pathInProject' among $sourceFolderByPath")
@@ -261,7 +281,8 @@ class ModuleInfo(val module: Module, private val projectInfo: ProjectInfo) {
 
     fun outputPath(pathInProject: String, isProduction: Boolean) {
         val compilerModuleExtension = CompilerModuleExtension.getInstance(module)
-        val url = if (isProduction) compilerModuleExtension?.compilerOutputUrl else compilerModuleExtension?.compilerOutputUrlForTests
+        val url =
+            if (isProduction) compilerModuleExtension?.compilerOutputUrl else compilerModuleExtension?.compilerOutputUrlForTests
         val actualPathInProject = url?.let {
             FileUtil.getRelativePath(
                 projectInfo.projectPath,
