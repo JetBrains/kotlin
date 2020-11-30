@@ -21,9 +21,9 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/jvm-abi-gen/testData/compare")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class CompareJvmAbiTestGenerated extends AbstractCompareJvmAbiTest {
+public class LegacyCompareJvmAbiTestGenerated extends AbstractLegacyCompareJvmAbiTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM, testDataFilePath, "// IGNORE_BACKEND_LEGACY: ");
     }
 
     public void testAllFilesPresentInCompare() throws Exception {
