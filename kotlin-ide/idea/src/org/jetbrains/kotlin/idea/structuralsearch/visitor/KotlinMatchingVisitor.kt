@@ -910,8 +910,8 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                 other.bodyBlockExpression
             )
             patternBody == null && codeBody == null -> myMatchingVisitor.match(function.bodyExpression, other.bodyExpression)
-            patternBody == null -> myMatchingVisitor.match(function.bodyExpression, codeBody)
-            codeBody == null -> myMatchingVisitor.match(patternBody, other.bodyExpression)
+            patternBody == null -> function.bodyExpression == null || codeBody !is KtBlockExpression && myMatchingVisitor.match(function.bodyExpression, codeBody)
+            codeBody == null -> patternBody !is KtBlockExpression && myMatchingVisitor.match(patternBody, other.bodyExpression)
             else -> myMatchingVisitor.match(function.bodyBlockExpression, other.bodyBlockExpression)
         }
         myMatchingVisitor.result = myMatchingVisitor.match(function.modifierList, other.modifierList)
