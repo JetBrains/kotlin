@@ -14,4 +14,6 @@ class KotlinSSTextFilterTest : KotlinSSResourceInspectionTest() {
     fun testFqSuperType() { doTest("class '_ : '_:[regex(test\\.Foo)]()") }
 
     fun testFqTypeAlias() { doTest("fun '_('_ : '_:[regex(test\\.OtherInt)])") }
+
+    fun testFqClassName() { doTest("class '_:[regex(test\\.A)]") }
 }
