@@ -1552,6 +1552,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
                 runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/implementsSortedMap.kt");
             }
 
+            @TestMetadata("kt43610.kt")
+            public void testKt43610() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/kt43610.kt");
+            }
+
             @TestMetadata("nonGenericClass.kt")
             public void testNonGenericClass() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/nonGenericClass.kt");
