@@ -18,9 +18,6 @@
       <option name="STATIC_METHODS_ORDER_WEIGHT" value="5" />
       <option name="METHODS_ORDER_WEIGHT" value="4" />
     </GroovyCodeStyleSettings>
-    <H2CodeStyleSettings version="5">
-      <option name="USE_GENERAL_STYLE" value="false" />
-    </H2CodeStyleSettings>
     <JavaCodeStyleSettings>
       <option name="FIELD_NAME_PREFIX" value="my" />
       <option name="STATIC_FIELD_NAME_PREFIX" value="our" />
