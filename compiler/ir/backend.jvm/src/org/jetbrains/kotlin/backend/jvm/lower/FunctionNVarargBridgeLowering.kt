@@ -76,26 +76,22 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             return super.visitClassNew(declaration)
         declaration.transformChildrenVoid(this)
 
-        // Note that we allow classes with multiple function supertypes, so long as only one
-        // of them has more than 22 arguments.
-        // TODO: Add a proper diagnostic message in the frontend
-        assert(bigArityFunctionSuperTypes.size == 1) {
-            "Class has multiple big-arity function super types: ${bigArityFunctionSuperTypes.joinToString { it.render() }}"
-        }
+        // Note that we allow classes with multiple function supertypes, so long as only one of them has more than 22 arguments.
+        // Code below will generate one 'invoke' for each function supertype,
+        // which will cause conflicting inherited JVM signatures error diagnostics in case of multiple big arity function supertypes.
+        for (superType in bigArityFunctionSuperTypes) {
+            declaration.superTypes -= superType
+            declaration.superTypes += context.ir.symbols.functionN.typeWith(
+                (superType.arguments.last() as IrTypeProjection).type
+            )
 
-        // Fix super class
-        val superType = bigArityFunctionSuperTypes.single()
-        declaration.superTypes -= superType
-        declaration.superTypes += context.ir.symbols.functionN.typeWith(
-            (superType.arguments.last() as IrTypeProjection).type
-        )
-
-        // Add vararg invoke bridge
-        val invokeFunction = declaration.functions.single {
-            it.name.asString() == "invoke" && it.valueParameters.size == superType.arguments.size - if (it.isSuspend) 0 else 1
+            // Add vararg invoke bridge
+            val invokeFunction = declaration.functions.single {
+                it.name.asString() == "invoke" && it.valueParameters.size == superType.arguments.size - if (it.isSuspend) 0 else 1
+            }
+            invokeFunction.overriddenSymbols = emptyList()
+            declaration.addBridge(invokeFunction, functionNInvokeFun.owner)
         }
-        invokeFunction.overriddenSymbols = emptyList()
-        declaration.addBridge(invokeFunction, functionNInvokeFun.owner)
 
         return declaration
     }
@@ -123,7 +119,7 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
                         irInt(argumentCount)
                     ),
                     irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
-                        putValueArgument(0, irString("Expected ${argumentCount} arguments"))
+                        putValueArgument(0, irString("Expected $argumentCount arguments"))
                     }
                 )
 

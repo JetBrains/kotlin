@@ -39,6 +39,11 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle.kt");
     }
 
+    @TestMetadata("multipleBigArityFunsImplemented.kt")
+    public void testMultipleBigArityFunsImplemented() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/multipleBigArityFunsImplemented.kt");
+    }
+
     @TestMetadata("suspendInlineCycle.kt")
     public void testSuspendInlineCycle() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle.kt");
