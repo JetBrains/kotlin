@@ -440,6 +440,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
             runTest("compiler/testData/compileKotlinAgainstKotlin/fir/ExistingSymbolInFakeOverride.kt");
         }
 
+        @TestMetadata("IrConstAcceptMultiModule.kt")
+        public void testIrConstAcceptMultiModule() throws Exception {
+            runTest("compiler/testData/compileKotlinAgainstKotlin/fir/IrConstAcceptMultiModule.kt");
+        }
+
         @TestMetadata("LibraryProperty.kt")
         public void testLibraryProperty() throws Exception {
             runTest("compiler/testData/compileKotlinAgainstKotlin/fir/LibraryProperty.kt");
