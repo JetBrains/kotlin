@@ -45,6 +45,11 @@ public class Jdk15BlackBoxCodegenTestGenerated extends AbstractJdk15BlackBoxCode
             runTest("compiler/testData/codegen/java15/box/records/bytecodeShapeForJava.kt");
         }
 
+        @TestMetadata("dataJvmRecord.kt")
+        public void testDataJvmRecord() throws Exception {
+            runTest("compiler/testData/codegen/java15/box/records/dataJvmRecord.kt");
+        }
+
         @TestMetadata("recordDifferentPropertyOverride.kt")
         public void testRecordDifferentPropertyOverride() throws Exception {
             runTest("compiler/testData/codegen/java15/box/records/recordDifferentPropertyOverride.kt");

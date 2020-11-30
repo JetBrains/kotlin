@@ -10,7 +10,7 @@ public class JavaClass {
 // FILE: main.kt
 
 @JvmRecord
-class MyRec<R>(val x: String, val y: R)
+data class MyRec<R>(val x: String, val y: R)
 
 fun box(): String {
     val recordComponents = MyRec::class.java.recordComponents
