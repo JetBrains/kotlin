@@ -11,9 +11,16 @@ import com.intellij.util.ThrowableRunnable
 import org.jetbrains.kotlin.test.KotlinRoot
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadataUtil
+import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
+import org.jetbrains.kotlin.test.runTest
 import java.io.File
 
+@WithMutedInDatabaseRunTest
 abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCodeInsightFixtureTestCase() {
+    override fun runTest() {
+        runTest { super.runTest() }
+    }
+
     protected open fun isFirPlugin(): Boolean = false
 
     override fun setUp() {
