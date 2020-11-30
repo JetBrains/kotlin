@@ -25,6 +25,25 @@ abstract class MultiplePluginVersionGradleImportingTestCase : KotlinGradleImport
     @Parameterized.Parameter(1)
     var pluginVersion: String = ""
 
+    private val orgGradleNativePropertyKey: String = "org.gradle.native"
+    private var initialOrgGradleNativePropertyValue: String? = null
+
+    override fun setUp() {
+        super.setUp()
+        initialOrgGradleNativePropertyValue = System.getProperty(orgGradleNativePropertyKey, "false")
+        System.setProperty("org.gradle.native", "false")
+    }
+
+
+    override fun tearDown() {
+        super.tearDown()
+        val initialOrgGradleNativePropertyValue = initialOrgGradleNativePropertyValue
+        if (initialOrgGradleNativePropertyValue == null) {
+            System.clearProperty(orgGradleNativePropertyKey)
+        } else {
+            System.setProperty(orgGradleNativePropertyKey, initialOrgGradleNativePropertyValue)
+        }
+    }
 
     companion object {
         @JvmStatic

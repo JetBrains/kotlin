@@ -5,12 +5,8 @@ buildscript {
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:{{kotlin_plugin_version}}")
-        classpath 'com.android.tools.build:gradle:3.0.0'
+        classpath 'com.android.tools.build:gradle:3.6.4'
     }
-}
-
-repositories {
-    mavenCentral()
 }
 
 apply plugin: 'com.android.application'
