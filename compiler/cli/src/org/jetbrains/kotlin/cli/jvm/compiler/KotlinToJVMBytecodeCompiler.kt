@@ -350,6 +350,9 @@ object KotlinToJVMBytecodeCompiler {
             )
             performanceManager?.notifyAnalysisFinished()
 
+            // TODO: maybe we should not do it in presence of errors, but tests at the moment expect lookups to be reported
+            session.firLookupTracker?.flushLookups()
+
             if (syntaxErrors || firDiagnostics.any { it.severity == Severity.ERROR }) {
                 return false
             }
