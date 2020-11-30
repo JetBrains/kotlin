@@ -379,7 +379,7 @@ fun IrSimpleType.isRawType(): Boolean =
     hasAnnotation(JvmGeneratorExtensions.RAW_TYPE_ANNOTATION_FQ_NAME)
 
 internal fun classFileContainsMethod(function: IrFunction, context: JvmBackendContext, name: String): Boolean? {
-    val classId = (function.parent as? IrClass)?.classId ?: (function.containerSource as? JvmPackagePartSource)?.classId ?: return null
+    val classId = (function.containerSource as? JvmPackagePartSource)?.classId ?: (function.parent as? IrClass)?.classId ?: return null
     val originalDescriptor = context.methodSignatureMapper.mapSignatureWithGeneric(function).asmMethod.descriptor
     val descriptor = if (function.isSuspend)
         listOf(*Type.getArgumentTypes(originalDescriptor), Type.getObjectType("kotlin/coroutines/Continuation"))
