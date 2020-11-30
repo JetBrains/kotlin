@@ -19,7 +19,11 @@ package org.jetbrains.kotlin.config
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-enum class JvmTarget(override val description: String) : TargetPlatformVersion {
+enum class JvmTarget(
+    override val description: String,
+    val descriptionForJavacArgument: String = description,
+    val isPreview: Boolean = false,
+) : TargetPlatformVersion {
     JVM_1_6("1.6"),
     JVM_1_8("1.8"),
     JVM_9("9"),
@@ -29,7 +33,7 @@ enum class JvmTarget(override val description: String) : TargetPlatformVersion {
     JVM_13("13"),
     JVM_14("14"),
     JVM_15("15"),
-    JVM_15_PREVIEW("15_PREVIEW"),
+    JVM_15_PREVIEW("15_PREVIEW", descriptionForJavacArgument = "15", isPreview = true),
     ;
 
     val bytecodeVersion: Int by lazy {

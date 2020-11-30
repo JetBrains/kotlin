@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
-import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -36,7 +35,9 @@ abstract class AbstractCustomJDKBlackBoxCodegenTest : AbstractBlackBoxCodegenTes
     }
 
     override fun runJavacTask(files: MutableCollection<File>, options: List<String>) {
-        KotlinTestUtils.compileJavaFilesExternally(files, options + getAdditionalJavacArgs(), getJdkHome())
+        assert(KotlinTestUtils.compileJavaFilesExternally(files, options, getJdkHome())) {
+            "Javac failed: $options on $files"
+        }
     }
 
     override fun getTestJdkKind(files: List<TestFile>): TestJdkKind {
@@ -46,7 +47,6 @@ abstract class AbstractCustomJDKBlackBoxCodegenTest : AbstractBlackBoxCodegenTes
     abstract fun getTestJdkKind(): TestJdkKind
     abstract fun getJdkHome(): File
 
-    open fun getAdditionalJavacArgs(): List<String> = emptyList()
     open fun getAdditionalJvmArgs(): List<String> = emptyList()
 
     abstract override fun getPrefix(): String

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.jvm.compiler.ADDITIONAL_JAVAC_ARGS_FOR_15
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
@@ -15,7 +14,6 @@ abstract class AbstractJdk15BlackBoxCodegenTest : AbstractCustomJDKBlackBoxCodeg
     override fun getJdkHome(): File = KotlinTestUtils.getJdk15Home()
     override fun getPrefix(): String = "java15/box"
 
-    override fun getAdditionalJavacArgs(): List<String> = ADDITIONAL_JAVAC_ARGS_FOR_15
     override fun getAdditionalJvmArgs(): List<String> = listOf("--enable-preview")
 
     override fun verifyWithDex(): Boolean = false
