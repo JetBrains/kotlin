@@ -76,7 +76,7 @@ Builds of the Gradle plugin are available through the
 ```kotlin
 plugins {
   kotlin("multiplatform") version "1.4.20"
-  id("com.bnorm.power.kotlin-power-assert") version "0.6.0"
+  id("com.bnorm.power.kotlin-power-assert") version "0.6.1"
 }
 ```
 
