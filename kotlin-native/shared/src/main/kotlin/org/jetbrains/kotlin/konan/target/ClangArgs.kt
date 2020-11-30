@@ -108,33 +108,33 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         KonanTarget.IOS_ARM32 -> listOf(
                 "-stdlib=libc++",
                 "-arch", "armv7",
-                "-isysroot", absoluteTargetSysRoot,
+                "--sysroot=$absoluteTargetSysRoot",
                 "-miphoneos-version-min=$osVersionMin"
         )
 
         KonanTarget.IOS_ARM64 -> listOf(
                 "-stdlib=libc++",
                 "-arch", "arm64",
-                "-isysroot", absoluteTargetSysRoot,
+                "--sysroot=$absoluteTargetSysRoot",
                 "-miphoneos-version-min=$osVersionMin"
         )
 
         KonanTarget.IOS_X64 -> listOf(
                 "-stdlib=libc++",
-                "-isysroot", absoluteTargetSysRoot,
+                "--sysroot=$absoluteTargetSysRoot",
                 "-miphoneos-version-min=$osVersionMin"
         )
 
         KonanTarget.TVOS_ARM64 -> listOf(
                 "-stdlib=libc++",
                 "-arch", "arm64",
-                "-isysroot", absoluteTargetSysRoot,
+                "--sysroot=$absoluteTargetSysRoot",
                 "-mtvos-version-min=$osVersionMin"
         )
 
         KonanTarget.TVOS_X64 -> listOf(
                 "-stdlib=libc++",
-                "-isysroot", absoluteTargetSysRoot,
+                "--sysroot=$absoluteTargetSysRoot",
                 "-mtvos-simulator-version-min=$osVersionMin"
         )
 
@@ -142,20 +142,20 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         KonanTarget.WATCHOS_ARM32 -> listOf(
                 "-stdlib=libc++",
                 "-arch", "armv7k",
-                "-isysroot", absoluteTargetSysRoot,
+                "--sysroot=$absoluteTargetSysRoot",
                 "-mwatchos-version-min=$osVersionMin"
         )
 
         KonanTarget.WATCHOS_X86 -> listOf(
                 "-stdlib=libc++",
                 "-arch", "i386",
-                "-isysroot", absoluteTargetSysRoot,
+                "--sysroot=$absoluteTargetSysRoot",
                 "-mwatchos-simulator-version-min=$osVersionMin"
         )
 
         KonanTarget.WATCHOS_X64 -> listOf(
                 "-stdlib=libc++",
-                "-isysroot", absoluteTargetSysRoot,
+                "--sysroot=$absoluteTargetSysRoot",
                 "-mwatchos-simulator-version-min=$osVersionMin"
         )
 
