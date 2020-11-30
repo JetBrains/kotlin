@@ -6,15 +6,15 @@ interface I
 val i: I = object : I {}
 
 @JvmRecord
-class MyRec1(val name: String) : <!DELEGATION_BY_IN_JVM_RECORD!>I by i<!>
+data class MyRec1(val name: String) : <!DELEGATION_BY_IN_JVM_RECORD!>I by i<!>
 
 @JvmRecord
-class MyRec2(val name: String) {
+data class MyRec2(val name: String) {
     <!FIELD_IN_JVM_RECORD!>val x: Int = 0<!>
 }
 
 @JvmRecord
-class MyRec3(val name: String) {
+data class MyRec3(val name: String) {
     <!FIELD_IN_JVM_RECORD!>val y: String
         get() = field + "1"<!>
 
@@ -24,12 +24,12 @@ class MyRec3(val name: String) {
 }
 
 @JvmRecord
-class MyRec4(val name: String) {
+data class MyRec4(val name: String) {
     <!FIELD_IN_JVM_RECORD!>val z: Int by lazy { 1 }<!>
 }
 
 @JvmRecord
-class MyRec5(val name: String) {
+data class MyRec5(val name: String) {
     val w: String get() = name + "1"
 }
 

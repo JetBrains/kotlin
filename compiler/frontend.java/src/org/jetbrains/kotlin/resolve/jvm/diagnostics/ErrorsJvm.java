@@ -126,6 +126,7 @@ public interface ErrorsJvm {
     DiagnosticFactory0<PsiElement> INNER_JVM_RECORD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> FIELD_IN_JVM_RECORD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> DELEGATION_BY_IN_JVM_RECORD = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> NON_DATA_CLASS_JVM_RECORD = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtDeclaration> NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
 

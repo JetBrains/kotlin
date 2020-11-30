@@ -1,11 +1,11 @@
 // !LANGUAGE: +JvmRecordSupport
 
-@JvmRecord
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class BasicRecord(val x: String)
 
 @JvmRecord
 data class BasicDataRecord(val x: String)
 
-@JvmRecord
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class BasicRecordWithSuperClass(val x: String) : Record()
 

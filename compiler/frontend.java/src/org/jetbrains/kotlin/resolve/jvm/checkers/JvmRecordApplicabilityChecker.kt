@@ -83,28 +83,6 @@ object JvmRecordApplicabilityChecker : DeclarationChecker {
             return
         }
 
-        val primaryConstructor = declaration.primaryConstructor
-        val parameters = primaryConstructor?.valueParameters ?: emptyList()
-        if (parameters.isEmpty()) {
-            (primaryConstructor?.valueParameterList ?: declaration.nameIdentifier)?.let {
-                context.trace.report(ErrorsJvm.JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS.on(it))
-                return
-            }
-        }
-
-        for (parameter in parameters) {
-            if (!parameter.hasValOrVar() || parameter.isMutable) {
-                context.trace.report(ErrorsJvm.JVM_RECORD_NOT_VAL_PARAMETER.on(parameter))
-                return
-            }
-        }
-
-        for (parameter in parameters.dropLast(1)) {
-            if (parameter.isVarArg) {
-                context.trace.report(ErrorsJvm.JVM_RECORD_NOT_LAST_VARARG_PARAMETER.on(parameter))
-                return
-            }
-        }
 
         for (member in declaration.declarations) {
             if (member !is KtProperty) continue
@@ -130,6 +108,34 @@ object JvmRecordApplicabilityChecker : DeclarationChecker {
             val reportSupertypeOn = declaration.nameIdentifier ?: declaration
             context.trace.report(ErrorsJvm.JVM_RECORD_EXTENDS_CLASS.on(reportSupertypeOn, supertype))
             return
+        }
+
+        if (!descriptor.isData) {
+            context.trace.report(ErrorsJvm.NON_DATA_CLASS_JVM_RECORD.on(reportOn))
+            return
+        }
+
+        val primaryConstructor = declaration.primaryConstructor
+        val parameters = primaryConstructor?.valueParameters ?: emptyList()
+        if (parameters.isEmpty()) {
+            (primaryConstructor?.valueParameterList ?: declaration.nameIdentifier)?.let {
+                context.trace.report(ErrorsJvm.JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS.on(it))
+                return
+            }
+        }
+
+        for (parameter in parameters) {
+            if (!parameter.hasValOrVar() || parameter.isMutable) {
+                context.trace.report(ErrorsJvm.JVM_RECORD_NOT_VAL_PARAMETER.on(parameter))
+                return
+            }
+        }
+
+        for (parameter in parameters.dropLast(1)) {
+            if (parameter.isVarArg) {
+                context.trace.report(ErrorsJvm.JVM_RECORD_NOT_LAST_VARARG_PARAMETER.on(parameter))
+                return
+            }
         }
     }
 }

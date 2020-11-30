@@ -1,25 +1,25 @@
 // !LANGUAGE: +JvmRecordSupport
 // SKIP_TXT
 
-@JvmRecord
-class <!JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS!>A0<!>
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+class A0
 
-@JvmRecord
-class <!JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS!>A1<!> {
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+class A1 {
     constructor()
 }
 
-@JvmRecord
-class A2<!JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS!>()<!>
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+class A2()
 
-@JvmRecord
-class A3(<!JVM_RECORD_NOT_VAL_PARAMETER!><!UNUSED_PARAMETER!>name<!>: String<!>)
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+class A3(<!UNUSED_PARAMETER!>name<!>: String)
 
-@JvmRecord
-class A4(<!JVM_RECORD_NOT_VAL_PARAMETER!>var name: String<!>)
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+class A4(var name: String)
 
-@JvmRecord
-class A5(vararg val name: String, <!JVM_RECORD_NOT_VAL_PARAMETER!><!UNUSED_PARAMETER!>y<!>: Int<!>)
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
+class A5(vararg val name: String, <!UNUSED_PARAMETER!>y<!>: Int)
 
 @JvmRecord
 <!NON_FINAL_JVM_RECORD!>open<!> class A6(val x: String)
@@ -35,7 +35,7 @@ class A5(vararg val name: String, <!JVM_RECORD_NOT_VAL_PARAMETER!><!UNUSED_PARAM
     X("");
 }
 
-@JvmRecord
+<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
 class A10(
     val x: String,
     val y: Int,

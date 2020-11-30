@@ -163,6 +163,7 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(INNER_JVM_RECORD, "@JvmRecord class should not be inner");
         MAP.put(FIELD_IN_JVM_RECORD, "It's not allowed to have non-constructor properties with backing filed in @JvmRecord class");
         MAP.put(DELEGATION_BY_IN_JVM_RECORD, "Delegation is not allowed for @JvmRecord classes");
+        MAP.put(NON_DATA_CLASS_JVM_RECORD, "Only data classes are allowed to be marked as @JvmRecord");
 
         String MESSAGE_FOR_CONCURRENT_HASH_MAP_CONTAINS =
                 "Method 'contains' from ConcurrentHashMap may have unexpected semantics: it calls 'containsValue' instead of 'containsKey'. " +
