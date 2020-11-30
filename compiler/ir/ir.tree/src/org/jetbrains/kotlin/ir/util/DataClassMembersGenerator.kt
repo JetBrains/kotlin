@@ -168,15 +168,13 @@ abstract class DataClassMembersGenerator(
 
             val irIntType = context.irBuiltIns.intType
 
-            val resultVarDescriptor = WrappedVariableDescriptor()
             val irResultVar = IrVariableImpl(
                 startOffset, endOffset,
                 IrDeclarationOrigin.DEFINED,
-                IrVariableSymbolImpl(resultVarDescriptor),
+                IrVariableSymbolImpl(),
                 Name.identifier("result"), irIntType,
                 isVar = true, isConst = false, isLateinit = false
             ).also {
-                resultVarDescriptor.bind(it)
                 it.parent = irFunction
                 it.initializer = getHashCodeOfProperty(properties[0])
             }

@@ -425,7 +425,7 @@ private inline fun IrClass.addAnonymousInitializer(builder: IrFunctionBuilder.()
         returnType = defaultType
         IrAnonymousInitializerImpl(
             startOffset, endOffset, origin,
-            IrAnonymousInitializerSymbolImpl(WrappedClassDescriptor())
+            IrAnonymousInitializerSymbolImpl()
         )
     }.also { anonymousInitializer ->
         declarations.add(anonymousInitializer)

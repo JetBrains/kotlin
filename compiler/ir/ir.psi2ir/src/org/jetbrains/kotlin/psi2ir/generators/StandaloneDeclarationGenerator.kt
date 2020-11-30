@@ -194,7 +194,7 @@ class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
         }
         irFunction.metadata = DescriptorMetadataSource.Function(descriptor)
 
-        symbolTable.withScope(descriptor) {
+        symbolTable.withScope(irFunction) {
             generateOverridenSymbols(irFunction, descriptor.overriddenDescriptors)
             generateScopedTypeParameterDeclarations(irFunction, descriptor.propertyIfAccessor.typeParameters)
             generateValueParameterDeclarations(irFunction, descriptor, defaultArgumentFactory)

@@ -60,6 +60,10 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
         result as D
     }
 
+    @ObsoleteDescriptorBasedAPI
+    override val hasDescriptor: Boolean
+        get() = false
+
     companion object {
         private const val GETTER_PREFIX = "<get"
         private const val SETTER_PREFIX = "<set"

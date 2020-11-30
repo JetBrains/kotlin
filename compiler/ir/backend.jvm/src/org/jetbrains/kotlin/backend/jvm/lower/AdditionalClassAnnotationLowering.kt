@@ -84,13 +84,11 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     }
 
     private fun buildEnumEntry(enumClass: IrClass, entryName: String): IrEnumEntry {
-        val descriptor = WrappedEnumEntryDescriptor()
         return IrEnumEntryImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
-            IrEnumEntrySymbolImpl(descriptor),
+            IrEnumEntrySymbolImpl(),
             Name.identifier(entryName)
         ).apply {
-            descriptor.bind(this)
             parent = enumClass
             enumClass.addChild(this)
         }

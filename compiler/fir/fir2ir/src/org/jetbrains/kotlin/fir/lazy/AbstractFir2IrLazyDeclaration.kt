@@ -19,7 +19,7 @@ interface AbstractFir2IrLazyDeclaration<F : FirMemberDeclaration, D : IrSymbolOw
     IrDeclaration, IrDeclarationParent, Fir2IrComponents {
 
     val fir: F
-    val symbol: Fir2IrBindableSymbol<*, D>
+    override val symbol: Fir2IrBindableSymbol<*, D>
 
     override val factory: IrFactory
         get() = irFactory
