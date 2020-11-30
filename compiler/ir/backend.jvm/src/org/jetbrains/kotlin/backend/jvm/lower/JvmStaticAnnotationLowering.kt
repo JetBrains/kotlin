@@ -171,4 +171,5 @@ private class MakeCallsStatic(val context: JvmBackendContext) : IrElementTransfo
 
 private fun IrDeclaration.isJvmStaticDeclaration(): Boolean =
     hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) ||
-            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true
+            (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true ||
+            (this as? IrProperty)?.getter?.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) == true

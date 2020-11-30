@@ -243,6 +243,11 @@ public class FirCompileKotlinAgainstKotlinTestGenerated extends AbstractFirCompi
         runTest("compiler/testData/compileKotlinAgainstKotlin/jvmStaticInObject.kt");
     }
 
+    @TestMetadata("jvmStaticInObjectPropertyReference.kt")
+    public void testJvmStaticInObjectPropertyReference() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/jvmStaticInObjectPropertyReference.kt");
+    }
+
     @TestMetadata("kotlinPropertyAsAnnotationParameter.kt")
     public void testKotlinPropertyAsAnnotationParameter() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/kotlinPropertyAsAnnotationParameter.kt");

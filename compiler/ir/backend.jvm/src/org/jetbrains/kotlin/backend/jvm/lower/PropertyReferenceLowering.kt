@@ -156,23 +156,29 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
         val wrapper: IrFunction
     )
 
-    private fun propertyReferenceKind(mutable: Boolean, i: Int) = PropertyReferenceKind(
-        context.ir.symbols.getPropertyReferenceClass(mutable, i, false),
-        context.ir.symbols.getPropertyReferenceClass(mutable, i, true),
-        context.ir.symbols.reflection.owner.functions.single { it.name.asString() == (if (mutable) "mutableProperty$i" else "property$i") }
-    )
+    private fun propertyReferenceKind(expression: IrCallableReference<*>, mutable: Boolean, i: Int): PropertyReferenceKind {
+        check(i in 0..2) { "Incorrect number of receivers ($i) for property reference: ${expression.render()}" }
+        return PropertyReferenceKind(
+            context.ir.symbols.getPropertyReferenceClass(mutable, i, false),
+            context.ir.symbols.getPropertyReferenceClass(mutable, i, true),
+            context.ir.symbols.reflection.owner.functions.single {
+                it.name.asString() == (if (mutable) "mutableProperty$i" else "property$i")
+            }
+        )
+    }
 
-    private fun propertyReferenceKindFor(expression: IrMemberAccessExpression<*>): PropertyReferenceKind =
+    private fun propertyReferenceKindFor(expression: IrCallableReference<*>): PropertyReferenceKind =
         expression.getter?.owner?.let {
             val boundReceivers = listOfNotNull(expression.dispatchReceiver, expression.extensionReceiver).size
             val needReceivers = listOfNotNull(it.dispatchReceiverParameter, it.extensionReceiverParameter).size
             // PropertyReference1 will swap the receivers if bound with the extension one, and PropertyReference0
             // has no way to bind two receivers at once.
-            if (boundReceivers == 2 || (expression.extensionReceiver != null && needReceivers == 2))
-                TODO("property reference with 2 receivers")
-            propertyReferenceKind(expression.setter != null, needReceivers - boundReceivers)
+            check(boundReceivers < 2 && (expression.extensionReceiver == null || needReceivers < 2)) {
+                "Property reference with two receivers is not supported: ${expression.render()}"
+            }
+            propertyReferenceKind(expression, expression.setter != null, needReceivers - boundReceivers)
         } ?: expression.field?.owner?.let {
-            propertyReferenceKind(!it.isFinal, if (it.isStatic || expression.dispatchReceiver != null) 0 else 1)
+            propertyReferenceKind(expression, !it.isFinal, if (it.isStatic || expression.dispatchReceiver != null) 0 else 1)
         } ?: throw AssertionError("property has no getter and no field: ${expression.dump()}")
 
     private data class PropertyInstance(val initializer: IrExpression, val index: Int)
@@ -343,14 +349,15 @@ private class PropertyReferenceLowering(val context: JvmBackendContext) : IrElem
             fun IrBuilderWithScope.setCallArguments(call: IrCall, arguments: List<IrValueParameter>) {
                 var index = 1
                 call.copyTypeArgumentsFrom(expression)
+                val hasBoundReceiver = expression.getBoundReceiver() != null
                 call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
-                    if (expression.dispatchReceiver != null)
+                    if (hasBoundReceiver)
                         irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type)
                     else
                         irImplicitCast(irGet(arguments[index++]), it.type)
                 }
                 call.extensionReceiver = call.symbol.owner.extensionReceiverParameter?.let {
-                    if (expression.extensionReceiver != null)
+                    if (hasBoundReceiver)
                         irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type)
                     else
                         irImplicitCast(irGet(arguments[index++]), it.type)
