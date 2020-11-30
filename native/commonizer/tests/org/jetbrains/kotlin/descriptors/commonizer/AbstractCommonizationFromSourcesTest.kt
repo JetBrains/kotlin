@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -174,16 +175,13 @@ private class AnalyzedModuleDependencies(
 
     companion object {
         val EMPTY = AnalyzedModuleDependencies(emptyMap(), emptyList())
-
-        fun create(regularDependencies: Map<Target, ModuleDescriptor>, expectByDependencies: List<ModuleDescriptor>) =
-            AnalyzedModuleDependencies(regularDependencies.mapValues { listOf(it.value) }, expectByDependencies)
     }
 }
 
 private class AnalyzedModules(
     val originalModules: Map<Target, ModuleDescriptor>,
     val commonizedModules: Map<Target, ModuleDescriptor>,
-    val dependeeModules: Map<Target, ModuleDescriptor>
+    val dependeeModules: Map<Target, List<ModuleDescriptor>>
 ) {
     val leafTargets: Set<LeafTarget>
     val sharedTarget: SharedTarget
@@ -214,13 +212,13 @@ private class AnalyzedModules(
                     target = leafTarget,
                     builtInsClass = originalModule.builtIns::class.java,
                     builtInsProvider = MockBuiltInsProvider(originalModule.builtIns),
-                    modulesProvider = MockModulesProvider(originalModule),
-                    dependeeModulesProvider = dependeeModules[leafTarget]?.let(::MockModulesProvider)
+                    modulesProvider = MockModulesProvider.create(originalModule),
+                    dependeeModulesProvider = dependeeModules[leafTarget]?.let(MockModulesProvider::create)
                 )
             )
         }
 
-        parameters.dependeeModulesProvider = dependeeModules[sharedTarget]?.let(::MockModulesProvider)
+        parameters.dependeeModulesProvider = dependeeModules[sharedTarget]?.let(MockModulesProvider::create)
 
         return parameters
     }
@@ -230,20 +228,35 @@ private class AnalyzedModules(
             sourceModuleRoots: SourceModuleRoots,
             parentDisposable: Disposable
         ): AnalyzedModules = with(sourceModuleRoots) {
-            // first, build the modules that are are the dependencies for "original" and "commonized" modules
-            val dependeeModules =
-                createModules(sharedTarget, dependeeRoots, AnalyzedModuleDependencies.EMPTY, parentDisposable, isDependeeModule = true)
+            // phase 1: provide the modules that are the dependencies for "original" and "commonized" modules
+            val (dependeeModules, dependencies) = createDependeeModules(sharedTarget, dependeeRoots, parentDisposable)
 
-            val dependencies = AnalyzedModuleDependencies.create(
-                regularDependencies = dependeeModules,
-                expectByDependencies = listOfNotNull(dependeeModules[sharedTarget])
-            )
-
-            // then, build "original" and "commonized" modules
+            // phase 2: build "original" and "commonized" modules
             val originalModules = createModules(sharedTarget, originalRoots, dependencies, parentDisposable)
             val commonizedModules = createModules(sharedTarget, commonizedRoots, dependencies, parentDisposable)
 
             return AnalyzedModules(originalModules, commonizedModules, dependeeModules)
+        }
+
+        private fun createDependeeModules(
+            sharedTarget: SharedTarget,
+            dependeeRoots: Map<out Target, SourceModuleRoot>,
+            parentDisposable: Disposable
+        ): Pair<Map<Target, List<ModuleDescriptor>>, AnalyzedModuleDependencies> {
+            val customDependeeModules =
+                createModules(sharedTarget, dependeeRoots, AnalyzedModuleDependencies.EMPTY, parentDisposable, isDependeeModule = true)
+
+            val stdlibModule = DefaultBuiltIns.Instance.builtInsModule
+
+            val dependeeModules = (sharedTarget.targets + sharedTarget).associateWith { target ->
+                // prepend stdlib for each target explicitly, so that the commonizer can see symbols from the stdlib
+                listOfNotNull(stdlibModule, customDependeeModules[target])
+            }
+
+            return dependeeModules to AnalyzedModuleDependencies(
+                regularDependencies = dependeeModules,
+                expectByDependencies = dependeeModules.getValue(sharedTarget).filter { module -> module !== stdlibModule }
+            )
         }
 
         private fun createModules(

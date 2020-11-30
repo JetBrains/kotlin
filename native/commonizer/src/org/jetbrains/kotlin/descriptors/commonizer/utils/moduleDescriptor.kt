@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.library.metadata.NativeTypeTransformer
 import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.konan.impl.KlibResolvedModuleDescriptorsFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
 
@@ -38,27 +39,33 @@ internal fun ModuleDescriptor.resolveClassOrTypeAlias(classId: ClassId): Classif
         return null
 
     return packageFragmentProvider.packageFragments(classId.packageFqName).asSequence().mapNotNull { packageFragment ->
-        var memberScope = packageFragment.getMemberScope()
-
-        val classifierName = if ('.' in relativeClassName.asString()) {
-            // resolve member scope of the nested class
-            relativeClassName.pathSegments().reduce { first, second ->
-                memberScope = (memberScope.getContributedClassifier(
-                    first,
-                    NoLookupLocation.FOR_ALREADY_TRACKED
-                ) as? ClassDescriptor)?.unsubstitutedMemberScope ?: return@mapNotNull null
-
-                second
-            }
-        } else {
-            relativeClassName.shortName()
-        }
-
-        memberScope.getContributedClassifier(
-            classifierName,
-            NoLookupLocation.FOR_ALREADY_TRACKED
-        ) as? ClassifierDescriptorWithTypeParameters
+        packageFragment.getMemberScope().resolveClassOrTypeAlias(relativeClassName)
     }.firstOrNull()
+}
+
+internal fun MemberScope.resolveClassOrTypeAlias(relativeClassName: FqName): ClassifierDescriptorWithTypeParameters? {
+    var memberScope: MemberScope = this
+    if (memberScope is MemberScope.Empty)
+        return null
+
+    val classifierName = if ('.' in relativeClassName.asString()) {
+        // resolve member scope of the nested class
+        relativeClassName.pathSegments().reduce { first, second ->
+            memberScope = (memberScope.getContributedClassifier(
+                first,
+                NoLookupLocation.FOR_ALREADY_TRACKED
+            ) as? ClassDescriptor)?.unsubstitutedMemberScope ?: return null
+
+            second
+        }
+    } else {
+        relativeClassName.shortName()
+    }
+
+    return memberScope.getContributedClassifier(
+        classifierName,
+        NoLookupLocation.FOR_ALREADY_TRACKED
+    ) as? ClassifierDescriptorWithTypeParameters
 }
 
 internal const val MODULE_NAME_PREFIX = "module:"

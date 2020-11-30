@@ -15,6 +15,7 @@ class Parameters(
     private val _targetProviders = LinkedHashMap<LeafTarget, TargetProvider>()
 
     val targetProviders: List<TargetProvider> get() = _targetProviders.values.toList()
+    val sharedTarget: SharedTarget get() = SharedTarget(_targetProviders.keys)
 
     // common module dependencies (ex: Kotlin stdlib)
     var dependeeModulesProvider: ModulesProvider? = null

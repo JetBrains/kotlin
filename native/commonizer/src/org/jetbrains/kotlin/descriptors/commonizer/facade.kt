@@ -9,9 +9,10 @@ import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVi
 import org.jetbrains.kotlin.descriptors.commonizer.builder.DeclarationsBuilderVisitor2
 import org.jetbrains.kotlin.descriptors.commonizer.builder.createGlobalBuilderComponents
 import org.jetbrains.kotlin.descriptors.commonizer.core.CommonizationVisitor
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTreeMerger
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.DefaultCirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTreeMerger.CirTreeMergeResult
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 
 fun runCommonization(parameters: Parameters): Result {
     if (!parameters.hasAnythingToCommonize())
@@ -19,14 +20,8 @@ fun runCommonization(parameters: Parameters): Result {
 
     val storageManager = LockBasedStorageManager("Declaration descriptors commonization")
 
-    // build merged tree:
-    val cache = DefaultCirClassifiersCache()
-    val mergeResult = CirTreeMerger(storageManager, cache, parameters).merge()
-
-    // commonize:
+    val mergeResult = mergeAndCommonize(storageManager, parameters)
     val mergedTree = mergeResult.root
-    mergedTree.accept(CommonizationVisitor(cache, mergedTree), Unit)
-    parameters.progressLogger?.invoke("Commonized declarations")
 
     // build resulting descriptors:
     val components = mergedTree.createGlobalBuilderComponents(storageManager, parameters)
@@ -50,4 +45,26 @@ fun runCommonization(parameters: Parameters): Result {
     parameters.progressLogger?.invoke("Prepared new descriptors")
 
     return Result.Commonized(modulesByTargets)
+}
+
+private fun mergeAndCommonize(storageManager: StorageManager, parameters: Parameters): CirTreeMergeResult {
+    // build merged tree:
+    val classifiers = CirKnownClassifiers(
+        commonized = CirCommonizedClassifiers.default(),
+        forwardDeclarations = CirForwardDeclarations.default(),
+        dependeeLibraries = mapOf(
+            // for now, supply only common dependee libraries (ex: Kotlin stdlib)
+            parameters.sharedTarget to CirProvidedClassifiers.fromModules(storageManager) {
+                parameters.dependeeModulesProvider?.loadModules(emptyList())?.values.orEmpty()
+            }
+        )
+    )
+    val mergeResult = CirTreeMerger(storageManager, classifiers, parameters).merge()
+
+    // commonize:
+    val mergedTree = mergeResult.root
+    mergedTree.accept(CommonizationVisitor(classifiers, mergedTree), Unit)
+    parameters.progressLogger?.invoke("Commonized declarations")
+
+    return mergeResult
 }

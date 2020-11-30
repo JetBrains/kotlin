@@ -11,10 +11,9 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMapNotNull
 import org.jetbrains.kotlin.descriptors.commonizer.utils.internedClassId
-import org.jetbrains.kotlin.descriptors.commonizer.utils.isUnderStandardKotlinPackages
 
 internal class CommonizationVisitor(
-    private val cache: CirClassifiersCache,
+    private val classifiers: CirKnownClassifiers,
     private val root: CirRootNode
 ) : CirNodeVisitor<Unit, Unit> {
     override fun visitRootNode(node: CirRootNode, data: Unit) {
@@ -88,7 +87,7 @@ internal class CommonizationVisitor(
             val companionObjectName = node.targetDeclarations.mapTo(HashSet()) { it!!.companion }.singleOrNull()
             if (companionObjectName != null) {
                 val companionObjectClassId = internedClassId(node.classId, companionObjectName)
-                val companionObjectNode = cache.classNode(companionObjectClassId)
+                val companionObjectNode = classifiers.commonized.classNode(companionObjectClassId)
                     ?: error("Can't find companion object with class ID $companionObjectClassId")
 
                 if (companionObjectNode.commonDeclaration() != null) {
@@ -129,10 +128,10 @@ internal class CommonizationVisitor(
         val supertypesMap: MutableMap<CirType, CommonizedGroup<CirType>> = linkedMapOf() // preserve supertype order
         for ((index, typeAlias) in targetDeclarations.withIndex()) {
             val expandedClassId = typeAlias!!.expandedType.classifierId
-            if (expandedClassId.packageFqName.isUnderStandardKotlinPackages)
-                return null // this case is not supported
+            if (classifiers.commonDependeeLibraries?.hasClassifier(expandedClassId) == true)
+                return null // this case is not supported yet
 
-            val expandedClassNode = cache.classNode(expandedClassId) ?: return null
+            val expandedClassNode = classifiers.commonized.classNode(expandedClassId) ?: return null
             val expandedClass = expandedClassNode.targetDeclarations[index]
                 ?: error("Can't find expanded class with class ID $expandedClassId and index $index for type alias $classId")
 
@@ -148,7 +147,7 @@ internal class CommonizationVisitor(
             if (supertypesMap.isNullOrEmpty())
                 emptyList()
             else
-                supertypesMap.values.compactMapNotNull { supertypesGroup -> commonize(supertypesGroup, TypeCommonizer(cache)) }
+                supertypesMap.values.compactMapNotNull { supertypesGroup -> commonize(supertypesGroup, TypeCommonizer(classifiers)) }
         )
     }
 }

@@ -67,7 +67,7 @@ class CommonizerFacadeTest {
                         target = LeafTarget(targetName),
                         builtInsClass = DefaultBuiltIns::class.java,
                         builtInsProvider = BuiltInsProvider.defaultBuiltInsProvider,
-                        modulesProvider = MockModulesProvider(moduleNames),
+                        modulesProvider = MockModulesProvider.create(moduleNames),
                         dependeeModulesProvider = null
                     )
                 )
