@@ -234,11 +234,14 @@ class FakeOverrideGenerator(
         for (baseSymbol in baseSymbols) {
             val unwrapped = baseSymbol.unwrapFakeOverrides()
             // Do not create fake overrides for accessors if not allowed to do so, e.g., private lateinit var.
-            if (unwrapped.fir.getter?.allowsToHaveFakeOverride != true) {
+            // For delegated Fir properties with null accessors, DelegatedMemberGenerator creates their IR accessors.
+            // We'd like to keep the accessors of their fakeoverrides. See KT-43342.
+            val isFromDelegated = unwrapped.fir.origin == FirDeclarationOrigin.Delegated
+            if (unwrapped.fir.getter?.allowsToHaveFakeOverride != true && !(isFromDelegated && unwrapped.fir.getter == null)) {
                 getter = null
             }
             // or private setter
-            if (unwrapped.fir.setter?.allowsToHaveFakeOverride != true) {
+            if (unwrapped.fir.setter?.allowsToHaveFakeOverride != true && !(isFromDelegated && unwrapped.fir.setter == null)) {
                 setter = null
             }
         }
