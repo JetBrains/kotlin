@@ -774,6 +774,11 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/callableReference/kt36975.kt");
         }
 
+        @TestMetadata("kt39612.kt")
+        public void testKt39612() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/callableReference/kt39612.kt");
+        }
+
         @TestMetadata("nameIntrinsicWithImplicitThis.kt")
         public void testNameIntrinsicWithImplicitThis() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/callableReference/nameIntrinsicWithImplicitThis.kt");
