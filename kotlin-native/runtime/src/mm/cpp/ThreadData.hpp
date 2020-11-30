@@ -9,6 +9,7 @@
 #include <pthread.h>
 
 #include "GlobalsRegistry.hpp"
+#include "ThreadLocalStorage.hpp"
 #include "Utils.hpp"
 
 namespace kotlin {
@@ -31,9 +32,12 @@ public:
 
     GlobalsRegistry::ThreadQueue* globalsThreadQueue() noexcept { return &globalsThreadQueue_; }
 
+    ThreadLocalStorage& tls() noexcept { return tls_; }
+
 private:
     const pthread_t threadId_;
     GlobalsRegistry::ThreadQueue globalsThreadQueue_;
+    ThreadLocalStorage tls_;
 };
 
 } // namespace mm

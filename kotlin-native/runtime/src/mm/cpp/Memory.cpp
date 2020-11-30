@@ -31,6 +31,10 @@ ALWAYS_INLINE mm::ThreadRegistry::Node* FromMemoryState(MemoryState* state) {
     return reinterpret_cast<mm::ThreadRegistry::Node*>(state);
 }
 
+ALWAYS_INLINE mm::ThreadData* GetThreadData(MemoryState* state) {
+    return FromMemoryState(state)->Get();
+}
+
 } // namespace
 
 extern "C" MemoryState* InitMemory(bool firstRuntime) {
@@ -54,4 +58,20 @@ extern "C" RUNTIME_NOTHROW void InitAndRegisterGlobal(ObjHeader** location, cons
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(threadData, location);
     RuntimeCheck(false, "Unimplemented");
+}
+
+extern "C" RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, void** key, int size) {
+    GetThreadData(memory)->tls().AddRecord(key, size);
+}
+
+extern "C" RUNTIME_NOTHROW void CommitTLSStorage(MemoryState* memory) {
+    GetThreadData(memory)->tls().Commit();
+}
+
+extern "C" RUNTIME_NOTHROW void ClearTLS(MemoryState* memory) {
+    GetThreadData(memory)->tls().Clear();
+}
+
+extern "C" RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
+    return mm::ThreadRegistry::Instance().CurrentThreadData()->tls().Lookup(key, index);
 }

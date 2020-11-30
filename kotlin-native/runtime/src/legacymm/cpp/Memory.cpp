@@ -600,10 +600,10 @@ public:
         RuntimeAssert(storage_ == nullptr, "Storage must not be committed");
         auto it = map_->find(key);
         if (it != map_->end()) {
-            RuntimeAssert(it->second.second == size, "Attempt to add TLS record with the same key and different size");
+            RuntimeAssert(it->second.size == size, "Attempt to add TLS record with the same key and different size");
             return;
         }
-        map_->emplace(key, std::make_pair(size_, size));
+        map_->emplace(key, Entry{size_, size});
         size_ += size;
     }
 
@@ -629,15 +629,20 @@ public:
         }
         auto it = map_->find(key);
         RuntimeAssert(it != map_->end(), "Must be there");
-        int offset = it->second.first;
-        RuntimeAssert(offset + index < size_, "Out of bound in TLS access");
+        auto entry = it->second;
+        RuntimeAssert(index < entry.size, "Out of bounds in TLS access");
         lastKey_ = key;
-        lastOffset_ = offset;
-        return storage_ + offset + index;
+        lastOffset_ = entry.offset;
+        return storage_ + entry.offset + index;
     }
 
 private:
-    using Map = KStdUnorderedMap<Key, std::pair<int, int>>;
+    struct Entry {
+        int offset;
+        int size;
+    };
+
+    using Map = KStdUnorderedMap<Key, Entry>;
 
     Map* map_ = nullptr;
     KRef* storage_ = nullptr;

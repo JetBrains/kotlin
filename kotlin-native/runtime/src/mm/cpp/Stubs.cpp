@@ -158,22 +158,6 @@ void EnsureNeverFrozen(ObjHeader* obj) {
     RuntimeCheck(false, "Unimplemented");
 }
 
-RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, void** key, int size) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW void CommitTLSStorage(MemoryState* memory) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW void ClearTLS(MemoryState* memory) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
-RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
-    RuntimeCheck(false, "Unimplemented");
-}
-
 RUNTIME_NOTHROW void GC_RegisterWorker(void* worker) {
     RuntimeCheck(false, "Unimplemented");
 }
