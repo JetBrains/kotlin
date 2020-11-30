@@ -62,6 +62,12 @@ class JavaClassImpl(psiClass: PsiClass) : JavaClassifierImpl<PsiClass>(psiClass)
     override val isRecord: Boolean
         get() = false
 
+    override val isSealed: Boolean
+        get() = JavaElementUtil.isSealed(this)
+
+    override val permittedTypes: Collection<JavaClassifierType>
+        get() = emptyList()
+
     override val outerClass: JavaClassImpl?
         get() {
             val outer = psi.containingClass

@@ -69,6 +69,8 @@ class BinaryJavaClass(
     override val isRecord get() = false
 
     override val lightClassOriginKind: LightClassOriginKind? get() = null
+    override val isSealed: Boolean get() = permittedTypes.isNotEmpty()
+    override val permittedTypes = arrayListOf<JavaClassifierType>()
 
     override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = false
 
