@@ -232,13 +232,14 @@ class FakeOverrideGenerator(
 
     private fun IrProperty.discardAccessorsAccordingToBaseVisibility(baseSymbols: List<FirPropertySymbol>) {
         for (baseSymbol in baseSymbols) {
-            val unwrapped = baseSymbol.unwrapFakeOverrides()
+            val unwrappedSymbol = baseSymbol.unwrapFakeOverrides()
+            val unwrappedProperty = unwrappedSymbol.fir
             // Do not create fake overrides for accessors if not allowed to do so, e.g., private lateinit var.
-            if (unwrapped.fir.getter?.allowsToHaveFakeOverride != true) {
+            if (!(unwrappedProperty.getter?.allowsToHaveFakeOverride ?: unwrappedProperty.allowsToHaveFakeOverride)) {
                 getter = null
             }
             // or private setter
-            if (unwrapped.fir.setter?.allowsToHaveFakeOverride != true) {
+            if (!(unwrappedProperty.setter?.allowsToHaveFakeOverride ?: unwrappedProperty.allowsToHaveFakeOverride)) {
                 setter = null
             }
         }
