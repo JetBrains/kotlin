@@ -245,7 +245,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
             if (!useOptimizedSuperClass) {
                 // This is the case of a fun interface wrapper over a (maybe adapted) function reference,
-                // with `-Xno-optimized-callable-referenced` enabled. We can't use constructors of FunctionReferenceImpl,
+                // with `-Xno-optimized-callable-references` enabled. We can't use constructors of FunctionReferenceImpl,
                 // so we'd need to basically generate a full class for a reference inheriting from FunctionReference,
                 // effectively disabling the optimization of fun interface wrappers over references.
                 // This scenario is probably not very popular because it involves using equals/hashCode on function references
@@ -254,8 +254,11 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 // TODO: generate getFunctionDelegate, equals and hashCode properly in this case
                 functionReferenceClass.addFunction("equals", backendContext.irBuiltIns.booleanType, Modality.ABSTRACT).apply {
                     addValueParameter("other", backendContext.irBuiltIns.anyNType)
+                    overriddenSymbols = listOf(functionSuperClass.functions.single { isEqualsFromAny(it.owner) })
                 }
-                functionReferenceClass.addFunction("hashCode", backendContext.irBuiltIns.intType, Modality.ABSTRACT)
+                functionReferenceClass.addFunction("hashCode", backendContext.irBuiltIns.intType, Modality.ABSTRACT).apply {
+                    overriddenSymbols = listOf(functionSuperClass.functions.single { isHashCodeFromAny(it.owner) })
+                }
                 return
             }
 
@@ -273,6 +276,13 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 }
             }.generate()
         }
+
+        private fun isEqualsFromAny(f: IrSimpleFunction): Boolean =
+            f.name.asString() == "equals" && f.extensionReceiverParameter == null &&
+                    f.valueParameters.singleOrNull()?.type?.isNullableAny() == true
+
+        private fun isHashCodeFromAny(f: IrSimpleFunction): Boolean =
+            f.name.asString() == "hashCode" && f.extensionReceiverParameter == null && f.valueParameters.isEmpty()
 
         private fun createConstructor(): IrConstructor =
             functionReferenceClass.addConstructor {

@@ -5214,6 +5214,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/funInterface/funConversionInVararg.kt");
         }
 
+        @TestMetadata("noOptimizedCallableReferences.kt")
+        public void testNoOptimizedCallableReferences() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/noOptimizedCallableReferences.kt");
+        }
+
         @TestMetadata("partialSam.kt")
         public void testPartialSam() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/partialSam.kt");

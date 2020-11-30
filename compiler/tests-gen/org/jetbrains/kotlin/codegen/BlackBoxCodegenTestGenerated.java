@@ -13594,6 +13594,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/funInterface/multimodule.kt");
         }
 
+        @TestMetadata("noOptimizedCallableReferences.kt")
+        public void testNoOptimizedCallableReferences() throws Exception {
+            runTest("compiler/testData/codegen/box/funInterface/noOptimizedCallableReferences.kt");
+        }
+
         @TestMetadata("nonAbstractMethod.kt")
         public void testNonAbstractMethod() throws Exception {
             runTest("compiler/testData/codegen/box/funInterface/nonAbstractMethod.kt");
