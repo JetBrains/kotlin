@@ -13,8 +13,6 @@ open class KotlinNativePlatformPlugin: KotlinPlatformImplementationPluginBase("n
     private val Project.konanMultiplatformTasks: Collection<KonanCompileTask>
         get() = tasks.withType(KonanCompileTask::class.java).filter { it.enableMultiplatform }
 
-    override fun configurationsForCommonModuleDependency(project: Project) = emptyList<Configuration>()
-
     open class RequestedCommonSourceSet @Inject constructor(private val name: String): Named {
         override fun getName() = name
     }
