@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredCallableSymbols
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -422,9 +424,13 @@ private fun FirRegularClass.createRawArguments(
 private fun FirAnnotationCallBuilder.buildArgumentMapping(
     session: FirSession,
     javaTypeParameterStack: JavaTypeParameterStack,
-    classId: ClassId,
+    classId: ClassId?,
     annotationArguments: Collection<JavaAnnotationArgument>
 ): LinkedHashMap<FirExpression, FirValueParameter>? {
+    if (classId == null) {
+        annotationTypeRef = buildErrorTypeRef { diagnostic = ConeUnresolvedReferenceError() }
+        return null
+    }
     val lookupTag = ConeClassLikeLookupTagImpl(classId)
     annotationTypeRef = buildResolvedTypeRef {
         type = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
@@ -452,7 +458,6 @@ internal fun JavaAnnotation.toFirAnnotationCall(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
 ): FirAnnotationCall {
     return buildAnnotationCall {
-        val classId = classId!!
         val mapping = buildArgumentMapping(session, javaTypeParameterStack, classId, arguments)
         argumentList = if (mapping != null) {
             buildResolvedArgumentList(mapping)
