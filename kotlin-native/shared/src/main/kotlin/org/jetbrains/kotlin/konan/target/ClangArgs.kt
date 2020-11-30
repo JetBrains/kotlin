@@ -46,7 +46,6 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         KonanTarget.MACOS_X64 -> "$absoluteTargetToolchain/usr/bin"
         else -> throw TargetSupportException("Unexpected host platform")
     }
-
     // TODO: Use buildList
     private val commonClangArgs: List<String> = mutableListOf<List<String>>().apply {
         add(listOf("-B$binDir", "-fno-stack-protector"))
@@ -55,6 +54,18 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         }
         if (configurables is TargetableConfigurables) {
             add(listOf("-target", configurables.targetArg!!))
+        }
+        val hasCustomSysroot = configurables is ZephyrConfigurables
+                || configurables is WasmConfigurables
+                || configurables is AndroidConfigurables
+        if (!hasCustomSysroot) {
+            when (configurables) {
+                // isysroot and sysroot on darwin are _almost_ synonyms.
+                // The first one parses SDKSettings.json while second one is not.
+                is AppleConfigurables -> add(listOf("-isysroot", absoluteTargetSysRoot))
+                else -> add(listOf("--sysroot=$absoluteTargetSysRoot"))
+            }
+
         }
     }.flatten()
 
@@ -65,76 +76,63 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
             }
 
     private val specificClangArgs: List<String> = when (target) {
-        KonanTarget.LINUX_X64 -> listOf(
-                "--sysroot=$absoluteTargetSysRoot",
-        )
+        KonanTarget.LINUX_X64 -> listOf()
 
         KonanTarget.LINUX_ARM32_HFP -> listOf(
                 "-mfpu=vfp", "-mfloat-abi=hard",
-                "--sysroot=$absoluteTargetSysRoot",
                 // TODO: those two are hacks.
                 "-I$absoluteTargetSysRoot/usr/include/c++/4.8.3",
                 "-I$absoluteTargetSysRoot/usr/include/c++/4.8.3/arm-linux-gnueabihf"
         )
 
         KonanTarget.LINUX_ARM64 -> listOf(
-                "--sysroot=$absoluteTargetSysRoot",
                 "-I$absoluteTargetSysRoot/usr/include/c++/7",
                 "-I$absoluteTargetSysRoot/usr/include/c++/7/aarch64-linux-gnu"
         )
 
         KonanTarget.LINUX_MIPS32 -> listOf(
-                "--sysroot=$absoluteTargetSysRoot",
                 "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4",
                 "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4/mips-unknown-linux-gnu"
         )
 
         KonanTarget.LINUX_MIPSEL32 -> listOf(
-                "--sysroot=$absoluteTargetSysRoot",
                 "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4",
                 "-I$absoluteTargetSysRoot/usr/include/c++/4.9.4/mipsel-unknown-linux-gnu"
         )
 
         KonanTarget.MINGW_X64, KonanTarget.MINGW_X86 -> listOf(
-                "--sysroot=$absoluteTargetSysRoot", "-Xclang",
-                "-flto-visibility-public-std"
+                "-Xclang", "-flto-visibility-public-std"
         )
 
         KonanTarget.MACOS_X64 -> listOf(
-                "--sysroot=$absoluteTargetSysRoot",
                 "-mmacosx-version-min=$osVersionMin"
         )
 
         KonanTarget.IOS_ARM32 -> listOf(
                 "-stdlib=libc++",
                 "-arch", "armv7",
-                "--sysroot=$absoluteTargetSysRoot",
                 "-miphoneos-version-min=$osVersionMin"
         )
 
         KonanTarget.IOS_ARM64 -> listOf(
                 "-stdlib=libc++",
                 "-arch", "arm64",
-                "--sysroot=$absoluteTargetSysRoot",
                 "-miphoneos-version-min=$osVersionMin"
         )
 
         KonanTarget.IOS_X64 -> listOf(
                 "-stdlib=libc++",
-                "--sysroot=$absoluteTargetSysRoot",
                 "-miphoneos-version-min=$osVersionMin"
         )
 
         KonanTarget.TVOS_ARM64 -> listOf(
                 "-stdlib=libc++",
                 "-arch", "arm64",
-                "--sysroot=$absoluteTargetSysRoot",
                 "-mtvos-version-min=$osVersionMin"
         )
 
         KonanTarget.TVOS_X64 -> listOf(
                 "-stdlib=libc++",
-                "--sysroot=$absoluteTargetSysRoot",
                 "-mtvos-simulator-version-min=$osVersionMin"
         )
 
@@ -142,20 +140,17 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
         KonanTarget.WATCHOS_ARM32 -> listOf(
                 "-stdlib=libc++",
                 "-arch", "armv7k",
-                "--sysroot=$absoluteTargetSysRoot",
                 "-mwatchos-version-min=$osVersionMin"
         )
 
         KonanTarget.WATCHOS_X86 -> listOf(
                 "-stdlib=libc++",
                 "-arch", "i386",
-                "--sysroot=$absoluteTargetSysRoot",
                 "-mwatchos-simulator-version-min=$osVersionMin"
         )
 
         KonanTarget.WATCHOS_X64 -> listOf(
                 "-stdlib=libc++",
-                "--sysroot=$absoluteTargetSysRoot",
                 "-mwatchos-simulator-version-min=$osVersionMin"
         )
 
