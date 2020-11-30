@@ -75,7 +75,7 @@ interface AppleConfigurables : Configurables, ClangFlags {
 interface MingwConfigurables : TargetableConfigurables, ClangFlags
 
 interface GccConfigurables : TargetableConfigurables, ClangFlags {
-    val gccToolchain get() = hostString("gccToolchain")
+    val gccToolchain get() = targetString("gccToolchain")
     val absoluteGccToolchain get() = absolute(gccToolchain)
 
     val libGcc get() = targetString("libGcc")!!
