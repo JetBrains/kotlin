@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.idea.fir.*
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
@@ -143,10 +141,7 @@ internal object FirReferenceResolveHelper {
         when (fir) {
             is FirResolvedTypeRef -> {
                 if (expression.isPartOfUserTypeRefQualifier()) {
-                    val typeQualifier = findPossibleTypeQualifier(expression, fir)?.toTargetPsi(session, symbolBuilder)
-                    val typeOrPackageQualifier = typeQualifier ?: getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = true)
-
-                    return listOfNotNull(typeOrPackageQualifier)
+                    return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder, forQualifiedType = true))
                 }
                 return listOfNotNull(fir.toTargetSymbol(session, symbolBuilder))
             }
@@ -278,34 +273,5 @@ internal object FirReferenceResolveHelper {
                 return emptyList()
             }
         }
-    }
-
-    private fun findPossibleTypeQualifier(qualifier: KtSimpleNameExpression, wholeTypeFir: FirResolvedTypeRef): ClassId? {
-        val qualifierToResolve = qualifier.parent as? KtUserType
-            ?: error("$qualifier should be a part of KtUserType")
-
-        val wholeType = (wholeTypeFir.psi as? KtTypeReference)?.typeElement as? KtUserType
-            ?: error("$wholeTypeFir psi should point to KtTypeReference")
-
-        val qualifiersToDrop = countQualifiersToDrop(wholeType, qualifierToResolve)
-        return wholeTypeFir.type.classId?.dropLastNestedClasses(qualifiersToDrop)
-    }
-
-    /**
-     * @return class id without [classesToDrop] last nested classes, or `null` if [classesToDrop] is too big.
-     *
-     * Example: `foo.bar.Baz.Inner` with 1 dropped class is `foo.bar.Baz`, and with 2 dropped class is `null`.
-     */
-    private fun ClassId.dropLastNestedClasses(classesToDrop: Int) = generateSequence(this) { it.outerClassId }.drop(classesToDrop).firstOrNull()
-
-    /**
-     * @return How many qualifiers needs to be dropped from [wholeType] to get [nestedType].
-     *
-     * Example: to get `foo.bar` from `foo.bar.Baz.Inner`, you need to drop 2 qualifiers (`Inner` and `Baz`).
-     */
-    private fun countQualifiersToDrop(wholeType: KtUserType, nestedType: KtUserType): Int {
-        val qualifierIndex = generateSequence(wholeType) { it.qualifier }.indexOf(nestedType)
-        require(qualifierIndex != -1) { "Whole type $wholeType should contain $nestedType, but it didn't" }
-        return qualifierIndex
     }
 }
