@@ -50,6 +50,7 @@ dependencies {
     testCompile(protobufCompareSourceSet.output)
 
     testCompile(projectTests(":compiler:cli"))
+    testCompile(projectTests(":compiler:incremental-compilation-impl"))
     testCompile(projectTests(":plugins:jvm-abi-gen"))
     testCompile(projectTests(":plugins:android-extensions-compiler"))
     testCompile(projectTests(":plugins:parcelize:parcelize-compiler"))

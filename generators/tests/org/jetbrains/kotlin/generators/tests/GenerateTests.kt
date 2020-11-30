@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.fir.plugin.AbstractFirAllOpenDiagnosticTest
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.incremental.*
-import org.jetbrains.kotlin.jvm.abi.AbstractCompareJvmAbiTest
-import org.jetbrains.kotlin.jvm.abi.AbstractCompileAgainstJvmAbiTest
-import org.jetbrains.kotlin.jvm.abi.AbstractJvmAbiContentTest
+import org.jetbrains.kotlin.jvm.abi.*
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
 import org.jetbrains.kotlin.kapt.cli.test.AbstractKaptToolIntegrationTest
 import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTest
@@ -169,15 +167,45 @@ fun main(args: Array<String>) {
 
         testGroup("plugins/jvm-abi-gen/test", "plugins/jvm-abi-gen/testData") {
             testClass<AbstractCompareJvmAbiTest> {
-                model("compare", recursive = false, extension = null)
+                model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
             }
 
             testClass<AbstractJvmAbiContentTest> {
-                model("content", recursive = false, extension = null)
+                model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
             }
 
             testClass<AbstractCompileAgainstJvmAbiTest> {
-                model("compile", recursive = false, extension = null)
+                model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
+            }
+
+            testClass<AbstractIrCompareJvmAbiTest> {
+                model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractIrJvmAbiContentTest> {
+                model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
+            }
+
+            testClass<AbstractIrCompileAgainstJvmAbiTest> {
+                model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM_IR)
+            }
+        }
+
+        testGroup(
+            "plugins/jvm-abi-gen/test", "plugins/jvm-abi-gen/testData",
+            testRunnerMethodName = "runTestWithCustomIgnoreDirective",
+            additionalRunnerArguments = listOf("\"// IGNORE_BACKEND_LEGACY: \"")
+        ) {
+            testClass<AbstractLegacyCompareJvmAbiTest> {
+                model("compare", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
+            }
+
+            testClass<AbstractLegacyJvmAbiContentTest> {
+                model("content", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
+            }
+
+            testClass<AbstractLegacyCompileAgainstJvmAbiTest> {
+                model("compile", recursive = false, extension = null, targetBackend = TargetBackend.JVM)
             }
         }
 

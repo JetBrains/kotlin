@@ -21,13 +21,13 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/jvm-abi-gen/testData/compile")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvmAbiTest {
+public class IrCompileAgainstJvmAbiTestGenerated extends AbstractIrCompileAgainstJvmAbiTest {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
     public void testAllFilesPresentInCompile() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/jvm-abi-gen/testData/compile"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, false);
     }
 
     @TestMetadata("anonymousObject")
