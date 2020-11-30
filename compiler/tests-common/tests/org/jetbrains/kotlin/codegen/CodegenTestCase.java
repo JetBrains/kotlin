@@ -556,6 +556,14 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         for (TestFile file : files) {
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
         }
+
+        if (kotlinTarget != null && kotlinTarget.isPreview()) {
+            javacOptions.add("--release");
+            javacOptions.add(kotlinTarget.getDescriptionForJavacArgument());
+            javacOptions.add("--enable-preview");
+            return javacOptions;
+        }
+
         String javaTarget = computeJavaTarget(javacOptions, kotlinTarget);
         if (javaTarget != null) {
             javacOptions.add("-source");
@@ -574,7 +582,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         if (JAVA_COMPILATION_TARGET != null && !javacOptions.contains("-target"))
             return JAVA_COMPILATION_TARGET;
         if (kotlinTarget != null && kotlinTarget.compareTo(JvmTarget.JVM_1_6) > 0)
-            return kotlinTarget.getDescription();
+            return kotlinTarget.getDescriptionForJavacArgument();
         if (IS_SOURCE_6_STILL_SUPPORTED)
             return "1.6";
         return null;
