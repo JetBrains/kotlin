@@ -240,8 +240,6 @@ fun main(args: Array<String>) {
                 model("ir/sourceRanges")
             }
 
-
-
             testClass<AbstractBytecodeListingTest> {
                 model("codegen/bytecodeListing", targetBackend = TargetBackend.JVM)
             }
@@ -432,6 +430,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractKotlinLexerTest> {
                 model("lexer/kotlin")
+            }
+
+            testClass<AbstractComposeLikeIrBlackBoxCodegenTest> {
+                model("codegen/composeLike", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractIrBlackBoxCodegenTest> {
