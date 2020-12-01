@@ -14,6 +14,7 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.isPrimitiveType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -83,12 +85,21 @@ private class AnonymousTypesSubstitutor(private val session: FirSession, private
         val isAnonymous = type.classId.let { it?.shortClassName?.asString() == SpecialNames.ANONYMOUS }
         if (!isAnonymous) return null
 
-        val firstSuperType = (type.lookupTag.toSymbol(session) as? FirClassSymbol)?.fir
-            ?.withFirDeclaration(state, FirResolvePhase.SUPER_TYPES) {
-                (it as? FirClass)?.superConeTypes?.firstOrNull()
+        fun ConeClassLikeType.isNotInterface(): Boolean {
+            val firClassNode = lookupTag.toSymbol(session)?.fir as? FirClass ?: return false
+            return firClassNode.withFirDeclaration(state) { firSuperClass ->
+                firSuperClass.classKind != ClassKind.INTERFACE
             }
+        }
 
-        if (firstSuperType != null) return firstSuperType
+        val firClassNode = (type.lookupTag.toSymbol(session) as? FirClassSymbol)?.fir
+        if (firClassNode != null) {
+            val superTypesCones = firClassNode.withFirDeclaration(state, FirResolvePhase.SUPER_TYPES) {
+                (it as? FirClass)?.superConeTypes
+            }
+            val superClass = superTypesCones?.firstOrNull { it.isNotInterface() }
+            if (superClass != null) return superClass
+        }
 
         return if (type.nullability.isNullable) session.builtinTypes.nullableAnyType.type
         else session.builtinTypes.anyType.type
