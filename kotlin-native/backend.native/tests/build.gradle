@@ -3275,6 +3275,10 @@ task inlineClass_secondaryConstructorWithGenerics(type: KonanLocalTest) {
     source = "codegen/inlineClass/secondaryConstructorWithGenerics.kt"
 }
 
+task valueClass0(type: KonanLocalTest) {
+    source = "codegen/inlineClass/valueClass0.kt"
+}
+
 task deserialized_inline0(type: KonanLocalTest) {
     source = "serialization/deserialized_inline0.kt"
 }
