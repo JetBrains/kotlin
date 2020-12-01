@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.lookupTracker
+import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
@@ -93,7 +95,9 @@ class PostponedArgumentsAnalyzer(
             namedReference
         ).apply {
             if (resultingCandidate != null) {
-                replaceTypeRef(buildResolvedTypeRef { type = resultingCandidate.resultingTypeForCallableReference!! })
+                val resolvedTypeRef = buildResolvedTypeRef { type = resultingCandidate.resultingTypeForCallableReference!! }
+                replaceTypeRef(resolvedTypeRef)
+                resolutionContext.session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, source, null)
             }
         }
     }

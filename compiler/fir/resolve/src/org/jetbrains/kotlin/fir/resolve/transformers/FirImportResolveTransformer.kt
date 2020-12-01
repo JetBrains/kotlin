@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -36,10 +37,20 @@ open class FirImportResolveTransformer protected constructor(
 
     private val symbolProvider: FirSymbolProvider = session.symbolProvider
 
+    private var currentFile: FirFile? = null
+
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
         file.replaceResolvePhase(transformerPhase)
-        return file.also { it.transformChildren(this, null) }.compose()
+        return file.also {
+            val prevValue = currentFile
+            currentFile = file
+            try {
+                it.transformChildren(this, null)
+            } finally {
+                currentFile = prevValue
+            }
+        }.compose()
     }
 
     override fun transformImport(import: FirImport, data: Nothing?): CompositeTransformResult<FirImport> {
@@ -52,6 +63,9 @@ open class FirImportResolveTransformer protected constructor(
         }
 
         val parentFqName = fqName.parent()
+        currentFile?.let {
+            session.lookupTracker?.recordLookup(fqName.shortName(), parentFqName.asString(), import.source, it.source)
+        }
         return transformImportForFqName(parentFqName, import)
     }
 

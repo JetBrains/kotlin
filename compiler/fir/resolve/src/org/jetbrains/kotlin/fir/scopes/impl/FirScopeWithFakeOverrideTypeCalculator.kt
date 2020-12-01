@@ -80,4 +80,7 @@ class FirScopeWithFakeOverrideTypeCalculator(
             fakeOverrideTypeCalculator.computeReturnType(declaration)
         }
     }
+
+    override val scopeOwnerLookupNames: List<String>
+        get() = delegate.scopeOwnerLookupNames
 }

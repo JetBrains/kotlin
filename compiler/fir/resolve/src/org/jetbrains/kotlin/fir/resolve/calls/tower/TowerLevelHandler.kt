@@ -44,18 +44,18 @@ internal class TowerLevelHandler {
 
         when (info.callKind) {
             CallKind.VariableAccess -> {
-                processResult += towerLevel.processPropertiesByName(info.name, processor)
+                processResult += towerLevel.processPropertiesByName(info, processor)
 
                 if (!collector.isSuccess() && towerLevel is ScopeTowerLevel && towerLevel.extensionReceiver == null) {
-                    processResult += towerLevel.processObjectsByName(info.name, processor)
+                    processResult += towerLevel.processObjectsByName(info, processor)
                 }
             }
             CallKind.Function -> {
-                processResult += towerLevel.processFunctionsByName(info.name, processor)
+                processResult += towerLevel.processFunctionsByName(info, processor)
             }
             CallKind.CallableReference -> {
-                processResult += towerLevel.processFunctionsByName(info.name, processor)
-                processResult += towerLevel.processPropertiesByName(info.name, processor)
+                processResult += towerLevel.processFunctionsByName(info, processor)
+                processResult += towerLevel.processPropertiesByName(info, processor)
             }
             else -> {
                 throw AssertionError("Unsupported call kind in tower resolver: ${info.callKind}")

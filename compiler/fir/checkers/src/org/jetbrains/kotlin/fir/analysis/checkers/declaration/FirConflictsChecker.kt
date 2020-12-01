@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 
 object FirConflictsChecker : FirBasicDeclarationChecker() {
@@ -21,7 +20,7 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         val inspector = FirDeclarationInspector()
 
         when (declaration) {
-            is FirFile -> checkFile(declaration, inspector)
+            is FirFile -> checkFile(declaration, inspector, context)
             is FirRegularClass -> checkRegularClass(declaration, inspector)
             else -> return
         }
@@ -47,9 +46,21 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
         }
     }
 
-    private fun checkFile(declaration: FirFile, inspector: FirDeclarationInspector) {
-        for (it in declaration.declarations) {
-            inspector.collect(it)
+    private fun checkFile(file: FirFile, inspector: FirDeclarationInspector, context: CheckerContext) {
+        val lookupTracker = context.session.lookupTracker
+        for (topLevelDeclaration in file.declarations) {
+            inspector.collect(topLevelDeclaration)
+            if (lookupTracker != null) {
+                when (topLevelDeclaration) {
+                    is FirSimpleFunction -> topLevelDeclaration.name
+                    is FirVariable<*> -> topLevelDeclaration.name
+                    is FirRegularClass -> topLevelDeclaration.name
+                    is FirTypeAlias -> topLevelDeclaration.name
+                    else -> null
+                }?.let {
+                    lookupTracker.recordLookup(it, file.packageFqName.asString(), topLevelDeclaration.source, file.source)
+                }
+            }
         }
     }
 

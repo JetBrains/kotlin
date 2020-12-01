@@ -43,6 +43,9 @@ private class FirNestedClassifierScopeWithSubstitution(
 
     override fun getCallableNames(): Set<Name> = scope.getContainingCallableNamesIfPresent()
     override fun getClassifierNames(): Set<Name> = scope.getContainingClassifierNamesIfPresent()
+
+    override val scopeOwnerLookupNames: List<String>
+        get() = scope.scopeOwnerLookupNames
 }
 
 fun FirScope.wrapNestedClassifierScopeWithSubstitutionForSuperType(

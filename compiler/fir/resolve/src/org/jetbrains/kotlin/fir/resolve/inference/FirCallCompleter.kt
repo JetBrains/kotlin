@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBod
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
-import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -62,7 +60,9 @@ class FirCallCompleter(
         val initialType = components.initialTypeOfCandidate(candidate, call)
 
         if (call is FirExpression) {
-            call.resultType = typeRef.resolvedTypeFromPrototype(initialType)
+            val resolvedTypeRef = typeRef.resolvedTypeFromPrototype(initialType)
+            call.resultType = resolvedTypeRef
+            session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, call.source, null)
         }
 
         if (expectedTypeRef is FirResolvedTypeRef) {
@@ -208,14 +208,19 @@ class FirCallCompleter(
                 }
             )
 
+            val lookupTracker = session.lookupTracker
             lambdaArgument.valueParameters.forEachIndexed { index, parameter ->
-                parameter.replaceReturnTypeRef(
-                    parameter.returnTypeRef.resolvedTypeFromPrototype(parameters[index].approximateLambdaInputType())
-                )
+                val newReturnTypeRef = parameter.returnTypeRef.resolvedTypeFromPrototype(parameters[index].approximateLambdaInputType())
+                parameter.replaceReturnTypeRef(newReturnTypeRef)
+                lookupTracker?.recordTypeResolveAsLookup(newReturnTypeRef, parameter.source, null)
             }
 
             lambdaArgument.replaceValueParameters(lambdaArgument.valueParameters + listOfNotNull(itParam))
-            lambdaArgument.replaceReturnTypeRef(expectedReturnTypeRef ?: components.noExpectedType)
+            lambdaArgument.replaceReturnTypeRef(
+                expectedReturnTypeRef?.also {
+                    lookupTracker?.recordTypeResolveAsLookup(it, lambdaArgument.source, null)
+                } ?: components.noExpectedType
+            )
 
             val builderInferenceSession = runIf(stubsForPostponedVariables.isNotEmpty()) {
                 @Suppress("UNCHECKED_CAST")

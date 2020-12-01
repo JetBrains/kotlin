@@ -10,10 +10,14 @@ import org.jetbrains.kotlin.fir.resolve.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedForCalls
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.SmartList
 
 class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirScope() {
     private val symbolProvider = session.symbolProvider
@@ -56,4 +60,6 @@ class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirSc
             processor(symbol)
         }
     }
+
+    override val scopeOwnerLookupNames: List<String> = SmartList(fqName.asString())
 }

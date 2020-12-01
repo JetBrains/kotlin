@@ -8,16 +8,15 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.isLocalClassOrAnonymousObject
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterSupertype
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
@@ -284,6 +283,14 @@ private class FirSupertypeResolverVisitor(
         supertypeRefs: List<FirTypeRef>
     ): List<FirTypeRef> {
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, scope ->
+            if (!classLikeDeclaration.isLocalClassOrAnonymousObject()) {
+                session.lookupTracker?.let {
+                    val fileSource = session.firProvider.getFirClassifierContainerFile(classLikeDeclaration.symbol).source
+                    for (supertypeRef in supertypeRefs) {
+                        it.recordTypeLookup(supertypeRef, scope.scopeOwnerLookupNames, fileSource)
+                    }
+                }
+            }
             /*
               This list is backed by mutable list and during iterating on it we can resolve supertypes of that class via IDE light classes
               as IJ Java resolve may resolve a lot of stuff by light classes

@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.fir.java.enhancement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirPrimaryConstructorBuilder
@@ -19,11 +18,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
-import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -85,7 +82,10 @@ class FirSignatureEnhancement(
                     )
 
                 val newReturnTypeRef = enhanceReturnType(firElement, emptyList(), memberContext, predefinedInfo)
-                return firElement.symbol.apply { this.fir.replaceReturnTypeRef(newReturnTypeRef) }
+                return firElement.symbol.apply {
+                    this.fir.replaceReturnTypeRef(newReturnTypeRef)
+                    session.lookupTracker?.recordTypeResolveAsLookup(newReturnTypeRef, this.fir.source, null)
+                }
             }
             is FirField -> {
                 if (firElement.returnTypeRef !is FirJavaTypeRef) return original

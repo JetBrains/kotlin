@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 
@@ -17,13 +18,15 @@ fun createSessionForTests(
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope = GlobalSearchScope.notScope(sourceScope),
     moduleName: String = "TestModule",
-    friendPaths: List<String> = emptyList()
+    friendPaths: List<String> = emptyList(),
+    lookupTracker: LookupTracker? = null
 ): FirSession = createSessionForTests(
     environment.project,
     sourceScope,
     librariesScope,
     moduleName,
     friendPaths,
+    lookupTracker,
     environment::createPackagePartProvider
 )
 
@@ -33,6 +36,7 @@ fun createSessionForTests(
     librariesScope: GlobalSearchScope,
     moduleName: String = "TestModule",
     friendPaths: List<String> = emptyList(),
+    lookupTracker: LookupTracker? = null,
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
 ): FirSession {
     return createSessionWithDependencies(
@@ -43,6 +47,7 @@ fun createSessionForTests(
         languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         sourceScope,
         librariesScope,
+        lookupTracker,
         packagePartProvider
     )
 }

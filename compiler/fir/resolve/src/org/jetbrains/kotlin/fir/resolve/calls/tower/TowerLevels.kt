@@ -5,29 +5,23 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.isInner
-import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.typeContext
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeStarProjection
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.constructClassType
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.SmartList
 
 enum class ProcessResult {
     FOUND, SCOPE_EMPTY;
@@ -46,11 +40,11 @@ abstract class TowerScopeLevel {
         object Objects : Token<AbstractFirBasedSymbol<*>>()
     }
 
-    abstract fun processFunctionsByName(name: Name, processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>): ProcessResult
+    abstract fun processFunctionsByName(info: CallInfo, processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>): ProcessResult
 
-    abstract fun processPropertiesByName(name: Name, processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>): ProcessResult
+    abstract fun processPropertiesByName(info: CallInfo, processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>): ProcessResult
 
-    abstract fun processObjectsByName(name: Name, processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>): ProcessResult
+    abstract fun processObjectsByName(info: CallInfo, processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>): ProcessResult
 
     interface TowerScopeLevelProcessor<in T : AbstractFirBasedSymbol<*>> {
         fun consumeCandidate(
@@ -131,41 +125,50 @@ class MemberScopeTowerLevel(
     }
 
     override fun processFunctionsByName(
-        name: Name,
+        info: CallInfo,
         processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>
     ): ProcessResult {
-        val isInvoke = name == OperatorNameConventions.INVOKE
+        val isInvoke = info.name == OperatorNameConventions.INVOKE
         if (implicitExtensionInvokeMode && !isInvoke) {
             return ProcessResult.FOUND
         }
+        val lookupTracker = session.lookupTracker
         return processMembers(processor) { consumer ->
-            this.processFunctionsAndConstructorsByName(
-                name, session, bodyResolveComponents,
-                includeInnerConstructors = true,
-                processor = {
-                    // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
-                    @Suppress("UNCHECKED_CAST")
-                    consumer(it as FirFunctionSymbol<*>)
-                }
-            )
+            withMemberCallLookup(lookupTracker, info) { lookupCtx ->
+                this.processFunctionsAndConstructorsByName(
+                    info.name, session, bodyResolveComponents,
+                    includeInnerConstructors = true,
+                    processor = {
+                        lookupCtx.recordCallableMemberLookup(it)
+                        // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
+                        @Suppress("UNCHECKED_CAST")
+                        consumer(it as FirFunctionSymbol<*>)
+                    }
+                )
+            }
         }
     }
 
     override fun processPropertiesByName(
-        name: Name,
+        info: CallInfo,
         processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>
     ): ProcessResult {
+        val lookupTracker = session.lookupTracker
         return processMembers(processor) { consumer ->
-            this.processPropertiesByName(name) {
-                // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
-                @Suppress("UNCHECKED_CAST")
-                consumer(it)
+            withMemberCallLookup(lookupTracker, info) { lookupCtx ->
+                lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
+                this.processPropertiesByName(info.name) {
+                    lookupCtx.recordCallableMemberLookup(it)
+                    // WARNING, DO NOT CAST FUNCTIONAL TYPE ITSELF
+                    @Suppress("UNCHECKED_CAST")
+                    consumer(it)
+                }
             }
         }
     }
 
     override fun processObjectsByName(
-        name: Name,
+        info: CallInfo,
         processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>
     ): ProcessResult {
         return ProcessResult.FOUND
@@ -175,6 +178,28 @@ class MemberScopeTowerLevel(
         return MemberScopeTowerLevel(
             session, bodyResolveComponents, receiverValue, extensionReceiver, implicitExtensionInvokeMode, scopeSession
         )
+    }
+
+    private inline fun withMemberCallLookup(
+        lookupTracker: FirLookupTrackerComponent?,
+        info: CallInfo,
+        body: (Triple<FirLookupTrackerComponent?, SmartList<String>, CallInfo>) -> Unit
+    ) {
+        lookupTracker?.recordCallLookup(info, dispatchReceiverValue.type)
+        val lookupScopes = SmartList<String>()
+        body(Triple(lookupTracker, lookupScopes, info))
+        if (lookupScopes.isNotEmpty()) {
+            lookupTracker?.recordCallLookup(info, lookupScopes)
+        }
+    }
+
+    private fun Triple<FirLookupTrackerComponent?, SmartList<String>, CallInfo>.recordCallableMemberLookup(callable: FirCallableSymbol<*>) {
+        first?.run {
+            recordTypeResolveAsLookup(callable.fir.returnTypeRef, third.callSite.source, third.containingFile.source)
+            callable.callableId.className?.let { lookupScope ->
+                second.add(lookupScope.asString())
+            }
+        }
     }
 }
 
@@ -269,12 +294,13 @@ class ScopeTowerLevel(
     }
 
     override fun processFunctionsByName(
-        name: Name,
+        info: CallInfo,
         processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>
     ): ProcessResult {
         var empty = true
+        session.lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
         scope.processFunctionsAndConstructorsByName(
-            name,
+            info.name,
             session,
             bodyResolveComponents,
             includeInnerConstructors = includeInnerConstructors
@@ -286,11 +312,12 @@ class ScopeTowerLevel(
     }
 
     override fun processPropertiesByName(
-        name: Name,
+        info: CallInfo,
         processor: TowerScopeLevelProcessor<FirVariableSymbol<*>>
     ): ProcessResult {
         var empty = true
-        scope.processPropertiesByName(name) { candidate ->
+        session.lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
+        scope.processPropertiesByName(info.name) { candidate ->
             empty = false
             consumeCallableCandidate(candidate, processor)
         }
@@ -298,11 +325,12 @@ class ScopeTowerLevel(
     }
 
     override fun processObjectsByName(
-        name: Name,
+        info: CallInfo,
         processor: TowerScopeLevelProcessor<AbstractFirBasedSymbol<*>>
     ): ProcessResult {
         var empty = true
-        scope.processClassifiersByName(name) {
+        session.lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
+        scope.processClassifiersByName(info.name) {
             empty = false
             processor.consumeCandidate(
                 it, dispatchReceiverValue = null,

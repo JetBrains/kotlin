@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
@@ -38,16 +39,35 @@ class FirSpecificTypeResolverTransformer(
         }
     }
 
+    @PrivateForInline
+    @JvmField
+    var currentFile: FirFile? = null
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withFile(file: FirFile?, block: FirSpecificTypeResolverTransformer.() -> R): R {
+        val oldValue = currentFile
+        currentFile = file
+        return try {
+            block()
+        } finally {
+            currentFile = oldValue
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
     override fun transformTypeRef(typeRef: FirTypeRef, data: FirScope): CompositeTransformResult<FirResolvedTypeRef> {
+        session.lookupTracker?.recordTypeLookup(typeRef, data.scopeOwnerLookupNames, currentFile?.source)
         typeRef.transformChildren(this, data)
         return transformType(typeRef, typeResolver.resolveType(typeRef, data, areBareTypesAllowed))
     }
 
+    @OptIn(PrivateForInline::class)
     override fun transformFunctionTypeRef(
         functionTypeRef: FirFunctionTypeRef,
         data: FirScope
     ): CompositeTransformResult<FirResolvedTypeRef> {
         functionTypeRef.transformChildren(this, data)
+        session.lookupTracker?.recordTypeLookup(functionTypeRef, data.scopeOwnerLookupNames, currentFile?.source)
         val resolvedType = typeResolver.resolveType(functionTypeRef, data, areBareTypesAllowed).takeIfAcceptable()
         return if (resolvedType != null && resolvedType !is ConeClassErrorType) {
             buildResolvedTypeRef {
