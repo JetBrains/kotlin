@@ -217,6 +217,11 @@ class BodyGenerator(
     private fun generateSuperConstructorCall(body: IrBlockBody, ktClassOrObject: KtPureClassOrObject) {
         val classDescriptor = ktClassOrObject.findClassDescriptor(context.bindingContext)
 
+        context.extensions.createCustomSuperConstructorCall(ktClassOrObject, classDescriptor, context)?.let {
+            body.statements.add(it)
+            return
+        }
+
         when (classDescriptor.kind) {
             // enums can't be synthetic
             ClassKind.ENUM_CLASS -> generateEnumSuperConstructorCall(body, ktClassOrObject as KtClassOrObject, classDescriptor)
