@@ -208,6 +208,9 @@ internal fun FlyweightCapableTreeStructure<LighterASTNode>.visibilityModifier(de
 internal fun FlyweightCapableTreeStructure<LighterASTNode>.modalityModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, MODALITY_MODIFIERS) }
 
+internal fun FlyweightCapableTreeStructure<LighterASTNode>.overrideModifier(declaration: LighterASTNode): LighterASTNode? =
+    modifierList(declaration)?.let { findChildByType(it, KtTokens.OVERRIDE_KEYWORD) }
+
 private fun FlyweightCapableTreeStructure<LighterASTNode>.accessorNamePlaceholder(node: LighterASTNode): LighterASTNode =
     findChildByType(node, KtTokens.GET_KEYWORD) ?: findChildByType(node, KtTokens.SET_KEYWORD)!!
 
