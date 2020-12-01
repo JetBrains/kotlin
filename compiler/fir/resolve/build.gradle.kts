@@ -14,9 +14,10 @@ dependencies {
     api(project(":compiler:fir:tree"))
     api(kotlinxCollectionsImmutable())
     implementation(project(":core:util.runtime"))
+    implementation(project(":compiler:psi"))
 
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep()) { includeJars("guava", rootProject = rootProject) }
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 }
 
 sourceSets {

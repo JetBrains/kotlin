@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.typeForQualifier
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 const val ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE = "_root_ide_package_"
 
@@ -91,7 +92,7 @@ class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
             }
 
             return buildResolvedQualifier {
-                this.source = source
+                this.source = getWholeQualifierSource(source, qualifierPartsToDrop)
                 packageFqName = resolved.packageFqName
                 relativeClassFqName = resolved.relativeClassFqName
                 symbol = resolved.classSymbol
@@ -104,4 +105,11 @@ class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
         return null
     }
 
+    private fun getWholeQualifierSource(qualifierStartSource: FirSourceElement?, stepsToWholeQualifier: Int): FirSourceElement? {
+        if (qualifierStartSource !is FirRealPsiSourceElement<*>) return qualifierStartSource
+
+        val qualifierStart = qualifierStartSource.psi
+        val wholeQualifier = qualifierStart.parentsWithSelf.drop(stepsToWholeQualifier).first()
+        return wholeQualifier.toFirPsiSourceElement()
+    }
 }
