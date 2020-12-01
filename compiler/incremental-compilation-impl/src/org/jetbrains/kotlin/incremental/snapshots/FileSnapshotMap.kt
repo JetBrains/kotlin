@@ -18,11 +18,16 @@ package org.jetbrains.kotlin.incremental.snapshots
 
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.storage.BasicStringMap
+import org.jetbrains.kotlin.incremental.storage.FileToPathConverter
 import org.jetbrains.kotlin.incremental.storage.PathStringDescriptor
 import java.io.File
 import java.util.*
 
-class FileSnapshotMap(storageFile: File) : BasicStringMap<FileSnapshot>(storageFile, PathStringDescriptor, FileSnapshotExternalizer) {
+class FileSnapshotMap(
+    storageFile: File,
+    private val pathConverter: FileToPathConverter
+) : BasicStringMap<FileSnapshot>(storageFile, PathStringDescriptor, FileSnapshotExternalizer) {
+
     override fun dumpValue(value: FileSnapshot): String =
         value.toString()
 
@@ -32,16 +37,16 @@ class FileSnapshotMap(storageFile: File) : BasicStringMap<FileSnapshot>(storageF
         val newOrModified = ArrayList<File>()
         val removed = ArrayList<File>()
 
-        val newPaths = newFiles.mapTo(HashSet()) { it.canonicalPath }
+        val newPaths = newFiles.mapTo(HashSet(), transform = pathConverter::toPath)
         for (oldPath in storage.keys) {
             if (oldPath !in newPaths) {
                 storage.remove(oldPath)
-                removed.add(File(oldPath))
+                removed.add(pathConverter.toFile(oldPath))
             }
         }
 
         for (path in newPaths) {
-            val file = File(path)
+            val file = pathConverter.toFile(path)
             val oldSnapshot = storage[path]
             val newSnapshot = snapshotProvider[file]
 
