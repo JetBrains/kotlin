@@ -66,13 +66,20 @@ class BinaryClassSignatureParser {
 
         // postpone list allocation till a second bound is seen; ignore sole Object bound
         val bounds: MutableList<JavaClassifierType> = SmartList()
+        var hasImplicitObjectBound = false
         while (signature.current() == ':') {
             signature.next()
-            val bound = parseClassifierRefSignature(signature, context) ?: continue
-            bounds.add(bound)
+
+            // '::' means that the implicit object bound is between ':'
+            if (signature.current() == ':') {
+                hasImplicitObjectBound = true
+                continue
+            }
+
+            bounds.add(parseClassifierRefSignature(signature, context) ?: continue)
         }
 
-        return BinaryJavaTypeParameter(Name.identifier(parameterName), bounds)
+        return BinaryJavaTypeParameter(Name.identifier(parameterName), bounds, hasImplicitObjectBound)
     }
 
     fun parseClassifierRefSignature(signature: CharacterIterator, context: ClassifierResolutionContext): JavaClassifierType? {
@@ -83,7 +90,7 @@ class BinaryClassSignatureParser {
         }
     }
 
-    private fun parseTypeVariableRefSignature(signature: CharacterIterator, context: ClassifierResolutionContext): JavaClassifierType? {
+    private fun parseTypeVariableRefSignature(signature: CharacterIterator, context: ClassifierResolutionContext): JavaClassifierType {
         val id = StringBuilder()
 
         signature.next()

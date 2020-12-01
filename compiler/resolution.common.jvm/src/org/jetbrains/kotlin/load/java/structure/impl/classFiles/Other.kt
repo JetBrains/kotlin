@@ -17,20 +17,19 @@
 package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import org.jetbrains.kotlin.load.java.structure.*
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 
 class BinaryJavaField(
-        override val name: Name,
-        override val access: Int,
-        override val containingClass: JavaClass,
-        override val isEnumEntry: Boolean,
-        override val type: JavaType,
-        override val initializerValue: Any?
-) : JavaField, MapBasedJavaAnnotationOwner, BinaryJavaModifierListOwner {
+    override val name: Name,
+    override val access: Int,
+    override val containingClass: JavaClass,
+    override val isEnumEntry: Boolean,
+    override val type: JavaType,
+    override val initializerValue: Any?
+) : JavaField, BinaryJavaModifierListOwner, MutableJavaAnnotationOwner {
     override val annotations: MutableCollection<JavaAnnotation> = SmartList()
     override val annotationsByFqName by buildLazyValueForMap()
 
@@ -39,20 +38,19 @@ class BinaryJavaField(
 }
 
 class BinaryJavaTypeParameter(
-        override val name: Name,
-        override val upperBounds: Collection<JavaClassifierType>
-) : JavaTypeParameter {
-    // TODO: support annotations on type parameters
-    override val annotations get() = emptyList<JavaAnnotation>()
-    override fun findAnnotation(fqName: FqName) = null
-
-    override val isDeprecatedInJavaDoc get() = false
+    override val name: Name,
+    override val upperBounds: Collection<JavaClassifierType>,
+    // If all bounds are interfaces then a type parameter has implicit Object class bound
+    val hasImplicitObjectClassBound: Boolean
+) : JavaTypeParameter, ListBasedJavaAnnotationOwner, MutableJavaAnnotationOwner {
+    override val annotations: MutableCollection<JavaAnnotation> = SmartList()
+    override val isDeprecatedInJavaDoc = false
 }
 
 class BinaryJavaValueParameter(
-        override val type: JavaType,
-        override val isVararg: Boolean
-) : JavaValueParameter, MapBasedJavaAnnotationOwner {
+    override val type: JavaType,
+    override val isVararg: Boolean
+) : JavaValueParameter, MapBasedJavaAnnotationOwner, MutableJavaAnnotationOwner {
     override val annotations: MutableCollection<JavaAnnotation> = SmartList()
     override val annotationsByFqName by buildLazyValueForMap()
 
