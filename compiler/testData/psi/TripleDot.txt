@@ -29,22 +29,16 @@ KtFile: TripleDot.kt
         LOOP_RANGE
           INTEGER_CONSTANT
             PsiElement(INTEGER_LITERAL)('1')
-        PsiErrorElement:Expecting ')'
-          <empty list>
-        BODY
-          <empty list>
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RESERVED)('...')
-        PsiElement(INTEGER_LITERAL)('2')
+        PsiErrorElement:Unexpected tokens in loop
+          PsiElement(RESERVED)('...')
+          PsiElement(INTEGER_LITERAL)('2')
         PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          PsiWhiteSpace('\n\n    ')
+        PsiWhiteSpace(' ')
+        BODY
           BLOCK
-            <empty list>
-          PsiElement(RBRACE)('}')
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n\n    ')
+            PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
       FOR
         PsiElement(for)('for')

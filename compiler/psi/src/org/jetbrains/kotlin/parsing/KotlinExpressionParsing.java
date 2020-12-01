@@ -1493,6 +1493,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
                 error("Expecting a variable name");
             }
 
+            TokenSet recoverySet = TokenSet.create(RPAR, LBRACE, RBRACE, EOL_OR_SEMICOLON, EOF);
+            if (!atSet(recoverySet)) {
+                errorUntil("Unexpected tokens in loop", recoverySet);
+            }
+
             expectNoAdvance(RPAR, "Expecting ')'");
             myBuilder.restoreNewlinesState();
         }

@@ -53,48 +53,51 @@ KtFile: forDestructuring.kt
             PsiElement(LBRACE)('{')
             PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
-      FOR
-        PsiElement(for)('for')
-        PsiWhiteSpace(' ')
-        PsiElement(LPAR)('(')
-        VALUE_PARAMETER
-          MODIFIER_LIST
-            ANNOTATION_ENTRY
-              PsiElement(AT)('@')
-              CONSTRUCTOR_CALLEE
-                TYPE_REFERENCE
-                  USER_TYPE
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('Foo')
-              PsiWhiteSpace(' ')
-              VALUE_ARGUMENT_LIST
-                PsiElement(LPAR)('(')
-                VALUE_ARGUMENT
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('i')
-                PsiErrorElement:Expecting ')'
-                  PsiElement(COLON)(':')
+      BINARY_EXPRESSION
+        FOR
+          PsiElement(for)('for')
           PsiWhiteSpace(' ')
-          DESTRUCTURING_DECLARATION
-            PsiElement(LPAR)('(')
-            PsiErrorElement:Expecting a name
-              <empty list>
-            PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiErrorElement:Expecting 'in'
-          PsiElement(ARROW)('->')
-        PsiErrorElement:Expecting ')'
-          <empty list>
-        PsiWhiteSpace(' ')
-        BODY
-          REFERENCE_EXPRESSION
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER
+            MODIFIER_LIST
+              ANNOTATION_ENTRY
+                PsiElement(AT)('@')
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION
+                        PsiElement(IDENTIFIER)('Foo')
+                PsiWhiteSpace(' ')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  VALUE_ARGUMENT
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('i')
+                  PsiErrorElement:Expecting ')'
+                    PsiElement(COLON)(':')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION
+              PsiElement(LPAR)('(')
+              PsiErrorElement:Expecting a name
+                <empty list>
+              PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Expecting 'in'
+            PsiElement(ARROW)('->')
+          PsiWhiteSpace(' ')
+          PsiErrorElement:Unexpected tokens in loop
             PsiElement(IDENTIFIER)('Unit')
+          PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BODY
+            PsiErrorElement:Expecting an expression
+              <empty list>
+        OPERATION_REFERENCE
+          PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('y')
       PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('y')
         PsiElement(RPAR)(')')
       PsiWhiteSpace(' ')
       LAMBDA_EXPRESSION
