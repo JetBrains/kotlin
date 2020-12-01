@@ -5,13 +5,26 @@
 
 package org.jetbrains.kotlin.project.model
 
-sealed class ModuleOrigin
-data class LocalBuild(val buildId: String) : ModuleOrigin() // TODO add project ID?
-data class ExternalOrigin(val dependencyIdParts: List<String>) : ModuleOrigin()
+// TODO sealed with an abstract subclass? this will make exhaustive checks work
+open class ModuleIdentifier
+
+// TODO consider id: Any, to allow IDs with custom equality?
+data class LocalModuleIdentifier(val buildId: String, val projectId: String) : ModuleIdentifier() {
+    companion object {
+        private const val SINGLE_BUILD_ID = ":"
+    }
+
+    override fun toString(): String = "project '$projectId'" + buildId.takeIf { it != SINGLE_BUILD_ID }?.let { "(build '$it')" }.orEmpty()
+}
+
+data class MavenModuleIdentifier(val group: String, val name: String) : ModuleIdentifier() {
+    override fun toString(): String = "$group:$name"
+}
+
+// TODO Gradle allows having multiple capabilities in a published module, we need to figure out how we can include them in the module IDs
 
 interface KotlinModule {
-    val moduleName: String
-    val moduleOrigin: ModuleOrigin
+    val moduleIdentifier: ModuleIdentifier
 
     val fragments: Iterable<KotlinModuleFragment>
 
@@ -20,10 +33,9 @@ interface KotlinModule {
 }
 
 class BasicKotlinModule(
-    override val moduleName: String,
-    override val moduleOrigin: ModuleOrigin
+    override val moduleIdentifier: ModuleIdentifier
 ) : KotlinModule {
     override val fragments = mutableListOf<BasicKotlinModuleFragment>()
 
-    override fun toString(): String = "module '$moduleName'"
+    override fun toString(): String = "module $moduleIdentifier"
 }

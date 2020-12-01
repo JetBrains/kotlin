@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.project.model
 
-fun module(name: String) = BasicKotlinModule(name, LocalBuild("current"))
+fun module(name: String) = BasicKotlinModule(LocalModuleIdentifier("current", name))
 
 fun BasicKotlinModule.fragment(vararg nameParts: String): BasicKotlinModuleFragment =
     fragment(nameParts.drop(1).joinToString("", nameParts.first()) { it.capitalize() })

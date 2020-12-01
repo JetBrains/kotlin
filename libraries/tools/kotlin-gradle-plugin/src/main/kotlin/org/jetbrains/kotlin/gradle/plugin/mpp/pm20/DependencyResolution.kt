@@ -13,7 +13,6 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.mpp.GradleModuleVariantResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.ProjectStructureMetadataModuleBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.GradleProjectModuleBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.getProjectStructureMetadata
@@ -41,7 +40,7 @@ class GradleModuleDependencyResolver(
                 projectModuleBuilder.buildModuleFromProject(project.project(id.projectPath))
             id is ModuleComponentIdentifier -> {
                 val metadata = getProjectStructureMetadata(project, component, configurationToResolve) ?: return null
-                projectStructureMetadataModuleBuilder.getModule(id.displayName, id.toModuleOrigin(), metadata)
+                projectStructureMetadataModuleBuilder.getModule(id.toModuleIdentifier(), metadata)
             }
             else -> null
         }
@@ -110,11 +109,7 @@ class FragmentDependenciesDiscovery(
     // TODO think about multi-variant stub modules for non-Kotlin modules which got more than one chosen variant
     private fun buildStubModule(resolvedComponentResult: ResolvedComponentResult, singleVariantName: String): KotlinModule {
         val moduleDependency = resolvedComponentResult.toModuleDependency()
-        val moduleName = when (val id = resolvedComponentResult.id) {
-            is ProjectComponentIdentifier -> id.projectPath
-            else -> id.displayName
-        }
-        return BasicKotlinModule(moduleName, moduleDependency.moduleOrigin).apply {
+        return BasicKotlinModule(moduleDependency.moduleIdentifier).apply {
             BasicKotlinModuleVariant(this@apply, singleVariantName).apply {
                 fragments.add(this)
                 this.declaredModuleDependencies.addAll(
@@ -140,6 +135,7 @@ class VariantDependencyDiscovery(
             .find { it.defaultSourceSetName == fragment.fragmentName }
         requireNotNull(compilation)
 
+        // TODO distinguish between compile and runtime dependencies?
         val configuration = project.configurations.getByName(compilation.compileDependencyConfigurationName)
         return configuration.incoming.resolutionResult.allComponents
     }
@@ -150,45 +146,50 @@ class VariantDependencyDiscovery(
 
         val components = resolvedComponentResults(fragment)
         return components.mapNotNull { component ->
-            when (val id = component.id) {
-                is ProjectComponentIdentifier -> LocalModuleDependency(LocalBuild(id.build.name), id.projectPath)
-                is ModuleComponentIdentifier -> ExternalModuleDependency(id.toModuleOrigin())
-                else -> null // TODO check that no other options are possible, throw errors
+            val moduleIdentifier = when (val id = component.id) {
+                is ProjectComponentIdentifier -> LocalModuleIdentifier(id.build.name, id.projectPath)
+                is ModuleComponentIdentifier -> id.toModuleIdentifier()
+                else -> return@mapNotNull null // TODO check that no other options are possible, throw errors?
             }
+            ModuleDependency(moduleIdentifier)
         }
     }
 }
 
-private fun ModuleComponentIdentifier.toModuleOrigin(): ExternalOrigin =
-    ExternalOrigin(listOf(moduleIdentifier.group, moduleIdentifier.name))
+private fun ModuleComponentIdentifier.toModuleIdentifier(): MavenModuleIdentifier =
+    MavenModuleIdentifier(moduleIdentifier.group, moduleIdentifier.name)
 
 internal fun ComponentIdentifier.matchesModule(module: KotlinModule): Boolean {
-    return when (val moduleSource = module.moduleOrigin) {
-        is LocalBuild -> {
+    return when (val moduleId = module.moduleIdentifier) {
+        is LocalModuleIdentifier -> {
             val projectId = this as? ProjectComponentIdentifier
-            projectId?.build?.name == moduleSource.buildId && projectId.projectPath == module.moduleName
+            projectId?.build?.name == moduleId.buildId && projectId.projectPath == moduleId.projectId
         }
-        is ExternalOrigin -> {
-            val moduleId = this as? ModuleComponentIdentifier
-            moduleId?.toModuleOrigin() == moduleSource
+        is MavenModuleIdentifier -> {
+            val componentId = this as? ModuleComponentIdentifier
+            componentId?.toModuleIdentifier() == moduleId
         }
+        else -> false
     }
 }
 
-internal fun ResolvedComponentResult.toModuleDependency(): ModuleDependency = when (val id = id) {
-    is ProjectComponentIdentifier -> LocalModuleDependency(LocalBuild(id.build.name), id.projectPath)
-    is ModuleComponentIdentifier -> ExternalModuleDependency(id.toModuleOrigin())
-    else -> ExternalModuleDependency(ExternalOrigin(listOf(moduleVersion?.group.orEmpty(), moduleVersion?.name.orEmpty())))
-}
+internal fun ResolvedComponentResult.toModuleDependency(): ModuleDependency = ModuleDependency(
+    when (val id = id) {
+        is ProjectComponentIdentifier -> LocalModuleIdentifier(id.build.name, id.projectPath)
+        is ModuleComponentIdentifier -> id.toModuleIdentifier()
+        else -> MavenModuleIdentifier(moduleVersion?.group.orEmpty(), moduleVersion?.name.orEmpty())
+    }
+)
 
 internal fun ComponentIdentifier.matchesModuleDependency(moduleDependency: ModuleDependency) =
-    when (moduleDependency) {
-        is LocalModuleDependency -> {
+    when (val id = moduleDependency.moduleIdentifier) {
+        is LocalModuleIdentifier -> {
             val projectId = this as? ProjectComponentIdentifier
-            projectId?.build?.name == moduleDependency.moduleOrigin.buildId && projectId.projectPath == moduleDependency.moduleName
+            projectId?.build?.name == id.buildId && projectId.projectPath == id.projectId
         }
-        is ExternalModuleDependency -> {
-            val moduleId = this as? ModuleComponentIdentifier
-            moduleId?.toModuleOrigin() == moduleDependency.moduleOrigin
+        is MavenModuleIdentifier -> {
+            val componentId = this as? ModuleComponentIdentifier
+            componentId?.toModuleIdentifier() == id
         }
+        else -> false
     }

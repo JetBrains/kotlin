@@ -18,18 +18,18 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.matchesModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.representsProject
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.project.model.*
 
 class ProjectStructureMetadataModuleBuilder {
-    private val modulesCache = mutableMapOf<String, KotlinModule>()
+    private val modulesCache = mutableMapOf<ModuleIdentifier, KotlinModule>()
 
     private fun buildModuleFromProjectStructureMetadata(
-        moduleName: String,
-        moduleOrigin: ModuleOrigin,
+        moduleIdentifier: ModuleIdentifier,
         metadata: KotlinProjectStructureMetadata
     ): KotlinModule =
-        BasicKotlinModule(moduleName, moduleOrigin).apply {
+        BasicKotlinModule(moduleIdentifier).apply {
             metadata.sourceSetNamesByVariantName.keys.forEach { variantName ->
                 fragments.add(BasicKotlinModuleVariant(this@apply, variantName))
             }
@@ -53,11 +53,10 @@ class ProjectStructureMetadataModuleBuilder {
             }
         }
 
-    fun getModule(name: String, moduleOrigin: ModuleOrigin, projectStructureMetadata: KotlinProjectStructureMetadata): KotlinModule {
-        return modulesCache.getOrPut(name) {
+    fun getModule(moduleIdentifier: ModuleIdentifier, projectStructureMetadata: KotlinProjectStructureMetadata): KotlinModule {
+        return modulesCache.getOrPut(moduleIdentifier) {
             buildModuleFromProjectStructureMetadata(
-                name,
-                moduleOrigin,
+                moduleIdentifier,
                 projectStructureMetadata
             )
         }
@@ -77,7 +76,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
             else -> return null
         }
 
-        return BasicKotlinModule(project.path, LocalBuild(project.currentBuildId().name)).apply {
+        return BasicKotlinModule(LocalModuleIdentifier(project.currentBuildId().name, project.path)).apply {
             val variantToCompilation = mutableMapOf<KotlinModuleFragment, KotlinCompilation<*>>()
 
             targets.forEach { target ->
@@ -109,7 +108,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
             extension.sourceSets.forEach { sourceSet ->
                 val existingVariant = fragments.filterIsInstance<BasicKotlinModuleVariant>().find { it.fragmentName == sourceSet.name }
                 val fragment = existingVariant ?: BasicKotlinModuleFragment(this@apply, sourceSet.name).also { fragments.add(it) }
-                fragment.kotlinSourceRoots = sourceSet.kotlin.sourceDirectories.toList()
+                fragment.kotlinSourceDirectories = sourceSet.kotlin.sourceDirectories.toList()
 
                 // FIXME: Kotlin/Native implementation-effective-api dependencies are missing here. Introduce dependency scopes
                 project.configurations.getByName(sourceSet.apiConfigurationName).allDependencies.forEach {
@@ -163,9 +162,9 @@ internal fun Dependency.toModuleDependency(
     project: Project
 ) = when (val dependency = this) {
     is ProjectDependency ->
-        LocalModuleDependency(LocalBuild(project.currentBuildId().name), dependency.dependencyProject.path)
+        ModuleDependency(LocalModuleIdentifier(project.currentBuildId().name, dependency.dependencyProject.path))
     else ->
-        ExternalModuleDependency(ExternalOrigin(listOfNotNull(dependency.group, dependency.name)))
+        ModuleDependency(MavenModuleIdentifier(dependency.group.orEmpty(), dependency.name))
 }
 
 private fun BasicKotlinModule.fragmentByName(name: String) =
@@ -184,8 +183,7 @@ class GradleModuleVariantResolver(val project: Project) : ModuleVariantResolver 
         val module = requestingVariant.containingModule
 
         // This implementation can only resolve variants for the current project's KotlinModule
-        require(module.moduleName == project.path)
-        require(module.moduleOrigin.let { it is LocalBuild && it.buildId == project.currentBuildId().name })
+        require(module.representsProject(project))
 
         val targets =
             project.multiplatformExtensionOrNull?.targets ?: listOf((project.kotlinExtension as KotlinSingleTargetExtension).target)

@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.project.model
 
-sealed class ModuleDependency(open val moduleOrigin: ModuleOrigin)
-
-data class ExternalModuleDependency(override val moduleOrigin: ExternalOrigin) : ModuleDependency(moduleOrigin) {
-    override fun toString() = "external dependency ${moduleOrigin.dependencyIdParts.joinToString(":")}"
+data class ModuleDependency(val moduleIdentifier: ModuleIdentifier) {
+    override fun toString(): String = "dependency $moduleIdentifier"
 }
 
-data class LocalModuleDependency(override val moduleOrigin: LocalBuild, val moduleName: String) :
-    ModuleDependency(moduleOrigin) {
-    override fun toString() = "local module $moduleName (build ${moduleOrigin.buildId})"
-}
+/**
+ * TODO other kinds of dependencies: non-Kotlin: cinterop, CocoaPods, NPM dependencies?
+ *  support with different moduleIdentifiers? Introduce other kinds of dependencies than ModuleDependency?
+ */
