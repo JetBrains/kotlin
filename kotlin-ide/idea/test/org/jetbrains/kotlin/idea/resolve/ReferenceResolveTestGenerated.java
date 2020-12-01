@@ -664,10 +664,6 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
-        public void testAllFilesPresentInNestedTypes() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/nestedTypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
         @TestMetadata("ResolveCompanionInCompanionType.kt")
         public void testResolveCompanionInCompanionType() throws Exception {
             runTest("idea/testData/resolve/references/nestedTypes/ResolveCompanionInCompanionType.kt");
