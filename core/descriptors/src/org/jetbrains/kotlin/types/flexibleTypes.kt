@@ -16,10 +16,13 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.checker.ErrorTypesAreEqualToAnything
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
@@ -145,5 +148,36 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
             kotlinTypeRefiner.refineType(lowerBound) as SimpleType,
             kotlinTypeRefiner.refineType(upperBound) as SimpleType
         )
+    }
+}
+
+object FlexibleTypeBoundsChecker {
+    private val fqNames = StandardNames.FqNames
+    private val baseTypesToMutableEquivalent = mapOf(
+        fqNames.iterable to fqNames.mutableIterable,
+        fqNames.iterator to fqNames.mutableIterator,
+        fqNames.listIterator to fqNames.mutableListIterator,
+        fqNames.list to fqNames.mutableList,
+        fqNames.collection to fqNames.mutableCollection,
+        fqNames.set to fqNames.mutableSet,
+        fqNames.map to fqNames.mutableMap,
+        fqNames.mapEntry to fqNames.mutableMapEntry
+    )
+    private val mutableToBaseMap = baseTypesToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
+
+    fun areTypesMayBeLowerAndUpperBoundsOfSameFlexibleTypeByMutability(a: KotlinType, b: KotlinType): Boolean {
+        val fqName = a.constructor.declarationDescriptor?.fqNameSafe ?: return false
+        val possiblePairBound = (baseTypesToMutableEquivalent[fqName] ?: mutableToBaseMap[fqName]) ?: return false
+
+        return possiblePairBound == b.constructor.declarationDescriptor?.fqNameSafe
+    }
+
+    // We consider base bounds as not mutable collections
+    fun getBaseBoundFqNameByMutability(a: KotlinType): FqName? {
+        val fqName = a.constructor.declarationDescriptor?.fqNameSafe ?: return null
+
+        if (fqName in baseTypesToMutableEquivalent) return fqName
+
+        return mutableToBaseMap[fqName]
     }
 }
