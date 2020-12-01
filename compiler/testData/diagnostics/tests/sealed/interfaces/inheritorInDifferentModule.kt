@@ -1,5 +1,5 @@
 // ISSUE: KT-20423
-// !LANGUAGE: +SealedInterfaces +FreedomForSealedClasses
+// !LANGUAGE: +SealedInterfaces +AllowSealedInheritorsInDifferentFilesOfSamePackage
 
 // MODULE: m1
 // FILE: a.kt

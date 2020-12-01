@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.resolve.bindingContextUtil.getAbbreviatedTypeOrType
 
 object SealedInheritorInSamePackageChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.FreedomForSealedClasses)) return
+        if (!context.languageVersionSettings.supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage)) return
         if (descriptor !is ClassDescriptor || declaration !is KtClassOrObject) return
         val classPackage = descriptor.containingPackage() ?: return // local class, SEALED_SUPERTYPE already reported
         for (superTypeListEntry in declaration.superTypeListEntries) {

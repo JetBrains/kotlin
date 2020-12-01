@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
 // ISSUE: KT-20423
-// !LANGUAGE: +FreedomForSealedClasses +SealedInterfaces
+// !LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage +SealedInterfaces
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 sealed interface Base

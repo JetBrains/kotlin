@@ -695,13 +695,13 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     fun testSealedClassesAndInterfaces() {
-        val features = listOf("-XXLanguage:+FreedomForSealedClasses", "-XXLanguage:+SealedInterfaces")
+        val features = listOf("-XXLanguage:+AllowSealedInheritorsInDifferentFilesOfSamePackage", "-XXLanguage:+SealedInterfaces")
         val library = compileLibrary("library", additionalOptions = features, checkKotlinOutput = {})
         compileKotlin("main.kt", tmpdir, listOf(library), additionalOptions = features)
     }
 
     fun testSealedInheritorInDifferentModule() {
-        val features = listOf("-XXLanguage:+FreedomForSealedClasses", "-XXLanguage:+SealedInterfaces")
+        val features = listOf("-XXLanguage:+AllowSealedInheritorsInDifferentFilesOfSamePackage", "-XXLanguage:+SealedInterfaces")
         val library = compileLibrary("library", additionalOptions = features, checkKotlinOutput = {})
         compileKotlin("main.kt", tmpdir, listOf(library), additionalOptions = features)
     }

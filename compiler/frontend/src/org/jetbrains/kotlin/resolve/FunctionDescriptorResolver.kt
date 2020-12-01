@@ -392,7 +392,7 @@ class FunctionDescriptorResolver(
             resolveValueParameters(constructorDescriptor, parameterScope, valueParameters, trace, null),
             resolveVisibilityFromModifiers(
                 modifierList,
-                DescriptorUtils.getDefaultConstructorVisibility(classDescriptor, languageVersionSettings.supportsFeature(LanguageFeature.FreedomForSealedClasses))
+                DescriptorUtils.getDefaultConstructorVisibility(classDescriptor, languageVersionSettings.supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage))
             )
         )
         constructor.returnType = classDescriptor.defaultType
