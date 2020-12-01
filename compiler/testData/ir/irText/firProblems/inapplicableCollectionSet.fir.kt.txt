@@ -23,10 +23,10 @@ class Flaf {
             result = Flaf(javaName = javaName)
           }
         }
-        error("") /* ErrorCallExpression */javaName; result;
+        <this>.<get-INSTANCES>().set<String, Flaf>(key = javaName, value = result /*as Flaf */)
       }
     }
-    return result
+    return result /*as Flaf */
   }
 
 }
