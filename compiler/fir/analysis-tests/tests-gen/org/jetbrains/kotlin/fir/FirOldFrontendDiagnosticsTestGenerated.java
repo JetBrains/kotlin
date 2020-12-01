@@ -10659,6 +10659,16 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
                 runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/captureTypeOnlyOnTopLevel.kt");
             }
 
+            @TestMetadata("capturedFlexibleIntersectionTypesWithDifferentBounds.kt")
+            public void testCapturedFlexibleIntersectionTypesWithDifferentBounds() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedFlexibleIntersectionTypesWithDifferentBounds.kt");
+            }
+
+            @TestMetadata("capturedFlexibleIntersectionTypesWithDifferentConstructors.kt")
+            public void testCapturedFlexibleIntersectionTypesWithDifferentConstructors() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedFlexibleIntersectionTypesWithDifferentConstructors.kt");
+            }
+
             @TestMetadata("capturedType.kt")
             public void testCapturedType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/capturedType.kt");
