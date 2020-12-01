@@ -227,24 +227,25 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             }
         """.trimIndent()
         )
+
+        val allKotlinStubs = setOf(
+            project.projectDir.resolve("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath,
+            project.projectDir.resolve("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
+            project.projectDir.resolve("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
+            project.projectDir.resolve("build/tmp/kapt3/stubs/main/baz/UtilKt.java").canonicalPath,
+            project.projectDir.resolve("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
+        )
+
         project.build("clean", "build") {
             assertSuccessful()
+            assertEquals(allKotlinStubs + fileInWorkingDir("src/main/java/foo/JavaClass.java").canonicalPath, getProcessedSources(output))
         }
 
         // change type that all generated sources reference
         classpathTypeSource.writeText(classpathTypeSource.readText().replace("}", "int i = 10;\n}"))
         project.build("build") {
             assertSuccessful()
-            assertEquals(
-                setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/foo/A.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/baz/UtilKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
-                ),
-                getProcessedSources(output)
-            )
+            assertEquals(allKotlinStubs, getProcessedSources(output))
         }
     }
 
