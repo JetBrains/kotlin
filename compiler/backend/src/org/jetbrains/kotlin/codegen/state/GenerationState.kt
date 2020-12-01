@@ -201,7 +201,7 @@ class GenerationState private constructor(
 
     val target = configuration.get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
     val runtimeStringConcat =
-        if (target.bytecodeVersion >= JvmTarget.JVM_9.bytecodeVersion)
+        if (target.majorVersion >= JvmTarget.JVM_9.majorVersion)
             configuration.get(JVMConfigurationKeys.STRING_CONCAT) ?: JvmStringConcat.INLINE
         else JvmStringConcat.INLINE
 

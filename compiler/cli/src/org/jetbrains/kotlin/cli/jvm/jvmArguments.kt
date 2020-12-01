@@ -39,7 +39,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     }
 
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
-    if (jvmTarget.bytecodeVersion < JvmTarget.JVM_1_8.bytecodeVersion) {
+    if (jvmTarget.majorVersion < JvmTarget.JVM_1_8.majorVersion) {
         val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
         if (jvmDefaultMode.forAllMethodsWithBody) {
             messageCollector.report(
@@ -53,7 +53,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         val runtimeStringConcat = JvmStringConcat.fromString(arguments.stringConcat!!)
         if (runtimeStringConcat != null) {
             put(JVMConfigurationKeys.STRING_CONCAT, runtimeStringConcat)
-            if (jvmTarget.bytecodeVersion < JvmTarget.JVM_9.bytecodeVersion && runtimeStringConcat != JvmStringConcat.INLINE) {
+            if (jvmTarget.majorVersion < JvmTarget.JVM_9.majorVersion && runtimeStringConcat != JvmStringConcat.INLINE) {
                 messageCollector.report(
                     WARNING,
                     "`-Xstring-concat=${arguments.stringConcat}` does nothing with JVM target `${jvmTarget.description}`."

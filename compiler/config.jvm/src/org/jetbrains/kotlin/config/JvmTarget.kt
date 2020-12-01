@@ -21,34 +21,33 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 
 enum class JvmTarget(
     override val description: String,
+    val majorVersion: Int,
     val descriptionForJavacArgument: String = description,
     val isPreview: Boolean = false,
 ) : TargetPlatformVersion {
-    JVM_1_6("1.6"),
-    JVM_1_8("1.8"),
-    JVM_9("9"),
-    JVM_10("10"),
-    JVM_11("11"),
-    JVM_12("12"),
-    JVM_13("13"),
-    JVM_14("14"),
-    JVM_15("15"),
-    JVM_15_PREVIEW("15_PREVIEW", descriptionForJavacArgument = "15", isPreview = true),
+    JVM_1_6("1.6", Opcodes.V1_6),
+    JVM_1_8("1.8", Opcodes.V1_8),
+    JVM_9("9", Opcodes.V9),
+    JVM_10("10", Opcodes.V10),
+    JVM_11("11", Opcodes.V11),
+    JVM_12("12", Opcodes.V12),
+    JVM_13("13", Opcodes.V13),
+    JVM_14("14", Opcodes.V14),
+    JVM_15("15", Opcodes.V15),
+    JVM_15_PREVIEW(
+        "15_PREVIEW", Opcodes.V15,
+        descriptionForJavacArgument = "15", isPreview = true
+    ),
     ;
 
+    val minorVersion: Int =
+        if (isPreview)
+            0xffff
+        else
+            0
+
     val bytecodeVersion: Int by lazy {
-        when (this) {
-            JVM_1_6 -> Opcodes.V1_6
-            JVM_1_8 -> Opcodes.V1_8
-            JVM_9 -> Opcodes.V9
-            JVM_10 -> Opcodes.V10
-            JVM_11 -> Opcodes.V11
-            JVM_12 -> Opcodes.V12
-            JVM_13 -> Opcodes.V13
-            JVM_14 -> Opcodes.V14
-            JVM_15 -> Opcodes.V15
-            JVM_15_PREVIEW -> Opcodes.V15 + (0xffff shl 16)
-        }
+        (minorVersion shl 16) + majorVersion
     }
 
     companion object {
