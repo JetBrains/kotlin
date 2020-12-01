@@ -344,6 +344,11 @@ public class ExtendedFirWithLightTreeDiagnosticsTestGenerated extends AbstractEx
             runTest("compiler/fir/analysis-tests/testData/extendedCheckers/unused/manyLocalVariables.kt");
         }
 
+        @TestMetadata("usedInAnnotationArguments.kt")
+        public void testUsedInAnnotationArguments() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/unused/usedInAnnotationArguments.kt");
+        }
+
         @TestMetadata("valueIsNeverRead.kt")
         public void testValueIsNeverRead() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/extendedCheckers/unused/valueIsNeverRead.kt");
