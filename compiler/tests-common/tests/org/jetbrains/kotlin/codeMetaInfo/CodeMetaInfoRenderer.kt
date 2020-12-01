@@ -56,13 +56,17 @@ object CodeMetaInfoRenderer {
                     current = next
                 }
             }
+            // Here we need to handle meta infos which has start == end and close them immediately
+            checkOpenedAndCloseStringIfNeeded(opened, i, builder)
             builder.append(c)
         }
         checkOpenedAndCloseStringIfNeeded(opened, originalText.length, builder)
     }
 
+    private val metaInfoComparator = (compareBy<CodeMetaInfo> { it.start } then compareByDescending { it.end }) then compareBy { it.tag }
+
     private fun getSortedCodeMetaInfos(metaInfos: Collection<CodeMetaInfo>): List<CodeMetaInfo> {
-        return metaInfos.sortedWith(compareBy<CodeMetaInfo> { it.start }.then(compareByDescending { it.end }))
+        return metaInfos.sortedWith(metaInfoComparator)
     }
 
     private fun closeString(result: StringBuilder) = result.append("<!>")
