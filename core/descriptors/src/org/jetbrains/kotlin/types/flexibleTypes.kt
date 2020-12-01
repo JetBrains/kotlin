@@ -45,10 +45,8 @@ fun KotlinType.isNullabilityFlexible(): Boolean {
 fun Collection<KotlinType>.singleBestRepresentative(): KotlinType? {
     if (this.size == 1) return this.first()
 
-    return this.firstOrNull {
-        candidate ->
-        this.all {
-            other ->
+    return this.firstOrNull { candidate ->
+        this.all { other ->
             // We consider error types equal to anything here, so that intersections like
             // {Array<String>, Array<[ERROR]>} work correctly
             candidate == other || ErrorTypesAreEqualToAnything.equalTypes(candidate, other)
@@ -73,6 +71,7 @@ fun KotlinType.lowerIfFlexible(): SimpleType = with(unwrap()) {
         is SimpleType -> this
     }
 }
+
 fun KotlinType.upperIfFlexible(): SimpleType = with(unwrap()) {
     when (this) {
         is FlexibleType -> upperBound
@@ -98,10 +97,10 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
         if (!RUN_SLOW_ASSERTIONS || assertionsDone) return
         assertionsDone = true
 
-        assert (!lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $lowerBound" }
-        assert (!upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $upperBound" }
-        assert (lowerBound != upperBound) { "Lower and upper bounds are equal: $lowerBound == $upperBound" }
-        assert (KotlinTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
+        assert(!lowerBound.isFlexible()) { "Lower bound of a flexible type can not be flexible: $lowerBound" }
+        assert(!upperBound.isFlexible()) { "Upper bound of a flexible type can not be flexible: $upperBound" }
+        assert(lowerBound != upperBound) { "Lower and upper bounds are equal: $lowerBound == $upperBound" }
+        assert(KotlinTypeChecker.DEFAULT.isSubtypeOf(lowerBound, upperBound)) {
             "Lower bound $lowerBound of a flexible type must be a subtype of the upper bound $upperBound"
         }
     }
@@ -112,19 +111,20 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
             return lowerBound
         }
 
-    override val isTypeVariable: Boolean get() = lowerBound.constructor.declarationDescriptor is TypeParameterDescriptor
-                                                 && lowerBound.constructor == upperBound.constructor
+    override val isTypeVariable: Boolean
+        get() = lowerBound.constructor.declarationDescriptor is TypeParameterDescriptor
+                && lowerBound.constructor == upperBound.constructor
 
     override fun substitutionResult(replacement: KotlinType): KotlinType {
         val unwrapped = replacement.unwrap()
-        return when(unwrapped) {
+        return when (unwrapped) {
             is FlexibleType -> unwrapped
             is SimpleType -> KotlinTypeFactory.flexibleType(unwrapped, unwrapped.makeNullableAsSpecified(true))
         }.inheritEnhancement(unwrapped)
     }
 
-    override fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType
-            = KotlinTypeFactory.flexibleType(lowerBound.replaceAnnotations(newAnnotations), upperBound.replaceAnnotations(newAnnotations))
+    override fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType =
+        KotlinTypeFactory.flexibleType(lowerBound.replaceAnnotations(newAnnotations), upperBound.replaceAnnotations(newAnnotations))
 
     override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String {
         if (options.debugMode) {
@@ -133,8 +133,10 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
         return renderer.renderFlexibleType(renderer.renderType(lowerBound), renderer.renderType(upperBound), builtIns)
     }
 
-    override fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
-            = KotlinTypeFactory.flexibleType(lowerBound.makeNullableAsSpecified(newNullability), upperBound.makeNullableAsSpecified(newNullability))
+    override fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType = KotlinTypeFactory.flexibleType(
+        lowerBound.makeNullableAsSpecified(newNullability),
+        upperBound.makeNullableAsSpecified(newNullability)
+    )
 
     @TypeRefinement
     @OptIn(TypeRefinement::class)
