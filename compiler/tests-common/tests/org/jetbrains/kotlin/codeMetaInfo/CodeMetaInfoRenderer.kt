@@ -30,37 +30,53 @@ object CodeMetaInfoRenderer {
             builder.append(originalText)
             return
         }
-        val sortedMetaInfos = getSortedCodeMetaInfos(codeMetaInfos)
+        val sortedMetaInfos = getSortedCodeMetaInfos(codeMetaInfos).groupBy { it.start }
         val opened = Stack<CodeMetaInfo>()
 
         for ((i, c) in originalText.withIndex()) {
-            checkOpenedAndCloseStringIfNeeded(opened, i, builder)
-            val matchedCodeMetaInfos = sortedMetaInfos.filter { it.start == i }
-            if (matchedCodeMetaInfos.isNotEmpty()) {
-                openStartTag(builder)
-                val iterator = matchedCodeMetaInfos.listIterator()
-                var current: CodeMetaInfo? = iterator.next()
-
-                while (current != null) {
-                    val next: CodeMetaInfo? = if (iterator.hasNext()) iterator.next() else null
-                    opened.push(current)
-                    builder.append(current.asString())
-                    when {
-                        next == null ->
-                            closeStartTag(builder)
-                        next.end == current.end ->
-                            builder.append(", ")
-                        else ->
-                            closeStartAndOpenNewTag(builder)
-                    }
-                    current = next
-                }
-            }
-            // Here we need to handle meta infos which has start == end and close them immediately
-            checkOpenedAndCloseStringIfNeeded(opened, i, builder)
+            processMetaInfosStartedAtOffset(i, sortedMetaInfos, opened, builder)
             builder.append(c)
         }
-        checkOpenedAndCloseStringIfNeeded(opened, originalText.length, builder)
+        val lastSymbolIsNewLine = builder.last() == '\n'
+        if (lastSymbolIsNewLine) {
+            builder.deleteCharAt(builder.length - 1)
+        }
+        processMetaInfosStartedAtOffset(originalText.length, sortedMetaInfos, opened, builder)
+        if (lastSymbolIsNewLine) {
+            builder.appendLine()
+        }
+    }
+
+    private fun processMetaInfosStartedAtOffset(
+        offset: Int,
+        sortedMetaInfos: Map<Int, List<CodeMetaInfo>>,
+        opened: Stack<CodeMetaInfo>,
+        builder: StringBuilder
+    ) {
+        checkOpenedAndCloseStringIfNeeded(opened, offset, builder)
+        val matchedCodeMetaInfos = sortedMetaInfos[offset] ?: emptyList()
+        if (matchedCodeMetaInfos.isNotEmpty()) {
+            openStartTag(builder)
+            val iterator = matchedCodeMetaInfos.listIterator()
+            var current: CodeMetaInfo? = iterator.next()
+
+            while (current != null) {
+                val next: CodeMetaInfo? = if (iterator.hasNext()) iterator.next() else null
+                opened.push(current)
+                builder.append(current.asString())
+                when {
+                    next == null ->
+                        closeStartTag(builder)
+                    next.end == current.end ->
+                        builder.append(", ")
+                    else ->
+                        closeStartAndOpenNewTag(builder)
+                }
+                current = next
+            }
+        }
+        // Here we need to handle meta infos which has start == end and close them immediately
+        checkOpenedAndCloseStringIfNeeded(opened, offset, builder)
     }
 
     private val metaInfoComparator = (compareBy<CodeMetaInfo> { it.start } then compareByDescending { it.end }) then compareBy { it.tag }
