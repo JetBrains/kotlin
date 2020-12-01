@@ -71,7 +71,7 @@ class IncrementalProcessor(private val processor: Processor, private val kind: D
 
     fun isUnableToRunIncrementally() = !kind.canRunIncrementally
 
-    /** Mapping fromm generated file to type that were used as originating elements. For aggregating APs types will be [null]. */
+    /** Mapping from generated file to type that were used as originating elements. For aggregating APs types will be [null]. */
     fun getGeneratedToSources(): Map<File, String?> = dependencyCollector.value.getGeneratedToSources()
 
     /** All top-level types that were processed by aggregating APs. */
