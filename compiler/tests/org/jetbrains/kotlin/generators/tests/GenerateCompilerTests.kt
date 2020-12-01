@@ -220,6 +220,10 @@ fun main(args: Array<String>) {
                 model("codegen/java15/box")
             }
 
+            testClass<AbstractJdk15IrBlackBoxCodegenTest> {
+                model("codegen/java15/box")
+            }
+
             testClass<AbstractJdk9BlackBoxCodegenTest> {
                 model("codegen/java9/box")
             }
