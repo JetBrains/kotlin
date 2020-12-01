@@ -113,6 +113,7 @@ class FirCallCompletionResultsWriterTransformer(
         if (declaration !is FirErrorFunction) {
             result.replaceTypeArguments(typeArguments)
         }
+        session.lookupTracker?.recordTypeResolveAsLookup(typeRef, qualifiedAccessExpression.source, null)
         return result
     }
 
@@ -135,6 +136,7 @@ class FirCallCompletionResultsWriterTransformer(
         val resultType = typeRef.substituteTypeRef(subCandidate)
         resultType.ensureResolvedTypeDeclaration(session)
         result.replaceTypeRef(resultType)
+        session.lookupTracker?.recordTypeResolveAsLookup(resultType, qualifiedAccessExpression.source, null)
 
         if (mode == Mode.DelegatedPropertyCompletion) {
             subCandidate.symbol.fir.transformSingle(declarationWriter, null)
@@ -179,6 +181,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         result.replaceTypeRef(resultType)
+        session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, null)
 
         if (mode == Mode.DelegatedPropertyCompletion) {
             subCandidate.symbol.fir.transformSingle(declarationWriter, null)
@@ -249,6 +252,7 @@ class FirCallCompletionResultsWriterTransformer(
     ): D {
         val resultTypeRef = typeRef.substituteTypeRef(calleeReference.candidate)
         replaceTypeRef(resultTypeRef)
+        session.lookupTracker?.recordTypeResolveAsLookup(resultTypeRef, source, null)
         return this
     }
 
@@ -297,6 +301,7 @@ class FirCallCompletionResultsWriterTransformer(
         val resultType = typeRef.withReplacedConeType(finalType)
         callableReferenceAccess.replaceTypeRef(resultType)
         callableReferenceAccess.replaceTypeArguments(typeArguments)
+        session.lookupTracker?.recordTypeResolveAsLookup(resultType, typeRef.source ?: callableReferenceAccess.source, null)
 
         return callableReferenceAccess.transformCalleeReference(
             StoreCalleeReference,
@@ -338,9 +343,9 @@ class FirCallCompletionResultsWriterTransformer(
         ): CompositeTransformResult<FirStatement> {
             val originalType = qualifiedAccessExpression.typeRef.coneType
             val substitutedReceiverType = finalSubstitutor.substituteOrNull(originalType) ?: return qualifiedAccessExpression.compose()
-            qualifiedAccessExpression.replaceTypeRef(
-                qualifiedAccessExpression.typeRef.resolvedTypeFromPrototype(substitutedReceiverType)
-            )
+            val resolvedTypeRef = qualifiedAccessExpression.typeRef.resolvedTypeFromPrototype(substitutedReceiverType)
+            qualifiedAccessExpression.replaceTypeRef(resolvedTypeRef)
+            session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, qualifiedAccessExpression.source, null)
             return qualifiedAccessExpression.compose()
         }
     }
@@ -500,9 +505,9 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         if (needUpdateLambdaType) {
-            anonymousFunction.replaceTypeRef(
-                anonymousFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
-            )
+            val resolvedTypeRef = anonymousFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
+            anonymousFunction.replaceTypeRef(resolvedTypeRef)
+            session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, anonymousFunction.source, null)
         }
 
         val result = transformElement(anonymousFunction, null)
@@ -519,10 +524,14 @@ class FirCallCompletionResultsWriterTransformer(
                 (returnExpressionsOfAnonymousFunction.lastOrNull() as? FirExpression)
                     ?.typeRef?.coneTypeSafe<ConeKotlinType>()
 
-            resultFunction.replaceReturnTypeRef(resultFunction.returnTypeRef.withReplacedConeType(lastExpressionType))
-            resultFunction.replaceTypeRef(
-                resultFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
-            )
+            val newReturnTypeRef = resultFunction.returnTypeRef.withReplacedConeType(lastExpressionType)
+            resultFunction.replaceReturnTypeRef(newReturnTypeRef)
+            val resolvedTypeRef = resultFunction.constructFunctionalTypeRef(isSuspend = expectedType?.isSuspendFunctionType(session) == true)
+            resultFunction.replaceTypeRef(resolvedTypeRef)
+            session.lookupTracker?.let {
+                it.recordTypeResolveAsLookup(newReturnTypeRef, anonymousFunction.source, null)
+                it.recordTypeResolveAsLookup(resolvedTypeRef, anonymousFunction.source, null)
+            }
         }
 
         return result
@@ -576,6 +585,7 @@ class FirCallCompletionResultsWriterTransformer(
                 resultType = resultType.resolvedTypeFromPrototype(it.getApproximatedType(data?.getExpectedType(block)))
             }
             block.replaceTypeRef(resultType)
+            session.lookupTracker?.recordTypeResolveAsLookup(resultType, block.source, null)
         }
         transformElement(block, data)
         if (block.resultType is FirErrorTypeRef) {

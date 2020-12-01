@@ -333,6 +333,7 @@ object KotlinToJVMBytecodeCompiler {
                 languageVersionSettings,
                 sourceScope,
                 librariesScope,
+                lookupTracker = environment.configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
                 environment::createPackagePartProvider
             ) {
                 if (extendedAnalysisMode) {
@@ -349,9 +350,6 @@ object KotlinToJVMBytecodeCompiler {
                 environment.messageCollector
             )
             performanceManager?.notifyAnalysisFinished()
-
-            // TODO: maybe we should not do it in presence of errors, but tests at the moment expect lookups to be reported
-            session.firLookupTracker?.flushLookups()
 
             if (syntaxErrors || firDiagnostics.any { it.severity == Severity.ERROR }) {
                 return false

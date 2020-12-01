@@ -50,9 +50,11 @@ class FirTypeResolveTransformer(
     }
 
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session)
+    private var currentFile: FirFile? = null
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         checkSessionConsistency(file)
+        currentFile = file
         return withScopeCleanup {
             scopes.addAll(createImportingScopes(file, session, scopeSession))
             super.transformFile(file, data)
@@ -169,7 +171,7 @@ class FirTypeResolveTransformer(
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): CompositeTransformResult<FirResolvedTypeRef> {
-        return typeRef.transform(typeResolverTransformer, towerScope)
+        return typeResolverTransformer.withFile(currentFile) { typeRef.transform(typeResolverTransformer, towerScope) }
     }
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): CompositeTransformResult<FirStatement> {

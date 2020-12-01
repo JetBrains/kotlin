@@ -55,6 +55,33 @@ import java.lang.annotation.Documented
 import java.lang.annotation.Retention
 import java.lang.annotation.Target
 import java.util.*
+import kotlin.Any
+import kotlin.Array
+import kotlin.Boolean
+import kotlin.BooleanArray
+import kotlin.Byte
+import kotlin.ByteArray
+import kotlin.Char
+import kotlin.CharArray
+import kotlin.Double
+import kotlin.DoubleArray
+import kotlin.Float
+import kotlin.FloatArray
+import kotlin.Int
+import kotlin.IntArray
+import kotlin.Long
+import kotlin.LongArray
+import kotlin.Short
+import kotlin.ShortArray
+import kotlin.String
+import kotlin.Suppress
+import kotlin.also
+import kotlin.arrayOf
+import kotlin.emptyArray
+import kotlin.error
+import kotlin.let
+import kotlin.run
+import kotlin.to
 
 internal val JavaModifierListOwner.modality: Modality
     get() = when {
@@ -702,6 +729,7 @@ private fun FirConstExpression<*>.setProperType(session: FirSession): FirConstEx
         type = kind.expectedConeType(session)
     }
     replaceTypeRef(typeRef)
+    session.lookupTracker?.recordTypeResolveAsLookup(typeRef, source, null)
     return this
 }
 

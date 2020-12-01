@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
 import org.jetbrains.kotlin.fir.session.FirSessionFactory
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.Name
@@ -24,6 +25,7 @@ fun createSessionWithDependencies(
     languageVersionSettings: LanguageVersionSettings,
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope,
+    lookupTracker: LookupTracker?,
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     sessionConfigurator: FirSessionFactory.FirSessionConfigurator.() -> Unit = {}
 ): FirSession {
@@ -33,6 +35,7 @@ fun createSessionWithDependencies(
         languageVersionSettings,
         sourceScope,
         librariesScope,
+        lookupTracker,
         packagePartProvider,
         sessionConfigurator
     ) {
@@ -46,6 +49,7 @@ fun createSessionWithDependencies(
     languageVersionSettings: LanguageVersionSettings,
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope,
+    lookupTracker: LookupTracker?,
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     sessionConfigurator: FirSessionFactory.FirSessionConfigurator.() -> Unit = {}
 ): FirSession {
@@ -55,6 +59,7 @@ fun createSessionWithDependencies(
         languageVersionSettings,
         sourceScope,
         librariesScope,
+        lookupTracker,
         packagePartProvider,
         sessionConfigurator
     ) {
@@ -68,6 +73,7 @@ private inline fun createSessionWithDependencies(
     languageVersionSettings: LanguageVersionSettings,
     sourceScope: GlobalSearchScope,
     librariesScope: GlobalSearchScope,
+    lookupTracker: LookupTracker?,
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     noinline sessionConfigurator: FirSessionFactory.FirSessionConfigurator.() -> Unit,
     moduleInfoProvider: (dependencies: List<ModuleInfo>) -> ModuleInfo,
@@ -84,6 +90,7 @@ private inline fun createSessionWithDependencies(
         sourceScope,
         project,
         languageVersionSettings = languageVersionSettings,
+        lookupTracker = lookupTracker,
         init = sessionConfigurator
     )
 }

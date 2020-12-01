@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.*
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
@@ -28,6 +30,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+
+val SAM_LOOKUP_NAME = Name.special("<SAM-CONSTRUCTOR>")
 
 fun Candidate.resolveArgumentExpression(
     csBuilder: ConstraintSystemBuilder,
@@ -391,6 +395,7 @@ private fun checkApplicabilityForArgumentType(
 }
 
 internal fun Candidate.resolveArgument(
+    callInfo: CallInfo,
     argument: FirExpression,
     parameter: FirValueParameter?,
     isReceiver: Boolean,
@@ -399,7 +404,8 @@ internal fun Candidate.resolveArgument(
 ) {
     argument.resultType.ensureResolvedTypeDeclaration(context.session)
 
-    val expectedType = prepareExpectedType(context.session, context.bodyResolveComponents.scopeSession, argument, parameter, context)
+    val expectedType =
+        prepareExpectedType(context.session, context.bodyResolveComponents.scopeSession, callInfo, argument, parameter, context)
     resolveArgumentExpression(
         this.system.getBuilder(),
         argument,
@@ -415,13 +421,33 @@ internal fun Candidate.resolveArgument(
 private fun Candidate.prepareExpectedType(
     session: FirSession,
     scopeSession: ScopeSession,
+    callInfo: CallInfo,
     argument: FirExpression,
     parameter: FirValueParameter?,
     context: ResolutionContext
 ): ConeKotlinType? {
     if (parameter == null) return null
     val basicExpectedType = argument.getExpectedTypeForSAMConversion(parameter/*, LanguageVersionSettings*/)
-    val expectedType = getExpectedTypeWithSAMConversion(session, scopeSession, argument, basicExpectedType, context) ?: basicExpectedType
+
+    val expectedType =
+        getExpectedTypeWithSAMConversion(session, scopeSession, argument, basicExpectedType, context)?.also {
+            session.lookupTracker?.let { lookupTracker ->
+                parameter.returnTypeRef.coneType.lowerBoundIfFlexible().classId?.takeIf { !it.isLocal }?.let { classId ->
+                    lookupTracker.recordLookup(
+                        SAM_LOOKUP_NAME,
+                        classId.asString(),
+                        callInfo.callSite.source,
+                        callInfo.containingFile.source
+                    )
+                    lookupTracker.recordLookup(
+                        classId.shortClassName,
+                        classId.packageFqName.asString(),
+                        callInfo.callSite.source,
+                        callInfo.containingFile.source
+                    )
+                }
+            }
+        } ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
 }
 

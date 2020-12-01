@@ -718,7 +718,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     }
                 val typeRef = symbol?.constructType(typeArguments, isNullable = false)
                 if (typeRef != null) {
-                    lhs.replaceTypeRef(buildResolvedTypeRef { type = typeRef })
+                    lhs.replaceTypeRef(
+                        buildResolvedTypeRef { type = typeRef }.also {
+                            session.lookupTracker?.recordTypeResolveAsLookup(it, getClassCall.source, null)
+                        }
+                    )
                     typeRef
                 } else {
                     lhs.resultType.coneType

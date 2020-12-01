@@ -144,6 +144,7 @@ internal object CheckArguments : CheckerStage() {
         for (argument in callInfo.arguments) {
             val parameter = argumentMapping[argument]
             candidate.resolveArgument(
+                callInfo,
                 argument,
                 parameter,
                 isReceiver = false,

@@ -62,6 +62,7 @@ class FirSyntheticCallGenerator(
             arguments += whenExpression.branches.map { it.result }
         }
         val reference = generateCalleeReferenceWithCandidate(
+            whenExpression,
             whenSelectFunction,
             argumentList,
             SyntheticCallableId.WHEN.callableName,
@@ -85,6 +86,7 @@ class FirSyntheticCallGenerator(
         }
 
         val reference = generateCalleeReferenceWithCandidate(
+            tryExpression,
             trySelectFunction,
             argumentList,
             SyntheticCallableId.TRY.callableName,
@@ -99,6 +101,7 @@ class FirSyntheticCallGenerator(
         if (stubReference !is FirStubReference) return null
 
         val reference = generateCalleeReferenceWithCandidate(
+            checkNotNullCall,
             checkNotNullFunction,
             checkNotNullCall.argumentList,
             SyntheticCallableId.CHECK_NOT_NULL.callableName,
@@ -116,6 +119,7 @@ class FirSyntheticCallGenerator(
             arguments += elvisExpression.rhs
         }
         val reference = generateCalleeReferenceWithCandidate(
+            elvisExpression,
             elvisFunction,
             argumentList,
             SyntheticCallableId.ELVIS_NOT_NULL.callableName,
@@ -134,6 +138,7 @@ class FirSyntheticCallGenerator(
 
         val reference =
             generateCalleeReferenceWithCandidate(
+                callableReferenceAccess,
                 idFunction,
                 argumentList,
                 SyntheticCallableId.ID.callableName,
@@ -156,13 +161,14 @@ class FirSyntheticCallGenerator(
     }
 
     private fun generateCalleeReferenceWithCandidate(
+        callSite: FirExpression,
         function: FirSimpleFunction,
         argumentList: FirArgumentList,
         name: Name,
         callKind: CallKind = CallKind.SyntheticSelect,
         context: ResolutionContext
     ): FirNamedReferenceWithCandidate? {
-        val callInfo = generateCallInfo(name, argumentList, callKind)
+        val callInfo = generateCallInfo(callSite, name, argumentList, callKind)
         val candidate = generateCandidate(callInfo, function, context)
         val applicability = components.resolutionStageRunner.processCandidate(candidate, context)
         if (applicability <= CandidateApplicability.INAPPLICABLE) {
@@ -182,7 +188,8 @@ class FirSyntheticCallGenerator(
         )
     }
 
-    private fun generateCallInfo(name: Name, argumentList: FirArgumentList, callKind: CallKind) = CallInfo(
+    private fun generateCallInfo(callSite: FirExpression, name: Name, argumentList: FirArgumentList, callKind: CallKind) = CallInfo(
+        callSite = callSite,
         callKind = callKind,
         name = name,
         explicitReceiver = null,
