@@ -145,6 +145,9 @@ private fun generateMultifileFacades(
             for (member in partClass.declarations) {
                 if (member !is IrSimpleFunction) continue
 
+                // KT-43519 Don't generate delegates for external methods
+                if (member.isExternal) continue
+
                 val correspondingProperty = member.correspondingPropertySymbol?.owner
                 if (member.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) ||
                     correspondingProperty?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true
