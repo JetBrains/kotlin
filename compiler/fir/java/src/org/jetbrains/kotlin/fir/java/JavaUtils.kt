@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -43,9 +44,15 @@ import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.load.java.typeEnhancement.TypeComponentPosition
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import java.lang.Deprecated
+import java.lang.annotation.Documented
+import java.lang.annotation.Retention
+import java.lang.annotation.Target
+import java.util.*
 
 internal val JavaModifierListOwner.modality: Modality
     get() = when {
@@ -421,52 +428,120 @@ private fun FirRegularClass.createRawArguments(
     computeRawProjection(session, typeParameter, position, erasedUpperBound)
 }
 
-private fun FirAnnotationCallBuilder.buildArgumentMapping(
+private fun buildEnumCall(session: FirSession, classId: ClassId?, entryName: Name?) =
+    buildFunctionCall {
+        val calleeReference = if (classId != null && entryName != null) {
+            session.firSymbolProvider.getClassDeclaredCallableSymbols(classId, entryName).firstOrNull()?.let {
+                buildResolvedNamedReference {
+                    name = entryName
+                    resolvedSymbol = it
+                }
+            }
+        } else {
+            null
+        }
+        this.calleeReference = calleeReference
+            ?: buildErrorNamedReference {
+                diagnostic = ConeSimpleDiagnostic("Strange Java enum value: $classId.$entryName", DiagnosticKind.Java)
+            }
+    }
+
+private val JAVA_TARGET_CLASS_ID = ClassId.topLevel(FqName(Target::class.java.canonicalName))
+private val JAVA_RETENTION_CLASS_ID = ClassId.topLevel(FqName(Retention::class.java.canonicalName))
+private val JAVA_DEPRECATED_CLASS_ID = ClassId.topLevel(FqName(Deprecated::class.java.canonicalName))
+private val JAVA_DOCUMENTED_CLASS_ID = ClassId.topLevel(FqName(Documented::class.java.canonicalName))
+private val JAVA_REPEATABLE_CLASS_ID = ClassId.topLevel(FqName("java.lang.annotation.Repeatable")) // since Java 8
+
+private val JAVA_TARGETS_TO_KOTLIN = mapOf(
+    "TYPE" to EnumSet.of(AnnotationTarget.CLASS, AnnotationTarget.FILE),
+    "ANNOTATION_TYPE" to EnumSet.of(AnnotationTarget.ANNOTATION_CLASS),
+    "TYPE_PARAMETER" to EnumSet.of(AnnotationTarget.TYPE_PARAMETER),
+    "FIELD" to EnumSet.of(AnnotationTarget.FIELD),
+    "LOCAL_VARIABLE" to EnumSet.of(AnnotationTarget.LOCAL_VARIABLE),
+    "PARAMETER" to EnumSet.of(AnnotationTarget.VALUE_PARAMETER),
+    "CONSTRUCTOR" to EnumSet.of(AnnotationTarget.CONSTRUCTOR),
+    "METHOD" to EnumSet.of(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER),
+    "TYPE_USE" to EnumSet.of(AnnotationTarget.TYPE)
+)
+
+private fun List<JavaAnnotationArgument>.mapJavaTargetArguments(session: FirSession): FirExpression? =
+    buildArrayOfCall {
+        argumentList = buildArgumentList {
+            val resultSet = EnumSet.noneOf(AnnotationTarget::class.java)
+            for (target in this@mapJavaTargetArguments) {
+                if (target !is JavaEnumValueAnnotationArgument) return null
+                resultSet.addAll(JAVA_TARGETS_TO_KOTLIN[target.entryName?.asString()] ?: continue)
+            }
+            val classId = ClassId.topLevel(StandardNames.FqNames.annotationTarget)
+            resultSet.mapTo(arguments) { buildEnumCall(session, classId, Name.identifier(it.name)) }
+        }
+    }
+
+private val JAVA_RETENTION_TO_KOTLIN = mapOf(
+    "RUNTIME" to AnnotationRetention.RUNTIME,
+    "CLASS" to AnnotationRetention.BINARY,
+    "SOURCE" to AnnotationRetention.SOURCE
+)
+
+private fun JavaAnnotationArgument.mapJavaRetentionArgument(session: FirSession): FirExpression? =
+    JAVA_RETENTION_TO_KOTLIN[(this as? JavaEnumValueAnnotationArgument)?.entryName?.asString()]?.let {
+        buildEnumCall(session, ClassId.topLevel(StandardNames.FqNames.annotationRetention), Name.identifier(it.name))
+    }
+
+private fun buildArgumentMapping(
     session: FirSession,
     javaTypeParameterStack: JavaTypeParameterStack,
-    classId: ClassId?,
+    lookupTag: ConeClassLikeLookupTagImpl,
     annotationArguments: Collection<JavaAnnotationArgument>
-): LinkedHashMap<FirExpression, FirValueParameter>? {
-    if (classId == null) {
-        annotationTypeRef = buildErrorTypeRef { diagnostic = ConeUnresolvedReferenceError() }
+): FirArgumentList? {
+    if (annotationArguments.none { it.name != null }) {
         return null
     }
-    val lookupTag = ConeClassLikeLookupTagImpl(classId)
-    annotationTypeRef = buildResolvedTypeRef {
-        type = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
+    val annotationClassSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(lookupTag.classId).also {
+        lookupTag.bindSymbolToLookupTag(session, it)
+    } ?: return null
+    val annotationConstructor =
+        (annotationClassSymbol.fir as FirRegularClass).declarations.filterIsInstance<FirConstructor>().first()
+    val mapping = annotationArguments.associateTo(linkedMapOf()) { argument ->
+        val parameter = annotationConstructor.valueParameters.find { it.name == (argument.name ?: JavaSymbolProvider.VALUE_METHOD_NAME) }
+            ?: return null
+        argument.toFirExpression(session, javaTypeParameterStack) to parameter
     }
-    if (annotationArguments.any { it.name != null }) {
-        val mapping = linkedMapOf<FirExpression, FirValueParameter>()
-        val annotationClassSymbol = session.firSymbolProvider.getClassLikeSymbolByFqName(classId).also {
-            lookupTag.bindSymbolToLookupTag(session, it)
-        }
-        if (annotationClassSymbol != null) {
-            val annotationConstructor =
-                (annotationClassSymbol.fir as FirRegularClass).declarations.filterIsInstance<FirConstructor>().first()
-            for (argument in annotationArguments) {
-                mapping[argument.toFirExpression(session, javaTypeParameterStack)] =
-                    annotationConstructor.valueParameters.find { it.name == (argument.name ?: JavaSymbolProvider.VALUE_METHOD_NAME) }
-                        ?: return null
-            }
-            return mapping
-        }
-    }
-    return null
+    return buildResolvedArgumentList(mapping)
 }
 
 internal fun JavaAnnotation.toFirAnnotationCall(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
 ): FirAnnotationCall {
     return buildAnnotationCall {
-        val mapping = buildArgumentMapping(session, javaTypeParameterStack, classId, arguments)
-        argumentList = if (mapping != null) {
-            buildResolvedArgumentList(mapping)
-        } else {
-            buildArgumentList {
-                for (argument in this@toFirAnnotationCall.arguments) {
-                    arguments += argument.toFirExpression(session, javaTypeParameterStack)
-                }
+        val lookupTag = when (classId) {
+            JAVA_TARGET_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.target)
+            JAVA_RETENTION_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.retention)
+            JAVA_REPEATABLE_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.repeatable)
+            JAVA_DOCUMENTED_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.mustBeDocumented)
+            JAVA_DEPRECATED_CLASS_ID -> ClassId.topLevel(StandardNames.FqNames.deprecated)
+            else -> classId
+        }?.let(::ConeClassLikeLookupTagImpl)
+        annotationTypeRef = if (lookupTag != null) {
+            buildResolvedTypeRef {
+                type = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isNullable = false)
             }
+        } else {
+            buildErrorTypeRef { diagnostic = ConeUnresolvedReferenceError() }
+        }
+        argumentList = when (classId) {
+            JAVA_TARGET_CLASS_ID -> when (val argument = arguments.singleOrNull()) {
+                is JavaArrayAnnotationArgument -> argument.getElements().mapJavaTargetArguments(session)?.let(::buildUnaryArgumentList)
+                is JavaEnumValueAnnotationArgument -> listOf(argument).mapJavaTargetArguments(session)?.let(::buildUnaryArgumentList)
+                else -> null
+            }
+            JAVA_RETENTION_CLASS_ID -> arguments.singleOrNull()?.mapJavaRetentionArgument(session)?.let(::buildUnaryArgumentList)
+            JAVA_DEPRECATED_CLASS_ID ->
+                buildUnaryArgumentList(buildConstExpression(null, FirConstKind.String, "Deprecated in Java").setProperType(session))
+            null -> null
+            else -> buildArgumentMapping(session, javaTypeParameterStack, lookupTag!!, arguments)
+        } ?: buildArgumentList {
+            this@toFirAnnotationCall.arguments.mapTo(arguments) { it.toFirExpression(session, javaTypeParameterStack) }
         }
         calleeReference = FirReferencePlaceholderForResolvedAnnotations
     }
@@ -490,9 +565,7 @@ private fun MutableList<FirAnnotationCall>.addAnnotationsFrom(
     javaAnnotationOwner: JavaAnnotationOwner,
     javaTypeParameterStack: JavaTypeParameterStack
 ) {
-    for (annotation in javaAnnotationOwner.annotations) {
-        this += annotation.toFirAnnotationCall(session, javaTypeParameterStack)
-    }
+    javaAnnotationOwner.annotations.mapTo(this) { it.toFirAnnotationCall(session, javaTypeParameterStack) }
 }
 
 internal fun JavaValueParameter.toFirValueParameter(
@@ -540,46 +613,18 @@ private fun JavaType?.toConeProjectionWithoutEnhancement(
 private fun JavaAnnotationArgument.toFirExpression(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
 ): FirExpression {
-    // TODO: this.name
     return when (this) {
-        is JavaLiteralAnnotationArgument -> {
-            value.createConstantOrError(session)
-        }
+        is JavaLiteralAnnotationArgument -> value.createConstantOrError(session)
         is JavaArrayAnnotationArgument -> buildArrayOfCall {
             argumentList = buildArgumentList {
-                for (element in getElements()) {
-                    arguments += element.toFirExpression(session, javaTypeParameterStack)
-                }
+                getElements().mapTo(arguments) { it.toFirExpression(session, javaTypeParameterStack) }
             }
         }
-        is JavaEnumValueAnnotationArgument -> {
-            buildFunctionCall {
-                val classId = this@toFirExpression.enumClassId
-                val entryName = this@toFirExpression.entryName
-                val calleeReference = if (classId != null && entryName != null) {
-                    val callableSymbol = session.firSymbolProvider.getClassDeclaredCallableSymbols(
-                        classId, entryName
-                    ).firstOrNull()
-                    callableSymbol?.let {
-                        buildResolvedNamedReference {
-                            name = entryName
-                            resolvedSymbol = it
-                        }
-                    }
-                } else {
-                    null
-                }
-                this.calleeReference = calleeReference
-                    ?: buildErrorNamedReference {
-                        diagnostic = ConeSimpleDiagnostic("Strange Java enum value: $classId.$entryName", DiagnosticKind.Java)
-                    }
-            }
-        }
+        is JavaEnumValueAnnotationArgument -> buildEnumCall(session, enumClassId, entryName)
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {
-            val referencedType = getReferencedType()
             argumentList = buildUnaryArgumentList(
                 buildClassReferenceExpression {
-                    classTypeRef = referencedType.toFirResolvedTypeRef(session, javaTypeParameterStack)
+                    classTypeRef = getReferencedType().toFirResolvedTypeRef(session, javaTypeParameterStack)
                 }
             )
         }

@@ -121,6 +121,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/annotations/fileClassWithFileAnnotation.kt");
         }
 
+        @TestMetadata("javaAnnotationOnProperty.kt")
+        public void testJavaAnnotationOnProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/javaAnnotationOnProperty.kt");
+        }
+
         @TestMetadata("jvmAnnotationFlags.kt")
         public void testJvmAnnotationFlags() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/jvmAnnotationFlags.kt");
