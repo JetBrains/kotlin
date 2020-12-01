@@ -1,7 +1,7 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:+FreedomForSealedClasses
+-XXLanguage:+AllowSealedInheritorsInDifferentFilesOfSamePackage
 -XXLanguage:+SealedInterfaces
 
 This mode is not recommended for production use,

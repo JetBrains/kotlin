@@ -1,6 +1,6 @@
 // ISSUE: KT-13495
 // IGNORE_BACKEND_FIR: JVM_IR
-// !LANGUAGE: +FreedomForSealedClasses
+// !LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
 
 // FILE: Base.kt
 

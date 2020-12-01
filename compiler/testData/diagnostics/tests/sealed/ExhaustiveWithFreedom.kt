@@ -1,6 +1,6 @@
 // ISSUE: KT-13495
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// !LANGUAGE: +FreedomForSealedClasses
+// !LANGUAGE: +AllowSealedInheritorsInDifferentFilesOfSamePackage
 
 // FILE: Base.kt
 
