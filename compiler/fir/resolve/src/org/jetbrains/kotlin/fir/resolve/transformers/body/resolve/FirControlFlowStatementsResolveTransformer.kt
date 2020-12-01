@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.withExpectedType
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.commonSuperTypeOrNull
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
@@ -104,19 +106,13 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
 
     private fun FirWhenExpression.refineReturnType(): FirWhenExpression {
         if (isExhaustive) {
-            val types = branches.map { it.result.typeRef.coneType }
+            val types = branches.map { it.result.typeRef.coneType.fullyExpandedType(session) }
             val ctx = session.inferenceComponents.ctx
-            // Note that we can't use, e.g., `ConeTypeIntersector.intersectTypes(ctx, types)`, directly due to cases like these:
-            // 1) else -> throw ... // which is of `Nothing` type, and the intersection would be dominated by it, i.e., `Nothing`.
-            // 2) else -> null // which is of `Nothing?` type, and it(T, Nothing?) == Nothing, not T?.
-            // Therefore, very conservative condition: only if all branches have the same type
-            val branchesHaveTheSameType = types.size >= 2 && types.toSet().size == 1
-            if (branchesHaveTheSameType) {
-                val theSameType = types.first()
-                // Additional conservative condition: only if the newly inferred type from branches is known to be _narrower_
-                if (AbstractTypeChecker.isSubtypeOf(ctx, theSameType, resultType.coneType, isFromNullabilityConstraint = true)) {
-                    resultType = resultType.resolvedTypeFromPrototype(theSameType)
-                }
+            val commonSuperType = ctx.commonSuperTypeOrNull(types)
+            if (commonSuperType != null &&
+                AbstractTypeChecker.isSubtypeOf(ctx, commonSuperType, resultType.coneType, isFromNullabilityConstraint = true)
+            ) {
+                resultType = resultType.resolvedTypeFromPrototype(commonSuperType)
             }
         } else {
             resultType = resultType.resolvedTypeFromPrototype(session.builtinTypes.unitType.type)

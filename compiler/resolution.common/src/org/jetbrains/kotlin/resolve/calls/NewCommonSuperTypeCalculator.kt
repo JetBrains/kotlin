@@ -207,11 +207,17 @@ object NewCommonSuperTypeCalculator {
         types: List<SimpleTypeMarker>,
         depth: Int,
         contextStubTypesEqualToAnything: AbstractTypeCheckerContext
-    ): SimpleTypeMarker =
-        intersectTypes(
-            allCommonSuperTypeConstructors(types, contextStubTypesEqualToAnything)
-                .map { superTypeWithGivenConstructor(types, it, depth) }
-        )
+    ): SimpleTypeMarker {
+        val constructors = allCommonSuperTypeConstructors(types, contextStubTypesEqualToAnything)
+        if (constructors.isEmpty()) {
+            return createErrorType("cannot find super type constructors for $types")
+        }
+        val superTypes = constructors.map { superTypeWithGivenConstructor(types, it, depth) }
+        if (superTypes.isEmpty()) {
+            return createErrorType("cannot construct super types for $types")
+        }
+        return intersectTypes(superTypes)
+    }
 
     /**
      * Note that if there is captured type C, then no one else is not subtype of C => lowerType cannot help here
