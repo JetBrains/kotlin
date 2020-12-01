@@ -97,6 +97,8 @@ internal class FirLightFieldForPropertySymbol(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _initializer by lazyPub {
+        if (!propertySymbol.isConst) return@lazyPub null
+        if (!propertySymbol.isVal) return@lazyPub null
         (propertySymbol.initializer as? KtSimpleConstantValue<*>)?.createPsiLiteral(this)
     }
 
