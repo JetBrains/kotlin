@@ -140,14 +140,17 @@ abstract class LogicSystem<FLOW : Flow>(protected val context: ConeInferenceCont
 
     private fun orForTypes(types: Collection<Set<ConeKotlinType>>): MutableSet<ConeKotlinType> {
         if (types.any { it.isEmpty() }) return mutableSetOf()
-        val allTypes = types.flatMapTo(mutableSetOf()) { it }
-        val commonTypes = allTypes.toMutableSet()
-        types.forEach { commonTypes.retainAll(it) }
-        val differentTypes = types.mapNotNull { typeSet -> (typeSet - commonTypes).takeIf { it.isNotEmpty() } }
-        if (differentTypes.size == types.size) {
-            context.commonSuperTypeOrNull(differentTypes.flatten())?.let { commonTypes += it }
+        val intersectedTypes = types.map {
+            if (it.size > 1) {
+                context.intersectTypes(it.toList()) as ConeKotlinType
+            } else {
+                assert(it.size == 1) { "We've already checked each set of types is not empty." }
+                it.single()
+            }
         }
-        return commonTypes
+        val result = mutableSetOf<ConeKotlinType>()
+        context.commonSuperTypeOrNull(intersectedTypes)?.let { result.add(it) }
+        return result
     }
 
     protected fun and(statements: Collection<TypeStatement>): MutableTypeStatement =

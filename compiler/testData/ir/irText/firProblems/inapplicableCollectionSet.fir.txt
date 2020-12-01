@@ -62,11 +62,17 @@ FILE fqName:<root> fileName:/inapplicableCollectionSet.kt
                     SET_VAR 'var result: <root>.Flaf? [var] declared in <root>.Flaf.forJavaName' type=kotlin.Unit origin=EQ
                       CONSTRUCTOR_CALL 'public constructor <init> (javaName: kotlin.String) [primary] declared in <root>.Flaf' type=<root>.Flaf origin=null
                         javaName: GET_VAR 'javaName: kotlin.String declared in <root>.Flaf.forJavaName' type=kotlin.String origin=null
-              ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): kotlin/collections/set>#' type=kotlin.Unit
-                GET_VAR 'javaName: kotlin.String declared in <root>.Flaf.forJavaName' type=kotlin.String origin=null
-                GET_VAR 'var result: <root>.Flaf? [var] declared in <root>.Flaf.forJavaName' type=<root>.Flaf? origin=null
+              CALL 'public final fun set <K, V> (key: K of kotlin.collections.set, value: V of kotlin.collections.set): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
+                <K>: kotlin.String
+                <V>: <root>.Flaf
+                $receiver: CALL 'private final fun <get-INSTANCES> (): kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> declared in <root>.Flaf' type=kotlin.collections.MutableMap<kotlin.String, <root>.Flaf> origin=GET_PROPERTY
+                  $this: GET_VAR '<this>: <root>.Flaf declared in <root>.Flaf.forJavaName' type=<root>.Flaf origin=null
+                key: GET_VAR 'javaName: kotlin.String declared in <root>.Flaf.forJavaName' type=kotlin.String origin=null
+                value: TYPE_OP type=<root>.Flaf origin=IMPLICIT_CAST typeOperand=<root>.Flaf
+                  GET_VAR 'var result: <root>.Flaf? [var] declared in <root>.Flaf.forJavaName' type=<root>.Flaf? origin=null
         RETURN type=kotlin.Nothing from='public final fun forJavaName (javaName: kotlin.String): <root>.Flaf declared in <root>.Flaf'
-          GET_VAR 'var result: <root>.Flaf? [var] declared in <root>.Flaf.forJavaName' type=<root>.Flaf? origin=null
+          TYPE_OP type=<root>.Flaf origin=IMPLICIT_CAST typeOperand=<root>.Flaf
+            GET_VAR 'var result: <root>.Flaf? [var] declared in <root>.Flaf.forJavaName' type=<root>.Flaf? origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
