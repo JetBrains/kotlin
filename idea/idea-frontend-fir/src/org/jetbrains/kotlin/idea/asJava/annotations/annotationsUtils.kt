@@ -69,8 +69,8 @@ internal fun KtAnnotatedSymbol.hasDeprecatedAnnotation(annotationUseSiteTarget: 
 internal fun KtAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean =
     hasAnnotation("kotlin/jvm/JvmOverloads", null)
 
-internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(): Boolean =
-    hasAnnotation("kotlin/jvm/JvmStatic", null)
+internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
+    hasAnnotation("kotlin/jvm/JvmStatic", annotationUseSiteTarget)
 
 internal fun KtAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean =
     hasAnnotation("kotlin/internal/InlineOnly", null)

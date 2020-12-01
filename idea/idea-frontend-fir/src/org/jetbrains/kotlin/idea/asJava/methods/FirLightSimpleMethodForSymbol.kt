@@ -86,21 +86,27 @@ internal class FirLightSimpleMethodForSymbol(
 
         val finalModifier = kotlinOrigin?.hasModifier(KtTokens.FINAL_KEYWORD) == true
 
-        val modifiers = functionSymbol.computeModalityForMethod(
-            isTopLevel = isTopLevel,
-            suppressFinal = !finalModifier && functionSymbol.isOverride
-        ) + _visibility
+        val modifiers = mutableSetOf<String>()
 
-        modifiers.add(
-            what = PsiModifier.STATIC,
-            `if` = functionSymbol.hasJvmStaticAnnotation()
-        ).add(
-            what = PsiModifier.STRICTFP,
-            `if` = functionSymbol.hasAnnotation("kotlin/jvm/Strictfp", null)
-        ).add(
-            what = PsiModifier.SYNCHRONIZED,
-            `if` = functionSymbol.hasAnnotation("kotlin/jvm/Synchronized", null)
+        functionSymbol.computeModalityForMethod(
+            isTopLevel = isTopLevel,
+            suppressFinal = !finalModifier && functionSymbol.isOverride,
+            result = modifiers
         )
+
+        modifiers.add(_visibility)
+
+        if (functionSymbol.hasJvmStaticAnnotation()) {
+            modifiers.add(PsiModifier.STATIC)
+        }
+        if (functionSymbol.hasAnnotation("kotlin/jvm/Strictfp", null)) {
+            modifiers.add(PsiModifier.STRICTFP)
+        }
+        if (functionSymbol.hasAnnotation("kotlin/jvm/Synchronized", null)) {
+            modifiers.add(PsiModifier.SYNCHRONIZED)
+        }
+
+        modifiers
     }
 
     private val _isDeprecated: Boolean by lazyPub {

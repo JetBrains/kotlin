@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.asJava.fields
+package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.asJava.*
-import org.jetbrains.kotlin.idea.asJava.FirLightClassForSymbol
-import org.jetbrains.kotlin.idea.asJava.FirLightClassModifierList
-import org.jetbrains.kotlin.idea.asJava.FirLightField
-import org.jetbrains.kotlin.idea.asJava.asPsiType
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -33,7 +29,7 @@ internal class FirLightFieldForEnumEntry(
         )
     }
 
-    override fun getModifierList(): PsiModifierList? = _modifierList
+    override fun getModifierList(): PsiModifierList = _modifierList
 
     override val kotlinOrigin: KtEnumEntry? = enumEntrySymbol.psi as? KtEnumEntry
 

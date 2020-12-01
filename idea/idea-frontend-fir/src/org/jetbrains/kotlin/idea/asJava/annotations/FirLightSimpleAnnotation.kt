@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.psi.PsiAnnotationMemberValue
 import com.intellij.psi.PsiElement
-import com.intellij.psi.impl.PsiImplUtil
 import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class FirLightSimpleAnnotation(

@@ -17,15 +17,13 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 
 internal class FirLightFieldForPropertySymbol(
     private val propertySymbol: KtPropertySymbol,
-    nameGenerator: FieldNameGenerator,
+    private val fieldName: String,
     containingClass: FirLightClassBase,
     lightMemberOrigin: LightMemberOrigin?,
     isTopLevel: Boolean,
     forceStatic: Boolean,
     takePropertyVisibility: Boolean
 ) : FirLightField(containingClass, lightMemberOrigin) {
-
-    private val _name: String = nameGenerator.generateUniqueFieldName(propertySymbol.name.asString())
 
     override val kotlinOrigin: KtDeclaration? = propertySymbol.psi as? KtDeclaration
 
@@ -51,37 +49,37 @@ internal class FirLightFieldForPropertySymbol(
 
     override fun getType(): PsiType = _returnedType
 
-    override fun getName(): String = _name
+    override fun getName(): String = fieldName
 
     private val _modifierList: PsiModifierList by lazyPub {
 
+        val modifiers = mutableSetOf<String>()
+
         val suppressFinal = !propertySymbol.isVal
 
-        val modifiersFromSymbol = propertySymbol.computeModalityForMethod(
+        propertySymbol.computeModalityForMethod(
             isTopLevel = isTopLevel,
-            suppressFinal = suppressFinal
+            suppressFinal = suppressFinal,
+            result = modifiers
         )
 
-        val basicModifiers = modifiersFromSymbol.add(
-            what = PsiModifier.STATIC,
-            `if` = forceStatic
-        )
+        if (forceStatic) {
+            modifiers.add(PsiModifier.STATIC)
+        }
 
         val visibility =
             if (takePropertyVisibility) propertySymbol.computeVisibility(isTopLevel = false) else PsiModifier.PRIVATE
+        modifiers.add(visibility)
 
-        val modifiersWithVisibility = basicModifiers + visibility
-
-        val modifiers = modifiersWithVisibility.add(
-            what = PsiModifier.FINAL,
-            `if` = !suppressFinal
-        ).add(
-            what = PsiModifier.TRANSIENT,
-            `if` = propertySymbol.hasAnnotation("kotlin/jvm/Transient", null)
-        ).add(
-            what = PsiModifier.VOLATILE,
-            `if` = propertySymbol.hasAnnotation("kotlin/jvm/Volatile", null)
-        )
+        if (!suppressFinal) {
+            modifiers.add(PsiModifier.FINAL)
+        }
+        if (propertySymbol.hasAnnotation("kotlin/jvm/Transient", null)) {
+            modifiers.add(PsiModifier.TRANSIENT)
+        }
+        if (propertySymbol.hasAnnotation("kotlin/jvm/Volatile", null)) {
+            modifiers.add(PsiModifier.VOLATILE)
+        }
 
         val nullability = if (visibility != PsiModifier.PRIVATE)
             propertySymbol.type.getTypeNullability(propertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import java.text.StringCharacterIterator
+import java.util.*
 
 internal fun <L : Any> L.invalidAccess(): Nothing =
     error("Cls delegate shouldn't be accessed for fir light classes! Qualified name: ${javaClass.name}")
@@ -192,39 +193,25 @@ internal fun KtSymbolWithModality<*>.computeSimpleModality(): String? = when (mo
     else -> throw NotImplementedError()
 }
 
-internal fun FirMemberDeclaration.computeModalityForMethod(isTopLevel: Boolean): Set<String> {
-    require(this !is FirConstructor)
-
-    val simpleModifier = computeSimpleModality()
-
-    val withNative = if (isExternal) simpleModifier + PsiModifier.NATIVE else simpleModifier
-    val withTopLevelStatic = if (isTopLevel) withNative + PsiModifier.STATIC else withNative
-
-    return withTopLevelStatic
-}
-
 internal fun KtSymbolWithModality<KtCommonSymbolModality>.computeModalityForMethod(
     isTopLevel: Boolean,
-    suppressFinal: Boolean
-): Set<String> {
+    suppressFinal: Boolean,
+    result: MutableSet<String>
+) {
     require(this !is KtClassLikeSymbol)
-
-    val modality = mutableSetOf<String>()
 
     computeSimpleModality()?.run {
         if (this != PsiModifier.FINAL || !suppressFinal) {
-            modality.add(this)
+            result.add(this)
         }
     }
 
     if (this is KtFunctionSymbol && isExternal) {
-        modality.add(PsiModifier.NATIVE)
+        result.add(PsiModifier.NATIVE)
     }
     if (isTopLevel) {
-        modality.add(PsiModifier.STATIC)
+        result.add(PsiModifier.STATIC)
     }
-
-    return modality
 }
 
 internal fun FirMemberDeclaration.computeVisibility(isTopLevel: Boolean): String {
@@ -337,8 +324,7 @@ internal fun KtSimpleConstantValue<*>.createPsiLiteral(parent: PsiElement): PsiE
     }
 }
 
-internal fun <T> Set<T>.add(what: T, `if`: Boolean): Set<T> =
-    applyIf(`if`) { this + what }
-
 internal inline fun <T> T.applyIf(`if`: Boolean, body: T.() -> T): T =
     if (`if`) body() else this
+
+internal fun BitSet.copy(): BitSet = clone() as BitSet
