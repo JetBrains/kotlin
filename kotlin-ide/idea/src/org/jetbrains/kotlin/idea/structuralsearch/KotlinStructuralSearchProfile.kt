@@ -77,14 +77,11 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
     }
 
     override fun getPresentableElement(element: PsiElement): PsiElement {
-        val pElement = super.getPresentableElement(element)
-        val parent = pElement.parent
-        return if (parent is KtProperty
-            || parent is KtNamedFunction
-            || parent is KtClass
-            || parent is KtCallExpression
-        ) parent else pElement
+        val elem = if (isIdentifier(element)) element.parent else return element
+        return if(elem is KtReferenceExpression) elem.parent else elem
     }
+
+    override fun isIdentifier(element: PsiElement?): Boolean = element != null && element.node?.elementType == KtTokens.IDENTIFIER
 
     override fun createPatternTree(
         text: String,
@@ -185,8 +182,6 @@ class KotlinStructuralSearchProfile : StructuralSearchProfile() {
             )
         }
     }
-
-    override fun isIdentifier(element: PsiElement?): Boolean = element != null && element.node?.elementType == KtTokens.IDENTIFIER
 
     private fun ancestors(node: PsiElement?): List<PsiElement?> {
         val family = mutableListOf(node)

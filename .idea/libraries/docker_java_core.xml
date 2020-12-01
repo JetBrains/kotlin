@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="docker-java-core" type="repository">
-    <properties maven-id="com.github.docker-java:docker-java-core:3.2.5">
+    <properties maven-id="com.github.docker-java:docker-java-core:3.2.6">
       <exclude>
         <dependency maven-id="com.google.guava:guava" />
         <dependency maven-id="org.slf4j:slf4j-api" />
@@ -13,18 +13,18 @@
       </exclude>
     </properties>
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-core/3.2.5/docker-java-core-3.2.5.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-api/3.2.5/docker-java-api-3.2.5.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-transport/3.2.5/docker-java-transport-3.2.5.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-core/3.2.6/docker-java-core-3.2.6.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-api/3.2.6/docker-java-api-3.2.6.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-transport/3.2.6/docker-java-transport-3.2.6.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcpkix-jdk15on/1.64/bcpkix-jdk15on-1.64.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcprov-jdk15on/1.64/bcprov-jdk15on-1.64.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-core/3.2.5/docker-java-core-3.2.5-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-api/3.2.5/docker-java-api-3.2.5-sources.jar!/" />
-      <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-transport/3.2.5/docker-java-transport-3.2.5-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-core/3.2.6/docker-java-core-3.2.6-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-api/3.2.6/docker-java-api-3.2.6-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/docker-java/docker-java-transport/3.2.6/docker-java-transport-3.2.6-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/commons-lang/commons-lang/2.6/commons-lang-2.6-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcpkix-jdk15on/1.64/bcpkix-jdk15on-1.64-sources.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/bouncycastle/bcprov-jdk15on/1.64/bcprov-jdk15on-1.64-sources.jar!/" />

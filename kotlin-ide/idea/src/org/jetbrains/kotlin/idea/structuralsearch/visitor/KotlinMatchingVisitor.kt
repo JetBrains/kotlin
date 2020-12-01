@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.debugger.sequence.psi.resolveType
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.calleeName
+import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.declarationsSearch.HierarchySearchRequest
@@ -39,6 +40,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -447,13 +449,27 @@ class KotlinMatchingVisitor(private val myMatchingVisitor: GlobalMatchingVisitor
                     && other.selectorExpression is KtCallExpression == expression.selectorExpression is KtCallExpression
                     && myMatchingVisitor.match(expression.selectorExpression, other.selectorExpression)
         } else {
+            val selector = expression.selectorExpression
+
             // Match '_?.'_()
-            myMatchingVisitor.result = expression.selectorExpression is KtCallExpression == other is KtCallExpression
+            myMatchingVisitor.result = selector is KtCallExpression == other is KtCallExpression
                     && handler is SubstitutionHandler
                     && handler.minOccurs == 0
                     && other.parent !is KtDotQualifiedExpression
                     && other.parent !is KtReferenceExpression
-                    && myMatchingVisitor.match(expression.selectorExpression, other)
+                    && myMatchingVisitor.match(selector, other)
+
+            // Match fq.call() with call()
+            if (!myMatchingVisitor.result && other is KtCallExpression && other.parent !is KtDotQualifiedExpression && selector is KtCallExpression) {
+                val expressionCall = expression.text.substringBefore('(')
+                val otherCall = other.getCallableDescriptor()?.fqNameSafe
+                myMatchingVisitor.result = otherCall != null
+                                           && myMatchingVisitor.matchText(expressionCall, otherCall.toString().substringBefore(".<"))
+                                           && myMatchingVisitor.match(selector.typeArgumentList, other.typeArgumentList)
+                                           && matchValueArguments(resolveParameters(other),
+                                                                  selector.valueArgumentList, other.valueArgumentList,
+                                                                  selector.lambdaArguments, other.lambdaArguments)
+            }
         }
     }
 

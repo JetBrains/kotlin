@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.DefaultRepo
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.Repository
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateBuildFiles
 import org.jetbrains.kotlin.tools.projectWizard.settings.buildsystem.updateModules
+import org.jetbrains.kotlin.tools.projectWizard.settings.version.Version
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplate
 import org.jetbrains.kotlin.tools.projectWizard.templates.FileTemplateDescriptor
 
@@ -87,6 +88,14 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
 
         private val isGradle = checker { buildSystemType.isGradle }
 
+        val gradleVersion by valueSetting(
+            "<GRADLE_VERSION>",
+            GenerationPhase.PROJECT_GENERATION,
+            parser = Version.parser
+        ) {
+            defaultValue = value(Versions.GRADLE)
+        }
+
         val initGradleWrapperTask by pipelineTask(GenerationPhase.PROJECT_GENERATION) {
             runBefore(TemplatesPlugin.renderFileTemplates)
             isAvailable = isGradle
@@ -99,7 +108,7 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
                         ),
                         StructurePlugin.projectPath.settingValue,
                         mapOf(
-                            "version" to Versions.GRADLE
+                            "version" to gradleVersion.settingValue
                         )
                     )
                 )
@@ -177,7 +186,11 @@ abstract class GradlePlugin(context: Context) : BuildSystemPlugin(context) {
         }
     }
 
-    override val settings: List<PluginSetting<*, *>> = super.settings
+    override val settings: List<PluginSetting<*, *>> = super.settings +
+            listOf(
+                gradleVersion,
+            )
+
     override val pipelineTasks: List<PipelineTask> = super.pipelineTasks +
             listOf(
                 createGradlePropertiesFile,

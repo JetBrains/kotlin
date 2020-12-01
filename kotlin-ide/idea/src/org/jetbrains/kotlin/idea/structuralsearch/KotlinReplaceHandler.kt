@@ -4,6 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.util.elementType
 import com.intellij.structuralsearch.StructuralReplaceHandler
 import com.intellij.structuralsearch.StructuralSearchUtil
@@ -12,9 +13,7 @@ import com.intellij.structuralsearch.impl.matcher.PatternTreeContext
 import com.intellij.structuralsearch.impl.matcher.compiler.PatternCompiler
 import com.intellij.structuralsearch.plugin.replace.ReplaceOptions
 import com.intellij.structuralsearch.plugin.replace.ReplacementInfo
-import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.addTypeParameter
-import org.jetbrains.kotlin.idea.core.setDefaultValue
+import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.js.translate.declaration.hasCustomGetter
 import org.jetbrains.kotlin.js.translate.declaration.hasCustomSetter
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -34,8 +33,9 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         ).first()
         val match = StructuralSearchUtil.getPresentableElement(info.matchResult.match)
         replaceTemplate.structuralReplace(searchTemplate, match)
-        (0 until info.matchesCount).mapNotNull(info::getMatch).forEach {
-            StructuralSearchUtil.getPresentableElement(it).replace(replaceTemplate)
+        StructuralSearchUtil.getPresentableElement(info.getMatch(0)).replace(replaceTemplate)
+        (1 until info.matchesCount).mapNotNull(info::getMatch).forEach {
+            StructuralSearchUtil.getPresentableElement(it).deleteElementAndCleanParent()
         }
     }
 
@@ -65,23 +65,74 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
                     replaceProperty(searchTemplate, match)
             }
         } else { // KtExpression
-            if(this is KtWhenExpression) {
-                if(subjectExpression == null) {
-                    leftParenthesis?.delete()
-                    rightParenthesis?.delete()
-                }
-            }
-            if(this is KtLambdaExpression) {
-                if(valueParameters.isEmpty()) {
-                    findDescendantOfType<PsiElement> { it.elementType == KtTokens.ARROW }?.let {
-                        it.deleteSurroundingWhitespace()
-                        it.delete()
-                    }
-                }
+            when {
+                this is KtWhenExpression -> replaceWhenExpression()
+                this is KtLambdaExpression && searchTemplate is KtLambdaExpression && match is KtLambdaExpression ->
+                    replaceLambdaExpression(searchTemplate, match)
+                this is KtDotQualifiedExpression && searchTemplate is KtDotQualifiedExpression && match is KtDotQualifiedExpression ->
+                    replaceDotQualifiedExpression(searchTemplate, match)
+                this is KtCallExpression && searchTemplate is KtCallExpression && match is KtCallExpression ->
+                    replaceCallExpression(searchTemplate, match)
             }
             fixWhiteSpace(match)
         }
         return this
+    }
+
+    private fun KtCallExpression.replaceCallExpression(searchTemplate: KtCallExpression, match: KtCallExpression) {
+        lambdaArguments.firstOrNull()?.getLambdaExpression()?.replaceLambdaExpression(
+            searchTemplate.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return,
+            match.lambdaArguments.firstOrNull()?.getLambdaExpression() ?: return
+        )
+    }
+
+    private fun KtDotQualifiedExpression.replaceDotQualifiedExpression(
+        searchTemplate: KtDotQualifiedExpression,
+        match: KtDotQualifiedExpression
+    ) {
+        receiverExpression.structuralReplace(searchTemplate.receiverExpression, match.receiverExpression)
+        val selectorExpr = selectorExpression
+        val searchSelectorExpr = searchTemplate.selectorExpression
+        val matchSelectorExpr = match.selectorExpression
+        if(selectorExpr != null && searchSelectorExpr != null && matchSelectorExpr != null) {
+            selectorExpr.structuralReplace(searchSelectorExpr, matchSelectorExpr)
+        }
+    }
+
+    private fun KtWhenExpression.replaceWhenExpression() {
+        if(subjectExpression == null) {
+            leftParenthesis?.delete()
+            rightParenthesis?.delete()
+        }
+    }
+
+    private fun KtLambdaExpression.replaceLambdaExpression(searchTemplate: KtLambdaExpression, match: KtLambdaExpression) {
+        if(valueParameters.isEmpty() && searchTemplate.valueParameters.isEmpty()) { // { $A$ } templates
+            match.functionLiteral.valueParameterList?.let {
+                functionLiteral.addAfter(it, functionLiteral.lBrace)
+                functionLiteral.addAfter(match.functionLiteral.arrow!!, functionLiteral.valueParameterList!!)
+                functionLiteral.addSurroundingWhiteSpace(
+                    functionLiteral.valueParameterList!!,
+                    match.functionLiteral.valueParameterList!!
+                )
+            }
+        }
+        if(valueParameters.isEmpty()) {
+            findDescendantOfType<PsiElement> { it.elementType == KtTokens.ARROW }?.let {
+                it.deleteSurroundingWhitespace()
+                it.delete()
+            }
+        }
+        valueParameters.forEachIndexed { i, par ->
+            val searchPar = searchTemplate.valueParameters.getOrElse(i) { return@forEachIndexed }
+            val matchPar = match.valueParameters.getOrElse(i) { return@forEachIndexed }
+            if(par.typeReference == null && searchPar.typeReference == null) {
+                matchPar.typeReference?.let {
+                    par.typeReference = it
+                    par.addSurroundingWhiteSpace(par.typeReference!!, it)
+                }
+            }
+        }
     }
 
     private fun PsiElement.fixWhiteSpace(match: PsiElement) {
@@ -128,9 +179,11 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
             val atElement = modifierList?.children?.find { it is PsiErrorElement }
             atElement?.delete()
         }
-
+        val annotationNames = annotationEntries.map { it.shortName }
+        val searchNames = searchTemplate.annotationEntries.map { it.shortName }
         match.annotationEntries.forEach { matchAnnotation ->
-            if(!annotationEntries.contains(matchAnnotation) && !searchTemplate.annotationEntries.contains(matchAnnotation)) {
+            val shortName = matchAnnotation.shortName
+            if(!annotationNames.contains(shortName) && !searchNames.contains(shortName)) {
                 addAnnotationEntry(matchAnnotation)
             }
         }
@@ -215,7 +268,7 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
 
             // format semi colon
             if(superTypeListEntries.isNotEmpty() && match.superTypeListEntries.isNotEmpty()) {
-                node.children().find { it.elementType == KtTokens.COLON }?.let { replaceColon -> // TODO replace by getColon in 1.3
+                node.children().find { it.elementType == KtTokens.COLON }?.let { replaceColon -> // TODO replace by getColon in 1.4.30
                     val matchColon = match.node.children().find { it.elementType == KtTokens.COLON }!!
                     addSurroundingWhiteSpace(replaceColon.psi, matchColon.psi)
                 }
@@ -231,6 +284,9 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
     private fun KtNamedFunction.replaceNamedFunction(searchTemplate: KtNamedFunction, match: KtNamedFunction): KtNamedFunction {
         FUN_MODIFIERS.forEach { replaceModifier(searchTemplate, match, it) }
         fixModifierListFormatting(match)
+        if(receiverTypeReference?.findDescendantOfType<PsiErrorElement> { true } != null) { //
+            findDescendantOfType<PsiElement>{ it.elementType == KtTokens.DOT }?.delete()
+        }
         if (!hasBody() && !searchTemplate.hasBody()) {
             match.equalsToken?.let { addFormatted(it) }
             match.bodyExpression?.let { addFormatted(it) }
@@ -262,16 +318,25 @@ class KotlinReplaceHandler(private val project: Project) : StructuralReplaceHand
         match: KtParameterList
     ): KtParameterList {
         parameters.forEachIndexed { i, param ->
-            val searchParam = searchTemplate.parameters.getOrNull(i) ?: return@forEachIndexed
+            val searchParam = searchTemplate.parameters.getOrNull(i)
             val matchParam = match.parameters.getOrNull(i) ?: return@forEachIndexed
-            if (param.typeReference == null && searchParam.typeReference == null) {
+            if(searchParam == null) { // count filter
+                addSurroundingWhiteSpace(param, matchParam)
+            }
+            if(param.valOrVarKeyword == null && searchParam?.valOrVarKeyword == null) {
+                matchParam.valOrVarKeyword?.let {
+                    param.addBefore(it, param.nameIdentifier)
+                    param.addSurroundingWhiteSpace(param.valOrVarKeyword!!, it)
+                }
+            }
+            if (param.typeReference == null && searchParam?.typeReference == null) {
                 matchParam.typeReference?.let{
                     param.typeReference = it
                     param.addSurroundingWhiteSpace(param.colon!!, matchParam.colon!!)
                 }
 
             }
-            if (!param.hasDefaultValue() && (!searchParam.hasDefaultValue())) {
+            if (!param.hasDefaultValue() && searchParam?.hasDefaultValue() != true) {
                 matchParam.defaultValue?.let {
                     param.setDefaultValue(it)
                     param.addSurroundingWhiteSpace(param.equalsToken!!, matchParam.equalsToken!!)

@@ -12,6 +12,8 @@ import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.JdkOrderEntry
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
@@ -60,6 +62,41 @@ class IdeaModelInfosCache(
     fun getSdkInfoForSdk(sdk: Sdk): SdkInfo? = sdkInfosBySdks[sdk]
 }
 
+// Workaround for duplicated libraries, see KT-42607
+private class LibraryWrapper(val library: LibraryEx) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is LibraryWrapper) return false
+
+        return library.hasEqualRoots(other.library)
+    }
+
+    override fun hashCode(): Int = library.rootBasedHashCode()
+}
+
+internal fun Library.asLibraryEx(): LibraryEx {
+    require(this is LibraryEx) { "Library '${name}' does not implement LibraryEx which is not expected" }
+    return this
+}
+
+private fun Library.wrap() = LibraryWrapper(this.asLibraryEx())
+
+internal val LibraryEx.allRootUrls: Set<String>
+    get() = mutableSetOf<String>().apply {
+        for (orderRootType in OrderRootType.getAllTypes()) {
+            addAll(rootProvider.getUrls(orderRootType))
+        }
+    }
+
+internal fun LibraryEx.hasEqualRoots(other: LibraryEx): Boolean {
+    if (allRootUrls != other.allRootUrls) return false
+    return excludedRootUrls.contentEquals(other.excludedRootUrls)
+}
+
+internal fun LibraryEx.rootBasedHashCode(): Int {
+    return 31 + allRootUrls.hashCode()
+}
+
 private fun collectModuleInfosFromIdeaModel(
     project: Project
 ): IdeaModelInfosCache {
@@ -68,7 +105,7 @@ private fun collectModuleInfosFromIdeaModel(
     //TODO: (module refactoring) include libraries that are not among dependencies of any module
     val ideaLibraries = ideaModules.flatMap {
         ModuleRootManager.getInstance(it).orderEntries.filterIsInstance<LibraryOrderEntry>().map {
-            it.library
+            it.library?.wrap()
         }
     }.filterNotNull().toSet()
 
@@ -86,9 +123,9 @@ private fun collectModuleInfosFromIdeaModel(
             }
         },
         libraryInfosByLibraries = MultiMap.create<Library, LibraryInfo>().also { libraryInfosByLibraries ->
-            for (library in ideaLibraries) {
+            for (libraryWrapper in ideaLibraries) {
                 checkCanceled()
-                libraryInfosByLibraries.putValues(library, createLibraryInfo(project, library))
+                libraryInfosByLibraries.putValues(libraryWrapper.library, createLibraryInfo(project, libraryWrapper.library))
             }
         },
         sdkInfosBySdks = (sdksFromModulesDependencies + getAllProjectSdks()).filterNotNull().toSet().associateWith { SdkInfo(project, it) }

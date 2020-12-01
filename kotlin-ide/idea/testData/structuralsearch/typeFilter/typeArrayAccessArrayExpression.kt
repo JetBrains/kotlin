@@ -1,5 +1,5 @@
-val x = arrayOf(1, 2, 3)
-val y = arrayListOf("a", "b")
+val x = Array( 1, { 1 })
+val y = "hello"
 
 fun foo() {
     print(<warning descr="SSR">x[0]</warning>)

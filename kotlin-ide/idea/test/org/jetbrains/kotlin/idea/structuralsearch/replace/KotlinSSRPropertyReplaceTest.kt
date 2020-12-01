@@ -29,4 +29,19 @@ class KotlinSSRPropertyReplaceTest : KotlinSSRReplaceTest() {
             result = "var foo : String"
         )
     }
+
+    fun testPropertyInitializer() {
+        doTest(
+                searchPattern = "'_ID()",
+                replacePattern = "'_ID()",
+                match = """
+                    class Foo
+                    val foo = Foo()
+                """.trimIndent(),
+                result = """
+                    class Foo
+                    val foo = Foo()
+                """.trimIndent()
+        )
+    }
 }
