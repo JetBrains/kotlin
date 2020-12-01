@@ -85,6 +85,10 @@ object ComposeErrors {
         )
 
     @JvmField
+    var DEPRECATED_COMPOSABLE_PROPERTY: DiagnosticFactory0<PsiElement> =
+        DiagnosticFactory0.create(Severity.WARNING)
+
+    @JvmField
     val ILLEGAL_ASSIGN_TO_UNIONTYPE =
         DiagnosticFactory2.create<KtExpression, Collection<KotlinType>, Collection<KotlinType>>(
             Severity.ERROR
