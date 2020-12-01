@@ -90,5 +90,10 @@ class ComposeErrorMessages : DefaultErrorMessages.Extension {
             RENDER_TYPE_WITH_ANNOTATIONS,
             RENDER_TYPE_WITH_ANNOTATIONS
         )
+        MAP.put(
+            ComposeErrors.DEPRECATED_COMPOSABLE_PROPERTY,
+            "@Composable properties should be declared with the @Composable annotation " +
+                "on the getter, and not the property itself."
+        )
     }
 }

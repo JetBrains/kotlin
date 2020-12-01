@@ -447,7 +447,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     import androidx.compose.runtime.Composable
 
                     class Foo {
-                      @Composable val value: Int get() = 123
+                      val value: Int @Composable get() = 123
                     }
                  """
                 ),
@@ -687,7 +687,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
                     import androidx.compose.runtime.*
 
-                    @Composable val foo: Int get() { return 123 }
+                    val foo: Int @Composable get() { return 123 }
                  """
                 ),
                 "Main" to mapOf(
@@ -732,6 +732,35 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
                     @Composable fun Example(inst: Foo) {
                         B().foo()
                         inst.foo()
+                    }
+                """
+                )
+            )
+        )
+    }
+
+    @Test
+    fun testXModuleComposableProperty(): Unit = ensureSetup {
+        compile(
+            mapOf(
+                "library module" to mapOf(
+                    "a/Foo.kt" to """
+                    package a
+
+                    import androidx.compose.runtime.*
+
+                    val foo: () -> Unit
+                        @Composable get() = {}
+                 """
+                ),
+                "Main" to mapOf(
+                    "B.kt" to """
+                    import a.foo
+                    import androidx.compose.runtime.*
+
+                    @Composable fun Example() {
+                        val bar = foo
+                        bar()
                     }
                 """
                 )

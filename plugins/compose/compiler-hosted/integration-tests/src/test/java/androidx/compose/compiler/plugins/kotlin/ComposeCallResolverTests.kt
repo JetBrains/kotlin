@@ -34,13 +34,13 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
         """
             import androidx.compose.runtime.*
 
-            @Composable val foo get() = 123
+            val foo @Composable get() = 123
 
             class A {
-                @Composable val bar get() = 123
+                val bar @Composable get() = 123
             }
 
-            @Composable val A.bam get() = 123
+            val A.bam @Composable get() = 123
 
             @Composable
             fun test() {
