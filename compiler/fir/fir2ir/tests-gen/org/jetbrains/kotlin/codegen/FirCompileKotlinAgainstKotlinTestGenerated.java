@@ -25,10 +25,6 @@ public class FirCompileKotlinAgainstKotlinTestGenerated extends AbstractFirCompi
         KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
     }
 
-    private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-        KotlinTestUtils.runTestWithCustomIgnoreDirective(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
-    }
-
     public void testAllFilesPresentInCompileKotlinAgainstKotlin() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
@@ -99,8 +95,8 @@ public class FirCompileKotlinAgainstKotlinTestGenerated extends AbstractFirCompi
     }
 
     @TestMetadata("coroutinesBinary.kt")
-    public void testCoroutinesBinary_1_3() throws Exception {
-        runTestWithPackageReplacement("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt", "kotlin.coroutines");
+    public void testCoroutinesBinary() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt");
     }
 
     @TestMetadata("defaultConstructor.kt")

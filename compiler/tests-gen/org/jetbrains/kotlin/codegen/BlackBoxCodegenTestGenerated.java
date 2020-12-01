@@ -934,10 +934,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInJvm() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/assert/jvm"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
@@ -1033,43 +1029,23 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @TestMetadata("suspendFunctionAssertionDisabled.kt")
-            public void testSuspendFunctionAssertionDisabled_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/assert/jvm/suspendFunctionAssertionDisabled.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendFunctionAssertionDisabled.kt")
-            public void testSuspendFunctionAssertionDisabled_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/assert/jvm/suspendFunctionAssertionDisabled.kt", "kotlin.coroutines");
+            public void testSuspendFunctionAssertionDisabled() throws Exception {
+                runTest("compiler/testData/codegen/box/assert/jvm/suspendFunctionAssertionDisabled.kt");
             }
 
             @TestMetadata("suspendFunctionAssertionsEnabled.kt")
-            public void testSuspendFunctionAssertionsEnabled_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/assert/jvm/suspendFunctionAssertionsEnabled.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendFunctionAssertionsEnabled.kt")
-            public void testSuspendFunctionAssertionsEnabled_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/assert/jvm/suspendFunctionAssertionsEnabled.kt", "kotlin.coroutines");
+            public void testSuspendFunctionAssertionsEnabled() throws Exception {
+                runTest("compiler/testData/codegen/box/assert/jvm/suspendFunctionAssertionsEnabled.kt");
             }
 
             @TestMetadata("suspendLambdaAssertionsDisabled.kt")
-            public void testSuspendLambdaAssertionsDisabled_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/assert/jvm/suspendLambdaAssertionsDisabled.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendLambdaAssertionsDisabled.kt")
-            public void testSuspendLambdaAssertionsDisabled_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/assert/jvm/suspendLambdaAssertionsDisabled.kt", "kotlin.coroutines");
+            public void testSuspendLambdaAssertionsDisabled() throws Exception {
+                runTest("compiler/testData/codegen/box/assert/jvm/suspendLambdaAssertionsDisabled.kt");
             }
 
             @TestMetadata("suspendLambdaAssertionsEnabled.kt")
-            public void testSuspendLambdaAssertionsEnabled_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/assert/jvm/suspendLambdaAssertionsEnabled.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendLambdaAssertionsEnabled.kt")
-            public void testSuspendLambdaAssertionsEnabled_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/assert/jvm/suspendLambdaAssertionsEnabled.kt", "kotlin.coroutines");
+            public void testSuspendLambdaAssertionsEnabled() throws Exception {
+                runTest("compiler/testData/codegen/box/assert/jvm/suspendLambdaAssertionsEnabled.kt");
             }
         }
     }
@@ -4865,10 +4841,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInCapturedVarsOptimization() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/closures/capturedVarsOptimization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
@@ -4918,24 +4890,14 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/sharedSlotsWithCapturedVars.kt");
             }
 
-            @TestMetadata("withCoroutinesNoStdLib.kt")
-            public void testWithCoroutinesNoStdLib_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutinesNoStdLib.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("withCoroutinesNoStdLib.kt")
-            public void testWithCoroutinesNoStdLib_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutinesNoStdLib.kt", "kotlin.coroutines");
-            }
-
             @TestMetadata("withCoroutines.kt")
-            public void testWithCoroutines_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutines.kt", "kotlin.coroutines.experimental");
+            public void testWithCoroutines() throws Exception {
+                runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutines.kt");
             }
 
-            @TestMetadata("withCoroutines.kt")
-            public void testWithCoroutines_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutines.kt", "kotlin.coroutines");
+            @TestMetadata("withCoroutinesNoStdLib.kt")
+            public void testWithCoroutinesNoStdLib() throws Exception {
+                runTest("compiler/testData/codegen/box/closures/capturedVarsOptimization/withCoroutinesNoStdLib.kt");
             }
         }
 
@@ -5381,10 +5343,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
 
-        private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-            KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-        }
-
         public void testAllFilesPresentInContracts() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/contracts"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
@@ -5430,13 +5388,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("kt39374.kt")
-        public void testKt39374_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/contracts/kt39374.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("kt39374.kt")
-        public void testKt39374_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/contracts/kt39374.kt", "kotlin.coroutines");
+        public void testKt39374() throws Exception {
+            runTest("compiler/testData/codegen/box/contracts/kt39374.kt");
         }
 
         @TestMetadata("lambdaParameter.kt")
@@ -6570,42 +6523,28 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
 
-        private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-            KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-        }
-
         @TestMetadata("32defaultParametersInSuspend.kt")
-        public void test32defaultParametersInSuspend_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/32defaultParametersInSuspend.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("32defaultParametersInSuspend.kt")
-        public void test32defaultParametersInSuspend_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/32defaultParametersInSuspend.kt", "kotlin.coroutines");
+        public void test32defaultParametersInSuspend() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/32defaultParametersInSuspend.kt");
         }
 
         @TestMetadata("accessorForSuspend.kt")
-        public void testAccessorForSuspend_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/accessorForSuspend.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("accessorForSuspend.kt")
-        public void testAccessorForSuspend_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/accessorForSuspend.kt", "kotlin.coroutines");
+        public void testAccessorForSuspend() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/accessorForSuspend.kt");
         }
 
         public void testAllFilesPresentInCoroutines() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
-        @TestMetadata("asyncException.kt")
-        public void testAsyncException_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/asyncException.kt", "kotlin.coroutines.experimental");
+        @TestMetadata("async.kt")
+        public void testAsync() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/async.kt");
         }
 
         @TestMetadata("asyncException.kt")
-        public void testAsyncException_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/asyncException.kt", "kotlin.coroutines");
+        public void testAsyncException() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/asyncException.kt");
         }
 
         @TestMetadata("asyncIteratorNullMerge_1_3.kt")
@@ -6623,44 +6562,19 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/coroutines/asyncIterator_1_3.kt");
         }
 
-        @TestMetadata("async.kt")
-        public void testAsync_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/async.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("async.kt")
-        public void testAsync_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/async.kt", "kotlin.coroutines");
-        }
-
         @TestMetadata("await.kt")
-        public void testAwait_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/await.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("await.kt")
-        public void testAwait_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/await.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("beginWithExceptionNoHandleException.kt")
-        public void testBeginWithExceptionNoHandleException_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/beginWithExceptionNoHandleException.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("beginWithExceptionNoHandleException.kt")
-        public void testBeginWithExceptionNoHandleException_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/beginWithExceptionNoHandleException.kt", "kotlin.coroutines");
+        public void testAwait() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/await.kt");
         }
 
         @TestMetadata("beginWithException.kt")
-        public void testBeginWithException_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/beginWithException.kt", "kotlin.coroutines.experimental");
+        public void testBeginWithException() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/beginWithException.kt");
         }
 
-        @TestMetadata("beginWithException.kt")
-        public void testBeginWithException_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/beginWithException.kt", "kotlin.coroutines");
+        @TestMetadata("beginWithExceptionNoHandleException.kt")
+        public void testBeginWithExceptionNoHandleException() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/beginWithExceptionNoHandleException.kt");
         }
 
         @TestMetadata("builderInferenceAndGenericArrayAcessCall.kt")
@@ -6684,53 +6598,28 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("capturedVarInSuspendLambda.kt")
-        public void testCapturedVarInSuspendLambda_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/capturedVarInSuspendLambda.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("capturedVarInSuspendLambda.kt")
-        public void testCapturedVarInSuspendLambda_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/capturedVarInSuspendLambda.kt", "kotlin.coroutines");
+        public void testCapturedVarInSuspendLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/capturedVarInSuspendLambda.kt");
         }
 
         @TestMetadata("catchWithInlineInsideSuspend.kt")
-        public void testCatchWithInlineInsideSuspend_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/catchWithInlineInsideSuspend.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("catchWithInlineInsideSuspend.kt")
-        public void testCatchWithInlineInsideSuspend_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/catchWithInlineInsideSuspend.kt", "kotlin.coroutines");
+        public void testCatchWithInlineInsideSuspend() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/catchWithInlineInsideSuspend.kt");
         }
 
         @TestMetadata("coercionToUnit.kt")
-        public void testCoercionToUnit_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/coercionToUnit.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("coercionToUnit.kt")
-        public void testCoercionToUnit_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/coercionToUnit.kt", "kotlin.coroutines");
+        public void testCoercionToUnit() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/coercionToUnit.kt");
         }
 
         @TestMetadata("controllerAccessFromInnerLambda.kt")
-        public void testControllerAccessFromInnerLambda_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controllerAccessFromInnerLambda.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("controllerAccessFromInnerLambda.kt")
-        public void testControllerAccessFromInnerLambda_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controllerAccessFromInnerLambda.kt", "kotlin.coroutines");
+        public void testControllerAccessFromInnerLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/controllerAccessFromInnerLambda.kt");
         }
 
         @TestMetadata("coroutineContextInInlinedLambda.kt")
-        public void testCoroutineContextInInlinedLambda_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/coroutineContextInInlinedLambda.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("coroutineContextInInlinedLambda.kt")
-        public void testCoroutineContextInInlinedLambda_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/coroutineContextInInlinedLambda.kt", "kotlin.coroutines");
+        public void testCoroutineContextInInlinedLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/coroutineContextInInlinedLambda.kt");
         }
 
         @TestMetadata("coroutineToString.kt")
@@ -6739,33 +6628,23 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("createCoroutineSafe.kt")
-        public void testCreateCoroutineSafe_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/createCoroutineSafe.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("createCoroutineSafe.kt")
-        public void testCreateCoroutineSafe_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/createCoroutineSafe.kt", "kotlin.coroutines");
+        public void testCreateCoroutineSafe() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/createCoroutineSafe.kt");
         }
 
         @TestMetadata("createCoroutinesOnManualInstances.kt")
-        public void testCreateCoroutinesOnManualInstances_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/createCoroutinesOnManualInstances.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("createCoroutinesOnManualInstances.kt")
-        public void testCreateCoroutinesOnManualInstances_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/createCoroutinesOnManualInstances.kt", "kotlin.coroutines");
+        public void testCreateCoroutinesOnManualInstances() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/createCoroutinesOnManualInstances.kt");
         }
 
         @TestMetadata("crossInlineWithCapturedOuterReceiver.kt")
-        public void testCrossInlineWithCapturedOuterReceiver_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/crossInlineWithCapturedOuterReceiver.kt", "kotlin.coroutines.experimental");
+        public void testCrossInlineWithCapturedOuterReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/crossInlineWithCapturedOuterReceiver.kt");
         }
 
-        @TestMetadata("crossInlineWithCapturedOuterReceiver.kt")
-        public void testCrossInlineWithCapturedOuterReceiver_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/crossInlineWithCapturedOuterReceiver.kt", "kotlin.coroutines");
+        @TestMetadata("defaultParametersInSuspend.kt")
+        public void testDefaultParametersInSuspend() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/defaultParametersInSuspend.kt");
         }
 
         @TestMetadata("defaultParametersInSuspendWithJvmOverloads.kt")
@@ -6773,34 +6652,14 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/coroutines/defaultParametersInSuspendWithJvmOverloads.kt");
         }
 
-        @TestMetadata("defaultParametersInSuspend.kt")
-        public void testDefaultParametersInSuspend_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/defaultParametersInSuspend.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("defaultParametersInSuspend.kt")
-        public void testDefaultParametersInSuspend_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/defaultParametersInSuspend.kt", "kotlin.coroutines");
-        }
-
         @TestMetadata("delegatedSuspendMember.kt")
-        public void testDelegatedSuspendMember_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/delegatedSuspendMember.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("delegatedSuspendMember.kt")
-        public void testDelegatedSuspendMember_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/delegatedSuspendMember.kt", "kotlin.coroutines");
+        public void testDelegatedSuspendMember() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/delegatedSuspendMember.kt");
         }
 
         @TestMetadata("dispatchResume.kt")
-        public void testDispatchResume_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/dispatchResume.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("dispatchResume.kt")
-        public void testDispatchResume_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/dispatchResume.kt", "kotlin.coroutines");
+        public void testDispatchResume() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/dispatchResume.kt");
         }
 
         @TestMetadata("doubleColonExpressionsGenerationInBuilderInference.kt")
@@ -6809,13 +6668,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("emptyClosure.kt")
-        public void testEmptyClosure_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/emptyClosure.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("emptyClosure.kt")
-        public void testEmptyClosure_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/emptyClosure.kt", "kotlin.coroutines");
+        public void testEmptyClosure() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/emptyClosure.kt");
         }
 
         @TestMetadata("emptyCommonConstraintSystemForCoroutineInferenceCall.kt")
@@ -6824,73 +6678,38 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("epam.kt")
-        public void testEpam_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/epam.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("epam.kt")
-        public void testEpam_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/epam.kt", "kotlin.coroutines");
+        public void testEpam() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/epam.kt");
         }
 
         @TestMetadata("falseUnitCoercion.kt")
-        public void testFalseUnitCoercion_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/falseUnitCoercion.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("falseUnitCoercion.kt")
-        public void testFalseUnitCoercion_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/falseUnitCoercion.kt", "kotlin.coroutines");
+        public void testFalseUnitCoercion() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/falseUnitCoercion.kt");
         }
 
         @TestMetadata("generate.kt")
-        public void testGenerate_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/generate.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("generate.kt")
-        public void testGenerate_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/generate.kt", "kotlin.coroutines");
+        public void testGenerate() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/generate.kt");
         }
 
         @TestMetadata("handleException.kt")
-        public void testHandleException_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/handleException.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("handleException.kt")
-        public void testHandleException_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/handleException.kt", "kotlin.coroutines");
+        public void testHandleException() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/handleException.kt");
         }
 
         @TestMetadata("handleResultCallEmptyBody.kt")
-        public void testHandleResultCallEmptyBody_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/handleResultCallEmptyBody.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("handleResultCallEmptyBody.kt")
-        public void testHandleResultCallEmptyBody_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/handleResultCallEmptyBody.kt", "kotlin.coroutines");
+        public void testHandleResultCallEmptyBody() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/handleResultCallEmptyBody.kt");
         }
 
         @TestMetadata("handleResultNonUnitExpression.kt")
-        public void testHandleResultNonUnitExpression_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/handleResultNonUnitExpression.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("handleResultNonUnitExpression.kt")
-        public void testHandleResultNonUnitExpression_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/handleResultNonUnitExpression.kt", "kotlin.coroutines");
+        public void testHandleResultNonUnitExpression() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/handleResultNonUnitExpression.kt");
         }
 
         @TestMetadata("handleResultSuspended.kt")
-        public void testHandleResultSuspended_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/handleResultSuspended.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("handleResultSuspended.kt")
-        public void testHandleResultSuspended_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/handleResultSuspended.kt", "kotlin.coroutines");
+        public void testHandleResultSuspended() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/handleResultSuspended.kt");
         }
 
         @TestMetadata("illegalState.kt")
@@ -6899,183 +6718,93 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("indirectInlineUsedAsNonInline.kt")
-        public void testIndirectInlineUsedAsNonInline_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/indirectInlineUsedAsNonInline.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("indirectInlineUsedAsNonInline.kt")
-        public void testIndirectInlineUsedAsNonInline_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/indirectInlineUsedAsNonInline.kt", "kotlin.coroutines");
+        public void testIndirectInlineUsedAsNonInline() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/indirectInlineUsedAsNonInline.kt");
         }
 
         @TestMetadata("inlineFunInGenericClass.kt")
-        public void testInlineFunInGenericClass_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineFunInGenericClass.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("inlineFunInGenericClass.kt")
-        public void testInlineFunInGenericClass_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineFunInGenericClass.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("inlineFunctionInMultifileClassUnoptimized.kt")
-        public void testInlineFunctionInMultifileClassUnoptimized_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineFunctionInMultifileClassUnoptimized.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("inlineFunctionInMultifileClassUnoptimized.kt")
-        public void testInlineFunctionInMultifileClassUnoptimized_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineFunctionInMultifileClassUnoptimized.kt", "kotlin.coroutines");
+        public void testInlineFunInGenericClass() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/inlineFunInGenericClass.kt");
         }
 
         @TestMetadata("inlineFunctionInMultifileClass.kt")
-        public void testInlineFunctionInMultifileClass_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineFunctionInMultifileClass.kt", "kotlin.coroutines.experimental");
+        public void testInlineFunctionInMultifileClass() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/inlineFunctionInMultifileClass.kt");
         }
 
-        @TestMetadata("inlineFunctionInMultifileClass.kt")
-        public void testInlineFunctionInMultifileClass_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineFunctionInMultifileClass.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("inlineGenericFunCalledFromSubclass.kt")
-        public void testInlineGenericFunCalledFromSubclass_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineGenericFunCalledFromSubclass.kt", "kotlin.coroutines.experimental");
+        @TestMetadata("inlineFunctionInMultifileClassUnoptimized.kt")
+        public void testInlineFunctionInMultifileClassUnoptimized() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/inlineFunctionInMultifileClassUnoptimized.kt");
         }
 
         @TestMetadata("inlineGenericFunCalledFromSubclass.kt")
-        public void testInlineGenericFunCalledFromSubclass_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineGenericFunCalledFromSubclass.kt", "kotlin.coroutines");
+        public void testInlineGenericFunCalledFromSubclass() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/inlineGenericFunCalledFromSubclass.kt");
         }
 
         @TestMetadata("inlineSuspendFunction.kt")
-        public void testInlineSuspendFunction_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineSuspendFunction.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("inlineSuspendFunction.kt")
-        public void testInlineSuspendFunction_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineSuspendFunction.kt", "kotlin.coroutines");
+        public void testInlineSuspendFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/inlineSuspendFunction.kt");
         }
 
         @TestMetadata("inlineSuspendLambdaNonLocalReturn.kt")
-        public void testInlineSuspendLambdaNonLocalReturn_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineSuspendLambdaNonLocalReturn.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("inlineSuspendLambdaNonLocalReturn.kt")
-        public void testInlineSuspendLambdaNonLocalReturn_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineSuspendLambdaNonLocalReturn.kt", "kotlin.coroutines");
+        public void testInlineSuspendLambdaNonLocalReturn() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/inlineSuspendLambdaNonLocalReturn.kt");
         }
 
         @TestMetadata("inlinedTryCatchFinally.kt")
-        public void testInlinedTryCatchFinally_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlinedTryCatchFinally.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("inlinedTryCatchFinally.kt")
-        public void testInlinedTryCatchFinally_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlinedTryCatchFinally.kt", "kotlin.coroutines");
+        public void testInlinedTryCatchFinally() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/inlinedTryCatchFinally.kt");
         }
 
         @TestMetadata("innerSuspensionCalls.kt")
-        public void testInnerSuspensionCalls_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/innerSuspensionCalls.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("innerSuspensionCalls.kt")
-        public void testInnerSuspensionCalls_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/innerSuspensionCalls.kt", "kotlin.coroutines");
+        public void testInnerSuspensionCalls() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/innerSuspensionCalls.kt");
         }
 
         @TestMetadata("instanceOfContinuation.kt")
-        public void testInstanceOfContinuation_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/instanceOfContinuation.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("instanceOfContinuation.kt")
-        public void testInstanceOfContinuation_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/instanceOfContinuation.kt", "kotlin.coroutines");
+        public void testInstanceOfContinuation() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/instanceOfContinuation.kt");
         }
 
         @TestMetadata("iterateOverArray.kt")
-        public void testIterateOverArray_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/iterateOverArray.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("iterateOverArray.kt")
-        public void testIterateOverArray_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/iterateOverArray.kt", "kotlin.coroutines");
+        public void testIterateOverArray() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/iterateOverArray.kt");
         }
 
         @TestMetadata("kt12958.kt")
-        public void testKt12958_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt12958.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("kt12958.kt")
-        public void testKt12958_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt12958.kt", "kotlin.coroutines");
+        public void testKt12958() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt12958.kt");
         }
 
         @TestMetadata("kt15016.kt")
-        public void testKt15016_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt15016.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("kt15016.kt")
-        public void testKt15016_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt15016.kt", "kotlin.coroutines");
+        public void testKt15016() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt15016.kt");
         }
 
         @TestMetadata("kt15017.kt")
-        public void testKt15017_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt15017.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("kt15017.kt")
-        public void testKt15017_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt15017.kt", "kotlin.coroutines");
+        public void testKt15017() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt15017.kt");
         }
 
         @TestMetadata("kt15930.kt")
-        public void testKt15930_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt15930.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("kt15930.kt")
-        public void testKt15930_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt15930.kt", "kotlin.coroutines");
+        public void testKt15930() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt15930.kt");
         }
 
         @TestMetadata("kt21605.kt")
-        public void testKt21605_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt21605.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("kt21605.kt")
-        public void testKt21605_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt21605.kt", "kotlin.coroutines");
+        public void testKt21605() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt21605.kt");
         }
 
         @TestMetadata("kt25912.kt")
-        public void testKt25912_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt25912.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("kt25912.kt")
-        public void testKt25912_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt25912.kt", "kotlin.coroutines");
+        public void testKt25912() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt25912.kt");
         }
 
         @TestMetadata("kt28844.kt")
-        public void testKt28844_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt28844.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("kt28844.kt")
-        public void testKt28844_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/kt28844.kt", "kotlin.coroutines");
+        public void testKt28844() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/kt28844.kt");
         }
 
         @TestMetadata("kt30858.kt")
@@ -7104,43 +6833,23 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("lastExpressionIsLoop.kt")
-        public void testLastExpressionIsLoop_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("lastExpressionIsLoop.kt")
-        public void testLastExpressionIsLoop_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt", "kotlin.coroutines");
+        public void testLastExpressionIsLoop() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/lastExpressionIsLoop.kt");
         }
 
         @TestMetadata("lastStatementInc.kt")
-        public void testLastStatementInc_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/lastStatementInc.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("lastStatementInc.kt")
-        public void testLastStatementInc_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/lastStatementInc.kt", "kotlin.coroutines");
+        public void testLastStatementInc() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/lastStatementInc.kt");
         }
 
         @TestMetadata("lastStementAssignment.kt")
-        public void testLastStementAssignment_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/lastStementAssignment.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("lastStementAssignment.kt")
-        public void testLastStementAssignment_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/lastStementAssignment.kt", "kotlin.coroutines");
+        public void testLastStementAssignment() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/lastStementAssignment.kt");
         }
 
         @TestMetadata("lastUnitExpression.kt")
-        public void testLastUnitExpression_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/lastUnitExpression.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("lastUnitExpression.kt")
-        public void testLastUnitExpression_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/lastUnitExpression.kt", "kotlin.coroutines");
+        public void testLastUnitExpression() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/lastUnitExpression.kt");
         }
 
         @TestMetadata("localCallableRef.kt")
@@ -7149,103 +6858,53 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("localDelegate.kt")
-        public void testLocalDelegate_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localDelegate.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("localDelegate.kt")
-        public void testLocalDelegate_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localDelegate.kt", "kotlin.coroutines");
+        public void testLocalDelegate() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/localDelegate.kt");
         }
 
         @TestMetadata("longRangeInSuspendCall.kt")
-        public void testLongRangeInSuspendCall_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/longRangeInSuspendCall.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("longRangeInSuspendCall.kt")
-        public void testLongRangeInSuspendCall_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/longRangeInSuspendCall.kt", "kotlin.coroutines");
+        public void testLongRangeInSuspendCall() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/longRangeInSuspendCall.kt");
         }
 
         @TestMetadata("longRangeInSuspendFun.kt")
-        public void testLongRangeInSuspendFun_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/longRangeInSuspendFun.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("longRangeInSuspendFun.kt")
-        public void testLongRangeInSuspendFun_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/longRangeInSuspendFun.kt", "kotlin.coroutines");
+        public void testLongRangeInSuspendFun() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/longRangeInSuspendFun.kt");
         }
 
         @TestMetadata("mergeNullAndString.kt")
-        public void testMergeNullAndString_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/mergeNullAndString.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("mergeNullAndString.kt")
-        public void testMergeNullAndString_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/mergeNullAndString.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("multipleInvokeCallsInsideInlineLambda1.kt")
-        public void testMultipleInvokeCallsInsideInlineLambda1_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multipleInvokeCallsInsideInlineLambda1.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("multipleInvokeCallsInsideInlineLambda1.kt")
-        public void testMultipleInvokeCallsInsideInlineLambda1_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multipleInvokeCallsInsideInlineLambda1.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("multipleInvokeCallsInsideInlineLambda2.kt")
-        public void testMultipleInvokeCallsInsideInlineLambda2_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multipleInvokeCallsInsideInlineLambda2.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("multipleInvokeCallsInsideInlineLambda2.kt")
-        public void testMultipleInvokeCallsInsideInlineLambda2_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multipleInvokeCallsInsideInlineLambda2.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("multipleInvokeCallsInsideInlineLambda3.kt")
-        public void testMultipleInvokeCallsInsideInlineLambda3_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multipleInvokeCallsInsideInlineLambda3.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("multipleInvokeCallsInsideInlineLambda3.kt")
-        public void testMultipleInvokeCallsInsideInlineLambda3_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multipleInvokeCallsInsideInlineLambda3.kt", "kotlin.coroutines");
+        public void testMergeNullAndString() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/mergeNullAndString.kt");
         }
 
         @TestMetadata("multipleInvokeCalls.kt")
-        public void testMultipleInvokeCalls_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multipleInvokeCalls.kt", "kotlin.coroutines.experimental");
+        public void testMultipleInvokeCalls() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/multipleInvokeCalls.kt");
         }
 
-        @TestMetadata("multipleInvokeCalls.kt")
-        public void testMultipleInvokeCalls_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multipleInvokeCalls.kt", "kotlin.coroutines");
+        @TestMetadata("multipleInvokeCallsInsideInlineLambda1.kt")
+        public void testMultipleInvokeCallsInsideInlineLambda1() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/multipleInvokeCallsInsideInlineLambda1.kt");
+        }
+
+        @TestMetadata("multipleInvokeCallsInsideInlineLambda2.kt")
+        public void testMultipleInvokeCallsInsideInlineLambda2() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/multipleInvokeCallsInsideInlineLambda2.kt");
+        }
+
+        @TestMetadata("multipleInvokeCallsInsideInlineLambda3.kt")
+        public void testMultipleInvokeCallsInsideInlineLambda3() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/multipleInvokeCallsInsideInlineLambda3.kt");
         }
 
         @TestMetadata("nestedTryCatch.kt")
-        public void testNestedTryCatch_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/nestedTryCatch.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("nestedTryCatch.kt")
-        public void testNestedTryCatch_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/nestedTryCatch.kt", "kotlin.coroutines");
+        public void testNestedTryCatch() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/nestedTryCatch.kt");
         }
 
         @TestMetadata("noSuspensionPoints.kt")
-        public void testNoSuspensionPoints_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noSuspensionPoints.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("noSuspensionPoints.kt")
-        public void testNoSuspensionPoints_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/noSuspensionPoints.kt", "kotlin.coroutines");
+        public void testNoSuspensionPoints() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/noSuspensionPoints.kt");
         }
 
         @TestMetadata("nonLocalReturn.kt")
@@ -7253,44 +6912,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/coroutines/nonLocalReturn.kt");
         }
 
-        @TestMetadata("nonLocalReturnFromInlineLambdaDeep.kt")
-        public void testNonLocalReturnFromInlineLambdaDeep_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/nonLocalReturnFromInlineLambdaDeep.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("nonLocalReturnFromInlineLambdaDeep.kt")
-        public void testNonLocalReturnFromInlineLambdaDeep_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/nonLocalReturnFromInlineLambdaDeep.kt", "kotlin.coroutines");
-        }
-
         @TestMetadata("nonLocalReturnFromInlineLambda.kt")
-        public void testNonLocalReturnFromInlineLambda_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/nonLocalReturnFromInlineLambda.kt", "kotlin.coroutines.experimental");
+        public void testNonLocalReturnFromInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/nonLocalReturnFromInlineLambda.kt");
         }
 
-        @TestMetadata("nonLocalReturnFromInlineLambda.kt")
-        public void testNonLocalReturnFromInlineLambda_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/nonLocalReturnFromInlineLambda.kt", "kotlin.coroutines");
+        @TestMetadata("nonLocalReturnFromInlineLambdaDeep.kt")
+        public void testNonLocalReturnFromInlineLambdaDeep() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/nonLocalReturnFromInlineLambdaDeep.kt");
         }
 
         @TestMetadata("overrideDefaultArgument.kt")
-        public void testOverrideDefaultArgument_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/overrideDefaultArgument.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("overrideDefaultArgument.kt")
-        public void testOverrideDefaultArgument_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/overrideDefaultArgument.kt", "kotlin.coroutines");
+        public void testOverrideDefaultArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/overrideDefaultArgument.kt");
         }
 
         @TestMetadata("recursiveSuspend.kt")
-        public void testRecursiveSuspend_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/recursiveSuspend.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("recursiveSuspend.kt")
-        public void testRecursiveSuspend_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/recursiveSuspend.kt", "kotlin.coroutines");
+        public void testRecursiveSuspend() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/recursiveSuspend.kt");
         }
 
         @TestMetadata("restrictedSuspendLambda.kt")
@@ -7299,23 +6938,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("returnByLabel.kt")
-        public void testReturnByLabel_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/returnByLabel.kt", "kotlin.coroutines.experimental");
+        public void testReturnByLabel() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/returnByLabel.kt");
         }
 
-        @TestMetadata("returnByLabel.kt")
-        public void testReturnByLabel_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/returnByLabel.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("simpleException.kt")
-        public void testSimpleException_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/simpleException.kt", "kotlin.coroutines.experimental");
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/simple.kt");
         }
 
         @TestMetadata("simpleException.kt")
-        public void testSimpleException_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/simpleException.kt", "kotlin.coroutines");
+        public void testSimpleException() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/simpleException.kt");
         }
 
         @TestMetadata("simpleSuspendCallableReference.kt")
@@ -7324,33 +6958,13 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("simpleWithHandleResult.kt")
-        public void testSimpleWithHandleResult_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/simpleWithHandleResult.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("simpleWithHandleResult.kt")
-        public void testSimpleWithHandleResult_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/simpleWithHandleResult.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/simple.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("simple.kt")
-        public void testSimple_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/simple.kt", "kotlin.coroutines");
+        public void testSimpleWithHandleResult() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/simpleWithHandleResult.kt");
         }
 
         @TestMetadata("statementLikeLastExpression.kt")
-        public void testStatementLikeLastExpression_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/statementLikeLastExpression.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("statementLikeLastExpression.kt")
-        public void testStatementLikeLastExpression_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/statementLikeLastExpression.kt", "kotlin.coroutines");
+        public void testStatementLikeLastExpression() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/statementLikeLastExpression.kt");
         }
 
         @TestMetadata("stopAfter.kt")
@@ -7359,23 +6973,13 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("suspendCallsInArguments.kt")
-        public void testSuspendCallsInArguments_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendCallsInArguments.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendCallsInArguments.kt")
-        public void testSuspendCallsInArguments_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendCallsInArguments.kt", "kotlin.coroutines");
+        public void testSuspendCallsInArguments() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendCallsInArguments.kt");
         }
 
         @TestMetadata("suspendCoroutineFromStateMachine.kt")
-        public void testSuspendCoroutineFromStateMachine_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendCoroutineFromStateMachine.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendCoroutineFromStateMachine.kt")
-        public void testSuspendCoroutineFromStateMachine_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendCoroutineFromStateMachine.kt", "kotlin.coroutines");
+        public void testSuspendCoroutineFromStateMachine() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendCoroutineFromStateMachine.kt");
         }
 
         @TestMetadata("suspendCovariantJavaOverrides.kt")
@@ -7384,43 +6988,23 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("suspendDefaultImpl.kt")
-        public void testSuspendDefaultImpl_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendDefaultImpl.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendDefaultImpl.kt")
-        public void testSuspendDefaultImpl_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendDefaultImpl.kt", "kotlin.coroutines");
+        public void testSuspendDefaultImpl() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendDefaultImpl.kt");
         }
 
         @TestMetadata("suspendDelegation.kt")
-        public void testSuspendDelegation_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendDelegation.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendDelegation.kt")
-        public void testSuspendDelegation_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendDelegation.kt", "kotlin.coroutines");
+        public void testSuspendDelegation() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendDelegation.kt");
         }
 
         @TestMetadata("suspendFromInlineLambda.kt")
-        public void testSuspendFromInlineLambda_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFromInlineLambda.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendFromInlineLambda.kt")
-        public void testSuspendFromInlineLambda_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFromInlineLambda.kt", "kotlin.coroutines");
+        public void testSuspendFromInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendFromInlineLambda.kt");
         }
 
         @TestMetadata("suspendFunImportedFromObject.kt")
-        public void testSuspendFunImportedFromObject_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunImportedFromObject.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendFunImportedFromObject.kt")
-        public void testSuspendFunImportedFromObject_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunImportedFromObject.kt", "kotlin.coroutines");
+        public void testSuspendFunImportedFromObject() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendFunImportedFromObject.kt");
         }
 
         @TestMetadata("suspendFunctionMethodReference.kt")
@@ -7434,43 +7018,23 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("suspendInCycle.kt")
-        public void testSuspendInCycle_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendInCycle.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendInCycle.kt")
-        public void testSuspendInCycle_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendInCycle.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("suspendInTheMiddleOfObjectConstructionEvaluationOrder.kt")
-        public void testSuspendInTheMiddleOfObjectConstructionEvaluationOrder_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstructionEvaluationOrder.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendInTheMiddleOfObjectConstructionEvaluationOrder.kt")
-        public void testSuspendInTheMiddleOfObjectConstructionEvaluationOrder_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstructionEvaluationOrder.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("suspendInTheMiddleOfObjectConstructionWithJumpOut.kt")
-        public void testSuspendInTheMiddleOfObjectConstructionWithJumpOut_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstructionWithJumpOut.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendInTheMiddleOfObjectConstructionWithJumpOut.kt")
-        public void testSuspendInTheMiddleOfObjectConstructionWithJumpOut_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstructionWithJumpOut.kt", "kotlin.coroutines");
+        public void testSuspendInCycle() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendInCycle.kt");
         }
 
         @TestMetadata("suspendInTheMiddleOfObjectConstruction.kt")
-        public void testSuspendInTheMiddleOfObjectConstruction_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstruction.kt", "kotlin.coroutines.experimental");
+        public void testSuspendInTheMiddleOfObjectConstruction() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstruction.kt");
         }
 
-        @TestMetadata("suspendInTheMiddleOfObjectConstruction.kt")
-        public void testSuspendInTheMiddleOfObjectConstruction_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstruction.kt", "kotlin.coroutines");
+        @TestMetadata("suspendInTheMiddleOfObjectConstructionEvaluationOrder.kt")
+        public void testSuspendInTheMiddleOfObjectConstructionEvaluationOrder() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstructionEvaluationOrder.kt");
+        }
+
+        @TestMetadata("suspendInTheMiddleOfObjectConstructionWithJumpOut.kt")
+        public void testSuspendInTheMiddleOfObjectConstructionWithJumpOut() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendInTheMiddleOfObjectConstructionWithJumpOut.kt");
         }
 
         @TestMetadata("suspendJavaOverrides.kt")
@@ -7484,13 +7048,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("suspendLambdaWithArgumentRearrangement.kt")
-        public void testSuspendLambdaWithArgumentRearrangement_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendLambdaWithArgumentRearrangement.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendLambdaWithArgumentRearrangement.kt")
-        public void testSuspendLambdaWithArgumentRearrangement_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendLambdaWithArgumentRearrangement.kt", "kotlin.coroutines");
+        public void testSuspendLambdaWithArgumentRearrangement() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendLambdaWithArgumentRearrangement.kt");
         }
 
         @TestMetadata("suspendReturningPlatformType.kt")
@@ -7498,24 +7057,14 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/coroutines/suspendReturningPlatformType.kt");
         }
 
-        @TestMetadata("suspensionInsideSafeCallWithElvis.kt")
-        public void testSuspensionInsideSafeCallWithElvis_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspensionInsideSafeCallWithElvis.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspensionInsideSafeCallWithElvis.kt")
-        public void testSuspensionInsideSafeCallWithElvis_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspensionInsideSafeCallWithElvis.kt", "kotlin.coroutines");
-        }
-
         @TestMetadata("suspensionInsideSafeCall.kt")
-        public void testSuspensionInsideSafeCall_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspensionInsideSafeCall.kt", "kotlin.coroutines.experimental");
+        public void testSuspensionInsideSafeCall() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspensionInsideSafeCall.kt");
         }
 
-        @TestMetadata("suspensionInsideSafeCall.kt")
-        public void testSuspensionInsideSafeCall_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspensionInsideSafeCall.kt", "kotlin.coroutines");
+        @TestMetadata("suspensionInsideSafeCallWithElvis.kt")
+        public void testSuspensionInsideSafeCallWithElvis() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspensionInsideSafeCallWithElvis.kt");
         }
 
         @TestMetadata("tailCallToNothing.kt")
@@ -7524,73 +7073,38 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("tryCatchFinallyWithHandleResult.kt")
-        public void testTryCatchFinallyWithHandleResult_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tryCatchFinallyWithHandleResult.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("tryCatchFinallyWithHandleResult.kt")
-        public void testTryCatchFinallyWithHandleResult_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tryCatchFinallyWithHandleResult.kt", "kotlin.coroutines");
+        public void testTryCatchFinallyWithHandleResult() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/tryCatchFinallyWithHandleResult.kt");
         }
 
         @TestMetadata("tryCatchWithHandleResult.kt")
-        public void testTryCatchWithHandleResult_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tryCatchWithHandleResult.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("tryCatchWithHandleResult.kt")
-        public void testTryCatchWithHandleResult_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tryCatchWithHandleResult.kt", "kotlin.coroutines");
+        public void testTryCatchWithHandleResult() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/tryCatchWithHandleResult.kt");
         }
 
         @TestMetadata("tryFinallyInsideInlineLambda.kt")
-        public void testTryFinallyInsideInlineLambda_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tryFinallyInsideInlineLambda.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("tryFinallyInsideInlineLambda.kt")
-        public void testTryFinallyInsideInlineLambda_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tryFinallyInsideInlineLambda.kt", "kotlin.coroutines");
+        public void testTryFinallyInsideInlineLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/tryFinallyInsideInlineLambda.kt");
         }
 
         @TestMetadata("tryFinallyWithHandleResult.kt")
-        public void testTryFinallyWithHandleResult_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tryFinallyWithHandleResult.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("tryFinallyWithHandleResult.kt")
-        public void testTryFinallyWithHandleResult_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tryFinallyWithHandleResult.kt", "kotlin.coroutines");
+        public void testTryFinallyWithHandleResult() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/tryFinallyWithHandleResult.kt");
         }
 
         @TestMetadata("varCaptuedInCoroutineIntrinsic.kt")
-        public void testVarCaptuedInCoroutineIntrinsic_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/varCaptuedInCoroutineIntrinsic.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("varCaptuedInCoroutineIntrinsic.kt")
-        public void testVarCaptuedInCoroutineIntrinsic_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/varCaptuedInCoroutineIntrinsic.kt", "kotlin.coroutines");
-        }
-
-        @TestMetadata("varValueConflictsWithTableSameSort.kt")
-        public void testVarValueConflictsWithTableSameSort_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/varValueConflictsWithTableSameSort.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("varValueConflictsWithTableSameSort.kt")
-        public void testVarValueConflictsWithTableSameSort_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/varValueConflictsWithTableSameSort.kt", "kotlin.coroutines");
+        public void testVarCaptuedInCoroutineIntrinsic() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/varCaptuedInCoroutineIntrinsic.kt");
         }
 
         @TestMetadata("varValueConflictsWithTable.kt")
-        public void testVarValueConflictsWithTable_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/varValueConflictsWithTable.kt", "kotlin.coroutines.experimental");
+        public void testVarValueConflictsWithTable() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/varValueConflictsWithTable.kt");
         }
 
-        @TestMetadata("varValueConflictsWithTable.kt")
-        public void testVarValueConflictsWithTable_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/varValueConflictsWithTable.kt", "kotlin.coroutines");
+        @TestMetadata("varValueConflictsWithTableSameSort.kt")
+        public void testVarValueConflictsWithTableSameSort() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/varValueConflictsWithTableSameSort.kt");
         }
 
         @TestMetadata("compiler/testData/codegen/box/coroutines/bridges")
@@ -7601,42 +7115,23 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInBridges() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/bridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("interfaceSpecialization.kt")
-            public void testInterfaceSpecialization_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/interfaceSpecialization.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("interfaceSpecialization.kt")
-            public void testInterfaceSpecialization_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/interfaceSpecialization.kt", "kotlin.coroutines");
+            public void testInterfaceSpecialization() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/bridges/interfaceSpecialization.kt");
             }
 
             @TestMetadata("lambdaWithLongReceiver.kt")
-            public void testLambdaWithLongReceiver_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("lambdaWithLongReceiver.kt")
-            public void testLambdaWithLongReceiver_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver.kt", "kotlin.coroutines");
+            public void testLambdaWithLongReceiver() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver.kt");
             }
 
             @TestMetadata("lambdaWithMultipleParameters.kt")
-            public void testLambdaWithMultipleParameters_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithMultipleParameters.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("lambdaWithMultipleParameters.kt")
-            public void testLambdaWithMultipleParameters_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/bridges/lambdaWithMultipleParameters.kt", "kotlin.coroutines");
+            public void testLambdaWithMultipleParameters() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/bridges/lambdaWithMultipleParameters.kt");
             }
         }
 
@@ -7648,112 +7143,58 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInControlFlow() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/controlFlow"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("breakFinally.kt")
-            public void testBreakFinally_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/breakFinally.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("breakFinally.kt")
-            public void testBreakFinally_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/breakFinally.kt", "kotlin.coroutines");
+            public void testBreakFinally() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/breakFinally.kt");
             }
 
             @TestMetadata("breakStatement.kt")
-            public void testBreakStatement_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/breakStatement.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("breakStatement.kt")
-            public void testBreakStatement_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/breakStatement.kt", "kotlin.coroutines");
+            public void testBreakStatement() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/breakStatement.kt");
             }
 
             @TestMetadata("complexChainSuspend.kt")
-            public void testComplexChainSuspend_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/complexChainSuspend.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("complexChainSuspend.kt")
-            public void testComplexChainSuspend_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/complexChainSuspend.kt", "kotlin.coroutines");
+            public void testComplexChainSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/complexChainSuspend.kt");
             }
 
             @TestMetadata("doWhileStatement.kt")
-            public void testDoWhileStatement_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/doWhileStatement.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("doWhileStatement.kt")
-            public void testDoWhileStatement_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/doWhileStatement.kt", "kotlin.coroutines");
+            public void testDoWhileStatement() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/doWhileStatement.kt");
             }
 
             @TestMetadata("doubleBreak.kt")
-            public void testDoubleBreak_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/doubleBreak.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("doubleBreak.kt")
-            public void testDoubleBreak_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/doubleBreak.kt", "kotlin.coroutines");
+            public void testDoubleBreak() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/doubleBreak.kt");
             }
 
             @TestMetadata("finallyCatch.kt")
-            public void testFinallyCatch_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/finallyCatch.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("finallyCatch.kt")
-            public void testFinallyCatch_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/finallyCatch.kt", "kotlin.coroutines");
+            public void testFinallyCatch() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/finallyCatch.kt");
             }
 
             @TestMetadata("forContinue.kt")
-            public void testForContinue_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/forContinue.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("forContinue.kt")
-            public void testForContinue_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/forContinue.kt", "kotlin.coroutines");
+            public void testForContinue() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/forContinue.kt");
             }
 
             @TestMetadata("forStatement.kt")
-            public void testForStatement_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/forStatement.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("forStatement.kt")
-            public void testForStatement_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/forStatement.kt", "kotlin.coroutines");
+            public void testForStatement() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/forStatement.kt");
             }
 
             @TestMetadata("forWithStep.kt")
-            public void testForWithStep_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/forWithStep.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("forWithStep.kt")
-            public void testForWithStep_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/forWithStep.kt", "kotlin.coroutines");
+            public void testForWithStep() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/forWithStep.kt");
             }
 
             @TestMetadata("ifStatement.kt")
-            public void testIfStatement_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/ifStatement.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("ifStatement.kt")
-            public void testIfStatement_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/ifStatement.kt", "kotlin.coroutines");
+            public void testIfStatement() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/ifStatement.kt");
             }
 
             @TestMetadata("kt22694_1_3.kt")
@@ -7762,113 +7203,58 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @TestMetadata("labeledWhile.kt")
-            public void testLabeledWhile_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/labeledWhile.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("labeledWhile.kt")
-            public void testLabeledWhile_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/labeledWhile.kt", "kotlin.coroutines");
+            public void testLabeledWhile() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/labeledWhile.kt");
             }
 
             @TestMetadata("multipleCatchBlocksSuspend.kt")
-            public void testMultipleCatchBlocksSuspend_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/multipleCatchBlocksSuspend.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("multipleCatchBlocksSuspend.kt")
-            public void testMultipleCatchBlocksSuspend_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/multipleCatchBlocksSuspend.kt", "kotlin.coroutines");
+            public void testMultipleCatchBlocksSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/multipleCatchBlocksSuspend.kt");
             }
 
             @TestMetadata("returnFromFinally.kt")
-            public void testReturnFromFinally_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/returnFromFinally.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("returnFromFinally.kt")
-            public void testReturnFromFinally_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/returnFromFinally.kt", "kotlin.coroutines");
+            public void testReturnFromFinally() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/returnFromFinally.kt");
             }
 
             @TestMetadata("returnWithFinally.kt")
-            public void testReturnWithFinally_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/returnWithFinally.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("returnWithFinally.kt")
-            public void testReturnWithFinally_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/returnWithFinally.kt", "kotlin.coroutines");
+            public void testReturnWithFinally() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/returnWithFinally.kt");
             }
 
             @TestMetadata("suspendInStringTemplate.kt")
-            public void testSuspendInStringTemplate_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/suspendInStringTemplate.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendInStringTemplate.kt")
-            public void testSuspendInStringTemplate_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/suspendInStringTemplate.kt", "kotlin.coroutines");
+            public void testSuspendInStringTemplate() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/suspendInStringTemplate.kt");
             }
 
             @TestMetadata("switchLikeWhen.kt")
-            public void testSwitchLikeWhen_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/switchLikeWhen.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("switchLikeWhen.kt")
-            public void testSwitchLikeWhen_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/switchLikeWhen.kt", "kotlin.coroutines");
+            public void testSwitchLikeWhen() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/switchLikeWhen.kt");
             }
 
             @TestMetadata("throwFromCatch.kt")
-            public void testThrowFromCatch_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/throwFromCatch.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("throwFromCatch.kt")
-            public void testThrowFromCatch_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/throwFromCatch.kt", "kotlin.coroutines");
+            public void testThrowFromCatch() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/throwFromCatch.kt");
             }
 
             @TestMetadata("throwFromFinally.kt")
-            public void testThrowFromFinally_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/throwFromFinally.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("throwFromFinally.kt")
-            public void testThrowFromFinally_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/throwFromFinally.kt", "kotlin.coroutines");
+            public void testThrowFromFinally() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/throwFromFinally.kt");
             }
 
             @TestMetadata("throwInTryWithHandleResult.kt")
-            public void testThrowInTryWithHandleResult_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/throwInTryWithHandleResult.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("throwInTryWithHandleResult.kt")
-            public void testThrowInTryWithHandleResult_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/throwInTryWithHandleResult.kt", "kotlin.coroutines");
+            public void testThrowInTryWithHandleResult() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/throwInTryWithHandleResult.kt");
             }
 
             @TestMetadata("whenWithSuspensions.kt")
-            public void testWhenWithSuspensions_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/whenWithSuspensions.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("whenWithSuspensions.kt")
-            public void testWhenWithSuspensions_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/whenWithSuspensions.kt", "kotlin.coroutines");
+            public void testWhenWithSuspensions() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/whenWithSuspensions.kt");
             }
 
             @TestMetadata("whileStatement.kt")
-            public void testWhileStatement_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/whileStatement.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("whileStatement.kt")
-            public void testWhileStatement_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/controlFlow/whileStatement.kt", "kotlin.coroutines");
+            public void testWhileStatement() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/controlFlow/whileStatement.kt");
             }
         }
 
@@ -7933,22 +7319,13 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInFeatureIntersection() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("breakWithNonEmptyStack.kt")
-            public void testBreakWithNonEmptyStack_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/breakWithNonEmptyStack.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("breakWithNonEmptyStack.kt")
-            public void testBreakWithNonEmptyStack_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/breakWithNonEmptyStack.kt", "kotlin.coroutines");
+            public void testBreakWithNonEmptyStack() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/breakWithNonEmptyStack.kt");
             }
 
             @TestMetadata("defaultExpect.kt")
@@ -7957,23 +7334,13 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @TestMetadata("delegate.kt")
-            public void testDelegate_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/delegate.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("delegate.kt")
-            public void testDelegate_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/delegate.kt", "kotlin.coroutines");
+            public void testDelegate() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/delegate.kt");
             }
 
             @TestMetadata("destructuringInLambdas.kt")
-            public void testDestructuringInLambdas_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/destructuringInLambdas.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("destructuringInLambdas.kt")
-            public void testDestructuringInLambdas_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/destructuringInLambdas.kt", "kotlin.coroutines");
+            public void testDestructuringInLambdas() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/destructuringInLambdas.kt");
             }
 
             @TestMetadata("funInterface.kt")
@@ -7982,13 +7349,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @TestMetadata("inlineSuspendFinally.kt")
-            public void testInlineSuspendFinally_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/inlineSuspendFinally.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineSuspendFinally.kt")
-            public void testInlineSuspendFinally_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/inlineSuspendFinally.kt", "kotlin.coroutines");
+            public void testInlineSuspendFinally() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/inlineSuspendFinally.kt");
             }
 
             @TestMetadata("interfaceMethodWithBody.kt")
@@ -8006,34 +7368,19 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/coroutines/featureIntersection/overrideInInlineClass.kt");
             }
 
-            @TestMetadata("safeCallOnTwoReceiversLong.kt")
-            public void testSafeCallOnTwoReceiversLong_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceiversLong.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("safeCallOnTwoReceiversLong.kt")
-            public void testSafeCallOnTwoReceiversLong_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceiversLong.kt", "kotlin.coroutines");
-            }
-
             @TestMetadata("safeCallOnTwoReceivers.kt")
-            public void testSafeCallOnTwoReceivers_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceivers.kt", "kotlin.coroutines.experimental");
+            public void testSafeCallOnTwoReceivers() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceivers.kt");
             }
 
-            @TestMetadata("safeCallOnTwoReceivers.kt")
-            public void testSafeCallOnTwoReceivers_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceivers.kt", "kotlin.coroutines");
+            @TestMetadata("safeCallOnTwoReceiversLong.kt")
+            public void testSafeCallOnTwoReceiversLong() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/safeCallOnTwoReceiversLong.kt");
             }
 
             @TestMetadata("suspendDestructuringInLambdas.kt")
-            public void testSuspendDestructuringInLambdas_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendDestructuringInLambdas.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendDestructuringInLambdas.kt")
-            public void testSuspendDestructuringInLambdas_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendDestructuringInLambdas.kt", "kotlin.coroutines");
+            public void testSuspendDestructuringInLambdas() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/suspendDestructuringInLambdas.kt");
             }
 
             @TestMetadata("suspendFunctionIsAs.kt")
@@ -8042,43 +7389,23 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @TestMetadata("suspendInlineSuspendFinally.kt")
-            public void testSuspendInlineSuspendFinally_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendInlineSuspendFinally.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendInlineSuspendFinally.kt")
-            public void testSuspendInlineSuspendFinally_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendInlineSuspendFinally.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("suspendOperatorPlusAssign.kt")
-            public void testSuspendOperatorPlusAssign_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlusAssign.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendOperatorPlusAssign.kt")
-            public void testSuspendOperatorPlusAssign_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlusAssign.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("suspendOperatorPlusCallFromLambda.kt")
-            public void testSuspendOperatorPlusCallFromLambda_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlusCallFromLambda.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendOperatorPlusCallFromLambda.kt")
-            public void testSuspendOperatorPlusCallFromLambda_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlusCallFromLambda.kt", "kotlin.coroutines");
+            public void testSuspendInlineSuspendFinally() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/suspendInlineSuspendFinally.kt");
             }
 
             @TestMetadata("suspendOperatorPlus.kt")
-            public void testSuspendOperatorPlus_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlus.kt", "kotlin.coroutines.experimental");
+            public void testSuspendOperatorPlus() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlus.kt");
             }
 
-            @TestMetadata("suspendOperatorPlus.kt")
-            public void testSuspendOperatorPlus_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlus.kt", "kotlin.coroutines");
+            @TestMetadata("suspendOperatorPlusAssign.kt")
+            public void testSuspendOperatorPlusAssign() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlusAssign.kt");
+            }
+
+            @TestMetadata("suspendOperatorPlusCallFromLambda.kt")
+            public void testSuspendOperatorPlusCallFromLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/suspendOperatorPlusCallFromLambda.kt");
             }
 
             @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference")
@@ -8089,22 +7416,13 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
 
-                private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                    KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-                }
-
                 public void testAllFilesPresentInCallableReference() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                 }
 
                 @TestMetadata("bigArity.kt")
-                public void testBigArity_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bigArity.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("bigArity.kt")
-                public void testBigArity_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bigArity.kt", "kotlin.coroutines");
+                public void testBigArity() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bigArity.kt");
                 }
 
                 @TestMetadata("fromJava.kt")
@@ -8190,142 +7508,73 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
 
-                private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                    KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-                }
-
                 public void testAllFilesPresentInTailrec() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                 }
 
                 @TestMetadata("controlFlowIf.kt")
-                public void testControlFlowIf_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/controlFlowIf.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("controlFlowIf.kt")
-                public void testControlFlowIf_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/controlFlowIf.kt", "kotlin.coroutines");
+                public void testControlFlowIf() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/controlFlowIf.kt");
                 }
 
                 @TestMetadata("controlFlowWhen.kt")
-                public void testControlFlowWhen_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/controlFlowWhen.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("controlFlowWhen.kt")
-                public void testControlFlowWhen_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/controlFlowWhen.kt", "kotlin.coroutines");
+                public void testControlFlowWhen() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/controlFlowWhen.kt");
                 }
 
                 @TestMetadata("extention.kt")
-                public void testExtention_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/extention.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("extention.kt")
-                public void testExtention_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/extention.kt", "kotlin.coroutines");
+                public void testExtention() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/extention.kt");
                 }
 
                 @TestMetadata("infixCall.kt")
-                public void testInfixCall_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/infixCall.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("infixCall.kt")
-                public void testInfixCall_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/infixCall.kt", "kotlin.coroutines");
+                public void testInfixCall() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/infixCall.kt");
                 }
 
                 @TestMetadata("infixRecursiveCall.kt")
-                public void testInfixRecursiveCall_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/infixRecursiveCall.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("infixRecursiveCall.kt")
-                public void testInfixRecursiveCall_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/infixRecursiveCall.kt", "kotlin.coroutines");
+                public void testInfixRecursiveCall() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/infixRecursiveCall.kt");
                 }
 
                 @TestMetadata("realIteratorFoldl.kt")
-                public void testRealIteratorFoldl_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realIteratorFoldl.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("realIteratorFoldl.kt")
-                public void testRealIteratorFoldl_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realIteratorFoldl.kt", "kotlin.coroutines");
+                public void testRealIteratorFoldl() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realIteratorFoldl.kt");
                 }
 
                 @TestMetadata("realStringEscape.kt")
-                public void testRealStringEscape_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realStringEscape.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("realStringEscape.kt")
-                public void testRealStringEscape_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realStringEscape.kt", "kotlin.coroutines");
+                public void testRealStringEscape() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realStringEscape.kt");
                 }
 
                 @TestMetadata("realStringRepeat.kt")
-                public void testRealStringRepeat_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realStringRepeat.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("realStringRepeat.kt")
-                public void testRealStringRepeat_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realStringRepeat.kt", "kotlin.coroutines");
+                public void testRealStringRepeat() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/realStringRepeat.kt");
                 }
 
                 @TestMetadata("returnInParentheses.kt")
-                public void testReturnInParentheses_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/returnInParentheses.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("returnInParentheses.kt")
-                public void testReturnInParentheses_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/returnInParentheses.kt", "kotlin.coroutines");
+                public void testReturnInParentheses() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/returnInParentheses.kt");
                 }
 
                 @TestMetadata("sum.kt")
-                public void testSum_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/sum.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("sum.kt")
-                public void testSum_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/sum.kt", "kotlin.coroutines");
+                public void testSum() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/sum.kt");
                 }
 
                 @TestMetadata("tailCallInBlockInParentheses.kt")
-                public void testTailCallInBlockInParentheses_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/tailCallInBlockInParentheses.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("tailCallInBlockInParentheses.kt")
-                public void testTailCallInBlockInParentheses_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/tailCallInBlockInParentheses.kt", "kotlin.coroutines");
+                public void testTailCallInBlockInParentheses() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/tailCallInBlockInParentheses.kt");
                 }
 
                 @TestMetadata("tailCallInParentheses.kt")
-                public void testTailCallInParentheses_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/tailCallInParentheses.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("tailCallInParentheses.kt")
-                public void testTailCallInParentheses_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/tailCallInParentheses.kt", "kotlin.coroutines");
+                public void testTailCallInParentheses() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/tailCallInParentheses.kt");
                 }
 
                 @TestMetadata("whenWithIs.kt")
-                public void testWhenWithIs_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/whenWithIs.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("whenWithIs.kt")
-                public void testWhenWithIs_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/whenWithIs.kt", "kotlin.coroutines");
+                public void testWhenWithIs() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec/whenWithIs.kt");
                 }
             }
         }
@@ -8355,10 +7604,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
 
-                private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                    KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-                }
-
                 public void testAllFilesPresentInDirect() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/inlineClasses/direct"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                 }
@@ -8374,113 +7619,58 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine.kt")
-                public void testBoxUnboxInsideCoroutine_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine.kt")
-                public void testBoxUnboxInsideCoroutine_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_Any.kt")
-                public void testBoxUnboxInsideCoroutine_Any_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_Any.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_Any.kt")
-                public void testBoxUnboxInsideCoroutine_Any_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_Any.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_Any() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_Any.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_InlineAny.kt")
-                public void testBoxUnboxInsideCoroutine_InlineAny_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_InlineAny.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_InlineAny.kt")
-                public void testBoxUnboxInsideCoroutine_InlineAny_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_InlineAny.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_InlineAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_InlineAny.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_InlineInt.kt")
-                public void testBoxUnboxInsideCoroutine_InlineInt_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_InlineInt.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_InlineInt.kt")
-                public void testBoxUnboxInsideCoroutine_InlineInt_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_InlineInt.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_InlineInt() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_InlineInt.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_Int.kt")
-                public void testBoxUnboxInsideCoroutine_Int_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_Int.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_Int.kt")
-                public void testBoxUnboxInsideCoroutine_Int_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_Int.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_Int() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_Int.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_Long.kt")
-                public void testBoxUnboxInsideCoroutine_Long_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_Long.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_Long.kt")
-                public void testBoxUnboxInsideCoroutine_Long_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_Long.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_Long() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_Long.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_NAny.kt")
-                public void testBoxUnboxInsideCoroutine_NAny_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_NAny.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_NAny.kt")
-                public void testBoxUnboxInsideCoroutine_NAny_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_NAny.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_NAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_NAny.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_nonLocalReturn.kt")
-                public void testBoxUnboxInsideCoroutine_nonLocalReturn_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_nonLocalReturn.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_nonLocalReturn.kt")
-                public void testBoxUnboxInsideCoroutine_nonLocalReturn_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_nonLocalReturn.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_nonLocalReturn() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_nonLocalReturn.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_suspendFunType.kt")
-                public void testBoxUnboxInsideCoroutine_suspendFunType_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_suspendFunType.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_suspendFunType.kt")
-                public void testBoxUnboxInsideCoroutine_suspendFunType_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_suspendFunType.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_suspendFunType() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/boxUnboxInsideCoroutine_suspendFunType.kt");
                 }
 
                 @TestMetadata("bridgeGenerationCrossinline.kt")
-                public void testBridgeGenerationCrossinline_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/bridgeGenerationCrossinline.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("bridgeGenerationCrossinline.kt")
-                public void testBridgeGenerationCrossinline_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/bridgeGenerationCrossinline.kt", "kotlin.coroutines");
+                public void testBridgeGenerationCrossinline() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/bridgeGenerationCrossinline.kt");
                 }
 
                 @TestMetadata("bridgeGenerationNonInline.kt")
-                public void testBridgeGenerationNonInline_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/bridgeGenerationNonInline.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("bridgeGenerationNonInline.kt")
-                public void testBridgeGenerationNonInline_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/bridgeGenerationNonInline.kt", "kotlin.coroutines");
+                public void testBridgeGenerationNonInline() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/bridgeGenerationNonInline.kt");
                 }
 
                 @TestMetadata("covariantOverrideSuspendFun.kt")
@@ -8594,13 +7784,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @TestMetadata("interfaceDelegateWithInlineClass.kt")
-                public void testInterfaceDelegateWithInlineClass_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/interfaceDelegateWithInlineClass.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("interfaceDelegateWithInlineClass.kt")
-                public void testInterfaceDelegateWithInlineClass_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/interfaceDelegateWithInlineClass.kt", "kotlin.coroutines");
+                public void testInterfaceDelegateWithInlineClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/interfaceDelegateWithInlineClass.kt");
                 }
 
                 @TestMetadata("invokeOperator.kt")
@@ -8609,53 +7794,28 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @TestMetadata("overrideSuspendFun.kt")
-                public void testOverrideSuspendFun_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun.kt")
-                public void testOverrideSuspendFun_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun_Any.kt")
-                public void testOverrideSuspendFun_Any_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun_Any.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun_Any.kt")
-                public void testOverrideSuspendFun_Any_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun_Any.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun_Any() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun_Any.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun_Any_itf.kt")
-                public void testOverrideSuspendFun_Any_itf_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun_Any_itf.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun_Any_itf.kt")
-                public void testOverrideSuspendFun_Any_itf_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun_Any_itf.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun_Any_itf() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun_Any_itf.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun_Any_this.kt")
-                public void testOverrideSuspendFun_Any_this_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun_Any_this.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun_Any_this.kt")
-                public void testOverrideSuspendFun_Any_this_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun_Any_this.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun_Any_this() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun_Any_this.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun_Int.kt")
-                public void testOverrideSuspendFun_Int_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun_Int.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun_Int.kt")
-                public void testOverrideSuspendFun_Int_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun_Int.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun_Int() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/direct/overrideSuspendFun_Int.kt");
                 }
 
                 @TestMetadata("returnResult.kt")
@@ -8670,10 +7830,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public static class Resume extends AbstractBlackBoxCodegenTest {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-                }
-
-                private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                    KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInResume() throws Exception {
@@ -8691,113 +7847,58 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine.kt")
-                public void testBoxUnboxInsideCoroutine_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine.kt")
-                public void testBoxUnboxInsideCoroutine_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_Any.kt")
-                public void testBoxUnboxInsideCoroutine_Any_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_Any.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_Any.kt")
-                public void testBoxUnboxInsideCoroutine_Any_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_Any.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_Any() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_Any.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_InlineAny.kt")
-                public void testBoxUnboxInsideCoroutine_InlineAny_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_InlineAny.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_InlineAny.kt")
-                public void testBoxUnboxInsideCoroutine_InlineAny_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_InlineAny.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_InlineAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_InlineAny.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_InlineInt.kt")
-                public void testBoxUnboxInsideCoroutine_InlineInt_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_InlineInt.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_InlineInt.kt")
-                public void testBoxUnboxInsideCoroutine_InlineInt_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_InlineInt.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_InlineInt() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_InlineInt.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_Int.kt")
-                public void testBoxUnboxInsideCoroutine_Int_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_Int.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_Int.kt")
-                public void testBoxUnboxInsideCoroutine_Int_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_Int.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_Int() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_Int.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_Long.kt")
-                public void testBoxUnboxInsideCoroutine_Long_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_Long.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_Long.kt")
-                public void testBoxUnboxInsideCoroutine_Long_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_Long.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_Long() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_Long.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_NAny.kt")
-                public void testBoxUnboxInsideCoroutine_NAny_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_NAny.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_NAny.kt")
-                public void testBoxUnboxInsideCoroutine_NAny_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_NAny.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_NAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_NAny.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_nonLocalReturn.kt")
-                public void testBoxUnboxInsideCoroutine_nonLocalReturn_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_nonLocalReturn.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_nonLocalReturn.kt")
-                public void testBoxUnboxInsideCoroutine_nonLocalReturn_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_nonLocalReturn.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_nonLocalReturn() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_nonLocalReturn.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_suspendFunType.kt")
-                public void testBoxUnboxInsideCoroutine_suspendFunType_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_suspendFunType.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_suspendFunType.kt")
-                public void testBoxUnboxInsideCoroutine_suspendFunType_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_suspendFunType.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_suspendFunType() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/boxUnboxInsideCoroutine_suspendFunType.kt");
                 }
 
                 @TestMetadata("bridgeGenerationCrossinline.kt")
-                public void testBridgeGenerationCrossinline_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/bridgeGenerationCrossinline.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("bridgeGenerationCrossinline.kt")
-                public void testBridgeGenerationCrossinline_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/bridgeGenerationCrossinline.kt", "kotlin.coroutines");
+                public void testBridgeGenerationCrossinline() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/bridgeGenerationCrossinline.kt");
                 }
 
                 @TestMetadata("bridgeGenerationNonInline.kt")
-                public void testBridgeGenerationNonInline_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/bridgeGenerationNonInline.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("bridgeGenerationNonInline.kt")
-                public void testBridgeGenerationNonInline_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/bridgeGenerationNonInline.kt", "kotlin.coroutines");
+                public void testBridgeGenerationNonInline() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/bridgeGenerationNonInline.kt");
                 }
 
                 @TestMetadata("covariantOverrideSuspendFun.kt")
@@ -8911,13 +8012,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @TestMetadata("interfaceDelegateWithInlineClass.kt")
-                public void testInterfaceDelegateWithInlineClass_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/interfaceDelegateWithInlineClass.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("interfaceDelegateWithInlineClass.kt")
-                public void testInterfaceDelegateWithInlineClass_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/interfaceDelegateWithInlineClass.kt", "kotlin.coroutines");
+                public void testInterfaceDelegateWithInlineClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/interfaceDelegateWithInlineClass.kt");
                 }
 
                 @TestMetadata("invokeOperator.kt")
@@ -8926,53 +8022,28 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @TestMetadata("overrideSuspendFun.kt")
-                public void testOverrideSuspendFun_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun.kt")
-                public void testOverrideSuspendFun_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun_Any.kt")
-                public void testOverrideSuspendFun_Any_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun_Any.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun_Any.kt")
-                public void testOverrideSuspendFun_Any_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun_Any.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun_Any() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun_Any.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun_Any_itf.kt")
-                public void testOverrideSuspendFun_Any_itf_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun_Any_itf.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun_Any_itf.kt")
-                public void testOverrideSuspendFun_Any_itf_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun_Any_itf.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun_Any_itf() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun_Any_itf.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun_Any_this.kt")
-                public void testOverrideSuspendFun_Any_this_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun_Any_this.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun_Any_this.kt")
-                public void testOverrideSuspendFun_Any_this_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun_Any_this.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun_Any_this() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun_Any_this.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun_Int.kt")
-                public void testOverrideSuspendFun_Int_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun_Int.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun_Int.kt")
-                public void testOverrideSuspendFun_Int_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun_Int.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun_Int() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resume/overrideSuspendFun_Int.kt");
                 }
 
                 @TestMetadata("returnResult.kt")
@@ -8987,10 +8058,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public static class ResumeWithException extends AbstractBlackBoxCodegenTest {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-                }
-
-                private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                    KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
                 }
 
                 public void testAllFilesPresentInResumeWithException() throws Exception {
@@ -9008,113 +8075,58 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine.kt")
-                public void testBoxUnboxInsideCoroutine_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine.kt")
-                public void testBoxUnboxInsideCoroutine_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_Any.kt")
-                public void testBoxUnboxInsideCoroutine_Any_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_Any.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_Any.kt")
-                public void testBoxUnboxInsideCoroutine_Any_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_Any.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_Any() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_Any.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_InlineAny.kt")
-                public void testBoxUnboxInsideCoroutine_InlineAny_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_InlineAny.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_InlineAny.kt")
-                public void testBoxUnboxInsideCoroutine_InlineAny_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_InlineAny.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_InlineAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_InlineAny.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_InlineInt.kt")
-                public void testBoxUnboxInsideCoroutine_InlineInt_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_InlineInt.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_InlineInt.kt")
-                public void testBoxUnboxInsideCoroutine_InlineInt_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_InlineInt.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_InlineInt() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_InlineInt.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_Int.kt")
-                public void testBoxUnboxInsideCoroutine_Int_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_Int.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_Int.kt")
-                public void testBoxUnboxInsideCoroutine_Int_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_Int.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_Int() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_Int.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_Long.kt")
-                public void testBoxUnboxInsideCoroutine_Long_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_Long.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_Long.kt")
-                public void testBoxUnboxInsideCoroutine_Long_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_Long.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_Long() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_Long.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_NAny.kt")
-                public void testBoxUnboxInsideCoroutine_NAny_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_NAny.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_NAny.kt")
-                public void testBoxUnboxInsideCoroutine_NAny_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_NAny.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_NAny() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_NAny.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_nonLocalReturn.kt")
-                public void testBoxUnboxInsideCoroutine_nonLocalReturn_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_nonLocalReturn.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_nonLocalReturn.kt")
-                public void testBoxUnboxInsideCoroutine_nonLocalReturn_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_nonLocalReturn.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_nonLocalReturn() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_nonLocalReturn.kt");
                 }
 
                 @TestMetadata("boxUnboxInsideCoroutine_suspendFunType.kt")
-                public void testBoxUnboxInsideCoroutine_suspendFunType_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_suspendFunType.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("boxUnboxInsideCoroutine_suspendFunType.kt")
-                public void testBoxUnboxInsideCoroutine_suspendFunType_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_suspendFunType.kt", "kotlin.coroutines");
+                public void testBoxUnboxInsideCoroutine_suspendFunType() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/boxUnboxInsideCoroutine_suspendFunType.kt");
                 }
 
                 @TestMetadata("bridgeGenerationCrossinline.kt")
-                public void testBridgeGenerationCrossinline_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/bridgeGenerationCrossinline.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("bridgeGenerationCrossinline.kt")
-                public void testBridgeGenerationCrossinline_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/bridgeGenerationCrossinline.kt", "kotlin.coroutines");
+                public void testBridgeGenerationCrossinline() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/bridgeGenerationCrossinline.kt");
                 }
 
                 @TestMetadata("bridgeGenerationNonInline.kt")
-                public void testBridgeGenerationNonInline_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/bridgeGenerationNonInline.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("bridgeGenerationNonInline.kt")
-                public void testBridgeGenerationNonInline_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/bridgeGenerationNonInline.kt", "kotlin.coroutines");
+                public void testBridgeGenerationNonInline() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/bridgeGenerationNonInline.kt");
                 }
 
                 @TestMetadata("covariantOverrideSuspendFun.kt")
@@ -9213,13 +8225,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @TestMetadata("interfaceDelegateWithInlineClass.kt")
-                public void testInterfaceDelegateWithInlineClass_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/interfaceDelegateWithInlineClass.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("interfaceDelegateWithInlineClass.kt")
-                public void testInterfaceDelegateWithInlineClass_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/interfaceDelegateWithInlineClass.kt", "kotlin.coroutines");
+                public void testInterfaceDelegateWithInlineClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/interfaceDelegateWithInlineClass.kt");
                 }
 
                 @TestMetadata("invokeOperator.kt")
@@ -9228,53 +8235,28 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @TestMetadata("overrideSuspendFun.kt")
-                public void testOverrideSuspendFun_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun.kt")
-                public void testOverrideSuspendFun_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun_Any.kt")
-                public void testOverrideSuspendFun_Any_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun_Any.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun_Any.kt")
-                public void testOverrideSuspendFun_Any_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun_Any.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun_Any() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun_Any.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun_Any_itf.kt")
-                public void testOverrideSuspendFun_Any_itf_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun_Any_itf.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun_Any_itf.kt")
-                public void testOverrideSuspendFun_Any_itf_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun_Any_itf.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun_Any_itf() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun_Any_itf.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun_Any_this.kt")
-                public void testOverrideSuspendFun_Any_this_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun_Any_this.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun_Any_this.kt")
-                public void testOverrideSuspendFun_Any_this_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun_Any_this.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun_Any_this() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun_Any_this.kt");
                 }
 
                 @TestMetadata("overrideSuspendFun_Int.kt")
-                public void testOverrideSuspendFun_Int_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun_Int.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("overrideSuspendFun_Int.kt")
-                public void testOverrideSuspendFun_Int_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun_Int.kt", "kotlin.coroutines");
+                public void testOverrideSuspendFun_Int() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException/overrideSuspendFun_Int.kt");
                 }
 
                 @TestMetadata("returnResult.kt")
@@ -9292,32 +8274,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInIntLikeVarSpilling() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intLikeVarSpilling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("complicatedMerge.kt")
-            public void testComplicatedMerge_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/complicatedMerge.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("complicatedMerge.kt")
-            public void testComplicatedMerge_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/complicatedMerge.kt", "kotlin.coroutines");
+            public void testComplicatedMerge() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/complicatedMerge.kt");
             }
 
             @TestMetadata("i2bResult.kt")
-            public void testI2bResult_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/i2bResult.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("i2bResult.kt")
-            public void testI2bResult_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/i2bResult.kt", "kotlin.coroutines");
+            public void testI2bResult() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/i2bResult.kt");
             }
 
             @TestMetadata("listThrowablePairInOneSlot.kt")
@@ -9326,83 +8294,43 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @TestMetadata("loadFromBooleanArray.kt")
-            public void testLoadFromBooleanArray_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/loadFromBooleanArray.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("loadFromBooleanArray.kt")
-            public void testLoadFromBooleanArray_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/loadFromBooleanArray.kt", "kotlin.coroutines");
+            public void testLoadFromBooleanArray() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/loadFromBooleanArray.kt");
             }
 
             @TestMetadata("loadFromByteArray.kt")
-            public void testLoadFromByteArray_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/loadFromByteArray.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("loadFromByteArray.kt")
-            public void testLoadFromByteArray_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/loadFromByteArray.kt", "kotlin.coroutines");
+            public void testLoadFromByteArray() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/loadFromByteArray.kt");
             }
 
             @TestMetadata("noVariableInTable.kt")
-            public void testNoVariableInTable_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/noVariableInTable.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("noVariableInTable.kt")
-            public void testNoVariableInTable_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/noVariableInTable.kt", "kotlin.coroutines");
+            public void testNoVariableInTable() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/noVariableInTable.kt");
             }
 
             @TestMetadata("sameIconst1ManyVars.kt")
-            public void testSameIconst1ManyVars_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/sameIconst1ManyVars.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("sameIconst1ManyVars.kt")
-            public void testSameIconst1ManyVars_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/sameIconst1ManyVars.kt", "kotlin.coroutines");
+            public void testSameIconst1ManyVars() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/sameIconst1ManyVars.kt");
             }
 
             @TestMetadata("usedInArrayStore.kt")
-            public void testUsedInArrayStore_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInArrayStore.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("usedInArrayStore.kt")
-            public void testUsedInArrayStore_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInArrayStore.kt", "kotlin.coroutines");
+            public void testUsedInArrayStore() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInArrayStore.kt");
             }
 
             @TestMetadata("usedInMethodCall.kt")
-            public void testUsedInMethodCall_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInMethodCall.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("usedInMethodCall.kt")
-            public void testUsedInMethodCall_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInMethodCall.kt", "kotlin.coroutines");
+            public void testUsedInMethodCall() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInMethodCall.kt");
             }
 
             @TestMetadata("usedInPutfield.kt")
-            public void testUsedInPutfield_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInPutfield.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("usedInPutfield.kt")
-            public void testUsedInPutfield_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInPutfield.kt", "kotlin.coroutines");
+            public void testUsedInPutfield() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInPutfield.kt");
             }
 
             @TestMetadata("usedInVarStore.kt")
-            public void testUsedInVarStore_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInVarStore.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("usedInVarStore.kt")
-            public void testUsedInVarStore_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInVarStore.kt", "kotlin.coroutines");
+            public void testUsedInVarStore() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intLikeVarSpilling/usedInVarStore.kt");
             }
         }
 
@@ -9414,92 +8342,48 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInIntrinsicSemantics() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/intrinsicSemantics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
-            @TestMetadata("coroutineContextReceiverNotIntrinsic.kt")
-            public void testCoroutineContextReceiverNotIntrinsic_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiverNotIntrinsic.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("coroutineContextReceiverNotIntrinsic.kt")
-            public void testCoroutineContextReceiverNotIntrinsic_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiverNotIntrinsic.kt", "kotlin.coroutines");
+            @TestMetadata("coroutineContext.kt")
+            public void testCoroutineContext() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContext.kt");
             }
 
             @TestMetadata("coroutineContextReceiver.kt")
-            public void testCoroutineContextReceiver_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiver.kt", "kotlin.coroutines.experimental");
+            public void testCoroutineContextReceiver() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiver.kt");
             }
 
-            @TestMetadata("coroutineContextReceiver.kt")
-            public void testCoroutineContextReceiver_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiver.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("coroutineContext.kt")
-            public void testCoroutineContext_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContext.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("coroutineContext.kt")
-            public void testCoroutineContext_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContext.kt", "kotlin.coroutines");
+            @TestMetadata("coroutineContextReceiverNotIntrinsic.kt")
+            public void testCoroutineContextReceiverNotIntrinsic() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/coroutineContextReceiverNotIntrinsic.kt");
             }
 
             @TestMetadata("intercepted.kt")
-            public void testIntercepted_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/intercepted.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("intercepted.kt")
-            public void testIntercepted_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/intercepted.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("startCoroutineUninterceptedOrReturnInterception.kt")
-            public void testStartCoroutineUninterceptedOrReturnInterception_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/startCoroutineUninterceptedOrReturnInterception.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("startCoroutineUninterceptedOrReturnInterception.kt")
-            public void testStartCoroutineUninterceptedOrReturnInterception_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/startCoroutineUninterceptedOrReturnInterception.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("startCoroutineUninterceptedOrReturn.kt")
-            public void testStartCoroutineUninterceptedOrReturn_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/startCoroutineUninterceptedOrReturn.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("startCoroutineUninterceptedOrReturn.kt")
-            public void testStartCoroutineUninterceptedOrReturn_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/startCoroutineUninterceptedOrReturn.kt", "kotlin.coroutines");
+            public void testIntercepted() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/intercepted.kt");
             }
 
             @TestMetadata("startCoroutine.kt")
-            public void testStartCoroutine_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/startCoroutine.kt", "kotlin.coroutines.experimental");
+            public void testStartCoroutine() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/startCoroutine.kt");
             }
 
-            @TestMetadata("startCoroutine.kt")
-            public void testStartCoroutine_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/startCoroutine.kt", "kotlin.coroutines");
+            @TestMetadata("startCoroutineUninterceptedOrReturn.kt")
+            public void testStartCoroutineUninterceptedOrReturn() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/startCoroutineUninterceptedOrReturn.kt");
+            }
+
+            @TestMetadata("startCoroutineUninterceptedOrReturnInterception.kt")
+            public void testStartCoroutineUninterceptedOrReturnInterception() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/startCoroutineUninterceptedOrReturnInterception.kt");
             }
 
             @TestMetadata("suspendCoroutineUninterceptedOrReturn.kt")
-            public void testSuspendCoroutineUninterceptedOrReturn_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/suspendCoroutineUninterceptedOrReturn.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendCoroutineUninterceptedOrReturn.kt")
-            public void testSuspendCoroutineUninterceptedOrReturn_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/intrinsicSemantics/suspendCoroutineUninterceptedOrReturn.kt", "kotlin.coroutines");
+            public void testSuspendCoroutineUninterceptedOrReturn() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/suspendCoroutineUninterceptedOrReturn.kt");
             }
         }
 
@@ -9511,62 +8395,33 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInJavaInterop() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("objectWithSeveralSuspends.kt")
-            public void testObjectWithSeveralSuspends_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/objectWithSeveralSuspends.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("objectWithSeveralSuspends.kt")
-            public void testObjectWithSeveralSuspends_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/objectWithSeveralSuspends.kt", "kotlin.coroutines");
+            public void testObjectWithSeveralSuspends() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/javaInterop/objectWithSeveralSuspends.kt");
             }
 
             @TestMetadata("returnLambda.kt")
-            public void testReturnLambda_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/returnLambda.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("returnLambda.kt")
-            public void testReturnLambda_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/returnLambda.kt", "kotlin.coroutines");
+            public void testReturnLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/javaInterop/returnLambda.kt");
             }
 
             @TestMetadata("returnObject.kt")
-            public void testReturnObject_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/returnObject.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("returnObject.kt")
-            public void testReturnObject_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/returnObject.kt", "kotlin.coroutines");
+            public void testReturnObject() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/javaInterop/returnObject.kt");
             }
 
             @TestMetadata("severalCaptures.kt")
-            public void testSeveralCaptures_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/severalCaptures.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("severalCaptures.kt")
-            public void testSeveralCaptures_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/severalCaptures.kt", "kotlin.coroutines");
+            public void testSeveralCaptures() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/javaInterop/severalCaptures.kt");
             }
 
             @TestMetadata("suspendInlineWithCrossinline.kt")
-            public void testSuspendInlineWithCrossinline_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/suspendInlineWithCrossinline.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendInlineWithCrossinline.kt")
-            public void testSuspendInlineWithCrossinline_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/javaInterop/suspendInlineWithCrossinline.kt", "kotlin.coroutines");
+            public void testSuspendInlineWithCrossinline() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/javaInterop/suspendInlineWithCrossinline.kt");
             }
         }
 
@@ -9590,22 +8445,13 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
 
-                private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                    KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-                }
-
                 public void testAllFilesPresentInAnonymous() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/anonymous"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                 }
 
                 @TestMetadata("simple.kt")
-                public void testSimple_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/anonymous/simple.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("simple.kt")
-                public void testSimple_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/anonymous/simple.kt", "kotlin.coroutines");
+                public void testSimple() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/anonymous/simple.kt");
                 }
             }
 
@@ -9617,72 +8463,38 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }
 
-                private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                    KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-                }
-
                 public void testAllFilesPresentInNamed() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/localFunctions/named"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
                 }
 
                 @TestMetadata("capturedParameters.kt")
-                public void testCapturedParameters_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/capturedParameters.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("capturedParameters.kt")
-                public void testCapturedParameters_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/capturedParameters.kt", "kotlin.coroutines");
+                public void testCapturedParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/capturedParameters.kt");
                 }
 
                 @TestMetadata("capturedVariables.kt")
-                public void testCapturedVariables_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/capturedVariables.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("capturedVariables.kt")
-                public void testCapturedVariables_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/capturedVariables.kt", "kotlin.coroutines");
+                public void testCapturedVariables() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/capturedVariables.kt");
                 }
 
                 @TestMetadata("extension.kt")
-                public void testExtension_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/extension.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("extension.kt")
-                public void testExtension_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/extension.kt", "kotlin.coroutines");
+                public void testExtension() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/extension.kt");
                 }
 
                 @TestMetadata("infix.kt")
-                public void testInfix_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/infix.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("infix.kt")
-                public void testInfix_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/infix.kt", "kotlin.coroutines");
+                public void testInfix() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/infix.kt");
                 }
 
                 @TestMetadata("insideLambda.kt")
-                public void testInsideLambda_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/insideLambda.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("insideLambda.kt")
-                public void testInsideLambda_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/insideLambda.kt", "kotlin.coroutines");
+                public void testInsideLambda() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/insideLambda.kt");
                 }
 
                 @TestMetadata("nestedLocals.kt")
-                public void testNestedLocals_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/nestedLocals.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("nestedLocals.kt")
-                public void testNestedLocals_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/nestedLocals.kt", "kotlin.coroutines");
+                public void testNestedLocals() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/nestedLocals.kt");
                 }
 
                 @TestMetadata("rec.kt")
@@ -9690,44 +8502,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                     runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/rec.kt");
                 }
 
-                @TestMetadata("simpleSuspensionPoint.kt")
-                public void testSimpleSuspensionPoint_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/simpleSuspensionPoint.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("simpleSuspensionPoint.kt")
-                public void testSimpleSuspensionPoint_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/simpleSuspensionPoint.kt", "kotlin.coroutines");
-                }
-
                 @TestMetadata("simple.kt")
-                public void testSimple_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/simple.kt", "kotlin.coroutines.experimental");
+                public void testSimple() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/simple.kt");
                 }
 
-                @TestMetadata("simple.kt")
-                public void testSimple_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/simple.kt", "kotlin.coroutines");
+                @TestMetadata("simpleSuspensionPoint.kt")
+                public void testSimpleSuspensionPoint() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/simpleSuspensionPoint.kt");
                 }
 
                 @TestMetadata("stateMachine.kt")
-                public void testStateMachine_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/stateMachine.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("stateMachine.kt")
-                public void testStateMachine_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/stateMachine.kt", "kotlin.coroutines");
+                public void testStateMachine() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/stateMachine.kt");
                 }
 
                 @TestMetadata("withArguments.kt")
-                public void testWithArguments_1_2() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/withArguments.kt", "kotlin.coroutines.experimental");
-                }
-
-                @TestMetadata("withArguments.kt")
-                public void testWithArguments_1_3() throws Exception {
-                    runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/localFunctions/named/withArguments.kt", "kotlin.coroutines");
+                public void testWithArguments() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/localFunctions/named/withArguments.kt");
                 }
             }
         }
@@ -9740,82 +8532,43 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInMultiModule() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/multiModule"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("inlineCrossModule.kt")
-            public void testInlineCrossModule_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineCrossModule.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineCrossModule.kt")
-            public void testInlineCrossModule_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineCrossModule.kt", "kotlin.coroutines");
+            public void testInlineCrossModule() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineCrossModule.kt");
             }
 
             @TestMetadata("inlineFunctionWithOptionalParam.kt")
-            public void testInlineFunctionWithOptionalParam_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineFunctionWithOptionalParam.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineFunctionWithOptionalParam.kt")
-            public void testInlineFunctionWithOptionalParam_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineFunctionWithOptionalParam.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineMultiModuleOverride.kt")
-            public void testInlineMultiModuleOverride_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleOverride.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineMultiModuleOverride.kt")
-            public void testInlineMultiModuleOverride_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleOverride.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineMultiModuleWithController.kt")
-            public void testInlineMultiModuleWithController_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleWithController.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineMultiModuleWithController.kt")
-            public void testInlineMultiModuleWithController_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleWithController.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("inlineMultiModuleWithInnerInlining.kt")
-            public void testInlineMultiModuleWithInnerInlining_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleWithInnerInlining.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineMultiModuleWithInnerInlining.kt")
-            public void testInlineMultiModuleWithInnerInlining_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleWithInnerInlining.kt", "kotlin.coroutines");
+            public void testInlineFunctionWithOptionalParam() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineFunctionWithOptionalParam.kt");
             }
 
             @TestMetadata("inlineMultiModule.kt")
-            public void testInlineMultiModule_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModule.kt", "kotlin.coroutines.experimental");
+            public void testInlineMultiModule() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModule.kt");
             }
 
-            @TestMetadata("inlineMultiModule.kt")
-            public void testInlineMultiModule_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModule.kt", "kotlin.coroutines");
+            @TestMetadata("inlineMultiModuleOverride.kt")
+            public void testInlineMultiModuleOverride() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleOverride.kt");
+            }
+
+            @TestMetadata("inlineMultiModuleWithController.kt")
+            public void testInlineMultiModuleWithController() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleWithController.kt");
+            }
+
+            @TestMetadata("inlineMultiModuleWithInnerInlining.kt")
+            public void testInlineMultiModuleWithInnerInlining() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineMultiModuleWithInnerInlining.kt");
             }
 
             @TestMetadata("inlineTailCall.kt")
-            public void testInlineTailCall_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineTailCall.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineTailCall.kt")
-            public void testInlineTailCall_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/inlineTailCall.kt", "kotlin.coroutines");
+            public void testInlineTailCall() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/inlineTailCall.kt");
             }
 
             @TestMetadata("inlineWithJava.kt")
@@ -9824,13 +8577,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @TestMetadata("simple.kt")
-            public void testSimple_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/simple.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("simple.kt")
-            public void testSimple_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/multiModule/simple.kt", "kotlin.coroutines");
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/multiModule/simple.kt");
             }
         }
 
@@ -9842,22 +8590,13 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInRedundantLocalsElimination() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/redundantLocalsElimination"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("ktor_receivedMessage.kt")
-            public void testKtor_receivedMessage_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/redundantLocalsElimination/ktor_receivedMessage.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("ktor_receivedMessage.kt")
-            public void testKtor_receivedMessage_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/redundantLocalsElimination/ktor_receivedMessage.kt", "kotlin.coroutines");
+            public void testKtor_receivedMessage() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/redundantLocalsElimination/ktor_receivedMessage.kt");
             }
         }
 
@@ -9897,72 +8636,38 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInStackUnwinding() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/stackUnwinding"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("exception.kt")
-            public void testException_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/stackUnwinding/exception.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("exception.kt")
-            public void testException_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/stackUnwinding/exception.kt", "kotlin.coroutines");
+            public void testException() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/stackUnwinding/exception.kt");
             }
 
             @TestMetadata("inlineSuspendFunction.kt")
-            public void testInlineSuspendFunction_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/stackUnwinding/inlineSuspendFunction.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineSuspendFunction.kt")
-            public void testInlineSuspendFunction_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/stackUnwinding/inlineSuspendFunction.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("rethrowInFinallyWithSuspension.kt")
-            public void testRethrowInFinallyWithSuspension_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/stackUnwinding/rethrowInFinallyWithSuspension.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("rethrowInFinallyWithSuspension.kt")
-            public void testRethrowInFinallyWithSuspension_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/stackUnwinding/rethrowInFinallyWithSuspension.kt", "kotlin.coroutines");
+            public void testInlineSuspendFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/stackUnwinding/inlineSuspendFunction.kt");
             }
 
             @TestMetadata("rethrowInFinally.kt")
-            public void testRethrowInFinally_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/stackUnwinding/rethrowInFinally.kt", "kotlin.coroutines.experimental");
+            public void testRethrowInFinally() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/stackUnwinding/rethrowInFinally.kt");
             }
 
-            @TestMetadata("rethrowInFinally.kt")
-            public void testRethrowInFinally_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/stackUnwinding/rethrowInFinally.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("simple.kt")
-            public void testSimple_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/stackUnwinding/simple.kt", "kotlin.coroutines.experimental");
+            @TestMetadata("rethrowInFinallyWithSuspension.kt")
+            public void testRethrowInFinallyWithSuspension() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/stackUnwinding/rethrowInFinallyWithSuspension.kt");
             }
 
             @TestMetadata("simple.kt")
-            public void testSimple_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/stackUnwinding/simple.kt", "kotlin.coroutines");
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/stackUnwinding/simple.kt");
             }
 
             @TestMetadata("suspendInCycle.kt")
-            public void testSuspendInCycle_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/stackUnwinding/suspendInCycle.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendInCycle.kt")
-            public void testSuspendInCycle_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/stackUnwinding/suspendInCycle.kt", "kotlin.coroutines");
+            public void testSuspendInCycle() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/stackUnwinding/suspendInCycle.kt");
             }
         }
 
@@ -10007,32 +8712,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInSuspendFunctionAsCoroutine() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("dispatchResume.kt")
-            public void testDispatchResume_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/dispatchResume.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("dispatchResume.kt")
-            public void testDispatchResume_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/dispatchResume.kt", "kotlin.coroutines");
+            public void testDispatchResume() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/dispatchResume.kt");
             }
 
             @TestMetadata("handleException.kt")
-            public void testHandleException_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/handleException.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("handleException.kt")
-            public void testHandleException_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/handleException.kt", "kotlin.coroutines");
+            public void testHandleException() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/handleException.kt");
             }
 
             @TestMetadata("ifExpressionInsideCoroutine_1_3.kt")
@@ -10040,44 +8731,24 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/ifExpressionInsideCoroutine_1_3.kt");
             }
 
-            @TestMetadata("inlineTwoReceivers.kt")
-            public void testInlineTwoReceivers_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/inlineTwoReceivers.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineTwoReceivers.kt")
-            public void testInlineTwoReceivers_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/inlineTwoReceivers.kt", "kotlin.coroutines");
-            }
-
             @TestMetadata("inline.kt")
-            public void testInline_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/inline.kt", "kotlin.coroutines.experimental");
+            public void testInline() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/inline.kt");
             }
 
-            @TestMetadata("inline.kt")
-            public void testInline_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/inline.kt", "kotlin.coroutines");
+            @TestMetadata("inlineTwoReceivers.kt")
+            public void testInlineTwoReceivers() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/inlineTwoReceivers.kt");
             }
 
             @TestMetadata("member.kt")
-            public void testMember_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/member.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("member.kt")
-            public void testMember_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/member.kt", "kotlin.coroutines");
+            public void testMember() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/member.kt");
             }
 
             @TestMetadata("noinlineTwoReceivers.kt")
-            public void testNoinlineTwoReceivers_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/noinlineTwoReceivers.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("noinlineTwoReceivers.kt")
-            public void testNoinlineTwoReceivers_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/noinlineTwoReceivers.kt", "kotlin.coroutines");
+            public void testNoinlineTwoReceivers() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/noinlineTwoReceivers.kt");
             }
 
             @TestMetadata("openFunWithJava.kt")
@@ -10086,103 +8757,53 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @TestMetadata("operators.kt")
-            public void testOperators_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/operators.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("operators.kt")
-            public void testOperators_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/operators.kt", "kotlin.coroutines");
+            public void testOperators() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/operators.kt");
             }
 
             @TestMetadata("privateFunctions.kt")
-            public void testPrivateFunctions_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/privateFunctions.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("privateFunctions.kt")
-            public void testPrivateFunctions_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/privateFunctions.kt", "kotlin.coroutines");
+            public void testPrivateFunctions() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/privateFunctions.kt");
             }
 
             @TestMetadata("privateInFile.kt")
-            public void testPrivateInFile_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/privateInFile.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("privateInFile.kt")
-            public void testPrivateInFile_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/privateInFile.kt", "kotlin.coroutines");
+            public void testPrivateInFile() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/privateInFile.kt");
             }
 
             @TestMetadata("returnNoSuspend.kt")
-            public void testReturnNoSuspend_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/returnNoSuspend.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("returnNoSuspend.kt")
-            public void testReturnNoSuspend_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/returnNoSuspend.kt", "kotlin.coroutines");
+            public void testReturnNoSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/returnNoSuspend.kt");
             }
 
             @TestMetadata("simple.kt")
-            public void testSimple_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/simple.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("simple.kt")
-            public void testSimple_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/simple.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("superCallAbstractClass.kt")
-            public void testSuperCallAbstractClass_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/superCallAbstractClass.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("superCallAbstractClass.kt")
-            public void testSuperCallAbstractClass_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/superCallAbstractClass.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("superCallInterface.kt")
-            public void testSuperCallInterface_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/superCallInterface.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("superCallInterface.kt")
-            public void testSuperCallInterface_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/superCallInterface.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("superCallOverload.kt")
-            public void testSuperCallOverload_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/superCallOverload.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("superCallOverload.kt")
-            public void testSuperCallOverload_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/superCallOverload.kt", "kotlin.coroutines");
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/simple.kt");
             }
 
             @TestMetadata("superCall.kt")
-            public void testSuperCall_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/superCall.kt", "kotlin.coroutines.experimental");
+            public void testSuperCall() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/superCall.kt");
             }
 
-            @TestMetadata("superCall.kt")
-            public void testSuperCall_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/superCall.kt", "kotlin.coroutines");
+            @TestMetadata("superCallAbstractClass.kt")
+            public void testSuperCallAbstractClass() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/superCallAbstractClass.kt");
+            }
+
+            @TestMetadata("superCallInterface.kt")
+            public void testSuperCallInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/superCallInterface.kt");
+            }
+
+            @TestMetadata("superCallOverload.kt")
+            public void testSuperCallOverload() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/superCallOverload.kt");
             }
 
             @TestMetadata("withVariables.kt")
-            public void testWithVariables_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/withVariables.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("withVariables.kt")
-            public void testWithVariables_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/withVariables.kt", "kotlin.coroutines");
+            public void testWithVariables() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine/withVariables.kt");
             }
         }
 
@@ -10194,62 +8815,33 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInSuspendFunctionTypeCall() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("localVal.kt")
-            public void testLocalVal_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/localVal.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("localVal.kt")
-            public void testLocalVal_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/localVal.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("manyParametersNoCapture.kt")
-            public void testManyParametersNoCapture_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/manyParametersNoCapture.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("manyParametersNoCapture.kt")
-            public void testManyParametersNoCapture_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/manyParametersNoCapture.kt", "kotlin.coroutines");
+            public void testLocalVal() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/localVal.kt");
             }
 
             @TestMetadata("manyParameters.kt")
-            public void testManyParameters_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/manyParameters.kt", "kotlin.coroutines.experimental");
+            public void testManyParameters() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/manyParameters.kt");
             }
 
-            @TestMetadata("manyParameters.kt")
-            public void testManyParameters_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/manyParameters.kt", "kotlin.coroutines");
-            }
-
-            @TestMetadata("simple.kt")
-            public void testSimple_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/simple.kt", "kotlin.coroutines.experimental");
+            @TestMetadata("manyParametersNoCapture.kt")
+            public void testManyParametersNoCapture() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/manyParametersNoCapture.kt");
             }
 
             @TestMetadata("simple.kt")
-            public void testSimple_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/simple.kt", "kotlin.coroutines");
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/simple.kt");
             }
 
             @TestMetadata("suspendModifier.kt")
-            public void testSuspendModifier_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/suspendModifier.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendModifier.kt")
-            public void testSuspendModifier_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/suspendModifier.kt", "kotlin.coroutines");
+            public void testSuspendModifier() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall/suspendModifier.kt");
             }
         }
 
@@ -10259,10 +8851,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public static class TailCallOptimizations extends AbstractBlackBoxCodegenTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-            }
-
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
             }
 
             public void testAllFilesPresentInTailCallOptimizations() throws Exception {
@@ -10275,13 +8863,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @TestMetadata("crossinline.kt")
-            public void testCrossinline_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailCallOptimizations/crossinline.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("crossinline.kt")
-            public void testCrossinline_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailCallOptimizations/crossinline.kt", "kotlin.coroutines");
+            public void testCrossinline() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/crossinline.kt");
             }
 
             @TestMetadata("inlineWithStateMachine.kt")
@@ -10290,23 +8873,13 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @TestMetadata("inlineWithoutStateMachine.kt")
-            public void testInlineWithoutStateMachine_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailCallOptimizations/inlineWithoutStateMachine.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("inlineWithoutStateMachine.kt")
-            public void testInlineWithoutStateMachine_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailCallOptimizations/inlineWithoutStateMachine.kt", "kotlin.coroutines");
+            public void testInlineWithoutStateMachine() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/inlineWithoutStateMachine.kt");
             }
 
             @TestMetadata("innerObjectRetransformation.kt")
-            public void testInnerObjectRetransformation_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailCallOptimizations/innerObjectRetransformation.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("innerObjectRetransformation.kt")
-            public void testInnerObjectRetransformation_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailCallOptimizations/innerObjectRetransformation.kt", "kotlin.coroutines");
+            public void testInnerObjectRetransformation() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/innerObjectRetransformation.kt");
             }
 
             @TestMetadata("interfaceDelegation.kt")
@@ -10339,19 +8912,14 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tailSuspendUnitFun.kt");
             }
 
+            @TestMetadata("tryCatch.kt")
+            public void testTryCatch() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tryCatch.kt");
+            }
+
             @TestMetadata("tryCatchTailCall.kt")
             public void testTryCatchTailCall() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tryCatchTailCall.kt");
-            }
-
-            @TestMetadata("tryCatch.kt")
-            public void testTryCatch_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tryCatch.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("tryCatch.kt")
-            public void testTryCatch_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tryCatch.kt", "kotlin.coroutines");
             }
 
             @TestMetadata("unreachable.kt")
@@ -10441,52 +9009,28 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInTailOperations() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailOperations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("suspendWithIf.kt")
-            public void testSuspendWithIf_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithIf.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendWithIf.kt")
-            public void testSuspendWithIf_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithIf.kt", "kotlin.coroutines");
+            public void testSuspendWithIf() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithIf.kt");
             }
 
             @TestMetadata("suspendWithTryCatch.kt")
-            public void testSuspendWithTryCatch_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithTryCatch.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendWithTryCatch.kt")
-            public void testSuspendWithTryCatch_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithTryCatch.kt", "kotlin.coroutines");
+            public void testSuspendWithTryCatch() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithTryCatch.kt");
             }
 
             @TestMetadata("suspendWithWhen.kt")
-            public void testSuspendWithWhen_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithWhen.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendWithWhen.kt")
-            public void testSuspendWithWhen_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithWhen.kt", "kotlin.coroutines");
+            public void testSuspendWithWhen() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailOperations/suspendWithWhen.kt");
             }
 
             @TestMetadata("tailInlining.kt")
-            public void testTailInlining_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailOperations/tailInlining.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("tailInlining.kt")
-            public void testTailInlining_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/tailOperations/tailInlining.kt", "kotlin.coroutines");
+            public void testTailInlining() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailOperations/tailInlining.kt");
             }
         }
 
@@ -10498,32 +9042,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-            }
-
             public void testAllFilesPresentInUnitTypeReturn() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/unitTypeReturn"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("coroutineNonLocalReturn.kt")
-            public void testCoroutineNonLocalReturn_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/unitTypeReturn/coroutineNonLocalReturn.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("coroutineNonLocalReturn.kt")
-            public void testCoroutineNonLocalReturn_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/unitTypeReturn/coroutineNonLocalReturn.kt", "kotlin.coroutines");
+            public void testCoroutineNonLocalReturn() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/unitTypeReturn/coroutineNonLocalReturn.kt");
             }
 
             @TestMetadata("coroutineReturn.kt")
-            public void testCoroutineReturn_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/unitTypeReturn/coroutineReturn.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("coroutineReturn.kt")
-            public void testCoroutineReturn_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/unitTypeReturn/coroutineReturn.kt", "kotlin.coroutines");
+            public void testCoroutineReturn() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/unitTypeReturn/coroutineReturn.kt");
             }
 
             @TestMetadata("inlineUnitFunction.kt")
@@ -10537,33 +9067,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @TestMetadata("suspendNonLocalReturn.kt")
-            public void testSuspendNonLocalReturn_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/unitTypeReturn/suspendNonLocalReturn.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendNonLocalReturn.kt")
-            public void testSuspendNonLocalReturn_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/unitTypeReturn/suspendNonLocalReturn.kt", "kotlin.coroutines");
+            public void testSuspendNonLocalReturn() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/unitTypeReturn/suspendNonLocalReturn.kt");
             }
 
             @TestMetadata("suspendReturn.kt")
-            public void testSuspendReturn_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/unitTypeReturn/suspendReturn.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("suspendReturn.kt")
-            public void testSuspendReturn_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/unitTypeReturn/suspendReturn.kt", "kotlin.coroutines");
+            public void testSuspendReturn() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/unitTypeReturn/suspendReturn.kt");
             }
 
             @TestMetadata("unitSafeCall.kt")
-            public void testUnitSafeCall_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/unitTypeReturn/unitSafeCall.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("unitSafeCall.kt")
-            public void testUnitSafeCall_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/unitTypeReturn/unitSafeCall.kt", "kotlin.coroutines");
+            public void testUnitSafeCall() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/unitTypeReturn/unitSafeCall.kt");
             }
         }
 
@@ -10573,10 +9088,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public static class VarSpilling extends AbstractBlackBoxCodegenTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-            }
-
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
             }
 
             public void testAllFilesPresentInVarSpilling() throws Exception {
@@ -10589,33 +9100,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @TestMetadata("kt19475.kt")
-            public void testKt19475_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/varSpilling/kt19475.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("kt19475.kt")
-            public void testKt19475_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/varSpilling/kt19475.kt", "kotlin.coroutines");
+            public void testKt19475() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt19475.kt");
             }
 
             @TestMetadata("kt38925.kt")
-            public void testKt38925_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/varSpilling/kt38925.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("kt38925.kt")
-            public void testKt38925_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/varSpilling/kt38925.kt", "kotlin.coroutines");
+            public void testKt38925() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt38925.kt");
             }
 
             @TestMetadata("nullSpilling.kt")
-            public void testNullSpilling_1_2() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/varSpilling/nullSpilling.kt", "kotlin.coroutines.experimental");
-            }
-
-            @TestMetadata("nullSpilling.kt")
-            public void testNullSpilling_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/varSpilling/nullSpilling.kt", "kotlin.coroutines");
+            public void testNullSpilling() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/varSpilling/nullSpilling.kt");
             }
 
             @TestMetadata("refinedIntTypesAnalysis.kt")
@@ -22162,10 +20658,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
 
-        private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-            KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM, testDataFilePath);
-        }
-
         public void testAllFilesPresentInParametersMetadata() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/parametersMetadata"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
@@ -22216,13 +20708,8 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @TestMetadata("suspendFunction.kt")
-        public void testSuspendFunction_1_2() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/parametersMetadata/suspendFunction.kt", "kotlin.coroutines.experimental");
-        }
-
-        @TestMetadata("suspendFunction.kt")
-        public void testSuspendFunction_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/box/parametersMetadata/suspendFunction.kt", "kotlin.coroutines");
+        public void testSuspendFunction() throws Exception {
+            runTest("compiler/testData/codegen/box/parametersMetadata/suspendFunction.kt");
         }
     }
 

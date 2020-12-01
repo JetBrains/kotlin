@@ -25,10 +25,6 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
         KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
     }
 
-    private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-        KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM_IR, testDataFilePath);
-    }
-
     public void testAllFilesPresentInCompileKotlinAgainstKotlin() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/compileKotlinAgainstKotlin"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
@@ -99,8 +95,8 @@ public class IrCompileKotlinAgainstKotlinTestGenerated extends AbstractIrCompile
     }
 
     @TestMetadata("coroutinesBinary.kt")
-    public void testCoroutinesBinary_1_3() throws Exception {
-        runTestWithPackageReplacement("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt", "kotlin.coroutines");
+    public void testCoroutinesBinary() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/coroutinesBinary.kt");
     }
 
     @TestMetadata("defaultConstructor.kt")

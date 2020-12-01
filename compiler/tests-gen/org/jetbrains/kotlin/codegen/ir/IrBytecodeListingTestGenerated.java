@@ -674,32 +674,28 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
         }
 
-        private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-            KotlinTestUtils.runTest(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM_IR, testDataFilePath);
-        }
-
         public void testAllFilesPresentInCoroutines() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
         @TestMetadata("coroutineContextIntrinsic.kt")
-        public void testCoroutineContextIntrinsic_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/coroutines/coroutineContextIntrinsic.kt", "kotlin.coroutines");
+        public void testCoroutineContextIntrinsic() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/coroutines/coroutineContextIntrinsic.kt");
         }
 
         @TestMetadata("coroutineFields.kt")
-        public void testCoroutineFields_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/coroutines/coroutineFields.kt", "kotlin.coroutines");
+        public void testCoroutineFields() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/coroutines/coroutineFields.kt");
         }
 
         @TestMetadata("oomInReturnUnit.kt")
-        public void testOomInReturnUnit_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/coroutines/oomInReturnUnit.kt", "kotlin.coroutines");
+        public void testOomInReturnUnit() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/coroutines/oomInReturnUnit.kt");
         }
 
         @TestMetadata("privateAccessor.kt")
-        public void testPrivateAccessor_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/coroutines/privateAccessor.kt", "kotlin.coroutines");
+        public void testPrivateAccessor() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/coroutines/privateAccessor.kt");
         }
 
         @TestMetadata("privateSuspendFun.kt")
@@ -713,13 +709,13 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         }
 
         @TestMetadata("suspendReifiedFun.kt")
-        public void testSuspendReifiedFun_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/coroutines/suspendReifiedFun.kt", "kotlin.coroutines");
+        public void testSuspendReifiedFun() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/coroutines/suspendReifiedFun.kt");
         }
 
         @TestMetadata("tcoContinuation.kt")
-        public void testTcoContinuation_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/coroutines/tcoContinuation.kt", "kotlin.coroutines");
+        public void testTcoContinuation() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/coroutines/tcoContinuation.kt");
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeListing/coroutines/spilling")

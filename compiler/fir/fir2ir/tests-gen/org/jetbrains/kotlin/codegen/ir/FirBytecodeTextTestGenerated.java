@@ -1413,10 +1413,6 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
             KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
         }
 
-        private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-            KotlinTestUtils.runTestWithCustomIgnoreDirective(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
-        }
-
         public void testAllFilesPresentInCoroutines() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
@@ -1447,8 +1443,8 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @TestMetadata("returnUnitInLambda.kt")
-        public void testReturnUnitInLambda_1_3() throws Exception {
-            runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/returnUnitInLambda.kt", "kotlin.coroutines");
+        public void testReturnUnitInLambda() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/coroutines/returnUnitInLambda.kt");
         }
 
         @TestMetadata("suspendMain.kt")
@@ -1626,62 +1622,58 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
                 KotlinTestUtils.runTestWithCustomIgnoreDirective(this::doTest, TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
             }
 
-            private void runTestWithPackageReplacement(String testDataFilePath, String packageName) throws Exception {
-                KotlinTestUtils.runTestWithCustomIgnoreDirective(filePath -> doTestWithCoroutinesPackageReplacement(filePath, packageName), TargetBackend.JVM_IR, testDataFilePath, "// IGNORE_BACKEND_FIR: ");
-            }
-
             public void testAllFilesPresentInIntLikeVarSpilling() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @TestMetadata("complicatedMerge.kt")
-            public void testComplicatedMerge_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/complicatedMerge.kt", "kotlin.coroutines");
+            public void testComplicatedMerge() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/complicatedMerge.kt");
             }
 
             @TestMetadata("i2bResult.kt")
-            public void testI2bResult_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/i2bResult.kt", "kotlin.coroutines");
+            public void testI2bResult() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/i2bResult.kt");
             }
 
             @TestMetadata("loadFromBooleanArray.kt")
-            public void testLoadFromBooleanArray_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/loadFromBooleanArray.kt", "kotlin.coroutines");
+            public void testLoadFromBooleanArray() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/loadFromBooleanArray.kt");
             }
 
             @TestMetadata("loadFromByteArray.kt")
-            public void testLoadFromByteArray_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/loadFromByteArray.kt", "kotlin.coroutines");
+            public void testLoadFromByteArray() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/loadFromByteArray.kt");
             }
 
             @TestMetadata("noVariableInTable.kt")
-            public void testNoVariableInTable_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/noVariableInTable.kt", "kotlin.coroutines");
+            public void testNoVariableInTable() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/noVariableInTable.kt");
             }
 
             @TestMetadata("sameIconst1ManyVars.kt")
-            public void testSameIconst1ManyVars_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/sameIconst1ManyVars.kt", "kotlin.coroutines");
+            public void testSameIconst1ManyVars() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/sameIconst1ManyVars.kt");
             }
 
             @TestMetadata("usedInArrayStore.kt")
-            public void testUsedInArrayStore_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/usedInArrayStore.kt", "kotlin.coroutines");
+            public void testUsedInArrayStore() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/usedInArrayStore.kt");
             }
 
             @TestMetadata("usedInMethodCall.kt")
-            public void testUsedInMethodCall_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/usedInMethodCall.kt", "kotlin.coroutines");
+            public void testUsedInMethodCall() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/usedInMethodCall.kt");
             }
 
             @TestMetadata("usedInPutfield.kt")
-            public void testUsedInPutfield_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/usedInPutfield.kt", "kotlin.coroutines");
+            public void testUsedInPutfield() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/usedInPutfield.kt");
             }
 
             @TestMetadata("usedInVarStore.kt")
-            public void testUsedInVarStore_1_3() throws Exception {
-                runTestWithPackageReplacement("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/usedInVarStore.kt", "kotlin.coroutines");
+            public void testUsedInVarStore() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/coroutines/intLikeVarSpilling/usedInVarStore.kt");
             }
         }
 

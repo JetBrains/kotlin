@@ -9,7 +9,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.generators.util.CoroutinesKt;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.Printer;
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.utils.Printer;
 import java.io.File;
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class SimpleTestClassModel extends TestClassModel {
     private static final Comparator<TestEntityModel> BY_NAME = Comparator.comparing(TestEntityModel::getName);
@@ -53,8 +51,6 @@ public class SimpleTestClassModel extends TestClassModel {
     private final String testRunnerMethodName;
     private final List<String> additionalRunnerArguments;
 
-    private boolean skipTestsForExperimentalCoroutines;
-
     public SimpleTestClassModel(
             @NotNull File rootFile,
             boolean recursive,
@@ -70,8 +66,7 @@ public class SimpleTestClassModel extends TestClassModel {
             String testRunnerMethodName,
             List<String> additionalRunnerArguments,
             Integer deep,
-            @NotNull Collection<AnnotationModel> annotations,
-            boolean skipTestsForExperimentalCoroutines
+            @NotNull Collection<AnnotationModel> annotations
     ) {
         this.rootFile = rootFile;
         this.recursive = recursive;
@@ -88,7 +83,6 @@ public class SimpleTestClassModel extends TestClassModel {
         this.additionalRunnerArguments = additionalRunnerArguments;
         this.deep = deep;
         this.annotations = annotations;
-        this.skipTestsForExperimentalCoroutines = skipTestsForExperimentalCoroutines;
     }
 
     @NotNull
@@ -108,8 +102,8 @@ public class SimpleTestClassModel extends TestClassModel {
                         children.add(new SimpleTestClassModel(
                                 file, true, excludeParentDirs, filenamePattern, excludePattern, checkFilenameStartsLowerCase,
                                 doTestMethodName, innerTestClassName, targetBackend, excludesStripOneDirectory(file.getName()),
-                                skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep != null ? deep - 1 : null, annotations,
-                                skipTestsForExperimentalCoroutines)
+                                skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep != null ? deep - 1 : null, annotations
+                             )
                         );
 
                     }
@@ -158,16 +152,9 @@ public class SimpleTestClassModel extends TestClassModel {
     public Collection<MethodModel> getMethods() {
         if (testMethods == null) {
             if (!rootFile.isDirectory()) {
-                if (CoroutinesKt.isCommonCoroutineTest(rootFile)) {
-                    testMethods = CoroutinesKt.createCommonCoroutinesTestMethodModels(rootFile, rootFile, filenamePattern,
-                                                                                      checkFilenameStartsLowerCase, targetBackend,
-                                                                                      skipIgnored, skipTestsForExperimentalCoroutines);
-                }
-                else {
-                    testMethods = Collections.singletonList(new SimpleTestMethodModel(
-                            rootFile, rootFile, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored
-                    ));
-                }
+                testMethods = Collections.singletonList(new SimpleTestMethodModel(
+                        rootFile, rootFile, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored
+                ));
             }
             else {
                 List<MethodModel> result = new ArrayList<>();
@@ -178,8 +165,6 @@ public class SimpleTestClassModel extends TestClassModel {
 
                 File[] listFiles = rootFile.listFiles();
 
-                boolean hasCoroutines = false;
-
                 if (listFiles != null && (deep == null || deep == 0)) {
                     for (File file : listFiles) {
                         boolean excluded = excludePattern != null && excludePattern.matcher(file.getName()).matches();
@@ -188,26 +173,9 @@ public class SimpleTestClassModel extends TestClassModel {
                             if (file.isDirectory() && excludeParentDirs && dirHasSubDirs(file)) {
                                 continue;
                             }
-
-                            if (!file.isDirectory() && CoroutinesKt.isCommonCoroutineTest(file)) {
-                                hasCoroutines = true;
-                                result.addAll(CoroutinesKt.createCommonCoroutinesTestMethodModels(rootFile, file,
-                                                                                                  filenamePattern,
-                                                                                                  checkFilenameStartsLowerCase,
-                                                                                                  targetBackend, skipIgnored,
-                                                                                                  skipTestsForExperimentalCoroutines));
-                            }
-                            else {
-                                result.add(new SimpleTestMethodModel(rootFile, file, filenamePattern,
-                                                                     checkFilenameStartsLowerCase, targetBackend, skipIgnored));
-                            }
+                            result.add(new SimpleTestMethodModel(rootFile, file, filenamePattern, checkFilenameStartsLowerCase, targetBackend, skipIgnored));
                         }
                     }
-                }
-
-                if (hasCoroutines) {
-                    String methodName = doTestMethodName + "WithCoroutinesPackageReplacement";
-                    result.add(new RunTestMethodWithPackageReplacementModel(targetBackend, methodName, testRunnerMethodName, additionalRunnerArguments));
                 }
 
                 result.sort(BY_NAME);

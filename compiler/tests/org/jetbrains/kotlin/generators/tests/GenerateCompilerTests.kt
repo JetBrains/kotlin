@@ -509,8 +509,7 @@ fun main(args: Array<String>) {
             testClass<AbstractJvmOldAgainstIrBoxTest> {
                 model(
                     "compileKotlinAgainstKotlin",
-                    targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR,
-                    skipTestsForExperimentalCoroutines = true
+                    targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR
                 )
             }
 
@@ -634,8 +633,7 @@ fun main(args: Array<String>) {
             testClass<AbstractJvmOldAgainstIrBoxInlineTest> {
                 model(
                     "codegen/boxInline",
-                    targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR,
-                    skipTestsForExperimentalCoroutines = true
+                    targetBackend = TargetBackend.JVM_MULTI_MODULE_OLD_AGAINST_IR
                 )
             }
         }
@@ -713,8 +711,7 @@ fun main(args: Array<String>) {
             testClass<AbstractFirOldFrontendDiagnosticsTestWithStdlib> {
                 model(
                     "diagnostics/testsWithStdLib",
-                    excludedPattern = excludedFirTestdataPattern,
-                    skipTestsForExperimentalCoroutines = true
+                    excludedPattern = excludedFirTestdataPattern
                 )
             }
         }
