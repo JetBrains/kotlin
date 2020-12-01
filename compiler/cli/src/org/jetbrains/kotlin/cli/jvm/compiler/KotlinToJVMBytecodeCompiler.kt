@@ -52,10 +52,10 @@ import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
-import org.jetbrains.kotlin.fir.backend.jvm.FirMetadataSerializer
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJvmModuleInfo
@@ -389,10 +389,8 @@ object KotlinToJVMBytecodeCompiler {
             performanceManager?.notifyIRGenerationStarted()
             generationState.beforeCompile()
             codegenFactory.generateModuleInFrontendIRMode(
-                generationState, moduleFragment, symbolTable, sourceManager, extensions
-            ) { context, irClass, _, serializationBindings, parent ->
-                FirMetadataSerializer(session, context, irClass, serializationBindings, parent)
-            }
+                generationState, moduleFragment, symbolTable, sourceManager, extensions, FirJvmBackendExtension(session, components)
+            )
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
 

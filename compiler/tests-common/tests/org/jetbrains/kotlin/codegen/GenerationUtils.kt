@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.fir.analysis.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
-import org.jetbrains.kotlin.fir.backend.jvm.FirMetadataSerializer
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.createSession
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -142,10 +142,8 @@ object GenerationUtils {
 
         generationState.beforeCompile()
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, moduleFragment, symbolTable, sourceManager, extensions
-        ) { context, irClass, _, serializationBindings, parent ->
-            FirMetadataSerializer(session, context, irClass, serializationBindings, parent)
-        }
+            generationState, moduleFragment, symbolTable, sourceManager, extensions, FirJvmBackendExtension(session, components),
+        )
 
         generationState.factory.done()
         return generationState
