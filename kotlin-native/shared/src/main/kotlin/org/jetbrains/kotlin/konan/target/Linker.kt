@@ -340,7 +340,11 @@ class GccBasedLinker(targetProperties: GccConfigurables)
 
         val isMips = target == KonanTarget.LINUX_MIPS32 || target == KonanTarget.LINUX_MIPSEL32
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
-        val crtPrefix = if (configurables.target == KonanTarget.LINUX_ARM64) "usr/lib" else "usr/lib64"
+        val crtPrefix = when (val bitness = configurables.target.architecture.bitness) {
+            32 -> "usr/lib"
+            64 -> "usr/lib64"
+            else -> error("Unexpected target bitness: $bitness")
+        }
         // TODO: Can we extract more to the konan.configurables?
         return listOf(Command(linker).apply {
             +"--sysroot=${absoluteTargetSysRoot}"
