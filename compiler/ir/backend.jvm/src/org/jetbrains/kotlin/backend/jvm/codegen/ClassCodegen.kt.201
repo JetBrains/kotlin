@@ -190,7 +190,9 @@ class ClassCodegen private constructor(
     }
 
     private val metadataSerializer: MetadataSerializer =
-        context.serializerFactory(context, irClass, type, visitor.serializationBindings, parentClassCodegen?.metadataSerializer)
+        context.backendExtension.createSerializer(
+            context, irClass, type, visitor.serializationBindings, parentClassCodegen?.metadataSerializer
+        )
 
     private fun generateKotlinMetadataAnnotation() {
         // TODO: if `-Xmultifile-parts-inherit` is enabled, write the corresponding flag for parts and facades to [Metadata.extraInt].

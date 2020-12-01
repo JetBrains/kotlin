@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.backend.jvm.lower.CollectionStubComputer
 import org.jetbrains.kotlin.backend.jvm.lower.JvmInnerClassesSupport
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.MemoizedInlineClassReplacements
-import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -41,8 +40,6 @@ import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.Type
 
-typealias MetadataSerializerFactory = (JvmBackendContext, IrClass, Type, JvmSerializationBindings, MetadataSerializer?) -> MetadataSerializer
-
 class JvmBackendContext(
     val state: GenerationState,
     val psiSourceManager: PsiSourceManager,
@@ -51,7 +48,7 @@ class JvmBackendContext(
     private val symbolTable: SymbolTable,
     val phaseConfig: PhaseConfig,
     val generatorExtensions: JvmGeneratorExtensions,
-    val serializerFactory: MetadataSerializerFactory
+    val backendExtension: JvmBackendExtension,
 ) : CommonBackendContext {
     // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
     // annotated with @JvmPackageName, the correct name is recorded here.

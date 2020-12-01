@@ -9,11 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.JvmNameProvider
-import org.jetbrains.kotlin.backend.jvm.codegen.DescriptorMetadataSerializer
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
+import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
@@ -152,7 +148,7 @@ class ClassicFrontend2IrConverter(
             phaseConfig,
             irProviders,
             extensions,
-            ::DescriptorMetadataSerializer
+            JvmBackendExtension.Default,
         )
     }
 }

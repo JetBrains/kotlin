@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
-import org.jetbrains.kotlin.backend.jvm.MetadataSerializerFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.IrProvider
@@ -25,7 +25,7 @@ data class IrBackendInput(
     val phaseConfig: PhaseConfig,
     val irProviders: List<IrProvider>,
     val extensions: JvmGeneratorExtensions,
-    val serializerFactory: MetadataSerializerFactory
+    val backendExtension: JvmBackendExtension,
 ) : ResultingArtifact.BackendInput<IrBackendInput>() {
     override val kind: BackendKinds.IrBackend
         get() = BackendKinds.IrBackend

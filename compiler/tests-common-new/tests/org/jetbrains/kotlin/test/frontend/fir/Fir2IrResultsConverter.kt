@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
-import org.jetbrains.kotlin.fir.backend.jvm.FirMetadataSerializer
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.ir.descriptors.IrFunctionFactory
 import org.jetbrains.kotlin.ir.util.generateTypicalIrProviderList
@@ -89,8 +89,7 @@ class Fir2IrResultsConverter(
             phaseConfig,
             irProviders,
             extensions,
-        ) { context, irClass, _, serializationBindings, parent ->
-            FirMetadataSerializer(inputArtifact.session, context, irClass, serializationBindings, components, parent)
-        }
+            FirJvmBackendExtension(inputArtifact.session, components)
+        )
     }
 }
