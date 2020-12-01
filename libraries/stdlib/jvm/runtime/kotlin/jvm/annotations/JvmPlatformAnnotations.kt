@@ -141,7 +141,7 @@ public actual annotation class JvmWildcard
  * in their signature are mangled.
  */
 @Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.BINARY)
+@Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 @SinceKotlin("1.5")
 public actual annotation class JvmInline
