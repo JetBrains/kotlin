@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.classFileContainsMethod
+import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -70,6 +71,8 @@ class MemoizedInlineClassReplacements(
                     when {
                         it.isRemoveAtSpecialBuiltinStub() ->
                             null
+                        it.isInlineClassMemberFakeOverriddenFromDefaultJavaInterfaceMethod() ->
+                            null
                         it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
                             createMethodReplacement(it)
                         else ->
@@ -93,6 +96,16 @@ class MemoizedInlineClassReplacements(
                 name.asString() == "remove" &&
                 valueParameters.size == 1 &&
                 valueParameters[0].type.isInt()
+
+    private fun IrFunction.isInlineClassMemberFakeOverriddenFromDefaultJavaInterfaceMethod(): Boolean {
+        if (this !is IrSimpleFunction) return false
+        if (!this.isFakeOverride) return false
+        val parentClass = parentClassOrNull ?: return false
+        if (!parentClass.isInline) return false
+
+        val overridden = resolveFakeOverride() ?: return false
+        return overridden.isFromJava() && overridden.modality != Modality.ABSTRACT && overridden.parentAsClass.isJvmInterface
+    }
 
     /**
      * Get the box function for an inline class. Concretely, this is a synthetic
