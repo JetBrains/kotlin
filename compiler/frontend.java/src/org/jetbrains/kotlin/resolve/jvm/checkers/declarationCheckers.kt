@@ -59,7 +59,7 @@ class LocalFunInlineChecker : DeclarationChecker {
 }
 
 class JvmStaticChecker(jvmTarget: JvmTarget, languageVersionSettings: LanguageVersionSettings) : DeclarationChecker {
-    private val isLessJVM18 = jvmTarget.bytecodeVersion < JvmTarget.JVM_1_8.bytecodeVersion
+    private val isLessJVM18 = jvmTarget.majorVersion < JvmTarget.JVM_1_8.majorVersion
 
     private val supportJvmStaticInInterface = languageVersionSettings.supportsFeature(LanguageFeature.JvmStaticInInterface)
 
