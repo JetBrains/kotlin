@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleTargetExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.project.model.KotlinModule
-import org.jetbrains.kotlin.project.model.LocalBuild
+import org.jetbrains.kotlin.project.model.LocalModuleIdentifier
 
 val KotlinProjectExtension.targets: Iterable<KotlinTarget>
     get() = when (this) {
@@ -24,7 +24,7 @@ val KotlinProjectExtension.targets: Iterable<KotlinTarget>
     }
 
 fun KotlinModule.representsProject(project: Project): Boolean =
-    moduleOrigin.let { it is LocalBuild && it.buildId == project.currentBuildId().name } && moduleName == project.path
+    moduleIdentifier.let { it is LocalModuleIdentifier && it.buildId == project.currentBuildId().name && it.projectId == project.path }
 
 // FIXME internal API?
 fun Project.currentBuildId(): BuildIdentifier =
