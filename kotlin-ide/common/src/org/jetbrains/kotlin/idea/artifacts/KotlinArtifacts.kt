@@ -5,7 +5,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.io.FileNotFoundException
 
-abstract class KotlinArtifacts(kotlincDistDir: File) {
+abstract class KotlinArtifacts(val kotlincDistDir: File) {
     companion object {
         @get:JvmStatic
         val instance: KotlinArtifacts by lazy {
