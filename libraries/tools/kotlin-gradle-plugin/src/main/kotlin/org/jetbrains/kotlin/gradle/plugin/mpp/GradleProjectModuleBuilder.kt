@@ -108,7 +108,7 @@ class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExp
             extension.sourceSets.forEach { sourceSet ->
                 val existingVariant = fragments.filterIsInstance<BasicKotlinModuleVariant>().find { it.fragmentName == sourceSet.name }
                 val fragment = existingVariant ?: BasicKotlinModuleFragment(this@apply, sourceSet.name).also { fragments.add(it) }
-                fragment.kotlinSourceDirectories = sourceSet.kotlin.sourceDirectories.toList()
+                fragment.kotlinSourceRoots = sourceSet.kotlin.sourceDirectories.toList()
 
                 // FIXME: Kotlin/Native implementation-effective-api dependencies are missing here. Introduce dependency scopes
                 project.configurations.getByName(sourceSet.apiConfigurationName).allDependencies.forEach {
