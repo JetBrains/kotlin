@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.analysis.cfa.*
@@ -17,7 +18,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClass
 import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -159,8 +162,10 @@ object UnusedChecker : FirControlFlowChecker() {
             data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
         ): PathAwareVariableStatusInfo {
             if (data.isEmpty()) return PathAwareVariableStatusInfo.EMPTY
-            return data.map { (label, info) -> info.applyLabel(node, label) }
+            val result = data.map { (label, info) -> info.applyLabel(node, label) }
                 .reduce(PathAwareVariableStatusInfo::merge)
+            return (node.fir as? FirAnnotationContainer)?.annotations?.fold(result, ::visitAnnotation)
+                ?: result
         }
 
         override fun visitVariableDeclarationNode(
@@ -230,31 +235,52 @@ object UnusedChecker : FirControlFlowChecker() {
             data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
-            if (node.fir.source?.kind is FirFakeSourceElementKind) return dataForNode
-            val reference = node.fir.calleeReference as? FirResolvedNamedReference ?: return dataForNode
-            val symbol = reference.resolvedSymbol as? FirPropertySymbol ?: return dataForNode
+            return visitQualifiedAccesses(dataForNode, node.fir)
+        }
 
-            if (symbol !in localProperties) return dataForNode
+        private fun visitAnnotation(
+            dataForNode: PathAwareVariableStatusInfo,
+            annotation: FirAnnotationCall,
+        ): PathAwareVariableStatusInfo {
+            val qualifiedAccesses = annotation.argumentList.arguments.mapNotNull { it as? FirQualifiedAccess }.toTypedArray()
+            return visitQualifiedAccesses(dataForNode, *qualifiedAccesses)
+        }
+
+        private fun visitQualifiedAccesses(
+            dataForNode: PathAwareVariableStatusInfo,
+            vararg qualifiedAccesses: FirQualifiedAccess,
+        ): PathAwareVariableStatusInfo {
+            fun retrieveSymbol(qualifiedAccess: FirQualifiedAccess): FirPropertySymbol? {
+                if (qualifiedAccess.source?.kind is FirFakeSourceElementKind) return null
+                val reference = qualifiedAccess.calleeReference as? FirResolvedNamedReference ?: return null
+                val symbol = reference.resolvedSymbol as? FirPropertySymbol ?: return null
+                return if (symbol !in localProperties) null else symbol
+            }
+
+            val symbols = qualifiedAccesses.mapNotNull { retrieveSymbol(it) }.toTypedArray()
 
             val status = VariableStatus.READ
             status.isRead = true
-            return update(dataForNode, symbol) { status }
+
+            return update(dataForNode, *symbols) { status }
         }
 
         private fun update(
             pathAwareInfo: PathAwareVariableStatusInfo,
-            symbol: FirPropertySymbol,
+            vararg symbols: FirPropertySymbol,
             updater: (VariableStatus?) -> VariableStatus?,
         ): PathAwareVariableStatusInfo {
             var resultMap = persistentMapOf<EdgeLabel, VariableStatusInfo>()
             var changed = false
             for ((label, dataPerLabel) in pathAwareInfo) {
-                val v = updater.invoke(dataPerLabel[symbol])
-                if (v != null) {
-                    resultMap = resultMap.put(label, dataPerLabel.put(symbol, v))
-                    changed = true
-                } else {
-                    resultMap = resultMap.put(label, dataPerLabel)
+                for (symbol in symbols) {
+                    val v = updater.invoke(dataPerLabel[symbol])
+                    if (v != null) {
+                        resultMap = resultMap.put(label, dataPerLabel.put(symbol, v))
+                        changed = true
+                    } else {
+                        resultMap = resultMap.put(label, dataPerLabel)
+                    }
                 }
             }
             return if (changed) PathAwareVariableStatusInfo(resultMap) else pathAwareInfo
