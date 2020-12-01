@@ -103,8 +103,10 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-Xabi-stability",
         valueDescription = "{stable|unstable}",
-        description = "When using unstable compiler features such as FIR or JVM IR, use 'stable' to mark generated class files as stable\n" +
-                "to prevent diagnostics from stable compilers at the call site.\n"
+        description = "When using unstable compiler features such as FIR, use 'stable' to mark generated class files as stable\n" +
+                "to prevent diagnostics from stable compilers at the call site.\n" +
+                "When using the JVM IR backend, conversely, use 'unstable' to mark generated class files as unstable\n" +
+                "to force diagnostics to be reported."
     )
     var abiStability: String? by FreezableVar(null)
 
@@ -446,7 +448,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
         result[JvmAnalysisFlags.irCheckLocalNames] = irCheckLocalNames
         result[JvmAnalysisFlags.enableJvmPreview] = enableJvmPreview
-        result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies || useIR || useFir
+        result[AnalysisFlags.allowUnstableDependencies] = allowUnstableDependencies || useFir
         result[JvmAnalysisFlags.disableUltraLightClasses] = disableUltraLightClasses
         return result
     }

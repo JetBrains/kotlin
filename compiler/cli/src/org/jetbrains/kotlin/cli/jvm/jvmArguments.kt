@@ -165,7 +165,8 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
-    put(JVMConfigurationKeys.IR, (arguments.useIR && !arguments.noUseIR) || arguments.useFir)
+    val useIR = (arguments.useIR && !arguments.noUseIR) || arguments.useFir
+    put(JVMConfigurationKeys.IR, useIR)
 
     val abiStability = JvmAbiStability.fromStringOrNull(arguments.abiStability)
     if (arguments.abiStability != null) {
@@ -174,6 +175,8 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
                 ERROR,
                 "Unknown ABI stability mode: ${arguments.abiStability}, supported modes: ${JvmAbiStability.values().map { it.description }}"
             )
+        } else if (!useIR && abiStability == JvmAbiStability.UNSTABLE) {
+            messageCollector.report(ERROR, "-Xabi-stability=unstable is not supported in the old JVM backend")
         } else {
             put(JVMConfigurationKeys.ABI_STABILITY, abiStability)
         }

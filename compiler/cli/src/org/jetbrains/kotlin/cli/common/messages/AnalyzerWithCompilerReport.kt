@@ -182,10 +182,10 @@ class AnalyzerWithCompilerReport(
                 )
             }
 
-            if (diagnostics.any { it.factory == Errors.IR_COMPILED_CLASS }) {
+            if (diagnostics.any { it.factory == Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS }) {
                 messageCollector.report(
                     ERROR,
-                    "Classes compiled by a new Kotlin compiler backend were found in dependencies. " +
+                    "Classes compiled by an unstable version of the Kotlin compiler were found in dependencies. " +
                             "Remove them from the classpath or use '-Xallow-unstable-dependencies' to suppress errors"
                 )
             }

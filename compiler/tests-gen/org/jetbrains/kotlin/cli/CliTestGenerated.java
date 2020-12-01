@@ -26,6 +26,16 @@ public class CliTestGenerated extends AbstractCliTest {
             KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
         }
 
+        @TestMetadata("abiStabilityIncorrectValue.args")
+        public void testAbiStabilityIncorrectValue() throws Exception {
+            runTest("compiler/testData/cli/jvm/abiStabilityIncorrectValue.args");
+        }
+
+        @TestMetadata("abiStabilityUnstableWithOldBackend.args")
+        public void testAbiStabilityUnstableWithOldBackend() throws Exception {
+            runTest("compiler/testData/cli/jvm/abiStabilityUnstableWithOldBackend.args");
+        }
+
         public void testAllFilesPresentInJvm() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm"), Pattern.compile("^(.+)\\.args$"), null, false);
         }

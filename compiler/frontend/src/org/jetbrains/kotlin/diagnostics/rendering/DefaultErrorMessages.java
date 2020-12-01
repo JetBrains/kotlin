@@ -11,7 +11,6 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.LanguageVersion;
-import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.UnboundDiagnostic;
@@ -401,7 +400,7 @@ public class DefaultErrorMessages {
         MAP.put(MISSING_IMPORTED_SCRIPT_PSI, "Imported script file ''{0}'' is not loaded. Check your script imports", TO_STRING);
         MAP.put(MISSING_SCRIPT_PROVIDED_PROPERTY_CLASS, "Cannot access script provided property class ''{0}''. Check your module classpath for missing or conflicting dependencies", TO_STRING);
         MAP.put(PRE_RELEASE_CLASS, "{0} is compiled by a pre-release version of Kotlin and cannot be loaded by this version of the compiler", TO_STRING);
-        MAP.put(IR_COMPILED_CLASS, "{0} is compiled by a new Kotlin compiler backend and cannot be loaded by the old compiler", TO_STRING);
+        MAP.put(IR_WITH_UNSTABLE_ABI_COMPILED_CLASS, "{0} is compiled by an unstable version of the Kotlin compiler and cannot be loaded by this compiler", TO_STRING);
         MAP.put(FIR_COMPILED_CLASS, "{0} is compiled by the new Kotlin compiler frontend and cannot be loaded by the old compiler", TO_STRING);
         MAP.put(INCOMPATIBLE_CLASS,
                 "{0} was compiled with an incompatible version of Kotlin. {1}",

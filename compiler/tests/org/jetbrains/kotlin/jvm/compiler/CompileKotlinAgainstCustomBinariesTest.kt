@@ -669,28 +669,44 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         classLoader.loadClass("SourceKt").getDeclaredMethod("main").invoke(null)
     }
 
-    fun testJvmIrAgainstJvmIr() {
-        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-ir"))
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xuse-ir"))
+    fun testFirAgainstFir() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-fir"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xuse-fir"))
     }
 
-    fun testJvmIrAgainstOld() {
+    fun testFirAgainstOldJvm() {
         val library = compileLibrary("library")
-        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xuse-ir"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xuse-fir"))
     }
 
-    fun testOldAgainstJvmIr() {
+    fun testOldJvmAgainstJvmIr() {
         val library = compileLibrary("library", additionalOptions = listOf("-Xuse-ir"))
+        compileKotlin("source.kt", tmpdir, listOf(library))
+
+        val library2 = compileLibrary("library", additionalOptions = listOf("-Xuse-ir", "-Xabi-stability=stable"))
+        compileKotlin("source.kt", tmpdir, listOf(library2))
+    }
+
+    fun testOldJvmAgainstFir() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-fir"))
+        compileKotlin("source.kt", tmpdir, listOf(library))
+
+        val library2 = compileLibrary("library", additionalOptions = listOf("-Xuse-fir", "-Xabi-stability=unstable"))
+        compileKotlin("source.kt", tmpdir, listOf(library2))
+    }
+
+    fun testOldJvmAgainstJvmIrWithUnstableAbi() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-ir", "-Xabi-stability=unstable"))
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
-    fun testOldAgainstJvmIrWithStableAbi() {
-        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-ir", "-Xabi-stability=stable"))
+    fun testOldJvmAgainstFirWithStableAbi() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-fir", "-Xabi-stability=stable"))
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
-    fun testOldAgainstJvmIrWithAllowIrDependencies() {
-        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-ir"))
+    fun testOldJvmAgainstFirWithAllowUnstableDependencies() {
+        val library = compileLibrary("library", additionalOptions = listOf("-Xuse-fir"))
         compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-Xallow-unstable-dependencies"))
     }
 
