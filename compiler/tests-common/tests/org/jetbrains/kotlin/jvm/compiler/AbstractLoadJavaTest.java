@@ -295,7 +295,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                         }
                         return targetFile;
                     }
-                }, "");
+                });
 
         Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
                 srcFiles, compiledDir, ConfigurationKind.ALL

@@ -68,11 +68,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     private void doBytecodeListingTest(@NotNull File wholeFile) throws Exception {
         if (!InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "CHECK_BYTECODE_LISTING")) return;
 
-        String suffix =
-                (coroutinesPackage.equals(StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()) || coroutinesPackage.isEmpty())
-                && InTextDirectivesUtils.isDirectiveDefined(FileUtil.loadFile(wholeFile), "COMMON_COROUTINES_TEST")
-                ? "_1_2" :
-                getBackend().isIR() ? "_ir" : "";
+        String suffix = getBackend().isIR() ? "_ir" : "";
         File expectedFile = new File(wholeFile.getParent(), FilesKt.getNameWithoutExtension(wholeFile) + suffix + ".txt");
 
         String text =
@@ -101,7 +97,7 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                         }
                 );
 
-        assertEqualsToFile(expectedFile, text, s -> s.replace("COROUTINES_PACKAGE", coroutinesPackage));
+        assertEqualsToFile(expectedFile, text);
     }
 
     protected void blackBox(boolean reportProblems, boolean unexpectedBehaviour) {

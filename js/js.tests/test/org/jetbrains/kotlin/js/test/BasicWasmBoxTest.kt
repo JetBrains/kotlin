@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.js.test
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.psi.PsiManager
-import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.wasm.compileWasm
@@ -28,10 +24,8 @@ import org.jetbrains.kotlin.js.test.engines.SpiderMonkeyEngine
 import org.jetbrains.kotlin.library.resolver.impl.KotlinLibraryResolverResultImpl
 import org.jetbrains.kotlin.library.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
@@ -63,7 +57,7 @@ abstract class BasicWasmBoxTest(
         val fileContent = KotlinTestUtils.doLoadFile(file)
 
         TestFileFactoryImpl().use { testFactory ->
-            val inputFiles: MutableList<TestFile> = TestFiles.createTestFiles(file.name, fileContent, testFactory, true, "")
+            val inputFiles: MutableList<TestFile> = TestFiles.createTestFiles(file.name, fileContent, testFactory, true)
             val testPackage = testFactory.testPackage
             val outputFileBase = outputDir.absolutePath + "/" + getTestName(true)
             val outputWatFile = outputFileBase + ".wat"

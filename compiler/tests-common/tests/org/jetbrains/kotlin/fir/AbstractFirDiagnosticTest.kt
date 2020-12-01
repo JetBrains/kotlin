@@ -64,7 +64,6 @@ import java.io.File
 abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
     companion object {
         const val DUMP_CFG_DIRECTIVE = "DUMP_CFG"
-        const val COMMON_COROUTINES_DIRECTIVE = "COMMON_COROUTINES_TEST"
 
         private val allowedKindsForDebugInfo = setOf(
             FirRealSourceElementKind,
@@ -73,9 +72,6 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
 
         val TestFile.withDumpCfgDirective: Boolean
             get() = DUMP_CFG_DIRECTIVE in directives
-
-        val TestFile.withCommonCoroutinesDirective: Boolean
-            get() = COMMON_COROUTINES_DIRECTIVE in directives
 
         val File.cfgDumpFile: File
             get() = File(absolutePath.replace(".kt", ".dot"))
@@ -136,10 +132,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
                 actualTextBuilder.append(testFile.expectedText)
             }
         }
-        var actualText = actualTextBuilder.toString()
-        if (testFiles.any { it.withCommonCoroutinesDirective }) {
-            actualText = actualText.replace(coroutinesPackage, "COROUTINES_PACKAGE")
-        }
+        val actualText = actualTextBuilder.toString()
         KotlinTestUtils.assertEqualsToFile(file, actualText)
     }
 

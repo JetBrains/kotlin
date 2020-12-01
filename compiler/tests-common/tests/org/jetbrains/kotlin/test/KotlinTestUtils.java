@@ -574,7 +574,7 @@ public class KotlinTestUtils {
                 int firstLineEnd = text.indexOf('\n');
                 return StringUtil.trimTrailing(text.substring(firstLineEnd + 1));
             }
-        }, "");
+        });
 
         Assert.assertTrue("Exactly two files expected: ", files.size() == 2);
 

@@ -607,32 +607,21 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         File file = new File(filePath);
 
         String expectedText = KotlinTestUtils.doLoadFile(file);
-        if (!coroutinesPackage.isEmpty()) {
-            expectedText = expectedText.replace("COROUTINES_PACKAGE", coroutinesPackage);
-        }
-
         List<TestFile> testFiles = createTestFilesFromFile(file, expectedText);
 
         doMultiFileTest(file, testFiles);
     }
 
     @Override
-    protected void doTestWithCoroutinesPackageReplacement(@NotNull String filePath, @NotNull String packageName) throws Exception {
-        this.coroutinesPackage = packageName;
-        doTest(filePath);
-    }
-
-    @Override
     @NotNull
     protected List<TestFile> createTestFilesFromFile(@NotNull File file, @NotNull String expectedText) {
-        return createTestFilesFromFile(file, expectedText, coroutinesPackage, parseDirectivesPerFiles(), getBackend());
+        return createTestFilesFromFile(file, expectedText, parseDirectivesPerFiles(), getBackend());
     }
 
     @NotNull
     public static List<TestFile> createTestFilesFromFile(
             @NotNull File file,
             @NotNull String expectedText,
-            @NotNull String coroutinesPackage,
             boolean parseDirectivesPerFiles,
             @NotNull TargetBackend backend
     ) {
@@ -643,7 +632,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
                     public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
                         return new TestFile(fileName, text, directives);
                     }
-                }, false, coroutinesPackage, parseDirectivesPerFiles);
+                }, false, parseDirectivesPerFiles);
         if (InTextDirectivesUtils.isDirectiveDefined(expectedText, "WITH_HELPERS")) {
             testFiles.add(new TestFile("CodegenTestHelpers.kt", TestHelperGeneratorKt.createTextForCodegenTestHelpers(backend)));
         }

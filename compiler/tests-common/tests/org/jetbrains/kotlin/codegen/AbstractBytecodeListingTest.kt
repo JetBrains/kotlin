@@ -31,8 +31,7 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
         )
 
         val prefixes = when {
-            backend.isIR -> listOf("_ir", "_1_3", "")
-            coroutinesPackage == StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString() -> listOf("_1_3", "")
+            backend.isIR -> listOf("_ir", "")
             else -> listOf("")
         }
 
