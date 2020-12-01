@@ -116,7 +116,7 @@ class FirLightClassForFacade(
         }
 
         for (propertySymbol in propertySymbols) {
-            val forceStaticAndPropertyVisibility = propertySymbol.hasJvmStaticAnnotation()
+            val forceStaticAndPropertyVisibility = propertySymbol.isConst || propertySymbol.hasJvmFieldAnnotation()
             createField(
                 propertySymbol,
                 nameGenerator,

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.load.java.JvmAbi
 
 internal open class FirLightClassForSymbol(
     private val classOrObjectSymbol: KtClassOrObjectSymbol,
@@ -118,41 +119,24 @@ internal open class FirLightClassForSymbol(
         result
     }
 
-    private fun addFieldsFromCompanionIfNeeded(result: MutableList<KtLightField>, nameGenerator: FirLightField.FieldNameGenerator) {
+    private fun addFieldsFromCompanionIfNeeded(result: MutableList<KtLightField>) {
         classOrObjectSymbol.companionObject?.run {
             analyzeWithSymbolAsContext(this) {
                 getDeclaredMemberScope().getCallableSymbols()
                     .filterIsInstance<KtPropertySymbol>()
-                    .filter { it.hasJvmFieldAnnotation() || it.isConst }
+                    .filter { it.hasJvmFieldAnnotation() || it.hasJvmStaticAnnotation() || it.isConst }
                     .mapTo(result) {
                         FirLightFieldForPropertySymbol(
                             propertySymbol = it,
-                            fieldName = nameGenerator.generateUniqueFieldName(it.name.asString()),
+                            fieldName = it.name.asString(),
                             containingClass = this@FirLightClassForSymbol,
                             lightMemberOrigin = null,
                             isTopLevel = false,
-                            forceStatic = true,
+                            forceStatic = !it.hasJvmStaticAnnotation(),
                             takePropertyVisibility = true
                         )
                     }
             }
-        }
-    }
-
-
-    private fun addObjectFields(result: MutableList<KtLightField>, nameGenerator: FirLightField.FieldNameGenerator) {
-        analyzeWithSymbolAsContext(classOrObjectSymbol) {
-            classOrObjectSymbol.getDeclaredMemberScope().getAllSymbols()
-                .filterIsInstance<KtClassOrObjectSymbol>()
-                .filter { it.classKind == KtClassKind.OBJECT }
-                .mapTo(result) {
-                    FirLightFieldForObjectSymbol(
-                        objectSymbol = it,
-                        containingClass = this@FirLightClassForSymbol,
-                        name = nameGenerator.generateUniqueFieldName(it.name.asString()),
-                        lightMemberOrigin = null
-                    )
-                }
         }
     }
 
@@ -163,14 +147,14 @@ internal open class FirLightClassForSymbol(
                 FirLightFieldForObjectSymbol(
                     objectSymbol = classOrObjectSymbol,
                     containingClass = this@FirLightClassForSymbol,
-                    name = "INSTANCE",
+                    name = JvmAbi.INSTANCE_FIELD,
                     lightMemberOrigin = null
                 )
             )
         }
     }
 
-    private fun addPropertyBackingFields(result: MutableList<KtLightField>, nameGenerator: FirLightField.FieldNameGenerator) {
+    private fun addPropertyBackingFields(result: MutableList<KtLightField>) {
         analyzeWithSymbolAsContext(classOrObjectSymbol) {
             val propertySymbols = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
                 .filterIsInstance<KtPropertySymbol>()
@@ -178,12 +162,15 @@ internal open class FirLightClassForSymbol(
                     filterNot { it.hasJvmFieldAnnotation() || it.isConst }
                 }
 
+            val nameGenerator = FirLightField.FieldNameGenerator()
             val isObject = classOrObjectSymbol.classKind == KtClassKind.OBJECT
+            val isCompanionObject = classOrObjectSymbol.classKind == KtClassKind.COMPANION_OBJECT
 
             for (propertySymbol in propertySymbols) {
+                val isJvmField = propertySymbol.hasJvmFieldAnnotation()
                 val isJvmStatic = propertySymbol.hasJvmStaticAnnotation()
-                val forceStatic = isObject || isJvmStatic
-                val takePropertyVisibility = (isObject && propertySymbol.isConst) || isJvmStatic
+                val forceStatic = isObject && (propertySymbol.isConst || isJvmStatic || isJvmField)
+                val takePropertyVisibility = !isCompanionObject && (isJvmField || (isObject && isJvmStatic))
 
                 createField(
                     declaration = propertySymbol,
@@ -194,8 +181,6 @@ internal open class FirLightClassForSymbol(
                     result = result
                 )
             }
-
-
 
             if (isEnum) {
                 classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
@@ -212,11 +197,8 @@ internal open class FirLightClassForSymbol(
         addCompanionObjectFieldIfNeeded(result)
         addInstanceFieldIfNeeded(result)
 
-        val nameGenerator = FirLightField.FieldNameGenerator()
-
-        addObjectFields(result, nameGenerator)
-        addFieldsFromCompanionIfNeeded(result, nameGenerator)
-        addPropertyBackingFields(result, nameGenerator)
+        addFieldsFromCompanionIfNeeded(result)
+        addPropertyBackingFields(result)
 
         result
     }
