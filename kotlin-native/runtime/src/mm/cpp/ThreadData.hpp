@@ -19,18 +19,13 @@ namespace mm {
 // Pin it in memory to prevent accidental copying.
 class ThreadData final : private Pinned {
 public:
-    ThreadData(pthread_t threadId) noexcept : threadId_(threadId) {}
+    ThreadData(pthread_t threadId) noexcept : threadId_(threadId), globalsThreadQueue_(GlobalsRegistry::Instance()) {}
 
     ~ThreadData() = default;
 
     pthread_t threadId() const noexcept { return threadId_; }
 
-    bool isWaitingForGC() const noexcept {
-        // TODO: Implement.
-        return false;
-    }
-
-    GlobalsRegistry::ThreadQueue* globalsThreadQueue() noexcept { return &globalsThreadQueue_; }
+    GlobalsRegistry::ThreadQueue& globalsThreadQueue() noexcept { return globalsThreadQueue_; }
 
     ThreadLocalStorage& tls() noexcept { return tls_; }
 

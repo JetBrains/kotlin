@@ -16,24 +16,29 @@ namespace mm {
 
 class GlobalsRegistry : Pinned {
 public:
-    using ThreadQueue = MultiSourceQueue<ObjHeader**>::Producer;
+    class ThreadQueue : public MultiSourceQueue<ObjHeader**>::Producer {
+    public:
+        explicit ThreadQueue(GlobalsRegistry& registry) : Producer(registry.globals_) {}
+        // Do not add fields as this is just a wrapper and Producer does not have virtual destructor.
+    };
 
-    using Iterator = std::list<ObjHeader**>::iterator;
+    using Iterable = MultiSourceQueue<ObjHeader**>::Iterable;
+
+    using Iterator = MultiSourceQueue<ObjHeader**>::Iterator;
 
     static GlobalsRegistry& Instance() noexcept;
 
     void RegisterStorageForGlobal(mm::ThreadData* threadData, ObjHeader** location) noexcept;
 
-    // Collect globals from thread corresponding to `threadData`. Thread must be waiting for GC.
-    // Only one thread can call this method.
+    // Collect globals from thread corresponding to `threadData`. Must be called by the thread
+    // when it's asked by GC to stop.
     void ProcessThread(mm::ThreadData* threadData) noexcept;
 
-    // These must be called on the same thread as `ProcessThread` to avoid races.
+    // Lock registry for safe iteration.
     // TODO: Iteration over `globals_` will be slow, because it's `std::list` collected at different times from
     // different threads, and so the nodes are all over the memory. Use metrics to understand how
     // much of a problem is it.
-    Iterator begin() noexcept { return globals_.begin(); }
-    Iterator end() noexcept { return globals_.end(); }
+    Iterable Iter() noexcept { return globals_.Iter(); }
 
 private:
     friend class GlobalData;

@@ -12,6 +12,7 @@
 #include "gtest/gtest.h"
 
 #include "Atomic.h"
+#include "TestSupport.hpp"
 #include "TestSupportCompilerGenerated.hpp"
 
 using testing::_;
@@ -21,7 +22,7 @@ using testing::_;
 TEST(CleanerTest, ConcurrentCreation) {
     ResetCleanerWorkerForTests();
 
-    constexpr int threadCount = 100;
+    constexpr int threadCount = kotlin::kDefaultThreadCount;
     constexpr KInt workerId = 42;
 
     auto createCleanerWorkerMock = ScopedCreateCleanerWorkerMock();
