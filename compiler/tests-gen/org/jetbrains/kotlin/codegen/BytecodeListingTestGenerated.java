@@ -827,6 +827,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
         public void testInlineClassTypesInSignature() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/deprecated/inlineClassTypesInSignature.kt");
         }
+
+        @TestMetadata("jvmStaticDeprecatedProperty.kt")
+        public void testJvmStaticDeprecatedProperty() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/deprecated/jvmStaticDeprecatedProperty.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/bytecodeListing/inline")
