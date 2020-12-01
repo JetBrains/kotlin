@@ -1,0 +1,11 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:+JvmRecordSupport
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+error: -XXLanguage:+JvmRecordSupport feature is only supported with JVM target 15_PREVIEW or later
+COMPILATION_ERROR

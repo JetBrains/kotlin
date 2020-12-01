@@ -261,6 +261,9 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(
                         "$FOREIGN_ANNOTATIONS_DIR$",
                         new File(AbstractForeignAnnotationsTestKt.getFOREIGN_ANNOTATIONS_SOURCES_PATH()).getPath()
+                ).replace(
+                        "$JDK_15$",
+                        KotlinTestUtils.getJdk15Home().getPath()
                 );
     }
 

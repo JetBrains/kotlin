@@ -1,0 +1,8 @@
+$TESTDATA_DIR$/jvmRecordWrongTarget.kt
+-d
+$TEMP_DIR$
+-cp
+$JDK_15$
+-XXLanguage:+JvmRecordSupport
+-jvm-target
+9
