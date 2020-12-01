@@ -10,11 +10,11 @@ import org.jetbrains.report.*
 
 import kotlin.math.abs
 
-enum class RenderType(val render: Render) {
-    TEXT(TextRender()),
-    HTML(HTMLRender()),
-    TEAMCITY(TeamCityStatisticsRender()),
-    STATISTICS(StatisticsRender())
+enum class RenderType(val createRender: () -> Render) {
+    TEXT(::TextRender),
+    HTML(::HTMLRender),
+    TEAMCITY(::TeamCityStatisticsRender),
+    STATISTICS(::StatisticsRender)
 }
 
 // Base class for printing report in different formats.

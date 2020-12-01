@@ -169,7 +169,7 @@ fun main(args: Array<String>) {
 
     var outputFile = output
     renders.forEach {
-        it.render.print(summaryReport, useShortForm, outputFile)
+        it.createRender().print(summaryReport, useShortForm, outputFile)
         outputFile = null
     }
 }
