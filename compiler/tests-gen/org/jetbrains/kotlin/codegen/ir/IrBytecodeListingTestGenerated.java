@@ -99,6 +99,16 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/jvmOverloadsAndParametersAnnotations.kt");
     }
 
+    @TestMetadata("jvmOverloadsExternal.kt")
+    public void testJvmOverloadsExternal() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/jvmOverloadsExternal.kt");
+    }
+
+    @TestMetadata("jvmStaticExternal.kt")
+    public void testJvmStaticExternal() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/jvmStaticExternal.kt");
+    }
+
     @TestMetadata("jvmStaticWithDefaultParameters.kt")
     public void testJvmStaticWithDefaultParameters() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/jvmStaticWithDefaultParameters.kt");
@@ -122,6 +132,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     @TestMetadata("kt43440.kt")
     public void testKt43440() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/kt43440.kt");
+    }
+
+    @TestMetadata("kt43519.kt")
+    public void testKt43519() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/kt43519.kt");
     }
 
     @TestMetadata("localFunctionInInitBlock.kt")
