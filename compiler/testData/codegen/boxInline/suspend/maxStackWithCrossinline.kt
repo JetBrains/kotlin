@@ -3,8 +3,6 @@
 // NO_CHECK_LAMBDA_INLINING
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
-
 fun handle(f: suspend () -> Unit) {}
 
 open class Foo {
@@ -26,8 +24,6 @@ class Bar : Foo() {
 class Baz(unit: Unit)
 
 // FILE: inlineSite.kt
-// COMMON_COROUTINES_TEST
-
 fun box(): String {
     Bar().bar {}
     return "OK"
