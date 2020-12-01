@@ -1,7 +1,7 @@
 package test;
 
 import java.lang.annotation.*;
-public class TypeAnnotations {
+public class Basic {
     @Target(ElementType.TYPE_USE)
     @interface A {
         String value() default "";

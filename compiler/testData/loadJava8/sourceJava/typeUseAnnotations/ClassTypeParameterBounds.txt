@@ -1,0 +1,56 @@
+package test
+
+public open class ClassTypeParameterBounds {
+    public constructor ClassTypeParameterBounds()
+
+    public/*package*/ interface G1</*0*/ T : @test.A kotlin.Any!> {
+    }
+
+    public/*package*/ interface G10</*0*/ _A : test.ClassTypeParameterBounds.I4<@test.A kotlin.IntArray!>!> where _A : test.ClassTypeParameterBounds.I2<out @test.A kotlin.IntArray!>!, _A : @test.A test.ClassTypeParameterBounds.I3<out @test.A kotlin.IntArray!>! {
+    }
+
+    public/*package*/ interface G11</*0*/ _A : test.ClassTypeParameterBounds.I4<(@test.A kotlin.Array<kotlin.Array<(out) kotlin.Array<(out) kotlin.Int!>!>!>..@test.A kotlin.Array<out kotlin.Array<(out) kotlin.Array<(out) kotlin.Int!>!>!>?)>!> where _A : test.ClassTypeParameterBounds.I2<out kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) (@test.A kotlin.Array<@test.A kotlin.Int!>..@test.A kotlin.Array<out @test.A kotlin.Int!>?)>!>!>!>!, _A : @test.A test.ClassTypeParameterBounds.I3<out (@test.A kotlin.Array<kotlin.Array<(out) kotlin.Int!>!>..@test.A kotlin.Array<out kotlin.Array<(out) kotlin.Int!>!>?)>! {
+    }
+
+    public/*package*/ interface G12</*0*/ _A : test.ClassTypeParameterBounds.I4<kotlin.Array<(out) @test.A kotlin.IntArray!>!>!> where _A : test.ClassTypeParameterBounds.I2<out (@test.A kotlin.Array<kotlin.Array<(out) kotlin.IntArray!>!>..@test.A kotlin.Array<out kotlin.Array<(out) kotlin.IntArray!>!>?)>!, _A : @test.A test.ClassTypeParameterBounds.I3<out kotlin.Array<(out) (@test.A kotlin.Array<kotlin.IntArray!>..@test.A kotlin.Array<out kotlin.IntArray!>?)>!>! {
+    }
+
+    public/*package*/ open inner class G2</*0*/ _A : kotlin.Any!, /*1*/ B : @test.A kotlin.Int!> {
+        public/*package*/ constructor G2</*0*/ _A : kotlin.Any!, /*1*/ B : @test.A kotlin.Int!>()
+    }
+
+    public/*package*/ interface G3</*0*/ _A : kotlin.Any!, /*1*/ B : kotlin.Any!> where B : @test.A test.ClassTypeParameterBounds.I1! {
+    }
+
+    public/*package*/ open inner class G4</*0*/ _A : @test.A B!, /*1*/ B : kotlin.Any!> {
+        public/*package*/ constructor G4</*0*/ _A : @test.A B!, /*1*/ B : kotlin.Any!>()
+    }
+
+    public/*package*/ interface G5</*0*/ _A : kotlin.Any!, /*1*/ B : @test.A _A!> {
+    }
+
+    public/*package*/ open inner class G6</*0*/ _A : @test.A test.ClassTypeParameterBounds.I1!, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : @test.A E!, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!> {
+        public/*package*/ constructor G6</*0*/ _A : @test.A test.ClassTypeParameterBounds.I1!, /*1*/ B : kotlin.Any!, /*2*/ C : kotlin.Any!, /*3*/ D : @test.A E!, /*4*/ E : kotlin.Any!, /*5*/ F : kotlin.Any!>()
+    }
+
+    public/*package*/ interface G7</*0*/ _A : kotlin.Any!> where _A : test.ClassTypeParameterBounds.I2<@test.A kotlin.Int!>!, _A : @test.A test.ClassTypeParameterBounds.I3<kotlin.String!>! {
+    }
+
+    public/*package*/ interface G8</*0*/ _A : kotlin.Any!> where _A : test.ClassTypeParameterBounds.I2<in @test.A kotlin.Int!>!, _A : @test.A test.ClassTypeParameterBounds.I3<out kotlin.String!>! {
+    }
+
+    public/*package*/ interface G9</*0*/ _A : test.ClassTypeParameterBounds.I4<(@test.A kotlin.Array<kotlin.Int!>..@test.A kotlin.Array<out kotlin.Int!>?)>!> where _A : test.ClassTypeParameterBounds.I2<out (@test.A kotlin.Array<@test.A kotlin.Int!>..@test.A kotlin.Array<out @test.A kotlin.Int!>?)>!, _A : @test.A test.ClassTypeParameterBounds.I3<out (@test.A kotlin.Array<kotlin.Int!>..@test.A kotlin.Array<out kotlin.Int!>?)>! {
+    }
+
+    public/*package*/ interface I1 {
+    }
+
+    public/*package*/ interface I2</*0*/ T : kotlin.Any!> {
+    }
+
+    public/*package*/ interface I3</*0*/ T : kotlin.Any!> {
+    }
+
+    public/*package*/ interface I4</*0*/ T : kotlin.Any!> {
+    }
+}

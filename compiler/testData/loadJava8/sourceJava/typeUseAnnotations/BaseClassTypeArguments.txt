@@ -1,0 +1,17 @@
+package test
+
+public open class BaseClassTypeArguments</*0*/ B : kotlin.Any!> : test.A3<kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) @test.A B!>!>!>!>!>!, test.I1<test.I1<kotlin.Array<(out) @test.A kotlin.IntArray!>!>!>!, test.A2<B!, (@test.A kotlin.Array<kotlin.Array<(out) kotlin.IntArray!>!>..@test.A kotlin.Array<out kotlin.Array<(out) kotlin.IntArray!>!>?)>!>, test.I1<kotlin.Array<(out) kotlin.Array<(out) (@test.A kotlin.Array<@test.A kotlin.Int!>..@test.A kotlin.Array<out @test.A kotlin.Int!>?)>!>!>, test.I2<@test.A B!, B!>, test.I3<kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) @test.A B!>!>!>!>!>!, B!, @test.A B!> {
+    public constructor BaseClassTypeArguments</*0*/ B : kotlin.Any!>()
+
+    public/*package*/ open class BaseClassTypeArguments2</*0*/ B : kotlin.Any!> : test.A3<kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) @test.A B!>!>!>!>!>!, test.I1<test.I1<kotlin.Array<(out) @test.A kotlin.IntArray!>!>!>!, test.A2<B!, (@test.A kotlin.Array<kotlin.Array<(out) kotlin.IntArray!>!>..@test.A kotlin.Array<out kotlin.Array<(out) kotlin.IntArray!>!>?)>!> {
+        public/*package*/ constructor BaseClassTypeArguments2</*0*/ B : kotlin.Any!>()
+    }
+
+    public/*package*/ open inner class ImplementedInterfacesTypeArguments</*0*/ B : kotlin.Any!> /*captured type parameters: /*1*/ B : kotlin.Any!*/ : test.I1<test.I2<test.I1<kotlin.Array<(out) kotlin.Array<(out) (@test.A kotlin.Array<@test.A kotlin.Int!>..@test.A kotlin.Array<out @test.A kotlin.Int!>?)>!>!>!, test.I1<(@test.A kotlin.Array<kotlin.IntArray!>..@test.A kotlin.Array<out kotlin.IntArray!>?)>!>!>, test.I2<@test.A B!, B!>, test.I3<kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) @test.A B!>!>!>!>!>!, test.I1<test.I1<kotlin.Array<(out) @test.A kotlin.IntArray!>!>!>!, test.I2<B!, (@test.A kotlin.Array<kotlin.Array<(out) kotlin.IntArray!>!>..@test.A kotlin.Array<out kotlin.Array<(out) kotlin.IntArray!>!>?)>!> {
+        public/*package*/ constructor ImplementedInterfacesTypeArguments</*0*/ B : kotlin.Any!>()
+
+        public open inner class BaseClassTypeArguments1</*0*/ B : kotlin.Any!> /*captured type parameters: /*1*/ B : kotlin.Any!, /*2*/ B : kotlin.Any!*/ : test.A3<kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) kotlin.Array<(out) @test.A B!>!>!>!>!>!, test.I1<test.I1<kotlin.Array<(out) @test.A kotlin.IntArray!>!>!>!, test.A2<B!, (@test.A kotlin.Array<kotlin.Array<(out) kotlin.IntArray!>!>..@test.A kotlin.Array<out kotlin.Array<(out) kotlin.IntArray!>!>?)>!> {
+            public constructor BaseClassTypeArguments1</*0*/ B : kotlin.Any!>()
+        }
+    }
+}

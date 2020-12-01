@@ -2,15 +2,21 @@
 package test;
 
 import java.lang.annotation.*;
-public class TypeParameterAnnotations {
+public class Basic {
     @Target(ElementType.TYPE_PARAMETER)
     public @interface A {
         String value() default "";
     }
 
-    // Currently annotations on type parameters and arguments are not loaded from compiled code because of IDEA-153093
-    // Once it will be fixed check if KT-11454 is ready to be resolved
     public interface G<@A T> {
         <@A("abc") R> void foo(R r);
+    }
+
+    public interface G1<T, E extends T, @A X> {
+        <R, @A("abc") _A extends R> void foo(R r);
+    }
+
+    <R, @A("abc") _A extends R, @A("abc") K> void foo(R r) {
+
     }
 }

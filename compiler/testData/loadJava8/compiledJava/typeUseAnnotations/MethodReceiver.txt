@@ -1,0 +1,16 @@
+package test
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public/*package*/ final annotation class A : kotlin.Annotation {
+    public/*package*/ constructor A(/*0*/ value: kotlin.String = ...)
+    public final val value: kotlin.String
+}
+
+public open class MethodReceiver</*0*/ T : kotlin.Any!> {
+    public constructor MethodReceiver</*0*/ T : kotlin.Any!>()
+    public open fun f1(): kotlin.Unit
+
+    public/*package*/ open inner class MethodReceiver3</*0*/ T : kotlin.Any!, /*1*/ K : kotlin.Any!, /*2*/ L : kotlin.Any!> /*captured type parameters: /*3*/ T : kotlin.Any!*/ {
+        public/*package*/ constructor MethodReceiver3</*0*/ T : kotlin.Any!, /*1*/ K : kotlin.Any!, /*2*/ L : kotlin.Any!>()
+        public open fun f1(): kotlin.Unit
+    }
+}
