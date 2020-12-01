@@ -65,7 +65,7 @@ class FragmentDependenciesDiscovery(
     private val project: Project,
     private val expansion: InternalDependencyExpansion,
     private val moduleResolver: ModuleDependencyResolver,
-    private val fragmentResolver: KotlinModuleFragmentResolver
+    private val fragmentsResolver: KotlinModuleFragmentsResolver
 ) : DependencyDiscovery {
     override fun discoverDependencies(fragment: KotlinModuleFragment): Iterable<ModuleDependency> {
         require(fragment.containingModule.representsProject(project))
@@ -93,11 +93,13 @@ class FragmentDependenciesDiscovery(
             val module = moduleResolver.resolveDependency(component.toModuleDependency())
                 ?: buildStubModule(component, component.variants.singleOrNull()?.displayName ?: "default")
 
-            val visibleFragments = fragmentResolver.getChosenFragments(fragment, module)
-            val newTransitiveDeps =
-                visibleFragments.chosenFragments.flatMap { it.declaredModuleDependencies }.mapNotNull { dependency ->
-                    componentByModuleDependency[dependency].takeIf { component -> component !in visited }
-                }
+            val newTransitiveDeps = when (val fragmentsResolution = fragmentsResolver.getChosenFragments(fragment, module)) {
+                is FragmentResolution.ChosenFragments ->
+                    fragmentsResolution.visibleFragments.flatMap { it.declaredModuleDependencies }.mapNotNull { dependency ->
+                        componentByModuleDependency[dependency].takeIf { component -> component !in visited }
+                    }
+                else -> emptyList()
+            }
 
             resolvedComponentQueue.addAll(newTransitiveDeps)
         }

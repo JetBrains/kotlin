@@ -60,6 +60,7 @@ sealed class VariantResolution(
         val chosenVariant: KotlinModuleVariant
     ) : VariantResolution(requestingVariant, dependencyModule)
 
+    // TODO: think about restricting calls with the type system to avoid partial functions in resolvers?
     class Unknown(requestingVariant: KotlinModuleVariant, dependencyModule: KotlinModule) :
         VariantResolution(requestingVariant, dependencyModule)
 

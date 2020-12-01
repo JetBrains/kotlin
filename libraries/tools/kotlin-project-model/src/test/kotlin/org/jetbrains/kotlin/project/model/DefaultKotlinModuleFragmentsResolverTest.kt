@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.project.model
 
-import org.junit.Assume
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class DefaultKotlinModuleFragmentResolverTest {
+class DefaultKotlinModuleFragmentsResolverTest {
     val moduleFoo = simpleModule("foo")
     val moduleBar = simpleModule("bar")
 
-    val fragmentResolver = DefaultKotlinModuleFragmentResolver(MatchVariantsByExactAttributes())
+    val fragmentResolver = DefaultKotlinModuleFragmentsResolver(MatchVariantsByExactAttributes())
 
     @Test
     fun testFragmentVisibility() {
@@ -30,7 +29,7 @@ class DefaultKotlinModuleFragmentResolverTest {
         moduleBar.fragments.forEach { consumingFragment ->
             val result = fragmentResolver.getChosenFragments(consumingFragment, moduleFoo)
             val expected = expectedVisibleFragments.getValue(consumingFragment.fragmentName.removeSuffix("Main").removeSuffix("Test"))
-            assertEquals(expected, result.chosenFragments.map { it.fragmentName }.toSet())
+            assertEquals(expected, result.visibleFragments.map { it.fragmentName }.toSet())
         }
     }
 
@@ -45,7 +44,7 @@ class DefaultKotlinModuleFragmentResolverTest {
         assumeTrue(MatchVariantsByExactAttributes().getChosenVariant(dependingModule.variant("linuxMain"), moduleFoo) is NoVariantMatch)
 
         val (commonMainResult, jsAndLinuxResult) = listOf("commonMain", "jsAndLinuxMain").map {
-            fragmentResolver.getChosenFragments(dependingModule.fragment(it), moduleFoo).chosenFragments.map { it.fragmentName }.toSet()
+            fragmentResolver.getChosenFragments(dependingModule.fragment(it), moduleFoo).visibleFragments.map { it.fragmentName }.toSet()
         }
 
         assertEquals(setOf("commonMain", "jvmAndJsMain"), commonMainResult)
