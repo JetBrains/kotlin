@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.incremental.storage
 
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.junit.After
-import org.junit.Assert
 import org.junit.Assert.assertArrayEquals
 import org.junit.Before
 import org.junit.Test
