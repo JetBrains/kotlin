@@ -152,8 +152,10 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
     private fun IrType.erasePropertyAnnotationsExtensionReceiverType(): IrType {
         // Use raw type of extension receiver to avoid generic signature,
         // which should not be generated for '...$annotations' method.
-        val classifier = classifierOrFail
-        return if (this is IrSimpleType && isArray()) {
+        if (this !is IrSimpleType) {
+            throw AssertionError("Unexpected property receiver type: $this")
+        }
+        val erasedType = if (isArray()) {
             when (val arg0 = arguments[0]) {
                 is IrStarProjection -> {
                     // 'Array<*>' becomes 'Array<*>'
@@ -171,6 +173,9 @@ class JvmPropertiesLowering(private val backendContext: JvmBackendContext) : IrE
         } else {
             classifier.typeWith()
         }
+        return erasedType
+            .withHasQuestionMark(this.hasQuestionMark)
+            .addAnnotations(this.annotations)
     }
 
     private fun computeSyntheticMethodName(property: IrProperty): String {
