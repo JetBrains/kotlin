@@ -141,6 +141,11 @@ public class ReferenceResolveTestGenerated extends AbstractReferenceResolveTest 
         runTest("testData/resolve/references/EnumValues.kt");
     }
 
+    @TestMetadata("ExternalCompanionObject.kt")
+    public void testExternalCompanionObject() throws Exception {
+        runTest("idea/testData/resolve/references/ExternalCompanionObject.kt");
+    }
+
     @TestMetadata("FakeJavaLang1.kt")
     public void testFakeJavaLang1() throws Exception {
         runTest("testData/resolve/references/FakeJavaLang1.kt");
