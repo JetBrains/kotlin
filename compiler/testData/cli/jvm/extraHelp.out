@@ -1,9 +1,10 @@
 Usage: kotlinc-jvm <options> <source files>
 where advanced options include:
   -Xabi-stability={stable|unstable}
-                             When using unstable compiler features such as FIR or JVM IR, use 'stable' to mark generated class files as stable
+                             When using unstable compiler features such as FIR, use 'stable' to mark generated class files as stable
                              to prevent diagnostics from stable compilers at the call site.
-
+                             When using the JVM IR backend, conversely, use 'unstable' to mark generated class files as unstable
+                             to force diagnostics to be reported.
   -Xadd-modules=<module[,]>  Root modules to resolve in addition to the initial modules,
                              or all modules on the module path if <module> is ALL-MODULE-PATH
   -Xallow-no-source-files    Allow no source files

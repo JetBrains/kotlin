@@ -63,7 +63,7 @@ object MissingDependencyClassChecker : CallChecker {
                 return FIR_COMPILED_CLASS.on(reportOn, source.presentableString)
             }
             if (source.abiStability == DeserializedContainerAbiStability.IR_UNSTABLE) {
-                return IR_COMPILED_CLASS.on(reportOn, source.presentableString)
+                return IR_WITH_UNSTABLE_ABI_COMPILED_CLASS.on(reportOn, source.presentableString)
             }
         }
 
