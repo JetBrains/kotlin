@@ -95,15 +95,11 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         }
     }
 
-    private fun FirPropertySymbol.getDestructuringChildrenCount(): Int? = when (fir.source) {
-        is FirPsiSourceElement<*> -> fir.psi?.children?.size?.minus(1) // -1 cuz we don't need expression node after equals operator
-        is FirLightSourceElement -> {
-            val source = fir.source as FirLightSourceElement
-            val tree = (fir.source as FirLightSourceElement).treeStructure
-            val children = source.lighterASTNode.getChildren(tree)
-            children.filter { it?.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY }.size
+    private fun FirPropertySymbol.getDestructuringChildrenCount(): Int? {
+        val source = fir.source ?: return null
+        return source.lighterASTNode.getChildren(source.treeStructure).count {
+            it?.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY
         }
-        else -> null
     }
 
     private val FirPropertySymbol.isDestructuring
