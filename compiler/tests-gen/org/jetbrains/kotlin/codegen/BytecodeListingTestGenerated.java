@@ -982,6 +982,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassWithManyKindsOfMembers.kt");
         }
 
+        @TestMetadata("javaDefaultInterfaceMember.kt")
+        public void testJavaDefaultInterfaceMember() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/javaDefaultInterfaceMember.kt");
+        }
+
         @TestMetadata("jvmName.kt")
         public void testJvmName() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/jvmName.kt");
@@ -1122,6 +1127,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             @TestMetadata("set.kt")
             public void testSet() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/set.kt");
+            }
+
+            @TestMetadata("UIntArrayWithFullJdk.kt")
+            public void testUIntArrayWithFullJdk() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection/UIntArrayWithFullJdk.kt");
             }
         }
 
