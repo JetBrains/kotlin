@@ -242,7 +242,7 @@ KtFirFunctionSymbol:
   visibility: PUBLIC
 
 KtFirFunctionSymbol:
-  annotations: [java/lang/Deprecated()]
+  annotations: [kotlin/Deprecated(message = Deprecated in Java)]
   callableIdIfNonLocal: java.lang.String.getBytes
   isExtension: false
   isExternal: false
@@ -1166,7 +1166,7 @@ KtFirConstructorSymbol:
   visibility: PUBLIC
 
 KtFirConstructorSymbol:
-  annotations: [java/lang/Deprecated()]
+  annotations: [kotlin/Deprecated(message = Deprecated in Java)]
   containingClassIdIfNonLocal: java/lang/String
   isPrimary: false
   origin: JAVA
@@ -1176,7 +1176,7 @@ KtFirConstructorSymbol:
   visibility: PUBLIC
 
 KtFirConstructorSymbol:
-  annotations: [java/lang/Deprecated()]
+  annotations: [kotlin/Deprecated(message = Deprecated in Java)]
   containingClassIdIfNonLocal: java/lang/String
   isPrimary: false
   origin: JAVA
@@ -1276,7 +1276,7 @@ KtFirConstructorSymbol:
   visibility: UNKNOWN
 
 KtFirConstructorSymbol:
-  annotations: [java/lang/Deprecated()]
+  annotations: [kotlin/Deprecated(message = Deprecated in Java)]
   containingClassIdIfNonLocal: java/lang/String
   isPrimary: false
   origin: JAVA

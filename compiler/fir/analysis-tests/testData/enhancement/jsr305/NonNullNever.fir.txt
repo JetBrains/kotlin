@@ -1,4 +1,4 @@
-@R|java/lang/annotation/Documented|() @R|javax/annotation/meta/TypeQualifierNickname|() @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.NEVER|()) @R|java/lang/annotation/Retention|(R|java/lang/annotation/RetentionPolicy.RUNTIME|()) public abstract annotation class MyNullable : R|kotlin/Annotation| {
+@R|kotlin/annotation/MustBeDocumented|() @R|javax/annotation/meta/TypeQualifierNickname|() @R|javax/annotation/Nonnull|(R|javax/annotation/meta/When.NEVER|()) @R|kotlin/annotation/Retention|(R|kotlin/annotation/AnnotationRetention.RUNTIME|()) public abstract annotation class MyNullable : R|kotlin/Annotation| {
     public constructor(): R|MyNullable|
 
 }
