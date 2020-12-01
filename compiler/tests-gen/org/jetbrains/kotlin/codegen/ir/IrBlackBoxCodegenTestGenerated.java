@@ -9838,6 +9838,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/defaultArguments/function/covariantOverrideGeneric.kt");
             }
 
+            @TestMetadata("defaultLambdaInline.kt")
+            public void testDefaultLambdaInline() throws Exception {
+                runTest("compiler/testData/codegen/box/defaultArguments/function/defaultLambdaInline.kt");
+            }
+
             @TestMetadata("extensionFunctionManyArgs.kt")
             public void testExtensionFunctionManyArgs() throws Exception {
                 runTest("compiler/testData/codegen/box/defaultArguments/function/extensionFunctionManyArgs.kt");
