@@ -22,8 +22,6 @@ import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS
-import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_ENABLED_PROPERTY
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.idea.test.runAll
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
@@ -77,18 +75,10 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
             assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/main.kt", "src/Foo.kt")
         }
 
-        val daemonHome = FileUtil.createTempDirectory("daemon-home", "testJpsDaemonIC")
-        try {
-            withSystemProperty(COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS, daemonHome.absolutePath) {
-                withSystemProperty(COMPILE_DAEMON_ENABLED_PROPERTY, "true") {
-                    withSystemProperty(JpsKotlinCompilerRunner.FAIL_ON_FALLBACK_PROPERTY, "true") {
-                        testImpl()
-                    }
-                }
+        withDaemon {
+            withSystemProperty(JpsKotlinCompilerRunner.FAIL_ON_FALLBACK_PROPERTY, "true") {
+                testImpl()
             }
-        }
-        finally {
-            daemonHome.deleteRecursively()
         }
     }
 
