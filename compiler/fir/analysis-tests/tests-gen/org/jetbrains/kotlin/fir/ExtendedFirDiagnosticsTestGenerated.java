@@ -329,6 +329,11 @@ public class ExtendedFirDiagnosticsTestGenerated extends AbstractExtendedFirDiag
             runTest("compiler/fir/analysis-tests/testData/extendedCheckers/unused/classProperty.kt");
         }
 
+        @TestMetadata("invoke.kt")
+        public void testInvoke() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/extendedCheckers/unused/invoke.kt");
+        }
+
         @TestMetadata("lambda.kt")
         public void testLambda() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/extendedCheckers/unused/lambda.kt");
