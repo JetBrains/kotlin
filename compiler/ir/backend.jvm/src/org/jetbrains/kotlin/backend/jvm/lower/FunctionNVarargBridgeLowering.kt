@@ -57,15 +57,20 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             at(expression)
             irCall(functionNInvokeFun).apply {
                 dispatchReceiver = irImplicitCast(
-                    expression.dispatchReceiver!!,
+                    expression.dispatchReceiver!!.transformVoid(),
                     this@FunctionNVarargBridgeLowering.context.ir.symbols.functionN.defaultType
                 )
                 putValueArgument(0, irArray(irSymbols.array.typeWith(context.irBuiltIns.anyNType)) {
-                    (0 until expression.valueArgumentsCount).forEach { +expression.getValueArgument(it)!! }
+                    (0 until expression.valueArgumentsCount).forEach {
+                        +expression.getValueArgument(it)!!.transformVoid()
+                    }
                 })
             }
         }
     }
+
+    private fun IrExpression.transformVoid() =
+        transform(this@FunctionNVarargBridgeLowering, null)
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         val bigArityFunctionSuperTypes = declaration.superTypes.filterIsInstance<IrSimpleType>().filter {
