@@ -274,7 +274,7 @@ private class ElementAnnotator(
 
     private fun isUnstableAbiClassDiagnosticForModulesWithEnabledUnstableAbi(diagnostic: Diagnostic): Boolean {
         val setting = when (diagnostic.factory) {
-            Errors.IR_COMPILED_CLASS -> K2JVMCompilerArguments::useIR
+            Errors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS -> K2JVMCompilerArguments::useIR
             Errors.FIR_COMPILED_CLASS -> K2JVMCompilerArguments::useFir
             else -> return false
         }
