@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.idea.asJava.*
-import org.jetbrains.kotlin.idea.asJava.fields.FirLightFieldForEnumEntry
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -139,7 +138,7 @@ internal fun FirLightClassBase.createMethods(
                                 containingClass = this@createMethods,
                                 isTopLevel = isTopLevel,
                                 methodIndex = methodIndex++,
-                                argumentsSkipMask = skipMask.clone() as BitSet
+                                argumentsSkipMask = skipMask.copy()
                             )
                         )
                     }
@@ -225,7 +224,7 @@ internal fun FirLightClassBase.createField(
     result.add(
         FirLightFieldForPropertySymbol(
             propertySymbol = declaration,
-            nameGenerator = nameGenerator,
+            fieldName = nameGenerator.generateUniqueFieldName(declaration.name.asString()),
             containingClass = this,
             lightMemberOrigin = null,
             isTopLevel = isTopLevel,
@@ -262,7 +261,7 @@ internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, su
     }
 
     //TODO Add support for kotlin.collections.
-    superTypes
+    superTypes.asSequence()
         .filterIsInstance<KtClassType>()
         .filter { it.needToAddTypeIntoList() }
         .mapNotNull { it.mapSupertype(this, kotlinCollectionAsIs = true) }

@@ -11,7 +11,6 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.LightElement
-import com.intellij.psi.impl.light.LightReferenceListBuilder
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.kotlin.asJava.classes.KotlinSuperTypeListBuilder
@@ -24,11 +23,8 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.asJava.basicIsEquivalentTo
 import org.jetbrains.kotlin.idea.asJava.invalidAccess
 import org.jetbrains.kotlin.idea.asJava.mapSupertype
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassKind
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
@@ -65,7 +61,7 @@ internal class FirLightTypeParameter(
             role = PsiReferenceList.Role.EXTENDS_LIST
         )
 
-        typeParameterSymbol.bounds
+        typeParameterSymbol.upperBounds
             .filterIsInstance<KtClassType>()
             .filter { it.classId != StandardClassIds.Any }
             .mapNotNull { it.mapSupertype(this, kotlinCollectionAsIs = true) }

@@ -79,25 +79,30 @@ internal class FirLightAccessorMethodForSymbol(
         val isOverrideMethod = propertyAccessorSymbol.isOverride || containingPropertySymbol.isOverride
         val isInterfaceMethod = containingClass.isInterface
 
+        val modifiers = mutableSetOf<String>()
+
+        containingPropertySymbol.computeModalityForMethod(
+            isTopLevel = isTopLevel,
+            suppressFinal = isOverrideMethod || isInterfaceMethod,
+            result = modifiers
+        )
+
         val visibility = isOverrideMethod.ifTrue {
             (containingClass as? FirLightClassForSymbol)
                 ?.tryGetEffectiveVisibility(containingPropertySymbol)
                 ?.toPsiVisibility(isTopLevel)
         } ?: propertyAccessorSymbol.computeVisibility(isTopLevel)
+        modifiers.add(visibility)
 
-        val modifiers = containingPropertySymbol.computeModalityForMethod(
-            isTopLevel = isTopLevel,
-            suppressFinal = isOverrideMethod || isInterfaceMethod
-        ) + visibility
+        if (containingPropertySymbol.hasJvmStaticAnnotation(accessorSite)) {
+            modifiers.add(PsiModifier.STATIC)
+        }
+
+        if (isInterfaceMethod) {
+            modifiers.add(PsiModifier.ABSTRACT)
+        }
 
         modifiers
-            .add(
-                what = PsiModifier.STATIC,
-                `if` = _annotations.any { it.qualifiedName == "kotlin.jvm.JvmStatic" }
-            ).add(
-                what = PsiModifier.ABSTRACT,
-                `if` = isInterfaceMethod
-            )
     }
 
     private val _modifierList: PsiModifierList by lazyPub {

@@ -30,7 +30,7 @@ internal class KtFirTypeParameterSymbol(
 
     override val name: Name get() = firRef.withFir { it.name }
 
-    override val bounds: List<KtType> by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
+    override val upperBounds: List<KtType> by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
         fir.bounds.map { type -> builder.buildKtType(type) }
     }
 
