@@ -41,7 +41,7 @@ fun KaptContext.doAnnotationProcessing(
 
     val compilerAfterAP: JavaCompiler
     try {
-        if (javaSourceFiles.isEmpty() && aggregatedTypes.isEmpty()) {
+        if (javaSourceFiles.isEmpty() && aggregatedTypes.isEmpty() && additionalSources.isEmpty()) {
             if (logger.isVerbose) {
                 logger.info("Skipping annotation processing as all sources are up-to-date.")
             }
