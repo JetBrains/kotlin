@@ -19568,18 +19568,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
-            @TestMetadata("explicitFlexibleNoPackage.kt")
-            public void testExplicitFlexibleNoPackage() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/platformTypes/explicitFlexibleNoPackage.kt");
-            }
-
-            @Test
-            @TestMetadata("explicitFlexibleWithPackage.kt")
-            public void testExplicitFlexibleWithPackage() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/platformTypes/explicitFlexibleWithPackage.kt");
-            }
-
-            @Test
             @TestMetadata("getParentOfType.kt")
             public void testGetParentOfType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/platformTypes/getParentOfType.kt");
@@ -19655,12 +19643,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             @TestMetadata("samConstructor.kt")
             public void testSamConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/platformTypes/samConstructor.kt");
-            }
-
-            @Test
-            @TestMetadata("supertypeArgumentsExplicit.kt")
-            public void testSupertypeArgumentsExplicit() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/platformTypes/supertypeArgumentsExplicit.kt");
             }
 
             @Test
@@ -19782,22 +19764,6 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 @TestMetadata("wildcards.kt")
                 public void testWildcards() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/platformTypes/genericVarianceViolation/wildcards.kt");
-                }
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/diagnostics/tests/platformTypes/intersection")
-            @TestDataPath("$PROJECT_ROOT")
-            public class Intersection extends AbstractFirDiagnosticTest {
-                @Test
-                public void testAllFilesPresentInIntersection() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/platformTypes/intersection"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-                }
-
-                @Test
-                @TestMetadata("map.kt")
-                public void testMap() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/platformTypes/intersection/map.kt");
                 }
             }
 
