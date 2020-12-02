@@ -677,6 +677,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/coroutines/privateSuspendFun.kt");
         }
 
+        @TestMetadata("suspendImpl.kt")
+        public void testSuspendImpl() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/coroutines/suspendImpl.kt");
+        }
+
         @TestMetadata("suspendReifiedFun.kt")
         public void testSuspendReifiedFun_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/bytecodeListing/coroutines/suspendReifiedFun.kt", "kotlin.coroutines");

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
 import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -208,10 +209,8 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
         }
     }
 
-    private fun Name.toSuspendImplementationName() = when {
-        isSpecial -> Name.special(asString() + SUSPEND_IMPL_NAME_SUFFIX)
-        else -> Name.identifier(asString() + SUSPEND_IMPL_NAME_SUFFIX)
-    }
+    private fun Name.toSuspendImplementationName(): Name =
+        Name.guessByFirstCharacter(asString() + SUSPEND_IMPL_NAME_SUFFIX)
 
     private fun createStaticSuspendImpl(irFunction: IrSimpleFunction): IrSimpleFunction {
         // Create static suspend impl method.
@@ -220,6 +219,8 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
             irFunction.name.toSuspendImplementationName(),
             irFunction,
             origin = JvmLoweredDeclarationOrigin.SUSPEND_IMPL_STATIC_FUNCTION,
+            modality = Modality.OPEN,
+            visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
             isFakeOverride = false,
             copyMetadata = false
         )
