@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addDispatchReceiver
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
@@ -75,7 +75,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
             }
         }
 
-        irClass.findOrCreate(indirectCollectionSubClass, { it.isNonGenericToArray(context) }) {
+        irClass.findOrCreate(indirectCollectionSubClass, IrSimpleFunction::isNonGenericToArray) {
             irClass.addFunction {
                 name = Name.identifier("toArray")
                 origin = JvmLoweredDeclarationOrigin.TO_ARRAY
@@ -132,7 +132,12 @@ internal fun IrSimpleFunction.isGenericToArray(context: JvmBackendContext): Bool
             returnType.isArrayOrNullableArrayOf(context, typeParameters[0].symbol) &&
             valueParameters[0].type.isArrayOrNullableArrayOf(context, typeParameters[0].symbol)
 
-// Match `fun toArray(): Array<Any?>`
-internal fun IrSimpleFunction.isNonGenericToArray(context: JvmBackendContext): Boolean =
+// Match `fun toArray(): Array<...>`.
+// It would be more correct to check that the return type is erased to `Object[]`, however the old backend doesn't do that
+// (see `FunctionDescriptor.isNonGenericToArray` and KT-43111).
+internal fun IrSimpleFunction.isNonGenericToArray(): Boolean =
     name.asString() == "toArray" && typeParameters.isEmpty() && valueParameters.isEmpty() &&
-            extensionReceiverParameter == null && returnType.isArrayOrNullableArrayOf(context, context.irBuiltIns.anyClass)
+            extensionReceiverParameter == null && returnType.isArrayOrNullableArray()
+
+private fun IrType.isArrayOrNullableArray(): Boolean =
+    this is IrSimpleType && (isArray() || isNullableArray())

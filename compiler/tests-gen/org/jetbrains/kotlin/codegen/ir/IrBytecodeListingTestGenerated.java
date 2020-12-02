@@ -174,11 +174,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/noRemoveAtInReadOnly.kt");
     }
 
-    @TestMetadata("noToArrayInJava.kt")
-    public void testNoToArrayInJava() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/noToArrayInJava.kt");
-    }
-
     @TestMetadata("privateCompanionFields.kt")
     public void testPrivateCompanionFields() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/privateCompanionFields.kt");
@@ -614,6 +609,29 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             @TestMetadata("stringGenericMutableMap.kt")
             public void testStringGenericMutableMap() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/abstractStubSignatures/stringGenericMutableMap.kt");
+            }
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/collectionStubs/toArray")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class ToArray extends AbstractIrBytecodeListingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInToArray() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/collectionStubs/toArray"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("customNonGenericToArray.kt")
+            public void testCustomNonGenericToArray() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/toArray/customNonGenericToArray.kt");
+            }
+
+            @TestMetadata("noToArrayInJava.kt")
+            public void testNoToArrayInJava() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/toArray/noToArrayInJava.kt");
             }
         }
     }
