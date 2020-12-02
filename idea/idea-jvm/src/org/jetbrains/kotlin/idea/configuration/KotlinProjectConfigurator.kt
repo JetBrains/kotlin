@@ -70,8 +70,6 @@ interface KotlinProjectConfigurator {
         forTests: Boolean
     )
 
-    fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State)
-
     fun changeGeneralFeatureConfiguration(
         module: Module,
         feature: LanguageFeature,
