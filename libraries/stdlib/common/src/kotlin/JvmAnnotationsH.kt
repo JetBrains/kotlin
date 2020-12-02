@@ -119,6 +119,7 @@ public expect annotation class JvmInline()
 @Target(AnnotationTarget.CLASS)
 @MustBeDocumented
 @OptionalExpectation
+@SinceKotlin("1.5")
 public expect annotation class JvmRecord
 
 /**
@@ -166,4 +167,3 @@ public expect annotation class Synchronized()
 @SinceKotlin("1.2")
 @OptionalExpectation
 internal expect annotation class JvmPackageName(val name: String)
-
