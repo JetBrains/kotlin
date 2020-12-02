@@ -1,4 +1,9 @@
 @kotlin.Metadata
+public interface KBar2 {
+    // source: 'javaDefaultInterfaceMember.kt'
+}
+
+@kotlin.Metadata
 public interface KFoo2 {
     // source: 'javaDefaultInterfaceMember.kt'
 }
@@ -25,11 +30,13 @@ public interface KFooUnrelated {
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
-public final class Test1 {
+public final class TestBar1 {
     // source: 'javaDefaultInterfaceMember.kt'
     private final field x: int
     private synthetic method <init>(p0: int): void
-    public synthetic final static method box-impl(p0: int): Test1
+    public method bar(): void
+    public static method bar-impl(p0: int): void
+    public synthetic final static method box-impl(p0: int): TestBar1
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: java.lang.Object): boolean
@@ -44,11 +51,13 @@ public final class Test1 {
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
-public final class Test2 {
+public final class TestBar2 {
     // source: 'javaDefaultInterfaceMember.kt'
     private final field x: int
     private synthetic method <init>(p0: int): void
-    public synthetic final static method box-impl(p0: int): Test2
+    public method bar(): void
+    public static method bar-impl(p0: int): void
+    public synthetic final static method box-impl(p0: int): TestBar2
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: java.lang.Object): boolean
@@ -63,11 +72,49 @@ public final class Test2 {
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
-public final class Test3 {
+public final class TestFoo1 {
     // source: 'javaDefaultInterfaceMember.kt'
     private final field x: int
     private synthetic method <init>(p0: int): void
-    public synthetic final static method box-impl(p0: int): Test3
+    public synthetic final static method box-impl(p0: int): TestFoo1
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class TestFoo2 {
+    // source: 'javaDefaultInterfaceMember.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): TestFoo2
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class TestFoo3 {
+    // source: 'javaDefaultInterfaceMember.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): TestFoo3
     public static method constructor-impl(p0: int): int
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: java.lang.Object): boolean

@@ -977,11 +977,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineClassWithManyKindsOfMembers.kt");
         }
 
-        @TestMetadata("javaDefaultInterfaceMember.kt")
-        public void testJavaDefaultInterfaceMember() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/javaDefaultInterfaceMember.kt");
-        }
-
         @TestMetadata("jvmName.kt")
         public void testJvmName() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/jvmName.kt");
@@ -1040,6 +1035,34 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("shapeOfInlineClassWithPrimitive.kt")
         public void testShapeOfInlineClassWithPrimitive() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/shapeOfInlineClassWithPrimitive.kt");
+        }
+
+        @TestMetadata("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class DefaultInterfaceMembers extends AbstractIrBytecodeListingTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDefaultInterfaceMembers() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @TestMetadata("javaDefaultInterfaceMember.kt")
+            public void testJavaDefaultInterfaceMember() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers/javaDefaultInterfaceMember.kt");
+            }
+
+            @TestMetadata("jvmDefaultAll.kt")
+            public void testJvmDefaultAll() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers/jvmDefaultAll.kt");
+            }
+
+            @TestMetadata("jvmDefaultEnable.kt")
+            public void testJvmDefaultEnable() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/defaultInterfaceMembers/jvmDefaultEnable.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/bytecodeListing/inlineClasses/inlineCollection")

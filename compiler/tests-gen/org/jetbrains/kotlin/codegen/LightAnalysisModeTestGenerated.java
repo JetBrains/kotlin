@@ -16564,6 +16564,59 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             }
         }
 
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Jvm8DefaultInterfaceMethods extends AbstractLightAnalysisModeTest {
+            @TestMetadata("javaDefaultMethod.kt")
+            public void ignoreJavaDefaultMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/javaDefaultMethod.kt");
+            }
+
+            @TestMetadata("javaDefaultMethodOverriddenByKotlin.kt")
+            public void ignoreJavaDefaultMethodOverriddenByKotlin() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/javaDefaultMethodOverriddenByKotlin.kt");
+            }
+
+            @TestMetadata("jvmDefaultAll.kt")
+            public void ignoreJvmDefaultAll() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAll.kt");
+            }
+
+            @TestMetadata("jvmDefaultAllPrimaryProperty.kt")
+            public void ignoreJvmDefaultAllPrimaryProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllPrimaryProperty.kt");
+            }
+
+            @TestMetadata("jvmDefaultAllProperty.kt")
+            public void ignoreJvmDefaultAllProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllProperty.kt");
+            }
+
+            @TestMetadata("jvmDefaultEnable.kt")
+            public void ignoreJvmDefaultEnable() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultEnable.kt");
+            }
+
+            @TestMetadata("jvmDefaultEnablePrimaryProperty.kt")
+            public void ignoreJvmDefaultEnablePrimaryProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultEnablePrimaryProperty.kt");
+            }
+
+            @TestMetadata("jvmDefaultEnableProperty.kt")
+            public void ignoreJvmDefaultEnableProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultEnableProperty.kt");
+            }
+
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJvm8DefaultInterfaceMethods() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/propertyDelegation")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
