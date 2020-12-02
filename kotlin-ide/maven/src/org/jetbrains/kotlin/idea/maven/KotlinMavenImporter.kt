@@ -190,10 +190,6 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
         arguments.multiPlatform = configuration?.getChild("multiPlatform")?.text?.trim()?.toBoolean() ?: false
         arguments.suppressWarnings = configuration?.getChild("nowarn")?.text?.trim()?.toBoolean() ?: false
 
-        configuration?.getChild("experimentalCoroutines")?.text?.trim()?.let {
-            arguments.coroutinesState = it
-        }
-
         when (arguments) {
             is K2JVMCompilerArguments -> {
                 arguments.classpath = configuration?.getChild("classpath")?.text
@@ -256,7 +252,6 @@ class KotlinMavenImporter : MavenImporter(KOTLIN_PLUGIN_GROUP_ID, KOTLIN_PLUGIN_
 
         kotlinFacet.configureFacet(
             compilerVersion,
-            LanguageFeature.Coroutines.defaultState,
             platform,
             modifiableModelsProvider
         )
