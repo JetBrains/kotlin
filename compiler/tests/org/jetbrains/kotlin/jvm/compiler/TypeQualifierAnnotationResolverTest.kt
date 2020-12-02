@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import java.io.File
 
@@ -88,8 +89,8 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
         val configuration = KotlinTestUtils.newConfiguration(
                 ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
                 listOf(
-                        KotlinTestUtils.getAnnotationsJar(),
-                        MockLibraryUtil.compileJavaFilesLibraryToJar(
+                    KtTestUtil.getAnnotationsJar(),
+                    MockLibraryUtil.compileJavaFilesLibraryToJar(
                                 FOREIGN_ANNOTATIONS_SOURCES_PATH,
                                 "foreign-annotations"
                         )

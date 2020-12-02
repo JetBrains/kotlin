@@ -17,13 +17,13 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.AGPVersion
+import org.jetbrains.kotlin.gradle.util.createTempDir
 import org.jetbrains.kotlin.gradle.util.modify
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.File
-import org.jetbrains.kotlin.gradle.util.createTempDir
 import kotlin.test.assertEquals
 
 private val DEFAULT_GRADLE_VERSION = GradleVersionRequired.AtLeast("5.6.4")
@@ -37,7 +37,7 @@ class BuildCacheRelocationIT : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions =
         super.defaultBuildOptions().copy(
             withBuildCache = true,
-            androidHome = KotlinTestUtils.findAndroidSdk()
+            androidHome = KtTestUtil.findAndroidSdk()
         )
 
     @Parameterized.Parameter

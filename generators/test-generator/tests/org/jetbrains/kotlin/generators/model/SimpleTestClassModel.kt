@@ -8,6 +8,7 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.fileNameToJavaIdentifier
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -120,7 +121,7 @@ class SimpleTestClassModel(
         }
 
     override val dataString: String
-        get() = KotlinTestUtils.getFilePath(rootFile)
+        get() = KtTestUtil.getFilePath(rootFile)
 
     override val dataPathRoot: String
         get() = "\$PROJECT_ROOT"

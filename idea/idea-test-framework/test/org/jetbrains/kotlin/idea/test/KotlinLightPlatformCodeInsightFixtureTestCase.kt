@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.reflect.full.findAnnotation
 
@@ -26,7 +27,7 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
         super.setUp()
         enableKotlinOfficialCodeStyle(project)
         runPostStartupActivitiesOnce(project)
-        VfsRootAccess.allowRootAccess(KotlinTestUtils.getHomeDirectory())
+        VfsRootAccess.allowRootAccess(KtTestUtil.getHomeDirectory())
         if (!isFirPlugin()) {
             invalidateLibraryCache(project)
         }
@@ -34,7 +35,7 @@ abstract class KotlinLightPlatformCodeInsightFixtureTestCase : LightPlatformCode
 
     override fun tearDown() = runAll(
         ThrowableRunnable { disableKotlinOfficialCodeStyle(project) },
-        ThrowableRunnable { VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory()) },
+        ThrowableRunnable { VfsRootAccess.disallowRootAccess(KtTestUtil.getHomeDirectory()) },
         ThrowableRunnable { super.tearDown() },
     )
 

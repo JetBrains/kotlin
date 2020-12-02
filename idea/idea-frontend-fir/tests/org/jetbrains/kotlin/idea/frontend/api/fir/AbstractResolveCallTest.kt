@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtCallExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
@@ -32,7 +33,7 @@ import kotlin.reflect.jvm.javaGetter
 
 
 abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsightTestCase() {
-    override fun getTestDataPath(): String = KotlinTestUtils.getHomeDirectory() + "/"
+    override fun getTestDataPath(): String = KtTestUtil.getHomeDirectory() + "/"
 
     protected fun doTest(path: String) {
         addExternalTestFiles(path)

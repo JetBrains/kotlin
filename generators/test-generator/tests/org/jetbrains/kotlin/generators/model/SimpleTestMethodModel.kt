@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.generators.model
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.escapeForJavaIdentifier
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.regex.Pattern
 
@@ -28,7 +28,7 @@ open class SimpleTestMethodModel(
     override val dataString: String
         get() {
             val path = FileUtil.getRelativePath(rootDir, file)!!
-            return KotlinTestUtils.getFilePath(File(path))
+            return KtTestUtil.getFilePath(File(path))
         }
 
     override fun shouldBeGenerated(): Boolean {

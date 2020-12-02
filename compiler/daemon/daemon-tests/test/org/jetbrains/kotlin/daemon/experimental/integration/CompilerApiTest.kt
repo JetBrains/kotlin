@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.daemon.experimental.integration
 import com.intellij.openapi.application.ApplicationManager
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.test.IgnoreAll
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.resetApplicationToNull
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
 import org.junit.runner.RunWith
 import java.io.File
@@ -31,7 +32,8 @@ import java.net.URLClassLoader
 import java.nio.file.Path
 import java.util.logging.LogManager
 import java.util.logging.Logger
-import kotlin.io.path.*
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempFile
 
 private val logFiles = arrayListOf<String>()
 
@@ -150,8 +152,8 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         code to outputs
     }
 
-    private fun getHelloAppBaseDir(): String = KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/helloApp"
-    private fun getSimpleScriptBaseDir(): String = KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/simpleScript"
+    private fun getHelloAppBaseDir(): String = KtTestUtil.getTestDataPathBase() + "/integration/smoke/helloApp"
+    private fun getSimpleScriptBaseDir(): String = KtTestUtil.getTestDataPathBase() + "/integration/smoke/simpleScript"
 
     private fun run(baseDir: String, logName: String, vararg args: String): Int = runJava(baseDir, logName, *args)
 

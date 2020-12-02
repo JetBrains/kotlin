@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.checkers.javac
 import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 abstract class AbstractJavacDiagnosticsTest : AbstractDiagnosticsTest() {
@@ -52,7 +52,8 @@ abstract class AbstractJavacDiagnosticsTest : AbstractDiagnosticsTest() {
             return super.createTestFiles(file, expectedText, modules)
         }
 
-        return super.createTestFiles(specialFile, KotlinTestUtils.doLoadFile(specialFile), modules)
+        return super.createTestFiles(specialFile,
+                                     KtTestUtil.doLoadFile(specialFile), modules)
     }
 }
 

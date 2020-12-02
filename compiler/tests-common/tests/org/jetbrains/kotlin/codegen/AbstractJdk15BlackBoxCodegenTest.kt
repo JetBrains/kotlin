@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 abstract class AbstractJdk15BlackBoxCodegenTest : AbstractCustomJDKBlackBoxCodegenTest() {
     override fun getTestJdkKind(): TestJdkKind = TestJdkKind.FULL_JDK_15
-    override fun getJdkHome(): File = KotlinTestUtils.getJdk15Home()
+    override fun getJdkHome(): File = KtTestUtil.getJdk15Home()
     override fun getPrefix(): String = "java15/box"
 
     override fun getAdditionalJvmArgs(): List<String> = listOf("--enable-preview")

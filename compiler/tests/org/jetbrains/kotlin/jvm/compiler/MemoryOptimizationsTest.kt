@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.FlexibleType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.lowerIfFlexible
@@ -75,8 +76,8 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
                         )
         val moduleDescriptor =
                 JvmResolveUtil.analyze(
-                        KotlinTestUtils.createFile("main.kt", text, environment.project),
-                        environment
+                    KtTestUtil.createFile("main.kt", text, environment.project),
+                    environment
                 ).moduleDescriptor
 
         val aClass =

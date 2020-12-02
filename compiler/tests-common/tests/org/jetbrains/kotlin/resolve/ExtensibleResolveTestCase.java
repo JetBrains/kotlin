@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.config.JVMConfigurationKeys;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.*;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.io.File;
 import java.util.List;
@@ -43,7 +44,7 @@ public abstract class ExtensibleResolveTestCase extends KotlinTestWithEnvironmen
 
     protected void doTest(@NonNls String filePath) throws Exception {
         File file = new File(filePath);
-        String text = KotlinTestUtils.doLoadFile(file);
+        String text = KtTestUtil.doLoadFile(file);
         List<KtFile> files = TestFiles.createTestFiles("file.kt", text, new TestFiles.TestFileFactoryNoModules<KtFile>() {
             @NotNull
             @Override

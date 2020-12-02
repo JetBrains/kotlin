@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.generators.impl
 
 import com.intellij.openapi.util.text.StringUtil
-import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.generators.MethodGenerator
+import org.jetbrains.kotlin.generators.model.MethodModel
 import org.jetbrains.kotlin.generators.model.SimpleTestClassModel
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -36,7 +36,7 @@ object SimpleTestClassModelTestAllFilesPresentMethodGenerator : MethodGenerator<
             val assertTestsPresentStr = if (classModel.targetBackend === TargetBackend.ANY) {
                 String.format(
                     "KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s%s);",
-                    KotlinTestUtils.getFilePath(classModel.rootFile),
+                    KtTestUtil.getFilePath(classModel.rootFile),
                     StringUtil.escapeStringCharacters(classModel.filenamePattern.pattern()),
                     excludedArgument,
                     classModel.recursive,
@@ -45,7 +45,7 @@ object SimpleTestClassModelTestAllFilesPresentMethodGenerator : MethodGenerator<
             } else {
                 String.format(
                     "KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s, %s%s);",
-                    KotlinTestUtils.getFilePath(classModel.rootFile),
+                    KtTestUtil.getFilePath(classModel.rootFile),
                     StringUtil.escapeStringCharacters(classModel.filenamePattern.pattern()),
                     excludedArgument, TargetBackend::class.java.simpleName, classModel.targetBackend.toString(), classModel.recursive, exclude
                 )

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import java.io.File
 
@@ -41,7 +42,7 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
 
     private fun doTest(useJavac: Boolean, configurator: (CompilerConfiguration) -> Unit) {
         val configuration = KotlinTestUtils.newConfiguration(
-                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KotlinTestUtils.getAnnotationsJar()
+            ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KtTestUtil.getAnnotationsJar()
         ).apply {
             if (useJavac) {
                 put(JVMConfigurationKeys.USE_JAVAC, true)

@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
 import org.jetbrains.kotlin.test.KotlinBaseTest
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.junit.Assert
 import java.io.File
@@ -118,12 +118,24 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
 
         if (includeExtras) {
             if (declareFlexibleType) {
-                ktFiles.add(KotlinTestUtils.createFile("EXPLICIT_FLEXIBLE_TYPES.kt", EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS, project))
+                ktFiles.add(
+                    KtTestUtil.createFile(
+                        "EXPLICIT_FLEXIBLE_TYPES.kt",
+                        EXPLICIT_FLEXIBLE_TYPES_DECLARATIONS,
+                        project
+                    )
+                )
             }
             if (declareCheckType) {
                 val checkTypeDeclarations = File("$HELPERS_PATH/types/checkType.kt").readText()
 
-                ktFiles.add(KotlinTestUtils.createFile("CHECK_TYPE.kt", checkTypeDeclarations, project))
+                ktFiles.add(
+                    KtTestUtil.createFile(
+                        "CHECK_TYPE.kt",
+                        checkTypeDeclarations,
+                        project
+                    )
+                )
             }
         }
 

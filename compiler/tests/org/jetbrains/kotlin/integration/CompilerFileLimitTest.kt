@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.integration
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
 import java.io.File
 
@@ -112,5 +112,5 @@ class CompilerFileLimitTest : CompilerSmokeTestBase() {
 
     }
 
-    private fun tempDir(markerName: String) = KotlinTestUtils.tmpDir("${CompilerFileLimitTest::class.simpleName}$markerName")
+    private fun tempDir(markerName: String) = KtTestUtil.tmpDir("${CompilerFileLimitTest::class.simpleName}$markerName")
 }

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider;
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper;
 import org.jetbrains.kotlin.test.*;
 import org.jetbrains.kotlin.test.clientserver.TestProxy;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.tree.ClassNode;
@@ -63,8 +64,8 @@ import java.util.stream.Collectors;
 import static org.jetbrains.kotlin.cli.common.output.OutputUtilsKt.writeAllTo;
 import static org.jetbrains.kotlin.codegen.CodegenTestUtil.*;
 import static org.jetbrains.kotlin.codegen.TestUtilsKt.extractUrls;
-import static org.jetbrains.kotlin.test.KotlinTestUtils.getAnnotationsJar;
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.*;
+import static org.jetbrains.kotlin.test.util.KtTestUtil.getAnnotationsJar;
 
 public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.TestFile> {
     private static final String DEFAULT_TEST_FILE_NAME = "a_test";
@@ -134,7 +135,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
     @NotNull
     protected String loadFile(@NotNull @TestDataFile String name) {
-        return loadFileByFullPath(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + name);
+        return loadFileByFullPath(KtTestUtil.getTestDataPathBase() + "/codegen/" + name);
     }
 
     @NotNull
@@ -172,7 +173,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             if (file.name.endsWith(".kt") || file.name.endsWith(".kts")) {
                 // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
                 String content = CheckerTestUtil.INSTANCE.parseDiagnosedRanges(file.content, new ArrayList<>(0), null);
-                ktFiles.add(KotlinTestUtils.createFile(file.name, content, project));
+                ktFiles.add(KtTestUtil.createFile(file.name, content, project));
             }
         }
 
@@ -608,7 +609,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     protected void doTest(@NotNull String filePath) throws Exception {
         File file = new File(filePath);
 
-        String expectedText = KotlinTestUtils.doLoadFile(file);
+        String expectedText = KtTestUtil.doLoadFile(file);
         List<TestFile> testFiles = createTestFilesFromFile(file, expectedText);
 
         doMultiFileTest(file, testFiles);
@@ -659,7 +660,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     @NotNull
     private static File createTempDirectory(String prefix) {
         try {
-            return KotlinTestUtils.tmpDir(prefix);
+            return KtTestUtil.tmpDir(prefix);
         } catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
         }
@@ -674,7 +675,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
 
         for (TestFile testFile : javaFiles) {
             File file = new File(dir, testFile.name);
-            KotlinTestUtils.mkdirs(file.getParentFile());
+            KtTestUtil.mkdirs(file.getParentFile());
             FilesKt.writeText(file, testFile.content, Charsets.UTF_8);
         }
 

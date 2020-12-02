@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.checkers.AbstractDiagnosticsTest
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils.getHomeDirectory
+import org.jetbrains.kotlin.test.util.KtTestUtil.getHomeDirectory
 import java.io.File
 
 abstract class AbstractDiagnosticsUsingJavacTest : AbstractDiagnosticsTest() {

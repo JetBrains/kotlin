@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.concurrent.TimeUnit
 
@@ -18,7 +19,7 @@ abstract class AbstractCustomJDKBlackBoxCodegenTest : AbstractBlackBoxCodegenTes
     override fun doTest(filePath: String) {
         val file = File(filePath)
         val expectedText =
-            KotlinTestUtils.doLoadFile(file) +
+            KtTestUtil.doLoadFile(file) +
                     "\n" +
                     """
                         fun main() {

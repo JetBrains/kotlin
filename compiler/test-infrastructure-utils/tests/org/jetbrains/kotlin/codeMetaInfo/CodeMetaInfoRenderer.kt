@@ -9,7 +9,6 @@ import com.intellij.util.containers.Stack
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import java.io.File
-import java.lang.StringBuilder
 
 object CodeMetaInfoRenderer {
     fun renderTagsToText(

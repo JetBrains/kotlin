@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -111,7 +112,7 @@ public class LoadDescriptorUtil {
     ) {
         List<File> javaBinaryRoots = new ArrayList<>();
         // TODO: use the same additional binary roots as those were used for compilation
-        javaBinaryRoots.add(KotlinTestUtils.getAnnotationsJar());
+        javaBinaryRoots.add(KtTestUtil.getAnnotationsJar());
         javaBinaryRoots.add(ForTestCompileRuntime.jvmAnnotationsForTests());
         javaBinaryRoots.addAll(additionalClasspath);
 
@@ -156,7 +157,7 @@ public class LoadDescriptorUtil {
         List<File> classpath = new ArrayList<>();
 
         classpath.add(ForTestCompileRuntime.runtimeJarForTests());
-        classpath.add(KotlinTestUtils.getAnnotationsJar());
+        classpath.add(KtTestUtil.getAnnotationsJar());
 
         for (File test : javaFiles) {
             String content = FilesKt.readText(test, Charsets.UTF_8);
@@ -189,7 +190,7 @@ public class LoadDescriptorUtil {
     private static List<KtFile> createKtFiles(@NotNull List<File> kotlinFiles, @NotNull KotlinCoreEnvironment environment) {
         return CollectionsKt.map(kotlinFiles, kotlinFile -> {
             try {
-                return KotlinTestUtils.createFile(kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true), environment.getProject());
+                return KtTestUtil.createFile(kotlinFile.getName(), FileUtil.loadFile(kotlinFile, true), environment.getProject());
             }
             catch (IOException e) {
                 throw ExceptionUtilsKt.rethrow(e);

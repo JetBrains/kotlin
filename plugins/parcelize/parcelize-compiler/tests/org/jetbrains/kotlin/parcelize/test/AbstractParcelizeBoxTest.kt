@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.parcelize.ParcelizeComponentRegistrar
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.ClassWriter.COMPUTE_FRAMES
@@ -178,10 +178,10 @@ abstract class AbstractParcelizeBoxTest : CodegenTestCase() {
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         ParcelizeComponentRegistrar.registerParcelizeComponents(environment.project)
         addParcelizeRuntimeLibrary(environment)
-        environment.updateClasspath(listOf(JvmClasspathRoot(KotlinTestUtils.findAndroidApiJar())))
+        environment.updateClasspath(listOf(JvmClasspathRoot(KtTestUtil.findAndroidApiJar())))
     }
 
     override fun updateJavaClasspath(javaClasspath: MutableList<String>) {
-        javaClasspath += KotlinTestUtils.findAndroidApiJar().absolutePath
+        javaClasspath += KtTestUtil.findAndroidApiJar().absolutePath
     }
 }

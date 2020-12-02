@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.preloading.ClassPreloadingUtils
 import org.jetbrains.kotlin.preloading.Preloader
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import org.junit.Assert.assertEquals
@@ -52,7 +53,7 @@ object MockLibraryUtil {
             useJava9: Boolean = false
     ): File {
         return compileLibraryToJar(
-            sourcesPath, KotlinTestUtils.tmpDirForReusableFolder("testLibrary-" + jarName), jarName, addSources, allowKotlinSources, extraOptions, extraClasspath
+            sourcesPath, KtTestUtil.tmpDirForReusableFolder("testLibrary-" + jarName), jarName, addSources, allowKotlinSources, extraOptions, extraClasspath
             , useJava9)}
 
     @JvmStatic
@@ -96,7 +97,7 @@ object MockLibraryUtil {
         if (javaFiles.isNotEmpty()) {
             val classpath = mutableListOf<String>()
             classpath += ForTestCompileRuntime.runtimeJarForTests().path
-            classpath += KotlinTestUtils.getAnnotationsJar().path
+            classpath += KtTestUtil.getAnnotationsJar().path
             classpath += extraClasspath
 
             // Probably no kotlin files were present, so dir might not have been created after kotlin compiler
@@ -127,7 +128,7 @@ object MockLibraryUtil {
 
     @JvmStatic
     fun compileJsLibraryToJar(sourcesPath: String, jarName: String, addSources: Boolean, extraOptions: List<String> = emptyList()): File {
-        val contentDir = KotlinTestUtils.tmpDirForReusableFolder("testLibrary-" + jarName)
+        val contentDir = KtTestUtil.tmpDirForReusableFolder("testLibrary-" + jarName)
 
         val outDir = File(contentDir, "out")
         val outputFile = File(outDir, jarName + ".js")

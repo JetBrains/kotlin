@@ -18,9 +18,8 @@ package org.jetbrains.kotlin.kapt3.test
 
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.SystemInfoRt
-import org.jetbrains.kotlin.kapt3.base.util.isJava11OrLater
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
@@ -31,12 +30,12 @@ interface CustomJdkTestLauncher {
         // Already under Java 9
         if (isJava9OrLater()) return
 
-        doTestCustomJdk(mainClass, arg, KotlinTestUtils.getJdk9Home())
+        doTestCustomJdk(mainClass, arg, KtTestUtil.getJdk9Home())
     }
 
     fun doTestWithJdk11(mainClass: Class<*>, arg: String) {
         if (isJava9OrLater()) return
-        KotlinTestUtils.getJdk11Home()?.let { doTestCustomJdk(mainClass, arg, it) }
+        KtTestUtil.getJdk11Home()?.let { doTestCustomJdk(mainClass, arg, it) }
     }
 
     private fun doTestCustomJdk(mainClass: Class<*>, arg: String, javaHome: File) {

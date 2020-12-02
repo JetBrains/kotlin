@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.test.dumpTextWithErrors
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.regex.Pattern
 
@@ -93,7 +94,7 @@ abstract class AbstractJavaToKotlinConverterSingleFileTest : AbstractJavaToKotli
         val funBody = text.lines().joinToString(separator = "\n", transform = { "  $it" })
         val textToFormat = if (inFunContext) "fun convertedTemp() {\n$funBody\n}" else text
 
-        val convertedFile = KotlinTestUtils.createFile("converted", textToFormat, project)
+        val convertedFile = KtTestUtil.createFile("converted", textToFormat, project)
         WriteCommandAction.runWriteCommandAction(project) {
             CodeStyleManager.getInstance(project)!!.reformat(convertedFile)
         }

@@ -20,13 +20,14 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.incModificationTracker
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.nio.file.Files
 import java.nio.file.Paths
 import kotlin.io.path.writeText
 
 abstract class AbstractSessionsInvalidationTest : AbstractMultiModuleTest() {
     override fun getTestDataPath(): String =
-        "${KotlinTestUtils.getHomeDirectory()}/idea/idea-frontend-fir/idea-fir-low-level-api/testdata/sessionInvalidation/"
+        "${KtTestUtil.getHomeDirectory()}/idea/idea-frontend-fir/idea-fir-low-level-api/testdata/sessionInvalidation/"
 
     protected fun doTest(path: String) {
         val testStructure = TestProjectStructureReader.readToTestStructure(

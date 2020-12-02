@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.StringsKt;
 
@@ -85,7 +86,7 @@ public class CodegenTestUtil {
             @NotNull List<String> additionalOptions
     ) {
         try {
-            File directory = KotlinTestUtils.tmpDir("java-classes");
+            File directory = KtTestUtil.tmpDir("java-classes");
             compileJava(fileNames, additionalClasspath, additionalOptions, directory);
             return directory;
         }
@@ -118,7 +119,7 @@ public class CodegenTestUtil {
         List<String> classpath = new ArrayList<>();
         classpath.add(ForTestCompileRuntime.runtimeJarForTests().getPath());
         classpath.add(ForTestCompileRuntime.reflectJarForTests().getPath());
-        classpath.add(KotlinTestUtils.getAnnotationsJar().getPath());
+        classpath.add(KtTestUtil.getAnnotationsJar().getPath());
         classpath.addAll(additionalClasspath);
 
         List<String> options = new ArrayList<>(Arrays.asList(

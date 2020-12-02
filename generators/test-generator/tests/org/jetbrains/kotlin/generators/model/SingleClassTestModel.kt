@@ -5,8 +5,8 @@
 package org.jetbrains.kotlin.generators.model
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -54,7 +54,7 @@ class SingleClassTestModel(
     // There's always one test for checking if all tests are present
     override val isEmpty: Boolean
         get() = methods.size <= 1
-    override val dataString: String = KotlinTestUtils.getFilePath(rootFile)
+    override val dataString: String = KtTestUtil.getFilePath(rootFile)
     override val dataPathRoot: String = "\$PROJECT_ROOT"
 
     object AllFilesPresentedMethodKind : MethodModel.Kind()

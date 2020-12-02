@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.TestFiles.TestFileFactoryNoModules
 import org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesForbidden
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.Configuration
 import org.jetbrains.kotlin.utils.Printer
@@ -133,7 +134,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
                 for (root in environment.configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)) {
                     LOG.info("root: $root")
                 }
-                val ktFile = KotlinTestUtils.createFile(file.path, text, environment.project)
+                val ktFile = KtTestUtil.createFile(file.path, text, environment.project)
                 GenerationUtils.compileFileTo(ktFile, environment, tmpdir)
             }
         }

@@ -14,7 +14,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.LightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.ProjectDescriptorWithStdlibSources
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 
 abstract class AbstractHierarchyWithLibTest : AbstractHierarchyTest() {
@@ -24,7 +24,7 @@ abstract class AbstractHierarchyWithLibTest : AbstractHierarchyTest() {
         val filesToConfigure = filesToConfigure
         val file = filesToConfigure.first()
         val directive = InTextDirectivesUtils.findLinesWithPrefixesRemoved(
-            File("${KotlinTestUtils.getHomeDirectory()}/$folderName/$file").readText(),
+            File("${KtTestUtil.getHomeDirectory()}/$folderName/$file").readText(),
             "// BASE_CLASS: "
         ).singleOrNull() ?: error("File should contain BASE_CLASS directive")
 

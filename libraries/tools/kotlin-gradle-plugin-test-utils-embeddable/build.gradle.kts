@@ -13,9 +13,12 @@ plugins { `java` }
 
 val packedJars by configurations.creating
 
-val projectsToInclude = listOf(":compiler:tests-common",
-                               ":compiler:incremental-compilation-impl",
-                               ":kotlin-build-common")
+val projectsToInclude = listOf(
+    ":compiler:test-infrastructure-utils",
+    ":compiler:tests-common",
+    ":compiler:incremental-compilation-impl",
+    ":kotlin-build-common"
+)
 
 dependencies {
     for (projectName in projectsToInclude) {

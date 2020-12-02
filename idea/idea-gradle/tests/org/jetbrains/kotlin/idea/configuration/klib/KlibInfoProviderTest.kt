@@ -9,7 +9,7 @@ import com.intellij.testFramework.PlatformTestUtil.getTestName
 import junit.framework.TestCase
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.test.KotlinTestUtils.getHomeDirectory
+import org.jetbrains.kotlin.test.util.KtTestUtil.getHomeDirectory
 import java.io.File
 
 class KlibInfoProviderTest : TestCase() {

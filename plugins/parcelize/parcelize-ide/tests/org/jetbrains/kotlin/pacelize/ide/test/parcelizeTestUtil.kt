@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.pacelize.ide.test
 
 import com.intellij.openapi.module.Module
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 
 fun addParcelizeLibraries(module: Module) {
-    val androidJar = KotlinTestUtils.findAndroidApiJar()
+    val androidJar = KtTestUtil.findAndroidApiJar()
     ConfigLibraryUtil.addLibrary(module, "androidJar", androidJar.parentFile.absolutePath, arrayOf(androidJar.name))
     ConfigLibraryUtil.addLibrary(module, "parcelizeRuntime", "dist/kotlinc/lib", arrayOf("parcelize-runtime.jar"))
     ConfigLibraryUtil.addLibrary(module, "androidExtensionsRuntime", "dist/kotlinc/lib", arrayOf("android-extensions-runtime.jar"))

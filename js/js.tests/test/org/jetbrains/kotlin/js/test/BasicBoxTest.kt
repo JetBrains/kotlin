@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import org.jetbrains.kotlin.utils.KotlinJavascriptMetadata
@@ -108,7 +109,7 @@ abstract class BasicBoxTest(
         val outputDir = getOutputDir(file)
         val dceOutputDir = getOutputDir(file, testGroupOutputDirForMinification)
         val pirOutputDir = getOutputDir(file, testGroupOutputDirForPir)
-        var fileContent = KotlinTestUtils.doLoadFile(file)
+        var fileContent = KtTestUtil.doLoadFile(file)
         if (coroutinesPackage.isNotEmpty()) {
             fileContent = fileContent.replace("COROUTINES_PACKAGE", coroutinesPackage)
         }
@@ -936,7 +937,7 @@ abstract class BasicBoxTest(
 
     private inner class TestFileFactoryImpl(val coroutinesPackage: String) : TestFiles.TestFileFactory<TestModule, TestFile>, Closeable {
         var testPackage: String? = null
-        val tmpDir = KotlinTestUtils.tmpDir("js-tests")
+        val tmpDir = KtTestUtil.tmpDir("js-tests")
         val defaultModule = TestModule(TEST_MODULE, emptyList(), emptyList())
         var languageVersionSettings: LanguageVersionSettings? = null
 
@@ -962,7 +963,7 @@ abstract class BasicBoxTest(
             }
 
             val temporaryFile = File(tmpDir, "${currentModule.name}/$fileName")
-            KotlinTestUtils.mkdirs(temporaryFile.parentFile)
+            KtTestUtil.mkdirs(temporaryFile.parentFile)
             temporaryFile.writeText(text, Charsets.UTF_8)
 
             // TODO Deduplicate logic copied from CodegenTestCase.updateConfigurationByDirectivesInTestFiles
