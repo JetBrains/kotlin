@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.idea.editor.fixers.start
 interface CodeMetaInfo {
     val start: Int
     val end: Int
+    val tag: String
     val renderConfiguration: AbstractCodeMetaInfoRenderConfiguration
     val platforms: MutableList<String>
 
     fun asString(): String
-    fun getTag(): String
 }
 
 class DiagnosticCodeMetaInfo(
@@ -39,11 +39,12 @@ class DiagnosticCodeMetaInfo(
         diagnostic: Diagnostic
     ) : this(range.startOffset, range.endOffset, renderConfiguration, diagnostic)
 
+    override val tag: String
+        get() = renderConfiguration.getTag(this)
+
     override val platforms: MutableList<String> = mutableListOf()
 
     override fun asString(): String = renderConfiguration.asString(this)
-
-    override fun getTag(): String = renderConfiguration.getTag(this)
 }
 
 class LineMarkerCodeMetaInfo(
@@ -54,11 +55,13 @@ class LineMarkerCodeMetaInfo(
         get() = lineMarker.startOffset
     override val end: Int
         get() = lineMarker.endOffset
+
+    override val tag: String
+        get() = renderConfiguration.getTag()
+
     override val platforms: MutableList<String> = mutableListOf()
 
     override fun asString(): String = renderConfiguration.asString(this)
-
-    override fun getTag(): String = renderConfiguration.getTag()
 }
 
 class HighlightingCodeMetaInfo(
@@ -69,29 +72,29 @@ class HighlightingCodeMetaInfo(
         get() = highlightingInfo.startOffset
     override val end: Int
         get() = highlightingInfo.endOffset
+
+    override val tag: String
+        get() = renderConfiguration.getTag()
+
     override val platforms: MutableList<String> = mutableListOf()
 
     override fun asString(): String = renderConfiguration.asString(this)
-
-    override fun getTag(): String = renderConfiguration.getTag()
 }
 
 class ParsedCodeMetaInfo(
     override val start: Int,
     override val end: Int,
     override val platforms: MutableList<String>,
-    private val tag: String,
+    override val tag: String,
     val description: String?
 ) : CodeMetaInfo {
     override val renderConfiguration = object : AbstractCodeMetaInfoRenderConfiguration(false) {}
 
     override fun asString(): String = renderConfiguration.asString(this)
 
-    override fun getTag(): String = tag
-
     override fun equals(other: Any?): Boolean {
         if (other == null || other !is CodeMetaInfo) return false
-        return this.tag == other.getTag() && this.start == other.start && this.end == other.end
+        return this.tag == other.tag && this.start == other.start && this.end == other.end
     }
 
     override fun hashCode(): Int {
