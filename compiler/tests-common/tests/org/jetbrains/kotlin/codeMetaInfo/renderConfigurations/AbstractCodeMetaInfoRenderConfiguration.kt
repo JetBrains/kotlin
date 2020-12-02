@@ -32,7 +32,7 @@ abstract class AbstractCodeMetaInfoRenderConfiguration(var renderParams: Boolean
     }
 
     protected fun getPlatformsString(codeMetaInfo: CodeMetaInfo): String {
-        if (codeMetaInfo.platforms.isEmpty()) return ""
-        return "{${codeMetaInfo.platforms.joinToString(";")}}"
+        if (codeMetaInfo.attributes.isEmpty()) return ""
+        return "{${codeMetaInfo.attributes.joinToString(";")}}"
     }
 }

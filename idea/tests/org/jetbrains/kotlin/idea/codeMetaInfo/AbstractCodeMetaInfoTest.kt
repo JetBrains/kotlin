@@ -161,13 +161,13 @@ class CodeMetaInfoTestCase(
             val correspondingParsed = parsedMetaInfo.firstOrNull { it == codeMetaInfo }
             if (correspondingParsed != null) {
                 parsedMetaInfo.remove(correspondingParsed)
-                codeMetaInfo.platforms.addAll(correspondingParsed.platforms)
-                if (correspondingParsed.platforms.isNotEmpty() && OSKind.current.toString() !in correspondingParsed.platforms)
-                    codeMetaInfo.platforms.add(OSKind.current.toString())
+                codeMetaInfo.attributes.addAll(correspondingParsed.attributes)
+                if (correspondingParsed.attributes.isNotEmpty() && OSKind.current.toString() !in correspondingParsed.attributes)
+                    codeMetaInfo.attributes.add(OSKind.current.toString())
             }
         }
         parsedMetaInfo.forEach {
-            if (it.platforms.isNotEmpty() && OSKind.current.toString() !in it.platforms) codeMetaInfoForCheck.add(
+            if (it.attributes.isNotEmpty() && OSKind.current.toString() !in it.attributes) codeMetaInfoForCheck.add(
                 it
             )
         }

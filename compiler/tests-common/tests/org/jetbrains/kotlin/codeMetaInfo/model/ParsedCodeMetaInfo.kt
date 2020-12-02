@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.AbstractCodeMetaIn
 class ParsedCodeMetaInfo(
     override val start: Int,
     override val end: Int,
-    override val platforms: MutableList<String>,
+    override val attributes: MutableList<String>,
     override val tag: String,
     val description: String?
 ) : CodeMetaInfo {

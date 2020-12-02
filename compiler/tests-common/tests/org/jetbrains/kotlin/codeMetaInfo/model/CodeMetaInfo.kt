@@ -12,7 +12,7 @@ interface CodeMetaInfo {
     val end: Int
     val tag: String
     val renderConfiguration: AbstractCodeMetaInfoRenderConfiguration
-    val platforms: MutableList<String>
+    val attributes: MutableList<String>
 
     fun asString(): String
 }

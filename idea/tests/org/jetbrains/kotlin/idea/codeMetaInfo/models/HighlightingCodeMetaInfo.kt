@@ -21,7 +21,7 @@ class HighlightingCodeMetaInfo(
     override val tag: String
         get() = renderConfiguration.getTag()
 
-    override val platforms: MutableList<String> = mutableListOf()
+    override val attributes: MutableList<String> = mutableListOf()
 
     override fun asString(): String = renderConfiguration.asString(this)
 }
