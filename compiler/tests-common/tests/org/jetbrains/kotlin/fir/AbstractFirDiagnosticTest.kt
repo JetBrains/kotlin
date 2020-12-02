@@ -295,7 +295,7 @@ abstract class AbstractFirDiagnosticsTest : AbstractFirBaseDiagnosticsTest() {
         firFiles.forEach { it.accept(CfgConsistencyChecker) }
     }
 
-    private object CfgConsistencyChecker : FirVisitorVoid() {
+    object CfgConsistencyChecker : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
             element.acceptChildren(this)
         }

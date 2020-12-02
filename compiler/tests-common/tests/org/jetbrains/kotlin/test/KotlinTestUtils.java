@@ -52,8 +52,8 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
-import org.jetbrains.kotlin.test.util.JetTestUtilsKt;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.util.StringUtilsKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.junit.Assert;
 
@@ -291,7 +291,7 @@ public class KotlinTestUtils {
 
     public static void assertEqualsToFile(@NotNull String message, @NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
         try {
-            String actualText = JetTestUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
+            String actualText = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(actual.trim()));
 
             if (!expectedFile.exists()) {
                 FileUtil.writeToFile(expectedFile, actualText);
@@ -299,7 +299,7 @@ public class KotlinTestUtils {
             }
             String expected = FileUtil.loadFile(expectedFile, CharsetToolkit.UTF8, true);
 
-            String expectedText = JetTestUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
+            String expectedText = StringUtilsKt.trimTrailingWhitespacesAndAddNewlineAtEOF(StringUtil.convertLineSeparators(expected.trim()));
 
             if (!Comparing.equal(sanitizer.invoke(expectedText), sanitizer.invoke(actualText))) {
                 throw new FileComparisonFailure(message + ": " + expectedFile.getName(),

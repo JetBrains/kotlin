@@ -24,14 +24,6 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid
 
-fun String.trimTrailingWhitespaces(): String =
-    this.split('\n').joinToString(separator = "\n") { it.trimEnd() }
-
-fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
-        this.trimTrailingWhitespaces().let {
-            result -> if (result.endsWith("\n")) result else result + "\n"
-        }
-
 fun PsiFile.findElementByCommentPrefix(commentText: String): PsiElement? =
         findElementsByCommentPrefix(commentText).keys.singleOrNull()
 
