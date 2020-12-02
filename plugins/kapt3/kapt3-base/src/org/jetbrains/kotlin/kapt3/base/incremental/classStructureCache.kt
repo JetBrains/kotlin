@@ -31,17 +31,6 @@ class JavaClassCache() : Serializable {
         sourceCache[sourceStructure.sourceFile] = sourceStructure
     }
 
-    /** Invalidates types for these files, and return the list of invalidated types.*/
-    fun invalidateTypesForFiles(files: List<File>): Set<String> {
-        val typesFromFiles = HashSet<String>()
-        for (file in files) {
-            sourceCache.remove(file.toURI())?.getDeclaredTypes()?.let {
-                typesFromFiles.addAll(it)
-            }
-        }
-        return typesFromFiles
-    }
-
     /** Returns all types defined in these files. */
     fun getTypesForFiles(files: Collection<File>): Set<String> {
         val typesFromFiles = HashSet<String>(files.size)

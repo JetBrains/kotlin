@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.incapt.IncrementalAggregatingReferencingClasspathProcessor
+import org.jetbrains.kotlin.gradle.incapt.IncrementalBinaryIsolatingProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessorReferencingClasspath
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Assume
 import org.junit.Test
 import test.kt33617.MyClass
@@ -275,12 +278,106 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             )
         }
     }
+
+    /**
+     * Make sure that changes to classpath can cause types to be reprocessed (i.e types in generated .class files that contain annotations
+     * claimed by annotation processors).
+     */
+    @Test
+    fun testClasspathChangesCauseTypesToBeReprocessed() {
+        val project = Project(
+            "kaptIncrementalCompilationProject",
+            GradleVersionRequired.None
+        ).apply {
+            setupIncrementalAptProject(
+                Pair("ISOLATING", IncrementalBinaryIsolatingProcessor::class.java),
+                Pair("AGGREGATING", IncrementalAggregatingReferencingClasspathProcessor::class.java),
+            )
+        }
+        project.gradleSettingsScript().writeText("include ':', ':lib'")
+        val classpathTypeSource = project.projectDir.resolve("lib").run {
+            mkdirs()
+            resolve("build.gradle").writeText("apply plugin: 'java'")
+            val source =
+                resolve("src/main/java/" + IncrementalAggregatingReferencingClasspathProcessor.CLASSPATH_TYPE.replace(".", "/") + ".java")
+            source.parentFile.mkdirs()
+
+            source.writeText(
+                """
+                package ${IncrementalAggregatingReferencingClasspathProcessor.CLASSPATH_TYPE.substringBeforeLast(".")};
+                public class ${IncrementalAggregatingReferencingClasspathProcessor.CLASSPATH_TYPE.substringAfterLast(".")} {}
+            """.trimIndent()
+            )
+            return@run source
+        }
+        project.gradleBuildScript().appendText(
+            """
+                
+            dependencies {
+                implementation project(':lib')
+            }
+        """.trimIndent()
+        )
+
+        // Remove all sources, and add only 1 source file
+        project.projectDir.resolve("src").let {
+            it.deleteRecursively()
+            with(it.resolve("main/java/example/A.kt")) {
+                parentFile.mkdirs()
+                writeText(
+                    """
+                    package example
+                    
+                    annotation class ExampleAnnotation
+                    @ExampleAnnotation
+                    class A
+                """.trimIndent()
+                )
+            }
+        }
+
+        val allKotlinStubs = setOf(
+            project.projectDir.resolve("build/tmp/kapt3/stubs/main/example/ExampleAnnotation.java").canonicalPath,
+            project.projectDir.resolve("build/tmp/kapt3/stubs/main/example/A.java").canonicalPath,
+            project.projectDir.resolve("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
+        )
+
+        project.build("clean", "build") {
+            assertSuccessful()
+            assertEquals(allKotlinStubs, getProcessedSources(output))
+
+            assertTrue(
+                "Aggregating sources exists",
+                fileInWorkingDir("build/generated/source/kapt/main/com/example/AggGenerated.java").exists()
+            )
+        }
+
+        // change type that the aggregated generated source reference
+        classpathTypeSource.writeText(classpathTypeSource.readText().replace("}", "int i = 10;\n}"))
+        project.build("build") {
+            assertSuccessful()
+            assertEquals(emptySet<String>(), getProcessedSources(output))
+            assertEquals(setOf("example.AGenerated"), getProcessedTypes(output))
+            assertTrue(
+                "Aggregating sources exists",
+                fileInWorkingDir("build/generated/source/kapt/main/com/example/AggGenerated.java").exists()
+            )
+        }
+    }
 }
 
 private const val patternApt = "Processing java sources with annotation processors:"
 fun getProcessedSources(output: String): Set<String> {
     return output.lines().filter { it.contains(patternApt) }.flatMapTo(HashSet()) { logging ->
         val indexOf = logging.indexOf(patternApt) + patternApt.length
+        logging.drop(indexOf).split(",").map { it.trim() }.filter { !it.isEmpty() }.toSet()
+    }
+}
+
+private const val patternClassesApt = "Processing types with annotation processors: "
+fun getProcessedTypes(output: String): Set<String> {
+    return output.lines().filter { it.contains(patternClassesApt) }.flatMapTo(HashSet()) { logging ->
+        val indexOf = logging.indexOf(patternClassesApt) + patternClassesApt.length
         logging.drop(indexOf).split(",").map { it.trim() }.filter { !it.isEmpty() }.toSet()
     }
 }
