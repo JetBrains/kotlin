@@ -26,7 +26,7 @@ class WizardStatsService : CounterUsagesCollector() {
     companion object {
 
         // Collector ID
-        private val GROUP = EventLogGroup("kotlin.ide.new.project", 3)
+        private val GROUP = EventLogGroup("kotlin.ide.new.project", 4)
 
         // Whitelisted values for the events fields
         private val allowedProjectTemplates = listOf( // Modules
@@ -51,6 +51,7 @@ class WizardStatsService : CounterUsagesCollector() {
             "frontendApplication",
             "fullStackWebApplication",
             "nodejsApplication",
+            "reactApplication",
             "composeDesktopApplication",
             "composeMultiplatformApplication",
             "none"
