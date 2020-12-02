@@ -200,8 +200,7 @@ interface PackageOracleFactory {
 interface LanguageSettingsProvider {
     fun getLanguageVersionSettings(
         moduleInfo: ModuleInfo,
-        project: Project,
-        isReleaseCoroutines: Boolean? = null
+        project: Project
     ): LanguageVersionSettings
 
     fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion
@@ -209,8 +208,7 @@ interface LanguageSettingsProvider {
     object Default : LanguageSettingsProvider {
         override fun getLanguageVersionSettings(
             moduleInfo: ModuleInfo,
-            project: Project,
-            isReleaseCoroutines: Boolean?
+            project: Project
         ) = LanguageVersionSettingsImpl.DEFAULT
 
         override fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion = TargetPlatformVersion.NoVersion

@@ -116,8 +116,7 @@ fun Module.getStableName(): Name {
 @JvmOverloads
 fun Project.getLanguageVersionSettings(
     contextModule: Module? = null,
-    javaTypeEnhancementState: JavaTypeEnhancementState? = null,
-    isReleaseCoroutines: Boolean? = null
+    javaTypeEnhancementState: JavaTypeEnhancementState? = null
 ): LanguageVersionSettings {
     val kotlinFacetSettings = contextModule?.let {
         KotlinFacetSettingsProvider.getInstance(this)?.getInitializedSettings(it)

@@ -45,13 +45,12 @@ import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 object IDELanguageSettingsProvider : LanguageSettingsProvider {
     override fun getLanguageVersionSettings(
         moduleInfo: ModuleInfo,
-        project: Project,
-        isReleaseCoroutines: Boolean?
+        project: Project
     ): LanguageVersionSettings =
         when (moduleInfo) {
             is ModuleSourceInfo -> moduleInfo.module.languageVersionSettings
             is LibraryInfo -> project.getLanguageVersionSettings(
-                javaTypeEnhancementState = computeJavaTypeEnhancementState(project), isReleaseCoroutines = isReleaseCoroutines
+                javaTypeEnhancementState = computeJavaTypeEnhancementState(project)
             )
             is ScriptModuleInfo -> {
                 getLanguageSettingsForScripts(
