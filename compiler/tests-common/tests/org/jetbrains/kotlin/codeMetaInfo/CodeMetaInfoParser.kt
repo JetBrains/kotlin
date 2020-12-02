@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.codeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 
 object CodeMetaInfoParser {
-    private val openingRegex = """(<!(.+?)!>)""".toRegex()
+    private val openingRegex = """(<!([^"]*?(".*?")?[^"]*?)!>)""".toRegex()
     private val closingRegex = """(<!>)""".toRegex()
 
     /*
@@ -22,7 +22,8 @@ object CodeMetaInfoParser {
     fun getCodeMetaInfoFromText(renderedText: String): List<ParsedCodeMetaInfo> {
         var text = renderedText
         val openingMatchResults = ArrayDeque<MatchResult>()
-        val closingMatchResults = ArrayDeque<MatchResult>()
+        val stackOfOpeningMatchResults = ArrayDeque<MatchResult>()
+        val closingMatchResults = mutableMapOf<MatchResult, MatchResult>()
         val result = mutableListOf<ParsedCodeMetaInfo>()
 
         while (true) {
@@ -40,10 +41,11 @@ object CodeMetaInfoParser {
             text = if (openingStartOffset < closingStartOffset) {
                 requireNotNull(opening)
                 openingMatchResults.addLast(opening)
+                stackOfOpeningMatchResults.addLast(opening)
                 text.removeRange(openingStartOffset, opening.range.last + 1)
             } else {
                 requireNotNull(closing)
-                closingMatchResults.addLast(closing)
+                closingMatchResults[stackOfOpeningMatchResults.removeLast()] = closing
                 text.removeRange(closingStartOffset, closing.range.last + 1)
             }
         }
@@ -52,7 +54,7 @@ object CodeMetaInfoParser {
         }
         while (!openingMatchResults.isEmpty()) {
             val openingMatchResult = openingMatchResults.removeLast()
-            val closingMatchResult = closingMatchResults.removeLast()
+            val closingMatchResult = closingMatchResults.getValue(openingMatchResult)
             val allMetaInfos = openingMatchResult.groups[2]!!.value
             tagRegex.findAll(allMetaInfos).map { it.groups }.forEach {
                 val tag = it[1]!!.value
