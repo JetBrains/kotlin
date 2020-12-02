@@ -1,9 +1,9 @@
 package sample
 
-actual class <lineMarker descr="Has declaration in common module">Sample</lineMarker> {
-    actual fun <lineMarker descr="Has declaration in common module">checkMe</lineMarker>() = 42
+actual class <!LINE_MARKER("descr='Has declaration in common module'")!>Sample<!> {
+    actual fun <!LINE_MARKER("descr='Has declaration in common module'")!>checkMe<!>() = 42
 }
 
-actual object <lineMarker descr="Has declaration in common module">Platform</lineMarker> {
-    actual val <lineMarker descr="Has declaration in common module">name</lineMarker>: String = "JVM"
+actual object <!LINE_MARKER("descr='Has declaration in common module'")!>Platform<!> {
+    actual val <!LINE_MARKER("descr='Has declaration in common module'")!>name<!>: String = "JVM"
 }

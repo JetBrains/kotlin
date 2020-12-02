@@ -26,6 +26,8 @@ abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
 
     protected open fun testDataDirName(): String = ""
 
+    protected open fun clearTextFromMarkup(text: String): String = text
+
     protected open fun testDataDirectory(): File {
         val baseDir = IDEA_TEST_DATA_DIR.resolve("gradle/${testDataDirName()}")
         return File(baseDir, getTestName(true).substringBefore("_"))
@@ -48,7 +50,7 @@ abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
                 it.isDirectory -> null
 
                 !it.name.endsWith(AFTER_SUFFIX) -> {
-                    var text = FileUtil.loadFile(it, /* convertLineSeparators = */ true)
+                    var text = clearTextFromMarkup(FileUtil.loadFile(it, true))
                     (properties ?: mapOf("kotlin_plugin_version" to LATEST_STABLE_GRADLE_PLUGIN_VERSION)).forEach { key, value ->
                         text = text.replace("{{${key}}}", value)
                     }

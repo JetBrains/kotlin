@@ -3,9 +3,9 @@ package sample
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class <lineMarker descr="Run Test">SampleTestsJVM</lineMarker> {
+class <!LINE_MARKER("descr='Run Test'")!>SampleTestsJVM<!> {
     @Test
-    fun <lineMarker descr="Run Test">testHello</lineMarker>() {
+    fun <!LINE_MARKER("descr='Run Test'")!>testHello<!>() {
         assertTrue("JVM" in hello())
     }
 }

@@ -1,11 +1,11 @@
 package sample
 
-expect class <lineMarker descr="Has actuals in JS, JVM">Sample</lineMarker>() {
-    fun <lineMarker descr="Has actuals in JS, JVM">checkMe</lineMarker>(): Int
+expect class <!LINE_MARKER("descr='Has actuals in JS, JVM'")!>Sample<!>() {
+    fun <!LINE_MARKER("descr='Has actuals in JS, JVM'")!>checkMe<!>(): Int
 }
 
-expect object <lineMarker descr="Has actuals in JS, JVM">Platform</lineMarker> {
-    val <lineMarker descr="Has actuals in JS, JVM">name</lineMarker>: String
+expect object <!LINE_MARKER("descr='Has actuals in JS, JVM'")!>Platform<!> {
+    val <!LINE_MARKER("descr='Has actuals in JS, JVM'")!>name<!>: String
 }
 
 fun hello(): String = "Hello from ${Platform.name}"
