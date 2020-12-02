@@ -17,9 +17,11 @@ class LineMarkerCodeMetaInfo(
         get() = lineMarker.startOffset
     override val end: Int
         get() = lineMarker.endOffset
+
+    override val tag: String
+        get() = renderConfiguration.getTag()
+
     override val platforms: MutableList<String> = mutableListOf()
 
     override fun asString(): String = renderConfiguration.asString(this)
-
-    override fun getTag(): String = renderConfiguration.getTag()
 }

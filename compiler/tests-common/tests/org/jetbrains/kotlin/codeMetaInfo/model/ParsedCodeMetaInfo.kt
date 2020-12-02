@@ -11,18 +11,16 @@ class ParsedCodeMetaInfo(
     override val start: Int,
     override val end: Int,
     override val platforms: MutableList<String>,
-    private val tag: String,
+    override val tag: String,
     val description: String?
 ) : CodeMetaInfo {
     override val renderConfiguration = object : AbstractCodeMetaInfoRenderConfiguration(false) {}
 
     override fun asString(): String = renderConfiguration.asString(this)
 
-    override fun getTag(): String = tag
-
     override fun equals(other: Any?): Boolean {
         if (other == null || other !is CodeMetaInfo) return false
-        return this.tag == other.getTag() && this.start == other.start && this.end == other.end
+        return this.tag == other.tag && this.start == other.start && this.end == other.end
     }
 
     override fun hashCode(): Int {

@@ -17,9 +17,11 @@ class HighlightingCodeMetaInfo(
         get() = highlightingInfo.startOffset
     override val end: Int
         get() = highlightingInfo.endOffset
+
+    override val tag: String
+        get() = renderConfiguration.getTag()
+
     override val platforms: MutableList<String> = mutableListOf()
 
     override fun asString(): String = renderConfiguration.asString(this)
-
-    override fun getTag(): String = renderConfiguration.getTag()
 }

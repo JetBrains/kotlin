@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.AbstractCodeMetaIn
 interface CodeMetaInfo {
     val start: Int
     val end: Int
+    val tag: String
     val renderConfiguration: AbstractCodeMetaInfoRenderConfiguration
     val platforms: MutableList<String>
 
     fun asString(): String
-    fun getTag(): String
 }

@@ -21,9 +21,10 @@ class DiagnosticCodeMetaInfo(
         diagnostic: Diagnostic
     ) : this(range.startOffset, range.endOffset, renderConfiguration, diagnostic)
 
+    override val tag: String
+        get() = renderConfiguration.getTag(this)
+
     override val platforms: MutableList<String> = mutableListOf()
 
     override fun asString(): String = renderConfiguration.asString(this)
-
-    override fun getTag(): String = renderConfiguration.getTag(this)
 }
