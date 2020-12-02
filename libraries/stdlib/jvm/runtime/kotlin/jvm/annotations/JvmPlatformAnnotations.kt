@@ -152,4 +152,5 @@ public actual annotation class JvmInline
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
+@SinceKotlin("1.5")
 public actual annotation class JvmRecord

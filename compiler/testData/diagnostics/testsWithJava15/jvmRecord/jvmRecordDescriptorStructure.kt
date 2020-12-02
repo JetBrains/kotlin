@@ -1,3 +1,4 @@
+// !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
 
 <!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>

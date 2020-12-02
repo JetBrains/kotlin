@@ -1,3 +1,4 @@
+// !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
 // JVM_TARGET: 15_PREVIEW
 // FILE: JavaClass.java
