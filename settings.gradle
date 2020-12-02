@@ -326,7 +326,8 @@ include ":compiler:fir:cones",
         ":compiler:fir:entrypoint",
         ":compiler:fir:analysis-tests"
 
-include ":compiler:test-infrastructure-utils"
+include ":compiler:test-infrastructure",
+        ":compiler:test-infrastructure-utils"
 
 include ":idea:idea-frontend-fir:idea-fir-low-level-api"
 include ":idea:idea-fir-performance-tests"
