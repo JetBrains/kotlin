@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
@@ -110,24 +109,6 @@ internal class KonanSymbols(
             (fromClass to toClass) to symbol
         }
     }.toMap()
-
-    private val binaryOperatorCache = mutableMapOf<Triple<Name, KotlinType, KotlinType>, IrSimpleFunctionSymbol>()
-
-    /**
-     * A less restrictive version of [getBinaryOperator] that should be used when symbols might not be bound yet.
-     * Note that it is a hack that will be removed in a foreseeable future. Consider using [getBinaryOperator] instead.
-     *
-     * TODO: Remove with [org.jetbrains.kotlin.backend.konan.ir.interop.cenum.CEnumByValueFunctionGenerator].
-     */
-    fun getBinaryOperatorMaybeUnbound(name: Name, lhsType: KotlinType, rhsType: KotlinType): IrSimpleFunctionSymbol {
-        val key = Triple(name, lhsType, rhsType)
-        return binaryOperatorCache.getOrPut(key) {
-            symbolTable.referenceSimpleFunction(
-                    lhsType.memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)
-                            .first { it.valueParameters.size == 1 && it.valueParameters[0].type == rhsType }
-            )
-        }
-    }
 
     val arrayList = symbolTable.referenceClass(getArrayListClassDescriptor(context))
 

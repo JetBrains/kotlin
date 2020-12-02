@@ -56,29 +56,22 @@ internal class CEnumByValueFunctionGenerator(
                 val values = irTemporary(irCall(valuesIrFunctionSymbol), isMutable = true)
                 val inductionVariable = irTemporary(irInt(0), isMutable = true)
                 val arrayClass = values.type.classOrNull!!
-                val valuesSize = IrCallImpl.fromSymbolDescriptor(
-                        startOffset, endOffset, irBuiltIns.intType, symbols.arraySize.getValue(arrayClass)
-                ).also { irCall ->
+                val valuesSize = irCall(symbols.arraySize.getValue(arrayClass), irBuiltIns.intType).also { irCall ->
                     irCall.dispatchReceiver = irGet(values)
                 }
                 val getElementFn = symbols.arrayGet.getValue(arrayClass)
-                val plusFun = symbols.getBinaryOperatorMaybeUnbound(OperatorNameConventions.PLUS, irBuiltIns.int, irBuiltIns.int)
+                val plusFun = symbols.getBinaryOperator(OperatorNameConventions.PLUS, irBuiltIns.intType, irBuiltIns.intType)
                 val lessFunctionSymbol = irBuiltIns.lessFunByOperandType.getValue(irBuiltIns.intClass)
                 +irWhile().also { loop ->
-                    loop.condition = IrCallImpl.fromSymbolDescriptor(
-                            startOffset, endOffset, irBuiltIns.booleanType, lessFunctionSymbol
-                    ).also { irCall ->
+                    loop.condition = irCall(lessFunctionSymbol, irBuiltIns.booleanType).also { irCall ->
                         irCall.putValueArgument(0, irGet(inductionVariable))
                         irCall.putValueArgument(1, valuesSize)
                     }
                     loop.body = irBlock {
-                        val temporaryValue = IrCallImpl.fromSymbolDescriptor(
-                                startOffset, endOffset,byValueIrFunction.returnType, getElementFn
-                        ).also { irCall ->
+                        val entry = irTemporary(irCall(getElementFn, byValueIrFunction.returnType).also { irCall ->
                             irCall.dispatchReceiver = irGet(values)
                             irCall.putValueArgument(0, irGet(inductionVariable))
-                        }
-                        val entry = irTemporary(temporaryValue, isMutable = true)
+                        }, isMutable = true)
                         val valueGetter = entry.type.getClass()!!.getPropertyGetter("value")!!
                         val entryValue = irGet(irValueParameter.type, irGet(entry), valueGetter)
                         +irIfThenElse(
