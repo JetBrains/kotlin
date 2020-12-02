@@ -22,7 +22,7 @@ interface CodeMetaInfo {
     val end: Int
     val tag: String
     val renderConfiguration: AbstractCodeMetaInfoRenderConfiguration
-    val platforms: MutableList<String>
+    val attributes: MutableList<String>
 
     fun asString(): String
 }
@@ -42,7 +42,7 @@ class DiagnosticCodeMetaInfo(
     override val tag: String
         get() = renderConfiguration.getTag(this)
 
-    override val platforms: MutableList<String> = mutableListOf()
+    override val attributes: MutableList<String> = mutableListOf()
 
     override fun asString(): String = renderConfiguration.asString(this)
 }
@@ -59,7 +59,7 @@ class LineMarkerCodeMetaInfo(
     override val tag: String
         get() = renderConfiguration.getTag()
 
-    override val platforms: MutableList<String> = mutableListOf()
+    override val attributes: MutableList<String> = mutableListOf()
 
     override fun asString(): String = renderConfiguration.asString(this)
 }
@@ -76,7 +76,7 @@ class HighlightingCodeMetaInfo(
     override val tag: String
         get() = renderConfiguration.getTag()
 
-    override val platforms: MutableList<String> = mutableListOf()
+    override val attributes: MutableList<String> = mutableListOf()
 
     override fun asString(): String = renderConfiguration.asString(this)
 }
@@ -84,7 +84,7 @@ class HighlightingCodeMetaInfo(
 class ParsedCodeMetaInfo(
     override val start: Int,
     override val end: Int,
-    override val platforms: MutableList<String>,
+    override val attributes: MutableList<String>,
     override val tag: String,
     val description: String?
 ) : CodeMetaInfo {
