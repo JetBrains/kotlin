@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.codeMetaInfo.models
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.checkers.diagnostics.ActualDiagnostic
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.codeMetaInfo.renderConfigurations.AbstractCodeMetaInfoRenderConfiguration
@@ -32,6 +33,12 @@ class DiagnosticCodeMetaInfo(
     override val renderConfiguration: DiagnosticCodeMetaInfoRenderConfiguration,
     val diagnostic: Diagnostic
 ) : CodeMetaInfo {
+    constructor(
+        range: TextRange,
+        renderConfiguration: DiagnosticCodeMetaInfoRenderConfiguration,
+        diagnostic: Diagnostic
+    ) : this(range.startOffset, range.endOffset, renderConfiguration, diagnostic)
+
     override val platforms: MutableList<String> = mutableListOf()
 
     override fun asString(): String = renderConfiguration.asString(this)
