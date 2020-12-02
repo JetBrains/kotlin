@@ -346,7 +346,6 @@ public class ConfigureKotlinTest extends AbstractConfigureKotlinTest {
             FacetUtilsKt.configureFacet(
                     facet,
                     "1.1",
-                    LanguageFeature.State.ENABLED,
                     platform,
                     modelsProvider
             );

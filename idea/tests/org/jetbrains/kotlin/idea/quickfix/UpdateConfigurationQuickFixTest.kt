@@ -7,15 +7,12 @@ package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.facet.FacetManager
 import com.intellij.facet.impl.FacetUtil
-import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ModuleRootModificationUtil.updateModel
 import com.intellij.openapi.roots.OrderRootType
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments.Companion.DEFAULT
 import org.jetbrains.kotlin.config.CompilerSettings.Companion.DEFAULT_ADDITIONAL_ARGUMENTS
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -55,28 +52,6 @@ class UpdateConfigurationQuickFixTest : KotlinLightPlatformCodeInsightFixtureTes
         assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, inlineClassesSupport)
         myFixture.launchAction(myFixture.findSingleIntention("Enable inline classes support in the project"))
         assertEquals(LanguageFeature.State.ENABLED, inlineClassesSupport)
-    }
-
-    fun testEnableCoroutines() {
-        configureRuntime("mockRuntime11")
-        resetProjectSettings(LanguageVersion.KOTLIN_1_1)
-        myFixture.configureByText("foo.kt", "suspend fun foo()")
-
-        assertEquals(DEFAULT, KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.coroutinesState)
-        assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, coroutineSupport)
-        myFixture.launchAction(myFixture.findSingleIntention("Enable coroutine support in the project"))
-        assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
-    }
-
-    fun testDisableCoroutines() {
-        configureRuntime("mockRuntime11")
-        resetProjectSettings(LanguageVersion.KOTLIN_1_1)
-        myFixture.configureByText("foo.kt", "suspend fun foo()")
-
-        assertEquals(DEFAULT, KotlinCommonCompilerArgumentsHolder.getInstance(project).settings.coroutinesState)
-        assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, coroutineSupport)
-        myFixture.launchAction(myFixture.findSingleIntention("Disable coroutine support in the project"))
-        assertEquals(LanguageFeature.State.ENABLED_WITH_ERROR, coroutineSupport)
     }
 
     fun testIncreaseLangLevel() {
@@ -189,12 +164,8 @@ class UpdateConfigurationQuickFixTest : KotlinLightPlatformCodeInsightFixtureTes
         KotlinCommonCompilerArgumentsHolder.getInstance(project).update {
             languageVersion = version.versionString
             apiVersion = version.versionString
-            coroutinesState = DEFAULT
         }
     }
-
-    private val coroutineSupport: LanguageFeature.State
-        get() = project.getLanguageVersionSettings().getFeatureSupport(LanguageFeature.Coroutines)
 
     private val inlineClassesSupport: LanguageFeature.State
         get() = project.getLanguageVersionSettings().getFeatureSupport(LanguageFeature.InlineClasses)

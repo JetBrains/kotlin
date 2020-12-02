@@ -130,8 +130,6 @@ where advanced options include:
                              Run sticky condition checks on subsequent phases as well. Implies -Xcheck-phase-conditions
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in the multi-platform mode.
                              Should be a subset of sources passed as free arguments
-  -Xcoroutines={enable|warn|error}
-                             Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
   -Xdisable-phases           Disable backend phases
