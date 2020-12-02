@@ -88,7 +88,7 @@ class ParsedCodeMetaInfo(
     override val tag: String,
     val description: String?
 ) : CodeMetaInfo {
-    override val renderConfiguration = object : AbstractCodeMetaInfoRenderConfiguration(false) {}
+    override val renderConfiguration = ParsedCodeMetaInfoRenderConfiguration
 
     override fun asString(): String = renderConfiguration.asString(this)
 
@@ -102,6 +102,17 @@ class ParsedCodeMetaInfo(
         result = 31 * result + end
         result = 31 * result + tag.hashCode()
         return result
+    }
+
+    fun copy(): ParsedCodeMetaInfo {
+        return ParsedCodeMetaInfo(start, end, attributes.toMutableList(), tag, description)
+    }
+}
+
+object ParsedCodeMetaInfoRenderConfiguration : AbstractCodeMetaInfoRenderConfiguration() {
+    override fun asString(codeMetaInfo: CodeMetaInfo): String {
+        require(codeMetaInfo is ParsedCodeMetaInfo)
+        return super.asString(codeMetaInfo) + (codeMetaInfo.description?.let { "(\"$it\")" } ?: "")
     }
 }
 
