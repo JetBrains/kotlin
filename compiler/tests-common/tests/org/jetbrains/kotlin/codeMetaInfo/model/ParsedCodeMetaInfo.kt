@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.codeMetaInfo.model
 
-import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.AbstractCodeMetaInfoRenderConfiguration
+import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.ParsedCodeMetaInfoRenderConfiguration
 
 class ParsedCodeMetaInfo(
     override val start: Int,
@@ -14,7 +14,7 @@ class ParsedCodeMetaInfo(
     override val tag: String,
     val description: String?
 ) : CodeMetaInfo {
-    override val renderConfiguration = object : AbstractCodeMetaInfoRenderConfiguration(false) {}
+    override val renderConfiguration = ParsedCodeMetaInfoRenderConfiguration
 
     override fun asString(): String = renderConfiguration.asString(this)
 
@@ -29,4 +29,9 @@ class ParsedCodeMetaInfo(
         result = 31 * result + tag.hashCode()
         return result
     }
+
+    fun copy(): ParsedCodeMetaInfo {
+        return ParsedCodeMetaInfo(start, end, attributes.toMutableList(), tag, description)
+    }
 }
+
