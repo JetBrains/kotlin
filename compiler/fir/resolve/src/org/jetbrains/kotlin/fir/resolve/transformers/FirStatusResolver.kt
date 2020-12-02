@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 class FirStatusResolver(
     val session: FirSession,
@@ -73,14 +74,14 @@ class FirStatusResolver(
             @Suppress("RemoveExplicitTypeArguments") // Workaround for KT-42175
             buildList<FirCallableMemberDeclaration<*>> {
                 val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
-                scope.processFunctionsByName(function.name) {}
-                scope
-                    .processDirectOverriddenFunctionsWithBaseScope(function.symbol) { symbol, _ ->
-                        (symbol.fir as? FirCallableMemberDeclaration<*>)?.let {
-                            this += it
-                        }
+                val symbol = function.symbol
+                if (symbol is FirNamedFunctionSymbol) {
+                    scope.processFunctionsByName(function.name) {}
+                    scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overriddenSymbol, _ ->
+                        this += overriddenSymbol.fir
                         ProcessorAction.NEXT
                     }
+                }
             }.mapNotNull {
                 it.status as? FirResolvedDeclarationStatus
             }

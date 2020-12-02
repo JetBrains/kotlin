@@ -140,26 +140,27 @@ fun FirReference.toSymbolForCall(
     }
 }
 
-private fun FirCallableSymbol<*>.toSymbolForCall(declarationStorage: Fir2IrDeclarationStorage, preferGetter: Boolean): IrSymbol? = when (this) {
-    is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this)
-    is SyntheticPropertySymbol -> {
-        (fir as? FirSyntheticProperty)?.let { syntheticProperty ->
-            val delegateSymbol = if (preferGetter) {
-                syntheticProperty.getter.delegate.symbol
-            } else {
-                syntheticProperty.setter?.delegate?.symbol
-                    ?: throw AssertionError("Written synthetic property must have a setter")
-            }
-            delegateSymbol.unwrapCallRepresentative().toSymbolForCall(declarationStorage, preferGetter)
-        } ?: declarationStorage.getIrPropertySymbol(this)
+private fun FirCallableSymbol<*>.toSymbolForCall(declarationStorage: Fir2IrDeclarationStorage, preferGetter: Boolean): IrSymbol? =
+    when (this) {
+        is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this)
+        is SyntheticPropertySymbol -> {
+            (fir as? FirSyntheticProperty)?.let { syntheticProperty ->
+                val delegateSymbol = if (preferGetter) {
+                    syntheticProperty.getter.delegate.symbol
+                } else {
+                    syntheticProperty.setter?.delegate?.symbol
+                        ?: throw AssertionError("Written synthetic property must have a setter")
+                }
+                delegateSymbol.unwrapCallRepresentative().toSymbolForCall(declarationStorage, preferGetter)
+            } ?: declarationStorage.getIrPropertySymbol(this)
+        }
+        is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this)
+        is FirFieldSymbol -> declarationStorage.getIrFieldSymbol(this)
+        is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(this)
+        is FirDelegateFieldSymbol<*> -> declarationStorage.getIrBackingFieldSymbol(this)
+        is FirVariableSymbol<*> -> declarationStorage.getIrValueSymbol(this)
+        else -> null
     }
-    is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this)
-    is FirFieldSymbol -> declarationStorage.getIrFieldSymbol(this)
-    is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(this)
-    is FirDelegateFieldSymbol<*> -> declarationStorage.getIrBackingFieldSymbol(this)
-    is FirVariableSymbol<*> -> declarationStorage.getIrValueSymbol(this)
-    else -> null
-}
 
 fun FirConstExpression<*>.getIrConstKind(): IrConstKind<*> = when (kind) {
     FirConstKind.IntegerLiteral -> {
@@ -249,8 +250,9 @@ internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(
     val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
     scope.processFunctionsByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
+    val symbol = symbol as? FirNamedFunctionSymbol ?: return emptyList()
     scope.processDirectlyOverriddenFunctions(symbol) {
-        if ((it.fir as FirSimpleFunction).visibility == Visibilities.Private) {
+        if (it.fir.visibility == Visibilities.Private) {
             return@processDirectlyOverriddenFunctions ProcessorAction.NEXT
         }
 

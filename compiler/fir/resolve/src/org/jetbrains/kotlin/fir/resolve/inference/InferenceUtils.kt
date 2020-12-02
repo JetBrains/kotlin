@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -125,9 +126,11 @@ fun ConeKotlinType.findContributedInvokeSymbol(
         FakeOverrideTypeCalculator.DoNothing
     }
     val scope = scope(session, scopeSession, fakeOverrideTypeCalculator) ?: return null
-    var declaredInvoke: FirFunctionSymbol<*>? = null
+    var declaredInvoke: FirNamedFunctionSymbol? = null
     scope.processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
-        if (functionSymbol.fir.valueParameters.size == baseInvokeSymbol.fir.valueParameters.size) {
+        if (functionSymbol is FirNamedFunctionSymbol &&
+            functionSymbol.fir.valueParameters.size == baseInvokeSymbol.fir.valueParameters.size
+        ) {
             declaredInvoke = functionSymbol
             return@processFunctionsByName
         }

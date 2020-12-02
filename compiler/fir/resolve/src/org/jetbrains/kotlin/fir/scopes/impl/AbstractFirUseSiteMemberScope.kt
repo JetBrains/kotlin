@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -20,7 +19,7 @@ abstract class AbstractFirUseSiteMemberScope(
 ) : AbstractFirOverrideScope(session, overrideChecker) {
 
     private val functions = hashMapOf<Name, Collection<FirFunctionSymbol<*>>>()
-    private val directOverriddenFunctions = hashMapOf<FirFunctionSymbol<*>, Collection<FirFunctionSymbol<*>>>()
+    private val directOverriddenFunctions = hashMapOf<FirNamedFunctionSymbol, Collection<FirNamedFunctionSymbol>>()
     protected val directOverriddenProperties = hashMapOf<FirPropertySymbol, MutableList<FirPropertySymbol>>()
 
     override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
@@ -37,8 +36,10 @@ abstract class AbstractFirUseSiteMemberScope(
         val overrideCandidates = mutableSetOf<FirFunctionSymbol<*>>()
         declaredMemberScope.processFunctionsByName(name) { symbol ->
             if (symbol.isStatic) return@processFunctionsByName
-            val directOverridden = computeDirectOverridden(symbol)
-            this@AbstractFirUseSiteMemberScope.directOverriddenFunctions[symbol] = directOverridden
+            if (symbol is FirNamedFunctionSymbol) {
+                val directOverridden = computeDirectOverridden(symbol)
+                this@AbstractFirUseSiteMemberScope.directOverriddenFunctions[symbol] = directOverridden
+            }
             overrideCandidates += symbol
             add(symbol)
         }
@@ -53,13 +54,12 @@ abstract class AbstractFirUseSiteMemberScope(
         }
     }
 
-    private fun computeDirectOverridden(symbol: FirFunctionSymbol<*>): Collection<FirFunctionSymbol<*>> {
-        val result = mutableListOf<FirFunctionSymbol<*>>()
-        val firSimpleFunction = symbol.fir as? FirSimpleFunction ?: return emptyList()
+    private fun computeDirectOverridden(symbol: FirNamedFunctionSymbol): Collection<FirNamedFunctionSymbol> {
+        val result = mutableListOf<FirNamedFunctionSymbol>()
+        val firSimpleFunction = symbol.fir
         superTypesScope.processFunctionsByName(symbol.callableId.callableName) { superSymbol ->
-            val superFunctionFir = superSymbol.fir
-            if (superFunctionFir is FirSimpleFunction &&
-                overrideChecker.isOverriddenFunction(firSimpleFunction, superFunctionFir)
+            if (superSymbol is FirNamedFunctionSymbol &&
+                overrideChecker.isOverriddenFunction(firSimpleFunction, superSymbol.fir)
             ) {
                 result.add(superSymbol)
             }
@@ -69,8 +69,8 @@ abstract class AbstractFirUseSiteMemberScope(
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
-        functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+        functionSymbol: FirNamedFunctionSymbol,
+        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
         doProcessDirectOverriddenCallables(
             functionSymbol, processor, directOverriddenFunctions, superTypesScope,

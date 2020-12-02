@@ -56,7 +56,8 @@ class FirSyntheticPropertiesScope(
         getterSymbol: FirFunctionSymbol<*>,
         processor: (FirVariableSymbol<*>) -> Unit
     ) {
-        val getter = getterSymbol.fir as? FirSimpleFunction ?: return
+        if (getterSymbol !is FirNamedFunctionSymbol) return
+        val getter = getterSymbol.fir
 
         if (getter.typeParameters.isNotEmpty()) return
         if (getter.valueParameters.isNotEmpty()) return
@@ -121,7 +122,7 @@ class FirSyntheticPropertiesScope(
         processor(property.symbol)
     }
 
-    private fun FirFunctionSymbol<*>.hasJavaOverridden(): Boolean {
+    private fun FirNamedFunctionSymbol.hasJavaOverridden(): Boolean {
         var result = false
         baseScope.processOverriddenFunctionsAndSelf(this) {
             if (it.unwrapFakeOverrides().fir.origin == FirDeclarationOrigin.Enhancement) {

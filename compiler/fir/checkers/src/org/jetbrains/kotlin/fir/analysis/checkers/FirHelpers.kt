@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -152,7 +153,7 @@ fun FirSymbolOwner<*>.getContainingClass(context: CheckerContext): FirClassLikeD
  * Returns the FirClassLikeDeclaration the type alias is pointing
  * to provided `this` is a FirTypeAlias. Returns this otherwise.
  */
-fun FirClassLikeDeclaration<*>.followAlias(session: FirSession): FirClassLikeDeclaration<*>? {
+fun FirClassLikeDeclaration<*>.followAlias(session: FirSession): FirClassLikeDeclaration<*> {
     return this.safeAs<FirTypeAlias>()
         ?.expandedTypeRef
         ?.firClassLike(session)
@@ -199,6 +200,7 @@ fun FirSimpleFunction.overriddenFunctions(
     containingClass: FirClass<*>,
     context: CheckerContext
 ): List<FirFunctionSymbol<*>> {
+    val symbol = symbol as? FirNamedFunctionSymbol ?: return emptyList()
     val firTypeScope = containingClass.unsubstitutedScope(
         context.sessionHolder.session,
         context.sessionHolder.scopeSession,

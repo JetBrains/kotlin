@@ -6,31 +6,32 @@
 package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirScope {
     open fun processClassifiersByNameWithSubstitution(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
-    ) {}
+    ) {
+    }
 
     open fun processFunctionsByName(
         name: Name,
         processor: (FirFunctionSymbol<*>) -> Unit
-    ) {}
+    ) {
+    }
 
     open fun processPropertiesByName(
         name: Name,
         processor: (FirVariableSymbol<*>) -> Unit
-    ) {}
+    ) {
+    }
 
     open fun processDeclaredConstructors(
         processor: (FirConstructorSymbol) -> Unit
-    ) {}
+    ) {
+    }
 
     open fun mayContainName(name: Name) = true
 }
@@ -52,8 +53,8 @@ fun FirScope.getDeclaredConstructors(): List<FirConstructorSymbol> = mutableList
 }
 
 fun FirTypeScope.processOverriddenFunctionsAndSelf(
-    functionSymbol: FirFunctionSymbol<*>,
-    processor: (FirFunctionSymbol<*>) -> ProcessorAction
+    functionSymbol: FirNamedFunctionSymbol,
+    processor: (FirNamedFunctionSymbol) -> ProcessorAction
 ): ProcessorAction {
     if (!processor(functionSymbol)) return ProcessorAction.STOP
 

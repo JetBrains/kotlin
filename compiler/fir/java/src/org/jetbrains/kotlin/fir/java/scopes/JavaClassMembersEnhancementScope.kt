@@ -36,7 +36,7 @@ class JavaClassMembersEnhancementScope(
     private val owner: FirRegularClassSymbol,
     private val useSiteMemberScope: JavaClassUseSiteMemberScope,
 ) : FirTypeScope() {
-    private val overriddenFunctions = mutableMapOf<FirFunctionSymbol<*>, Collection<FirFunctionSymbol<*>>>()
+    private val overriddenFunctions = mutableMapOf<FirNamedFunctionSymbol, Collection<FirNamedFunctionSymbol>>()
     private val overriddenProperties = mutableMapOf<FirPropertySymbol, Collection<FirPropertySymbol>>()
 
     private val overrideBindCache = mutableMapOf<Name, Map<FirCallableSymbol<*>?, List<FirCallableSymbol<*>>>>()
@@ -149,16 +149,11 @@ class JavaClassMembersEnhancementScope(
             val enhancedFunction = (symbol.fir as? FirSimpleFunction)?.changeSignatureIfErasedValueParameter()
             val enhancedFunctionSymbol = enhancedFunction?.symbol ?: symbol
 
-            val originalFunction = original.fir as? FirSimpleFunction
-
-            overriddenFunctions[enhancedFunctionSymbol] =
-                if (enhancedFunction != null && originalFunction != null)
-                    originalFunction
-                        .overriddenMembers(enhancedFunction.name)
-                        .mapNotNull { it.symbol as? FirFunctionSymbol<*> }
-                else
-                    emptyList()
-
+            if (enhancedFunctionSymbol is FirNamedFunctionSymbol && original is FirNamedFunctionSymbol) {
+                overriddenFunctions[enhancedFunctionSymbol] = original.fir
+                    .overriddenMembers(enhancedFunctionSymbol.fir.name)
+                    .mapNotNull { it.symbol as? FirNamedFunctionSymbol }
+            }
             processor(enhancedFunctionSymbol)
         }
 
@@ -188,8 +183,8 @@ class JavaClassMembersEnhancementScope(
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
-        functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+        functionSymbol: FirNamedFunctionSymbol,
+        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
         doProcessDirectOverriddenCallables(
             functionSymbol, processor, overriddenFunctions, useSiteMemberScope,
