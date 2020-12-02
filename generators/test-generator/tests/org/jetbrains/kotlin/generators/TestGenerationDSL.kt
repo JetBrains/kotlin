@@ -76,7 +76,7 @@ class TestGroup(
     val testClasses: List<TestClass>
         get() = _testClasses
 
-    inline fun <reified T : TestCase> testClass(
+    inline fun <reified T> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
         useJunit4: Boolean = false,
         annotations: List<AnnotationModel> = emptyList(),
