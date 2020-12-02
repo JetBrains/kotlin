@@ -45,7 +45,7 @@ object Kapt {
                 kaptContext.doAnnotationProcessing(
                     javaSourceFiles,
                     processors.processors,
-                    aggregatedTypes = collectAggregatedTypes(kaptContext.sourcesToReprocess)
+                    typesToReprocess = collectAggregatedTypes(kaptContext.sourcesToReprocess)
                 )
             }
 
