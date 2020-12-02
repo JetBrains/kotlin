@@ -397,7 +397,7 @@ fun IrClass.createImplicitParameterDeclarationWithWrappedDescriptor() {
 @Suppress("UNCHECKED_CAST")
 fun isElseBranch(branch: IrBranch) = branch is IrElseBranch || ((branch.condition as? IrConst<Boolean>)?.value == true)
 
-fun IrSimpleFunction.isMethodOfAny() =
+fun IrFunction.isMethodOfAny() =
     ((valueParameters.size == 0 && name.asString().let { it == "hashCode" || it == "toString" }) ||
             (valueParameters.size == 1 && name.asString() == "equals" && valueParameters[0].type.isNullableAny()))
 

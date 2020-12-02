@@ -5167,6 +5167,16 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/jsExport"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
         }
 
+        @TestMetadata("dataClass.kt")
+        public void testDataClass() throws Exception {
+            runTest("js/js.translator/testData/box/jsExport/dataClass.kt");
+        }
+
+        @TestMetadata("jsExportInClass.kt")
+        public void testJsExportInClass() throws Exception {
+            runTest("js/js.translator/testData/box/jsExport/jsExportInClass.kt");
+        }
+
         @TestMetadata("recursiveExport.kt")
         public void testRecursiveExport() throws Exception {
             runTest("js/js.translator/testData/box/jsExport/recursiveExport.kt");
