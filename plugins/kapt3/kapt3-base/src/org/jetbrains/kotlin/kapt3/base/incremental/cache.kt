@@ -93,8 +93,7 @@ class JavaClassCacheManager(val file: File) : Closeable {
             javaCache.invalidateDataForTypes(impactedTypes)
             aptCache.invalidateAggregating()
             // for isolating, invalidate both own types and classpath types
-            aptCache.invalidateIsolatingForOriginTypes(impactedTypes)
-            aptCache.invalidateIsolatingForOriginTypes(dirtyClasspathFqNames)
+            aptCache.invalidateIsolatingForOriginTypes(impactedTypes + dirtyClasspathFqNames)
         }
 
         return SourcesToReprocess.Incremental(sourcesToReprocess.toList(), impactedTypes, classNamesToReprocess)
