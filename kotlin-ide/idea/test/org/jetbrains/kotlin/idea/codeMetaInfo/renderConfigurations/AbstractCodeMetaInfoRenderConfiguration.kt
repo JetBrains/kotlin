@@ -89,7 +89,7 @@ open class DiagnosticCodeMetaInfoRenderConfiguration(
 open class LineMarkerRenderConfiguration(var renderDescription: Boolean = true) : AbstractCodeMetaInfoRenderConfiguration() {
     override fun asString(codeMetaInfo: CodeMetaInfo): String {
         if (codeMetaInfo !is LineMarkerCodeMetaInfo) return ""
-        return getTag() + getParamsString(codeMetaInfo)
+        return getTag() + getPlatformsString(codeMetaInfo) + getParamsString(codeMetaInfo)
     }
 
     fun getTag() = "LINE_MARKER"
