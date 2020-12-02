@@ -113,11 +113,13 @@ class AnalyzerWithCompilerReport(
 
     override fun analyzeAndReport(files: Collection<KtFile>, analyze: () -> AnalysisResult) {
         analysisResult = analyze()
-        ExperimentalUsageChecker.checkCompilerArguments(
-            analysisResult.moduleDescriptor, languageVersionSettings,
-            reportError = { message -> messageCollector.report(ERROR, message) },
-            reportWarning = { message -> messageCollector.report(WARNING, message) }
-        )
+        if (!analysisResult.isError()) {
+            ExperimentalUsageChecker.checkCompilerArguments(
+                analysisResult.moduleDescriptor, languageVersionSettings,
+                reportError = { message -> messageCollector.report(ERROR, message) },
+                reportWarning = { message -> messageCollector.report(WARNING, message) }
+            )
+        }
         reportSyntaxErrors(files)
         reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector, renderDiagnosticName)
         reportIncompleteHierarchies()
