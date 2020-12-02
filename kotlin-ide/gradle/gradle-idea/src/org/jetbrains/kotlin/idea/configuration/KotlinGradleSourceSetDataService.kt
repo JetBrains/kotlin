@@ -276,14 +276,9 @@ fun configureFacetByGradleModule(
     // TODO there should be a way to figure out the correct platform version
     val platform = platformKind?.defaultPlatform
 
-    val coroutinesProperty = CoroutineSupport.byCompilerArgument(
-        moduleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)
-    )
-
     val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false, GradleConstants.SYSTEM_ID.id)
     kotlinFacet.configureFacet(
         compilerVersion,
-        coroutinesProperty,
         platform,
         modelsProvider
     )
@@ -340,9 +335,4 @@ internal fun adjustClasspath(kotlinFacet: KotlinFacet, dependencyClasspath: List
     if (fullClasspath.isEmpty()) return
     val newClasspath = fullClasspath - dependencyClasspath
     arguments.classpath = if (newClasspath.isNotEmpty()) newClasspath.joinToString(File.pathSeparator) else null
-}
-
-internal fun findKotlinCoroutinesProperty(project: Project): String {
-    return GradlePropertiesFileFacade.forProject(project).readProperty("kotlin.coroutines")
-        ?: CoroutineSupport.getCompilerArgument(LanguageFeature.Coroutines.defaultState)
 }

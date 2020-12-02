@@ -346,23 +346,6 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         return module.getBuildSystemType() == BuildSystemType.JPS
     }
 
-    override fun changeCoroutineConfiguration(module: Module, state: LanguageFeature.State) {
-        val runtimeUpdateRequired = state != LanguageFeature.State.DISABLED &&
-                getRuntimeLibraryVersion(module).toApiVersion() == ApiVersion.KOTLIN_1_0
-
-        if (runtimeUpdateRequired && !askUpdateRuntime(module, LanguageFeature.Coroutines.sinceApiVersion)) {
-            return
-        }
-
-        val facetSettings = KotlinFacetSettingsProvider.getInstance(module.project)?.getInitializedSettings(module)
-        if (facetSettings != null) {
-            ModuleRootModificationUtil.updateModel(module) {
-                facetSettings.apiLevel = LanguageVersion.KOTLIN_1_1
-                facetSettings.languageLevel = LanguageVersion.KOTLIN_1_1
-            }
-        }
-    }
-
     override fun changeGeneralFeatureConfiguration(
         module: Module,
         feature: LanguageFeature,
