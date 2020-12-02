@@ -29,7 +29,10 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.runtime.Composable
 
             @Composable
-            val <!COMPOSABLE_PROPERTY_BACKING_FIELD!>foo<!>: Int = 123
+            val <!DEPRECATED_COMPOSABLE_PROPERTY,COMPOSABLE_PROPERTY_BACKING_FIELD!>foo<!>: Int = 123
+
+            val <!COMPOSABLE_PROPERTY_BACKING_FIELD!>bar<!>: Int = 123
+                @Composable get() = field
         """
         )
     }
@@ -78,7 +81,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.runtime.Composable
 
             @Composable
-            val bar: Int get() = 123
+            val <!DEPRECATED_COMPOSABLE_PROPERTY!>bar<!>: Int get() = 123
+
+            val foo: Int @Composable get() = 123
         """
         )
     }
@@ -89,9 +94,67 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.runtime.Composable
 
             @Composable
-            var <!COMPOSABLE_VAR!>bam<!>: Int 
+            var <!DEPRECATED_COMPOSABLE_PROPERTY, COMPOSABLE_VAR!>bam<!>: Int
                 get() { return 123 }
                 set(value) { print(value) }
+
+            var <!COMPOSABLE_VAR!>bam2<!>: Int
+                @Composable get() { return 123 }
+                set(value) { print(value) }
+
+            var <!COMPOSABLE_VAR!>bam3<!>: Int
+                @Composable get() { return 123 }
+                <!WRONG_ANNOTATION_TARGET!>@Composable<!> set(value) { print(value) }
+
+            var <!COMPOSABLE_VAR!>bam4<!>: Int
+                get() { return 123 }
+                <!WRONG_ANNOTATION_TARGET!>@Composable<!> set(value) { print(value) }
+        """
+        )
+    }
+
+    fun testPropertyGetterAllForms() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+
+            @Composable val <!DEPRECATED_COMPOSABLE_PROPERTY!>bar1<!>: Int get() = 123
+            val bar2: Int @Composable get() = 123
+            @get:Composable val bar3: Int get() = 123
+
+            interface Foo {
+                @Composable val <!DEPRECATED_COMPOSABLE_PROPERTY!>bar1<!>: Int get() = 123
+                val bar2: Int @Composable get() = 123
+                @get:Composable val bar3: Int get() = 123
+            }
+        """
+        )
+    }
+
+    fun testMarkedPropInOverrideMarkedGetter() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+            interface A {
+                val foo: Int @Composable get() = 123
+            }
+            class Impl : A {
+                @Composable override val <!DEPRECATED_COMPOSABLE_PROPERTY!>foo<!>: Int get() = 123
+            }
+        """
+        )
+    }
+
+    fun testMarkedGetterInOverrideMarkedProp() {
+        doTest(
+            """
+            import androidx.compose.runtime.Composable
+            interface A {
+                @Composable val <!DEPRECATED_COMPOSABLE_PROPERTY!>foo<!>: Int get() = 123
+            }
+            class Impl : A {
+                override val foo: Int @Composable get() = 123
+            }
         """
         )
     }
@@ -128,16 +191,31 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
                 @Composable
                 fun composableFunction(param: Boolean): Boolean
                 @Composable
-                val composableProperty: Boolean
+                val <!DEPRECATED_COMPOSABLE_PROPERTY!>composableProperty<!>: Boolean
                 fun nonComposableFunction(param: Boolean): Boolean
                 val nonComposableProperty: Boolean
             }
 
             object FakeFoo : Foo {
                 <!CONFLICTING_OVERLOADS!>override fun composableFunction(param: Boolean)<!> = true
-                <!CONFLICTING_OVERLOADS!>override val composableProperty: Boolean<!> get() = true
+                <!CONFLICTING_OVERLOADS!>override val composableProperty: Boolean<!> <!CONFLICTING_OVERLOADS!>get()<!> = true
                 <!CONFLICTING_OVERLOADS!>@Composable override fun nonComposableFunction(param: Boolean)<!> = true
-                <!CONFLICTING_OVERLOADS!>@Composable override val nonComposableProperty: Boolean<!> get() = true
+                <!CONFLICTING_OVERLOADS!>@Composable override val <!DEPRECATED_COMPOSABLE_PROPERTY!>nonComposableProperty<!>: Boolean<!> <!CONFLICTING_OVERLOADS!>get()<!> = true
+            }
+
+            interface Bar {
+                @Composable
+                fun composableFunction(param: Boolean): Boolean
+                val composableProperty: Boolean @Composable get()
+                fun nonComposableFunction(param: Boolean): Boolean
+                val nonComposableProperty: Boolean
+            }
+
+            object FakeBar : Bar {
+                <!CONFLICTING_OVERLOADS!>override fun composableFunction(param: Boolean)<!> = true
+                <!CONFLICTING_OVERLOADS!>override val composableProperty: Boolean<!> <!CONFLICTING_OVERLOADS!>get()<!> = true
+                <!CONFLICTING_OVERLOADS!>@Composable override fun nonComposableFunction(param: Boolean)<!> = true
+                <!CONFLICTING_OVERLOADS!>override val nonComposableProperty: Boolean<!> <!CONFLICTING_OVERLOADS!>@Composable get()<!> = true
             }
         """
         )

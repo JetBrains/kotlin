@@ -356,7 +356,16 @@ class ComposerParamTransformer(
         ).also { fn ->
             newDescriptor.bind(fn)
             if (this is IrSimpleFunction) {
-                fn.correspondingPropertySymbol = correspondingPropertySymbol
+                val propertySymbol = correspondingPropertySymbol
+                if (propertySymbol != null) {
+                    fn.correspondingPropertySymbol = propertySymbol
+                    if (propertySymbol.owner.getter == this) {
+                        propertySymbol.owner.getter = fn
+                    }
+                    if (propertySymbol.owner.setter == this) {
+                        propertySymbol.owner.setter = this
+                    }
+                }
             }
             fn.parent = parent
             fn.typeParameters = this.typeParameters.map {

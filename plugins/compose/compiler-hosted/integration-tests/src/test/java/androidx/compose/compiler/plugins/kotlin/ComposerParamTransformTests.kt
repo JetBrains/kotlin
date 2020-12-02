@@ -55,7 +55,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
     @Test
     fun testCallingProperties(): Unit = composerParam(
         """
-            @Composable val bar: Int get() { return 123 }
+            val bar: Int @Composable get() { return 123 }
 
             @ComposableContract(restartable = false) @Composable fun Example() {
                 bar
@@ -289,8 +289,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
     @Test
     fun testDexNaming(): Unit = composerParam(
         """
-            @Composable
-            val myProperty: () -> Unit get() {
+            val myProperty: () -> Unit @Composable get() {
                 return {  }
             }
         """,

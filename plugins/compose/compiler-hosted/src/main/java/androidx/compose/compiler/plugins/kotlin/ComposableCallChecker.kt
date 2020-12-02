@@ -68,6 +68,8 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+internal const val COMPOSABLE_PROPERTIES = true
+
 open class ComposableCallChecker :
     CallChecker,
     AdditionalTypeChecker,
@@ -187,7 +189,11 @@ open class ComposableCallChecker :
                 }
                 is KtPropertyAccessor -> {
                     val property = node.property
-                    if (!property.annotationEntries.hasComposableAnnotation(bindingContext)) {
+                    val isComposable = node
+                        .annotationEntries.hasComposableAnnotation(bindingContext)
+                    val propertyIsComposable = property
+                        .annotationEntries.hasComposableAnnotation(bindingContext)
+                    if (!(isComposable || COMPOSABLE_PROPERTIES && propertyIsComposable)) {
                         illegalCall(context, reportOn, property.nameIdentifier ?: property)
                     }
                     return
@@ -329,19 +335,32 @@ fun ResolvedCall<*>.isComposableInvocation(): Boolean {
     return when (candidateDescriptor) {
         is ValueParameterDescriptor -> false
         is LocalVariableDescriptor -> false
-        is PropertyDescriptor -> candidateDescriptor.hasComposableAnnotation()
-        is PropertyGetterDescriptor ->
-            candidateDescriptor.correspondingProperty.hasComposableAnnotation()
+        is PropertyDescriptor -> {
+            val isGetter = valueArguments.isEmpty()
+            val getter = candidateDescriptor.getter
+            if (isGetter && getter != null) {
+                getter.hasComposableAnnotation() ||
+                    (COMPOSABLE_PROPERTIES && candidateDescriptor.hasComposableAnnotation())
+            } else {
+                false
+            }
+        }
+        is PropertyGetterDescriptor -> candidateDescriptor.hasComposableAnnotation() || (
+            COMPOSABLE_PROPERTIES && candidateDescriptor.correspondingProperty
+                .hasComposableAnnotation()
+            )
         else -> candidateDescriptor.hasComposableAnnotation()
     }
 }
 
 internal fun CallableDescriptor.isMarkedAsComposable(): Boolean {
     return when (this) {
-        is PropertyGetterDescriptor -> correspondingProperty.hasComposableAnnotation()
+        is PropertyGetterDescriptor -> hasComposableAnnotation() || (
+            COMPOSABLE_PROPERTIES && correspondingProperty.hasComposableAnnotation()
+            )
         is ValueParameterDescriptor -> type.hasComposableAnnotation()
         is LocalVariableDescriptor -> type.hasComposableAnnotation()
-        is PropertyDescriptor -> hasComposableAnnotation()
+        is PropertyDescriptor -> COMPOSABLE_PROPERTIES && hasComposableAnnotation()
         else -> hasComposableAnnotation()
     }
 }
