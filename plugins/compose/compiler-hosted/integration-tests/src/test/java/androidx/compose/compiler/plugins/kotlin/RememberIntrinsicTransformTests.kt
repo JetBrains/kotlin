@@ -19,7 +19,6 @@ package androidx.compose.compiler.plugins.kotlin
 import org.junit.Test
 
 class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
-    override val intrinsicRememberEnabled: Boolean get() = true
     private fun comparisonPropagation(
         unchecked: String,
         checked: String,
@@ -42,6 +41,214 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
     )
 
     @Test
+    fun testElidedRememberInsideIfDeoptsRememberAfterIf(): Unit = comparisonPropagation(
+        "",
+        """
+            import androidx.compose.runtime.ComposableContract
+
+            @Composable
+            @ComposableContract(restartable = false)
+            fun app(x: Boolean) {
+                val a = if (x) { remember { 1 } } else { 2 }
+                val b = remember { 2 }
+            }
+        """,
+        """
+            @Composable
+            @ComposableContract(restartable = false)
+            fun app(x: Boolean, %composer: Composer<*>?, %changed: Int) {
+              %composer.startReplaceableGroup(<>, "C(app)<rememb...>:Test.kt")
+              val a = if (x) {
+                %composer.startReplaceableGroup(<>)
+                val tmp0_group = %composer.cache(false) {
+                  val tmp0_return = 1
+                  tmp0_return
+                }
+                %composer.endReplaceableGroup()
+                tmp0_group
+              } else {
+                %composer.startReplaceableGroup(<>)
+                %composer.endReplaceableGroup()
+                2
+              }
+              val b = remember({
+                val tmp0_return = 2
+                tmp0_return
+              }, %composer, 0)
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
+
+    @Test
+    fun testMultipleParamInputs(): Unit = comparisonPropagation(
+        """
+        """,
+        """
+            @Composable
+            fun <T> loadResourceInternal(
+                key: String,
+                pendingResource: T? = null,
+                failedResource: T? = null
+            ): Boolean {
+                val deferred = remember(key, pendingResource, failedResource) {
+                    123
+                }
+                return deferred > 10
+            }
+        """,
+        """
+            @Composable
+            fun <T> loadResourceInternal(key: String, pendingResource: T?, failedResource: T?, %composer: Composer<*>?, %changed: Int, %default: Int): Boolean {
+              %composer.startReplaceableGroup(<>, "C(loadResourceInternal)P(1,2):Test.kt")
+              val pendingResource = if (%default and 0b0010 !== 0) null else pendingResource
+              val failedResource = if (%default and 0b0100 !== 0) null else failedResource
+              val deferred = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(key) || %changed and 0b0110 === 0b0100 or %changed and 0b01110000 xor 0b00110000 > 32 && %composer.changed(pendingResource) || %changed and 0b00110000 === 0b00100000 or %changed and 0b001110000000 xor 0b000110000000 > 256 && %composer.changed(failedResource) || %changed and 0b000110000000 === 0b000100000000) {
+                val tmp0_return = 123
+                tmp0_return
+              }
+              val tmp0 = deferred > 10
+              %composer.endReplaceableGroup()
+              return tmp0
+            }
+        """
+    )
+
+    @Test
+    fun testRestartableParameterInputsStableUnstableUncertain(): Unit = comparisonPropagation(
+        """
+            class KnownStable
+            class KnownUnstable(var x: Int)
+            interface Uncertain
+        """,
+        """
+            @Composable
+            fun test1(x: KnownStable) {
+                remember(x) { 1 }
+            }
+            @Composable
+            fun test2(x: KnownUnstable) {
+                remember(x) { 1 }
+            }
+            @Composable
+            fun test3(x: Uncertain) {
+                remember(x) { 1 }
+            }
+        """,
+        """
+            @Composable
+            fun test1(x: KnownStable, %composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(test1):Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                %composer.cache(%dirty and 0b1110 === 0b0100) {
+                  val tmp0_return = 1
+                  tmp0_return
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                test1(x, %composer, %changed or 0b0001)
+              }
+            }
+            @Composable
+            fun test2(x: KnownUnstable, %composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(test2):Test.kt")
+              %composer.cache(%composer.changed(x)) {
+                val tmp0_return = 1
+                tmp0_return
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                test2(x, %composer, %changed or 0b0001)
+              }
+            }
+            @Composable
+            fun test3(x: Uncertain, %composer: Composer<*>?, %changed: Int) {
+              %composer.startRestartGroup(<>, "C(test3):Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                %composer.cache(%dirty and 0b1110 === 0b0100 || %dirty and 0b1000 !== 0 && %composer.changed(x)) {
+                  val tmp0_return = 1
+                  tmp0_return
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer<*>?, %force: Int ->
+                test3(x, %composer, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testNonRestartableParameterInputsStableUnstableUncertain(): Unit = comparisonPropagation(
+        """
+            class KnownStable
+            class KnownUnstable(var x: Int)
+            interface Uncertain
+        """,
+        """
+            import androidx.compose.runtime.ComposableContract
+
+            @Composable
+            @ComposableContract(restartable=false)
+            fun test1(x: KnownStable) {
+                remember(x) { 1 }
+            }
+            @Composable
+            @ComposableContract(restartable=false)
+            fun test2(x: KnownUnstable) {
+                remember(x) { 1 }
+            }
+            @Composable
+            @ComposableContract(restartable=false)
+            fun test3(x: Uncertain) {
+                remember(x) { 1 }
+            }
+        """,
+        """
+            @Composable
+            @ComposableContract(restartable = false)
+            fun test1(x: KnownStable, %composer: Composer<*>?, %changed: Int) {
+              %composer.startReplaceableGroup(<>, "C(test1):Test.kt")
+              %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(x) || %changed and 0b0110 === 0b0100) {
+                val tmp0_return = 1
+                tmp0_return
+              }
+              %composer.endReplaceableGroup()
+            }
+            @Composable
+            @ComposableContract(restartable = false)
+            fun test2(x: KnownUnstable, %composer: Composer<*>?, %changed: Int) {
+              %composer.startReplaceableGroup(<>, "C(test2):Test.kt")
+              %composer.cache(%composer.changed(x)) {
+                val tmp0_return = 1
+                tmp0_return
+              }
+              %composer.endReplaceableGroup()
+            }
+            @Composable
+            @ComposableContract(restartable = false)
+            fun test3(x: Uncertain, %composer: Composer<*>?, %changed: Int) {
+              %composer.startReplaceableGroup(<>, "C(test3):Test.kt")
+              %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(x) || %changed and 0b0110 === 0b0100) {
+                val tmp0_return = 1
+                tmp0_return
+              }
+              %composer.endReplaceableGroup()
+            }
+        """
+    )
+
+    @Test
     fun testPassedArgs(): Unit = comparisonPropagation(
         """
             class Foo(val a: Int, val b: Int)
@@ -54,7 +261,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             @Composable
             fun rememberFoo(a: Int, b: Int, %composer: Composer<*>?, %changed: Int): Foo {
               %composer.startReplaceableGroup(<>, "C(rememberFoo):Test.kt")
-              val tmp0 = %composer.cache(%changed and 0b0110 === 0 && %composer.changed(a) || %changed and 0b1110 === 0b0100 or %changed and 0b00110000 === 0 && %composer.changed(b) || %changed and 0b01110000 === 0b00100000) {
+              val tmp0 = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(a) || %changed and 0b0110 === 0b0100 or %changed and 0b01110000 xor 0b00110000 > 32 && %composer.changed(b) || %changed and 0b00110000 === 0b00100000) {
                 val tmp0_return = Foo(a, b)
                 tmp0_return
               }
@@ -676,7 +883,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
             fun Test(a: Int, %composer: Composer<*>?, %changed: Int): Foo {
               %composer.startReplaceableGroup(<>, "C(Test):Test.kt")
               val b = someInt()
-              val tmp0 = %composer.cache(%changed and 0b0110 === 0 && %composer.changed(a) || %changed and 0b1110 === 0b0100 or %composer.changed(b)) {
+              val tmp0 = %composer.cache(%changed and 0b1110 xor 0b0110 > 4 && %composer.changed(a) || %changed and 0b0110 === 0b0100 or %composer.changed(b)) {
                 val tmp0_return = Foo(a, b)
                 tmp0_return
               }

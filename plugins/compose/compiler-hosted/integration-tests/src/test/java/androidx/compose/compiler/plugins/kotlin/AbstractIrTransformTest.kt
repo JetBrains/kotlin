@@ -68,11 +68,10 @@ import java.io.File
 abstract class ComposeIrTransformTest : AbstractIrTransformTest() {
     open val liveLiteralsEnabled get() = false
     open val sourceInformationEnabled get() = true
-    open val intrinsicRememberEnabled get() = false
     private val extension = ComposeIrGenerationExtension(
         liveLiteralsEnabled,
         sourceInformationEnabled,
-        intrinsicRememberEnabled
+        intrinsicRememberEnabled = true
     )
     // Some tests require the plugin context in order to perform assertions, for example, a
     // context is required to determine the stability of a type using the StabilityInferencer.
