@@ -31,6 +31,12 @@ class ImportAndCheckHighlighting : MultiplePluginVersionGradleImportingTestCase(
         importAndCheckHighlighting(checkWarnings = true)
     }
 
+    @Test
+    @PluginTargetVersions(pluginVersion = "1.3.40+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
+    fun testMacosTargets() {
+        importAndCheckHighlighting(checkLineMarkers = true)
+    }
+
     private fun importAndCheckHighlighting(checkLineMarkers: Boolean = false, checkWarnings: Boolean = false) {
         val files = configureByFiles()
         importProject()
