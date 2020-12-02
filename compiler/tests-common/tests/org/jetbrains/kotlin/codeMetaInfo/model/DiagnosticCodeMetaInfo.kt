@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codeMetaInfo.model
 
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.DiagnosticCodeMetaInfoRenderConfiguration
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 
@@ -14,6 +15,12 @@ class DiagnosticCodeMetaInfo(
     override val renderConfiguration: DiagnosticCodeMetaInfoRenderConfiguration,
     val diagnostic: Diagnostic
 ) : CodeMetaInfo {
+    constructor(
+        range: TextRange,
+        renderConfiguration: DiagnosticCodeMetaInfoRenderConfiguration,
+        diagnostic: Diagnostic
+    ) : this(range.startOffset, range.endOffset, renderConfiguration, diagnostic)
+
     override val platforms: MutableList<String> = mutableListOf()
 
     override fun asString(): String = renderConfiguration.asString(this)
