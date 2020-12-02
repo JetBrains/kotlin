@@ -135,7 +135,6 @@ abstract class AbstractMultiModuleTest : DaemonAnalyzerTestCase() {
             ?: error("Facet settings are not found")
 
         facetSettings.useProjectSettings = false
-        facetSettings.coroutineSupport = LanguageFeature.State.ENABLED
     }
 
     protected fun checkFiles(

@@ -273,13 +273,11 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
         )
 
         val moduleNew = module("moduleNew").setupKotlinFacet {
-            settings.coroutineSupport = LanguageFeature.State.ENABLED
             settings.languageLevel = LanguageVersion.KOTLIN_1_3
             settings.apiLevel = LanguageVersion.KOTLIN_1_3
         }
 
         val moduleOld = module("moduleOld").setupKotlinFacet {
-            settings.coroutineSupport = LanguageFeature.State.ENABLED
             settings.languageLevel = LanguageVersion.KOTLIN_1_2
             settings.apiLevel = LanguageVersion.KOTLIN_1_2
         }
