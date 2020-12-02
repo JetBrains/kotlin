@@ -17,3 +17,7 @@ data class A4(val x: String) : java.lang.Record(), I
 
 @JvmRecord
 data class A5(val x: String) : I
+
+<!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>data class A6(val x: String) : Record(), I<!>
+
+<!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>data class A7(val x: String) : java.lang.Record(), I<!>

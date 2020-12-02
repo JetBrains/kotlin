@@ -50,6 +50,26 @@ package
     public open override /*2*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
+public final data class A6 : java.lang.Record, I {
+    public constructor A6(/*0*/ x: kotlin.String)
+    public final val x: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ...): A6
+    public open override /*2*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class A7 : java.lang.Record, I {
+    public constructor A7(/*0*/ x: kotlin.String)
+    public final val x: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ...): A7
+    public open override /*2*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
 public abstract class Abstract {
     public constructor Abstract()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
