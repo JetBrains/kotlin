@@ -32,7 +32,7 @@ fun KaptContext.doAnnotationProcessing(
     javaSourceFiles: List<File>,
     processors: List<IncrementalProcessor>,
     additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil(),
-    typesToReprocess: List<String> = emptyList()
+    binaryTypesToReprocess: List<String> = emptyList()
 ) {
     val processingEnvironment = JavacProcessingEnvironment.instance(context)
 
@@ -40,7 +40,7 @@ fun KaptContext.doAnnotationProcessing(
 
     val compilerAfterAP: JavaCompiler
     try {
-        if (javaSourceFiles.isEmpty() && typesToReprocess.isEmpty() && additionalSources.isEmpty()) {
+        if (javaSourceFiles.isEmpty() && binaryTypesToReprocess.isEmpty() && additionalSources.isEmpty()) {
             if (logger.isVerbose) {
                 logger.info("Skipping annotation processing as all sources are up-to-date.")
             }
@@ -56,7 +56,7 @@ fun KaptContext.doAnnotationProcessing(
 
         if (logger.isVerbose) {
             logger.info("Processing java sources with annotation processors: ${javaSourceFiles.joinToString()}")
-            logger.info("Processing types with annotation processors: ${typesToReprocess.joinToString()}")
+            logger.info("Processing types with annotation processors: ${binaryTypesToReprocess.joinToString()}")
         }
         val parsedJavaFiles = parseJavaFiles(javaSourceFiles)
 
@@ -74,7 +74,7 @@ fun KaptContext.doAnnotationProcessing(
                 CompileState.PARSE, compiler.enterTrees(parsedJavaFiles + additionalSources)
             )
 
-            val additionalClassNames = JavacList.from(typesToReprocess)
+            val additionalClassNames = JavacList.from(binaryTypesToReprocess)
             if (isJava9OrLater()) {
                 val processAnnotationsMethod =
                     compiler.javaClass.getMethod("processAnnotations", JavacList::class.java, java.util.Collection::class.java)
