@@ -34,7 +34,7 @@ class FirLocalScope private constructor(
 
     fun storeFunction(function: FirSimpleFunction): FirLocalScope {
         return FirLocalScope(
-            properties, functions.put(function.name, function.symbol as FirNamedFunctionSymbol), classes
+            properties, functions.put(function.name, function.symbol), classes
         )
     }
 

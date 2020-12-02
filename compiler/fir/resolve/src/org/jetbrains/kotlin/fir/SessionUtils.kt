@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeInferenceContext
 import org.jetbrains.kotlin.fir.types.ConeTypeCheckerContext
 
@@ -30,7 +29,6 @@ fun FirSimpleFunction.lowestVisibilityAmongOverrides(
     session: FirSession,
     scopeSession: ScopeSession
 ): Visibility {
-    val symbol = symbol as? FirNamedFunctionSymbol ?: return visibility
     val firTypeScope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
     var visibility = visibility
 

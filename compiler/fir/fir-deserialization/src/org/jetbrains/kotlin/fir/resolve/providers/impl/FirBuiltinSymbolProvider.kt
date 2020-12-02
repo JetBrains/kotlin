@@ -233,7 +233,7 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
         val functionClass = getClassLikeSymbolByFqName(classId(arity)) ?: return null
         val invoke =
             functionClass.fir.declarations.find { it is FirSimpleFunction && it.name == OperatorNameConventions.INVOKE } ?: return null
-        return (invoke as FirSimpleFunction).symbol as? FirNamedFunctionSymbol
+        return (invoke as FirSimpleFunction).symbol
     }
 
     private fun FunctionClassKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))

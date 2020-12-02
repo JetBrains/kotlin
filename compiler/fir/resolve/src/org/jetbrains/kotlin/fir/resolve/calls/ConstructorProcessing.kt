@@ -117,7 +117,7 @@ private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
 
     if (type.typeArguments.isEmpty()) return samConstructorForClass
 
-    val namedSymbol = samConstructorForClass.symbol as? FirNamedFunctionSymbol ?: return null
+    val namedSymbol = samConstructorForClass.symbol
 
     val substitutor = prepareSubstitutorForTypeAliasConstructors(
         type,

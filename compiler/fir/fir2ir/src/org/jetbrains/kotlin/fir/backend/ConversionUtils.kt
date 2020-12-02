@@ -250,7 +250,6 @@ internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(
     val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
     scope.processFunctionsByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
-    val symbol = symbol as? FirNamedFunctionSymbol ?: return emptyList()
     scope.processDirectlyOverriddenFunctions(symbol) {
         if (it.fir.visibility == Visibilities.Private) {
             return@processDirectlyOverriddenFunctions ProcessorAction.NEXT

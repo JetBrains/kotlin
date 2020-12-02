@@ -64,7 +64,7 @@ class FirDelegatedMemberScope(
                     newModality = Modality.OPEN,
                 ).apply {
                     delegatedWrapperData = DelegatedWrapperData(functionSymbol.fir, containingClass.symbol.toLookupTag(), delegateField)
-                }.symbol as FirNamedFunctionSymbol
+                }.symbol
             }
             processor(delegatedSymbol)
         }

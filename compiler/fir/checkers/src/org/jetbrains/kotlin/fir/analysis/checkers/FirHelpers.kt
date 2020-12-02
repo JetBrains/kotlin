@@ -200,7 +200,6 @@ fun FirSimpleFunction.overriddenFunctions(
     containingClass: FirClass<*>,
     context: CheckerContext
 ): List<FirFunctionSymbol<*>> {
-    val symbol = symbol as? FirNamedFunctionSymbol ?: return emptyList()
     val firTypeScope = containingClass.unsubstitutedScope(
         context.sessionHolder.session,
         context.sessionHolder.scopeSession,

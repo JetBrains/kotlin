@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
@@ -54,7 +54,7 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
     open var dispatchReceiverType: ConeKotlinType? = null
     open var contractDescription: FirContractDescription = FirEmptyContractDescription
     open lateinit var name: Name
-    open lateinit var symbol: FirFunctionSymbol<FirSimpleFunction>
+    open lateinit var symbol: FirNamedFunctionSymbol
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 

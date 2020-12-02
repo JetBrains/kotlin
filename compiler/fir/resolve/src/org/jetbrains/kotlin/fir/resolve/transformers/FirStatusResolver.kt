@@ -75,12 +75,10 @@ class FirStatusResolver(
             buildList<FirCallableMemberDeclaration<*>> {
                 val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
                 val symbol = function.symbol
-                if (symbol is FirNamedFunctionSymbol) {
-                    scope.processFunctionsByName(function.name) {}
-                    scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overriddenSymbol, _ ->
-                        this += overriddenSymbol.fir
-                        ProcessorAction.NEXT
-                    }
+                scope.processFunctionsByName(function.name) {}
+                scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overriddenSymbol, _ ->
+                    this += overriddenSymbol.fir
+                    ProcessorAction.NEXT
                 }
             }.mapNotNull {
                 it.status as? FirResolvedDeclarationStatus

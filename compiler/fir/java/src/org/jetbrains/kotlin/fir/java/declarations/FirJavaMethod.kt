@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.jvm.FirJavaTypeRef
@@ -52,7 +52,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     name: Name,
     status: FirDeclarationStatus,
     containerSource: DeserializedContainerSource?,
-    symbol: FirFunctionSymbol<FirSimpleFunction>,
+    symbol: FirNamedFunctionSymbol,
     annotations: MutableList<FirAnnotationCall>,
     dispatchReceiverType: ConeKotlinType?,
 ) : FirSimpleFunctionImpl(
