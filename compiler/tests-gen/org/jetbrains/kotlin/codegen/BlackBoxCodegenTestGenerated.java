@@ -3860,6 +3860,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/classes/exceptionConstructor.kt");
         }
 
+        @TestMetadata("extensionFunWithDefaultParam.kt")
+        public void testExtensionFunWithDefaultParam() throws Exception {
+            runTest("compiler/testData/codegen/box/classes/extensionFunWithDefaultParam.kt");
+        }
+
         @TestMetadata("extensionOnNamedClassObject.kt")
         public void testExtensionOnNamedClassObject() throws Exception {
             runTest("compiler/testData/codegen/box/classes/extensionOnNamedClassObject.kt");

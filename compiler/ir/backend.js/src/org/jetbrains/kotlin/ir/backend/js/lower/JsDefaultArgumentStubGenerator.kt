@@ -37,11 +37,12 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
     ): IrExpression {
         val paramCount = oldIrFunction.valueParameters.size
         val invokeFunctionN = resolveInvoke(paramCount)
-        // NOTE: currently we do not have a syntax to perform super extension call
-        // but in case we have such functionality in the future the logic bellow should be fixed
+
         return irCall(invokeFunctionN, IrStatementOrigin.INVOKE).apply {
             dispatchReceiver = irImplicitCast(irGet(handlerDeclaration), invokeFunctionN.dispatchReceiverParameter!!.type)
-            assert(newIrFunction.extensionReceiverParameter == null)
+            // NOTE: currently we do not have a syntax to perform super extension call
+            // that's why we've used to just fail with an exception in case we have extension function in for JS IR compilation
+            // TODO: that was overkill, however, we still need to revisit this issue later on
             params.forEachIndexed { i, variable -> putValueArgument(i, irGet(variable)) }
         }
     }
