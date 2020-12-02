@@ -5461,11 +5461,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testAllFilesPresentInBigArity() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/functions/bigArity"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
-
-            @TestMetadata("nestedBigArityFunCalls.kt")
-            public void testNestedBigArityFunCalls() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/bigArity/nestedBigArityFunCalls.kt");
-            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/functions/functionExpression")

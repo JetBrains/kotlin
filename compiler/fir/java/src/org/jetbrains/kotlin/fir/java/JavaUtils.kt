@@ -485,7 +485,7 @@ internal fun FirJavaClass.addAnnotationsFrom(
     annotations.addAnnotationsFrom(session, javaAnnotationOwner, javaTypeParameterStack)
 }
 
-private fun MutableList<FirAnnotationCall>.addAnnotationsFrom(
+internal fun MutableList<FirAnnotationCall>.addAnnotationsFrom(
     session: FirSession,
     javaAnnotationOwner: JavaAnnotationOwner,
     javaTypeParameterStack: JavaTypeParameterStack

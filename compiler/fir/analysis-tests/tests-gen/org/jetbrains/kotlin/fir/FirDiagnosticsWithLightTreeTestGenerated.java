@@ -2079,6 +2079,11 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/questionableSmartCast.kt");
         }
 
+        @TestMetadata("recursiveNamedAnnotation.kt")
+        public void testRecursiveNamedAnnotation() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/recursiveNamedAnnotation.kt");
+        }
+
         @TestMetadata("safeCallInvoke.kt")
         public void testSafeCallInvoke() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/safeCallInvoke.kt");
