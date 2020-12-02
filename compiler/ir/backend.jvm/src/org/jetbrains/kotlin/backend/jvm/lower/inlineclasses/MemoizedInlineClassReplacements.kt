@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.classFileContainsMethod
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
@@ -71,7 +72,7 @@ class MemoizedInlineClassReplacements(
                     when {
                         it.isRemoveAtSpecialBuiltinStub() ->
                             null
-                        it.isInlineClassMemberFakeOverriddenFromDefaultJavaInterfaceMethod() ->
+                        it.isInlineClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod() ->
                             null
                         it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
                             createMethodReplacement(it)
@@ -97,14 +98,21 @@ class MemoizedInlineClassReplacements(
                 valueParameters.size == 1 &&
                 valueParameters[0].type.isInt()
 
-    private fun IrFunction.isInlineClassMemberFakeOverriddenFromDefaultJavaInterfaceMethod(): Boolean {
+    private fun IrFunction.isInlineClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod(): Boolean {
         if (this !is IrSimpleFunction) return false
         if (!this.isFakeOverride) return false
         val parentClass = parentClassOrNull ?: return false
         if (!parentClass.isInline) return false
 
         val overridden = resolveFakeOverride() ?: return false
-        return overridden.isFromJava() && overridden.modality != Modality.ABSTRACT && overridden.parentAsClass.isJvmInterface
+        if (!overridden.parentAsClass.isJvmInterface) return false
+        if (overridden.modality == Modality.ABSTRACT) return false
+
+        // We have a non-abstract interface member.
+        // It is a JVM default interface method if one of the following conditions are true:
+        // - it is a Java method,
+        // - it is a Kotlin function compiled to JVM default interface method.
+        return overridden.isFromJava() || overridden.isCompiledToJvmDefault(context.state.jvmDefaultMode)
     }
 
     /**
