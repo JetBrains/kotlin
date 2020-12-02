@@ -187,27 +187,6 @@ class GradleFacetImportTest : KotlinGradleImportingTestCase() {
         )
     }
 
-    @Test
-    fun testCoroutineImportByOptions() {
-        configureByFiles()
-        importProject()
-
-        with(facetSettings) {
-            assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
-        }
-    }
-
-    @Test
-    fun testCoroutineImportByProperties() {
-        configureByFiles()
-        importProject()
-
-        with(facetSettings) {
-            assertEquals(LanguageFeature.State.ENABLED, coroutineSupport)
-        }
-    }
-
-    @Test
     fun testJsImport() {
         configureByFiles()
         importProject()

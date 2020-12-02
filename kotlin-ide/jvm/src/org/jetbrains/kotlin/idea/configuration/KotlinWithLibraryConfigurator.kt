@@ -357,7 +357,6 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
         val facetSettings = KotlinFacetSettingsProvider.getInstance(module.project)?.getInitializedSettings(module)
         if (facetSettings != null) {
             ModuleRootModificationUtil.updateModel(module) {
-                facetSettings.coroutineSupport = state
                 facetSettings.apiLevel = LanguageVersion.KOTLIN_1_1
                 facetSettings.languageLevel = LanguageVersion.KOTLIN_1_1
             }
