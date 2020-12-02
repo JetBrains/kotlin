@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 class DiagnosticCodeMetaInfo(
     override val start: Int,
     override val end: Int,
-    override val renderConfiguration: DiagnosticCodeMetaInfoRenderConfiguration,
+    renderConfiguration: DiagnosticCodeMetaInfoRenderConfiguration,
     val diagnostic: Diagnostic
 ) : CodeMetaInfo {
     constructor(
@@ -20,6 +20,13 @@ class DiagnosticCodeMetaInfo(
         renderConfiguration: DiagnosticCodeMetaInfoRenderConfiguration,
         diagnostic: Diagnostic
     ) : this(range.startOffset, range.endOffset, renderConfiguration, diagnostic)
+
+    override var renderConfiguration: DiagnosticCodeMetaInfoRenderConfiguration = renderConfiguration
+        private set
+
+    fun replaceRenderConfiguration(renderConfiguration: DiagnosticCodeMetaInfoRenderConfiguration) {
+        this.renderConfiguration = renderConfiguration
+    }
 
     override val tag: String
         get() = renderConfiguration.getTag(this)
