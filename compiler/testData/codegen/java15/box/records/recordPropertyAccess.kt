@@ -1,3 +1,4 @@
+// !LANGUAGE: +JvmRecordSupport
 // JVM_TARGET: 15_PREVIEW
 // FILE: MyRec.java
 public record MyRec(String name) {}

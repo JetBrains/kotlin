@@ -94,7 +94,11 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor, SyntheticPropert
     }
 }
 
-class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val lookupTracker: LookupTracker) : SyntheticScope.Default() {
+class JavaSyntheticPropertiesScope(
+    storageManager: StorageManager,
+    private val lookupTracker: LookupTracker,
+    private val supportJavaRecords: Boolean,
+) : SyntheticScope.Default() {
     private val syntheticPropertyInClass =
         storageManager.createMemoizedFunction<Pair<ClassDescriptor, Name>, SyntheticPropertyHolder> { pair ->
             syntheticPropertyInClassNotCached(pair.first, pair.second)
@@ -178,6 +182,8 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         name: Name,
         ownerClass: ClassDescriptor
     ): PropertyDescriptor? {
+        if (!supportJavaRecords) return null
+
         val componentLikeMethod =
             ownerClass.unsubstitutedMemberScope
                 .getContributedFunctions(name, NoLookupLocation.FROM_SYNTHETIC_SCOPE)

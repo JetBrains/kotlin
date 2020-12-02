@@ -1,3 +1,4 @@
+// !LANGUAGE: +JvmRecordSupport
 // FILE: MyRecord.java
 public record MyRecord(int x, CharSequence y) {
 
