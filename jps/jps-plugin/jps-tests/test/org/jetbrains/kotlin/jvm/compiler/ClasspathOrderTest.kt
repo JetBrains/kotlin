@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.jvm.compiler
 import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestCaseWithTmpdir
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
@@ -32,7 +32,7 @@ import java.io.File
  */
 class ClasspathOrderTest : TestCaseWithTmpdir() {
     companion object {
-        private val sourceDir = File(KotlinTestUtils.getTestDataPathBase() + "/classpathOrder").absoluteFile
+        private val sourceDir = File(KtTestUtil.getTestDataPathBase() + "/classpathOrder").absoluteFile
     }
 
     fun testClasspathOrderForCLI() {
