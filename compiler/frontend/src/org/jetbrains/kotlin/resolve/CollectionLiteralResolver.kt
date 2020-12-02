@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -93,12 +94,16 @@ class CollectionLiteralResolver(
     }
 
     private fun getArrayFunctionCallName(expectedType: KotlinType): Name {
-        if (NO_EXPECTED_TYPE === expectedType || !KotlinBuiltIns.isPrimitiveArray(expectedType)) {
+        if (NO_EXPECTED_TYPE === expectedType ||
+            !(KotlinBuiltIns.isPrimitiveArray(expectedType) || KotlinBuiltIns.isUnsignedArrayType(expectedType))
+        ) {
             return ArrayFqNames.ARRAY_OF_FUNCTION
         }
 
         val descriptor = expectedType.constructor.declarationDescriptor ?: return ArrayFqNames.ARRAY_OF_FUNCTION
 
-        return ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY[KotlinBuiltIns.getPrimitiveArrayType(descriptor)] ?: ArrayFqNames.ARRAY_OF_FUNCTION
+        return ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY[KotlinBuiltIns.getPrimitiveArrayType(descriptor)]
+            ?: UnsignedTypes.unsignedArrayTypeToArrayCall[UnsignedTypes.toUnsignedArrayType(descriptor)]
+            ?: ArrayFqNames.ARRAY_OF_FUNCTION
     }
 }

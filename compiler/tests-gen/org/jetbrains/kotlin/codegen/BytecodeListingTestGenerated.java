@@ -975,6 +975,11 @@ public class BytecodeListingTestGenerated extends AbstractBytecodeListingTest {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/annotatedPropertyWithInlineClassTypeInSignature.kt");
         }
 
+        @TestMetadata("annotationGetters.kt")
+        public void testAnnotationGetters() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/annotationGetters.kt");
+        }
+
         @TestMetadata("annotationsOnHiddenConstructor.kt")
         public void testAnnotationsOnHiddenConstructor() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/inlineClasses/annotationsOnHiddenConstructor.kt");
