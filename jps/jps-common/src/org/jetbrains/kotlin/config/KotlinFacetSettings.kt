@@ -48,29 +48,6 @@ sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
     )
 }
 
-object CoroutineSupport {
-    @JvmStatic
-    fun byCompilerArguments(arguments: CommonCompilerArguments?): LanguageFeature.State =
-        byCompilerArgumentsOrNull(arguments) ?: LanguageFeature.Coroutines.defaultState
-
-    fun byCompilerArgumentsOrNull(arguments: CommonCompilerArguments?): LanguageFeature.State? = when (arguments?.coroutinesState) {
-        CommonCompilerArguments.ENABLE -> LanguageFeature.State.ENABLED
-        CommonCompilerArguments.WARN, CommonCompilerArguments.DEFAULT -> LanguageFeature.State.ENABLED_WITH_WARNING
-        CommonCompilerArguments.ERROR -> LanguageFeature.State.ENABLED_WITH_ERROR
-        else -> null
-    }
-
-    fun byCompilerArgument(argument: String): LanguageFeature.State =
-        LanguageFeature.State.values().find { getCompilerArgument(it).equals(argument, ignoreCase = true) }
-            ?: LanguageFeature.Coroutines.defaultState
-
-    fun getCompilerArgument(state: LanguageFeature.State): String = when (state) {
-        LanguageFeature.State.ENABLED -> "enable"
-        LanguageFeature.State.ENABLED_WITH_WARNING -> "warn"
-        LanguageFeature.State.ENABLED_WITH_ERROR, LanguageFeature.State.DISABLED -> "error"
-    }
-}
-
 sealed class VersionView : DescriptionAware {
     abstract val version: LanguageVersion
 
