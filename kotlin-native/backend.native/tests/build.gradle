@@ -358,7 +358,8 @@ task run_external () {
         if (!file.isDirectory() || !file.file.list().any{ it.endsWith(".kt")})
             return
         def taskPath = rootProject.relativePath(file.file)
-        def taskName = taskPath.split(System.properties["file.separator"]).join('_')
+        def fileSeparator = System.properties["file.separator"]
+        def taskName = taskPath.split("\\$fileSeparator").join('_')
         project.tasks.register(taskName, RunExternalTestGroup) {
             it.groupDirectory = taskPath
             it.finalizedBy resultsTask
