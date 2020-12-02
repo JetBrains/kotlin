@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
@@ -27,7 +28,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 object JvmRecordApplicabilityChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        if (descriptor !is ClassDescriptor || declaration !is KtClassOrObject || !descriptor.isJvmRecord()) return
+        if (descriptor !is ClassDescriptor || declaration !is KtClassOrObject) return
+
+        if (!descriptor.isJvmRecord()) {
+            if (descriptor.typeConstructor.supertypes.any { it.constructor.declarationDescriptor?.fqNameOrNull() == JAVA_LANG_RECORD_FQ_NAME }) {
+                context.trace.report(ErrorsJvm.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE.on(declaration))
+            }
+            return
+        }
 
         val reportOn =
             declaration.annotationEntries.firstOrNull { it.shortName == JVM_RECORD_ANNOTATION_FQ_NAME.shortName() }
