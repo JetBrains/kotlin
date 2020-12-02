@@ -819,6 +819,26 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClassAndNotNullable(type, FqNames.uLongFqName.toUnsafe());
     }
 
+    public static boolean isUByteArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames.uByteArrayFqName.toUnsafe());
+    }
+
+    public static boolean isUShortArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames.uShortArrayFqName.toUnsafe());
+    }
+
+    public static boolean isUIntArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames.uIntArrayFqName.toUnsafe());
+    }
+
+    public static boolean isULongArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClassAndNotNullable(type, FqNames.uLongArrayFqName.toUnsafe());
+    }
+
+    public static boolean isUnsignedArrayType(@NotNull KotlinType type) {
+        return isUByteArray(type) || isUShortArray(type) || isUIntArray(type) || isULongArray(type);
+    }
+
     public static boolean isDoubleOrNullableDouble(@NotNull KotlinType type) {
         return isConstructedFromGivenClass(type, FqNames._double);
     }

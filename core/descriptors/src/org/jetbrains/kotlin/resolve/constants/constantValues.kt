@@ -56,11 +56,13 @@ class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<AnnotationDes
 }
 
 class ArrayValue(
-        value: List<ConstantValue<*>>,
-        private val computeType: (ModuleDescriptor) -> KotlinType
+    value: List<ConstantValue<*>>,
+    private val computeType: (ModuleDescriptor) -> KotlinType
 ) : ConstantValue<List<ConstantValue<*>>>(value) {
     override fun getType(module: ModuleDescriptor): KotlinType = computeType(module).also { type ->
-        assert(KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) { "Type should be an array, but was $type: $value" }
+        assert(KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type) || KotlinBuiltIns.isUnsignedArrayType(type)) {
+            "Type should be an array, but was $type: $value"
+        }
     }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitArrayValue(this, data)

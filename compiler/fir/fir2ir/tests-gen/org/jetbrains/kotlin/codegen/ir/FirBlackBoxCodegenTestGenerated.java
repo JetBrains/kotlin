@@ -32036,6 +32036,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/unsignedTypes/equalsImplForInlineClassWrappingNullableInlineClass.kt");
         }
 
+        @TestMetadata("evaluateConstructorOfUnsignedArrayType.kt")
+        public void testEvaluateConstructorOfUnsignedArrayType() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/evaluateConstructorOfUnsignedArrayType.kt");
+        }
+
         @TestMetadata("evaluateConstructorOfUnsignedType.kt")
         public void testEvaluateConstructorOfUnsignedType() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/evaluateConstructorOfUnsignedType.kt");
