@@ -32,6 +32,7 @@ internal class CEnumCompanionGenerator(
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
+    override val postLinkageSteps: MutableList<() -> Unit> = mutableListOf()
 
     // Depends on already generated `.values()` irFunction.
     fun generate(enumClass: IrClass): IrClass =
@@ -50,13 +51,16 @@ internal class CEnumCompanionGenerator(
     private fun createCompanionConstructor(companionObjectDescriptor: ClassDescriptor): IrConstructor {
         val anyPrimaryConstructor = companionObjectDescriptor.builtIns.any.unsubstitutedPrimaryConstructor!!
         val superConstructorSymbol = symbolTable.referenceConstructor(anyPrimaryConstructor)
+        val classSymbol = symbolTable.referenceClass(companionObjectDescriptor)
         return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also {
-            it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
-                +IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
-                        startOffset, endOffset, context.irBuiltIns.unitType,
-                        superConstructorSymbol
-                )
-                +irInstanceInitializer(symbolTable.referenceClass(companionObjectDescriptor))
+            postLinkageSteps.add {
+                it.body = irBuilder(irBuiltIns, it.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
+                    +IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                            startOffset, endOffset, context.irBuiltIns.unitType,
+                            superConstructorSymbol
+                    )
+                    +irInstanceInitializer(classSymbol)
+                }
             }
         }
     }
@@ -88,7 +92,9 @@ internal class CEnumCompanionGenerator(
     private fun declareEntryAliasProperty(propertyDescriptor: PropertyDescriptor, enumClass: IrClass): IrProperty {
         val entrySymbol = fundCorrespondingEnumEntrySymbol(propertyDescriptor, enumClass)
         return createProperty(propertyDescriptor).also {
-            it.getter!!.body = generateAliasGetterBody(it.getter!!, entrySymbol, enumClass)
+            postLinkageSteps.add {
+                it.getter!!.body = generateAliasGetterBody(it.getter!!, entrySymbol, enumClass)
+            }
         }
     }
 }
