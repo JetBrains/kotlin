@@ -33,9 +33,10 @@ class DebuggerFieldExpressionCodegenExtension : ExpressionCodegenExtension {
         if (propertyDescriptor is JavaPropertyDescriptor) {
             val containingClass = propertyDescriptor.containingDeclaration as? JavaClassDescriptor
             if (containingClass != null) {
-                val correspondingGetter = JavaSyntheticPropertiesScope(LockBasedStorageManager.NO_LOCKS, LookupTracker.DO_NOTHING)
-                    .getSyntheticExtensionProperties(listOf(containingClass.defaultType), NoLookupLocation.FROM_BACKEND)
-                    .firstOrNull { it.name == propertyDescriptor.name }
+                val correspondingGetter =
+                    JavaSyntheticPropertiesScope(LockBasedStorageManager.NO_LOCKS, LookupTracker.DO_NOTHING, supportJavaRecords = true)
+                        .getSyntheticExtensionProperties(listOf(containingClass.defaultType), NoLookupLocation.FROM_BACKEND)
+                        .firstOrNull { it.name == propertyDescriptor.name }
 
                 if (correspondingGetter != null) {
                     return c.codegen.intermediateValueForProperty(
