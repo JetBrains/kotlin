@@ -1,10 +1,15 @@
 // TARGET_BACKEND: JS_IR
 // DONT_TARGET_EXACT_BACKEND: WASM
 // PROPERTY_LAZY_INITIALIZATION
+// KJS_WITH_FULL_RUNTIME
 
 // FILE: A.kt
 val a1 = "a".let {
     it + "a"
+}
+
+val b1 by lazy {
+    "b1"
 }
 
 object A {
