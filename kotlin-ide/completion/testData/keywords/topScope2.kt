@@ -20,6 +20,7 @@
 // EXIST:  sealed class
 // EXIST:  data class
 // EXIST:  inline
+// EXIST:  value
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component name="libraryTable">
   <library name="tips-pycharm-pro" type="repository">
-    <properties maven-id="com.jetbrains.intellij.documentation:tips-pycharm:202.2014" />
+    <properties maven-id="com.jetbrains.intellij.documentation:tips-pycharm:203.2017" />
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/intellij/documentation/tips-pycharm/202.2014/tips-pycharm-202.2014.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/jetbrains/intellij/documentation/tips-pycharm/203.2017/tips-pycharm-203.2017.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

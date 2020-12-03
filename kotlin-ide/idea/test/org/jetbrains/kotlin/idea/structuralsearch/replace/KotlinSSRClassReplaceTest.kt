@@ -128,4 +128,17 @@ class KotlinSSRClassReplaceTest : KotlinSSRReplaceTest() {
             """.trimIndent()
         )
     }
+
+    fun testSimpleClassConstructorReplacement() {
+        doTest(
+            searchPattern = "class '_ID('_PAR : '_TYPE)",
+            replacePattern = "class '_ID('_PAR : '_TYPE)",
+            match = """
+                class Foo(val bar : Int)
+            """.trimIndent(),
+            result = """
+                class Foo(val bar : Int)
+            """.trimIndent()
+        )
+    }
 }

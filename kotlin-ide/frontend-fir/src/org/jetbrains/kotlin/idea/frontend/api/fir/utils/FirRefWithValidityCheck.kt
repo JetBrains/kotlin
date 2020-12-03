@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.utils
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.resolvedFirToPhase
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.withFirDeclaration
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
@@ -24,22 +25,20 @@ internal class FirRefWithValidityCheck<D : FirDeclaration>(fir: D, resolveState:
             ?: throw EntityWasGarbageCollectedException("FirElement")
         val resolveState = resolveStateWeakRef.get()
             ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
-        LowLevelFirApiFacade.resolvedFirToPhase(fir, phase, resolveState)
-        return resolveState.withFirDeclaration(fir) { action(it) }
-    }
-
-    inline fun <R> withFirResolvedToBodyResolve(action: (fir: D) -> R): R {
-        token.assertIsValid()
-        val fir = firWeakRef.get()
-            ?: throw EntityWasGarbageCollectedException("FirElement")
-        val resolveState = resolveStateWeakRef.get()
-            ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
-        LowLevelFirApiFacade.resolvedFirToPhase(fir, FirResolvePhase.BODY_RESOLVE, resolveState)
-        return action(resolveState.withFirDeclaration(fir) { it })
+        return when (phase) {
+            FirResolvePhase.BODY_RESOLVE -> {
+                /*
+                 The BODY_RESOLVE phase is the maximum possible phase we can resolve our declaration to
+                 So there is not need to run whole `action` under read lock
+                 */
+                action(fir.withFirDeclaration(resolveState, phase) { it })
+            }
+            else -> fir.withFirDeclaration(resolveState, phase) { action(it) }
+        }
     }
 
     val resolveState
-        get() = resolveStateWeakRef.get() ?: error("FirModuleResolveState was garbage collected while analysis session is still valid")
+        get() = resolveStateWeakRef.get() ?: throw EntityWasGarbageCollectedException("FirModuleResolveState")
 
     inline fun <R> withFirAndCache(phase: FirResolvePhase = FirResolvePhase.RAW_FIR, crossinline createValue: (fir: D) -> R) =
         ValidityAwareCachedValue(token) {

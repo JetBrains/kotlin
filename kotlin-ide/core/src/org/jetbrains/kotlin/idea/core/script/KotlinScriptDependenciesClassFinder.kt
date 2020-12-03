@@ -14,7 +14,6 @@ import com.intellij.psi.impl.java.stubs.index.JavaFullClassNameIndex
 import com.intellij.psi.search.EverythingGlobalScope
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
-import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
 import org.jetbrains.kotlin.resolve.jvm.KotlinSafeClassFinder
 
 
@@ -25,7 +24,6 @@ class KotlinScriptDependenciesClassFinder(
         .getAllScriptsDependenciesClassFiles().filter { it.isValid }.toList()
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
-        if (scope !is AbstractJavaClassFinder.FilterOutKotlinSourceFilesScope) return null
         val classByFileName = super.findClass(qualifiedName, scope)
         if (classByFileName != null) {
             return classByFileName.isInScope(scope)

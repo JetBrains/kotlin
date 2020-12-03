@@ -665,4 +665,72 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
             runTest("../idea/testData/resolve/references/invoke/oneParamRPar.kt");
         }
     }
+
+    @TestMetadata("idea/testData/resolve/references/nestedTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class NestedTypes extends AbstractFirReferenceResolveTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInNestedTypes() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/resolve/references/nestedTypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("ResolveCompanionInCompanionType.kt")
+        public void testResolveCompanionInCompanionType() throws Exception {
+            runTest("idea/testData/resolve/references/nestedTypes/ResolveCompanionInCompanionType.kt");
+        }
+
+        @TestMetadata("ResolveEndOfPackageInType.kt")
+        public void testResolveEndOfPackageInType() throws Exception {
+            runTest("idea/testData/resolve/references/nestedTypes/ResolveEndOfPackageInType.kt");
+        }
+
+        @TestMetadata("ResolveMiddleOfPackageInType.kt")
+        public void testResolveMiddleOfPackageInType() throws Exception {
+            runTest("idea/testData/resolve/references/nestedTypes/ResolveMiddleOfPackageInType.kt");
+        }
+
+        @TestMetadata("ResolveStartOfPackageInType.kt")
+        public void testResolveStartOfPackageInType() throws Exception {
+            runTest("idea/testData/resolve/references/nestedTypes/ResolveStartOfPackageInType.kt");
+        }
+
+        @TestMetadata("ResolveTypeInTheEndOfType.kt")
+        public void testResolveTypeInTheEndOfType() throws Exception {
+            runTest("idea/testData/resolve/references/nestedTypes/ResolveTypeInTheEndOfType.kt");
+        }
+
+        @TestMetadata("ResolveTypeInTheMiddleOfCompanionType.kt")
+        public void testResolveTypeInTheMiddleOfCompanionType() throws Exception {
+            runTest("idea/testData/resolve/references/nestedTypes/ResolveTypeInTheMiddleOfCompanionType.kt");
+        }
+
+        @TestMetadata("ResolveTypeInTheMiddleOfFunctionalType.kt")
+        public void testResolveTypeInTheMiddleOfFunctionalType() throws Exception {
+            runTest("idea/testData/resolve/references/nestedTypes/ResolveTypeInTheMiddleOfFunctionalType.kt");
+        }
+
+        @TestMetadata("ResolveTypeInTheMiddleOfNullableType.kt")
+        public void testResolveTypeInTheMiddleOfNullableType() throws Exception {
+            runTest("idea/testData/resolve/references/nestedTypes/ResolveTypeInTheMiddleOfNullableType.kt");
+        }
+
+        @TestMetadata("ResolveTypeInTheMiddleOfType.kt")
+        public void testResolveTypeInTheMiddleOfType() throws Exception {
+            runTest("idea/testData/resolve/references/nestedTypes/ResolveTypeInTheMiddleOfType.kt");
+        }
+
+        @TestMetadata("ResolveTypeInTheStartOfCompanionType.kt")
+        public void testResolveTypeInTheStartOfCompanionType() throws Exception {
+            runTest("idea/testData/resolve/references/nestedTypes/ResolveTypeInTheStartOfCompanionType.kt");
+        }
+
+        @TestMetadata("ResolveTypeInTheStartOfType.kt")
+        public void testResolveTypeInTheStartOfType() throws Exception {
+            runTest("idea/testData/resolve/references/nestedTypes/ResolveTypeInTheStartOfType.kt");
+        }
+    }
 }

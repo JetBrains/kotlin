@@ -36,6 +36,7 @@ class B {
 // EXIST:  data class
 // EXIST:  { "lookupString":"data class", "itemText":"data class", "tailText":" AfterClasses_LangLevel10(...)", "attributes":"bold" }
 // EXIST:  inline
+// EXIST:  value
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class

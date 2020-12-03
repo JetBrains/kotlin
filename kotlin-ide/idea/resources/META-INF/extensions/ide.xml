@@ -136,6 +136,11 @@
                      defaultValue="false"
                      restartRequired="false"/>
 
+        <registryKey key="kotlin.gradle-run.enabled"
+                     description="Enable delegation of app running to gradle"
+                     defaultValue="false"
+                     restartRequired="false"/>
+
         <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
 
         <jbProtocolCommand implementation="org.jetbrains.kotlin.tools.projectWizard.wizard.OpenNewProjectWizardProtocolCommand"/>

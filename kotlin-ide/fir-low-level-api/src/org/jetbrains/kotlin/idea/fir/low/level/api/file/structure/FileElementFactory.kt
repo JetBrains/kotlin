@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.idea.fir.low.level.api.file.structure
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 
 internal object FileElementFactory {
     /**
@@ -20,13 +22,19 @@ internal object FileElementFactory {
         ktDeclaration: KtDeclaration,
         firFile: FirFile,
     ): FileStructureElement = when {
-        ktDeclaration is KtNamedFunction && ktDeclaration.name != null && ktDeclaration.hasExplicitTypeOrUnit ->
-            ReanalyzableFunctionStructureElement(
-                firFile,
-                ktDeclaration,
-                (firDeclaration as FirSimpleFunction).symbol,
-                ktDeclaration.modificationStamp
-            )
+        ktDeclaration is KtNamedFunction && ktDeclaration.isReanalyzableContainer() -> ReanalyzableFunctionStructureElement(
+            firFile,
+            ktDeclaration,
+            (firDeclaration as FirSimpleFunction).symbol,
+            ktDeclaration.modificationStamp
+        )
+
+        ktDeclaration is KtProperty && ktDeclaration.isReanalyzableContainer() -> ReanalyzablePropertyStructureElement(
+            firFile,
+            ktDeclaration,
+            (firDeclaration as FirProperty).symbol,
+            ktDeclaration.modificationStamp
+        )
 
         else -> NonReanalyzableDeclarationStructureElement(
             firFile,
@@ -40,10 +48,17 @@ internal object FileElementFactory {
      */
     fun isReanalyzableContainer(
         ktDeclaration: KtDeclaration,
-    ): Boolean = when {
-        ktDeclaration is KtNamedFunction && ktDeclaration.name != null && ktDeclaration.hasExplicitTypeOrUnit -> true
+    ): Boolean = when (ktDeclaration) {
+        is KtNamedFunction -> ktDeclaration.isReanalyzableContainer()
+        is KtProperty -> ktDeclaration.isReanalyzableContainer()
         else -> false
     }
+
+    private fun KtNamedFunction.isReanalyzableContainer() =
+        name != null && hasExplicitTypeOrUnit
+
+    private fun KtProperty.isReanalyzableContainer() =
+        name != null && typeReference != null
 
     private val KtNamedFunction.hasExplicitTypeOrUnit
         get() = hasBlockBody() || typeReference != null

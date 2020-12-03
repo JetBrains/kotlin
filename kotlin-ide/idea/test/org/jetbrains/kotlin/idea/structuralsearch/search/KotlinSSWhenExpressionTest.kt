@@ -31,8 +31,8 @@ class KotlinSSWhenExpressionTest : KotlinSSResourceInspectionTest() {
         doTest(
             """
             when(10) {
-                in 3..10 -> println("In range")
-                else ->  println("Not in Range.")
+                in 3..10 -> '_
+                else -> '_
             }
             """
         )
@@ -65,7 +65,7 @@ class KotlinSSWhenExpressionTest : KotlinSSResourceInspectionTest() {
         doTest(
             """
             when (i) {
-                '_ -> println("one")
+                '_ -> '_
              }
             """.trimIndent()
         )
@@ -75,7 +75,7 @@ class KotlinSSWhenExpressionTest : KotlinSSResourceInspectionTest() {
         doTest(
             """
             when ('_) {
-                '_ -> println("ok")
+                '_ -> '_
              }
             """.trimIndent()
         )

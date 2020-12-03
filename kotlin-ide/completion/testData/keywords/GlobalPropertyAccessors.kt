@@ -40,6 +40,7 @@ var a : Int
 // EXIST:  data class
 // EXIST:  { "lookupString":"data class", "itemText":"data class", "tailText":" GlobalPropertyAccessors(...)", "attributes":"bold" }
 // EXIST:  inline
+// EXIST:  value
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class

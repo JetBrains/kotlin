@@ -65,4 +65,54 @@ class KotlinSSRFunctionReplaceTest : KotlinSSRReplaceTest() {
             result = "public fun foo(bar : Int = 0)  {}"
         )
     }
+
+    fun testFunctionMultiParamCountFilter() {
+        doTest(
+            searchPattern = "fun '_ID('_PARAM*)",
+            replacePattern = "fun '_ID('_PARAM)",
+            match = "fun foo(one: Int, two: Double) {}",
+            result = "fun foo(one: Int, two: Double) {}"
+        )
+    }
+
+    fun testFunctionInitializer() {
+        doTest(
+            searchPattern = "'_ID()",
+            replacePattern = "'_ID()",
+            match = """
+                    class Foo
+                    fun foo() = Foo()
+                """.trimIndent(),
+            result = """
+                    class Foo
+                    fun foo() = Foo()
+                """.trimIndent()
+        )
+    }
+
+    fun testExtensionSearchPattern() {
+        doTest(
+            searchPattern = "fun '_RECEIVER{0,1}.'_COLLECTOR()",
+            replacePattern = "fun '_RECEIVER.'_COLLECTOR()",
+            match = """
+                    fun foo() { }
+                """.trimIndent(),
+            result = """
+                    fun foo() { }
+                """.trimIndent()
+        )
+    }
+
+    fun testExtensionFunction() {
+        doTest(
+            searchPattern = "fun '_RECEIVER{0,1}.'_COLLECTOR(): Int",
+            replacePattern = "fun '_RECEIVER.'_COLLECTOR(): Int",
+            match = """
+                    fun Number.foo(): Int { return 0 }
+                """.trimIndent(),
+            result = """
+                    fun Number.foo(): Int { return 0 }
+                """.trimIndent()
+        )
+    }
 }

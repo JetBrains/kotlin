@@ -1,6 +1,5 @@
-import java.awt.event.MouseAdapter
-import java.awt.event.MouseEvent
+open class X
 
-<warning descr="SSR">fun a() = object : MouseAdapter() { }</warning>
+<warning descr="SSR">fun a() = object : X() { }</warning>
 
 fun b() = object { }

@@ -339,6 +339,9 @@ private class ModuleTestSourceScope(module: Module) : ModuleSourceScope(module) 
 abstract class LibraryInfo(override val project: Project, val library: Library) :
     IdeaModuleInfo, LibraryModuleInfo, BinaryModuleInfo, TrackableModuleInfo {
 
+    init {
+        require(library is LibraryEx) { "Library '${name}' does not implement LibraryEx which is not expected" }
+    }
     override val moduleOrigin: ModuleOrigin
         get() = ModuleOrigin.LIBRARY
 
@@ -383,10 +386,12 @@ abstract class LibraryInfo(override val project: Project, val library: Library) 
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        return (other is LibraryInfo && library == other.library)
+        if (other !is LibraryInfo) return false
+
+        return library.asLibraryEx().hasEqualRoots(other.library.asLibraryEx())
     }
 
-    override fun hashCode(): Int = 43 * library.hashCode()
+    override fun hashCode(): Int = library.asLibraryEx().rootBasedHashCode()
 }
 
 data class LibrarySourceInfo(override val project: Project, val library: Library, override val binariesModuleInfo: BinaryModuleInfo) :

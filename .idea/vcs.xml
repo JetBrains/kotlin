@@ -71,6 +71,10 @@
           <option name="issueRegexp" value="IJI-(CR|MR)-(\d+)" />
           <option name="linkRegexp" value="https://jetbrains.team/p/iji/review/$2/timeline" />
         </IssueNavigationLink>
+        <IssueNavigationLink>
+          <option name="issueRegexp" value="GO-(CR|MR)-(\d+)" />
+          <option name="linkRegexp" value="https://jetbrains.team/p/go/review/$2/timeline" />
+        </IssueNavigationLink>
       </list>
     </option>
   </component>

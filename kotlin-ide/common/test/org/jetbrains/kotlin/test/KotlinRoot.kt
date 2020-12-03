@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.test
 
+import com.intellij.openapi.application.PathManager
 import java.io.File
 
 object KotlinRoot {
@@ -14,15 +15,19 @@ object KotlinRoot {
 
         var kind = current.getKotlinRootKind()
         while (kind == null) {
-            current = current.parentFile
+            current = current.parentFile ?: break
             kind = current.getKotlinRootKind()
         }
+        if (kind != null) {
+            REPO = current
 
-        REPO = current
-
-        DIR = when (kind) {
-            KotlinRootKind.ULTIMATE -> current.resolve("kotlin")
-            KotlinRootKind.COMMUNITY -> current
+            DIR = when (kind) {
+                KotlinRootKind.ULTIMATE -> current.resolve("kotlin")
+                KotlinRootKind.COMMUNITY -> current
+            }
+        } else {
+            REPO = File(PathManager.getHomePath())
+            DIR = File(PathManager.getHomePath())
         }
     }
 }

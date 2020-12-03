@@ -82,9 +82,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-/**
- * @author peter
- */
 @SuppressWarnings("ALL")
 public abstract class KtUsefulTestCase extends TestCase {
     public static final boolean IS_UNDER_TEAMCITY = System.getenv("TEAMCITY_VERSION") != null;

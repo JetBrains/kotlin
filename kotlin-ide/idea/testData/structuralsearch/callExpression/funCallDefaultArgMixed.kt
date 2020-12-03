@@ -1,4 +1,4 @@
-fun a(k: Int, b: Int = 0, c: String = "Hello World!", d: Double, vararg t: String) { println("$k $b $c $d $t") }
+fun a(k: Int, b: Int = 0, c: String = "Hello World!", d: Double, vararg t: String): String { return "$k $b $c $d $t" }
 
 fun c() {
     <warning descr="SSR">a(0, 0, "This is test!", 0.0, "Test")</warning>

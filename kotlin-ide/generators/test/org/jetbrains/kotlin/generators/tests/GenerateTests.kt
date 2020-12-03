@@ -994,6 +994,9 @@ private fun assembleWorkspace(): TWorkspace = workspace {
             testClass<AbstractFileStructureTest> {
                 model("fileStructure")
             }
+            testClass<AbstractSessionsInvalidationTest> {
+                model("sessionInvalidation", recursive = false, extension = null)
+            }
         }
 
     testGroup("idea/idea-fir/tests", "idea") {

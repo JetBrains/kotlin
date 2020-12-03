@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component name="libraryTable">
+  <library name="cwm-lobby-common">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/intellij/lib/cwm-lobby-common.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/intellij/lib/cwm-lobby-common-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
