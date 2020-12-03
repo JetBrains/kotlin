@@ -297,15 +297,23 @@ val unzipV8 by task<Copy> {
     into(unpackedDir)
 }
 
-projectTest("wasmTest", true) {
-    dependsOn(unzipJsShell)
+fun Test.setupV8() {
     dependsOn(unzipV8)
-    include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
-    val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
     val v8ExecutablePath = File(unzipV8.get().destinationDir, "d8").absolutePath
-
-    systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
     systemProperty("javascript.engine.path.V8", v8ExecutablePath)
+}
+
+fun Test.setupSpiderMonkey() {
+    dependsOn(unzipJsShell)
+    val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
+    systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
+}
+
+projectTest("wasmTest", true) {
+    setupV8()
+    setupSpiderMonkey()
+
+    include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
 
     dependsOn(":kotlin-stdlib-wasm:compileKotlinJs")
     systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/js/main")
