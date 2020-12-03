@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 internal val jvmStandardLibraryBuiltInsPhase = makeIrFilePhase(
@@ -60,11 +61,14 @@ class JvmStandardLibraryBuiltInsLowering(val context: JvmBackendContext) : FileL
     // Originals are so far only instance methods, and the replacements are
     // statics, so we copy dispatch receivers to a value argument if needed.
     // If we can't coerce arguments to required types, keep original expression (see below).
-    private fun IrCall.replaceWithCallTo(replacement: IrSimpleFunctionSymbol): IrCall =
-        IrCallImpl.fromSymbolOwner(
+    private fun IrCall.replaceWithCallTo(replacement: IrSimpleFunctionSymbol): IrExpression {
+        val expectedType = this.type
+        val intrinsicCallType = replacement.owner.returnType
+
+        val intrinsicCall = IrCallImpl.fromSymbolOwner(
             startOffset,
             endOffset,
-            type,
+            intrinsicCallType,
             replacement
         ).also { newCall ->
             var valueArgumentOffset = 0
@@ -80,6 +84,15 @@ class JvmStandardLibraryBuiltInsLowering(val context: JvmBackendContext) : FileL
                 newCall.putValueArgument(index + valueArgumentOffset, coercedValueArgument)
             }
         }
+
+        // Coerce intrinsic call result from JVM 'int' or 'long' to corresponding unsigned type if required.
+        return if (intrinsicCallType.isInt() || intrinsicCallType.isLong()) {
+            intrinsicCall.coerceIfPossible(expectedType)
+                ?: throw AssertionError("Can't coerce '${intrinsicCallType.render()}' to '${expectedType.render()}'")
+        } else {
+            intrinsicCall
+        }
+    }
 
     private fun IrExpression.coerceIfPossible(toType: IrType): IrExpression? {
         // TODO maybe UnsafeCoerce could handle types with different, but coercible underlying representations.

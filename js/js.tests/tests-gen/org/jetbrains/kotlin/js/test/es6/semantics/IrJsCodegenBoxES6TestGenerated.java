@@ -26209,6 +26209,19 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
         public void testWhenByUnsigned() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/whenByUnsigned.kt");
         }
+
+        @TestMetadata("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Jvm8Intrinsics extends AbstractIrJsCodegenBoxES6Test {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR_ES6, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJvm8Intrinsics() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/vararg")
