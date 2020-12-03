@@ -33,6 +33,8 @@ class B {
 // EXIST:  infix
 // EXIST:  sealed class
 // EXIST:  sealed class AfterClasses_LangLevel11
+// EXIST:  sealed interface AfterClasses_LangLevel11
+// EXIST:  sealed interface
 // EXIST:  data class
 // EXIST:  { "lookupString":"data class", "itemText":"data class", "tailText":" AfterClasses_LangLevel11(...)", "attributes":"bold" }
 // EXIST:  inline
