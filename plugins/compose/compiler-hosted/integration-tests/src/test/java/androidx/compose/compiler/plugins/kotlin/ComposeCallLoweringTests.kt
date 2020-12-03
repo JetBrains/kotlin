@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -2727,6 +2728,9 @@ fun <T> B(foo: T, bar: String) { }
         }
     }
 }
+
+@Suppress("UNCHECKED_CAST")
+fun View.getComposedSet(tagId: Int): Set<String>? = getTag(tagId) as? Set<String>
 
 private val noParameters = { emptyMap<String, String>() }
 
