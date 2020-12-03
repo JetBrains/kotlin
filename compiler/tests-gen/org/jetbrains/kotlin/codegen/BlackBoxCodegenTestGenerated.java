@@ -34079,6 +34079,59 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testWhenByUnsigned() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/whenByUnsigned.kt");
         }
+
+        @TestMetadata("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Jvm8Intrinsics extends AbstractBlackBoxCodegenTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInJvm8Intrinsics() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("unsignedIntCompare_jvm8.kt")
+            public void testUnsignedIntCompare_jvm8() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics/unsignedIntCompare_jvm8.kt");
+            }
+
+            @TestMetadata("unsignedIntDivide_jvm8.kt")
+            public void testUnsignedIntDivide_jvm8() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics/unsignedIntDivide_jvm8.kt");
+            }
+
+            @TestMetadata("unsignedIntRemainder_jvm8.kt")
+            public void testUnsignedIntRemainder_jvm8() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics/unsignedIntRemainder_jvm8.kt");
+            }
+
+            @TestMetadata("unsignedIntToString_jvm8.kt")
+            public void testUnsignedIntToString_jvm8() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics/unsignedIntToString_jvm8.kt");
+            }
+
+            @TestMetadata("unsignedLongCompare_jvm8.kt")
+            public void testUnsignedLongCompare_jvm8() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics/unsignedLongCompare_jvm8.kt");
+            }
+
+            @TestMetadata("unsignedLongDivide_jvm8.kt")
+            public void testUnsignedLongDivide_jvm8() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics/unsignedLongDivide_jvm8.kt");
+            }
+
+            @TestMetadata("unsignedLongRemainder_jvm8.kt")
+            public void testUnsignedLongRemainder_jvm8() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics/unsignedLongRemainder_jvm8.kt");
+            }
+
+            @TestMetadata("unsignedLongToString_jvm8.kt")
+            public void testUnsignedLongToString_jvm8() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics/unsignedLongToString_jvm8.kt");
+            }
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/vararg")
