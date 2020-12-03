@@ -201,6 +201,8 @@ fun Test.setupSpiderMonkey() {
 }
 
 fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
+    setupV8()
+
     dependsOn(":dist")
     if (jsEnabled) dependsOn(testJsRuntime)
     if (jsIrEnabled) {
