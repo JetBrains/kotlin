@@ -1516,6 +1516,10 @@ fun main(args: Array<String>) {
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }
 
+            testClass<AbstractIncrementalMultiModuleJsKlibCompilerRunnerTest>(annotations = listOf(muteExtraSuffix(".jsklib"))) {
+                model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
+            }
+
             testClass<AbstractIncrementalJsCompilerRunnerWithMetadataOnlyTest> {
                 model("incremental/pureKotlin", extension = null, recursive = false)
                 model("incremental/classHierarchyAffected", extension = null, recursive = false)
