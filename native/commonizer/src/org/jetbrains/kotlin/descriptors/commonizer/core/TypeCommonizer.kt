@@ -220,7 +220,7 @@ private class TypeArgumentListCommonizer(classifiers: CirKnownClassifiers) : Abs
 )
 
 private fun commonizeClass(classId: ClassId, classifiers: CirKnownClassifiers): Boolean {
-    if (classifiers.commonDependeeLibraries?.hasClassifier(classId) == true) {
+    if (classifiers.commonDependeeLibraries.hasClassifier(classId)) {
         // The class is from common fragment of dependee library (ex: stdlib). Already commonized.
         return true
     } else if (classId.packageFqName.isUnderKotlinNativeSyntheticPackages) {
@@ -247,7 +247,7 @@ private fun commonizeClass(classId: ClassId, classifiers: CirKnownClassifiers): 
 }
 
 private fun commonizeTypeAlias(typeAliasId: ClassId, classifiers: CirKnownClassifiers): CommonizedTypeAliasAnswer {
-    if (classifiers.commonDependeeLibraries?.hasClassifier(typeAliasId) == true) {
+    if (classifiers.commonDependeeLibraries.hasClassifier(typeAliasId)) {
         // The type alias is from common fragment of dependee library (ex: stdlib). Already commonized.
         return SUCCESS_FROM_DEPENDEE_LIBRARY
     }

@@ -128,7 +128,7 @@ internal class CommonizationVisitor(
         val supertypesMap: MutableMap<CirType, CommonizedGroup<CirType>> = linkedMapOf() // preserve supertype order
         for ((index, typeAlias) in targetDeclarations.withIndex()) {
             val expandedClassId = typeAlias!!.expandedType.classifierId
-            if (classifiers.commonDependeeLibraries?.hasClassifier(expandedClassId) == true)
+            if (classifiers.commonDependeeLibraries.hasClassifier(expandedClassId))
                 return null // this case is not supported yet
 
             val expandedClassNode = classifiers.commonized.classNode(expandedClassId) ?: return null

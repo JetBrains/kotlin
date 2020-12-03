@@ -76,7 +76,7 @@ private class TypeAliasShortCircuitingCommonizer(
     private tailrec fun computeCommonizedUnderlyingType(underlyingType: CirClassOrTypeAliasType): CirClassOrTypeAliasType {
         return when (underlyingType) {
             is CirClassType -> underlyingType
-            is CirTypeAliasType -> if (classifiers.commonDependeeLibraries?.hasClassifier(underlyingType.classifierId) == true)
+            is CirTypeAliasType -> if (classifiers.commonDependeeLibraries.hasClassifier(underlyingType.classifierId))
                 underlyingType
             else
                 computeCommonizedUnderlyingType(underlyingType.underlyingType)

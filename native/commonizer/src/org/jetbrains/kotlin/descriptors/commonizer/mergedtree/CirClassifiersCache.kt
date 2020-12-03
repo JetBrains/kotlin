@@ -25,7 +25,8 @@ class CirKnownClassifiers(
     val dependeeLibraries: Map<Target, CirProvidedClassifiers>
 ) {
     // a shortcut for fast access
-    val commonDependeeLibraries: CirProvidedClassifiers? = dependeeLibraries.filterKeys { it is SharedTarget }.values.singleOrNull()
+    val commonDependeeLibraries: CirProvidedClassifiers =
+        dependeeLibraries.filterKeys { it is SharedTarget }.values.singleOrNull() ?: CirProvidedClassifiers.EMPTY
 }
 
 interface CirCommonizedClassifiers {
@@ -86,6 +87,10 @@ interface CirProvidedClassifiers {
     //fun classifier(classifierId: ClassId): Any?
 
     companion object {
+        internal val EMPTY = object : CirProvidedClassifiers {
+            override fun hasClassifier(classifierId: ClassId) = false
+        }
+
         // N.B. This is suboptimal implementation. It will be replaced by another implementation that will
         // retrieve classifier information directly from the metadata.
         fun fromModules(storageManager: StorageManager, modules: () -> Collection<ModuleDescriptor>) = object : CirProvidedClassifiers {
