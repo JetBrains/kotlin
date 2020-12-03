@@ -517,8 +517,10 @@ class CodeInliner<TCallElement : KtElement>(
             }
         }
 
-        val newElements = pointers.mapNotNull { it.element }.let {
-            ShortenReferences { ShortenReferences.Options(removeThis = true) }.process(it, elementFilter = shortenFilter)
+        val newElements = pointers.mapNotNull {
+            it.element?.let { element ->
+                ShortenReferences { ShortenReferences.Options(removeThis = true) }.process(element, elementFilter = shortenFilter)
+            }
         }
 
         for (element in newElements) {
