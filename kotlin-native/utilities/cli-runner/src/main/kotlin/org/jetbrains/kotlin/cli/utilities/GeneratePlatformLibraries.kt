@@ -12,10 +12,7 @@ import kotlinx.cli.*
 import org.jetbrains.kotlin.backend.konan.CachedLibraries
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.files.renameAtomic
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.customerDistribution
+import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.konan.util.PlatformLibsInfo
 import org.jetbrains.kotlin.konan.util.visibleName
@@ -28,7 +25,6 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
-import java.io.File as JFile
 
 // TODO: We definitely need to unify logging in different parts of the compiler.
 private class Logger(val level: Level = Level.NORMAL) {
@@ -126,8 +122,11 @@ fun generatePlatformLibraries(args: Array<String>) {
     argParser.parse(args)
 
     val distribution = customerDistribution(KonanHomeProvider.determineKonanHome())
-    val target = HostManager(distribution).targetByName(targetName)
-
+    val platformManager = PlatformManager(distribution)
+    val target = platformManager.targetByName(targetName)
+    val targetCacheArgs = platformManager.let {
+        target.let(it::loader).additionalCacheFlags
+    }
     val inputDirectory = inputDirectoryPath?.File()
             ?: File(distribution.konanSubdir, "platformDef").child(target.visibleName)
 
@@ -148,7 +147,9 @@ fun generatePlatformLibraries(args: Array<String>) {
 
     val logger = Logger(if (verbose) Logger.Level.VERBOSE else Logger.Level.NORMAL)
 
-    val cacheInfo = cacheDirectory?.let { CacheInfo(it, cacheKind.outputKind.visibleName, cacheArgs) }
+    val cacheInfo = cacheDirectory?.let {
+        CacheInfo(it, cacheKind.outputKind.visibleName, cacheArgs + targetCacheArgs)
+    }
 
     generatePlatformLibraries(
             target, mode,

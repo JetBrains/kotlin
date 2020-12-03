@@ -38,6 +38,9 @@ interface Configurables : TargetableExternalStorage {
     val llvmVersion get() = hostString("llvmVersion")
     val libffiDir get() = hostString("libffiDir")
 
+    val cacheableTargets get() = hostList("cacheableTargets")
+    val additionalCacheFlags get() = targetList("additionalCacheFlags")
+
     // TODO: Delegate to a map?
     val linkerOptimizationFlags get() = targetList("linkerOptimizationFlags")
     val linkerKonanFlags get() = targetList("linkerKonanFlags")

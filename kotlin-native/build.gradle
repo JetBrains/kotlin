@@ -74,11 +74,8 @@ ext {
     platformManager = new PlatformManager(DistributionKt.buildDistribution(projectDir.absolutePath),
             ext.experimentalEnabled)
 
-    cacheableTargets = [
-            KonanTarget.MACOS_X64.INSTANCE,
-            KonanTarget.IOS_X64.INSTANCE
-    ]
-    cacheableTargetNames = cacheableTargets.collect { it.visibleName }
+    cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
+    cacheableTargets = cacheableTargetNames.collect { platformManager.targetByName(it) }
 
     // Some targets miss zlib in their sysroots.
     // We skip these targets when generate a corresponding platform library.
