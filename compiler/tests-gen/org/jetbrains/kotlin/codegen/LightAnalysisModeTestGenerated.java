@@ -30849,11 +30849,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class ToArray extends AbstractLightAnalysisModeTest {
-        @TestMetadata("toArrayFromJava.kt")
-        public void ignoreToArrayFromJava() throws Exception {
-            runTest("compiler/testData/codegen/box/toArray/toArrayFromJava.kt");
-        }
-
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -30885,6 +30880,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("toArrayAlreadyPresent.kt")
         public void testToArrayAlreadyPresent() throws Exception {
             runTest("compiler/testData/codegen/box/toArray/toArrayAlreadyPresent.kt");
+        }
+
+        @TestMetadata("toArrayFromJava.kt")
+        public void testToArrayFromJava() throws Exception {
+            runTest("compiler/testData/codegen/box/toArray/toArrayFromJava.kt");
         }
 
         @TestMetadata("toArrayShouldBePublic.kt")
