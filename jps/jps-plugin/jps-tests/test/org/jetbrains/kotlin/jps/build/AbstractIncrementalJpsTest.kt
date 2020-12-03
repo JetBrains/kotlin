@@ -300,7 +300,7 @@ abstract class AbstractIncrementalJpsTest(
 
     protected open fun doTest(testDataPath: String) {
         testDataDir = File(testDataPath)
-        workDir = FileUtilRt.createTempDirectory(TEMP_DIRECTORY_TO_USE, "jps-build", null)
+        workDir = FileUtilRt.createTempDirectory(TEMP_DIRECTORY_TO_USE, "aijt-jps-build", null)
         val buildLogFile = buildLogFinder.findBuildLog(testDataDir)
         Disposer.register(testRootDisposable, Disposable { FileUtilRt.delete(workDir) })
 
