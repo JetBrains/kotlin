@@ -6,6 +6,7 @@
         <element id="archive" name="RoboscopePlugin.jar">
           <element id="module-output" name="util.android-studio.android-studio-finder" />
           <element id="module-output" name="util.android-studio.android-studio-roboscope-plugin" />
+          <element id="module-output" name="util.android-studio.android-studio-roboscope-common" />
         </element>
         <element id="library" level="project" name="kotlin-stdlib-jdk8" />
       </element>
