@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
 
 class Fir2IrLazyClass(
@@ -151,7 +153,7 @@ class Fir2IrLazyClass(
                     if (declaration.name !in processedNames) {
                         processedNames += declaration.name
                         scope.processPropertiesByName(declaration.name) {
-                            if (it is FirPropertySymbol) {
+                            if (it is FirPropertySymbol && it.dispatchReceiverClassOrNull() == fir.symbol.toLookupTag()) {
                                 result += declarationStorage.getIrPropertySymbol(it).owner as IrProperty
                             }
                         }
@@ -172,7 +174,9 @@ class Fir2IrLazyClass(
         // TODO: remove this check to save time
         for (declaration in result) {
             if (declaration.parent != this) {
-                throw AssertionError("Unmatched parent for lazy class member")
+                throw AssertionError(
+                    "Unmatched parent for lazy class ${fir.name} member ${declaration.render()} f/o ${declaration.isFakeOverride}"
+                )
             }
         }
         result
