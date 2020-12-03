@@ -33,7 +33,7 @@ abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
 
     protected open fun copyTestDataToTmpDir(testDataDir: File): File {
         assert(testDataDir.exists()) { "Cannot find source folder " + testDataDir.absolutePath }
-        val tmpDir = FileUtil.createTempDirectory("jps-build", null)
+        val tmpDir = FileUtil.createTempDirectory("kjbtb-jps-build", null)
         FileUtil.copyDir(testDataDir, tmpDir)
         return tmpDir
     }
