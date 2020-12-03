@@ -88,6 +88,10 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
         return super.visitFunction(declaration).also { it.copyMetadataFrom(declaration) }
     }
 
+    override fun visitConstructor(declaration: IrConstructor): IrConstructor {
+        return super.visitConstructor(declaration).also { it.copyMetadataFrom(declaration) }
+    }
+
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction {
         return super.visitSimpleFunction(declaration).also {
             it.correspondingPropertySymbol = declaration.correspondingPropertySymbol
@@ -284,6 +288,7 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
             is IrPropertyImpl -> metadata = owner.metadata
             is IrFunction -> metadata = owner.metadata
             is IrClassImpl -> metadata = owner.metadata
+            else -> throw Error("Unknown type: $this")
         }
     }
 
