@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.fir.FirEffectiveVisibility
 import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -146,6 +148,23 @@ object FirErrors {
     // Invalid local declarations
     val LOCAL_OBJECT_NOT_ALLOWED by error1<FirSourceElement, KtNamedDeclaration, Name>(SourceElementPositioningStrategies.DECLARATION_NAME)
     val LOCAL_INTERFACE_NOT_ALLOWED by error1<FirSourceElement, KtNamedDeclaration, Name>(SourceElementPositioningStrategies.DECLARATION_NAME)
+
+    // Properties & accessors
+    val ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS by error0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.MODALITY_MODIFIER)
+    val PRIVATE_PROPERTY_IN_INTERFACE by error0<FirSourceElement, KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
+
+    val ABSTRACT_PROPERTY_WITH_INITIALIZER by error1<FirSourceElement, PsiElement, FirExpression>()
+    val PROPERTY_INITIALIZER_IN_INTERFACE by error1<FirSourceElement, PsiElement, FirExpression>()
+    val PROPERTY_WITH_NO_TYPE_NO_INITIALIZER by error1<FirSourceElement, PsiElement, FirPropertySymbol>()
+
+    val ABSTRACT_DELEGATED_PROPERTY by error1<FirSourceElement, PsiElement, FirExpression>()
+    val DELEGATED_PROPERTY_IN_INTERFACE by error1<FirSourceElement, PsiElement, FirExpression>()
+    // TODO: val ACCESSOR_FOR_DELEGATED_PROPERTY by error1<FirSourceElement, PsiElement, FirPropertyAccessorSymbol>()
+
+    val ABSTRACT_PROPERTY_WITH_GETTER by error1<FirSourceElement, PsiElement, FirPropertyAccessorSymbol>()
+    val ABSTRACT_PROPERTY_WITH_SETTER by error1<FirSourceElement, PsiElement, FirPropertyAccessorSymbol>()
+    val PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY by error1<FirSourceElement, PsiElement, FirPropertyAccessorSymbol>()
+    val PRIVATE_SETTER_FOR_OPEN_PROPERTY by error1<FirSourceElement, PsiElement, FirPropertyAccessorSymbol>()
 
     // Control flow diagnostics
     val UNINITIALIZED_VARIABLE by error1<FirSourceElement, PsiElement, FirPropertySymbol>()
