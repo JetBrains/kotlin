@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.codeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
 
 object CodeMetaInfoParser {
-    private val openingRegex = """(<!([^"]*?(".*?")?[^"]*?)!>)""".toRegex()
-    private val closingRegex = """(<!>)""".toRegex()
+    val openingRegex = """(<!([^"]*?((".*?")(, ".*?")*?)?[^"]*?)!>)""".toRegex()
+    val closingRegex = """(<!>)""".toRegex()
+
+    val openingOrClosingRegex = """(${closingRegex.pattern}|${openingRegex.pattern})""".toRegex()
 
     /*
      * ([\S&&[^,(){}]]+) -- tag, allowing all non-space characters except bracers and curly bracers
