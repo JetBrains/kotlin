@@ -78,7 +78,7 @@ public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boole
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
     if (ignoreCase) {
-        val matcher = Pattern.compile(oldValue, Pattern.LITERAL or Pattern.CASE_INSENSITIVE).matcher(this)
+        val matcher = Pattern.compile(oldValue, Pattern.LITERAL or Pattern.CASE_INSENSITIVE or Pattern.UNICODE_CASE).matcher(this)
         if (!matcher.find()) return this
         val stringBuilder = StringBuilder()
         var i = 0

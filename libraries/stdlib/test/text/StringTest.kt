@@ -896,6 +896,15 @@ class StringTest {
 
         assertEquals("-a-b-b-A-b-", input.replace("", "-"))
         assertEquals("-a-b-b-A-b-", input.replace("", "-", ignoreCase = true))
+
+        assertEquals("Ü", "üÜ".replace("ü", ""))
+        assertEquals("", "üÜ".replace("ü", "", ignoreCase = true))
+
+        assertEquals("Ö", "öÖ".replace("ö", ""))
+        assertEquals("", "öÖ".replace("ö", "", ignoreCase = true))
+
+        assertEquals("Ä", "äÄ".replace("ä", ""))
+        assertEquals("", "äÄ".replace("ä", "", ignoreCase = true))
     }
 
     @Test fun replaceFirst() {
