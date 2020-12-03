@@ -81,7 +81,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         var step = 1
         for ((modificationStep, buildLogStep) in modifications.zip(buildLogSteps)) {
             modificationStep.forEach { it.perform(workingDir, mapWorkingToOriginalFile) }
-            val (_, compiledSources, compileErrors) = incrementalMake(cacheDir, outDir, sourceRoots, createCompilerArguments(outDir, testDir))
+            val (_, compiledSources, compileErrors) = incrementalMake(cacheDir, outDir, sourceRoots, createCompilerArgumentsImpl(outDir, testDir))
 
             expectedSB.appendLine(stepLogAsString(step, buildLogStep.compiledKotlinFiles, buildLogStep.compileErrors))
             expectedSBWithoutErrors.appendLine(
@@ -173,6 +173,9 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         protected val kotlinStdlibJvm: File = File(distKotlincLib, "kotlin-stdlib.jar").also {
             KtUsefulTestCase.assertExists(it)
         }
+
+        @JvmStatic
+        protected fun buildHistoryFile(cacheDir: File): File = File(cacheDir, "build-history.bin")
 
         private const val ARGUMENTS_FILE_NAME = "args.txt"
 
