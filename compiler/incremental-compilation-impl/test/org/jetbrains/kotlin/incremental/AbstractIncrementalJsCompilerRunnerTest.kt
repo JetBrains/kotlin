@@ -44,7 +44,5 @@ abstract class AbstractIncrementalJsCompilerRunnerTest : AbstractIncrementalComp
             metaInfo = true
         }
 
-    protected fun buildHistoryFile(cacheDir: File): File = File(cacheDir, "build-history.bin")
-
     protected open val scopeExpansionMode = CompileScopeExpansionMode.NEVER
 }
