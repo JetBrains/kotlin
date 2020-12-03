@@ -61,9 +61,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.DEFAULT_CONSTRUCTOR_MARKER
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.annotations.isCompiledToJvmDefault
-import org.jetbrains.kotlin.resolve.jvm.annotations.isJvmRecord
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -573,7 +573,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                     return property.name.asString()
                 }
 
-                if ((containingDeclaration as? ClassDescriptor)?.isJvmRecord() == true) return property.name.asString()
+                if ((containingDeclaration as? ClassDescriptor)?.hasJavaLangRecordSupertype() == true) return property.name.asString()
 
                 val isAccessor = property is AccessorForPropertyDescriptor
                 val propertyName = if (isAccessor)
@@ -608,6 +608,9 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 mangleMemberNameIfRequired(descriptor.name.asString(), descriptor, kind)
         }
     }
+
+    private fun ClassDescriptor.hasJavaLangRecordSupertype() =
+        typeConstructor.supertypes.any { KotlinBuiltIns.isConstructedFromGivenClass(it, JAVA_LANG_RECORD_FQ_NAME) }
 
     private val shouldMangleByReturnType =
         languageVersionSettings.supportsFeature(LanguageFeature.MangleClassMembersReturningInlineClasses)

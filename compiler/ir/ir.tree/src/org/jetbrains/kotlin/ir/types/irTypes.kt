@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isPropertyAccessor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -73,6 +75,9 @@ val IrType.classifierOrNull: IrClassifierSymbol?
 
 val IrType.classOrNull: IrClassSymbol?
     get() = classifierOrNull as? IrClassSymbol
+
+val IrType.classFqName: FqName?
+    get() = classOrNull?.owner?.fqNameWhenAvailable
 
 val IrTypeArgument.typeOrNull: IrType? get() = (this as? IrTypeProjection)?.type
 

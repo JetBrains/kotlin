@@ -373,6 +373,14 @@ fun main(args: Array<String>) {
                 model("compileKotlinAgainstKotlin")
             }
 
+            testClass<AbstractCompileKotlinAgainstKotlinJdk15Test> {
+                model("compileKotlinAgainstKotlinJdk15")
+            }
+
+            testClass<AbstractIrCompileKotlinAgainstKotlinJdk15Test> {
+                model("compileKotlinAgainstKotlinJdk15")
+            }
+
             testClass<AbstractDescriptorRendererTest> {
                 model("renderer")
             }

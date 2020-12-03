@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.NameUtils
-import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_RECORD_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.jvm.JAVA_LANG_RECORD_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -84,8 +84,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
         if (property != null) {
             val propertyName = property.name.asString()
             val propertyParent = property.parentAsClass
-            if (propertyParent.isAnnotationClass || propertyParent.hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME))
-                return propertyName
+            if (propertyParent.isAnnotationClass || propertyParent.superTypes.any { it.isJavaLangRecord() }) return propertyName
 
             // The enum property getters <get-name> and <get-ordinal> have special names which also
             // apply to their fake overrides. Unfortunately, getJvmMethodNameIfSpecial does not handle
@@ -101,6 +100,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
         return mangleMemberNameIfRequired(function.name.asString(), function)
     }
+
+    private fun IrType.isJavaLangRecord() = getClass()!!.hasEqualFqName(JAVA_LANG_RECORD_FQ_NAME)
 
     private fun mangleMemberNameIfRequired(name: String, function: IrSimpleFunction): String {
         val newName = JvmCodegenUtil.sanitizeNameIfNeeded(name, context.state.languageVersionSettings)
