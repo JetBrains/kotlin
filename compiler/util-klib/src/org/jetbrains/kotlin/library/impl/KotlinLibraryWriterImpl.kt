@@ -14,9 +14,13 @@ import org.jetbrains.kotlin.library.*
 const val KLIB_DEFAULT_COMPONENT_NAME = "default"
 
 open class KotlinLibraryLayoutForWriter(
-    override val libDir: File,
+    override val libFile: File,
+    val unzippedDir: File,
     override val component: String = KLIB_DEFAULT_COMPONENT_NAME
-) : KotlinLibraryLayout, MetadataKotlinLibraryLayout, IrKotlinLibraryLayout
+) : KotlinLibraryLayout, MetadataKotlinLibraryLayout, IrKotlinLibraryLayout {
+    override val componentDir: File
+        get() = File(unzippedDir, component)
+}
 
 open class BaseWriterImpl(
     val libraryLayout: KotlinLibraryLayoutForWriter,
@@ -28,14 +32,12 @@ open class BaseWriterImpl(
     val shortName: String? = null
 ) : BaseWriter {
 
-    val klibFile = File("${libraryLayout.libDir.path}.$KLIB_FILE_EXTENSION")
+    val klibFile = libraryLayout.libFile
     val manifestProperties = Properties()
 
     init {
         // TODO: figure out the proper policy here.
-        libraryLayout.libDir.deleteRecursively()
         klibFile.delete()
-        libraryLayout.libDir.mkdirs()
         libraryLayout.resourcesDir.mkdirs()
         // TODO: <name>:<hash> will go somewhere around here.
         manifestProperties.setProperty(KLIB_PROPERTY_UNIQUE_NAME, moduleName)
@@ -76,8 +78,8 @@ open class BaseWriterImpl(
     override fun commit() {
         manifestProperties.saveToFile(libraryLayout.manifestFile)
         if (!nopack) {
-            libraryLayout.libDir.zipDirAs(klibFile)
-            libraryLayout.libDir.deleteRecursively()
+            libraryLayout.unzippedDir.zipDirAs(klibFile)
+            libraryLayout.unzippedDir.deleteRecursively()
         }
     }
 }
@@ -86,16 +88,13 @@ open class BaseWriterImpl(
  * Requires non-null [target].
  */
 class KotlinLibraryWriterImpl(
-    libDir: File,
     moduleName: String,
     versions: KotlinLibraryVersioning,
     builtInsPlatform: BuiltInsPlatform,
     nativeTargets: List<String>,
     nopack: Boolean = false,
     shortName: String? = null,
-
-    val layout: KotlinLibraryLayoutForWriter = KotlinLibraryLayoutForWriter(libDir),
-
+    val layout: KotlinLibraryLayoutForWriter,
     val base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, builtInsPlatform, nativeTargets, nopack, shortName),
     metadata: MetadataWriter = MetadataWriterImpl(layout),
     ir: IrWriter = IrMonoliticWriterImpl(layout)
@@ -118,11 +117,11 @@ fun buildKotlinLibrary(
     nativeTargets: List<String> = emptyList()
 ): KotlinLibraryLayout {
 
-    val klibDirectory = File(output)
-    val layout = KotlinLibraryLayoutForWriter(klibDirectory)
+    val klibFile = File(output)
+    val unzippedKlibDir = if (nopack) klibFile.also { it.isDirectory } else org.jetbrains.kotlin.konan.file.createTempDir(moduleName)
+    val layout = KotlinLibraryLayoutForWriter(klibFile, unzippedKlibDir)
     val irWriter = if (perFile) IrPerFileWriterImpl(layout) else IrMonoliticWriterImpl(layout)
     val library = KotlinLibraryWriterImpl(
-        klibDirectory,
         moduleName,
         versions,
         builtInsPlatform,
@@ -158,9 +157,9 @@ class KotlinLibraryOnlyIrWriter(output: String, moduleName: String, versions: Ko
         nativeTargets: List<String>,
         directory: File
     ): KotlinLibraryWriterImpl {
-        val layout = KotlinLibraryLayoutForWriter(directory)
+        val layout = KotlinLibraryLayoutForWriter(directory, directory)
         val irWriter = if (perFile) IrPerFileWriterImpl(layout) else IrMonoliticWriterImpl(layout)
-        return KotlinLibraryWriterImpl(directory, moduleName, versions, platform, nativeTargets, nopack = true, layout = layout, ir = irWriter)
+        return KotlinLibraryWriterImpl(moduleName, versions, platform, nativeTargets, nopack = true, layout = layout, ir = irWriter)
     }
 
     fun invalidate() {
