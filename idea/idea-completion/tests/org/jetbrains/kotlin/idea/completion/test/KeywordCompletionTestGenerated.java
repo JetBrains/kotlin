@@ -503,6 +503,26 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         runTest("idea/idea-completion/testData/keywords/ReturnSet.kt");
     }
 
+    @TestMetadata("SealedForDeclaredClass.kt")
+    public void testSealedForDeclaredClass() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/SealedForDeclaredClass.kt");
+    }
+
+    @TestMetadata("SealedForDeclaredInterface.kt")
+    public void testSealedForDeclaredInterface() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/SealedForDeclaredInterface.kt");
+    }
+
+    @TestMetadata("SealedWithName.kt")
+    public void testSealedWithName() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/SealedWithName.kt");
+    }
+
+    @TestMetadata("SealedWithoutName.kt")
+    public void testSealedWithoutName() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/SealedWithoutName.kt");
+    }
+
     @TestMetadata("SuspendInParameterTypePosition.kt")
     public void testSuspendInParameterTypePosition() throws Exception {
         runTest("idea/idea-completion/testData/keywords/SuspendInParameterTypePosition.kt");
