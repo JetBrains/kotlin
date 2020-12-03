@@ -66,7 +66,8 @@ class KotlinFunctionParameterTableModel(
         var receiver: KotlinParameterInfo? = methodDescriptor.receiver
         override fun valueOf(item: TableItem): Boolean = item.parameter == receiver
 
-        override fun setValue(item: TableItem, value: Boolean) {
+        override fun setValue(item: TableItem, value: Boolean?) {
+            if (value == null) return
             receiver = if (value) item.parameter else null
         }
 
