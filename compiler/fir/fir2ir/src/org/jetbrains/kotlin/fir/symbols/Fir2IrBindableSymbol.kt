@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner>(
+abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclaration>(
     override val signature: IdSignature,
     private val containerSource: DeserializedContainerSource? = null
 ) : IrBindableSymbol<D, B> {
@@ -34,31 +34,9 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolO
         get() = _owner != null
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: D by lazy {
-        val result = when (val owner = owner) {
-            is IrEnumEntry -> WrappedEnumEntryDescriptor().apply { bind(owner) }
-            is IrClass -> WrappedClassDescriptor().apply { bind(owner) }
-            is IrConstructor -> WrappedClassConstructorDescriptor().apply { bind(owner) }
-            is IrSimpleFunction -> when {
-                owner.name.isSpecial && owner.name.asString().startsWith(GETTER_PREFIX) ->
-                    WrappedPropertyGetterDescriptor()
-                owner.name.isSpecial && owner.name.asString().startsWith(SETTER_PREFIX) ->
-                    WrappedPropertySetterDescriptor()
-                else ->
-                    WrappedSimpleFunctionDescriptor()
-            }.apply { bind(owner) }
-            is IrVariable -> WrappedVariableDescriptor().apply { bind(owner) }
-            is IrValueParameter -> WrappedValueParameterDescriptor().apply { bind(owner) }
-            is IrTypeParameter -> WrappedTypeParameterDescriptor().apply { bind(owner) }
-            is IrProperty -> WrappedPropertyDescriptor().apply { bind(owner) }
-            is IrField -> WrappedFieldDescriptor().apply { bind(owner) }
-            is IrTypeAlias -> WrappedTypeAliasDescriptor().apply { bind(owner) }
-            else -> throw IllegalStateException("Unsupported owner in Fir2IrBindableSymbol: $owner")
-        }
-
+    override val descriptor: D
         @Suppress("UNCHECKED_CAST")
-        result as D
-    }
+        get() = owner.toIrBasedDescriptor() as D
 
     @ObsoleteDescriptorBasedAPI
     override val hasDescriptor: Boolean

@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
-import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
@@ -1045,34 +1043,6 @@ class SymbolTable(
             else ->
                 throw IllegalArgumentException("Unexpected value descriptor: $value")
         }
-
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
-    fun wrappedTopLevelCallableDescriptors(): Set<DescriptorWithContainerSource> {
-        val result = mutableSetOf<DescriptorWithContainerSource>()
-        for (descriptor in simpleFunctionSymbolTable.descriptorToSymbol.keys) {
-            if (descriptor is WrappedSimpleFunctionDescriptor && descriptor.owner.parent is IrPackageFragment) {
-                result.add(descriptor)
-            }
-        }
-        for (symbol in simpleFunctionSymbolTable.idSigToSymbol.values) {
-            val descriptor = symbol.descriptor
-            if (descriptor is WrappedSimpleFunctionDescriptor && symbol.owner.parent is IrPackageFragment) {
-                result.add(descriptor)
-            }
-        }
-        for (descriptor in propertySymbolTable.descriptorToSymbol.keys) {
-            if (descriptor is WrappedPropertyDescriptor && descriptor.owner.parent is IrPackageFragment) {
-                result.add(descriptor)
-            }
-        }
-        for (symbol in propertySymbolTable.idSigToSymbol.values) {
-            val descriptor = symbol.descriptor
-            if (descriptor is WrappedPropertyDescriptor && symbol.owner.parent is IrPackageFragment) {
-                result.add(descriptor)
-            }
-        }
-        return result
-    }
 
     private inline fun <D : DeclarationDescriptor, IR : IrSymbolOwner, S : IrBindableSymbol<D, IR>> FlatSymbolTable<D, IR, S>.forEachPublicSymbolImpl(
         block: (IrSymbol) -> Unit

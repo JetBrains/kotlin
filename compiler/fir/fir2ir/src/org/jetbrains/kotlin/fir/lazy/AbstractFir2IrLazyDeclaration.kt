@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import kotlin.properties.ReadWriteProperty
 
-interface AbstractFir2IrLazyDeclaration<F : FirMemberDeclaration, D : IrSymbolOwner> :
+interface AbstractFir2IrLazyDeclaration<F : FirMemberDeclaration, D : IrDeclaration> :
     IrDeclaration, IrDeclarationParent, Fir2IrComponents {
 
     val fir: F

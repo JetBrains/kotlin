@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.PropertyCarrier
 import org.jetbrains.kotlin.ir.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.name.Name
@@ -165,7 +166,7 @@ internal class PersistentIrFakeOverrideProperty(
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor
-        get() = _symbol?.descriptor ?: WrappedPropertyDescriptor()
+        get() = _symbol?.descriptor ?: this.toIrBasedDescriptor()
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun acquireSymbol(symbol: IrPropertySymbol): IrProperty {
