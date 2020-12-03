@@ -43,6 +43,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(
         FirTypeMismatchOnOverrideChecker,
+        FirMemberPropertyChecker,
     )
 
     override val constructorCheckers: Set<FirConstructorChecker> = setOf(

@@ -9,7 +9,7 @@ interface Foo {
 expect class NonAbstractClass : Foo {
     abstract fun bar()
 
-    abstract val baz: Int
+    <!ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS!>abstract<!> val baz: Int
 
     abstract override fun foo()
 }
