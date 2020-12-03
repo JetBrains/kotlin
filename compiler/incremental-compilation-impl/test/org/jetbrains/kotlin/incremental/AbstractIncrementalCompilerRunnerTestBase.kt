@@ -28,6 +28,13 @@ import java.io.File
 abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerArguments> : TestWithWorkingDir() {
     protected abstract fun createCompilerArguments(destinationDir: File, testDir: File): Args
 
+    protected open val moduleNames: Collection<String>? get() = null
+
+    protected open fun setupTest(testDir: File, srcDir: File, cacheDir: File, outDir: File): List<File> =
+        listOf(srcDir)
+
+    protected open fun resetTest(testDir: File, newOutDir: File, newCacheDir: File) {}
+
     fun doTest(path: String) {
         val testDir = File(path)
 
@@ -39,9 +46,10 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val outDir = File(workingDir, "out").apply { mkdirs() }
 
         val mapWorkingToOriginalFile = HashMap(copyTestSources(testDir, srcDir, filePrefix = ""))
-        val sourceRoots = listOf(srcDir)
-        val args = createCompilerArguments(outDir, testDir)
-        val (_, _, errors) = initialMake(cacheDir, sourceRoots, args)
+
+        val sourceRoots = setupTest(testDir, srcDir, cacheDir, outDir)
+
+        val (_, _, errors) = initialMake(cacheDir, outDir, sourceRoots, createCompilerArguments(outDir, testDir))
         check(errors.isEmpty()) { "Initial build failed: \n${errors.joinToString("\n")}" }
 
         // modifications
@@ -49,7 +57,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val buildLogSteps = parseTestBuildLog(buildLogFile)
         val modifications = getModificationsToPerform(
             testDir,
-            moduleNames = null,
+            moduleNames = moduleNames,
             allowNoFilesWithSuffixInTestData = false,
             touchPolicy = TouchPolicy.CHECKSUM
         )
@@ -69,7 +77,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         var step = 1
         for ((modificationStep, buildLogStep) in modifications.zip(buildLogSteps)) {
             modificationStep.forEach { it.perform(workingDir, mapWorkingToOriginalFile) }
-            val (_, compiledSources, compileErrors) = incrementalMake(cacheDir, sourceRoots, args)
+            val (_, compiledSources, compileErrors) = incrementalMake(cacheDir, outDir, sourceRoots, createCompilerArguments(outDir, testDir))
 
             expectedSB.appendLine(stepLogAsString(step, buildLogStep.compiledKotlinFiles, buildLogStep.compileErrors))
             expectedSBWithoutErrors.appendLine(
@@ -98,9 +106,9 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
     }
 
     // these functions are needed only to simplify debugging of IC tests
-    private fun initialMake(cacheDir: File, sourceRoots: List<File>, args: Args) = make(cacheDir, sourceRoots, args)
+    private fun initialMake(cacheDir: File, outDir: File, sourceRoots: List<File>, args: Args) = make(cacheDir, outDir, sourceRoots, args)
 
-    private fun incrementalMake(cacheDir: File, sourceRoots: List<File>, args: Args) = make(cacheDir, sourceRoots, args)
+    private fun incrementalMake(cacheDir: File, outDir: File, sourceRoots: List<File>, args: Args) = make(cacheDir, outDir, sourceRoots, args)
 
     protected open fun rebuildAndCompareOutput(
         sourceRoots: List<File>,
@@ -111,7 +119,9 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         // todo: also compare caches
         val rebuildOutDir = File(workingDir, "rebuild-out").apply { mkdirs() }
         val rebuildCacheDir = File(workingDir, "rebuild-cache").apply { mkdirs() }
-        val rebuildResult = make(rebuildCacheDir, sourceRoots, createCompilerArguments(rebuildOutDir, testDir))
+        resetTest(testDir, rebuildOutDir, rebuildCacheDir)
+
+        val rebuildResult = make(rebuildCacheDir, rebuildOutDir, sourceRoots, createCompilerArguments(rebuildOutDir, testDir))
 
         val rebuildExpectedToSucceed = buildLogSteps.last().compileSucceeded
         val rebuildSucceeded = rebuildResult.exitCode == ExitCode.OK
@@ -125,7 +135,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
     protected open val buildLogFinder: BuildLogFinder
         get() = BuildLogFinder(isGradleEnabled = true)
 
-    protected abstract fun make(cacheDir: File, sourceRoots: Iterable<File>, args: Args): TestCompilationResult
+    protected abstract fun make(cacheDir: File, outDir: File, sourceRoots: Iterable<File>, args: Args): TestCompilationResult
 
     private fun stepLogAsString(step: Int, ktSources: Iterable<String>, errors: Collection<String>, includeErrors: Boolean = true): String {
         val sb = StringBuilder()
