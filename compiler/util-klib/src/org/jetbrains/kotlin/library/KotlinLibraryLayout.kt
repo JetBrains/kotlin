@@ -26,18 +26,18 @@ const val KLIB_IR_FOLDER_NAME = "ir"
  * This scheme describes the Kotlin/Native Library (KLIB) layout.
  */
 interface KotlinLibraryLayout {
-    val libDir: File
+    val libFile: File
     val libraryName: String
-        get() = libDir.path
+        get() = libFile.path
     val component: String?
     val componentDir: File
-        get() = File(libDir, component!!)
+        get() = File(libFile, component!!)
     val manifestFile
         get() = File(componentDir, KLIB_MANIFEST_FILE_NAME)
     val resourcesDir
         get() = File(componentDir, "resources")
     val pre_1_4_manifest: File
-        get() = File(libDir, KLIB_MANIFEST_FILE_NAME)
+        get() = File(libFile, KLIB_MANIFEST_FILE_NAME)
 }
 
 interface MetadataKotlinLibraryLayout : KotlinLibraryLayout {
