@@ -59,9 +59,18 @@ class ClasspathExtractionException(message: String) : Exception(message)
 fun classpathFromClassloader(currentClassLoader: ClassLoader, unpackJarCollections: Boolean = false): List<File>? {
     val processedJars = hashSetOf<File>()
     val unpackJarCollectionsDir by lazy {
-        createTempDir("unpackedJarCollections").canonicalFile.also {
+        File.createTempFile("unpackedJarCollections", null).canonicalFile.apply {
+            delete()
+            mkdir()
+            setReadable(false, false)
+            setWritable(false, false)
+            setExecutable(false, false)
+            setReadable(true, true)
+            setWritable(true, true)
+            setExecutable(true, true)
+
             Runtime.getRuntime().addShutdownHook(Thread {
-                it.deleteRecursively()
+                deleteRecursively()
             })
         }
     }
@@ -144,8 +153,12 @@ fun ClassLoader.classPathFromTypicalResourceUrls(): Sequence<File> =
         .distinct()
         .filter { it.isValidClasspathFile() }
 
-private fun File.unpackJarCollection(rootTempDir: File?): Sequence<File> {
-    val targetDir = createTempDir(nameWithoutExtension, directory = rootTempDir)
+private fun File.unpackJarCollection(rootTempDir: File): Sequence<File> {
+    val targetDir = File.createTempFile(nameWithoutExtension, null, rootTempDir).apply {
+        delete()
+        mkdir()
+    }
+
     return try {
         ArrayList<File>().apply {
             JarInputStream(FileInputStream(this@unpackJarCollection)).use { jarInputStream ->

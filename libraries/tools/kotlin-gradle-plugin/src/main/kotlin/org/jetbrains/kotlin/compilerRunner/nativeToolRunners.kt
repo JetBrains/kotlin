@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import java.nio.file.Files
 import java.util.*
 
 private val Project.jvmArgs
@@ -126,7 +127,7 @@ internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRu
     override fun transformArgs(args: List<String>): List<String> {
         if (!useArgFile) return super.transformArgs(args)
 
-        val argFile = createTempFile(prefix = "kotlinc-native-args", suffix = ".lst").apply { deleteOnExit() }
+        val argFile = Files.createTempFile(/* prefix = */ "kotlinc-native-args", /* suffix = */ ".lst").toFile().apply { deleteOnExit() }
         argFile.printWriter().use { w ->
             args.forEach { arg ->
                 val escapedArg = arg

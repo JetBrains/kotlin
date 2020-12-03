@@ -4,7 +4,9 @@ plugins {
     id("jps-compatible")
 }
 
+val JDK_16: String by project
 jvmTarget = "1.6"
+javaHome = JDK_16
 
 dependencies {
     compile(project(":kotlin-script-runtime"))
@@ -20,6 +22,10 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions.freeCompilerArgs += "-Xallow-kotlin-package"
+}
+
+tasks.withType<Test> {
+    executable = "$JDK_16/bin/java"
 }
 
 publish()
