@@ -76,7 +76,7 @@ class JvmMappedScope(
     }
 
     override fun getCallableNames(): Set<Name> {
-        return declaredMemberScope.getContainingCallableNamesIfPresent()
+        return declaredMemberScope.getContainingCallableNamesIfPresent() + signatures.visibleMethodSignaturesByName.keys
     }
 
     override fun getClassifierNames(): Set<Name> {
