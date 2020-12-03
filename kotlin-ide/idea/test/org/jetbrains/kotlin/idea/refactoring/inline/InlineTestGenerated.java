@@ -1123,6 +1123,11 @@ public abstract class InlineTestGenerated extends AbstractInlineTest {
             runTest("testData/refactoring/inline/namedFunction/implementingInterface.kt");
         }
 
+        @TestMetadata("importConflict.kt")
+        public void testImportConflict() throws Exception {
+            runTest("testData/refactoring/inline/namedFunction/importConflict.kt");
+        }
+
         @TestMetadata("InStringTemplates.kt")
         public void testInStringTemplates() throws Exception {
             runTest("testData/refactoring/inline/namedFunction/InStringTemplates.kt");
