@@ -30,7 +30,7 @@ open class BaseKotlinLibraryImpl(
 
     private val componentListAndHasPre14Manifest by lazy {
         access.inPlace { layout ->
-            val listFiles = layout.libDir.listFiles
+            val listFiles = layout.libFile.listFiles
             listFiles
                 .filter { it.isDirectory }
                 .filter { it.listFiles.map { it.name }.contains(KLIB_MANIFEST_FILE_NAME) }
