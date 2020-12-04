@@ -1534,6 +1534,10 @@ fun main(args: Array<String>) {
                 model("incremental/js", extension = null, excludeParentDirs = true)
             }
 
+            testClass<AbstractIncrementalMultiModuleJsCompilerRunnerTest> {
+                model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
+            }
+
             testClass<AbstractIncrementalMultiModuleJsKlibCompilerRunnerTest> {
                 model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
             }
