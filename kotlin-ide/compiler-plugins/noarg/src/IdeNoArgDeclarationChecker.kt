@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 internal val NO_ARG_ANNOTATION_OPTION_PREFIX =
     "plugin:${NoArgCommandLineProcessor.PLUGIN_ID}:${NoArgCommandLineProcessor.ANNOTATION_OPTION.optionName}="
 
-class IdeNoArgDeclarationChecker(project: Project) : AbstractNoArgDeclarationChecker() {
+class IdeNoArgDeclarationChecker(project: Project) : AbstractNoArgDeclarationChecker(false) {
 
     private val cachedAnnotationNames = CachedAnnotationNames(project, NO_ARG_ANNOTATION_OPTION_PREFIX)
 
