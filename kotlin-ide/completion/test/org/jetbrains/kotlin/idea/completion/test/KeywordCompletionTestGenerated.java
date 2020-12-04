@@ -501,6 +501,21 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         runTest("testData/keywords/ReturnSet.kt");
     }
 
+    @TestMetadata("SealedForAlreadySealed.kt")
+    public void testSealedForAlreadySealed() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/SealedForAlreadySealed.kt");
+    }
+
+    @TestMetadata("SealedForAnnotationClass.kt")
+    public void testSealedForAnnotationClass() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/SealedForAnnotationClass.kt");
+    }
+
+    @TestMetadata("SealedForDataClass.kt")
+    public void testSealedForDataClass() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/SealedForDataClass.kt");
+    }
+
     @TestMetadata("SealedForDeclaredClass.kt")
     public void testSealedForDeclaredClass() throws Exception {
         runTest("idea/idea-completion/testData/keywords/SealedForDeclaredClass.kt");
@@ -509,6 +524,26 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
     @TestMetadata("SealedForDeclaredInterface.kt")
     public void testSealedForDeclaredInterface() throws Exception {
         runTest("idea/idea-completion/testData/keywords/SealedForDeclaredInterface.kt");
+    }
+
+    @TestMetadata("SealedForEnumClass.kt")
+    public void testSealedForEnumClass() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/SealedForEnumClass.kt");
+    }
+
+    @TestMetadata("SealedForFunInterface.kt")
+    public void testSealedForFunInterface() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/SealedForFunInterface.kt");
+    }
+
+    @TestMetadata("SealedForInnerClass.kt")
+    public void testSealedForInnerClass() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/SealedForInnerClass.kt");
+    }
+
+    @TestMetadata("SealedForOpenClass.kt")
+    public void testSealedForOpenClass() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/SealedForOpenClass.kt");
     }
 
     @TestMetadata("SealedWithName.kt")
