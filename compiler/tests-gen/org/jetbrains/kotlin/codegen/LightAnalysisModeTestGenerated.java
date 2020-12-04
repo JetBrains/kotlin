@@ -26465,6 +26465,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/reflection/properties/simpleGetProperties.kt");
             }
 
+            @TestMetadata("withLocalType.kt")
+            public void testWithLocalType() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/properties/withLocalType.kt");
+            }
+
             @TestMetadata("compiler/testData/codegen/box/reflection/properties/accessors")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

@@ -391,7 +391,7 @@ object KotlinToJVMBytecodeCompiler {
             codegenFactory.generateModuleInFrontendIRMode(
                 generationState, moduleFragment, symbolTable, sourceManager, extensions
             ) { context, irClass, _, serializationBindings, parent ->
-                FirMetadataSerializer(session, context, irClass, serializationBindings, parent)
+                FirMetadataSerializer(session, context, irClass, serializationBindings, components, parent)
             }
             CodegenFactory.doCheckCancelled(generationState)
             generationState.factory.done()
