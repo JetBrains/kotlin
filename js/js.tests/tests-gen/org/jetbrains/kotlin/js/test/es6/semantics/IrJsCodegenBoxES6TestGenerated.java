@@ -4123,6 +4123,11 @@ public class IrJsCodegenBoxES6TestGenerated extends AbstractIrJsCodegenBoxES6Tes
             runTest("compiler/testData/codegen/box/collections/inSetWithSmartCast.kt");
         }
 
+        @TestMetadata("internalRemove.kt")
+        public void testInternalRemove() throws Exception {
+            runTest("compiler/testData/codegen/box/collections/internalRemove.kt");
+        }
+
         @TestMetadata("kt41123.kt")
         public void testKt41123() throws Exception {
             runTest("compiler/testData/codegen/box/collections/kt41123.kt");
