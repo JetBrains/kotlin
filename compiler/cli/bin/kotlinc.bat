@@ -49,6 +49,7 @@ if "%_KOTLIN_RUNNER%"=="1" (
   "%_JAVACMD%" %JAVA_OPTS% "-Dkotlin.home=%_KOTLIN_HOME%" -cp "%_KOTLIN_HOME%\lib\kotlin-runner.jar" ^
     org.jetbrains.kotlin.runner.Main %KOTLIN_OPTS%
 ) else (
+  setlocal EnableDelayedExpansion
   SET _ADDITIONAL_CLASSPATH=
 
   if not "%_KOTLIN_TOOL%"=="" (
@@ -56,7 +57,7 @@ if "%_KOTLIN_RUNNER%"=="1" (
   )
 
   "%_JAVACMD%" %JAVA_OPTS% -noverify -cp "%_KOTLIN_HOME%\lib\kotlin-preloader.jar" ^
-    org.jetbrains.kotlin.preloading.Preloader -cp "%_KOTLIN_HOME%\lib\kotlin-compiler.jar%_ADDITIONAL_CLASSPATH%" ^
+    org.jetbrains.kotlin.preloading.Preloader -cp "%_KOTLIN_HOME%\lib\kotlin-compiler.jar!_ADDITIONAL_CLASSPATH!" ^
     %_KOTLIN_COMPILER% %KOTLIN_OPTS%
 )
 
