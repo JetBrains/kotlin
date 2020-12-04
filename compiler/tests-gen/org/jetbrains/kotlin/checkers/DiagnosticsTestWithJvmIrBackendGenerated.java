@@ -583,4 +583,27 @@ public class DiagnosticsTestWithJvmIrBackendGenerated extends AbstractDiagnostic
             }
         }
     }
+
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ValueClasses extends AbstractDiagnosticsTestWithJvmIrBackend {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInValueClasses() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("cloneable.kt")
+        public void testCloneable() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses/cloneable.kt");
+        }
+
+        @TestMetadata("cloneable.fir.kt")
+        public void testCloneable_fir() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses/cloneable.fir.kt");
+        }
+    }
 }
