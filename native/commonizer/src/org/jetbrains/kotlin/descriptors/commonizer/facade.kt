@@ -13,10 +13,11 @@ import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirTreeMerger.CirTreeMergeResult
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.descriptors.commonizer.Result as CommonizerResult
 
-fun runCommonization(parameters: Parameters): Result {
+fun runCommonization(parameters: Parameters): CommonizerResult {
     if (!parameters.hasAnythingToCommonize())
-        return Result.NothingToCommonize
+        return CommonizerResult.NothingToCommonize
 
     val storageManager = LockBasedStorageManager("Declaration descriptors commonization")
 
@@ -44,7 +45,7 @@ fun runCommonization(parameters: Parameters): Result {
 
     parameters.progressLogger?.invoke("Prepared new descriptors")
 
-    return Result.Commonized(modulesByTargets)
+    return CommonizerResult.Commonized(modulesByTargets)
 }
 
 private fun mergeAndCommonize(storageManager: StorageManager, parameters: Parameters): CirTreeMergeResult {

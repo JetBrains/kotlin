@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.*
-import org.jetbrains.kotlin.descriptors.commonizer.Target
+import org.jetbrains.kotlin.descriptors.commonizer.Target as CommonizerTarget
+import org.jetbrains.kotlin.descriptors.commonizer.Result as CommonizerResult
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.StatsType.*
 import org.jetbrains.kotlin.descriptors.commonizer.stats.AggregatedStatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.stats.FileStatsOutput
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.impl.BaseWriterImpl
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.impl.KotlinLibraryLayoutForWriter
 import org.jetbrains.kotlin.library.impl.KotlinLibraryWriterImpl
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
@@ -136,7 +138,7 @@ class NativeDistributionCommonizer(
         return library
     }
 
-    private fun commonize(allLibraries: AllNativeLibraries): Result {
+    private fun commonize(allLibraries: AllNativeLibraries): CommonizerResult {
         val statsCollector = when (statsType) {
             RAW -> RawStatsCollector(targets, FileStatsOutput(destination, "raw"))
             AGGREGATED -> AggregatedStatsCollector(targets, FileStatsOutput(destination, "aggregated"))
@@ -170,13 +172,13 @@ class NativeDistributionCommonizer(
         }
     }
 
-    private fun saveModules(originalLibraries: AllNativeLibraries, result: Result) {
+    private fun saveModules(originalLibraries: AllNativeLibraries, result: CommonizerResult) {
         // optimization: stdlib and endorsed libraries effectively remain the same across all Kotlin/Native targets,
         // so they can be just copied to the new destination without running serializer
         copyCommonStandardLibraries()
 
         when (result) {
-            is Result.NothingToCommonize -> {
+            is CommonizerResult.NothingToCommonize -> {
                 // It may happen that all targets to be commonized (or at least all but one target) miss platform libraries.
                 // In such case commonizer will do nothing and return a special result value 'NothingToCommonize'.
                 // So, let's just copy platform libraries from the target where they are to the new destination.
@@ -185,7 +187,7 @@ class NativeDistributionCommonizer(
                 }
             }
 
-            is Result.Commonized -> {
+            is CommonizerResult.Commonized -> {
                 val serializer = KlibMetadataMonolithicSerializer(
                     languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
                     metadataVersion = KlibMetadataVersion.INSTANCE,
@@ -266,7 +268,7 @@ class NativeDistributionCommonizer(
     }
 
     private fun serializeTarget(
-        target: Target,
+        target: CommonizerTarget,
         targetName: String,
         newModules: Collection<ModuleDescriptor>,
         absentModuleLocations: List<File>,
@@ -304,14 +306,16 @@ class NativeDistributionCommonizer(
         manifestData: NativeSensitiveManifestData,
         destination: File
     ) {
+        val kDestination = KFile(destination.path)
+        val layout = KotlinLibraryLayoutForWriter(kDestination, kDestination)
         val library = KotlinLibraryWriterImpl(
-            libDir = KFile(destination.path),
             moduleName = manifestData.uniqueName,
             versions = manifestData.versions,
             builtInsPlatform = BuiltInsPlatform.NATIVE,
             nativeTargets = emptyList(), // will be overwritten with NativeSensitiveManifestData.applyTo() below
             nopack = true,
-            shortName = manifestData.shortName
+            shortName = manifestData.shortName,
+            layout = layout
         )
         library.addMetadata(metadata)
         manifestData.applyTo(library.base as BaseWriterImpl)
@@ -323,7 +327,7 @@ class NativeDistributionCommonizer(
             .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
             .resolve(name)
 
-    private val Target.librariesDestination: File
+    private val CommonizerTarget.librariesDestination: File
         get() = when (this) {
             is LeafTarget -> destination.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(name)
             is SharedTarget -> destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)
