@@ -2,6 +2,8 @@
     <id>org.jetbrains.kotlin</id>
     <version>1.2</version>
 
+    <!-- Don't add more extension points here! Logic in KotlinCoreEnvironment assumes that there is only one EP.  -->
+    <!-- And this file should be removed once 202 is no longer supported -->
     <extensionPoints>
         <extensionPoint qualifiedName="com.intellij.psi.classFileDecompiler"
                         interface="com.intellij.psi.compiled.ClassFileDecompilers$Decompiler"
