@@ -99,7 +99,7 @@ interface IrBuilderExtension {
         typeHint: IrType? = null
     ): IrMemberAccessExpression<*> {
         assert(callee.isBound) { "Symbol $callee expected to be bound" }
-        val returnType = typeHint ?: callee.run { owner.returnType }
+        val returnType = typeHint ?: callee.owner.returnType
         val call = irCall(callee, type = returnType)
         call.dispatchReceiver = dispatchReceiver
         args.forEachIndexed(call::putValueArgument)

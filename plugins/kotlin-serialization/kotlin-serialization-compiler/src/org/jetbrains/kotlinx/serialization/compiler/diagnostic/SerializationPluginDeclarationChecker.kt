@@ -123,10 +123,10 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             return false
         }
 
-        if (descriptor.isInlineClass()) {
-            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED)
-            return false
-        }
+//        if (descriptor.isInlineClass()) {
+//            trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED)
+//            return false
+//        }
         if (!descriptor.hasSerializableAnnotationWithoutArgs) return false
 
         if (descriptor.serializableAnnotationIsUseless) {
@@ -258,9 +258,9 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
     ) {
         if (type.genericIndex != null) return // type arguments always have serializer stored in class' field
         val element = ktType?.typeElement
-        if (type.isUnsupportedInlineType()) {
-            trace.report(SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(element ?: fallbackElement))
-        }
+//        if (type.isUnsupportedInlineType()) {
+//            trace.report(SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED.on(element ?: fallbackElement))
+//        }
         val serializer = findTypeSerializerOrContextUnchecked(module, type)
         if (serializer != null) {
             checkCustomSerializerMatch(module, type, type, element, trace, fallbackElement)
