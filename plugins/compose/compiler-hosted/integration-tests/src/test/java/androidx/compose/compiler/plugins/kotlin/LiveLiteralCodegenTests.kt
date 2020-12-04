@@ -38,7 +38,7 @@ class LiveLiteralCodegenTests : AbstractLoweringTests() {
         configuration.put(ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY, true)
     }
 
-    @Ignore
+    @Ignore("Live literals are currently disabled by default")
     @Test
     fun testBasicFunctionality(): Unit = ensureSetup {
         compose(
@@ -60,7 +60,7 @@ class LiveLiteralCodegenTests : AbstractLoweringTests() {
         }
     }
 
-    @Ignore
+    @Ignore("Live literals are currently disabled by default")
     @Test
     fun testObjectFieldsLoweredToStaticFields(): Unit = ensureSetup {
         validateBytecode(
