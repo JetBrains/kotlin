@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm
 
-import llvm.LLVMStoreSizeOfType
+import llvm.LLVMLinkage
+import llvm.LLVMSetLinkage
 import llvm.LLVMValueRef
-import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.ir.*
@@ -65,7 +65,9 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                 staticData.placeGlobal(
                         "kobjcclassptr:${irClass.fqNameForIrSerialization}#internal",
                         NullPointer(int8Type)
-                ).pointer
+                ).pointer,
+
+                generateClassDataImp(irClass)
         )
 
         objCLLvmDeclarations.classInfoGlobal.setInitializer(info)
@@ -130,6 +132,26 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
                         it.llvmFunction
                 )
             }
+
+    private fun generateClassDataImp(irClass: IrClass): ConstPointer {
+        val classDataPointer = staticData.placeGlobal(
+                "kobjcclassdata:${irClass.fqNameForIrSerialization}#internal",
+                Zero(runtime.kotlinObjCClassData)
+        ).pointer
+
+        val functionType = functionType(classDataPointer.llvmType, false, int8TypePtr, int8TypePtr)
+        val functionName = "kobjcclassdataimp:${irClass.fqNameForIrSerialization}#internal"
+
+        val function = generateFunction(codegen, functionType, functionName) {
+            ret(classDataPointer.llvm)
+        }.also {
+            LLVMSetLinkage(it, LLVMLinkage.LLVMPrivateLinkage)
+        }
+
+        return constPointer(function)
+    }
+
+    private val codegen = CodeGenerator(context)
 
     companion object {
         const val createdClassFieldIndex = 11
