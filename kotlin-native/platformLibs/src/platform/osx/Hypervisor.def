@@ -1,7 +1,10 @@
 depends = darwin posix
 language = Objective-C
 package = platform.Hypervisor
-modules = Hypervisor
+
+# Using headers instead of modules to workaround incorrect module definition in Xcode 12.2:
+headers = Hypervisor/Hypervisor.h
+headerFilter = Hypervisor/**
 
 compilerOpts = -framework Hypervisor
 linkerOpts = -framework Hypervisor
