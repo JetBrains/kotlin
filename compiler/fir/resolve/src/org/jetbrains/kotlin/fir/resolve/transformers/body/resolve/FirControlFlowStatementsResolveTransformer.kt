@@ -216,9 +216,12 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
     ): CompositeTransformResult<FirStatement> {
         if (elvisExpression.calleeReference is FirResolvedNamedReference) return elvisExpression.compose()
         elvisExpression.transformAnnotations(transformer, data)
-        elvisExpression.transformLhs(transformer, ResolutionMode.ContextDependent)
+        val expectedArgumentType =
+            if (data is ResolutionMode.WithExpectedType && data.expectedType !is FirImplicitTypeRef) data
+            else ResolutionMode.ContextDependent
+        elvisExpression.transformLhs(transformer, expectedArgumentType)
         dataFlowAnalyzer.exitElvisLhs(elvisExpression)
-        elvisExpression.transformRhs(transformer, ResolutionMode.ContextDependent)
+        elvisExpression.transformRhs(transformer, expectedArgumentType)
 
         val result = syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext)?.let {
             callCompleter.completeCall(it, data.expectedType).result
