@@ -22,6 +22,8 @@ where advanced options include:
   -Xir-do-not-clear-binding-context
                              When using the IR backend, do not clear BindingContext between psi2ir and lowerings
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode
+  -Xjvm-enable-preview       Allow using features from Java language that are in preview phase.
+                             Works as `--enable-preview` in Java. All class files are marked as preview-generated thus it won't be possible to use them in release environment
   -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xir-check-local-names     Check that names of local classes and anonymous objects are the same in the IR backend as in the old backend

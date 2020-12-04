@@ -25,9 +25,16 @@ abstract class AbstractBlackBoxAgainstJavaCodegenTest : AbstractBlackBoxCodegenT
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         javaClassesOutputDirectory = writeJavaFiles(files)!!.let { directory ->
             val jvmTargets = files.mapNotNullTo(mutableSetOf()) { it.directives["JVM_TARGET"]?.let((JvmTarget)::fromString) }
+            val enablePreview = files.any { it.directives.contains("ENABLE_JVM_PREVIEW") }
             check(jvmTargets.size <= 1) { "Having different JVM_TARGETs for different files is not supported in this test." }
             CodegenTestUtil.compileJava(
-                CodegenTestUtil.findJavaSourcesInDirectory(directory), emptyList(), extractJavacOptions(files, jvmTargets.firstOrNull())
+                CodegenTestUtil.findJavaSourcesInDirectory(directory),
+                emptyList(),
+                extractJavacOptions(
+                    files,
+                    jvmTargets.firstOrNull(),
+                    enablePreview,
+                ),
             )
         }
 

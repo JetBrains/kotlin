@@ -227,6 +227,11 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                         ?: error("Unknown target: $targetString")
                     configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
                 }
+
+                if (directives.contains("ENABLE_JVM_PREVIEW")) {
+                    configuration.put(JVMConfigurationKeys.ENABLE_JVM_PREVIEW, true)
+                }
+
                 val version = directives["LANGUAGE_VERSION"]
                 if (version != null) {
                     throw AssertionError(

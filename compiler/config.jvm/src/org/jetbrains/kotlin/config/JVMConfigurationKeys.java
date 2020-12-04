@@ -140,4 +140,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> USE_OLD_INLINE_CLASSES_MANGLING_SCHEME =
             CompilerConfigurationKey.create("Use old, 1.4 version of inline classes mangling scheme");
+
+    public static final CompilerConfigurationKey<Boolean> ENABLE_JVM_PREVIEW =
+            CompilerConfigurationKey.create("Enable Java language preview features");
 }

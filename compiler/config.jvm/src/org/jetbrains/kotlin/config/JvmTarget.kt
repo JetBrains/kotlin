@@ -22,8 +22,6 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 enum class JvmTarget(
     override val description: String,
     val majorVersion: Int,
-    val descriptionForJavacArgument: String = description,
-    val isPreview: Boolean = false,
 ) : TargetPlatformVersion {
     JVM_1_6("1.6", Opcodes.V1_6),
     JVM_1_8("1.8", Opcodes.V1_8),
@@ -34,21 +32,7 @@ enum class JvmTarget(
     JVM_13("13", Opcodes.V13),
     JVM_14("14", Opcodes.V14),
     JVM_15("15", Opcodes.V15),
-    JVM_15_PREVIEW(
-        "15_PREVIEW", Opcodes.V15,
-        descriptionForJavacArgument = "15", isPreview = true
-    ),
     ;
-
-    val minorVersion: Int =
-        if (isPreview)
-            0xffff
-        else
-            0
-
-    val bytecodeVersion: Int by lazy {
-        (minorVersion shl 16) + majorVersion
-    }
 
     companion object {
         @JvmField
@@ -57,14 +41,14 @@ enum class JvmTarget(
         @JvmStatic
         fun fromString(string: String) = values().find { it.description == string }
 
-        fun getDescription(bytecodeVersion: Int): String {
-            val platformDescription = values().find { it.bytecodeVersion == bytecodeVersion }?.description ?: when (bytecodeVersion) {
+        fun getDescription(majorVersion: Int): String {
+            val platformDescription = values().find { it.majorVersion == majorVersion }?.description ?: when (majorVersion) {
                 Opcodes.V1_7 -> "1.7"
                 else -> null
             }
 
             return if (platformDescription != null) "JVM target $platformDescription"
-            else "JVM bytecode version $bytecodeVersion"
+            else "JVM bytecode version $majorVersion"
         }
     }
 }

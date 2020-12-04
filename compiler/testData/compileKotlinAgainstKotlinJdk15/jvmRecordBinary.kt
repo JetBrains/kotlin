@@ -1,6 +1,7 @@
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
-// JVM_TARGET: 15_PREVIEW
+// JVM_TARGET: 15
+// ENABLE_JVM_PREVIEW
 // FILE: A.kt
 @JvmRecord
 data class MyRecord(val foo: String, val bar: String)
