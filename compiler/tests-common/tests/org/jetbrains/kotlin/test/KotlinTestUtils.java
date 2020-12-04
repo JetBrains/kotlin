@@ -414,6 +414,11 @@ public class KotlinTestUtils {
     @NotNull
     public static File getJdk15Home() {
         String jdk15 = System.getenv("JDK_15");
+
+        if (jdk15 == null) {
+            jdk15 = System.getenv("JDK_15_0");
+        }
+
         if (jdk15 == null) {
             throw new AssertionError("Environment variable JDK_15 is not set!");
         }
