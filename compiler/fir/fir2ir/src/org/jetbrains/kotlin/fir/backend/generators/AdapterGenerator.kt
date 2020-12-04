@@ -400,8 +400,8 @@ internal class AdapterGenerator(
             return this
         }
         val expectedType = parameter?.returnTypeRef?.coneType ?: return this
-        // Expect the expected type to be a suspend functional type, and the argument type is not a suspend functional type.
-        if (!expectedType.isSuspendFunctionType(session) || argument.typeRef.coneType.isSuspendFunctionType(session)) {
+        // Expect the expected type to be a suspend functional type.
+        if (!expectedType.isSuspendFunctionType(session)) {
             return this
         }
         val expectedFunctionalType = expectedType.suspendFunctionTypeToFunctionType(session)
@@ -424,22 +424,17 @@ internal class AdapterGenerator(
 
     private fun findInvokeSymbol(expectedFunctionalType: ConeClassLikeType, argument: FirExpression): IrSimpleFunctionSymbol? {
         val argumentType = argument.typeRef.coneType
-        // To avoid any remaining exotic types, e.g., intersection type, like it(FunctionN..., SuspendFunctionN...)
-        if (argumentType !is ConeClassLikeType) {
-            return null
-        }
+        val argumentTypeWithInvoke = argumentType.findSubtypeOfNonSuspendFunctionalType(session, expectedFunctionalType) ?: return null
 
-        if (argumentType.isSubtypeOfFunctionalType(session, expectedFunctionalType)) {
-            return if (argumentType.isBuiltinFunctionalType(session)) {
-                argumentType.findBaseInvokeSymbol(session, scopeSession)
-            } else {
-                argumentType.findContributedInvokeSymbol(session, scopeSession, expectedFunctionalType, shouldCalculateReturnTypesOfFakeOverrides = true)
-            }?.let {
-                declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol
-            }
+        return if (argumentTypeWithInvoke.isBuiltinFunctionalType(session)) {
+            (argumentTypeWithInvoke as? ConeClassLikeType)?.findBaseInvokeSymbol(session, scopeSession)
+        } else {
+            argumentTypeWithInvoke.findContributedInvokeSymbol(
+                session, scopeSession, expectedFunctionalType, shouldCalculateReturnTypesOfFakeOverrides = true
+            )
+        }?.let {
+            declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol
         }
-
-        return null
     }
 
     private fun createAdapterFunctionForArgument(

@@ -97,6 +97,33 @@ fun ConeKotlinType.isSubtypeOfFunctionalType(session: FirSession, expectedFuncti
     return AbstractTypeChecker.isSubtypeOf(session.typeContext, this, expectedFunctionalType.replaceArgumentsWithStarProjections())
 }
 
+fun ConeKotlinType.findSubtypeOfNonSuspendFunctionalType(session: FirSession, expectedFunctionalType: ConeClassLikeType): ConeKotlinType? {
+    require(expectedFunctionalType.isBuiltinFunctionalType(session) && !expectedFunctionalType.isSuspendFunctionType(session))
+    return when (this) {
+        is ConeClassLikeType -> {
+            // Expect the argument type is not a suspend functional type.
+            if (isSuspendFunctionType(session) || !isSubtypeOfFunctionalType(session, expectedFunctionalType))
+                null
+            else
+                this
+        }
+        is ConeIntersectionType -> {
+            if (intersectedTypes.any { it.isSuspendFunctionType(session) })
+                null
+            else
+                intersectedTypes.find { it.findSubtypeOfNonSuspendFunctionalType(session, expectedFunctionalType) != null }
+        }
+        is ConeTypeParameterType -> {
+            val bounds = lookupTag.typeParameterSymbol.fir.bounds.map { it.coneType }
+            if (bounds.any { it.isSuspendFunctionType(session) })
+                null
+            else
+                bounds.find { it.findSubtypeOfNonSuspendFunctionalType(session, expectedFunctionalType) != null }
+        }
+        else -> null
+    }
+}
+
 fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: ScopeSession): FirFunctionSymbol<*>? {
     require(this.isBuiltinFunctionalType(session))
     val functionN = (lookupTag.toSymbol(session)?.fir as? FirClass<*>) ?: return null

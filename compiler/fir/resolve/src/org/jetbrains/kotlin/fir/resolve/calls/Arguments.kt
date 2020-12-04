@@ -247,36 +247,30 @@ private fun argumentTypeWithSuspendConversion(
 ): ConeKotlinType? {
     // TODO: should refer to LanguageVersionSettings.SuspendConversion
 
-    // To avoid any remaining exotic types, e.g., intersection type, like it(FunctionN..., SuspendFunctionN...)
-    if (argumentType !is ConeClassLikeType) {
-        return null
-    }
-
-    // Expect the expected type to be a suspend functional type, and the argument type is not a suspend functional type.
-    if (!expectedType.isSuspendFunctionType(session) || argumentType.isSuspendFunctionType(session)) {
+    // Expect the expected type to be a suspend functional type.
+    if (!expectedType.isSuspendFunctionType(session)) {
         return null
     }
 
     // We want to check the argument type against non-suspend functional type.
     val expectedFunctionalType = expectedType.suspendFunctionTypeToFunctionType(session)
-    if (argumentType.isSubtypeOfFunctionalType(session, expectedFunctionalType)) {
-        return argumentType.findContributedInvokeSymbol(
-            session,
-            scopeSession,
-            expectedFunctionalType,
-            shouldCalculateReturnTypesOfFakeOverrides = false
-        )?.let { invokeSymbol ->
-            createFunctionalType(
-                invokeSymbol.fir.valueParameters.map { it.returnTypeRef.coneType },
-                null,
-                invokeSymbol.fir.returnTypeRef.coneType,
-                isSuspend = true,
-                isKFunctionType = argumentType.isKFunctionType(session)
-            )
-        }
-    }
 
-    return null
+    val argumentTypeWithInvoke = argumentType.findSubtypeOfNonSuspendFunctionalType(session, expectedFunctionalType)
+
+    return argumentTypeWithInvoke?.findContributedInvokeSymbol(
+        session,
+        scopeSession,
+        expectedFunctionalType,
+        shouldCalculateReturnTypesOfFakeOverrides = false
+    )?.let { invokeSymbol ->
+        createFunctionalType(
+            invokeSymbol.fir.valueParameters.map { it.returnTypeRef.coneType },
+            null,
+            invokeSymbol.fir.returnTypeRef.coneType,
+            isSuspend = true,
+            isKFunctionType = argumentType.isKFunctionType(session)
+        )
+    }
 }
 
 fun Candidate.prepareCapturedType(argumentType: ConeKotlinType, context: ResolutionContext): ConeKotlinType {
