@@ -529,7 +529,11 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
             updateJavaClasspath(javaClasspath);
 
             javaClassesOutputDirectory = getJavaClassesOutputDirectory();
-            List<String> javacOptions = extractJavacOptions(files, configuration.get(JVMConfigurationKeys.JVM_TARGET));
+            List<String> javacOptions = extractJavacOptions(
+                    files,
+                    configuration.get(JVMConfigurationKeys.JVM_TARGET),
+                    configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)
+            );
             List<String> finalJavacOptions = prepareJavacOptions(javaClasspath, javacOptions, javaClassesOutputDirectory);
 
             try {
@@ -551,15 +555,19 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     protected void updateJavaClasspath(@NotNull List<String> javaClasspath) {}
 
     @NotNull
-    protected static List<String> extractJavacOptions(@NotNull List<TestFile> files, @Nullable JvmTarget kotlinTarget) {
+    protected static List<String> extractJavacOptions(
+            @NotNull List<TestFile> files,
+            @Nullable JvmTarget kotlinTarget,
+            boolean isJvmPreviewEnabled
+    ) {
         List<String> javacOptions = new ArrayList<>(0);
         for (TestFile file : files) {
             javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"));
         }
 
-        if (kotlinTarget != null && kotlinTarget.isPreview()) {
+        if (kotlinTarget != null && isJvmPreviewEnabled) {
             javacOptions.add("--release");
-            javacOptions.add(kotlinTarget.getDescriptionForJavacArgument());
+            javacOptions.add(kotlinTarget.getDescription());
             javacOptions.add("--enable-preview");
             return javacOptions;
         }
@@ -582,7 +590,7 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
         if (JAVA_COMPILATION_TARGET != null && !javacOptions.contains("-target"))
             return JAVA_COMPILATION_TARGET;
         if (kotlinTarget != null && kotlinTarget.compareTo(JvmTarget.JVM_1_6) > 0)
-            return kotlinTarget.getDescriptionForJavacArgument();
+            return kotlinTarget.getDescription();
         if (IS_SOURCE_6_STILL_SUPPORTED)
             return "1.6";
         return null;

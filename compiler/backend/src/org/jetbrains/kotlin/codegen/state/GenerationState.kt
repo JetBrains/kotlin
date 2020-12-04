@@ -272,7 +272,10 @@ class GenerationState private constructor(
 
     val rootContext: CodegenContext<*> = RootContext(this)
 
-    val classFileVersion: Int = target.bytecodeVersion
+    val classFileVersion: Int = run {
+        val minorVersion = if (configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)) 0xffff else 0
+        (minorVersion shl 16) + target.majorVersion
+    }
 
     val generateParametersMetadata: Boolean = configuration.getBoolean(JVMConfigurationKeys.PARAMETERS_METADATA)
 

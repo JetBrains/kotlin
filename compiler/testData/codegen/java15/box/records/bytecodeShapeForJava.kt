@@ -1,6 +1,7 @@
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
-// JVM_TARGET: 15_PREVIEW
+// JVM_TARGET: 15
+// ENABLE_JVM_PREVIEW
 // FILE: JavaClass.java
 public class JavaClass {
     public static String box() {

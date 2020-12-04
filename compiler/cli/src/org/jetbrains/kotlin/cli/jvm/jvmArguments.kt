@@ -67,19 +67,19 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
-    if (languageVersionSettings.supportsFeature(LanguageFeature.JvmRecordSupport) && !jvmTarget.isRecordsAllowed()) {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.JvmRecordSupport) && !jvmTarget.areRecordsAllowed(arguments.enableJvmPreview)) {
         messageCollector.report(
             ERROR,
-            "-XXLanguage:+${LanguageFeature.JvmRecordSupport} feature is only supported with JVM target ${JvmTarget.JVM_15_PREVIEW.description} or later"
+            "-XXLanguage:+${LanguageFeature.JvmRecordSupport} feature is only supported with JVM target ${JvmTarget.JVM_15.description} or later"
         )
     }
 
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
 }
 
-private fun JvmTarget.isRecordsAllowed(): Boolean {
-    if (majorVersion < JvmTarget.JVM_15_PREVIEW.majorVersion) return false
-    return isPreview || majorVersion > JvmTarget.JVM_15_PREVIEW.majorVersion
+private fun JvmTarget.areRecordsAllowed(enableJvmPreview: Boolean): Boolean {
+    if (majorVersion < JvmTarget.JVM_15.majorVersion) return false
+    return enableJvmPreview || majorVersion > JvmTarget.JVM_15.majorVersion
 }
 
 fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): Boolean {
@@ -244,6 +244,12 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
     put(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS, arguments.useOldSpilledVarTypeAnalysis)
     put(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME, arguments.useOldInlineClassesManglingScheme)
+    put(JVMConfigurationKeys.ENABLE_JVM_PREVIEW, arguments.enableJvmPreview)
+
+    if (arguments.enableJvmPreview) {
+        getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            .report(INFO, "Using preview Java language features")
+    }
 
     arguments.declarationsOutputPath?.let { put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
 }
