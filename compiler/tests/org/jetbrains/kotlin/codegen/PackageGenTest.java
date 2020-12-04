@@ -45,14 +45,14 @@ public class PackageGenTest extends CodegenTestCase {
         loadText("fun f() : Int { return 42; }");
         Method main = generateFunction();
         Object returnValue = main.invoke(null);
-        assertEquals(new Integer(42), returnValue);
+        assertEquals(Integer.valueOf(42), returnValue);
     }
 
     public void testReturnA() throws Exception {
         loadText("fun foo(a : Int) = a");
         Method main = generateFunction();
         Object returnValue = main.invoke(null, 50);
-        assertEquals(new Integer(50), returnValue);
+        assertEquals(Integer.valueOf(50), returnValue);
     }
 
     public void testCurrentTime() throws Exception {
