@@ -49,8 +49,8 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
             if (symbol !in localProperties) return
             if (symbol.fir.isLateInit) return
             val pathAwareInfo = data.getValue(node)
-            for (label in pathAwareInfo.keys) {
-                if (investigate(pathAwareInfo[label]!!, symbol, node)) {
+            for (info in pathAwareInfo.values) {
+                if (investigate(info, symbol, node)) {
                     // To avoid duplicate reports, stop investigating remaining paths if the property is not initialized at any path.
                     break
                 }

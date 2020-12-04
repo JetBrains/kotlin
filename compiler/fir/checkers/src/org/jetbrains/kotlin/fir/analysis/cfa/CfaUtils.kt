@@ -128,15 +128,14 @@ class PropertyInitializationInfoCollector(private val localProperties: Set<FirPr
 }
 
 internal fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> addRange(
-    info: P,
+    pathAwareInfo: P,
     key: K,
     range: EventOccurrencesRange,
     constructor: (PersistentMap<EdgeLabel, S>) -> P
 ): P {
     var resultMap = persistentMapOf<EdgeLabel, S>()
     // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
-    for (label in info.keys) {
-        val dataPerLabel = info[label]!!
+    for ((label, dataPerLabel) in pathAwareInfo) {
         val existingKind = dataPerLabel[key] ?: EventOccurrencesRange.ZERO
         val kind = existingKind + range
         resultMap = resultMap.put(label, dataPerLabel.put(key, kind))
