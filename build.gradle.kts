@@ -630,6 +630,7 @@ tasks {
         dependsOn("dist")
         dependsOn(
             ":compiler:test",
+            ":compiler:tests-common-new:test",
             ":compiler:container:test",
             ":compiler:tests-java8:test",
             ":compiler:tests-spec:test",
@@ -870,6 +871,7 @@ tasks {
             ":idea:idea-gradle:test",
             ":idea:test",
             ":compiler:test",
+            ":compiler:container:test",
             ":js:js.tests:test"
         )
 
