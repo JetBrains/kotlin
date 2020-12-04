@@ -77,18 +77,14 @@ class ClangArgs(private val configurables: Configurables) : Configurables by con
 
     private val specificClangArgs: List<String> = when (target) {
         KonanTarget.LINUX_X64, 
-        KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32 -> emptyList()
+        KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32,
+        KonanTarget.LINUX_ARM64 -> emptyList()
 
         KonanTarget.LINUX_ARM32_HFP -> listOf(
                 "-mfpu=vfp", "-mfloat-abi=hard",
                 // TODO: those two are hacks.
                 "-I$absoluteTargetSysRoot/usr/include/c++/4.8.3",
                 "-I$absoluteTargetSysRoot/usr/include/c++/4.8.3/arm-linux-gnueabihf"
-        )
-
-        KonanTarget.LINUX_ARM64 -> listOf(
-                "-I$absoluteTargetSysRoot/usr/include/c++/7",
-                "-I$absoluteTargetSysRoot/usr/include/c++/7/aarch64-linux-gnu"
         )
 
         KonanTarget.MINGW_X64, KonanTarget.MINGW_X86 -> emptyList()
