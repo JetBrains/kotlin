@@ -897,21 +897,21 @@ class StringTest {
         assertEquals("-a-b-b-A-b-", input.replace("", "-"))
         assertEquals("-a-b-b-A-b-", input.replace("", "-", ignoreCase = true))
 
-        assertEquals("_Ü", "üÜ".replace('ü', '_'))
-        assertEquals("__", "üÜ".replace('ü', '_', ignoreCase = true))
-        assertEquals("_Ö", "öÖ".replace('ö', '_'))
-        assertEquals("__", "öÖ".replace('ö', '_', ignoreCase = true))
-        assertEquals("_Ä", "äÄ".replace('ä', '_'))
-        assertEquals("__", "äÄ".replace('ä', '_', ignoreCase = true))
+        fun testIgnoreCase(chars: String) {
+            for ((i, c) in chars.withIndex()) {
+                val message = "Char: $c (${c.toInt()})"
+                val expectOneReplaced = chars.replaceRange(i..i, "_")
+                val expectAllReplaced = "_".repeat(chars.length)
+                assertEquals(expectOneReplaced, chars.replace(c, '_'), message)
+                assertEquals(expectAllReplaced, chars.replace(c, '_', ignoreCase = true), "$message, ignoreCase")
+                assertEquals(expectOneReplaced, chars.replace(c.toString(), "_"), "$message, as string")
+                assertEquals(expectAllReplaced, chars.replace(c.toString(), "_", ignoreCase = true), "$message, as string, ignoreCase")
+            }
+        }
 
-        assertEquals("_Ü", "üÜ".replace("ü", "_"))
-        assertEquals("__", "üÜ".replace("ü", "_", ignoreCase = true))
-        assertEquals("_Ö", "öÖ".replace("ö", "_"))
-        assertEquals("__", "öÖ".replace("ö", "_", ignoreCase = true))
-        assertEquals("_Ä", "äÄ".replace("ä", "_"))
-        assertEquals("__", "äÄ".replace('ä', '_', ignoreCase = true))
-
-
+        testIgnoreCase("üÜ")
+        testIgnoreCase("öÖ")
+        testIgnoreCase("äÄ")
     }
 
     @Test fun replaceFirst() {
