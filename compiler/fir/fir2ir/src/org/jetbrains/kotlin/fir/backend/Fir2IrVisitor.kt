@@ -587,8 +587,7 @@ class Fir2IrVisitor(
             fun irGetLhsValue(): IrGetValue =
                 IrGetValueImpl(startOffset, endOffset, irLhsVariable.type, irLhsVariable.symbol)
 
-            // TODO: replace with .coneType
-            val originalType = firLhsVariable.returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
+            val originalType = firLhsVariable.returnTypeRef.coneType
             val notNullType = originalType.withNullability(ConeNullability.NOT_NULL)
             val irBranches = listOf(
                 IrBranchImpl(
