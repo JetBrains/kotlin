@@ -77,17 +77,7 @@ public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boole
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replace(oldValue: String, newValue: String, ignoreCase: Boolean = false): String {
-    if (ignoreCase) {
-        val matcher = Pattern.compile(oldValue, Pattern.LITERAL or Pattern.CASE_INSENSITIVE).matcher(this)
-        if (!matcher.find()) return this
-        val stringBuilder = StringBuilder()
-        var i = 0
-        do {
-            stringBuilder.append(this, i, matcher.start()).append(newValue)
-            i = matcher.end()
-        } while (matcher.find())
-        return stringBuilder.append(this, i, length).toString()
-    } else {
+    run {
         var occurrenceIndex: Int = indexOf(oldValue, 0, ignoreCase)
         // FAST PATH: no match
         if (occurrenceIndex < 0) return this
