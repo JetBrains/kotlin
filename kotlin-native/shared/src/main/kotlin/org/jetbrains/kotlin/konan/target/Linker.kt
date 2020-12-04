@@ -316,7 +316,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
     private val ar = if (HostManager.hostIsMac) "$absoluteTargetToolchain/bin/llvm-ar"
         else "$absoluteTargetToolchain/bin/ar"
     override val libGcc = "$absoluteTargetSysRoot/${super.libGcc}"
-    private val linker = "$absoluteLlvmHome/bin/ld.lld"
+
     private val specificLibs = abiSpecificLibraries.map { "-L${absoluteTargetSysRoot}/$it" }
 
     override fun provideCompilerRtLibrary(libraryName: String): String? {
@@ -337,6 +337,11 @@ class GccBasedLinker(targetProperties: GccConfigurables)
                                    needsProfileLibrary: Boolean, mimallocEnabled: Boolean): List<Command> {
         if (kind == LinkerOutputKind.STATIC_LIBRARY)
             return staticGnuArCommands(ar, executable, objectFiles, libraries)
+        // TODO: Control via properties.
+        val (linker, linkerSpecificFlags) = when {
+            HostManager.hostIsMac -> "$absoluteLlvmHome/bin/ld.lld" to listOf("--no-threads")
+            else -> "$absoluteTargetToolchain/bin/ld.gold" to emptyList()
+        }
 
         val isMips = target == KonanTarget.LINUX_MIPS32 || target == KonanTarget.LINUX_MIPSEL32
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
@@ -354,6 +359,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             +"--build-id"
             +"--eh-frame-hdr"
             +"-dynamic-linker"
+            linkerSpecificFlags.forEach { +it }
             +dynamicLinker
             +"-o"
             +executable
