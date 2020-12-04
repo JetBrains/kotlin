@@ -255,6 +255,9 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
     /** Regression test for KT-34340. */
     @Test
     fun testIsolatingWithOriginsInClasspath() {
+        //https://youtrack.jetbrains.com/issue/KTI-405
+        if (System.getProperty("os.name")?.toLowerCase()?.contains("windows") == true) return
+
         val project = Project("kaptIncrementalWithParceler", GradleVersionRequired.None).apply {
             setupWorkingDir()
         }
