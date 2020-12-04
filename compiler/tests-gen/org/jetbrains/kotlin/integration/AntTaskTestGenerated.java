@@ -44,6 +44,16 @@ public class AntTaskTestGenerated extends AbstractAntTaskTest {
         runTest("compiler/testData/integration/ant/jvm/failOnErrorByDefault/");
     }
 
+    @TestMetadata("fork")
+    public void testFork() throws Exception {
+        runTest("compiler/testData/integration/ant/jvm/fork/");
+    }
+
+    @TestMetadata("forkOnError")
+    public void testForkOnError() throws Exception {
+        runTest("compiler/testData/integration/ant/jvm/forkOnError/");
+    }
+
     @TestMetadata("helloWorld")
     public void testHelloWorld() throws Exception {
         runTest("compiler/testData/integration/ant/jvm/helloWorld/");
