@@ -44,8 +44,8 @@ object UnusedChecker : FirControlFlowChecker() {
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
             val variableSymbol = (node.fir.calleeReference as? FirResolvedNamedReference)?.resolvedSymbol ?: return
             val dataPerNode = data[node] ?: return
-            for (label in dataPerNode.keys) {
-                val data = dataPerNode[label]!![variableSymbol] ?: continue
+            for (dataPerLabel in dataPerNode.values) {
+                val data = dataPerLabel[variableSymbol] ?: continue
                 if (data == VariableStatus.ONLY_WRITTEN_NEVER_READ) {
                     // todo: report case like "a += 1" where `a` `doesn't writes` different way (special for Idea)
                     val source = node.fir.lValue.source
@@ -60,8 +60,8 @@ object UnusedChecker : FirControlFlowChecker() {
             val variableSymbol = node.fir.symbol
             if (variableSymbol.isLoopIterator) return
             val dataPerNode = data[node] ?: return
-            for (label in dataPerNode.keys) {
-                val data = dataPerNode[label]!![variableSymbol] ?: continue
+            for (dataPerLabel in dataPerNode.values) {
+                val data = dataPerLabel[variableSymbol] ?: continue
 
                 val variableSource = variableSymbol.fir.source.takeIf { it?.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION }
                 when {
@@ -242,14 +242,13 @@ object UnusedChecker : FirControlFlowChecker() {
         }
 
         private fun update(
-            info: PathAwareVariableStatusInfo,
+            pathAwareInfo: PathAwareVariableStatusInfo,
             symbol: FirPropertySymbol,
             updater: (VariableStatus?) -> VariableStatus?,
         ): PathAwareVariableStatusInfo {
             var resultMap = persistentMapOf<EdgeLabel, VariableStatusInfo>()
             var changed = false
-            for (label in info.keys) {
-                val dataPerLabel = info[label]!!
+            for ((label, dataPerLabel) in pathAwareInfo) {
                 val v = updater.invoke(dataPerLabel[symbol])
                 if (v != null) {
                     resultMap = resultMap.put(label, dataPerLabel.put(symbol, v))
@@ -258,7 +257,7 @@ object UnusedChecker : FirControlFlowChecker() {
                     resultMap = resultMap.put(label, dataPerLabel)
                 }
             }
-            return if (changed) PathAwareVariableStatusInfo(resultMap) else info
+            return if (changed) PathAwareVariableStatusInfo(resultMap) else pathAwareInfo
         }
     }
 

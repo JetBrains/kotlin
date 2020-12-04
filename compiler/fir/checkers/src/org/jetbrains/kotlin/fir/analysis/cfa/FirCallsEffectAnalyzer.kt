@@ -89,9 +89,9 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
         for ((symbol, effectDeclaration) in functionalTypeEffects) {
             graph.exitNode.previousCfgNodes.forEach { node ->
                 val requiredRange = effectDeclaration.kind
-                val info = invocationData.getValue(node)
-                for (label in info.keys) {
-                    if (investigate(info.getValue(label), symbol, requiredRange, function, reporter)) {
+                val pathAwareInfo = invocationData.getValue(node)
+                for (info in pathAwareInfo.values) {
+                    if (investigate(info, symbol, requiredRange, function, reporter)) {
                         // To avoid duplicate reports, stop investigating remaining paths once reported.
                         break
                     }
