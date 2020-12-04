@@ -33,6 +33,9 @@ constructor(
     }
 
     @Input
+    var nodeArgs: MutableList<String> = mutableListOf()
+
+    @Input
     var sourceMapStackTraces = true
 
     @Optional
@@ -52,12 +55,13 @@ constructor(
         }
 
     override fun exec() {
+        val newArgs = mutableListOf<String>()
+        newArgs.addAll(nodeArgs)
         if (inputFileProperty.isPresent) {
-            val newArgs = mutableListOf<String>()
             newArgs.add(inputFileProperty.asFile.get().canonicalPath)
-            args?.let { newArgs.addAll(it) }
-            args = newArgs
         }
+        args?.let { newArgs.addAll(it) }
+        args = newArgs
 
         if (sourceMapStackTraces) {
             val sourceMapSupportArgs = mutableListOf(
