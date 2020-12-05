@@ -408,4 +408,14 @@ class Strings {
         assertPrints(matchDetails(inputString, toFind, 2), "Searching for 'ever' in 'Never ever give up' starting at position 2: Found at 6")
         assertPrints(matchDetails(inputString, toFind, 10), "Searching for 'ever' in 'Never ever give up' starting at position 10: Not found")
     }
+
+    @Sample
+    fun replaceAfter() {
+        val inputString = "Lieutenant, set phasers to stun."
+
+        assertPrints(inputString.replaceAfter(',', " open a coms channel."), "Lieutenant, open a coms channel.")
+        assertPrints(inputString.replaceAfter("to", " kill."), "Lieutenant, set phasers to kill.")
+        
+        assertPrints(inputString.replaceAfter("kill.", " Fire!"), "Lieutenant, set phasers to stun.")
+    }
 }
