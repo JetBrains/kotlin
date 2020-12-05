@@ -79,8 +79,8 @@ sealed class WasmImmediate {
     class LabelIdxVector(val value: List<Int>) : WasmImmediate()
     class ElemIdx(val value: WasmElement) : WasmImmediate()
 
-    class StructType(val value: WasmSymbol<WasmStructDeclaration>) : WasmImmediate() {
-        constructor(value: WasmStructDeclaration) : this(WasmSymbol(value))
+    class GcType(val value: WasmSymbol<WasmTypeDeclaration>) : WasmImmediate() {
+        constructor(value: WasmTypeDeclaration) : this(WasmSymbol(value))
     }
 
     class StructFieldIdx(val value: WasmSymbol<Int>) : WasmImmediate()

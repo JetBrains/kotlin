@@ -21,7 +21,7 @@ interface WasmBaseCodegenContext {
 
     fun referenceFunction(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunction>
     fun referenceGlobal(irField: IrFieldSymbol): WasmSymbol<WasmGlobal>
-    fun referenceStructType(irClass: IrClassSymbol): WasmSymbol<WasmStructDeclaration>
+    fun referenceGcType(irClass: IrClassSymbol): WasmSymbol<WasmTypeDeclaration>
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType>
 
     fun referenceClassId(irClass: IrClassSymbol): WasmSymbol<Int>

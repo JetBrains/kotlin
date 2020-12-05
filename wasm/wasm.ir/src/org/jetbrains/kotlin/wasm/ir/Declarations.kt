@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.wasm.ir
 
 class WasmModule(
     val functionTypes: List<WasmFunctionType> = emptyList(),
-    val structs: List<WasmStructDeclaration> = emptyList(),
+    val gcTypes: List<WasmTypeDeclaration> = emptyList(),
 
     val importsInOrder: List<WasmNamedModuleField> = emptyList(),
     val importedFunctions: List<WasmFunction.Imported> = emptyList(),

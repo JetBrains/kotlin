@@ -78,7 +78,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
 
     private fun generateInstanceFieldAccess(field: IrField) {
         body.buildStructGet(
-            context.referenceStructType(field.parentAsClass.symbol),
+            context.referenceGcType(field.parentAsClass.symbol),
             context.getStructFieldRef(field)
         )
     }
@@ -91,7 +91,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             generateExpression(receiver)
             generateExpression(expression.value)
             body.buildStructSet(
-                struct = context.referenceStructType(field.parentAsClass.symbol),
+                struct = context.referenceGcType(field.parentAsClass.symbol),
                 fieldId = context.getStructFieldRef(field),
             )
         } else {
@@ -122,7 +122,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             return
         }
 
-        val wasmStruct: WasmSymbol<WasmStructDeclaration> = context.referenceStructType(klass.symbol)
+        val wasmStruct: WasmSymbol<WasmTypeDeclaration> = context.referenceGcType(klass.symbol)
         val wasmClassId = context.referenceClassId(klass.symbol)
 
         val irFields: List<IrField> = klass.allFields(backendContext.irBuiltIns)
@@ -157,7 +157,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         if (call.symbol == wasmSymbols.boxIntrinsic) {
             val toType = call.getTypeArgument(0)!!
             val klass = toType.erasedUpperBound!!
-            val structTypeName = context.referenceStructType(klass.symbol)
+            val structTypeName = context.referenceGcType(klass.symbol)
             val klassId = context.referenceClassId(klass.symbol)
 
             body.buildConstI32Symbol(klassId)

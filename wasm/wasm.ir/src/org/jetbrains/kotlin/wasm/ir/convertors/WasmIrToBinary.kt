@@ -21,9 +21,14 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
         with(module) {
             // type section
             appendSection(1u) {
-                appendVectorSize(functionTypes.size + structs.size)
+                appendVectorSize(functionTypes.size + gcTypes.size)
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-                structs.forEach { appendStructTypeDeclaration(it) }
+                gcTypes.forEach {
+                    when (it) {
+                        is WasmStructDeclaration -> appendStructTypeDeclaration(it)
+                        else -> TODO("Support arrays")
+                    }
+                }
             }
 
             // import section
@@ -148,7 +153,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule) {
                     appendType(type)
                 }
             }
-            is WasmImmediate.StructType -> appendModuleFieldReference(x.value.owner)
+            is WasmImmediate.GcType -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.StructFieldIdx -> b.writeVarUInt32(x.value.owner)
             is WasmImmediate.HeapType -> appendHeapType(x.value)
         }

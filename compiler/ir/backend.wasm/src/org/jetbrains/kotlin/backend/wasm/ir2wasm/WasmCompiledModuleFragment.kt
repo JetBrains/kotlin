@@ -20,8 +20,8 @@ class WasmCompiledModuleFragment {
         ReferencableAndDefinable<IrFieldSymbol, WasmGlobal>()
     val functionTypes =
         ReferencableAndDefinable<IrFunctionSymbol, WasmFunctionType>()
-    val structTypes =
-        ReferencableAndDefinable<IrClassSymbol, WasmStructDeclaration>()
+    val gcTypes =
+        ReferencableAndDefinable<IrClassSymbol, WasmTypeDeclaration>()
     val classIds =
         ReferencableElements<IrClassSymbol, Int>()
     val interfaceId =
@@ -88,7 +88,7 @@ class WasmCompiledModuleFragment {
         bind(functions.unbound, functions.defined)
         bind(globals.unbound, globals.defined)
         bind(functionTypes.unbound, functionTypes.defined)
-        bind(structTypes.unbound, structTypes.defined)
+        bind(gcTypes.unbound, gcTypes.defined)
         bind(runtimeTypes.unbound, runtimeTypes.defined)
 
         val klassIds = mutableMapOf<IrClassSymbol, Int>()
@@ -162,7 +162,7 @@ class WasmCompiledModuleFragment {
 
         val module = WasmModule(
             functionTypes = functionTypes.elements,
-            structs = structTypes.elements,
+            gcTypes = gcTypes.elements,
             importsInOrder = importedFunctions,
             importedFunctions = importedFunctions,
             definedFunctions = functions.elements.filterIsInstance<WasmFunction.Defined>(),

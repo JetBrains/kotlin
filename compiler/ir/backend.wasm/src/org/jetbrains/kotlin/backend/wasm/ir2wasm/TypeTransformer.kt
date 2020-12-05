@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
@@ -47,7 +46,7 @@ class WasmTypeTransformer(
         }
 
     fun IrType.toStructType(): WasmType =
-        WasmRefNullType(WasmHeapType.Type(context.referenceStructType(erasedUpperBound?.symbol ?: builtIns.anyClass)))
+        WasmRefNullType(WasmHeapType.Type(context.referenceGcType(erasedUpperBound?.symbol ?: builtIns.anyClass)))
 
     fun IrType.toBoxedInlineClassType(): WasmType =
         toStructType()

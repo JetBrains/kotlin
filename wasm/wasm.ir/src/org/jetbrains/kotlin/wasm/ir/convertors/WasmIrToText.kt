@@ -107,7 +107,7 @@ class WasmIrToText : SExpressionBuilder() {
 
             is WasmImmediate.ValTypeVector -> sameLineList("result") { x.value.forEach { appendType(it) } }
 
-            is WasmImmediate.StructType -> appendModuleFieldReference(x.value.owner)
+            is WasmImmediate.GcType -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.StructFieldIdx -> appendElement(x.value.owner.toString())
             is WasmImmediate.HeapType -> {
                 appendHeapType(x.value)
@@ -197,7 +197,14 @@ class WasmIrToText : SExpressionBuilder() {
         with(module) {
             newLineList("module") {
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-                structs.forEach { appendStructTypeDeclaration(it) }
+                gcTypes.forEach {
+                    when (it) {
+                        is WasmStructDeclaration ->
+                            appendStructTypeDeclaration(it)
+                        else ->
+                            TODO("Support arrays")
+                    }
+                }
                 importsInOrder.forEach {
                     when (it) {
                         is WasmFunction.Imported -> appendImportedFunction(it)

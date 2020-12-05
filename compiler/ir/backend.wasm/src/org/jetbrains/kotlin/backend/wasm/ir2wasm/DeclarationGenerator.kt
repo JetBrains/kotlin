@@ -183,7 +183,7 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                 }
             )
 
-            context.defineStructType(symbol, structType)
+            context.defineGcType(symbol, structType)
 
             var depth = 2
             val metadata = context.getClassMetadata(symbol)
