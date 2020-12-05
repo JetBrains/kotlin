@@ -27,7 +27,10 @@ import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
 
@@ -38,6 +41,8 @@ object ComposeConfiguration {
         CompilerConfigurationKey<Boolean>("Include source information in generated code")
     val INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable optimization to treat remember as an intrinsic")
+    val SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK =
+        CompilerConfigurationKey<Boolean>("Suppress Kotlin version compatibility check")
 }
 
 class ComposeCommandLineProcessor : CommandLineProcessor {
@@ -64,13 +69,21 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
             required = false,
             allowMultipleOccurrences = false
         )
+        val SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION = CliOption(
+            "suppressKotlinVersionCompatibilityCheck",
+            "<true|false>",
+            "Suppress Kotlin version compatibility check",
+            required = false,
+            allowMultipleOccurrences = false
+        )
     }
 
     override val pluginId = PLUGIN_ID
     override val pluginOptions = listOf(
         LIVE_LITERALS_ENABLED_OPTION,
         SOURCE_INFORMATION_ENABLED_OPTION,
-        INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION
+        INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION,
+        SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION
     )
 
     override fun processOption(
@@ -88,6 +101,10 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         )
         INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
+            value == "true"
+        )
+        SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION -> configuration.put(
+            ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK,
             value == "true"
         )
         else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
@@ -112,6 +129,26 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             project: Project,
             configuration: CompilerConfiguration
         ) {
+            val KOTLIN_VERSION_EXPECTATION = "1.4.20"
+            KotlinCompilerVersion.getVersion()?.let { version ->
+                val suppressKotlinVersionCheck = configuration.get(
+                    ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK,
+                    false
+                )
+                if (!suppressKotlinVersionCheck && version != KOTLIN_VERSION_EXPECTATION) {
+                    val msgCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+                    msgCollector?.report(
+                        CompilerMessageSeverity.ERROR,
+                        "This version (${VersionChecker.compilerVersion}) of the Compose" +
+                            " Compiler requires Kotlin version $KOTLIN_VERSION_EXPECTATION but" +
+                            " you appear to be using Kotlin version $version which is not known" +
+                            " to be compatible.  Please fix your configuration (or" +
+                            " `suppressKotlinVersionCompatibilityCheck` but don't say I didn't" +
+                            " warn you!)."
+                    )
+                }
+            }
+
             val liveLiteralsEnabled = configuration.get(
                 ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY,
                 false
