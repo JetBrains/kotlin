@@ -122,7 +122,10 @@ fun CFGNode<*>.render(): String =
     }
 
 private object CfgRenderMode : FirRenderer.RenderMode(
-    renderLambdaBodies = false, renderCallArguments = false, renderCallableFqNames = false
+    renderLambdaBodies = false,
+    renderCallArguments = false,
+    renderCallableFqNames = false,
+    renderDeclarationResolvePhase = false
 )
 
 private fun FirFunction<*>.name(): String = when (this) {

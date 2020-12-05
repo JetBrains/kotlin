@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -47,6 +48,7 @@ class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopePro
             Modality.ABSTRACT
         )
         classKind = ClassKind.INTERFACE
+        symbol = FirRegularClassSymbol(CLONEABLE_CLASS_ID)
         declarations += buildSimpleFunction {
             this.session = session
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -57,10 +59,11 @@ class FirCloneableSymbolProvider(session: FirSession, scopeProvider: FirScopePro
             status = FirDeclarationStatusImpl(Visibilities.Protected, Modality.OPEN)
             name = CLONE
             symbol = FirNamedFunctionSymbol(CallableId(CLONEABLE_CLASS_ID, CLONE))
+            dispatchReceiverType = this@buildRegularClass.symbol.constructType(emptyArray(), isNullable = false)
         }
         this.scopeProvider = scopeProvider
         name = CLONEABLE
-        symbol = FirRegularClassSymbol(CLONEABLE_CLASS_ID)
+
     }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {

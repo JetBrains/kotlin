@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 interface ConstraintSystemCompletionContext : VariableFixationFinder.Context, ResultTypeResolver.Context {
     val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
     override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
+    override val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
     override val postponedTypeVariables: List<TypeVariableMarker>
 
     fun getBuilder(): ConstraintSystemBuilder

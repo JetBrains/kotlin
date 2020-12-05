@@ -56,6 +56,16 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             runTest("idea/testData/indentationOnNewline/AfterImport.after.kt");
         }
 
+        @TestMetadata("AfterPropertyGetter.after.kt")
+        public void testAfterPropertyGetter() throws Exception {
+            runTest("idea/testData/indentationOnNewline/AfterPropertyGetter.after.kt");
+        }
+
+        @TestMetadata("AfterPropertySetter.after.kt")
+        public void testAfterPropertySetter() throws Exception {
+            runTest("idea/testData/indentationOnNewline/AfterPropertySetter.after.kt");
+        }
+
         @TestMetadata("AfterTry.after.kt")
         public void testAfterTry() throws Exception {
             runTest("idea/testData/indentationOnNewline/AfterTry.after.kt");
@@ -93,16 +103,6 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
         @TestMetadata("ConsecutiveCallsInSafeCallsEnd.after.kt")
         public void testConsecutiveCallsInSafeCallsEnd() throws Exception {
             runTest("idea/testData/indentationOnNewline/ConsecutiveCallsInSafeCallsEnd.after.kt");
-        }
-
-        @TestMetadata("FunctionBlock.after.kt")
-        public void testFunctionBlock() throws Exception {
-            runTest("idea/testData/indentationOnNewline/FunctionBlock.after.kt");
-        }
-
-        @TestMetadata("FunctionBlock2.after.kt")
-        public void testFunctionBlock2() throws Exception {
-            runTest("idea/testData/indentationOnNewline/FunctionBlock2.after.kt");
         }
 
         @TestMetadata("HigherOrderFunction.after.kt")
@@ -566,6 +566,64 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             @TestMetadata("BeforeElvisInBinaryExpression.after.kt")
             public void testBeforeElvisInBinaryExpression() throws Exception {
                 runTest("idea/testData/indentationOnNewline/elvis/BeforeElvisInBinaryExpression.after.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/indentationOnNewline/emptyBraces")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EmptyBraces extends AbstractTypingIndentationTestBase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doNewlineTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInEmptyBraces() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/indentationOnNewline/emptyBraces"), Pattern.compile("^([^\\.]+)\\.after\\.kt.*$"), null, true);
+            }
+
+            @TestMetadata("ClassWithConstructor.after.kt")
+            public void testClassWithConstructor() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyBraces/ClassWithConstructor.after.kt");
+            }
+
+            @TestMetadata("ClassWithConstructor2.after.kt")
+            public void testClassWithConstructor2() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyBraces/ClassWithConstructor2.after.kt");
+            }
+
+            @TestMetadata("ClassWithoutConstructor.after.kt")
+            public void testClassWithoutConstructor() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyBraces/ClassWithoutConstructor.after.kt");
+            }
+
+            @TestMetadata("FunctionBlock.after.kt")
+            public void testFunctionBlock() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyBraces/FunctionBlock.after.kt");
+            }
+
+            @TestMetadata("FunctionBlock2.after.kt")
+            public void testFunctionBlock2() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyBraces/FunctionBlock2.after.kt");
+            }
+
+            @TestMetadata("FunctionBody3.after.kt")
+            public void testFunctionBody3() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyBraces/FunctionBody3.after.kt");
+            }
+
+            @TestMetadata("FunctionBody4.after.kt")
+            public void testFunctionBody4() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyBraces/FunctionBody4.after.kt");
+            }
+
+            @TestMetadata("FunctionBodyInsideClass.after.kt")
+            public void testFunctionBodyInsideClass() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyBraces/FunctionBodyInsideClass.after.kt");
+            }
+
+            @TestMetadata("FunctionBodyInsideClass2.after.kt")
+            public void testFunctionBodyInsideClass2() throws Exception {
+                runTest("idea/testData/indentationOnNewline/emptyBraces/FunctionBodyInsideClass2.after.kt");
             }
         }
 
@@ -1343,6 +1401,19 @@ public class TypingIndentationTestBaseGenerated extends AbstractTypingIndentatio
             @TestMetadata("BeforeElvisInBinaryExpression.after.inv.kt")
             public void testBeforeElvisInBinaryExpression() throws Exception {
                 runTest("idea/testData/indentationOnNewline/elvis/BeforeElvisInBinaryExpression.after.inv.kt");
+            }
+        }
+
+        @TestMetadata("idea/testData/indentationOnNewline/emptyBraces")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class EmptyBraces extends AbstractTypingIndentationTestBase {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doNewlineTestWithInvert, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInEmptyBraces() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/indentationOnNewline/emptyBraces"), Pattern.compile("^([^\\.]+)\\.after\\.inv\\.kt.*$"), null, true);
             }
         }
 

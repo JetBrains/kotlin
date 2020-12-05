@@ -10,7 +10,7 @@ digraph simple_kt {
             color=blue
             1 [label="Enter block"];
             2 [label="Access variable R|<local>/x|"];
-            3 [label="Function call: R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            3 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             4 [label="Exit block"];
         }
         5 [label="Exit function bar" style="filled" fillcolor=red];
@@ -28,7 +28,7 @@ digraph simple_kt {
             color=blue
             7 [label="Enter block"];
             8 [label="Access variable R|<local>/x|"];
-            9 [label="Function call: R|<local>/x|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            9 [label="Function call: R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             subgraph cluster_4 {
                 color=blue
                 10 [label="Enter when"];
@@ -43,7 +43,7 @@ digraph simple_kt {
                 subgraph cluster_6 {
                     color=blue
                     16 [label="Enter block"];
-                    17 [label="Function call: R|<local>/y|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+                    17 [label="Function call: R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
                     18 [label="Exit block"];
                 }
                 19 [label="Exit when branch result"];

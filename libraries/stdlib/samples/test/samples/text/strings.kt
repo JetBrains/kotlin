@@ -410,6 +410,19 @@ class Strings {
     }
 
     @Sample
+    fun last() {
+        val string = "Kotlin 1.4.0"
+        assertPrints(string.last(), "0")
+        assertPrints(string.last { it.isLetter() }, "n")
+        assertPrints(string.lastOrNull { it > 'z' }, "null")
+        assertFails { string.last { it > 'z' } }
+
+        val emptyString = ""
+        assertPrints(emptyString.lastOrNull(), "null")
+        assertFails { emptyString.last() }
+    }
+  
+    @Sample
     fun replaceAfter() {
         val inputString = "Lieutenant, set phasers to stun."
 

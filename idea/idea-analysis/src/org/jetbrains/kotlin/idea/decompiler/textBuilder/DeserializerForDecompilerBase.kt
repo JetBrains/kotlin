@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.decompiler.textBuilder
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.PackageFragmentProviderOptimized
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.MutablePackageFragmentDescriptor
 import org.jetbrains.kotlin.name.ClassId
@@ -28,7 +29,7 @@ abstract class DeserializerForDecompilerBase(val directoryPackageFqName: FqName)
 
     protected val moduleDescriptor: ModuleDescriptorImpl = createDummyModule("module for building decompiled sources")
 
-    protected val packageFragmentProvider: PackageFragmentProvider = object : PackageFragmentProvider {
+    protected val packageFragmentProvider: PackageFragmentProvider = object : PackageFragmentProviderOptimized {
         override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {
             packageFragments.add(createDummyPackageFragment(fqName))
         }

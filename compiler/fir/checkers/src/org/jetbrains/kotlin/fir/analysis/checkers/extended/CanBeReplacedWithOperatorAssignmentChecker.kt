@@ -6,21 +6,17 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
-import org.jetbrains.kotlin.fir.FirLightSourceElement
-import org.jetbrains.kotlin.fir.FirPsiSourceElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.classId
@@ -41,7 +37,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVari
         val rValueClassId = rValue.explicitReceiver?.typeRef?.coneType?.classId
         if (rValueClassId !in StandardClassIds.primitiveTypes) return
         val rValueResolvedSymbol = rValue.toResolvedCallableSymbol() ?: return
-        if (rValueResolvedSymbol.callableId.classId !in StandardClassIds.primitiveTypes) return
+        if (rValueResolvedSymbol.dispatchReceiverClassOrNull()?.classId !in StandardClassIds.primitiveTypes) return
 
         var needToReport = false
         val assignmentSource = expression.source
@@ -54,16 +50,15 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVari
                 needToReport = true
             }
         } else if (assignmentSource is FirLightSourceElement) {
-            val lValueLightTree = (lValue.source as FirLightSourceElement).element
-            val rValueLightTree = (rValue.source as FirLightSourceElement).element
+            val lValueLightTree = lValue.source!!.lighterASTNode
+            val rValueLightTree = rValue.source!!.lighterASTNode
             if (lightTreeMatcher(lValueLightTree, rValueLightTree, assignmentSource)) {
                 needToReport = true
             }
         }
 
         if (needToReport) {
-            val source = expression.source?.getChild(setOf(KtTokens.EQ))
-            reporter.report(source, FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT)
+            reporter.report(expression.source, FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT)
         }
 
     }
@@ -74,10 +69,8 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVari
         source: FirLightSourceElement,
         prevOperator: LighterASTNode? = null
     ): Boolean {
-        val tree = source.tree
-        val childrenNullable = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(expression, childrenNullable)
-        val children = childrenNullable.get().filterNotNull()
+        val tree = source.treeStructure
+        val children = expression.getChildren(tree).filterNotNull()
 
         val operator = children.firstOrNull { it.tokenType == KtNodeTypes.OPERATION_REFERENCE }
         if (prevOperator != null && !isLightNodesHierarchicallyTrue(prevOperator, operator)) return false

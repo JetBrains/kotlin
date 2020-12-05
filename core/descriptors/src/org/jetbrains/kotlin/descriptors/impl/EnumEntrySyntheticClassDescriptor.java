@@ -139,6 +139,11 @@ public class EnumEntrySyntheticClassDescriptor extends ClassDescriptorBase {
     }
 
     @Override
+    public boolean isValue() {
+        return false;
+    }
+
+    @Override
     public boolean isFun() {
         return false;
     }

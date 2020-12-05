@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
@@ -125,7 +126,7 @@ fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifi
     val classSymbol = resolvedQualifier.symbol
     val resultType = resolvedQualifier.resultType
     if (classSymbol != null) {
-        classSymbol.ensureResolved(FirResolvePhase.STATUS, session)
+        classSymbol.ensureResolved(FirResolvePhase.DECLARATIONS, session)
         val declaration = classSymbol.fir
         if (declaration !is FirTypeAlias || resolvedQualifier.typeArguments.isEmpty()) {
             typeForQualifierByDeclaration(declaration, resultType, session)?.let { return it }
@@ -323,4 +324,20 @@ fun FirAnnotationCall.getCorrespondingClassSymbolOrNull(session: FirSession): Fi
             (session.firSymbolProvider.getClassLikeSymbolByFqName(it) as? FirRegularClassSymbol)
         }
     }
+}
+
+fun <T> BodyResolveComponents.initialTypeOfCandidate(
+    candidate: Candidate,
+    call: T
+): ConeKotlinType where T : FirResolvable, T : FirStatement {
+    return initialTypeOfCandidate(candidate, typeFromCallee(call))
+}
+
+fun BodyResolveComponents.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
+    val typeRef = typeFromSymbol(candidate.symbol, makeNullable = false)
+    return initialTypeOfCandidate(candidate, typeRef)
+}
+
+private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTypeRef): ConeKotlinType {
+    return candidate.substitutor.substituteOrSelf(typeRef.type)
 }

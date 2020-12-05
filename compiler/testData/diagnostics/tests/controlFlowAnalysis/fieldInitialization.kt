@@ -129,3 +129,24 @@ class Test4 {
         }
     }
 }
+
+@kotlin.contracts.ExperimentalContracts
+class Test5 {
+    val a: String
+    val b: String
+    val c: String
+    val d: String
+
+    val aInit = inlineMe {
+        a = "OK"
+    }
+    val bInit = crossinlineMe {
+        <!CAPTURED_VAL_INITIALIZATION!>b<!> = "OK"
+    }
+    val cInit = noinlineMe {
+        <!CAPTURED_VAL_INITIALIZATION!>c<!> = "OK"
+    }
+    val dInit = notinline {
+        <!CAPTURED_VAL_INITIALIZATION!>d<!> = "OK"
+    }
+}

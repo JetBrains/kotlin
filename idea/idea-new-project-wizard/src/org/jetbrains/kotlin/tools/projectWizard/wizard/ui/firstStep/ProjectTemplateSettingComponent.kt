@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.tools.projectWizard.wizard.ui.firstStep
 import com.intellij.ui.JBColor
 import com.intellij.ui.ScrollPaneFactory
 import com.intellij.ui.SeparatorWithText
+import com.intellij.ui.SimpleTextAttributes
 import com.intellij.util.ui.JBUI
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.tools.projectWizard.core.Context
@@ -40,6 +41,10 @@ class ProjectTemplateSettingComponent(
         render = { value ->
             icon = value.icon
             append(value.title)
+            value.projectKind.message?.let { message ->
+                append(" ")
+                append(message, SimpleTextAttributes.GRAYED_ATTRIBUTES)
+            }
         },
         onValueSelected = { value = it }
     )
@@ -47,10 +52,10 @@ class ProjectTemplateSettingComponent(
     override val alignment: TitleComponentAlignment
         get() = TitleComponentAlignment.AlignFormTopWithPadding(4)
 
-    private val borderedPanel = list.addBorder(BorderFactory.createLineBorder(JBColor.border()))
+    private val scrollPane = ScrollPaneFactory.createScrollPane(list)
 
     override val component: JComponent = borderPanel {
-        addToCenter(borderPanel { addToCenter(list) }.addBorder(JBUI.Borders.empty(0,/*left*/ 3, 0, /*right*/ 3)))
+        addToCenter(borderPanel { addToCenter(scrollPane) }.addBorder(JBUI.Borders.empty(0,/*left*/ 3, 0, /*right*/ 3)))
         addToBottom(templateDescriptionComponent.component.addBorder(JBUI.Borders.empty(/*top*/8,/*left*/ 3, 0, 0)))
     }
 
@@ -93,6 +98,8 @@ private val ProjectTemplate.icon: Icon
         MultiplatformMobileApplicationProjectTemplate -> KotlinIcons.Wizard.MULTIPLATFORM_MOBILE
         MultiplatformMobileLibraryProjectTemplate -> KotlinIcons.Wizard.MULTIPLATFORM_MOBILE_LIBRARY
         NodeJsApplicationProjectTemplate -> KotlinIcons.Wizard.NODE_JS
+        ComposeDesktopApplicationProjectTemplate -> KotlinIcons.Wizard.COMPOSE
+        ComposeMultiplatformApplicationProjectTemplate -> KotlinIcons.Wizard.COMPOSE
     }
 
 class TemplateDescriptionComponent : Component() {

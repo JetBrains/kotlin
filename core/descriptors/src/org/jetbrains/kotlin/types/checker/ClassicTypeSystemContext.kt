@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.types.checker
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
-import org.jetbrains.kotlin.builtins.isBuiltinFunctionalTypeOrSubtype
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -22,6 +20,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExactAnnotation
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
@@ -212,7 +211,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.typeConstructor
     }
 
-    override fun isEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
+    override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
         require(c1 is TypeConstructor, c1::errorMessage)
         require(c2 is TypeConstructor, c2::errorMessage)
         return c1 == c2
@@ -601,7 +600,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
-        return (declarationDescriptor as? ClassDescriptor)?.isInline == true
+        return (declarationDescriptor as? ClassDescriptor)?.isInlineClass() == true
     }
 
     override fun TypeConstructorMarker.isInnerClass(): Boolean {
@@ -668,6 +667,39 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
             else intersectionTypeWithAlternative
 
         } ?: error("Expected intersection type, found $firstCandidate")
+    }
+
+    override fun KotlinTypeMarker.isFunctionOrKFunctionWithAnySuspendability(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return this.isFunctionOrKFunctionTypeWithAnySuspendability
+    }
+
+    override fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return this.isSuspendFunctionTypeOrSubtype
+    }
+
+    override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return this.isBuiltinExtensionFunctionalType
+    }
+
+    override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {
+        require(this is KotlinType, this::errorMessage)
+        return this.getPureArgumentsForFunctionalTypeOrSubtype()
+    }
+
+    override fun KotlinTypeMarker.getFunctionalTypeFromSupertypes(): KotlinTypeMarker {
+        require(this is KotlinType)
+        return this.extractFunctionalTypeFromSupertypes()
+    }
+
+    override fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
+        return getFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
+    }
+
+    override fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
+        return getKFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
     }
 }
 

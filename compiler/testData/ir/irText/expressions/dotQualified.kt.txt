@@ -1,0 +1,14 @@
+fun length(s: String): Int {
+  return s.<get-length>()
+}
+
+fun lengthN(s: String?): Int? {
+  return { // BLOCK
+    val tmp0_safe_receiver: String? = s
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      else -> tmp0_safe_receiver.<get-length>()
+    }
+  }
+}
+

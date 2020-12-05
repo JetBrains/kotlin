@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -155,8 +155,6 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
                 sourceSet.dependencies.modifyDependenciesOnMppModules(ideProject, resolverCtx)
             }
             super.populateModuleDependencies(gradleModule, ideModule, ideProject)//TODO add dependencies on mpp module
-        } else {
-            mppModel.dependencyMap.values.modifyDependenciesOnMppModules(ideProject, resolverCtx)
         }
         populateModuleDependencies(gradleModule, ideProject, ideModule, resolverCtx)
     }
@@ -475,8 +473,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             val dependsOnReverseGraph: MutableMap<String, MutableSet<KotlinSourceSet>> = HashMap()
             mppModel.targets.forEach { target ->
                 target.compilations.forEach { compilation ->
-                    val testRunTasks = target.testRunTasks
-                        .filter { task -> task.compilationName == compilation.name }
+                    val testRunTasks = target.testTasksFor(compilation)
                         .map {
                             ExternalSystemTestRunTask(
                                 it.taskName,
@@ -583,6 +580,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             resolverCtx: ProjectResolverContext
         ) {
             val mppModel = resolverCtx.getMppModel(gradleModule) ?: return
+            mppModel.dependencyMap.values.modifyDependenciesOnMppModules(ideProject, resolverCtx)
             val sourceSetMap = ideProject.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS) ?: return
             val artifactsMap = ideProject.getUserData(CONFIGURATION_ARTIFACTS) ?: return
             val substitutor = KotlinNativeLibrariesDependencySubstitutor(mppModel, gradleModule, resolverCtx)
@@ -731,7 +729,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
             val copyFrom = when {
                 compilations.all { it.isAppleCompilation } ->
                     compilations.selectFirstAvailableTarget(
-                        "watchos_arm64", "watchos_arm32", "watchos_x86",
+                        "watchos_arm64", "watchos_arm32", "watchos_x64", "watchos_x86",
                         "ios_arm64", "ios_arm32", "ios_x64",
                         "tvos_arm64", "tvos_x64"
                     )
@@ -1100,6 +1098,13 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtensionComp
 
         private fun delegateToAndroidPlugin(kotlinSourceSet: KotlinSourceSet): Boolean =
             androidPluginPresent && kotlinSourceSet.actualPlatforms.platforms.singleOrNull() == KotlinPlatform.ANDROID
+    }
+}
+
+private fun KotlinTarget.testTasksFor(compilation: KotlinCompilation) = testRunTasks.filter { task ->
+    when (name) {
+        "android" -> task.taskName.endsWith(compilation.name, true)
+        else -> task.compilationName == compilation.name
     }
 }
 

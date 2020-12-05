@@ -71,8 +71,8 @@ class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiP
             apply plugin: 'kotlin'
 
             dependencies {
-                compile "org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version"
-                compile 'org.codehaus.groovy:groovy-all:2.4.8'
+                implementation "org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version"
+                implementation 'org.codehaus.groovy:groovy-all:2.4.8'
             }
             """.trimIndent()
         }
@@ -95,6 +95,44 @@ class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationMultiP
         project.build("build") {
             assertSuccessful()
             val affectedSources = File(project.projectDir, "app").allKotlinFiles()
+            val relativePaths = project.relativize(affectedSources)
+            assertCompiledKotlinSources(relativePaths)
+        }
+    }
+
+    /** Regression test for KT-43489. Make sure build history mapping is not initialized too early. */
+    @Test
+    fun testBuildHistoryMappingLazilyComputedWithWorkers() {
+        val project = defaultProject()
+        project.setupWorkingDir()
+        project.projectDir.resolve("app/build.gradle").appendText(
+            """
+                // added to force eager configuration
+                tasks.withType(JavaCompile) {
+                    options.encoding = 'UTF-8'
+                }
+            """.trimIndent()
+        )
+        val options = defaultBuildOptions().copy(parallelTasksInProject = true)
+        project.build(options = options, params = arrayOf("build")) {
+            assertSuccessful()
+        }
+
+        val aKt = project.projectDir.getFileByName("A.kt")
+        aKt.writeText(
+            """
+package bar
+
+open class A {
+    fun a() {}
+    fun newA() {}
+}
+"""
+        )
+
+        project.build(options = options, params = arrayOf("build")) {
+            assertSuccessful()
+            val affectedSources = project.projectDir.getFilesByNames("A.kt", "B.kt", "AA.kt", "AAA.kt", "BB.kt")
             val relativePaths = project.relativize(affectedSources)
             assertCompiledKotlinSources(relativePaths)
         }
@@ -293,7 +331,7 @@ open class A {
 
         val appBuildGradle = project.projectDir.resolve("app/build.gradle")
         val appBuildGradleContent = appBuildGradle.readText()
-        appBuildGradle.modify { it.checkedReplace("compile project(':lib')", "") }
+        appBuildGradle.modify { it.checkedReplace("implementation project(':lib')", "") }
         val aaKt = project.projectDir.getFileByName("AA.kt")
         aaKt.addNewLine()
 

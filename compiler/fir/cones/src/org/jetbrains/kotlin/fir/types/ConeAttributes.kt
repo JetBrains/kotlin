@@ -34,6 +34,7 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         }
 
         val Empty: ConeAttributes = ConeAttributes(emptyList())
+        internal val WithFlexibleNullability: ConeAttributes = ConeAttributes(listOf(CompilerConeAttributes.FlexibleNullability))
 
         fun create(attributes: List<ConeAttribute<*>>): ConeAttributes {
             return if (attributes.isEmpty()) {
@@ -48,7 +49,16 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         for (attribute in attributes) {
             registerComponent(attribute.key, attribute)
         }
+        assert(!hasEnhancedNullability || !hasFlexibleNullability) {
+            "It doesn't make sense to have @EnhancedNullability and @FlexibleNullability at the same time."
+        }
     }
+
+    val hasEnhancedNullability: Boolean
+        get() = enhancedNullability != null
+
+    val hasFlexibleNullability: Boolean
+        get() = flexibleNullability != null
 
     fun union(other: ConeAttributes): ConeAttributes {
         return perform(other) { this.union(it) }
@@ -84,3 +94,12 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
         return arrayMap.isEmpty()
     }
 }
+
+private fun ConeAttributes.intersectUnless(other: ConeAttributes, predicate: (ConeAttributes) -> Boolean): ConeAttributes =
+    if (predicate.invoke(this)) this else intersect(other)
+
+fun ConeAttributes.withFlexible(): ConeAttributes =
+    intersect(ConeAttributes.WithFlexibleNullability)
+
+fun ConeAttributes.withFlexibleUnless(predicate: (ConeAttributes) -> Boolean): ConeAttributes =
+    intersectUnless(ConeAttributes.WithFlexibleNullability, predicate)

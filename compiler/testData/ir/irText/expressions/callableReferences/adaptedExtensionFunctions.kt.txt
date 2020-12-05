@@ -1,0 +1,42 @@
+fun use(f: @ExtensionFunctionType Function2<C, Int, Unit>) {
+}
+
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun C.extensionVararg(i: Int, vararg s: String) {
+}
+
+fun C.extensionDefault(i: Int, s: String = "") {
+}
+
+fun C.extensionBoth(i: Int, s: String = "", vararg t: String) {
+}
+
+fun testExtensionVararg() {
+  use(f = local fun extensionVararg(p0: C, p1: Int) {
+    p0.extensionVararg(i = p1)
+  }
+)
+}
+
+fun testExtensionDefault() {
+  use(f = local fun extensionDefault(p0: C, p1: Int) {
+    p0.extensionDefault(i = p1)
+  }
+)
+}
+
+fun testExtensionBoth() {
+  use(f = local fun extensionBoth(p0: C, p1: Int) {
+    p0.extensionBoth(i = p1)
+  }
+)
+}
+

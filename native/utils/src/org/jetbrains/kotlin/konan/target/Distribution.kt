@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.keepOnlyDefaultProfiles
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import org.jetbrains.kotlin.konan.util.visibleName
 
 class Distribution(
         val konanHome: String,
         private val onlyDefaultProfiles: Boolean = false,
-        private val runtimeFileOverride: String? = null
+        private val runtimeFileOverride: String? = null,
+        private val propertyOverrides: Map<String, String>? = null
 ) {
 
     val localKonanDir = DependencyDirectories.localKonanDir
@@ -65,7 +65,7 @@ class Distribution(
         if (onlyDefaultProfiles) {
             result.keepOnlyDefaultProfiles()
         }
-
+        propertyOverrides?.let(result::putAll)
         result
     }
 

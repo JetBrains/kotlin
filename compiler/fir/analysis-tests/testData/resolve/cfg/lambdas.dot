@@ -9,7 +9,7 @@ digraph lambdas_kt {
         subgraph cluster_1 {
             color=blue
             1 [label="Enter block"];
-            2 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            2 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             3 [label="Exit block"];
         }
         4 [label="Exit function run" style="filled" fillcolor=red];
@@ -166,7 +166,7 @@ digraph lambdas_kt {
         subgraph cluster_17 {
             color=blue
             54 [label="Enter block"];
-            55 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            55 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             56 [label="Const: Int(1)"];
             57 [label="Jump: ^getInt Int(1)"];
             58 [label="Stub" style="filled" fillcolor=gray];

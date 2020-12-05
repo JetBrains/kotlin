@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import com.google.gson.Gson
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
@@ -22,6 +23,11 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
+
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(warningMode = WarningMode.Summary)
+    }
+
     @Test
     fun generateDts() {
         val project = Project("kotlin2JsIrDtsGeneration")
@@ -116,6 +122,11 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
 }
 
 class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
+
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(warningMode = WarningMode.Summary)
+    }
+
     @Test
     fun testKotlinJsBuiltins() {
         val project = Project("kotlinBuiltins")
@@ -763,17 +774,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
-        fun assertYarnResolutions(
-            packageJson: PackageJson
-        ) {
-            val name = "lodash"
-            val version = packageJson.resolutions?.get(name)
-            val requiredVersion = ">=1.0.0 <1.2.1 || >1.4.0 <2.0.0"
-            assertTrue("Root package.json must have resolution $name with version $requiredVersion, but $version found") {
-                version == requiredVersion
-            }
-        }
-
         build("packageJson", "rootPackageJson", "kotlinNpmInstall") {
             assertSuccessful()
 
@@ -784,7 +784,43 @@ abstract class AbstractKotlin2JsGradlePluginIT(private val irBackend: Boolean) :
                         Gson().fromJson(it.readText(), PackageJson::class.java)
                     }
 
-            assertYarnResolutions(getPackageJson())
+            val name = "lodash"
+            val version = getPackageJson().resolutions?.get(name)
+            val requiredVersion = ">=1.0.0 <1.2.1 || >1.4.0 <2.0.0"
+            assertTrue("Root package.json must have resolution $name with version $requiredVersion, but $version found") {
+                version == requiredVersion
+            }
+
+            val react = "react"
+            val reactVersion = getPackageJson().resolutions?.get(react)
+            val requiredReactVersion = "16.0.0"
+            assertTrue("Root package.json must have resolution $react with version $requiredReactVersion, but $reactVersion found") {
+                reactVersion == requiredReactVersion
+            }
+        }
+    }
+
+    @Test
+    fun testDirectoryDependencyNotFailProjectResolution() {
+        with(Project("kotlin-js-nodejs-project")) {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+            gradleSettingsScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            gradleBuildScript().appendText(
+                """${"\n"}
+                dependencies {
+                    implementation(files("${"$"}{projectDir}/custom"))
+                    implementation(files("${"$"}{projectDir}/custom2"))
+                }
+            """.trimIndent()
+            )
+
+            build(
+                "packageJson"
+            ) {
+                assertSuccessful()
+            }
         }
     }
 }

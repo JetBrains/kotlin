@@ -5,30 +5,22 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
-
-import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
-import org.jetbrains.kotlin.fir.analysis.cfa.PropertyInitializationInfo
-import org.jetbrains.kotlin.fir.analysis.cfa.TraverseDirection
-import org.jetbrains.kotlin.fir.analysis.cfa.traverse
+import org.jetbrains.kotlin.fir.analysis.cfa.*
+import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.lexer.KtTokens
-
 
 object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
     override fun analyze(
         graph: ControlFlowGraph,
         reporter: DiagnosticReporter,
-        data: Map<CFGNode<*>, PropertyInitializationInfo>,
+        data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
         properties: Set<FirPropertySymbol>
     ) {
         val unprocessedProperties = mutableSetOf<FirPropertySymbol>()
@@ -48,7 +40,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         var lastDestructuredVariables = 0
 
         for ((symbol, value) in propertiesCharacteristics) {
-            val source = symbol.fir.source?.getChild(setOf(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD), depth = 1)
+            val source = symbol.fir.source
             if (symbol.isDestructuring) {
                 lastDestructuringSource = source
                 lastDestructuredVariables = symbol.getDestructuringChildrenCount() ?: continue
@@ -75,7 +67,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         value in canBeValOccurrenceRanges && symbol.fir.isVar
 
     private class UninitializedPropertyReporter(
-        val data: Map<CFGNode<*>, PropertyInitializationInfo>,
+        val data: Map<CFGNode<*>, PathAwarePropertyInitializationInfo>,
         val localProperties: Set<FirPropertySymbol>,
         val unprocessedProperties: MutableSet<FirPropertySymbol>,
         val propertiesCharacteristics: MutableMap<FirPropertySymbol, EventOccurrencesRange>
@@ -89,7 +81,8 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
             unprocessedProperties.remove(symbol)
 
             val currentCharacteristic = propertiesCharacteristics.getOrDefault(symbol, EventOccurrencesRange.ZERO)
-            propertiesCharacteristics[symbol] = currentCharacteristic.or(data.getValue(node)[symbol] ?: EventOccurrencesRange.ZERO)
+            val info = data.getValue(node)
+            propertiesCharacteristics[symbol] = currentCharacteristic.or(info.infoAtNormalPath[symbol] ?: EventOccurrencesRange.ZERO)
         }
 
         override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
@@ -102,16 +95,11 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         }
     }
 
-    private fun FirPropertySymbol.getDestructuringChildrenCount(): Int? = when (fir.source) {
-        is FirPsiSourceElement<*> -> fir.psi?.children?.size?.minus(1) // -1 cuz we don't need expression node after equals operator
-        is FirLightSourceElement -> {
-            val source = fir.source as FirLightSourceElement
-            val tree = (fir.source as FirLightSourceElement).tree
-            val children = Ref<Array<LighterASTNode?>>()
-            tree.getChildren(source.element, children)
-            children.get().filterNotNull().filter { it.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY }.size
+    private fun FirPropertySymbol.getDestructuringChildrenCount(): Int? {
+        val source = fir.source ?: return null
+        return source.lighterASTNode.getChildren(source.treeStructure).count {
+            it?.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY
         }
-        else -> null
     }
 
     private val FirPropertySymbol.isDestructuring

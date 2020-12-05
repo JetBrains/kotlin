@@ -24,14 +24,8 @@ open class IrTypeCheckerContextWithAdditionalAxioms(
     private val secondTypeParameterConstructors = secondParameters.map { it.symbol }
     private val matchingTypeConstructors = firstTypeParameterConstructors.zip(secondTypeParameterConstructors).toMap()
 
-    override fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker): Boolean {
-        if (super.isEqualTypeConstructors(a, b)) return true
-        if (matchingTypeConstructors[a] == b || matchingTypeConstructors[b] == a) return true
-        return false
-    }
-
-    override fun isEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
-        if (super.isEqualTypeConstructors(c1, c2)) return true
+    override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
+        if (super.areEqualTypeConstructors(c1, c2)) return true
         if (matchingTypeConstructors[c1] == c2 || matchingTypeConstructors[c2] == c1) return true
         return false
     }

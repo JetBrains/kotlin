@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import org.gradle.api.Project
+import org.gradle.api.UnknownTaskException
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.JavaPluginConvention
@@ -159,7 +160,7 @@ internal open class GradleCompilerRunner(protected val taskProvider: GradleCompi
             incrementalModuleInfo = modulesInfo,
             outputFiles = environment.outputFiles.toList(),
             taskPath = pathProvider,
-            buildReportMode = environment.buildReportMode,
+            reportingSettings = environment.reportingSettings,
             kotlinScriptExtensions = environment.kotlinScriptExtensions,
             allWarningsAsErrors = compilerArgs.allWarningsAsErrors
         )
@@ -235,8 +236,14 @@ internal open class GradleCompilerRunner(protected val taskProvider: GradleCompi
 
                     if (compilation.isMain()) {
                         if (isMultiplatformProject) {
-                            project.locateTask<AbstractArchiveTask>(target.artifactsTaskName)?.configure { jarTask ->
-                                jarToModule[jarTask.archivePathCompatible.canonicalFile] = module
+                            try {
+                                //It could cause task reconfiguration. TODO: fix it some day if need
+                                // But using project.locateTask(taskName).configure cause an Exception for call from ImmutableActionSet
+
+                                val archiveTask = project.tasks.getByName(target.artifactsTaskName) as AbstractArchiveTask
+                                jarToModule[archiveTask.archivePathCompatible.canonicalFile] = module
+                            } catch (e: UnknownTaskException) {
+                                //ignore not found task
                             }
                         } else {
                             if (target is KotlinWithJavaTarget<*>) {

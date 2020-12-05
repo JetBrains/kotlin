@@ -59,7 +59,11 @@ public class CompileTimeConstantUtils {
             "kotlin.shortArrayOf",
             "kotlin.byteArrayOf",
             "kotlin.booleanArrayOf",
-            "kotlin.emptyArray"
+            "kotlin.emptyArray",
+            "kotlin.ubyteArrayOf",
+            "kotlin.ushortArrayOf",
+            "kotlin.uintArrayOf",
+            "kotlin.ulongArrayOf"
     );
 
     public static void checkConstructorParametersType(@NotNull List<KtParameter> parameters, @NotNull BindingTrace trace) {
@@ -91,7 +95,8 @@ public class CompileTimeConstantUtils {
             KotlinBuiltIns.isPrimitiveArray(parameterType) ||
             KotlinBuiltIns.isPrimitiveType(parameterType) ||
             KotlinBuiltIns.isString(parameterType) ||
-            UnsignedTypes.INSTANCE.isUnsignedType(parameterType)) {
+            UnsignedTypes.isUnsignedType(parameterType) ||
+            UnsignedTypes.isUnsignedArrayType(parameterType)) {
             return true;
         }
 

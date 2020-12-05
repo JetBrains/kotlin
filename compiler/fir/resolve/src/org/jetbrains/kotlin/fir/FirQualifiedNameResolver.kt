@@ -16,13 +16,16 @@ import org.jetbrains.kotlin.fir.resolve.transformers.PackageOrClass
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveToPackageOrClass
 import org.jetbrains.kotlin.fir.resolve.typeForQualifier
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
     private val session = components.session
-    private var qualifierStack = mutableListOf<Name>()
+    private var qualifierStack = mutableListOf<NameWithTypeArguments>()
     private var qualifierPartsToDrop = 0
+
+    private class NameWithTypeArguments(val name: Name, val typeArguments: List<FirTypeProjection>)
 
     fun reset() {
         qualifierStack.clear()
@@ -41,11 +44,11 @@ class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
      */
     fun isPotentialQualifierPartPosition() = qualifierStack.size > 1
 
-    fun initProcessingQualifiedAccess(callee: FirSimpleNamedReference) {
+    fun initProcessingQualifiedAccess(callee: FirSimpleNamedReference, typeArguments: List<FirTypeProjection>) {
         if (callee.name.isSpecial) {
             qualifierStack.clear()
         } else {
-            qualifierStack.add(callee.name)
+            qualifierStack.add(NameWithTypeArguments(callee.name, typeArguments))
         }
     }
 
@@ -62,7 +65,7 @@ class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
             return null
         }
         val symbolProvider = session.firSymbolProvider
-        var qualifierParts = qualifierStack.asReversed().map { it.asString() }
+        var qualifierParts = qualifierStack.asReversed().map { it.name.asString() }
         var resolved: PackageOrClass?
         do {
             resolved = resolveToPackageOrClass(
@@ -80,6 +83,7 @@ class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
                 packageFqName = resolved.packageFqName
                 relativeClassFqName = resolved.relativeClassFqName
                 symbol = resolved.classSymbol
+                typeArguments.addAll(qualifierStack.take(qualifierParts.size).flatMap { it.typeArguments })
             }.apply {
                 resultType = components.typeForQualifier(this)
             }

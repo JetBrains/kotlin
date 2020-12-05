@@ -12,6 +12,7 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:light-classes"))
     compile(project(":idea"))
+    compile(project(":idea:idea-gradle"))
     compile(project(":plugins:parcelize:parcelize-compiler"))
     compile(project(":plugins:parcelize:parcelize-runtime"))
 
@@ -22,9 +23,7 @@ dependencies {
         compileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
     }
 
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
-    }
+    compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
 
     testCompile(projectTests(":idea"))
     testCompile(projectTests(":plugins:parcelize:parcelize-compiler"))
@@ -38,9 +37,7 @@ dependencies {
 
     testRuntime(toolsJar())
 
-    Platform[192].orHigher {
-        testRuntimeOnly(intellijPluginDep("java"))
-    }
+    testRuntimeOnly(intellijPluginDep("java"))
 }
 
 sourceSets {

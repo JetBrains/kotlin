@@ -258,7 +258,7 @@ open class LazyClassMemberScope(
         name: Name,
         fromSupertypes: List<SimpleFunctionDescriptor>
     ) {
-        if (!thisDescriptor.isInline) return
+        if (!thisDescriptor.isInlineClass()) return
         addFunctionFromAnyIfNeeded(result, name, fromSupertypes)
     }
 

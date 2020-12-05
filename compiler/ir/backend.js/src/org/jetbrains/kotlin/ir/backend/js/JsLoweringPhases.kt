@@ -272,7 +272,6 @@ private val enumClassConstructorBodyLoweringPhase = makeBodyLoweringPhase(
     description = "Transform Enum Class into regular Class"
 )
 
-
 private val enumEntryInstancesLoweringPhase = makeDeclarationTransformerPhase(
     ::EnumEntryInstancesLowering,
     name = "EnumEntryInstancesLowering",
@@ -315,6 +314,12 @@ private val enumUsageLoweringPhase = makeBodyLoweringPhase(
     prerequisite = setOf(enumEntryCreateGetInstancesFunsLoweringPhase)
 )
 
+private val externalEnumUsageLoweringPhase = makeBodyLoweringPhase(
+    ::ExternalEnumUsagesLowering,
+    name = "ExternalEnumUsagesLowering",
+    description = "Replace external enum entry accesses with field accesses"
+)
+
 private val enumEntryRemovalLoweringPhase = makeDeclarationTransformerPhase(
     ::EnumClassRemoveEntriesLowering,
     name = "EnumEntryRemovalLowering",
@@ -345,6 +350,18 @@ private val forLoopsLoweringPhase = makeBodyLoweringPhase(
     ::ForLoopsLowering,
     name = "ForLoopsLowering",
     description = "[Optimization] For loops lowering"
+)
+
+private val propertyLazyInitLoweringPhase = makeBodyLoweringPhase(
+    ::PropertyLazyInitLowering,
+    name = "PropertyLazyInitLowering",
+    description = "Make property init as lazy"
+)
+
+private val removeInitializersForLazyProperties = makeDeclarationTransformerPhase(
+    ::RemoveInitializersForLazyProperties,
+    name = "RemoveInitializersForLazyProperties",
+    description = "Remove property initializers if they was initialized lazily"
 )
 
 private val propertyAccessorInlinerLoweringPhase = makeBodyLoweringPhase(
@@ -504,7 +521,9 @@ private val initializersLoweringPhase = makeBodyLoweringPhase(
     ::InitializersLowering,
     name = "InitializersLowering",
     description = "Merge init block and field initializers into [primary] constructor",
-    prerequisite = setOf(enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase, annotationConstructorLowering)
+    prerequisite = setOf(
+        enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase, annotationConstructorLowering, localClassExtractionPhase
+    )
 )
 
 private val initializersCleanupLoweringPhase = makeDeclarationTransformerPhase(
@@ -534,7 +553,7 @@ private val errorDeclarationLoweringPhase = makeDeclarationTransformerPhase(
 )
 
 private val bridgesConstructionPhase = makeDeclarationTransformerPhase(
-    ::BridgesConstruction,
+    ::JsBridgesConstruction,
     name = "BridgesConstruction",
     description = "Generate bridges",
     prerequisite = setOf(suspendFunctionsLoweringPhase)
@@ -645,6 +664,13 @@ private val objectDeclarationLoweringPhase = makeDeclarationTransformerPhase(
     description = "Create lazy object instance generator functions"
 )
 
+private val invokeStaticInitializersPhase = makeBodyLoweringPhase(
+    ::InvokeStaticInitializersLowering,
+    name = "IntroduceStaticInitializersLowering",
+    description = "Invoke companion object's initializers from companion object in object constructor",
+    prerequisite = setOf(objectDeclarationLoweringPhase)
+)
+
 private val objectUsageLoweringPhase = makeBodyLoweringPhase(
     ::ObjectUsageLowering,
     name = "ObjectUsageLowering",
@@ -704,6 +730,7 @@ val loweringList = listOf<Lowering>(
     enumEntryCreateGetInstancesFunsLoweringPhase,
     enumSyntheticFunsLoweringPhase,
     enumUsageLoweringPhase,
+    externalEnumUsageLoweringPhase,
     enumEntryRemovalLoweringPhase,
     suspendFunctionsLoweringPhase,
     propertyReferenceLoweringPhase,
@@ -712,6 +739,8 @@ val loweringList = listOf<Lowering>(
     rangeContainsLoweringPhase,
     forLoopsLoweringPhase,
     primitiveCompanionLoweringPhase,
+    propertyLazyInitLoweringPhase,
+    removeInitializersForLazyProperties,
     propertyAccessorInlinerLoweringPhase,
     foldConstantLoweringPhase,
     privateMembersLoweringPhase,
@@ -740,6 +769,7 @@ val loweringList = listOf<Lowering>(
     blockDecomposerLoweringPhase,
     constLoweringPhase,
     objectDeclarationLoweringPhase,
+    invokeStaticInitializersPhase,
     objectUsageLoweringPhase,
     captureStackTraceInThrowablesPhase,
     callsLoweringPhase,

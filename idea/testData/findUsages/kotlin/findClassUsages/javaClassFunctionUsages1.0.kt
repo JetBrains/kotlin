@@ -35,3 +35,5 @@ open class A: X {
         println("!$s!")
     }
 }
+
+// FIR_COMPARISON

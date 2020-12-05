@@ -1,0 +1,47 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Anno {
+    // source: 'annotatedPropertyWithInlineClassTypeInSignature.kt'
+}
+
+@kotlin.Metadata
+public final class AnnotatedPropertyWithInlineClassTypeInSignatureKt {
+    // source: 'annotatedPropertyWithInlineClassTypeInSignature.kt'
+    public synthetic deprecated static @Anno method getReturnType$annotations(): void
+    public final static method getReturnType(): int
+    public synthetic deprecated static @Anno method getTopLevel-IQRRRT4$annotations(p0: int): void
+    public final static method getTopLevel-IQRRRT4(p0: int): int
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'annotatedPropertyWithInlineClassTypeInSignature.kt'
+    public method <init>(): void
+    public synthetic deprecated static @Anno method getInternal-IQRRRT4$test_module$annotations(p0: int): void
+    public final method getInternal-IQRRRT4$test_module(p0: int): int
+    public synthetic deprecated static @Anno method getMemberExtension-IQRRRT4$annotations(p0: int): void
+    public final method getMemberExtension-IQRRRT4(p0: int): int
+    public synthetic deprecated static @Anno method getReturnType-a_XrcN0$annotations(): void
+    public final method getReturnType-a_XrcN0(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Z {
+    // source: 'annotatedPropertyWithInlineClassTypeInSignature.kt'
+    private final field x: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): Z
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public synthetic deprecated static @Anno method getMember$annotations(): void
+    public final static method getMember-impl(p0: int): int
+    public final method getX(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}

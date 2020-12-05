@@ -4,10 +4,10 @@ FILE: lambdaWithReceiver.kt
 
     }
     public final fun <T> myWith(receiver: R|T|, block: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
-        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/receiver|)
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/receiver|)
     }
     public final fun <T> R|T|.myApply(block: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
-        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/myApply|)
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/myApply|)
     }
     public final fun withA(block: R|A.() -> kotlin/Unit|): R|kotlin/Unit| {
     }

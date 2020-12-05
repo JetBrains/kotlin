@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
     private var containingClass: FirRegularClass? = null
+    private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
 
     private inline fun <T> withFirArrayOfCallTransformer(block: () -> T): T {
         transformer.expressionsTransformer.enableArrayOfCallTransformation = true
@@ -120,13 +121,14 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             dataFlowAnalyzer.enterProperty(property)
             withFullBodyResolve {
                 withLocalScopeCleanup {
+                    val primaryConstructorParametersScope = context.getPrimaryConstructorPureParametersScope()
                     context.withContainer(property) {
                         if (property.delegate != null) {
-                            addLocalScope(context.getPrimaryConstructorParametersScope())
+                            addLocalScope(primaryConstructorParametersScope)
                             transformPropertyWithDelegate(property)
                         } else {
                             withLocalScopeCleanup {
-                                addLocalScope(context.getPrimaryConstructorParametersScope())
+                                addLocalScope(primaryConstructorParametersScope)
                                 property.transformChildrenWithoutAccessors(returnTypeRef)
                             }
                             if (property.initializer != null) {
@@ -190,7 +192,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     }
 
     private fun transformPropertyWithDelegate(property: FirProperty) {
-        property.transformDelegate(transformer, ResolutionMode.ContextDependent)
+        property.transformDelegate(transformer, ResolutionMode.ContextDependentDelegate)
 
         val delegateExpression = property.delegate!!
 
@@ -228,7 +230,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     ): CompositeTransformResult<FirStatement> {
         dataFlowAnalyzer.enterDelegateExpression()
         try {
-            val delegateProvider = wrappedDelegateExpression.delegateProvider.transformSingle(transformer, ResolutionMode.ContextDependent)
+            val delegateProvider = wrappedDelegateExpression.delegateProvider.transformSingle(transformer, data)
             when (val calleeReference = (delegateProvider as FirResolvable).calleeReference) {
                 is FirResolvedNamedReference -> return delegateProvider.compose()
                 is FirNamedReferenceWithCandidate -> {
@@ -241,7 +243,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
             (delegateProvider as? FirFunctionCall)?.let { dataFlowAnalyzer.dropSubgraphFromCall(it) }
             return wrappedDelegateExpression.expression
-                .transformSingle(transformer, ResolutionMode.ContextDependent)
+                .transformSingle(transformer, data)
                 .approximateIfIsIntegerConst()
                 .compose()
         } finally {
@@ -329,8 +331,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     private fun FirDeclaration.resolveStatus(status: FirDeclarationStatus, containingClass: FirClass<*>? = null): FirDeclarationStatus {
         val containingDeclaration = context.containerIfAny
-        return resolveStatus(
-            status, containingClass as? FirRegularClass, isLocal = containingDeclaration != null && containingClass == null
+        return statusResolver.resolveStatus(
+            this,
+            containingClass as? FirRegularClass,
+            isLocal = containingDeclaration != null && containingClass == null
         )
     }
 
@@ -574,7 +578,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
 
             val scopeWithValueParameters = if (constructor.isPrimary) {
-                context.getPrimaryConstructorParametersScope()
+                context.getPrimaryConstructorAllParametersScope()
             } else {
                 constructor.scopeWithParameters()
             }
@@ -621,7 +625,9 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         if (implicitTypeOnly) return anonymousInitializer.compose()
         return withLocalScopeCleanup {
             dataFlowAnalyzer.enterInitBlock(anonymousInitializer)
-            addLocalScope(context.getPrimaryConstructorParametersScope())
+            addLocalScope(
+                context.getPrimaryConstructorPureParametersScope()
+            )
             addNewLocalScope()
             val result =
                 transformDeclarationContent(anonymousInitializer, ResolutionMode.ContextIndependent).single as FirAnonymousInitializer
@@ -663,7 +669,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             context.saveContextForAnonymousFunction(anonymousFunction)
         }
         return when (data) {
-            ResolutionMode.ContextDependent -> {
+            is ResolutionMode.ContextDependent, is ResolutionMode.ContextDependentDelegate -> {
                 dataFlowAnalyzer.visitPostponedAnonymousFunction(anonymousFunction)
                 anonymousFunction.addReturn().compose()
             }
@@ -838,17 +844,20 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 staticsAndCompanion
 
         val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
-        val primaryConstructorParametersScope =
+        val (primaryConstructorPureParametersScope, primaryConstructorAllParametersScope) =
             if (constructor?.isPrimary == true) {
-                constructor.scopeWithParameters()
-            } else null
+                constructor.scopesWithPrimaryConstructorParameters(owner)
+            } else {
+                null to null
+            }
 
         components.context.replaceTowerDataContext(forMembersResolution)
 
         val newContexts = FirTowerDataContextsForClassParts(
             newTowerDataContextForStaticNestedClasses,
             scopeForConstructorHeader,
-            primaryConstructorParametersScope
+            primaryConstructorPureParametersScope,
+            primaryConstructorAllParametersScope
         )
 
         context.withNewTowerDataForClassParts(newContexts) {
@@ -858,6 +867,22 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
     private fun FirConstructor.scopeWithParameters(): FirLocalScope {
         return valueParameters.fold(FirLocalScope()) { acc, param -> acc.storeVariable(param) }
+    }
+
+    private fun FirConstructor.scopesWithPrimaryConstructorParameters(
+        ownerClass: FirClass<*>
+    ): Pair<FirLocalScope, FirLocalScope> {
+        var parameterScope = FirLocalScope()
+        var allScope = FirLocalScope()
+        val properties = ownerClass.declarations.filterIsInstance<FirProperty>().associateBy { it.name }
+        for (parameter in valueParameters) {
+            allScope = allScope.storeVariable(parameter)
+            val property = properties[parameter.name]
+            if (property?.source?.kind != FirFakeSourceElementKind.PropertyFromParameter) {
+                parameterScope = parameterScope.storeVariable(parameter)
+            }
+        }
+        return parameterScope to allScope
     }
 
     protected inline fun <T> withLabelAndReceiverType(

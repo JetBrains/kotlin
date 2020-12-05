@@ -64,10 +64,11 @@ class CommonizerFacadeTest {
             forEach { (targetName, moduleNames) ->
                 it.addTarget(
                     TargetProvider(
-                        target = InputTarget(targetName),
+                        target = LeafTarget(targetName),
                         builtInsClass = DefaultBuiltIns::class.java,
                         builtInsProvider = BuiltInsProvider.defaultBuiltInsProvider,
-                        modulesProvider = MockModulesProvider(moduleNames)
+                        modulesProvider = MockModulesProvider.create(moduleNames),
+                        dependeeModulesProvider = null
                     )
                 )
             }

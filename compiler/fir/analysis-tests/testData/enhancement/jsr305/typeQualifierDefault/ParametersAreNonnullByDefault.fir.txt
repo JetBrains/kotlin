@@ -1,9 +1,9 @@
 @R|javax/annotation/ParametersAreNonnullByDefault|() public open class A : R|kotlin/Any| {
-    @R|javax/annotation/Nullable|() public open field field: R|kotlin/String?|
+    @R|javax/annotation/Nullable|() public open field field: R|@FlexibleNullability kotlin/String?|
 
-    public open fun foo(q: R|kotlin/String|, @R|javax/annotation/Nonnull|() x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|ft<kotlin/String, kotlin/String?>!|
+    public open fun foo(q: R|@FlexibleNullability kotlin/String|, @R|javax/annotation/Nonnull|() x: R|@EnhancedNullability kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|@FlexibleNullability kotlin/CharSequence?|): R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|
 
-    @R|javax/annotation/Nonnull|() public open fun bar(): R|kotlin/String|
+    @R|javax/annotation/Nonnull|() public open fun bar(): R|@EnhancedNullability kotlin/String|
 
     public constructor(): R|A|
 

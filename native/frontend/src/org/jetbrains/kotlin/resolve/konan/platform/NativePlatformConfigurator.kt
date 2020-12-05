@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.konan.diagnostics.NativeTopLevelSingletonChe
 object NativePlatformConfigurator : PlatformConfiguratorBase(
     additionalCallCheckers = listOf(
         SuperCallWithDefaultArgumentsChecker(),
-        TypeOfChecker,
     ),
     additionalDeclarationCheckers = listOf(
         NativeThrowsChecker, NativeSharedImmutableChecker,

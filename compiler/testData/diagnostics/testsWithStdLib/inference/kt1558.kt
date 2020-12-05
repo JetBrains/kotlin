@@ -3,6 +3,8 @@
 //KT-1558 Exception while analyzing
 package j
 
+import checkSubtype
+
 fun <T : Any> T?.sure() : T = this!!
 
 fun <E> List<*>.toArray(ar: Array<E>): Array<E> = ar

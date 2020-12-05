@@ -36,7 +36,7 @@ internal open class IrInlineReferenceLocator(private val context: JvmBackendCont
                     continue
 
                 val valueArgument = expression.getValueArgument(parameter.index) ?: continue
-                if (!isInlineIrExpression(valueArgument))
+                if (!valueArgument.isInlineIrExpression())
                     continue
 
                 if (valueArgument is IrBlock) {

@@ -35,7 +35,10 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 import java.net.URLClassLoader
+import java.nio.file.Path
+import kotlin.io.path.*
 
+@OptIn(ExperimentalPathApi::class)
 class CompilerApiTest : KotlinIntegrationTestBase() {
 
     private val compilerLibDir = getCompilerLib()
@@ -119,7 +122,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                                               verbose = true,
                                               reportPerf = true)
 
-            val logFile = createTempFile("kotlin-daemon-test.", ".log")
+            val logFile: Path = createTempFile("kotlin-daemon-test.", ".log")
 
             val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                                              inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
@@ -137,7 +140,8 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             }
             finally {
                 KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
-                logFile.delete()
+                runCatching { logFile.deleteIfExists() }
+                    .onFailure { e -> println("Failed to delete log file: $e") }
             }
         }
     }
@@ -158,7 +162,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
                                               verbose = true,
                                               reportPerf = true)
 
-            val logFile = createTempFile("kotlin-daemon-test.", ".log")
+            val logFile: Path = createTempFile("kotlin-daemon-test.", ".log")
 
             val daemonJVMOptions = configureDaemonJVMOptions("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"${logFile.loggerCompatiblePath}\"",
                                                              inheritMemoryLimits = false, inheritOtherJvmOptions = false, inheritAdditionalProperties = false)
@@ -174,7 +178,8 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
             }
             finally {
                 KotlinCompilerClient.shutdownCompileService(compilerId, daemonOptions)
-                logFile.delete()
+                runCatching { logFile.deleteIfExists() }
+                    .onFailure { e -> println("Failed to delete log file: $e") }
             }
         }
     }

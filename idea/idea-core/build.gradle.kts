@@ -31,10 +31,8 @@ dependencies {
 
     compileOnly(intellijDep())
 
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java"))
-    }
-    
+    compileOnly(intellijPluginDep("java"))
+
     compileOnly(intellijPluginDep("gradle"))
 }
 

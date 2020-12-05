@@ -958,7 +958,7 @@ private val CLASS_FLAGS_MAP = COMMON_FLAGS_MAP + mapOf(
 )
 
 private val CONSTRUCTOR_FLAGS_MAP = VISIBILITY_FLAGS_MAP + mapOf(
-    Flag.Constructor.IS_PRIMARY to "/* primary */",
+    Flag.Constructor.IS_SECONDARY to "/* secondary */",
     Flag.Constructor.HAS_NON_STABLE_PARAMETER_NAMES to "/* non-stable parameter names */"
 )
 

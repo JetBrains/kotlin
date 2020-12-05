@@ -1,0 +1,8 @@
+fun test1(f: Function1<String, String>): C<String?> {
+  return C<String?>(jxx = f /*-> J<X?, X?>? */)
+}
+
+fun test2(x: Any) {
+  x as Function1<String, String> /*~> Unit */
+  C<String?>(jxx = x /*as Function1<String, String> */ /*-> J<X?, X?>? */) /*~> Unit */
+}

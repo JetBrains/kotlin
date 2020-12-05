@@ -1,0 +1,38 @@
+fun interface IFoo {
+  abstract fun foo(i: Int)
+
+}
+
+fun useVararg(vararg foos: IFoo) {
+}
+
+fun testLambda() {
+  useVararg(foos = [local fun <anonymous>(it: Int) {
+    return Unit
+  }
+ /*-> IFoo */])
+}
+
+fun testSeveralLambdas() {
+  useVararg(foos = [local fun <anonymous>(it: Int) {
+    return Unit
+  }
+ /*-> IFoo */, local fun <anonymous>(it: Int) {
+    return Unit
+  }
+ /*-> IFoo */, local fun <anonymous>(it: Int) {
+    return Unit
+  }
+ /*-> IFoo */])
+}
+
+fun withVarargOfInt(vararg xs: Int): String {
+  return ""
+}
+
+fun testAdaptedCR() {
+  useVararg(foos = [local fun withVarargOfInt(p0: Int) {
+    withVarargOfInt(xs = [p0])
+  }
+ /*-> IFoo */])
+}

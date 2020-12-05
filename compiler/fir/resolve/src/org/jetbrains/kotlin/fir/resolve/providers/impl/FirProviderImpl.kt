@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -30,7 +31,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
-        symbol.overriddenSymbol?.let {
+        symbol.originalIfFakeOverride()?.let {
             return getFirCallableContainerFile(it)
         }
         if (symbol is FirAccessorSymbol) {
@@ -120,7 +121,10 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
             state.classifierContainerFileMap[classId] = file
         }
 
-        override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<F>, data: Pair<State, FirFile>) {
+        override fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(
+            callableDeclaration: FirCallableDeclaration<F>,
+            data: Pair<State, FirFile>
+        ) {
             val symbol = callableDeclaration.symbol
             val callableId = symbol.callableId
             val (state, file) = data
@@ -138,6 +142,8 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: KotlinSc
 
         override fun visitProperty(property: FirProperty, data: Pair<State, FirFile>) {
             visitCallableDeclaration(property, data)
+            property.getter?.let { visitCallableDeclaration(it, data) }
+            property.setter?.let { visitCallableDeclaration(it, data) }
         }
 
         override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Pair<State, FirFile>) {

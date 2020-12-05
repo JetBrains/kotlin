@@ -4,9 +4,9 @@ import java.lang.System;
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno {
 
-    public abstract StrangeEnum size();
-
     public abstract java.lang.String name();
+
+    public abstract StrangeEnum size();
 }
 
 ////////////////////
@@ -20,12 +20,12 @@ public enum StrangeEnum {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String size = null;
 
+    StrangeEnum(java.lang.String size) {
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getSize() {
         return null;
-    }
-
-    StrangeEnum(java.lang.String size) {
     }
 }
 
@@ -37,6 +37,10 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Test {
     public java.lang.String simpleName;
+
+    public Test() {
+        super();
+    }
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getSimpleName() {
@@ -55,9 +59,5 @@ public final class Test {
     public final void strangeFun4(@org.jetbrains.annotations.NotNull()
     java.lang.String a, @org.jetbrains.annotations.NotNull()
     java.lang.String p1_949560896) {
-    }
-
-    public Test() {
-        super();
     }
 }

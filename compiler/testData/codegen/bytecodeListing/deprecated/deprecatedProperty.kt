@@ -51,3 +51,8 @@ var <T> List<T>.textGenExtVar
     get() = 1
     set(v) {}
 
+interface I {
+    @Deprecated("")
+    val <T> T.id: T
+        get() = this
+}

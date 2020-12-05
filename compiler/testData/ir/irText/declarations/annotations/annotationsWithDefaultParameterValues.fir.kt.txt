@@ -1,0 +1,31 @@
+annotation class A : Annotation {
+  constructor(x: String = "", y: Int = 42) /* primary */
+  val x: String
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+}
+
+@A(x = "abc", y = 123)
+fun test1() {
+}
+
+@A(x = "def")
+fun test2() {
+}
+
+@A(x = "ghi")
+fun test3() {
+}
+
+@A(, y = 456)
+fun test4() {
+}
+
+@A
+fun test5() {
+}

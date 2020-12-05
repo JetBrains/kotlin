@@ -18,44 +18,44 @@ package org.jetbrains.kotlin.js.facade
 
 import com.intellij.openapi.vfs.VfsUtilCore
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.facade.exceptions.TranslationException
-import org.jetbrains.kotlin.js.inline.JsInliner
-import org.jetbrains.kotlin.js.inline.clean.*
-import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
-import org.jetbrains.kotlin.js.translate.general.Translation
-import org.jetbrains.kotlin.js.translate.utils.*
-import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
-import org.jetbrains.kotlin.serialization.js.ast.JsAstSerializer
-import org.jetbrains.kotlin.utils.JsMetadataVersion
-
-import java.io.ByteArrayOutputStream
-import java.io.IOException
-import java.util.ArrayList
-
-import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
 import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.coroutine.transformCoroutines
+import org.jetbrains.kotlin.js.facade.exceptions.TranslationException
+import org.jetbrains.kotlin.js.inline.JsInliner
+import org.jetbrains.kotlin.js.inline.clean.resolveTemporaryNames
+import org.jetbrains.kotlin.js.inline.clean.transformLabeledBlockToDoWhile
 import org.jetbrains.kotlin.js.inline.util.collectDefinedNamesInAllScopes
+import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.translate.general.SourceFileTranslationResult
+import org.jetbrains.kotlin.js.translate.general.Translation
+import org.jetbrains.kotlin.js.translate.utils.BindingUtils
+import org.jetbrains.kotlin.js.translate.utils.expandIsCalls
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf
+import org.jetbrains.kotlin.serialization.js.ast.JsAstSerializer
 import org.jetbrains.kotlin.serialization.js.missingMetadata
+import org.jetbrains.kotlin.utils.JsMetadataVersion
+import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.util.*
 
 /**
  * An entry point of translator.
@@ -221,7 +221,8 @@ class K2JSTranslator @JvmOverloads constructor(
             bindingContext,
             moduleDescriptor,
             config.configuration.languageVersionSettings,
-            config.configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? JsMetadataVersion ?: JsMetadataVersion.INSTANCE
+            config.configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? JsMetadataVersion ?: JsMetadataVersion.INSTANCE,
+            config.project
         )
 
         for ((packageName, metadata) in additionalMetadata) {
@@ -248,6 +249,7 @@ class K2JSTranslator @JvmOverloads constructor(
             scope,
             packageName,
             config.configuration.languageVersionSettings,
+            config.project,
             metadataVersion ?: JsMetadataVersion.INSTANCE
         )
     }

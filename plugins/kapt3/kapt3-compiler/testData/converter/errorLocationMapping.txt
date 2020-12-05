@@ -35,6 +35,13 @@ public final class ErrorInConstructorParameter {
     @org.jetbrains.annotations.NotNull()
     private final java.util.List<ABC> c = null;
 
+    public ErrorInConstructorParameter(@org.jetbrains.annotations.NotNull()
+    java.lang.String a, @org.jetbrains.annotations.NotNull()
+    ABC b, @org.jetbrains.annotations.NotNull()
+    java.util.List<? extends ABC> c) {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getA() {
         return null;
@@ -49,13 +56,6 @@ public final class ErrorInConstructorParameter {
     public final java.util.List<ABC> getC() {
         return null;
     }
-
-    public ErrorInConstructorParameter(@org.jetbrains.annotations.NotNull()
-    java.lang.String a, @org.jetbrains.annotations.NotNull()
-    ABC b, @org.jetbrains.annotations.NotNull()
-    java.util.List<? extends ABC> c) {
-        super();
-    }
 }
 
 ////////////////////
@@ -69,39 +69,8 @@ public final class ErrorInDeclarations {
     public ABC p2;
     public BCD<java.lang.String> p3;
 
-    @org.jetbrains.annotations.NotNull()
-    public final java.lang.String getP1() {
-        return null;
-    }
-
-    public final void setP1(@org.jetbrains.annotations.NotNull()
-    java.lang.String p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final ABC getP2() {
-        return null;
-    }
-
-    public final void setP2(@org.jetbrains.annotations.NotNull()
-    ABC p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final BCD<java.lang.String> getP3() {
-        return null;
-    }
-
-    public final void setP3(@org.jetbrains.annotations.NotNull()
-    BCD<java.lang.String> p0) {
-    }
-
-    public final void overloads(@org.jetbrains.annotations.NotNull()
-    java.lang.String a) {
-    }
-
-    public final void overloads(@org.jetbrains.annotations.NotNull()
-    ABC a) {
+    public ErrorInDeclarations() {
+        super();
     }
 
     public final void f1(@org.jetbrains.annotations.NotNull()
@@ -120,8 +89,39 @@ public final class ErrorInDeclarations {
         return null;
     }
 
-    public ErrorInDeclarations() {
-        super();
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getP1() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final ABC getP2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final BCD<java.lang.String> getP3() {
+        return null;
+    }
+
+    public final void overloads(@org.jetbrains.annotations.NotNull()
+    ABC a) {
+    }
+
+    public final void overloads(@org.jetbrains.annotations.NotNull()
+    java.lang.String a) {
+    }
+
+    public final void setP1(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
+    }
+
+    public final void setP2(@org.jetbrains.annotations.NotNull()
+    ABC p0) {
+    }
+
+    public final void setP3(@org.jetbrains.annotations.NotNull()
+    BCD<java.lang.String> p0) {
     }
 }
 

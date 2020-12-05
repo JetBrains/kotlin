@@ -9,20 +9,12 @@ group = 'me.user'
 version = '1.0-SNAPSHOT'
 
 repositories {
-    mavenCentral()
     jcenter()
-    maven {
-        url 'https://dl.bintray.com/kotlin/ktor'
-    }
-    maven {
-        url 'KOTLIN_REPO'
-    }
-    maven {
-        url 'https://dl.bintray.com/kotlin/kotlinx'
-    }
-    maven {
-        url 'https://dl.bintray.com/kotlin/kotlin-js-wrappers'
-    }
+    mavenCentral()
+    maven { url 'KOTLIN_REPO' }
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-js-wrappers' }
+    maven { url 'https://dl.bintray.com/kotlin/kotlinx' }
+    maven { url 'https://dl.bintray.com/kotlin/ktor' }
 }
 
 kotlin {

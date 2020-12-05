@@ -79,6 +79,11 @@ public final class DiagnosticFactoryToRendererMap {
         map.put(factory, new DiagnosticWithParameters3Renderer<A, B, C>(message, rendererA, rendererB, rendererC));
     }
 
+    public void put(@NotNull DiagnosticFactory<?> factory, @NotNull DiagnosticRenderer<?> renderer) {
+        checkMutability();
+        map.put(factory, renderer);
+    }
+
     @Nullable
     public DiagnosticRenderer<?> get(@NotNull DiagnosticFactory<?> factory) {
         return map.get(factory);

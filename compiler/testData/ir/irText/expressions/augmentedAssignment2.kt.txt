@@ -1,0 +1,55 @@
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+operator fun A.plusAssign(s: String) {
+}
+
+operator fun A.minusAssign(s: String) {
+}
+
+operator fun A.timesAssign(s: String) {
+}
+
+operator fun A.divAssign(s: String) {
+}
+
+operator fun A.remAssign(s: String) {
+}
+
+val p: A
+  field = A()
+  get
+
+fun testVariable() {
+  val a: A = A()
+  a.plusAssign(s = "+=")
+  a.minusAssign(s = "-=")
+  a.timesAssign(s = "*=")
+  a.divAssign(s = "/=")
+  a.remAssign(s = "*=")
+}
+
+fun testProperty() {
+  { // BLOCK
+    <get-p>().plusAssign(s = "+=")
+  }
+  { // BLOCK
+    <get-p>().minusAssign(s = "-=")
+  }
+  { // BLOCK
+    <get-p>().timesAssign(s = "*=")
+  }
+  { // BLOCK
+    <get-p>().divAssign(s = "/=")
+  }
+  { // BLOCK
+    <get-p>().remAssign(s = "%=")
+  }
+}
+

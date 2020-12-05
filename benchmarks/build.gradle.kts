@@ -40,9 +40,7 @@ dependencies {
     compile(project(":compiler:cli"))
     compile(intellijCoreDep()) { includeJars("intellij-core") }
     compile(jpsStandalone()) { includeJars("jps-model") }
-    Platform[192].orHigher {
-        compile(intellijPluginDep("java"))
-    }
+    compile(intellijPluginDep("java"))
     compile(intellijDep()) { includeIntellijCoreJarDependencies(project) }
     compile("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:$benchmarks_version")
 }

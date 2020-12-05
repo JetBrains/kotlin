@@ -1,7 +1,7 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtProperty
 // OPTIONS: usages
 // OPTIONS: skipRead
-// FIR_IGNORE
+// FIR_COMPARISON
 
 fun foo() {
     var <caret>v = 1

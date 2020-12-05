@@ -5,11 +5,9 @@ import java.lang.System;
 @kotlin.Metadata()
 public abstract class BundleProperty<AA extends java.lang.Object> extends test.NullableBundleProperty<AA> {
 
-    @java.lang.Override()
-    public final void setValue(@org.jetbrains.annotations.NotNull()
-    java.lang.Object thisRef, @org.jetbrains.annotations.NotNull()
-    kotlin.reflect.KProperty<?> property, @org.jetbrains.annotations.Nullable()
-    AA value) {
+    public BundleProperty(@org.jetbrains.annotations.Nullable()
+    java.lang.String key) {
+        super(null);
     }
 
     @java.lang.Override()
@@ -30,9 +28,11 @@ public abstract class BundleProperty<AA extends java.lang.Object> extends test.N
     java.lang.Object bundle, @org.jetbrains.annotations.NotNull()
     java.lang.String key, AA value);
 
-    public BundleProperty(@org.jetbrains.annotations.Nullable()
-    java.lang.String key) {
-        super(null);
+    @java.lang.Override()
+    public final void setValue(@org.jetbrains.annotations.NotNull()
+    java.lang.Object thisRef, @org.jetbrains.annotations.NotNull()
+    kotlin.reflect.KProperty<?> property, @org.jetbrains.annotations.Nullable()
+    AA value) {
     }
 }
 
@@ -67,9 +67,15 @@ import java.lang.System;
 public abstract class NullableBundleProperty<EE extends java.lang.Object> implements kotlin.properties.ReadWriteProperty<java.lang.Object, EE> {
     private final java.lang.String key = null;
 
-    private final java.lang.String toKey(kotlin.reflect.KProperty<?> $this$toKey) {
-        return null;
+    public NullableBundleProperty(@org.jetbrains.annotations.Nullable()
+    java.lang.String key) {
+        super();
     }
+
+    @org.jetbrains.annotations.Nullable()
+    public abstract EE getValue(@org.jetbrains.annotations.NotNull()
+    java.lang.Object bundle, @org.jetbrains.annotations.NotNull()
+    java.lang.String key);
 
     @org.jetbrains.annotations.Nullable()
     @java.lang.Override()
@@ -79,6 +85,11 @@ public abstract class NullableBundleProperty<EE extends java.lang.Object> implem
         return null;
     }
 
+    public abstract void setNullableValue(@org.jetbrains.annotations.NotNull()
+    java.lang.Object bundle, @org.jetbrains.annotations.NotNull()
+    java.lang.String key, @org.jetbrains.annotations.Nullable()
+    EE value);
+
     @java.lang.Override()
     public void setValue(@org.jetbrains.annotations.NotNull()
     java.lang.Object thisRef, @org.jetbrains.annotations.NotNull()
@@ -86,18 +97,7 @@ public abstract class NullableBundleProperty<EE extends java.lang.Object> implem
     EE value) {
     }
 
-    @org.jetbrains.annotations.Nullable()
-    public abstract EE getValue(@org.jetbrains.annotations.NotNull()
-    java.lang.Object bundle, @org.jetbrains.annotations.NotNull()
-    java.lang.String key);
-
-    public abstract void setNullableValue(@org.jetbrains.annotations.NotNull()
-    java.lang.Object bundle, @org.jetbrains.annotations.NotNull()
-    java.lang.String key, @org.jetbrains.annotations.Nullable()
-    EE value);
-
-    public NullableBundleProperty(@org.jetbrains.annotations.Nullable()
-    java.lang.String key) {
-        super();
+    private final java.lang.String toKey(kotlin.reflect.KProperty<?> $this$toKey) {
+        return null;
     }
 }

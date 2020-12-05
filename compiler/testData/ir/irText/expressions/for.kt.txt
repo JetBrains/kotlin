@@ -1,0 +1,45 @@
+fun testEmpty(ss: List<String>) {
+  { // BLOCK
+    val tmp0_iterator: Iterator<String> = ss.iterator()
+    while (tmp0_iterator.hasNext()) { // BLOCK
+      val s: String = tmp0_iterator.next()
+    }
+  }
+}
+
+fun testIterable(ss: List<String>) {
+  { // BLOCK
+    val tmp0_iterator: Iterator<String> = ss.iterator()
+    while (tmp0_iterator.hasNext()) { // BLOCK
+      val s: String = tmp0_iterator.next()
+      { // BLOCK
+        println(message = s)
+      }
+    }
+  }
+}
+
+fun testDestructuring(pp: List<Pair<Int, String>>) {
+  { // BLOCK
+    val tmp0_iterator: Iterator<Pair<Int, String>> = pp.iterator()
+    while (tmp0_iterator.hasNext()) { // BLOCK
+      val tmp1_loop_parameter: Pair<Int, String> = tmp0_iterator.next()
+      val i: Int = tmp1_loop_parameter.component1()
+      val s: String = tmp1_loop_parameter.component2()
+      { // BLOCK
+        println(message = i)
+        println(message = s)
+      }
+    }
+  }
+}
+
+fun testRange() {
+  { // BLOCK
+    val tmp0_iterator: IntIterator = 1.rangeTo(other = 10).iterator()
+    while (tmp0_iterator.hasNext()) { // BLOCK
+      val i: Int = tmp0_iterator.next()
+    }
+  }
+}
+

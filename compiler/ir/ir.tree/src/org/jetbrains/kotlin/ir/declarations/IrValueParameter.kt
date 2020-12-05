@@ -32,6 +32,7 @@ abstract class IrValueParameter : IrValueDeclaration(), IrSymbolDeclaration<IrVa
     abstract var varargElementType: IrType?
     abstract val isCrossinline: Boolean
     abstract val isNoinline: Boolean
+
     // if true parameter is not included into IdSignature.
     // Skipping hidden params makes IrFunction be look similar to FE.
     // NOTE: it is introduced to fix KT-40980 because more clear solution was not possible to implement.

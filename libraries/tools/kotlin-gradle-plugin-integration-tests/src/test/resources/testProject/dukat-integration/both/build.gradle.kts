@@ -14,6 +14,7 @@ dependencies {
 
 kotlin {
     js(BOTH) {
+        useCommonJs()
         nodejs()
     }
 }

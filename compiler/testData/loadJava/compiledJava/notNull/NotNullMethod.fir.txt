@@ -1,5 +1,5 @@
 public open class NotNullMethod : R|kotlin/Any| {
-    @R|org/jetbrains/annotations/NotNull|() public open fun hi(): R|kotlin/String|
+    @R|org/jetbrains/annotations/NotNull|() public open fun hi(): R|@EnhancedNullability kotlin/String|
 
     public constructor(): R|test/NotNullMethod|
 

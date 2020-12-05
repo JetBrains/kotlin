@@ -33,6 +33,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.PrintStream
+import java.nio.file.Files
 import kotlin.test.assertEquals
 
 
@@ -51,7 +52,7 @@ class CompilerClientIT {
     }
 
     private val clientAliveFile by lazy {
-        createTempFile("client", ".alive").apply {
+        Files.createTempFile("client", ".alive").toFile().apply {
             deleteOnExit()
         }
     }

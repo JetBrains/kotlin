@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
@@ -35,15 +36,24 @@ fun FirTypeParameterBuilder.addDefaultBoundIfNecessary(isFlexible: Boolean = fal
     }
 }
 
+inline val FirRegularClass.modality get() = status.modality
+inline val FirRegularClass.isSealed get() = status.modality == Modality.SEALED
+inline val FirRegularClass.isAbstract get() = status.modality == Modality.ABSTRACT
+
 inline val FirRegularClass.isInner get() = status.isInner
 inline val FirRegularClass.isCompanion get() = status.isCompanion
 inline val FirRegularClass.isData get() = status.isData
 inline val FirRegularClass.isInline get() = status.isInline
 inline val FirRegularClass.isFun get() = status.isFun
+
 inline val FirMemberDeclaration.modality get() = status.modality
+inline val FirMemberDeclaration.isAbstract get() = status.modality == Modality.ABSTRACT
+inline val FirMemberDeclaration.isOpen get() = status.modality == Modality.OPEN
+
 inline val FirMemberDeclaration.visibility get() = status.visibility
 inline val FirMemberDeclaration.allowsToHaveFakeOverride: Boolean
     get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
+
 inline val FirMemberDeclaration.isActual get() = status.isActual
 inline val FirMemberDeclaration.isExpect get() = status.isExpect
 inline val FirMemberDeclaration.isInner get() = status.isInner
@@ -64,6 +74,10 @@ inline val FirPropertyAccessor.modality get() = status.modality
 inline val FirPropertyAccessor.visibility get() = status.visibility
 inline val FirPropertyAccessor.isInline get() = status.isInline
 inline val FirPropertyAccessor.isExternal get() = status.isExternal
+inline val FirPropertyAccessor.hasBody get() = body != null
+
+inline val FirProperty.allowsToHaveFakeOverride: Boolean
+    get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
 inline val FirPropertyAccessor.allowsToHaveFakeOverride: Boolean
     get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
 

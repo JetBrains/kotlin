@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.parcelize
 
+import org.jetbrains.kotlin.backend.common.serialization.findPackage
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.parcelize.ParcelizeAnnotationChecker.Companion.DEPRECATED_RUNTIME_PACKAGE
 import org.jetbrains.kotlin.parcelize.diagnostic.ErrorsParcelize
 import org.jetbrains.kotlin.parcelize.serializers.ParcelSerializer
 import org.jetbrains.kotlin.parcelize.serializers.isParcelable
@@ -29,16 +31,17 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmFieldAnnotation
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 val ANDROID_PARCELABLE_CLASS_FQNAME = FqName("android.os.Parcelable")
 val ANDROID_PARCELABLE_CREATOR_CLASS_FQNAME = FqName("android.os.Parcelable.Creator")
 val ANDROID_PARCEL_CLASS_FQNAME = FqName("android.os.Parcel")
 
-class ParcelizeDeclarationChecker : DeclarationChecker {
+open class ParcelizeDeclarationChecker : DeclarationChecker {
     private companion object {
         private val IGNORED_ON_PARCEL_FQ_NAMES = listOf(
             FqName(kotlinx.parcelize.IgnoredOnParcel::class.java.canonicalName),
-            FqName(kotlinx.android.parcel.IgnoredOnParcel::class.java.canonicalName)
+            @Suppress("DEPRECATION") FqName(kotlinx.android.parcel.IgnoredOnParcel::class.java.canonicalName)
         )
     }
 
@@ -48,6 +51,7 @@ class ParcelizeDeclarationChecker : DeclarationChecker {
         when (descriptor) {
             is ClassDescriptor -> {
                 checkParcelableClass(descriptor, declaration, trace, trace.bindingContext, context.languageVersionSettings)
+                checkParcelerClass(descriptor, declaration, trace)
             }
             is SimpleFunctionDescriptor -> {
                 val containingClass = descriptor.containingDeclaration as? ClassDescriptor
@@ -112,6 +116,24 @@ class ParcelizeDeclarationChecker : DeclarationChecker {
             if (outerClass != null && outerClass.isParcelize) {
                 val reportElement = declaration.nameIdentifier ?: declaration
                 diagnosticHolder.report(ErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED.on(reportElement))
+            }
+        }
+    }
+
+    private fun checkParcelerClass(
+        descriptor: ClassDescriptor,
+        declaration: KtDeclaration,
+        diagnosticHolder: DiagnosticSink,
+    ) {
+        if (!descriptor.isCompanionObject || declaration !is KtObjectDeclaration) {
+            return
+        }
+
+        for (type in descriptor.defaultType.supertypes()) {
+            if (type.constructor.declarationDescriptor?.fqNameSafe == OLD_PARCELER_FQNAME) {
+                val reportElement = declaration.nameIdentifier ?: declaration.getObjectKeyword() ?: declaration
+                diagnosticHolder.report(ErrorsParcelize.DEPRECATED_PARCELER.on(reportElement))
+                break
             }
         }
     }
@@ -190,7 +212,8 @@ class ParcelizeDeclarationChecker : DeclarationChecker {
             bindingContext,
             ClassBuilderMode.FULL,
             descriptor.module.name.asString(),
-            languageVersionSettings
+            languageVersionSettings,
+            useOldInlineClassesManglingScheme = false
         )
 
         for (parameter in primaryConstructor?.valueParameters.orEmpty<KtParameter>()) {

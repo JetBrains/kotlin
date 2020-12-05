@@ -16,11 +16,11 @@ FILE: toLocalVariables.kt
             }
             else ->  {
                 lval yCopy: R|() -> kotlin/Unit| = R|<local>/y|
-                R|<local>/yCopy|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+                R|<local>/yCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
             }
         }
 
         lval zCopy: R|() -> kotlin/Unit|
         R|<local>/zCopy| = R|<local>/z|
-        R|<local>/zCopy|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/zCopy|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }

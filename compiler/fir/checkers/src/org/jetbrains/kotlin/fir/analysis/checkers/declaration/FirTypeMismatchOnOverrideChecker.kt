@@ -36,7 +36,8 @@ object FirTypeMismatchOnOverrideChecker : FirRegularClassChecker() {
 
         val firTypeScope = declaration.unsubstitutedScope(
             context.sessionHolder.session,
-            context.sessionHolder.scopeSession
+            context.sessionHolder.scopeSession,
+            withForcedTypeCalculator = true
         )
 
         for (it in declaration.declarations) {

@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.checkers
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.DefaultCodegenFactory
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
-import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
@@ -36,12 +32,7 @@ abstract class AbstractDiagnosticsTestWithJvmBackend : AbstractDiagnosticsTest()
             )
 
         val generationState =
-            GenerationState.Builder(
-                project, ClassBuilderFactories.TEST, analysisResult.moduleDescriptor, analysisResult.bindingContext,
-                files, environment.configuration
-            ).setupGenerationState().build()
-
-        KotlinCodegenFacade.compileCorrectFiles(generationState)
+            GenerationUtils.generateFiles(project, files, environment.configuration, ClassBuilderFactories.TEST, analysisResult)
 
         for (diagnostic in generationState.collectedExtraJvmDiagnostics.all()) {
             moduleTrace.report(diagnostic)
@@ -51,23 +42,12 @@ abstract class AbstractDiagnosticsTestWithJvmBackend : AbstractDiagnosticsTest()
 
     // DO NOT use FE-based diagnostics for JVM signature conflict
     override fun shouldSkipJvmSignatureDiagnostics(groupedByModule: Map<TestModule?, List<TestFile>>): Boolean = true
-
-    protected abstract fun GenerationState.Builder.setupGenerationState(): GenerationState.Builder
 }
 
-abstract class AbstractDiagnosticsTestWithOldJvmBackend : AbstractDiagnosticsTestWithJvmBackend() {
-
-    override fun GenerationState.Builder.setupGenerationState(): GenerationState.Builder =
-        codegenFactory(DefaultCodegenFactory).isIrBackend(false)
-}
+abstract class AbstractDiagnosticsTestWithOldJvmBackend : AbstractDiagnosticsTestWithJvmBackend()
 
 abstract class AbstractDiagnosticsTestWithJvmIrBackend : AbstractDiagnosticsTestWithJvmBackend() {
-
-    override fun GenerationState.Builder.setupGenerationState(): GenerationState.Builder =
-        codegenFactory(
-            JvmIrCodegenFactory(
-                environment.configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
-                    ?: PhaseConfig(jvmPhases)
-            )
-        ).isIrBackend(true)
+    override fun updateConfiguration(configuration: CompilerConfiguration) {
+        configuration.put(JVMConfigurationKeys.IR, true)
+    }
 }

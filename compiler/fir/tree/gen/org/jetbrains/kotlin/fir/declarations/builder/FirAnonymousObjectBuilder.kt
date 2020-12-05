@@ -39,6 +39,7 @@ class FirAnonymousObjectBuilder : FirClassBuilder, FirAnnotationContainerBuilder
     override lateinit var session: FirSession
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
     override lateinit var origin: FirDeclarationOrigin
+    override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
     override lateinit var classKind: ClassKind
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
@@ -54,6 +55,7 @@ class FirAnonymousObjectBuilder : FirClassBuilder, FirAnnotationContainerBuilder
             session,
             resolvePhase,
             origin,
+            attributes,
             typeParameters,
             classKind,
             superTypeRefs,

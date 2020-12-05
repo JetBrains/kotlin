@@ -2,12 +2,12 @@ FILE: invokeOfLambdaWithReceiver.kt
     public abstract interface A : R|kotlin/Any| {
     }
     public final fun test(a: R|A|, block: R|A.() -> kotlin/Int|): R|kotlin/Unit| {
-        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(R|<local>/a|)
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(R|<local>/a|)
     }
     public abstract interface B : R|kotlin/Any| {
     }
     public final fun R|B|.otherTest(block: R|B.() -> kotlin/Int|): R|kotlin/Unit| {
-        R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(this@R|/otherTest|)
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(this@R|/otherTest|)
     }
     public final class C : R|kotlin/Any| {
         public constructor(): R|C| {
@@ -15,7 +15,7 @@ FILE: invokeOfLambdaWithReceiver.kt
         }
 
         public final fun anotherTest(block: R|C.() -> kotlin/Int|): R|kotlin/Unit| {
-            R|<local>/block|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(this@R|/C|)
+            R|<local>/block|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Int|>|(this@R|/C|)
         }
 
     }

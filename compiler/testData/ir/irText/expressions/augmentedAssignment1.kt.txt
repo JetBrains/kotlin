@@ -1,0 +1,32 @@
+var p: Int
+  field = 0
+  get
+  set
+
+fun testVariable() {
+  var x: Int = 0
+  x = x.plus(other = 1)
+  x = x.minus(other = 2)
+  x = x.times(other = 3)
+  x = x.div(other = 4)
+  x = x.rem(other = 5)
+}
+
+fun testProperty() {
+  { // BLOCK
+    <set-p>(<set-?> = <get-p>().plus(other = 1))
+  }
+  { // BLOCK
+    <set-p>(<set-?> = <get-p>().minus(other = 2))
+  }
+  { // BLOCK
+    <set-p>(<set-?> = <get-p>().times(other = 3))
+  }
+  { // BLOCK
+    <set-p>(<set-?> = <get-p>().div(other = 4))
+  }
+  { // BLOCK
+    <set-p>(<set-?> = <get-p>().rem(other = 5))
+  }
+}
+

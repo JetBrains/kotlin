@@ -9,12 +9,14 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -88,11 +90,26 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             else -> error("Invalid type reference $this")
         }
         return if (isVararg) {
-            "kotlin.Array<out $rendered>"
+            rendered.asArrayType()
         } else {
             rendered
         }
     }
+
+    private fun String.asArrayType(): String {
+        classIdToName[this]?.let { return it }
+        return "kotlin.Array<out $this>"
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private val classIdToName: Map<String, String> = buildList {
+        StandardClassIds.primitiveArrayTypeByElementType.mapTo(this) { (classId, arrayClassId) ->
+            classId.asString().replace('/', '.') to arrayClassId.asString().replace('/', '.')
+        }
+        StandardClassIds.unsignedArrayTypeByElementType.mapTo(this) { (classId, arrayClassId) ->
+            classId.asString().replace('/', '.') to arrayClassId.asString().replace('/', '.')
+        }
+    }.toMap()
 
     private fun FirTypeProjection.renderTypeAsKotlinType() = when (this) {
         is FirStarProjection -> "*"
@@ -116,7 +133,7 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
 
     private fun KtTypeReference.toKotlinTypReference(session: FirSession): FirTypeRef {
         // Maybe resolve all types here to not to work with FirTypeRef directly
-        return RawFirBuilder(session, DummyScopeProvider, stubMode = true).buildTypeReference(this)
+        return RawFirBuilder(session, DummyScopeProvider, RawFirBuilderMode.STUBS).buildTypeReference(this)
     }
 
     private fun ConeKotlinType.renderTypeAsKotlinType(): String {

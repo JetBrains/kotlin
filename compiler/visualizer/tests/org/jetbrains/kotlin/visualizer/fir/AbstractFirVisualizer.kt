@@ -33,7 +33,7 @@ abstract class AbstractFirVisualizer : AbstractVisualizer() {
         val session = createSession(environment, scope)
 
         val firProvider = (session.firProvider as FirProviderImpl)
-        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, stubMode = false)
+        val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
 
         val transformer = FirTotalResolveProcessor(session)
         val firFiles = ktFiles.map {

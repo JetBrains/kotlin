@@ -36,8 +36,8 @@ class NoGenericTest {
     fun B.extensionFun(): A = A()
 
     fun test_1() {
-        val extensionValRef = <!UNRESOLVED_REFERENCE!>B::extensionVal<!>
-        val extensionFunRef = <!UNRESOLVED_REFERENCE!>B::extensionFun<!>
+        val extensionValRef = B::extensionVal
+        val extensionFunRef = B::extensionFun
     }
 
     fun test_2() {

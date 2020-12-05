@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
@@ -58,15 +58,21 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
 
     fun KtDeclaration.getReturnKtType(): KtType = typeProvider.getReturnTypeForKtDeclaration(this)
 
+    fun KtType.isEqualTo(other: KtType): Boolean = typeProvider.isEqualTo(this, other)
+
+    fun KtType.isSubTypeOf(superType: KtType): Boolean = typeProvider.isSubTypeOf(this, superType)
+
+    fun KtType.isBuiltInFunctionalType(): Boolean = typeProvider.isBuiltinFunctionalType(this)
+
     fun KtElement.getDiagnostics(): Collection<Diagnostic> = diagnosticProvider.getDiagnosticsForElement(this)
 
     fun KtFile.collectDiagnosticsForFile(): Collection<Diagnostic> = diagnosticProvider.collectDiagnosticsForFile(this)
 
     fun KtSymbolWithKind.getContainingSymbol(): KtSymbolWithKind? = containingDeclarationProvider.getContainingDeclaration(this)
 
-    fun KtClassOrObjectSymbol.getMemberScope(): KtMemberScope = scopeProvider.getMemberScope(this)
+    fun KtSymbolWithDeclarations.getMemberScope(): KtMemberScope = scopeProvider.getMemberScope(this)
 
-    fun KtClassOrObjectSymbol.getDeclaredMemberScope(): KtDeclaredMemberScope = scopeProvider.getDeclaredMemberScope(this)
+    fun KtSymbolWithDeclarations.getDeclaredMemberScope(): KtDeclaredMemberScope = scopeProvider.getDeclaredMemberScope(this)
 
     fun KtPackageSymbol.getPackageScope(): KtPackageScope = scopeProvider.getPackageScope(this)
 
@@ -96,6 +102,8 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
     fun KtLambdaExpression.getAnonymousFunctionSymbol(): KtAnonymousFunctionSymbol = symbolProvider.getAnonymousFunctionSymbol(this)
 
     fun KtProperty.getVariableSymbol(): KtVariableSymbol = symbolProvider.getVariableSymbol(this)
+
+    fun KtObjectLiteralExpression.getAnonymousObjectSymbol(): KtAnonymousObjectSymbol = symbolProvider.getAnonymousObjectSymbol(this)
 
     fun KtClassOrObject.getClassOrObjectSymbol(): KtClassOrObjectSymbol = symbolProvider.getClassOrObjectSymbol(this)
 

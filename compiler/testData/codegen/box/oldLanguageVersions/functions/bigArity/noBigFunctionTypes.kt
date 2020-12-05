@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: BIG_ARITY
 // !LANGUAGE: -FunctionTypesWithBigArity
 
 // This test does not make sense for JVM because a diagnostic is reported when function types with big arity are not available

@@ -1,5 +1,6 @@
 // ERROR_POLICY: SEMANTIC
 
+// MODULE: lib
 // FILE: t.kt
 
 fun <reified T> bar(t: T) = t
@@ -12,6 +13,7 @@ fun foo(): String {
 
 fun dec() { qux() }
 
+// MODULE: main(lib)
 // FILE: b.kt
 
 fun box(): String {

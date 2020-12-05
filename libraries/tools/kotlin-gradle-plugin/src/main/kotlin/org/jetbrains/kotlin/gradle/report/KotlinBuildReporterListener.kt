@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.report
 
-import com.intellij.util.text.DateFormatUtil.formatTime
 import org.gradle.api.invocation.Gradle
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener

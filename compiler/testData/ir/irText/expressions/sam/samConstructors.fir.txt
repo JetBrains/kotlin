@@ -33,4 +33,5 @@ FILE fqName:<root> fileName:/samConstructors.kt
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (a: kotlin.Int?, b: kotlin.Int?): kotlin.Int declared in <root>.test4'
                   CALL 'public final fun minus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MINUS
                     $this: GET_VAR 'a: kotlin.Int? declared in <root>.test4.<anonymous>' type=kotlin.Int? origin=null
-                    other: GET_VAR 'b: kotlin.Int? declared in <root>.test4.<anonymous>' type=kotlin.Int? origin=null
+                    other: TYPE_OP type=kotlin.Int origin=IMPLICIT_NOTNULL typeOperand=kotlin.Int
+                      GET_VAR 'b: kotlin.Int? declared in <root>.test4.<anonymous>' type=kotlin.Int? origin=null

@@ -34,6 +34,12 @@ dependencies {
     fatJarContents(intellijDep()) { includeJars("jna-platform") }
     fatJarContentsStripServices(jpsStandalone()) { includeJars("jps-model") }
     fatJarContentsStripMetadata(intellijDep()) { includeJars("oro", "jdom", "log4j", rootProject = rootProject) }
+
+    if (Platform.P202()) {
+        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
+    } else if (Platform.P203.orHigher()) {
+        fatJarContents(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-3") }
+    }
 }
 
 val jar: Jar by tasks

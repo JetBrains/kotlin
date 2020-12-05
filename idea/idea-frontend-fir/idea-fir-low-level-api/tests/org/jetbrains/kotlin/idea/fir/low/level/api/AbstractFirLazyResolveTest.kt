@@ -13,13 +13,15 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
+import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFir
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.getResolveState
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.jsonUtils.getString
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
@@ -66,8 +68,8 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
             else -> elementToResolve
         } as KtExpression
 
-        val resolveState = LowLevelFirApiFacade.getResolveStateFor(expressionToResolve)
-        val resultsDump = when (val firElement = resolveState.getOrBuildFirFor(expressionToResolve)) {
+        val resolveState = expressionToResolve.getResolveState()
+        val resultsDump = when (val firElement = expressionToResolve.getOrBuildFir(resolveState)) {
             is FirResolvedImport -> buildString {
                 append("import ")
                 append(firElement.packageFqName)
@@ -82,7 +84,7 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
                     append(name)
                 }
             }
-            else -> firElement.render()
+            else -> firElement.render(FirRenderer.RenderMode.WithResolvePhases)
         }
         KotlinTestUtils.assertEqualsToFile(File(testFile.parent, "results.txt"), resultsDump)
 
@@ -106,7 +108,7 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
             val session = resolveState.rootModuleSession
             val firProvider = session.firIdeProvider
             val firFile = firProvider.cache.getCachedFirFile(psiFile) ?: continue
-            KotlinTestUtils.assertEqualsToFile(File(expectedTxtPath(file)), firFile.render())
+            KotlinTestUtils.assertEqualsToFile(File(expectedTxtPath(file)), firFile.render(FirRenderer.RenderMode.WithResolvePhases))
         }
     }
 }

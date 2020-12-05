@@ -1,10 +1,11 @@
 // !LANGUAGE: +InlineClasses
 // !DIAGNOSTICS: -UNUSED_VARIABLE
+// FIR_IDENTICAL
 
 inline class Foo(val x: Int) {
-    <!INLINE_CLASS_WITH_INITIALIZER!>init<!> {}
+    init {}
 
-    <!INLINE_CLASS_WITH_INITIALIZER!>init<!> {
+    init {
         val f = 1
     }
 }

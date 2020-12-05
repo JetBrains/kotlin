@@ -8,17 +8,15 @@ package org.jetbrains.kotlin.ir.builders.declarations
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyProperty
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.Variance
 
 @PublishedApi
@@ -77,9 +75,7 @@ fun IrClass.addField(fieldName: String, fieldType: IrType, fieldVisibility: Desc
 
 @PublishedApi
 internal fun IrFactory.buildProperty(builder: IrPropertyBuilder): IrProperty = with(builder) {
-    val wrappedDescriptor = if (originalDeclaration is IrLazyProperty || containerSource != null)
-        WrappedPropertyDescriptorWithContainerSource()
-    else WrappedPropertyDescriptor()
+    val wrappedDescriptor = WrappedPropertyDescriptor()
 
     createProperty(
         startOffset, endOffset, origin,
@@ -117,9 +113,7 @@ inline fun IrProperty.addGetter(builder: IrFunctionBuilder.() -> Unit = {}): IrS
 
 @PublishedApi
 internal fun IrFactory.buildFunction(builder: IrFunctionBuilder): IrSimpleFunction = with(builder) {
-    val wrappedDescriptor = if (originalDeclaration is IrLazyFunction || containerSource != null)
-        WrappedFunctionDescriptorWithContainerSource()
-    else WrappedSimpleFunctionDescriptor()
+    val wrappedDescriptor = WrappedSimpleFunctionDescriptor()
     createFunction(
         startOffset, endOffset, origin,
         IrSimpleFunctionSymbolImpl(wrappedDescriptor),
@@ -169,9 +163,13 @@ fun IrClass.addFunction(
         isStatic: Boolean = false,
         isSuspend: Boolean = false,
         isFakeOverride: Boolean = false,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED
+        origin: IrDeclarationOrigin = IrDeclarationOrigin.DEFINED,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET
 ): IrSimpleFunction =
     addFunction {
+        this.startOffset = startOffset
+        this.endOffset = endOffset
         this.name = Name.identifier(name)
         this.returnType = returnType
         this.modality = modality
@@ -213,7 +211,8 @@ fun <D> buildReceiverParameter(
     parent.factory.createValueParameter(
         startOffset, endOffset, origin,
         IrValueParameterSymbolImpl(wrappedDescriptor),
-        RECEIVER_PARAMETER_NAME, -1, type, null, isCrossinline = false, isNoinline = false
+        RECEIVER_PARAMETER_NAME, -1, type, null, isCrossinline = false, isNoinline = false,
+        isHidden = false, isAssignable = false
     ).also {
         wrappedDescriptor.bind(it)
         it.parent = parent
@@ -227,7 +226,7 @@ internal fun IrFactory.buildValueParameter(builder: IrValueParameterBuilder, par
         return createValueParameter(
             startOffset, endOffset, origin,
             IrValueParameterSymbolImpl(wrappedDescriptor),
-            name, index, type, varargElementType, isCrossInline, isNoinline, isHidden
+            name, index, type, varargElementType, isCrossInline, isNoinline, isHidden, isAssignable
         ).also {
             wrappedDescriptor.bind(it)
             it.parent = parent

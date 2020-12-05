@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.load.kotlin.incremental
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.PackageFragmentProviderOptimized
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
@@ -49,7 +49,7 @@ class IncrementalPackageFragmentProvider(
     val incrementalCache: IncrementalCache,
     val target: TargetId,
     private val kotlinClassFinder: KotlinClassFinder
-) : PackageFragmentProvider {
+) : PackageFragmentProviderOptimized {
     private val fqNameToPackageFragment =
         PackagePartClassUtils.getFilesWithCallables(sourceFiles)
             .mapTo(hashSetOf()) { it.packageFqName }

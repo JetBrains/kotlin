@@ -117,13 +117,13 @@ open class FirEffectiveVisibilityResolverImpl(private val session: FirSession) :
     }
 
     private fun FirDeclaration.getParentClassId(): ClassId? = when (this) {
-        is FirCallableMemberDeclaration<*> -> this.symbol.callableId.classId
+        is FirCallableMemberDeclaration<*> -> this.containingClass()?.classId
         is FirClassLikeDeclaration<*> -> this.symbol.classId.outerClassId
         else -> null
     }
 
     private fun FirDeclaration.getClassId(): ClassId? = when (this) {
-        is FirCallableMemberDeclaration<*> -> this.symbol.callableId.classId
+        is FirCallableMemberDeclaration<*> -> this.containingClass()?.classId
         is FirClassLikeDeclaration<*> -> this.symbol.classId
         else -> null
     }

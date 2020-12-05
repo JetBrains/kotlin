@@ -1,0 +1,7 @@
+fun foo() {
+}
+
+fun test(): ErrorType {
+  return CHECK_NOT_NULL<KFunction0<Unit>>(arg0 = ::foo)
+}
+

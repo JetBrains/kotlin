@@ -1,0 +1,45 @@
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo(): C {
+    return <this>
+  }
+
+  fun bar(): C? {
+    return <this>
+  }
+
+}
+
+fun test(nc: C?): C? {
+  return { // BLOCK
+    val tmp3_safe_receiver: C? = { // BLOCK
+      val tmp2_safe_receiver: C? = { // BLOCK
+        val tmp1_safe_receiver: C? = { // BLOCK
+          val tmp0_safe_receiver: C? = nc
+          when {
+            EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+            else -> tmp0_safe_receiver.foo()
+          }
+        }
+        when {
+          EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
+          else -> tmp1_safe_receiver.bar()
+        }
+      }
+      when {
+        EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
+        else -> tmp2_safe_receiver.foo()
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp3_safe_receiver, arg1 = null) -> null
+      else -> tmp3_safe_receiver.foo()
+    }
+  }
+}
+

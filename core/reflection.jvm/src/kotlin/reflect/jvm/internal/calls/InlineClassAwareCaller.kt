@@ -76,7 +76,8 @@ internal class InlineClassAwareCaller<out M : Member?>(
             else -> 0
         }
 
-        val extraArgumentsTail = if (isDefault) 2 else 0
+        val extraArgumentsTail = (if (isDefault) 2 else 0) +
+                (if (descriptor is FunctionDescriptor && descriptor.isSuspend) 1 else 0)
 
         val kotlinParameterTypes: List<KotlinType> = ArrayList<KotlinType>().also { kotlinParameterTypes ->
             val extensionReceiverType = descriptor.extensionReceiverParameter?.type
@@ -89,7 +90,7 @@ internal class InlineClassAwareCaller<out M : Member?>(
                 }
             } else {
                 val containingDeclaration = descriptor.containingDeclaration
-                if (containingDeclaration is ClassDescriptor && containingDeclaration.isInline) {
+                if (containingDeclaration is ClassDescriptor && containingDeclaration.isInlineClass()) {
                     kotlinParameterTypes.add(containingDeclaration.defaultType)
                 }
             }
@@ -179,7 +180,7 @@ internal fun KotlinType.toInlineClass(): Class<*>? =
     constructor.declarationDescriptor.toInlineClass()
 
 internal fun DeclarationDescriptor?.toInlineClass(): Class<*>? =
-    if (this is ClassDescriptor && isInline)
+    if (this is ClassDescriptor && isInlineClass())
         toJavaClass() ?: throw KotlinReflectionInternalError("Class object for the class $name cannot be found (classId=$classId)")
     else
         null

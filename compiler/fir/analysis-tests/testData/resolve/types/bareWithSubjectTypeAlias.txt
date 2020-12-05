@@ -32,7 +32,7 @@ FILE: bareWithSubjectTypeAlias.kt
     public final fun foo(): R|kotlin/Unit| {
         when (lval a: R|TA| = R|/bar|()) {
             ($subj$ is R|A.B<kotlin/CharSequence>|) ->  {
-                R|<local>/a|.R|FakeOverride</A.B.x: R|kotlin/CharSequence|>|.R|kotlin/CharSequence.length|
+                R|<local>/a|.R|SubstitutionOverride</A.B.x: R|kotlin/CharSequence|>|.R|kotlin/CharSequence.length|
             }
         }
 

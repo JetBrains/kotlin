@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.report
 
+import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
+
 internal class TaskExecutionResult(
-    val executionStrategy: String,
-    val icLogLines: List<String>?
+    val buildMetrics: BuildMetrics,
+    val icLogLines: List<String> = emptyList()
 )

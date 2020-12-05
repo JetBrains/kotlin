@@ -40,3 +40,19 @@ expect fun functionWithTypeParametersInReturnType12(): Box<Fox>
 expect fun <T> functionWithUnsubstitutedTypeParametersInReturnType1(): T
 expect fun <T> functionWithUnsubstitutedTypeParametersInReturnType2(): T
 expect fun <T> functionWithUnsubstitutedTypeParametersInReturnType8(): Box<T>
+
+expect class Outer<A>() {
+    class Nested<B>() {
+        class Nested<C>()
+        inner class Inner<D>()
+    }
+    inner class Inner<E>() {
+        inner class Inner<F>()
+    }
+}
+
+expect fun <T> returnOuter(): Outer<T>
+expect fun <T> returnOuterNested(): Outer.Nested<T>
+expect fun <T> returnOuterNestedNested(): Outer.Nested.Nested<T>
+expect fun <T, R> returnOuterInner(): Outer<T>.Inner<R>
+expect fun <T, R, S> returnOuterInnerInner(): Outer<T>.Inner<R>.Inner<S>

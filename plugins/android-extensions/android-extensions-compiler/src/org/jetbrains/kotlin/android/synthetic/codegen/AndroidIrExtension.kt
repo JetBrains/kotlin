@@ -220,7 +220,7 @@ private fun FqName.child(name: String) = child(Name.identifier(name))
 
 @ObsoleteDescriptorBasedAPI
 private fun IrSimpleFunction.callWithRanges(source: IrExpression) =
-    IrCallImpl(source.startOffset, source.endOffset, returnType, symbol)
+    IrCallImpl.fromSymbolDescriptor(source.startOffset, source.endOffset, returnType, symbol)
 
 private val AndroidContainerType.fqName: FqName
     get() = FqName(internalClassName.replace("/", "."))
@@ -244,7 +244,8 @@ private fun TranslationPluginContext.declareParameterStub(parameterDescriptor: P
     val varargElementType = parameterDescriptor.varargElementType?.let { typeTranslator.translateType(it) }
     return irFactory.createValueParameter(
         UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, symbol, parameterDescriptor.name,
-        parameterDescriptor.indexOrMinusOne, type, varargElementType, parameterDescriptor.isCrossinline, parameterDescriptor.isNoinline
+        parameterDescriptor.indexOrMinusOne, type, varargElementType, parameterDescriptor.isCrossinline,
+        parameterDescriptor.isNoinline, isHidden = false, isAssignable = false
     )
 }
 

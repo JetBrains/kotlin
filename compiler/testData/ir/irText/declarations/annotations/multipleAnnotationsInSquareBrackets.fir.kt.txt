@@ -1,0 +1,20 @@
+annotation class A1 : Annotation {
+  constructor() /* primary */
+
+}
+
+annotation class A2 : Annotation {
+  constructor() /* primary */
+
+}
+
+annotation class A3 : Annotation {
+  constructor() /* primary */
+
+}
+
+@A1
+@A2
+@A3
+fun test() {
+}

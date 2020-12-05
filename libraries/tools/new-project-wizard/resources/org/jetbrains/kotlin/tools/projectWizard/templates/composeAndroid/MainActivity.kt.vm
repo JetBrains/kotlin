@@ -1,0 +1,20 @@
+#if ($package)
+package ${package}
+#end
+#if ($sharedPackage)
+import ${sharedPackage}.App
+#end
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.setContent
+
+class MainActivity : AppCompatActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+#if ($sharedPackage)
+        setContent {
+            App()
+        }
+#end
+    }
+}

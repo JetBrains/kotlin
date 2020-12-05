@@ -1,5 +1,5 @@
 public open class MethodWithFunctionTypes : R|kotlin/Any| {
-    public open fun foo(f: R|ft<kotlin/Function1<ft<kotlin/String, kotlin/String?>!, ft<kotlin/String, kotlin/String?>!>, kotlin/Function1<ft<kotlin/String, kotlin/String?>!, ft<kotlin/String, kotlin/String?>!>?>!|): R|ft<kotlin/Function0<ft<kotlin/String, kotlin/String?>!>, kotlin/Function0<ft<kotlin/String, kotlin/String?>!>?>!|
+    public open fun foo(f: R|ft<@FlexibleNullability kotlin/Function1<ft<@FlexibleNullability kotlin/String, kotlin/String?>!, ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, kotlin/Function1<ft<@FlexibleNullability kotlin/String, kotlin/String?>!, ft<@FlexibleNullability kotlin/String, kotlin/String?>!>?>!|): R|ft<@FlexibleNullability kotlin/Function0<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>, kotlin/Function0<ft<@FlexibleNullability kotlin/String, kotlin/String?>!>?>!|
 
     public constructor(): R|test/MethodWithFunctionTypes|
 

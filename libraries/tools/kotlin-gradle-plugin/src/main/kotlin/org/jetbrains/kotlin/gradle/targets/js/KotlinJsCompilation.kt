@@ -8,15 +8,19 @@
 // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import groovy.lang.Closure
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.util.ConfigureUtil
 import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.targets.js.ir.JsBinary
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJson
@@ -27,6 +31,13 @@ open class KotlinJsCompilation(
     target: KotlinTarget,
     name: String
 ) : AbstractKotlinCompilationToRunnableFiles<KotlinJsOptions>(target, name), KotlinCompilationWithResources<KotlinJsOptions> {
+
+    private val kotlinProperties = PropertiesProvider(target.project)
+
+    internal open val externalsOutputFormat: ExternalsOutputFormat
+        get() = kotlinProperties.externalsOutputFormat ?: defaultExternalsOutputFormat
+
+    internal open val defaultExternalsOutputFormat: ExternalsOutputFormat = ExternalsOutputFormat.SOURCE
 
     override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsImpl()
 
@@ -60,9 +71,14 @@ open class KotlinJsCompilation(
 
     internal val packageJsonHandlers = mutableListOf<PackageJson.() -> Unit>()
 
-    @Suppress("unused")
     fun packageJson(handler: PackageJson.() -> Unit) {
         packageJsonHandlers.add(handler)
+    }
+
+    fun packageJson(handler: Closure<*>) {
+        packageJson {
+            ConfigureUtil.configure(handler, this)
+        }
     }
 
     override val apiConfigurationName: String

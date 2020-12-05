@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
@@ -60,17 +61,19 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
         val (_, moduleDescriptor) = analyzer.analysisResult
 
         val destDir = checkNotNull(environment.destDir)
-        performSerialization(configuration, moduleDescriptor, destDir)
+        performSerialization(configuration, moduleDescriptor, destDir, environment.project)
     }
 
     private fun performSerialization(
         configuration: CompilerConfiguration,
         module: ModuleDescriptor,
-        destDir: File
+        destDir: File,
+        project: Project
     ) {
         val serializedMetadata: SerializedMetadata = KlibMetadataMonolithicSerializer(
             configuration.languageVersionSettings,
             metadataVersion,
+            project,
             skipExpects = false,
             includeOnlyModuleContent = true
         ).serializeModule(module)

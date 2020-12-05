@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem
 
 import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.gradle.GradleIR
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.BuildFilePrinter
 import org.jetbrains.kotlin.tools.projectWizard.plugins.printer.GradlePrinter
@@ -16,8 +17,26 @@ sealed class ModuleIR : IrsOwner, BuildSystemIR {
     abstract val template: Template?
     abstract val originalModule: Module
     abstract val sourcesets: List<SourcesetIR>
+
+    abstract override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): ModuleIR
 }
 
+data class FakeMultiplatformModuleIR(
+    override val name: String,
+    override val path: Path,
+    override val template: Template?,
+    val targets: List<MultiplatformModuleIR>,
+    override val originalModule: Module
+) : ModuleIR() {
+    override val sourcesets: List<SourcesetIR> = emptyList()
+    override val irs: PersistentList<BuildSystemIR> = persistentListOf()
+
+    override fun withReplacedIrs(irs: PersistentList<BuildSystemIR>): FakeMultiplatformModuleIR = this
+
+    override fun BuildFilePrinter.render() {
+        error("Should not be called")
+    }
+}
 
 data class SingleplatformModuleIR(
     override val name: String,

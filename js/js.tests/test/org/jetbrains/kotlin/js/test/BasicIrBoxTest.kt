@@ -93,7 +93,8 @@ abstract class BasicIrBoxTest(
         needsFullIrRuntime: Boolean,
         isMainModule: Boolean,
         skipDceDriven: Boolean,
-        splitPerModule: Boolean
+        splitPerModule: Boolean,
+        propertyLazyInitialization: Boolean,
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
 
@@ -143,7 +144,8 @@ abstract class BasicIrBoxTest(
                     generateFullJs = true,
                     generateDceJs = runIrDce,
                     es6mode = runEs6Mode,
-                    multiModule = splitPerModule || perModule
+                    multiModule = splitPerModule || perModule,
+                    propertyLazyInitialization = propertyLazyInitialization,
                 )
 
                 compiledModule.jsCode!!.writeTo(outputFile, config)
@@ -169,7 +171,8 @@ abstract class BasicIrBoxTest(
                     exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
                     dceDriven = true,
                     es6mode = runEs6Mode,
-                    multiModule = splitPerModule || perModule
+                    multiModule = splitPerModule || perModule,
+                    propertyLazyInitialization = propertyLazyInitialization
                 ).jsCode!!.writeTo(pirOutputFile, config)
             }
         } else {

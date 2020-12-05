@@ -13,11 +13,8 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.providers.firIdeProvider
 import org.jetbrains.kotlin.idea.fir.low.level.api.util.findSourceNonLocalFirDeclaration
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.hasExplicitTypeOrUnit
-import org.jetbrains.kotlin.idea.fir.low.level.api.util.replaceFirst
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import java.util.concurrent.ConcurrentHashMap
 
@@ -39,11 +36,12 @@ internal class FileStructure(
     }
 
     private fun getStructureElementForDeclaration(declaration: KtAnnotated): FileStructureElement {
+        @Suppress("CANNOT_CHECK_FOR_ERASED")
         val structureElement = structureElements.compute(declaration) { _, structureElement ->
             when {
                 structureElement == null -> createStructureElement(declaration)
-                structureElement is WithInBlockModificationFileStructureElement && !structureElement.isUpToDate() -> {
-                    createMappingsCopy(structureElement, declaration as KtNamedFunction)
+                structureElement is ReanalyzableStructureElement<KtDeclaration> && !structureElement.isUpToDate() -> {
+                    structureElement.reanalyze(declaration as KtDeclaration, moduleFileCache, firLazyDeclarationResolver, firIdeProvider)
                 }
                 else -> structureElement
             }
@@ -59,7 +57,7 @@ internal class FileStructure(
             ktFile.forEachDescendantOfType<KtDeclaration>(
                 canGoInside = { psi -> psi !is KtFunction && psi !is KtValVarKeywordOwner }
             ) { declaration ->
-                if (declaration.isStructureElementContainer()) {
+                if (FileStructureUtil.isStructureElementContainer(declaration)) {
                     add(declaration)
                 }
             }
@@ -70,70 +68,22 @@ internal class FileStructure(
         }
     }
 
-    private fun replaceFunction(from: FirSimpleFunction, to: FirSimpleFunction) {
-        val declarations = if (from.symbol.callableId.className == null) {
-            firFile.declarations as MutableList<FirDeclaration>
-        } else {
-            val classId = from.symbol.callableId.classId
-                ?: error("Class name should not be null for non-top-level & non-local declarations")
-            val containingClass = firIdeProvider.getFirClassifierByFqName(classId) as FirRegularClass
-            containingClass.declarations as MutableList<FirDeclaration>
-        }
-        declarations.replaceFirst(from, to)
-    }
-
-    private fun createMappingsCopy(
-        original: WithInBlockModificationFileStructureElement,
-        containerKtFunction: KtNamedFunction
-    ): WithInBlockModificationFileStructureElement {
-        val newFunction = firIdeProvider.buildFunctionWithBody(containerKtFunction) as FirSimpleFunction
-        val originalFunction = original.firSymbol.fir as FirSimpleFunction
-        replaceFunction(originalFunction, newFunction)
-
-        try {
-            firLazyDeclarationResolver.lazyResolveDeclaration(
-                newFunction,
-                moduleFileCache,
-                FirResolvePhase.BODY_RESOLVE,
-                checkPCE = true,
-                reresolveFile = true,
-            )
-            return WithInBlockModificationFileStructureElement(
-                firFile,
-                containerKtFunction,
-                newFunction.symbol,
-                containerKtFunction.modificationStamp,
-            )
-        } catch (e: Throwable) {
-            replaceFunction(newFunction, originalFunction)
-            throw e
-        }
-    }
 
     private fun createDeclarationStructure(declaration: KtDeclaration): FileStructureElement {
-        val firDeclaration = declaration.findSourceNonLocalFirDeclaration(firFileBuilder, firIdeProvider.symbolProvider, moduleFileCache)
+        val firDeclaration = declaration.findSourceNonLocalFirDeclaration(
+            firFileBuilder,
+            firIdeProvider.symbolProvider,
+            moduleFileCache,
+            firFile
+        )
         firLazyDeclarationResolver.lazyResolveDeclaration(
             firDeclaration,
             moduleFileCache,
             FirResolvePhase.BODY_RESOLVE,
             checkPCE = true
         )
-        return when {
-            declaration is KtNamedFunction && declaration.hasExplicitTypeOrUnit -> {
-                WithInBlockModificationFileStructureElement(
-                    firFile,
-                    declaration,
-                    (firDeclaration as FirSimpleFunction).symbol,
-                    declaration.modificationStamp,
-                )
-            }
-            else -> {
-                NonLocalDeclarationFileStructureElement(
-                    firFile,
-                    firDeclaration,
-                    declaration,
-                )
-            }
+        return moduleFileCache.firFileLockProvider.withReadLock(firFile) {
+            FileElementFactory.createFileStructureElement(firDeclaration, declaration, firFile)
         }
     }
 
@@ -145,7 +95,7 @@ internal class FileStructure(
                 FirResolvePhase.IMPORTS,
                 checkPCE = true
             )
-            FileWithoutDeclarationsFileStructureElement(
+            RootStructureElement(
                 firFile,
                 container,
             )
@@ -154,12 +104,3 @@ internal class FileStructure(
         else -> error("Invalid container $container")
     }
 }
-
-private fun KtDeclaration.isStructureElementContainer(): Boolean {
-    if (this !is KtClassOrObject && this !is KtDeclarationWithBody && this !is KtProperty && this !is KtTypeAlias) return false
-    if (this is KtEnumEntry) return false
-    if (containingClassOrObject is KtEnumEntry) return false
-    return !KtPsiUtil.isLocal(this)
-}
-
-

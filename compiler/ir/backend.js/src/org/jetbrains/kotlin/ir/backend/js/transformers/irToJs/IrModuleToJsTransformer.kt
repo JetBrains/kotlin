@@ -303,8 +303,10 @@ class IrModuleToJsTransformer(
             if (mainFunction.valueParameters.isNotEmpty()) JsArrayLiteral(mainArguments.map { JsStringLiteral(it) }) else null
 
         val continuation = if (mainFunction.isSuspend) {
-            val emptyContinuationField = backendContext.coroutineEmptyContinuation.owner.backingField!!
-            rootContext.getNameForField(emptyContinuationField).makeRef()
+            backendContext.coroutineEmptyContinuation.owner
+                .let { it.getter!! }
+                .let { rootContext.getNameForStaticFunction(it) }
+                .let { JsInvocation(it.makeRef()) }
         } else null
 
         return listOfNotNull(mainArgumentsArray, continuation)

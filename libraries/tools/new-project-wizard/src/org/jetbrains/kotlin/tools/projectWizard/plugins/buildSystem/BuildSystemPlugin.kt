@@ -43,19 +43,17 @@ abstract class BuildSystemPlugin(context: Context) : Plugin(context) {
             }
 
             validate { buildSystemType ->
-                if (!buildSystemType.isGradle
-                    && KotlinPlugin.projectKind.notRequiredSettingValue != ProjectKind.Singleplatform
-                ) {
-                    val projectKind = KotlinPlugin.projectKind.notRequiredSettingValue?.text?.capitalize()
-                        ?: KotlinNewProjectWizardBundle.message("project")
-                    ValidationResult.ValidationError(
+                val projectKind = KotlinPlugin.projectKind.notRequiredSettingValue ?: ProjectKind.Multiplatform
+                when (buildSystemType) {
+                    in projectKind.supportedBuildSystems -> ValidationResult.OK
+                    else -> ValidationResult.ValidationError(
                         KotlinNewProjectWizardBundle.message(
                             "plugin.buildsystem.setting.type.error.wrong.project.kind",
-                            projectKind,
+                            projectKind.shortName.capitalize(),
                             buildSystemType.fullText
                         )
                     )
-                } else ValidationResult.OK
+                }
             }
         }
 
@@ -171,6 +169,10 @@ enum class BuildSystemType(
 
     override val greyText: String?
         get() = null
+
+    companion object {
+        val ALL_GRADLE = setOf(GradleKotlinDsl, GradleGroovyDsl)
+    }
 }
 
 val BuildSystemType.isGradle

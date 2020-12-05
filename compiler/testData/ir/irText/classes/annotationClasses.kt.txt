@@ -1,0 +1,32 @@
+annotation class Test1 : Annotation {
+  constructor(x: Int) /* primary */ 
+  val x: Int
+    field = x
+    get
+
+}
+
+annotation class Test2 : Annotation {
+  constructor(x: Int = 0) /* primary */ 
+  val x: Int
+    field = x
+    get
+
+}
+
+annotation class Test3 : Annotation {
+  constructor(x: Test1) /* primary */ 
+  val x: Test1
+    field = x
+    get
+
+}
+
+annotation class Test4 : Annotation {
+  constructor(vararg xs: Int) /* primary */ 
+  val xs: IntArray
+    field = xs
+    get
+
+}
+

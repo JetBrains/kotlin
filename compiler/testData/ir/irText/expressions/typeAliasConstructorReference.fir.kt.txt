@@ -1,0 +1,36 @@
+typealias CA = C
+typealias NA = Nested
+class C {
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+object Host {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  class Nested {
+    constructor(x: Int) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+}
+
+val test1: Function1<Int, C>
+  field = C::<init>
+  get
+
+val test2: Function1<Int, Nested>
+  field = Nested::<init>
+  get

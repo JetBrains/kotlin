@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.generators.AnnotationGenerator
 import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -25,11 +26,14 @@ class Fir2IrComponentsStorage(
 ) : Fir2IrComponents {
     override lateinit var classifierStorage: Fir2IrClassifierStorage
     override lateinit var declarationStorage: Fir2IrDeclarationStorage
-    override lateinit var typeConverter: Fir2IrTypeConverter
-    override lateinit var callGenerator: CallAndReferenceGenerator
-    override lateinit var fakeOverrideGenerator: FakeOverrideGenerator
-    override lateinit var visibilityConverter: Fir2IrVisibilityConverter
+
     override lateinit var builtIns: Fir2IrBuiltIns
 
+    override lateinit var typeConverter: Fir2IrTypeConverter
     override val signatureComposer = FirBasedSignatureComposer(mangler)
+    override lateinit var visibilityConverter: Fir2IrVisibilityConverter
+
+    override lateinit var annotationGenerator: AnnotationGenerator
+    override lateinit var callGenerator: CallAndReferenceGenerator
+    override lateinit var fakeOverrideGenerator: FakeOverrideGenerator
 }

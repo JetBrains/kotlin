@@ -87,6 +87,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final boolean isExpect;
     private final boolean isActual;
     private final boolean isFun;
+    private final boolean isValue;
 
     private final Annotations annotations;
     private final Annotations danglingAnnotations;
@@ -160,6 +161,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                         containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isExpect();
 
         this.isFun = modifierList != null && PsiUtilsKt.hasFunModifier(modifierList);
+        this.isValue = modifierList != null && PsiUtilsKt.hasValueModifier(modifierList);
 
         // Annotation entries are taken from both own annotations (if any) and object literal annotations (if any)
         List<KtAnnotationEntry> annotationEntries = new ArrayList<>();
@@ -550,6 +552,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public boolean isFun() {
         return isFun;
+    }
+
+    @Override
+    public boolean isValue() {
+        return isValue;
     }
 
     @NotNull

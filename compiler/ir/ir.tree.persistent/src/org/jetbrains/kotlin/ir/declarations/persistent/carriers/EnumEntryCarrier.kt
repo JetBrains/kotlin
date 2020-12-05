@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 internal interface EnumEntryCarrier : DeclarationCarrier {
     var correspondingClassField: IrClass?
     var initializerExpressionField: IrExpressionBody?
-    
+
     override fun clone(): EnumEntryCarrier {
         return EnumEntryCarrierImpl(
             lastModified,

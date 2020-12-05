@@ -15,14 +15,14 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 
 class IrTypeAliasImpl(
-        override val startOffset: Int,
-        override val endOffset: Int,
-        override val symbol: IrTypeAliasSymbol,
-        override val name: Name,
-        override var visibility: DescriptorVisibility,
-        override var expandedType: IrType,
-        override val isActual: Boolean,
-        override var origin: IrDeclarationOrigin
+    override val startOffset: Int,
+    override val endOffset: Int,
+    override val symbol: IrTypeAliasSymbol,
+    override val name: Name,
+    override var visibility: DescriptorVisibility,
+    override var expandedType: IrType,
+    override val isActual: Boolean,
+    override var origin: IrDeclarationOrigin
 ) : IrTypeAlias() {
     init {
         symbol.bind(this)

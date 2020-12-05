@@ -12,19 +12,13 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
+abstract class EventOccurrencesRangeInfo<E : EventOccurrencesRangeInfo<E, K>, K : Any>(
+    map: PersistentMap<K, EventOccurrencesRange> = persistentMapOf()
+) : ControlFlowInfo<E, K, EventOccurrencesRange>(map) {
 
-class PropertyInitializationInfo(
-    map: PersistentMap<FirPropertySymbol, EventOccurrencesRange> = persistentMapOf()
-) : ControlFlowInfo<PropertyInitializationInfo, FirPropertySymbol, EventOccurrencesRange>(map) {
-    companion object {
-        val EMPTY = PropertyInitializationInfo()
-    }
-
-    override val constructor: (PersistentMap<FirPropertySymbol, EventOccurrencesRange>) -> PropertyInitializationInfo =
-        ::PropertyInitializationInfo
-
-    fun merge(other: PropertyInitializationInfo): PropertyInitializationInfo {
-        var result = this
+    override fun merge(other: E): E {
+        @Suppress("UNCHECKED_CAST")
+        var result = this as E
         for (symbol in keys.union(other.keys)) {
             val kind1 = this[symbol] ?: EventOccurrencesRange.ZERO
             val kind2 = other[symbol] ?: EventOccurrencesRange.ZERO
@@ -32,6 +26,20 @@ class PropertyInitializationInfo(
         }
         return result
     }
+}
+
+class PropertyInitializationInfo(
+    map: PersistentMap<FirPropertySymbol, EventOccurrencesRange> = persistentMapOf()
+) : EventOccurrencesRangeInfo<PropertyInitializationInfo, FirPropertySymbol>(map) {
+    companion object {
+        val EMPTY = PropertyInitializationInfo()
+    }
+
+    override val constructor: (PersistentMap<FirPropertySymbol, EventOccurrencesRange>) -> PropertyInitializationInfo =
+        ::PropertyInitializationInfo
+
+    override val empty: () -> PropertyInitializationInfo =
+        ::EMPTY
 }
 
 class LocalPropertyCollector private constructor() : ControlFlowGraphVisitorVoid() {
@@ -52,17 +60,35 @@ class LocalPropertyCollector private constructor() : ControlFlowGraphVisitorVoid
     }
 }
 
+class PathAwarePropertyInitializationInfo(
+    map: PersistentMap<EdgeLabel, PropertyInitializationInfo> = persistentMapOf()
+) : PathAwareControlFlowInfo<PathAwarePropertyInitializationInfo, PropertyInitializationInfo>(map) {
+    companion object {
+        val EMPTY = PathAwarePropertyInitializationInfo(persistentMapOf(NormalPath to PropertyInitializationInfo.EMPTY))
+    }
+
+    override val constructor: (PersistentMap<EdgeLabel, PropertyInitializationInfo>) -> PathAwarePropertyInitializationInfo =
+        ::PathAwarePropertyInitializationInfo
+
+    override val empty: () -> PathAwarePropertyInitializationInfo =
+        ::EMPTY
+}
+
 class PropertyInitializationInfoCollector(private val localProperties: Set<FirPropertySymbol>) :
-    ControlFlowGraphVisitor<PropertyInitializationInfo, Collection<PropertyInitializationInfo>>() {
-    override fun visitNode(node: CFGNode<*>, data: Collection<PropertyInitializationInfo>): PropertyInitializationInfo {
-        if (data.isEmpty()) return PropertyInitializationInfo.EMPTY
-        return data.reduce(PropertyInitializationInfo::merge)
+    ControlFlowGraphVisitor<PathAwarePropertyInitializationInfo, Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>>() {
+    override fun visitNode(
+        node: CFGNode<*>,
+        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
+    ): PathAwarePropertyInitializationInfo {
+        if (data.isEmpty()) return PathAwarePropertyInitializationInfo.EMPTY
+        return data.map { (label, info) -> info.applyLabel(node, label) }
+            .reduce(PathAwarePropertyInitializationInfo::merge)
     }
 
     override fun visitVariableAssignmentNode(
         node: VariableAssignmentNode,
-        data: Collection<PropertyInitializationInfo>
-    ): PropertyInitializationInfo {
+        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
+    ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
         val reference = node.fir.lValue as? FirResolvedNamedReference ?: return dataForNode
         val symbol = reference.resolvedSymbol as? FirPropertySymbol ?: return dataForNode
@@ -75,8 +101,8 @@ class PropertyInitializationInfoCollector(private val localProperties: Set<FirPr
 
     override fun visitVariableDeclarationNode(
         node: VariableDeclarationNode,
-        data: Collection<PropertyInitializationInfo>
-    ): PropertyInitializationInfo {
+        data: Collection<Pair<EdgeLabel, PathAwarePropertyInitializationInfo>>
+    ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
         return if (node.fir.initializer == null && node.fir.delegate == null) {
             dataForNode
@@ -86,18 +112,36 @@ class PropertyInitializationInfoCollector(private val localProperties: Set<FirPr
     }
 
     fun getData(graph: ControlFlowGraph) =
-        graph.collectDataForNode(
+        graph.collectPathAwareDataForNode(
             TraverseDirection.Forward,
-            PropertyInitializationInfo.EMPTY,
+            PathAwarePropertyInitializationInfo.EMPTY,
             this
         )
 
     private fun processVariableWithAssignment(
-        dataForNode: PropertyInitializationInfo,
+        dataForNode: PathAwarePropertyInitializationInfo,
         symbol: FirPropertySymbol
-    ): PropertyInitializationInfo {
-        val existingKind = dataForNode[symbol] ?: EventOccurrencesRange.ZERO
-        val kind = existingKind + EventOccurrencesRange.EXACTLY_ONCE
-        return dataForNode.put(symbol, kind)
+    ): PathAwarePropertyInitializationInfo {
+        assert(dataForNode.keys.isNotEmpty())
+        return addRange(dataForNode, symbol, EventOccurrencesRange.EXACTLY_ONCE, ::PathAwarePropertyInitializationInfo)
     }
+}
+
+internal fun <P : PathAwareControlFlowInfo<P, S>, S : ControlFlowInfo<S, K, EventOccurrencesRange>, K : Any> addRange(
+    info: P,
+    key: K,
+    range: EventOccurrencesRange,
+    constructor: (PersistentMap<EdgeLabel, S>) -> P
+): P {
+    var resultMap = persistentMapOf<EdgeLabel, S>()
+    // before: { |-> { p1 |-> PI1 }, l1 |-> { p2 |-> PI2 } }
+    for (label in info.keys) {
+        val dataPerLabel = info[label]!!
+        val existingKind = dataPerLabel[key] ?: EventOccurrencesRange.ZERO
+        val kind = existingKind + range
+        resultMap = resultMap.put(label, dataPerLabel.put(key, kind))
+    }
+    // after (if key is p1):
+    //   { |-> { p1 |-> PI1 + r }, l1 |-> { p1 |-> r, p2 |-> PI2 } }
+    return constructor(resultMap)
 }

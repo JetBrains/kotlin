@@ -134,13 +134,13 @@ fun IrClass.isSubclassOfFqName(fqName: String): Boolean {
 }
 
 inline fun IrBlockBuilder.forUntil(upperBound: IrExpression, loopBody: IrBlockBuilder.(IrValueDeclaration) -> Unit) {
-    val indexTemporary = irTemporaryVar(irInt(0))
+    val indexTemporary = irTemporary(irInt(0), isMutable = true)
     +irWhile().apply {
         condition = irNotEquals(irGet(indexTemporary), upperBound)
         body = irBlock {
             loopBody(indexTemporary)
             val inc = context.irBuiltIns.intClass.getSimpleFunction("inc")!!
-            +irSetVar(indexTemporary.symbol, irCall(inc).apply {
+            +irSet(indexTemporary.symbol, irCall(inc).apply {
                 dispatchReceiver = irGet(indexTemporary)
             })
         }

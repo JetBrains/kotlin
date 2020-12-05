@@ -54,6 +54,16 @@ public class BlackBoxCodegenTestForNoArgGenerated extends AbstractBlackBoxCodege
         runTest("plugins/noarg/noarg-cli/testData/box/kt18668.kt");
     }
 
+    @TestMetadata("localClassInInitiailzer.kt")
+    public void testLocalClassInInitiailzer() throws Exception {
+        runTest("plugins/noarg/noarg-cli/testData/box/localClassInInitiailzer.kt");
+    }
+
+    @TestMetadata("nestedClass.kt")
+    public void testNestedClass() throws Exception {
+        runTest("plugins/noarg/noarg-cli/testData/box/nestedClass.kt");
+    }
+
     @TestMetadata("simple.kt")
     public void testSimple() throws Exception {
         runTest("plugins/noarg/noarg-cli/testData/box/simple.kt");

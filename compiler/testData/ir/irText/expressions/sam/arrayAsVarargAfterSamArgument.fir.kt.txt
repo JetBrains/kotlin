@@ -1,0 +1,69 @@
+fun test(fn: Function0<Unit>, r: Runnable, arr: Array<String>) {
+  error("") /* ErrorCallExpression */local fun <anonymous>() {
+    return Unit
+  }
+; arr;
+  foo1(r = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> Runnable? */, strs = [*arr]) /*~> Unit */
+  error("") /* ErrorCallExpression */fn; arr;
+  foo1(r = fn /*-> Runnable? */, strs = [*arr]) /*~> Unit */
+  foo1(r = r, strs = [""]) /*~> Unit */
+  error("") /* ErrorCallExpression */fn; arr;
+  foo1(r = fn /*-> Runnable? */, strs = [*arr]) /*~> Unit */
+  foo1(r = r, strs = [*arr]) /*~> Unit */
+  val i1: ErrorType = error("") /* ErrorCallExpression */local fun <anonymous>() {
+    return Unit
+  }
+; arr;
+  val i2: Test = Test(r = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> Runnable? */, strs = [*arr])
+  val i3: ErrorType = error("") /* ErrorCallExpression */local fun <anonymous>() {
+    return Unit
+  }
+; local fun <anonymous>() {
+    return Unit
+  }
+; arr;
+  val i4: Test = Test(r1 = r, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> Runnable? */, strs = [""])
+  val i5: Test = Test(r1 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> Runnable? */, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> Runnable? */, strs = [*arr])
+  val i6: Test = Test(r1 = r, r2 = local fun <anonymous>() {
+    return Unit
+  }
+ /*-> Runnable? */, strs = [*arr])
+  error("") /* ErrorCallExpression */local fun <anonymous>() {
+    return Unit
+  }
+; local fun <anonymous>() {
+    return Unit
+  }
+; arr;
+  error("") /* ErrorCallExpression */r; local fun <anonymous>() {
+    return Unit
+  }
+; "";
+  error("") /* ErrorCallExpression */local fun <anonymous>() {
+    return Unit
+  }
+; local fun <anonymous>() {
+    return Unit
+  }
+; arr;
+  error("") /* ErrorCallExpression */r; local fun <anonymous>() {
+    return Unit
+  }
+; arr;
+}
+

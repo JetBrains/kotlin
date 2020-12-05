@@ -368,7 +368,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testTestTasks() {
         val files = configureByFiles()
-        importProject()
+        importProject(skipIndexing = true)
 
         checkProjectStructure(exhaustiveSourceSourceRootList = false) {
             module("project")

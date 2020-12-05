@@ -125,7 +125,8 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
                 descriptor, extension,
                 parentCodegen instanceof ImplementationBodyCodegen
                 ? ((ImplementationBodyCodegen) parentCodegen).serializer
-                : DescriptorSerializer.createTopLevel(extension)
+                : DescriptorSerializer.createTopLevel(extension),
+                state.getProject()
         );
 
         this.constructorCodegen = new ConstructorCodegen(
@@ -259,7 +260,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Override
     protected void generateErasedInlineClassIfNeeded() {
         if (!(myClass instanceof KtClass)) return;
-        if (!descriptor.isInline()) return;
+        if (!InlineClassesUtilsKt.isInlineClass(descriptor)) return;
 
         ClassContext erasedInlineClassContext = context.intoWrapperForErasedInlineClass(descriptor, state);
         new ErasedInlineClassBodyCodegen((KtClass) myClass, erasedInlineClassContext, v, state, this).generate();
@@ -268,7 +269,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     @Override
     protected void generateUnboxMethodForInlineClass() {
         if (!(myClass instanceof KtClass)) return;
-        if (!descriptor.isInline()) return;
+        if (!InlineClassesUtilsKt.isInlineClass(descriptor)) return;
 
         Type ownerType = typeMapper.mapClass(descriptor);
         ValueParameterDescriptor inlinedValue = InlineClassesUtilsKt.underlyingRepresentation(this.descriptor);
@@ -449,7 +450,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
         try {
             lookupConstructorExpressionsInClosureIfPresent();
             constructorCodegen.generatePrimaryConstructor(delegationFieldsInfo, superClassAsmType);
-            if (!descriptor.isInline() && !(descriptor instanceof SyntheticClassOrObjectDescriptor)) {
+            if (!InlineClassesUtilsKt.isInlineClass(descriptor) && !(descriptor instanceof SyntheticClassOrObjectDescriptor)) {
                 // Synthetic classes does not have declarations for secondary constructors
                 for (ClassConstructorDescriptor secondaryConstructor : DescriptorUtilsKt.getSecondaryConstructors(descriptor)) {
                     constructorCodegen.generateSecondaryConstructor(secondaryConstructor, superClassAsmType);
@@ -551,7 +552,7 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateFunctionsFromAnyForInlineClasses() {
-        if (!descriptor.isInline()) return;
+        if (!InlineClassesUtilsKt.isInlineClass(descriptor)) return;
         if (!(myClass instanceof KtClassOrObject)) return;
         new FunctionsFromAnyGeneratorImpl(
                 (KtClassOrObject) myClass, bindingContext, descriptor, classAsmType, context, v, state
@@ -902,19 +903,26 @@ public class ImplementationBodyCodegen extends ClassBodyCodegen {
     }
 
     private void generateCompanionObjectBackingFieldCopies() {
-        if (companionObjectPropertiesToCopy == null) return;
+        if (companionObjectPropertiesToCopy == null || companionObjectPropertiesToCopy.isEmpty()) return;
 
+        boolean isPrivateCompanion =
+                DescriptorVisibilities.isPrivate(
+                        ((ClassDescriptor) companionObjectPropertiesToCopy.get(0).descriptor.getContainingDeclaration()).getVisibility());
+
+        int modifiers = ACC_STATIC | ACC_FINAL | ACC_PUBLIC | (isPrivateCompanion ? ACC_DEPRECATED : 0);
+        List<String> additionalVisibleAnnotations =
+                isPrivateCompanion ? Collections.singletonList(CodegenUtilKt.JAVA_LANG_DEPRECATED) : Collections.emptyList();
         for (PropertyAndDefaultValue info : companionObjectPropertiesToCopy) {
             PropertyDescriptor property = info.descriptor;
 
             Type type = typeMapper.mapType(property);
-            int modifiers = ACC_STATIC | ACC_FINAL | ACC_PUBLIC;
+
             FieldVisitor fv = v.newField(JvmDeclarationOriginKt.Synthetic(DescriptorToSourceUtils.descriptorToDeclaration(property), property),
                                          modifiers, context.getFieldName(property, false),
                                          type.getDescriptor(), typeMapper.mapFieldSignature(property.getType(), property),
                                          info.defaultValue);
 
-            AnnotationCodegen.forField(fv, this, state).genAnnotations(property, type, null);
+            AnnotationCodegen.forField(fv, this, state).genAnnotations(property, type, null, null, additionalVisibleAnnotations);
 
             //This field are always static and final so if it has constant initializer don't do anything in clinit,
             //field would be initialized via default value in v.newField(...) - see JVM SPEC Ch.4

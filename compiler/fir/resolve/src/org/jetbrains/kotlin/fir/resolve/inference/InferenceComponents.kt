@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.types.AbstractTypeApproximator
 
 @NoMutableState
 class InferenceComponents(val session: FirSession) : FirSessionComponent {
-    val ctx: ConeTypeCheckerContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = false, session)
+    val ctx: ConeTypeCheckerContext = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = true, session)
 
     val approximator: AbstractTypeApproximator = object : AbstractTypeApproximator(ctx) {}
     val trivialConstraintTypeInferenceOracle = TrivialConstraintTypeInferenceOracle.create(ctx)
@@ -25,10 +25,11 @@ class InferenceComponents(val session: FirSession) : FirSessionComponent {
         session.languageVersionSettings,
     )
     val resultTypeResolver = ResultTypeResolver(approximator, trivialConstraintTypeInferenceOracle)
+    val variableFixationFinder = VariableFixationFinder(trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
+    val postponedArgumentInputTypesResolver =
+        PostponedArgumentInputTypesResolver(resultTypeResolver, variableFixationFinder, ConeConstraintSystemUtilContext)
 
     val constraintSystemFactory = ConstraintSystemFactory()
-
-    val variableFixationFinder = VariableFixationFinder(trivialConstraintTypeInferenceOracle, session.languageVersionSettings)
 
     fun createConstraintSystem(): NewConstraintSystemImpl {
         return NewConstraintSystemImpl(injector, ctx)

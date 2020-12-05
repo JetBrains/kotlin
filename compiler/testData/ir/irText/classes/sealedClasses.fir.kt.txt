@@ -1,0 +1,47 @@
+sealed class Expr {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  class Const : Expr {
+    constructor(number: Double) /* primary */ {
+      super/*Expr*/()
+      /* <init>() */
+
+    }
+
+    val number: Double
+      field = number
+      get
+
+  }
+
+  class Sum : Expr {
+    constructor(e1: Expr, e2: Expr) /* primary */ {
+      super/*Expr*/()
+      /* <init>() */
+
+    }
+
+    val e1: Expr
+      field = e1
+      get
+
+    val e2: Expr
+      field = e2
+      get
+
+  }
+
+  object NotANumber : Expr {
+    private constructor() /* primary */ {
+      super/*Expr*/()
+      /* <init>() */
+
+    }
+
+  }
+
+}

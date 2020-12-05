@@ -1,0 +1,10 @@
+fun <T : Any?> useTX(x: T, fn: Function0<T>): T {
+  return fn.invoke()
+}
+
+fun testNoNullCheck() {
+  useTX<String?>(x = "", fn = local fun <anonymous>(): String? {
+    return string()
+  }
+) /*~> Unit */
+}

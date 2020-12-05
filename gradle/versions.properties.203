@@ -4,6 +4,7 @@ versions.idea.NodeJS=193.6494.7
 versions.jar.asm-all=8.0.1
 versions.jar.guava=29.0-jre
 versions.jar.groovy=2.5.11
+versions.jar.groovy-xml=2.5.11
 versions.jar.lombok-ast=0.2.3
 versions.jar.swingx-core=1.6.2-2
 versions.jar.kxml2=2.3.0

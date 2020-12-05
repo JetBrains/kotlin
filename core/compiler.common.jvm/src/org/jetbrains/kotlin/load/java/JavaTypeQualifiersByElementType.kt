@@ -5,20 +5,15 @@
 
 package org.jetbrains.kotlin.load.java
 
-import org.jetbrains.kotlin.load.java.typeEnhancement.JavaTypeQualifiers
-import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import java.util.*
 
-typealias QualifierByApplicabilityType = EnumMap<AnnotationQualifierApplicabilityType, NullabilityQualifierWithMigrationStatus?>
+typealias QualifierByApplicabilityType =
+        EnumMap<AnnotationQualifierApplicabilityType, JavaDefaultQualifiers?>
 
-class JavaTypeQualifiersByElementType(val nullabilityQualifiers: QualifierByApplicabilityType) {
-    operator fun get(applicabilityType: AnnotationQualifierApplicabilityType?): JavaTypeQualifiers? {
-        val nullabilityQualifierWithMigrationStatus = nullabilityQualifiers[applicabilityType] ?: return null
-
-        return JavaTypeQualifiers(
-            nullabilityQualifierWithMigrationStatus.qualifier, null,
-            isNotNullTypeParameter = false,
-            isNullabilityQualifierForWarning = nullabilityQualifierWithMigrationStatus.isForWarningOnly
-        )
+class JavaTypeQualifiersByElementType(val defaultQualifiers: QualifierByApplicabilityType) {
+    operator fun get(
+        applicabilityType: AnnotationQualifierApplicabilityType?
+    ): JavaDefaultQualifiers? {
+        return defaultQualifiers[applicabilityType]
     }
 }

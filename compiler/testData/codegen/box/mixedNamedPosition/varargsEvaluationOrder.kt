@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: SPREAD_OPERATOR
 // !LANGUAGE: +NewInference +MixedNamedArgumentsInTheirOwnPosition
 // IGNORE_BACKEND: JVM
 // See KT-17691: Wrong argument order in resolved call with varargs. (fixed in JVM_IR)

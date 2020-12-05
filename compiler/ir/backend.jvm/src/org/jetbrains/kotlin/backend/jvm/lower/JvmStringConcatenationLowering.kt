@@ -193,6 +193,9 @@ private class JvmDynamicStringConcatenationLowering(val context: JvmBackendConte
                 arguments.isEmpty() ->
                     irString("")
 
+                arguments.size == 1 ->
+                    lowerInlineClassArgument(arguments[0]) ?: callToString(arguments[0].unwrapImplicitNotNull())
+
                 else -> {
                     IrStringConcatenationImpl(
                         expression.startOffset,

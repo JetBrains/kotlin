@@ -11,7 +11,7 @@ FILE: receiverWithCapturedType.kt
         ^getParameterForArgument String()
     }
     public final fun <D : R|CallableDescriptor|> R|ResolvedCall<D>|.updateD(d: R|D|): R|D| {
-        this@R|/updateD|.R|FakeOverride</ResolvedCall.d: R|D|>| = R|<local>/d|
+        this@R|/updateD|.R|SubstitutionOverride</ResolvedCall.d: R|D|>| = R|<local>/d|
         ^updateD R|<local>/d|
     }
     public final fun test_1_1(resolvedCall: R|ResolvedCall<out CallableDescriptor>|): R|kotlin/Unit| {

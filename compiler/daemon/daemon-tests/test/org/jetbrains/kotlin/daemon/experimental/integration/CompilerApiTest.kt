@@ -28,13 +28,16 @@ import org.junit.Assert
 import org.junit.runner.RunWith
 import java.io.File
 import java.net.URLClassLoader
+import java.nio.file.Path
 import java.util.logging.LogManager
 import java.util.logging.Logger
+import kotlin.io.path.*
 
 private val logFiles = arrayListOf<String>()
 
 // TODO: remove ignore annotation from tests.
 
+@OptIn(ExperimentalPathApi::class)
 @RunWith(IgnoreAll::class)
 class CompilerApiTest : KotlinIntegrationTestBase() {
 
@@ -43,7 +46,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
 
     private val compilerLibDir = getCompilerLib()
 
-    private fun createNewLogFile(): File {
+    private fun createNewLogFile(): Path {
         println("creating logFile")
         val newLogFile = createTempFile("kotlin-daemon-experimental-test.", ".log")
         println("logFile created (${newLogFile.loggerCompatiblePath})")
@@ -51,7 +54,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         return newLogFile
     }
 
-    private val currentLogFile: File by lazy {
+    private val currentLogFile: Path by lazy {
         val newLogFile = createNewLogFile()
         val cfg: String =
             "handlers = java.util.logging.FileHandler\n" +
@@ -67,7 +70,7 @@ class CompilerApiTest : KotlinIntegrationTestBase() {
         newLogFile
     }
 
-    private val externalLogFile: File by lazy { createNewLogFile() }
+    private val externalLogFile: Path by lazy { createNewLogFile() }
 
     private val log by lazy {
         currentLogFile

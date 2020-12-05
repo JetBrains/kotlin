@@ -1,0 +1,22 @@
+class Some {
+  constructor(foo: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var foo: Int
+    field = foo
+    get
+    set
+
+  init {
+    when {
+      less(arg0 = <this>.<get-foo>(), arg1 = 0) -> { // BLOCK
+        <this>.<set-foo>(<set-?> = 0)
+      }
+    }
+  }
+
+}
+

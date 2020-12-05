@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.gradle.utils.optionalProvider
 import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import java.io.File
 
-open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
+abstract class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
@@ -84,7 +84,7 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
     private var processIncrementally = false
 
     private val javaPackagePrefix by project.optionalProvider { kotlinCompileTask.javaPackagePrefix }
-    private val buildReportMode by project.optionalProvider { kotlinCompileTask.buildReportMode }
+    private val reportingSettings by project.provider { kotlinCompileTask.reportingSettings }
 
     @TaskAction
     fun compile(inputs: IncrementalTaskInputs) {
@@ -104,7 +104,7 @@ open class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JV
         val outputItemCollector = OutputItemsCollectorImpl()
         val environment = GradleCompilerEnvironment(
             compilerClasspath, messageCollector, outputItemCollector,
-            buildReportMode = buildReportMode,
+            reportingSettings = reportingSettings,
             outputFiles = allOutputFiles()
         )
         if (environment.toolsJar == null && !isAtLeastJava9) {

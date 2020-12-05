@@ -1,0 +1,14 @@
+object A {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun test() {
+  A::class /*~> Unit */
+  A::class.<get-java><A>() /*~> Unit */
+}
+

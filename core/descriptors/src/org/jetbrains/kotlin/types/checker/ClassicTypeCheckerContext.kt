@@ -47,10 +47,10 @@ open class ClassicTypeCheckerContext(
     override val isStubTypeEqualsToAnything: Boolean
         get() = stubTypeEqualsToAnything
 
-    override fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker): Boolean {
-        require(a is TypeConstructor, a::errorMessage)
-        require(b is TypeConstructor, b::errorMessage)
-        return areEqualTypeConstructors(a, b)
+    override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
+        require(c1 is TypeConstructor, c1::errorMessage)
+        require(c2 is TypeConstructor, c2::errorMessage)
+        return areEqualTypeConstructors(c1, c2)
     }
 
     open fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean = when {

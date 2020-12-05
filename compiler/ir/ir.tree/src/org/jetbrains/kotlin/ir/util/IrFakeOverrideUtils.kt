@@ -24,27 +24,26 @@ val IrSimpleFunction.target: IrSimpleFunction
     else
         resolveFakeOverride() ?: error("Could not resolveFakeOverride() for ${this.render()}")
 
-val IrFunction.target: IrFunction get() = when (this) {
-    is IrSimpleFunction -> this.target
-    is IrConstructor -> this
-    else -> error(this)
-}
+val IrFunction.target: IrFunction
+    get() = when (this) {
+        is IrSimpleFunction -> this.target
+        is IrConstructor -> this
+        else -> error(this)
+    }
 
-fun IrSimpleFunction.collectRealOverrides(toSkip: (IrSimpleFunction) -> Boolean = { false }): Set<IrSimpleFunction> {
-    if (isReal && !toSkip(this)) return setOf(this)
+fun IrSimpleFunction.collectRealOverrides(filter: (IrOverridableMember) -> Boolean = { false }): Set<IrSimpleFunction> {
+    if (isReal) return setOf(this)
 
     return this.overriddenSymbols
         .map { it.owner }
-        .collectAndFilterRealOverrides {
-            require(it is IrSimpleFunction) { "Expected IrSimpleFunction: ${it.render()}" }
-            toSkip(it)
-        }
+        .collectAndFilterRealOverrides(filter)
         .map { it as IrSimpleFunction }
         .toSet()
 }
 
-fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(toSkip: (IrOverridableMember) -> Boolean = { false }): Set<IrOverridableMember> {
-
+fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(
+    filter: (IrOverridableMember) -> Boolean = { false }
+): Set<IrOverridableMember> {
     val visited = mutableSetOf<IrOverridableMember>()
     val realOverrides = mutableSetOf<IrOverridableMember>()
 
@@ -57,9 +56,9 @@ fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(toSkip: (IrOve
     }
 
     fun collectRealOverrides(member: IrOverridableMember) {
-        if (!visited.add(member)) return
+        if (!visited.add(member) || filter(member)) return
 
-        if (member.isReal && !toSkip(member)) {
+        if (member.isReal) {
             realOverrides += member
         } else {
             overriddenSymbols(member).forEach { collectRealOverrides(it.owner as IrOverridableMember) }
@@ -84,14 +83,13 @@ fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(toSkip: (IrOve
 }
 
 // TODO: use this implementation instead of any other
-fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false, toSkip: (IrSimpleFunction) -> Boolean = { false }): IrSimpleFunction? {
-    val reals = collectRealOverrides(toSkip)
+fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false): IrSimpleFunction? {
     return if (allowAbstract) {
+        val reals = collectRealOverrides()
         if (reals.isEmpty()) error("No real overrides for ${this.render()}")
         reals.first()
     } else {
-        reals
-            .filter { it.modality != Modality.ABSTRACT }
+        collectRealOverrides { it.modality == Modality.ABSTRACT }
             .let { realOverrides ->
                 // Kotlin forbids conflicts between overrides, but they may trickle down from Java.
                 realOverrides.singleOrNull { it.parent.safeAs<IrClass>()?.isInterface != true }

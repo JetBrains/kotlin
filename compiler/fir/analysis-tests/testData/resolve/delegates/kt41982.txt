@@ -31,10 +31,10 @@ FILE: kt41982.kt
         }
         )
             public get(): R|kotlin/Long| {
-                ^ this@R|/Test|.D|/Test.start|.R|FakeOverride</Delegate.getValue: R|kotlin/Long|>|(this@R|/Test|, ::R|/Test.start|)
+                ^ this@R|/Test|.D|/Test.start|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/Long|>|(this@R|/Test|, ::R|/Test.start|)
             }
             public set(<set-?>: R|kotlin/Long|): R|kotlin/Unit| {
-                this@R|/Test|.D|/Test.start|.R|FakeOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Test|, ::R|/Test.start|, R|<local>/start|)
+                this@R|/Test|.D|/Test.start|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Test|, ::R|/Test.start|, R|<local>/start|)
             }
 
     }

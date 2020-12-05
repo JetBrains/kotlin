@@ -14,11 +14,11 @@ fun test() {
 }
 
 fun check() {
-    [1, 2] checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Array<Int>>() }
-    [""] checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Array<String>>() }
+    [1, 2] <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Array<Int>>() }
+    [""] <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Array<String>>() }
 
     val f: IntArray = [1]
-    [f] checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Array<IntArray>>() }
+    [f] <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Array<IntArray>>() }
 
-    [1, ""] checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Array<Any>>() }
+    [1, ""] <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><Array<Any>>() }
 }

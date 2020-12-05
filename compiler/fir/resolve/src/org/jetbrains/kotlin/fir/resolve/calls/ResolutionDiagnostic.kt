@@ -60,3 +60,5 @@ object ResolvedWithLowPriority : ResolutionDiagnostic(CandidateApplicability.RES
 object InapplicableWrongReceiver : ResolutionDiagnostic(CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER)
 
 object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(CandidateApplicability.RESOLVED_NEED_PRESERVE_COMPATIBILITY)
+
+object CandidateChosenUsingOverloadResolutionByLambdaAnnotation : ResolutionDiagnostic(CandidateApplicability.RESOLVED)

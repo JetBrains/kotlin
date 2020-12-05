@@ -8,13 +8,10 @@ group = 'me.user'
 version = '1.0-SNAPSHOT'
 
 repositories {
-    gradlePluginPortal()
     google()
     jcenter()
     mavenCentral()
-    maven {
-        url 'KOTLIN_REPO'
-    }
+    maven { url 'KOTLIN_REPO' }
 }
 
 kotlin {
@@ -38,13 +35,13 @@ kotlin {
         }
         androidMain {
             dependencies {
-                implementation 'com.google.android.material:material:1.2.0'
+                implementation 'com.google.android.material:material:1.2.1'
             }
         }
         androidTest {
             dependencies {
                 implementation kotlin('test-junit')
-                implementation 'junit:junit:4.12'
+                implementation 'junit:junit:4.13'
             }
         }
         iosMain {
@@ -62,12 +59,5 @@ android {
     defaultConfig {
         minSdkVersion 24
         targetSdkVersion 29
-        versionCode 1
-        versionName '1.0'
-    }
-    buildTypes {
-        'release' {
-            minifyEnabled false
-        }
     }
 }

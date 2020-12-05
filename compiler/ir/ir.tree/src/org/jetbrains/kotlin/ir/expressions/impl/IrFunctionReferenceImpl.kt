@@ -36,25 +36,6 @@ class IrFunctionReferenceImpl(
     override val reflectionTarget: IrFunctionSymbol? = symbol,
     override val origin: IrStatementOrigin? = null,
 ) : IrFunctionReference(typeArgumentsCount) {
-    @ObsoleteDescriptorBasedAPI
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        type: IrType,
-        symbol: IrFunctionSymbol,
-        typeArgumentsCount: Int,
-        reflectionTarget: IrFunctionSymbol?,
-        origin: IrStatementOrigin? = null
-    ) : this(
-        startOffset, endOffset,
-        type,
-        symbol,
-        typeArgumentsCount,
-        symbol.descriptor.valueParameters.size,
-        reflectionTarget,
-        origin
-    )
-
     override val referencedName: Name
         get() = symbol.owner.name
 
@@ -91,5 +72,44 @@ class IrFunctionReferenceImpl(
         argumentsByParameterIndex.forEachIndexed { i, irExpression ->
             argumentsByParameterIndex[i] = irExpression?.transform(transformer, data)
         }
+    }
+
+    companion object {
+        @ObsoleteDescriptorBasedAPI
+        fun fromSymbolDescriptor(
+            startOffset: Int,
+            endOffset: Int,
+            type: IrType,
+            symbol: IrFunctionSymbol,
+            typeArgumentsCount: Int,
+            reflectionTarget: IrFunctionSymbol?,
+            origin: IrStatementOrigin? = null
+        ) = IrFunctionReferenceImpl(
+            startOffset, endOffset,
+            type,
+            symbol,
+            typeArgumentsCount,
+            symbol.descriptor.valueParameters.size,
+            reflectionTarget,
+            origin
+        )
+
+        fun fromSymbolOwner(
+            startOffset: Int,
+            endOffset: Int,
+            type: IrType,
+            symbol: IrFunctionSymbol,
+            typeArgumentsCount: Int,
+            reflectionTarget: IrFunctionSymbol?,
+            origin: IrStatementOrigin? = null
+        ) = IrFunctionReferenceImpl(
+            startOffset, endOffset,
+            type,
+            symbol,
+            typeArgumentsCount,
+            symbol.owner.valueParameters.size,
+            reflectionTarget,
+            origin
+        )
     }
 }

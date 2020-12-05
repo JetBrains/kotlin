@@ -18,6 +18,7 @@ val embeddableTestRuntime by configurations.creating {
 
 dependencies {
     allTestsRuntime(commonDep("junit"))
+    testCompile(kotlinStdlib("jdk8"))
     testCompile(project(":kotlin-scripting-ide-services-unshaded"))
     testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":kotlin-scripting-dependencies"))

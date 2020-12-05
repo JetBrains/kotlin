@@ -1,0 +1,37 @@
+class MyClass {
+  constructor(value: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val value: String
+    field = value
+    get
+
+}
+
+operator fun MyClass.provideDelegate(host: Any?, p: Any): String {
+  return <this>.<get-value>()
+}
+
+operator fun String.getValue(receiver: Any?, p: Any): String {
+  return <this>
+}
+
+val testO: String /* by */ 
+  field = MyClass(value = "O").provideDelegate(host = null, p = ::testO)
+  get(): String {
+    return #testO$delegate.getValue(receiver = null, p = ::testO)
+  }
+
+val testK: String /* by */ 
+  field = "K"
+  get(): String {
+    return #testK$delegate.getValue(receiver = null, p = ::testK)
+  }
+
+val testOK: String
+  field = <get-testO>().plus(other = <get-testK>())
+  get
+

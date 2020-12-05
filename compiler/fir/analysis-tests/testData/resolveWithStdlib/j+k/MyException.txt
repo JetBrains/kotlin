@@ -8,15 +8,15 @@ FILE: test.kt
     public final fun test(e: R|MyException|, stream: R|java/io/PrintStream|): R|kotlin/Unit| {
         R|<local>/e|.R|java/lang/Throwable.printStackTrace|()
         R|<local>/e|.R|java/lang/Throwable.printStackTrace|(R|<local>/stream|)
-        lval result: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/e|.R|java/lang/Throwable.getLocalizedMessage|()
+        lval result: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = R|<local>/e|.R|java/lang/Throwable.getLocalizedMessage|()
     }
     public final fun test(e: R|YourException|, stream: R|java/io/PrintStream|): R|kotlin/Unit| {
         R|<local>/e|.R|java/lang/Throwable.printStackTrace|()
         R|<local>/e|.R|java/lang/Throwable.printStackTrace|(R|<local>/stream|)
-        lval result: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/e|.R|java/lang/Throwable.getLocalizedMessage|()
+        lval result: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = R|<local>/e|.R|java/lang/Throwable.getLocalizedMessage|()
     }
     public final fun test(e: R|kotlin/Exception|, stream: R|java/io/PrintStream|): R|kotlin/Unit| {
         R|<local>/e|.R|java/lang/Throwable.printStackTrace|()
         R|<local>/e|.R|java/lang/Throwable.printStackTrace|(R|<local>/stream|)
-        lval result: R|ft<kotlin/String, kotlin/String?>!| = R|<local>/e|.R|java/lang/Throwable.getLocalizedMessage|()
+        lval result: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = R|<local>/e|.R|java/lang/Throwable.getLocalizedMessage|()
     }

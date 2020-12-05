@@ -28,3 +28,5 @@ annotation class S(val g: String)
 @Repeatable
 @Retention(AnnotationRetention.SOURCE)
 annotation class R(val s: String)
+
+// FIR_COMPARISON

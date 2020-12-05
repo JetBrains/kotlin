@@ -53,6 +53,8 @@ abstract class FirAnonymousFunction : FirFunction<FirAnonymousFunction>, FirExpr
 
     abstract override fun replaceValueParameters(newValueParameters: List<FirValueParameter>)
 
+    abstract override fun replaceBody(newBody: FirBlock?)
+
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
     abstract fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?)

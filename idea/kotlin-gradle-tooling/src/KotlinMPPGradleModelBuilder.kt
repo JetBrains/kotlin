@@ -473,6 +473,15 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         }
     }
 
+    private fun Named.testTaskClass(className: String) = try {
+        // This is a workaround that makes assumptions about the tasks naming logic
+        // and is therefore an unstable and temporary solution until test runs API is implemented:
+        @Suppress("UNCHECKED_CAST")
+        this.javaClass.classLoader.loadClass(className) as Class<out Task>
+    } catch (_: ClassNotFoundException) {
+        null
+    }
+
     private fun buildTestRunTasks(project: Project, gradleTarget: Named): Collection<KotlinTestRunTask> {
         val getTestRunsMethod = gradleTarget.javaClass.getMethodOrNull("getTestRuns")
         if (getTestRunsMethod != null) {
@@ -501,14 +510,9 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             return emptyList()
         }
 
-        // Otherwise, find the Kotlin test task with names matching the target name. This is a workaround that makes assumptions about
-        // the tasks naming logic and is therefore an unstable and temporary solution until test runs API is implemented:
-        @Suppress("UNCHECKED_CAST")
-        val kotlinTestTaskClass = try {
-            gradleTarget.javaClass.classLoader.loadClass("org.jetbrains.kotlin.gradle.tasks.KotlinTest") as Class<out Task>
-        } catch (_: ClassNotFoundException) {
-            return emptyList()
-        }
+        // Otherwise, find the Kotlin/JVM test task with names matching the target name or
+        // aggregate Android JVM tasks (like testDebugUnitTest).
+        val kotlinTestTaskClass = gradleTarget.testTaskClass("org.jetbrains.kotlin.gradle.tasks.KotlinTest") ?: return emptyList()
 
         val targetDisambiguationClassifier = run {
             val getDisambiguationClassifier = gradleTarget.javaClass.getMethodOrNull("getDisambiguationClassifier")
@@ -520,13 +524,16 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         // The 'targetName' of a test task matches the target disambiguation classifier, potentially with suffix, e.g. jsBrowser
         val getTargetName = kotlinTestTaskClass.getDeclaredMethodOrNull("getTargetName") ?: return emptyList()
 
-        val jvmTestTaskClass = try {
-            gradleTarget.javaClass.classLoader.loadClass("org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest") as Class<out Task>
-        } catch (_: ClassNotFoundException) {
-            return emptyList()
-        }
+        val jvmTestTaskClass = gradleTarget.testTaskClass("org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest") ?: return emptyList()
         val getJvmTargetName = jvmTestTaskClass.getDeclaredMethodOrNull("getTargetName") ?: return emptyList()
 
+        if (targetDisambiguationClassifier == "android") {
+            val androidUnitTestClass = gradleTarget.testTaskClass("com.android.build.gradle.tasks.factory.AndroidUnitTest")
+                ?: return emptyList()
+
+            return project.tasks.filter { androidUnitTestClass.isInstance(it) }.mapNotNull { task -> task.name }
+                .map { KotlinTestRunTaskImpl(it, KotlinCompilation.TEST_COMPILATION_NAME) }
+        }
 
         return project.tasks.filter { kotlinTestTaskClass.isInstance(it) || jvmTestTaskClass.isInstance(it) }.mapNotNull { task ->
             val testTaskDisambiguationClassifier =

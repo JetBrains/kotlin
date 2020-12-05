@@ -1,0 +1,12 @@
+fun test1(a: Int, b: Int): Boolean {
+  return EQEQ(arg0 = a, arg1 = b)
+}
+
+fun test2(a: Int, b: Int): Boolean {
+  return EQEQ(arg0 = a, arg1 = b).not()
+}
+
+fun test3(a: Any?, b: Any?): Boolean {
+  return EQEQ(arg0 = a, arg1 = b)
+}
+

@@ -74,11 +74,6 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelable.kt");
     }
 
-    @TestMetadata("customParcelableDeprecated.kt")
-    public void testCustomParcelableDeprecated() throws Exception {
-        runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelableDeprecated.kt");
-    }
-
     @TestMetadata("customParcelerScoping.kt")
     public void testCustomParcelerScoping() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customParcelerScoping.kt");
@@ -94,19 +89,9 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerSimple.kt");
     }
 
-    @TestMetadata("customSerializerSimpleDeprecated.kt")
-    public void testCustomSerializerSimpleDeprecated() throws Exception {
-        runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerSimpleDeprecated.kt");
-    }
-
     @TestMetadata("customSerializerWriteWith.kt")
     public void testCustomSerializerWriteWith() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerWriteWith.kt");
-    }
-
-    @TestMetadata("customSerializerWriteWithDeprecated.kt")
-    public void testCustomSerializerWriteWithDeprecated() throws Exception {
-        runTest("plugins/parcelize/parcelize-compiler/testData/box/customSerializerWriteWithDeprecated.kt");
     }
 
     @TestMetadata("customSimple.kt")
@@ -197,6 +182,16 @@ public class ParcelizeIrBoxTestGenerated extends AbstractParcelizeIrBoxTest {
     @TestMetadata("kt39981.kt")
     public void testKt39981() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/box/kt39981.kt");
+    }
+
+    @TestMetadata("kt41553.kt")
+    public void testKt41553() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/kt41553.kt");
+    }
+
+    @TestMetadata("kt41553_2.kt")
+    public void testKt41553_2() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/box/kt41553_2.kt");
     }
 
     @TestMetadata("listKinds.kt")

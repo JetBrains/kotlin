@@ -245,7 +245,6 @@ internal class FirInvokeResolveTowerExtension(
         receiverGroup,
         candidateFactoriesAndCollectors.resultCollector,
         candidateFactory,
-        candidateFactoriesAndCollectors.stubReceiverCandidateFactory
     )
 }
 
@@ -307,7 +306,6 @@ private class InvokeReceiverResolveTask(
     towerDataElementsForName,
     collector,
     candidateFactory,
-    stubReceiverCandidateFactory = null
 ) {
     override fun interceptTowerGroup(towerGroup: TowerGroup): TowerGroup =
         towerGroup.InvokeResolvePriority(InvokeResolvePriority.INVOKE_RECEIVER)
@@ -324,14 +322,12 @@ private class InvokeFunctionResolveTask(
     private val receiverGroup: TowerGroup,
     collector: CandidateCollector,
     candidateFactory: CandidateFactory,
-    stubReceiverCandidateFactory: CandidateFactory? = null
 ) : FirBaseTowerResolveTask(
     components,
     manager,
     towerDataElementsForName,
     collector,
     candidateFactory,
-    stubReceiverCandidateFactory
 ) {
 
     override fun interceptTowerGroup(towerGroup: TowerGroup): TowerGroup =

@@ -1,6 +1,6 @@
 FILE: tryInLambda.kt
     public final fun <T> myRun(block: R|() -> T|): R|T| {
-        ^myRun R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()
+        ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
     }
     public final fun foo(): R|kotlin/Unit| {
     }

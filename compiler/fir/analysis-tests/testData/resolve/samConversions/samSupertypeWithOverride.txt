@@ -2,11 +2,11 @@ FILE: main.kt
     public final fun foo(m: R|MyRunnable|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaUsage|.R|/JavaUsage.foo|(<L> = foo@fun <anonymous>(x: R|kotlin/Int|): R|ft<kotlin/Boolean, kotlin/Boolean?>!| {
+        Q|JavaUsage|.R|/JavaUsage.foo|(<L> = foo@fun <anonymous>(x: R|kotlin/Int|): R|ft<@FlexibleNullability kotlin/Boolean, kotlin/Boolean?>!| {
             ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
         }
         )
-        Q|JavaUsage|.R|/JavaUsage.foo|(foo@fun <anonymous>(it: R|kotlin/Int|): R|ft<kotlin/Boolean, kotlin/Boolean?>!| {
+        Q|JavaUsage|.R|/JavaUsage.foo|(foo@fun <anonymous>(it: R|kotlin/Int|): R|ft<@FlexibleNullability kotlin/Boolean, kotlin/Boolean?>!| {
             ^ CMP(>, R|<local>/it|.R|kotlin/Int.compareTo|(Int(1)))
         }
         )

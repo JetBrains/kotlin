@@ -25,7 +25,7 @@ data class PropertyApproximationKey(
 }
 
 /** Used for approximation of [SimpleFunctionDescriptor]s before running concrete [Commonizer]s */
-class FunctionApproximationKey(
+data class FunctionApproximationKey(
     private val name: Name,
     private val valueParametersTypes: Array<CirTypeSignature>,
     private val additionalValueParametersNamesHash: Int,
@@ -55,7 +55,7 @@ class FunctionApproximationKey(
 }
 
 /** Used for approximation of [ConstructorDescriptor]s before running concrete [Commonizer]s */
-class ConstructorApproximationKey(
+data class ConstructorApproximationKey(
     private val valueParametersTypes: Array<CirTypeSignature>,
     private val additionalValueParametersNamesHash: Int
 ) {

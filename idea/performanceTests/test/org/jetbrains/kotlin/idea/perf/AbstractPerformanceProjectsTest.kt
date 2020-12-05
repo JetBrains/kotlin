@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.idea.perf.util.ProfileTools.Companion.initDefaultPro
 import org.jetbrains.kotlin.idea.perf.util.logMessage
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.kotlin.idea.testFramework.*
-import org.jetbrains.kotlin.idea.testFramework.TestApplicationManager
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.cleanupCaches
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.close
 import org.jetbrains.kotlin.idea.testFramework.Fixture.Companion.isAKotlinScriptFile
@@ -167,9 +166,9 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         openAction: ProjectOpenAction,
         fast: Boolean = false
     ): Project {
-        val projectPath = File(path).canonicalPath
+        val projectPath = File(path).absolutePath
 
-        assertTrue("path $path does not exist, check README.md", File(projectPath).exists())
+        assertTrue("path $projectPath does not exist, check README.md", File(projectPath).exists())
 
         val warmUpIterations = if (fast) 0 else 5
         val iterations = if (fast) 1 else 5
@@ -178,7 +177,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         var counter = 0
 
         val openProject = OpenProject(
-            projectPath = path,
+            projectPath = projectPath,
             projectName = name,
             jdk = jdk18,
             projectOpenAction = openAction
@@ -231,7 +230,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             myApplication.setDataProvider(TestDataProvider(project))
         }
 
-        return lastProject ?: error("unable to open project $name at $path")
+        return lastProject ?: error("unable to open project $name at $projectPath")
     }
 
     fun perfTypeAndAutocomplete(

@@ -5,18 +5,13 @@
 
 package org.jetbrains.kotlin.scripting.resolve
 
-import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassMemberScope
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
 class LazyScriptClassMemberScope(
     resolveSession: ResolveSession,
@@ -28,65 +23,17 @@ class LazyScriptClassMemberScope(
     private val _variableNames: MutableSet<Name>
             by lazy(LazyThreadSafetyMode.PUBLICATION) {
                 super.getVariableNames().apply {
+                    scriptDescriptor.scriptProvidedProperties.forEach {
+                        add(it.name)
+                    }
                     scriptDescriptor.resultFieldName()?.let {
                         add(it)
                     }
                 }
             }
 
-    private val scriptPrimaryConstructor: () -> ClassConstructorDescriptorImpl? = resolveSession.storageManager.createNullableLazyValue {
-        val baseClass = scriptDescriptor.baseClassDescriptor()
-        val baseConstructorDescriptor = baseClass?.unsubstitutedPrimaryConstructor
-        if (baseConstructorDescriptor != null) {
-            val implicitReceiversParamTypes =
-                scriptDescriptor.implicitReceivers.mapIndexed { idx, receiver ->
-                    val name =
-                        if (receiver is ScriptDescriptor) "$IMPORTED_SCRIPT_PARAM_NAME_PREFIX${receiver.name}"
-                        else "$IMPLICIT_RECEIVER_PARAM_NAME_PREFIX$idx"
-                    name to receiver.defaultType
-                }
-            val providedPropertiesParamTypes =
-                scriptDescriptor.scriptProvidedProperties.map {
-                    it.name.identifier to it.type
-                }
-            val annotations = baseConstructorDescriptor.annotations
-            val constructorDescriptor = ClassConstructorDescriptorImpl.create(
-                scriptDescriptor, annotations, baseConstructorDescriptor.isPrimary, scriptDescriptor.source
-            )
-            var paramsIndexBase = baseConstructorDescriptor.valueParameters.lastIndex + 1
-            val syntheticParameters =
-                (implicitReceiversParamTypes + providedPropertiesParamTypes).map { param: Pair<String, KotlinType> ->
-                    ValueParameterDescriptorImpl(
-                        constructorDescriptor,
-                        null,
-                        paramsIndexBase++,
-                        Annotations.EMPTY,
-                        Name.identifier(param.first),
-                        param.second,
-                        false, false, false, null, SourceElement.NO_SOURCE
-                    )
-                }
-            val parameters = baseConstructorDescriptor.valueParameters.map { it.copy(constructorDescriptor, it.name, it.index) } +
-                    syntheticParameters
-            constructorDescriptor.initialize(parameters, baseConstructorDescriptor.visibility)
-            constructorDescriptor.returnType = scriptDescriptor.defaultType
-            constructorDescriptor
-        } else {
-            null
-        }
-    }
-
-    override fun resolvePrimaryConstructor(): ClassConstructorDescriptor? {
-        val constructor = scriptPrimaryConstructor()
-                ?: ClassConstructorDescriptorImpl.create(
-                    scriptDescriptor,
-                    Annotations.EMPTY,
-                    true,
-                    SourceElement.NO_SOURCE
-                ).initialize(
-                    emptyList(),
-                    DescriptorVisibilities.PUBLIC
-                )
+    override fun resolvePrimaryConstructor(): ClassConstructorDescriptor {
+        val constructor = scriptDescriptor.scriptPrimaryConstructorWithParams().constructor
         setDeferredReturnType(constructor)
         return constructor
     }
@@ -100,6 +47,7 @@ class LazyScriptClassMemberScope(
                 result.add(it)
             }
         }
+        scriptDescriptor.scriptProvidedProperties.forEach { if (it.name == name) result.add(it) }
     }
 
     override fun createPropertiesFromPrimaryConstructorParameters(name: Name, result: MutableSet<PropertyDescriptor>) {
@@ -111,5 +59,3 @@ class LazyScriptClassMemberScope(
     }
 }
 
-private fun ClassDescriptor.substitute(vararg types: KotlinType): KotlinType? =
-    KotlinTypeFactory.simpleType(this.defaultType, arguments = types.map { it.asTypeProjection() })

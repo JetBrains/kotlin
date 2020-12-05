@@ -65,10 +65,15 @@ class SingleCandidateResolver(
         val resolutionContext = stubBodyResolveTransformer.resolutionContext
 
         val candidate = CandidateFactory(resolutionContext, callInfo).createCandidate(
+            callInfo,
             resolutionParameters.callableSymbol,
             explicitReceiverKind = explicitReceiverKind,
             dispatchReceiverValue = dispatchReceiverValue,
-            implicitExtensionReceiverValue = implicitExtensionReceiverValue,
+            extensionReceiverValue =
+            if (explicitReceiverKind.isExtensionReceiver)
+                callInfo.explicitReceiver?.let { ExpressionReceiverValue(it) }
+            else
+                implicitExtensionReceiverValue,
             scope = null,
         )
 

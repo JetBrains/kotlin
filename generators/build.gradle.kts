@@ -27,7 +27,7 @@ val (interpreterSourceSet, interpreterApi) = extraSourceSet("interpreter")
 
 dependencies {
     // for GeneratorsFileUtil
-    compile(kotlinStdlib())
+    compile(kotlinStdlib("jdk8"))
     compile(intellijDep()) { includeJars("util") }
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
@@ -42,6 +42,7 @@ dependencies {
     testCompile(projectTests(":compiler:cli"))
     testCompile(projectTests(":idea:idea-maven"))
     testCompile(projectTests(":idea:idea-fir"))
+    testCompile(projectTests(":idea:idea-fir-performance-tests"))
     testCompile(projectTests(":idea:idea-frontend-fir"))
     testCompile(projectTests(":idea:idea-frontend-fir:idea-fir-low-level-api"))
     testCompile(projectTests(":j2k"))

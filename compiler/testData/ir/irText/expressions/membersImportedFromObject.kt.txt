@@ -1,0 +1,42 @@
+object A {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo(): Int {
+    return 1
+  }
+
+  fun Int.fooExt(): Int {
+    return 2
+  }
+
+  val bar: Int
+    field = 42
+    get
+
+  val Int.barExt: Int
+    get(): Int {
+      return 43
+    }
+
+}
+
+val test1: Int
+  field = A.foo()
+  get
+
+val test2: Int
+  field = A.<get-bar>()
+  get
+
+val test3: Int
+  field = (A, 1).fooExt()
+  get
+
+val test4: Int
+  field = (A, 1).<get-barExt>()
+  get
+

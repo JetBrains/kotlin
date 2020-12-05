@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.render
 
 
 interface IdSignatureClashTracker {
@@ -28,7 +29,7 @@ abstract class GlobalDeclarationTable(
     private val mangler: KotlinMangler.IrMangler,
     private val clashTracker: IdSignatureClashTracker
 ) {
-    private val table = mutableMapOf<IrDeclaration, IdSignature>()
+    protected val table = mutableMapOf<IrDeclaration, IdSignature>()
 
     constructor(signaturer: IdSignatureSerializer, mangler: KotlinMangler.IrMangler) :
             this(signaturer, mangler, IdSignatureClashTracker.DEFAULT_TRACKER)
@@ -36,7 +37,7 @@ abstract class GlobalDeclarationTable(
     protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
         builtIns.knownBuiltins.forEach {
             val symbol = (it as IrSymbolOwner).symbol
-            table[it] = symbol.signature.also { id -> clashTracker.commit(it, id) }
+            table[it] = symbol.signature!!.also { id -> clashTracker.commit(it, id) }
         }
     }
 
@@ -49,9 +50,11 @@ abstract class GlobalDeclarationTable(
     fun isExportedDeclaration(declaration: IrDeclaration): Boolean = with(mangler) { declaration.isExported() }
 }
 
-open class DeclarationTable(private val globalDeclarationTable: GlobalDeclarationTable) {
-    private val table = mutableMapOf<IrDeclaration, IdSignature>()
-    private val signaturer = globalDeclarationTable.signaturer.also {
+open class DeclarationTable(globalTable: GlobalDeclarationTable) {
+    protected val table = mutableMapOf<IrDeclaration, IdSignature>()
+    protected open val globalDeclarationTable: GlobalDeclarationTable = globalTable
+    // TODO: we need to disentangle signature construction with declaration tables.
+    private val signaturer: IdSignatureSerializer = globalTable.signaturer.also {
         it.reset()
         it.table = this
     }
@@ -78,6 +81,11 @@ open class DeclarationTable(private val globalDeclarationTable: GlobalDeclaratio
 
     fun signatureByDeclaration(declaration: IrDeclaration): IdSignature {
         return computeSignatureByDeclaration(declaration)
+    }
+
+    fun assumeDeclarationSignature(declaration: IrDeclaration, signature: IdSignature) {
+        assert(table[declaration] == null) { "Declaration table already has signature for ${declaration.render()}" }
+        table.put(declaration, signature)
     }
 }
 

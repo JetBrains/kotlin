@@ -124,8 +124,8 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
             name = Name.identifier("main")
             visibility = DescriptorVisibilities.PUBLIC
             returnType = context.irBuiltIns.unitType
-            modality = Modality.FINAL
-            this.origin = JvmLoweredDeclarationOrigin.GENERATED_EXTENDED_MAIN
+            modality = Modality.OPEN
+            origin = JvmLoweredDeclarationOrigin.GENERATED_EXTENDED_MAIN
         }.apply {
             val args = addValueParameter {
                 name = Name.identifier("args")

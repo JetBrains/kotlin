@@ -2,6 +2,7 @@
 public final class test/Foo {
     // source: 'InlineOnlyPropertyMultifile.kt'
     public final static method foo(): void
+    public final static @org.jetbrains.annotations.NotNull method getProp2(): java.lang.String
 }
 
 @kotlin.Metadata
@@ -10,5 +11,7 @@ synthetic final class test/Foo__InlineOnlyPropertyMultifileKt {
     public final static method foo(): void
     public synthetic deprecated static @kotlin.internal.InlineOnly method getProp$annotations(): void
     private final static method getProp(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method getProp2(): java.lang.String
     private final static method setProp(p0: java.lang.String): void
+    private final static @kotlin.internal.InlineOnly method setProp2(p0: java.lang.String): void
 }

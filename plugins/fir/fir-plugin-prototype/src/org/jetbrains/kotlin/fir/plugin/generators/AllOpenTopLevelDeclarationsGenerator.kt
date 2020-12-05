@@ -59,7 +59,7 @@ class AllOpenTopLevelDeclarationsGenerator(session: FirSession) : FirDeclaration
                 Modality.FINAL
             )
             name = Name.identifier("hello")
-            symbol = FirNamedFunctionSymbol(CallableId(klass.symbol.classId, name), isFakeOverride = false)
+            symbol = FirNamedFunctionSymbol(CallableId(klass.symbol.classId, name))
         }
         return listOf(function)
     }

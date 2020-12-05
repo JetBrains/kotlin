@@ -46,7 +46,7 @@ fun foo(x: List<String>, y: Throwable, z: A3) {
 
     y.fillInStackTrace() checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
 
-    HashMap<String, Int>().getOrDefault(Any(), null)
+    HashMap<String, Int>().<!INAPPLICABLE_CANDIDATE!>getOrDefault<!>(Any(), null)
 
     // Falls back to extension in stdlib
     y.printStackTrace()

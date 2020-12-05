@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
 import org.jetbrains.kotlin.js.test.es6.semantics.*
 import org.jetbrains.kotlin.js.test.ir.semantics.*
 import org.jetbrains.kotlin.js.test.semantics.*
-import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrWasmBoxWasmTest
+import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenBoxWasmTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
     //generateTestDataForReservedWords()
 
     testGroupSuite(args) {
-        testGroup("js/js.tests/test", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
+        testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractBoxJsTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
             }
@@ -62,17 +62,9 @@ fun main(args: Array<String>) {
             testClass<AbstractJsLineNumberTest> {
                 model("lineNumbers/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS)
             }
-
-            testClass<AbstractIrWasmBoxWasmTest> {
-                model("wasmBox", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
-            }
-
-            testClass<AbstractIrWasmBoxJsTest> {
-                model("wasmBox", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS_IR)
-            }
         }
 
-        testGroup("js/js.tests/test", "compiler/testData", testRunnerMethodName = "runTest0") {
+        testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractJsCodegenBoxTest> {
                 model("codegen/box", targetBackend = TargetBackend.JS)
             }
@@ -83,6 +75,33 @@ fun main(args: Array<String>) {
 
             testClass<AbstractIrJsCodegenBoxErrorTest> {
                 model("codegen/boxError", targetBackend = TargetBackend.JS_IR)
+            }
+
+            testClass<AbstractIrCodegenBoxWasmTest> {
+                model(
+                    "codegen/box", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM, excludeDirs = listOf(
+                        
+                        // TODO: Support reflection
+                        "toArray", "classLiteral", "reflection",
+
+                        // TODO: Add stdlib
+                        "contracts", "platformTypes",
+
+                        // TODO: ArrayList
+                        "ranges/stepped/unsigned",
+
+                        // TODO: Support coroutines
+                        "coroutines", "parametersMetadata",
+
+                        // TODO: Support exceptions
+                        "finally", "deadCodeElimination", "controlStructures/tryCatchInExpressions",
+
+                        // TODO: Support delegated properties
+                        "delegatedProperty",
+
+                        "oldLanguageVersions"
+                    )
+                )
             }
 
             testClass<AbstractIrJsCodegenBoxES6Test> {

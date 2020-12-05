@@ -1,6 +1,6 @@
 public abstract interface RemoveRedundantProjectionKind : R|kotlin/Any| {
-    public abstract fun f(collection: R|ft<kotlin/collections/MutableCollection<out ft<kotlin/CharSequence, kotlin/CharSequence?>!>, kotlin/collections/Collection<out ft<kotlin/CharSequence, kotlin/CharSequence?>!>?>!|): R|kotlin/Unit|
+    public abstract fun f(collection: R|ft<@FlexibleNullability kotlin/collections/MutableCollection<out ft<@FlexibleNullability kotlin/CharSequence, kotlin/CharSequence?>!>, kotlin/collections/Collection<out ft<@FlexibleNullability kotlin/CharSequence, kotlin/CharSequence?>!>?>!|): R|kotlin/Unit|
 
-    public abstract fun f(comparator: R|ft<kotlin/Comparable<in ft<kotlin/CharSequence, kotlin/CharSequence?>!>, kotlin/Comparable<in ft<kotlin/CharSequence, kotlin/CharSequence?>!>?>!|): R|kotlin/Unit|
+    public abstract fun f(comparator: R|ft<@FlexibleNullability kotlin/Comparable<in ft<@FlexibleNullability kotlin/CharSequence, kotlin/CharSequence?>!>, kotlin/Comparable<in ft<@FlexibleNullability kotlin/CharSequence, kotlin/CharSequence?>!>?>!|): R|kotlin/Unit|
 
 }

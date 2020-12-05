@@ -8,7 +8,7 @@ fun <T> case_1(x: T) {
 
     if (y != x) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propT
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableT
@@ -17,7 +17,7 @@ fun <T> case_1(x: T) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { equals(null) }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { <!INAPPLICABLE_CANDIDATE!>equals<!>(null) }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { propT }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { <!INAPPLICABLE_CANDIDATE!>propAny<!> }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { propNullableT }
@@ -25,8 +25,8 @@ fun <T> case_1(x: T) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { funT() }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { <!INAPPLICABLE_CANDIDATE!>funAny<!>() }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { funNullableT() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { funNullableAny(); <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.equals(null) }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.equals(null) }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { funNullableAny(); <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null) }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.<!INAPPLICABLE_CANDIDATE!>equals<!>(null) }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.propT }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.<!INAPPLICABLE_CANDIDATE!>propAny<!> }
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.propNullableT }
@@ -51,7 +51,7 @@ fun <T> case_2(x: T?, y: Nothing?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.<!INAPPLICABLE_CANDIDATE!>funAny<!>()
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.funNullableAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { equals(null) }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { <!INAPPLICABLE_CANDIDATE!>equals<!>(null) }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { propT }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { <!INAPPLICABLE_CANDIDATE!>propAny<!> }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { propNullableT }

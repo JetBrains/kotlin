@@ -95,6 +95,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             withArg("F", "FirCallableMemberDeclaration<F>")
             parentArg(callableDeclaration, "F", "F")
             +field("containerSource", type(DeserializedContainerSource::class), nullable = true)
+            +field("dispatchReceiverType", coneKotlinTypeType, nullable = true)
         }
 
         function.configure {
@@ -102,7 +103,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(callableDeclaration, "F", "F")
             +symbol("FirFunctionSymbol", "F")
             +fieldList(valueParameter, withReplace = true).withTransform()
-            +body(nullable = true).withTransform()
+            +body(nullable = true, withReplace = true).withTransform()
         }
 
         errorFunction.configure {
@@ -368,7 +369,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(callableDeclaration, "F", "F")
             +name
             +symbol("FirVariableSymbol", "F")
-            +initializer.withTransform()
+            +initializer.withTransform().withReplace()
             +field("delegate", expression, nullable = true).withTransform()
             +field("delegateFieldSymbol", delegateFieldSymbolType, "F", nullable = true)
             generateBooleanFields("var", "val")
@@ -516,7 +517,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         wrappedExpression.configure {
-            +field(expression)
+            +field(expression).withReplace()
         }
 
         wrappedDelegateExpression.configure {
@@ -576,10 +577,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +valueParameters
             +returnTypeRef
             +booleanField("isSuspend")
-        }
-
-        composedSuperTypeRef.configure {
-            +fieldList("superTypeRefs", resolvedTypeRef)
         }
 
         thisReceiverExpression.configure {

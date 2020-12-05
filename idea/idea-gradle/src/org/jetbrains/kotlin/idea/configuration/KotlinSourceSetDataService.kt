@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,16 +25,22 @@ import org.jetbrains.kotlin.gradle.KotlinCompilation
 import org.jetbrains.kotlin.gradle.KotlinModule
 import org.jetbrains.kotlin.gradle.KotlinPlatform
 import org.jetbrains.kotlin.gradle.KotlinSourceSet
+import org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService.Companion.isRelevantFor
 import org.jetbrains.kotlin.idea.facet.*
 import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
 import org.jetbrains.kotlin.idea.roots.populateNonJvmSourceRootTypes
+import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
+import org.jetbrains.kotlin.platform.js.JsPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.platform.konan.NativePlatform
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
@@ -43,12 +49,30 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetData, Void>() {
     override fun getTargetDataKey() = GradleSourceSetData.KEY
 
+    private fun getProjectPlatforms(toImport: MutableCollection<DataNode<GradleSourceSetData>>): List<KotlinPlatform> {
+        val platforms = HashSet<KotlinPlatform>()
+
+        for (nodeToImport in toImport) {
+            nodeToImport.kotlinSourceSet?.also {
+                platforms += it.actualPlatforms.platforms
+            }
+
+            if (nodeToImport.parent?.children?.any { it.key.dataType.contains("Android") } == true) {
+                platforms += KotlinPlatform.ANDROID
+            }
+        }
+
+        return platforms.toList()
+    }
+
     override fun postProcess(
         toImport: MutableCollection<DataNode<GradleSourceSetData>>,
         projectData: ProjectData?,
         project: Project,
         modelsProvider: IdeModifiableModelsProvider
     ) {
+        val projectPlatforms = getProjectPlatforms(toImport)
+
         for (nodeToImport in toImport) {
             val mainModuleData = ExternalSystemApiUtil.findParent(
                 nodeToImport,
@@ -65,7 +89,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 populateNonJvmSourceRootTypes(nodeToImport, ideModule)
             }
 
-            configureFacet(sourceSetData, kotlinSourceSet, mainModuleData, ideModule, modelsProvider)?.let { facet ->
+            configureFacet(sourceSetData, kotlinSourceSet, mainModuleData, ideModule, modelsProvider, projectPlatforms)?.let { facet ->
                 GradleProjectImportHandler.getInstances(project).forEach { it.importBySourceSet(facet, nodeToImport) }
             }
 
@@ -92,12 +116,59 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 else -> KotlinModuleKind.DEFAULT
             }
 
+        private fun SimplePlatform.isRelevantFor(projectPlatforms: List<KotlinPlatform>): Boolean {
+            val jvmPlatforms = listOf(KotlinPlatform.ANDROID, KotlinPlatform.JVM, KotlinPlatform.COMMON)
+            return when (this) {
+                is JvmPlatform -> projectPlatforms.intersect(jvmPlatforms).isNotEmpty()
+                is JsPlatform -> KotlinPlatform.JS in projectPlatforms
+                is NativePlatform -> KotlinPlatform.NATIVE in projectPlatforms
+                else -> true
+            }
+        }
+
+        private fun IdePlatformKind<*>.toSimplePlatforms(
+            moduleData: ModuleData,
+            isHmppModule: Boolean,
+            projectPlatforms: List<KotlinPlatform>
+        ): Collection<SimplePlatform> {
+            if (this is JvmIdePlatformKind) {
+                val jvmTarget = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
+                return JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget)
+            }
+
+            if (this is NativeIdePlatformKind) {
+                return NativePlatforms.nativePlatformByTargetNames(moduleData.konanTargets)
+            }
+
+            return if (isHmppModule) {
+                this.defaultPlatform.filter { it.isRelevantFor(projectPlatforms) }
+            } else {
+                this.defaultPlatform
+            }
+        }
+
         fun configureFacet(
             moduleData: ModuleData,
             kotlinSourceSet: KotlinSourceSetInfo,
             mainModuleNode: DataNode<ModuleData>,
             ideModule: Module,
             modelsProvider: IdeModifiableModelsProvider
+        ) = configureFacet(
+            moduleData,
+            kotlinSourceSet,
+            mainModuleNode,
+            ideModule,
+            modelsProvider,
+            enumValues<KotlinPlatform>().toList()
+        )
+
+        fun configureFacet(
+            moduleData: ModuleData,
+            kotlinSourceSet: KotlinSourceSetInfo,
+            mainModuleNode: DataNode<ModuleData>,
+            ideModule: Module,
+            modelsProvider: IdeModifiableModelsProvider,
+            projectPlatforms: List<KotlinPlatform>
         ): KotlinFacet? {
             val compilerVersion = mainModuleNode
                 .findAll(BuildScriptClasspathData.KEY)
@@ -107,16 +178,7 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
 
             val platformKinds = kotlinSourceSet.actualPlatforms.platforms //TODO(auskov): fix calculation of jvm target
                 .map { IdePlatformKindTooling.getTooling(it).kind }
-                .flatMap { platformKind ->
-                    when (platformKind) {
-                        is JvmIdePlatformKind -> {
-                            val jvmTarget = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
-                            JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget).componentPlatforms
-                        }
-                        is NativeIdePlatformKind -> NativePlatforms.nativePlatformByTargetNames(moduleData.konanTargets)
-                        else -> platformKind.defaultPlatform.componentPlatforms
-                    }
-                }
+                .flatMap { it.toSimplePlatforms(moduleData, mainModuleNode.isHmpp, projectPlatforms) }
                 .distinct()
                 .toSet()
 

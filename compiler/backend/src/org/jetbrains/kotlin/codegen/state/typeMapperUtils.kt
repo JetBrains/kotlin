@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
@@ -93,4 +94,4 @@ fun KotlinType.removeExternalProjections(): KotlinType {
 
 fun isInlineClassConstructorAccessor(descriptor: FunctionDescriptor): Boolean =
     descriptor is AccessorForConstructorDescriptor &&
-            descriptor.calleeDescriptor.constructedClass.isInline
+            descriptor.calleeDescriptor.constructedClass.isInlineClass()

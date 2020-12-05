@@ -8,19 +8,19 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
-import org.jetbrains.kotlin.fir.resolve.constructType
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
-import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -177,19 +177,24 @@ abstract class AbstractAnnotationDeserializer(
 
         var arguments = emptyList<FirExpression>()
         if (proto.argumentCount != 0 && firAnnotationClass?.classKind == ClassKind.ANNOTATION_CLASS) {
-            val constructor = firAnnotationClass.declarations.firstOrNull { it is FirConstructor }
-            if (constructor is FirConstructor) {
-                val parameterByName = constructor.valueParameters.associateBy { it.name }
+            val classScope = firAnnotationClass.defaultType()
+                .scope(session, ScopeSession(), FakeOverrideTypeCalculator.DoNothing)
+                ?: error("Null scope for $classId")
 
-                arguments = proto.argumentList.mapNotNull {
-                    val name = nameResolver.getName(it.nameId)
-                    val parameter = parameterByName[name] ?: return@mapNotNull null
-                    val value = resolveValue(parameter.returnTypeRef.coneType, it.value, nameResolver)
-                    buildNamedArgumentExpression {
-                        expression = value
-                        isSpread = false
-                        this.name = name
-                    }
+            val constructor =
+                classScope.getDeclaredConstructors().singleOrNull()?.fir ?: error("No single constructor found for $classId")
+
+
+            val parameterByName = constructor.valueParameters.associateBy { it.name }
+
+            arguments = proto.argumentList.mapNotNull {
+                val name = nameResolver.getName(it.nameId)
+                val parameter = parameterByName[name] ?: return@mapNotNull null
+                val value = resolveValue(parameter.returnTypeRef.coneType, it.value, nameResolver)
+                buildNamedArgumentExpression {
+                    expression = value
+                    isSpread = false
+                    this.name = name
                 }
             }
         }

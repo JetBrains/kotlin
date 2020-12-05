@@ -1,9 +1,9 @@
 package sample
 
-expect fun <lineMarker descr="Has actuals in common">sameFile</lineMarker>()
+expect fun <!LINE_MARKER("descr='Has actuals in common'")!>sameFile<!>()
 
-actual fun <lineMarker>sameFile</lineMarker>() = Unit
+actual fun <!LINE_MARKER("descr='null'")!>sameFile<!>() = Unit
 
-expect fun <lineMarker descr="Has actuals in common">sameModule</lineMarker>()
+expect fun <!LINE_MARKER("descr='Has actuals in common'")!>sameModule<!>()
 
 fun noExpectActualDeclaration() = Unit

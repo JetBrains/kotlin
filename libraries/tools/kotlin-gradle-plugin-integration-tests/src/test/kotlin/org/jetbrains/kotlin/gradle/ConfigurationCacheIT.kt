@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.jetbrains.kotlin.gradle.util.findFileByName
+import org.jetbrains.kotlin.gradle.util.createTempDir
 import org.junit.Test
 import java.io.File
 import java.net.URI
@@ -16,6 +17,27 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @Test
     fun testSimpleKotlinJvmProject() = with(Project("kotlinProject")) {
         testConfigurationCacheOf(":compileKotlin")
+    }
+
+    @Test
+    fun testJvmWithMavenPublish() = with(Project("kotlinProject")) {
+        setupWorkingDir()
+        gradleBuildScript().appendText("""
+            apply plugin: "maven-publish"
+            group = "com.example"
+            version = "1.0"
+            publishing.repositories {
+                maven { 
+                    url = "${'$'}buildDir/repo"
+                }
+            }
+            publishing.publications {
+                maven(MavenPublication) {
+                    from(components["java"])
+                }
+            }
+        """.trimIndent())
+        testConfigurationCacheOf(":publishMavenPublicationToMavenRepository", checkUpToDateOnRebuild = false)
     }
 
     @Test
@@ -57,6 +79,7 @@ abstract class AbstractConfigurationCacheIT : BaseGradleIT() {
     protected fun Project.testConfigurationCacheOf(
         vararg taskNames: String,
         executedTaskNames: List<String>? = null,
+        checkUpToDateOnRebuild: Boolean = true,
         buildOptions: BuildOptions = defaultBuildOptions()
     ) {
         // First, run a build that serializes the tasks state for instant execution in further builds
@@ -70,7 +93,7 @@ abstract class AbstractConfigurationCacheIT : BaseGradleIT() {
             checkInstantExecutionSucceeded()
         }
 
-        build("clean") {
+        build("clean", options = buildOptions) {
             assertSuccessful()
         }
 
@@ -81,9 +104,11 @@ abstract class AbstractConfigurationCacheIT : BaseGradleIT() {
             assertContains("Reusing configuration cache.")
         }
 
-        build(*taskNames, options = buildOptions) {
-            assertSuccessful()
-            assertTasksUpToDate(executedTask)
+        if (checkUpToDateOnRebuild) {
+            build(*taskNames, options = buildOptions) {
+                assertSuccessful()
+                assertTasksUpToDate(executedTask)
+            }
         }
     }
 
@@ -99,7 +124,7 @@ abstract class AbstractConfigurationCacheIT : BaseGradleIT() {
      * directory.
      */
     private fun copyReportToTempDir(htmlReportFile: File): File =
-        createTempDir().let { tempDir ->
+        createTempDir("report").let { tempDir ->
             htmlReportFile.parentFile.copyRecursively(tempDir)
             tempDir.resolve(htmlReportFile.name)
         }

@@ -12,4 +12,10 @@ import org.jetbrains.kotlin.psi.KtExpression
 abstract class KtTypeProvider : KtAnalysisSessionComponent() {
     abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType
     abstract fun getKtExpressionType(expression: KtExpression): KtType
+
+    abstract fun isEqualTo(first: KtType, second: KtType): Boolean
+    abstract fun isSubTypeOf(subType: KtType, superType: KtType): Boolean
+
+    //TODO get rid of
+    abstract fun isBuiltinFunctionalType(type: KtType): Boolean
 }

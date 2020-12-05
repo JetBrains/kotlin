@@ -37,7 +37,7 @@ internal data class NativeSensitiveManifestData(
         addOptionalProperty(KLIB_PROPERTY_DEPENDS, dependencies.isNotEmpty()) { dependencies.joinToString(separator = " ") }
         addOptionalProperty(KLIB_PROPERTY_INTEROP, isInterop) { "true" }
         addOptionalProperty(KLIB_PROPERTY_PACKAGE, packageFqName != null) { packageFqName!! }
-        addOptionalProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, exportForwardDeclarations.isNotEmpty()) {
+        addOptionalProperty(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, exportForwardDeclarations.isNotEmpty() || isInterop) {
             exportForwardDeclarations.joinToString(" ")
         }
         addOptionalProperty(KLIB_PROPERTY_NATIVE_TARGETS, nativeTargets.isNotEmpty()) {
@@ -51,15 +51,22 @@ internal data class NativeSensitiveManifestData(
 
         check(uniqueName == other.uniqueName)
 
-        // Assumption: It's enough to merge native targets list, other properties can be taken from 'this' manifest.
+        // Merge algorithm:
+        // - Unite native target lists.
+        // - Intersect dependency lists.
+        // - Boolean and 'isInterop'.
+        // - If both libs are 'isInterop' then intersect exported forward declaration lists.
+        // - Other properties can be taken from 'this' manifest.
+
+        val bothAreInterop = isInterop && other.isInterop
 
         return NativeSensitiveManifestData(
             uniqueName = uniqueName,
             versions = versions,
             dependencies = (dependencies intersect other.dependencies).toList(),
-            isInterop = isInterop,
+            isInterop = bothAreInterop,
             packageFqName = packageFqName,
-            exportForwardDeclarations = exportForwardDeclarations,
+            exportForwardDeclarations = if (bothAreInterop) (exportForwardDeclarations intersect other.exportForwardDeclarations).toList() else emptyList(),
             nativeTargets = HashSet<String>().apply {
                 addAll(nativeTargets)
                 addAll(other.nativeTargets)

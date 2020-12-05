@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
 import org.jetbrains.kotlin.util.OperatorNameConventions.PLUS
@@ -34,7 +37,7 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
                 val expression = (arg as? FirNamedArgumentExpression)?.expression ?: arg
 
                 checkAnnotationArgumentWithSubElements(expression, context.session, reporter)
-                    ?.let { reporter.report(getFirSourceElement(expression), it) }
+                    ?.let { reporter.report(expression.source, it) }
             }
         }
     }
@@ -49,7 +52,7 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
                 var usedNonConst = false
 
                 for (arg in expression.argumentList.arguments) {
-                    val sourceForReport = getFirSourceElement(arg)
+                    val sourceForReport = arg.source
 
                     when (val err = checkAnnotationArgumentWithSubElements(arg, session, reporter)) {
                         null -> {
@@ -67,7 +70,7 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
             is FirVarargArgumentsExpression -> {
                 for (arg in expression.arguments)
                     checkAnnotationArgumentWithSubElements(arg, session, reporter)
-                        ?.let { reporter.report(getFirSourceElement(arg), it) }
+                        ?.let { reporter.report(arg.source, it) }
             }
             else ->
                 return checkAnnotationArgument(expression, session)
@@ -140,18 +143,19 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
             }
             expression is FirFunctionCall -> {
                 val calleeReference = expression.calleeReference
-                if (calleeReference is FirErrorNamedReference)
+                if (calleeReference is FirErrorNamedReference) {
                     return null
-                if (expression.typeRef.coneType.classId == StandardClassIds.KClass)
+                }
+                if (expression.typeRef.coneType.classId == StandardClassIds.KClass) {
                     return FirErrors.ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL
+                }
 
                 //TODO: UNRESOLVED REFERENCE
-                if (expression.dispatchReceiver is FirThisReceiverExpression)
+                if (expression.dispatchReceiver is FirThisReceiverExpression) {
                     return null
+                }
 
                 when (calleeReference.name) {
-                    TO_STRING ->
-                        return checkAnnotationArgument(expression.dispatchReceiver, session)
                     in BINARY_OPERATION_NAMES, in UNARY_OPERATION_NAMES -> {
                         val receiverClassId = expression.dispatchReceiver.typeRef.coneType.classId
 
@@ -167,8 +171,18 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
                             checkAnnotationArgument(exp, session)?.let { return it }
                         }
                     }
-                    else ->
+                    else -> {
+                        if (expression.arguments.isNotEmpty() || calleeReference !is FirResolvedNamedReference) {
+                            return FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
+                        }
+                        val symbol = calleeReference.resolvedSymbol as? FirCallableSymbol
+                        if (calleeReference.name == TO_STRING ||
+                            calleeReference.name in CONVERSION_NAMES && symbol?.callableId?.packageName?.asString() == "kotlin"
+                        ) {
+                            return checkAnnotationArgument(expression.dispatchReceiver, session)
+                        }
                         return FirErrors.ANNOTATION_ARGUMENT_MUST_BE_CONST
+                    }
                 }
             }
             expression is FirQualifiedAccessExpression -> {
@@ -210,36 +224,14 @@ object FirAnnotationArgumentChecker : FirBasicDeclarationChecker() {
             ?.toSymbol(session)
             ?.fir
 
-    private fun getFirSourceElement(expression: FirExpression): FirSourceElement? =
-        when {
-            expression is FirFunctionCall && expression.calleeReference.name == TO_STRING ->
-                getParentOfFirSourceElement(getParentOfFirSourceElement(expression.source))
-            expression is FirFunctionCall ->
-                expression.source
-            (expression as? FirQualifiedAccess)?.explicitReceiver != null ->
-                getParentOfFirSourceElement(expression.source)
-            else ->
-                expression.source
-        }
-
-    private fun getParentOfFirSourceElement(source: FirSourceElement?): FirSourceElement? =
-        when (source) {
-            is FirPsiSourceElement<*> ->
-                source.psi.parent.toFirPsiSourceElement()
-            is FirLightSourceElement -> {
-                val elementOfParent = source.tree.getParent(source.element)
-                    ?: source.element
-
-                elementOfParent.toFirLightSourceElement(elementOfParent.startOffset, elementOfParent.endOffset, source.tree)
-            }
-            else ->
-                source
-        }
-
     private inline fun <reified T : FirSourceElement, P : PsiElement> DiagnosticReporter.report(
         source: T?,
         factory: FirDiagnosticFactory0<T, P>
     ) {
         source?.let { report(factory.on(it)) }
     }
+
+    private val CONVERSION_NAMES = listOf(
+        "toInt", "toLong", "toShort", "toByte", "toFloat", "toDouble", "toChar", "toBoolean"
+    ).mapTo(hashSetOf()) { Name.identifier(it) }
 }

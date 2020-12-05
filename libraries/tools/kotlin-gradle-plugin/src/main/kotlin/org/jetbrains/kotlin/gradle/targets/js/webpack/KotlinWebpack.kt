@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
+import org.jetbrains.kotlin.gradle.utils.disableTaskOnConfigurationCacheBuild
 import org.jetbrains.kotlin.gradle.utils.injected
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import org.jetbrains.kotlin.gradle.utils.property
@@ -35,10 +36,16 @@ open class KotlinWebpack
 @Inject
 constructor(
     @Internal
+    @Transient
     override val compilation: KotlinJsCompilation
 ) : DefaultTask(), RequiresNpmDependencies {
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
+
+    init {
+        // TODO: temporary workaround for configuration cache enabled builds
+        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
+    }
 
     @get:Inject
     open val fileResolver: FileResolver
@@ -49,11 +56,13 @@ constructor(
         get() = injected
 
     @Suppress("unused")
-    val compilationId: String
-        @Input get() = compilation.let {
+    @get:Input
+    val compilationId: String by lazy {
+        compilation.let {
             val target = it.target
             target.project.path + "@" + target.name + ":" + it.compilationName
         }
+    }
 
     @Input
     var mode: Mode = Mode.DEVELOPMENT
@@ -81,11 +90,15 @@ constructor(
     internal var resolveFromModulesFirst: Boolean = false
 
     @Suppress("unused")
-    val runtimeClasspath: FileCollection
-        @InputFiles get() = compilation.compileDependencyFiles
+    @get:InputFiles
+    val runtimeClasspath: FileCollection by lazy {
+        compilation.compileDependencyFiles
+    }
 
-    open val configFile: File
-        @OutputFile get() = compilation.npmProject.dir.resolve("webpack.config.js")
+    @get:OutputFile
+    open val configFile: File by lazy {
+        compilation.npmProject.dir.resolve("webpack.config.js")
+    }
 
     @Input
     var saveEvaluatedConfigFile: Boolean = true
@@ -133,12 +146,12 @@ constructor(
     open val reportDir: File
         @Internal get() = reportDirProvider.get()
 
-    open val reportDirProvider: Provider<File>
-        @OutputDirectory get() = entryProperty
-            .map { it.asFile.nameWithoutExtension }
-            .map {
-                project.reportsDir.resolve("webpack").resolve(it)
-            }
+    @OutputDirectory
+    open val reportDirProvider: Provider<File> = entryProperty
+        .map { it.asFile.nameWithoutExtension }
+        .map {
+            project.reportsDir.resolve("webpack").resolve(it)
+        }
 
     open val evaluatedConfigFile: File
         @Internal get() = evaluatedConfigFileProvider.get()
@@ -172,8 +185,15 @@ constructor(
     @Internal
     var generateConfigOnly: Boolean = false
 
-    @Input
-    val webpackConfigAppliers: MutableList<(KotlinWebpackConfig) -> Unit> =
+    @Nested
+    val synthConfig = KotlinWebpackConfig()
+
+    fun webpackConfigApplier(body: KotlinWebpackConfig.() -> Unit) {
+        synthConfig.body()
+        webpackConfigAppliers.add(body)
+    }
+
+    private val webpackConfigAppliers: MutableList<(KotlinWebpackConfig) -> Unit> =
         mutableListOf()
 
     private fun createRunner(): KotlinWebpackRunner {
@@ -213,6 +233,8 @@ constructor(
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = createRunner().config.getRequiredDependencies(versions)
 
+    private val isContinuous = project.gradle.startParameter.isContinuous
+
     @TaskAction
     fun doExecute() {
         nodeJs.npmResolutionManager.checkRequiredDependencies(this)
@@ -224,13 +246,11 @@ constructor(
             return
         }
 
-        if (project.gradle.startParameter.isContinuous) {
-            val continuousRunner = runner
-
+        if (isContinuous) {
             val deploymentRegistry = services.get(DeploymentRegistry::class.java)
             val deploymentHandle = deploymentRegistry.get("webpack", Handle::class.java)
             if (deploymentHandle == null) {
-                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, continuousRunner)
+                deploymentRegistry.start("webpack", DeploymentRegistry.ChangeBehavior.BLOCK, Handle::class.java, runner)
             }
         } else {
             runner.copy(

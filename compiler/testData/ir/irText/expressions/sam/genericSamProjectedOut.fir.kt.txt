@@ -1,0 +1,14 @@
+fun test(a: SomeJavaClass<out String>) {
+  a.someFunction(hello = local fun <anonymous>(it: String?) {
+    return Unit
+  }
+ /*-> Hello<Any?>? */)
+  a.plus(hello = local fun <anonymous>(it: String?) {
+    return Unit
+  }
+ /*-> Hello<Any?>? */)
+  a.get(hello = local fun <anonymous>(it: String?) {
+    return Unit
+  }
+ /*-> Hello<Any?>? */)
+}

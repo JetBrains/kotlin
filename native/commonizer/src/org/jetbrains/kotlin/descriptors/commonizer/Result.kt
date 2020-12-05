@@ -14,8 +14,8 @@ sealed class Result {
     class Commonized(
         val modulesByTargets: Map<Target, Collection<ModuleResult>>
     ) : Result() {
-        val sharedTarget: OutputTarget by lazy { modulesByTargets.keys.filterIsInstance<OutputTarget>().single() }
-        val leafTargets: Set<InputTarget> by lazy { modulesByTargets.keys.filterIsInstance<InputTarget>().toSet() }
+        val sharedTarget: SharedTarget by lazy { modulesByTargets.keys.filterIsInstance<SharedTarget>().single() }
+        val leafTargets: Set<LeafTarget> by lazy { modulesByTargets.keys.filterIsInstance<LeafTarget>().toSet() }
     }
 }
 

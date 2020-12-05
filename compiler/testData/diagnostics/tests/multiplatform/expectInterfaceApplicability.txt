@@ -1,0 +1,30 @@
+// -- Module: <m1-common> --
+package
+
+public expect interface My {
+    public expect abstract val abstractVal: kotlin.Int
+    public expect open val openValNegative: kotlin.Int
+    public expect open val openValPositive: kotlin.Int
+    public abstract expect fun abstractFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open expect fun openFunNegative(): kotlin.Unit
+    public open expect fun openFunPositive(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+
+// -- Module: <m1-jvm> --
+package
+
+public actual interface My {
+    public actual abstract val abstractVal: kotlin.Int
+    public actual abstract val openValNegative: kotlin.Int
+    public actual open val openValPositive: kotlin.Int
+    public abstract actual fun abstractFun(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract actual fun openFunNegative(): kotlin.Unit
+    public open actual fun openFunPositive(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

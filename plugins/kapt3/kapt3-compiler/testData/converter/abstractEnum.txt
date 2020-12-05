@@ -5,12 +5,12 @@ public enum E {
     /*public static final*/ X /* = new E() */,
     /*public static final*/ Y /* = new E() */;
 
+    E() {
+    }
+
     public abstract void a();
 
     public final void b() {
-    }
-
-    E() {
     }
 
     @kotlin.Metadata()
@@ -42,13 +42,13 @@ public enum E2 {
     /*public static final*/ X /* = new E2() */,
     /*public static final*/ Y /* = new E2() */;
 
-    public abstract void a();
-
     E2(int n) {
     }
 
     E2(java.lang.String s) {
     }
+
+    public abstract void a();
 }
 
 ////////////////////
@@ -63,12 +63,12 @@ public enum E3 {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.String a = null;
 
+    E3(java.lang.String a) {
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getA() {
         return null;
-    }
-
-    E3(java.lang.String a) {
     }
 }
 
@@ -86,6 +86,9 @@ public enum E4 {
     private final long c = 0L;
     private final boolean d = false;
 
+    E4(java.lang.String a, int b, long c, boolean d) {
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getA() {
         return null;
@@ -101,8 +104,5 @@ public enum E4 {
 
     public final boolean getD() {
         return false;
-    }
-
-    E4(java.lang.String a, int b, long c, boolean d) {
     }
 }

@@ -81,8 +81,11 @@ abstract class AbstractIdeLightClassTest : KotlinLightCodeInsightFixtureTestCase
 
     private fun lazinessModeByFileText(): LightClassLazinessChecker.Mode {
         return testDataFile().readText().run {
-            val argument = substringAfter("LAZINESS:", "").substringBefore(" ")
-            LightClassLazinessChecker.Mode.values().firstOrNull { it.name == argument } ?: LightClassLazinessChecker.Mode.AllChecks
+            val argument = substringAfter("LAZINESS:", "").substringBefore('\n').substringBefore(' ')
+            if (argument == "") LightClassLazinessChecker.Mode.AllChecks
+            else requireNotNull(LightClassLazinessChecker.Mode.values().firstOrNull { it.name == argument }) {
+                "Invalid LAZINESS testdata parameter $argument"
+            }
         }
     }
 
@@ -128,8 +131,7 @@ abstract class AbstractIdeCompiledLightClassTest : KotlinDaemonAnalyzerTestCase(
 }
 
 private fun testLightClass(expected: File, testData: File, normalize: (String) -> String, findLightClass: (String) -> PsiClass?) {
-    LightClassTestCommon.testLightClass(
-        expected,
+    val actual = LightClassTestCommon.getActualLightClassText(
         testData,
         findLightClass = findLightClass,
         normalizeText = { text ->
@@ -144,19 +146,18 @@ private fun testLightClass(expected: File, testData: File, normalize: (String) -
                 .run(normalize)
         }
     )
+    KotlinTestUtils.assertEqualsToFile(expected, actual)
 }
 
-private fun findClass(fqName: String, ktFile: KtFile?, project: Project): PsiClass? {
+fun findClass(fqName: String, ktFile: KtFile?, project: Project): PsiClass? {
     ktFile?.script?.let {
         return it.toLightClass()
     }
 
-    return JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project)) ?: PsiTreeUtil.findChildrenOfType(
-            ktFile,
-            KtClassOrObject::class.java
-        )
-        .find { fqName.endsWith(it.nameAsName!!.asString()) }
-        ?.let { KtLightClassForSourceDeclaration.create(it) }
+    return JavaPsiFacade.getInstance(project).findClass(fqName, GlobalSearchScope.allScope(project))
+        ?: PsiTreeUtil.findChildrenOfType(ktFile, KtClassOrObject::class.java)
+            .find { fqName.endsWith(it.nameAsName!!.asString()) }
+            ?.toLightClass()
 }
 
 object LightClassLazinessChecker {
@@ -276,11 +277,13 @@ object LightClassLazinessChecker {
                 // see KtLightNullabilityAnnotation
                 assertTrue(
                     lightAnnotations.isNotEmpty(),
-                    "Missing $fqName annotation in '${modifierListOwner}' have only ${annotations?.joinToString(
-                        ", ",
-                        "[",
-                        "]"
-                    ) { it.toString() }}"
+                    "Missing $fqName annotation in '${modifierListOwner}' have only ${
+                        annotations?.joinToString(
+                            ", ",
+                            "[",
+                            "]"
+                        ) { it.toString() }
+                    }"
                 )
             }
             clsAnnotations.zip(lightAnnotations).forEach { (clsAnnotation, lightAnnotation) ->

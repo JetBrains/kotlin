@@ -50,11 +50,29 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     abstract class RenderMode(
         val renderLambdaBodies: Boolean,
         val renderCallArguments: Boolean,
-        val renderCallableFqNames: Boolean
+        val renderCallableFqNames: Boolean,
+        val renderDeclarationResolvePhase: Boolean
     ) {
-        object Normal : RenderMode(renderLambdaBodies = true, renderCallArguments = true, renderCallableFqNames = false)
+        object Normal : RenderMode(
+            renderLambdaBodies = true,
+            renderCallArguments = true,
+            renderCallableFqNames = false,
+            renderDeclarationResolvePhase = false
+        )
 
-        object WithFqNames: RenderMode(renderLambdaBodies = true, renderCallArguments = true, renderCallableFqNames = true)
+        object WithFqNames : RenderMode(
+            renderLambdaBodies = true,
+            renderCallArguments = true,
+            renderCallableFqNames = true,
+            renderDeclarationResolvePhase = false
+        )
+
+        object WithResolvePhases : RenderMode(
+            renderLambdaBodies = true,
+            renderCallArguments = true,
+            renderCallableFqNames = false,
+            renderDeclarationResolvePhase = true
+        )
     }
 
     private val printer = Printer(builder)
@@ -322,6 +340,9 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitDeclaration(declaration: FirDeclaration) {
+        if (mode.renderDeclarationResolvePhase) {
+            print("[${declaration.resolvePhase}] ")
+        }
         print(
             when (declaration) {
                 is FirRegularClass -> declaration.classKind.name.toLowerCase().replace("_", " ")
@@ -503,8 +524,11 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
         anonymousInitializer.body?.renderBody()
     }
 
-    private fun FirBlock.renderBody(additionalStatements: List<FirStatement> = emptyList()) {
-        renderInBraces {
+    private fun FirBlock.renderBody(additionalStatements: List<FirStatement> = emptyList()) = when (this) {
+        is FirLazyBlock -> {
+            println(" { LAZY_BLOCK }")
+        }
+        else -> renderInBraces {
             for (statement in additionalStatements + statements) {
                 statement.accept(this@FirRenderer)
                 println()
@@ -702,10 +726,13 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     override fun visitExpression(expression: FirExpression) {
-        expression.annotations.renderAnnotations()
+        if (expression !is FirLazyExpression) {
+            expression.annotations.renderAnnotations()
+        }
         print(
             when (expression) {
                 is FirExpressionStub -> "STUB"
+                is FirLazyExpression -> "LAZY_EXPRESSION"
                 is FirUnitExpression -> "Unit"
                 is FirElseIfTrueCondition -> "else"
                 is FirNoReceiverExpression -> ""
@@ -946,14 +973,10 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
         print("R|")
         val symbol = resolvedNamedReference.resolvedSymbol
-        val isFakeOverride = when (symbol) {
-            is FirNamedFunctionSymbol -> symbol.isFakeOverride
-            is FirPropertySymbol -> symbol.isFakeOverride
-            else -> false
-        }
+        val isSubstitutionOverride = (symbol.fir as? FirCallableMemberDeclaration)?.isSubstitutionOverride == true
 
-        if (isFakeOverride) {
-            print("FakeOverride<")
+        if (isSubstitutionOverride) {
+            print("SubstitutionOverride<")
         }
 
         print(symbol.unwrapIntersectionOverrides().render())
@@ -968,7 +991,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
             }
         }
 
-        if (isFakeOverride) {
+        if (isSubstitutionOverride) {
             when (symbol) {
                 is FirNamedFunctionSymbol -> {
                     print(": ")
@@ -985,7 +1008,7 @@ class FirRenderer(builder: StringBuilder, private val mode: RenderMode = RenderM
     }
 
     private fun AbstractFirBasedSymbol<*>.unwrapIntersectionOverrides(): AbstractFirBasedSymbol<*> {
-        if (this is FirCallableSymbol<*> && isIntersectionOverride) return overriddenSymbol!!.unwrapIntersectionOverrides()
+        (this as? FirCallableSymbol<*>)?.baseForIntersectionOverride?.let { return it.unwrapIntersectionOverrides() }
         return this
     }
 

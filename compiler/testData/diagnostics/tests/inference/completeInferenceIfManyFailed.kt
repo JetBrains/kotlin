@@ -3,6 +3,8 @@
 
 package d
 
+import checkSubtype
+
 fun <T: Any> joinT(<!UNUSED_PARAMETER!>x<!>: Int, vararg <!UNUSED_PARAMETER!>a<!>: T): T? {
     return null
 }

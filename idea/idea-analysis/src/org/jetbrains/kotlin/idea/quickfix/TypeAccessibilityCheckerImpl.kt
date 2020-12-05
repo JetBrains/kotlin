@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.types.isError
@@ -101,7 +102,7 @@ private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
     return when (this) {
         is ClassConstructorDescriptor -> valueParameters.asSequence().map(ValueParameterDescriptor::getType)
             .flatMap(KotlinType::collectAllTypes)
-        is ClassDescriptor -> if (isInline) unsubstitutedPrimaryConstructor?.collectAllTypes().orEmpty() else {
+        is ClassDescriptor -> if (isInlineClass()) unsubstitutedPrimaryConstructor?.collectAllTypes().orEmpty() else {
             emptySequence()
         } + declaredTypeParameters.asSequence().flatMap(DeclarationDescriptor::collectAllTypes) + sequenceOf(fqNameOrNull())
         is CallableDescriptor -> {

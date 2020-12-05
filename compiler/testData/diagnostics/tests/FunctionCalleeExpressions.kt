@@ -3,6 +3,9 @@
 
 package foo
 
+import checkType
+import checkSubtype
+
 fun Any.foo() : () -> Unit {
   return {}
 }

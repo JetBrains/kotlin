@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
+import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
@@ -65,11 +67,10 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
             IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 
     override fun generateFacadeClass(irFactory: IrFactory, source: DeserializedContainerSource): IrClass? {
-        if (!generateFacades) return null
-        val jvmPackagePartSource = source as? JvmPackagePartSource ?: return null
-        val facadeName = jvmPackagePartSource.facadeClassName ?: jvmPackagePartSource.className
+        if (!generateFacades || source !is JvmPackagePartSource) return null
+        val facadeName = source.facadeClassName ?: source.className
         return irFactory.buildClass {
-            origin = IrDeclarationOrigin.FILE_CLASS
+            origin = if (source.facadeClassName != null) IrDeclarationOrigin.JVM_MULTIFILE_CLASS else IrDeclarationOrigin.FILE_CLASS
             name = facadeName.fqNameForTopLevelClassMaybeWithDollars.shortName()
         }.also {
             it.createParameterDeclarations()
@@ -79,6 +80,11 @@ class JvmGeneratorExtensions(private val generateFacades: Boolean = true) : Gene
 
     override fun isPropertyWithPlatformField(descriptor: PropertyDescriptor): Boolean =
         descriptor.hasJvmFieldAnnotation()
+
+    override fun isStaticFunction(descriptor: FunctionDescriptor): Boolean =
+        DescriptorUtils.isNonCompanionObject(descriptor.containingDeclaration) &&
+                (descriptor.hasJvmStaticAnnotation() ||
+                        descriptor is PropertyAccessorDescriptor && descriptor.correspondingProperty.hasJvmStaticAnnotation())
 
     override val enhancedNullability: EnhancedNullability
         get() = JvmEnhancedNullability

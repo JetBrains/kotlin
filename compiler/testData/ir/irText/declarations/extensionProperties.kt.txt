@@ -1,0 +1,33 @@
+val String.test1: Int
+  get(): Int {
+    return 42
+  }
+
+var String.test2: Int
+  get(): Int {
+    return 42
+  }
+  set(value: Int) {
+  }
+
+class Host {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val String.test3: Int
+    get(): Int {
+      return 42
+    }
+
+  var String.test4: Int
+    get(): Int {
+      return 42
+    }
+    set(value: Int) {
+    }
+
+}
+

@@ -1,0 +1,24 @@
+val d: dynamic
+  field = 1
+  get
+
+val p: Int
+  field = <get-d>() /*~> Int */
+  get
+
+fun test1(d: dynamic): Int {
+  return d /*~> Int */
+}
+
+fun test2(d: dynamic): Any {
+  return d /*~> Any */
+}
+
+fun test3(d: dynamic): Any? {
+  return d
+}
+
+fun test4(d: dynamic): String {
+  return d.member(1, 2, 3) /*~> String */
+}
+

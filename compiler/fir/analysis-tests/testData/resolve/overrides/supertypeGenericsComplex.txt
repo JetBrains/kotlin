@@ -23,6 +23,6 @@ FILE: supertypeGenericsComplex.kt
 
     }
     public final fun f(list: R|kotlin/collections/MutableList<X>|, s: R|kotlin/collections/MutableList<kotlin/CharSequence>|): R|kotlin/Unit| {
-        R|/C.C|().R|FakeOverride</C.f: R|kotlin/Unit|>|<R|X|>(R|<local>/list|, R|<local>/s|)
+        R|/C.C|().R|SubstitutionOverride</C.f: R|kotlin/Unit|>|<R|X|>(R|<local>/list|, R|<local>/s|)
         R|/C.C|().<Inapplicable(INAPPLICABLE): /C.f>#<R|kotlin/CharSequence|>(R|<local>/s|, R|<local>/list|)
     }

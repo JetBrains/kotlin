@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.checkers
 import com.intellij.rt.execution.junit.FileComparisonFailure
 import org.jetbrains.kotlin.idea.test.withCustomCompilerOptions
 import org.jetbrains.kotlin.idea.withPossiblyDisabledDuplicatedFirSourceElementsException
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.uitls.IgnoreTests
 import java.io.File
 
 abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
@@ -16,13 +16,11 @@ abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
 
     override fun isFirPlugin(): Boolean = true
 
-    override fun setUp() {
-        super.setUp()
-    }
-
     override fun doTest(filePath: String) {
-        myFixture.configureByFile(fileName())
-        checkHighlighting(checkWarnings = false, checkInfos = false, checkWeakWarnings = false)
+        IgnoreTests.runTestIfEnabledByFileDirective(testDataFilePath(), IgnoreTests.DIRECTIVES.FIR_COMPARISON) {
+            myFixture.configureByFile(fileName())
+            checkHighlighting(checkWarnings = false, checkInfos = false, checkWeakWarnings = false)
+        }
     }
 
     override fun checkHighlighting(
@@ -30,27 +28,15 @@ abstract class AbstractFirPsiCheckerTest : AbstractPsiCheckerTest() {
         checkInfos: Boolean,
         checkWeakWarnings: Boolean
     ): Long {
-        val file = file
         val fileText = file.text
         return withCustomCompilerOptions(fileText, project, module) {
-            val doComparison = InTextDirectivesUtils.isDirectiveDefined(myFixture.file.text, "FIR_COMPARISON")
             try {
                 withPossiblyDisabledDuplicatedFirSourceElementsException(fileText) {
                     myFixture.checkHighlighting(checkWarnings, checkInfos, checkWeakWarnings)
                 }
             } catch (e: FileComparisonFailure) {
-                if (doComparison) {
-                    // Even this is very partial check (only error compatibility, no warnings / infos)
-                    throw FileComparisonFailure(e.message, e.expected, e.actual, File(e.filePath).absolutePath)
-                } else {
-                    // Here we just check that we haven't crashed due to exception
-                    0
-                }
+                throw FileComparisonFailure(e.message, e.expected, e.actual, File(e.filePath).absolutePath)
             }
         }
-    }
-
-    override fun tearDown() {
-        super.tearDown()
     }
 }

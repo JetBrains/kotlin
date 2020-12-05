@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirProperty
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertyFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirPropertyGetterFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.PropertyCommonizer.ConstCommonizationState.*
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 
-class PropertyCommonizer(cache: CirClassifiersCache) : AbstractFunctionOrPropertyCommonizer<CirProperty>(cache) {
+class PropertyCommonizer(classifiers: CirKnownClassifiers) : AbstractFunctionOrPropertyCommonizer<CirProperty>(classifiers) {
     private val setter = PropertySetterCommonizer()
     private var isExternal = true
     private lateinit var constCommonizationState: ConstCommonizationState

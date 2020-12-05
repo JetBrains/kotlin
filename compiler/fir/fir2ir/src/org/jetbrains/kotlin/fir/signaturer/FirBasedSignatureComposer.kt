@@ -6,16 +6,12 @@
 package org.jetbrains.kotlin.fir.signaturer
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrSignatureComposer
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.name.FqName
 
 @NoMutableState
 class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatureComposer {
@@ -60,14 +56,12 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
         }
     }
 
-    private val CallableId.relativeCallableName: FqName
-        get() = className?.child(callableName) ?: FqName.topLevel(callableName)
-
     override fun composeSignature(declaration: FirDeclaration, containingClass: ConeClassLikeLookupTag?): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null
         if (declaration is FirCallableMemberDeclaration<*>) {
-            if (declaration.visibility == Visibilities.Local || declaration.symbol.callableId.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
+            if (declaration.visibility == Visibilities.Local) return null
+            if (declaration.symbol.dispatchReceiverClassOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
         }
         val builder = SignatureBuilder()
         try {
@@ -93,11 +87,15 @@ class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatu
             is FirCallableMemberDeclaration<*> -> {
                 if (declaration.visibility == Visibilities.Private) return null
                 val containingClassId = containingClass?.classId
-                val baseCallableId = declaration.symbol.callableId
-                val callableId =
-                    if (containingClassId != null) CallableId(containingClassId, baseCallableId.callableName) else baseCallableId
+
+                val classId = containingClassId ?: declaration.containingClass()?.classId
+                val packageName = classId?.packageFqName ?: declaration.symbol.callableId.packageName
+                val callableName = declaration.symbol.callableId.callableName
+
                 IdSignature.PublicSignature(
-                    callableId.packageName.asString(), callableId.relativeCallableName.asString(), builder.hashId, builder.mask
+                    packageName.asString(),
+                    classId?.relativeClassName?.child(callableName)?.asString() ?: callableName.asString(),
+                    builder.hashId, builder.mask
                 )
             }
             else -> error("Unsupported FIR declaration in signature composer: ${declaration.render()}")

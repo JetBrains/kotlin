@@ -1009,7 +1009,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         descriptor.setupProject()
 
         try {
-            val builder = IncProjectBuilder(descriptor, BuilderRegistry.getInstance(), this.myBuildParams, canceledStatus, null, true)
+            val builder = IncProjectBuilder(descriptor, BuilderRegistry.getInstance(), this.myBuildParams, canceledStatus, true)
             builder.addMessageHandler(buildResult)
             builder.build(scopeBuilder.build(), false)
         }

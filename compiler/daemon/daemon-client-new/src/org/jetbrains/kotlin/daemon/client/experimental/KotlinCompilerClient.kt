@@ -25,6 +25,7 @@ import java.io.File
 import java.io.Serializable
 import java.net.SocketException
 import java.nio.channels.ClosedChannelException
+import java.nio.file.Files
 import java.rmi.ConnectException
 import java.rmi.ConnectIOException
 import java.rmi.UnmarshalException
@@ -422,7 +423,7 @@ class KotlinCompilerClient : KotlinCompilerDaemonClient {
         report: (DaemonReportCategory, String) -> Unit
     ): Deferred<Pair<CompileServiceAsync?, DaemonJVMOptions>> = GlobalScope.async {
         registryDir.mkdirs()
-        val timestampMarker = createTempFile("kotlin-daemon-client-tsmarker", directory = registryDir)
+        val timestampMarker = Files.createTempFile(registryDir.toPath(), "kotlin-daemon-client-tsmarker", null).toFile()
         val aliveWithMetadata = try {
             walkDaemonsAsync(registryDir, compilerId, timestampMarker, report = report)
         } finally {

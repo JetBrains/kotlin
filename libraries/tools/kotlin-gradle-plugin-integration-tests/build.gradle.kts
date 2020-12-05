@@ -45,6 +45,7 @@ dependencies {
     // Workaround for missing transitive import of the common(project `kotlin-test-common`
     // for `kotlin-test-jvm` into the IDE:
     testCompileOnly(project(":kotlin-test:kotlin-test-common")) { isTransitive = false }
+    testCompileOnly("org.jetbrains.intellij.deps:asm-all:9.0")
 }
 
 // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
@@ -66,6 +67,16 @@ fun Test.includeMppAndAndroid(include: Boolean) {
     }
 }
 
+fun Test.includeNative(include: Boolean) {
+    if (isTeamcityBuild) {
+        val filter = if (include)
+            filter.includePatterns
+        else
+            filter.excludePatterns
+        filter.add("org.jetbrains.kotlin.gradle.native.*")
+    }
+}
+
 fun Test.advanceGradleVersion() {
     val gradleVersionForTests = "6.3"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
@@ -74,15 +85,25 @@ fun Test.advanceGradleVersion() {
 // additional configuration in tasks.withType<Test> below
 projectTest("test", shortenTempRootName = shortenTempRootName) {
     includeMppAndAndroid(false)
+    includeNative(false)
 }
 
 projectTest("testAdvanceGradleVersion", shortenTempRootName = shortenTempRootName) {
     advanceGradleVersion()
     includeMppAndAndroid(false)
+    includeNative(false)
 }
 
-
 if (isTeamcityBuild) {
+    projectTest("testNative", shortenTempRootName = shortenTempRootName) {
+        includeNative(true)
+    }
+
+    projectTest("testAdvanceGradleVersionNative", shortenTempRootName = shortenTempRootName) {
+        advanceGradleVersion()
+        includeNative(true)
+    }
+
     projectTest("testMppAndAndroid", shortenTempRootName = shortenTempRootName) {
         includeMppAndAndroid(true)
     }
@@ -98,6 +119,8 @@ tasks.named<Task>("check") {
     if (isTeamcityBuild) {
         dependsOn("testAdvanceGradleVersionMppAndAndroid")
         dependsOn("testMppAndAndroid")
+        dependsOn("testNative")
+        dependsOn("testAdvanceGradleVersionNative")
     }
 }
 

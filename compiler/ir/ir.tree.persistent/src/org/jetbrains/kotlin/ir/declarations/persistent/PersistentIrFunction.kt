@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.declarations.persistent
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.persistent.carriers.Carrier
@@ -19,24 +19,25 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 internal abstract class PersistentIrFunctionCommon(
-        override val startOffset: Int,
-        override val endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val name: Name,
-        visibility: DescriptorVisibility,
-        returnType: IrType,
-        override val isInline: Boolean,
-        override val isExternal: Boolean,
-        override val isTailrec: Boolean,
-        override val isSuspend: Boolean,
-        override val isOperator: Boolean,
-        override val isInfix: Boolean,
-        override val isExpect: Boolean,
-        override val containerSource: DeserializedContainerSource? = null
+    override val startOffset: Int,
+    override val endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val name: Name,
+    visibility: DescriptorVisibility,
+    returnType: IrType,
+    override val isInline: Boolean,
+    override val isExternal: Boolean,
+    override val isTailrec: Boolean,
+    override val isSuspend: Boolean,
+    override val isOperator: Boolean,
+    override val isInfix: Boolean,
+    override val isExpect: Boolean,
+    override val containerSource: DeserializedContainerSource? = null
 ) : IrSimpleFunction(),
     PersistentIrDeclarationBase<FunctionCarrier>,
     FunctionCarrier {
@@ -63,7 +64,7 @@ internal abstract class PersistentIrFunctionCommon(
 
     final override var returnType: IrType
         get() = returnTypeField.let {
-            if (it !== IrUninitializedType) it else error("Return type is not initialized")
+            if (it !== IrUninitializedType) it else throw ReturnTypeIsNotInitializedException(this)
         }
         set(c) {
             returnTypeField = c
@@ -175,23 +176,23 @@ internal abstract class PersistentIrFunctionCommon(
 }
 
 internal class PersistentIrFunction(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        override val symbol: IrSimpleFunctionSymbol,
-        name: Name,
-        visibility: DescriptorVisibility,
-        override val modality: Modality,
-        returnType: IrType,
-        isInline: Boolean,
-        isExternal: Boolean,
-        isTailrec: Boolean,
-        isSuspend: Boolean,
-        isOperator: Boolean,
-        isInfix: Boolean,
-        isExpect: Boolean,
-        override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
-        containerSource: DeserializedContainerSource?
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    override val symbol: IrSimpleFunctionSymbol,
+    name: Name,
+    visibility: DescriptorVisibility,
+    override val modality: Modality,
+    returnType: IrType,
+    isInline: Boolean,
+    isExternal: Boolean,
+    isTailrec: Boolean,
+    isSuspend: Boolean,
+    isOperator: Boolean,
+    isInfix: Boolean,
+    isExpect: Boolean,
+    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    containerSource: DeserializedContainerSource?
 ) : PersistentIrFunctionCommon(
     startOffset, endOffset, origin, name, visibility, returnType, isInline,
     isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,
@@ -207,20 +208,20 @@ internal class PersistentIrFunction(
 }
 
 internal class PersistentIrFakeOverrideFunction(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        name: Name,
-        override var visibility: DescriptorVisibility,
-        override var modality: Modality,
-        returnType: IrType,
-        isInline: Boolean,
-        isExternal: Boolean,
-        isTailrec: Boolean,
-        isSuspend: Boolean,
-        isOperator: Boolean,
-        isInfix: Boolean,
-        isExpect: Boolean,
+    startOffset: Int,
+    endOffset: Int,
+    origin: IrDeclarationOrigin,
+    name: Name,
+    override var visibility: DescriptorVisibility,
+    override var modality: Modality,
+    returnType: IrType,
+    isInline: Boolean,
+    isExternal: Boolean,
+    isTailrec: Boolean,
+    isSuspend: Boolean,
+    isOperator: Boolean,
+    isInfix: Boolean,
+    isExpect: Boolean,
 ) : PersistentIrFunctionCommon(
     startOffset, endOffset, origin, name, visibility, returnType, isInline,
     isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect,

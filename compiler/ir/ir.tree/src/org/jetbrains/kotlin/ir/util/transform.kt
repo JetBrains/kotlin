@@ -46,19 +46,42 @@ inline fun <T> MutableList<T>.transformFlat(transformation: (T) -> List<T>?) {
     while (i < size) {
         val item = get(i)
 
-        val transformed = transformation(item)
+        i = replaceInPlace(transformation(item), i)
+    }
+}
 
-        when (transformed?.size) {
-            null -> i++
-            0 -> removeAt(i)
-            1 -> set(i++, transformed.first())
-            else -> {
-                addAll(i, transformed)
-                i += transformed.size
-                removeAt(i)
-            }
+/**
+ * Transforms a subset of a mutable list in place.
+ * Each element `it` that has a type S is replaced with a result of `transformation(it)`,
+ * `null` means "keep existing element" (to avoid creating excessive singleton lists).
+ */
+inline fun <T, reified S : T> MutableList<T>.transformSubsetFlat(transformation: (S) -> List<S>?) {
+    var i = 0
+    while (i < size) {
+        val item = get(i)
+
+        if (item !is S) {
+            i++
+            continue
+        }
+
+        i = replaceInPlace(transformation(item), i)
+    }
+}
+
+@PublishedApi internal fun <T> MutableList<T>.replaceInPlace(transformed: List<T>?, atIndex: Int): Int {
+    var i = atIndex
+    when (transformed?.size) {
+        null -> i++
+        0 -> removeAt(i)
+        1 -> set(i++, transformed.first())
+        else -> {
+            addAll(i, transformed)
+            i += transformed.size
+            removeAt(i)
         }
     }
+    return i
 }
 
 /**

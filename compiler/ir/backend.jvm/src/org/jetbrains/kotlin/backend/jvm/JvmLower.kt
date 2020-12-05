@@ -97,10 +97,17 @@ private val lateinitUsageLoweringPhase = makeIrFilePhase(
 internal val propertiesPhase = makeIrFilePhase(
     ::JvmPropertiesLowering,
     name = "Properties",
-    description = "Move fields and accessors for properties to their classes, replace calls to default property accessors " +
-            "with field accesses, remove unused accessors and create synthetic methods for property annotations",
+    description = "Move fields and accessors for properties to their classes, " +
+            "replace calls to default property accessors with field accesses, " +
+            "remove unused accessors and create synthetic methods for property annotations",
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
+
+internal val IrClass.isGeneratedLambdaClass: Boolean
+    get() = origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
+            origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
+            origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
+            origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
 
 internal val localDeclarationsPhase = makeIrFilePhase(
     { context ->
@@ -111,11 +118,10 @@ internal val localDeclarationsPhase = makeIrFilePhase(
                     NameUtils.sanitizeAsJavaIdentifier(super.localName(declaration))
             },
             object : VisibilityPolicy {
+                // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalClassPopupLowering`,
+                // else it won't detect the class as local.
                 override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
-                    if (declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
-                        declaration.origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
-                        declaration.origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
-                    ) {
+                    if (declaration.isGeneratedLambdaClass) {
                         scopedVisibility(inInlineFunctionScope)
                     } else {
                         declaration.visibility
@@ -287,10 +293,14 @@ private val jvmFilePhases = listOf(
     lateinitDeclarationLoweringPhase,
     lateinitUsageLoweringPhase,
 
-    moveOrCopyCompanionObjectFieldsPhase,
     inlineCallableReferenceToLambdaPhase,
+    functionReferencePhase,
+    suspendLambdaPhase,
     propertyReferencePhase,
     constPhase,
+    // TODO: merge the next three phases together, as visitors behave incorrectly between them
+    //  (backing fields moved out of companion objects are reachable by two paths):
+    moveOrCopyCompanionObjectFieldsPhase,
     propertiesPhase,
     remapObjectFieldAccesses,
     anonymousObjectSuperConstructorPhase,
@@ -300,6 +310,7 @@ private val jvmFilePhases = listOf(
 
     rangeContainsLoweringPhase,
     forLoopsPhase,
+    collectionStubMethodLowering,
     jvmInlineClassPhase,
 
     sharedVariablesPhase,
@@ -309,7 +320,6 @@ private val jvmFilePhases = listOf(
     enumWhenPhase,
     singletonReferencesPhase,
 
-    functionReferencePhase,
     singleAbstractMethodPhase,
     assertionPhase,
     returnableBlocksPhase,
@@ -330,6 +340,7 @@ private val jvmFilePhases = listOf(
 
     interfacePhase,
     inheritedDefaultMethodsOnClassesPhase,
+    replaceDefaultImplsOverriddenSymbolsPhase,
     interfaceSuperCallsPhase,
     interfaceDefaultCallsPhase,
     interfaceObjectCallsPhase,
@@ -348,9 +359,8 @@ private val jvmFilePhases = listOf(
     staticInitializersPhase,
     initializersPhase,
     initializersCleanupPhase,
-    collectionStubMethodLowering,
     functionNVarargBridgePhase,
-    jvmStaticAnnotationPhase,
+    jvmStaticInCompanionPhase,
     staticDefaultFunctionPhase,
     bridgePhase,
     syntheticAccessorPhase,
@@ -380,7 +390,9 @@ val jvmPhases = NamedCompilerPhase(
     lower = validateIrBeforeLowering then
             processOptionalAnnotationsPhase then
             expectDeclarationsRemovingPhase then
+            scriptsToClassesPhase then
             fileClassPhase then
+            jvmStaticInObjectPhase then
             performByIrFile(lower = jvmFilePhases) then
             generateMultifileFacadesPhase then
             resolveInlineCallsPhase then

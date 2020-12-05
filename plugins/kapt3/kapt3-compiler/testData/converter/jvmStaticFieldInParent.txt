@@ -3,9 +3,9 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Test {
     @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String test = "";
-    @org.jetbrains.annotations.NotNull()
     public static final Test.A A = null;
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String test = "";
 
     public Test() {
         super();
@@ -19,8 +19,8 @@ public final class Test {
     @kotlin.Metadata()
     public static final class A {
 
-        @java.lang.Deprecated()
-        public static void getTest$annotations() {
+        private A() {
+            super();
         }
 
         @org.jetbrains.annotations.NotNull()
@@ -28,8 +28,8 @@ public final class Test {
             return null;
         }
 
-        private A() {
-            super();
+        @java.lang.Deprecated()
+        public static void getTest$annotations() {
         }
     }
 }

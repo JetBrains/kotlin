@@ -1,0 +1,18 @@
+open class BaseConverter : BaseFirBuilder<Any> {
+  constructor() /* primary */ {
+    super/*BaseFirBuilder*/<Any>()
+    /* <init>() */
+
+  }
+
+}
+
+class DeclarationsConverter : BaseConverter {
+  constructor() /* primary */ {
+    super/*BaseConverter*/()
+    /* <init>() */
+
+  }
+
+}
+

@@ -1,3 +1,4 @@
+// FIR_COMPARISON
 package jet121
 
 fun box(): String {

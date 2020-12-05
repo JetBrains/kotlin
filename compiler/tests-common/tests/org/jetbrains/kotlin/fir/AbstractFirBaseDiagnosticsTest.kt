@@ -20,10 +20,11 @@ import org.jetbrains.kotlin.checkers.diagnostics.TextDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
+import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnostic
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirPsiDiagnostic
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
+import org.jetbrains.kotlin.fir.builder.RawFirBuilderMode
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -56,6 +57,9 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
     protected open val useLightTree: Boolean
         get() = false
 
+    protected open val useLazyBodiesModeForRawFir: Boolean
+        get() = false
+
     override fun setupEnvironment(environment: KotlinCoreEnvironment) {
         PsiElementFinder.EP.getPoint(environment.project).unregisterExtension(JavaElementFinder::class.java)
     }
@@ -65,7 +69,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
 
         val modules = createModules(groupedByModule)
 
-        val sessionProvider = FirProjectSessionProvider(project)
+        val sessionProvider = FirProjectSessionProvider()
 
         //For BuiltIns, registered in sessionProvider automatically
         val allProjectScope = GlobalSearchScope.allScope(project)
@@ -80,7 +84,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
             val scope = TopDownAnalyzerFacadeForJVM.newModuleSearchScope(
                 project,
                 moduleFiles.mapNotNull { it.ktFile })
-            FirSessionFactory.createJavaModuleBasedSession(info, sessionProvider, scope) {
+            FirSessionFactory.createJavaModuleBasedSession(info, sessionProvider, scope, project) {
                 configureSession()
                 getFirExtensions()?.let {
                     registerExtensions(it)
@@ -118,7 +122,11 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                 firFile
             }
         } else {
-            val firBuilder = RawFirBuilder(session, firProvider.kotlinScopeProvider, false)
+            val firBuilder = RawFirBuilder(
+                session,
+                firProvider.kotlinScopeProvider,
+                RawFirBuilderMode.lazyBodies(useLazyBodiesModeForRawFir)
+            )
             ktFiles.mapTo(firFiles) {
                 val firFile = firBuilder.buildFirFile(it)
                 firProvider.recordFile(firFile)
@@ -317,9 +325,8 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
 
     private fun Iterable<FirDiagnostic<*>>.toActualDiagnostic(root: PsiElement): List<ActualDiagnostic> {
         val result = mutableListOf<ActualDiagnostic>()
-        mapTo(result) {
-            val oldDiagnostic = (it as FirPsiDiagnostic<*>).asPsiBasedDiagnostic()
-            ActualDiagnostic(oldDiagnostic, null, true)
+        filterIsInstance<Diagnostic>().mapTo(result) {
+            ActualDiagnostic(it, null, true)
         }
         for (errorElement in AnalyzingUtils.getSyntaxErrorRanges(root)) {
             result.add(ActualDiagnostic(SyntaxErrorDiagnostic(errorElement), null, true))

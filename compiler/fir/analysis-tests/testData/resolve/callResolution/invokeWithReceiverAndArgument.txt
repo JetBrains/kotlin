@@ -33,8 +33,8 @@ FILE: invokeWithReceiverAndArgument.kt
         }
 
         public final fun test(func: R|(AbstractBuilderConfigurator.LeafBuilderConfigurationContext<FirTreeBuilder>) -> kotlin/Unit|): R|kotlin/Unit| {
-            lval context: R|AbstractBuilderConfigurator.LeafBuilderConfigurationContext<FirTreeBuilder>| = this@R|/BuilderConfigurator|.R|/AbstractBuilderConfigurator.LeafBuilderConfigurationContext.LeafBuilderConfigurationContext|()
-            R|<local>/func|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/context|)
+            lval context: R|AbstractBuilderConfigurator.LeafBuilderConfigurationContext<FirTreeBuilder>| = this@R|/BuilderConfigurator|.R|SubstitutionOverride</AbstractBuilderConfigurator.LeafBuilderConfigurationContext.LeafBuilderConfigurationContext>|()
+            R|<local>/func|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/context|)
         }
 
     }
@@ -51,9 +51,9 @@ FILE: invokeWithReceiverAndArgument.kt
         }
 
         public final fun foo(x: R|(Outer.Inner<E>) -> kotlin/Unit|, y: R|Outer.Inner<E>.() -> kotlin/Unit|): R|kotlin/Unit| {
-            this@R|/Outer|.R|/Outer.bar|(this@R|/Outer|.R|/Outer.Inner.Inner|())
-            R|<local>/x|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/Outer|.R|/Outer.Inner.Inner|())
-            R|<local>/y|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/Outer|.R|/Outer.Inner.Inner|())
+            this@R|/Outer|.R|/Outer.bar|(this@R|/Outer|.R|SubstitutionOverride</Outer.Inner.Inner>|())
+            R|<local>/x|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/Outer|.R|SubstitutionOverride</Outer.Inner.Inner>|())
+            R|<local>/y|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/Outer|.R|SubstitutionOverride</Outer.Inner.Inner>|())
         }
 
         public final fun bar(i: R|Outer.Inner<E>|): R|kotlin/Unit| {

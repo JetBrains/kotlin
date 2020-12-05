@@ -13,7 +13,7 @@ FILE: lambdaAsReturnStatementOfLambda.kt
 
         }
         )
-        lval alsoA: R|A| = R|<local>/lambda|.R|FakeOverride<kotlin/Function0.invoke: R|A|>|()
+        lval alsoA: R|A| = R|<local>/lambda|.R|SubstitutionOverride<kotlin/Function0.invoke: R|A|>|()
         R|/takeA|(R|<local>/alsoA|)
     }
     public final fun takeA(a: R|A|): R|kotlin/Unit| {

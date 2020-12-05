@@ -246,7 +246,7 @@ message IrSetField {
   optional int32 origin_name = 3;
 }
 
-message IrSetVariable {
+message IrSetValue {
   required int64 symbol = 1;
   required IrExpression value = 2;
   optional int32 origin_name = 3;
@@ -301,6 +301,16 @@ message IrWhile {
 message IrFunctionExpression {
   required IrFunction function = 1;
   required int32 origin_name = 2;
+}
+
+message IrErrorExpression {
+  required int32 description = 1;
+}
+
+message IrErrorCallExpression {
+  required int32 description = 1;
+  optional IrExpression receiver = 2;
+  repeated IrExpression value_argument = 3;
 }
 
 /* ------ Dynamic expression --------------------------------------------- */
@@ -375,7 +385,7 @@ message IrOperation {
     IrPropertyReference property_reference = 18;
     IrReturn return = 19;
     IrSetField set_field = 20;
-    IrSetVariable set_variable = 21;
+    IrSetValue set_value = 21;
     IrStringConcat string_concat = 22;
     IrThrow throw = 23;
     IrTry try = 24;
@@ -388,6 +398,9 @@ message IrOperation {
     IrLocalDelegatedPropertyReference local_delegated_property_reference = 31;
     IrConstructorCall constructor_call = 32;
     IrFunctionExpression function_expression = 33;
+    // Error code
+    IrErrorExpression error_expression = 34;
+    IrErrorCallExpression error_call_expression = 35;
   }
 }
 
@@ -501,6 +514,10 @@ message IrTypeAlias {
   repeated IrTypeParameter type_parameter = 3;
 }
 
+message IrErrorDeclaration {
+  required int64 coordinates = 1;
+}
+
 message IrEnumEntry {
   required IrDeclarationBase base = 1;
   required int32 name = 2;
@@ -530,6 +547,7 @@ message IrDeclaration {
     IrValueParameter ir_value_parameter = 10;
     IrLocalDelegatedProperty ir_local_delegated_property = 11;
     IrTypeAlias ir_type_alias = 12;
+    IrErrorDeclaration ir_error_declaration = 13;
   }
 }
 

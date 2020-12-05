@@ -62,9 +62,9 @@ interface E : A {
     override var a: Int
         get() = 0
         // Errors here and below
-        private set(arg) {}
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private set(arg) {}<!>
 
     override var b: Int
         get() = 0
-        private set(arg) {}
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private set(arg) {}<!>
 }

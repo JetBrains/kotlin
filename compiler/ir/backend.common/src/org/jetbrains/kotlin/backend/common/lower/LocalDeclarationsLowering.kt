@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.*
@@ -120,6 +120,7 @@ class LocalDeclarationsLowering(
 
     private abstract class LocalContext {
         val capturedTypeParameterToTypeParameter: MutableMap<IrTypeParameter, IrTypeParameter> = mutableMapOf()
+
         // By the time typeRemapper is used, the map will be already filled
         val typeRemapper = IrTypeParameterRemapper(capturedTypeParameterToTypeParameter)
 
@@ -200,7 +201,6 @@ class LocalDeclarationsLowering(
         body.remapTypes(typeRemapper)
     }
 
-    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private inner class LocalDeclarationsTransformer(
         val irElement: IrElement, val container: IrDeclaration, val classesToLower: Set<IrClass>?
     ) {
@@ -390,18 +390,22 @@ class LocalDeclarationsLowering(
                 val newCallee = oldCallee.transformed ?: return expression
                 val newReflectionTarget = expression.reflectionTarget?.run { owner.transformed }
 
+                val typeParameters = if (newCallee is IrConstructor)
+                    newCallee.parentAsClass.typeParameters
+                else
+                    newCallee.typeParameters
                 return IrFunctionReferenceImpl(
                     expression.startOffset, expression.endOffset,
                     expression.type, // TODO functional type for transformed descriptor
                     newCallee.symbol,
-                    typeArgumentsCount = newCallee.typeParameters.size,
+                    typeArgumentsCount = typeParameters.size,
                     valueArgumentsCount = newCallee.valueParameters.size,
                     reflectionTarget = newReflectionTarget?.symbol,
                     origin = expression.origin
                 ).also {
                     it.fillArguments2(expression, newCallee)
                     it.setLocalTypeArguments(oldCallee)
-                    it.copyTypeArgumentsFrom(expression, shift = newCallee.typeParameters.size - expression.typeArgumentsCount)
+                    it.copyTypeArgumentsFrom(expression, shift = typeParameters.size - expression.typeArgumentsCount)
                     it.copyAttributes(expression)
                 }
             }
@@ -700,7 +704,9 @@ class LocalDeclarationsLowering(
                 throw AssertionError("Local class constructor can't have extension receiver: ${ir2string(oldDeclaration)}")
             }
 
-            newDeclaration.valueParameters += createTransformedValueParameters(capturedValues, localClassContext, oldDeclaration, newDeclaration)
+            newDeclaration.valueParameters += createTransformedValueParameters(
+                capturedValues, localClassContext, oldDeclaration, newDeclaration
+            )
             newDeclaration.recordTransformedValueParameters(constructorContext)
 
             newDeclaration.metadata = oldDeclaration.metadata
@@ -710,13 +716,13 @@ class LocalDeclarationsLowering(
         }
 
         private fun createFieldForCapturedValue(
-                startOffset: Int,
-                endOffset: Int,
-                name: Name,
-                visibility: DescriptorVisibility,
-                parent: IrClass,
-                fieldType: IrType,
-                isCrossinline: Boolean
+            startOffset: Int,
+            endOffset: Int,
+            name: Name,
+            visibility: DescriptorVisibility,
+            parent: IrClass,
+            fieldType: IrType,
+            isCrossinline: Boolean
         ): IrField =
             context.irFactory.buildField {
                 this.startOffset = startOffset
@@ -764,18 +770,22 @@ class LocalDeclarationsLowering(
             if (isSpecial) asString().substring(1, asString().length - 1) else asString()
 
         private fun suggestNameForCapturedValue(declaration: IrValueDeclaration, usedNames: MutableSet<String>): Name {
-            if (declaration is IrValueParameter && declaration.name.asString() == "<this>") {
-                if (declaration.isDispatchReceiver()) {
+            if (declaration is IrValueParameter) {
+                if (declaration.name.asString() == "<this>" && declaration.isDispatchReceiver()) {
                     return findFirstUnusedName("this\$0", usedNames) {
                         "this\$$it"
                     }
-                } else if (declaration.isExtensionReceiver()) {
+                } else if (declaration.name.asString() == "<this>" && declaration.isExtensionReceiver()) {
                     val parentNameSuffix = declaration.parentNameSuffixForExtensionReceiver
                     return findFirstUnusedName("\$this_$parentNameSuffix", usedNames) {
                         "\$this_$parentNameSuffix\$$it"
                     }
+                } else if (declaration.isCapturedReceiver()) {
+                    val baseName = declaration.name.asString().removePrefix(CAPTURED_RECEIVER_PREFIX)
+                    return findFirstUnusedName("\$this_$baseName", usedNames) {
+                        "\$this_$baseName\$$it"
+                    }
                 }
-                // TODO captured extension receivers of extension lambdas?
             }
             val base = if (declaration.name.isSpecial)
                 declaration.name.stripSpecialMarkers()
@@ -808,6 +818,11 @@ class LocalDeclarationsLowering(
             val parentFun = parent as? IrFunction ?: return false
             return parentFun.extensionReceiverParameter == this
         }
+
+        private val CAPTURED_RECEIVER_PREFIX = "\$this\$"
+
+        private fun IrValueParameter.isCapturedReceiver(): Boolean =
+            name.asString().startsWith(CAPTURED_RECEIVER_PREFIX)
 
         private val IrValueParameter.parentNameSuffixForExtensionReceiver: String
             get() {

@@ -153,6 +153,10 @@ object StandardNames {
         @JvmField val uShort: ClassId = ClassId.topLevel(uShortFqName)
         @JvmField val uInt: ClassId = ClassId.topLevel(uIntFqName)
         @JvmField val uLong: ClassId = ClassId.topLevel(uLongFqName)
+        @JvmField val uByteArrayFqName: FqName = fqName("UByteArray")
+        @JvmField val uShortArrayFqName: FqName = fqName("UShortArray")
+        @JvmField val uIntArrayFqName: FqName = fqName("UIntArray")
+        @JvmField val uLongArrayFqName: FqName = fqName("ULongArray")
 
         @JvmField val primitiveTypeShortNames: Set<Name> = newHashSetWithExpectedSize<Name>(PrimitiveType.values().size).apply {
             PrimitiveType.values().mapTo(this) { it.typeName }
@@ -209,13 +213,19 @@ object StandardNames {
     }
 
     @JvmStatic
+    fun getFunctionClassId(parameterCount: Int): ClassId {
+        return ClassId(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(getFunctionName(parameterCount)))
+    }
+
+    @JvmStatic
     fun getKFunctionFqName(parameterCount: Int): FqNameUnsafe {
         return reflect(FunctionClassKind.KFunction.classNamePrefix + parameterCount)
     }
 
     @JvmStatic
-    fun getFunctionClassId(parameterCount: Int): ClassId {
-        return ClassId(BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(getFunctionName(parameterCount)))
+    fun getKFunctionClassId(parameterCount: Int): ClassId {
+        val fqName = getKFunctionFqName(parameterCount)
+        return ClassId(fqName.parent().toSafe(), fqName.shortName())
     }
 
     @JvmStatic
@@ -226,6 +236,17 @@ object StandardNames {
     @JvmStatic
     fun getSuspendFunctionClassId(parameterCount: Int): ClassId {
         return ClassId(COROUTINES_PACKAGE_FQ_NAME_RELEASE, Name.identifier(getSuspendFunctionName(parameterCount)))
+    }
+
+    @JvmStatic
+    fun getKSuspendFunctionName(parameterCount: Int): FqNameUnsafe {
+        return reflect(FunctionClassKind.KSuspendFunction.classNamePrefix + parameterCount)
+    }
+
+    @JvmStatic
+    fun getKSuspendFunctionClassId(parameterCount: Int): ClassId {
+        val fqName = getKSuspendFunctionName(parameterCount)
+        return ClassId(fqName.parent().toSafe(), fqName.shortName())
     }
 
     @JvmStatic

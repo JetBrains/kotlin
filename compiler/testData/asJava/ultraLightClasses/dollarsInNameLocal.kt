@@ -1,4 +1,5 @@
 // c.b.a.Foo$bar$A$B
+// CHECK_BY_JAVA_FILE
 package c.b.a
 
 class Foo {
@@ -12,3 +13,5 @@ class Foo {
         }
     }
 }
+
+// FIR_COMPARISON

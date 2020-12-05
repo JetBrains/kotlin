@@ -148,10 +148,10 @@ abstract class AbstractValueUsageTransformer(
         return expression
     }
 
-    override fun visitSetVariable(expression: IrSetVariable): IrExpression {
+    override fun visitSetValue(expression: IrSetValue): IrExpression {
         expression.transformChildrenVoid(this)
 
-        expression.value = expression.value.useForVariable(expression.symbol.owner)
+        expression.value = expression.value.useAsValue(expression.symbol.owner)
 
         return expression
     }

@@ -1,0 +1,44 @@
+fun defaultsOnly(x: String = ""): Int {
+  return 1
+}
+
+fun regularAndDefaults(x1: String, x2: String = ""): Int {
+  return 1
+}
+
+fun varargs(vararg xs: String): Int {
+  return 1
+}
+
+class C {
+  constructor(x: String = "") /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: String
+    field = x
+    get
+
+}
+
+fun useKCallableStar(fn: KCallable<*>) {
+}
+
+fun testDefaultsOnlyStar() {
+  useKCallableStar(fn = ::defaultsOnly)
+}
+
+fun testRegularAndDefaultsStar() {
+  useKCallableStar(fn = ::regularAndDefaults)
+}
+
+fun testVarargsStar() {
+  useKCallableStar(fn = ::varargs)
+}
+
+fun testCtorStar() {
+  useKCallableStar(fn = C::<init>)
+}
+

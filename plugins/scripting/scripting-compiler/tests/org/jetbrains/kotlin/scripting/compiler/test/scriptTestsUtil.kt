@@ -53,7 +53,7 @@ internal fun captureOut(body: () -> Unit): String {
     return outStream.toString()
 }
 
-private fun String.linesSplitTrim() =
+internal fun String.linesSplitTrim() =
     split('\n', '\r').map(String::trim).filter(String::isNotBlank)
 
 internal fun assertEqualsTrimmed(expected: String, actual: String) =

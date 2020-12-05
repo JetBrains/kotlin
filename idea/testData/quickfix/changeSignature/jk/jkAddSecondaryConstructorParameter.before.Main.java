@@ -1,4 +1,4 @@
-// "Add 'int' as 1st parameter to method 'K'" "true"
+// "Add 'int' as 1st parameter to constructor 'K'" "true"
 
 public class J {
     void foo() {

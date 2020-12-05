@@ -10,8 +10,8 @@ FILE: noneWithForEach.kt
             ^ R|<local>/it|.R|/Diagnostic.name|
         }
         ).R|kotlin/collections/forEach|<R|kotlin/String|, R|kotlin/collections/List<Diagnostic>|>(<L> = forEach@fun <anonymous>(it: R|kotlin/collections/Map.Entry<kotlin/String, kotlin/collections/List<Diagnostic>>|): R|kotlin/Unit| <kind=UNKNOWN>  {
-            lval diagnostics: R|kotlin/collections/List<Diagnostic>| = R|<local>/it|.R|FakeOverride<kotlin/collections/Map.Entry.value: R|kotlin/collections/List<Diagnostic>|>|
-            R|<local>/filtered|.R|FakeOverride<java/util/ArrayList.addAll: R|kotlin/Boolean|>|(R|<local>/diagnostics|.R|kotlin/collections/filter|<R|Diagnostic|>(<L> = filter@fun <anonymous>(me: R|Diagnostic|): R|kotlin/Boolean| <kind=UNKNOWN>  {
+            lval diagnostics: R|kotlin/collections/List<Diagnostic>| = R|<local>/it|.R|SubstitutionOverride<kotlin/collections/Map.Entry.value: R|kotlin/collections/List<Diagnostic>|>|
+            R|<local>/filtered|.R|SubstitutionOverride<java/util/ArrayList.addAll: R|kotlin/Boolean|>|(R|<local>/diagnostics|.R|kotlin/collections/filter|<R|Diagnostic|>(<L> = filter@fun <anonymous>(me: R|Diagnostic|): R|kotlin/Boolean| <kind=UNKNOWN>  {
                 ^ R|<local>/diagnostics|.R|kotlin/collections/none|<R|Diagnostic|>(<L> = none@fun <anonymous>(other: R|Diagnostic|): R|kotlin/Boolean| <kind=UNKNOWN>  {
                     ^ !=(R|<local>/me|, R|<local>/other|)
                 }

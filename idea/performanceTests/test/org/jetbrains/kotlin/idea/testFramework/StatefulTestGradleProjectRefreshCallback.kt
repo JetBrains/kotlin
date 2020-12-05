@@ -12,6 +12,7 @@ import com.intellij.openapi.externalSystem.service.project.ExternalProjectRefres
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.guessProjectDir
+import org.jetbrains.kotlin.idea.test.GradleProcessOutputInterceptor
 import java.io.Closeable
 import kotlin.test.assertFalse
 import kotlin.test.fail

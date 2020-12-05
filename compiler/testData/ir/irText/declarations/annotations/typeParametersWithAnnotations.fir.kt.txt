@@ -1,0 +1,8 @@
+@Target(allowedTargets = [AnnotationTarget.TYPE_PARAMETER])
+annotation class Anno : Annotation {
+  constructor() /* primary */
+
+}
+
+fun <T : Any?> foo() {
+}

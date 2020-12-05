@@ -284,7 +284,7 @@ fun usefulDeclarations(roots: Iterable<IrDeclaration>, context: JsIrBackendConte
 
                     when (expression.symbol) {
                         context.intrinsics.jsBoxIntrinsic -> {
-                            val inlineClass = expression.getTypeArgument(0)!!.getInlinedClass()!!
+                            val inlineClass = context.inlineClassesUtils.getInlinedClass(expression.getTypeArgument(0)!!)!!
                             val constructor = inlineClass.declarations.filterIsInstance<IrConstructor>().single { it.isPrimary }
                             constructor.enqueue("intrinsic: jsBoxIntrinsic")
                         }

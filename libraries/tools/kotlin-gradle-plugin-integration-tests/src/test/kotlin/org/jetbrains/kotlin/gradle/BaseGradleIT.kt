@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.gradle
 
 import com.intellij.testFramework.TestDataFile
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.intellij.lang.annotations.Language
@@ -35,6 +36,8 @@ abstract class BaseGradleIT {
 
     open val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.None
+
+    val isTeamCityRun = System.getenv("TEAMCITY_VERSION") != null
 
     @Before
     fun setUp() {
@@ -150,6 +153,22 @@ abstract class BaseGradleIT {
             return wrapper
         }
 
+        fun maybeUpdateSettingsScript(wrapperVersion: String, settingsScript: File) {
+            // enableFeaturePreview("GRADLE_METADATA") is no longer needed when building with Gradle 5.4 or above
+            if (GradleVersion.version(wrapperVersion) >= GradleVersion.version("5.4")) {
+                settingsScript.apply {
+                    if(exists()) {
+                        modify {
+                            it.replace("enableFeaturePreview('GRADLE_METADATA')", "//")
+                        }
+                        modify {
+                            it.replace("enableFeaturePreview(\"GRADLE_METADATA\")", "//")
+                        }
+                    }
+                }
+            }
+        }
+
         private fun createNewWrapperDir(version: String): File =
             createTempDir("GradleWrapper-$version-")
                 .apply {
@@ -198,6 +217,7 @@ abstract class BaseGradleIT {
         val jsIrBackend: Boolean? = null,
         val androidHome: File? = null,
         val javaHome: File? = null,
+        val gradleUserHome: File? = null,
         val androidGradlePluginVersion: AGPVersion? = null,
         val forceOutputToStdout: Boolean = false,
         val debug: Boolean = false,
@@ -210,7 +230,8 @@ abstract class BaseGradleIT {
         val parallelTasksInProject: Boolean? = null,
         val jsCompilerType: KotlinJsCompilerType? = null,
         val configurationCache: Boolean = false,
-        val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL
+        val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
+        val warningMode: WarningMode = WarningMode.Fail
     )
 
     enum class ConfigurationCacheProblems {
@@ -316,6 +337,7 @@ abstract class BaseGradleIT {
 
         val env = createEnvironmentVariablesMap(options)
         val wrapperDir = prepareWrapper(wrapperVersion, env)
+
         val cmd = createBuildCommand(wrapperDir, params, options)
 
         println("<=== Test build: ${this.projectName} $cmd ===>")
@@ -323,6 +345,8 @@ abstract class BaseGradleIT {
         if (!projectDir.exists()) {
             setupWorkingDir()
         }
+
+        maybeUpdateSettingsScript(wrapperVersion, gradleSettingsScript())
 
         val result = runProcess(cmd, projectDir, env, options)
         try {
@@ -508,6 +532,16 @@ abstract class BaseGradleIT {
 
     fun CompiledProject.assertTasksExecuted(vararg tasks: String) {
         assertTasksExecuted(tasks.toList())
+    }
+
+    fun CompiledProject.assertTasksRetrievedFromCache(tasks: Iterable<String>) {
+        for (task in tasks) {
+            assertContains("$task FROM-CACHE")
+        }
+    }
+
+    fun CompiledProject.assertTasksRetrievedFromCache(vararg tasks: String) {
+        assertTasksRetrievedFromCache(tasks.toList())
     }
 
     fun CompiledProject.assertTasksUpToDate(tasks: Iterable<String>) {
@@ -815,6 +849,16 @@ Finished executing task ':$taskName'|
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")
+            //The feature of failing the build on deprecation warnings is introduced in gradle 5.6
+            val supportFailingBuildOnWarning =
+                GradleVersion.version(chooseWrapperVersionOrFinishTest()) >= GradleVersion.version("5.6")
+            // Agp uses Gradle internal API constructor DefaultDomainObjectSet(Class<T>) until Agp 3.6.0 which is deprecated by Gradle,
+            // so we don't run with --warning-mode=fail when Agp 3.6 or less is used.
+            val notUsingAgpWithWarnings =
+                options.androidGradlePluginVersion == null || options.androidGradlePluginVersion > AGPVersion.v3_6_0
+            if (supportFailingBuildOnWarning && notUsingAgpWithWarnings && options.warningMode == WarningMode.Fail) {
+                add("--warning-mode=${WarningMode.Fail.name.toLowerCase()}")
+            }
             addAll(options.freeCommandLineArgs)
         }
 
@@ -827,6 +871,10 @@ Finished executing task ':$taskName'|
 
             options.javaHome?.let {
                 put("JAVA_HOME", it.canonicalPath)
+            }
+
+            options.gradleUserHome?.let {
+                put("GRADLE_USER_HOME", it.canonicalPath)
             }
         }
 

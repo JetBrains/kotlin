@@ -1,0 +1,63 @@
+object A {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun testWithSubject(x: Any?): String {
+  return { // BLOCK
+    val tmp0_subject: Any? = x
+    when {
+      EQEQ(arg0 = tmp0_subject, arg1 = null) -> "null"
+      EQEQ(arg0 = tmp0_subject, arg1 = A) -> "A"
+      tmp0_subject is String -> "String"
+      tmp0_subject !is Number -> "!Number"
+      setOf<Nothing>().contains<Any?>(element = tmp0_subject) -> "nothingness?"
+      else -> "something"
+    }
+  }
+}
+
+fun test(x: Any?): String {
+  return when {
+    EQEQ(arg0 = x, arg1 = null) -> "null"
+    EQEQ(arg0 = x /*as Any */, arg1 = A) -> "A"
+    x /*as Any */ is String -> "String"
+    x /*as Any */ !is Number -> "!Number"
+    setOf<Nothing>().contains<Number>(element = x /*as Number */) -> "nothingness?"
+    else -> "something"
+  }
+}
+
+fun testComma(x: Int): String {
+  return { // BLOCK
+    val tmp1_subject: Int = x
+    when {
+      when {
+        when {
+          when {
+            EQEQ(arg0 = tmp1_subject, arg1 = 1) -> true
+            else -> EQEQ(arg0 = tmp1_subject, arg1 = 2)
+          } -> true
+          else -> EQEQ(arg0 = tmp1_subject, arg1 = 3)
+        } -> true
+        else -> EQEQ(arg0 = tmp1_subject, arg1 = 4)
+      } -> "1234"
+      when {
+        when {
+          EQEQ(arg0 = tmp1_subject, arg1 = 5) -> true
+          else -> EQEQ(arg0 = tmp1_subject, arg1 = 6)
+        } -> true
+        else -> EQEQ(arg0 = tmp1_subject, arg1 = 7)
+      } -> "567"
+      when {
+        EQEQ(arg0 = tmp1_subject, arg1 = 8) -> true
+        else -> EQEQ(arg0 = tmp1_subject, arg1 = 9)
+      } -> "89"
+      else -> "?"
+    }
+  }
+}

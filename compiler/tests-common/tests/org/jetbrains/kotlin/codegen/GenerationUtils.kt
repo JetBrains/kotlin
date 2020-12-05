@@ -21,8 +21,10 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.TestsCompiletimeError
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -117,7 +119,8 @@ object GenerationUtils {
 
         // TODO: add running checkers and check that it's safe to compile
         val firAnalyzerFacade = FirAnalyzerFacade(session, configuration.languageVersionSettings, files)
-        val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr()
+        val extensions = JvmGeneratorExtensions()
+        val (moduleFragment, symbolTable, sourceManager, components) = firAnalyzerFacade.convertToIr(extensions)
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 
         val codegenFactory = JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
@@ -139,7 +142,7 @@ object GenerationUtils {
 
         generationState.beforeCompile()
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, moduleFragment, symbolTable, sourceManager
+            generationState, moduleFragment, symbolTable, sourceManager, extensions
         ) { context, irClass, _, serializationBindings, parent ->
             FirMetadataSerializer(session, context, irClass, serializationBindings, parent)
         }
@@ -169,6 +172,17 @@ object GenerationUtils {
             )
         analysisResult.throwIfError()
 
+        return generateFiles(project, files, configuration, classBuilderFactory, analysisResult)
+    }
+
+    fun generateFiles(
+        project: Project,
+        files: List<KtFile>,
+        configuration: CompilerConfiguration,
+        classBuilderFactory: ClassBuilderFactory,
+        analysisResult: AnalysisResult,
+        configureGenerationState: GenerationState.Builder.() -> Unit = {},
+    ): GenerationState {
         /* Currently Kapt3 only works with the old JVM backend, so disable IR for everything except actual bytecode generation. */
         val isIrBackend =
             classBuilderFactory.classBuilderMode == ClassBuilderMode.FULL && configuration.getBoolean(JVMConfigurationKeys.IR)
@@ -179,7 +193,7 @@ object GenerationUtils {
             if (isIrBackend)
                 JvmIrCodegenFactory(configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases))
             else DefaultCodegenFactory
-        ).isIrBackend(isIrBackend).build()
+        ).isIrBackend(isIrBackend).apply(configureGenerationState).build()
         if (analysisResult.shouldGenerateCode) {
             KotlinCodegenFacade.compileCorrectFiles(generationState)
         }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 
@@ -28,7 +29,7 @@ abstract class IrGetValue : IrValueAccessExpression(), IrExpressionWithCopy {
     abstract override fun copy(): IrGetValue
 }
 
-abstract class IrSetVariable : IrValueAccessExpression() {
-    abstract override val symbol: IrVariableSymbol
+abstract class IrSetValue : IrValueAccessExpression() {
+    abstract override val symbol: IrValueSymbol
     abstract var value: IrExpression
 }

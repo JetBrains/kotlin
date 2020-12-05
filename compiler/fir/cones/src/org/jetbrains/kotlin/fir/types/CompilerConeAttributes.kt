@@ -35,6 +35,18 @@ object CompilerConeAttributes {
         override fun toString(): String = "@NoInfer"
     }
 
+    object EnhancedNullability : ConeAttribute<EnhancedNullability>() {
+        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.jvm.internal"), Name.identifier("EnhancedNullability"))
+
+        override fun union(other: EnhancedNullability?): EnhancedNullability? = other
+        override fun intersect(other: EnhancedNullability?): EnhancedNullability? = this
+        override fun isSubtypeOf(other: EnhancedNullability?): Boolean = true
+
+        override val key: KClass<out EnhancedNullability> = EnhancedNullability::class
+
+        override fun toString(): String = "@EnhancedNullability"
+    }
+
     object ExtensionFunctionType : ConeAttribute<ExtensionFunctionType>() {
         val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin"), Name.identifier("ExtensionFunctionType"))
 
@@ -45,6 +57,18 @@ object CompilerConeAttributes {
         override val key: KClass<out ExtensionFunctionType> = ExtensionFunctionType::class
 
         override fun toString(): String = "@ExtensionFunctionType"
+    }
+
+    object FlexibleNullability : ConeAttribute<FlexibleNullability>() {
+        val ANNOTATION_CLASS_ID = ClassId(FqName("kotlin.internal.ir"), Name.identifier("FlexibleNullability"))
+
+        override fun union(other: FlexibleNullability?): FlexibleNullability? = other
+        override fun intersect(other: FlexibleNullability?): FlexibleNullability? = this
+        override fun isSubtypeOf(other: FlexibleNullability?): Boolean = true
+
+        override val key: KClass<out FlexibleNullability> = FlexibleNullability::class
+
+        override fun toString(): String = "@FlexibleNullability"
     }
 
     object UnsafeVariance : ConeAttribute<UnsafeVariance>() {
@@ -62,8 +86,16 @@ object CompilerConeAttributes {
 
 val ConeAttributes.exact: CompilerConeAttributes.Exact? by ConeAttributes.attributeAccessor<CompilerConeAttributes.Exact>()
 val ConeAttributes.noInfer: CompilerConeAttributes.NoInfer? by ConeAttributes.attributeAccessor<CompilerConeAttributes.NoInfer>()
+val ConeAttributes.enhancedNullability: CompilerConeAttributes.EnhancedNullability? by ConeAttributes.attributeAccessor<CompilerConeAttributes.EnhancedNullability>()
 val ConeAttributes.extensionFunctionType: CompilerConeAttributes.ExtensionFunctionType? by ConeAttributes.attributeAccessor<CompilerConeAttributes.ExtensionFunctionType>()
+val ConeAttributes.flexibleNullability: CompilerConeAttributes.FlexibleNullability? by ConeAttributes.attributeAccessor<CompilerConeAttributes.FlexibleNullability>()
 val ConeAttributes.unsafeVarianceType: CompilerConeAttributes.UnsafeVariance? by ConeAttributes.attributeAccessor<CompilerConeAttributes.UnsafeVariance>()
+
+val ConeKotlinType.hasEnhancedNullability: Boolean
+    get() = attributes.enhancedNullability != null
 
 val ConeKotlinType.isExtensionFunctionType: Boolean
     get() = attributes.extensionFunctionType != null
+
+val ConeKotlinType.hasFlexibleNullability: Boolean
+    get() = attributes.flexibleNullability != null

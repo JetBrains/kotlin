@@ -9,19 +9,19 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirFunctionOrProperty
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
-    cache: CirClassifiersCache
+    classifiers: CirKnownClassifiers
 ) : AbstractStandardCommonizer<T, T>() {
     protected lateinit var name: Name
     protected val modality = ModalityCommonizer()
     protected val visibility = VisibilityCommonizer.lowering()
-    protected val extensionReceiver = ExtensionReceiverCommonizer(cache)
-    protected val returnType = TypeCommonizer(cache)
+    protected val extensionReceiver = ExtensionReceiverCommonizer(classifiers)
+    protected val returnType = TypeCommonizer(classifiers)
     protected lateinit var kind: CallableMemberDescriptor.Kind
-    protected val typeParameters = TypeParameterListCommonizer(cache)
+    protected val typeParameters = TypeParameterListCommonizer(classifiers)
 
     override fun initialize(first: T) {
         name = first.name
@@ -29,8 +29,7 @@ abstract class AbstractFunctionOrPropertyCommonizer<T : CirFunctionOrProperty>(
     }
 
     override fun doCommonizeWith(next: T): Boolean =
-        !next.isNonAbstractMemberInInterface() // non-abstract callable members declared in interface can't be commonized
-                && next.kind != DELEGATION // delegated members should not be commonized
+        next.kind != DELEGATION // delegated members should not be commonized
                 && (next.kind != SYNTHESIZED || next.containingClassDetails?.isData != true) // synthesized members of data classes should not be commonized
                 && kind == next.kind
                 && modality.commonizeWith(next.modality)

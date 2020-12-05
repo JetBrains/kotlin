@@ -12,6 +12,7 @@ class Outer(val z1: Z) {
 }
 
 inline class InlineOuter(val z1: Z) {
+    @Suppress("INNER_CLASS_INSIDE_INLINE_CLASS")
     inner class Inner(val z2: Z) {
         val test = "$z1 $z2"
     }

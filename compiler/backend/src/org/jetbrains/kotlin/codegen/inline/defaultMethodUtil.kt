@@ -130,7 +130,9 @@ fun <T, R : DefaultLambda> expandMaskConditionsAndUpdateVariableNodes(
         node.instructions.insert(position, newInsn)
     }
 
-    node.localVariables.removeIf { it.start in toDelete && it.end in toDelete }
+    node.localVariables.removeIf {
+        (it.start in toDelete && it.end in toDelete) || defaultLambdas.contains(it.index)
+    }
 
     node.remove(toDelete)
 

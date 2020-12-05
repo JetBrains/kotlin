@@ -31,9 +31,7 @@ interface InnerClassesSupport {
 }
 
 class InnerClassesLowering(val context: BackendContext, private val innerClassesSupport: InnerClassesSupport) : DeclarationTransformer {
-    override fun lower(irFile: IrFile) {
-        runPostfix(true).toFileLoweringPass().lower(irFile)
-    }
+    override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrClass && declaration.isInner) {
@@ -46,10 +44,11 @@ class InnerClassesLowering(val context: BackendContext, private val innerClasses
 
             val newConstructor = lowerConstructor(declaration)
             val oldConstructorParameterToNew = innerClassesSupport.primaryConstructorParameterMap(declaration)
+            val variableRemapper = VariableRemapper(oldConstructorParameterToNew)
             for ((oldParam, newParam) in oldConstructorParameterToNew.entries) {
                 newParam.defaultValue = oldParam.defaultValue?.let { oldDefault ->
                     context.irFactory.createExpressionBody(oldDefault.startOffset, oldDefault.endOffset) {
-                        expression = oldDefault.expression.patchDeclarationParents(newConstructor)
+                        expression = oldDefault.expression.transform(variableRemapper, null).patchDeclarationParents(newConstructor)
                     }
                 }
             }
@@ -98,9 +97,17 @@ private fun InnerClassesSupport.primaryConstructorParameterMap(originalConstruct
 
     val loweredConstructor = getInnerClassConstructorWithOuterThisParameter(originalConstructor)
 
-    originalConstructor.valueParameters.forEach { old ->
-        oldConstructorParameterToNew[old] = loweredConstructor.valueParameters[old.index + 1]
+    var index = 0
+
+    originalConstructor.dispatchReceiverParameter?.let {
+        oldConstructorParameterToNew[it] = loweredConstructor.valueParameters[index++]
     }
+
+    originalConstructor.valueParameters.forEach { old ->
+        oldConstructorParameterToNew[old] = loweredConstructor.valueParameters[index++]
+    }
+
+    assert(loweredConstructor.valueParameters.size == index)
 
     return oldConstructorParameterToNew
 }

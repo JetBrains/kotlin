@@ -1,13 +1,13 @@
 public/*package*/ open class A : R|kotlin/Any| {
-    public open fun first(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(hello)) value: R|ft<kotlin/String, kotlin/String?>!| = String(hello)): R|kotlin/Unit|
+    public open fun first(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(hello)) value: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = String(hello)): R|kotlin/Unit|
 
-    public open fun second(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(first)) a: R|ft<kotlin/String, kotlin/String?>!| = String(first), @R|kotlin/annotations/jvm/internal/DefaultValue|(String(second)) b: R|ft<kotlin/String, kotlin/String?>!| = String(second)): R|kotlin/Unit|
+    public open fun second(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(first)) a: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = String(first), @R|kotlin/annotations/jvm/internal/DefaultValue|(String(second)) b: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = String(second)): R|kotlin/Unit|
 
-    public open fun third(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(first)) a: R|ft<kotlin/String, kotlin/String?>!| = String(first), b: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
+    public open fun third(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(first)) a: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = String(first), b: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
 
-    public open fun fourth(first: R|ft<kotlin/String, kotlin/String?>!|, @R|kotlin/annotations/jvm/internal/DefaultValue|(String(second)) second: R|ft<kotlin/String, kotlin/String?>!| = String(second)): R|kotlin/Unit|
+    public open fun fourth(first: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|, @R|kotlin/annotations/jvm/internal/DefaultValue|(String(second)) second: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| = String(second)): R|kotlin/Unit|
 
-    public open fun wrong(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(hello)) i: R|ft<kotlin/Int, kotlin/Int?>!|): R|kotlin/Unit|
+    public open fun wrong(@R|kotlin/annotations/jvm/internal/DefaultValue|(String(hello)) i: R|ft<@FlexibleNullability kotlin/Int, kotlin/Int?>!|): R|kotlin/Unit|
 
     public/*package*/ constructor(): R|A|
 

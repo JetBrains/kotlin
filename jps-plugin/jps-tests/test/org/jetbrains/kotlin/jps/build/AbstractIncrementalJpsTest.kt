@@ -43,7 +43,6 @@ import org.jetbrains.jps.model.JpsModuleRootModificationUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.jps.util.JpsPathUtil
-import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.incremental.LookupSymbol
@@ -128,7 +127,6 @@ abstract class AbstractIncrementalJpsTest(
 
         enableICFixture.setUp()
         lookupsDuringTest = hashSetOf()
-        System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
 
         if (DEBUG_LOGGING_ENABLED) {
             enableDebugLogging()
@@ -172,7 +170,6 @@ abstract class AbstractIncrementalJpsTest(
                 BuilderRegistry.getInstance(),
                 myBuildParams,
                 CanceledStatus.NULL,
-                mockConstantSearch,
                 true
             )
             val buildResult = BuildResult()
@@ -301,7 +298,7 @@ abstract class AbstractIncrementalJpsTest(
 
     protected open fun doTest(testDataPath: String) {
         testDataDir = File(testDataPath)
-        workDir = FileUtilRt.createTempDirectory(TEMP_DIRECTORY_TO_USE, "jps-build", null)
+        workDir = FileUtilRt.createTempDirectory(TEMP_DIRECTORY_TO_USE, "aijt-jps-build", null)
         val buildLogFile = buildLogFinder.findBuildLog(testDataDir)
         Disposer.register(testRootDisposable, Disposable { FileUtilRt.delete(workDir) })
 

@@ -27,7 +27,7 @@ fun test1(): Map<Int, Int> = run {
 }
 
 fun test2(): Map<Int, Int> = run {
-    <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>try {
+    <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>try {
         emptyMap()
     } catch (e: ExcA) {
         <!NI;TYPE_MISMATCH, OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>mapOf(<!NI;TYPE_MISMATCH!>"" to ""<!>)<!>

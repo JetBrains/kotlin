@@ -1,0 +1,10 @@
+fun outer() {
+  var x: Int = 0
+  local fun local() {
+    val <unary>: Int = x
+    x = <unary>.inc()
+    <unary> /*~> Unit */
+  }
+
+  local()
+}

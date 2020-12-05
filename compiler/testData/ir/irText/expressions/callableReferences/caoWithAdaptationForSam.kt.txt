@@ -1,0 +1,106 @@
+fun interface IFoo {
+  abstract fun foo(i: Int) 
+
+}
+
+fun interface IFoo2 : IFoo {
+
+}
+
+object A {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+object B {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+operator fun A.get(i: IFoo): Int {
+  return 1
+}
+
+operator fun A.set(i: IFoo, newValue: Int) {
+}
+
+operator fun B.get(i: IFoo): Int {
+  return 1
+}
+
+operator fun B.set(i: IFoo2, newValue: Int) {
+}
+
+fun withVararg(vararg xs: Int): Int {
+  return 42
+}
+
+fun test1() {
+  { // BLOCK
+    val tmp0_array: A = A
+    val tmp2_sam: IFoo = local fun withVararg(p0: Int) {
+      withVararg(xs = [p0]) /*~> Unit */
+    }
+ /*-> IFoo */
+    tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
+  }
+}
+
+fun test2() {
+  { // BLOCK
+    val tmp0_array: B = B
+    val tmp2_sam: IFoo2 = local fun withVararg(p0: Int) {
+      withVararg(xs = [p0]) /*~> Unit */
+    }
+ /*-> IFoo2 */
+    tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
+  }
+}
+
+fun test3(fn: Function1<Int, Unit>) {
+  { // BLOCK
+    val tmp0_array: A = A
+    val tmp2_sam: IFoo = fn /*-> IFoo */
+    tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
+  }
+}
+
+fun test4(fn: Function1<Int, Unit>) {
+  when {
+    fn is IFoo -> { // BLOCK
+      { // BLOCK
+        val tmp0_array: A = A
+        val tmp1_index0: Function1<Int, Unit> = fn
+        tmp0_array.set(i = tmp1_index0 /*as IFoo */, newValue = tmp0_array.get(i = tmp1_index0 /*as IFoo */).plus(other = 1))
+      }
+    }
+  }
+}
+
+fun test5(a: Any) {
+  a as Function1<Int, Unit> /*~> Unit */
+  { // BLOCK
+    val tmp0_array: A = A
+    val tmp2_sam: IFoo = a /*as Function1<@ParameterName(name = "i") Int, Unit> */ /*-> IFoo */
+    tmp0_array.set(i = tmp2_sam, newValue = tmp0_array.get(i = tmp2_sam).plus(other = 1))
+  }
+}
+
+fun test6(a: Any) {
+  a as Function1<Int, Unit> /*~> Unit */
+  a as IFoo /*~> Unit */
+  { // BLOCK
+    val tmp0_array: A = A
+    val tmp1_index0: Any = a
+    tmp0_array.set(i = tmp1_index0 /*as IFoo */, newValue = tmp0_array.get(i = tmp1_index0 /*as IFoo */).plus(other = 1))
+  }
+}
+

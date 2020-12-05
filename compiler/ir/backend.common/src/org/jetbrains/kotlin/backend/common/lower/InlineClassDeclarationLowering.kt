@@ -106,6 +106,12 @@ class InlineClassLowering(val context: CommonBackendContext) {
                                 return expression
                             }
 
+                            override fun visitSetValue(expression: IrSetValue): IrExpression {
+                                expression.transformChildrenVoid()
+                                parameterMapping[expression.symbol]?.let { return irSet(it.symbol, expression.value) }
+                                return expression
+                            }
+
                             override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
                                 declaration.transformChildrenVoid(this)
                                 if (declaration.parent == irConstructor)
@@ -169,6 +175,21 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
                                 else -> return expression
                             }
+                        )
+                    }
+
+                    override fun visitSetValue(expression: IrSetValue): IrExpression {
+                        val valueDeclaration = expression.symbol.owner as? IrValueParameter ?: return super.visitSetValue(expression)
+                        expression.transformChildrenVoid()
+                        return context.createIrBuilder(staticMethod.symbol).irSet(
+                            when (valueDeclaration) {
+                                in function.valueParameters -> {
+                                    val offset = if (function.extensionReceiverParameter != null) 2 else 1
+                                    staticMethod.valueParameters[valueDeclaration.index + offset].symbol
+                                }
+                                else -> return expression
+                            },
+                            expression.value
                         )
                     }
                 })
@@ -250,9 +271,12 @@ class InlineClassLowering(val context: CommonBackendContext) {
         }
     }
 
-    private fun Name.toInlineClassImplementationName() = when {
-        isSpecial -> Name.special(asString() + INLINE_CLASS_IMPL_SUFFIX)
-        else -> Name.identifier(asString() + INLINE_CLASS_IMPL_SUFFIX)
+    private fun IrFunction.toInlineClassImplementationName(): Name {
+        val newName = parentAsClass.name.asString() + "__" + name.asString() + INLINE_CLASS_IMPL_SUFFIX
+        return when {
+            name.isSpecial -> Name.special("<$newName>")
+            else -> Name.identifier(newName)
+        }
     }
 
     private fun collectTypeParameters(declaration: IrTypeParametersContainer): List<IrTypeParameter> {
@@ -271,7 +295,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
     private fun createStaticBodilessMethod(function: IrFunction): IrSimpleFunction =
         context.irFactory.createStaticFunctionWithReceivers(
             function.parent,
-            function.name.toInlineClassImplementationName(),
+            function.toInlineClassImplementationName(),
             function,
             typeParametersFromContext = collectTypeParameters(function.parentAsClass)
         )

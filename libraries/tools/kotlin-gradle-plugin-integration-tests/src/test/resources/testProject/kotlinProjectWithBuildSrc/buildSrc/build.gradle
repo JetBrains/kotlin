@@ -6,5 +6,5 @@ repositories {
 apply plugin: 'java'
 
 dependencies {
-    runtime "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    runtimeOnly "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 }

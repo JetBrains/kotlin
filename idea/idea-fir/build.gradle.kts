@@ -21,13 +21,12 @@ dependencies {
     testCompile(projectTests(":idea:idea-frontend-fir"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
     testCompile(commonDep("junit:junit"))
+    testCompile(projectTests(":idea:idea-frontend-independent"))
 
     testCompileOnly(intellijDep())
     testRuntime(intellijDep())
 
-    Platform[192].orHigher {
-        compile(intellijPluginDep("java"))
-    }
+    compile(intellijPluginDep("java"))
 }
 
 sourceSets {
@@ -35,7 +34,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-if (rootProject.findProperty("idea.fir.plugin") == "true") {
+if (kotlinBuildProperties.useFirIdeaPlugin) {
     projectTest(parallel = true) {
         dependsOn(":dist")
         workingDir = rootDir

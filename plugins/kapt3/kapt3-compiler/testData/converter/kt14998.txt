@@ -3,48 +3,49 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Outer {
 
-    public final void nonAbstract(@org.jetbrains.annotations.NotNull()
-    java.lang.String s, int i) {
-    }
-
     public Outer() {
         super();
+    }
+
+    public final void nonAbstract(@org.jetbrains.annotations.NotNull()
+    java.lang.String s, int i) {
     }
 
     @kotlin.Metadata()
     final class Inner {
         @org.jetbrains.annotations.NotNull()
-        private final java.lang.String foo = null;
-        @org.jetbrains.annotations.NotNull()
         private final java.lang.String bar = null;
-
         @org.jetbrains.annotations.NotNull()
-        public final java.lang.String getFoo() {
-            return null;
-        }
-
-        @org.jetbrains.annotations.NotNull()
-        public final java.lang.String getBar() {
-            return null;
-        }
+        private final java.lang.String foo = null;
 
         public Inner(@org.jetbrains.annotations.NotNull()
         java.lang.String foo, @org.jetbrains.annotations.NotNull()
         java.lang.String bar) {
             super();
         }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getBar() {
+            return null;
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getFoo() {
+            return null;
+        }
     }
 
     @kotlin.Metadata()
     static final class Nested {
         @org.jetbrains.annotations.NotNull()
-        private final java.lang.String foo = null;
-        @org.jetbrains.annotations.NotNull()
         private final java.lang.String bar = null;
-
         @org.jetbrains.annotations.NotNull()
-        public final java.lang.String getFoo() {
-            return null;
+        private final java.lang.String foo = null;
+
+        public Nested(@org.jetbrains.annotations.NotNull()
+        java.lang.String foo, @org.jetbrains.annotations.NotNull()
+        java.lang.String bar) {
+            super();
         }
 
         @org.jetbrains.annotations.NotNull()
@@ -52,10 +53,9 @@ public final class Outer {
             return null;
         }
 
-        public Nested(@org.jetbrains.annotations.NotNull()
-        java.lang.String foo, @org.jetbrains.annotations.NotNull()
-        java.lang.String bar) {
-            super();
+        @org.jetbrains.annotations.NotNull()
+        public final java.lang.String getFoo() {
+            return null;
         }
     }
 }

@@ -1,0 +1,57 @@
+object FiveTimes {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class IntCell {
+  constructor(value: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var value: Int
+    field = value
+    get
+    set
+
+}
+
+interface IReceiver {
+  operator fun FiveTimes.iterator(): IntCell {
+    return IntCell(value = 5)
+  }
+
+  operator fun IntCell.hasNext(): Boolean {
+    return greater(arg0 = <this>.<get-value>(), arg1 = 0)
+  }
+
+  operator fun IntCell.next(): Int {
+    return { // BLOCK
+      val tmp0_this: IntCell = <this>
+      { // BLOCK
+        val tmp1: Int = tmp0_this.<get-value>()
+        tmp0_this.<set-value>(<set-?> = tmp1.dec())
+        tmp1
+      }
+    }
+  }
+
+}
+
+fun IReceiver.test() {
+  { // BLOCK
+    val tmp0_iterator: IntCell = (<this>, FiveTimes).iterator()
+    while ((<this>, tmp0_iterator).hasNext()) { // BLOCK
+      val i: Int = (<this>, tmp0_iterator).next()
+      { // BLOCK
+        println(message = i)
+      }
+    }
+  }
+}
+

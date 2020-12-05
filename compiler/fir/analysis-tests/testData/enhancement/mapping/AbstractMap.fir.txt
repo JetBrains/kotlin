@@ -1,4 +1,4 @@
-public abstract class AbstractMap : R|kotlin/Any|, R|kotlin/collections/MutableMap<ft<kotlin/String, kotlin/String?>!, ft<kotlin/String, kotlin/String?>!>| {
+public abstract class AbstractMap : R|kotlin/Any|, R|kotlin/collections/MutableMap<ft<@FlexibleNullability kotlin/String, kotlin/String?>!, ft<@FlexibleNullability kotlin/String, kotlin/String?>!>| {
     public constructor(): R|AbstractMap|
 
 }

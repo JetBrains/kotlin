@@ -1,0 +1,17 @@
+fun f() {
+}
+
+fun J.test1() {
+  <this>.get(k = ::f /*-> Runnable? */)
+  <this>.get(k = ::f /*-> Runnable? */, m = ::f /*-> Runnable? */)
+}
+
+fun J.test2() {
+  <this>.set(k = ::f /*-> Runnable? */, v = ::f /*-> Runnable? */)
+  <this>.set(k = ::f /*-> Runnable? */, m = ::f /*-> Runnable? */, v = ::f /*-> Runnable? */)
+}
+
+fun J.test3() {
+  <this>.plusAssign(i = ::f /*-> Runnable? */)
+  <this>.minusAssign(i = ::f /*-> Runnable? */)
+}

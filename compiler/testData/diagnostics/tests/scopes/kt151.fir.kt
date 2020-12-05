@@ -10,7 +10,7 @@ class B : A() {
 }
 
 fun test(b: B) {
-    b.x()
+    b.<!HIDDEN!>x<!>()
 }
 
 

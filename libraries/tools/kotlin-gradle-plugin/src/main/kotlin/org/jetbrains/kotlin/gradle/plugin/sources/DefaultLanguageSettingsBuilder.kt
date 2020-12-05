@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 import org.gradle.api.InvalidUserDataException
 import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.compile.AbstractCompile
+import org.gradle.api.tasks.SourceTask
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -70,7 +69,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
 
     /* A Kotlin task that is responsible for code analysis of the owner of this language settings builder. */
     @Transient // not needed during Gradle Instant Execution
-    var compilerPluginOptionsTask: Lazy<AbstractCompile?> = lazyOf(null)
+    var compilerPluginOptionsTask: Lazy<SourceTask?> = lazyOf(null)
 
     val compilerPluginArguments: List<String>?
         get() {

@@ -17,19 +17,19 @@ FILE fqName:<root> fileName:/breakContinue.kt
     BLOCK_BODY
       WHILE label=OUTER origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
-        body: BLOCK type=kotlin.Nothing origin=WHILE_LOOP
+        body: BLOCK type=kotlin.Nothing origin=null
           WHILE label=INNER origin=WHILE_LOOP
             condition: CONST Boolean type=kotlin.Boolean value=true
-            body: BLOCK type=kotlin.Nothing origin=WHILE_LOOP
+            body: BLOCK type=kotlin.Nothing origin=null
               BREAK label=INNER loop.label=INNER
               BREAK label=OUTER loop.label=OUTER
           BREAK label=OUTER loop.label=OUTER
       WHILE label=OUTER origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
-        body: BLOCK type=kotlin.Nothing origin=WHILE_LOOP
+        body: BLOCK type=kotlin.Nothing origin=null
           WHILE label=INNER origin=WHILE_LOOP
             condition: CONST Boolean type=kotlin.Boolean value=true
-            body: BLOCK type=kotlin.Nothing origin=WHILE_LOOP
+            body: BLOCK type=kotlin.Nothing origin=null
               CONTINUE label=INNER loop.label=INNER
               CONTINUE label=OUTER loop.label=OUTER
           CONTINUE label=OUTER loop.label=OUTER
@@ -37,14 +37,14 @@ FILE fqName:<root> fileName:/breakContinue.kt
     BLOCK_BODY
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
-        body: BLOCK type=kotlin.Nothing origin=WHILE_LOOP
+        body: BLOCK type=kotlin.Nothing origin=null
           WHILE label=L origin=WHILE_LOOP
             condition: CONST Boolean type=kotlin.Boolean value=true
             body: BREAK label=L loop.label=L
           BREAK label=L loop.label=L
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
-        body: BLOCK type=kotlin.Nothing origin=WHILE_LOOP
+        body: BLOCK type=kotlin.Nothing origin=null
           WHILE label=L origin=WHILE_LOOP
             condition: CONST Boolean type=kotlin.Boolean value=true
             body: CONTINUE label=L loop.label=L

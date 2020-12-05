@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.idea.fir.low.level.api.element.builder
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.idea.fir.low.level.api.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.idea.fir.low.level.api.annotations.ThreadSafe
-import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureCache
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.FileStructureElement
 import org.jetbrains.kotlin.idea.util.getElementTextInContext
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 
 /**
@@ -53,6 +53,16 @@ internal class FirElementBuilder {
         return psi.getFirOfClosestParent(mappings)?.second
             ?: error("FirElement is not found for:\n${element.getElementTextInContext()}")
     }
+
+    @TestOnly
+    fun getStructureElementFor(
+        element: KtElement,
+        moduleFileCache: ModuleFileCache,
+        fileStructureCache: FileStructureCache,
+    ): FileStructureElement {
+        val fileStructure = fileStructureCache.getFileStructure(element.containingKtFile, moduleFileCache)
+        return fileStructure.getStructureElementFor(element)
+    }
 }
 
 private fun KtElement.getFirOfClosestParent(cache: Map<KtElement, FirElement>): Pair<KtElement, FirElement>? {
@@ -68,14 +78,17 @@ private fun KtElement.getFirOfClosestParent(cache: Map<KtElement, FirElement>): 
     return null
 }
 
-fun KtElement.getNonLocalContainingOrThisDeclaration(): KtNamedDeclaration? {
+
+internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtNamedDeclaration? {
     var container: PsiElement? = this
     while (container != null && container !is KtFile) {
         if (container is KtNamedDeclaration
             && (container is KtClassOrObject || container is KtDeclarationWithBody || container is KtProperty || container is KtTypeAlias)
+            && container !is KtPrimaryConstructor
             && !KtPsiUtil.isLocal(container)
             && container !is KtEnumEntry
             && container.containingClassOrObject !is KtEnumEntry
+            && predicate(container)
         ) {
             return container
         }
@@ -83,3 +96,14 @@ fun KtElement.getNonLocalContainingOrThisDeclaration(): KtNamedDeclaration? {
     }
     return null
 }
+
+internal fun PsiElement.getNonLocalContainingInBodyDeclarationWith(): KtNamedDeclaration? =
+    getNonLocalContainingOrThisDeclaration { declaration ->
+        when (declaration) {
+            is KtNamedFunction -> declaration.bodyExpression?.isAncestor(this) == true
+            is KtProperty -> declaration.initializer?.isAncestor(this) == true ||
+                    declaration.getter?.isAncestor(this) == true ||
+                    declaration.setter?.isAncestor(this) == true
+            else -> false
+        }
+    }

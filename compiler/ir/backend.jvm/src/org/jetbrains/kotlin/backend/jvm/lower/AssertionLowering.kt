@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.ASSERTIONS_DISABLED_FIELD_NAME
 import org.jetbrains.kotlin.config.JVMAssertionsMode
@@ -145,11 +146,11 @@ fun IrClass.buildAssertionsDisabledField(backendContext: JvmBackendContext, topL
         type = backendContext.irBuiltIns.booleanType
         isFinal = true
         isStatic = true
-    }.apply {
-        parent = this@buildAssertionsDisabledField
-        initializer = backendContext.createIrBuilder(this@buildAssertionsDisabledField.symbol).run {
-            at(this@apply)
-            irExprBody(irNot(irCall(backendContext.ir.symbols.desiredAssertionStatus).apply {
+    }.also { field ->
+        field.parent = this
+        field.initializer = backendContext.createJvmIrBuilder(this.symbol).run {
+            at(field)
+            irExprBody(irNot(irCall(irSymbols.desiredAssertionStatus).apply {
                 dispatchReceiver = getJavaClass(backendContext, topLevelClass)
             }))
         }

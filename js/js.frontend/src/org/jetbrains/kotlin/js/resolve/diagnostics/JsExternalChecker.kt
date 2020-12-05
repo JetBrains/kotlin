@@ -44,6 +44,7 @@ object JsExternalChecker : DeclarationChecker {
                 descriptor.isData -> "data class"
                 descriptor.isInner -> "inner class"
                 descriptor.isInline -> "inline class"
+                descriptor.isValue -> "value class"
                 descriptor.isFun -> "fun interface"
                 DescriptorUtils.isAnnotationClass(descriptor) -> "annotation class"
                 else -> null

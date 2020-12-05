@@ -35,7 +35,8 @@ class IdeaKotlinUastResolveProviderService : KotlinUastResolveProviderService {
     override fun getTypeMapper(element: KtElement): KotlinTypeMapper? {
         return KotlinTypeMapper(
             getBindingContext(element), ClassBuilderMode.LIGHT_CLASSES,
-            JvmProtoBufUtil.DEFAULT_MODULE_NAME, element.languageVersionSettings
+            JvmProtoBufUtil.DEFAULT_MODULE_NAME, element.languageVersionSettings,
+            useOldInlineClassesManglingScheme = false
         )
     }
 

@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.ReportLevel
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-class AnnotationTypeQualifierResolver(storageManager: StorageManager, private val jsr305State: Jsr305State) {
+class AnnotationTypeQualifierResolver(storageManager: StorageManager, private val javaTypeEnhancementState: JavaTypeEnhancementState) {
     class TypeQualifierWithApplicability(
         private val typeQualifier: AnnotationDescriptor,
         private val applicability: Int
@@ -38,8 +38,15 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         operator fun component1() = typeQualifier
         operator fun component2() = AnnotationQualifierApplicabilityType.values().filter(this::isApplicableTo)
 
-        private fun isApplicableTo(elementType: AnnotationQualifierApplicabilityType) =
-            isApplicableConsideringMask(AnnotationQualifierApplicabilityType.TYPE_USE) || isApplicableConsideringMask(elementType)
+        private fun isApplicableTo(elementType: AnnotationQualifierApplicabilityType): Boolean {
+            if (isApplicableConsideringMask(elementType)) return true
+
+            // We explicitly state that while JSR-305 TYPE_USE annotations effectively should be applied to every type
+            // they are not applicable for type parameter bounds because it would be a breaking change otherwise.
+            // Only defaulting annotations from jspecify are applicable
+            return isApplicableConsideringMask(AnnotationQualifierApplicabilityType.TYPE_USE) &&
+                    elementType != AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
+        }
 
         private fun isApplicableConsideringMask(elementType: AnnotationQualifierApplicabilityType) =
             (applicability and (1 shl elementType.ordinal)) != 0
@@ -61,7 +68,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     }
 
     fun resolveTypeQualifierAnnotation(annotationDescriptor: AnnotationDescriptor): AnnotationDescriptor? {
-        if (jsr305State.disabled) {
+        if (javaTypeEnhancementState.disabledJsr305) {
             return null
         }
 
@@ -71,19 +78,29 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         return resolveTypeQualifierNickname(annotationClass)
     }
 
-    fun resolveQualifierBuiltInDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): NullabilityQualifierWithApplicability? {
-        if (jsr305State.disabled) {
+    fun resolveQualifierBuiltInDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): JavaDefaultQualifiers? {
+        if (javaTypeEnhancementState.disabledDefaultAnnotations) {
             return null
         }
 
-        return BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS[annotationDescriptor.fqName]?.let { (qualifier, applicability) ->
-            val state = resolveJsr305AnnotationState(annotationDescriptor).takeIf { it != ReportLevel.IGNORE } ?: return null
-            return NullabilityQualifierWithApplicability(qualifier.copy(isForWarningOnly = state.isWarning), applicability)
+        return BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS[annotationDescriptor.fqName]?.let { qualifierForDefaultingAnnotation ->
+            val state = resolveDefaultAnnotationState(annotationDescriptor).takeIf { it != ReportLevel.IGNORE } ?: return null
+            qualifierForDefaultingAnnotation.copy(
+                nullabilityQualifier = qualifierForDefaultingAnnotation.nullabilityQualifier.copy(isForWarningOnly = state.isWarning)
+            )
         }
     }
 
+    private fun resolveDefaultAnnotationState(annotationDescriptor: AnnotationDescriptor): ReportLevel {
+        if (annotationDescriptor.fqName in JSPECIFY_DEFAULT_ANNOTATIONS) {
+            return javaTypeEnhancementState.jspecifyReportLevel
+        }
+
+        return resolveJsr305AnnotationState(annotationDescriptor)
+    }
+
     fun resolveTypeQualifierDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): TypeQualifierWithApplicability? {
-        if (jsr305State.disabled) {
+        if (javaTypeEnhancementState.disabledJsr305) {
             return null
         }
 
@@ -111,11 +128,11 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
 
     fun resolveJsr305AnnotationState(annotationDescriptor: AnnotationDescriptor): ReportLevel {
         resolveJsr305CustomState(annotationDescriptor)?.let { return it }
-        return jsr305State.global
+        return javaTypeEnhancementState.globalJsr305Level
     }
 
     fun resolveJsr305CustomState(annotationDescriptor: AnnotationDescriptor): ReportLevel? {
-        jsr305State.user[annotationDescriptor.fqName?.asString()]?.let { return it }
+        javaTypeEnhancementState.userDefinedLevelForSpecificJsr305Annotation[annotationDescriptor.fqName?.asString()]?.let { return it }
         return annotationDescriptor.annotationClass?.migrationAnnotationStatus()
     }
 
@@ -123,7 +140,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         val enumValue = annotations.findAnnotation(MIGRATION_ANNOTATION_FQNAME)?.firstArgument() as? EnumValue
             ?: return null
 
-        jsr305State.migration?.let { return it }
+        javaTypeEnhancementState.migrationLevelForJsr305?.let { return it }
 
         return when (enumValue.enumEntryName.asString()) {
             "STRICT" -> ReportLevel.STRICT
@@ -147,8 +164,6 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
             )
             else -> emptyList()
         }
-
-    val disabled: Boolean = jsr305State.disabled
 }
 
 private val ClassDescriptor.isAnnotatedWithTypeQualifier: Boolean

@@ -51,8 +51,16 @@ abstract class FakeOverrideBuilderStrategy {
         return deepCopyFakeOverride
     }
 
-    // TODO: this one doesn't belong here. IrOverridingUtil shouldn't know about symbol table.
-    abstract fun linkFakeOverride(fakeOverride: IrOverridableMember)
+    fun linkFakeOverride(fakeOverride: IrOverridableMember) {
+        when (fakeOverride) {
+            is IrFakeOverrideFunction -> linkFunctionFakeOverride(fakeOverride)
+            is IrFakeOverrideProperty -> linkPropertyFakeOverride(fakeOverride)
+            else -> error("Unexpected fake override: $fakeOverride")
+        }
+    }
+
+    protected abstract fun linkFunctionFakeOverride(declaration: IrFakeOverrideFunction)
+    protected abstract fun linkPropertyFakeOverride(declaration: IrFakeOverrideProperty)
 
     // TODO: need to make IrProperty carry overriddenSymbols.
     val propertyOverriddenSymbols: MutableMap<IrOverridableMember, List<IrSymbol>> = mutableMapOf()
@@ -101,26 +109,16 @@ class IrOverridingUtil(
             }
         }
 
-    // We need to get Any's members if all the parents are private.
-    private fun allPublicApiSuperTypesOrAny(clazz: IrClass): List<IrType> {
-        val superTypes = clazz.superTypes
-        val superClasses = superTypes.map { it.getClass() ?: error("Unexpected super type: $it") }
-        return if (superClasses.isEmpty() || superClasses.any { it.symbol.isPublicApi })
-            superTypes
-        else
-            listOf(irBuiltIns.anyType)
-    }
-
     fun buildFakeOverridesForClass(clazz: IrClass) {
-        val superTypes = allPublicApiSuperTypesOrAny(clazz)
+        val superTypes = clazz.superTypes
 
         @Suppress("UNCHECKED_CAST")
-        val fromCurrent = clazz.declarations.filter { it is IrOverridableMember && it.symbol.isPublicApi } as List<IrOverridableMember>
+        val fromCurrent = clazz.declarations.filter { it is IrOverridableMember } as List<IrOverridableMember>
 
         val allFromSuper = superTypes.flatMap { superType ->
             val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
             superClass.declarations
-                .filter { it is IrOverridableMember && it.symbol.isPublicApi }
+                .filter { it.isOverridableMemberOrAccessor() }
                 .map {
                     val overridenMember = it as IrOverridableMember
                     val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overridenMember, clazz)
@@ -400,8 +398,8 @@ class IrOverridingUtil(
             fakeOverride.overriddenSymbols.isNotEmpty()
         ) { "Overridden symbols should be set for " + CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
 
-        fakeOverrideBuilder.linkFakeOverride(fakeOverride)
         addedFakeOverrides.add(fakeOverride)
+        fakeOverrideBuilder.linkFakeOverride(fakeOverride)
     }
 
     private fun isVisibilityMoreSpecific(
@@ -744,4 +742,19 @@ class IrOverridingUtil(
             else -> error("Unxpected declaration for value parameter check: $this")
         }
     }
+}
+
+fun IrSimpleFunction.isOverridableFunction(): Boolean =
+    this.visibility != DescriptorVisibilities.PRIVATE &&
+    this.dispatchReceiverParameter != null
+
+fun IrProperty.isOverridableProperty(): Boolean =
+    this.visibility != DescriptorVisibilities.PRIVATE &&
+    (this.getter?.dispatchReceiverParameter != null ||
+     this.setter?.dispatchReceiverParameter != null)
+
+fun IrDeclaration.isOverridableMemberOrAccessor(): Boolean = when(this) {
+    is IrSimpleFunction -> isOverridableFunction()
+    is IrProperty -> isOverridableProperty()
+    else -> false
 }

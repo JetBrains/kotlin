@@ -15,10 +15,28 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.Name
 
 fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " is not supported yet here")
+
+fun IrFunction.hasStableJsName(): Boolean {
+    val namedOrMissingGetter = when (this) {
+        is IrSimpleFunction -> {
+            val owner = correspondingPropertySymbol?.owner
+            if (owner == null) {
+                true
+            } else {
+                owner.getter?.getJsName() != null
+            }
+        }
+        else -> true
+    }
+
+    return (isEffectivelyExternal() || getJsName() != null || parentClassOrNull?.isJsExport() == true) && namedOrMissingGetter
+}
 
 fun IrFunction.isEqualsInheritedFromAny() =
     name == Name.identifier("equals") &&
@@ -80,3 +98,13 @@ fun IrExpression?.isPure(anyVariable: Boolean, checkFields: Boolean = true): Boo
 
     return false
 }
+
+val IrValueDeclaration.isDispatchReceiver: Boolean
+    get() {
+        val parent = this.parent
+        if (parent is IrClass)
+            return true
+        if (parent is IrFunction && parent.dispatchReceiverParameter == this)
+            return true
+        return false
+    }

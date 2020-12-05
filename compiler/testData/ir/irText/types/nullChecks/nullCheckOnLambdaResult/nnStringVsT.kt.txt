@@ -1,0 +1,11 @@
+fun <T : Any?> useT(fn: Function0<T>): T {
+  return fn.invoke()
+}
+
+fun testNoNullCheck() {
+  useT<@EnhancedNullability String>(fn = local fun <anonymous>(): @EnhancedNullability String {
+    return notNullString()
+  }
+) /*~> Unit */
+}
+

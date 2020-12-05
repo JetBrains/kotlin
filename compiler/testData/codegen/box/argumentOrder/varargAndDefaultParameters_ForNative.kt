@@ -39,8 +39,7 @@ fun box(): String {
                        receiver = { invokeOrder += " receiver"; "R" }()
     )
     if (result != "C, R, I") return "fail 3: $result"
-    // Change test after e3fe1bcf7c3 has been dealt with.
-    if (invokeOrder != "init receiver constraints") return "fail 4: $invokeOrder"
+    if (invokeOrder != "init constraints receiver") return "fail 4: $invokeOrder"
 
     result = ""
     invokeOrder = ""

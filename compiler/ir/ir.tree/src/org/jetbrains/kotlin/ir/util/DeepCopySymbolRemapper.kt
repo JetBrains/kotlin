@@ -33,6 +33,7 @@ open class DeepCopySymbolRemapper(
 ) : IrElementVisitorVoid, SymbolRemapper {
 
     private val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
+    private val scripts = hashMapOf<IrScriptSymbol, IrScriptSymbol>()
     private val constructors = hashMapOf<IrConstructorSymbol, IrConstructorSymbol>()
     private val enumEntries = hashMapOf<IrEnumEntrySymbol, IrEnumEntrySymbol>()
     private val externalPackageFragments = hashMapOf<IrExternalPackageFragmentSymbol, IrExternalPackageFragmentSymbol>()
@@ -60,6 +61,13 @@ open class DeepCopySymbolRemapper(
     override fun visitClass(declaration: IrClass) {
         remapSymbol(classes, declaration) {
             IrClassSymbolImpl(descriptorsRemapper.remapDeclaredClass(it.descriptor))
+        }
+        declaration.acceptChildrenVoid(this)
+    }
+
+    override fun visitScript(declaration: IrScript) {
+        remapSymbol(scripts, declaration) {
+            IrScriptSymbolImpl(descriptorsRemapper.remapDeclaredScript(it.descriptor))
         }
         declaration.acceptChildrenVoid(this)
     }
@@ -166,6 +174,7 @@ open class DeepCopySymbolRemapper(
         getOrElse(symbol) { symbol }
 
     override fun getDeclaredClass(symbol: IrClassSymbol): IrClassSymbol = classes.getDeclared(symbol)
+    override fun getDeclaredScript(symbol: IrScriptSymbol): IrScriptSymbol = scripts.getDeclared(symbol)
     override fun getDeclaredFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol = functions.getDeclared(symbol)
     override fun getDeclaredProperty(symbol: IrPropertySymbol): IrPropertySymbol = properties.getDeclared(symbol)
     override fun getDeclaredField(symbol: IrFieldSymbol): IrFieldSymbol = fields.getDeclared(symbol)
@@ -184,6 +193,7 @@ open class DeepCopySymbolRemapper(
     override fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getDeclared(symbol)
 
     override fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol = classes.getReferenced(symbol)
+    override fun getReferencedScript(symbol: IrScriptSymbol): IrScriptSymbol = scripts.getReferenced(symbol)
     override fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol? = symbol?.let { classes.getReferenced(it) }
     override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol = enumEntries.getReferenced(symbol)
     override fun getReferencedVariable(symbol: IrVariableSymbol): IrVariableSymbol = variables.getReferenced(symbol)
@@ -214,6 +224,7 @@ open class DeepCopySymbolRemapper(
     override fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol =
         when (symbol) {
             is IrClassSymbol -> classes.getReferenced(symbol)
+            is IrScriptSymbol -> scripts.getReferenced(symbol)
             is IrTypeParameterSymbol -> typeParameters.getReferenced(symbol)
             else -> throw IllegalArgumentException("Unexpected symbol $symbol")
         }

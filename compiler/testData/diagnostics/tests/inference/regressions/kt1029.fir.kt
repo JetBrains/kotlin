@@ -3,6 +3,8 @@
 //KT-1029 Wrong type inference
 package i
 
+import checkSubtype
+
 public fun<T> from(yielder: ()->Iterable<T>) : Iterable<T> {
 }
 

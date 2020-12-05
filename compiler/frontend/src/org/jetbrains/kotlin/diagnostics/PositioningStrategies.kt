@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.diagnostics.Errors.ACTUAL_WITHOUT_EXPECT
 import org.jetbrains.kotlin.diagnostics.Errors.NO_ACTUAL_FOR_EXPECT
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.KtTokens.MODALITY_MODIFIERS
+import org.jetbrains.kotlin.lexer.KtTokens.VISIBILITY_MODIFIERS
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.Compatibility.Incompatible
@@ -46,10 +48,7 @@ object PositioningStrategies {
                 is KtObjectLiteralExpression -> {
                     val objectDeclaration = element.objectDeclaration
                     val objectKeyword = objectDeclaration.getObjectKeyword()!!
-                    val delegationSpecifierList = objectDeclaration.getSuperTypeList()
-                    if (delegationSpecifierList == null) {
-                        return markElement(objectKeyword)
-                    }
+                    val delegationSpecifierList = objectDeclaration.getSuperTypeList() ?: return markElement(objectKeyword)
                     return markRange(objectKeyword, delegationSpecifierList)
                 }
                 is KtObjectDeclaration -> {
@@ -405,15 +404,12 @@ object PositioningStrategies {
         }
     }
 
-    @JvmField
-    val VISIBILITY_MODIFIER: PositioningStrategy<KtModifierListOwner> = object : PositioningStrategy<KtModifierListOwner>() {
+    private class ModifierSetBasedPositioningStrategy(private val modifierSet: TokenSet) : PositioningStrategy<KtModifierListOwner>() {
         override fun mark(element: KtModifierListOwner): List<TextRange> {
-            val visibilityTokens =
-                listOf(KtTokens.PRIVATE_KEYWORD, KtTokens.PROTECTED_KEYWORD, KtTokens.PUBLIC_KEYWORD, KtTokens.INTERNAL_KEYWORD)
             val modifierList = element.modifierList
 
-            val result = visibilityTokens.mapNotNull { modifierList?.getModifier(it)?.textRange }
-            if (!result.isEmpty()) return result
+            val result = modifierSet.types.mapNotNull { modifierList?.getModifier(it as KtModifierKeywordToken)?.textRange }
+            if (result.isNotEmpty()) return result
 
             // Try to resolve situation when there's no visibility modifiers written before element
             if (element is PsiNameIdentifierOwner) {
@@ -434,6 +430,12 @@ object PositioningStrategies {
             return markElement(elementToMark)
         }
     }
+
+    @JvmField
+    val VISIBILITY_MODIFIER: PositioningStrategy<KtModifierListOwner> = ModifierSetBasedPositioningStrategy(VISIBILITY_MODIFIERS)
+
+    @JvmField
+    val MODALITY_MODIFIER: PositioningStrategy<KtModifierListOwner> = ModifierSetBasedPositioningStrategy(MODALITY_MODIFIERS)
 
     @JvmField
     val VARIANCE_IN_PROJECTION: PositioningStrategy<KtTypeProjection> = object : PositioningStrategy<KtTypeProjection>() {
@@ -480,11 +482,12 @@ object PositioningStrategies {
     }
 
     @JvmField
-    val VAL_OR_VAR_NODE: PositioningStrategy<KtNamedDeclaration> = object : PositioningStrategy<KtNamedDeclaration>() {
-        override fun mark(element: KtNamedDeclaration): List<TextRange> {
+    val VAL_OR_VAR_NODE: PositioningStrategy<KtDeclaration> = object : PositioningStrategy<KtDeclaration>() {
+        override fun mark(element: KtDeclaration): List<TextRange> {
             return when (element) {
                 is KtParameter -> markElement(element.valOrVarKeyword ?: element)
                 is KtProperty -> markElement(element.valOrVarKeyword)
+                is KtDestructuringDeclaration -> markElement(element.valOrVarKeyword ?: element)
                 else -> error("Declaration is neither a parameter nor a property: " + element.getElementTextWithContext())
             }
         }
@@ -612,15 +615,26 @@ object PositioningStrategies {
     }
 
     @JvmField
-    val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: PositioningStrategy<KtConstructorDelegationCall> =
-        object : PositioningStrategy<KtConstructorDelegationCall>() {
-            override fun mark(element: KtConstructorDelegationCall): List<TextRange> {
-                if (element.isImplicit) {
-                    val constructor = element.getStrictParentOfType<KtSecondaryConstructor>()!!
-                    val valueParameterList = constructor.valueParameterList ?: return markElement(constructor)
-                    return markRange(constructor.getConstructorKeyword(), valueParameterList.lastChild)
+    val SECONDARY_CONSTRUCTOR_DELEGATION_CALL: PositioningStrategy<PsiElement> =
+        object : PositioningStrategy<PsiElement>() {
+            override fun mark(element: PsiElement): List<TextRange> {
+                when (element) {
+                    is KtSecondaryConstructor -> {
+                        val valueParameterList = element.valueParameterList ?: return markElement(element)
+                        return markRange(element.getConstructorKeyword(), valueParameterList.lastChild)
+                    }
+                    is KtConstructorDelegationCall -> {
+                        if (element.isImplicit) {
+                            // TODO: [VD] FIR collects for some reason implicit KtConstructorDelegationCall
+                            // check(!element.isImplicit) { "Implicit KtConstructorDelegationCall should not be collected directly" }
+                            val constructor = element.getStrictParentOfType<KtSecondaryConstructor>()!!
+                            val valueParameterList = constructor.valueParameterList ?: return markElement(constructor)
+                            return markRange(constructor.getConstructorKeyword(), valueParameterList.lastChild)
+                        }
+                        return markElement(element.calleeExpression ?: element)
+                    }
+                    else -> error("unexpected element $element")
                 }
-                return markElement(element.calleeExpression ?: element)
             }
         }
 
@@ -677,6 +691,16 @@ object PositioningStrategies {
         override fun mark(element: KtCallableDeclaration): List<TextRange> {
             element.receiverTypeReference?.let { return markElement(it) }
             return DEFAULT.mark(element)
+        }
+    }
+
+    val OPERATOR: PositioningStrategy<KtExpression> = object : PositioningStrategy<KtExpression>() {
+        override fun mark(element: KtExpression): List<TextRange> {
+            return when (element) {
+                is KtBinaryExpression -> mark(element.operationReference)
+                is KtUnaryExpression -> mark(element.operationReference)
+                else -> super.mark(element)
+            }
         }
     }
 }

@@ -1,0 +1,35 @@
+fun String.k(): Function0<String> {
+  return local fun <anonymous>(): String {
+    return <this>
+  }
+
+}
+
+fun test1(f: Function0<Unit>) {
+  return f.invoke()
+}
+
+fun test2(f: @ExtensionFunctionType Function1<String, Unit>) {
+  return f.invoke(p1 = "hello")
+}
+
+fun test3(): String {
+  return "hello".k().invoke()
+}
+
+fun test4(ns: String?): String? {
+  return { // BLOCK
+    val tmp1_safe_receiver: Function0<String>? = { // BLOCK
+      val tmp0_safe_receiver: String? = ns
+      when {
+        EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+        else -> tmp0_safe_receiver.k()
+      }
+    }
+    when {
+      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
+      else -> tmp1_safe_receiver.invoke()
+    }
+  }
+}
+

@@ -292,7 +292,7 @@ class IrSparseArrayParcelSerializer(
 ) : IrParcelSerializer {
     override fun AndroidIrBuilder.readParcel(parcel: IrValueDeclaration): IrExpression {
         return irBlock {
-            val remainingSizeTemporary = irTemporaryVar(parcelReadInt(irGet(parcel)))
+            val remainingSizeTemporary = irTemporary(parcelReadInt(irGet(parcel)), isMutable = true)
 
             val sparseArrayConstructor = sparseArrayClass.constructors.first { irConstructor ->
                 irConstructor.valueParameters.size == 1 && irConstructor.valueParameters.single().type.isInt()
@@ -320,7 +320,7 @@ class IrSparseArrayParcelSerializer(
                     }
 
                     val dec = context.irBuiltIns.intClass.getSimpleFunction("dec")!!
-                    +irSetVar(remainingSizeTemporary.symbol, irCall(dec).apply {
+                    +irSet(remainingSizeTemporary.symbol, irCall(dec).apply {
                         dispatchReceiver = irGet(remainingSizeTemporary)
                     })
                 }

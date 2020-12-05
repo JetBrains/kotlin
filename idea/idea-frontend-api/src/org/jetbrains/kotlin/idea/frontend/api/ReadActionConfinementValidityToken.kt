@@ -13,18 +13,45 @@ class ReadActionConfinementValidityToken(project: Project) : ValidityToken() {
     private val modificationTracker = KotlinModificationTrackerService.getInstance(project).modificationTracker
     private val onCreatedTimeStamp = modificationTracker.modificationCount
 
+    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
     override fun isValid(): Boolean {
         val application = ApplicationManager.getApplication()
-        if (application.isDispatchThread) return false
+        if (application.isDispatchThread && !allowOnEdt.get()) return false
         if (!application.isReadAccessAllowed) return false
         return onCreatedTimeStamp == modificationTracker.modificationCount
     }
 
+    @OptIn(HackToForceAllowRunningAnalyzeOnEDT::class)
     override fun getInvalidationReason(): String {
         val application = ApplicationManager.getApplication()
-        if (application.isDispatchThread) return "Called in EDT thread"
+        if (application.isDispatchThread && !allowOnEdt.get()) return "Called in EDT thread"
         if (!application.isReadAccessAllowed) return "Called outside read action"
         if (onCreatedTimeStamp != modificationTracker.modificationCount) return "PSI has changed since creation"
         error("Getting invalidation reason for valid validity token")
+    }
+
+    companion object {
+        @HackToForceAllowRunningAnalyzeOnEDT
+        val allowOnEdt: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
+    }
+}
+
+@RequiresOptIn("All frontend related work should not be allowed to be ran from EDT thread. Only use it as a temporary solution")
+annotation class HackToForceAllowRunningAnalyzeOnEDT
+
+/**
+ * All frontend related work should not be allowed to be ran from EDT thread. Only use it as a temporary solution.
+ *
+ * @see KtAnalysisSession
+ * @see ReadActionConfinementValidityToken
+ */
+@HackToForceAllowRunningAnalyzeOnEDT
+inline fun <T> hackyAllowRunningOnEdt(action: () -> T): T {
+    if (ReadActionConfinementValidityToken.allowOnEdt.get()) return action()
+    ReadActionConfinementValidityToken.allowOnEdt.set(true)
+    try {
+        return action()
+    } finally {
+        ReadActionConfinementValidityToken.allowOnEdt.set(false)
     }
 }

@@ -1,0 +1,16 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Ann {
+    // source: 'annotationGetters.kt'
+    public abstract method u(): int
+    public abstract method uba(): byte[]
+    public abstract method uia(): int[]
+    public abstract method ula(): long[]
+    public abstract method usa(): short[]
+}
+
+@kotlin.Metadata
+public final class AnnotationGettersKt {
+    // source: 'annotationGetters.kt'
+    public final static @Ann method foo(): void
+}

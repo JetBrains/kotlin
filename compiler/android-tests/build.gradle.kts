@@ -34,9 +34,7 @@ dependencies {
     Platform[201].orLower {
         testCompile(intellijDep()) { includeJars("groovy-all", rootProject = rootProject) }
     }
-    Platform[192].orHigher {
-        testCompile(intellijPluginDep("java")) { includeJars("jps-builders") }
-    }
+    testCompile(intellijPluginDep("java")) { includeJars("jps-builders") }
     testCompile(jpsStandalone()) { includeJars("jps-model") }
     testCompile(jpsBuildTest())
 }

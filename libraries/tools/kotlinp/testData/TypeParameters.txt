@@ -3,7 +3,7 @@
 public final class A<T#0 /* T */> : kotlin/Any {
 
   // signature: <init>()V
-  public /* primary */ constructor()
+  public constructor()
 
   // signature: a(Ljava/lang/Object;)V
   public final fun <T#1 /* T */> a(t: T#1): kotlin/Unit
@@ -17,7 +17,7 @@ public final class A<T#0 /* T */> : kotlin/Any {
 public final inner class A.B<T#1 /* U */, T#2 /* V */ : T#1> : kotlin/Any {
 
   // signature: <init>(LA;)V
-  public /* primary */ constructor()
+  public constructor()
 
   // signature: b(Ljava/lang/Comparable;Ljava/lang/Object;Ljava/lang/Object;)V
   public final fun <T#3 /* T */ : kotlin/Comparable<T#3> & kotlin/Cloneable, T#4 /* U */> b(t: T#3, u: T#4, v: T#2): kotlin/Unit
@@ -34,7 +34,7 @@ public final inner class A.B<T#1 /* U */, T#2 /* V */ : T#1> : kotlin/Any {
 public final inner class A.B.C<T#3 /* T */, T#4 /* U */> : kotlin/Any {
 
   // signature: <init>(LA$B;)V
-  public /* primary */ constructor()
+  public constructor()
 
   // signature: c(Ljava/lang/Object;Ljava/lang/Object;)V
   public final fun <T#5 /* T */, T#6 /* U */> c(t: T#5?, u: T#6?): kotlin/Unit

@@ -1,5 +1,7 @@
 package
 
+public fun foo(): kotlin.Unit
+
 public final inline class A0 {
     public constructor A0(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
@@ -92,6 +94,14 @@ public final class B1 {
         public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
     }
 
+    public final inner inline class C21 {
+        public constructor C21(/*0*/ x: kotlin.Int)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
     public companion object Companion {
         private constructor Companion()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
@@ -100,6 +110,14 @@ public final class B1 {
 
         public final inline class C1 {
             public constructor C1(/*0*/ x: kotlin.Int)
+            public final val x: kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+        }
+
+        public final inline class C11 {
+            public constructor C11(/*0*/ x: kotlin.Int)
             public final val x: kotlin.Int
             public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
             public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
@@ -116,6 +134,14 @@ public object B2 {
 
     public final inline class C3 {
         public constructor C3(/*0*/ x: kotlin.Int)
+        public final val x: kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    public final inline class C31 {
+        public constructor C31(/*0*/ x: kotlin.Int)
         public final val x: kotlin.Int
         public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int

@@ -10,3 +10,5 @@ public class JJ extends B {
         new B("");
     }
 }
+
+// FIR_IGNORE

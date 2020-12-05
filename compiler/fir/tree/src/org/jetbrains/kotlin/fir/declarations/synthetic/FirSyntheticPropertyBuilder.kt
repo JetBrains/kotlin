@@ -22,7 +22,7 @@ class FirSyntheticPropertyBuilder {
 
     fun build(): FirSyntheticProperty = FirSyntheticProperty(
         session, name, isVar = delegateSetter != null, symbol = symbol,
-        status = FirDeclarationStatusImpl(delegateGetter.visibility, delegateGetter.modality),
+        status = delegateGetter.status,
         resolvePhase = delegateGetter.resolvePhase,
         getter = FirSyntheticPropertyAccessor(delegateGetter, isGetter = true),
         setter = delegateSetter?.let { FirSyntheticPropertyAccessor(it, isGetter = false) }

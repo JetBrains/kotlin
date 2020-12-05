@@ -12,19 +12,17 @@ class Parameters(
     val progressLogger: ((String) -> Unit)? = null
 ) {
     // use linked hash map to preserve order
-    private val _targetProviders = LinkedHashMap<InputTarget, TargetProvider>()
+    private val _targetProviders = LinkedHashMap<LeafTarget, TargetProvider>()
 
     val targetProviders: List<TargetProvider> get() = _targetProviders.values.toList()
+    val sharedTarget: SharedTarget get() = SharedTarget(_targetProviders.keys)
 
-    // only for test purposes
-    internal var extendedLookupForBuiltInsClassifiers: Boolean = false
+    // common module dependencies (ex: Kotlin stdlib)
+    var dependeeModulesProvider: ModulesProvider? = null
         set(value) {
-            check(!field || value)
+            check(field == null)
             field = value
         }
-
-    // only for test purposes
-    internal var commonModulesProvider: ModulesProvider? = null
 
     fun addTarget(targetProvider: TargetProvider): Parameters {
         require(targetProvider.target !in _targetProviders) { "Target ${targetProvider.target} is already added" }

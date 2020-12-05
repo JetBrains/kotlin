@@ -1,5 +1,5 @@
-expect class <lineMarker>WithCompanion</lineMarker> {
-    companion <lineMarker>object</lineMarker> {
+expect class <!LINE_MARKER("descr='Has actuals in JVM'")!>WithCompanion<!> {
+    companion <!LINE_MARKER("descr='Has actuals in JVM'")!>object<!> {
 
     }
 }

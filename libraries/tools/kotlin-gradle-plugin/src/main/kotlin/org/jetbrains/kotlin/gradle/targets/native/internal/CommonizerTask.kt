@@ -105,11 +105,10 @@ internal data class CommonizerTaskParams(
                         val parentDir = destinationDir.parentFile
                         parentDir.mkdirs()
 
-                        val destinationTmpDir = createTempDir(
-                            prefix = "tmp-" + destinationDir.name,
-                            suffix = ".new",
-                            directory = parentDir
-                        )
+                        val destinationTmpDir = Files.createTempDirectory(
+                            /* dir = */ parentDir.toPath(),
+                            /* prefix = */ "tmp-new-" + destinationDir.name
+                        ).toFile()
 
                         commandLineArguments += "native-dist-commonize"
                         commandLineArguments += "-distribution-path"
@@ -256,16 +255,16 @@ private fun renameToTempAndDelete(directory: File) {
         directory
     } else {
         // first, rename the directory to some temp directory
-        val tempDir = createTempFile(
-            prefix = "tmp-" + directory.name,
-            suffix = ".old",
-            directory = directory.parentFile
+        val tempDir = Files.createTempFile(
+            /* dir = */ directory.parentFile.toPath(),
+            /* prefix = */ "tmp-old-" + directory.name,
+            /* suffix = */ null
         )
-        tempDir.delete()
+        Files.delete(tempDir)
 
-        Files.move(directory.toPath(), tempDir.toPath(), StandardCopyOption.ATOMIC_MOVE)
+        Files.move(directory.toPath(), tempDir, StandardCopyOption.ATOMIC_MOVE)
 
-        tempDir
+        tempDir.toFile()
     }
 
     dirToRemove.deleteRecursively()

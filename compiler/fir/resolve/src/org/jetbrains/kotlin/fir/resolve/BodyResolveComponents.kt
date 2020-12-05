@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
+import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -143,7 +144,8 @@ typealias TowerDataContextForAnonymousFunctions = Map<FirAnonymousFunctionSymbol
 class FirTowerDataContextsForClassParts(
     val forNestedClasses: FirTowerDataContext,
     val forConstructorHeaders: FirTowerDataContext,
-    val primaryConstructorParametersScope: FirLocalScope?,
+    val primaryConstructorPureParametersScope: FirLocalScope?,
+    val primaryConstructorAllParametersScope: FirLocalScope?,
 )
 
 // --------------------------------------- Utils ---------------------------------------
@@ -193,9 +195,13 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass<*>, defaultTy
 
     val superClassesStaticsAndCompanionReceivers = mutableListOf<FirTowerDataElement>()
     for (superType in lookupSuperTypes(owner, lookupInterfaces = false, deep = true, useSiteSession = session)) {
-        val superClass = superType.fullyExpandedType(session).lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: continue
+        val expandedType = superType.fullyExpandedType(session)
+        val superClass = expandedType.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: continue
 
-        superClass.staticScope(this)?.asTowerDataElement(isLocal = false)?.let(superClassesStaticsAndCompanionReceivers::add)
+        superClass.staticScope(this)
+            ?.wrapNestedClassifierScopeWithSubstitutionForSuperType(expandedType, session)
+            ?.asTowerDataElement(isLocal = false)
+            ?.let(superClassesStaticsAndCompanionReceivers::add)
 
         (superClass as? FirRegularClass)?.companionObject?.let { companion ->
             val superCompanionReceiver = ImplicitDispatchReceiverValue(

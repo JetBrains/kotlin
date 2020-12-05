@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.PublishArtifact
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
-import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.COMPILE
@@ -142,8 +140,8 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         project.locateOrRegisterTask<ProcessResources>(compilation.processResourcesTaskName) { resourcesTask ->
             resourcesTask.description = "Processes $resourceSet."
-            DslObject(resourcesTask).conventionMapping.map("destinationDir") { project.file(compilation.output.resourcesDir) }
             resourcesTask.from(resourceSet)
+            resourcesTask.into(project.file(compilation.output.resourcesDir))
         }
     }
 
@@ -406,25 +404,27 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
                 jarArtifact.type = archiveType
 
                 val apiElementsConfiguration = project.configurations.getByName(target.apiElementsConfigurationName)
-                addJar(apiElementsConfiguration, jarArtifact)
+                // If the target adds its own artifact to this configuration until this happens, don't add another one:
+                addJarIfNoArtifactsPresent(apiElementsConfiguration, jarArtifact)
 
                 if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
                     val runtimeConfiguration = project.configurations.getByName(mainCompilation.deprecatedRuntimeConfigurationName)
                     val runtimeElementsConfiguration = project.configurations.getByName(target.runtimeElementsConfigurationName)
-                    addJar(runtimeConfiguration, jarArtifact)
-                    addJar(runtimeElementsConfiguration, jarArtifact)
-                    // TODO Check Gradle's special split into variants for classes & resources -- do we need that too?
+                    addJarIfNoArtifactsPresent(runtimeConfiguration, jarArtifact)
+                    addJarIfNoArtifactsPresent(runtimeElementsConfiguration, jarArtifact)
                 }
             }
         }
     }
 
-    private fun addJar(configuration: Configuration, jarArtifact: PublishArtifact) {
-        val publications = configuration.outgoing
+    private fun addJarIfNoArtifactsPresent(configuration: Configuration, jarArtifact: PublishArtifact) {
+        if (configuration.artifacts.isEmpty()) {
+            val publications = configuration.outgoing
 
-        // Configure an implicit variant
-        publications.artifacts.add(jarArtifact)
-        publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, archiveType)
+            // Configure an implicit variant
+            publications.artifacts.add(jarArtifact)
+            publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, archiveType)
+        }
     }
 }
 

@@ -54,36 +54,36 @@ inline val FirProperty.hasJvmFieldAnnotation: Boolean
 val FirAnnotationCall.isJvmFieldAnnotation: Boolean
     get() = toAnnotationClassId() == JVM_FIELD_CLASS_ID
 
-private fun FirAnnotationCall.useSiteTargetsFromMetaAnnotation(session: FirSession): List<AnnotationUseSiteTarget> {
-    val metaAnnotationAboutTarget =
-        toAnnotationClass(session)?.annotations?.find { it.toAnnotationClassId() == TARGET_CLASS_ID }
-            ?: return emptyList()
-    return metaAnnotationAboutTarget.argumentList.arguments.toAnnotationUseSiteTargets()
-}
+fun FirAnnotationCall.useSiteTargetsFromMetaAnnotation(session: FirSession): Set<AnnotationUseSiteTarget> =
+    toAnnotationClass(session)?.annotations?.find { it.toAnnotationClassId() == TARGET_CLASS_ID }?.argumentList?.arguments
+        ?.toAnnotationUseSiteTargets() ?: DEFAULT_USE_SITE_TARGETS
 
-private fun List<FirExpression>.toAnnotationUseSiteTargets(): List<AnnotationUseSiteTarget> =
-    flatMap { arg ->
-        val unwrappedArg = if (arg is FirNamedArgumentExpression) arg.expression else arg
-        if (unwrappedArg is FirArrayOfCall) {
-            unwrappedArg.argumentList.arguments.toAnnotationUseSiteTargets()
-        } else {
-            unwrappedArg.toAnnotationUseSiteTarget()?.let { listOf(it) } ?: emptyList()
+private fun List<FirExpression>.toAnnotationUseSiteTargets(): Set<AnnotationUseSiteTarget> =
+    flatMapTo(mutableSetOf()) { arg ->
+        when (val unwrappedArg = if (arg is FirNamedArgumentExpression) arg.expression else arg) {
+            is FirArrayOfCall -> unwrappedArg.argumentList.arguments.toAnnotationUseSiteTargets()
+            is FirVarargArgumentsExpression -> unwrappedArg.arguments.toAnnotationUseSiteTargets()
+            else -> USE_SITE_TARGET_NAME_MAP[unwrappedArg.callableNameOfMetaAnnotationArgument?.identifier] ?: setOf()
         }
     }
 
-private val USE_SITE_TARGET_NAME_MAP =
-    AnnotationUseSiteTarget.values().map { it.name to it }.toMap()
+// See [org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.USE_SITE_MAPPING] (it's in reverse)
+private val USE_SITE_TARGET_NAME_MAP = mapOf(
+    "FIELD" to setOf(AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD),
+    "FILE" to setOf(AnnotationUseSiteTarget.FILE),
+    "PROPERTY" to setOf(AnnotationUseSiteTarget.PROPERTY),
+    "PROPERTY_GETTER" to setOf(AnnotationUseSiteTarget.PROPERTY_GETTER),
+    "PROPERTY_SETTER" to setOf(AnnotationUseSiteTarget.PROPERTY_SETTER),
+    "VALUE_PARAMETER" to setOf(
+        AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER,
+        AnnotationUseSiteTarget.RECEIVER,
+        AnnotationUseSiteTarget.SETTER_PARAMETER,
+    ),
+)
 
-private fun FirExpression.toAnnotationUseSiteTarget(): AnnotationUseSiteTarget? =
-    // TODO: depending on the context, "PARAMETER" can be mapped to either CONSTRUCTOR_PARAMETER or SETTER_PARAMETER ?
-    callableNameOfMetaAnnotationArgument?.identifier?.let {
-        USE_SITE_TARGET_NAME_MAP[it]
-    }
-
-fun FirAnnotationCall.hasMetaAnnotationUseSiteTargets(session: FirSession, vararg useSiteTargets: AnnotationUseSiteTarget): Boolean {
-    val meta = useSiteTargetsFromMetaAnnotation(session)
-    return useSiteTargets.any { meta.contains(it) }
-}
+// See [org.jetbrains.kotlin.descriptors.annotations.KotlinTarget] (the second argument of each entry)
+private val DEFAULT_USE_SITE_TARGETS: Set<AnnotationUseSiteTarget> =
+    USE_SITE_TARGET_NAME_MAP.values.fold(setOf<AnnotationUseSiteTarget>()) { a, b -> a + b } - setOf(AnnotationUseSiteTarget.FILE)
 
 fun FirAnnotatedDeclaration.hasAnnotation(classId: ClassId): Boolean {
     return annotations.any { it.toAnnotationClassId() == classId }

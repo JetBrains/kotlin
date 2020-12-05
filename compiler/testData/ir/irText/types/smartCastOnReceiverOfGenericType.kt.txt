@@ -1,0 +1,60 @@
+fun testFunction(a: Any, b: Any) {
+  a as MutableList<String> /*~> Unit */
+  b as String /*~> Unit */
+  a /*as MutableList<String> */.add(element = b /*as String */) /*~> Unit */
+}
+
+fun testProperty(a: Any, b: Any) {
+  a as Cell<String> /*~> Unit */
+  b as String /*~> Unit */
+  a /*as Cell<String> */.<set-value>(<set-?> = b /*as String */)
+}
+
+fun testInnerClass(a: Any, b: Any, c: Any) {
+  a as Inner<String, Int> /*~> Unit */
+  b as Int /*~> Unit */
+  c as String /*~> Unit */
+  a /*as Inner<String, Int> */.use(x1 = b /*as Int */, x2 = c /*as String */)
+}
+
+fun <T : Any?> testNonSubstitutedTypeParameter(a: Any, b: Any) {
+  a as MutableList<List<T>> /*~> Unit */
+  b as List<T> /*~> Unit */
+  a /*as MutableList<List<T>> */.add(element = b /*as List<T> */) /*~> Unit */
+}
+
+class Cell<T : Any?> {
+  constructor(value: T) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var value: T
+    field = value
+    get
+    set
+
+}
+
+class Outer<T1 : Any?> {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  inner class Inner<T2 : Any?> {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    fun use(x1: T1, x2: T2) {
+    }
+
+  }
+
+}
+

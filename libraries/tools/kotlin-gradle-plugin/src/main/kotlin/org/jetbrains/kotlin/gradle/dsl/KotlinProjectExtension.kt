@@ -101,7 +101,8 @@ open class KotlinJsProjectExtension :
     // target is public property
     // Users can write kotlin.target and it should work
     // So call of target should init default configuration
-    internal var _target: KotlinJsTargetDsl? = null
+    @Deprecated("Use `target` instead", ReplaceWith("target"))
+    var _target: KotlinJsTargetDsl? = null
         private set
 
     companion object {

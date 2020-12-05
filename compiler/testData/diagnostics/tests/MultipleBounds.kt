@@ -62,7 +62,7 @@ fun <T> test2(t : T)
   t.bar()
 }
 
-val t1 = test2<<!UPPER_BOUND_VIOLATED!>A<!>>(A())
+val t1 = test2<<!UPPER_BOUND_VIOLATED!>A<!>>(<!TYPE_MISMATCH!>A()<!>)
 val t2 = test2<<!UPPER_BOUND_VIOLATED!>B<!>>(C())
 val t3 = test2<C>(C())
 

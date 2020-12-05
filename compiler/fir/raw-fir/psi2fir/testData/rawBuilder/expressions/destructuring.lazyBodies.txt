@@ -1,0 +1,25 @@
+FILE: destructuring.kt
+    public? final? data class Some : R|kotlin/Any| {
+        public? constructor(first: Int, second: Double, third: String): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val first: Int = R|<local>/first|
+            public? get(): Int
+
+        public? final? val second: Double = R|<local>/second|
+            public? get(): Double
+
+        public? final? val third: String = R|<local>/third|
+            public? get(): String
+
+        public final fun component1(): Int
+
+        public final fun component2(): Double
+
+        public final fun component3(): String
+
+        public final fun copy(first: Int = this@R|/Some|.R|/Some.first|, second: Double = this@R|/Some|.R|/Some.second|, third: String = this@R|/Some|.R|/Some.third|): R|Some|
+
+    }
+    public? final? fun foo(some: Some): R|kotlin/Unit| { LAZY_BLOCK }

@@ -255,6 +255,7 @@ task libraryJarWithoutIr(type: Jar, dependsOn: compileJs) {
     from jsOutputMetaFile
     from "${jsOutputFile}.map"
     from sourceSets.main.output
+    filesMatching("*.*") { it.mode = 0b110100100 } // KTI-401
 }
 
 task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
@@ -269,16 +270,19 @@ task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
         def irKlib = tasks.getByPath(":kotlin-stdlib-js-ir:compileKotlinJs")
         fileTree(irKlib.outputs.files.first().path)
     }
+    filesMatching("*.*") { it.mode = 0b110100100 } // KTI-401
 }
 
 jar.dependsOn(libraryJarWithIr)
 
 task sourcesJar(type: Jar, dependsOn: compileJs) {
-    classifier = 'sources'
+    archiveClassifier.set('sources')
     includeEmptyDirs false
     duplicatesStrategy = DuplicatesStrategy.FAIL
-    from(sourceSets.builtins.allSource) {
+    from("${builtinsDir}/native/kotlin") {
         into 'kotlin'
+        include 'Comparable.kt'
+        include 'Enum.kt'
     }
     from(sourceSets.main.allSource) {
         into 'kotlin'
@@ -294,7 +298,7 @@ task sourcesJar(type: Jar, dependsOn: compileJs) {
 task distSourcesJar(type: Jar) {
     dependsOn(sourcesJar, configurations.commonSources)
     destinationDirectory = file("$buildDir/lib/dist")
-    archiveClassifier = 'sources'
+    archiveClassifier.set('sources')
     duplicatesStrategy = DuplicatesStrategy.FAIL
     from zipTree(sourcesJar.outputs.files.singleFile)
 

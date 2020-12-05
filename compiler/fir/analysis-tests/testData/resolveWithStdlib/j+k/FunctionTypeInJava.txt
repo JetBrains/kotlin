@@ -1,14 +1,14 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        Q|JavaClass|.R|/JavaClass.foo1|(<L> = foo1@fun <anonymous>(): R|ft<kotlin/Int, kotlin/Int?>!| {
+        Q|JavaClass|.R|/JavaClass.foo1|(<L> = foo1@fun <anonymous>(): R|ft<@FlexibleNullability kotlin/Int, kotlin/Int?>!| {
             ^ Int(123)
         }
         )
-        Q|JavaClass|.R|/JavaClass.foo2|(<L> = foo2@fun <anonymous>(it: R|ft<kotlin/Int, kotlin/Int?>!|): R|ft<kotlin/String, kotlin/String?>!| {
+        Q|JavaClass|.R|/JavaClass.foo2|(<L> = foo2@fun <anonymous>(it: R|ft<@FlexibleNullability kotlin/Int, kotlin/Int?>!|): R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| {
             ^ R|<local>/it|.R|kotlin/Int.plus|(Int(2)).R|kotlin/Any.toString|()
         }
         )
-        Q|JavaClass|.R|/JavaClass.foo2|(foo2@fun <anonymous>(it: R|ft<kotlin/Int, kotlin/Int?>!|): R|ft<kotlin/String, kotlin/String?>!| {
+        Q|JavaClass|.R|/JavaClass.foo2|(foo2@fun <anonymous>(it: R|ft<@FlexibleNullability kotlin/Int, kotlin/Int?>!|): R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| {
             ^ R|<local>/it|.R|kotlin/Int.plus|(Int(3)).R|kotlin/Any.toString|()
         }
         )
@@ -17,7 +17,7 @@ FILE: main.kt
         }
 
         Q|JavaClass|.R|/JavaClass.foo2|(R|<local>/y|)
-        Q|JavaClass|.R|/JavaClass.foo3|<R|ft<kotlin/Int, kotlin/Int?>!|>(foo3@fun <anonymous>(it: R|ft<kotlin/Int, kotlin/Int?>!|): R|ft<kotlin/String, kotlin/String?>!| {
+        Q|JavaClass|.R|/JavaClass.foo3|<R|ft<kotlin/Int, kotlin/Int?>!|>(foo3@fun <anonymous>(it: R|ft<kotlin/Int, kotlin/Int?>!|): R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!| {
             ^ R|<local>/it|.R|kotlin/Int.plus|(Int(4)).R|kotlin/Any.toString|()
         }
         , Int(5))

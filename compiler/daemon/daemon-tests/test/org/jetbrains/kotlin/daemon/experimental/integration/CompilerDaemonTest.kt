@@ -3,6 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(ExperimentalPathApi::class)
+
 package org.jetbrains.kotlin.daemon.experimental.integration
 
 import junit.framework.TestCase
@@ -38,6 +40,7 @@ import java.net.URL
 import java.net.URLClassLoader
 import java.nio.channels.ClosedChannelException
 import java.nio.charset.Charset
+import java.nio.file.Path
 import java.rmi.ConnectException
 import java.rmi.ConnectIOException
 import java.rmi.UnmarshalException
@@ -46,6 +49,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.logging.LogManager
 import kotlin.concurrent.thread
+import kotlin.io.path.*
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
 import kotlin.script.experimental.dependencies.DependenciesResolver
@@ -64,7 +68,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     val kotlinCompilerClientInstance = KotlinCompilerDaemonClient.instantiate(DaemonProtocolVariant.SOCKETS)
 
-    private fun createNewLogFile(): File {
+    private fun createNewLogFile(): Path {
         println("creating logFile")
         val newLogFile = createTempFile("kotlin-daemon-experimental-test.", ".log")
         println("logFile created (${newLogFile.loggerCompatiblePath})")
@@ -595,8 +599,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 shutdownDelayMilliseconds = 1,
                 runFilesPath = File(tmpdir, getTestName(true)).absolutePath
             )
-            val clientFlag = createTempFile(getTestName(true), "-client.alive")
-            val sessionFlag = createTempFile(getTestName(true), "-session.alive")
+            val clientFlag = createTempFile(getTestName(true), "-client.alive").toFile()
+            val sessionFlag = createTempFile(getTestName(true), "-session.alive").toFile()
             try {
                 withLogFile("kotlin-daemon-test") { logFile ->
                     val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
@@ -635,8 +639,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 shutdownDelayMilliseconds = 1,
                 runFilesPath = File(tmpdir, getTestName(true)).absolutePath
             )
-            val clientFlag = createTempFile(getTestName(true), "-client.alive")
-            val sessionFlag = createTempFile(getTestName(true), "-session.alive")
+            val clientFlag = createTempFile(getTestName(true), "-client.alive").toFile()
+            val sessionFlag = createTempFile(getTestName(true), "-session.alive").toFile()
             try {
                 withLogFile("kotlin-daemon-test") { logFile ->
                     val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
@@ -678,8 +682,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 shutdownDelayMilliseconds = 3000,
                 runFilesPath = File(tmpdir, getTestName(true)).absolutePath
             )
-            val clientFlag = createTempFile(getTestName(true), "-client.alive")
-            val clientFlag2 = createTempFile(getTestName(true), "-client.alive")
+            val clientFlag = createTempFile(getTestName(true), "-client.alive").toFile()
+            val clientFlag2 = createTempFile(getTestName(true), "-client.alive").toFile()
             try {
                 withLogFile("kotlin-daemon-test") { logFile ->
                     val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
@@ -769,8 +773,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             assertEquals("Compilation failed:\n$resOutput", 0, resCode)
             println("OK")
         } finally {
-            if (clientAliveFile.exists())
-                clientAliveFile.delete()
+            clientAliveFile.deleteIfExists()
         }
     }
 
@@ -1427,7 +1430,7 @@ fun restoreSystemProperty(propertyName: String, backupValue: String?) {
 }
 
 internal inline fun withFlagFile(prefix: String, suffix: String? = null, body: (File) -> Unit) {
-    val file = createTempFile(prefix, suffix)
+    val file = createTempFile(prefix, suffix).toFile()
     try {
         body(file)
     } finally {
@@ -1436,7 +1439,7 @@ internal inline fun withFlagFile(prefix: String, suffix: String? = null, body: (
 }
 
 internal inline fun withLogFile(prefix: String, suffix: String = ".log", printLogOnException: Boolean = true, body: (File) -> Unit) {
-    val logFile = createTempFile(prefix, suffix)
+    val logFile = createTempFile(prefix, suffix).toFile()
     println("LOG FILE : ${logFile.path}")
     try {
         body(logFile)
@@ -1449,13 +1452,6 @@ internal inline fun withLogFile(prefix: String, suffix: String = ".log", printLo
     }
 }
 
-// java.util.Logger used in the daemon silently forgets to log into a file specified in the config on Windows,
-// if file path is given in windows form (using backslash as a separator); the reason is unknown
-// this function makes a path with forward slashed, that works on windows too
-internal val File.loggerCompatiblePath: String
-    get() =
-        if (OSKind.current == OSKind.Windows) absolutePath.replace('\\', '/')
-        else absolutePath
 
 open class TestKotlinScriptDummyDependenciesResolver : DependenciesResolver {
 
