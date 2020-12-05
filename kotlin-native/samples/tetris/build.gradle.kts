@@ -109,7 +109,7 @@ kotlin {
             val sdl by creating {
                 when (preset) {
                     presets["macosX64"] -> includeDirs("/opt/local/include/SDL2", "/usr/local/include/SDL2")
-                    presets["linuxX64"] -> includeDirs("/usr/include/SDL2")
+                    presets["linuxX64"] -> includeDirs("/usr/include", "/usr/include/x86_64-linux-gnu", "/usr/include/SDL2")
                     presets["mingwX64"] -> includeDirs(mingw64Path.resolve("include/SDL2"))
                     presets["mingwX86"] -> includeDirs(mingw32Path.resolve("include/SDL2"))
                     presets["linuxArm32Hfp"] -> includeDirs(kotlinNativeDataPath.resolve("dependencies/target-sysroot-2-raspberrypi/usr/include/SDL2"))
