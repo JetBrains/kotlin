@@ -63,15 +63,15 @@ $ brew cask install java6
 
 On Windows you might need to add long paths setting to the repo:
 
-    git config core.longpaths true 
+    git config core.longpaths true
 
 ## Building
 
-The project is built with Gradle. Run Gradle to build the project and to run the tests 
+The project is built with Gradle. Run Gradle to build the project and to run the tests
 using the following command on Unix/macOS:
 
     ./gradlew <tasks-and-options>
-    
+
 or the following command on Windows:
 
     gradlew <tasks-and-options>
@@ -81,10 +81,10 @@ On the first project configuration gradle will download and setup the dependenci
 * `intellij-core` is a part of command line compiler and contains only necessary APIs.
 * `idea-full` is a full blown IntelliJ IDEA Community Edition to be used in the plugin module.
 
-These dependencies are quite large, so depending on the quality of your internet connection 
-you might face timeouts getting them. In this case you can increase timeout by specifying the following 
-command line parameters on the first run: 
-    
+These dependencies are quite large, so depending on the quality of your internet connection
+you might face timeouts getting them. In this case, you can increase timeout by specifying the following 
+command line parameters on the first run:
+
     ./gradlew -Dhttp.socketTimeout=60000 -Dhttp.connectionTimeout=60000
 
 ## Important gradle tasks
@@ -126,7 +126,7 @@ bunch switch 191
 
 Working with the Kotlin project requires at least IntelliJ IDEA 2019.1. You can download IntelliJ IDEA 2019.1 [here](https://www.jetbrains.com/idea/download).
 
-After cloning the project, to import the project in IntelliJ choose the project directory in the Open project dialog. Then, after project opened, select 
+After cloning the project, to import the project in IntelliJ choose the project directory in the Open project dialog. Then, after the project is opened, select
 `File` -> `New` -> `Module from Existing Sources...` in the menu, and select `build.gradle.kts` file in the project's root folder.
 
 In the import dialog, select `use default gradle wrapper`.
