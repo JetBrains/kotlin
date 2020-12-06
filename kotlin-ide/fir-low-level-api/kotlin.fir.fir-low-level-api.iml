@@ -40,5 +40,6 @@
     <orderEntry type="module" module-name="kotlin.fir.frontend-independent" />
     <orderEntry type="library" name="Guava" level="project" />
     <orderEntry type="module" module-name="kotlin.common" scope="TEST" />
+    <orderEntry type="library" name="kotlinx-collections-immutable-jvm" level="project" />
   </component>
 </module>
