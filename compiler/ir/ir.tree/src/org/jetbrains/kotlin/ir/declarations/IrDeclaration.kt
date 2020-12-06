@@ -48,10 +48,6 @@ interface IrDeclaration : IrStatement, IrSymbolOwner, IrMutableAnnotationContain
 
 abstract class IrDeclarationBase : IrElementBase(), IrDeclaration
 
-interface IrSymbolDeclaration<out S : IrSymbol> : IrDeclaration {
-    override val symbol: S
-}
-
 interface IrOverridableDeclaration<S : IrSymbol> : IrDeclaration {
     var overriddenSymbols: List<S>
 }
