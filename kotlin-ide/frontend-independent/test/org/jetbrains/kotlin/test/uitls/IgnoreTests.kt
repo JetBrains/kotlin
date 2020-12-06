@@ -11,6 +11,7 @@ import java.nio.file.Path
 
 object IgnoreTests {
     private const val INSERT_DIRECTIVE_AUTOMATICALLY = false // TODO use environment variable instead
+    private const val ALWAYS_CONSIDER_TEST_AS_PASSING = false // TODO use environment variable instead
 
     fun runTestIfEnabledByFileDirective(
         testFile: Path,
@@ -46,6 +47,11 @@ object IgnoreTests {
         additionalFilesExtensions: List<String>,
         test: () -> Unit
     ) {
+        if (ALWAYS_CONSIDER_TEST_AS_PASSING) {
+            test()
+            return
+        }
+
         val testIsEnabled = directive.isEnabledInFile(testFile)
 
         try {
