@@ -53,37 +53,37 @@ public class ProjectWideOutOfBlockKotlinModificationTrackerTestGenerated extends
 
     @TestMetadata("topPropertyWithTypeInGetter.kt")
     public void testTopPropertyWithTypeInGetter() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithTypeInGetter.kt");
+        runTest("testdata/outOfBlockProjectWide/topPropertyWithTypeInGetter.kt");
     }
 
     @TestMetadata("topPropertyWithTypeInGetterOnNextLine.kt")
     public void testTopPropertyWithTypeInGetterOnNextLine() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithTypeInGetterOnNextLine.kt");
+        runTest("testdata/outOfBlockProjectWide/topPropertyWithTypeInGetterOnNextLine.kt");
     }
 
     @TestMetadata("topPropertyWithTypeInInititalzer.kt")
     public void testTopPropertyWithTypeInInititalzer() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithTypeInInititalzer.kt");
+        runTest("testdata/outOfBlockProjectWide/topPropertyWithTypeInInititalzer.kt");
     }
 
     @TestMetadata("topPropertyWithTypeInSetter.kt")
     public void testTopPropertyWithTypeInSetter() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithTypeInSetter.kt");
+        runTest("testdata/outOfBlockProjectWide/topPropertyWithTypeInSetter.kt");
     }
 
     @TestMetadata("topPropertyWithoutTypeInGetter.kt")
     public void testTopPropertyWithoutTypeInGetter() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithoutTypeInGetter.kt");
+        runTest("testdata/outOfBlockProjectWide/topPropertyWithoutTypeInGetter.kt");
     }
 
     @TestMetadata("topPropertyWithoutTypeInInititalzer.kt")
     public void testTopPropertyWithoutTypeInInititalzer() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithoutTypeInInititalzer.kt");
+        runTest("testdata/outOfBlockProjectWide/topPropertyWithoutTypeInInititalzer.kt");
     }
 
     @TestMetadata("topPropertyWithoutTypeInSetter.kt")
     public void testTopPropertyWithoutTypeInSetter() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/outOfBlockProjectWide/topPropertyWithoutTypeInSetter.kt");
+        runTest("testdata/outOfBlockProjectWide/topPropertyWithoutTypeInSetter.kt");
     }
 
     @TestMetadata("typeInFunctionAnnotation.kt")

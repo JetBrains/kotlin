@@ -33,7 +33,7 @@ public class FileStructureTestGenerated extends AbstractFileStructureTest {
 
     @TestMetadata("classMemberProperty.kt")
     public void testClassMemberProperty() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure/classMemberProperty.kt");
+        runTest("testdata/fileStructure/classMemberProperty.kt");
     }
 
     @TestMetadata("localClass.kt")
@@ -48,7 +48,7 @@ public class FileStructureTestGenerated extends AbstractFileStructureTest {
 
     @TestMetadata("localProperty.kt")
     public void testLocalProperty() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure/localProperty.kt");
+        runTest("testdata/fileStructure/localProperty.kt");
     }
 
     @TestMetadata("nestedClasses.kt")
@@ -73,7 +73,7 @@ public class FileStructureTestGenerated extends AbstractFileStructureTest {
 
     @TestMetadata("topLevelProperty.kt")
     public void testTopLevelProperty() throws Exception {
-        runTest("idea/idea-frontend-fir/idea-fir-low-level-api/testdata/fileStructure/topLevelProperty.kt");
+        runTest("testdata/fileStructure/topLevelProperty.kt");
     }
 
     @TestMetadata("topLevelUnitFun.kt")

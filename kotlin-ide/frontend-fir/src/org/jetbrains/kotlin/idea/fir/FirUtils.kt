@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
-import org.jetbrains.kotlin.idea.fir.low.level.api.api.LowLevelFirApiFacade
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.util.OperatorNameConventions

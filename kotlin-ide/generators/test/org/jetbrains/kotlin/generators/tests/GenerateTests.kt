@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.AbstractSessionsInvalidationTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
@@ -1002,9 +1003,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
         testClass<AbstractFileStructureTest> {
             model("fileStructure")
         }
-    testClass<AbstractSessionsInvalidationTest> {
-                model("sessionInvalidation", recursive = false, extension = null)
-            }}
+        testClass<AbstractSessionsInvalidationTest> {
+            model("sessionInvalidation", isRecursive = false, pattern = DIRECTORY)
+        }
+    }
 
 
    /* testGroup("idea/idea-fir-performance-tests/tests", "idea") {
