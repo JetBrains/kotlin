@@ -5,9 +5,6 @@
 
 package sample.videoplayer
 
-import ffmpeg.AV_PIX_FMT_NONE
-import ffmpeg.AV_PIX_FMT_RGB24
-import ffmpeg.AV_PIX_FMT_RGB32
 import kotlinx.cinterop.*
 import sdl.*
 
@@ -72,7 +69,7 @@ class SDLRendererWindow(windowPos: Dimensions, videoSize: Dimensions) : Disposab
         SDL_CreateTexture(renderer, SDL_GetWindowPixelFormat(window), 0, videoSize.w, videoSize.h),
         ::SDL_DestroyTexture)
     private val rect = sdlDisposable("calloc(SDL_Rect)",
-        SDL_calloc(1, SDL_Rect.size.convert()), ::SDL_free)
+        SDL_calloc(1, sizeOf<SDL_Rect>().convert()), ::SDL_free)
         .reinterpret<SDL_Rect>()
 
     init {

@@ -153,7 +153,6 @@ private class VideoDecoder(
             videoQueue.push(VideoFrame(buffer, scaledVideoFrame.linesize[0], ts))
         }
     }
-
 }
 
 private fun SampleFormat.toAVSampleFormat(): AVSampleFormat? = when (this) {
@@ -191,14 +190,14 @@ private class AudioDecoder(
     private val maxAudioFrames = 5
 
     init {
-        with (resampledAudioFrame) {
+        with(resampledAudioFrame) {
             channels = output.channels
             sample_rate = output.sampleRate
             format = output.sampleFormat
             channel_layout = output.channelLayout.convert()
         }
 
-        with (audioCodecContext) {
+        with(audioCodecContext) {
             setResampleOpt("in_channel_layout", channel_layout.convert())
             setResampleOpt("out_channel_layout", output.channelLayout)
             setResampleOpt("in_sample_rate", sample_rate)
@@ -226,12 +225,12 @@ private class AudioDecoder(
     fun nextFrame(size: Int): AudioFrame? {
         val frame = audioQueue.peek() ?: return null
         val realSize = if (frame.position + size > frame.size) frame.size - frame.position else size
-        if (frame.position + realSize == frame.size) {
-            return audioQueue.pop()
+        return if (frame.position + realSize == frame.size) {
+            audioQueue.pop()
         } else {
             val result = AudioFrame(av_buffer_ref(frame.buffer)!!, frame.position, frame.size, frame.timeStamp)
             frame.position += realSize
-            return result
+            result
         }
     }
 
@@ -241,7 +240,7 @@ private class AudioDecoder(
             if (frameFinished.value != 0) {
                 // Put audio frame to decoder's queue.
                 swr_convert_frame(resampleContext, resampledAudioFrame.ptr, audioFrame.ptr).checkAVError()
-                with (resampledAudioFrame) {
+                with(resampledAudioFrame) {
                     val audioFrameSize = av_samples_get_buffer_size(null, channels, nb_samples, format, 1)
                     val buffer = av_buffer_alloc(audioFrameSize)!!
                     val ts = av_frame_get_best_effort_timestamp(audioFrame.ptr) *

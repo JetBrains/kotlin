@@ -6,7 +6,6 @@
 package sample.videoplayer
 
 import ffmpeg.*
-import kotlin.system.*
 import kotlinx.cinterop.*
 import platform.posix.*
 import kotlinx.cli.*
@@ -32,12 +31,12 @@ enum class PlayMode {
     val useAudio: Boolean get() = this != VIDEO
 }
 
-class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
+class VideoPlayer(private val requestedSize: Dimensions?) : DisposableContainer() {
     private val decoder = disposable { DecoderWorker() }
     private val video = disposable { SDLVideo() }
     private val audio = disposable { SDLAudio(this) }
     private val input = disposable { SDLInput(this) }
-    private val now = arena.alloc<platform.posix.timespec>().ptr
+    private val now = arena.alloc<timespec>().ptr
 
     private var state = State.STOPPED
 
@@ -63,7 +62,7 @@ class VideoPlayer(val requestedSize: Dimensions?) : DisposableContainer() {
     }
 
     private fun getTime(): Double {
-        clock_gettime(platform.posix.CLOCK_MONOTONIC, now)
+        clock_gettime(CLOCK_MONOTONIC, now)
         return now.pointed.tv_sec + now.pointed.tv_nsec / 1e9
     }
 
