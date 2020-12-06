@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 
-interface IrFakeOverrideFunction : IrSymbolDeclaration<IrSimpleFunctionSymbol> {
+interface IrFakeOverrideFunction : IrDeclaration {
+    override val symbol: IrSimpleFunctionSymbol
+
     var modality: Modality
 
     fun acquireSymbol(symbol: IrSimpleFunctionSymbol): IrSimpleFunction
