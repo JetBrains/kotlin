@@ -11,5 +11,11 @@ dependencies {
 publish()
 
 runtimeJar()
-sourcesJar()
+
+sourcesJar {
+    from {
+        project(":compiler:tests-common").sourceSets["test"].allSource
+    }
+}
+
 javadocJar()
