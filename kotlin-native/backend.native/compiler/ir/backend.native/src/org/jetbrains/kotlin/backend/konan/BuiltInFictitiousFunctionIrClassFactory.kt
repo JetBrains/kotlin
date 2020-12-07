@@ -213,7 +213,7 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                                         SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, invokeFunctionOrigin,
                                         IrValueParameterSymbolImpl(it), it.name, it.index,
                                         functionClass.typeParameters[it.index].defaultType, null,
-                                        it.isCrossinline, it.isNoinline
+                                        it.isCrossinline, it.isNoinline, false, false
                                 ).also { it.parent = this }
                             }
                             if (!isFakeOverride)
@@ -271,7 +271,9 @@ internal class BuiltInFictitiousFunctionIrClassFactory(
                 toIrType(descriptor.type),
                 varargType?.let { toIrType(it) },
                 descriptor.isCrossinline,
-                descriptor.isNoinline
+                descriptor.isNoinline,
+            false,
+            false
         ).also {
             it.parent = this
         }

@@ -104,7 +104,8 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                                 varargElementType = null,
                                 isCrossinline = arg.isCrossinline,
                                 isNoinline = arg.isNoinline,
-                                isAssignable = arg.isAssignable
+                                isAssignable = arg.isAssignable,
+                                isHidden = arg.isHidden
                         ).apply { it.bind(this) }
                     }
                 }

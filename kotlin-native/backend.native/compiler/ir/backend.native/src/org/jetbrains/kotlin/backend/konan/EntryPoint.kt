@@ -55,7 +55,9 @@ internal fun makeEntryPoint(context: Context): IrFunction {
                     varargElementType = null,
                     isCrossinline = false,
                     type = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.stringType),
-                    isNoinline = false
+                    isNoinline = false,
+                    isAssignable = false,
+                    isHidden = false
             ).apply {
                 it.bind(this)
                 parent = function

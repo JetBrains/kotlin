@@ -87,7 +87,7 @@ internal class KotlinBridgeBuilder(
                 bridge.startOffset, bridge.endOffset, bridge.origin,
                 IrValueParameterSymbolImpl(descriptor),
                 Name.identifier("p$index"), index, type,
-                null, false, false
+                null, false, false, false, false
         ).apply {
             descriptor.bind(this)
             parent = bridge

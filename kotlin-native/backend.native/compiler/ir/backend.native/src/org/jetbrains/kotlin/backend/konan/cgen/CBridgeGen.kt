@@ -1142,7 +1142,7 @@ private class ObjCBlockPointerValuePassing(
                 Name.identifier("blockPointer"),
                 0,
                 symbols.nativePtrType,
-                varargElementType = null, isCrossinline = false, isNoinline = false
+                varargElementType = null, isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
         )
         constructorParameterDescriptor.bind(constructorParameter)
         constructor.valueParameters += constructorParameter
@@ -1187,7 +1187,8 @@ private class ObjCBlockPointerValuePassing(
                     Name.identifier("p$index"),
                     index,
                     functionType.arguments[index].typeOrNull!!,
-                    varargElementType = null, isCrossinline = false, isNoinline = false
+                    varargElementType = null, isCrossinline = false, isNoinline = false,
+                    isHidden = false, isAssignable = false
             )
             parameterDescriptor.bind(parameter)
             parameter.parent = invokeMethod
