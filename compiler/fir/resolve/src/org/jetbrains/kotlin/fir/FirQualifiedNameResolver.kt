@@ -48,7 +48,7 @@ class FirQualifiedNameResolver(private val components: BodyResolveComponents) {
         if (callee.name.isSpecial) {
             qualifierStack.clear()
         } else {
-            qualifierStack.add(NameWithTypeArguments(callee.name, typeArguments))
+            qualifierStack.add(NameWithTypeArguments(callee.name, typeArguments.toList()))
         }
     }
 
