@@ -82,7 +82,7 @@ class FirLightClassForFacade(
             }
         }
 
-        createMethods(symbols.asSequence(), isTopLevel = true, result)
+        createMethods(symbols.asSequence(), result, isTopLevel = true)
     }
 
     private val _ownMethods: List<KtLightMethod> by lazyPub {

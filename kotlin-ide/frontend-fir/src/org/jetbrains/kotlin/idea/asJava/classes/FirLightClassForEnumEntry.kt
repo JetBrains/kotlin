@@ -128,7 +128,7 @@ internal class FirLightClassForEnumEntry(
 
         analyzeWithSymbolAsContext(enumEntrySymbol) {
             val callableSymbols = enumEntrySymbol.getDeclaredMemberScope().getCallableSymbols()
-            createMethods(callableSymbols, isTopLevel = false, result)
+            createMethods(callableSymbols, result)
         }
 
         return result
