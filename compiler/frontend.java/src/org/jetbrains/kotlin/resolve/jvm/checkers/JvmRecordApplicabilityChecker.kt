@@ -30,12 +30,15 @@ object JvmRecordApplicabilityChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor || declaration !is KtClassOrObject) return
 
-        if (!descriptor.isJvmRecord()) {
-            if (descriptor.typeConstructor.supertypes.any { it.constructor.declarationDescriptor?.fqNameOrNull() == JAVA_LANG_RECORD_FQ_NAME }) {
-                context.trace.report(ErrorsJvm.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE.on(declaration))
+        for (supertypeEntry in declaration.superTypeListEntries) {
+            val supertype = context.trace[BindingContext.TYPE, supertypeEntry.typeReference]
+            if (supertype?.constructor?.declarationDescriptor?.fqNameOrNull() == JAVA_LANG_RECORD_FQ_NAME) {
+                context.trace.report(ErrorsJvm.ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE.on(supertypeEntry))
+                return
             }
-            return
         }
+
+        if (!descriptor.isJvmRecord()) return
 
         val reportOn =
             declaration.annotationEntries.firstOrNull { it.shortName == JVM_RECORD_ANNOTATION_FQ_NAME.shortName() }

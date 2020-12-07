@@ -7,6 +7,6 @@ class BasicRecord(val x: String)
 @JvmRecord
 data class BasicDataRecord(val x: String)
 
-<!NON_DATA_CLASS_JVM_RECORD!>@JvmRecord<!>
-class BasicRecordWithSuperClass(val x: String) : Record()
+@JvmRecord
+class BasicRecordWithSuperClass(val x: String) : <!ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE!>Record()<!>
 
