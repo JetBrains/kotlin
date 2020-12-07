@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredCallableSymbols
+import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.firUnsafe
@@ -557,10 +557,10 @@ private fun JavaAnnotationArgument.toFirExpression(
                 val classId = this@toFirExpression.enumClassId
                 val entryName = this@toFirExpression.entryName
                 val calleeReference = if (classId != null && entryName != null) {
-                    val callableSymbol = session.firSymbolProvider.getClassDeclaredCallableSymbols(
+                    val propertySymbol = session.firSymbolProvider.getClassDeclaredPropertySymbols(
                         classId, entryName
                     ).firstOrNull()
-                    callableSymbol?.let {
+                    propertySymbol?.let {
                         buildResolvedNamedReference {
                             name = entryName
                             resolvedSymbol = it

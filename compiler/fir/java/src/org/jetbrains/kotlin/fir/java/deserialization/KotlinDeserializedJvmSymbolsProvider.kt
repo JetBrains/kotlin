@@ -197,16 +197,16 @@ class KotlinDeserializedJvmSymbolsProvider(
 
             private fun ClassId.toEnumEntryReferenceExpression(name: Name): FirExpression {
                 return buildFunctionCall {
-                    val entryCallableSymbol =
-                        this@KotlinDeserializedJvmSymbolsProvider.session.firSymbolProvider.getClassDeclaredCallableSymbols(
+                    val entryPropertySymbol =
+                        this@KotlinDeserializedJvmSymbolsProvider.session.firSymbolProvider.getClassDeclaredPropertySymbols(
                             this@toEnumEntryReferenceExpression, name,
                         ).firstOrNull()
 
                     calleeReference = when {
-                        entryCallableSymbol != null -> {
+                        entryPropertySymbol != null -> {
                             buildResolvedNamedReference {
                                 this.name = name
-                                resolvedSymbol = entryCallableSymbol
+                                resolvedSymbol = entryPropertySymbol
                             }
                         }
                         else -> {
