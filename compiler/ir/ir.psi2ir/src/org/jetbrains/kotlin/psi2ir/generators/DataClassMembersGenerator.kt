@@ -17,15 +17,23 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 
 /**
  * A generator that generates synthetic members of data class as well as part of inline class.
@@ -72,14 +80,57 @@ class DataClassMembersGenerator(
             override fun getProperty(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrProperty? =
                 parameter?.let {
                     val property = getOrFail(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameter)
-                    return getProperty(property)
+                    return getIrProperty(property)
                 }
 
             override fun transform(typeParameterDescriptor: TypeParameterDescriptor): IrType =
                 typeParameterDescriptor.defaultType.toIrType()
 
-            override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>, descriptor: CallableDescriptor) {
-                irMemberAccessExpression.commitSubstituted(descriptor)
+            private fun MemberScope.findHashCodeFunctionOrNull() =
+                getContributedFunctions(Name.identifier("hashCode"), NoLookupLocation.FROM_BACKEND)
+                    .find { it.valueParameters.isEmpty() && it.extensionReceiverParameter == null }
+
+            private fun getHashCodeFunction(type: KotlinType): FunctionDescriptor =
+                type.memberScope.findHashCodeFunctionOrNull()
+                    ?: context.builtIns.any.unsubstitutedMemberScope.findHashCodeFunctionOrNull()!!
+
+            private fun getHashCodeFunction(
+                type: KotlinType,
+                symbolResolve: (FunctionDescriptor) -> IrSimpleFunctionSymbol
+            ): IrSimpleFunctionSymbol =
+                when (val typeConstructorDescriptor = type.constructor.declarationDescriptor) {
+                    is ClassDescriptor ->
+                        if (KotlinBuiltIns.isArrayOrPrimitiveArray(typeConstructorDescriptor))
+                            context.irBuiltIns.dataClassArrayMemberHashCodeSymbol
+                        else
+                            symbolResolve(getHashCodeFunction(type))
+
+                    is TypeParameterDescriptor ->
+                        getHashCodeFunction(typeConstructorDescriptor.representativeUpperBound, symbolResolve)
+
+                    else ->
+                        throw AssertionError("Unexpected type: $type")
+                }
+
+
+            inner class Psi2IrHashCodeFunctionInfo(
+                override val symbol: IrSimpleFunctionSymbol,
+                val substituted: CallableDescriptor
+            ) : HashCodeFunctionInfo {
+
+                override fun commitSubstituted(irMemberAccessExpression: IrMemberAccessExpression<*>) {
+                    irMemberAccessExpression.commitSubstituted(substituted)
+                }
+
+            }
+
+            override fun getHashCodeFunctionInfo(type: IrType): HashCodeFunctionInfo {
+                var substituted: CallableDescriptor? = null
+                val symbol = getHashCodeFunction(type.toKotlinType()) { hashCodeDescriptor ->
+                    substituted = hashCodeDescriptor
+                    symbolTable.referenceSimpleFunction(hashCodeDescriptor.original)
+                }
+                return Psi2IrHashCodeFunctionInfo(symbol, substituted ?: symbol.descriptor)
             }
         }
 
