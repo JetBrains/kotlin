@@ -288,12 +288,12 @@ private fun FirDeclaration.hasBody(): Boolean = when (this) {
  */
 fun FirClass<*>.findNonInterfaceSupertype(context: CheckerContext): FirTypeRef? {
     for (it in superTypeRefs) {
-        val classId = it.safeAs<FirResolvedTypeRef>()
+        val lookupTag = it.safeAs<FirResolvedTypeRef>()
             ?.type.safeAs<ConeClassLikeType>()
-            ?.lookupTag?.classId
+            ?.lookupTag
             ?: continue
 
-        val fir = context.session.firSymbolProvider.getClassLikeSymbolByFqName(classId)
+        val fir = lookupTag.toSymbol(context.session)
             ?.fir.safeAs<FirClass<*>>()
             ?: continue
 
