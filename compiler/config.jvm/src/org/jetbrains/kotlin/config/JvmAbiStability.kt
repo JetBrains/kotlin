@@ -9,4 +9,9 @@ enum class JvmAbiStability(val description: String) {
     STABLE("stable"),
     UNSTABLE("unstable"),
     ;
+
+    companion object {
+        fun fromStringOrNull(string: String?): JvmAbiStability? =
+            values().find { it.description == string }
+    }
 }

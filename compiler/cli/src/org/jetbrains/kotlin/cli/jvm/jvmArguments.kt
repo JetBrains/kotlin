@@ -173,7 +173,17 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.IR, arguments.useIR && !arguments.noUseIR)
 
-    put(JVMConfigurationKeys.ABI_STABILITY, if (arguments.isIrWithStableAbi) JvmAbiStability.STABLE else JvmAbiStability.UNSTABLE)
+    val abiStability = JvmAbiStability.fromStringOrNull(arguments.abiStability)
+    if (arguments.abiStability != null) {
+        if (abiStability == null) {
+            getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(
+                ERROR,
+                "Unknown ABI stability mode: ${arguments.abiStability}, supported modes: ${JvmAbiStability.values().map { it.description }}"
+            )
+        } else {
+            put(JVMConfigurationKeys.ABI_STABILITY, abiStability)
+        }
+    }
 
     put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, arguments.doNotClearBindingContext)
     put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, arguments.noCallAssertions)
