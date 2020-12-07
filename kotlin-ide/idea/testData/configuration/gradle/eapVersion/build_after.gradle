@@ -6,7 +6,6 @@ version = '1.0'
 
 repositories {
   mavenCentral()
-    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
 }
 
 dependencies {
@@ -16,7 +15,6 @@ dependencies {
 buildscript {
     ext.kotlin_version = '$VERSION$'
     repositories {
-        maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         mavenCentral()
     }
     dependencies {

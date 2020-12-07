@@ -75,7 +75,6 @@ abstract class MultiplePluginVersionGradleImportingTestCase : KotlinGradleImport
         }
 
         addCustomRepository("https://dl.bintray.com/kotlin/kotlin-dev")
-        addCustomRepository("http://dl.bintray.com/kotlin/kotlin-eap")
 
         return repositories.joinToString("\n")
     }

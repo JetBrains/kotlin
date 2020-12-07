@@ -36,15 +36,14 @@ class KotlinVersionProviderTestWizardService() : KotlinVersionProviderService(),
 
     private fun getKotlinVersionRepositoryWithCacheRedirector(versionKind: KotlinVersionKind): Repository = when (versionKind) {
         KotlinVersionKind.STABLE -> DefaultRepository.MAVEN_CENTRAL
-        KotlinVersionKind.EAP -> KOTLIN_EAP_BINTRAY_WITH_CACHE_REDIRECTOR
+        KotlinVersionKind.EAP -> DefaultRepository.MAVEN_CENTRAL
         KotlinVersionKind.DEV -> KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR
-        KotlinVersionKind.M -> KOTLIN_EAP_BINTRAY_WITH_CACHE_REDIRECTOR
+        KotlinVersionKind.M -> DefaultRepository.MAVEN_CENTRAL
     }
 
     companion object {
         private const val CACHE_REDIRECTOR_BINTRAY_URL = "https://cache-redirector.jetbrains.com/dl.bintray.com"
 
-        val KOTLIN_EAP_BINTRAY_WITH_CACHE_REDIRECTOR = BintrayRepository("kotlin/kotlin-eap", CACHE_REDIRECTOR_BINTRAY_URL)
         val KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR = BintrayRepository("kotlin/kotlin-dev", CACHE_REDIRECTOR_BINTRAY_URL)
 
 

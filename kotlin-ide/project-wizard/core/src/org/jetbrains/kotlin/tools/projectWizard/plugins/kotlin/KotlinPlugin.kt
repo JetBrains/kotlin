@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.BuildFileIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.RepositoryIR
 import org.jetbrains.kotlin.tools.projectWizard.ir.buildsystem.withIrs
 import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.ModuleConfigurator
-import org.jetbrains.kotlin.tools.projectWizard.moduleConfigurators.inContextOfModuleConfigurator
 import org.jetbrains.kotlin.tools.projectWizard.phases.GenerationPhase
 import org.jetbrains.kotlin.tools.projectWizard.plugins.StructurePlugin
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemPlugin
@@ -56,7 +55,7 @@ class KotlinPlugin(context: Context) : Plugin(context) {
 
         val version by property(
             // todo do not hardcode kind & repository
-            WizardKotlinVersion(Versions.KOTLIN, KotlinVersionKind.M, Repositories.KOTLIN_EAP_BINTRAY)
+            WizardKotlinVersion(Versions.KOTLIN, KotlinVersionKind.M, Repositories.KOTLIN_EAP_MAVEN_CENTRAL)
         )
 
         val initKotlinVersions by pipelineTask(GenerationPhase.PREPARE_GENERATION) {
