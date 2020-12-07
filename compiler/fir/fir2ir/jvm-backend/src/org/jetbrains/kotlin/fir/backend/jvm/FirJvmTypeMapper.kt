@@ -202,7 +202,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
         return when (this) {
             is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isNullable = false)
             is ConeClassLikeLookupTag -> {
-                val symbol = symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol
+                val symbol = toSymbol(session) as? FirRegularClassSymbol
                     ?: error("Class for $this not found")
                 symbol.fir.defaultType()
             }
