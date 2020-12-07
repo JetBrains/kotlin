@@ -125,7 +125,7 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
             val result = mutableMapOf<String, MutableList<ModuleDependency>>()
 
             val lines = actualModulesTxtFile.readLines()
-            lines.map { it.split("->") }.map {
+            lines.map { it.split("->") }.forEach {
                 assert(it.size == 2)
                 val moduleName = it[0]
                 val dependencyPart = it[1]
