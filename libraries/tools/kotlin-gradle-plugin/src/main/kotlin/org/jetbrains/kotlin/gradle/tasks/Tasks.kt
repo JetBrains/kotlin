@@ -44,9 +44,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.isParentOf
-import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.utils.JsLibraryUtils
@@ -631,15 +628,29 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
     override fun isIncrementalCompilationEnabled(): Boolean =
         when {
             "-Xir-produce-js" in kotlinOptions.freeCompilerArgs -> false
-            "-Xir-produce-klib-dir" in kotlinOptions.freeCompilerArgs -> incrementalJsKlib
+            "-Xir-produce-klib-dir" in kotlinOptions.freeCompilerArgs -> false // TODO: it's not supported yet
             "-Xir-produce-klib-file" in kotlinOptions.freeCompilerArgs -> incrementalJsKlib
             else -> incremental
         }
 
-    @Suppress("unused")
-    @get:OutputFile
+    @get:Internal
     val outputFile: File
-        get() = kotlinOptions.outputFile?.let(::File) ?: defaultOutputFile
+        get() = outputFilePath?.let(::File) ?: defaultOutputFile
+
+    @get:OutputFile
+    @get:Optional
+    val outputFileOrNull: File?
+        get() = outputFile.let { file ->
+            if (file.isFile) {
+                file
+            } else {
+                null
+            }
+        }
+
+    @get:Input
+    val outputFilePath: String?
+        get() = kotlinOptions.outputFile
 
     override fun findKotlinCompilerClasspath(project: Project): List<File> =
         findKotlinJsCompilerClasspath(project)
@@ -651,7 +662,14 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         args.apply { fillDefaultValues() }
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
-        args.outputFile = outputFile.canonicalPath
+        try {
+            outputFile.canonicalPath
+        } catch (ex: Throwable) {
+            logger.warn("IO EXCEPTION: outputFile: ${outputFile.path}")
+            throw ex
+        }
+
+        args.outputFile = outputFile.absoluteFile.normalize().absolutePath
 
         if (defaultsOnly) return
 
