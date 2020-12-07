@@ -73,7 +73,6 @@ class KotlinDeserializedJvmSymbolsProvider(
     private class PackagePartsCacheData(
         val proto: ProtoBuf.Package,
         val context: FirDeserializationContext,
-        val source: JvmPackagePartSource,
     ) {
         val topLevelFunctionNameIndex by lazy {
             proto.functionList.withIndex()
@@ -130,7 +129,6 @@ class KotlinDeserializedJvmSymbolsProvider(
                     FirConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass),
                     source
                 ),
-                source,
             )
         }
     }
@@ -176,7 +174,7 @@ class KotlinDeserializedJvmSymbolsProvider(
 
     private fun loadAnnotation(
         annotationClassId: ClassId, result: MutableList<FirAnnotationCall>,
-    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
         val lookupTag = ConeClassLikeLookupTagImpl(annotationClassId)
 
         return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
@@ -231,7 +229,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                 argumentMap[name] = enumClassId.toEnumEntryReferenceExpression(enumEntryName)
             }
 
-            override fun visitArray(name: Name): AnnotationArrayArgumentVisitor? {
+            override fun visitArray(name: Name): AnnotationArrayArgumentVisitor {
                 return object : AnnotationArrayArgumentVisitor {
                     private val elements = mutableListOf<FirExpression>()
 
@@ -261,9 +259,9 @@ class KotlinDeserializedJvmSymbolsProvider(
                 }
             }
 
-            override fun visitAnnotation(name: Name, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+            override fun visitAnnotation(name: Name, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
                 val list = mutableListOf<FirAnnotationCall>()
-                val visitor = loadAnnotation(classId, list)!!
+                val visitor = loadAnnotation(classId, list)
                 return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
                     override fun visitEnd() {
                         visitor.visitEnd()
