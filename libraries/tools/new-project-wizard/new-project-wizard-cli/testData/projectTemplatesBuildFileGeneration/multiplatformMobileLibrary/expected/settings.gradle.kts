@@ -4,7 +4,6 @@ pluginManagement {
         jcenter()
         gradlePluginPortal()
         mavenCentral()
-        maven { url = uri("KOTLIN_REPO") }
     }
     resolutionStrategy {
         eachPlugin {

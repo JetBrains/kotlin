@@ -26,27 +26,6 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-kotlin-kotlin-eap</id>
-            <name>bintray</name>
-            <url>https://dl.bintray.com/kotlin/kotlin-eap</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-kotlin-kotlin-eap</id>
-            <name>bintray-plugins</name>
-            <url>https://dl.bintray.com/kotlin/kotlin-eap</url>
-        </pluginRepository>
-    </pluginRepositories>
-
     <build>
         <plugins>
             <plugin>
