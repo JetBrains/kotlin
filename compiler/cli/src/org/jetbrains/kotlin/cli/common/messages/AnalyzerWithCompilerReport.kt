@@ -186,7 +186,7 @@ class AnalyzerWithCompilerReport(
                 messageCollector.report(
                     ERROR,
                     "Classes compiled by a new Kotlin compiler backend were found in dependencies. " +
-                            "Remove them from the classpath or use '-Xallow-jvm-ir-dependencies' to suppress errors"
+                            "Remove them from the classpath or use '-Xallow-unstable-dependencies' to suppress errors"
                 )
             }
 
@@ -194,7 +194,7 @@ class AnalyzerWithCompilerReport(
                 messageCollector.report(
                     ERROR,
                     "Classes compiled by the new Kotlin compiler frontend were found in dependencies. " +
-                            "Remove them from the classpath or use '-Xallow-jvm-ir-dependencies' to suppress errors"
+                            "Remove them from the classpath or use '-Xallow-unstable-dependencies' to suppress errors"
                 )
             }
 
