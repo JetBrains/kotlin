@@ -42,6 +42,8 @@ class IrScriptImpl(
 
     override val statements: MutableList<IrStatement> = mutableListOf()
 
+    override var metadata: MetadataSource? = null
+
     override lateinit var thisReceiver: IrValueParameter
 
     override lateinit var baseClass: IrType
