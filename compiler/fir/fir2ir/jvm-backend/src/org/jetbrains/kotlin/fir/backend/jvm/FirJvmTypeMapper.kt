@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
 
 class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatureWriter>, FirSessionComponent {
@@ -189,7 +190,8 @@ val FirSession.jvmTypeMapper: FirJvmTypeMapper by FirSession.sessionComponentAcc
 class ConeTypeSystemCommonBackendContextForTypeMapping(
     val context: ConeTypeContext
 ) : TypeSystemCommonBackendContext by context, TypeSystemCommonBackendContextForTypeMapping {
-    private val symbolProvider = context.session.firSymbolProvider
+    private val session = context.session
+    private val symbolProvider = session.firSymbolProvider
 
     override fun TypeConstructorMarker.isTypeParameter(): Boolean {
         return this is ConeTypeParameterLookupTag
@@ -210,7 +212,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
 
     override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
         require(this is ConeSimpleKotlinType)
-        return isSuspendFunctionType(context.session)
+        return isSuspendFunctionType(session)
     }
 
     override fun SimpleTypeMarker.isKClass(): Boolean {
@@ -234,8 +236,8 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
         require(this is ConeTypeParameterLookupTag)
         val bounds = this.typeParameterSymbol.fir.bounds.map { it.coneType }
         return bounds.firstOrNull {
-            val classId = it.classId ?: return@firstOrNull false
-            val classSymbol = symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return@firstOrNull false
+            val classSymbol = it.safeAs<ConeClassLikeType>()?.fullyExpandedType(session)
+                ?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol ?: return@firstOrNull false
             val kind = classSymbol.fir.classKind
             kind != ClassKind.INTERFACE && kind != ClassKind.ANNOTATION_CLASS
         } ?: bounds.first()
