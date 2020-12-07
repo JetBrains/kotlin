@@ -192,7 +192,7 @@ private class ElementAnnotator(
         val factory = diagnostic.factory
 
         // hack till the root cause #KT-21246 is fixed
-        if (isIrCompileClassDiagnosticForModulesWithEnabledIR(diagnostic)) return
+        if (isUnstableAbiClassDiagnosticForModulesWithEnabledUnstableAbi(diagnostic)) return
 
         assert(diagnostics.all { it.psiElement == element && it.factory == factory })
 
@@ -272,16 +272,18 @@ private class ElementAnnotator(
         data.processDiagnostics(holder, diagnostics, fixesMap)
     }
 
-    private fun isIrCompileClassDiagnosticForModulesWithEnabledIR(diagnostic: Diagnostic): Boolean {
-        if (diagnostic.factory != Errors.IR_COMPILED_CLASS) return false
+    private fun isUnstableAbiClassDiagnosticForModulesWithEnabledUnstableAbi(diagnostic: Diagnostic): Boolean {
+        val setting = when (diagnostic.factory) {
+            Errors.IR_COMPILED_CLASS -> K2JVMCompilerArguments::useIR
+            Errors.FIR_COMPILED_CLASS -> K2JVMCompilerArguments::useFir
+            else -> return false
+        }
         val module = element.module ?: return false
         val moduleFacetSettings = KotlinFacetSettingsProvider.getInstance(element.project)?.getSettings(module) ?: return false
-        return moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::useIR)
-                || moduleFacetSettings.isCompilerSettingPresent(K2JVMCompilerArguments::allowJvmIrDependencies)
+        return moduleFacetSettings.isCompilerSettingPresent(setting)
     }
 
     companion object {
         val LOG = Logger.getInstance(ElementAnnotator::class.java)
     }
 }
-

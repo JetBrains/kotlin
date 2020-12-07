@@ -118,7 +118,7 @@ public class JVMConfigurationKeys {
             CompilerConfigurationKey.create("Paths to .klib libraries");
 
     public static final CompilerConfigurationKey<JvmAbiStability> ABI_STABILITY =
-            CompilerConfigurationKey.create("ABI stability of class files produced by the JVM IR backend");
+            CompilerConfigurationKey.create("ABI stability of class files produced by JVM IR and/or FIR");
 
     public static final CompilerConfigurationKey<Boolean> DO_NOT_CLEAR_BINDING_CONTEXT =
             CompilerConfigurationKey.create("When using the IR backend, do not clear BindingContext between psi2ir and lowerings");
