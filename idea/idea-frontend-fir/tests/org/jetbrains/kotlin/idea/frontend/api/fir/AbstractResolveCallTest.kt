@@ -11,8 +11,10 @@ import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightCodeInsightTestCase
 import org.jetbrains.kotlin.idea.addExternalTestFiles
 import org.jetbrains.kotlin.idea.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.idea.frontend.api.CallInfo
 import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
+import org.jetbrains.kotlin.idea.frontend.api.calls.KtErrorCallTarget
+import org.jetbrains.kotlin.idea.frontend.api.calls.KtSuccessCallTarget
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
@@ -86,9 +88,9 @@ abstract class AbstractResolveCallTest : @Suppress("DEPRECATION") LightCodeInsig
     )
 }
 
-private fun CallInfo.stringRepresentation(): String {
+private fun KtCall.stringRepresentation(): String {
     fun KtType.render() = asStringForDebugging().replace('/', '.')
-    fun Any.stringValue(): String? = when (this) {
+    fun Any.stringValue(): String = when (this) {
         is KtFunctionLikeSymbol -> buildString {
             append(if (this@stringValue is KtFunctionSymbol) callableIdIfNonLocal ?: name else "<constructor>")
             append("(")
@@ -103,6 +105,8 @@ private fun CallInfo.stringRepresentation(): String {
             append(": ${type.render()}")
         }
         is KtParameterSymbol -> "$name: ${type.render()}"
+        is KtSuccessCallTarget -> symbol.stringValue()
+        is KtErrorCallTarget -> "ERR<${this.diagnostic.message}, [${candidates.joinToString { it.stringValue() }}]>"
         is Boolean -> toString()
         else -> error("unexpected parameter type ${this::class}")
     }

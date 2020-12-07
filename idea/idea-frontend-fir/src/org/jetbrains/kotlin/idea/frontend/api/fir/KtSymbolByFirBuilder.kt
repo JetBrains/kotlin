@@ -191,7 +191,11 @@ internal class KtSymbolByFirBuilder private constructor(
     }
 
 
-    fun buildKtType(coneType: FirTypeRef): KtType = buildKtType(coneType.coneTypeUnsafe<ConeKotlinType>())
+    fun buildKtType(coneType: FirTypeRef): KtType =
+        buildKtType(
+            coneType.coneTypeSafe<ConeKotlinType>()
+                ?: error("")
+        )
 
     fun buildKtType(coneType: ConeKotlinType): KtType = typesCache.cache(coneType) {
         when (coneType) {

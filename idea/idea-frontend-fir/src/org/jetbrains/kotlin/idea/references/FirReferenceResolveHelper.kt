@@ -61,7 +61,7 @@ internal object FirReferenceResolveHelper {
         return classLikeDeclaration?.buildSymbol(symbolBuilder)
     }
 
-    fun FirReference.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): KtSymbol? {
+    fun FirReference.toTargetSymbol(session: FirSession, symbolBuilder: KtSymbolByFirBuilder): Collection<KtSymbol> {
         return when (this) {
             is FirResolvedNamedReference -> {
                 val fir = when (val symbol = resolvedSymbol) {
@@ -75,20 +75,21 @@ internal object FirReferenceResolveHelper {
                     }
                     else -> symbol.fir as? FirDeclaration
                 }
-                fir?.buildSymbol(symbolBuilder)
+                listOfNotNull(fir?.buildSymbol(symbolBuilder))
             }
             is FirResolvedCallableReference -> {
-                resolvedSymbol.fir.buildSymbol(symbolBuilder)
+                listOfNotNull(resolvedSymbol.fir.buildSymbol(symbolBuilder))
             }
             is FirThisReference -> {
-                boundSymbol?.fir?.buildSymbol(symbolBuilder)
+                listOfNotNull(boundSymbol?.fir?.buildSymbol(symbolBuilder))
             }
             is FirSuperReference -> {
-                (superTypeRef as? FirResolvedTypeRef)?.toTargetSymbol(session, symbolBuilder)
+                listOfNotNull((superTypeRef as? FirResolvedTypeRef)?.toTargetSymbol(session, symbolBuilder))
             }
-            else -> {
-                null
+            is FirErrorNamedReference -> {
+                getCandidateSymbols().mapNotNull { it.fir.buildSymbol(symbolBuilder) }
             }
+            else -> emptyList()
         }
     }
 
@@ -195,7 +196,7 @@ internal object FirReferenceResolveHelper {
         expression: KtSimpleNameExpression,
         session: FirSession,
         symbolBuilder: KtSymbolByFirBuilder
-    ): List<KtSymbol> {
+    ): Collection<KtSymbol> {
         val calleeReference =
             if (fir is FirFunctionCall
                 && fir.isImplicitFunctionCall()
@@ -207,7 +208,7 @@ internal object FirReferenceResolveHelper {
                 // }
                 (fir.dispatchReceiver as FirQualifiedAccessExpression).calleeReference
             } else fir.calleeReference
-        return listOfNotNull(calleeReference.toTargetSymbol(session, symbolBuilder))
+        return calleeReference.toTargetSymbol(session, symbolBuilder)
     }
 
     private fun getSymbolsByErrorNamedReference(
