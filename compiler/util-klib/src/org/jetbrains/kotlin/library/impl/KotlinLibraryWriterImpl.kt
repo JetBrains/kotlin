@@ -20,12 +20,14 @@ open class KotlinLibraryLayoutForWriter(
 ) : KotlinLibraryLayout, MetadataKotlinLibraryLayout, IrKotlinLibraryLayout {
     override val componentDir: File
         get() = File(unzippedDir, component)
+    override val pre_1_4_manifest: File
+        get() = File(unzippedDir, KLIB_MANIFEST_FILE_NAME)
 }
 
 open class BaseWriterImpl(
     val libraryLayout: KotlinLibraryLayoutForWriter,
     moduleName: String,
-    override val versions: KotlinLibraryVersioning,
+    _versions: KotlinLibraryVersioning,
     builtInsPlatform: BuiltInsPlatform,
     nativeTargets: List<String> = emptyList(),
     val nopack: Boolean = false,
@@ -34,14 +36,16 @@ open class BaseWriterImpl(
 
     val klibFile = libraryLayout.libFile
     val manifestProperties = Properties()
+    override val versions: KotlinLibraryVersioning = _versions
 
     init {
         // TODO: figure out the proper policy here.
-        klibFile.delete()
+        klibFile.deleteRecursively()
+        klibFile.parentFile.run { if (!exists) mkdirs() }
         libraryLayout.resourcesDir.mkdirs()
         // TODO: <name>:<hash> will go somewhere around here.
         manifestProperties.setProperty(KLIB_PROPERTY_UNIQUE_NAME, moduleName)
-        manifestProperties.writeKonanLibraryVersioning(versions)
+        manifestProperties.writeKonanLibraryVersioning(_versions)
 
         if (builtInsPlatform != BuiltInsPlatform.COMMON) {
             manifestProperties.setProperty(KLIB_PROPERTY_BUILTINS_PLATFORM, builtInsPlatform.name)
