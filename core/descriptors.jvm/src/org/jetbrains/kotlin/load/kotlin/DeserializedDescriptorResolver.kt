@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPackageMemberScope
 import javax.inject.Inject
 
@@ -53,7 +54,7 @@ class DeserializedDescriptorResolver {
             JvmProtoBufUtil.readClassDataFrom(data, strings)
         } ?: return null
         val source = KotlinJvmBinarySourceElement(
-            kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible, kotlinClass.isInvisibleJvmIrDependency
+            kotlinClass, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible, kotlinClass.abiStability
         )
         return ClassData(nameResolver, classProto, kotlinClass.classHeader.metadataVersion, source)
     }
@@ -66,7 +67,7 @@ class DeserializedDescriptorResolver {
         } ?: return null
         val source = JvmPackagePartSource(
             kotlinClass, packageProto, nameResolver, kotlinClass.incompatibility, kotlinClass.isPreReleaseInvisible,
-            kotlinClass.isInvisibleJvmIrDependency
+            kotlinClass.abiStability
         )
         return DeserializedPackageMemberScope(
             descriptor, packageProto, nameResolver, kotlinClass.classHeader.metadataVersion, source, components
@@ -97,8 +98,12 @@ class DeserializedDescriptorResolver {
         get() = !components.configuration.skipPrereleaseCheck &&
                 classHeader.isPreRelease && classHeader.metadataVersion == KOTLIN_1_3_M1_METADATA_VERSION
 
-    private val KotlinJvmBinaryClass.isInvisibleJvmIrDependency: Boolean
-        get() = !components.configuration.allowUnstableDependencies && classHeader.isUnstableJvmIrBinary
+    private val KotlinJvmBinaryClass.abiStability: DeserializedContainerAbiStability
+        get() = when {
+            components.configuration.allowUnstableDependencies -> DeserializedContainerAbiStability.STABLE
+            classHeader.isUnstableJvmIrBinary -> DeserializedContainerAbiStability.IR_UNSTABLE
+            else -> DeserializedContainerAbiStability.STABLE
+        }
 
     private fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
         val header = kotlinClass.classHeader

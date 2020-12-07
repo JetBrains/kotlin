@@ -17,9 +17,16 @@ interface DeserializedContainerSource : SourceElement {
 
     // True iff this container was compiled by the new IR backend, this compiler is not using the IR backend right now,
     // and no additional flags to override this behavior were specified.
-    val isInvisibleIrDependency: Boolean
+    val abiStability: DeserializedContainerAbiStability
 
     // This string should only be used in error messages
     val presentableString: String
 }
 
+enum class DeserializedContainerAbiStability {
+    // Either the container is stable, or this compiler is configured to ignore ABI stability of dependencies.
+    STABLE,
+
+    // The container is unstable because it is compiled with unstable JVM IR backend, and this compiler is _not_ configured to ignore that.
+    IR_UNSTABLE,
+}
