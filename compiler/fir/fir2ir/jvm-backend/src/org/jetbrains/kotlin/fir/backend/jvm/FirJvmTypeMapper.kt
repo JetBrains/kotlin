@@ -210,6 +210,8 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
         }
     }
 
+    override fun TypeConstructorMarker.isScript(): Boolean = false
+
     override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
         require(this is ConeSimpleKotlinType)
         return isSuspendFunctionType(session)

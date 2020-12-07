@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.ir.assertCast
+import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -41,6 +42,8 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
         val existedScripts = context.symbolTable.listExistedScripts()
 
         return context.symbolTable.declareScript(descriptor).buildWithScope { irScript ->
+
+            irScript.metadata = DescriptorMetadataSource.Class(descriptor)
 
             // A workaround for the JS/REPL backend:
             // JS backend doesn't save previously executed snippets anywhere, they should be taken for now from the context.symbolTable.listExistedScripts()

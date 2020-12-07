@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 //NOTE: declarations and statements stored separately
 abstract class IrScript :
     IrDeclarationBase(), IrDeclarationWithName,
-    IrDeclarationParent, IrStatementContainer {
+    IrDeclarationParent, IrStatementContainer, IrMetadataSourceOwner {
 
     abstract override val symbol: IrScriptSymbol
 

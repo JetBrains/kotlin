@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -219,6 +220,10 @@ private class IrTypeCheckerContextForTypeMapping(
             is IrTypeParameterSymbol -> owner.defaultType
             else -> error("Unsupported type constructor: $this")
         }
+    }
+
+    override fun TypeConstructorMarker.isScript(): Boolean {
+        return this is IrScriptSymbol
     }
 
     override fun SimpleTypeMarker.isSuspendFunction(): Boolean {

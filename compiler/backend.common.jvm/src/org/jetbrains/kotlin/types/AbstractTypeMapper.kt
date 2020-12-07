@@ -116,6 +116,12 @@ object AbstractTypeMapper {
                 return asmType
             }
 
+            typeConstructor.isScript() -> {
+                val asmType = AsmTypes.JAVA_CLASS_TYPE
+                with(context) { sw?.writeGenericType(type, asmType, mode) }
+                return asmType
+            }
+
             typeConstructor.isTypeParameter() -> {
                 val typeParameter = typeConstructor as TypeParameterMarker
                 return mapType(context, typeParameter.representativeUpperBound(), mode, null).also { asmType ->

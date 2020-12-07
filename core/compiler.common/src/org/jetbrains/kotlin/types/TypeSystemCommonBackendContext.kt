@@ -54,6 +54,7 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
 interface TypeSystemCommonBackendContextForTypeMapping : TypeSystemCommonBackendContext {
     fun TypeConstructorMarker.isTypeParameter(): Boolean
     fun TypeConstructorMarker.defaultType(): KotlinTypeMarker
+    fun TypeConstructorMarker.isScript(): Boolean
 
     fun SimpleTypeMarker.isSuspendFunction(): Boolean
     fun SimpleTypeMarker.isKClass(): Boolean
