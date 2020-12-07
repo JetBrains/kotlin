@@ -110,6 +110,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitModuleFragment(declaration: IrModuleFragment, data: IrDeclaration?) {
+        p.println("// MODULE: ${declaration.name.asString()}")
         declaration.acceptChildren(this, null)
     }
 
@@ -176,11 +177,18 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printWithNoIndent(declaration.name.asString())
 
         declaration.printTypeParametersWithNoIndent()
+        // TODO no test
         if (declaration.superTypes.isNotEmpty()) {
-            for ((i, type) in declaration.superTypes.withIndex()) {
+            var first = true
+            for (type in declaration.superTypes) {
                 if (type.isAny()) continue
 
-                p.printWithNoIndent(if (i > 0) ", " else " : ")
+                if (!first) {
+                    p.printWithNoIndent(", ")
+                } else {
+                    p.printWithNoIndent(" : ")
+                    first = false
+                }
 
                 type.printTypeWithNoIndent()
             }
@@ -991,8 +999,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     ) {
         // TODO flag to omit comment block?
         val delegatingClass = symbol.owner.parentAsClass
-        // TODO don't crash when parent isn't class
-        val currentClass = data?.parentAsClass
+        val currentClass = data?.parent as? IrClass
         val delegatingClassName = delegatingClass.name.asString()
 
         val name = if (data is IrConstructor) {
