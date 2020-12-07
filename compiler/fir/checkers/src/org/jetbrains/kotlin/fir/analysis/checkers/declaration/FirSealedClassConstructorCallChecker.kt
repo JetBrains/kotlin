@@ -13,13 +13,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirSealedClassConstructorCallChecker : FirQualifiedAccessChecker() {
@@ -29,27 +27,15 @@ object FirSealedClassConstructorCallChecker : FirQualifiedAccessChecker() {
             ?.fir.safeAs<FirConstructor>()
             ?: return
 
-        val typeClassId = constructorFir.returnTypeRef.safeAs<FirResolvedTypeRef>()
+        val typeFir = constructorFir.returnTypeRef.safeAs<FirResolvedTypeRef>()
             ?.type.safeAs<ConeClassLikeType>()
-            ?.lookupTag
-            ?.classId
-            ?: return
-
-        val typeFir = typeClassId.toRegularClass(context)
+            ?.lookupTag?.toSymbol(context.session)
+            ?.fir as? FirRegularClass
             ?: return
 
         if (typeFir.status.modality == Modality.SEALED) {
             reporter.report(expression.calleeReference.source)
         }
-    }
-
-    private fun ClassId.toRegularClass(context: CheckerContext): FirRegularClass? = if (!isLocal) {
-        context.session.firSymbolProvider.getClassLikeSymbolByFqName(this)
-            ?.fir.safeAs()
-    } else {
-        context.containingDeclarations
-            .lastOrNull { it.safeAs<FirRegularClass>()?.classId == this }
-            .safeAs()
     }
 
     private fun DiagnosticReporter.report(source: FirSourceElement?) {
