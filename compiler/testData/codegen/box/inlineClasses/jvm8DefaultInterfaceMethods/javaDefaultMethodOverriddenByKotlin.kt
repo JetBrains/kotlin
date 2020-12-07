@@ -1,7 +1,4 @@
 // TARGET_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
-// IGNORE_BACKEND: JVM
-// ^ KT-43698, fixed in JVM_IR
 // JVM_TARGET: 1.8
 // FILE: javaDefaultMethod.kt
 interface K2 : J {

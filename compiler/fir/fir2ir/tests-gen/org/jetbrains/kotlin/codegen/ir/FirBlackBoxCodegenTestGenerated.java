@@ -15235,6 +15235,26 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             public void testJvmDefaultEnableProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultEnableProperty.kt");
             }
+
+            @TestMetadata("jvmDefaultGeneric.kt")
+            public void testJvmDefaultGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultGeneric.kt");
+            }
+
+            @TestMetadata("jvmDefaultSafeCall.kt")
+            public void testJvmDefaultSafeCall() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultSafeCall.kt");
+            }
+
+            @TestMetadata("jvmDefaultSmartCast.kt")
+            public void testJvmDefaultSmartCast() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultSmartCast.kt");
+            }
+
+            @TestMetadata("jvmDefaultSuspend.kt")
+            public void testJvmDefaultSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultSuspend.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/propertyDelegation")

@@ -1,8 +1,5 @@
 // !JVM_DEFAULT_MODE: enable
 // TARGET_BACKEND: JVM
-// IGNORE_LIGHT_ANALYSIS
-// IGNORE_BACKEND: JVM
-// ^ KT-43698, fixed in JVM_IR
 // WITH_RUNTIME
 // JVM_TARGET: 1.8
 // FILE: jvmDefaultEnable.kt

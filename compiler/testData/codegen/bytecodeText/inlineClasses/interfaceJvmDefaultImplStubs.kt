@@ -1,9 +1,5 @@
 // !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND_FIR: JVM_IR
-
-// IGNORE_BACKEND: JVM
-// The JVM backend does not generate the g-impl method, but ends up calling it from box.
-
 // !JVM_DEFAULT_MODE: enable
 // JVM_TARGET: 1.8
 // FILE: test.kt
