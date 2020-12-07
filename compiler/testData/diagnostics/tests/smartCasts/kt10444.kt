@@ -10,7 +10,7 @@ class Qwe<T : Any>(val a: T?) {
 
     fun test1(obj: Qwe<*>) {
         obj <!UNCHECKED_CAST!>as Qwe<T><!>
-        check(<!OI;DEBUG_INFO_SMARTCAST!>obj<!>.a)
+        check(<!DEBUG_INFO_SMARTCAST{OI}!>obj<!>.a)
     }
 
     fun check(a: T?) {

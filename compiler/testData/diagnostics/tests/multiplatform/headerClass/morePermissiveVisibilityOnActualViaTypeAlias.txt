@@ -8,7 +8,6 @@ public open expect class Container {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -24,3 +23,4 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

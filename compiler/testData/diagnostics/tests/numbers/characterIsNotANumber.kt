@@ -8,5 +8,5 @@ fun test() {
     foo(<!TYPE_MISMATCH!>c<!>)
 
     val d: Char? = 'd'
-    foo(<!NI;TYPE_MISMATCH!><!OI;TYPE_MISMATCH!>d<!>!!<!>)
+    foo(<!TYPE_MISMATCH{NI}!><!TYPE_MISMATCH{OI}!>d<!>!!<!>)
 }

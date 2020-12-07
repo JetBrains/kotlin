@@ -9,6 +9,6 @@ object Inference2 {
     operator fun <T> Foo<T>.provideDelegate(host: T, p: Any?): Foo<T> = TODO()
     operator fun <T> Foo<T>.getValue(receiver: Inference2, p: Any?): String = TODO()
 
-    val test1: String by <!NI;DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!><!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>delegate<!>()<!> // same story like in Inference1
+    val test1: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE{NI}!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER{NI}, TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER{OI}!>delegate<!>()<!> // same story like in Inference1
     val test2: String by delegate<Inference2>()
 }

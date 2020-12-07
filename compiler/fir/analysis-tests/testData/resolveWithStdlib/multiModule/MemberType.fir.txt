@@ -1,3 +1,4 @@
+Module: m1-common
 FILE: common.kt
     public final expect class MyList : R|kotlin/Any| {
         public expect constructor(): R|MyList| {
@@ -16,6 +17,7 @@ FILE: common.kt
             public get(): R|MyList|
 
     }
+Module: m1-jvm
 FILE: jvm.kt
     public final actual class MyList : R|kotlin/Any| {
         public constructor(): R|MyList| {

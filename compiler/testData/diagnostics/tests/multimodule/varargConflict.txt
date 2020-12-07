@@ -6,7 +6,6 @@ package p {
     public fun foo(/*0*/ vararg values: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
 }
 
-
 // -- Module: <m2> --
 package
 
@@ -15,10 +14,10 @@ package p {
     public fun foo(/*0*/ vararg values: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
 }
 
-
 // -- Module: <m3> --
 package
 
 package m {
     public fun main(): kotlin.Unit
 }
+

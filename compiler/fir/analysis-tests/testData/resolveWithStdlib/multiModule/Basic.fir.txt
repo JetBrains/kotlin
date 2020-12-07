@@ -1,3 +1,4 @@
+Module: m1
 FILE: base.kt
     public final class Hello : R|kotlin/Any| {
         public constructor(msg: R|kotlin/String|): R|hello/Hello| {
@@ -17,6 +18,7 @@ FILE: base.kt
             public get(): R|java/util/Set<*>|
 
     }
+Module: m2
 FILE: user.kt
     public final fun foo(hello: R|hello/Hello|): R|kotlin/String| {
         ^foo R|<local>/hello|.R|hello/Hello.msg|

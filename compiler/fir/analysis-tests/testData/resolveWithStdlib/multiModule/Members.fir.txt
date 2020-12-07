@@ -1,3 +1,4 @@
+Module: m1-common
 FILE: common.kt
     public open expect class A : R|kotlin/Any| {
         public expect constructor(): R|A| {
@@ -16,6 +17,7 @@ FILE: common.kt
         }
 
     }
+Module: m1-jvm
 FILE: jvm.kt
     public open actual class A : R|kotlin/Any| {
         public constructor(): R|A| {

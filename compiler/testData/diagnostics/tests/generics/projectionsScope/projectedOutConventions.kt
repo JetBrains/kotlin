@@ -8,7 +8,7 @@ class A<T> {
 }
 
 fun test(a: A<out CharSequence>) {
-    a <!OI;MEMBER_PROJECTED_OUT!>+<!> <!NI;TYPE_MISMATCH!>""<!>
-    <!OI;MEMBER_PROJECTED_OUT!>a[1]<!> = <!NI;TYPE_MISMATCH!>""<!>
-    <!OI;MEMBER_PROJECTED_OUT!>a[<!NI;TYPE_MISMATCH!>""<!>]<!>
+    a <!MEMBER_PROJECTED_OUT{OI}!>+<!> <!TYPE_MISMATCH{NI}!>""<!>
+    <!MEMBER_PROJECTED_OUT{OI}!>a[1]<!> = <!TYPE_MISMATCH{NI}!>""<!>
+    <!MEMBER_PROJECTED_OUT{OI}!>a[<!TYPE_MISMATCH{NI}!>""<!>]<!>
 }

@@ -5,4 +5,4 @@ fun foo() {
         {
          break
     }
-}<!SYNTAX!><!><!>
+}<!><!SYNTAX!><!>

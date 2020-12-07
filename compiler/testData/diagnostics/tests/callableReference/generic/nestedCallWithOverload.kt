@@ -11,7 +11,7 @@ fun test() {
     val x2: (Int) -> Unit = baz(id(::foo), ::foo)
     val x3: (Int) -> Unit = baz(id(::foo), id(id(::foo)))
     val x4: (String) -> Unit = baz(id(::foo), id(id(::foo)))
-    val x5: (Double) -> Unit = baz(id(::<!NI;CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY, OI;NONE_APPLICABLE!>foo<!>), id(id(::<!NI;CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY, OI;NONE_APPLICABLE!>foo<!>)))
+    val x5: (Double) -> Unit = baz(id(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY{NI}, NONE_APPLICABLE{OI}!>foo<!>), id(id(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY{NI}, NONE_APPLICABLE{OI}!>foo<!>)))
 
 
     id<(Int) -> Unit>(id(id(::foo)))

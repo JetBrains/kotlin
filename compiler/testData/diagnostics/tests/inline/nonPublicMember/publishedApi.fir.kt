@@ -1,7 +1,7 @@
 // !DIAGNOSTICS: -EXPOSED_PARAMETER_TYPE -NOTHING_TO_INLINE
 
 
-inline fun call(<!EXPOSED_PARAMETER_TYPE!>a: A<!>) {
+inline fun call(a: A) {
     a.test()
 
     privateFun()

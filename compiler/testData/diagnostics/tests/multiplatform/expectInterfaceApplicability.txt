@@ -13,7 +13,6 @@ public expect interface My {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-
 // -- Module: <m1-jvm> --
 package
 
@@ -28,3 +27,4 @@ public actual interface My {
     public open actual fun openFunPositive(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

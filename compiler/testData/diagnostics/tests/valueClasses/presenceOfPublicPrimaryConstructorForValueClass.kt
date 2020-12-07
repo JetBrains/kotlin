@@ -1,5 +1,5 @@
-// !LANGUAGE: +InlineClasses
 // FIR_IDENTICAL
+// !LANGUAGE: +InlineClasses
 
 package kotlin.jvm
 
