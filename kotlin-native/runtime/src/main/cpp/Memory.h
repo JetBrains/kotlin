@@ -268,6 +268,11 @@ void AdoptReferenceFromSharedVariable(ObjHeader* object);
 
 void CheckGlobalsAccessible();
 
+// Sets state of the current thread to NATIVE (used by the new MM).
+ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative();
+// Sets state of the current thread to RUNNABLE (used by the new MM).
+ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable();
+
 #ifdef __cplusplus
 }
 #endif

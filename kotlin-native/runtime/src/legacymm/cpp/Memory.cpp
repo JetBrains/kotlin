@@ -3670,4 +3670,12 @@ void CheckGlobalsAccessible() {
         ThrowIncorrectDereferenceException();
 }
 
+ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateNative() {
+    // no-op, used by the new MM only.
+}
+
+ALWAYS_INLINE RUNTIME_NOTHROW void Kotlin_mm_switchThreadStateRunnable() {
+    // no-op, used by the new MM only.
+}
+
 } // extern "C"
