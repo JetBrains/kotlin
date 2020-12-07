@@ -401,8 +401,5 @@ class KotlinDeserializedJvmSymbolsProvider(
         }!!
     }
 
-    private fun findRegularClass(classId: ClassId): FirRegularClass? =
-        getClassLikeSymbolByFqName(classId)?.fir as? FirRegularClass
-
     override fun getPackage(fqName: FqName): FqName? = null
 }
