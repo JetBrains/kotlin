@@ -117,8 +117,8 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<List<String>> KLIB_PATHS =
             CompilerConfigurationKey.create("Paths to .klib libraries");
 
-    public static final CompilerConfigurationKey<Boolean> IS_IR_WITH_STABLE_ABI =
-            CompilerConfigurationKey.create("Is IR with stable ABI");
+    public static final CompilerConfigurationKey<JvmAbiStability> ABI_STABILITY =
+            CompilerConfigurationKey.create("ABI stability of class files produced by the JVM IR backend");
 
     public static final CompilerConfigurationKey<Boolean> DO_NOT_CLEAR_BINDING_CONTEXT =
             CompilerConfigurationKey.create("When using the IR backend, do not clear BindingContext between psi2ir and lowerings");

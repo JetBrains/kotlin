@@ -172,7 +172,9 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
     put(JVMConfigurationKeys.IR, arguments.useIR && !arguments.noUseIR)
-    put(JVMConfigurationKeys.IS_IR_WITH_STABLE_ABI, arguments.isIrWithStableAbi)
+
+    put(JVMConfigurationKeys.ABI_STABILITY, if (arguments.isIrWithStableAbi) JvmAbiStability.STABLE else JvmAbiStability.UNSTABLE)
+
     put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, arguments.doNotClearBindingContext)
     put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, arguments.noCallAssertions)
     put(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS, arguments.noReceiverAssertions)
