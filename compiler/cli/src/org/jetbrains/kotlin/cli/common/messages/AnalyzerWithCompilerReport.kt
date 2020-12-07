@@ -190,6 +190,14 @@ class AnalyzerWithCompilerReport(
                 )
             }
 
+            if (diagnostics.any { it.factory == Errors.FIR_COMPILED_CLASS }) {
+                messageCollector.report(
+                    ERROR,
+                    "Classes compiled by the new Kotlin compiler frontend were found in dependencies. " +
+                            "Remove them from the classpath or use '-Xallow-jvm-ir-dependencies' to suppress errors"
+                )
+            }
+
             return hasErrors
         }
 

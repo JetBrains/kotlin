@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.jvm.lower.hasAssertionsDisabledField
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.writeKotlinMetadata
-import org.jetbrains.kotlin.config.JvmAbiStability
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -197,10 +196,7 @@ class ClassCodegen private constructor(
 
     private fun generateKotlinMetadataAnnotation() {
         // TODO: if `-Xmultifile-parts-inherit` is enabled, write the corresponding flag for parts and facades to [Metadata.extraInt].
-        var extraFlags = JvmAnnotationNames.METADATA_JVM_IR_FLAG
-        if (state.abiStability != JvmAbiStability.UNSTABLE) {
-            extraFlags += JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG
-        }
+        val extraFlags = context.backendExtension.generateMetadataExtraFlags(state.abiStability)
 
         val facadeClassName = context.multifileFacadeForPart[irClass.attributeOwnerId]
         val metadata = irClass.metadata

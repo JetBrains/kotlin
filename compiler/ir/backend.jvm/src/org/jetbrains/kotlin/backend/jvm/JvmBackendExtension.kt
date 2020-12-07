@@ -8,13 +8,17 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.jvm.codegen.DescriptorMetadataSerializer
 import org.jetbrains.kotlin.backend.jvm.codegen.MetadataSerializer
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
+import org.jetbrains.kotlin.config.JvmAbiStability
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.Type
 
 interface JvmBackendExtension {
     fun createSerializer(
         context: JvmBackendContext, klass: IrClass, type: Type, bindings: JvmSerializationBindings, parentSerializer: MetadataSerializer?
     ): MetadataSerializer
+
+    fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int
 
     object Default : JvmBackendExtension {
         override fun createSerializer(
@@ -26,5 +30,9 @@ interface JvmBackendExtension {
         ): MetadataSerializer {
             return DescriptorMetadataSerializer(context, klass, type, bindings, parentSerializer)
         }
+
+        override fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =
+            JvmAnnotationNames.METADATA_JVM_IR_FLAG or
+                    (if (abiStability == JvmAbiStability.STABLE) JvmAnnotationNames.METADATA_JVM_IR_STABLE_ABI_FLAG else 0)
     }
 }
