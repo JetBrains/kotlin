@@ -139,6 +139,7 @@ internal class FirLightAccessorMethodForSymbol(
     override fun equals(other: Any?): Boolean =
         this === other ||
                 (other is FirLightAccessorMethodForSymbol &&
+                        isGetter == other.isGetter &&
                         kotlinOrigin == other.kotlinOrigin &&
                         propertyAccessorSymbol == other.propertyAccessorSymbol)
 

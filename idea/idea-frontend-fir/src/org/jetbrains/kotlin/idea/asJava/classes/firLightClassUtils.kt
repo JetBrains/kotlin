@@ -98,10 +98,10 @@ private fun lightClassForEnumEntry(ktEnumEntry: KtEnumEntry): KtLightClass? {
 
 internal fun FirLightClassBase.createMethods(
     declarations: Sequence<KtCallableSymbol>,
-    isTopLevel: Boolean,
-    result: MutableList<KtLightMethod>
+    result: MutableList<KtLightMethod>,
+    isTopLevel: Boolean = false,
+    suppressStaticForMethods: Boolean = false
 ) {
-    var methodIndex = METHOD_INDEX_BASE
     for (declaration in declarations) {
 
         if (declaration is KtFunctionSymbol && declaration.isInline) continue
@@ -112,13 +112,15 @@ internal fun FirLightClassBase.createMethods(
 
         when (declaration) {
             is KtFunctionSymbol -> {
+                var methodIndex = METHOD_INDEX_BASE
                 result.add(
                     FirLightSimpleMethodForSymbol(
                         functionSymbol = declaration,
                         lightMemberOrigin = null,
                         containingClass = this@createMethods,
                         isTopLevel = isTopLevel,
-                        methodIndex = methodIndex++
+                        methodIndex = methodIndex,
+                        suppressStatic = suppressStaticForMethods
                     )
                 )
 
@@ -150,7 +152,7 @@ internal fun FirLightClassBase.createMethods(
                         constructorSymbol = declaration,
                         lightMemberOrigin = null,
                         containingClass = this@createMethods,
-                        methodIndex++
+                        methodIndex = METHOD_INDEX_BASE
                     )
                 )
             }

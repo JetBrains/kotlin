@@ -22,13 +22,14 @@ internal class FirLightSimpleMethodForSymbol(
     containingClass: FirLightClassBase,
     methodIndex: Int,
     isTopLevel: Boolean,
-    argumentsSkipMask: BitSet? = null
+    argumentsSkipMask: BitSet? = null,
+    suppressStatic: Boolean = false
 ) : FirLightMethodForSymbol(
     functionSymbol = functionSymbol,
     lightMemberOrigin = lightMemberOrigin,
     containingClass = containingClass,
     methodIndex = methodIndex,
-    argumentsSkipMask = argumentsSkipMask
+    argumentsSkipMask = argumentsSkipMask,
 ) {
 
     private val _name: String by lazyPub {
@@ -96,7 +97,7 @@ internal class FirLightSimpleMethodForSymbol(
 
         modifiers.add(_visibility)
 
-        if (functionSymbol.hasJvmStaticAnnotation()) {
+        if (!suppressStatic && functionSymbol.hasJvmStaticAnnotation()) {
             modifiers.add(PsiModifier.STATIC)
         }
         if (functionSymbol.hasAnnotation("kotlin/jvm/Strictfp", null)) {

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.psi.*
+import org.jetbrains.kotlin.asJava.builder.memberIndex
+import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_BASE
 import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_DEFAULT_CTOR
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -100,7 +102,8 @@ internal open class FirLightClassForSymbol(
                 }
             }
 
-            createMethods(visibleDeclarations, isTopLevel = false, result)
+            val suppressStatic = classOrObjectSymbol.classKind == KtClassKind.COMPANION_OBJECT
+            createMethods(visibleDeclarations, result, suppressStaticForMethods = suppressStatic)
         }
 
         if (result.none { it.isConstructor }) {
@@ -115,6 +118,8 @@ internal open class FirLightClassForSymbol(
                 )
             }
         }
+
+        addMethodsFromCompanionIfNeeded(result)
 
         result
     }
@@ -136,6 +141,17 @@ internal open class FirLightClassForSymbol(
                             takePropertyVisibility = true
                         )
                     }
+            }
+        }
+    }
+
+    private fun addMethodsFromCompanionIfNeeded(result: MutableList<KtLightMethod>) {
+        classOrObjectSymbol.companionObject?.run {
+            analyzeWithSymbolAsContext(this) {
+                val methods = getDeclaredMemberScope().getCallableSymbols()
+                    .filterIsInstance<KtFunctionSymbol>()
+                    .filter { it.hasJvmStaticAnnotation() }
+                createMethods(methods, result)
             }
         }
     }
