@@ -48,7 +48,7 @@ object Repositories {
     val KTOR_BINTRAY = BintrayRepository("kotlin/ktor")
     val KOTLINX = BintrayRepository("kotlin/kotlinx")
     val KOTLIN_JS_WRAPPERS_BINTRAY = BintrayRepository("kotlin/kotlin-js-wrappers")
-    val KOTLIN_EAP_BINTRAY = BintrayRepository("kotlin/kotlin-eap")
+    val KOTLIN_EAP_MAVEN_CENTRAL = DefaultRepository.MAVEN_CENTRAL
     val KOTLIN_DEV_BINTRAY = BintrayRepository("kotlin/kotlin-dev")
     val JETBRAINS_COMPOSE_DEV = JetBrainsSpace("compose/dev")
 }
