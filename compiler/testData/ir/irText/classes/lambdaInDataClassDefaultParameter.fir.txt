@@ -81,7 +81,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
       $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.A'
-          CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+          CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Function2' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:runA type:@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> visibility:private [final]' type=@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.hashCode' type=<root>.A origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.A) returnType:kotlin.String
