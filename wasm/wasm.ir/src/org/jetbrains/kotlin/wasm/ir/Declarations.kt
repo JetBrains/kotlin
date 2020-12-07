@@ -145,6 +145,11 @@ class WasmStructDeclaration(
     val fields: List<WasmStructFieldDeclaration>
 ) : WasmTypeDeclaration(name)
 
+class WasmArrayDeclaration(
+    name: String,
+    val field: WasmStructFieldDeclaration
+) : WasmTypeDeclaration(name)
+
 class WasmStructFieldDeclaration(
     val name: String,
     val type: WasmType,

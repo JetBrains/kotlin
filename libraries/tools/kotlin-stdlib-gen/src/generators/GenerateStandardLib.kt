@@ -72,7 +72,7 @@ fun main(args: Array<String>) {
         targetDir.resolve("_${source.name.capitalize()}$platformSuffix.kt")
     }
 
-    targetBaseDirs[KotlinTarget.WASM]?.let { generateWasmOps(it) }
+    targetBaseDirs[KotlinTarget.WASM]?.let { generateWasmBuiltIns(it) }
 }
 
 fun File.resolveExistingDir(subpath: String) = resolve(subpath).also { it.requireExistingDir() }

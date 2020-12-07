@@ -122,7 +122,19 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             return
         }
 
-        val wasmStruct: WasmSymbol<WasmTypeDeclaration> = context.referenceGcType(klass.symbol)
+        val wasmGcType: WasmSymbol<WasmTypeDeclaration> = context.referenceGcType(klass.symbol)
+
+        klass.getWasmArrayAnnotation()?.let { wasmArrayInfo ->
+            require(expression.valueArgumentsCount == 1) { "@WasmArrayOf constructs must have exactly one argument" }
+            generateExpression(expression.getValueArgument(0)!!)
+            body.buildRttCanon(context.transformType(klass.defaultType))
+            body.buildInstr(
+                WasmOp.ARRAY_NEW_DEFAULT_WITH_RTT,
+                WasmImmediate.GcType(wasmGcType)
+            )
+            return
+        }
+
         val wasmClassId = context.referenceClassId(klass.symbol)
 
         val irFields: List<IrField> = klass.allFields(backendContext.irBuiltIns)
@@ -135,7 +147,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         }
 
         body.buildGetGlobal(context.referenceClassRTT(klass.symbol))
-        body.buildStructNew(wasmStruct)
+        body.buildStructNew(wasmGcType)
         generateCall(expression)
     }
 
@@ -472,12 +484,16 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                 0 -> {
                 }
                 1 -> {
-                    when (val imm = op.immediates[0]) {
-                        WasmImmediateKind.MEM_ARG ->
-                            immediates = arrayOf(WasmImmediate.MemArg(0u, 0u))
-                        else ->
-                            error("Immediate $imm is unsupported")
-                    }
+                    immediates = arrayOf(
+                        when (val imm = op.immediates[0]) {
+                            WasmImmediateKind.MEM_ARG ->
+                                WasmImmediate.MemArg(0u, 0u)
+                            WasmImmediateKind.STRUCT_TYPE_IDX ->
+                                WasmImmediate.GcType(context.referenceGcType(function.dispatchReceiverParameter!!.type.classOrNull!!))
+                            else ->
+                                error("Immediate $imm is unsupported")
+                        }
+                    )
                 }
                 else ->
                     error("Op $opString is unsupported")

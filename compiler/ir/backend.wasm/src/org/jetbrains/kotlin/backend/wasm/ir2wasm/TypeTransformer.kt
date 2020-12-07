@@ -45,11 +45,11 @@ class WasmTypeTransformer(
                 toWasmValueType()
         }
 
-    fun IrType.toStructType(): WasmType =
+    fun IrType.toWasmGcRefType(): WasmType =
         WasmRefNullType(WasmHeapType.Type(context.referenceGcType(erasedUpperBound?.symbol ?: builtIns.anyClass)))
 
     fun IrType.toBoxedInlineClassType(): WasmType =
-        toStructType()
+        toWasmGcRefType()
 
     fun IrType.toWasmValueType(): WasmType =
         when (this) {
@@ -88,7 +88,7 @@ class WasmTypeTransformer(
                 } else if (ic != null) {
                     getInlineClassUnderlyingType(ic).toWasmValueType()
                 } else {
-                    this.toStructType()
+                    this.toWasmGcRefType()
                 }
             }
         }

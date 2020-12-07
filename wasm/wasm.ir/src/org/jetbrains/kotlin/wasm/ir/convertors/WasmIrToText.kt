@@ -201,8 +201,9 @@ class WasmIrToText : SExpressionBuilder() {
                     when (it) {
                         is WasmStructDeclaration ->
                             appendStructTypeDeclaration(it)
-                        else ->
-                            TODO("Support arrays")
+                        is WasmArrayDeclaration ->
+                            appendArrayTypeDeclaration(it)
+                        else -> error("Unexpected GC type: $it")
                     }
                 }
                 importsInOrder.forEach {
@@ -252,6 +253,16 @@ class WasmIrToText : SExpressionBuilder() {
             }
         }
     }
+
+    private fun appendArrayTypeDeclaration(type: WasmArrayDeclaration) {
+        newLineList("type") {
+            appendModuleFieldReference(type)
+            sameLineList("array") {
+                appendStructField(type.field)
+            }
+        }
+    }
+
 
     private fun appendImportedFunction(function: WasmFunction.Imported) {
         newLineList("func") {

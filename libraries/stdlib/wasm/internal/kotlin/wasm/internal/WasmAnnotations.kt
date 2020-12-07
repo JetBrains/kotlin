@@ -6,6 +6,7 @@
 package kotlin.wasm.internal
 
 import kotlin.annotation.AnnotationTarget.*
+import kotlin.reflect.KClass
 
 // Exclude declaration or file from lowering and code generation
 @Target(FILE, CLASS, FUNCTION, CONSTRUCTOR, PROPERTY)
@@ -19,6 +20,13 @@ internal annotation class WasmImport(val module: String, val name: String)
 @Target(CLASS)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class WasmForeign
+
+@Target(CLASS)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class WasmArrayOf(
+    val type: KClass<*>,
+    val isNullable: Boolean,
+)
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
