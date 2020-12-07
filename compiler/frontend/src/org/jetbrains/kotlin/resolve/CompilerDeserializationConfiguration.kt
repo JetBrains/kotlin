@@ -19,7 +19,7 @@ class CompilerDeserializationConfiguration(languageVersionSettings: LanguageVers
     override val reportErrorsOnPreReleaseDependencies =
         !skipPrereleaseCheck && !languageVersionSettings.isPreRelease() && !KotlinCompilerVersion.isPreRelease()
 
-    override val reportErrorsOnIrDependencies = languageVersionSettings.getFlag(AnalysisFlags.reportErrorsOnIrDependencies)
+    override val allowUnstableDependencies = languageVersionSettings.getFlag(AnalysisFlags.allowUnstableDependencies)
 
     override val typeAliasesAllowed = languageVersionSettings.supportsFeature(LanguageFeature.TypeAliases)
 
