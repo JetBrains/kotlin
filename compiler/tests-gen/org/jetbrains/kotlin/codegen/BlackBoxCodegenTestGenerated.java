@@ -7951,6 +7951,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/breakWithNonEmptyStack.kt", "kotlin.coroutines");
             }
 
+            @TestMetadata("defaultExpect.kt")
+            public void testDefaultExpect() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt");
+            }
+
             @TestMetadata("delegate.kt")
             public void testDelegate_1_2() throws Exception {
                 runTestWithPackageReplacement("compiler/testData/codegen/box/coroutines/featureIntersection/delegate.kt", "kotlin.coroutines.experimental");
