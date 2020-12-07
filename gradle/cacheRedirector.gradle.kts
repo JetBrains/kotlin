@@ -23,7 +23,6 @@ val mirroredUrls = listOf(
     "https://dl.bintray.com/kodein-framework/Kodein-DI",
     "https://dl.bintray.com/konsoletyper/teavm",
     "https://dl.bintray.com/kotlin/kotlin-dev",
-    "https://dl.bintray.com/kotlin/kotlin-eap",
     "https://dl.bintray.com/kotlin/kotlinx.html",
     "https://dl.bintray.com/kotlin/kotlinx",
     "https://dl.bintray.com/kotlin/ktor",

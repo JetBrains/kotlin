@@ -59,14 +59,6 @@ val SNAPSHOT_REPOSITORY = RepositoryDescription(
     isSnapshot = true
 )
 
-val EAP_REPOSITORY = RepositoryDescription(
-    "bintray.kotlin.eap",
-    "Bintray Kotlin EAP Repository",
-    "https://dl.bintray.com/kotlin/kotlin-eap",
-    "https://bintray.com/kotlin/kotlin-eap/kotlin/",
-    isSnapshot = false
-)
-
 val DEFAULT_GRADLE_PLUGIN_REPOSITORY = RepositoryDescription(
     "default.gradle.plugins",
     "Default Gradle Plugin Repository",
@@ -113,7 +105,6 @@ fun RepositoryDescription.toKotlinRepositorySnippet() = "maven(\"$url\")"
 
 fun getRepositoryForVersion(version: String): RepositoryDescription? = when {
     isSnapshot(version) -> SNAPSHOT_REPOSITORY
-    isEap(version) -> EAP_REPOSITORY
     isDev(version) -> devRepository(version)
     else -> null
 }

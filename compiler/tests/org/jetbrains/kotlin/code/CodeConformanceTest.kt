@@ -338,44 +338,6 @@ class CodeConformanceTest : TestCase() {
             RepoAllowList("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-dev", root, setOf()),
             RepoAllowList(
                 // Please use cache-redirector for importing in tests
-                "https://dl.bintray.com/kotlin/kotlin-eap", root, setOf(
-                    "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/app/build.gradle.kts",
-                    "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/shared/build.gradle.kts",
-                    "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/build.gradle.kts",
-                    "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/settings.gradle.kts",
-                    "kotlin-ultimate/ide/android-studio-native/src/com/jetbrains/kmm/wizard/templates/buildFile.kt",
-                    "libraries/scripting/dependencies-maven/test/kotlin/script/experimental/test/MavenResolverTest.kt",
-                    "idea/testData/configuration/gradle/eapVersion/build_after.gradle",
-                    "idea/testData/configuration/gradle/rcVersion/build_after.gradle",
-                    "idea/testData/configuration/gradle/m04Version/build_after.gradle",
-                    "idea/testData/configuration/gsk/eapVersion/build_after.gradle.kts",
-                    "idea/testData/configuration/gsk/eap11Version/build_after.gradle.kts",
-                    "idea/idea-jvm/src/org/jetbrains/kotlin/idea/configuration/ConfigureKotlinInProjectUtils.kt",
-                    "gradle/cacheRedirector.gradle.kts",
-                    "idea/idea-maven/testData/configurator/jvm/simpleProjectEAP/pom_after.xml",
-                    "idea/idea-maven/testData/configurator/jvm/simpleProjectRc/pom_after.xml",
-                    "idea/idea-maven/testData/maven-inspections/deprecatedJre.fixed.1.xml",
-                    "idea/idea-maven/testData/maven-inspections/deprecatedJre.xml",
-                    "idea/idea-maven/testData/maven-inspections/deprecatedKotlinxCoroutines.fixed.1.xml",
-                    "idea/idea-maven/testData/maven-inspections/deprecatedKotlinxCoroutines.xml",
-                    "idea/idea-maven/testData/maven-inspections/deprecatedKotlinxCoroutinesNoError.xml",
-                    "idea/testData/gradle/configurator/configureJsEAPWithBuildGradle/build.gradle.after",
-                    "idea/testData/gradle/configurator/configureJsEAPWithBuildGradleKts/build.gradle.kts.after",
-                    "idea/testData/gradle/configurator/configureJvmEAPWithBuildGradle/build.gradle.after",
-                    "idea/testData/gradle/configurator/configureJvmEAPWithBuildGradleKts/build.gradle.kts.after",
-                    "idea/testData/gradle/nativeRunConfiguration/customEntryPointWithoutRunGutter/build.gradle.kts",
-                    "idea/testData/gradle/nativeRunConfiguration/customEntryPointWithoutRunGutter/settings.gradle.kts",
-                    "idea/testData/gradle/nativeRunConfiguration/multiplatformNativeRunGutter/build.gradle.kts",
-                    "idea/testData/gradle/nativeRunConfiguration/multiplatformNativeRunGutter/settings.gradle.kts",
-                    "idea/testData/perfTest/native/_common/settings.gradle.kts",
-                    "kotlin-ultimate/gradle/cidrPluginTools.gradle.kts",
-                    "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt",
-                    "idea/testData/perfTest/native/_common/build.gradle.kts.header"
-                )
-            ),
-            RepoAllowList("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-eap", root, setOf()),
-            RepoAllowList(
-                // Please use cache-redirector for importing in tests
                 "https://dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf(
                     "kotlin-ultimate/build.gradle.kts"
                 )
