@@ -350,9 +350,12 @@ task shadowJar(type: ShadowJar) {
     exclude("META-INF/versions/9/module-info.class")
     configurations = [project.configurations.distPack]
     archiveClassifier.set(null)
-    transform(CollisionTransformer.class) {
-        resolvedConflicts = detectJarCollision.resolvedConflicts
+    outputs.upToDateWhen {
+        archiveFile.getOrNull()?.asFile.exists() ?: false
     }
+    //transform(CollisionTransformer.class) {
+    //    resolvedConflicts = detectJarCollision.resolvedConflicts
+    //}
 }
 
 task distCompiler(type: Copy) {
