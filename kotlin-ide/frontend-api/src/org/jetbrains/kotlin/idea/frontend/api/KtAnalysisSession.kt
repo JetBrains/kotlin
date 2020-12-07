@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.frontend.api
 
 import org.jetbrains.kotlin.diagnostics.Diagnostic
+import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
 import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -118,9 +119,9 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
 
     fun <S : KtSymbol> KtSymbolPointer<S>.restoreSymbol(): S? = restoreSymbol(this@KtAnalysisSession)
 
-    fun KtCallExpression.resolveCall(): CallInfo? = callResolver.resolveCall(this)
+    fun KtCallExpression.resolveCall(): KtCall? = callResolver.resolveCall(this)
 
-    fun KtBinaryExpression.resolveCall(): CallInfo? = callResolver.resolveCall(this)
+    fun KtBinaryExpression.resolveCall(): KtCall? = callResolver.resolveCall(this)
 
     fun KtReference.resolveToSymbols(): Collection<KtSymbol> {
         check(this is KtSymbolBasedReference) { "To get reference symbol the one should be KtSymbolBasedReference" }
