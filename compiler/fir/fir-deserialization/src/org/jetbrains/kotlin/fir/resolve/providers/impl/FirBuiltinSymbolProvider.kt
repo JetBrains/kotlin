@@ -228,14 +228,6 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
         }
     }
 
-    // Find the symbol for "invoke" in the function class
-    private fun FunctionClassKind.getInvoke(arity: Int): FirNamedFunctionSymbol? {
-        val functionClass = getClassLikeSymbolByFqName(classId(arity)) ?: return null
-        val invoke =
-            functionClass.fir.declarations.find { it is FirSimpleFunction && it.name == OperatorNameConventions.INVOKE } ?: return null
-        return (invoke as FirSimpleFunction).symbol
-    }
-
     private fun FunctionClassKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
 
     @FirSymbolProviderInternals
@@ -308,14 +300,6 @@ class FirBuiltinSymbolProvider(session: FirSession, val kotlinScopeProvider: Kot
             return packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
                 memberDeserializer.loadFunction(it).symbol
             }
-        }
-
-        fun getAllCallableNames(): Set<Name> {
-            return packageProto.`package`.functionList.mapTo(mutableSetOf()) { nameResolver.getName(it.name) }
-        }
-
-        fun getAllClassNames(): Set<Name> {
-            return classDataFinder.allClassIds.mapTo(mutableSetOf()) { it.shortClassName }
         }
     }
 }
