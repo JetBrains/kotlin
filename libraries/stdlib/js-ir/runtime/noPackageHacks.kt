@@ -8,7 +8,7 @@
 @PublishedApi
 internal fun <T> arrayConcat(vararg args: T): T {
     val len = args.size
-    val typed = js("Array(len)").unsafeCast<Array<T>>()
+    val typed = js("Array")(len).unsafeCast<Array<T>>()
     for (i in 0 .. (len - 1)) {
         val arr = args[i]
         if (arr !is Array<*>) {
@@ -24,21 +24,21 @@ internal fun <T> arrayConcat(vararg args: T): T {
  */
 @PublishedApi
 internal fun <T> primitiveArrayConcat(vararg args: T): T {
-    var size_local = 0
+    var size_local_hack = 0
     for (i in 0 .. (args.size - 1)) {
-        size_local += args[i].unsafeCast<Array<Any?>>().size
+        size_local_hack += args[i].unsafeCast<Array<Any?>>().size
     }
-    val a = args[0]
-    val result = js("new a.constructor(size_local)").unsafeCast<Array<Any?>>()
-    if (a.asDynamic().`$type$` != null) {
-        withType(a.asDynamic().`$type$`, result)
+    val a_hack = args[0]
+    val result = js("new a_hack.constructor(size_local_hack)").unsafeCast<Array<Any?>>()
+    if (a_hack.asDynamic().`$type$` != null) {
+        withType(a_hack.asDynamic().`$type$`, result)
     }
 
-    size_local = 0
+    size_local_hack = 0
     for (i in 0 .. (args.size - 1)) {
         val arr = args[i].unsafeCast<Array<Any?>>()
         for (j in 0 .. (arr.size - 1)) {
-            result[size_local++] = arr[j]
+            result[size_local_hack++] = arr[j]
         }
     }
     return result.unsafeCast<T>()

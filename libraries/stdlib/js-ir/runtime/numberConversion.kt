@@ -7,15 +7,15 @@ package kotlin.js
 
 internal fun numberToByte(a: dynamic): Byte = toByte(numberToInt(a))
 
-internal fun numberToDouble(@Suppress("UNUSED_PARAMETER") a: dynamic): Double = js("+a").unsafeCast<Double>()
+internal fun numberToDouble(@Suppress("UNUSED_PARAMETER") a_hack: dynamic): Double = js("+a_hack").unsafeCast<Double>()
 
 internal fun numberToInt(a: dynamic): Int = if (a is Long) a.toInt() else doubleToInt(a)
 
 internal fun numberToShort(a: dynamic): Short = toShort(numberToInt(a))
 
 // << and >> shifts are used to preserve sign of the number
-internal fun toByte(@Suppress("UNUSED_PARAMETER") a: dynamic): Byte = js("a << 24 >> 24").unsafeCast<Byte>()
-internal fun toShort(@Suppress("UNUSED_PARAMETER") a: dynamic): Short = js("a << 16 >> 16").unsafeCast<Short>()
+internal fun toByte(a_hack: dynamic): Byte = js("a_hack << 24 >> 24").unsafeCast<Byte>()
+internal fun toShort(a_hack: dynamic): Short = js("a_hack << 16 >> 16").unsafeCast<Short>()
 
 internal fun numberToLong(a: dynamic): Long = if (a is Long) a else fromNumber(a)
 
