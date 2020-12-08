@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
-import com.sun.org.apache.bcel.internal.generic.StoreInstruction
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.*
@@ -1223,8 +1222,9 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
         oldLvt += record
     }
     method.localVariables.clear()
-    // Skip `this` for suspend lamdba
+    // Skip `this` for suspend lambda
     val start = if (isForNamedFunction) 0 else 1
+    val oldLvtNodeToLatestNewLvtNode = mutableMapOf<LocalVariableNode, LocalVariableNode>()
     for (variableIndex in start until method.maxLocals) {
         if (oldLvt.none { it.index == variableIndex }) continue
         var startLabel: LabelNode? = null
@@ -1240,25 +1240,15 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
                 val endLabel = insn as? LabelNode ?: insn.findNextOrNull { it is LabelNode } as? LabelNode ?: continue
                 // startLabel can be null in case of parameters
                 @Suppress("NAME_SHADOWING") val startLabel = startLabel ?: lvtRecord.start
-                var recordToExtend: LocalVariableNode? = null
-                for (record in method.localVariables) {
-                    if (record.name == lvtRecord.name &&
-                        record.desc == lvtRecord.desc &&
-                        record.signature == lvtRecord.signature &&
-                        record.index == lvtRecord.index
-                    ) {
-                        if (InsnSequence(record.end, startLabel).none { isBeforeSuspendMarker(it) }) {
-                            recordToExtend = record
-                            break
-                        }
-                    }
-                }
-                if (recordToExtend != null) {
+                // Attempt to extend existing local variable node corresponding to the record in
+                // the original local variable table.
+                var recordToExtend: LocalVariableNode? = oldLvtNodeToLatestNewLvtNode[lvtRecord]
+                if (recordToExtend != null && InsnSequence(recordToExtend.end, startLabel).none { isBeforeSuspendMarker(it) }) {
                     recordToExtend.end = endLabel
                 } else {
-                    method.localVariables.add(
-                        LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
-                    )
+                    val node = LocalVariableNode(lvtRecord.name, lvtRecord.desc, lvtRecord.signature, startLabel, endLabel, lvtRecord.index)
+                    method.localVariables.add(node)
+                    oldLvtNodeToLatestNewLvtNode[lvtRecord] = node
                 }
             }
         }
