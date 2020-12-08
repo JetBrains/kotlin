@@ -309,7 +309,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             TransformData.Data(value)
         }
         block.transformOtherChildren(transformer, data)
-        block.writeResultType(session)
+        if (data is ResolutionMode.WithExpectedType && data.expectedTypeRef is FirResolvedTypeRef) {
+            // Top-down propagation: from the explicit type of the enclosing declaration to the block type
+            block.resultType = data.expectedTypeRef
+        } else {
+            // Bottom-up propagation: from the return type of the last expression in the block to the block type
+            block.writeResultType(session)
+        }
 
         dataFlowAnalyzer.exitBlock(block)
     }
