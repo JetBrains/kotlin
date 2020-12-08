@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -43,6 +40,10 @@ fun CallableDescriptor.isGenericParameter(): Boolean {
 
 fun classFileContainsMethod(descriptor: FunctionDescriptor, state: GenerationState, method: Method): Boolean? {
     if (descriptor !is DeserializedSimpleFunctionDescriptor) return null
+
+    if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+        return descriptor.overriddenDescriptors.any { classFileContainsMethod(it, state, method) == true }
+    }
 
     val classId: ClassId = when {
         descriptor.containingDeclaration is DeserializedClassDescriptor -> {
