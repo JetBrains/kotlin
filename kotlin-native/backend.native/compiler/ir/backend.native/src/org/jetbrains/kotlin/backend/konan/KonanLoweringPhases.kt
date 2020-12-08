@@ -8,6 +8,7 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunc
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLowering
+import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.FinallyBlocksLowering
@@ -104,6 +105,12 @@ internal val lateinitPhase = makeKonanModuleOpPhase(
         },
         name = "Lateinit",
         description = "Lateinit properties lowering"
+)
+
+internal val propertyAccessorInlinePhase = makeKonanModuleLoweringPhase(
+        ::PropertyAccessorInlineLowering,
+        name = "PropertyAccessorInline",
+        description = "Property accessor inline lowering"
 )
 
 internal val sharedVariablesPhase = makeKonanModuleLoweringPhase(
