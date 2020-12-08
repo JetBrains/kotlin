@@ -58,12 +58,27 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractLoadJava8UsingJavacTest> {
-                model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
-                model("loadJava8/sourceJava", extension = "java", testMethod = "doTestSourceJava")
+                model(
+                    "loadJava8/compiledJava",
+                    extension = "java",
+                    testMethod = "doTestCompiledJava",
+                    excludeDirs = listOf("typeUseAnnotations", "typeParameterAnnotations")
+                )
+                model(
+                    "loadJava8/sourceJava",
+                    extension = "java",
+                    testMethod = "doTestSourceJava",
+                    excludeDirs = listOf("typeUseAnnotations", "typeParameterAnnotations")
+                )
             }
 
             testClass<AbstractLoadJava8WithPsiClassReadingTest> {
-                model("loadJava8/compiledJava", extension = "java", testMethod = "doTestCompiledJava")
+                model(
+                    "loadJava8/compiledJava",
+                    extension = "java",
+                    testMethod = "doTestCompiledJava",
+                    excludeDirs = listOf("typeUseAnnotations", "typeParameterAnnotations")
+                )
             }
 
             testClass<AbstractEnhancedSignaturesResolvedCallsTest> {
