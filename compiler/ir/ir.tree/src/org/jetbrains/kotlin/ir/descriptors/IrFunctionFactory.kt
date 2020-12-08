@@ -273,8 +273,6 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
             isAssignable = false
         )
 
-        if (vDescriptor is WrappedReceiverParameterDescriptor) vDescriptor.bind(vDeclaration)
-
         return vDeclaration
     }
 
@@ -339,7 +337,6 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                     isAssignable = false
                 )
                 vDeclaration.parent = fDeclaration
-                if (vDescriptor is WrappedValueParameterDescriptor) vDescriptor.bind(vDeclaration)
                 fDeclaration.valueParameters += vDeclaration
             }
 

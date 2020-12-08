@@ -556,8 +556,6 @@ abstract class KotlinIrLinker(
         if (!symbol.hasDescriptor) return null
 
         val descriptor = symbol.descriptor
-
-        if (descriptor is WrappedDeclarationDescriptor<*>) return null
         if (descriptor is CallableMemberDescriptor) {
             if (descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 // skip fake overrides
@@ -578,7 +576,6 @@ abstract class KotlinIrLinker(
 
         if (!symbol.isPublicApi) {
             val descriptor = symbol.descriptor
-            if (descriptor is WrappedDeclarationDescriptor<*>) return null
             if (!platformSpecificSymbol(symbol)) {
                 if (descriptor.module !== currentModule) return null
             }

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 
 /* Descriptors that serve purely as a view into IR structures.
@@ -112,6 +113,7 @@ fun IrDeclaration.toIrBasedDescriptor(): DeclarationDescriptor = when (this) {
     is IrProperty -> toIrBasedDescriptor()
     is IrField -> toIrBasedDescriptor()
     is IrTypeAlias -> toIrBasedDescriptor()
+    is IrErrorDeclaration -> toIrBasedDescriptor()
     else -> error("Unknown declaration kind")
 }
 
@@ -658,6 +660,27 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
 
 fun IrClass.toIrBasedDescriptor() = IrBasedClassDescriptor(this)
 
+class LazyTypeConstructor(
+    val classDescriptor: ClassDescriptor,
+    val parametersBuilder: () -> List<TypeParameterDescriptor>,
+    val superTypesBuilder: () -> List<KotlinType>,
+    storageManager: StorageManager
+) : AbstractClassTypeConstructor(storageManager) {
+    val parameters_ by lazy { parametersBuilder() }
+    val superTypes_ by lazy { superTypesBuilder() }
+
+    override fun getParameters() = parameters_
+
+    override fun computeSupertypes() = superTypes_
+
+    override fun isDenotable() = true
+
+    override fun getDeclarationDescriptor() = classDescriptor
+
+    override val supertypeLoopChecker: SupertypeLoopChecker
+        get() = SupertypeLoopChecker.EMPTY
+}
+
 open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrBasedDeclarationDescriptor<IrEnumEntry>(owner) {
     override fun getName() = owner.name
 
@@ -1036,6 +1059,25 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
 }
 
 fun IrField.toIrBasedDescriptor() = IrBasedFieldDescriptor(this)
+
+class IrBasedErrorDescriptor(owner: IrErrorDeclaration) : IrBasedDeclarationDescriptor<IrErrorDeclaration>(owner) {
+    override fun getName(): Name = error("IrBasedErrorDescriptor.getName: Should not be reached")
+
+    override fun getOriginal(): DeclarationDescriptorWithSource =
+        error("IrBasedErrorDescriptor.getOriginal: Should not be reached")
+
+    override fun getContainingDeclaration(): DeclarationDescriptor =
+        error("IrBasedErrorDescriptor.getContainingDeclaration: Should not be reached")
+
+    override fun <R : Any?, D : Any?> accept(visitor: DeclarationDescriptorVisitor<R, D>?, data: D): R {
+        error("IrBasedErrorDescriptor.accept: Should not be reached")
+    }
+
+    override fun acceptVoid(visitor: DeclarationDescriptorVisitor<Void, Void>?) {
+    }
+}
+
+fun IrErrorDeclaration.toIrBasedDescriptor() = IrBasedErrorDescriptor(this)
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun getContainingDeclaration(declaration: IrDeclaration): DeclarationDescriptor {
