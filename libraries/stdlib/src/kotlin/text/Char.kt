@@ -64,13 +64,13 @@ public fun Int.digitToChar(radix: Int = 10): Char {
     if (radix !in 2..36) {
         throw IllegalArgumentException("Invalid radix: $radix. Valid radix values are in range 2..36")
     }
-    if (this >= radix) {
+    if (this < 0 || this >= radix) {
         throw IllegalArgumentException("Digit $this does not represent a valid digit in radix $radix")
     }
     return if (this < 10) {
-        Char(code = '0'.code + this)
+        '0' + this
     } else {
-        Char(code = 'A'.code + this - 10)
+        'A' + this - 10
     }
 }
 
