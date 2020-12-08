@@ -5106,10 +5106,18 @@ public final class kotlin/text/CharDirectionality$Companion {
 }
 
 public final class kotlin/text/CharsKt {
+	public static final fun Char (I)C
 	public static final fun checkRadix (I)I
+	public static final fun digitToChar (II)C
+	public static synthetic fun digitToChar$default (IIILjava/lang/Object;)C
+	public static final fun digitToInt (CI)I
+	public static synthetic fun digitToInt$default (CIILjava/lang/Object;)I
+	public static final fun digitToIntOrNull (CI)Ljava/lang/Integer;
+	public static synthetic fun digitToIntOrNull$default (CIILjava/lang/Object;)Ljava/lang/Integer;
 	public static final fun equals (CCZ)Z
 	public static synthetic fun equals$default (CCZILjava/lang/Object;)Z
 	public static final fun getCategory (C)Lkotlin/text/CharCategory;
+	public static final fun getCode (C)I
 	public static final fun getDirectionality (C)Lkotlin/text/CharDirectionality;
 	public static final fun isSurrogate (C)Z
 	public static final fun isWhitespace (C)Z
