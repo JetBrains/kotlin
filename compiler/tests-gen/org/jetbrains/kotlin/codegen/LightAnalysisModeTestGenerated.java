@@ -31041,6 +31041,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/traits/doubleDiamond.kt");
         }
 
+        @TestMetadata("doubleGenericDiamond.kt")
+        public void testDoubleGenericDiamond() throws Exception {
+            runTest("compiler/testData/codegen/box/traits/doubleGenericDiamond.kt");
+        }
+
         @TestMetadata("genericMethod.kt")
         public void testGenericMethod() throws Exception {
             runTest("compiler/testData/codegen/box/traits/genericMethod.kt");
