@@ -17,9 +17,10 @@
 package org.jetbrains.kotlin.library.impl
 
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.konan.file.walk
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
+import org.jetbrains.kotlin.library.*
 
 open class BaseKotlinLibraryImpl(
     val access: BaseLibraryAccess<KotlinLibraryLayout>,
@@ -28,14 +29,30 @@ open class BaseKotlinLibraryImpl(
     override val libraryFile get() = access.klib
     override val libraryName: String by lazy { access.inPlace { it.libraryName } }
 
-    override val componentList: List<String> by lazy {
-        access.inPlace {
-            it.libFile.listFiles
-                .filter { it.isDirectory }
-                .filter { it.listFiles.map { it.name }.contains(KLIB_MANIFEST_FILE_NAME) }
-                .map { it.name }
+    override val componentList: List<File> by lazy {
+        mutableListOf<File>().apply {
+            access.inPlace {
+                it.libFile.walk { f ->
+                    if (f.isDirectory) {
+                        val names = f.listFiles.map { sf -> sf.name }
+                        if (KLIB_MANIFEST_FILE_NAME in names) {
+                            add(f)
+                            return@walk false
+                        }
+                    }
+                    true
+                }
+            }
         }
     }
+
+    fun walkFiles(onFile: (File) -> Boolean) {
+        access.inPlace {
+            it.libFile.listFiles.forEach { it.walk(onFile) }
+        }
+    }
+
+    fun fileList(): Collection<File> = access.inPlace { it.libFile.listFiles }
 
     override fun toString() = "$libraryName[default=$isDefault]"
 
@@ -259,7 +276,7 @@ fun createKotlinLibraryComponents(
     val baseAccess = BaseLibraryAccess<KotlinLibraryLayout>(libraryFile, null)
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     return base.componentList.map {
-        createKotlinLibrary(libraryFile, it, isDefault)
+        createKotlinLibrary(libraryFile, it.path, isDefault)
     }
 }
 

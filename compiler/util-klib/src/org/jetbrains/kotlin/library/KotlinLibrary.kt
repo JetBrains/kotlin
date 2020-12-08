@@ -29,7 +29,7 @@ const val KLIB_PROPERTY_NATIVE_TARGETS = "native_targets"
 interface BaseKotlinLibrary {
     val libraryName: String
     val libraryFile: File
-    val componentList: List<String>
+    val componentList: List<File>
     val versions: KotlinLibraryVersioning
     // Whether this library is default (provided by distribution)?
     val isDefault: Boolean

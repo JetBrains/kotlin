@@ -10,7 +10,6 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.RandomAccessFile
-import java.lang.Exception
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.*
@@ -229,5 +228,11 @@ inline fun <T : AutoCloseable?, R> T.use(block: (T) -> R): R {
         if (!closed) {
             this?.close()
         }
+    }
+}
+
+fun File.walk(_onFile: (File) -> Boolean) {
+    if (_onFile(this)) {
+        if (isDirectory) listFiles.forEach { it.walk(_onFile) }
     }
 }

@@ -44,9 +44,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.isParentOf
-import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.utils.JsLibraryUtils
@@ -632,7 +629,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
     override fun isIncrementalCompilationEnabled(): Boolean =
         when {
             "-Xir-produce-js" in kotlinOptions.freeCompilerArgs -> false
-            "-Xir-produce-klib-dir" in kotlinOptions.freeCompilerArgs -> incrementalJsKlib
+            "-Xir-produce-klib-dir" in kotlinOptions.freeCompilerArgs -> false // TODO: it's not supported yet
             "-Xir-produce-klib-file" in kotlinOptions.freeCompilerArgs -> incrementalJsKlib
             else -> incremental
         }

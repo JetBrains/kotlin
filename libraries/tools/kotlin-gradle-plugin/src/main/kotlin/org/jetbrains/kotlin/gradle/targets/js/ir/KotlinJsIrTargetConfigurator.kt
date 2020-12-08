@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
+import java.io.File
 
 open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true, true, kotlinPluginVersion),
@@ -68,18 +69,34 @@ open class KotlinJsIrTargetConfigurator(kotlinPluginVersion: String) :
             compilation.kotlinOptions {
                 configureOptions()
 
-                freeCompilerArgs += listOf(
-                    DISABLE_PRE_IR,
-                    PRODUCE_UNZIPPED_KLIB
-                )
+
+                var produceUnzippedKlib = PRODUCE_UNZIPPED_KLIB in freeCompilerArgs
+                var produceZippedKlib = PRODUCE_ZIPPED_KLIB in freeCompilerArgs
+
+                freeCompilerArgs = freeCompilerArgs + DISABLE_PRE_IR
+
+                val isMainCompilation = compilation.isMain()
+
+                if (!produceUnzippedKlib && !produceZippedKlib) {
+                    freeCompilerArgs = freeCompilerArgs + PRODUCE_UNZIPPED_KLIB
+                    produceUnzippedKlib = true
+                }
 
                 // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
-                val baseName = if (compilation.isMain()) {
+                val baseName = if (isMainCompilation) {
                     target.project.name
                 } else {
                     "${target.project.name}_${compilation.name}"
                 }
-                freeCompilerArgs += listOf("$MODULE_NAME=${target.project.klibModuleName(baseName)}")
+
+                val klibModuleName = target.project.klibModuleName(baseName)
+
+                val outFileName = if (produceUnzippedKlib) klibModuleName else "$klibModuleName.$KLIB_TYPE"
+                val destinationDir = compilation.compileKotlinTask.destinationDir
+
+                outputFile = File(destinationDir, outFileName).canonicalPath
+
+                freeCompilerArgs = freeCompilerArgs + "$MODULE_NAME=$klibModuleName"
             }
 
             compilation.binaries

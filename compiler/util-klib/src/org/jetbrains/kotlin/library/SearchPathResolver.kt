@@ -4,7 +4,10 @@ import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.impl.isPre_1_4_Library
-import org.jetbrains.kotlin.util.*
+import org.jetbrains.kotlin.util.Logger
+import org.jetbrains.kotlin.util.WithLogger
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.util.suffixIfNot
 import java.nio.file.InvalidPathException
 import java.nio.file.Paths
 
@@ -143,7 +146,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
                         .filterNotNull()
 
                 matching.firstOrNull() ?: run {
-                    logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}.")
+                    logger.fatal("Could not find \"$givenPath\" in ${searchRoots.map { it.absolutePath }}")
                 }
             } catch (e: Throwable) {
                 logger.error("Failed to resolve Kotlin library: $givenPath")
@@ -152,7 +155,7 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         }
     }
 
-    override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary) = true
+    override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean = true
 
     override fun resolve(givenPath: String) = resolve(UnresolvedLibrary(givenPath, null), false)
 
