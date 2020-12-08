@@ -111,6 +111,7 @@ fun IrDeclaration.toIrBasedDescriptor(): DeclarationDescriptor = when (this) {
     is IrEnumEntry -> toIrBasedDescriptor()
     is IrProperty -> toIrBasedDescriptor()
     is IrField -> toIrBasedDescriptor()
+    is IrTypeAlias -> toIrBasedDescriptor()
     else -> error("Unknown declaration kind")
 }
 
@@ -933,6 +934,8 @@ open class IrBasedTypeAliasDescriptor(owner: IrTypeAlias) : IrBasedDeclarationDe
         visitor.visitTypeAliasDescriptor(this, null)
     }
 }
+
+fun IrTypeAlias.toIrBasedDescriptor() = IrBasedTypeAliasDescriptor(this)
 
 open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedDeclarationDescriptor<IrField>(owner) {
     override fun getModality() = if (owner.isFinal) Modality.FINAL else Modality.OPEN
