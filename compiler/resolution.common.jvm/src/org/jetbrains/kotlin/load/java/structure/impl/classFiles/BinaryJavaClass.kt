@@ -91,6 +91,12 @@ class BinaryJavaClass(
             val translatedPath = BinaryJavaAnnotation.translatePath(typePath)
 
             when (typeReference.sort) {
+                TypeReference.CLASS_EXTENDS -> {
+                    val baseType: JavaType = if (typeReference.superTypeIndex == -1) superclass!! else interfaces[typeReference.superTypeIndex]
+                    val targetType = BinaryJavaAnnotation.computeTargetType(baseType, translatedPath)
+
+                    return BinaryJavaAnnotation.addAnnotation(targetType as JavaPlainType, descriptor, context, signatureParser)
+                }
                 TypeReference.CLASS_TYPE_PARAMETER_BOUND -> {
                     val baseType = computeTypeParameterBound(typeParameters, typeReference)
                     val targetType = BinaryJavaAnnotation.computeTargetType(baseType, translatedPath)
