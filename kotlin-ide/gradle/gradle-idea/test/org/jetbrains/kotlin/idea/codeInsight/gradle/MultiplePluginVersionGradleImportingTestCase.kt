@@ -34,7 +34,6 @@ abstract class MultiplePluginVersionGradleImportingTestCase : KotlinGradleImport
         System.setProperty("org.gradle.native", "false")
     }
 
-
     override fun tearDown() {
         super.tearDown()
         val initialOrgGradleNativePropertyValue = initialOrgGradleNativePropertyValue
@@ -43,6 +42,10 @@ abstract class MultiplePluginVersionGradleImportingTestCase : KotlinGradleImport
         } else {
             System.setProperty(orgGradleNativePropertyKey, initialOrgGradleNativePropertyValue)
         }
+    }
+
+    override fun importProject() {
+        super.importProject(true)
     }
 
     companion object {

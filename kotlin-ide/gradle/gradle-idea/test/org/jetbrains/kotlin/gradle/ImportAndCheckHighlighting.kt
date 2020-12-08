@@ -38,7 +38,7 @@ class ImportAndCheckHighlighting : MultiplePluginVersionGradleImportingTestCase(
 
     private fun importAndCheckHighlighting(checkLineMarkers: Boolean = false, checkWarnings: Boolean = false) {
         val files = configureByFiles()
-        importProject()
+        importProject(false)
         val project = myTestFixture.project
         val configurations = listOfNotNull(
             LineMarkerRenderConfiguration().takeIf { checkLineMarkers },

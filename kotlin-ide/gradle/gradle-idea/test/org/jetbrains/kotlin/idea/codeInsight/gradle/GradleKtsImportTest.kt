@@ -45,6 +45,10 @@ class GradleKtsImportTest : KotlinGradleImportingTestCase() {
         return "gradleKtsImportTest"
     }
 
+    override fun importProject() {
+        importProject(true)
+    }
+
     @Test
     @TargetVersions("6.0.1+")
     fun testEmpty() {
