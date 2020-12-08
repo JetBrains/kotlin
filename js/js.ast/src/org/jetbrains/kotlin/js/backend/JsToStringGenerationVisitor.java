@@ -1172,6 +1172,57 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         }
     }
 
+    @Override
+    public void visitExport(@NotNull JsExport export) {
+        p.print("export");
+        space();
+        blockOpen();
+        for (JsExport.Element element : export.getElements()) {
+            nameDef(element.getName());
+            JsName alias = element.getAlias();
+            if (alias != null) {
+                p.print(" as ");
+                nameDef(alias);
+            }
+            p.print(',');
+            p.newline();
+        }
+        needSemi = true;
+        blockClose();
+    }
+
+    @Override
+    public void visitImport(@NotNull JsImport jsImport) {
+        p.print("import {");
+        boolean isMultiline = jsImport.getElements().size() > 1;
+        p.indentIn();
+        if (isMultiline)
+            newlineOpt();
+        else
+            space();
+
+        for (JsImport.Element element : jsImport.getElements()) {
+            nameDef(element.getName());
+            JsName alias = element.getAlias();
+            if (alias != null) {
+                p.print(" as ");
+                nameDef(alias);
+            }
+
+            if (isMultiline) {
+                p.print(',');
+                newlineOpt();
+            } else {
+                space();
+            }
+        }
+        p.indentOut();
+        p.print("} from ");
+        p.print(javaScriptString(jsImport.getModule()));
+        p.print(';');
+    }
+
+
     private void newline() {
         p.newline();
         sourceLocationConsumer.newLine();
