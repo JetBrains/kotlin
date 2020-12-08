@@ -158,6 +158,11 @@ public class CompileKotlinAgainstKotlinTestGenerated extends AbstractCompileKotl
         runTest("compiler/testData/compileKotlinAgainstKotlin/importCompanion.kt");
     }
 
+    @TestMetadata("inlineClassFakeOverrideMangling.kt")
+    public void testInlineClassFakeOverrideMangling() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassFakeOverrideMangling.kt");
+    }
+
     @TestMetadata("inlineClassFromBinaryDependencies.kt")
     public void testInlineClassFromBinaryDependencies() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/inlineClassFromBinaryDependencies.kt");
