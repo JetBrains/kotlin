@@ -261,7 +261,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
                 .replace(TESTDATA_DIR, testDataDir)
                 .replace(
                         "$FOREIGN_ANNOTATIONS_DIR$",
-                        new File(AbstractForeignAnnotationsTestKt.getFOREIGN_ANNOTATIONS_SOURCES_PATH()).getPath()
+                        new File(AbstractForeignAnnotationsTestKt.FOREIGN_ANNOTATIONS_SOURCES_PATH).getPath()
                 ).replace(
                         "$JDK_15$",
                         KtTestUtil.getJdk15Home().getPath()

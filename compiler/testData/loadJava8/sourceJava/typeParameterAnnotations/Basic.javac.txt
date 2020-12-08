@@ -9,6 +9,6 @@ public open class Basic {
     }
 
     public interface G</*0*/ @test.Basic.A T : kotlin.Any!> {
-        public abstract fun </*0*/ @test.Basic.A(value = "abc") R : kotlin.Any!> foo(/*0*/ r: R!): kotlin.Unit
+        public abstract fun </*0*/ @test.Basic.A(value = "abc") R : kotlin.Any!> foo(/*0*/ p0: R!): kotlin.Unit
     }
 }

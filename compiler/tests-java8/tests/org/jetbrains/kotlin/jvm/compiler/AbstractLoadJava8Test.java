@@ -25,4 +25,9 @@ public abstract class AbstractLoadJava8Test extends AbstractLoadJavaTest {
     protected TestJdkKind getJdkKind() {
         return TestJdkKind.FULL_JDK;
     }
+
+    @Override
+    protected boolean withForeignAnnotations() {
+        return true;
+    }
 }
