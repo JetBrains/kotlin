@@ -51,6 +51,8 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     // There are two modules in each test case (sources and dependencies), so we should render declarations from both of them
     public static final Configuration COMPARATOR_CONFIGURATION = DONT_INCLUDE_METHODS_OF_OBJECT.renderDeclarationsFromOtherModules(true);
 
+    protected boolean withForeignAnnotations() { return false; }
+
     protected void doTestCompiledJava(@NotNull String javaFileName) throws Exception {
         doTestCompiledJava(javaFileName, COMPARATOR_CONFIGURATION);
     }
@@ -140,7 +142,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         PackageViewDescriptor packageFromBinary = LoadDescriptorUtil.loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), getJdkKind(), configurationKind, true, false, useJavacWrapper(),
-                configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS),
+                withForeignAnnotations(), configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS),
                 getExtraClasspath(), this::configureEnvironment
         ).first;
 
@@ -266,7 +268,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), getJdkKind(), ConfigurationKind.JDK_ONLY, false,
-                false, useJavacWrapper(), null);
+                false, useJavacWrapper(), withForeignAnnotations(), null);
 
         checkJavaPackage(
                 expectedFile, javaPackageAndContext.first, javaPackageAndContext.second,
@@ -321,9 +323,9 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             @NotNull File outDir,
             @NotNull ConfigurationKind configurationKind
     ) throws IOException {
-        compileJavaWithAnnotationsJar(javaFiles, outDir, getAdditionalJavacArgs(), getJdkHomeForJavac());
+        compileJavaWithAnnotationsJar(javaFiles, outDir, getAdditionalJavacArgs(), getJdkHomeForJavac(), withForeignAnnotations());
         return loadTestPackageAndBindingContextFromJavaRoot(outDir, getTestRootDisposable(), getJdkKind(), configurationKind, true,
-                                                            usePsiClassFilesReading(), useJavacWrapper(), null,
+                                                            usePsiClassFilesReading(), useJavacWrapper(), withForeignAnnotations(), null,
                                                             getExtraClasspath(), this::configureEnvironment);
     }
 

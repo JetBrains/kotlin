@@ -2,12 +2,7 @@
 
 package test;
 
-import java.lang.annotation.*;
-
-@Target(ElementType.TYPE_USE)
-@interface A {
-    String value() default "";
-}
+import org.jetbrains.annotations.*;
 
 /*
  * Note that a receiver type doesn't get into signatures used by the Kotlin compiler
@@ -15,9 +10,9 @@ import java.lang.annotation.*;
  */
 
 public class MethodReceiver<T> {
-    public void f1(MethodReceiver<@A T> this) { }
+    public void f1(MethodReceiver<@Nullable T> this) { }
 
     class MethodReceiver3<T, K, L> {
-        public void f1(@A MethodReceiver3<@A T, K, @A L> this) { }
+        public void f1(@Nullable MethodReceiver3<@Nullable T, K, @Nullable L> this) { }
     }
 }

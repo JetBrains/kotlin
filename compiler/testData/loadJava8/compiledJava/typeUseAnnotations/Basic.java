@@ -1,12 +1,10 @@
+// JAVAC_EXPECTED_FILE
+
 package test;
 
-import java.lang.annotation.*;
-public class Basic {
-    @Target(ElementType.TYPE_USE)
-    @interface A {
-        String value() default "";
-    }
+import org.jetbrains.annotations.*;
 
+public class Basic {
     interface G<T> {
     }
 
@@ -14,8 +12,7 @@ public class Basic {
     }
 
     public interface MyClass<TT> {
-        void f(G<@A String> p);
-
-        void f(G2<@A String, @A("abc") Integer> p);
+        void f(G<@NotNull String> p);
+        void f(G2<@Nullable String, @NotNull Integer> p);
     }
 }
