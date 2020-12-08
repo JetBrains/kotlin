@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -263,14 +264,14 @@ internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDef
     if (!isFakeOverride) return null
     parent.let { if (it is IrClass && it.isJvmInterface) return null }
 
-    val implementation = resolveFakeOverride() ?: return null
+    val implementation = resolveFakeOverride(toSkip = ::isDefaultImplsBridge) ?: return null
 
     // Only generate interface delegation for functions immediately inherited from an interface.
     // (Otherwise, delegation will be present in the parent class)
     if (overriddenSymbols.any {
             !it.owner.parentAsClass.isInterface &&
                     it.owner.modality != Modality.ABSTRACT &&
-                    it.owner.resolveFakeOverride() == implementation
+                    it.owner.resolveFakeOverride(toSkip = ::isDefaultImplsBridge) == implementation
         }) {
         return null
     }
@@ -285,3 +286,6 @@ internal fun IrSimpleFunction.findInterfaceImplementation(jvmDefaultMode: JvmDef
 
     return implementation
 }
+
+private fun isDefaultImplsBridge(f: IrSimpleFunction) =
+    f.origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
