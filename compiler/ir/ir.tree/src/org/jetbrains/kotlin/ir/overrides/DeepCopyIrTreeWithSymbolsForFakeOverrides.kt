@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.ir.overrides
 
-import org.jetbrains.kotlin.ir.util.DescriptorsToIrRemapper
-import org.jetbrains.kotlin.ir.util.WrappedDescriptorPatcher
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
@@ -29,9 +27,6 @@ class DeepCopyIrTreeWithSymbolsForFakeOverrides(typeArguments: Map<IrTypeParamet
         // Make symbol remapper aware of the callsite's type arguments.
         // Copy IR.
         val result = irElement.transform(copier, data = null)
-
-        // Bind newly created IR with wrapped descriptors.
-        result.acceptVoid(WrappedDescriptorPatcher)
 
         result.patchDeclarationParents(parent)
         return result
@@ -92,7 +87,7 @@ class DeepCopyIrTreeWithSymbolsForFakeOverrides(typeArguments: Map<IrTypeParamet
     private val symbolRemapper =
         FakeOverrideSymbolRemapperImpl(
             typeArguments,
-            DescriptorsToIrRemapper
+            NullDescriptorsRemapper
         )
     private val copier = FakeOverrideCopier(
         symbolRemapper,
