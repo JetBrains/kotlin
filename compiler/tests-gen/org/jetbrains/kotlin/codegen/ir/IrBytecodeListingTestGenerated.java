@@ -104,6 +104,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/jvmOverloadsExternal.kt");
     }
 
+    @TestMetadata("jvmRecordStructure.kt")
+    public void testJvmRecordStructure() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/jvmRecordStructure.kt");
+    }
+
     @TestMetadata("jvmStaticExternal.kt")
     public void testJvmStaticExternal() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/jvmStaticExternal.kt");

@@ -45,9 +45,29 @@ public class Jdk15IrBlackBoxCodegenTestGenerated extends AbstractJdk15IrBlackBox
             runTest("compiler/testData/codegen/java15/box/records/bytecodeShapeForJava.kt");
         }
 
+        @TestMetadata("collectionSizeOverrides.kt")
+        public void testCollectionSizeOverrides() throws Exception {
+            runTest("compiler/testData/codegen/java15/box/records/collectionSizeOverrides.kt");
+        }
+
         @TestMetadata("dataJvmRecord.kt")
         public void testDataJvmRecord() throws Exception {
             runTest("compiler/testData/codegen/java15/box/records/dataJvmRecord.kt");
+        }
+
+        @TestMetadata("propertiesOverrides.kt")
+        public void testPropertiesOverrides() throws Exception {
+            runTest("compiler/testData/codegen/java15/box/records/propertiesOverrides.kt");
+        }
+
+        @TestMetadata("propertiesOverridesAllCompatibilityJvmDefault.kt")
+        public void testPropertiesOverridesAllCompatibilityJvmDefault() throws Exception {
+            runTest("compiler/testData/codegen/java15/box/records/propertiesOverridesAllCompatibilityJvmDefault.kt");
+        }
+
+        @TestMetadata("propertiesOverridesEnableJvmDefault.kt")
+        public void testPropertiesOverridesEnableJvmDefault() throws Exception {
+            runTest("compiler/testData/codegen/java15/box/records/propertiesOverridesEnableJvmDefault.kt");
         }
 
         @TestMetadata("recordDifferentPropertyOverride.kt")

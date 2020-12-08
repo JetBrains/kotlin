@@ -1,0 +1,33 @@
+@kotlin.Metadata
+public final class KI$DefaultImpls {
+    // source: 'jvmRecordStructure.kt'
+    public static @org.jetbrains.annotations.NotNull method getX(@org.jetbrains.annotations.NotNull p0: KI): java.lang.String
+    public final inner class KI$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface KI {
+    // source: 'jvmRecordStructure.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getX(): java.lang.String
+    public abstract method getY(): java.lang.Object
+    public final inner class KI$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class MyRec {
+    // source: 'jvmRecordStructure.kt'
+    private final @org.jetbrains.annotations.NotNull field x: java.lang.String
+    private final field y: java.lang.Object
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: java.lang.Object): void
+    public final @org.jetbrains.annotations.NotNull method component1(): java.lang.String
+    public final method component2(): java.lang.Object
+    public synthetic static method copy$default(p0: MyRec, p1: java.lang.String, p2: java.lang.Object, p3: int, p4: java.lang.Object): MyRec
+    public final @org.jetbrains.annotations.NotNull method copy(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: java.lang.Object): MyRec
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public synthetic bridge method getX(): java.lang.String
+    public synthetic bridge method getY(): java.lang.Object
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method x(): java.lang.String
+    public method y(): java.lang.Object
+}
