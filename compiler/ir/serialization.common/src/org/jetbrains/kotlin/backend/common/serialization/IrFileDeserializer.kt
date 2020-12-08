@@ -1046,9 +1046,6 @@ abstract class IrFileDeserializer(
             ).apply {
                 if (proto.hasDefaultValue())
                     defaultValue = irFactory.createExpressionBody(deserializeExpressionBody(proto.defaultValue))
-
-                (descriptor as? WrappedValueParameterDescriptor)?.bind(this)
-                (descriptor as? WrappedReceiverParameterDescriptor)?.bind(this)
             }
         }
 
@@ -1110,9 +1107,7 @@ abstract class IrFileDeserializer(
     private fun deserializeErrorDeclaration(proto: ProtoErrorDeclaration): IrErrorDeclaration {
         require(allowErrorNodes) { "IrErrorDeclaration found but error code is not allowed" }
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
-        val descriptor = WrappedErrorDescriptor()
-        return irFactory.createErrorDeclaration(coordinates.startOffset, coordinates.endOffset, descriptor).also {
-            descriptor.bind(it)
+        return irFactory.createErrorDeclaration(coordinates.startOffset, coordinates.endOffset).also {
             it.parent = parentsStack.peek()!!
         }
     }
@@ -1241,8 +1236,6 @@ abstract class IrFileDeserializer(
                 )
             }.apply {
                 overriddenSymbols = proto.overriddenList.map { deserializeIrSymbolAndRemap(it) as IrSimpleFunctionSymbol }
-
-                (descriptor as? WrappedSimpleFunctionDescriptor)?.bind(this)
             }
         }
     }
@@ -1262,8 +1255,6 @@ abstract class IrFileDeserializer(
             ).apply {
                 if (proto.hasInitializer())
                     initializer = deserializeExpression(proto.initializer)
-
-                (descriptor as? WrappedVariableDescriptor)?.bind(this)
             }
         }
 
@@ -1350,8 +1341,6 @@ abstract class IrFileDeserializer(
                 getter = deserializeIrFunction(proto.getter)
                 if (proto.hasSetter())
                     setter = deserializeIrFunction(proto.setter)
-
-                (descriptor as? WrappedVariableDescriptorWithAccessor)?.bind(this)
             }
         }
 
@@ -1387,17 +1376,9 @@ abstract class IrFileDeserializer(
                 }
                 if (proto.hasBackingField()) {
                     backingField = deserializeIrField(proto.backingField).also {
-                        // A property symbol and its field symbol share the same descriptor.
-                        // Unfortunately symbol deserialization doesn't know anything about that.
-                        // So we can end up with two wrapped property descriptors for property and its field.
-                        // In that case we need to bind the field's one here.
-                        if (descriptor != it.descriptor)
-                            (it.descriptor as? WrappedPropertyDescriptor)?.bind(this)
                         it.correspondingPropertySymbol = symbol
                     }
                 }
-
-                (descriptor as? WrappedPropertyDescriptor)?.bind(this)
             }
         }
 

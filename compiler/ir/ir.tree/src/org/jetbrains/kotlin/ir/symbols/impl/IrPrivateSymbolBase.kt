@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.ir.symbols.impl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.*
@@ -52,8 +51,8 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
         assert(descriptor == null || isOriginalDescriptor(descriptor)) {
             "Substituted descriptor $descriptor for ${descriptor!!.original}"
         }
-        if (descriptor !is WrappedDeclarationDescriptor<*>) {
-            val containingDeclaration = descriptor?.containingDeclaration
+        if (descriptor != null) {
+            val containingDeclaration = descriptor.containingDeclaration
             assert(containingDeclaration == null || isOriginalDescriptor(containingDeclaration)) {
                 "Substituted containing declaration: $containingDeclaration\nfor descriptor: $descriptor"
             }
@@ -61,9 +60,8 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
     }
 
     private fun isOriginalDescriptor(descriptor: DeclarationDescriptor): Boolean =
-        descriptor is WrappedDeclarationDescriptor<*> ||
-                // TODO fix declaring/referencing value parameters: compute proper original descriptor
-                descriptor is ValueParameterDescriptor && isOriginalDescriptor(descriptor.containingDeclaration) ||
+        // TODO fix declaring/referencing value parameters: compute proper original descriptor
+        descriptor is ValueParameterDescriptor && isOriginalDescriptor(descriptor.containingDeclaration) ||
                 descriptor == descriptor.original
 
     private var _owner: B? = null
@@ -132,7 +130,7 @@ class IrConstructorSymbolImpl(descriptor: ClassConstructorDescriptor? = null) :
     IrBindableSymbolBase<ClassConstructorDescriptor, IrConstructor>(descriptor),
     IrConstructorSymbol
 
-class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor) :
+class IrReturnableBlockSymbolImpl(descriptor: FunctionDescriptor? = null) :
     IrBindableSymbolBase<FunctionDescriptor, IrReturnableBlock>(descriptor),
     IrReturnableBlockSymbol
 

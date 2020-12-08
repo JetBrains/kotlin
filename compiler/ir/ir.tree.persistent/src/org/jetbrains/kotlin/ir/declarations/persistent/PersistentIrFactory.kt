@@ -83,7 +83,7 @@ object PersistentIrFactory : IrFactory {
     override fun createErrorDeclaration(
         startOffset: Int,
         endOffset: Int,
-        descriptor: DeclarationDescriptor,
+        descriptor: DeclarationDescriptor?,
     ): IrErrorDeclaration =
         PersistentIrErrorDeclaration(startOffset, endOffset, descriptor)
 

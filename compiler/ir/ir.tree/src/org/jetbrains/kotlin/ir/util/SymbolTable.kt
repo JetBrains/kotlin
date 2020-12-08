@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
-import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 
 interface ReferenceSymbolTable {
     fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol
@@ -184,20 +182,11 @@ class SymbolTable(
         protected open fun signature(descriptor: D): IdSignature? = signaturer.composeSignature(descriptor)
 
         override fun get(d: D): S? {
-            return if (d !is WrappedDeclarationDescriptor<*>) {
-                val sig = signature(d)
-                if (sig != null) {
-                    idSigToSymbol[sig]
-                } else {
-                    descriptorToSymbol[d]
-                }
+            val sig = signature(d)
+            return if (sig != null) {
+                idSigToSymbol[sig]
             } else {
-                if (d.isBound()) {
-                    @Suppress("UNCHECKED_CAST")
-                    d.owner.symbol as S
-                } else {
-                    descriptorToSymbol[d]
-                }
+                descriptorToSymbol[d]
             }
         }
 
@@ -236,13 +225,9 @@ class SymbolTable(
             }
 
             operator fun get(d: D): S? {
-                return if (d !is WrappedDeclarationDescriptor<*>) {
-                    val sig = signaturer.composeSignature(d)
-                    if (sig != null) {
-                        getByIdSignature(sig)
-                    } else {
-                        getByDescriptor(d)
-                    }
+                val sig = signaturer.composeSignature(d)
+                return if (sig != null) {
+                    getByIdSignature(sig)
                 } else {
                     getByDescriptor(d)
                 }

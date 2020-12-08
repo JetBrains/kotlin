@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.symbols.impl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -44,15 +43,13 @@ abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrS
     }
 
     private fun isOriginalDescriptor(descriptor: DeclarationDescriptor): Boolean =
-        descriptor is WrappedDeclarationDescriptor<*> ||
-                // TODO fix declaring/referencing value parameters: compute proper original descriptor
-                descriptor is ValueParameterDescriptor && isOriginalDescriptor(descriptor.containingDeclaration) ||
+        // TODO fix declaring/referencing value parameters: compute proper original descriptor
+        descriptor is ValueParameterDescriptor && isOriginalDescriptor(descriptor.containingDeclaration) ||
                 descriptor == descriptor.original
 
     private var _owner: B? = null
     override val owner: B
-        get() = _owner ?:
-        throw IllegalStateException("Symbol for $signature is unbound")
+        get() = _owner ?: throw IllegalStateException("Symbol for $signature is unbound")
 
     override fun bind(owner: B) {
         if (_owner == null) {

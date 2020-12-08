@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -149,12 +148,11 @@ class ComposeLikeDefaultArgumentRewriter(
         declaration.valueParameters.forEach { param ->
             newParameters.add(
                 if (param.defaultValue != null) {
-                    val descriptor = WrappedValueParameterDescriptor()
                     val result = IrValueParameterImpl(
                         param.startOffset,
                         param.endOffset,
                         param.origin,
-                        IrValueParameterSymbolImpl(descriptor),
+                        IrValueParameterSymbolImpl(),
                         param.name,
                         index = param.index,
                         type = defaultParameterType(param),
@@ -167,7 +165,6 @@ class ComposeLikeDefaultArgumentRewriter(
                         it.defaultValue = param.defaultValue
                         it.parent = declaration
                     }
-                    descriptor.bind(result)
                     parameterMapping[param] = result
                     result
                 } else param

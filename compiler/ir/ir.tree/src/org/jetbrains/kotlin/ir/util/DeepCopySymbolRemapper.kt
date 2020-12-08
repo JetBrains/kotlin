@@ -159,7 +159,7 @@ open class DeepCopySymbolRemapper(
     override fun visitBlock(expression: IrBlock) {
         if (expression is IrReturnableBlock) {
             remapSymbol(returnableBlocks, expression) {
-                IrReturnableBlockSymbolImpl(expression.descriptor)
+                IrReturnableBlockSymbolImpl()
             }
         }
         expression.acceptChildrenVoid(this)

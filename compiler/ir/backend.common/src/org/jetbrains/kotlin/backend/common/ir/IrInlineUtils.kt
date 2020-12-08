@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnableBlockImpl
@@ -83,12 +81,6 @@ private fun IrBody.move(
 // TODO use a generic inliner (e.g. JS/Native's FunctionInlining.Inliner)
 // Inline simple function calls without type parameters, default parameters, or varargs.
 fun IrFunction.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrReturnableBlock =
-    IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(getNewWrappedDescriptor()), null, symbol).apply {
+    IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(), null, symbol).apply {
         statements += body!!.move(this@inline, target, symbol, valueParameters.zip(arguments).toMap()).statements
     }
-
-fun IrFunction.getNewWrappedDescriptor(): FunctionDescriptor = when (this) {
-    is IrConstructor -> WrappedClassConstructorDescriptor().apply { bind(this@getNewWrappedDescriptor) }
-    is IrSimpleFunction -> WrappedSimpleFunctionDescriptor().apply { bind(this@getNewWrappedDescriptor) }
-    else -> error("Unknown IrFunction kind: $this")
-}

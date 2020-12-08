@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrAbstractFunctionFactory
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.descriptors.WrappedDeclarationDescriptor
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.IrLibrary
@@ -42,7 +41,7 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
     open fun declareIrSymbol(symbol: IrSymbol) {
         val signature = symbol.signature
         require(signature != null) { "Symbol is not public API: ${symbol.descriptor}" }
-        assert(symbol.descriptor !is WrappedDeclarationDescriptor<*>)
+        assert(symbol.hasDescriptor)
         deserializeIrSymbol(signature, symbol.kind())
     }
 
@@ -69,7 +68,7 @@ abstract class IrModuleDeserializer(val moduleDescriptor: ModuleDescriptor) {
 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
 class IrModuleDeserializerWithBuiltIns(
-    private val builtIns: IrBuiltIns,
+    builtIns: IrBuiltIns,
     private val functionFactory: IrAbstractFunctionFactory,
     private val delegate: IrModuleDeserializer
 ) : IrModuleDeserializer(delegate.moduleDescriptor) {
