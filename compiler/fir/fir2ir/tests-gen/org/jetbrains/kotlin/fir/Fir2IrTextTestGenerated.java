@@ -221,6 +221,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/classes/objectWithInitializers.kt");
         }
 
+        @TestMetadata("openDataClass.kt")
+        public void testOpenDataClass() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/openDataClass.kt");
+        }
+
         @TestMetadata("outerClassAccess.kt")
         public void testOuterClassAccess() throws Exception {
             runTest("compiler/testData/ir/irText/classes/outerClassAccess.kt");

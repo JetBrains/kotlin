@@ -4210,6 +4210,16 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/properties"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("dataClass.kt")
+        public void testDataClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/properties/dataClass.kt");
+        }
+
+        @TestMetadata("openDataClass.kt")
+        public void testOpenDataClass() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/properties/openDataClass.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/bytecodeText/properties/lateinit")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
