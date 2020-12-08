@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.coroutines
 
+import com.sun.org.apache.bcel.internal.generic.StoreInstruction
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.optimization.common.*
