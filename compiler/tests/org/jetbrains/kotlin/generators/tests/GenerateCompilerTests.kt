@@ -216,7 +216,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractJdk15IrBlackBoxCodegenTest> {
-                model("codegen/java15/box")
+                model("codegen/java15/box", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractJdk9BlackBoxCodegenTest> {
@@ -373,7 +373,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractIrCompileKotlinAgainstKotlinJdk15Test> {
-                model("compileKotlinAgainstKotlinJdk15")
+                model("compileKotlinAgainstKotlinJdk15", targetBackend = TargetBackend.JVM_IR)
             }
 
             testClass<AbstractDescriptorRendererTest> {
