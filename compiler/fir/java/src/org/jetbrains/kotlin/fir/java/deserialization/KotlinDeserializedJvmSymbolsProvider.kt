@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
@@ -366,20 +365,16 @@ class KotlinDeserializedJvmSymbolsProvider(
 
     private fun loadFunctionsByName(part: PackagePartsCacheData, name: Name): List<FirCallableSymbol<*>> {
         val functionIds = part.topLevelFunctionNameIndex[name] ?: return emptyList()
-        return functionIds.map { part.proto.getFunction(it) }
-            .map {
-                val firNamedFunction = part.context.memberDeserializer.loadFunction(it) as FirSimpleFunctionImpl
-                firNamedFunction.symbol
-            }
+        return functionIds.map {
+            part.context.memberDeserializer.loadFunction(part.proto.getFunction(it)).symbol
+        }
     }
 
     private fun loadPropertiesByName(part: PackagePartsCacheData, name: Name): List<FirCallableSymbol<*>> {
         val propertyIds = part.topLevelPropertyNameIndex[name] ?: return emptyList()
-        return propertyIds.map { part.proto.getProperty(it) }
-            .map {
-                val firProperty = part.context.memberDeserializer.loadProperty(it)
-                firProperty.symbol
-            }
+        return propertyIds.map {
+            part.context.memberDeserializer.loadProperty(part.proto.getProperty(it)).symbol
+        }
     }
 
     @FirSymbolProviderInternals
