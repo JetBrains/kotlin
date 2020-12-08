@@ -138,7 +138,40 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
             tasks.named(binary.compilation.target.artifactsTaskName).configure { it.dependsOn(result) }
             tasks.maybeCreate(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(result)
         }
+
+        if (binary is Framework) {
+            val configuration = configurations.create(configurationName(binary.target.name, binary.buildType.name.toLowerCase()) + binary.baseName) {
+                it.isCanBeConsumed = true
+                it.isCanBeResolved = false
+            }
+            with(configuration) {
+                usesPlatformOf(binary.target)
+                project.afterEvaluate {
+                    val linkArtifact = project.artifacts.add(name, binary.outputFile) { artifact ->
+                        artifact.name = name
+                        artifact.extension = "framework"
+                        artifact.type = "binary"
+                        artifact.classifier = "framework"
+                        artifact.builtBy(result)
+                    }
+                    project.extensions.getByType(org.gradle.api.internal.plugins.DefaultArtifactPublicationSet::class.java)
+                        .addCandidate(linkArtifact)
+                    artifacts.add(linkArtifact)
+                    attributes.attribute(
+                        ArtifactAttributes.ARTIFACT_FORMAT,
+                        NativeArtifactFormat.FRAMEWORK
+                    )
+                    attributes.attribute(
+                        KotlinNativeTarget.konanBuildTypeAttribute,
+                        binary.buildType.name
+                    )
+                }
+            }
+        }
     }
+
+    private fun configurationName(name: String, type: String): String =
+        listOf(name, type, "frameworks").joinToString("") { it.capitalize() }.decapitalize()
 
     private fun Project.createRunTask(binary: Executable) {
         val taskName = binary.runTaskName ?: return
@@ -399,6 +432,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget>(
 
     object NativeArtifactFormat {
         const val KLIB = "org.jetbrains.kotlin.klib"
+        const val FRAMEWORK = "org.jetbrains.kotlin.framework"
     }
 
     companion object {
