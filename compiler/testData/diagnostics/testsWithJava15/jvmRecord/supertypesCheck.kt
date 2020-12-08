@@ -1,5 +1,7 @@
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
+// JVM_TARGET: 15
+// ENABLE_JVM_PREVIEW
 
 abstract class Abstract
 interface I

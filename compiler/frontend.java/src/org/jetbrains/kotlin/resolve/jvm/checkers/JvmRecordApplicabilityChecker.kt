@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.JvmAnalysisFlags
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -26,7 +28,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.isJvmRecord
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
-object JvmRecordApplicabilityChecker : DeclarationChecker {
+class JvmRecordApplicabilityChecker(private val jvmTarget: JvmTarget) : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor || declaration !is KtClassOrObject) return
 
@@ -55,6 +57,13 @@ object JvmRecordApplicabilityChecker : DeclarationChecker {
                     reportOn,
                     LanguageFeature.JvmRecordSupport to context.languageVersionSettings
                 )
+            )
+            return
+        }
+
+        if (!jvmTarget.areRecordsAllowed(context.languageVersionSettings.getFlag(JvmAnalysisFlags.enableJvmPreview))) {
+            context.trace.report(
+                ErrorsJvm.JVM_RECORDS_ILLEGAL_BYTECODE_TARGET.on(reportOn)
             )
             return
         }
@@ -153,3 +162,8 @@ object JvmRecordApplicabilityChecker : DeclarationChecker {
 
 private fun KtModifierList.findOneOfModifiers(vararg modifierTokens: KtModifierKeywordToken): PsiElement? =
     modifierTokens.firstNotNullResult(this::getModifier)
+
+private fun JvmTarget.areRecordsAllowed(enableJvmPreview: Boolean): Boolean {
+    if (majorVersion < JvmTarget.JVM_15.majorVersion) return false
+    return enableJvmPreview || majorVersion > JvmTarget.JVM_15.majorVersion
+}

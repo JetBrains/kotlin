@@ -41,8 +41,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         JvmMultifileClassStateChecker,
         SynchronizedOnInlineMethodChecker,
         DefaultCheckerInTailrec,
-        FunctionDelegateMemberNameClashChecker,
-        JvmRecordApplicabilityChecker
+        FunctionDelegateMemberNameClashChecker
     ),
 
     additionalCallCheckers = listOf(
@@ -111,6 +110,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<JvmDefaultSuperCallChecker>()
         container.useImpl<JvmSamConversionOracle>()
         container.useImpl<JvmAdditionalClassPartsProvider>()
+        container.useImpl<JvmRecordApplicabilityChecker>()
         container.useInstance(FunctionWithBigAritySupport.LanguageVersionDependent)
         container.useInstance(GenericArrayClassLiteralSupport.Enabled)
         container.useInstance(JavaActualAnnotationArgumentExtractor())
