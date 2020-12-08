@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableMap
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.checkers.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -183,7 +184,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                     configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
                 }
 
-                if (directives.contains("ENABLE_JVM_PREVIEW")) {
+                if (directives.contains(ENABLE_JVM_PREVIEW)) {
                     configuration.put(JVMConfigurationKeys.ENABLE_JVM_PREVIEW, true)
                 }
 
