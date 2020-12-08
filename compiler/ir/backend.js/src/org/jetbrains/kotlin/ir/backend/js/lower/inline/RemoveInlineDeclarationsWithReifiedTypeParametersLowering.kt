@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,15 +9,19 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
-class RemoveInlineFunctionsWithReifiedTypeParametersLowering: DeclarationTransformer {
+class RemoveInlineDeclarationsWithReifiedTypeParametersLowering: DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
+        fun IrFunction.isInlineFunWithReifiedParameter() = isInline && typeParameters.any { it.isReified }
 
-        if (declaration is IrFunction && declaration.isInline && declaration.typeParameters.any { it.isReified }) {
+        if (declaration is IrFunction && declaration.isInlineFunWithReifiedParameter() ||
+            declaration is IrProperty && declaration.getter?.isInlineFunWithReifiedParameter() == true
+        ) {
             return emptyList()
         }
 
