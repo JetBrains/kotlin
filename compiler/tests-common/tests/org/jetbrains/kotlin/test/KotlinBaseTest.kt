@@ -60,6 +60,8 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
     }
 
     protected open fun getTestJdkKind(files: List<F>): TestJdkKind {
+        if (files.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.content, "JDK_15") }) return TestJdkKind.FULL_JDK_15
+
         for (file in files) {
             if (InTextDirectivesUtils.isDirectiveDefined(file.content, "FULL_JDK")) {
                 return TestJdkKind.FULL_JDK
