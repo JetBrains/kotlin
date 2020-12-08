@@ -3752,6 +3752,12 @@ createInterop("kt43265") {
     it.defFile 'interop/kt43265/kt43265.def'
 }
 
+createInterop("leakMemoryWithRunningThread") {
+    it.defFile 'interop/leakMemoryWithRunningThread/leakMemory.def'
+    it.headers "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.h"
+    it.extraOpts "-Xcompile-source", "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.cpp"
+}
+
 if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
@@ -4059,6 +4065,22 @@ interopTest("interop_kt43265") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     interop = 'kt43265'
     source = "interop/kt43265/usage.kt"
+}
+
+interopTest("interop_leakMemoryWithRunningThreadUnchecked") {
+    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
+    interop = 'leakMemoryWithRunningThread'
+    source = "interop/leakMemoryWithRunningThread/unchecked.kt"
+    flags = ['-g']
+}
+
+interopTest("interop_leakMemoryWithRunningThreadChecked") {
+    disabled = project.globalTestArgs.contains('-opt') || (project.testTarget == 'wasm32') // Needs debug build.
+    interop = 'leakMemoryWithRunningThread'
+    source = "interop/leakMemoryWithRunningThread/checked.kt"
+    flags = ['-g']
+    expectedExitStatusChecker = { it != 0 }
+    outputChecker = { s -> s.contains("Cannot run checkers when there are 1 alive runtimes at the shutdown") }
 }
 
 standaloneTest("interop_pinning") {

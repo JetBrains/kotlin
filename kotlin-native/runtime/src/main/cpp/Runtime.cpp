@@ -227,23 +227,28 @@ void Kotlin_shutdownRuntime() {
     auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
     RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
 
+    bool canDestroyRuntime = true;
+
     // TODO: When legacy mode is gone, this `if` will become unnecessary.
     if (Kotlin_forceCheckedShutdown() || Kotlin_memoryLeakCheckerEnabled() || Kotlin_cleanersLeakCheckerEnabled()) {
         // First make sure workers are gone.
         WaitNativeWorkersTermination();
 
+        // Now check for existence of any other runtimes.
+        auto otherRuntimesCount = atomicGet(&aliveRuntimesCount) - 1;
+        RuntimeAssert(otherRuntimesCount >= 0, "Cannot be negative");
         if (Kotlin_forceCheckedShutdown()) {
-            // Now check for existence of any other runtimes.
-            auto otherRuntimesCount = atomicGet(&aliveRuntimesCount) - 1;
-            RuntimeAssert(otherRuntimesCount >= 0, "Cannot be negative");
             if (otherRuntimesCount > 0) {
                 konan::consoleErrorf("Cannot run checkers when there are %d alive runtimes at the shutdown", otherRuntimesCount);
                 konan::abort();
             }
+        } else {
+            // Cannot destroy runtime globally if there're some other threads with Kotlin runtime on them.
+            canDestroyRuntime = otherRuntimesCount == 0;
         }
     }
 
-    deinitRuntime(runtime, true);
+    deinitRuntime(runtime, canDestroyRuntime);
     ::runtimeState = kInvalidRuntime;
 }
 
