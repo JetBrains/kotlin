@@ -26,7 +26,7 @@ public class LoadJava8WithPsiClassReadingTestGenerated extends AbstractLoadJava8
     }
 
     public void testAllFilesPresentInCompiledJava() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava"), Pattern.compile("^(.+)\\.java$"), null, true, "typeUseAnnotations", "typeParameterAnnotations");
     }
 
     @TestMetadata("InnerClassTypeAnnotation.java")
@@ -42,71 +42,5 @@ public class LoadJava8WithPsiClassReadingTestGenerated extends AbstractLoadJava8
     @TestMetadata("ParameterNames.java")
     public void testParameterNames() throws Exception {
         runTest("compiler/testData/loadJava8/compiledJava/ParameterNames.java");
-    }
-
-    @TestMetadata("compiler/testData/loadJava8/compiledJava/typeParameterAnnotations")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class TypeParameterAnnotations extends AbstractLoadJava8WithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInTypeParameterAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava/typeParameterAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("Basic.java")
-        public void testBasic() throws Exception {
-            runTest("compiler/testData/loadJava8/compiledJava/typeParameterAnnotations/Basic.java");
-        }
-    }
-
-    @TestMetadata("compiler/testData/loadJava8/compiledJava/typeUseAnnotations")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class TypeUseAnnotations extends AbstractLoadJava8WithPsiClassReadingTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTestCompiledJava, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInTypeUseAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava8/compiledJava/typeUseAnnotations"), Pattern.compile("^(.+)\\.java$"), null, true);
-        }
-
-        @TestMetadata("BaseClassTypeArguments.java")
-        public void testBaseClassTypeArguments() throws Exception {
-            runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/BaseClassTypeArguments.java");
-        }
-
-        @TestMetadata("Basic.java")
-        public void testBasic() throws Exception {
-            runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/Basic.java");
-        }
-
-        @TestMetadata("ClassTypeParameterBounds.java")
-        public void testClassTypeParameterBounds() throws Exception {
-            runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/ClassTypeParameterBounds.java");
-        }
-
-        @TestMetadata("MethodReceiver.java")
-        public void testMethodReceiver() throws Exception {
-            runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/MethodReceiver.java");
-        }
-
-        @TestMetadata("MethodTypeParameterBounds.java")
-        public void testMethodTypeParameterBounds() throws Exception {
-            runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/MethodTypeParameterBounds.java");
-        }
-
-        @TestMetadata("ReturnType.java")
-        public void testReturnType() throws Exception {
-            runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/ReturnType.java");
-        }
-
-        @TestMetadata("ValueArguments.java")
-        public void testValueArguments() throws Exception {
-            runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/ValueArguments.java");
-        }
     }
 }
