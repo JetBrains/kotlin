@@ -211,23 +211,12 @@ class BinaryJavaClass(
         if (access.isSet(Opcodes.ACC_SYNTHETIC)) return null
 
         val type = signatureParser.parseTypeString(StringCharacterIterator(signature ?: desc), context)
-
         val processedValue = processValue(value, type)
+        val filed = BinaryJavaField(Name.identifier(name), access, this, access.isSet(Opcodes.ACC_ENUM), type, processedValue)
 
-        return BinaryJavaField(Name.identifier(name), access, this, access.isSet(Opcodes.ACC_ENUM), type, processedValue).run {
-            fields.add(this)
+        fields.add(filed)
 
-            object : FieldVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
-                override fun visitAnnotation(desc: String, visible: Boolean) =
-                    BinaryJavaAnnotation.addAnnotation(this@run, desc, context, signatureParser)
-
-                override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, desc: String, visible: Boolean) =
-                    if (typePath == null)
-                        BinaryJavaAnnotation.addAnnotation(type as JavaPlainType, desc, context, signatureParser)
-                    else
-                        null
-            }
-        }
+        return AnnotationsCollectorFieldVisitor(filed, context, signatureParser)
     }
 
 

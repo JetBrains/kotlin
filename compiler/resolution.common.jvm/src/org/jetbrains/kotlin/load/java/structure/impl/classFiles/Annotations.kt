@@ -25,6 +25,35 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import java.lang.reflect.Array
 
+internal class AnnotationsCollectorFieldVisitor(
+    private val field: BinaryJavaField,
+    private val context: ClassifierResolutionContext,
+    private val signatureParser: BinaryClassSignatureParser,
+) : FieldVisitor(ASM_API_VERSION_FOR_CLASS_READING) {
+    override fun visitAnnotation(desc: String, visible: Boolean) =
+        BinaryJavaAnnotation.addAnnotation(field, desc, context, signatureParser)
+
+    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, desc: String, visible: Boolean): AnnotationVisitor? {
+        val typeReference = TypeReference(typeRef)
+
+        if (typePath != null) {
+            val translatedPath = translatePath(typePath)
+
+            when (typeReference.sort) {
+                TypeReference.FIELD -> {
+                    val targetType = computeTargetType(field.type, translatedPath)
+                    return BinaryJavaAnnotation.addAnnotation(targetType as JavaPlainType, desc, context, signatureParser)
+                }
+            }
+        }
+
+        return when (typeReference.sort) {
+            TypeReference.FIELD -> BinaryJavaAnnotation.addAnnotation(field.type as JavaPlainType, desc, context, signatureParser)
+            else -> null
+        }
+    }
+}
+
 internal class AnnotationsAndParameterCollectorMethodVisitor(
     private val member: BinaryJavaMethodBase,
     private val context: ClassifierResolutionContext,
