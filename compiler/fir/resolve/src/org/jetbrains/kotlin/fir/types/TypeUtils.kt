@@ -256,15 +256,18 @@ fun FirTypeRef.approximatedIfNeededOrSelf(
     containingCallableVisibility: Visibility?,
     isInlineFunction: Boolean = false
 ): FirTypeRef {
-    val approximatedType = if (this is FirResolvedTypeRef &&
-        (containingCallableVisibility == Visibilities.Public || containingCallableVisibility == Visibilities.Protected)
-    ) {
-        if (type.requiresApproximationInPublicPosition()) this.approximated(approximator, toSuper = true) else this
-    } else {
+    val approximated = if (containingCallableVisibility == Visibilities.Public || containingCallableVisibility == Visibilities.Protected)
+        approximatedForPublicPosition(approximator)
+    else
         this
-    }
-    return approximatedType.hideLocalTypeIfNeeded(containingCallableVisibility, isInlineFunction).withoutEnhancedNullability()
+    return approximated.hideLocalTypeIfNeeded(containingCallableVisibility, isInlineFunction).withoutEnhancedNullability()
 }
+
+fun FirTypeRef.approximatedForPublicPosition(approximator: AbstractTypeApproximator): FirTypeRef =
+    if (this is FirResolvedTypeRef && type.requiresApproximationInPublicPosition())
+        this.approximated(approximator, toSuper = true)
+    else
+        this
 
 private fun ConeKotlinType.requiresApproximationInPublicPosition(): Boolean {
     return when (this) {
