@@ -19061,6 +19061,11 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirOldFronte
             runTest("compiler/testData/diagnostics/tests/regressions/propertyWithExtensionTypeInvoke.kt");
         }
 
+        @TestMetadata("resolveCollectionLiteralInsideLambda.kt")
+        public void testResolveCollectionLiteralInsideLambda() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/regressions/resolveCollectionLiteralInsideLambda.kt");
+        }
+
         @TestMetadata("resolveSubclassOfList.kt")
         public void testResolveSubclassOfList() throws Exception {
             runTest("compiler/testData/diagnostics/tests/regressions/resolveSubclassOfList.kt");
