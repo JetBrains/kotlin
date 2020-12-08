@@ -16,7 +16,13 @@ val commonMainSources by task<Sync> {
         val fullCommonMainSources = tasks.getByPath(":kotlin-stdlib-js-ir:commonMainSources")
         exclude(
             listOf(
-                "libraries/stdlib/unsigned/**",
+                "libraries/stdlib/unsigned/src/kotlin/UByteArray.kt",
+                "libraries/stdlib/unsigned/src/kotlin/UIntArray.kt",
+                "libraries/stdlib/unsigned/src/kotlin/ULongArray.kt",
+                "libraries/stdlib/unsigned/src/kotlin/UMath.kt",
+                "libraries/stdlib/unsigned/src/kotlin/UNumbers.kt",
+                "libraries/stdlib/unsigned/src/kotlin/UShortArray.kt",
+                "libraries/stdlib/unsigned/src/kotlin/UStrings.kt",
                 "libraries/stdlib/common/src/generated/_Arrays.kt",
                 "libraries/stdlib/common/src/generated/_Collections.kt",
                 "libraries/stdlib/common/src/generated/_Comparisons.kt",
@@ -35,7 +41,6 @@ val commonMainSources by task<Sync> {
                 "libraries/stdlib/common/src/kotlin/collections/**",
                 "libraries/stdlib/common/src/kotlin/ioH.kt",
                 "libraries/stdlib/src/kotlin/collections/**",
-                "libraries/stdlib/src/kotlin/experimental/bitwiseOperations.kt",
                 "libraries/stdlib/src/kotlin/properties/Delegates.kt",
                 "libraries/stdlib/src/kotlin/random/URandom.kt",
                 "libraries/stdlib/src/kotlin/text/**",
