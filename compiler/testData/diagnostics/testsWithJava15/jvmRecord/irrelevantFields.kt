@@ -1,6 +1,8 @@
 // !API_VERSION: 1.5
 // !LANGUAGE: +JvmRecordSupport
 // SKIP_TXT
+// JVM_TARGET: 15
+// ENABLE_JVM_PREVIEW
 
 interface I
 

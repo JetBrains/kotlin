@@ -5,7 +5,7 @@ $TEMP_DIR$
 1.5
 -language-version
 1.5
--cp
+-jdk-home
 $JDK_15$
 -XXLanguage:+JvmRecordSupport
 -jvm-target

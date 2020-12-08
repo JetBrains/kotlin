@@ -67,19 +67,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         }
     }
 
-    if (languageVersionSettings.supportsFeature(LanguageFeature.JvmRecordSupport) && !jvmTarget.areRecordsAllowed(arguments.enableJvmPreview)) {
-        messageCollector.report(
-            ERROR,
-            "-XXLanguage:+${LanguageFeature.JvmRecordSupport} feature is only supported with JVM target ${JvmTarget.JVM_15.description} or later"
-        )
-    }
-
     addAll(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, arguments.additionalJavaModules?.asList())
-}
-
-private fun JvmTarget.areRecordsAllowed(enableJvmPreview: Boolean): Boolean {
-    if (majorVersion < JvmTarget.JVM_15.majorVersion) return false
-    return enableJvmPreview || majorVersion > JvmTarget.JVM_15.majorVersion
 }
 
 fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): Boolean {
