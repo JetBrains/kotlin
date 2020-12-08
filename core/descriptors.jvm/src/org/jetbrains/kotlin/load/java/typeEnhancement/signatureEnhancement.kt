@@ -245,6 +245,17 @@ class SignatureEnhancement(
         }
     }
 
+    /*
+     * This method should be only used for type enhancement of base classes' type arguments:
+     *      class A extends B<@NotNull Integer> {}
+     */
+    fun enhanceSuperType(type: KotlinType, context: LazyJavaResolverContext) =
+        SignatureParts(
+            null, type, emptyList(), false, context,
+            AnnotationQualifierApplicabilityType.TYPE_USE,
+            typeParameterBounds = true
+        ).enhance().type
+
     private fun ValueParameterDescriptor.hasDefaultValueInAnnotation(type: KotlinType) =
         when (val defaultValue = getDefaultValueFromAnnotation()) {
             is StringDefaultValue -> type.lexicalCastFrom(defaultValue.value) != null
