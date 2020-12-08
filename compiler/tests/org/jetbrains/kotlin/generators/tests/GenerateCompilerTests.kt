@@ -181,11 +181,6 @@ fun main(args: Array<String>) {
                 model("parseCodeFragment/block", testMethod = "doBlockCodeFragmentParsingTest", extension = "kt")
             }
 
-            GenerateRangesCodegenTestData.main(args)
-            GenerateInRangeExpressionTestData.main(args)
-            GenerateSteppedRangesCodegenTestData.main(args)
-            GeneratePrimitiveVsObjectEqualityTestData.main(args)
-
             testClass<AbstractBlackBoxCodegenTest> {
                 model("codegen/box", targetBackend = TargetBackend.JVM)
             }

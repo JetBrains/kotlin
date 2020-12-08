@@ -272,7 +272,10 @@ projectTest("quickTest", true) {
 
 testsJar {}
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt")
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt") {
+    dependsOn(":compiler:generateTestData")
+}
+
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 
 extensions.getByType(NodeExtension::class.java).nodeModulesDir = testDataDir

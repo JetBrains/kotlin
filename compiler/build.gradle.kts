@@ -98,6 +98,9 @@ projectTest(parallel = true) {
     }
 }
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt")
+val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt")
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt") {
+    dependsOn(generateTestData)
+}
 
 testsJar()
