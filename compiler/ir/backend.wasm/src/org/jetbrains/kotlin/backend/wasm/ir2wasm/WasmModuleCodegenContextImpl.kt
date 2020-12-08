@@ -33,6 +33,10 @@ class WasmModuleCodegenContextImpl(
         return with(typeTransformer) { irType.toWasmValueType() }
     }
 
+    override fun transformFieldType(irType: IrType): WasmType {
+        return with(typeTransformer) { irType.toWasmFieldType() }
+    }
+
     override fun transformBoxedType(irType: IrType): WasmType {
         return with(typeTransformer) { irType.toBoxedInlineClassType() }
     }

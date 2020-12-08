@@ -194,7 +194,7 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                 fields = declaration.allFields(irBuiltIns).map {
                     WasmStructFieldDeclaration(
                         name = it.name.toString(),
-                        type = context.transformType(it.type),
+                        type = context.transformFieldType(it.type),
                         isMutable = true
                     )
                 }

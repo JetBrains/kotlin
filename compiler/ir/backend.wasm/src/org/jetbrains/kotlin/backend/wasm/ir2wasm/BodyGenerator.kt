@@ -77,9 +77,22 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     private fun generateInstanceFieldAccess(field: IrField) {
-        body.buildStructGet(
-            context.referenceGcType(field.parentAsClass.symbol),
-            context.getStructFieldRef(field)
+        val opcode = when (field.type) {
+            irBuiltIns.charType ->
+                WasmOp.STRUCT_GET_U
+
+            irBuiltIns.booleanType,
+            irBuiltIns.byteType,
+            irBuiltIns.shortType ->
+                WasmOp.STRUCT_GET_S
+
+            else -> WasmOp.STRUCT_GET
+        }
+
+        body.buildInstr(
+            opcode,
+            WasmImmediate.GcType(context.referenceGcType(field.parentAsClass.symbol)),
+            WasmImmediate.StructFieldIdx(context.getStructFieldRef(field))
         )
     }
 
