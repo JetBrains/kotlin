@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.COLLECTION_LITERAL_CALL
 import org.jetbrains.kotlin.resolve.calls.CallResolver
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
@@ -94,7 +94,7 @@ class CollectionLiteralResolver(
     }
 
     private fun getArrayFunctionCallName(expectedType: KotlinType): Name {
-        if (NO_EXPECTED_TYPE === expectedType ||
+        if (TypeUtils.noExpectedType(expectedType) ||
             !(KotlinBuiltIns.isPrimitiveArray(expectedType) || KotlinBuiltIns.isUnsignedArrayType(expectedType))
         ) {
             return ArrayFqNames.ARRAY_OF_FUNCTION
