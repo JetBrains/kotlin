@@ -327,10 +327,23 @@ class SignatureEnhancement(
             isFromStarProjection: Boolean
         ): JavaTypeQualifiers {
             val composedAnnotation =
-                if (isHeadTypeConstructor && typeContainer != null)
+                if (isHeadTypeConstructor && typeContainer is TypeParameterDescriptor) {
                     composeAnnotations(typeContainer.annotations, annotations)
-                else
-                    annotations
+                } else if (isHeadTypeConstructor && typeContainer != null) {
+                    val filteredContainerAnnotations = typeContainer.annotations.filter {
+                        val (_, targets) = annotationTypeQualifierResolver.resolveAnnotation(it) ?: return@filter false
+                        /*
+                         * We don't apply container type use annotations to avoid double applying them like with arrays:
+                         *      @NotNull Integer [] f15();
+                         * Otherwise, in the example above we would apply `@NotNull` to `Integer` (i.e. array element; as TYPE_USE annotation)
+                         * and to entire array (as METHOD annotation).
+                         * In other words, we prefer TYPE_USE target of an annotation, and apply the annotation only according to it, if it's present.
+                         * See KT-24392 for more details.
+                         */
+                        AnnotationQualifierApplicabilityType.TYPE_USE !in targets
+                    }
+                    composeAnnotations(Annotations.create(filteredContainerAnnotations), annotations)
+                } else annotations
 
             fun <T : Any> List<FqName>.ifPresent(qualifier: T) =
                 if (any { composedAnnotation.findAnnotation(it) != null }) qualifier else null
