@@ -155,6 +155,18 @@ public class LocalVariableTestGenerated extends AbstractLocalVariableTest {
         }
 
         @Test
+        @TestMetadata("inlineLocalsStateMachineTransform.kt")
+        public void testInlineLocalsStateMachineTransform() throws Exception {
+            runTest("compiler/testData/debug/localVariables/suspend/inlineLocalsStateMachineTransform.kt");
+        }
+
+        @Test
+        @TestMetadata("localsStateMachineTransform.kt")
+        public void testLocalsStateMachineTransform() throws Exception {
+            runTest("compiler/testData/debug/localVariables/suspend/localsStateMachineTransform.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/debug/localVariables/suspend/simple.kt");
