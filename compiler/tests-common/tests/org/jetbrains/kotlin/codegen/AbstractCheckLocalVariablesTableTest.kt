@@ -16,13 +16,12 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.org.objectweb.asm.*
-import org.junit.ComparisonFailure
+import org.junit.Assert
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -82,13 +81,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
     ) {
         val actual = getActualVariablesAsString(actualLocalVariables)
         val expected = getExpectedVariablesAsString(testFileLines)
-        if (!Comparing.equal(expected, actual)) {
-            throw ComparisonFailure(
-                "Variables differ from expected",
-                expected,
-                actual
-            )
-        }
+        Assert.assertEquals(expected, actual)
     }
 
     private fun getActualVariablesAsString(list: List<LocalVariable>) = if (backend.isIR) {

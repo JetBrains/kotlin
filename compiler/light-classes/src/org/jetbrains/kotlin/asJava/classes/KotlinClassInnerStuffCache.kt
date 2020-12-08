@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.asJava.classes
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.psi.*
-import com.intellij.psi.augment.PsiAugmentProvider
-import com.intellij.psi.impl.PsiCachedValueImpl
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.light.LightMethod
@@ -17,12 +15,9 @@ import com.intellij.psi.impl.source.PsiExtensibleClass
 import com.intellij.psi.scope.ElementClassHint
 import com.intellij.psi.scope.NameHint
 import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.ArrayUtil
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.utils.SmartList
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.locks.ReentrantLock
 
 class KotlinClassInnerStuffCache(
     private val myClass: PsiExtensibleClass,
@@ -102,19 +97,19 @@ class KotlinClassInnerStuffCache(
 
     private fun getAllFields(): Array<PsiField> {
         val own = myClass.ownFields
-        val ext = PsiAugmentProvider.collectAugments(myClass, PsiField::class.java)
+        val ext = collectAugments(myClass, PsiField::class.java)
         return ArrayUtil.mergeCollections(own, ext, PsiField.ARRAY_FACTORY)
     }
 
     private fun getAllMethods(): Array<PsiMethod> {
         val own = myClass.ownMethods
-        val ext = PsiAugmentProvider.collectAugments(myClass, PsiMethod::class.java)
+        val ext = collectAugments(myClass, PsiMethod::class.java)
         return ArrayUtil.mergeCollections(own, ext, PsiMethod.ARRAY_FACTORY)
     }
 
     private fun getAllInnerClasses(): Array<PsiClass> {
         val own = myClass.ownInnerClasses
-        val ext = PsiAugmentProvider.collectAugments(myClass, PsiClass::class.java)
+        val ext = collectAugments(myClass, PsiClass::class.java)
         return ArrayUtil.mergeCollections(own, ext, PsiClass.ARRAY_FACTORY)
     }
 

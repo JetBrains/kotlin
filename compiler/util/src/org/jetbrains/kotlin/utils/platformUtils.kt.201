@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.utils
 
+import com.intellij.util.containers.ConcurrentMultiMap
 import com.intellij.util.containers.Interner
+import com.intellij.util.containers.MultiMap
 import com.intellij.util.containers.StringInterner
 
 fun createStringInterner(): Interner<String> =
     StringInterner()
+
+fun <K, V> createConcurrentMultiMap(): MultiMap<K, V> =
+    ConcurrentMultiMap<K, V>()

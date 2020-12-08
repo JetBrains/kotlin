@@ -45,7 +45,8 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         // indices of roots that are known to contain this package
         // if this list contains [1, 3, 5] then roots with indices 1, 3 and 5 are known to contain this package, 2 and 4 are known not to (no information about roots 6 or higher)
         // if this list contains maxIndex that means that all roots containing this package are known
-        val rootIndices = IntArrayList(2)
+        @Suppress("DEPRECATION") // TODO: fix deprecation
+        val rootIndices = com.intellij.util.containers.IntArrayList(2)
     }
 
     // root "Cache" object corresponds to DefaultPackage which exists in every root. Roots with non-default fqname are also listed here but
