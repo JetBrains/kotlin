@@ -56,26 +56,37 @@ abstract class AbstractCustomJDKBlackBoxCodegenTest : AbstractBlackBoxCodegenTes
         val fileFactory = generateClassesInFile()
         fileFactory.writeAll(tmpdir, null)
 
-        val jdkHome = getJdkHome()
-        val javaExe = File(jdkHome, "bin/java.exe").takeIf(File::exists)
-            ?: File(jdkHome, "bin/java").takeIf(File::exists)
-            ?: error("Can't find 'java' executable in $jdkHome")
-
-
-        val command = arrayOf(
-            javaExe.absolutePath,
-            "-ea",
-            *getAdditionalJvmArgs().toTypedArray(),
-            "-classpath",
-            listOfNotNull(
+        runJvmInstance(
+            getJdkHome(), getAdditionalJvmArgs(),
+            classPath = listOfNotNull(
                 tmpdir, ForTestCompileRuntime.runtimeJarForTests(),
                 javaClassesOutputDirectory
-            ).joinToString(File.pathSeparator, transform = File::getAbsolutePath),
-            getFacadeFqName(myFiles.psiFile)
+            ),
+            classNameToRun = getFacadeFqName(myFiles.psiFile)!!
         )
-
-        val process = ProcessBuilder(*command).inheritIO().start()
-        process.waitFor(1, TimeUnit.MINUTES)
-        assertEquals(0, process.exitValue())
     }
+}
+
+internal fun runJvmInstance(
+    jdkHome: File,
+    additionalArgs: List<String>,
+    classPath: List<File>,
+    classNameToRun: String,
+) {
+    val javaExe = File(jdkHome, "bin/java.exe").takeIf(File::exists)
+        ?: File(jdkHome, "bin/java").takeIf(File::exists)
+        ?: error("Can't find 'java' executable in $jdkHome")
+
+    val command = arrayOf(
+        javaExe.absolutePath,
+        "-ea",
+        *additionalArgs.toTypedArray(),
+        "-classpath",
+        classPath.joinToString(File.pathSeparator, transform = File::getAbsolutePath),
+        classNameToRun,
+    )
+
+    val process = ProcessBuilder(*command).inheritIO().start()
+    process.waitFor(1, TimeUnit.MINUTES)
+    AbstractBlackBoxCodegenTest.assertEquals(0, process.exitValue())
 }
