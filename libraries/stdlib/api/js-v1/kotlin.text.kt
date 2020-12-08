@@ -183,6 +183,30 @@ public inline fun kotlin.text.StringBuilder.deleteAt(index: kotlin.Int): kotlin.
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.text.StringBuilder.deleteRange(startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.text.StringBuilder
 
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+public fun kotlin.Int.digitToChar(): kotlin.Char
+
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+public fun kotlin.Int.digitToChar(radix: kotlin.Int): kotlin.Char
+
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+public fun kotlin.Char.digitToInt(): kotlin.Int
+
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+public fun kotlin.Char.digitToInt(radix: kotlin.Int): kotlin.Int
+
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+public fun kotlin.Char.digitToIntOrNull(): kotlin.Int?
+
+@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.4")
+public fun kotlin.Char.digitToIntOrNull(radix: kotlin.Int): kotlin.Int?
+
 public fun kotlin.CharSequence.drop(n: kotlin.Int): kotlin.CharSequence
 
 public fun kotlin.String.drop(n: kotlin.Int): kotlin.String
