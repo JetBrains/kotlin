@@ -1,3 +1,4 @@
+// !SKIP_JAVAC
 // !LANGUAGE: +InlineClasses
 
 package kotlin.jvm

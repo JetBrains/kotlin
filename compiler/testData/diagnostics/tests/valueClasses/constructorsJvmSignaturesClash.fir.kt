@@ -1,3 +1,4 @@
+// !SKIP_JAVAC
 // !LANGUAGE: +InlineClasses
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
