@@ -109,13 +109,17 @@ abstract class BasicIrBoxTest(
             if (!isMainModule) it.replace("_v5.js", "/") else it
         }
 
+        val logger = KotlinJsTestLogger()
+
         if (isMainModule) {
+            logger.logFile("Output JS", outputFile)
+
             val debugMode = getBoolean("kotlin.js.debugMode")
 
             val phaseConfig = if (debugMode) {
                 val allPhasesSet = jsPhases.toPhaseMap().values.toSet()
                 val dumpOutputDir = File(outputFile.parent, outputFile.nameWithoutExtension + "-irdump")
-                println("\n ------ Dumping phases to file://$dumpOutputDir")
+                logger.logFile("Dumping phasesTo", dumpOutputDir)
                 PhaseConfig(
                     jsPhases,
                     dumpToDirectory = dumpOutputDir.path,
@@ -150,8 +154,9 @@ abstract class BasicIrBoxTest(
                 compiledModule.dceJsCode?.writeTo(dceOutputFile, config)
 
                 if (generateDts) {
-                    val dtsFile = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")
-                    dtsFile?.write(compiledModule.tsDefinitions ?: error("No ts definitions"))
+                    val dtsFile = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")!!
+                    logger.logFile("Output d.ts", dtsFile)
+                    dtsFile.write(compiledModule.tsDefinitions ?: error("No ts definitions"))
                 }
             }
 
@@ -184,6 +189,8 @@ abstract class BasicIrBoxTest(
                 outputKlibPath = actualOutputFile,
                 nopack = true
             )
+
+            logger.logFile("Output klib", File(actualOutputFile))
 
             compilationCache[outputFile.name.replace(".js", ".meta.js")] = actualOutputFile
         }

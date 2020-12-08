@@ -119,6 +119,10 @@ abstract class BasicBoxTest(
 
     open fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String = "") {
         val file = File(filePath)
+
+        val logger = KotlinJsTestLogger()
+        logger.logFile("Test file", file)
+
         val outputDir = getOutputDir(file)
         val dceOutputDir = getOutputDir(file, testGroupOutputDirForMinification)
         val pirOutputDir = getOutputDir(file, testGroupOutputDirForPir)
@@ -188,6 +192,8 @@ abstract class BasicBoxTest(
                 val dceOutputFileName = module.outputFileName(dceOutputDir) + ".js"
                 val pirOutputFileName = module.outputFileName(pirOutputDir) + ".js"
                 val isMainModule = mainModuleName == module.name
+
+                logger.logFile("Output file", File(outputFileName))
                 generateJavaScriptFile(
                     testFactory.tmpDir,
                     file.parent,
@@ -1115,3 +1121,13 @@ fun KotlinTestWithEnvironment.createPsiFile(fileName: String): KtFile {
 }
 
 fun KotlinTestWithEnvironment.createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)
+
+class KotlinJsTestLogger {
+    val verbose = getBoolean("kotlin.js.test.verbose")
+
+    fun logFile(description: String, file: File) {
+        if (verbose) {
+            println("TEST_LOG: $description file://${file.absolutePath}")
+        }
+    }
+}
