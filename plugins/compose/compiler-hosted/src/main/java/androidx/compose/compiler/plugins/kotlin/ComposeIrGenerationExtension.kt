@@ -37,7 +37,7 @@ import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 class ComposeIrGenerationExtension(
     @Suppress("unused") private val liveLiteralsEnabled: Boolean = false,
     private val sourceInformationEnabled: Boolean = true,
-    private val intrinsicRememberEnabled: Boolean = false,
+    private val intrinsicRememberEnabled: Boolean = true,
 ) : IrGenerationExtension {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override fun generate(
