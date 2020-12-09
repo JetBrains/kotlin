@@ -1,4 +1,4 @@
-// !LANGUAGE:
+// !LANGUAGE: -ImprovementsAroundTypeEnhancement
 
 package test;
 

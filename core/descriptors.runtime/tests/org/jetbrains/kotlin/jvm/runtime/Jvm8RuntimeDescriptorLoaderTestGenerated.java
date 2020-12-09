@@ -59,6 +59,11 @@ public class Jvm8RuntimeDescriptorLoaderTestGenerated extends AbstractJvm8Runtim
         public void testBasic() throws Exception {
             runTest("compiler/testData/loadJava8/compiledJava/typeParameterAnnotations/Basic.java");
         }
+
+        @TestMetadata("Basic_DisabledImprovements.java")
+        public void testBasic_DisabledImprovements() throws Exception {
+            runTest("compiler/testData/loadJava8/compiledJava/typeParameterAnnotations/Basic_DisabledImprovements.java");
+        }
     }
 
     @TestMetadata("compiler/testData/loadJava8/compiledJava/typeUseAnnotations")
@@ -81,6 +86,11 @@ public class Jvm8RuntimeDescriptorLoaderTestGenerated extends AbstractJvm8Runtim
         @TestMetadata("Basic.java")
         public void testBasic() throws Exception {
             runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/Basic.java");
+        }
+
+        @TestMetadata("Basic_DisabledImprovements.java")
+        public void testBasic_DisabledImprovements() throws Exception {
+            runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/Basic_DisabledImprovements.java");
         }
 
         @TestMetadata("ClassTypeParameterBounds.java")

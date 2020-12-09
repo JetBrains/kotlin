@@ -26,7 +26,7 @@ public open class Basic_DisabledImprovements</*0*/ T : @org.jetbrains.annotation
         public abstract fun f5(/*0*/ p: test.Basic_DisabledImprovements.G<*>!): kotlin.Unit
         public abstract fun f6(/*0*/ p: test.Basic_DisabledImprovements.G<out @org.jetbrains.annotations.Nullable kotlin.Any?>!): kotlin.Unit
         public abstract fun f7(/*0*/ p: test.Basic_DisabledImprovements.G<@org.jetbrains.annotations.NotNull test.Basic_DisabledImprovements.A.B<*, *>>!): kotlin.Unit
-        public abstract fun f8(): test.Basic_DisabledImprovements.G<test.Basic_DisabledImprovements.A.B<*, *>!>!
+        public abstract fun f81(): test.Basic_DisabledImprovements.G<test.Basic_DisabledImprovements.A.B<*, *>!>!
         public abstract fun f9(): test.Basic_DisabledImprovements.G<@org.jetbrains.annotations.Nullable test.Basic_DisabledImprovements.A.B<*, *>?>!
     }
 }

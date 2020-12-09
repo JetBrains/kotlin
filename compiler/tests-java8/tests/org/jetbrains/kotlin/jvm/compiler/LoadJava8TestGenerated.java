@@ -61,6 +61,11 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
             public void testBasic() throws Exception {
                 runTest("compiler/testData/loadJava8/compiledJava/typeParameterAnnotations/Basic.java");
             }
+
+            @TestMetadata("Basic_DisabledImprovements.java")
+            public void testBasic_DisabledImprovements() throws Exception {
+                runTest("compiler/testData/loadJava8/compiledJava/typeParameterAnnotations/Basic_DisabledImprovements.java");
+            }
         }
 
         @TestMetadata("compiler/testData/loadJava8/compiledJava/typeUseAnnotations")
@@ -83,6 +88,11 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
             @TestMetadata("Basic.java")
             public void testBasic() throws Exception {
                 runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/Basic.java");
+            }
+
+            @TestMetadata("Basic_DisabledImprovements.java")
+            public void testBasic_DisabledImprovements() throws Exception {
+                runTest("compiler/testData/loadJava8/compiledJava/typeUseAnnotations/Basic_DisabledImprovements.java");
             }
 
             @TestMetadata("ClassTypeParameterBounds.java")
@@ -150,6 +160,11 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
             public void testBasic() throws Exception {
                 runTest("compiler/testData/loadJava8/sourceJava/typeParameterAnnotations/Basic.java");
             }
+
+            @TestMetadata("Basic_DisabledImprovements.java")
+            public void testBasic_DisabledImprovements() throws Exception {
+                runTest("compiler/testData/loadJava8/sourceJava/typeParameterAnnotations/Basic_DisabledImprovements.java");
+            }
         }
 
         @TestMetadata("compiler/testData/loadJava8/sourceJava/typeUseAnnotations")
@@ -172,6 +187,11 @@ public class LoadJava8TestGenerated extends AbstractLoadJava8Test {
             @TestMetadata("Basic.java")
             public void testBasic() throws Exception {
                 runTest("compiler/testData/loadJava8/sourceJava/typeUseAnnotations/Basic.java");
+            }
+
+            @TestMetadata("Basic_DisabledImprovements.java")
+            public void testBasic_DisabledImprovements() throws Exception {
+                runTest("compiler/testData/loadJava8/sourceJava/typeUseAnnotations/Basic_DisabledImprovements.java");
             }
 
             @TestMetadata("ClassTypeParameterBounds.java")

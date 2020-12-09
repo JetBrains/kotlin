@@ -83,9 +83,10 @@ class BinaryJavaClass(
     override fun isFromSourceCodeInScope(scope: SearchScope): Boolean = false
 
     override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, descriptor: String?, visible: Boolean): AnnotationVisitor? {
-        val typeReference = TypeReference(typeRef)
         if (descriptor == null)
             return null
+
+        val typeReference = TypeReference(typeRef)
 
         if (typePath != null) {
             val translatedPath = BinaryJavaAnnotation.translatePath(typePath)
