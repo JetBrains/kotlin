@@ -5,21 +5,35 @@
 
 package org.jetbrains.kotlin.idea.debugger.test
 
-import com.intellij.debugger.impl.DescriptorTestCase
-import com.intellij.debugger.impl.OutputChecker
+import com.intellij.debugger.DebuggerManagerEx
+import com.intellij.debugger.DefaultDebugEnvironment
+import com.intellij.debugger.engine.DebugProcessImpl
+import com.intellij.debugger.impl.*
+import com.intellij.debugger.settings.DebuggerSettings
+import com.intellij.execution.ExecutionException
+import com.intellij.execution.configurations.JavaCommandLineState
 import com.intellij.execution.configurations.JavaParameters
+import com.intellij.execution.executors.DefaultDebugExecutor
+import com.intellij.execution.process.ProcessAdapter
+import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.process.ProcessOutputTypes
+import com.intellij.execution.runners.ExecutionEnvironmentBuilder
+import com.intellij.execution.target.TargetEnvironmentConfiguration
+import com.intellij.execution.target.TargetEnvironmentRequest
+import com.intellij.execution.target.TargetedCommandLineBuilder
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.util.ThrowableRunnable
+import com.intellij.util.ui.UIUtil
 import com.intellij.xdebugger.XDebugSession
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
@@ -134,6 +148,65 @@ abstract class KotlinDescriptorTestCase : DescriptorTestCase() {
 
         createLocalProcess(mainClassName)
         doMultiFileTest(testFiles, preferences)
+    }
+
+    override fun createLocalProcess(className: String?) {
+        LOG.assertTrue(myDebugProcess == null)
+        myDebuggerSession = createLocalProcess(DebuggerSettings.SOCKET_TRANSPORT, createJavaParameters(className))
+        myDebugProcess = myDebuggerSession.process
+    }
+
+    override fun createLocalProcess(transport: Int, javaParameters: JavaParameters): DebuggerSession? {
+        createBreakpoints(javaParameters.mainClass)
+        DebuggerSettings.getInstance().transport = transport
+
+        val debuggerRunnerSettings = GenericDebuggerRunnerSettings()
+        debuggerRunnerSettings.setLocal(true)
+        debuggerRunnerSettings.transport = transport
+        debuggerRunnerSettings.debugPort = if (transport == DebuggerSettings.SOCKET_TRANSPORT) "0" else DEFAULT_ADDRESS.toString()
+
+        val environment = ExecutionEnvironmentBuilder(myProject, DefaultDebugExecutor.getDebugExecutorInstance())
+            .runnerSettings(debuggerRunnerSettings)
+            .runProfile(object : MockConfiguration() {
+                override fun getProject() = myProject
+            })
+            .build()
+
+        val javaCommandLineState: JavaCommandLineState = object : JavaCommandLineState(environment) {
+            override fun createJavaParameters() = javaParameters
+
+            override fun createTargetedCommandLine(
+                request: TargetEnvironmentRequest,
+                configuration: TargetEnvironmentConfiguration?
+            ): TargetedCommandLineBuilder {
+                return getJavaParameters().toCommandLine(request, configuration)
+            }
+        }
+
+        val debugParameters = DebuggerManagerImpl.createDebugParameters(javaCommandLineState.javaParameters, debuggerRunnerSettings, true)
+        lateinit var debuggerSession: DebuggerSession
+
+        UIUtil.invokeAndWaitIfNeeded(Runnable {
+            try {
+                val env = javaCommandLineState.environment
+                env.putUserData(DefaultDebugEnvironment.DEBUGGER_TRACE_MODE, traceMode)
+                debuggerSession = attachVirtualMachine(javaCommandLineState, env, debugParameters, false)
+            } catch (e: ExecutionException) {
+                fail(e.message)
+            }
+        })
+
+        val processHandler = debuggerSession.process.processHandler
+        debuggerSession.process.addProcessListener(object : ProcessAdapter() {
+            override fun onTextAvailable(event: ProcessEvent, outputType: Key<*>) {
+                print(event.text, outputType)
+            }
+        })
+
+        val process = DebuggerManagerEx.getInstanceEx(myProject).getDebugProcess(processHandler) as DebugProcessImpl
+        assertNotNull(process)
+
+        return debuggerSession
     }
 
     open fun addMavenDependency(compilerFacility: DebuggerTestCompilerFacility, library: String) {
