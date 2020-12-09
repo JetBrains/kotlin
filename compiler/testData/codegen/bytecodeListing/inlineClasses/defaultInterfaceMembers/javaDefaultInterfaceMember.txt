@@ -28,6 +28,7 @@ public interface KFooUnrelated {
     public abstract method foo(): void
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class TestBar1 {
     // source: 'javaDefaultInterfaceMember.kt'
@@ -88,6 +89,7 @@ public final class TestFoo1 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class TestFoo2 {
     // source: 'javaDefaultInterfaceMember.kt'
@@ -106,6 +108,7 @@ public final class TestFoo2 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class TestFoo3 {
     // source: 'javaDefaultInterfaceMember.kt'

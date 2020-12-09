@@ -349,6 +349,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionByDelegationWithFullJdk.kt");
         }
 
+        @TestMetadata("collectionWithInternalRemove.kt")
+        public void testCollectionWithInternalRemove() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionWithInternalRemove.kt");
+        }
+
         @TestMetadata("collectionsWithFullJdk.kt")
         public void testCollectionsWithFullJdk() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/collectionStubs/collectionsWithFullJdk.kt");
