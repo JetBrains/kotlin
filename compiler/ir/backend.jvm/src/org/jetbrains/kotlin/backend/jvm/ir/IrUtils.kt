@@ -379,18 +379,21 @@ fun collectVisibleTypeParameters(scopeOwner: IrTypeParametersContainer): Set<IrT
         .flatMap { it.typeParameters }
         .toSet()
 
-fun IrClassSymbol.rawType(context: JvmBackendContext): IrSimpleType {
-    // On the IR backend we represent raw types as star projected types with a special synthetic annotation.
-    // See `TypeTranslator.translateTypeAnnotations`.
-    val rawTypeAnnotation = IrConstructorCallImpl.fromSymbolOwner(
-        context.generatorExtensions.rawTypeAnnotationConstructor!!.constructedClassType,
-        context.generatorExtensions.rawTypeAnnotationConstructor.symbol
+// On the IR backend we represent raw types as star projected types with a special synthetic annotation.
+// See `TypeTranslator.translateTypeAnnotations`.
+private fun JvmBackendContext.makeRawTypeAnnotation() =
+    IrConstructorCallImpl.fromSymbolOwner(
+        generatorExtensions.rawTypeAnnotationConstructor!!.constructedClassType,
+        generatorExtensions.rawTypeAnnotationConstructor.symbol
     )
 
-    return IrSimpleTypeImpl(
+fun IrClassSymbol.rawDefaultType(context: JvmBackendContext): IrType =
+    this.defaultType.addAnnotations(listOf(context.makeRawTypeAnnotation()))
+
+fun IrClassSymbol.rawStarProjectedType(context: JvmBackendContext): IrSimpleType =
+    IrSimpleTypeImpl(
         this,
         hasQuestionMark = false,
         arguments = owner.typeParameters.map { IrStarProjectionImpl },
-        annotations = listOf(rawTypeAnnotation)
+        annotations = listOf(context.makeRawTypeAnnotation())
     )
-}

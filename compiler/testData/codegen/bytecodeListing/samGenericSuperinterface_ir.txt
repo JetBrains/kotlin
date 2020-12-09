@@ -1,0 +1,15 @@
+@kotlin.Metadata
+final class<null>  SamGenericSuperinterfaceKt$sam$Sam$0 {
+    // source: 'samGenericSuperinterface.kt'
+    <null> method <init>(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): void
+    public synthetic final <null> method get(): java.lang.Object
+    private synthetic final field <null> function: kotlin.jvm.functions.Function0
+    final inner class SamGenericSuperinterfaceKt$sam$Sam$0
+}
+
+@kotlin.Metadata
+public final class<null>  SamGenericSuperinterfaceKt {
+    // source: 'samGenericSuperinterface.kt'
+    public final static <<T:Ljava/lang/Object;>(Lkotlin/jvm/functions/Function0<+TT;>;)TT;> method genericSam(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0): java.lang.Object
+    final inner class SamGenericSuperinterfaceKt$sam$Sam$0
+}

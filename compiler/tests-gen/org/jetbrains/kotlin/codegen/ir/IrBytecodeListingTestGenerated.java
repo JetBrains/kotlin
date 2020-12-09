@@ -214,6 +214,16 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         runTest("compiler/testData/codegen/bytecodeListing/samAdapterAndInlinedOne.kt");
     }
 
+    @TestMetadata("samGenericSuperinterface.kt")
+    public void testSamGenericSuperinterface() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/samGenericSuperinterface.kt");
+    }
+
+    @TestMetadata("samSpecializedGenericSuperinterface.kt")
+    public void testSamSpecializedGenericSuperinterface() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/samSpecializedGenericSuperinterface.kt");
+    }
+
     @TestMetadata("varargsBridge.kt")
     public void testVarargsBridge() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/varargsBridge.kt");
