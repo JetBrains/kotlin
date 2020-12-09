@@ -16,7 +16,9 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
     init {
         MAP.put(
             SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED,
-            "Inline classes are not supported by kotlinx.serialization yet"
+            "Inline classes require runtime serialization library version at least {0}, while your classpath has {1}.",
+            Renderers.STRING,
+            Renderers.STRING,
         )
         MAP.put(
             SerializationErrors.PLUGIN_IS_NOT_ENABLED,
