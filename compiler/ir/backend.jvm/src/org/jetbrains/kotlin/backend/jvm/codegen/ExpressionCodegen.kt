@@ -11,11 +11,13 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
 import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getNameForReceiverParameter
@@ -628,7 +630,25 @@ class ExpressionCodegen(
         expression.markLineNumber(startOffset = true)
         val type = frameMap.typeOf(expression.symbol)
         mv.load(findLocalIndex(expression.symbol), type)
+        unboxResultIfNeeded(expression)
         return MaterialValue(this, type, expression.type)
+    }
+
+    // We do not mangle functions if Result is the only parameter of the function,
+    // thus, if the function overrides generic parameter, its argument is boxed and there is no
+    // bridge to unbox it. Instead, we unbox it in the non-mangled function manually.
+    private fun unboxResultIfNeeded(arg: IrGetValue) {
+        if (arg.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) return
+        if (irFunction !is IrSimpleFunction) return
+
+        val index = (arg.symbol as? IrValueParameterSymbol)?.owner?.index ?: return
+        val genericOrAnyOverride = irFunction.overriddenSymbols.any {
+            val overriddenParam = if (index < 0) it.owner.dispatchReceiverParameter!! else it.owner.valueParameters[index]
+            overriddenParam.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME
+        } || irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+        if (!genericOrAnyOverride) return
+
+        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.toIrBasedKotlinType(), mv)
     }
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
