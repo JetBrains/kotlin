@@ -227,7 +227,7 @@ class IncrementalJvmCompilerRunner(
         dirtyFiles.addByDirtySymbols(androidLayoutChanges)
         dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
-
+        dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNamesForceRecompile)
         return CompilationMode.Incremental(dirtyFiles)
     }
 

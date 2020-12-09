@@ -125,7 +125,7 @@ class IncrementalJsCompilerRunner(
         val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles)
         dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
-
+        dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNamesForceRecompile)
         return CompilationMode.Incremental(dirtyFiles)
     }
 
