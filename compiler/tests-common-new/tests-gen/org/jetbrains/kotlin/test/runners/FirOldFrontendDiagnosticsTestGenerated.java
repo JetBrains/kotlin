@@ -29185,6 +29185,128 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/unsignedTypes")
+        @TestDataPath("$PROJECT_ROOT")
+        public class UnsignedTypes extends AbstractFirDiagnosticTest {
+            @Test
+            public void testAllFilesPresentInUnsignedTypes() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/unsignedTypes"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("allowedVarargsOfUnsignedTypes.kt")
+            public void testAllowedVarargsOfUnsignedTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/allowedVarargsOfUnsignedTypes.kt");
+            }
+
+            @Test
+            @TestMetadata("callDefaultConstructorOfUnsignedType.kt")
+            public void testCallDefaultConstructorOfUnsignedType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/callDefaultConstructorOfUnsignedType.kt");
+            }
+
+            @Test
+            @TestMetadata("explicitUnsignedLongTypeCheck.kt")
+            public void testExplicitUnsignedLongTypeCheck() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/explicitUnsignedLongTypeCheck.kt");
+            }
+
+            @Test
+            @TestMetadata("forbiddenEqualsOnUnsignedTypes.kt")
+            public void testForbiddenEqualsOnUnsignedTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/forbiddenEqualsOnUnsignedTypes.kt");
+            }
+
+            @Test
+            @TestMetadata("lateinitUnsignedType.kt")
+            public void testLateinitUnsignedType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/lateinitUnsignedType.kt");
+            }
+
+            @Test
+            @TestMetadata("overloadResolutionOfBasicOperations.kt")
+            public void testOverloadResolutionOfBasicOperations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/overloadResolutionOfBasicOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("unsignedLiteralsInsideConstVals.kt")
+            public void testUnsignedLiteralsInsideConstVals() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/unsignedLiteralsInsideConstVals.kt");
+            }
+
+            @Test
+            @TestMetadata("unsignedLiteralsOn1_2.kt")
+            public void testUnsignedLiteralsOn1_2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/unsignedLiteralsOn1_2.kt");
+            }
+
+            @Test
+            @TestMetadata("unsignedLiteralsOverflowSignedBorder.kt")
+            public void testUnsignedLiteralsOverflowSignedBorder() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/unsignedLiteralsOverflowSignedBorder.kt");
+            }
+
+            @Test
+            @TestMetadata("unsignedLiteralsTypeCheck.kt")
+            public void testUnsignedLiteralsTypeCheck() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/unsignedLiteralsTypeCheck.kt");
+            }
+
+            @Test
+            @TestMetadata("varargTypeToArrayTypeCheck.kt")
+            public void testVarargTypeToArrayTypeCheck() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/varargTypeToArrayTypeCheck.kt");
+            }
+
+            @Test
+            @TestMetadata("wrongLongSuffixForULong.kt")
+            public void testWrongLongSuffixForULong() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/unsignedTypes/wrongLongSuffixForULong.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/unsignedTypes/conversions")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Conversions extends AbstractFirDiagnosticTest {
+                @Test
+                public void testAllFilesPresentInConversions() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/unsignedTypes/conversions"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("conversionOfSignedToUnsigned.kt")
+                public void testConversionOfSignedToUnsigned() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/unsignedTypes/conversions/conversionOfSignedToUnsigned.kt");
+                }
+
+                @Test
+                @TestMetadata("inferenceForSignedAndUnsignedTypes.kt")
+                public void testInferenceForSignedAndUnsignedTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/unsignedTypes/conversions/inferenceForSignedAndUnsignedTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("noConversionForUnsignedTypesOnReceiver.kt")
+                public void testNoConversionForUnsignedTypesOnReceiver() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/unsignedTypes/conversions/noConversionForUnsignedTypesOnReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("overloadResolutionForSignedAndUnsignedTypes.kt")
+                public void testOverloadResolutionForSignedAndUnsignedTypes() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/unsignedTypes/conversions/overloadResolutionForSignedAndUnsignedTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("signedToUnsignedConversionWithExpectedType.kt")
+                public void testSignedToUnsignedConversionWithExpectedType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/unsignedTypes/conversions/signedToUnsignedConversionWithExpectedType.kt");
+                }
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/valueClasses")
         @TestDataPath("$PROJECT_ROOT")
         public class ValueClasses extends AbstractFirDiagnosticTest {

@@ -43,27 +43,27 @@ fun takeUIntWithoutAnnotaion(u: UInt) {}
 fun takeIntWithoutAnnotation(i: Int) {}
 
 fun test() {
-    takeUByte(IMPLICIT_INT)
-    takeUByte(EXPLICIT_INT)
+    <!INAPPLICABLE_CANDIDATE!>takeUByte<!>(IMPLICIT_INT)
+    <!INAPPLICABLE_CANDIDATE!>takeUByte<!>(EXPLICIT_INT)
 
-    takeUShort(IMPLICIT_INT)
-    takeUShort(BIGGER_THAN_UBYTE)
+    <!INAPPLICABLE_CANDIDATE!>takeUShort<!>(IMPLICIT_INT)
+    <!INAPPLICABLE_CANDIDATE!>takeUShort<!>(BIGGER_THAN_UBYTE)
 
-    takeUInt(IMPLICIT_INT)
+    <!INAPPLICABLE_CANDIDATE!>takeUInt<!>(IMPLICIT_INT)
 
-    takeULong(IMPLICIT_INT)
+    <!INAPPLICABLE_CANDIDATE!>takeULong<!>(IMPLICIT_INT)
 
-    takeUBytes(IMPLICIT_INT, EXPLICIT_INT, 42u)
+    <!INAPPLICABLE_CANDIDATE!>takeUBytes<!>(IMPLICIT_INT, EXPLICIT_INT, 42u)
 
-    takeLong(<!NI;TYPE_MISMATCH!>IMPLICIT_INT<!>)
+    <!INAPPLICABLE_CANDIDATE!>takeLong<!>(IMPLICIT_INT)
 
     takeIntWithoutAnnotation(IMPLICIT_INT)
 
     takeUIntWithoutAnnotaion(UINT_CONST)
 
-    takeUByte(<!TYPE_MISMATCH!>LONG_CONST<!>)
-    takeUByte(<!TYPE_MISMATCH!>NON_CONST<!>)
-    takeUByte(<!NI;TYPE_MISMATCH, TYPE_MISMATCH!>BIGGER_THAN_UBYTE<!>)
-    takeUByte(<!TYPE_MISMATCH!>UINT_CONST<!>)
-    takeUIntWithoutAnnotaion(<!TYPE_MISMATCH!>IMPLICIT_INT<!>)
+    <!INAPPLICABLE_CANDIDATE!>takeUByte<!>(LONG_CONST)
+    <!INAPPLICABLE_CANDIDATE!>takeUByte<!>(NON_CONST)
+    <!INAPPLICABLE_CANDIDATE!>takeUByte<!>(BIGGER_THAN_UBYTE)
+    <!INAPPLICABLE_CANDIDATE!>takeUByte<!>(UINT_CONST)
+    <!INAPPLICABLE_CANDIDATE!>takeUIntWithoutAnnotaion<!>(IMPLICIT_INT)
 }

@@ -21,8 +21,8 @@ fun test() {
     foo(1) checkType { _<Int>() }
     foo(1u) checkType { _<String>() }
 
-    foo(<!SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED!>2147483648<!>) checkType { _<String>() }
-    foo(<!INTEGER_OVERFLOW!>2147483647 + 1<!>) checkType { _<Int>() }
+    <!NONE_APPLICABLE!>foo<!>(2147483648) <!INAPPLICABLE_CANDIDATE!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+    foo(2147483647 + 1) checkType { _<Int>() }
 
     fooByte(1) checkType { _<Int>() }
     fooByte(1u) checkType { _<String>() }

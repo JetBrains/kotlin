@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.handlers.*
@@ -60,7 +61,8 @@ abstract class AbstractFirDiagnosticTest : AbstractKotlinCompilerTest() {
 
         forTestsMatching(
             "compiler/testData/diagnostics/testsWithStdLib/*" or
-                    "compiler/fir/analysis-tests/testData/resolveWithStdlib/*"
+                    "compiler/fir/analysis-tests/testData/resolveWithStdlib/*" or
+                    "compiler/testData/diagnostics/tests/unsignedTypes/*"
         ) {
             defaultDirectives {
                 +JvmEnvironmentConfigurationDirectives.WITH_STDLIB

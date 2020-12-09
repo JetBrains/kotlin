@@ -88,10 +88,6 @@ fun main(args: Array<String>) {
                 model("diagnostics/testsWithJava15")
             }
 
-            testClass<AbstractDiagnosticsWithUnsignedTypes> {
-                model("diagnostics/testsWithUnsignedTypes")
-            }
-
             testClass<AbstractDiagnosticsTestWithOldJvmBackend> {
                 model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_OLD)
             }
