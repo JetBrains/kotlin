@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.test.runners
 
+import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_API_MODE
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler
@@ -59,6 +62,12 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
         forTestsMatching("compiler/testData/diagnostics/testsWithStdLib/*") {
             defaultDirectives {
                 +WITH_STDLIB
+            }
+        }
+
+        forTestsMatching("compiler/testData/diagnostics/tests/testsWithExplicitApi/*") {
+            defaultDirectives {
+                EXPLICIT_API_MODE with ExplicitApiMode.STRICT
             }
         }
     }

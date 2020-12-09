@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.ConstraintSystemForOverloadResolutionMode
+import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
+@Suppress("RemoveExplicitTypeArguments")
 object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val LANGUAGE by stringDirective(
         description = """
@@ -45,9 +47,13 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Allow using Result in return type position"
     )
 
+    val EXPLICIT_API_MODE by enumDirective<ExplicitApiMode>(
+        "Configures explicit API mode (AnalysisFlags.explicitApiMode)",
+        additionalParser = ExplicitApiMode.Companion::fromString
+    )
+
     // --------------------- Jvm Analysis Flags ---------------------
 
-    @Suppress("RemoveExplicitTypeArguments")
     val JVM_DEFAULT_MODE by enumDirective<JvmDefaultMode>(
         description = "Configures corresponding analysis flag (JvmAnalysisFlags.jvmDefaultMode)",
         additionalParser = JvmDefaultMode.Companion::fromStringOrNull

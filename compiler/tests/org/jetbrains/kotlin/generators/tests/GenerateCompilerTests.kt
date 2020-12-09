@@ -92,10 +92,6 @@ fun main(args: Array<String>) {
                 model("diagnostics/testsWithUnsignedTypes")
             }
 
-            testClass<AbstractDiagnosticsWithExplicitApi> {
-                model("diagnostics/testsWithExplicitApi")
-            }
-
             testClass<AbstractDiagnosticsTestWithOldJvmBackend> {
                 model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_OLD)
             }

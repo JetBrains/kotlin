@@ -28105,6 +28105,76 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/testsWithExplicitApi")
+        @TestDataPath("$PROJECT_ROOT")
+        public class TestsWithExplicitApi extends AbstractFirDiagnosticTest {
+            @Test
+            public void testAllFilesPresentInTestsWithExplicitApi() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testsWithExplicitApi"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("annotations.kt")
+            public void testAnnotations() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/annotations.kt");
+            }
+
+            @Test
+            @TestMetadata("classes.kt")
+            public void testClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/classes.kt");
+            }
+
+            @Test
+            @TestMetadata("companionObject.kt")
+            public void testCompanionObject() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/companionObject.kt");
+            }
+
+            @Test
+            @TestMetadata("constructors.kt")
+            public void testConstructors() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/constructors.kt");
+            }
+
+            @Test
+            @TestMetadata("inlineClasses.kt")
+            public void testInlineClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/inlineClasses.kt");
+            }
+
+            @Test
+            @TestMetadata("interfaces.kt")
+            public void testInterfaces() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/interfaces.kt");
+            }
+
+            @Test
+            @TestMetadata("mustBeEffectivelyPublic.kt")
+            public void testMustBeEffectivelyPublic() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/mustBeEffectivelyPublic.kt");
+            }
+
+            @Test
+            @TestMetadata("properties.kt")
+            public void testProperties() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/properties.kt");
+            }
+
+            @Test
+            @TestMetadata("publishedApi.kt")
+            public void testPublishedApi() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/publishedApi.kt");
+            }
+
+            @Test
+            @TestMetadata("toplevel.kt")
+            public void testToplevel() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testsWithExplicitApi/toplevel.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/thisAndSuper")
         @TestDataPath("$PROJECT_ROOT")
         public class ThisAndSuper extends AbstractFirDiagnosticTest {
