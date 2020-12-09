@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
@@ -62,9 +59,7 @@ internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builde
     callableNames.forEach { name ->
         val callables = mutableListOf<KtCallableSymbol>()
         processFunctionsByName(name) { firSymbol ->
-            (firSymbol.fir as? FirSimpleFunction)?.let { fir ->
-                callables.add(builder.buildFunctionSymbol(fir))
-            }
+            callables.add(builder.buildFunctionSymbol(firSymbol.fir))
         }
         processPropertiesByName(name) { firSymbol ->
             val symbol = when {
