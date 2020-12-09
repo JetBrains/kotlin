@@ -84,10 +84,6 @@ fun main(args: Array<String>) {
                 model("diagnostics/testWithModifiedMockJdk")
             }
 
-            testClass<AbstractDiagnosticsWithJdk9Test> {
-                model("diagnostics/testsWithJava9")
-            }
-
             testClass<AbstractDiagnosticsWithJdk15Test> {
                 model("diagnostics/testsWithJava15")
             }

@@ -1,4 +1,6 @@
-//WITH_RUNTIME
+// FIR_IDENTICAL
+// JDK_KIND: FULL_JDK_9
+// WITH_STDLIB
 import java.util.stream.IntStream
 
 fun foo(s: IntStream) {
