@@ -302,8 +302,8 @@ data class KotlinWebpackConfig(
                             ? ${outputFileName!!.jsQuoted()}
                             : ${multiEntryOutput.jsQuoted()};
                     },
-                    library: "${output!!.library}",
-                    libraryTarget: "${output!!.libraryTarget}",
+                    ${output!!.library?.let { "library: ${it.jsQuoted()}," } ?: ""}
+                    ${output!!.libraryTarget?.let { "libraryTarget: ${it.jsQuoted()}," } ?: ""}
                     globalObject: "${output!!.globalObject}"
                 };
                 
