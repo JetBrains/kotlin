@@ -86,9 +86,6 @@
       </set>
     </option>
   </component>
-  <component name="SuppressKotlinCodeStyleNotification">
-    <option name="disableForAll" value="true" />
-  </component>
   <component name="WebServicesPlugin" addRequiredLibraries="true" />
   <component name="com.sixrr.metrics.MetricsReloaded">
     <option name="selectedProfile" value="" />
