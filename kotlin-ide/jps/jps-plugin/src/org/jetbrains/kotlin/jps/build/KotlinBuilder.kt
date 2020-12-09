@@ -248,7 +248,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         removedClasses.forEach { changesCollector.collectSignature(FqName(it), areSubclassesAffected = true) }
         val affectedByRemovedClasses = changesCollector.getDirtyFiles(incrementalCaches.values, kotlinContext.lookupStorageManager)
 
-        fsOperations.markFilesForCurrentRound(affectedByRemovedClasses)
+        fsOperations.markFilesForCurrentRound(affectedByRemovedClasses.dirtyFiles + affectedByRemovedClasses.forceRecompileTogether)
     }
 
     override fun chunkBuildFinished(context: CompileContext, chunk: ModuleChunk) {
@@ -661,21 +661,36 @@ private fun ChangesCollector.processChangesUsingLookups(
     reporter.reportVerbose { "Start processing changes" }
 
     val dirtyFiles = getDirtyFiles(allCaches, lookupStorageManager)
-    fsOperations.markInChunkOrDependents(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
+    // if list of inheritors of sealed class has changed it should be recompiled with all the inheritors
+    // Here we have a small optimization. Do not recompile the bunch if ALL these files were recompiled during the previous round.
+    val excludeFiles = if (compiledFiles.containsAll(dirtyFiles.forceRecompileTogether))
+        compiledFiles
+    else
+        compiledFiles.minus(dirtyFiles.forceRecompileTogether)
+    fsOperations.markInChunkOrDependents(
+        (dirtyFiles.dirtyFiles + dirtyFiles.forceRecompileTogether).asIterable(),
+        excludeFiles = excludeFiles
+    )
 
     reporter.reportVerbose { "End of processing changes" }
 }
 
+data class FilesToRecompile(val dirtyFiles: Set<File>, val forceRecompileTogether: Set<File>)
+
 private fun ChangesCollector.getDirtyFiles(
     caches: Iterable<IncrementalCacheCommon>,
     lookupStorageManager: JpsLookupStorageManager
-): Set<File> {
+): FilesToRecompile {
     val reporter = JpsICReporter()
-    val (dirtyLookupSymbols, dirtyClassFqNames) = getDirtyData(caches, reporter)
+    val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = getDirtyData(caches, reporter)
     val dirtyFilesFromLookups = lookupStorageManager.withLookupStorage {
         mapLookupSymbolsToFiles(it, dirtyLookupSymbols, reporter)
     }
-    return dirtyFilesFromLookups + mapClassesFqNamesToFiles(caches, dirtyClassFqNames, reporter)
+    return FilesToRecompile(
+        dirtyFilesFromLookups + mapClassesFqNamesToFiles(caches, dirtyClassFqNames, reporter),
+        mapClassesFqNamesToFiles(caches, forceRecompile, reporter)
+    )
+
 }
 
 private fun getLookupTracker(project: JpsProject, representativeTarget: KotlinModuleBuildTarget<*>): LookupTracker {
