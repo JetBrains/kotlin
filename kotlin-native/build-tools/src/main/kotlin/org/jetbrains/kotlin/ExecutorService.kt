@@ -24,6 +24,7 @@ import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.konan.target.Architecture
+import org.jetbrains.kotlin.konan.target.ConfigurablesWithEmulator
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.Xcode
@@ -52,7 +53,6 @@ fun create(project: Project): ExecutorService {
     val testTarget = project.testTarget
     val platform = platformManager.platform(testTarget)
     val absoluteTargetToolchain = platform.absoluteTargetToolchain
-    val absoluteTargetSysRoot = platform.absoluteTargetSysRoot
 
     return when (testTarget) {
         KonanTarget.WASM32 -> object : ExecutorService {
@@ -68,22 +68,10 @@ fun create(project: Project): ExecutorService {
             }
         }
 
-        KonanTarget.LINUX_MIPS32, KonanTarget.LINUX_MIPSEL32 -> object : ExecutorService {
-            override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec { execSpec ->
-                action.execute(execSpec)
-                with(execSpec) {
-                    val qemu = if (platform.target === KonanTarget.LINUX_MIPS32) "qemu-mips" else "qemu-mipsel"
-                    val absoluteQemu = "$absoluteTargetToolchain/bin/$qemu"
-                    val exe = executable
-                    executable = absoluteQemu
-                    args = listOf("-L", absoluteTargetSysRoot,
-                            // This is to workaround an endianess issue.
-                            // See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=731082 for details.
-                            "$absoluteTargetSysRoot/lib/ld.so.1", "--inhibit-cache",
-                            exe) + args
-                }
-            }
-        }
+        KonanTarget.LINUX_MIPS32,
+        KonanTarget.LINUX_MIPSEL32,
+        KonanTarget.LINUX_ARM32_HFP,
+        KonanTarget.LINUX_ARM64 -> emulatorExecutor(project, testTarget)
 
         KonanTarget.IOS_X64,
         KonanTarget.TVOS_X64,
@@ -211,6 +199,34 @@ fun localExecutor(project: Project) = { a: Action<in ExecSpec> -> project.exec(a
 
 fun localExecutorService(project: Project): ExecutorService = object : ExecutorService {
     override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec(action)
+}
+
+private fun emulatorExecutor(project: Project, target: KonanTarget) = object : ExecutorService {
+    val platformManager = project.platformManager
+    val configurables = platformManager.platform(target).configurables as? ConfigurablesWithEmulator
+            ?: error("$target does not support emulation!")
+    val absoluteTargetSysRoot = configurables.absoluteTargetSysRoot
+
+    override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec { execSpec ->
+        action.execute(execSpec)
+        with(execSpec) {
+            val exe = executable
+            // TODO: Move these to konan.properties when when it will be possible
+            //  to represent absolute path there.
+            val qemuSpecificArguments = listOf("-L", absoluteTargetSysRoot)
+            val targetSpecificArguments = when (target) {
+                KonanTarget.LINUX_MIPS32,
+                KonanTarget.LINUX_MIPSEL32 -> {
+                    // This is to workaround an endianess issue.
+                    // See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=731082 for details.
+                    listOf("$absoluteTargetSysRoot/lib/ld.so.1", "--inhibit-cache")
+                }
+                else -> emptyList()
+            }
+            executable = configurables.absoluteEmulatorExecutable
+            args = qemuSpecificArguments + targetSpecificArguments + exe + args
+        }
+    }
 }
 
 /**
