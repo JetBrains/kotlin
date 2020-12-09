@@ -28105,6 +28105,34 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/testWithModifiedMockJdk")
+        @TestDataPath("$PROJECT_ROOT")
+        public class TestWithModifiedMockJdk extends AbstractFirDiagnosticTest {
+            @Test
+            public void testAllFilesPresentInTestWithModifiedMockJdk() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/testWithModifiedMockJdk"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("newStringMethods.kt")
+            public void testNewStringMethods() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testWithModifiedMockJdk/newStringMethods.kt");
+            }
+
+            @Test
+            @TestMetadata("notConsideredMethod.kt")
+            public void testNotConsideredMethod() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testWithModifiedMockJdk/notConsideredMethod.kt");
+            }
+
+            @Test
+            @TestMetadata("throwableConstructor.kt")
+            public void testThrowableConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/testWithModifiedMockJdk/throwableConstructor.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/testsWithExplicitApi")
         @TestDataPath("$PROJECT_ROOT")
         public class TestsWithExplicitApi extends AbstractFirDiagnosticTest {

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.generators.tests
 import org.jetbrains.kotlin.asJava.AbstractCompilerLightClassTest
 import org.jetbrains.kotlin.cfg.AbstractControlFlowTest
 import org.jetbrains.kotlin.cfg.AbstractDataFlowTest
-import org.jetbrains.kotlin.cfg.AbstractDiagnosticsWithModifiedMockJdkTest
 import org.jetbrains.kotlin.cfg.AbstractPseudoValueTest
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.checkers.javac.*
@@ -78,10 +77,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractDiagnosticsNativeTest> {
                 model("diagnostics/nativeTests")
-            }
-
-            testClass<AbstractDiagnosticsWithModifiedMockJdkTest> {
-                model("diagnostics/testWithModifiedMockJdk")
             }
 
             testClass<AbstractDiagnosticsWithJdk15Test> {
