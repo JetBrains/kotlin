@@ -337,6 +337,11 @@ public class IrKotlinEvaluateExpressionTestGenerated extends AbstractIrKotlinEva
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/localClass.kt");
         }
 
+        @TestMetadata("localFunctionCapturedLocalVariable.kt")
+        public void testLocalFunctionCapturedLocalVariable() throws Exception {
+            runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/localFunctionCapturedLocalVariable.kt");
+        }
+
         @TestMetadata("localFunctionsWithReceivers.kt")
         public void testLocalFunctionsWithReceivers() throws Exception {
             runTest("idea/jvm-debugger/jvm-debugger-test/testData/evaluation/singleBreakpoint/localFunctionsWithReceivers.kt");
