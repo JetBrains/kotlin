@@ -7,48 +7,18 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
-import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
-
-private fun SerializationPluginContext.coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType): IrExpression {
-    if (this.platform?.isJvm() != true) return argument.apply { type = to }
-    val unsafeCoerce = irFactory.buildFun {
-        name = Name.special("<unsafe-coerce>")
-        origin = IrDeclarationOrigin.IR_BUILTINS_STUB
-    }.apply {
-        parent =  IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(moduleDescriptor, FqName("kotlin.jvm.internal"))
-        val src = addTypeParameter("T", irBuiltIns.anyNType)
-        val dst = addTypeParameter("R", irBuiltIns.anyNType)
-        addValueParameter("v", src.defaultType)
-        returnType = dst.defaultType
-    }.symbol
-    return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, unsafeCoerce).apply {
-        putTypeArgument(0, from)
-        putTypeArgument(1, to)
-        putValueArgument(0, argument)
-    }
-}
 
 class SerializerForInlineClassGenerator(
     irClass: IrClass,
@@ -129,14 +99,16 @@ class SerializerForInlineClassGenerator(
         )
     }
 
-
     // Compiler will elide these in corresponding inline class lowerings (when serialize/deserialize functions will be split in two)
 
-    fun IrBlockBodyBuilder.coerceToBox(expression: IrExpression, propertyType: IrType, inlineClassBoxType: IrType): IrExpression {
-        return irInvoke(null, serializableIrClass.constructors.single { it.isPrimary }.symbol, (inlineClassBoxType as IrSimpleType).arguments.map { it.typeOrNull }, listOf(expression))
-    }
+    private fun IrBlockBodyBuilder.coerceToBox(expression: IrExpression, propertyType: IrType, inlineClassBoxType: IrType): IrExpression =
+        irInvoke(
+            null,
+            serializableIrClass.constructors.single { it.isPrimary }.symbol,
+            (inlineClassBoxType as IrSimpleType).arguments.map { it.typeOrNull },
+            listOf(expression)
+        )
 
-    fun IrBlockBodyBuilder.getFromBox(expression: IrExpression, serializableProperty: SerializableProperty): IrExpression {
-        return getProperty(expression, serializableProperty.irProp)
-    }
+    private fun IrBlockBodyBuilder.getFromBox(expression: IrExpression, serializableProperty: SerializableProperty): IrExpression =
+        getProperty(expression, serializableProperty.getIrPropertyFrom(serializableIrClass))
 }
