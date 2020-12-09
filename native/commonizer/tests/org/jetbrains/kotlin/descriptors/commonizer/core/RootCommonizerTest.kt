@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
-import org.jetbrains.kotlin.descriptors.commonizer.SharedTarget
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.api.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.api.LeafCommonizerTarget
+import org.jetbrains.kotlin.commonizer.api.SharedCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirRootFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MockBuiltInsProvider
@@ -24,129 +24,125 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
     @Test
     fun allAreNative() = doTestSuccess(
         expected = KONAN_BUILT_INS.toMock(
-            SharedTarget(
-                setOf(
-                    LeafTarget("ios_x64", KonanTarget.IOS_X64),
-                    LeafTarget("ios_arm64", KonanTarget.IOS_ARM64),
-                    LeafTarget("ios_arm32", KonanTarget.IOS_ARM32)
-                )
+            CommonizerTarget(
+                KonanTarget.IOS_X64,
+                KonanTarget.IOS_ARM64,
+                KonanTarget.IOS_ARM32
             )
         ),
-        KONAN_BUILT_INS.toMock(LeafTarget("ios_x64", KonanTarget.IOS_X64)),
-        KONAN_BUILT_INS.toMock(LeafTarget("ios_arm64", KonanTarget.IOS_ARM64)),
-        KONAN_BUILT_INS.toMock(LeafTarget("ios_arm32", KonanTarget.IOS_ARM32))
+        KONAN_BUILT_INS.toMock(CommonizerTarget(KonanTarget.IOS_X64)),
+        KONAN_BUILT_INS.toMock(CommonizerTarget(KonanTarget.IOS_ARM64)),
+        KONAN_BUILT_INS.toMock(CommonizerTarget(KonanTarget.IOS_ARM32))
     )
 
     @Test
     fun jvmAndNative1() = doTestSuccess(
         expected = DEFAULT_BUILT_INS.toMock(
-            SharedTarget(
+            SharedCommonizerTarget(
                 setOf(
-                    LeafTarget("jvm1"),
-                    LeafTarget("ios_x64", KonanTarget.IOS_X64),
-                    LeafTarget("jvm2")
+                    LeafCommonizerTarget("jvm1"),
+                    LeafCommonizerTarget(KonanTarget.IOS_X64),
+                    LeafCommonizerTarget("jvm2")
                 )
             )
         ),
-        JVM_BUILT_INS.toMock(LeafTarget("jvm1")),
-        KONAN_BUILT_INS.toMock(LeafTarget("ios_x64", KonanTarget.IOS_X64)),
-        JVM_BUILT_INS.toMock(LeafTarget("jvm2"))
+        JVM_BUILT_INS.toMock(LeafCommonizerTarget("jvm1")),
+        KONAN_BUILT_INS.toMock(LeafCommonizerTarget(KonanTarget.IOS_X64)),
+        JVM_BUILT_INS.toMock(LeafCommonizerTarget("jvm2"))
     )
 
     @Test
     fun jvmAndNative2() = doTestSuccess(
         expected = DEFAULT_BUILT_INS.toMock(
-            SharedTarget(
+            SharedCommonizerTarget(
                 setOf(
-                    LeafTarget("ios_x64", KonanTarget.IOS_X64),
-                    LeafTarget("jvm"),
-                    LeafTarget("ios_arm64", KonanTarget.IOS_ARM64)
+                    LeafCommonizerTarget(KonanTarget.IOS_X64),
+                    LeafCommonizerTarget("jvm"),
+                    LeafCommonizerTarget(KonanTarget.IOS_ARM64)
                 )
             )
         ),
-        KONAN_BUILT_INS.toMock(LeafTarget("ios_x64", KonanTarget.IOS_X64)),
-        JVM_BUILT_INS.toMock(LeafTarget("jvm")),
-        KONAN_BUILT_INS.toMock(LeafTarget("ios_arm64", KonanTarget.IOS_ARM64))
+        KONAN_BUILT_INS.toMock(LeafCommonizerTarget(KonanTarget.IOS_X64)),
+        JVM_BUILT_INS.toMock(LeafCommonizerTarget("jvm")),
+        KONAN_BUILT_INS.toMock(LeafCommonizerTarget(KonanTarget.IOS_ARM64))
     )
 
     @Test
     fun noNative1() = doTestSuccess(
         expected = DEFAULT_BUILT_INS.toMock(
-            SharedTarget(
+            SharedCommonizerTarget(
                 setOf(
-                    LeafTarget("default1"),
-                    LeafTarget("default2"),
-                    LeafTarget("default3")
+                    LeafCommonizerTarget("default1"),
+                    LeafCommonizerTarget("default2"),
+                    LeafCommonizerTarget("default3")
                 )
             )
         ),
-        DEFAULT_BUILT_INS.toMock(LeafTarget("default1")),
-        DEFAULT_BUILT_INS.toMock(LeafTarget("default2")),
-        DEFAULT_BUILT_INS.toMock(LeafTarget("default3"))
+        DEFAULT_BUILT_INS.toMock(LeafCommonizerTarget("default1")),
+        DEFAULT_BUILT_INS.toMock(LeafCommonizerTarget("default2")),
+        DEFAULT_BUILT_INS.toMock(LeafCommonizerTarget("default3"))
     )
 
     @Test
     fun noNative2() = doTestSuccess(
         expected = DEFAULT_BUILT_INS.toMock(
-            SharedTarget(
+            SharedCommonizerTarget(
                 setOf(
-                    LeafTarget("jvm1"),
-                    LeafTarget("default"),
-                    LeafTarget("jvm2")
+                    LeafCommonizerTarget("jvm1"),
+                    LeafCommonizerTarget("default"),
+                    LeafCommonizerTarget("jvm2")
                 )
             )
         ),
-        JVM_BUILT_INS.toMock(LeafTarget("jvm1")),
-        DEFAULT_BUILT_INS.toMock(LeafTarget("default")),
-        JVM_BUILT_INS.toMock(LeafTarget("jvm2"))
+        JVM_BUILT_INS.toMock(LeafCommonizerTarget("jvm1")),
+        DEFAULT_BUILT_INS.toMock(LeafCommonizerTarget("default")),
+        JVM_BUILT_INS.toMock(LeafCommonizerTarget("jvm2"))
     )
 
     @Test
     fun noNative3() = doTestSuccess(
         expected = DEFAULT_BUILT_INS.toMock(
-            SharedTarget(
+            SharedCommonizerTarget(
                 setOf(
-                    LeafTarget("jvm1"),
-                    LeafTarget("jvm2"),
-                    LeafTarget("jvm3")
+                    LeafCommonizerTarget("jvm1"),
+                    LeafCommonizerTarget("jvm2"),
+                    LeafCommonizerTarget("jvm3")
                 )
             )
         ),
-        JVM_BUILT_INS.toMock(LeafTarget("jvm1")),
-        JVM_BUILT_INS.toMock(LeafTarget("jvm2")),
-        JVM_BUILT_INS.toMock(LeafTarget("jvm3"))
+        JVM_BUILT_INS.toMock(LeafCommonizerTarget("jvm1")),
+        JVM_BUILT_INS.toMock(LeafCommonizerTarget("jvm2")),
+        JVM_BUILT_INS.toMock(LeafCommonizerTarget("jvm3"))
     )
 
     @Test(expected = IllegalStateException::class)
     fun misconfiguration1() = doTestSuccess(
         expected = KONAN_BUILT_INS.toMock(
-            SharedTarget(
+            SharedCommonizerTarget(
                 setOf(
-                    LeafTarget("ios_x64", KonanTarget.IOS_X64),
-                    LeafTarget("ios_arm64", KonanTarget.IOS_ARM64),
-                    LeafTarget("ios_arm32", KonanTarget.IOS_ARM32)
+                    LeafCommonizerTarget(KonanTarget.IOS_X64),
+                    LeafCommonizerTarget(KonanTarget.IOS_ARM64),
+                    LeafCommonizerTarget(KonanTarget.IOS_ARM32)
                 )
             )
         ),
-        KONAN_BUILT_INS.toMock(LeafTarget("ios_x64")),
-        KONAN_BUILT_INS.toMock(LeafTarget("ios_arm64", KonanTarget.IOS_ARM64)),
-        KONAN_BUILT_INS.toMock(LeafTarget("ios_arm32", KonanTarget.IOS_ARM32))
+        KONAN_BUILT_INS.toMock(LeafCommonizerTarget("NO_KONAN_TARGET")),
+        KONAN_BUILT_INS.toMock(LeafCommonizerTarget(KonanTarget.IOS_ARM64)),
+        KONAN_BUILT_INS.toMock(LeafCommonizerTarget(KonanTarget.IOS_ARM32))
     )
 
     @Test(expected = IllegalStateException::class)
     fun misconfiguration2() = doTestSuccess(
         expected = DEFAULT_BUILT_INS.toMock(
-            SharedTarget(
-                setOf(
-                    LeafTarget("jvm1"),
-                    LeafTarget("jvm2"),
-                    LeafTarget("jvm3")
-                )
+            SharedCommonizerTarget(
+                LeafCommonizerTarget("jvm1"),
+                LeafCommonizerTarget("jvm2"),
+                LeafCommonizerTarget("jvm3")
             )
         ),
-        JVM_BUILT_INS.toMock(LeafTarget("jvm1", KonanTarget.IOS_X64)),
-        JVM_BUILT_INS.toMock(LeafTarget("jvm2")),
-        JVM_BUILT_INS.toMock(LeafTarget("jvm3"))
+        JVM_BUILT_INS.toMock(CommonizerTarget(KonanTarget.IOS_X64)),
+        JVM_BUILT_INS.toMock(LeafCommonizerTarget("jvm2")),
+        JVM_BUILT_INS.toMock(LeafCommonizerTarget("jvm3"))
     )
 
     override fun createCommonizer() = RootCommonizer()
@@ -171,3 +167,4 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
         )
     }
 }
+

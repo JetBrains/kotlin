@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     embedded(project(":native:kotlin-klib-commonizer")) { isTransitive = false }
+    embedded(project(":native:kotlin-klib-commonizer-api")) { isTransitive = false }
     runtimeOnly(kotlinStdlib())
     runtimeOnly(project(":kotlin-compiler-embeddable"))
 }

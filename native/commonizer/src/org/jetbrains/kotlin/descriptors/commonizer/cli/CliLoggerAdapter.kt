@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cli
 
 import org.jetbrains.kotlin.util.Logger
-import kotlin.system.exitProcess
 
 internal class CliLoggerAdapter(indentSize: Int) : Logger {
     private val indent = " ".repeat(indentSize)
@@ -17,7 +16,7 @@ internal class CliLoggerAdapter(indentSize: Int) : Logger {
     override fun error(message: String) = fatal(message)
     override fun fatal(message: String): Nothing {
         printlnIndented("Error: $message\n")
-        exitProcess(1)
+        error(message)
     }
 
     private fun printlnIndented(text: String) =
