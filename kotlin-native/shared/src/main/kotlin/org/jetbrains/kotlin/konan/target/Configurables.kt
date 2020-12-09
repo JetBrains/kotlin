@@ -63,6 +63,15 @@ interface Configurables : TargetableExternalStorage {
     val runtimeDefinitions get() = targetList("runtimeDefinitions")
 }
 
+interface ConfigurablesWithEmulator : Configurables {
+    val emulatorDependency get() = hostTargetString("emulatorDependency")
+    // TODO: We need to find a way to represent absolute path in properties.
+    //  In case of QEMU, absolute path to dynamic linker should be specified.
+    val emulatorExecutable get() = hostTargetString("emulatorExecutable")
+
+    val absoluteEmulatorExecutable get() = absolute(emulatorExecutable)
+}
+
 interface TargetableConfigurables : Configurables {
     val targetArg get() = targetString("quadruple")
 }
