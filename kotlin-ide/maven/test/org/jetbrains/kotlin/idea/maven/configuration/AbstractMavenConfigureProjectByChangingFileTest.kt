@@ -25,9 +25,14 @@ import org.jetbrains.idea.maven.model.MavenConstants
 import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.configuration.NotificationMessageCollector
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.TestPlatform
 import java.io.File
 
 abstract class AbstractMavenConfigureProjectByChangingFileTest : AbstractConfigureProjectByChangingFileTest<KotlinMavenConfigurator>() {
+    override fun shouldRunTest(): Boolean {
+        return super.shouldRunTest() && !TestPlatform.checkIsAndroidStudio()
+    }
+
     fun doTestWithMaven(path: String) {
         val pathWithFile = MavenConstants.POM_XML
         doTest(pathWithFile, pathWithFile.replace("pom", "pom_after"), KotlinJavaMavenConfigurator())

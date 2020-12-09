@@ -27,11 +27,16 @@ import org.jetbrains.jps.model.library.JpsOrderRootType
 import org.jetbrains.jps.model.library.sdk.JpsSdk
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.idea.test.runAll
+import org.jetbrains.kotlin.test.TestPlatform
 
 abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     override fun setUp() {
         super.setUp()
         System.setProperty("kotlin.jps.tests", "true")
+    }
+
+    override fun shouldRunTest(): Boolean {
+        return super.shouldRunTest() && !TestPlatform.checkIsAndroidStudio()
     }
 
     override fun tearDown() {
