@@ -7,7 +7,6 @@ version = '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
-    maven { url 'KOTLIN_REPO' }
 }
 
 kotlin {
