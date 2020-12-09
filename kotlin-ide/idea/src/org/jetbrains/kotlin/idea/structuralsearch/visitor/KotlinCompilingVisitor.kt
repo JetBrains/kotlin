@@ -71,6 +71,23 @@ class KotlinCompilingVisitor(private val myCompilingVisitor: GlobalCompilingVisi
                 if (!handleWord(expression.text, CODE, myCompilingVisitor.context)) return
             super.visitConstantExpression(expression)
         }
+
+        override fun visitReferenceExpression(expression: KtReferenceExpression) {
+            if (expression is KtNameReferenceExpression && expression.parent !is KtUserType)
+                if (!handleWord(expression.getReferencedName(), CODE, myCompilingVisitor.context)) return
+            super.visitReferenceExpression(expression)
+        }
+
+        override fun visitElement(element: PsiElement) {
+            if (element is KDocTag && !handleWord(element.name, CODE, myCompilingVisitor.context)) return
+            super.visitElement(element)
+        }
+
+        override fun visitAnnotationEntry(annotationEntry: KtAnnotationEntry) {
+            val name = annotationEntry.shortName ?: return
+            if (!handleWord(name.identifier, CODE, myCompilingVisitor.context)) return
+            super.visitAnnotationEntry(annotationEntry)
+        }
     }
 
     private fun getHandler(element: PsiElement) = myCompilingVisitor.context.pattern.getHandler(element)

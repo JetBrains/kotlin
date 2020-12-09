@@ -44,4 +44,18 @@ class KotlinOptimizedSearchScanTest : LightQuickFixTestCase() {
         doTest("val '_ : Int? = null", "[in code:null]")
     }
 
+    fun testDQE() {
+        doTest("'_.lifetime", "[in code:lifetime]")
+    }
+
+    fun testAnnotation() {
+        doTest("@Deprecated fun('_*)", "[in code:Deprecated]")
+    }
+
+    fun testKDocTag() {
+        doTest("/** \n" +
+                      "* @author '_\n" +
+                      "*/", "[in code:author]")
+    }
+
 }
