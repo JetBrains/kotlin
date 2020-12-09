@@ -569,7 +569,7 @@ val dist = tasks.register("dist") {
 }
 
 val syncMutedTests = tasks.register("syncMutedTests") {
-    dependsOn(":compiler:tests-mutes:run")
+    dependsOn(":compiler:tests-mutes:tc-integration:run")
 }
 
 val copyCompilerToIdeaPlugin by task<Copy> {
