@@ -23449,6 +23449,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/properties/const/constFlags.kt");
             }
 
+            @TestMetadata("constPropertyAccessor.kt")
+            public void testConstPropertyAccessor() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/const/constPropertyAccessor.kt");
+            }
+
             @TestMetadata("constValInAnnotationDefault.kt")
             public void testConstValInAnnotationDefault() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/const/constValInAnnotationDefault.kt");
