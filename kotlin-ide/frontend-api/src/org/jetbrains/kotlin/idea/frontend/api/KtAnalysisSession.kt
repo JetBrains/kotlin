@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.psi.*
  *
  * To create analysis session consider using [analyze]
  */
-abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTokenOwner {
+abstract class KtAnalysisSession(final override val token: ValidityToken) : ValidityTokenOwner {
     protected abstract val smartCastProvider: KtSmartCastProvider
     protected abstract val typeProvider: KtTypeProvider
     protected abstract val diagnosticProvider: KtDiagnosticProvider
@@ -43,6 +43,8 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
     protected abstract val callResolver: KtCallResolver
     protected abstract val completionCandidateChecker: KtCompletionCandidateChecker
     protected abstract val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider
+    @Suppress("LeakingThis")
+    protected open val typeRenderer: KtTypeRenderer = KtDefaultTypeRenderer(this, token)
 
     /// TODO: get rid of
     @Deprecated("Used only in completion now, temporary")
@@ -143,4 +145,7 @@ abstract class KtAnalysisSession(override val token: ValidityToken) : ValidityTo
         psiFakeCompletionExpression,
         psiReceiverExpression
     )
+
+    fun KtType.render(options: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT): String =
+        typeRenderer.render(this, options)
 }

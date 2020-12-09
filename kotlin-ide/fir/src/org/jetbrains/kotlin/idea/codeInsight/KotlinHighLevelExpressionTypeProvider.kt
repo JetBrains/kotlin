@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.codeInsight
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.idea.frontend.api.analyseInModalWindow
-import org.jetbrains.kotlin.idea.frontend.api.types.render
 import org.jetbrains.kotlin.psi.KtExpression
 
 class KotlinHighLevelExpressionTypeProvider : KotlinExpressionTypeProvider() {
