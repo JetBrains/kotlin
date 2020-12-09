@@ -117,6 +117,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.isNullable
@@ -716,6 +717,19 @@ abstract class AbstractComposeLowering(
             null,
             lhs,
             null,
+            rhs
+        )
+    }
+
+    protected fun irGreater(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
+        val int = context.irBuiltIns.intType
+        val gt = context.irBuiltIns.greaterFunByOperandType[int.classifierOrFail]
+        return irCall(
+            gt!!,
+            IrStatementOrigin.GT,
+            null,
+            null,
+            lhs,
             rhs
         )
     }

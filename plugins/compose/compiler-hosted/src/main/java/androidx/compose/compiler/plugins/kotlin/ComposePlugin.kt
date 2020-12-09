@@ -101,7 +101,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         )
         INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
-            value == "true"
+            value != "false"
         )
         SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK,
@@ -159,7 +159,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             )
             val intrinsicRememberEnabled = configuration.get(
                 ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
-                false
+                true
             )
             StorageComponentContainerContributor.registerExtension(
                 project,

@@ -252,6 +252,7 @@ fun composeSyntheticParamCount(
 interface IrChangedBitMaskValue {
     fun irLowBit(): IrExpression
     fun irIsolateBitsAtSlot(slot: Int, includeStableBit: Boolean): IrExpression
+    fun irSlotAnd(slot: Int, bits: Int): IrExpression
     fun irHasDifferences(): IrExpression
     fun irCopyToTemporary(
         nameHint: String? = null,
@@ -2163,16 +2164,21 @@ class ComposableFunctionBodyTransformer(
 
     private fun encounteredComposableCall(withGroups: Boolean) {
         var scope: Scope? = currentScope
+        // it is important that we only report "withGroups: false" for the _nearest_ scope, and
+        // every scope above that it effectively means there was a group even if it is false
+        var groups = withGroups
         loop@ while (scope != null) {
             when (scope) {
                 is Scope.FunctionScope -> {
-                    scope.recordComposableCall(withGroups)
+                    scope.recordComposableCall(groups)
+                    groups = true
                     if (!scope.isInlinedLambda) {
                         break@loop
                     }
                 }
                 is Scope.BlockScope -> {
-                    scope.recordComposableCall(withGroups)
+                    scope.recordComposableCall(groups)
+                    groups = true
                 }
                 is Scope.ClassScope -> {
                     break@loop
@@ -2684,9 +2690,11 @@ class ComposableFunctionBodyTransformer(
 
         return when {
             meta.isStatic -> irConst(false)
-            meta.isCertain && param is IrChangedBitMaskVariable -> {
-                // if it's a dirty flag then we know that the value is now CERTAIN,
-                // thus we can avoid calling changed all together
+            meta.isCertain &&
+                meta.stability.knownStable() &&
+                param is IrChangedBitMaskVariable -> {
+                // if it's a dirty flag, and the parameter is _guaranteed_ to be stable, then we
+                // know that the value is now CERTAIN, thus we can avoid calling changed completely
                 //
                 // invalid = invalid or (mask == different)
                 irEqual(
@@ -2694,30 +2702,55 @@ class ComposableFunctionBodyTransformer(
                     irConst(ParamState.Different.bitsForSlot(meta.maskSlot))
                 )
             }
-            meta.isCertain && param != null -> {
-                // if it's a changed flag then uncertain is a possible value. If it is uncertain,
-                // then we need to call changed. If it is uncertain here it will _always_ be
-                // uncertain here, so this is safe. If it is not uncertain, we can just check to
-                // see if its different
-                // TODO(lmr): IMPORTANT QUESTION - is unstable + something other than uncertain
-                //  possible?
+            meta.isCertain &&
+                !meta.stability.knownUnstable() &&
+                param is IrChangedBitMaskVariable -> {
+                // if it's a dirty flag, and the parameter might be stable, then we only check
+                // changed if the value is unstable, otherwise we can just check to see if the mask
+                // is different
                 //
-                //
-                //     invalid = invalid or ((mask == uncertain && changed()) || mask == different)
+                // invalid = invalid or (stable && mask == different || unstable && changed)
+
+                val maskIsStableAndDifferent = irEqual(
+                    param.irIsolateBitsAtSlot(meta.maskSlot, includeStableBit = true),
+                    irConst(ParamState.Different.bitsForSlot(meta.maskSlot))
+                )
+                val stableBits = param.irSlotAnd(meta.maskSlot, StabilityBits.UNSTABLE.bits)
+                val maskIsUnstableAndChanged = irAndAnd(
+                    irNotEqual(stableBits, irConst(0)),
+                    irChanged(arg)
+                )
+                irOrOr(
+                    maskIsStableAndDifferent,
+                    maskIsUnstableAndChanged
+                )
+            }
+            meta.isCertain &&
+                !meta.stability.knownUnstable() &&
+                param != null -> {
+                // if it's a changed flag then uncertain is a possible value. If it is uncertain
+                // OR unstable, then we need to call changed. If it is uncertain or unstable here
+                // it will _always_ be uncertain or unstable here, so this is safe. If it is not
+                // uncertain or unstable, we can just check to see if its different
+
+                //     unstableOrUncertain = mask xor 011 > 010
+                //     invalid = invalid or ((unstableOrUncertain && changed()) || mask == different)
+
+                val maskIsUnstableOrUncertain =
+                    irGreater(
+                        irXor(
+                            param.irIsolateBitsAtSlot(meta.maskSlot, includeStableBit = true),
+                            irConst(bitsForSlot(0b011, meta.maskSlot))
+                        ),
+                        irConst(bitsForSlot(0b010, meta.maskSlot))
+                    )
                 irOrOr(
                     irAndAnd(
-                        irEqual(
-                            // we do NOT include the stable bit here because we want to capture
-                            // both of the cases where the type is stable and unstable.
-                            param.irIsolateBitsAtSlot(meta.maskSlot, includeStableBit = false),
-                            // NOTE: this is always "0", but i'm writing it out fully here to
-                            // just make the code more clear
-                            irConst(ParamState.Uncertain.bitsForSlot(meta.maskSlot))
-                        ),
+                        maskIsUnstableOrUncertain,
                         irChanged(arg)
                     ),
                     irEqual(
-                        param.irIsolateBitsAtSlot(meta.maskSlot, includeStableBit = true),
+                        param.irIsolateBitsAtSlot(meta.maskSlot, includeStableBit = false),
                         irConst(ParamState.Different.bitsForSlot(meta.maskSlot))
                     )
                 )
@@ -3699,6 +3732,14 @@ class ComposableFunctionBodyTransformer(
                         ParamState.Static.bits,
                     slot
                 )
+            )
+        }
+
+        override fun irSlotAnd(slot: Int, bits: Int): IrExpression {
+            // %changed and 0b11
+            return irAnd(
+                irGet(params[paramIndexForSlot(slot)]),
+                irBitsForSlot(bits, slot)
             )
         }
 
