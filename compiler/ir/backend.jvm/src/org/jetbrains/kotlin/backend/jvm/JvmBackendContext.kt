@@ -131,6 +131,8 @@ class JvmBackendContext(
 
     val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory, this)
 
+    internal val continuationClassesVarsCountByType: MutableMap<IrClass, Map<Type, Int>> = hashMapOf()
+
     internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
         symbolTable.lazyWrapper.referenceClass(descriptor)
 
