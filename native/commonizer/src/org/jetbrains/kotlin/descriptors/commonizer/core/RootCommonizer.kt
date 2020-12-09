@@ -8,28 +8,28 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
-import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
-import org.jetbrains.kotlin.descriptors.commonizer.SharedTarget
+import org.jetbrains.kotlin.commonizer.api.LeafCommonizerTarget
+import org.jetbrains.kotlin.commonizer.api.SharedCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirRootFactory
 
 class RootCommonizer : AbstractStandardCommonizer<CirRoot, CirRoot>() {
-    private val leafTargets = mutableSetOf<LeafTarget>()
+    private val leafTargets = mutableSetOf<LeafCommonizerTarget>()
     private var konanBuiltInsProvider: BuiltInsProvider? = null
 
     override fun commonizationResult() = CirRootFactory.create(
-        target = SharedTarget(leafTargets),
+        target = SharedCommonizerTarget(leafTargets),
         builtInsClass = if (konanBuiltInsProvider != null) KonanBuiltIns::class.java.name else DefaultBuiltIns::class.java.name,
         builtInsProvider = konanBuiltInsProvider ?: BuiltInsProvider.defaultBuiltInsProvider
     )
 
     override fun initialize(first: CirRoot) {
-        leafTargets += first.target as LeafTarget
+        leafTargets += first.target as LeafCommonizerTarget
         konanBuiltInsProvider = first.konanBuiltInsProvider
     }
 
     override fun doCommonizeWith(next: CirRoot): Boolean {
-        leafTargets += next.target as LeafTarget
+        leafTargets += next.target as LeafCommonizerTarget
 
         // keep the first met KonanBuiltIns when all targets are Kotlin/Native
         // otherwise use DefaultBuiltIns

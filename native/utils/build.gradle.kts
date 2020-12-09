@@ -19,8 +19,6 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-// TODO: this single known external consumer of this artifact is Kotlin/Native backend,
-//  so publishing could be stopped after migration to monorepo
 publish()
 
 standardPublicJars()

@@ -7,11 +7,12 @@ package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.commonizer.api.LeafCommonizerTarget
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.io.File
 
 class TargetProvider(
-    val target: LeafTarget,
+    val target: LeafCommonizerTarget,
     val builtInsClass: Class<out KotlinBuiltIns>,
     val builtInsProvider: BuiltInsProvider,
     val modulesProvider: ModulesProvider,

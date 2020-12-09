@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer
 
+import org.jetbrains.kotlin.commonizer.api.LeafCommonizerTarget
+import org.jetbrains.kotlin.commonizer.api.SharedCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 
 class CommonizerParameters(
@@ -12,10 +14,10 @@ class CommonizerParameters(
     val progressLogger: ((String) -> Unit)? = null
 ) {
     // use linked hash map to preserve order
-    private val _targetProviders = LinkedHashMap<LeafTarget, TargetProvider>()
+    private val _targetProviders = LinkedHashMap<LeafCommonizerTarget, TargetProvider>()
 
     val targetProviders: List<TargetProvider> get() = _targetProviders.values.toList()
-    val sharedTarget: SharedTarget get() = SharedTarget(_targetProviders.keys)
+    val sharedTarget: SharedCommonizerTarget get() = SharedCommonizerTarget(_targetProviders.keys)
 
     // common module dependencies (ex: Kotlin stdlib)
     var dependeeModulesProvider: ModulesProvider? = null

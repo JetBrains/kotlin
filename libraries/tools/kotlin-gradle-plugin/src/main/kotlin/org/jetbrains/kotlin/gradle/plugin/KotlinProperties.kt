@@ -105,6 +105,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableCompatibilityMetadataVariant: Boolean
         get() = booleanProperty("kotlin.mpp.enableCompatibilityMetadataVariant") ?: true
 
+    val enableInteropBundleTransformation: Boolean?
+        get() = booleanProperty("kotlin.mpp.enableInteropBundleTransformation")
+
     val mppStabilityNoWarn: Boolean?
         get() = booleanProperty(KotlinMultiplatformPlugin.STABILITY_NOWARN_FLAG)
 

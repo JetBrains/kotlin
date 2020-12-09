@@ -16,12 +16,14 @@ import org.jetbrains.kotlin.descriptors.commonizer.utils.strip
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 
 internal class NativeDistributionModulesProvider(
     private val storageManager: StorageManager,
-    private val librariesToCommonize: NativeLibrariesToCommonize
+    private val librariesToCommonize: NativeLibrariesToCommonize,
+    private val logger: Logger
 ) : ModulesProvider {
     override fun loadModuleInfos(): Map<String, ModuleInfo> {
         return librariesToCommonize.libraries.associate { library ->
@@ -76,13 +78,19 @@ internal class NativeDistributionModulesProvider(
             val moduleDependencies = mutableListOf<ModuleDescriptorImpl>()
             moduleDependencies += module
 
-            librariesToCommonize.getManifest(name).dependencies.forEach {
-                moduleDependencies.addIfNotNull(platformModulesMap[it])
-                moduleDependencies += dependenciesMap[it].orEmpty()
+            librariesToCommonize.getManifest(name).dependencies.forEach { dependencyUniqueName ->
+                val dependencyModuleDescriptors = dependenciesMap[dependencyUniqueName].orEmpty()
+                    .plus(platformModulesMap[dependencyUniqueName])
+                    .filterNotNull()
+
+                if (dependencyModuleDescriptors.isEmpty()) {
+                    logger.warning("Missing dependency $dependencyUniqueName")
+                }
+
+                moduleDependencies += dependencyModuleDescriptors
             }
 
             moduleDependencies += forwardDeclarations
-
             module.setDependencies(moduleDependencies)
         }
 

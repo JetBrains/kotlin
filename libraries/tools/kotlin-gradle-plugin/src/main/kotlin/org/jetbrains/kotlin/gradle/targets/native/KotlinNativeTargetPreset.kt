@@ -13,6 +13,7 @@ import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.konanVersion
+import org.jetbrains.kotlin.gradle.ib.setupInteropBundleTransformationIfEnabled
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
@@ -91,6 +92,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
         SingleActionPerProject.run(project, "setUpKotlinNativePlatformDependencies") {
             project.gradle.projectsEvaluated {
+                project.setupInteropBundleTransformationIfEnabled()
                 project.setUpKotlinNativePlatformDependencies()
             }
         }

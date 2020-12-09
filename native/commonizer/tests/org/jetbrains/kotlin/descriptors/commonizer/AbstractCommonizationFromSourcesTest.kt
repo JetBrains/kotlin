@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.commonizer.api.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.api.LeafCommonizerTarget
+import org.jetbrains.kotlin.commonizer.api.SharedCommonizerTarget
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -30,6 +33,8 @@ import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorVisitorEmptyBo
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.target.KonanTarget.Companion.predefinedTargets
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -71,7 +76,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         val result: CommonizerResult = runCommonization(analyzedModules.toCommonizationParameters())
         assertCommonizationPerformed(result)
 
-        val sharedTarget: SharedTarget = analyzedModules.sharedTarget
+        val sharedTarget: SharedCommonizerTarget = analyzedModules.sharedTarget
         assertEquals(sharedTarget, result.sharedTarget)
 
         val sharedModuleAsExpected: ModuleDescriptor = analyzedModules.commonizedModules.getValue(sharedTarget)
@@ -82,7 +87,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         assertValidModule(sharedModuleByCommonizer)
         assertModulesAreEqual(sharedModuleAsExpected, sharedModuleByCommonizer, "\"$sharedTarget\" target")
 
-        val leafTargets: Set<LeafTarget> = analyzedModules.leafTargets
+        val leafTargets: Set<LeafCommonizerTarget> = analyzedModules.leafTargets
         assertEquals(leafTargets, result.leafTargets)
 
         for (leafTarget in leafTargets) {
@@ -116,18 +121,18 @@ private data class SourceModuleRoot(
 }
 
 private class SourceModuleRoots(
-    val originalRoots: Map<LeafTarget, SourceModuleRoot>,
+    val originalRoots: Map<LeafCommonizerTarget, SourceModuleRoot>,
     val commonizedRoots: Map<CommonizerTarget, SourceModuleRoot>,
     val dependeeRoots: Map<CommonizerTarget, SourceModuleRoot>
 ) {
-    val leafTargets: Set<LeafTarget> = originalRoots.keys
-    val sharedTarget: SharedTarget
+    val leafTargets: Set<LeafCommonizerTarget> = originalRoots.keys
+    val sharedTarget: SharedCommonizerTarget
 
     init {
         check(leafTargets.size >= 2)
         check(leafTargets.none { it.name == SHARED_TARGET_NAME })
 
-        val sharedTargets = commonizedRoots.keys.filterIsInstance<SharedTarget>()
+        val sharedTargets = commonizedRoots.keys.filterIsInstance<SharedCommonizerTarget>()
         check(sharedTargets.size == 1)
 
         sharedTarget = sharedTargets.single()
@@ -140,10 +145,10 @@ private class SourceModuleRoots(
 
     companion object {
         fun load(dataDir: File): SourceModuleRoots = try {
-            val originalRoots = listRoots(dataDir, ORIGINAL_ROOTS_DIR).mapKeys { LeafTarget(it.key) }
+            val originalRoots = listRoots(dataDir, ORIGINAL_ROOTS_DIR).mapKeys { LeafCommonizerTarget(it.key) }
 
             val leafTargets = originalRoots.keys
-            val sharedTarget = SharedTarget(leafTargets)
+            val sharedTarget = SharedCommonizerTarget(leafTargets)
 
             fun getTarget(targetName: String): CommonizerTarget =
                 if (targetName == SHARED_TARGET_NAME) sharedTarget else leafTargets.first { it.name == targetName }
@@ -185,18 +190,18 @@ private class AnalyzedModules(
     val commonizedModules: Map<CommonizerTarget, ModuleDescriptor>,
     val dependeeModules: Map<CommonizerTarget, List<ModuleDescriptor>>
 ) {
-    val leafTargets: Set<LeafTarget>
-    val sharedTarget: SharedTarget
+    val leafTargets: Set<LeafCommonizerTarget>
+    val sharedTarget: SharedCommonizerTarget
 
     init {
         originalModules.keys.let { targets ->
             check(targets.isNotEmpty())
 
-            leafTargets = targets.filterIsInstance<LeafTarget>().toSet()
+            leafTargets = targets.filterIsInstance<LeafCommonizerTarget>().toSet()
             check(targets.size == leafTargets.size)
         }
 
-        sharedTarget = SharedTarget(leafTargets)
+        sharedTarget = SharedCommonizerTarget(leafTargets)
         val allTargets = leafTargets + sharedTarget
 
         check(commonizedModules.keys == allTargets)
@@ -241,7 +246,7 @@ private class AnalyzedModules(
         }
 
         private fun createDependeeModules(
-            sharedTarget: SharedTarget,
+            sharedTarget: SharedCommonizerTarget,
             dependeeRoots: Map<out CommonizerTarget, SourceModuleRoot>,
             parentDisposable: Disposable
         ): Pair<Map<CommonizerTarget, List<ModuleDescriptor>>, AnalyzedModuleDependencies> {
@@ -262,7 +267,7 @@ private class AnalyzedModules(
         }
 
         private fun createModules(
-            sharedTarget: SharedTarget,
+            sharedTarget: SharedCommonizerTarget,
             moduleRoots: Map<out CommonizerTarget, SourceModuleRoot>,
             dependencies: AnalyzedModuleDependencies,
             parentDisposable: Disposable,
@@ -289,7 +294,7 @@ private class AnalyzedModules(
         }
 
         private fun createModule(
-            sharedTarget: SharedTarget,
+            sharedTarget: SharedCommonizerTarget,
             currentTarget: CommonizerTarget,
             moduleRoot: SourceModuleRoot,
             dependencies: AnalyzedModuleDependencies,
@@ -337,7 +342,7 @@ private class AnalyzedModules(
 }
 
 private class DependenciesContainerImpl(
-    sharedTarget: SharedTarget,
+    sharedTarget: SharedCommonizerTarget,
     currentTarget: CommonizerTarget,
     dependencies: AnalyzedModuleDependencies
 ) : CommonDependenciesContainer {

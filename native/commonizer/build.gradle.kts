@@ -19,6 +19,7 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":native:frontend.native"))
     compileOnly(project(":kotlin-util-klib-metadata"))
+    compileOnly(project(":native:kotlin-klib-commonizer-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeJars("trove4j") }
 
@@ -29,6 +30,8 @@ dependencies {
 
     testImplementation(commonDep("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(project(":native:kotlin-klib-commonizer-api"))
+
 }
 
 val runCommonizer by tasks.registering(JavaExec::class) {

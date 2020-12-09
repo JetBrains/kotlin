@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.descriptors.commonizer.builder
 
+import org.jetbrains.kotlin.commonizer.api.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedMemberScope.Companion.plusAssign
 import org.jetbrains.kotlin.descriptors.commonizer.builder.CommonizedPackageFragmentProvider.Companion.plusAssign
 import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.*
@@ -28,8 +28,7 @@ internal class DeclarationsBuilderVisitor1(
         check(components.targetComponents.size == node.dimension)
 
         val allTargets: List<CommonizerTarget> = (node.targetDeclarations + node.commonDeclaration()).map { it!!.target }
-        val modulesByTargets: Map<CommonizerTarget, MutableList<ModuleDescriptorImpl>> =
-            allTargets.associateWithTo(HashMap()) { mutableListOf() }
+        val modulesByTargets: Map<CommonizerTarget, MutableList<ModuleDescriptorImpl>> = allTargets.associateWithTo(HashMap()) { mutableListOf() }
 
         // collect module descriptors:
         for (moduleNode in node.modules.values) {

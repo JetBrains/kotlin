@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.commonizer.api.LeafCommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MockModulesProvider
 import org.jetbrains.kotlin.descriptors.commonizer.utils.assertCommonizationPerformed
 import org.junit.Test
@@ -64,7 +65,7 @@ class CommonizerFacadeTest {
             forEach { (targetName, moduleNames) ->
                 it.addTarget(
                     TargetProvider(
-                        target = LeafTarget(targetName),
+                        target = LeafCommonizerTarget(targetName),
                         builtInsClass = DefaultBuiltIns::class.java,
                         builtInsProvider = BuiltInsProvider.defaultBuiltInsProvider,
                         modulesProvider = MockModulesProvider.create(moduleNames),
