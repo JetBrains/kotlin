@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import static org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettings;
 import static org.jetbrains.kotlin.jvm.compiler.LoadDescriptorUtil.*;
 import static org.jetbrains.kotlin.test.KotlinTestUtils.*;
 import static org.jetbrains.kotlin.test.util.DescriptorValidator.ValidationVisitor.errorTypesAllowed;
@@ -77,7 +78,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
         List<File> javaSources = FileUtil.findFilesByMask(Pattern.compile(".+\\.java"), sourcesDir);
         Pair<PackageViewDescriptor, BindingContext> binaryPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
-                javaSources, tmpdir, ConfigurationKind.JDK_ONLY
+                javaSources, tmpdir, ConfigurationKind.JDK_ONLY, null
         );
 
         checkJavaPackage(expectedFile, binaryPackageAndContext.first, binaryPackageAndContext.second, COMPARATOR_CONFIGURATION);
@@ -167,7 +168,7 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
 
     public static void updateConfigurationWithDirectives(String content, CompilerConfiguration configuration) {
         Directives directives = KotlinTestUtils.parseDirectives(content);
-        LanguageVersionSettings languageVersionSettings = CompilerTestLanguageVersionSettingsKt.parseLanguageVersionSettings(directives);
+        LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives);
         if (languageVersionSettings == null) {
             languageVersionSettings = CompilerTestLanguageVersionSettingsKt.defaultLanguageVersionSettings();
         }
@@ -266,9 +267,12 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         assertTrue(testPackageDir.mkdir());
         FileUtil.copy(originalJavaFile, new File(testPackageDir, originalJavaFile.getName()));
 
+        Directives directives = KotlinTestUtils.parseDirectives(FileUtil.loadFile(originalJavaFile));
+        LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives);
+
         Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = loadTestPackageAndBindingContextFromJavaRoot(
                 tmpdir, getTestRootDisposable(), getJdkKind(), ConfigurationKind.JDK_ONLY, false,
-                false, useJavacWrapper(), withForeignAnnotations(), null);
+                false, useJavacWrapper(), withForeignAnnotations(), languageVersionSettings);
 
         checkJavaPackage(
                 expectedFile, javaPackageAndContext.first, javaPackageAndContext.second,
@@ -281,9 +285,10 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
         File compiledDir = new File(tmpdir, "compiled");
         assertTrue(srcDir.mkdir());
         assertTrue(compiledDir.mkdir());
+        String fileContent = FileUtil.loadFile(new File(javaFileName));
 
         List<File> srcFiles = TestFiles.createTestFiles(
-                new File(javaFileName).getName(), FileUtil.loadFile(new File(javaFileName), true),
+                new File(javaFileName).getName(), fileContent,
                 new TestFiles.TestFileFactoryNoModules<File>() {
                     @NotNull
                     @Override
@@ -299,8 +304,11 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                     }
                 }, "");
 
+        Directives directives = KotlinTestUtils.parseDirectives(fileContent);
+        LanguageVersionSettings languageVersionSettings = parseLanguageVersionSettings(directives);
+
         Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
-                srcFiles, compiledDir, ConfigurationKind.ALL
+                srcFiles, compiledDir, ConfigurationKind.ALL, languageVersionSettings
         );
 
 
@@ -321,11 +329,12 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
     private Pair<PackageViewDescriptor, BindingContext> compileJavaAndLoadTestPackageAndBindingContextFromBinary(
             @NotNull Collection<File> javaFiles,
             @NotNull File outDir,
-            @NotNull ConfigurationKind configurationKind
+            @NotNull ConfigurationKind configurationKind,
+            @Nullable LanguageVersionSettings explicitLanguageVersionSettings
     ) throws IOException {
         compileJavaWithAnnotationsJar(javaFiles, outDir, getAdditionalJavacArgs(), getJdkHomeForJavac(), withForeignAnnotations());
         return loadTestPackageAndBindingContextFromJavaRoot(outDir, getTestRootDisposable(), getJdkKind(), configurationKind, true,
-                                                            usePsiClassFilesReading(), useJavacWrapper(), withForeignAnnotations(), null,
+                                                            usePsiClassFilesReading(), useJavacWrapper(), withForeignAnnotations(), explicitLanguageVersionSettings,
                                                             getExtraClasspath(), this::configureEnvironment);
     }
 
