@@ -11,7 +11,7 @@ fun test(
     val ui = <!FORBIDDEN_IDENTITY_EQUALS!>ui1 === ui2<!> || <!FORBIDDEN_IDENTITY_EQUALS!>ui1 !== ui2<!>
     val ul = <!FORBIDDEN_IDENTITY_EQUALS!>ul1 === ul2<!> || <!FORBIDDEN_IDENTITY_EQUALS!>ul1 !== ul2<!>
 
-    val u = <!EQUALITY_NOT_APPLICABLE!>ub1 === ul1<!>
+    val u = <!EQUALITY_NOT_APPLICABLE, FORBIDDEN_IDENTITY_EQUALS!>ub1 === ul1<!>
 
     val a1 = <!FORBIDDEN_IDENTITY_EQUALS!>1u === 2u<!> || <!FORBIDDEN_IDENTITY_EQUALS!>1u !== 2u<!>
     val a2 = <!FORBIDDEN_IDENTITY_EQUALS!>0xFFFF_FFFF_FFFF_FFFFu === 0xFFFF_FFFF_FFFF_FFFFu<!>
