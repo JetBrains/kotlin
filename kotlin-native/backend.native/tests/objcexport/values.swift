@@ -1318,6 +1318,14 @@ func testMapsExport() throws {
     try assertEquals(actual: (ValuesKt.mutDouble2String() as! [Double: String])[2.718281828459045], expected: "2.718281828459045")
 }
 
+class Baz_FakeOverrideInInterface : Bar_FakeOverrideInInterface {
+    func foo(t: Any?) {}
+}
+
+func testFakeOverrideInInterface() throws {
+    ValuesKt.callFoo_FakeOverrideInInterface(obj: Baz_FakeOverrideInInterface())
+}
+
 // -------- Execution of the test --------
 
 class ValuesTests : SimpleTestProvider {
@@ -1374,6 +1382,7 @@ class ValuesTests : SimpleTestProvider {
         test("TestStringConversion", testStringConversion)
         test("TestGH3825", testGH3825)
         test("TestMapsExport", testMapsExport)
+        test("TestFakeOverrideInInterface", testFakeOverrideInInterface)
 
         // Stress test, must remain the last one:
         test("TestGH2931", testGH2931)

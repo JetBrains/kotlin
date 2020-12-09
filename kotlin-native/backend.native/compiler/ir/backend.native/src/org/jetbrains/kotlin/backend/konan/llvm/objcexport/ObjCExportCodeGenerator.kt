@@ -405,6 +405,7 @@ internal class ObjCExportCodeGenerator(
             staticData.cStringLiteral(selector),
             Int64(nameSignature),
             Int32(itablePlace.interfaceId),
+            Int32(itablePlace.itableSize),
             Int32(itablePlace.methodIndex),
             Int32(vtableIndex),
             kotlinImpl

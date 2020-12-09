@@ -363,9 +363,9 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
                 .toList()
     }
 
-    data class InterfaceTablePlace(val interfaceId: Int, val methodIndex: Int) {
+    data class InterfaceTablePlace(val interfaceId: Int, val itableSize: Int, val methodIndex: Int) {
         companion object {
-            val INVALID = InterfaceTablePlace(0, -1)
+            val INVALID = InterfaceTablePlace(0, -1, -1)
         }
     }
 
@@ -374,7 +374,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context, va
         val itable = interfaceTableEntries
         val index = itable.indexOf(function)
         if (index >= 0)
-            return InterfaceTablePlace(hierarchyInfo.interfaceId, index)
+            return InterfaceTablePlace(hierarchyInfo.interfaceId, itable.size, index)
         val superFunction = function.overriddenSymbols.first().owner
         return context.getLayoutBuilder(superFunction.parentAsClass).itablePlace(superFunction)
     }
