@@ -21,6 +21,15 @@ internal fun MemberScope.collectMembers(vararg collectors: (DeclarationDescripto
                 || error("Unhandled member declaration: $member")
     }
 
+/**
+ * Will not check if all members are consumed
+ */
+internal fun MemberScope.collectMembersUnchecked(vararg collectors: (DeclarationDescriptor) -> Boolean) =
+    getContributedDescriptors().forEach { member ->
+        collectors.any { it(member) }
+    }
+
+
 @Suppress("FunctionName")
 private inline fun <reified T : DeclarationDescriptor> Collector(
     crossinline typedCollector: (T) -> Unit
