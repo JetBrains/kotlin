@@ -139,7 +139,7 @@ class Fir2IrLazyClass(
                             result += declarationStorage.getIrFunctionSymbol(declaration.symbol).owner
                         } else {
                             scope.processFunctionsByName(declaration.name) {
-                                if (it is FirNamedFunctionSymbol && it.dispatchReceiverClassOrNull() == fir.symbol.toLookupTag()) {
+                                if (it.dispatchReceiverClassOrNull() == fir.symbol.toLookupTag()) {
                                     if (it.isAbstractMethodOfAny()) {
                                         return@processFunctionsByName
                                     }

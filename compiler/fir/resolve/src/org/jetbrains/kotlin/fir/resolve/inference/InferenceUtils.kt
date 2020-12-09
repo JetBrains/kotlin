@@ -124,10 +124,10 @@ fun ConeKotlinType.findSubtypeOfNonSuspendFunctionalType(session: FirSession, ex
     }
 }
 
-fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: ScopeSession): FirFunctionSymbol<*>? {
+fun ConeClassLikeType.findBaseInvokeSymbol(session: FirSession, scopeSession: ScopeSession): FirNamedFunctionSymbol? {
     require(this.isBuiltinFunctionalType(session))
     val functionN = (lookupTag.toSymbol(session)?.fir as? FirClass<*>) ?: return null
-    var baseInvokeSymbol: FirFunctionSymbol<*>? = null
+    var baseInvokeSymbol: FirNamedFunctionSymbol? = null
     functionN.unsubstitutedScope(
         session,
         scopeSession,
@@ -155,9 +155,7 @@ fun ConeKotlinType.findContributedInvokeSymbol(
     val scope = scope(session, scopeSession, fakeOverrideTypeCalculator) ?: return null
     var declaredInvoke: FirNamedFunctionSymbol? = null
     scope.processFunctionsByName(OperatorNameConventions.INVOKE) { functionSymbol ->
-        if (functionSymbol is FirNamedFunctionSymbol &&
-            functionSymbol.fir.valueParameters.size == baseInvokeSymbol.fir.valueParameters.size
-        ) {
+        if (functionSymbol.fir.valueParameters.size == baseInvokeSymbol.fir.valueParameters.size) {
             declaredInvoke = functionSymbol
             return@processFunctionsByName
         }

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.Name
 
 class FirLocalScope private constructor(
     val properties: PersistentMap<Name, FirVariableSymbol<*>>,
-    val functions: PersistentMultimap<Name, FirFunctionSymbol<*>>,
+    val functions: PersistentMultimap<Name, FirNamedFunctionSymbol>,
     val classes: PersistentMap<Name, FirRegularClassSymbol>
 ) : FirScope(), FirContainingNamesAwareScope {
     constructor() : this(persistentMapOf(), PersistentMultimap(), persistentMapOf())
@@ -50,7 +50,7 @@ class FirLocalScope private constructor(
         )
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         for (function in functions[name]) {
             processor(function)
         }

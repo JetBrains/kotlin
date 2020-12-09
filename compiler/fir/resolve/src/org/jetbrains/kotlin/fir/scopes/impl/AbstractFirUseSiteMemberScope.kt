@@ -18,11 +18,11 @@ abstract class AbstractFirUseSiteMemberScope(
     protected val declaredMemberScope: FirScope
 ) : AbstractFirOverrideScope(session, overrideChecker) {
 
-    private val functions = hashMapOf<Name, Collection<FirFunctionSymbol<*>>>()
+    private val functions = hashMapOf<Name, Collection<FirNamedFunctionSymbol>>()
     private val directOverriddenFunctions = hashMapOf<FirNamedFunctionSymbol, Collection<FirNamedFunctionSymbol>>()
     protected val directOverriddenProperties = hashMapOf<FirPropertySymbol, MutableList<FirPropertySymbol>>()
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         functions.getOrPut(name) {
             doProcessFunctions(name)
         }.forEach {
@@ -32,24 +32,20 @@ abstract class AbstractFirUseSiteMemberScope(
 
     private fun doProcessFunctions(
         name: Name
-    ): Collection<FirFunctionSymbol<*>> = mutableListOf<FirFunctionSymbol<*>>().apply {
+    ): Collection<FirNamedFunctionSymbol> = mutableListOf<FirNamedFunctionSymbol>().apply {
         val overrideCandidates = mutableSetOf<FirFunctionSymbol<*>>()
         declaredMemberScope.processFunctionsByName(name) { symbol ->
             if (symbol.isStatic) return@processFunctionsByName
-            if (symbol is FirNamedFunctionSymbol) {
-                val directOverridden = computeDirectOverridden(symbol)
-                this@AbstractFirUseSiteMemberScope.directOverriddenFunctions[symbol] = directOverridden
-            }
+            val directOverridden = computeDirectOverridden(symbol)
+            this@AbstractFirUseSiteMemberScope.directOverriddenFunctions[symbol] = directOverridden
             overrideCandidates += symbol
             add(symbol)
         }
 
         superTypesScope.processFunctionsByName(name) {
-            if (it !is FirConstructorSymbol) {
-                val overriddenBy = it.getOverridden(overrideCandidates)
-                if (overriddenBy == null) {
-                    add(it)
-                }
+            val overriddenBy = it.getOverridden(overrideCandidates)
+            if (overriddenBy == null) {
+                add(it)
             }
         }
     }
@@ -58,9 +54,7 @@ abstract class AbstractFirUseSiteMemberScope(
         val result = mutableListOf<FirNamedFunctionSymbol>()
         val firSimpleFunction = symbol.fir
         superTypesScope.processFunctionsByName(symbol.callableId.callableName) { superSymbol ->
-            if (superSymbol is FirNamedFunctionSymbol &&
-                overrideChecker.isOverriddenFunction(firSimpleFunction, superSymbol.fir)
-            ) {
+            if (overrideChecker.isOverriddenFunction(firSimpleFunction, superSymbol.fir)) {
                 result.add(superSymbol)
             }
         }

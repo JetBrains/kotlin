@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JvmMappedScope(
     private val declaredMemberScope: FirScope,
@@ -19,13 +18,13 @@ class JvmMappedScope(
     private val signatures: Signatures
 ) : FirTypeScope() {
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         val visibleMethods = signatures.visibleMethodSignaturesByName[name]
             ?: return declaredMemberScope.processFunctionsByName(name, processor)
 
         val declared = mutableListOf<FirNamedFunctionSymbol>()
         declaredMemberScope.processFunctionsByName(name) { symbol ->
-            declared.addIfNotNull(symbol as FirNamedFunctionSymbol)
+            declared += symbol
             processor(symbol)
         }
 
@@ -91,7 +90,7 @@ class JvmMappedScope(
 
         // NOTE: No-arg constructors
         @OptIn(ExperimentalStdlibApi::class)
-        private val additionalHiddenConstructors = buildSet<String> {
+        private val additionalHiddenConstructors = buildSet {
             // kotlin.text.String pseudo-constructors should be used instead of java.lang.String constructors
             listOf(
                 "",

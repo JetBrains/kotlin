@@ -45,7 +45,7 @@ class FirClassDeclaredMemberScope(
         result
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (name == CONSTRUCTOR_NAME) return
         processCallables(name, processor)
     }

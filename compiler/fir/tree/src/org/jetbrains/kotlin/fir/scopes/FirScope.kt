@@ -18,7 +18,7 @@ abstract class FirScope {
 
     open fun processFunctionsByName(
         name: Name,
-        processor: (FirFunctionSymbol<*>) -> Unit
+        processor: (FirNamedFunctionSymbol) -> Unit
     ) {
     }
 
@@ -40,7 +40,7 @@ fun FirScope.getSingleClassifier(name: Name): FirClassifierSymbol<*>? = mutableL
     processClassifiersByName(name, this::add)
 }.singleOrNull()
 
-fun FirScope.getFunctions(name: Name): List<FirFunctionSymbol<*>> = mutableListOf<FirFunctionSymbol<*>>().apply {
+fun FirScope.getFunctions(name: Name): List<FirNamedFunctionSymbol> = mutableListOf<FirNamedFunctionSymbol>().apply {
     processFunctionsByName(name, this::add)
 }
 

@@ -20,7 +20,7 @@ private class FirNestedClassifierScopeWithSubstitution(
     private val substitutor: ConeSubstitutor
 ) : FirScope() {
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         scope.processFunctionsByName(name, processor)
     }
 

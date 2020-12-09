@@ -30,10 +30,12 @@ class JavaClassStaticEnhancementScope(
         return super.processPropertiesByName(name, processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         useSiteStaticScope.processFunctionsByName(name) process@{ original ->
             val enhancedFunction = signatureEnhancement.enhancedFunction(original, name)
-            processor(enhancedFunction)
+            if (enhancedFunction is FirNamedFunctionSymbol) {
+                processor(enhancedFunction)
+            }
         }
 
         return super.processFunctionsByName(name, processor)

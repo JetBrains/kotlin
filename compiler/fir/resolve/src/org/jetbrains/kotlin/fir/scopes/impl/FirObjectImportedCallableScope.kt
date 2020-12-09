@@ -20,12 +20,8 @@ class FirObjectImportedCallableScope(
     private val importedClassId: ClassId,
     private val objectUseSiteScope: FirTypeScope
 ) : FirScope(), FirContainingNamesAwareScope {
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         objectUseSiteScope.processFunctionsByName(name) wrapper@{ symbol ->
-            if (symbol !is FirNamedFunctionSymbol) {
-                processor(symbol)
-                return@wrapper
-            }
             val function = symbol.fir
             val syntheticFunction = buildSimpleFunctionCopy(function) {
                 origin = FirDeclarationOrigin.ImportedFromObject

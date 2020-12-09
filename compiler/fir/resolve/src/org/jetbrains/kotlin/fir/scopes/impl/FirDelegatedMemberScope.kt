@@ -33,9 +33,9 @@ class FirDelegatedMemberScope(
     private val dispatchReceiverType = containingClass.defaultType()
     private val overrideChecker = FirStandardOverrideChecker(session)
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         useSiteScope.processFunctionsByName(name) processor@{ functionSymbol ->
-            if (functionSymbol !is FirNamedFunctionSymbol || functionSymbol.fir.isPublicInAny()) {
+            if (functionSymbol.fir.isPublicInAny()) {
                 processor(functionSymbol)
                 return@processor
             }
@@ -46,7 +46,7 @@ class FirDelegatedMemberScope(
                 return@processor
             }
 
-            if (declaredMemberScope.getFunctions(name).any { it is FirNamedFunctionSymbol && overrideChecker.isOverriddenFunction(it.fir, original) }) {
+            if (declaredMemberScope.getFunctions(name).any { overrideChecker.isOverriddenFunction(it.fir, original) }) {
                 processor(functionSymbol)
                 return@processor
             }

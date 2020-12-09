@@ -24,13 +24,13 @@ class JavaAnnotationSyntheticPropertiesScope(
 ) : FirTypeScope() {
     private val classId: ClassId = owner.classId
     private val names: Set<Name> = owner.fir.declarations.mapNotNullTo(mutableSetOf()) { (it as? FirSimpleFunction)?.name }
-    private val syntheticPropertiesCache = mutableMapOf<FirFunctionSymbol<*>, FirVariableSymbol<*>>()
+    private val syntheticPropertiesCache = mutableMapOf<FirNamedFunctionSymbol, FirVariableSymbol<*>>()
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         delegateScope.processDeclaredConstructors(processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (name in names) return
         delegateScope.processFunctionsByName(name, processor)
     }
@@ -38,7 +38,7 @@ class JavaAnnotationSyntheticPropertiesScope(
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         if (name !in names) return
         delegateScope.processFunctionsByName(name) { functionSymbol ->
-            val function = functionSymbol.fir as? FirSimpleFunction ?: return@processFunctionsByName
+            val function = functionSymbol.fir
             val symbol = syntheticPropertiesCache.getOrPut(functionSymbol) {
                 val callableId = CallableId(classId, name)
                 FirAccessorSymbol(callableId, callableId).also {

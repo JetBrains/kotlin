@@ -156,9 +156,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                             withForcedTypeCalculator = true
                         ).processFunctionsByName(name) {
                             val declaration = it.fir
-                            if (declaration is FirSimpleFunction &&
-                                declaration.matchesDataClassSyntheticMemberSignatures
-                            ) {
+                            if (declaration.matchesDataClassSyntheticMemberSignatures) {
                                 putIfAbsent(declaration.name, declaration)
                             }
                         }

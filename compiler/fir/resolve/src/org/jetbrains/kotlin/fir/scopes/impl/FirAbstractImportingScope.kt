@@ -88,11 +88,11 @@ abstract class FirAbstractImportingScope(
         processor: (FirCallableSymbol<*>) -> Unit
     )
 
-    final override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    final override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         return processCallables(
             name,
             TowerScopeLevel.Token.Functions
-        ) { if (it is FirFunctionSymbol<*>) processor(it) }
+        ) { if (it is FirNamedFunctionSymbol) processor(it) }
     }
 
     final override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
