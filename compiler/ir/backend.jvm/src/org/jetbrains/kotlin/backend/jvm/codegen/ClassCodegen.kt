@@ -358,7 +358,16 @@ class ClassCodegen private constructor(
             // lazily so that if tail call optimization kicks in, the unused class will not be written to the output.
             val continuationClass = method.continuationClass() // null if `SuspendLambda.invokeSuspend` - `this` is continuation itself
             val continuationClassCodegen = lazy { if (continuationClass != null) getOrCreate(continuationClass, context, method) else this }
-            node.acceptWithStateMachine(method, this, smapCopyingVisitor) { continuationClassCodegen.value.visitor }
+
+            node.acceptWithStateMachine(
+                method,
+                this,
+                smapCopyingVisitor,
+                context.continuationClassesVarsCountByType[continuationClass] ?: emptyMap()
+            ) {
+                continuationClassCodegen.value.visitor
+            }
+
             if (continuationClass != null && (continuationClassCodegen.isInitialized() || method.isSuspendCapturingCrossinline())) {
                 continuationClassCodegen.value.generate()
             }

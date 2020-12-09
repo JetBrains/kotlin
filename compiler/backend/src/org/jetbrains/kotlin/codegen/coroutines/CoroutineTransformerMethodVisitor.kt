@@ -1113,7 +1113,7 @@ inline fun withInstructionAdapter(block: InstructionAdapter.() -> Unit): InsnLis
     return tmpMethodNode.instructions
 }
 
-internal fun Type.normalize() =
+fun Type.normalize() =
     when (sort) {
         Type.ARRAY, Type.OBJECT -> AsmTypes.OBJECT_TYPE
         else -> this
