@@ -30,24 +30,9 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/checkLocalVariablesTable"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
-    @TestMetadata("copyFunction.kt")
-    public void testCopyFunction() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/copyFunction.kt");
-    }
-
-    @TestMetadata("destructuringInFor.kt")
-    public void testDestructuringInFor() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/destructuringInFor.kt");
-    }
-
     @TestMetadata("destructuringInLambdas.kt")
     public void testDestructuringInLambdas() throws Exception {
         runTest("compiler/testData/checkLocalVariablesTable/destructuringInLambdas.kt");
-    }
-
-    @TestMetadata("destructuringInlineLambda.kt")
-    public void testDestructuringInlineLambda() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/destructuringInlineLambda.kt");
     }
 
     @TestMetadata("inlineLambdaWithItParam.kt")
@@ -88,11 +73,6 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
     @TestMetadata("lambdaAsVar.kt")
     public void testLambdaAsVar() throws Exception {
         runTest("compiler/testData/checkLocalVariablesTable/lambdaAsVar.kt");
-    }
-
-    @TestMetadata("localFun.kt")
-    public void testLocalFun() throws Exception {
-        runTest("compiler/testData/checkLocalVariablesTable/localFun.kt");
     }
 
     @TestMetadata("objectInLocalPropertyDelegate.kt")
