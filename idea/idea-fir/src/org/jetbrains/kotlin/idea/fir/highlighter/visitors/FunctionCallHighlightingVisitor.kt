@@ -51,7 +51,7 @@ internal class FunctionCallHighlightingVisitor(
 
     private fun getTextAttributesForCal(call: KtCall): TextAttributesKey? = when {
         call.isSuccessCallOf<KtFunctionSymbol> { it.isSuspend } -> Colors.SUSPEND_FUNCTION_CALL
-        call is KtFunctionCall -> when (val function = call.targetFunction) {
+        call is KtFunctionCall -> when (val function = call.targetFunction.getSuccessCallSymbolOrNull()) {
             is KtConstructorSymbol -> Colors.CONSTRUCTOR_CALL
             is KtAnonymousFunctionSymbol -> null
             is KtFunctionSymbol -> when {
