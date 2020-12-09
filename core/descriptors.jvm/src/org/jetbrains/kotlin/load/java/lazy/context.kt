@@ -81,7 +81,7 @@ class JavaResolverComponents(
 interface JavaResolverSettings {
     val isReleaseCoroutines: Boolean
     val correctNullabilityForNotNullTypeParameter: Boolean
-    val enhancementImprovements: Boolean
+    val typeEnhancementImprovements: Boolean
 
     object Default : JavaResolverSettings {
         override val isReleaseCoroutines: Boolean
@@ -90,7 +90,7 @@ interface JavaResolverSettings {
         override val correctNullabilityForNotNullTypeParameter: Boolean
             get() = false
 
-        override val enhancementImprovements: Boolean
+        override val typeEnhancementImprovements: Boolean
             get() = false
     }
 
@@ -98,12 +98,12 @@ interface JavaResolverSettings {
         fun create(
             isReleaseCoroutines: Boolean,
             correctNullabilityForNotNullTypeParameter: Boolean,
-            enhancementImprovements: Boolean,
+            typeEnhancementImprovements: Boolean
         ): JavaResolverSettings =
             object : JavaResolverSettings {
                 override val isReleaseCoroutines get() = isReleaseCoroutines
                 override val correctNullabilityForNotNullTypeParameter get() = correctNullabilityForNotNullTypeParameter
-                override val enhancementImprovements get() = enhancementImprovements
+                override val typeEnhancementImprovements get() = typeEnhancementImprovements
             }
     }
 }

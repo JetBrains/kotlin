@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.load.java.structure.impl.classFiles
 
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnotation.Companion.computeTargetType
+import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnotation.Companion.translatePath
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -33,7 +34,9 @@ internal class AnnotationsCollectorFieldVisitor(
     override fun visitAnnotation(desc: String, visible: Boolean) =
         BinaryJavaAnnotation.addAnnotation(field, desc, context, signatureParser)
 
-    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, desc: String, visible: Boolean): AnnotationVisitor? {
+    override fun visitTypeAnnotation(typeRef: Int, typePath: TypePath?, descriptor: String?, visible: Boolean): AnnotationVisitor? {
+        if (descriptor == null) return null
+
         val typeReference = TypeReference(typeRef)
 
         if (typePath != null) {
@@ -42,13 +45,13 @@ internal class AnnotationsCollectorFieldVisitor(
             when (typeReference.sort) {
                 TypeReference.FIELD -> {
                     val targetType = computeTargetType(field.type, translatedPath)
-                    return BinaryJavaAnnotation.addAnnotation(targetType as JavaPlainType, desc, context, signatureParser)
+                    return BinaryJavaAnnotation.addAnnotation(targetType as JavaPlainType, descriptor, context, signatureParser, true)
                 }
             }
         }
 
         return when (typeReference.sort) {
-            TypeReference.FIELD -> BinaryJavaAnnotation.addAnnotation(field.type as JavaPlainType, desc, context, signatureParser)
+            TypeReference.FIELD -> BinaryJavaAnnotation.addAnnotation(field.type as JavaPlainType, descriptor, context, signatureParser, true)
             else -> null
         }
     }
@@ -119,19 +122,23 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
             } ?: return null
 
             return BinaryJavaAnnotation.addAnnotation(
-                computeTargetType(baseType, translatePath(typePath)) as JavaPlainType, desc, context, signatureParser
+                computeTargetType(baseType, translatePath(typePath)) as JavaPlainType, desc, context, signatureParser, true
             )
         }
 
-        val targetType = when (typeReference.sort) {
-            TypeReference.METHOD_RETURN -> (member as? BinaryJavaMethod)?.returnType as JavaPlainType
-            TypeReference.METHOD_TYPE_PARAMETER -> member.typeParameters[typeReference.typeParameterIndex] as BinaryJavaTypeParameter
-            TypeReference.METHOD_FORMAL_PARAMETER -> member.valueParameters[typeReference.formalParameterIndex].type as JavaPlainType
-            TypeReference.METHOD_TYPE_PARAMETER_BOUND -> BinaryJavaAnnotation.computeTypeParameterBound(member.typeParameters, typeReference) as JavaPlainType
-            else -> null
-        } ?: return null
+        val (targetType, isFreshlySupportedAnnotation) = when (typeReference.sort) {
+            TypeReference.METHOD_RETURN ->
+                (member as? BinaryJavaMethod)?.returnType as JavaPlainType to false
+            TypeReference.METHOD_TYPE_PARAMETER ->
+                member.typeParameters[typeReference.typeParameterIndex] as BinaryJavaTypeParameter to true
+            TypeReference.METHOD_FORMAL_PARAMETER ->
+                member.valueParameters[typeReference.formalParameterIndex].type as JavaPlainType to false
+            TypeReference.METHOD_TYPE_PARAMETER_BOUND ->
+                BinaryJavaAnnotation.computeTypeParameterBound(member.typeParameters, typeReference) as JavaPlainType to true
+            else -> return null
+        }
 
-        return BinaryJavaAnnotation.addAnnotation(targetType, desc, context, signatureParser)
+        return BinaryJavaAnnotation.addAnnotation(targetType, desc, context, signatureParser, isFreshlySupportedAnnotation)
     }
 
     enum class PathElementType { ARRAY_ELEMENT, WILDCARD_BOUND, ENCLOSING_CLASS, TYPE_ARGUMENT }
@@ -140,7 +147,8 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
 class BinaryJavaAnnotation private constructor(
     desc: String,
     private val context: ClassifierResolutionContext,
-    override val arguments: Collection<JavaAnnotationArgument>
+    override val arguments: Collection<JavaAnnotationArgument>,
+    override val isFreshlySupportedTypeUseAnnotation: Boolean
 ) : JavaAnnotation {
 
     companion object {
@@ -148,10 +156,11 @@ class BinaryJavaAnnotation private constructor(
         fun createAnnotationAndVisitor(
             desc: String,
             context: ClassifierResolutionContext,
-            signatureParser: BinaryClassSignatureParser
+            signatureParser: BinaryClassSignatureParser,
+            isFreshlySupportedTypeUseAnnotation: Boolean = false
         ): Pair<JavaAnnotation, AnnotationVisitor> {
             val arguments = mutableListOf<JavaAnnotationArgument>()
-            val annotation = BinaryJavaAnnotation(desc, context, arguments)
+            val annotation = BinaryJavaAnnotation(desc, context, arguments, isFreshlySupportedTypeUseAnnotation)
 
             return annotation to BinaryJavaAnnotationVisitor(context, signatureParser, arguments)
         }
@@ -160,9 +169,11 @@ class BinaryJavaAnnotation private constructor(
             annotationOwner: MutableJavaAnnotationOwner,
             desc: String,
             context: ClassifierResolutionContext,
-            signatureParser: BinaryClassSignatureParser
+            signatureParser: BinaryClassSignatureParser,
+            isFreshlySupportedAnnotation: Boolean = false
         ): AnnotationVisitor {
-            val (javaAnnotation, annotationVisitor) = createAnnotationAndVisitor(desc, context, signatureParser)
+            val (javaAnnotation, annotationVisitor) =
+                createAnnotationAndVisitor(desc, context, signatureParser, isFreshlySupportedAnnotation)
             annotationOwner.annotations.add(javaAnnotation)
             return annotationVisitor
         }
