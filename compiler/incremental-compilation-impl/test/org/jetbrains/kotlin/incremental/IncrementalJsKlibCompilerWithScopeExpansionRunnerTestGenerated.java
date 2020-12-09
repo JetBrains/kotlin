@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.incremental;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.MuteExtraSuffix;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated extends AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest {
     @TestMetadata("jps-plugin/testData/incremental/pureKotlin")
+    @MuteExtraSuffix(".jsklib")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class PureKotlin extends AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest {
@@ -568,6 +570,31 @@ public class IncrementalJsKlibCompilerWithScopeExpansionRunnerTestGenerated exte
         @TestMetadata("returnTypeChanged")
         public void testReturnTypeChanged() throws Exception {
             runTest("jps-plugin/testData/incremental/pureKotlin/returnTypeChanged/");
+        }
+
+        @TestMetadata("sealedClassesAddImplements")
+        public void testSealedClassesAddImplements() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/sealedClassesAddImplements/");
+        }
+
+        @TestMetadata("sealedClassesAddInheritor")
+        public void testSealedClassesAddInheritor() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/sealedClassesAddInheritor/");
+        }
+
+        @TestMetadata("sealedClassesRemoveImplements")
+        public void testSealedClassesRemoveImplements() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/sealedClassesRemoveImplements/");
+        }
+
+        @TestMetadata("sealedClassesRemoveInheritor")
+        public void testSealedClassesRemoveInheritor() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/sealedClassesRemoveInheritor/");
+        }
+
+        @TestMetadata("sealedClassesUseSwitch")
+        public void testSealedClassesUseSwitch() throws Exception {
+            runTest("jps-plugin/testData/incremental/pureKotlin/sealedClassesUseSwitch/");
         }
 
         @TestMetadata("secondaryConstructorInlined")
