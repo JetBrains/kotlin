@@ -1,3 +1,5 @@
+// !LANGUAGE: +ImprovementsAroundTypeEnhancement
+
 package test;
 
 import org.jetbrains.annotations.*;

@@ -62,7 +62,7 @@ class JavaTypeResolver(
     fun transformArrayType(arrayType: JavaArrayType, attr: JavaTypeAttributes, isVararg: Boolean = false): KotlinType {
         val javaComponentType = arrayType.componentType
         val primitiveType = (javaComponentType as? JavaPrimitiveType)?.type
-        val annotations = LazyJavaAnnotations(c, arrayType)
+        val annotations = LazyJavaAnnotations(c, arrayType, areAnnotationsFreshlySupported = true)
 
         if (primitiveType != null) {
             val jetType = c.module.builtIns.getPrimitiveArrayKotlinType(primitiveType)
