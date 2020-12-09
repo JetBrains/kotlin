@@ -145,6 +145,7 @@ open class IncrementalJvmCache(
                 }
                 protoMap.remove(className, changesCollector)
                 classFqNameToSourceMap.remove(className.fqNameForClassNameWithoutDollars)
+                classAttributesMap.remove(className.fqNameForClassNameWithoutDollars)
                 internalNameToSource.remove(className.internalName)
 
                 // TODO NO_CHANGES? (delegates only)
@@ -568,6 +569,7 @@ sealed class ChangeInfo(val fqName: FqName) {
 
     class SignatureChanged(fqName: FqName, val areSubclassesAffected: Boolean) : ChangeInfo(fqName)
 
+    class ParentsChanged(fqName: FqName, val parentsChanged: Collection<FqName>) : ChangeInfo(fqName)
 
     protected open fun toStringProperties(): String = "fqName = $fqName"
 

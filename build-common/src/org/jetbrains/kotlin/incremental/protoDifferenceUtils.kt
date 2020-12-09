@@ -28,12 +28,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.descriptorVisibility
+import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.util.*
 
 data class Difference(
     val isClassAffected: Boolean = false,
     val areSubclassesAffected: Boolean = false,
-    val changedMembersNames: Set<String> = emptySet()
+    val changedMembersNames: Set<String> = emptySet(),
+    val changedSupertypes: Set<FqName> = emptySet()
 )
 
 sealed class ProtoData
@@ -187,6 +189,7 @@ class DifferenceCalculatorForClass(
 
         var isClassAffected = false
         var areSubclassesAffected = false
+        val changedSupertypes = HashSet<FqName>()
         val names = hashSetOf<String>()
         val classIsSealed = newProto.isSealed && oldProto.isSealed
 
@@ -247,11 +250,20 @@ class DifferenceCalculatorForClass(
                 ProtoBufClassKind.FLAGS,
                 ProtoBufClassKind.FQ_NAME,
                 ProtoBufClassKind.TYPE_PARAMETER_LIST,
-                ProtoBufClassKind.SUPERTYPE_LIST,
-                ProtoBufClassKind.SUPERTYPE_ID_LIST,
                 ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST -> {
                     isClassAffected = true
                     areSubclassesAffected = true
+                }
+
+                ProtoBufClassKind.SUPERTYPE_LIST,
+                ProtoBufClassKind.SUPERTYPE_ID_LIST -> {
+                    isClassAffected = true
+                    areSubclassesAffected = true
+
+                    val oldSupertypes = oldProto.supertypeList.map { oldNameResolver.getClassId(it.className).asSingleFqName() }
+                    val newSupertypes = newProto.supertypeList.map { newNameResolver.getClassId(it.className).asSingleFqName() }
+                    val changed = (oldSupertypes union newSupertypes) subtract (oldSupertypes intersect newSupertypes)
+                    changedSupertypes.addAll(changed)
                 }
                 ProtoBufClassKind.JVM_EXT_CLASS_MODULE_NAME,
                 ProtoBufClassKind.JS_EXT_CLASS_CONTAINING_FILE_ID -> {
@@ -281,7 +293,7 @@ class DifferenceCalculatorForClass(
             }
         }
 
-        return Difference(isClassAffected, areSubclassesAffected, names)
+        return Difference(isClassAffected, areSubclassesAffected, names, changedSupertypes)
     }
 }
 

@@ -90,6 +90,8 @@ abstract class AbstractProtoComparisonTest<PROTO_DATA> : TestWithWorkingDir() {
                 when (it) {
                     is ChangeInfo.SignatureChanged -> "CLASS_SIGNATURE"
                     is ChangeInfo.MembersChanged -> "MEMBERS\n    ${it.names.sorted()}"
+                    is ChangeInfo.ParentsChanged -> "PARENTS\n    ${it.parentsChanged.map { it.asString()}.sorted()}"
+
                 }
             }.sorted()
 
