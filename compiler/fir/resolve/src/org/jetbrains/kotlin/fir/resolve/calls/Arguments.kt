@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.types.model.CaptureStatus
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun Candidate.resolveArgumentExpression(
     csBuilder: ConstraintSystemBuilder,
@@ -336,10 +337,9 @@ internal fun Candidate.resolveArgument(
     sink: CheckerSink,
     context: ResolutionContext
 ) {
-
     argument.resultType.ensureResolvedTypeDeclaration(context.session)
 
-    val expectedType = prepareExpectedType(context.session, argument, parameter, context)
+    val expectedType = prepareExpectedType(context.session, context.bodyResolveComponents.scopeSession, argument, parameter, context)
     resolveArgumentExpression(
         this.system.getBuilder(),
         argument,
@@ -354,18 +354,20 @@ internal fun Candidate.resolveArgument(
 
 private fun Candidate.prepareExpectedType(
     session: FirSession,
+    scopeSession: ScopeSession,
     argument: FirExpression,
     parameter: FirValueParameter?,
     context: ResolutionContext
 ): ConeKotlinType? {
     if (parameter == null) return null
     val basicExpectedType = argument.getExpectedTypeForSAMConversion(parameter/*, LanguageVersionSettings*/)
-    val expectedType = getExpectedTypeWithSAMConversion(session, argument, basicExpectedType, context) ?: basicExpectedType
+    val expectedType = getExpectedTypeWithSAMConversion(session, scopeSession, argument, basicExpectedType, context) ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
 }
 
 private fun Candidate.getExpectedTypeWithSAMConversion(
     session: FirSession,
+    scopeSession: ScopeSession,
     argument: FirExpression,
     candidateExpectedType: ConeKotlinType,
     context: ResolutionContext
@@ -375,20 +377,43 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
     val firFunction = symbol.fir as? FirFunction<*> ?: return null
     if (!context.bodyResolveComponents.samResolver.shouldRunSamConversionForFunction(firFunction)) return null
 
-    if (!argument.isFunctional(session)) return null
-
     // TODO: resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
 
-    return context.bodyResolveComponents.samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType).apply {
-        usesSAM = true
+    val expectedFunctionType = context.bodyResolveComponents.samResolver.getFunctionTypeForPossibleSamType(candidateExpectedType)
+    return runIf(argument.isFunctional(session, scopeSession, expectedFunctionType)) {
+        expectedFunctionType.apply {
+            // Even though the `expectedFunctionalType` could be `null`, we should mark the flag to indicate that the argument is a
+            // functional type. That will help avoid ambiguous `invoke` resolutions. See KT-39824
+            usesSAM = true
+        }
     }
 }
 
-fun FirExpression.isFunctional(session: FirSession): Boolean =
+fun FirExpression.isFunctional(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    expectedFunctionType: ConeKotlinType?,
+): Boolean {
     when ((this as? FirWrappedArgumentExpression)?.expression ?: this) {
-        is FirAnonymousFunction, is FirCallableReferenceAccess -> true
-        else -> typeRef.coneTypeSafe<ConeKotlinType>()?.isBuiltinFunctionalType(session) == true
+        is FirAnonymousFunction, is FirCallableReferenceAccess -> return true
+        else -> {
+            // Either a functional type or a subtype of a class that has a contributed `invoke`.
+            val coneType = typeRef.coneTypeSafe<ConeKotlinType>() ?: return false
+            if (coneType.isBuiltinFunctionalType(session)) {
+                return true
+            }
+            val classLikeExpectedFunctionType = expectedFunctionType as? ConeClassLikeType
+            if (classLikeExpectedFunctionType == null || coneType is ConeIntegerLiteralType) {
+                return false
+            }
+            val invokeSymbol =
+                coneType.findContributedInvokeSymbol(
+                    session, scopeSession, classLikeExpectedFunctionType, shouldCalculateReturnTypesOfFakeOverrides = false
+                )
+            return invokeSymbol != null
+        }
     }
+}
 
 fun FirExpression.getExpectedTypeForSAMConversion(
     parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/

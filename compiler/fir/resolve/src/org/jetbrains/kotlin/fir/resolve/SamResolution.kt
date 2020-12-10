@@ -70,11 +70,7 @@ class FirSamResolverImpl(
     }
 
     private fun getFunctionTypeForPossibleSamType(type: ConeClassLikeType): ConeLookupTagBasedType? {
-        val firRegularClass =
-            firSession.firSymbolProvider
-                .getSymbolByLookupTag(type.lookupTag)
-                ?.fir as? FirRegularClass
-                ?: return null
+        val firRegularClass = type.lookupTag.toFirRegularClass(firSession) ?: return null
 
         val unsubstitutedFunctionType = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
@@ -216,11 +212,7 @@ class FirSamResolverImpl(
 
     private fun resolveFunctionTypeIfSamInterface(firRegularClass: FirRegularClass): ConeLookupTagBasedType? {
         return resolvedFunctionType.getOrPut(firRegularClass) {
-            if (!firRegularClass.status.isFun) return@getOrPut NULL_STUB
-            val abstractMethod = firRegularClass.getSingleAbstractMethodOrNull(firSession, scopeSession) ?: return@getOrPut NULL_STUB
-            // TODO: val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
-
-            abstractMethod.getFunctionTypeForAbstractMethod()
+            firRegularClass.resolveFunctionTypeIfSamInterface(firSession, scopeSession) ?: NULL_STUB
         } as? ConeLookupTagBasedType
     }
 
@@ -228,6 +220,17 @@ class FirSamResolverImpl(
         // TODO: properly support, see org.jetbrains.kotlin.load.java.sam.JvmSamConversionTransformer.shouldRunSamConversionForFunction
         return true
     }
+}
+
+fun FirRegularClass.resolveFunctionTypeIfSamInterface(
+    session: FirSession,
+    scopeSession: ScopeSession
+): ConeLookupTagBasedType? {
+    if (!this.status.isFun) return null
+    val abstractMethod = getSingleAbstractMethodOrNull(session, scopeSession) ?: return null
+    // TODO: val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
+
+    return abstractMethod.getFunctionTypeForAbstractMethod()
 }
 
 private fun FirRegularClass.getSingleAbstractMethodOrNull(
