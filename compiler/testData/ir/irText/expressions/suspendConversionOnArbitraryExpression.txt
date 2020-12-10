@@ -227,7 +227,8 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
               CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=null
                 $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastWithSuspendConversion.suspendConversion0' type=kotlin.Function0<kotlin.Unit> origin=null
           FUNCTION_REFERENCE 'local final fun suspendConversion0 (): kotlin.Unit [suspend] declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.Any origin=null
+            $receiver: TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
+              GET_VAR 'a: kotlin.Any declared in <root>.testSmartCastWithSuspendConversion' type=kotlin.Any origin=null
   FUN name:testSmartCastOnVarWithSuspendConversion visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
@@ -244,7 +245,8 @@ FILE fqName:<root> fileName:/suspendConversionOnArbitraryExpression.kt
               CALL 'public abstract fun invoke (): R of kotlin.Function0 [operator] declared in kotlin.Function0' type=kotlin.Unit origin=null
                 $this: GET_VAR 'callee: kotlin.Function0<kotlin.Unit> declared in <root>.testSmartCastOnVarWithSuspendConversion.suspendConversion0' type=kotlin.Function0<kotlin.Unit> origin=null
           FUNCTION_REFERENCE 'local final fun suspendConversion0 (): kotlin.Unit [suspend] declared in <root>.testSmartCastOnVarWithSuspendConversion' type=kotlin.coroutines.SuspendFunction0<kotlin.Unit> origin=SUSPEND_CONVERSION reflectionTarget=null
-            $receiver: GET_VAR 'var b: kotlin.Any [var] declared in <root>.testSmartCastOnVarWithSuspendConversion' type=kotlin.Any origin=null
+            $receiver: TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
+              GET_VAR 'var b: kotlin.Any [var] declared in <root>.testSmartCastOnVarWithSuspendConversion' type=kotlin.Any origin=null
   FUN name:testSmartCastVsSuspendConversion visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
