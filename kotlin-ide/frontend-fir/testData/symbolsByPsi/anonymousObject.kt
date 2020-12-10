@@ -28,11 +28,13 @@ KtFirFunctionSymbol:
   valueParameters: []
   visibility: PUBLIC
 
-KtFirPropertySymbol:
+KtFirKotlinPropertySymbol:
   annotations: []
   callableIdIfNonLocal: <anonymous>.data
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
+  hasGetter: true
+  hasSetter: false
   initializer: 123
   isConst: false
   isExtension: false
@@ -54,11 +56,13 @@ KtFirAnonymousObjectSymbol:
   superTypes: [java/lang/Runnable]
   symbolKind: LOCAL
 
-KtFirPropertySymbol:
+KtFirKotlinPropertySymbol:
   annotations: []
   callableIdIfNonLocal: AnonymousContainer.anonymousObject
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
+  hasGetter: true
+  hasSetter: false
   initializer: KtUnsupportedConstantValue
   isConst: false
   isExtension: false

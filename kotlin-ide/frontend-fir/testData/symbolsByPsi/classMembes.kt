@@ -5,11 +5,13 @@ class A {
 
 // SYMBOLS:
 /*
-KtFirPropertySymbol:
+KtFirKotlinPropertySymbol:
   annotations: []
   callableIdIfNonLocal: A.a
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
+  hasGetter: true
+  hasSetter: false
   initializer: 10
   isConst: false
   isExtension: false

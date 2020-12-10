@@ -69,11 +69,13 @@ KtFirFunctionSymbol:
   valueParameters: []
   visibility: PUBLIC
 
-KtFirPropertySymbol:
+KtFirKotlinPropertySymbol:
   annotations: []
   callableIdIfNonLocal: kotlin.CharSequence.length
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
+  hasGetter: true
+  hasSetter: false
   initializer: null
   isConst: false
   isExtension: false

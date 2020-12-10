@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.idea.asJava.classes.createField
 import org.jetbrains.kotlin.idea.asJava.classes.createMethods
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -116,7 +117,8 @@ class FirLightClassForFacade(
         }
 
         for (propertySymbol in propertySymbols) {
-            val forceStaticAndPropertyVisibility = propertySymbol.isConst || propertySymbol.hasJvmFieldAnnotation()
+            val forceStaticAndPropertyVisibility = propertySymbol is KtKotlinPropertySymbol && propertySymbol.isConst
+                    || propertySymbol.hasJvmFieldAnnotation()
             createField(
                 propertySymbol,
                 nameGenerator,

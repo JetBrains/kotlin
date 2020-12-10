@@ -4,11 +4,13 @@ class A {
 }
 
 // SYMBOLS:
-KtFirPropertySymbol:
+KtFirKotlinPropertySymbol:
   annotations: []
   callableIdIfNonLocal: A.x
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: true
+  hasGetter: true
+  hasSetter: false
   initializer: 10
   isConst: false
   isExtension: false
@@ -35,11 +37,13 @@ KtFirPropertyGetterSymbol:
   type: kotlin/Int
   visibility: PUBLIC
 
-KtFirPropertySymbol:
+KtFirKotlinPropertySymbol:
   annotations: []
   callableIdIfNonLocal: A.y
   getter: KtFirPropertyGetterSymbol(<getter>)
   hasBackingField: false
+  hasGetter: true
+  hasSetter: false
   initializer: null
   isConst: false
   isExtension: true
