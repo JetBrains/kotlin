@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -409,8 +410,35 @@ fun FirExpression.isFunctional(
             val invokeSymbol =
                 coneType.findContributedInvokeSymbol(
                     session, scopeSession, classLikeExpectedFunctionType, shouldCalculateReturnTypesOfFakeOverrides = false
-                )
-            return invokeSymbol != null
+                ) ?: return false
+            // Make sure the contributed `invoke` is indeed a wanted functional type by checking if types are compatible.
+            val expectedReturnType = classLikeExpectedFunctionType.returnType(session)!!.lowerBoundIfFlexible()
+            val returnTypeCompatible =
+                expectedReturnType is ConeTypeParameterType ||
+                        AbstractTypeChecker.isSubtypeOf(
+                            session.inferenceComponents.ctx,
+                            invokeSymbol.fir.returnTypeRef.coneType,
+                            expectedReturnType,
+                            isFromNullabilityConstraint = false
+                        )
+            if (!returnTypeCompatible) {
+                return false
+            }
+            if (invokeSymbol.fir.valueParameters.size != classLikeExpectedFunctionType.typeArguments.size - 1) {
+                return false
+            }
+            val parameterPairs =
+                invokeSymbol.fir.valueParameters.zip(classLikeExpectedFunctionType.valueParameterTypesIncludingReceiver(session))
+            return parameterPairs.all { (invokeParameter, expectedParameter) ->
+                val expectedParameterType = expectedParameter!!.lowerBoundIfFlexible()
+                expectedParameterType is ConeTypeParameterType ||
+                        AbstractTypeChecker.isSubtypeOf(
+                            session.inferenceComponents.ctx,
+                            invokeParameter.returnTypeRef.coneType,
+                            expectedParameterType,
+                            isFromNullabilityConstraint = false
+                        )
+            }
         }
     }
 }
