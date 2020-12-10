@@ -56,7 +56,8 @@ class CompositeResolverForModuleFactory(
         moduleContext: ModuleContext,
         moduleContent: ModuleContent<M>,
         resolverForProject: ResolverForProject<M>,
-        languageVersionSettings: LanguageVersionSettings
+        languageVersionSettings: LanguageVersionSettings,
+        sealedInheritorsProvider: SealedClassInheritorsProvider
     ): ResolverForModule {
         val (moduleInfo, syntheticFiles, moduleContentScope) = moduleContent
         val project = moduleContext.project
@@ -178,7 +179,7 @@ class CompositeResolverForModuleFactory(
         }
 
         // Called by all normal containers set-ups
-        configureModule(moduleContext, targetPlatform, analyzerServices, trace, languageVersionSettings)
+        configureModule(moduleContext, targetPlatform, analyzerServices, trace, languageVersionSettings,)
         configureStandardResolveComponents()
         useInstance(moduleContentScope)
         useInstance(declarationProviderFactory)
