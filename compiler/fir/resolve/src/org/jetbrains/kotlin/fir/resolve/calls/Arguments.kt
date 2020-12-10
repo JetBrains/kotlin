@@ -402,7 +402,7 @@ fun FirExpression.isFunctional(
             if (coneType.isBuiltinFunctionalType(session)) {
                 return true
             }
-            val classLikeExpectedFunctionType = expectedFunctionType as? ConeClassLikeType
+            val classLikeExpectedFunctionType = expectedFunctionType?.lowerBoundIfFlexible() as? ConeClassLikeType
             if (classLikeExpectedFunctionType == null || coneType is ConeIntegerLiteralType) {
                 return false
             }

@@ -16,7 +16,7 @@ public interface MyListener<F extends MyFuture<?>>  {
 typealias Handler = (cause: Throwable?) -> Unit
 
 fun <T> MyFuture<T>.setup() {
-    addListener(ListenerImpl<T, MyFuture<T>>())
+    <!INAPPLICABLE_CANDIDATE!>addListener<!>(ListenerImpl<T, MyFuture<T>>())
     addListener { }
 }
 
