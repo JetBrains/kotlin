@@ -15,16 +15,109 @@
 
 using namespace kotlin;
 
+namespace {
+
+template <typename T>
+std::vector<T> Collect(MultiSourceQueue<T>& queue) {
+    std::vector<T> result;
+    for (const auto& element : queue.Iter()) {
+        result.push_back(element);
+    }
+    return result;
+}
+
+} // namespace
+
 using IntQueue = MultiSourceQueue<int>;
+
+TEST(MultiSourceQueueTest, Insert) {
+    IntQueue queue;
+    IntQueue::Producer producer(queue);
+
+    constexpr int kFirst = 1;
+    constexpr int kSecond = 2;
+
+    auto* node1 = producer.Insert(kFirst);
+    auto* node2 = producer.Insert(kSecond);
+
+    EXPECT_THAT(**node1, kFirst);
+    EXPECT_THAT(**node2, kSecond);
+}
+
+TEST(MultiSourceQueueTest, EraseFromTheSameProducer) {
+    IntQueue queue;
+    IntQueue::Producer producer(queue);
+
+    constexpr int kFirst = 1;
+    constexpr int kSecond = 2;
+
+    producer.Insert(kFirst);
+    auto* node2 = producer.Insert(kSecond);
+    producer.Erase(node2);
+    producer.Publish();
+
+    auto actual = Collect(queue);
+    EXPECT_THAT(actual, testing::ElementsAre(kFirst));
+}
+
+TEST(MultiSourceQueueTest, EraseFromGlobal) {
+    IntQueue queue;
+    IntQueue::Producer producer(queue);
+
+    constexpr int kFirst = 1;
+    constexpr int kSecond = 2;
+
+    producer.Insert(kFirst);
+    auto* node2 = producer.Insert(kSecond);
+    producer.Publish();
+    producer.Erase(node2);
+    producer.Publish();
+
+    auto actual1 = Collect(queue);
+    EXPECT_THAT(actual1, testing::ElementsAre(kFirst, kSecond));
+
+    queue.ApplyDeletions();
+
+    auto actual2 = Collect(queue);
+    EXPECT_THAT(actual2, testing::ElementsAre(kFirst));
+}
+
+TEST(MultiSourceQueueTest, EraseFromOtherProducer) {
+    IntQueue queue;
+    IntQueue::Producer producer1(queue);
+    IntQueue::Producer producer2(queue);
+
+    constexpr int kFirst = 1;
+    constexpr int kSecond = 2;
+
+    producer1.Insert(kFirst);
+    auto* node2 = producer1.Insert(kSecond);
+    producer2.Erase(node2);
+    producer1.Publish();
+
+    auto actual1 = Collect(queue);
+    EXPECT_THAT(actual1, testing::ElementsAre(kFirst, kSecond));
+
+    queue.ApplyDeletions();
+
+    auto actual2 = Collect(queue);
+    EXPECT_THAT(actual2, testing::ElementsAre(kFirst, kSecond));
+
+    producer2.Publish();
+
+    auto actual3 = Collect(queue);
+    EXPECT_THAT(actual3, testing::ElementsAre(kFirst, kSecond));
+
+    queue.ApplyDeletions();
+
+    auto actual4 = Collect(queue);
+    EXPECT_THAT(actual4, testing::ElementsAre(kFirst));
+}
 
 TEST(MultiSourceQueueTest, Empty) {
     IntQueue queue;
 
-    std::vector<int> actual;
-    for (int element : queue.Iter()) {
-        actual.push_back(element);
-    }
-
+    auto actual = Collect(queue);
     EXPECT_THAT(actual, testing::IsEmpty());
 }
 
@@ -35,11 +128,7 @@ TEST(MultiSourceQueueTest, DoNotPublish) {
     producer.Insert(1);
     producer.Insert(2);
 
-    std::vector<int> actual;
-    for (int element : queue.Iter()) {
-        actual.push_back(element);
-    }
-
+    auto actual = Collect(queue);
     EXPECT_THAT(actual, testing::IsEmpty());
 }
 
@@ -56,11 +145,7 @@ TEST(MultiSourceQueueTest, Publish) {
     producer1.Publish();
     producer2.Publish();
 
-    std::vector<int> actual;
-    for (int element : queue.Iter()) {
-        actual.push_back(element);
-    }
-
+    auto actual = Collect(queue);
     EXPECT_THAT(actual, testing::ElementsAre(1, 2, 10, 20));
 }
 
@@ -85,11 +170,7 @@ TEST(MultiSourceQueueTest, PublishSeveralTimes) {
     producer.Insert(5);
     producer.Publish();
 
-    std::vector<int> actual;
-    for (int element : queue.Iter()) {
-        actual.push_back(element);
-    }
-
+    auto actual = Collect(queue);
     EXPECT_THAT(actual, testing::ElementsAre(1, 2, 3, 4, 5));
 }
 
@@ -102,11 +183,7 @@ TEST(MultiSourceQueueTest, PublishInDestructor) {
         producer.Insert(2);
     }
 
-    std::vector<int> actual;
-    for (int element : queue.Iter()) {
-        actual.push_back(element);
-    }
-
+    auto actual = Collect(queue);
     EXPECT_THAT(actual, testing::ElementsAre(1, 2));
 }
 
@@ -137,11 +214,7 @@ TEST(MultiSourceQueueTest, ConcurrentPublish) {
         t.join();
     }
 
-    std::vector<int> actual;
-    for (int element : queue.Iter()) {
-        actual.push_back(element);
-    }
-
+    auto actual = Collect(queue);
     EXPECT_THAT(actual, testing::UnorderedElementsAreArray(expected));
 }
 
@@ -198,10 +271,49 @@ TEST(MultiSourceQueueTest, IterWhileConcurrentPublish) {
 
     EXPECT_THAT(actualBefore, testing::ElementsAreArray(expectedBefore));
 
-    std::vector<int> actualAfter;
-    for (int element : queue.Iter()) {
-        actualAfter.push_back(element);
+    auto actualAfter = Collect(queue);
+    EXPECT_THAT(actualAfter, testing::UnorderedElementsAreArray(expectedAfter));
+}
+
+TEST(MultiSourceQueueTest, ConcurrentPublishAndApplyDeletions) {
+    IntQueue queue;
+    constexpr int kThreadCount = kDefaultThreadCount;
+
+    std::atomic<bool> canStart(false);
+    std::atomic<int> readyCount(0);
+    std::atomic<int> startedCount(0);
+    std::vector<std::thread> threads;
+    for (int i = 0; i < kThreadCount; ++i) {
+        threads.emplace_back([&queue, i, &canStart, &readyCount, &startedCount]() {
+            IntQueue::Producer producer(queue);
+            auto* node = producer.Insert(i);
+            producer.Publish();
+            producer.Erase(node);
+            ++readyCount;
+            while (!canStart) {
+            }
+            ++startedCount;
+            producer.Publish();
+        });
     }
 
-    EXPECT_THAT(actualAfter, testing::UnorderedElementsAreArray(expectedAfter));
+    while (readyCount < kThreadCount) {
+    }
+    canStart = true;
+    while (startedCount < kThreadCount) {
+    }
+
+    queue.ApplyDeletions();
+
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    // We do not know which elements were deleted at this point. Expecting not to crash by this point.
+
+    // This must make the queue empty.
+    queue.ApplyDeletions();
+
+    auto actual = Collect(queue);
+    EXPECT_THAT(actual, testing::IsEmpty());
 }

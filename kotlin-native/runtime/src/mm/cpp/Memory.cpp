@@ -6,6 +6,7 @@
 #include "Memory.h"
 
 #include "GlobalsRegistry.hpp"
+#include "StableRefRegistry.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
@@ -19,6 +20,15 @@ extern "C" struct MemoryState : Pinned {
     ~MemoryState() = delete;
 };
 
+// TODO: This name does not make sense anymore.
+// Delete all means of creating this type directly as it only serves
+// as a typedef for `mm::StableRefRegistry::Node`.
+class ForeignRefManager : Pinned {
+public:
+    ForeignRefManager() = delete;
+    ~ForeignRefManager() = delete;
+};
+
 namespace {
 
 // `reinterpret_cast` to it and back to the same type
@@ -29,6 +39,14 @@ ALWAYS_INLINE MemoryState* ToMemoryState(mm::ThreadRegistry::Node* data) {
 
 ALWAYS_INLINE mm::ThreadRegistry::Node* FromMemoryState(MemoryState* state) {
     return reinterpret_cast<mm::ThreadRegistry::Node*>(state);
+}
+
+ALWAYS_INLINE ForeignRefManager* ToForeignRefManager(mm::StableRefRegistry::Node* data) {
+    return reinterpret_cast<ForeignRefManager*>(data);
+}
+
+ALWAYS_INLINE mm::StableRefRegistry::Node* FromForeignRefManager(ForeignRefManager* manager) {
+    return reinterpret_cast<mm::StableRefRegistry::Node*>(manager);
 }
 
 ALWAYS_INLINE mm::ThreadData* GetThreadData(MemoryState* state) {
@@ -74,4 +92,53 @@ extern "C" RUNTIME_NOTHROW void ClearTLS(MemoryState* memory) {
 
 extern "C" RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
     return mm::ThreadRegistry::Instance().CurrentThreadData()->tls().Lookup(key, index);
+}
+
+extern "C" RUNTIME_NOTHROW void* CreateStablePointer(ObjHeader* object) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    return mm::StableRefRegistry::Instance().RegisterStableRef(threadData, object);
+}
+
+extern "C" RUNTIME_NOTHROW void DisposeStablePointer(void* pointer) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
+    mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
+}
+
+extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void* pointer) {
+    auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
+    ObjHeader* object = **node;
+    RETURN_OBJ(object);
+}
+
+extern "C" RUNTIME_NOTHROW OBJ_GETTER(AdoptStablePointer, void* pointer) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
+    ObjHeader* object = **node;
+    UpdateReturnRef(OBJ_RESULT, object);
+    mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
+    return object;
+}
+
+extern "C" ForeignRefContext InitForeignRef(ObjHeader* object) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto* node = mm::StableRefRegistry::Instance().RegisterStableRef(threadData, object);
+    return ToForeignRefManager(node);
+}
+
+extern "C" void DeinitForeignRef(ObjHeader* object, ForeignRefContext context) {
+    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+    auto* node = FromForeignRefManager(context);
+    RuntimeAssert(object == **node, "Must correspond to the same object");
+    mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
+}
+
+extern "C" bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context) {
+    // TODO: Remove when legacy MM is gone.
+    return true;
+}
+
+extern "C" void AdoptReferenceFromSharedVariable(ObjHeader* object) {
+    // TODO: Remove when legacy MM is gone.
+    // Nothing to do.
 }

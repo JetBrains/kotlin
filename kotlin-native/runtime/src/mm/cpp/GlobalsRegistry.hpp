@@ -46,6 +46,7 @@ private:
     GlobalsRegistry();
     ~GlobalsRegistry();
 
+    // TODO: Add-only MultiSourceQueue can be made more efficient. Measure, if it's a problem.
     MultiSourceQueue<ObjHeader**> globals_;
 };
 
