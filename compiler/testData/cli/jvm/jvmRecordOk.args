@@ -7,7 +7,7 @@ $TEMP_DIR$
 1.5
 -jdk-home
 $JDK_15$
--XXLanguage:+JvmRecordSupport
+-XXLanguage\:+JvmRecordSupport
 -Xjvm-enable-preview
 -jvm-target
 15
