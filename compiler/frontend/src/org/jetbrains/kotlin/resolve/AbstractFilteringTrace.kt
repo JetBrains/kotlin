@@ -37,6 +37,8 @@ abstract class AbstractFilteringTrace(
     }
 
     override fun report(diagnostic: Diagnostic) {
+        diagnosticsCallback?.callback(diagnostic)
+
         parentTrace.report(diagnostic)
     }
 
