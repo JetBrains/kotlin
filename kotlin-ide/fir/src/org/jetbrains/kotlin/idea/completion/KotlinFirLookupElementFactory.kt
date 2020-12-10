@@ -34,7 +34,7 @@ internal class KotlinFirLookupElementFactory {
     fun KtAnalysisSession.createLookupElement(symbol: KtNamedSymbol): LookupElement? {
         val elementBuilder = when (symbol) {
             is KtFunctionSymbol -> with(functionLookupElementFactory) { createLookup(symbol) }
-            is KtVariableLikeSymbol -> with(variableLookupElementFactory)  { createLookup(symbol) }
+            is KtVariableLikeSymbol -> with(variableLookupElementFactory) { createLookup(symbol) }
             is KtClassLikeSymbol -> classLookupElementFactory.createLookup(symbol)
             is KtTypeParameterSymbol -> typeParameterLookupElementFactory.createLookup(symbol)
             else -> throw IllegalArgumentException("Cannot create a lookup element for $symbol")
@@ -67,8 +67,22 @@ private class VariableLookupElementFactory {
     fun KtAnalysisSession.createLookup(symbol: KtVariableLikeSymbol): LookupElementBuilder {
         return LookupElementBuilder.create(UniqueLookupObject(), symbol.name.asString())
             .withTypeText(symbol.type.render())
+            .markIfSyntheticJavaProperty(symbol)
             .withInsertHandler(createInsertHandler(symbol))
     }
+
+    private fun LookupElementBuilder.markIfSyntheticJavaProperty(symbol: KtVariableLikeSymbol): LookupElementBuilder = when (symbol) {
+        is KtSyntheticJavaPropertySymbol -> {
+            val getterName = symbol.javaGetterName.asString()
+            val setterName = symbol.javaSetterName?.asString()
+            this.withTailText((" (from ${buildSyntheticPropertyTailText(getterName, setterName)})"))
+                .withLookupStrings(listOfNotNull(getterName, setterName))
+        }
+        else -> this
+    }
+
+    private fun buildSyntheticPropertyTailText(getterName: String, setterName: String?): String =
+        if (setterName != null) "$getterName()/$setterName()" else "$getterName()"
 
     private fun createInsertHandler(symbol: KtVariableLikeSymbol): InsertHandler<LookupElement> {
         return QuotedNamesAwareInsertionHandler(symbol.name)
