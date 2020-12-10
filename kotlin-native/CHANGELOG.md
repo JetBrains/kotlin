@@ -1,3 +1,8 @@
+# 1.4.21 (Dec 2020)
+  * Fixed [KT-43517](https://youtrack.jetbrains.com/issue/KT-43517)
+  * Fixed [KT-43530](https://youtrack.jetbrains.com/issue/KT-43530)
+  * Fixed [KT-43265](https://youtrack.jetbrains.com/issue/KT-43265)
+
 # 1.4.20 (Nov 2020)
   * XCode 12 support
   * Completely reworked escape analysis for object allocation
