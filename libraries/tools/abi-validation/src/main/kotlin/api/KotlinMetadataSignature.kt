@@ -62,6 +62,24 @@ data class MethodBinarySignature(
         return super.findMemberVisibility(classVisibility) ?: classVisibility?.let { alternateDefaultSignature(it.name)?.let(it::findMember) }
     }
 
+    /**
+     * Checks whether the method is a $default counterpart of internal @PublishedApi method
+     */
+    public fun isPublishedApiWithDefaultArguments(
+        classVisibility: ClassVisibility?,
+        publishedApiSignatures: Set<JvmMethodSignature>
+    ): Boolean {
+        // Fast-path
+        findMemberVisibility(classVisibility)?.isInternal() ?: return false
+        val name = jvmMember.name
+        if (!name.endsWith("\$default")) return false
+        // Leverage the knowledge about modified signature
+        val expectedPublishedApiCounterPart = JvmMethodSignature(
+            name.removeSuffix("\$default"),
+            jvmMember.desc.replace( ";ILjava/lang/Object;)", ";)"))
+        return expectedPublishedApiCounterPart in publishedApiSignatures
+    }
+
     private fun isAccessOrAnnotationsMethod() = access.isSynthetic && (name.startsWith("access\$") || name.endsWith("\$annotations"))
 
     private fun isDummyDefaultConstructor() = access.isSynthetic && name == "<init>" && desc == "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V"
