@@ -467,7 +467,7 @@ allprojects {
     }
 
     tasks.withType<Test> {
-        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KT-37089") { true }
+        outputs.doNotCacheIf("https://youtrack.jetbrains.com/issue/KTI-112") { !isTestDistributionEnabled() }
     }
 
     normalization {

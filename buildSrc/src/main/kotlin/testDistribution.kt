@@ -25,3 +25,6 @@ fun Test.configureTestDistribution(configure: TestDistributionExtension.() -> Un
         configure()
     }
 }
+
+fun Test.isTestDistributionEnabled(): Boolean =
+    extensions.findByType(TestDistributionExtension::class.java)?.enabled?.orNull ?: false
