@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
 import org.jetbrains.kotlin.load.java.getJvmMethodNameIfSpecial
 import org.jetbrains.kotlin.load.java.getOverriddenBuiltinReflectingJvmDescriptor
@@ -995,7 +996,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
         if ((isFunctionExpression(descriptor) || isFunctionLiteral(descriptor)) && returnType.isInlineClassType()) return true
 
         return isJvmPrimitive(returnType) &&
-                getAllOverriddenDescriptors(descriptor).any { !isJvmPrimitive(it.returnType!!) }
+                getAllOverriddenDescriptors(descriptor).any { !isJvmPrimitive(it.returnType!!) } ||
+                returnType.isInlineClassType() && descriptor is JavaMethodDescriptor
     }
 
     private fun isJvmPrimitive(kotlinType: KotlinType) =
@@ -1061,7 +1063,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
     fun writeParameterType(sw: JvmSignatureWriter, type: KotlinType, callableDescriptor: CallableDescriptor?) {
         if (sw.skipGenericSignature()) {
-            mapType(type, sw, TypeMappingMode.DEFAULT)
+            if (type.isInlineClassType() && callableDescriptor is JavaMethodDescriptor) {
+                mapType(type, sw, TypeMappingMode.GENERIC_ARGUMENT)
+            } else {
+                mapType(type, sw, TypeMappingMode.DEFAULT)
+            }
             return
         }
 
