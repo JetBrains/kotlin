@@ -195,7 +195,8 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
     // See also: KotlinTypeMapper.forceBoxedReturnType
     private fun forceBoxedReturnType(function: IrFunction): Boolean =
-        isBoxMethodForInlineClass(function) || forceFoxedReturnTypeOnOverride(function) || forceBoxedReturnTypeOnDefaultImplFun(function)
+        isBoxMethodForInlineClass(function) || forceFoxedReturnTypeOnOverride(function) || forceBoxedReturnTypeOnDefaultImplFun(function) ||
+                function.isFromJava() && function.returnType.isInlined()
 
     private fun forceFoxedReturnTypeOnOverride(function: IrFunction) =
         function is IrSimpleFunction &&
@@ -320,7 +321,11 @@ class MethodSignatureMapper(private val context: JvmBackendContext) {
 
     private fun writeParameterType(sw: JvmSignatureWriter, type: IrType, declaration: IrDeclaration) {
         if (sw.skipGenericSignature()) {
-            typeMapper.mapType(type, TypeMappingMode.DEFAULT, sw)
+            if (type.isInlined() && declaration.isFromJava()) {
+                typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT, sw)
+            } else {
+                typeMapper.mapType(type, TypeMappingMode.DEFAULT, sw)
+            }
             return
         }
 
