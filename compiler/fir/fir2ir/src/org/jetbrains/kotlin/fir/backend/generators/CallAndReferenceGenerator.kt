@@ -17,13 +17,12 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.FirSamResolverImpl
 import org.jetbrains.kotlin.fir.resolve.calls.getExpectedTypeForSAMConversion
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isKMutableProperty
-import org.jetbrains.kotlin.fir.resolve.resolveFunctionTypeIfSamInterface
-import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -48,6 +47,7 @@ class CallAndReferenceGenerator(
 
     private val approximator = object : AbstractTypeApproximator(session.typeContext) {}
     private val adapterGenerator = AdapterGenerator(components, conversionScope)
+    private val samResolver = FirSamResolverImpl(session, scopeSession)
 
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 
@@ -621,10 +621,7 @@ class CallAndReferenceGenerator(
             return false
         }
         // On the other hand, the actual type should be either a functional type or a subtype of a class that has a contributed `invoke`.
-        val lookupTag = parameter.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag
-        val firRegularClass = lookupTag?.toFirRegularClass(session)
-        // TODO: cache SAM interface to resolved function type, as [SamResolution] does?
-        val expectedFunctionType = firRegularClass?.resolveFunctionTypeIfSamInterface(session, scopeSession)
+        val expectedFunctionType = samResolver.getFunctionTypeForPossibleSamType(parameter.returnTypeRef.coneType)
         return argument.isFunctional(session, scopeSession, expectedFunctionType)
     }
 
