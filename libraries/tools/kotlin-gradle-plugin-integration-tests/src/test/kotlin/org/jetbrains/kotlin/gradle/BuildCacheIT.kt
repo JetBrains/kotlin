@@ -96,34 +96,79 @@ class BuildCacheIT : BaseGradleIT() {
     }
 
     @Test
-    fun testCorrectBuildAfterCacheHit() = with(Project("buildCacheSimple", GRADLE_VERSION)) {
+    fun testKotlinCompileIncrementalBuildWithoutRelocation() = with(Project("buildCacheSimple", GRADLE_VERSION)) {
         prepareLocalBuildCache()
 
-        // First build, should be stored into the build cache:
-        build("assemble") {
-            assertSuccessful()
-            assertTaskPackedToCache(":compileKotlin")
-        }
+        checkKotlinCompileCachingIncrementalBuild(projectDir, this)
+    }
 
-        // A cache hit:
-        build("clean", "assemble") {
-            assertSuccessful()
-            assertContains(":compileKotlin FROM-CACHE")
-        }
+    @Test
+    fun testKotlinCompileCachingIncrementalBuildWithRelocation() {
+        with(Project("buildCacheSimple", GRADLE_VERSION)) {
+            prepareLocalBuildCache()
 
-        // Change the return type of foo() from Int to String in foo.kt, and check that fooUsage.kt is recompiled as well:
-        File(projectDir, "src/main/kotlin/foo.kt").modify { it.replace("Int = 1", "String = \"abc\"") }
-        build("assemble") {
-            assertSuccessful()
-            assertCompiledKotlinSources(relativize(allKotlinFiles))
+            // Copy the project to a different directory
+            val copyProjectParentDir = projectDir.resolveSibling("copy_${projectDir.name}").also { it.mkdirs() }
+            copyRecursively(projectDir, copyProjectParentDir)
+
+            checkKotlinCompileCachingIncrementalBuild(copyProjectParentDir.resolve(projectName), this)
         }
     }
 
     @Test
-    fun testKaptCachingWithIncrementalApt() {
+    fun testKaptCachingIncrementalBuildWithoutRelocation() {
         with(Project("kaptAvoidance", GRADLE_VERSION, directoryPrefix = "kapt2")) {
             prepareLocalBuildCache()
 
+            checkKaptCachingIncrementalBuild(projectDir, this)
+        }
+    }
+
+    @Test
+    fun testKaptCachingIncrementalBuildWithRelocation() {
+        with(Project("kaptAvoidance", GRADLE_VERSION, directoryPrefix = "kapt2")) {
+            prepareLocalBuildCache()
+
+            // Copy the project to a different directory
+            val copyProjectParentDir = projectDir.resolveSibling("copy_${projectDir.name}").also { it.mkdirs() }
+            copyRecursively(projectDir, copyProjectParentDir)
+
+            checkKaptCachingIncrementalBuild(copyProjectParentDir.resolve(projectName), this)
+        }
+    }
+
+    private fun checkKotlinCompileCachingIncrementalBuild(projectToBeModified: File, project: BaseGradleIT.Project) {
+        with(project) {
+            // First build, should be stored into the build cache:
+            build("assemble") {
+                assertSuccessful()
+                assertTaskPackedToCache(":compileKotlin")
+            }
+
+            // A cache hit: a clean build without any changes to the project
+            build("clean", "assemble", projectDir = projectToBeModified) {
+                assertSuccessful()
+                assertContains(":compileKotlin FROM-CACHE")
+            }
+
+            // Change the return type of foo() from Int to String in foo.kt, and check that fooUsage.kt is recompiled as well:
+            File(projectToBeModified, "src/main/kotlin/foo.kt").modify { it.replace("Int = 1", "String = \"abc\"") }
+            build("assemble", projectDir = projectToBeModified) {
+                assertSuccessful()
+                assertCompiledKotlinSources(relativize(allKotlinFiles))
+            }
+
+            // Revert the change to the return type of foo(), and check if we get a cache hit
+            File(projectToBeModified, "src/main/kotlin/foo.kt").modify { it.replace("String = \"abc\"", "Int = 1") }
+            build("clean", "assemble", projectDir = projectToBeModified) {
+                assertSuccessful()
+                assertContains(":compileKotlin FROM-CACHE")
+            }
+        }
+    }
+
+    private fun checkKaptCachingIncrementalBuild(projectToBeModified: File, project: BaseGradleIT.Project) {
+        with(project) {
             val options = defaultBuildOptions().copy(
                 kaptOptions = KaptOptions(
                     verbose = true,
@@ -132,17 +177,36 @@ class BuildCacheIT : BaseGradleIT() {
                     includeCompileClasspath = false
                 )
             )
+
+            // First build, should be stored into the build cache:
             build(options = options, params = *arrayOf("clean", ":app:build")) {
                 assertSuccessful()
                 assertTaskPackedToCache(":app:kaptGenerateStubsKotlin")
                 assertTaskPackedToCache(":app:kaptKotlin")
             }
 
-            // copy project to a new location
-            val copyProject = projectDir.resolveSibling("copy_${projectDir.name}").also { it.mkdirs() }
-            copyRecursively(projectDir, copyProject)
+            // A cache hit: a clean build without any changes to the project
+            build(options = options, params = *arrayOf("clean", ":app:build"), projectDir = projectToBeModified) {
+                assertSuccessful()
+                assertContains(":app:kaptGenerateStubsKotlin FROM-CACHE")
+                assertContains(":app:kaptKotlin FROM-CACHE")
+            }
 
-            build(options = options, projectDir = copyProject.resolve(projectName), params = *arrayOf("clean", "build")) {
+            // Make changes to annotated class and check kapt tasks are re-executed
+            File(projectToBeModified, "app/src/main/kotlin/AppClass.kt").modify {
+                it.replace("val testVal: String = \"text\"", "val testVal: Int = 1")
+            }
+            build(options = options, params = *arrayOf("build"), projectDir = projectToBeModified) {
+                assertSuccessful()
+                assertContains("':app:kaptGenerateStubsKotlin' is not up-to-date")
+                assertContains("':app:kaptKotlin' is not up-to-date")
+            }
+
+            // Revert changes and check kapt tasks are from cache
+            File(projectToBeModified, "app/src/main/kotlin/AppClass.kt").modify {
+                it.replace("val testVal: Int = 1", "val testVal: String = \"text\"")
+            }
+            build(options = options, params = *arrayOf("clean", "build"), projectDir = projectToBeModified) {
                 assertSuccessful()
                 assertContains(":app:kaptGenerateStubsKotlin FROM-CACHE")
                 assertContains(":app:kaptKotlin FROM-CACHE")
