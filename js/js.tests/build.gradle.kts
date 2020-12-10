@@ -11,6 +11,7 @@ plugins {
     id("jps-compatible")
     id("com.github.node-gradle.node") version "2.2.0"
     id("de.undercouch.download")
+    id("com.gradle.enterprise.test-distribution")
 }
 
 node {
@@ -70,6 +71,8 @@ dependencies {
     
     antLauncherJar(commonDep("org.apache.ant", "ant"))
     antLauncherJar(toolsJar())
+
+    testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.6.2")
 }
 
 val generationRoot = projectDir.resolve("tests-gen")
@@ -248,6 +251,8 @@ projectTest(parallel = true) {
     outputs.dir("$buildDir/out")
     outputs.dir("$buildDir/out-min")
     outputs.dir("$buildDir/out-pir")
+
+    configureTestDistribution()
 }
 
 projectTest("jsTest", true) {
