@@ -45,7 +45,7 @@ val SAM_PARAMETER_NAME = Name.identifier("block")
 class FirSamResolverImpl(
     private val firSession: FirSession,
     private val scopeSession: ScopeSession,
-    private val outerClassManager: FirOuterClassManager,
+    private val outerClassManager: FirOuterClassManager? = null,
 ) : FirSamResolver() {
 
     private val resolvedFunctionType: MutableMap<FirRegularClass, Any> = mutableMapOf()
@@ -206,13 +206,17 @@ class FirSamResolverImpl(
 
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }.apply {
-            containingClassAttr = outerClassManager.outerClass(firRegularClass.symbol)?.toLookupTag()
+            containingClassAttr = outerClassManager?.outerClass(firRegularClass.symbol)?.toLookupTag()
         }
     }
 
     private fun resolveFunctionTypeIfSamInterface(firRegularClass: FirRegularClass): ConeLookupTagBasedType? {
         return resolvedFunctionType.getOrPut(firRegularClass) {
-            firRegularClass.resolveFunctionTypeIfSamInterface(firSession, scopeSession) ?: NULL_STUB
+            if (!firRegularClass.status.isFun) return@getOrPut NULL_STUB
+            val abstractMethod = firRegularClass.getSingleAbstractMethodOrNull(firSession, scopeSession) ?: return@getOrPut NULL_STUB
+            // TODO: val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
+
+            abstractMethod.getFunctionTypeForAbstractMethod()
         } as? ConeLookupTagBasedType
     }
 
@@ -220,17 +224,6 @@ class FirSamResolverImpl(
         // TODO: properly support, see org.jetbrains.kotlin.load.java.sam.JvmSamConversionTransformer.shouldRunSamConversionForFunction
         return true
     }
-}
-
-fun FirRegularClass.resolveFunctionTypeIfSamInterface(
-    session: FirSession,
-    scopeSession: ScopeSession
-): ConeLookupTagBasedType? {
-    if (!this.status.isFun) return null
-    val abstractMethod = getSingleAbstractMethodOrNull(session, scopeSession) ?: return null
-    // TODO: val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
-
-    return abstractMethod.getFunctionTypeForAbstractMethod()
 }
 
 private fun FirRegularClass.getSingleAbstractMethodOrNull(
