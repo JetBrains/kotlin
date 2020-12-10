@@ -345,11 +345,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
 
         val isMips = target == KonanTarget.LINUX_MIPS32 || target == KonanTarget.LINUX_MIPSEL32
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
-        val crtPrefix = when (val bitness = configurables.target.architecture.bitness) {
-            32 -> "usr/lib"
-            64 -> "usr/lib64"
-            else -> error("Unexpected target bitness: $bitness")
-        }
+        val crtPrefix = "$absoluteTargetSysRoot/$crtFilesLocation"
         // TODO: Can we extract more to the konan.configurables?
         return listOf(Command(linker).apply {
             +"--sysroot=${absoluteTargetSysRoot}"
@@ -363,8 +359,8 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             +dynamicLinker
             +"-o"
             +executable
-            if (!dynamic) +"$absoluteTargetSysRoot/$crtPrefix/crt1.o"
-            +"$absoluteTargetSysRoot/$crtPrefix/crti.o"
+            if (!dynamic) +"$crtPrefix/crt1.o"
+            +"$crtPrefix/crti.o"
             +if (dynamic) "$libGcc/crtbeginS.o" else "$libGcc/crtbegin.o"
             +"-L$libGcc"
             if (!isMips) +"--hash-style=gnu" // MIPS doesn't support hash-style=gnu
@@ -379,7 +375,7 @@ class GccBasedLinker(targetProperties: GccConfigurables)
             +linkerKonanFlags
             +linkerGccFlags
             +if (dynamic) "$libGcc/crtendS.o" else "$libGcc/crtend.o"
-            +"$absoluteTargetSysRoot/$crtPrefix/crtn.o"
+            +"$crtPrefix/crtn.o"
             +libraries
             +linkerArgs
             if (mimallocEnabled) +mimallocLinkerDependencies
