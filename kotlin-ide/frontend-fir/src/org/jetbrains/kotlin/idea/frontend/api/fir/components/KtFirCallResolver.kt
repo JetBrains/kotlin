@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.fir.getCandidateSymbols
@@ -88,6 +89,10 @@ internal class KtFirCallResolver(
         val target = when (val calleeReference = calleeReference) {
             is FirResolvedNamedReference -> calleeReference.getKtFunctionOrConstructorSymbol()?.let { KtSuccessCallTarget(it) }
             is FirErrorNamedReference -> calleeReference.createErrorCallTarget()
+            is FirSimpleNamedReference -> error(
+                "Looks like FirFunctionCall was not resolved to BODY_RESOLVE phase, " +
+                        "consider resolving it containing declaration before starting resolve calls"
+            )
             else -> error("Unexpected call reference ${calleeReference::class.simpleName}")
         } ?: return null
         return KtFunctionCall(target)
