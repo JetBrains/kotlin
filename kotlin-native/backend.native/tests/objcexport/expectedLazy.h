@@ -612,6 +612,26 @@ __attribute__((swift_name("Kt41907Kt")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KT43599")))
+@interface KtKT43599 : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (readonly) NSString *memberProperty __attribute__((swift_name("memberProperty")));
+@end;
+
+@interface KtKT43599 (Kt43599Kt)
+@property (readonly) NSString *extensionProperty __attribute__((swift_name("extensionProperty")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Kt43599Kt")))
+@interface KtKt43599Kt : KtBase
++ (void)setTopLevelLateinitPropertyValue:(NSString *)value __attribute__((swift_name("setTopLevelLateinitProperty(value:)")));
+@property (class, readonly) NSString *topLevelProperty __attribute__((swift_name("topLevelProperty")));
+@property (class, readonly) NSString *topLevelLateinitProperty __attribute__((swift_name("topLevelLateinitProperty")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("LibraryKt")))
 @interface KtLibraryKt : KtBase
 + (NSString *)readDataFromLibraryClassInput:(KtA *)input __attribute__((swift_name("readDataFromLibraryClass(input:)")));
