@@ -33,6 +33,11 @@ public class CustomScriptCodegenTestGenerated extends AbstractCustomScriptCodege
         runTest("compiler/testData/codegen/customScript/pathPattern5.kts");
     }
 
+    @TestMetadata("providedPropsInLambda.kts")
+    public void testProvidedPropsInLambda_kts() throws Exception {
+        runTest("compiler/testData/codegen/customScript/providedPropsInLambda.kts");
+    }
+
     @TestMetadata("simpleEnvVars.kts")
     public void testSimpleEnvVars_kts() throws Exception {
         runTest("compiler/testData/codegen/customScript/simpleEnvVars.kts");

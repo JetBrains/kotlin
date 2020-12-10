@@ -18,6 +18,12 @@ private const val KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY = "kotlin.jsr2
 @Suppress("unused") // accessed from the tests below
 val shouldBeVisibleFromRepl = 7
 
+@Suppress("unused") // accessed from the tests below
+fun callLambda(x: Int, aFunction: (Int) -> Int): Int = aFunction.invoke(x)
+
+@Suppress("unused") // accessed from the tests below
+inline fun inlineCallLambda(x: Int, aFunction: (Int) -> Int): Int = aFunction.invoke(x)
+
 class KotlinJsr223ScriptEngineIT {
 
     init {
@@ -295,6 +301,30 @@ obj
         val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")!!
         val result = scriptEngine.eval("kotlin.script.experimental.jsr223.test.shouldBeVisibleFromRepl * 6")
         Assert.assertEquals(42, result)
+    }
+
+    @Test
+    fun testResolveFromContextLambda() {
+        val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")!!
+
+        val script1 = """
+            kotlin.script.experimental.jsr223.test.callLambda(4) { x -> 
+                x % aValue
+            }
+        """
+
+        val script2 = """
+            kotlin.script.experimental.jsr223.test.inlineCallLambda(5) { x ->
+                x % aValue
+            }
+        """
+
+        scriptEngine.put("aValue", 3)
+
+        val res1 = scriptEngine.eval(script1)
+        Assert.assertEquals(1, res1)
+        val res2 = scriptEngine.eval(script2)
+        Assert.assertEquals(2, res2)
     }
 
     @Test
