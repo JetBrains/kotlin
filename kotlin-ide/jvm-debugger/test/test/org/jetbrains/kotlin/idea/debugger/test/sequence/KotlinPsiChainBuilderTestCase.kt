@@ -7,18 +7,15 @@ package org.jetbrains.kotlin.idea.debugger.test.sequence
 import com.intellij.debugger.streams.test.StreamChainBuilderTestCase
 import com.intellij.debugger.streams.wrapper.StreamChain
 import com.intellij.debugger.streams.wrapper.StreamChainBuilder
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.projectRoots.Sdk
-import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
 import com.intellij.testFramework.IdeaTestUtil
-import com.intellij.testFramework.PsiTestUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
-import org.jetbrains.kotlin.idea.caches.project.LibraryModificationTracker
 import org.jetbrains.kotlin.idea.debugger.test.DEBUGGER_TESTDATA_PATH_BASE
+import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 
 abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) : StreamChainBuilderTestCase() {
     override fun getTestDataPath(): String = "$DEBUGGER_TESTDATA_PATH_BASE/sequence/psi/$relativeTestPath"
+    override fun getProjectDescriptor() = KotlinWithJdkAndRuntimeLightProjectDescriptor.INSTANCE
 
     override fun getFileExtension(): String = ".kt"
     abstract val kotlinChainBuilder: StreamChainBuilder
@@ -28,19 +25,6 @@ abstract class KotlinPsiChainBuilderTestCase(private val relativePath: String) :
     protected abstract fun doTest()
 
     final override fun getRelativeTestPath(): String = relativePath
-
-    override fun setUp() {
-        super.setUp()
-        ApplicationManager.getApplication().runWriteAction {
-            @Suppress("UnstableApiUsage")
-            if (ProjectLibraryTable.getInstance(project).getLibraryByName(stdLibName) == null) {
-                val stdLibPath = KotlinArtifacts.instance.kotlinStdlib
-                PsiTestUtil.addLibrary(testRootDisposable, module, stdLibName, stdLibPath.parent, stdLibPath.name)
-            }
-        }
-        LibraryModificationTracker.getInstance(project).incModificationCount()
-    }
-
 
     override fun getProjectJDK(): Sdk {
         return IdeaTestUtil.getMockJdk9()
