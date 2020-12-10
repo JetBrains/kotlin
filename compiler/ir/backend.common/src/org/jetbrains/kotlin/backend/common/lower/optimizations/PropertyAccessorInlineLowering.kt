@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isPure
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
@@ -55,7 +56,7 @@ class PropertyAccessorInlineLowering(private val context: CommonBackendContext) 
                     (backingField.initializer ?: error("Constant property has to have a backing field with initializer"))
                 val constExpression = initializer.expression.deepCopyWithSymbols()
                 val receiver = expression.dispatchReceiver
-                if (receiver != null && receiver is IrCall) {
+                if (receiver != null && !receiver.isPure(true)) {
                     val builder = context.createIrBuilder(expression.symbol,
                             expression.startOffset, expression.endOffset)
                     return builder.irBlock(expression) {
