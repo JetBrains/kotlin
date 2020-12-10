@@ -77,15 +77,23 @@ open class CliBindingTrace @TestOnly constructor() : BindingTraceContext() {
         this.kotlinCodeAnalyzer = kotlinCodeAnalyzer
     }
 
+    @Suppress("UNCHECKED_CAST")
     override fun <K, V> get(slice: ReadOnlySlice<K, V>, key: K): V? {
         val value = super.get(slice, key)
 
         if (value == null) {
-            if (BindingContext.FUNCTION === slice || BindingContext.VARIABLE === slice) {
-                if (key is KtDeclaration) {
+            if (key is KtDeclaration) {
+                // NB: intentional code duplication, see https://youtrack.jetbrains.com/issue/KT-43296
+                if (BindingContext.FUNCTION === slice) {
                     if (!KtPsiUtil.isLocal(key)) {
                         kotlinCodeAnalyzer!!.resolveToDescriptor(key)
-                        return super.get(slice, key)
+                        return super.get(slice, key) as V?
+                    }
+                }
+                if (BindingContext.VARIABLE === slice) {
+                    if (!KtPsiUtil.isLocal(key)) {
+                        kotlinCodeAnalyzer!!.resolveToDescriptor(key)
+                        return super.get(slice, key) as V?
                     }
                 }
             }
