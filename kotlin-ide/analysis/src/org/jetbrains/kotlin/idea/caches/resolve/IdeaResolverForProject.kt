@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
+import org.jetbrains.kotlin.idea.compiler.IdeSealedClassInheritorsProvider
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.project.useCompositeAnalysis
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -83,7 +84,8 @@ class IdeaResolverForProject(
             projectContext.withModule(descriptor),
             moduleContent,
             this,
-            languageVersionSettings
+            languageVersionSettings,
+            sealedInheritorsProvider = IdeSealedClassInheritorsProvider
         )
     }
 
