@@ -174,8 +174,10 @@ val unzipV8 by task<Copy> {
 
 fun Test.setupV8() {
     dependsOn(unzipV8)
-    val v8ExecutablePath = File(unzipV8.get().destinationDir, "d8").absolutePath
+    val v8Path = unzipV8.get().destinationDir
+    val v8ExecutablePath = File(v8Path, "d8")
     systemProperty("javascript.engine.path.V8", v8ExecutablePath)
+    inputs.dir(v8Path)
 }
 
 fun Test.setupSpiderMonkey() {
@@ -187,11 +189,14 @@ fun Test.setupSpiderMonkey() {
 fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
     setupV8()
 
+    inputs.files(rootDir.resolve("js/js.engines/src/org/jetbrains/kotlin/js/engine/repl.js"))
+
     dependsOn(":dist")
     if (jsEnabled) {
         dependsOn(testJsRuntime)
         inputs.files(testJsRuntime)
     }
+
     if (jsIrEnabled) {
         dependsOn(":kotlin-stdlib-js-ir:compileKotlinJs")
         systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/js-ir/build/classes/kotlin/js/main")
