@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctionsAndSelf
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
@@ -38,7 +35,7 @@ class FirSyntheticFunctionSymbol(
 class FirSyntheticPropertiesScope(
     val session: FirSession,
     private val baseScope: FirTypeScope
-) : FirScope() {
+) : FirScope(), FirContainingNamesAwareScope {
     private val syntheticNamesProvider = session.syntheticNamesProvider
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
@@ -49,6 +46,12 @@ class FirSyntheticPropertiesScope(
             }
         }
     }
+
+    override fun getCallableNames(): Set<Name> = baseScope.getCallableNames().flatMapTo(hashSetOf()) { propertyName ->
+        syntheticNamesProvider.possiblePropertyNamesByAccessorName(propertyName)
+    }
+
+    override fun getClassifierNames(): Set<Name> = emptySet()
 
     private fun checkGetAndCreateSynthetic(
         propertyName: Name,
