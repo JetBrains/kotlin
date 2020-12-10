@@ -19,7 +19,6 @@
         <element id="archive" name="appcode-native.jar">
           <element id="module-output" name="kotlin-ultimate.appcode-native" />
           <element id="module-output" name="kotlin-ultimate.common-cidr-native" />
-          <element id="module-output" name="kotlin-ultimate.common-cidr-swift-native" />
           <element id="module-output" name="kotlin-ultimate.common-native" />
         </element>
         <element id="library" level="module" name="org.jetbrains.konan:backend.native:mobile" module-name="kotlin-ultimate.common-cidr-swift-native" />
