@@ -157,7 +157,7 @@ fun testSmartCastWithSuspendConversion(a: Any) {
       callee.invoke()
     }
 
-    a::suspendConversion0
+    a /*as Function0<Unit> */::suspendConversion0
   })
 }
 
@@ -169,7 +169,7 @@ fun testSmartCastOnVarWithSuspendConversion(a: Any) {
       callee.invoke()
     }
 
-    b::suspendConversion0
+    b /*as Function0<Unit> */::suspendConversion0
   })
 }
 
