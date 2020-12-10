@@ -51,8 +51,10 @@ fun StorageComponentContainer.configureModule(
     platform: TargetPlatform,
     analyzerServices: PlatformDependentAnalyzerServices,
     trace: BindingTrace,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
+    sealedProvider: SealedClassInheritorsProvider = CliSealedClassInheritorsProvider
 ) {
+    useInstance(sealedProvider)
     useInstance(moduleContext)
     useInstance(moduleContext.module)
     useInstance(moduleContext.project)
@@ -103,7 +105,6 @@ private fun StorageComponentContainer.configurePlatformIndependentComponents() {
     useImpl<ClassicTypeSystemContextForCS>()
     useImpl<ClassicConstraintSystemUtilContext>()
     useInstance(ProgressManagerBasedCancellationChecker)
-    useInstance(SealedClassInheritorsProviderImpl)
 }
 
 /**

@@ -15,17 +15,17 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 abstract class SealedClassInheritorsProvider {
     abstract fun computeSealedSubclasses(
         sealedClass: ClassDescriptor,
-        freedomForSealedInterfacesSupported: Boolean
+        allowSealedInheritorsInDifferentFilesOfSamePackage: Boolean
     ): Collection<ClassDescriptor>
 }
 
-object SealedClassInheritorsProviderImpl : SealedClassInheritorsProvider() {
+object CliSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
     // Note this is a generic and slow implementation which would work almost for any subclass of ClassDescriptor.
     // Please avoid using it in new code.
     // TODO: do something more clever instead at call sites of this function
     override fun computeSealedSubclasses(
         sealedClass: ClassDescriptor,
-        freedomForSealedInterfacesSupported: Boolean
+        allowSealedInheritorsInDifferentFilesOfSamePackage: Boolean
     ): Collection<ClassDescriptor> {
         if (sealedClass.modality != Modality.SEALED) return emptyList()
 
@@ -45,7 +45,7 @@ object SealedClassInheritorsProviderImpl : SealedClassInheritorsProvider() {
             }
         }
 
-        val container = if (!freedomForSealedInterfacesSupported) {
+        val container = if (!allowSealedInheritorsInDifferentFilesOfSamePackage) {
             sealedClass.containingDeclaration
         } else {
             sealedClass.parents.firstOrNull { it is PackageFragmentDescriptor }
@@ -53,7 +53,7 @@ object SealedClassInheritorsProviderImpl : SealedClassInheritorsProvider() {
         if (container is PackageFragmentDescriptor) {
             collectSubclasses(
                 container.getMemberScope(),
-                collectNested = freedomForSealedInterfacesSupported
+                collectNested = allowSealedInheritorsInDifferentFilesOfSamePackage
             )
         }
         collectSubclasses(sealedClass.unsubstitutedInnerClassesScope, collectNested = true)
