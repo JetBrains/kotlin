@@ -48,16 +48,16 @@ sealed class RenderingContext {
         }
 
         @JvmStatic
-        fun fromDiagnostic(d: Diagnostic): RenderingContext {
-            val parameters = when (d) {
-                is SimpleDiagnostic<*> -> listOf()
-                is DiagnosticWithParameters1<*, *> -> listOf(d.a)
-                is DiagnosticWithParameters2<*, *, *> -> listOf(d.a, d.b)
-                is DiagnosticWithParameters3<*, *, *, *> -> listOf(d.a, d.b, d.c)
-                is ParametrizedDiagnostic<*> -> error("Unexpected diagnostic: ${d::class.java}")
-                else -> listOf()
-            }
-            return Impl(parameters)
+        fun parameters(d: Diagnostic): List<Any> = when (d) {
+            is SimpleDiagnostic<*> -> listOf()
+            is DiagnosticWithParameters1<*, *> -> listOf(d.a)
+            is DiagnosticWithParameters2<*, *, *> -> listOf(d.a, d.b)
+            is DiagnosticWithParameters3<*, *, *, *> -> listOf(d.a, d.b, d.c)
+            is ParametrizedDiagnostic<*> -> error("Unexpected diagnostic: ${d::class.java}")
+            else -> listOf()
         }
+
+        @JvmStatic
+        fun fromDiagnostic(d: Diagnostic): RenderingContext = Impl(parameters(d))
     }
 }
