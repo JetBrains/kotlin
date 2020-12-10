@@ -69,7 +69,7 @@ internal class FirLightFieldForPropertySymbol(
         }
 
         val visibility =
-            if (takePropertyVisibility) propertySymbol.computeVisibility(isTopLevel = false) else PsiModifier.PRIVATE
+            if (takePropertyVisibility) propertySymbol.toPsiVisibilityForMember(isTopLevel = false) else PsiModifier.PRIVATE
         modifiers.add(visibility)
 
         if (!suppressFinal) {
@@ -82,7 +82,7 @@ internal class FirLightFieldForPropertySymbol(
             modifiers.add(PsiModifier.VOLATILE)
         }
 
-        val nullability = if (visibility != PsiModifier.PRIVATE)
+        val nullability = if (visibility != PsiModifier.PRIVATE && !(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit))
             propertySymbol.type.getTypeNullability(propertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         else NullabilityType.Unknown
 

@@ -14,21 +14,19 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyAccessorSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyGetterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySetterSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
 import org.jetbrains.kotlin.load.java.JvmAbi.setterName
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtParameter
 
 internal class FirLightAccessorMethodForSymbol(
     private val propertyAccessorSymbol: KtPropertyAccessorSymbol,
-    containingPropertySymbol: KtPropertySymbol,
+    private val containingPropertySymbol: KtPropertySymbol,
     lightMemberOrigin: LightMemberOrigin?,
     containingClass: FirLightClassBase,
-    isTopLevel: Boolean,
+    private val isTopLevel: Boolean,
 ) : FirLightMethod(
     lightMemberOrigin,
     containingClass,
@@ -40,10 +38,12 @@ internal class FirLightAccessorMethodForSymbol(
         if (isGetter) getterName(this) else setterName(this)
 
     private val _name: String by lazyPub {
-        val defaultName = containingPropertySymbol.name.identifier.let {
-            if (containingClass.isAnnotationType) it else it.abiName()
+        propertyAccessorSymbol.getJvmNameFromAnnotation() ?: run {
+            val defaultName = containingPropertySymbol.name.identifier.let {
+                if (containingClass.isAnnotationType) it else it.abiName()
+            }
+            containingPropertySymbol.computeJvmMethodName(defaultName, containingClass, accessorSite)
         }
-        containingPropertySymbol.computeJvmMethodName(defaultName, containingClass, accessorSite)
     }
 
     override fun getName(): String = _name
@@ -62,20 +62,34 @@ internal class FirLightAccessorMethodForSymbol(
             if (propertyAccessorSymbol is KtPropertyGetterSymbol) AnnotationUseSiteTarget.PROPERTY_GETTER
             else AnnotationUseSiteTarget.PROPERTY_SETTER
 
-    private val _annotations: List<PsiAnnotation> by lazyPub {
+    //TODO Fix it when KtFirConstructorValueParameterSymbol be ready
+    private val isParameter: Boolean get() = containingPropertySymbol.psi.let { it == null || it is KtParameter }
 
-        val nullabilityType = if (isGetter) containingPropertySymbol.type
+    private fun computeAnnotations(isPrivate: Boolean): List<PsiAnnotation> {
+        val nullabilityApplicable = isGetter &&
+                !isPrivate &&
+                !(isParameter && (containingClass.isAnnotationType || containingClass.isEnum))
+
+        val nullabilityType = if (nullabilityApplicable) containingPropertySymbol.type
             .getTypeNullability(containingPropertySymbol, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
         else NullabilityType.Unknown
 
-        containingPropertySymbol.computeAnnotations(
+        val annotationsFromProperty = containingPropertySymbol.computeAnnotations(
             parent = this,
             nullability = nullabilityType,
             annotationUseSiteTarget = accessorSite,
         )
+
+        val annotationsFromAccessor = propertyAccessorSymbol.computeAnnotations(
+            parent = this,
+            nullability = NullabilityType.Unknown,
+            annotationUseSiteTarget = null,
+        )
+
+        return annotationsFromProperty + annotationsFromAccessor
     }
 
-    private val _modifiers: Set<String> by lazyPub {
+    private fun computeModifiers(): Set<String> {
         val isOverrideMethod = propertyAccessorSymbol.isOverride || containingPropertySymbol.isOverride
         val isInterfaceMethod = containingClass.isInterface
 
@@ -90,8 +104,8 @@ internal class FirLightAccessorMethodForSymbol(
         val visibility = isOverrideMethod.ifTrue {
             (containingClass as? FirLightClassForSymbol)
                 ?.tryGetEffectiveVisibility(containingPropertySymbol)
-                ?.toPsiVisibility(isTopLevel)
-        } ?: propertyAccessorSymbol.computeVisibility(isTopLevel)
+                ?.toPsiVisibilityForMember(isTopLevel)
+        } ?: propertyAccessorSymbol.toPsiVisibilityForMember(isTopLevel)
         modifiers.add(visibility)
 
         if (containingPropertySymbol.hasJvmStaticAnnotation(accessorSite)) {
@@ -102,11 +116,13 @@ internal class FirLightAccessorMethodForSymbol(
             modifiers.add(PsiModifier.ABSTRACT)
         }
 
-        modifiers
+        return modifiers
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
-        FirLightClassModifierList(this, _modifiers, _annotations)
+        val modifiers = computeModifiers()
+        val annotations = computeAnnotations(modifiers.contains(PsiModifier.PRIVATE))
+        FirLightClassModifierList(this, modifiers, annotations)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

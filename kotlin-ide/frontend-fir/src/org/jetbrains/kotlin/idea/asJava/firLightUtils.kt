@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.types.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
+import org.jetbrains.kotlin.load.kotlin.TypeMappingModeInternals
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import java.text.StringCharacterIterator
@@ -120,6 +121,7 @@ private fun ConeKotlinType.asPsiType(
     val correctedType = AnonymousTypesSubstitutor(session, state).substituteOrSelf(this)
 
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
+
     //TODO Check thread safety
     session.jvmTypeMapper.mapType(correctedType, mode, signatureWriter)
 
@@ -225,23 +227,20 @@ internal fun KtSymbolWithModality<KtCommonSymbolModality>.computeModalityForMeth
     }
 }
 
-internal fun FirMemberDeclaration.computeVisibility(isTopLevel: Boolean): String {
-    return when (this.visibility) {
-        // Top-level private class has PACKAGE_LOCAL visibility in Java
-        // Nested private class has PRIVATE visibility
-        Visibilities.Private -> if (isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
-        Visibilities.Protected -> PsiModifier.PROTECTED
-        else -> PsiModifier.PUBLIC
-    }
-}
 
-internal fun KtSymbolWithVisibility.computeVisibility(isTopLevel: Boolean): String =
-    visibility.toPsiVisibility(isTopLevel)
+internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
+    visibility.toPsiVisibility(isTopLevel, forClass = false)
 
-internal fun KtSymbolVisibility.toPsiVisibility(isTopLevel: Boolean): String = when (this) {
+internal fun KtSymbolWithVisibility.toPsiVisibilityForClass(isTopLevel: Boolean): String =
+    visibility.toPsiVisibility(isTopLevel, forClass = true)
+
+internal fun KtSymbolVisibility.toPsiVisibilityForMember(isTopLevel: Boolean): String =
+    toPsiVisibility(isTopLevel, forClass = false)
+
+private fun KtSymbolVisibility.toPsiVisibility(isTopLevel: Boolean, forClass: Boolean): String = when (this) {
     // Top-level private class has PACKAGE_LOCAL visibility in Java
     // Nested private class has PRIVATE visibility
-    KtSymbolVisibility.PRIVATE -> if (isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
+    KtSymbolVisibility.PRIVATE -> if (forClass && isTopLevel) PsiModifier.PACKAGE_LOCAL else PsiModifier.PRIVATE
     KtSymbolVisibility.PROTECTED -> PsiModifier.PROTECTED
     else -> PsiModifier.PUBLIC
 }

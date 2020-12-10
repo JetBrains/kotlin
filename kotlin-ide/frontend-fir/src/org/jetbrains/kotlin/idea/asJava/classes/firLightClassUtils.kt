@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.idea.asJava.*
 import org.jetbrains.kotlin.idea.frontend.api.analyze
 import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
@@ -155,8 +154,14 @@ internal fun FirLightClassBase.createMethods(
             }
             is KtPropertySymbol -> {
 
+                if (declaration is KtKotlinPropertySymbol && declaration.isConst) continue
+
+                if (declaration.visibility == KtSymbolVisibility.PRIVATE &&
+                    declaration.getter?.hasBody == false &&
+                    declaration.setter?.hasBody == false
+                ) continue
+
                 if (declaration.hasJvmFieldAnnotation()) continue
-                if (declaration.visibility == KtSymbolVisibility.PRIVATE) continue
 
                 fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
                     if (isInline) return false
@@ -217,8 +222,8 @@ internal fun FirLightClassBase.createField(
             property.modality == KtCommonSymbolModality.ABSTRACT -> false
             property.isHiddenOrSynthetic() -> false
             property.isLateInit -> true
-            //IS PARAMETER -> true
-            property.getter == null && property.setter == null -> true
+            //TODO Fix it when KtFirConstructorValueParameterSymbol be ready
+            property.psi.let { it == null || it is KtParameter } -> true
             property.hasJvmSyntheticAnnotation(AnnotationUseSiteTarget.FIELD) -> false
             else -> property.hasBackingField
         }
