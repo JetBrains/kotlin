@@ -25,12 +25,12 @@ import org.jetbrains.idea.maven.model.MavenConstants
 import org.jetbrains.kotlin.idea.configuration.AbstractConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.configuration.NotificationMessageCollector
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.TestPlatform
+import org.jetbrains.kotlin.test.AndroidStudioTestUtils
 import java.io.File
 
 abstract class AbstractMavenConfigureProjectByChangingFileTest : AbstractConfigureProjectByChangingFileTest<KotlinMavenConfigurator>() {
     override fun shouldRunTest(): Boolean {
-        return super.shouldRunTest() && !TestPlatform.checkIsAndroidStudio()
+        return super.shouldRunTest() && !AndroidStudioTestUtils.checkIsAndroidStudio()
     }
 
     fun doTestWithMaven(path: String) {

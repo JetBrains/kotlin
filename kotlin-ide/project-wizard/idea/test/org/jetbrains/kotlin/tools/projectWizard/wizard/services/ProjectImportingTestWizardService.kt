@@ -15,6 +15,7 @@ import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.framework.MAVEN_SYSTEM_ID
+import org.jetbrains.kotlin.test.AndroidStudioTestUtils
 import org.jetbrains.kotlin.tools.projectWizard.cli.TestWizardService
 import org.jetbrains.kotlin.tools.projectWizard.core.*
 import org.jetbrains.kotlin.tools.projectWizard.core.service.ProjectImportingWizardService
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.BuildSystemT
 import org.jetbrains.kotlin.tools.projectWizard.plugins.buildSystem.isGradle
 import org.jetbrains.kotlin.tools.projectWizard.plugins.kotlin.KotlinPlugin
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import java.io.File
 import java.nio.file.Path
 
 class GradleProjectImportingTestWizardService(private val project: Project) : ProjectImportingWizardService, TestWizardService {
@@ -35,6 +37,8 @@ class GradleProjectImportingTestWizardService(private val project: Project) : Pr
         modulesIrs: List<ModuleIR>,
         buildSystem: BuildSystemType
     ): TaskResult<Unit> {
+        AndroidStudioTestUtils.specifyAndroidSdk(path.toFile())
+
         var importingErrorMessage: String? = null
 
         ExternalSystemUtil.refreshProjects(

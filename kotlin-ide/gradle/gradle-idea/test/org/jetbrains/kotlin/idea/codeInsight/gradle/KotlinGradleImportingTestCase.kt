@@ -13,13 +13,13 @@ import com.intellij.testFramework.VfsTestUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.kotlin.idea.test.GradleProcessOutputInterceptor
 import org.jetbrains.kotlin.idea.test.IDEA_TEST_DATA_DIR
+import org.jetbrains.kotlin.test.AndroidStudioTestUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.runners.Parameterized
 import java.io.File
-import java.util.*
 
 abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
     public override fun getModule(name: String?): Module = super.getModule(name)
@@ -94,6 +94,11 @@ abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
                 val expectedFile = File(testDataDirectory(), expectedFileName)
                 KotlinTestUtils.assertEqualsToFile(expectedFile, actualText) { s -> configureKotlinVersionAndProperties(s) }
             }
+    }
+
+    override fun importProject() {
+        AndroidStudioTestUtils.specifyAndroidSdk(File(projectPath))
+        super.importProject()
     }
 
     protected fun importProjectFromTestData(skipIndexing: Boolean? = null): List<VirtualFile> {
