@@ -64,7 +64,7 @@ fun test4(fn: Function1<Int, Unit>) {
     fn is IFoo -> { // BLOCK
       val <<array>>: A = A
       val <<index_0>>: IFoo = fn /*as IFoo */
-      <<array>>.set(i = <<index_0>>, newValue = <<array>>.get(i = <<index_0>>).plus(other = 1))
+      <<array>>.set(i = <<index_0>> /*-> IFoo */, newValue = <<array>>.get(i = <<index_0>> /*-> IFoo */).plus(other = 1))
     }
   }
 }
@@ -84,7 +84,7 @@ fun test6(a: Any) {
   { // BLOCK
     val <<array>>: A = A
     val <<index_0>>: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
-    <<array>>.set(i = <<index_0>>, newValue = <<array>>.get(i = <<index_0>>).plus(other = 1))
+    <<array>>.set(i = <<index_0>> /*-> IFoo */, newValue = <<array>>.get(i = <<index_0>> /*-> IFoo */).plus(other = 1))
   }
 }
 

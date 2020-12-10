@@ -34,7 +34,8 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
     VALUE_PARAMETER name:a index:0 type:T of <root>.test0
     BLOCK_BODY
       CALL 'public final fun run1 (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        r: GET_VAR 'a: T of <root>.test0 declared in <root>.test0' type=T of <root>.test0 origin=null
+        r: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+          GET_VAR 'a: T of <root>.test0 declared in <root>.test0' type=T of <root>.test0 origin=null
   FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
@@ -43,8 +44,9 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.KRunnable
             GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=null
           then: CALL 'public final fun run1 (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-            r: TYPE_OP type=<root>.KRunnable origin=IMPLICIT_CAST typeOperand=<root>.KRunnable
-              GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=null
+            r: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+              TYPE_OP type=<root>.KRunnable origin=IMPLICIT_CAST typeOperand=<root>.KRunnable
+                GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test2 visibility:public modality:FINAL <> (a:<root>.KRunnable) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:<root>.KRunnable
     BLOCK_BODY
@@ -52,8 +54,9 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
         TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=CAST typeOperand=kotlin.Function0<kotlin.Unit>
           GET_VAR 'a: <root>.KRunnable declared in <root>.test2' type=<root>.KRunnable origin=null
       CALL 'public final fun run1 (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        r: TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
-          GET_VAR 'a: <root>.KRunnable declared in <root>.test2' type=<root>.KRunnable origin=null
+        r: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+          TYPE_OP type=kotlin.Function0<kotlin.Unit> origin=IMPLICIT_CAST typeOperand=kotlin.Function0<kotlin.Unit>
+            GET_VAR 'a: <root>.KRunnable declared in <root>.test2' type=<root>.KRunnable origin=null
   FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
@@ -62,10 +65,12 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.KRunnable
             GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
           then: CALL 'public final fun run2 (r1: <root>.KRunnable, r2: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-            r1: TYPE_OP type=<root>.KRunnable origin=IMPLICIT_CAST typeOperand=<root>.KRunnable
-              GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
-            r2: TYPE_OP type=<root>.KRunnable origin=IMPLICIT_CAST typeOperand=<root>.KRunnable
-              GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
+            r1: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+              TYPE_OP type=<root>.KRunnable origin=IMPLICIT_CAST typeOperand=<root>.KRunnable
+                GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
+            r2: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+              TYPE_OP type=<root>.KRunnable origin=IMPLICIT_CAST typeOperand=<root>.KRunnable
+                GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>, b:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     VALUE_PARAMETER name:b index:1 type:kotlin.Function0<kotlin.Unit>
@@ -75,8 +80,9 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=<root>.KRunnable
             GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
           then: CALL 'public final fun run2 (r1: <root>.KRunnable, r2: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-            r1: TYPE_OP type=<root>.KRunnable origin=IMPLICIT_CAST typeOperand=<root>.KRunnable
-              GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
+            r1: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+              TYPE_OP type=<root>.KRunnable origin=IMPLICIT_CAST typeOperand=<root>.KRunnable
+                GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
             r2: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
               GET_VAR 'b: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
@@ -102,8 +108,9 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
                 TYPE_OP type=<root>.KRunnable origin=IMPLICIT_CAST typeOperand=<root>.KRunnable
                   GET_VAR 'a: kotlin.Any declared in <root>.test5x' type=kotlin.Any origin=null
             CALL 'public final fun run1 (r: <root>.KRunnable): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-              r: TYPE_OP type=<root>.KRunnable origin=IMPLICIT_CAST typeOperand=<root>.KRunnable
-                GET_VAR 'a: kotlin.Any declared in <root>.test5x' type=kotlin.Any origin=null
+              r: TYPE_OP type=<root>.KRunnable origin=SAM_CONVERSION typeOperand=<root>.KRunnable
+                TYPE_OP type=<root>.KRunnable origin=IMPLICIT_CAST typeOperand=<root>.KRunnable
+                  GET_VAR 'a: kotlin.Any declared in <root>.test5x' type=kotlin.Any origin=null
   FUN name:test6 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY

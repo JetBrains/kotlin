@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.isKMutableProperty
+import org.jetbrains.kotlin.fir.resolve.resolveFunctionTypeIfSamInterface
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClass
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -618,8 +620,12 @@ class CallAndReferenceGenerator(
         if (expectedType is ConeTypeParameterType || expectedType.isBuiltinFunctionalType(session)) {
             return false
         }
-        // On the other hand, the actual type should be a functional type.
-        return argument.isFunctional(session)
+        // On the other hand, the actual type should be either a functional type or a subtype of a class that has a contributed `invoke`.
+        val lookupTag = parameter.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag
+        val firRegularClass = lookupTag?.toFirRegularClass(session)
+        // TODO: cache SAM interface to resolved function type, as [SamResolution] does?
+        val expectedFunctionType = firRegularClass?.resolveFunctionTypeIfSamInterface(session, scopeSession)
+        return argument.isFunctional(session, scopeSession, expectedFunctionType)
     }
 
     private fun IrExpression.applyAssigningArrayElementsToVarargInNamedForm(
