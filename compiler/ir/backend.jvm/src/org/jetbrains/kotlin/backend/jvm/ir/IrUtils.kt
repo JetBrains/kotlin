@@ -387,13 +387,5 @@ private fun JvmBackendContext.makeRawTypeAnnotation() =
         generatorExtensions.rawTypeAnnotationConstructor.symbol
     )
 
-fun IrClassSymbol.rawDefaultType(context: JvmBackendContext): IrType =
-    this.defaultType.addAnnotations(listOf(context.makeRawTypeAnnotation()))
-
-fun IrClassSymbol.rawStarProjectedType(context: JvmBackendContext): IrSimpleType =
-    IrSimpleTypeImpl(
-        this,
-        hasQuestionMark = false,
-        arguments = owner.typeParameters.map { IrStarProjectionImpl },
-        annotations = listOf(context.makeRawTypeAnnotation())
-    )
+fun IrClass.rawType(context: JvmBackendContext): IrType =
+    defaultType.addAnnotations(listOf(context.makeRawTypeAnnotation()))

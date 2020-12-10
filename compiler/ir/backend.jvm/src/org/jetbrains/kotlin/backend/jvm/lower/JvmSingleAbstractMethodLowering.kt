@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.SingleAbstractMethodLowering
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.rawDefaultType
-import org.jetbrains.kotlin.backend.jvm.ir.rawStarProjectedType
+import org.jetbrains.kotlin.backend.jvm.ir.rawType
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -45,10 +44,10 @@ private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sing
         if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 
     override fun getSuperTypeForWrapper(typeOperand: IrType): IrType =
-        typeOperand.erasedUpperBound.symbol.rawDefaultType(context as JvmBackendContext)
+        typeOperand.erasedUpperBound.rawType(context as JvmBackendContext)
 
     override fun getWrappedFunctionType(klass: IrClass): IrType =
-        klass.symbol.rawStarProjectedType(context as JvmBackendContext)
+        klass.rawType(context as JvmBackendContext)
 
     // The constructor of a SAM wrapper is non-synthetic and should not have line numbers.
     // Otherwise the debugger will try to step into it.
