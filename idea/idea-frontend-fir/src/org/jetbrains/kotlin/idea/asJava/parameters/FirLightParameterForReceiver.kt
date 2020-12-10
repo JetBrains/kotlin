@@ -59,7 +59,7 @@ internal class FirLightParameterForReceiver private constructor(
     override fun getName(): String = _name
 
     override fun isVarArgs() = false
-    override fun hasModifierProperty(name: String): Boolean = false //TODO()
+    override fun hasModifierProperty(name: String): Boolean = false
 
     override val kotlinOrigin: KtParameter? = null
 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtParameterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.idea.util.ifTrue
@@ -34,11 +35,18 @@ internal class FirLightParameterForSymbol(
             AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
         }
 
+        val nullabilityApplicable = !containingMethod.containingClass.let { it.isAnnotationType || it.isEnum } &&
+                !containingMethod.hasModifierProperty(PsiModifier.PRIVATE)
+
+        val nullabilityType = if (nullabilityApplicable)
+            parameterSymbol.type.getTypeNullability(parameterSymbol, FirResolvePhase.TYPES)
+        else NullabilityType.Unknown
+
         parameterSymbol.computeAnnotations(
             parent = this,
-            nullability = parameterSymbol.type.getTypeNullability(parameterSymbol, FirResolvePhase.TYPES),
+            nullability = nullabilityType,
             annotationUseSiteTarget = annotationSite,
-            includeAnnotationsWithoutSite = false
+            includeAnnotationsWithoutSite = true
         )
     }
 

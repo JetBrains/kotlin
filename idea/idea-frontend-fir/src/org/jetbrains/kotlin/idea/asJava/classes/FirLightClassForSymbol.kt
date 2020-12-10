@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.load.java.JvmAbi
 
-internal open class FirLightClassForSymbol(
+internal class FirLightClassForSymbol(
     private val classOrObjectSymbol: KtClassOrObjectSymbol,
     manager: PsiManager
 ) : FirLightClassForClassOrObjectSymbol(classOrObjectSymbol, manager) {
@@ -54,7 +54,7 @@ internal open class FirLightClassForSymbol(
 
     private val _modifierList: PsiModifierList? by lazyPub {
 
-        val modifiers = mutableSetOf(classOrObjectSymbol.computeVisibility(isTopLevel))
+        val modifiers = mutableSetOf(classOrObjectSymbol.toPsiVisibilityForClass(isTopLevel))
         classOrObjectSymbol.computeSimpleModality()?.run {
             modifiers.add(this)
         }
@@ -185,8 +185,9 @@ internal open class FirLightClassForSymbol(
             for (propertySymbol in propertySymbols) {
                 val isJvmField = propertySymbol.hasJvmFieldAnnotation()
                 val isJvmStatic = propertySymbol.hasJvmStaticAnnotation()
+
                 val forceStatic = isObject && (propertySymbol is KtKotlinPropertySymbol && propertySymbol.isConst || isJvmStatic || isJvmField)
-                val takePropertyVisibility = !isCompanionObject && (isJvmField || (isObject && isJvmStatic))
+                val takePropertyVisibility = !isCompanionObject && (isJvmField || forceStatic)
 
                 createField(
                     declaration = propertySymbol,

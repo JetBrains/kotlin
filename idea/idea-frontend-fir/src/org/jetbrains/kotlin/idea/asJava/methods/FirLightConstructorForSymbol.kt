@@ -42,7 +42,7 @@ internal class FirLightConstructorForSymbol(
     override fun isDeprecated(): Boolean = _isDeprecated
 
     private val _modifiers: Set<String> by lazyPub {
-        setOf(constructorSymbol.computeVisibility(isTopLevel = false))
+        setOf(constructorSymbol.toPsiVisibilityForMember(isTopLevel = false))
     }
 
     private val _modifierList: PsiModifierList by lazyPub {

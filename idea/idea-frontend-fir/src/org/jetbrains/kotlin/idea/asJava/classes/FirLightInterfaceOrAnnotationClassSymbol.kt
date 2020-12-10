@@ -29,7 +29,7 @@ internal abstract class FirLightInterfaceOrAnnotationClassSymbol(
 
         val isTopLevel: Boolean = classOrObjectSymbol.symbolKind == KtSymbolKind.TOP_LEVEL
 
-        val modifiers = mutableSetOf(classOrObjectSymbol.computeVisibility(isTopLevel), PsiModifier.ABSTRACT)
+        val modifiers = mutableSetOf(classOrObjectSymbol.toPsiVisibilityForClass(isTopLevel), PsiModifier.ABSTRACT)
 
         val annotations = classOrObjectSymbol.computeAnnotations(
             parent = this@FirLightInterfaceOrAnnotationClassSymbol,
