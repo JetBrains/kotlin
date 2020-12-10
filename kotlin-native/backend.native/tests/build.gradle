@@ -3229,6 +3229,11 @@ task inline_defaultArgs(type: KonanLocalTest) {
     source = "codegen/inline/defaultArgs.kt"
 }
 
+task inline_propertyAccessorInline(type: KonanLocalTest) {
+    goldValue = "123\n42\n"
+    source = "codegen/inline/propertyAccessorInline.kt"
+}
+
 task inline_twiceInlinedObject(type: KonanLocalTest) {
     goldValue = "Ok\n"
     source = "codegen/inline/twiceInlinedObject.kt"
