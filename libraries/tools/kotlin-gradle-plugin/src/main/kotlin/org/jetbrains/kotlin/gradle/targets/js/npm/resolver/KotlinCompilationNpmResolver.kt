@@ -367,9 +367,16 @@ internal class KotlinCompilationNpmResolver(
         val internalCompositeDependencies: Collection<CompositeDependency>,
         @Transient
         val externalGradleDependencies: Collection<ExternalGradleDependency>,
+        @Transient
         val externalNpmDependencies: Collection<NpmDependency>,
         val fileCollectionDependencies: Collection<FileCollectionDependency>
     ) {
+        val externalNpmDependencyDeclarations by lazy {
+            externalNpmDependencies.map {
+                it.toDeclaration()
+            }
+        }
+
         val fileExternalGradleDependencies by lazy {
             externalGradleDependencies.map {
                 FileExternalGradleDependency(
@@ -385,7 +392,7 @@ internal class KotlinCompilationNpmResolver(
                 internalDependencies.map { it.npmProject.name },
                 internalCompositeDependencies.flatMap { it.getPackages() },
                 fileExternalGradleDependencies.map { it.file },
-                externalNpmDependencies.map { it.uniqueRepresentation() },
+                externalNpmDependencyDeclarations.map { it.uniqueRepresentation() },
                 fileCollectionDependencies.map { it.files }.flatMap { it.files }
             )
 
@@ -424,7 +431,7 @@ internal class KotlinCompilationNpmResolver(
             val toolsNpmDependencies = taskRequirements
                 .getCompilationNpmRequirements(compilationName)
 
-            val allNpmDependencies = externalNpmDependencies.map { it.toDeclaration() } + toolsNpmDependencies
+            val allNpmDependencies = externalNpmDependencyDeclarations + toolsNpmDependencies
 
             val packageJson = packageJson(
                 npmName,
