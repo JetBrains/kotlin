@@ -96,7 +96,7 @@ internal open class FirLightClassForSymbol(
                 }
             }.applyIf(classOrObjectSymbol.classKind == KtClassKind.OBJECT) {
                 filterNot {
-                    it is KtPropertySymbol && it.isConst
+                    it is KtKotlinPropertySymbol && it.isConst
                 }
             }
 
@@ -124,7 +124,7 @@ internal open class FirLightClassForSymbol(
             analyzeWithSymbolAsContext(this) {
                 getDeclaredMemberScope().getCallableSymbols()
                     .filterIsInstance<KtPropertySymbol>()
-                    .filter { it.hasJvmFieldAnnotation() || it.hasJvmStaticAnnotation() || it.isConst }
+                    .filter { it.hasJvmFieldAnnotation() || it.hasJvmStaticAnnotation() || it is KtKotlinPropertySymbol && it.isConst }
                     .mapTo(result) {
                         FirLightFieldForPropertySymbol(
                             propertySymbol = it,
@@ -159,7 +159,7 @@ internal open class FirLightClassForSymbol(
             val propertySymbols = classOrObjectSymbol.getDeclaredMemberScope().getCallableSymbols()
                 .filterIsInstance<KtPropertySymbol>()
                 .applyIf(classOrObjectSymbol.classKind == KtClassKind.COMPANION_OBJECT) {
-                    filterNot { it.hasJvmFieldAnnotation() || it.isConst }
+                    filterNot { it.hasJvmFieldAnnotation() || it is KtKotlinPropertySymbol && it.isConst }
                 }
 
             val nameGenerator = FirLightField.FieldNameGenerator()
@@ -169,7 +169,7 @@ internal open class FirLightClassForSymbol(
             for (propertySymbol in propertySymbols) {
                 val isJvmField = propertySymbol.hasJvmFieldAnnotation()
                 val isJvmStatic = propertySymbol.hasJvmStaticAnnotation()
-                val forceStatic = isObject && (propertySymbol.isConst || isJvmStatic || isJvmField)
+                val forceStatic = isObject && (propertySymbol is KtKotlinPropertySymbol && propertySymbol.isConst || isJvmStatic || isJvmField)
                 val takePropertyVisibility = !isCompanionObject && (isJvmField || (isObject && isJvmStatic))
 
                 createField(

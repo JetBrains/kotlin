@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.*
-import org.jetbrains.kotlin.idea.frontend.api.fir.utils.threadLocal
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
@@ -143,7 +142,8 @@ internal class KtSymbolByFirBuilder private constructor(
     fun buildVariableSymbol(fir: FirProperty): KtVariableSymbol = symbolsCache.cache(fir) {
         when {
             fir.isLocal -> KtFirLocalVariableSymbol(fir, resolveState, token, this)
-            else -> KtFirPropertySymbol(fir, resolveState, token, this)
+            fir is FirSyntheticProperty -> KtFirSyntheticJavaPropertySymbol(fir, resolveState, token, this)
+            else -> KtFirKotlinPropertySymbol(fir, resolveState, token, this)
         }
     }
 

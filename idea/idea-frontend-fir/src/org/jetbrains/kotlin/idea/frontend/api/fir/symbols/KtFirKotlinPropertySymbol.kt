@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.frontend.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.idea.fir.findPsi
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignatu
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertAnnotation
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertConstantExpression
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertyGetterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySetterSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
@@ -28,14 +30,15 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirPropertySymbol(
+internal class KtFirKotlinPropertySymbol(
     fir: FirProperty,
     resolveState: FirModuleResolveState,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder
-) : KtPropertySymbol(), KtFirSymbol<FirProperty> {
+) : KtKotlinPropertySymbol(), KtFirSymbol<FirProperty> {
     init {
         assert(!fir.isLocal)
+        check(fir !is FirSyntheticProperty)
     }
 
     override val firRef = firRef(fir, resolveState)
@@ -83,6 +86,9 @@ internal class KtFirPropertySymbol(
     override val isConst: Boolean get() = firRef.withFir { it.isConst }
 
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
+
+    override val hasGetter: Boolean get() = firRef.withFir { it.getter != null }
+    override val hasSetter: Boolean get() = firRef.withFir { it.setter != null }
 
     override fun createPointer(): KtSymbolPointer<KtPropertySymbol> {
         KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }

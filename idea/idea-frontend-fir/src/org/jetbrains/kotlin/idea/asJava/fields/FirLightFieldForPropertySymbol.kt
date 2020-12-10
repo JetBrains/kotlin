@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -97,6 +98,7 @@ internal class FirLightFieldForPropertySymbol(
     override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _initializer by lazyPub {
+        if (propertySymbol !is KtKotlinPropertySymbol) return@lazyPub null
         if (!propertySymbol.isConst) return@lazyPub null
         if (!propertySymbol.isVal) return@lazyPub null
         (propertySymbol.initializer as? KtSimpleConstantValue<*>)?.createPsiLiteral(this)

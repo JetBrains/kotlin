@@ -210,13 +210,16 @@ internal fun FirLightClassBase.createField(
     takePropertyVisibility: Boolean,
     result: MutableList<KtLightField>
 ) {
-    fun hasBackingField(property: KtPropertySymbol): Boolean {
-        if (property.modality == KtCommonSymbolModality.ABSTRACT) return false
-        if (property.isLateInit) return true
-        //IS PARAMETER -> true
-        if (property.getter == null && property.setter == null) return true
-        if (property.hasJvmSyntheticAnnotation(AnnotationUseSiteTarget.FIELD)) return false
-        return property.hasBackingField
+    fun hasBackingField(property: KtPropertySymbol): Boolean = when (property) {
+        is KtSyntheticJavaPropertySymbol -> true
+        is KtKotlinPropertySymbol -> when {
+            property.modality == KtCommonSymbolModality.ABSTRACT -> false
+            property.isLateInit -> true
+            //IS PARAMETER -> true
+            !property.hasGetter && !property.hasSetter -> true
+            property.hasJvmSyntheticAnnotation(AnnotationUseSiteTarget.FIELD) -> false
+            else -> property.hasBackingField
+        }
     }
 
     if (!hasBackingField(declaration)) return

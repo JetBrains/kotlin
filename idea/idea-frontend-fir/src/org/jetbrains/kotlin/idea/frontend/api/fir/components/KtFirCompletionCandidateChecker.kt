@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
-import com.jetbrains.rd.util.getOrCreate
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.components.KtCompletionCandidateChecker
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirPropertySymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirKotlinPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.EnclosingDeclarationContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.buildCompletionContext
@@ -52,7 +51,7 @@ internal class KtFirCompletionCandidateChecker(
         val functionFits = firSymbolForCandidate.withResolvedFirOfType<KtFirFunctionSymbol, FirSimpleFunction, Boolean> { firFunction ->
             checkExtension(firFunction, originalFile, nameExpression, possibleExplicitReceiver)
         }
-        val propertyFits = firSymbolForCandidate.withResolvedFirOfType<KtFirPropertySymbol, FirProperty, Boolean> { firProperty ->
+        val propertyFits = firSymbolForCandidate.withResolvedFirOfType<KtFirKotlinPropertySymbol, FirProperty, Boolean> { firProperty ->
             checkExtension(firProperty, originalFile, nameExpression, possibleExplicitReceiver)
         }
 
