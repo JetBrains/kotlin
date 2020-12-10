@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.test.WithMutedInDatabaseRunTest
 import org.jetbrains.kotlin.test.runTest
 import org.jetbrains.kotlin.idea.test.runAll
-import org.jetbrains.kotlin.test.TestPlatform
+import org.jetbrains.kotlin.test.AndroidStudioTestUtils
 
 @WithMutedInDatabaseRunTest
 abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
@@ -40,7 +40,7 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     }
 
     override fun shouldRunTest(): Boolean {
-        return super.shouldRunTest() && !TestPlatform.checkIsAndroidStudio()
+        return super.shouldRunTest() && !AndroidStudioTestUtils.checkIsAndroidStudio()
     }
 
     override fun tearDown() {
