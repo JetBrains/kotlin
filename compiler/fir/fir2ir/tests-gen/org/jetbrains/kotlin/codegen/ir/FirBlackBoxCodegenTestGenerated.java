@@ -21575,6 +21575,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 runTest("compiler/testData/codegen/box/properties/const/constFlags.kt");
             }
 
+            @TestMetadata("constInObjectWithInit.kt")
+            public void testConstInObjectWithInit() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/const/constInObjectWithInit.kt");
+            }
+
             @TestMetadata("constPropertyAccessor.kt")
             public void testConstPropertyAccessor() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/const/constPropertyAccessor.kt");
