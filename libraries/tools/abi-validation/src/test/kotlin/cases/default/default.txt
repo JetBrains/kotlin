@@ -15,3 +15,8 @@ public final class cases/default/InterfaceFunctions$DefaultImpls {
 	public static synthetic fun withSomeDefaults$default (Lcases/default/InterfaceFunctions;ILjava/lang/String;ILjava/lang/Object;)V
 }
 
+public final class cases/default/PublishedApiWithDefaultsKt {
+	public static final fun twoDefaults (ILjava/lang/Object;Ljava/lang/String;)V
+	public static synthetic fun twoDefaults$default (ILjava/lang/Object;Ljava/lang/String;ILjava/lang/Object;)V
+}
+

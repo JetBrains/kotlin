@@ -41,7 +41,7 @@ fun MemberVisibility.isPublic(isPublishedApi: Boolean) =
         // Assuming isReified implies inline
         !isReified && isPublic(visibility, isPublishedApi)
 
-
+fun MemberVisibility.isInternal(): Boolean = visibility != null && Flag.IS_INTERNAL(visibility)
 
 val ClassNode.kotlinMetadata: KotlinClassMetadata?
     get() {
@@ -68,7 +68,7 @@ fun KotlinClassMetadata?.isFileOrMultipartFacade() =
 
 fun KotlinClassMetadata?.isSyntheticClass() = this is KotlinClassMetadata.SyntheticClass
 
-fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility? {
+fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassVisibility {
     var flags: Flags? = null
     var _facadeClassName: String? = null
     val members = mutableListOf<MemberVisibility>()

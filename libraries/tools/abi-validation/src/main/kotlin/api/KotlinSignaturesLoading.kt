@@ -28,27 +28,38 @@ public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String
 
     val visibilityMapNew = classNodes.readKotlinVisibilities().filterKeys(visibilityFilter)
     return classNodes
-        .map { classNode -> with(classNode) {
+        .map { classNode ->
+            with(classNode) {
                 val metadata = kotlinMetadata
                 val mVisibility = visibilityMapNew[name]
                 val classAccess = AccessFlags(effectiveAccess and Opcodes.ACC_STATIC.inv())
-
                 val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
 
-                val memberSignatures = (
-                    fields.map { it.toFieldBinarySignature() } +
-                    methods.map { it.toMethodBinarySignature() }
-                ).filter {
-                    it.isEffectivelyPublic(classAccess, mVisibility)
-                }
+                val fieldSignatures = fields
+                    .map { it.toFieldBinarySignature() }
+                    .filter {
+                        it.isEffectivelyPublic(classAccess, mVisibility)
+                    }
+
+                val allMethods = methods.map { it.toMethodBinarySignature() }
+                // Signatures marked with @PublishedApi
+                val publishedApiSignatures = allMethods.filter {
+                    it.isPublishedApi
+                }.map { it.jvmMember }.toSet()
+                val methodSignatures = allMethods
+                    .filter {
+                        it.isEffectivelyPublic(classAccess, mVisibility) ||
+                                it.isPublishedApiWithDefaultArguments(mVisibility, publishedApiSignatures)
+                    }
 
                 ClassBinarySignature(
-                    name, superName, outerClassName, supertypes, memberSignatures, classAccess,
+                    name, superName, outerClassName, supertypes, fieldSignatures + methodSignatures, classAccess,
                     isEffectivelyPublic(mVisibility),
                     metadata.isFileOrMultipartFacade() || isDefaultImpls(metadata),
                     annotations(visibleAnnotations, invisibleAnnotations)
                 )
-        }}
+            }
+        }
         .asIterable()
         .sortedBy { it.name }
 }
