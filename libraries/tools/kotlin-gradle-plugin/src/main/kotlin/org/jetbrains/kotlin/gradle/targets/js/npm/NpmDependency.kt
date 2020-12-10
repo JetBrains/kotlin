@@ -111,9 +111,6 @@ data class NpmDependency(
     }
 
     override fun getReason(): String? = reason
-
-    fun uniqueRepresentation() =
-        "$scope $key:$version, $generateExternals"
 }
 
 internal fun directoryNpmDependency(

@@ -18,6 +18,9 @@ data class NpmDependencyDeclaration(
     val generateExternals: Boolean
 )
 
+fun NpmDependencyDeclaration.uniqueRepresentation() =
+    "$scope $name:$version, $generateExternals"
+
 internal fun NpmDependency.toDeclaration(): NpmDependencyDeclaration =
     NpmDependencyDeclaration(
         scope = this.scope,
