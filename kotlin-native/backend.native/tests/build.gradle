@@ -3813,6 +3813,10 @@ if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcKt43517") {
         it.defFile 'framework/kt43517/kt43517.def'
     }
+    createInterop("objc_kt42172") {
+        it.defFile 'interop/objc/kt42172/objclib.def'
+        it.headers "$projectDir/interop/objc/kt42172/objclib.h"
+    }
 }
 
 createInterop("withSpaces") {
@@ -4279,6 +4283,25 @@ if (PlatformInfo.isAppleTarget(project)) {
             it.startsWith("Before") &&                   // Should crash after "Before"
                 !it.contains("After") &&                 // But before "After"
                 it.contains("isObjectAliveShouldCrash")  // And should contain stack trace.
+        }
+    }
+
+    interopTest("interop_objc_kt42172") {
+        source = "interop/objc/kt42172/main.kt"
+        interop = "objc_kt42172"
+        flags = ['-Xopt-in=kotlin.native.internal.InternalForKotlinNative']
+        goldValue = 'Executed finalizer\n'
+
+        doBeforeBuild {
+            mkdir(buildDir)
+            execKonanClang(project.target) {
+                args "$projectDir/interop/objc/kt42172/objclib.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjc_kt42172.dylib"
+            }
+            if (project.target instanceof KonanTarget.IOS_X64) {
+                UtilsKt.codesign(project, "$buildDir/libobjc_kt42172.dylib")
+            }
         }
     }
 }

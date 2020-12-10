@@ -140,7 +140,9 @@ RuntimeState* initRuntime() {
 void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   RuntimeAssert(state->status == RuntimeStatus::kRunning, "Runtime must be in the running state");
   state->status = RuntimeStatus::kDestroying;
-  // This may be called after TLS is zeroed out, so ::memoryState in Memory cannot be trusted.
+  // This may be called after TLS is zeroed out, so ::runtimeState and ::memoryState in Memory cannot be trusted.
+  // TODO: This may in fact reallocate TLS without guarantees that it'll be deallocated again.
+  ::runtimeState = state;
   RestoreMemory(state->memoryState);
   bool lastRuntime = atomicAdd(&aliveRuntimesCount, -1) == 0;
   switch (Kotlin_getDestroyRuntimeMode()) {
@@ -159,6 +161,7 @@ void deinitRuntime(RuntimeState* state, bool destroyRuntime) {
   DeinitMemory(state->memoryState, destroyRuntime);
   konanDestructInstance(state);
   WorkerDestroyThreadDataIfNeeded(workerId);
+  ::runtimeState = kInvalidRuntime;
 }
 
 void Kotlin_deinitRuntimeCallback(void* argument) {
@@ -191,7 +194,6 @@ void Kotlin_initRuntimeIfNeeded() {
 void Kotlin_deinitRuntimeIfNeeded() {
   if (isValidRuntime()) {
     deinitRuntime(::runtimeState, false);
-    ::runtimeState = kInvalidRuntime;
   }
 }
 
@@ -249,7 +251,6 @@ void Kotlin_shutdownRuntime() {
     }
 
     deinitRuntime(runtime, canDestroyRuntime);
-    ::runtimeState = kInvalidRuntime;
 }
 
 KInt Konan_Platform_canAccessUnaligned() {
