@@ -64,41 +64,6 @@ fun List<IrExpression>.toJsArrayLiteral(context: JsIrBackendContext, arrayType: 
     }
 }
 
-// TODO: support more cases like built-in operator call and so on
-
-fun IrExpression?.isPure(anyVariable: Boolean, checkFields: Boolean = true): Boolean {
-    if (this == null) return true
-
-    fun IrExpression.isPureImpl(): Boolean {
-        return when (this) {
-            is IrConst<*> -> true
-            is IrGetValue -> {
-                if (anyVariable) return true
-                val valueDeclaration = symbol.owner
-                if (valueDeclaration is IrVariable) !valueDeclaration.isVar
-                else true
-            }
-            is IrGetObjectValue -> type.isUnit()
-            else -> false
-        }
-    }
-
-    if (isPureImpl()) return true
-
-    if (!checkFields) return false
-
-    if (this is IrGetField) {
-        if (!symbol.owner.isFinal) {
-            if (!anyVariable) {
-                return false
-            }
-        }
-        return receiver.isPure(anyVariable)
-    }
-
-    return false
-}
-
 val IrValueDeclaration.isDispatchReceiver: Boolean
     get() {
         val parent = this.parent

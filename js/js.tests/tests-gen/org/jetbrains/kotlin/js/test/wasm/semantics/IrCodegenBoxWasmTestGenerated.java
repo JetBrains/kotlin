@@ -11216,6 +11216,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testAnotherFile() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/const/anotherFile.kt");
             }
+
+            @TestMetadata("constPropertyAccessor.kt")
+            public void testConstPropertyAccessor() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/const/constPropertyAccessor.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/properties/lateinit")
