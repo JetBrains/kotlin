@@ -570,8 +570,6 @@ object KotlinToJVMBytecodeCompiler {
         sourceFiles: List<KtFile>,
         module: Module?
     ): GenerationState {
-        val isIR = (configuration.getBoolean(JVMConfigurationKeys.IR) ||
-                configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
         val generationState = GenerationState.Builder(
             environment.project,
             ClassBuilderFactories.BINARIES,
@@ -581,13 +579,12 @@ object KotlinToJVMBytecodeCompiler {
             configuration
         )
             .codegenFactory(
-                if (isIR) JvmIrCodegenFactory(
+                if (configuration.getBoolean(JVMConfigurationKeys.IR)) JvmIrCodegenFactory(
                     configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
                 ) else DefaultCodegenFactory
             )
             .withModule(module)
             .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
-            .isIrBackend(isIR)
             .build()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

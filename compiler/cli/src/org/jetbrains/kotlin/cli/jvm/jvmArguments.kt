@@ -171,7 +171,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.PARAMETERS_METADATA, arguments.javaParameters)
 
-    put(JVMConfigurationKeys.IR, arguments.useIR && !arguments.noUseIR)
+    put(JVMConfigurationKeys.IR, (arguments.useIR && !arguments.noUseIR) || arguments.useFir)
 
     val abiStability = JvmAbiStability.fromStringOrNull(arguments.abiStability)
     if (arguments.abiStability != null) {
