@@ -17,6 +17,7 @@
 #ifndef RUNTIME_PORTING_H
 #define RUNTIME_PORTING_H
 
+#include <stdarg.h>
 #include <stdint.h>
 #include <stddef.h>
 
@@ -46,6 +47,7 @@ void onThreadExit(void (*destructor)(void*), void* destructorParameter);
 // by C compiler.
 void* memmem(const void *big, size_t bigLen, const void *little, size_t littleLen);
 int snprintf(char* buffer, size_t size, const char* format, ...);
+int vsnprintf(char* buffer, size_t size, const char* format, va_list args);
 size_t strnlen(const char* buffer, size_t maxSize);
 
 

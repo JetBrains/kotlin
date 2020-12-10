@@ -25,7 +25,7 @@
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 
-RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* message);
+RUNTIME_NORETURN void RuntimeAssertFailed(const char* location, const char* message, ...);
 
 namespace internal {
 
@@ -46,9 +46,9 @@ extern "C" const int KonanNeedDebugInfo;
 
 #if KONAN_ENABLE_ASSERT
 // Use RuntimeAssert() in internal state checks, which could be ignored in production.
-#define RuntimeAssert(condition, message)                           \
-if (KonanNeedDebugInfo && (!(condition))) {                         \
-    RuntimeAssertFailed( __FILE__ ":" TOSTRING(__LINE__), message); \
+#define RuntimeAssert(condition, format, ...)                                     \
+if (KonanNeedDebugInfo && (!(condition))) {                                       \
+    RuntimeAssertFailed( __FILE__ ":" TOSTRING(__LINE__), format, ##__VA_ARGS__); \
 }
 #else
 #define RuntimeAssert(condition, message)
@@ -56,9 +56,9 @@ if (KonanNeedDebugInfo && (!(condition))) {                         \
 
 // Use RuntimeCheck() in runtime checks that could fail due to external condition and shall lead
 // to program termination. Never compiled out.
-#define RuntimeCheck(condition, message)   \
-  if (!(condition)) {                      \
-    RuntimeAssertFailed(nullptr, message); \
+#define RuntimeCheck(condition, format, ...)             \
+  if (!(condition)) {                                    \
+    RuntimeAssertFailed(nullptr, format, ##__VA_ARGS__); \
   }
 
 #define TODO(...) \
