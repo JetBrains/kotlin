@@ -22,17 +22,12 @@ buildscript {
             url project.bootstrapKotlinRepo
         }
     }
-    ext.useCustomDist = project.hasProperty("kotlin.native.home") ||
-            project.hasProperty("org.jetbrains.kotlin.native.home") ||
-            project.hasProperty("konan.home")
-    ext.kotlinNativeDist = project.findProperty("kotlin.native.home")
-            ?: project.findProperty("org.jetbrains.kotlin.native.home")
-            ?: project.findProperty("konan.home")
-            ?: distDir.absolutePath
+    ext.useCustomDist = UtilsKt.getUseCustomDist(project)
+    ext.kotlinNativeDist = UtilsKt.getKotlinNativeDist(project)
     if (!useCustomDist) {
-        ext.setProperty("kotlin.native.home", distDir.absolutePath)
-        ext.setProperty("org.jetbrains.kotlin.native.home", distDir.absolutePath)
-        ext.setProperty("konan.home", distDir.absolutePath)
+        ext.setProperty("kotlin.native.home", kotlinNativeDist.absolutePath)
+        ext.setProperty("org.jetbrains.kotlin.native.home", kotlinNativeDist.absolutePath)
+        ext.setProperty("konan.home", kotlinNativeDist.absolutePath)
     }
 }
 
@@ -133,9 +128,6 @@ allprojects {
 testOutputExternal.mkdirs()
 testOutputStdlib.mkdirs()
 
-ext.dist = project.rootProject.file(project.findProperty("org.jetbrains.kotlin.native.home") ?:
-        project.findProperty("konan.home") ?: "dist")
-
 konanArtifacts {
     library('testLibrary') {
         if (!useCustomDist) {
@@ -166,7 +158,7 @@ def installTestLib = tasks.register("installTestLibrary", KlibInstall) {
 
 void konanc(String[] args) {
    def konancScript = isWindows() ? "konanc.bat" : "konanc"
-   def konanc = "$dist/bin/$konancScript"
+   def konanc = "$kotlinNativeDist/bin/$konancScript"
    def allArgs = args.join(" ")
    println("$konanc $allArgs")
    "$konanc $allArgs".execute().waitFor()
@@ -4389,7 +4381,7 @@ if (PlatformInfo.isAppleTarget(project)) {
 standaloneTest("jsinterop_math") {
     doBeforeBuild {
         def jsinteropScript = isWindows() ? "jsinterop.bat" : "jsinterop"
-        def jsinterop = "$dist/bin/$jsinteropScript"
+        def jsinterop = "$kotlinNativeDist/bin/$jsinteropScript"
         // TODO: We probably need a NativeInteropPlugin for jsinterop?
         "$jsinterop -pkg kotlinx.interop.wasm.math -o $buildDir/jsmath -target wasm32".execute().waitFor()
 
@@ -5192,7 +5184,7 @@ project.tasks.register("debugger_test", Test.class) {
     enabled = (target.family == Family.OSX)  // KT-30366
     testLogging { exceptionFormat = 'full' }
     UtilsKt.dependsOnDist(it)
-    systemProperties = ['kotlin.native.home': dist]
+    systemProperties = ['kotlin.native.home': kotlinNativeDist]
 }
 
 // Configure build for iOS device targets.

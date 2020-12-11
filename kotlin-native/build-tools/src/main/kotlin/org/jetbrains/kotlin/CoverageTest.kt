@@ -11,6 +11,7 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
+import org.jetbrains.kotlin.gradle.plugin.tasks.*
 
 /**
  * Test task for -Xcoverage and -Xlibraries-to-cover flags. Requires a binary to be built by the Konan plugin
@@ -64,7 +65,11 @@ open class CoverageTest : DefaultTask() {
     override fun configure(closure: Closure<Any>): Task {
         super.configure(closure)
         dependsOnDist()
-        dependsOn(project.tasks.getByName("compileKonan$binaryName"))
+        val compileBinaryTask = project.tasks.getByName("compileKonan$binaryName")
+        compileBinaryTask.konanOldPluginTaskDependenciesWalker{
+            dependsOnDist()
+        }
+        dependsOn(compileBinaryTask)
         return this
     }
 
