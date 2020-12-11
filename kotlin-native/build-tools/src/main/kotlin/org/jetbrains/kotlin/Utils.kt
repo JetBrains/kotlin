@@ -29,6 +29,9 @@ val Project.platformManager
 val Project.testTarget
     get() = findProperty("target") as KonanTarget
 
+val Project.testTargetSuffix
+    get() = (findProperty("target") as KonanTarget ?: HostManager.host).name.capitalize()
+
 val Project.verboseTest
     get() = hasProperty("test_verbose")
 
@@ -48,8 +51,32 @@ val Project.testOutputExternal
     get() = (findProperty("testOutputExternal") as File).toString()
 
 val Project.kotlinNativeDist
-    get() = this.rootProject.file(this.findProperty("org.jetbrains.kotlin.native.home")
-            ?: this.findProperty("konan.home") ?: "dist")
+    get() = this.rootProject.file(findProperty("kotlin.native.home")
+                                      ?: findProperty("org.jetbrains.kotlin.native.home")
+                                      ?: findProperty("konan.home") ?: "dist")
+
+val Project.useCustomDist
+    get() = hasProperty("kotlin.native.home") ||
+            hasProperty("org.jetbrains.kotlin.native.home") ||
+            hasProperty("konan.home")
+
+private val libraryRegexp = Regex("""^import\s+platform\.(\S+)\..*$""")
+fun File.dependencies() =
+    readLines().filter(libraryRegexp::containsMatchIn)
+        .map { libraryRegexp.matchEntire(it)?.groups?.get(1)?.value ?: "" }
+        .toSortedSet()
+
+
+fun Task.dependsOnPlatformLibs() {
+    val platformManager = project.project(":kotlin-native").platformManager
+    val target = project.testTarget ?: platformManager.hostPlatform.target
+    (this as? KonanTest)?.run {
+        project.file(source).dependencies().forEach {
+            this.dependsOn(":kotlin-native:platformLibs:${target.name}-$it")
+            //this.dependsOn(":kotlin-native:platformLibs:${target.name}-${it}Cache")
+        }
+    } ?: error("unsupported task : $this")
+}
 
 @Suppress("UNCHECKED_CAST")
 val Project.globalTestArgs: List<String>
@@ -105,16 +132,24 @@ fun Project.dependsOnDist(taskName: String) {
 }
 
 fun Task.dependsOnDist() {
-    val rootTasks = project.rootProject.tasks
     // We don't build the compiler if a custom dist path is specified.
     if (!(project.findProperty("useCustomDist") as Boolean)) {
-        dependsOn(rootTasks.getByName("dist"))
+        dependsOn(":kotlin-native:dist")
         val target = project.testTarget
         if (target != HostManager.host) {
             // if a test_target property is set then tests should depend on a crossDist
             // otherwise, runtime components would not be build for a target.
-            dependsOn(rootTasks.getByName("${target.name}CrossDist"))
+            dependsOn(":kotlin-native:${target.name}CrossDist")
         }
+    }
+}
+
+fun Task.konanOldPluginTaskDependenciesWalker(index:Int = 0, walker: Task.(Int)->Unit) {
+    walker(index + 1)
+    dependsOn.forEach{
+        val task = (it as? Task) ?: return@forEach
+        if (task.name.startsWith("compileKonan"))
+            task.konanOldPluginTaskDependenciesWalker(index + 1, walker)
     }
 }
 
@@ -140,7 +175,9 @@ fun Task.sameDependenciesAs(task: Task) {
  */
 fun Task.dependsOnKonanBuildingTask(artifact: String, target: KonanTarget) {
     val buildTask = project.findKonanBuildTask(artifact, target)
-    buildTask.dependsOnDist()
+    buildTask.konanOldPluginTaskDependenciesWalker {
+        dependsOnDist()
+    }
     buildTask.sameDependenciesAs(this)
     dependsOn(buildTask)
 }
