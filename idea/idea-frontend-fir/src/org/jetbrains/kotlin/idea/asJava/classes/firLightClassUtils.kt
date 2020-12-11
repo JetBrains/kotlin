@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclar
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import java.util.*
@@ -77,6 +78,29 @@ fun createFirLightClassNoCache(classOrObject: KtClassOrObject): KtLightClass? {
             }
         }
     }
+}
+
+fun getOrCreateFirLightFacade(
+    ktFiles: List<KtFile>,
+    facadeClassFqName: FqName,
+): FirLightClassForFacade? {
+    val firstFile = ktFiles.firstOrNull() ?: return null
+    //TODO Make caching keyed by all files
+    return CachedValuesManager.getCachedValue(firstFile) {
+        CachedValueProvider.Result
+            .create(
+                getOrCreateFirLightFacadeNoCache(ktFiles, facadeClassFqName),
+                KotlinModificationTrackerService.getInstance(firstFile.project).outOfBlockModificationTracker
+            )
+    }
+}
+
+fun getOrCreateFirLightFacadeNoCache(
+    ktFiles: List<KtFile>,
+    facadeClassFqName: FqName,
+): FirLightClassForFacade? {
+    val firstFile = ktFiles.firstOrNull() ?: return null
+    return FirLightClassForFacade(firstFile.manager, facadeClassFqName, ktFiles)
 }
 
 
