@@ -28,8 +28,7 @@ interface ModuleInfo {
     // The common module usually depends on kotlin-stdlib-common which may or may not have its own (common, non-JVM) built-ins,
     // but if they are present, they should come after JVM built-ins in the dependencies list, because JVM built-ins contain
     // additional members dependent on the JDK
-    fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
-        analyzerServices.dependencyOnBuiltIns()
+    fun dependencyOnBuiltIns(): DependencyOnBuiltIns = analyzerServices.dependencyOnBuiltIns()
 
     //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
     enum class DependencyOnBuiltIns { NONE, AFTER_SDK, LAST }

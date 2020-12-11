@@ -129,7 +129,7 @@ abstract class ResolverForModuleFactory {
 class LazyModuleDependencies<M : ModuleInfo>(
     storageManager: StorageManager,
     private val module: M,
-    firstDependency: M? = null,
+    firstDependency: M?,
     private val resolverForProject: AbstractResolverForProject<M>
 ) : ModuleDependencies {
 
