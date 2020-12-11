@@ -21,7 +21,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: run
   origin: SOURCE
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Unit
   typeParameters: []
@@ -44,7 +44,7 @@ KtFirKotlinPropertySymbol:
   modality: FINAL
   name: data
   origin: SOURCE
-  receiverType: null
+  receiverTypeAndAnnotations: null
   setter: null
   symbolKind: MEMBER
   type: kotlin/Int
@@ -72,7 +72,7 @@ KtFirKotlinPropertySymbol:
   modality: FINAL
   name: anonymousObject
   origin: SOURCE
-  receiverType: null
+  receiverTypeAndAnnotations: null
   setter: null
   symbolKind: MEMBER
   type: java/lang/Runnable

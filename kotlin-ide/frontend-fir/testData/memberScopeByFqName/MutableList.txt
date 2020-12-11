@@ -13,7 +13,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: add
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -32,7 +32,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: add
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Unit
   typeParameters: []
@@ -51,7 +51,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: addAll
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -70,7 +70,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: addAll
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -89,7 +89,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: clear
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Unit
   typeParameters: []
@@ -108,7 +108,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/collections/MutableListIterator<E>
   typeParameters: []
@@ -127,7 +127,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/collections/MutableListIterator<E>
   typeParameters: []
@@ -146,7 +146,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: remove
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -165,7 +165,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: removeAll
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -184,7 +184,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: removeAt
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: E
   typeParameters: []
@@ -203,7 +203,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: retainAll
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -222,7 +222,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: set
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: E
   typeParameters: []
@@ -241,7 +241,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: subList
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/collections/MutableList<E>
   typeParameters: []
@@ -260,7 +260,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: contains
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -279,7 +279,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: containsAll
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -298,7 +298,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: get
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: E
   typeParameters: []
@@ -317,7 +317,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: indexOf
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -336,7 +336,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: isEmpty
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -355,7 +355,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: iterator
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/collections/MutableIterator<E>
   typeParameters: []
@@ -374,7 +374,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: lastIndexOf
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -397,7 +397,7 @@ KtFirKotlinPropertySymbol:
   modality: ABSTRACT
   name: size
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   setter: null
   symbolKind: MEMBER
   type: kotlin/Int
@@ -415,7 +415,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Boolean
   typeParameters: []
@@ -434,7 +434,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -453,7 +453,7 @@ KtFirFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/String
   typeParameters: []

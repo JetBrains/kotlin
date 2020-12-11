@@ -20,13 +20,14 @@ KtFirKotlinPropertySymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  receiverType: null
+  receiverTypeAndAnnotations: null
   setter: null
   symbolKind: MEMBER
   type: kotlin/Int
   visibility: PUBLIC
 
 KtFirPropertyGetterSymbol:
+  annotations: []
   hasBody: true
   isDefault: false
   isInline: false
@@ -53,7 +54,7 @@ KtFirKotlinPropertySymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverType: kotlin/Int
+  receiverTypeAndAnnotations: [] kotlin/Int
   setter: null
   symbolKind: MEMBER
   type: kotlin/Int
