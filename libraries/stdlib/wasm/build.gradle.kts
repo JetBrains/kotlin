@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 
 plugins {
-    `maven-publish`
     kotlin("multiplatform")
 }
 
