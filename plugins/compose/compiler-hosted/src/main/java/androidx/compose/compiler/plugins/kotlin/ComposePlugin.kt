@@ -101,7 +101,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         )
         INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
-            value != "false"
+            value == "true"
         )
         SUPPRESS_KOTLIN_VERSION_CHECK_ENABLED_OPTION -> configuration.put(
             ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK,
