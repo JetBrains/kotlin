@@ -19,6 +19,7 @@ workspace.xml
 /js/js.translator/testData/out/
 /js/js.translator/testData/out-min/
 /js/js.translator/testData/out-pir/
+/kotlin-ide
 .gradle/
 build/
 !**/src/**/build
