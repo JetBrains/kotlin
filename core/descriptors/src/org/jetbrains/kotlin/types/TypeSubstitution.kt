@@ -21,8 +21,9 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 
 abstract class TypeSubstitution {
     companion object {
-        @JvmField val EMPTY: TypeSubstitution = object : TypeSubstitution() {
-            override fun get(key: KotlinType) = null
+        @JvmField
+        val EMPTY: TypeSubstitution = object : TypeSubstitution() {
+            override fun get(key: KotlinType): Nothing? = null
             override fun isEmpty() = true
             override fun toString() = "Empty TypeSubstitution"
         }
@@ -52,8 +53,8 @@ abstract class TypeConstructorSubstitution : TypeSubstitution() {
         @JvmStatic
         @JvmOverloads
         fun createByConstructorsMap(
-                map: Map<TypeConstructor, TypeProjection>,
-                approximateCapturedTypes: Boolean = false
+            map: Map<TypeConstructor, TypeProjection>,
+            approximateCapturedTypes: Boolean = false
         ): TypeConstructorSubstitution =
             object : TypeConstructorSubstitution() {
                 override fun get(key: TypeConstructor) = map[key]
@@ -61,18 +62,21 @@ abstract class TypeConstructorSubstitution : TypeSubstitution() {
                 override fun approximateCapturedTypes() = approximateCapturedTypes
             }
 
-        @JvmStatic fun createByParametersMap(map: Map<TypeParameterDescriptor, TypeProjection>): TypeConstructorSubstitution =
+        @JvmStatic
+        fun createByParametersMap(map: Map<TypeParameterDescriptor, TypeProjection>): TypeConstructorSubstitution =
             object : TypeConstructorSubstitution() {
                 override fun get(key: TypeConstructor) = map[key.declarationDescriptor]
                 override fun isEmpty() = map.isEmpty()
             }
 
-        @JvmStatic fun create(kotlinType: KotlinType) = create(kotlinType.constructor, kotlinType.arguments)
+        @JvmStatic
+        fun create(kotlinType: KotlinType) = create(kotlinType.constructor, kotlinType.arguments)
 
-        @JvmStatic fun create(typeConstructor: TypeConstructor, arguments: List<TypeProjection>): TypeSubstitution {
+        @JvmStatic
+        fun create(typeConstructor: TypeConstructor, arguments: List<TypeProjection>): TypeSubstitution {
             val parameters = typeConstructor.parameters
 
-            if (parameters.lastOrNull()?.isCapturedFromOuterDeclaration ?: false) {
+            if (parameters.lastOrNull()?.isCapturedFromOuterDeclaration == true) {
                 return createByConstructorsMap(typeConstructor.parameters.map { it.typeConstructor }.zip(arguments).toMap())
             }
 
@@ -93,7 +97,8 @@ class IndexedParametersSubstitution(
     }
 
     constructor(
-            parameters: List<TypeParameterDescriptor>, argumentsList: List<TypeProjection>
+        parameters: List<TypeParameterDescriptor>,
+        argumentsList: List<TypeProjection>
     ) : this(parameters.toTypedArray(), argumentsList.toTypedArray())
 
     override fun isEmpty(): Boolean = arguments.isEmpty()
@@ -114,23 +119,25 @@ class IndexedParametersSubstitution(
 
 @JvmOverloads
 fun KotlinType.replace(
-        newArguments: List<TypeProjection> = arguments,
-        newAnnotations: Annotations = annotations
+    newArguments: List<TypeProjection> = arguments,
+    newAnnotations: Annotations = annotations,
+    newArgumentsForUpperBound: List<TypeProjection> = newArguments
 ): KotlinType {
     if ((newArguments.isEmpty() || newArguments === arguments) && newAnnotations === annotations) return this
 
-    val unwrapped = unwrap()
-    return when(unwrapped) {
-        is FlexibleType -> KotlinTypeFactory.flexibleType(unwrapped.lowerBound.replace(newArguments, newAnnotations),
-                                                          unwrapped.upperBound.replace(newArguments, newAnnotations))
+    return when (val unwrapped = unwrap()) {
+        is FlexibleType -> KotlinTypeFactory.flexibleType(
+            unwrapped.lowerBound.replace(newArguments, newAnnotations),
+            unwrapped.upperBound.replace(newArgumentsForUpperBound, newAnnotations)
+        )
         is SimpleType -> unwrapped.replace(newArguments, newAnnotations)
     }
 }
 
 @JvmOverloads
 fun SimpleType.replace(
-        newArguments: List<TypeProjection> = arguments,
-        newAnnotations: Annotations = annotations
+    newArguments: List<TypeProjection> = arguments,
+    newAnnotations: Annotations = annotations
 ): SimpleType {
     if (newArguments.isEmpty() && newAnnotations === annotations) return this
 
@@ -139,16 +146,17 @@ fun SimpleType.replace(
     }
 
     return KotlinTypeFactory.simpleType(
-            newAnnotations,
-            constructor,
-            newArguments,
-            isMarkedNullable
+        newAnnotations,
+        constructor,
+        newArguments,
+        isMarkedNullable
     )
 }
 
-open class DelegatedTypeSubstitution(val substitution: TypeSubstitution): TypeSubstitution() {
+open class DelegatedTypeSubstitution(val substitution: TypeSubstitution) : TypeSubstitution() {
     override fun get(key: KotlinType) = substitution[key]
-    override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) = substitution.prepareTopLevelType(topLevelType, position)
+    override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) =
+        substitution.prepareTopLevelType(topLevelType, position)
 
     override fun isEmpty() = substitution.isEmpty()
 
