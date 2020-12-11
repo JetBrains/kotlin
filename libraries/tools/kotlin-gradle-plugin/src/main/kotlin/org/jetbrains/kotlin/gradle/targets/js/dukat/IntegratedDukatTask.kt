@@ -39,6 +39,6 @@ constructor(
 
     @TaskAction
     override fun run() {
-        executor.execute()
+        executor.execute(services)
     }
 }

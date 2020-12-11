@@ -41,13 +41,14 @@ open class KotlinJsIrLink @Inject constructor(
     @get:SkipWhenEmpty
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal val entryModule: File
-        get() = File(
+    internal val entryModule: File by lazy {
+        File(
             (taskData.compilation as KotlinJsIrCompilation)
                 .output
                 .classesDirs
                 .asPath
         )
+    }
 
     override fun skipCondition(inputs: IncrementalTaskInputs): Boolean {
         return !inputs.isIncremental && !entryModule.exists()

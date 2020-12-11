@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
+import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
@@ -32,7 +33,7 @@ abstract class YarnBasics : NpmApi {
         val nodeJs = NodeJsRootPlugin.apply(project)
         val yarnPlugin = YarnPlugin.apply(project)
 
-        project.execWithProgress(description) { exec ->
+        (project as ProjectInternal).services.execWithProgress(description) { exec ->
             exec.executable = nodeJs.requireConfigured().nodeExecutable
             exec.args = listOf(yarnPlugin.requireConfigured().home.resolve("bin/yarn.js").absolutePath) +
                     args +

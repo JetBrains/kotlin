@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
+import org.gradle.api.logging.Logger
 import org.gradle.internal.logging.progress.ProgressLogger
+import org.gradle.internal.service.ServiceRegistry
 import org.gradle.process.ExecSpec
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
@@ -18,6 +20,7 @@ import java.io.File
 
 internal data class KotlinWebpackRunner(
     val npmProject: NpmProject,
+    val logger: Logger,
     val configFile: File,
     val execHandleFactory: ExecHandleFactory,
     val tool: String,
@@ -25,7 +28,7 @@ internal data class KotlinWebpackRunner(
     val nodeArgs: List<String>,
     val config: KotlinWebpackConfig
 ) {
-    fun execute() = npmProject.project.execWithErrorLogger("webpack") { execAction, progressLogger ->
+    fun execute(services: ServiceRegistry) = services.execWithErrorLogger("webpack") { execAction, progressLogger ->
         configureExec(
             execAction,
             progressLogger
@@ -47,7 +50,6 @@ internal data class KotlinWebpackRunner(
         clientType: LogType,
         progressLogger: ProgressLogger?
     ): TeamCityMessageCommonClient {
-        val logger = npmProject.project.logger
         return TeamCityMessageCommonClient(clientType, logger)
             .apply {
                 if (progressLogger != null) {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
+import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -19,8 +20,8 @@ class DukatRunner(
     val jsInteropJvmEngine: String? = null,
     val operation: String = "Generating Kotlin/JS external declarations"
 ) {
-    fun execute() {
-        compilation.target.project.execWithProgress(operation) { exec ->
+    fun execute(services: ServiceRegistry) {
+        services.execWithProgress(operation) { exec ->
             val args = mutableListOf<String>()
 
             if (externalsOutputFormat == ExternalsOutputFormat.BINARY) {
