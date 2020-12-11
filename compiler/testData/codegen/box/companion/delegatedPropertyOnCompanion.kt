@@ -1,3 +1,4 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
 import kotlin.reflect.KProperty
 
 class Delegate {
