@@ -33,4 +33,7 @@ public interface TypeProjection extends TypeArgumentMarker {
     @NotNull
     @TypeRefinement
     TypeProjection refine(@NotNull KotlinTypeRefiner kotlinTypeRefiner);
+
+    @NotNull
+    TypeProjection replaceType(@NotNull KotlinType type);
 }
