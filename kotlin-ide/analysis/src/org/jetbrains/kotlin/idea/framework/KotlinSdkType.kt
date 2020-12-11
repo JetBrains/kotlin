@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,11 +12,11 @@ import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl
 import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.util.Consumer
 import org.jdom.Element
-import org.jetbrains.kotlin.idea.KotlinBundle
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.artifacts.KotlinArtifacts
+import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.versions.bundledRuntimeVersion
 import org.jetbrains.kotlin.utils.PathUtil
 import javax.swing.JComponent
 
@@ -52,7 +52,7 @@ class KotlinSdkType : SdkType("KotlinSDK") {
         }
     }
 
-    override fun getPresentableName() = KotlinBundle.message("framework.name.kotlin.sdk")
+    override fun getPresentableName() = KotlinIdeaAnalysisBundle.message("framework.name.kotlin.sdk")
 
     override fun getIcon() = KotlinIcons.SMALL_LOGO
 
@@ -64,7 +64,7 @@ class KotlinSdkType : SdkType("KotlinSDK") {
 
     override fun sdkHasValidPath(sdk: Sdk) = true
 
-    override fun getVersionString(sdk: Sdk) = bundledRuntimeVersion()
+    override fun getVersionString(sdk: Sdk): String = KotlinCompilerVersion.VERSION
 
     override fun supportsCustomCreateUI() = true
 
