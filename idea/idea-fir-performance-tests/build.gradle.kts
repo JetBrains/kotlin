@@ -30,6 +30,29 @@ dependencies {
     testRuntime(intellijDep())
 
     compile(intellijPluginDep("java"))
+    testRuntimeOnly(intellijPluginDep("java"))
+
+    testRuntimeOnly(intellijDep())
+    testRuntimeOnly(intellijRuntimeAnnotations())
+    testRuntimeOnly(toolsJar())
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":plugins:android-extensions-ide"))
+    testRuntimeOnly(project(":plugins:kapt3-idea"))
+    testRuntimeOnly(project(":sam-with-receiver-ide-plugin"))
+    testRuntimeOnly(project(":noarg-ide-plugin"))
+    testRuntimeOnly(project(":allopen-ide-plugin"))
+    testRuntimeOnly(project(":kotlin-scripting-idea"))
+    testRuntimeOnly(project(":kotlinx-serialization-ide-plugin"))
+    testRuntimeOnly(project(":plugins:parcelize:parcelize-ide"))
+    testRuntimeOnly(project(":nj2k:nj2k-services"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":idea:kotlin-gradle-tooling"))
+    testRuntimeOnly(project(":kotlin-gradle-statistics"))
+
+    testImplementation("khttp:khttp:1.0.0")
+
+    testImplementation(intellijPluginDep("gradle-java"))
+    testRuntimeOnly(intellijPluginDep("gradle-java"))
 }
 
 sourceSets {
@@ -51,6 +74,7 @@ projectTest(parallel = true) {
 testsJar()
 
 projectTest(taskName = "ideaFirPerformanceTest") {
+    exclude("**/*WholeProjectPerformanceComparisonFirImplTest*")
     val currentOs = org.gradle.internal.os.OperatingSystem.current()
 
     if (!currentOs.isWindows) {
@@ -90,5 +114,30 @@ projectTest(taskName = "ideaFirPerformanceTest") {
 
     project.providers.gradleProperty("cacheRedirectorEnabled").forUseAtConfigurationTime().orNull?.let {
         systemProperty("kotlin.test.gradle.import.arguments", "-PcacheRedirectorEnabled=$it")
+    }
+}
+
+projectTest(taskName = "firProjectPerformanceTest") {
+     include("**/*WholeProjectPerformanceComparisonFirImplTest*")
+
+    workingDir = rootDir
+
+    jvmArgs?.removeAll { it.startsWith("-Xmx") }
+
+    maxHeapSize = "3g"
+    jvmArgs("-DperformanceProjects=${System.getProperty("performanceProjects")}")
+    jvmArgs("-Didea.debug.mode=true")
+    jvmArgs("-DemptyProfile=${System.getProperty("emptyProfile")}")
+    jvmArgs("-XX:SoftRefLRUPolicyMSPerMB=50")
+    jvmArgs(
+        "-XX:+UseCompressedOops",
+        "-XX:+UseConcMarkSweepGC"
+    )
+
+    doFirst {
+        systemProperty("idea.home.path", intellijRootDir().canonicalPath)
+        project.findProperty("cacheRedirectorEnabled")?.let {
+            systemProperty("kotlin.test.gradle.import.arguments", "-PcacheRedirectorEnabled=$it")
+        }
     }
 }
