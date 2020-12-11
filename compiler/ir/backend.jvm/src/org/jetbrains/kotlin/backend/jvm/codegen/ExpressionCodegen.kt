@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
@@ -665,7 +666,8 @@ class ExpressionCodegen(
             ?: receiverType ?: typeMapper.mapClass(callee.parentAsClass)
         val ownerName = ownerType.internalName
         val fieldName = callee.name.asString()
-        val fieldType = callee.type.asmType
+        val calleeIrType = if (callee.isFromJava() && callee.type.isInlined()) callee.type.makeNullable() else callee.type
+        val fieldType = calleeIrType.asmType
         return if (expression is IrSetField) {
             val value = expression.value.accept(this, data)
             // We only initialize enum entries with a subtype of `fieldType` and can avoid the CHECKCAST.
