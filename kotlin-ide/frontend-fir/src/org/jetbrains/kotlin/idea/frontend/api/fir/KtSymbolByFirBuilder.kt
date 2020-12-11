@@ -40,6 +40,7 @@ internal class KtSymbolByFirBuilder private constructor(
     override val token: ValidityToken,
     val withReadOnlyCaching: Boolean,
     private val symbolsCache: BuilderCache<FirDeclaration, KtSymbol>,
+    private val filesCache: BuilderCache<FirFile, KtFileSymbol>,
     private val typesCache: BuilderCache<ConeKotlinType, KtType>
 ) : ValidityTokenOwner {
     private val resolveState by weakRef(resolveState)
@@ -56,7 +57,8 @@ internal class KtSymbolByFirBuilder private constructor(
         resolveState = resolveState,
         withReadOnlyCaching = false,
         symbolsCache = BuilderCache(),
-        typesCache = BuilderCache()
+        typesCache = BuilderCache(),
+        filesCache = BuilderCache(),
     )
 
 
@@ -68,7 +70,8 @@ internal class KtSymbolByFirBuilder private constructor(
             resolveState = newResolveState,
             withReadOnlyCaching = true,
             symbolsCache = symbolsCache.createReadOnlyCopy(),
-            typesCache = typesCache.createReadOnlyCopy()
+            typesCache = typesCache.createReadOnlyCopy(),
+            filesCache = filesCache.createReadOnlyCopy(),
         )
     }
 
@@ -138,6 +141,8 @@ internal class KtSymbolByFirBuilder private constructor(
     fun buildFieldSymbol(fir: FirField) = symbolsCache.cache(fir) { KtFirJavaFieldSymbol(fir, resolveState, token, this) }
     fun buildAnonymousFunctionSymbol(fir: FirAnonymousFunction) =
         symbolsCache.cache(fir) { KtFirAnonymousFunctionSymbol(fir, resolveState, token, this) }
+
+    fun buildFileSymbol(fir: FirFile) = filesCache.cache(fir) { KtFirFileSymbol(fir, resolveState, token, this) }
 
     fun buildVariableSymbol(fir: FirProperty): KtVariableSymbol = symbolsCache.cache(fir) {
         when {

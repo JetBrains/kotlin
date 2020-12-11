@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.asJava.classes.createField
 import org.jetbrains.kotlin.idea.asJava.classes.createMethods
@@ -51,14 +52,28 @@ class FirLightClassForFacade(
 
     override val clsDelegate: PsiClass get() = invalidAccess()
 
+    private val fileSymbols by lazyPub {
+        files.map { ktFile ->
+            analyze(ktFile) {
+                ktFile.getFileSymbol()
+            }
+        }
+    }
+
     private val _modifierList: PsiModifierList by lazyPub {
         if (multiFileClass)
             return@lazyPub LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC, PsiModifier.FINAL)
 
         val modifiers = setOf(PsiModifier.PUBLIC, PsiModifier.FINAL)
 
-        //TODO make annotations for file site
-        val annotations: List<PsiAnnotation> = emptyList()
+        val annotations = fileSymbols.flatMap {
+            it.computeAnnotations(
+                this@FirLightClassForFacade,
+                NullabilityType.Unknown,
+                AnnotationUseSiteTarget.FILE,
+                includeAnnotationsWithoutSite = false
+            )
+        }
 
         FirLightClassModifierList(this@FirLightClassForFacade, modifiers, annotations)
     }
@@ -95,7 +110,7 @@ class FirLightClassForFacade(
     }
 
     private val multiFileClass: Boolean by lazyPub {
-        files.size > 1 || files.any { it.hasJvmMultifileClassAnnotation() }
+        files.size > 1 || fileSymbols.any { it.hasJvmMultifileClassAnnotation() }
     }
 
     private fun loadFieldsFromFile(
