@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.junit.Assume
 import org.junit.runners.Parameterized
 import java.io.File
 
@@ -116,6 +117,7 @@ abstract class KotlinGradleImportingTestCase : GradleImportingTestCase() {
     }
 
     override fun setUp() {
+        Assume.assumeFalse(AndroidStudioTestUtils.checkIsAndroidStudio())
         super.setUp()
         GradleProcessOutputInterceptor.install(testRootDisposable)
     }
