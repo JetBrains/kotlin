@@ -444,20 +444,21 @@ abstract class DefaultScriptingSupportBase(val manager: CompositeScriptConfigura
     /**
      * Load new configuration and suggest to apply it (only if it is changed)
      */
-    fun ensureUpToDatedConfigurationSuggested(file: KtFile, skipNotification: Boolean = false) {
-        reloadIfOutOfDate(file, skipNotification)
+    fun ensureUpToDatedConfigurationSuggested(file: KtFile, skipNotification: Boolean = false, forceSync: Boolean = false) {
+        reloadIfOutOfDate(file, skipNotification, forceSync)
     }
 
-    private fun reloadIfOutOfDate(file: KtFile, skipNotification: Boolean = false) {
+    private fun reloadIfOutOfDate(file: KtFile, skipNotification: Boolean = false, forceSync: Boolean = false) {
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return
 
         manager.updater.update {
             val virtualFile = file.originalFile.virtualFile
             if (virtualFile != null) {
                 val state = cache[virtualFile]
-                if (state == null || !state.isUpToDate(project, virtualFile, file)) {
+                if (state == null || forceSync || !state.isUpToDate(project, virtualFile, file)) {
                     reloadOutOfDateConfiguration(
                         file,
+                        forceSync = forceSync,
                         isFirstLoad = state == null,
                         skipNotification = skipNotification
                     )
