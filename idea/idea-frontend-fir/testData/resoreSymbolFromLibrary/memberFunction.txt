@@ -13,7 +13,7 @@ KtFirFunctionSymbol:
   modality: ABSTRACT
   name: get
   origin: LIBRARY
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: E
   typeParameters: []

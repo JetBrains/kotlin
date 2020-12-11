@@ -66,7 +66,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Unit
   typeParameters: []

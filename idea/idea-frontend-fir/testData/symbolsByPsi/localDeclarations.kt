@@ -26,7 +26,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: aaa
   origin: SOURCE
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: LOCAL
   type: kotlin/Unit
   typeParameters: []
@@ -60,7 +60,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: yyy
   origin: SOURCE
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: TOP_LEVEL
   type: kotlin/Unit
   typeParameters: []

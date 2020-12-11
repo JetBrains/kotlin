@@ -62,7 +62,7 @@ object DebugSymbolRenderer {
         is KtNamedConstantValue -> "${renderValue(value.name)} = ${renderValue(value.expression)}"
         is KtAnnotationCall ->
             "${renderValue(value.classId)}${value.arguments.joinToString(prefix = "(", postfix = ")") { renderValue(it) }}"
-
+        is ReceiverTypeAndAnnotations -> "${renderValue(value.annotations)} ${renderValue(value.type)}"
         else -> value::class.simpleName!!
     }
 

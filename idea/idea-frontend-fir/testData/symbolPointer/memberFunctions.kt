@@ -16,7 +16,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Int
   typeParameters: []
@@ -35,7 +35,7 @@ KtFirFunctionSymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverType: null
+  receiverTypeAndAnnotations: null
   symbolKind: MEMBER
   type: kotlin/Unit
   typeParameters: []

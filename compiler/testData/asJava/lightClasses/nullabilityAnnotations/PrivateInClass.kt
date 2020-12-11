@@ -8,3 +8,5 @@ class PrivateInClass private constructor (g: String?) {
         get() = ""
     private fun bar(a: String, b: String?): String? = null
 }
+
+// FIR_COMPARISON
