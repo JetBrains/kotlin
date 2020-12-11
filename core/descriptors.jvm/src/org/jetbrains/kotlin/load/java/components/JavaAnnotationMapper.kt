@@ -45,14 +45,18 @@ object JavaAnnotationMapper {
     internal val TARGET_ANNOTATION_ALLOWED_TARGETS = Name.identifier("allowedTargets")
     internal val RETENTION_ANNOTATION_VALUE = Name.identifier("value")
 
-    fun mapOrResolveJavaAnnotation(annotation: JavaAnnotation, c: LazyJavaResolverContext): AnnotationDescriptor? =
+    fun mapOrResolveJavaAnnotation(
+        annotation: JavaAnnotation,
+        c: LazyJavaResolverContext,
+        isFreshlySupportedAnnotation: Boolean = false
+    ): AnnotationDescriptor? =
         when (annotation.classId) {
             ClassId.topLevel(TARGET_ANNOTATION) -> JavaTargetAnnotationDescriptor(annotation, c)
             ClassId.topLevel(RETENTION_ANNOTATION) -> JavaRetentionAnnotationDescriptor(annotation, c)
             ClassId.topLevel(REPEATABLE_ANNOTATION) -> JavaAnnotationDescriptor(c, annotation, StandardNames.FqNames.repeatable)
             ClassId.topLevel(DOCUMENTED_ANNOTATION) -> JavaAnnotationDescriptor(c, annotation, StandardNames.FqNames.mustBeDocumented)
             ClassId.topLevel(DEPRECATED_ANNOTATION) -> null
-            else -> LazyJavaAnnotationDescriptor(c, annotation)
+            else -> LazyJavaAnnotationDescriptor(c, annotation, isFreshlySupportedAnnotation)
         }
 
     fun findMappedJavaAnnotation(

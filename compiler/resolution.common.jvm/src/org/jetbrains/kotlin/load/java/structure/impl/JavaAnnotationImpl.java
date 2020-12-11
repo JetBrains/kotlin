@@ -94,4 +94,9 @@ public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implement
         ExternalAnnotationsManager externalAnnotationManager = ExternalAnnotationsManager.getInstance(psi.getProject());
         return externalAnnotationManager.isExternalAnnotation(psi);
     }
+
+    @Override
+    public boolean isFreshlySupportedTypeUseAnnotation() {
+        return false;
+    }
 }
