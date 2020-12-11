@@ -72,8 +72,9 @@ abstract class KtLightClassForSourceDeclaration(
     StubBasedPsiElement<KotlinClassOrObjectStub<out KtClassOrObject>> {
 
     override val myInnersCache: KotlinClassInnerStuffCache = KotlinClassInnerStuffCache(
-        this,
-        classOrObject.getExternalDependencies()
+        myClass = this,
+        externalDependencies = classOrObject.getExternalDependencies(),
+        lazyCreator = LightClassesLazyCreator(project)
     )
 
     private val lightIdentifier = KtLightIdentifier(this, classOrObject)

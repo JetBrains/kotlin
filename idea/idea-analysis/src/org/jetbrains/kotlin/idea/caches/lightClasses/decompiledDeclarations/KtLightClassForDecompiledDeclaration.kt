@@ -18,6 +18,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
+import org.jetbrains.kotlin.asJava.classes.LightClassesLazyCreator
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.idea.decompiler.classFile.KtClsFile
@@ -34,7 +35,8 @@ open class KtLightClassForDecompiledDeclaration(
 
     private val myInnersCache = KotlinClassInnerStuffCache(
         myClass = this,
-        externalDependencies = listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker)
+        externalDependencies = listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker),
+        lazyCreator = LightClassesLazyCreator(project)
     )
 
     override fun getOwnMethods(): MutableList<PsiMethod> = _methods
