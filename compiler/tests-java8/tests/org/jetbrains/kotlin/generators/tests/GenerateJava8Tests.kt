@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.generators.tests
 
-import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest
-import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsNoAnnotationInClasspathWithPsiClassReadingTest
-import org.jetbrains.kotlin.checkers.AbstractForeignJava8AnnotationsTest
-import org.jetbrains.kotlin.checkers.AbstractJspecifyAnnotationsTest
+import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.checkers.javac.AbstractJavacForeignJava8AnnotationsTest
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJava8Test
@@ -50,6 +47,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJspecifyAnnotationsTest> {
                 model("foreignAnnotationsJava8/tests/jspecify/kotlin")
+            }
+
+            testClass<AbstractForeignAnnotationsCompiledJavaDiagnosticTest> {
+                model("foreignAnnotationsJava8/tests/typeEnhancementOnCompiledJava")
             }
 
             testClass<AbstractLoadJava8Test> {

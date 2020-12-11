@@ -27,7 +27,9 @@ abstract class AbstractJspecifyAnnotationsTest : AbstractDiagnosticsTest() {
         super.doMultiFileTest(
             wholeFile,
             files,
-            MockLibraryUtil.compileJavaFilesLibraryToJar(FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH, "foreign-annotations")
+            MockLibraryUtil.compileJavaFilesLibraryToJar(FOREIGN_JDK8_ANNOTATIONS_SOURCES_PATH, "foreign-annotations"),
+            usePsiClassFilesReading = false,
+            excludeNonTypeUseJetbrainsAnnotations = true
         )
     }
 
