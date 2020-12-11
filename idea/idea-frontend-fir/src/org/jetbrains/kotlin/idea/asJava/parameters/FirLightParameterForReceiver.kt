@@ -11,19 +11,17 @@ import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.ReceiverTypeAndAnnotations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtPossibleExtensionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtParameter
 
 internal class FirLightParameterForReceiver private constructor(
-    private val annotatedSymbol: KtAnnotatedSymbol,
-    type: KtType,
+    private val receiverTypeAndAnnotations: ReceiverTypeAndAnnotations,
+    private val context: KtSymbol,
     methodName: String,
     method: FirLightMethod
 ) : FirLightParameter(method) {
@@ -35,15 +33,14 @@ internal class FirLightParameterForReceiver private constructor(
         ): FirLightParameterForReceiver? {
 
             if (callableSymbol !is KtNamedSymbol) return null
-            if (callableSymbol !is KtAnnotatedSymbol) return null
             if (callableSymbol !is KtPossibleExtensionSymbol) return null
 
             if (!callableSymbol.isExtension) return null
-            val receiverType = callableSymbol.receiverType ?: return null
+            val extensionTypeAndAnnotations = callableSymbol.receiverTypeAndAnnotations ?: return null
 
             return FirLightParameterForReceiver(
-                annotatedSymbol = callableSymbol,
-                type = receiverType,
+                receiverTypeAndAnnotations = extensionTypeAndAnnotations,
+                context = callableSymbol,
                 methodName = callableSymbol.name.asString(),
                 method = method
             )
@@ -64,11 +61,9 @@ internal class FirLightParameterForReceiver private constructor(
     override val kotlinOrigin: KtParameter? = null
 
     private val _annotations: List<PsiAnnotation> by lazyPub {
-        annotatedSymbol.computeAnnotations(
-            parent = this,
-            nullability = type.getTypeNullability(annotatedSymbol, FirResolvePhase.TYPES),
-            annotationUseSiteTarget = AnnotationUseSiteTarget.RECEIVER,
-        )
+        receiverTypeAndAnnotations.annotations.map {
+            FirLightAnnotationForAnnotationCall(it, this)
+        }
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList
@@ -77,7 +72,7 @@ internal class FirLightParameterForReceiver private constructor(
     }
 
     private val _type: PsiType by lazyPub {
-        type.asPsiType(annotatedSymbol, method, FirResolvePhase.TYPES)
+        receiverTypeAndAnnotations.type.asPsiType(context, method, FirResolvePhase.TYPES)
     }
 
     override fun getType(): PsiType = _type
@@ -85,8 +80,7 @@ internal class FirLightParameterForReceiver private constructor(
     override fun equals(other: Any?): Boolean =
         this === other ||
                 (other is FirLightParameterForReceiver &&
-                 kotlinOrigin == other.kotlinOrigin &&
-                 annotatedSymbol == other.annotatedSymbol)
+                        receiverTypeAndAnnotations == other.receiverTypeAndAnnotations)
 
     override fun hashCode(): Int = kotlinOrigin.hashCode()
 }

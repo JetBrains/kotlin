@@ -47,7 +47,17 @@ internal class KtFirKotlinPropertySymbol(
     override val isVal: Boolean get() = firRef.withFir { it.isVal }
     override val name: Name get() = firRef.withFir { it.name }
     override val type: KtType by firRef.withFirAndCache(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) { fir -> builder.buildKtType(fir.returnTypeRef) }
-    override val receiverType: KtType? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> fir.receiverTypeRef?.let(builder::buildKtType) }
+
+    override val receiverTypeAndAnnotations: ReceiverTypeAndAnnotations? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
+        fir.receiverTypeRef?.let { typeRef ->
+            val type = builder.buildKtType(typeRef)
+            val annotations = typeRef.annotations.mapNotNull {
+                convertAnnotation(it, fir.session)
+            }
+            ReceiverTypeAndAnnotations(type, annotations)
+        }
+    }
+
     override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
     override val initializer: KtConstantValue? by firRef.withFirAndCache(FirResolvePhase.BODY_RESOLVE) { fir -> fir.initializer?.convertConstantExpression() }
     override val symbolKind: KtSymbolKind

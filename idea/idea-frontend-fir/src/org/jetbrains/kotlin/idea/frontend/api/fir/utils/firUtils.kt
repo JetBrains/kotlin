@@ -64,7 +64,7 @@ private fun ConeClassLikeType.expandTypeAliasIfNeeded(session: FirSession): Cone
         ?: return this
 }
 
-private fun convertAnnotation(
+internal fun convertAnnotation(
     annotationCall: FirAnnotationCall,
     session: FirSession
 ): KtFirAnnotationCall? {

@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.pointers.createSignatu
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.convertAnnotation
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.firRef
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotationCall
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
@@ -57,7 +54,17 @@ internal class KtFirFunctionSymbol(
 
     override val isSuspend: Boolean get() = firRef.withFir { it.isSuspend }
     override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
-    override val receiverType: KtType? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir -> fir.receiverTypeRef?.let(builder::buildKtType) }
+
+    override val receiverTypeAndAnnotations: ReceiverTypeAndAnnotations? by firRef.withFirAndCache(FirResolvePhase.TYPES) { fir ->
+        fir.receiverTypeRef?.let { typeRef ->
+            val type = builder.buildKtType(typeRef)
+            val annotations = typeRef.annotations.mapNotNull {
+                convertAnnotation(it, fir.session)
+            }
+            ReceiverTypeAndAnnotations(type, annotations)
+        }
+    }
+
     override val isOperator: Boolean get() = firRef.withFir { it.isOperator }
     override val isExternal: Boolean get() = firRef.withFir { it.isExternal }
     override val isInline: Boolean get() = firRef.withFir { it.isInline }

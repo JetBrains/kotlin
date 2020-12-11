@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.FirLightIdentifier
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.idea.asJava.parameters.FirLightSetterParameterForSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.util.ifTrue
 import org.jetbrains.kotlin.load.java.JvmAbi.getterName
@@ -173,8 +174,9 @@ internal class FirLightAccessorMethodForSymbol(
 
         if (propertyParameter != null) {
             builder.addParameter(
-                FirLightParameterForSymbol(
+                FirLightSetterParameterForSymbol(
                     parameterSymbol = propertyParameter,
+                    containingPropertySymbol = containingPropertySymbol,
                     containingMethod = this@FirLightAccessorMethodForSymbol
                 )
             )

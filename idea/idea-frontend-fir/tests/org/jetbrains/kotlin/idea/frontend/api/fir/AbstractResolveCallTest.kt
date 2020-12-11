@@ -94,8 +94,8 @@ private fun KtCall.stringRepresentation(): String {
         is KtFunctionLikeSymbol -> buildString {
             append(if (this@stringValue is KtFunctionSymbol) callableIdIfNonLocal ?: name else "<constructor>")
             append("(")
-            (this@stringValue as? KtFunctionSymbol)?.receiverType?.let { receiver ->
-                append("<receiver>: ${receiver.render()}")
+            (this@stringValue as? KtFunctionSymbol)?.receiverTypeAndAnnotations?.let { receiver ->
+                append("<receiver>: ${receiver.type.render()}")
                 if (valueParameters.isNotEmpty()) append(", ")
             }
             valueParameters.joinTo(this) { parameter ->
