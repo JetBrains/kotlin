@@ -39,6 +39,11 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
+    @TestMetadata("anonymousObjectInGenericFun.kt")
+    public void testAnonymousObjectInGenericFun() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/anonymousObjectInGenericFun.kt");
+    }
+
     @TestMetadata("callableNameIntrinsic.kt")
     public void testCallableNameIntrinsic() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/callableNameIntrinsic.kt");
@@ -207,21 +212,6 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     @TestMetadata("rawTypeInSignature.kt")
     public void testRawTypeInSignature() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/rawTypeInSignature.kt");
-    }
-
-    @TestMetadata("samAdapterAndInlinedOne.kt")
-    public void testSamAdapterAndInlinedOne() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/samAdapterAndInlinedOne.kt");
-    }
-
-    @TestMetadata("samGenericSuperinterface.kt")
-    public void testSamGenericSuperinterface() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/samGenericSuperinterface.kt");
-    }
-
-    @TestMetadata("samSpecializedGenericSuperinterface.kt")
-    public void testSamSpecializedGenericSuperinterface() throws Exception {
-        runTest("compiler/testData/codegen/bytecodeListing/samSpecializedGenericSuperinterface.kt");
     }
 
     @TestMetadata("varargsBridge.kt")
@@ -1492,6 +1482,84 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("samAdapterForJavaInterfaceWithNullability.kt")
         public void testSamAdapterForJavaInterfaceWithNullability() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/nullabilityAnnotations/samAdapterForJavaInterfaceWithNullability.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/sam")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Sam extends AbstractIrBytecodeListingTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInSam() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/sam"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @TestMetadata("callableRefGenericFunInterface.kt")
+        public void testCallableRefGenericFunInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/callableRefGenericFunInterface.kt");
+        }
+
+        @TestMetadata("callableRefGenericSamInterface.kt")
+        public void testCallableRefGenericSamInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/callableRefGenericSamInterface.kt");
+        }
+
+        @TestMetadata("callableRefSpecializedFunInterface.kt")
+        public void testCallableRefSpecializedFunInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/callableRefSpecializedFunInterface.kt");
+        }
+
+        @TestMetadata("callableRefSpecializedSamInterface.kt")
+        public void testCallableRefSpecializedSamInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/callableRefSpecializedSamInterface.kt");
+        }
+
+        @TestMetadata("genericFunInterface.kt")
+        public void testGenericFunInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/genericFunInterface.kt");
+        }
+
+        @TestMetadata("genericSamInterface.kt")
+        public void testGenericSamInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/genericSamInterface.kt");
+        }
+
+        @TestMetadata("lambdaGenericFunInterface.kt")
+        public void testLambdaGenericFunInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/lambdaGenericFunInterface.kt");
+        }
+
+        @TestMetadata("lambdaGenericSamInterface.kt")
+        public void testLambdaGenericSamInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/lambdaGenericSamInterface.kt");
+        }
+
+        @TestMetadata("lambdaSpecializedFunInterface.kt")
+        public void testLambdaSpecializedFunInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/lambdaSpecializedFunInterface.kt");
+        }
+
+        @TestMetadata("lambdaSpecializedSamInterface.kt")
+        public void testLambdaSpecializedSamInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/lambdaSpecializedSamInterface.kt");
+        }
+
+        @TestMetadata("samAdapterAndInlinedOne.kt")
+        public void testSamAdapterAndInlinedOne() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/samAdapterAndInlinedOne.kt");
+        }
+
+        @TestMetadata("specializedFunInterface.kt")
+        public void testSpecializedFunInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/specializedFunInterface.kt");
+        }
+
+        @TestMetadata("specializedSamInterface.kt")
+        public void testSpecializedSamInterface() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/sam/specializedSamInterface.kt");
         }
     }
 

@@ -1,7 +1,7 @@
 // WITH_SIGNATURES
-// FILE: samGenericSuperinterface.kt
+// FILE: t.kt
 
-fun <T> genericSam(f: () -> T): T = J.g(f)
+fun specializedSam(f: () -> String) = J.g({ f() })
 
 // FILE: J.java
 public class J {

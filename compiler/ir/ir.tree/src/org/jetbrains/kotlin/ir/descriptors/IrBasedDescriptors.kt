@@ -1075,11 +1075,13 @@ private fun makeKotlinType(
                 classDescriptor.defaultType.replace(newArguments = kotlinTypeArguments).makeNullableAsSpecified(hasQuestionMark)
             } catch (e: Throwable) {
                 throw RuntimeException(
-                    "Classifier: $classDescriptor\n" +
+                    "Classifier: ${classifier.owner.render()}\n" +
                             "Type parameters:\n" +
                             classDescriptor.defaultType.constructor.parameters.withIndex()
                                 .joinToString(separator = "\n") {
-                                    "${it.index}: ${(it.value as IrBasedTypeParameterDescriptor).owner.render()}"
+                                    val irTypeParameter = (it.value as IrBasedTypeParameterDescriptor).owner
+                                    "${it.index}: ${irTypeParameter.render()} " +
+                                            "of ${irTypeParameter.parent.render()}"
                                 } +
                             "\nType arguments:\n" +
                             arguments.withIndex()

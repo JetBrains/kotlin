@@ -159,8 +159,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val adaptedReferenceOriginalTarget: IrFunction? = adapteeCall?.symbol?.owner
         private val isAdaptedReference = adaptedReferenceOriginalTarget != null
 
-        private val isKotlinFunInterface =
-            samSuperType != null && samSuperType.getClass()?.origin != IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
+        private val samInterface = samSuperType?.getClass()
+        private val isKotlinFunInterface = samInterface != null && !samInterface.isFromJava()
 
         private val needToGenerateSamEqualsHashCodeMethods =
             isKotlinFunInterface && (isAdaptedReference || !isLambda)
@@ -196,11 +196,37 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     context.ir.symbols.functionAdapter.defaultType
                 else null,
             )
+            if (samInterface != null && origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
+                // Old back-end generates formal type parameters as in SAM supertype.
+                // Here we create formal type parameters with same names and equivalent upper bounds.
+                // We don't really perform any type substitutions within class body
+                // (it's all fine as soon as we have required generic signatures and don't fail anywhere).
+                // NB this would no longer matter if we generate SAM wrapper classes as synthetic.
+                typeParameters = createFakeFormalTypeParameters(samInterface.typeParameters, this)
+            }
             createImplicitParameterDeclarationWithWrappedDescriptor()
             copyAttributes(irFunctionReference)
             if (isLambda) {
                 metadata = irFunctionReference.symbol.owner.metadata
             }
+        }
+
+        private fun createFakeFormalTypeParameters(sourceTypeParameters: List<IrTypeParameter>, irClass: IrClass): List<IrTypeParameter> {
+            if (sourceTypeParameters.isEmpty()) return emptyList()
+
+            val fakeTypeParameters = sourceTypeParameters.map {
+                buildTypeParameter(irClass) {
+                    updateFrom(it)
+                    name = it.name
+                }
+            }
+            val typeRemapper = IrTypeParameterRemapper(sourceTypeParameters.associateWith { fakeTypeParameters[it.index] })
+            for (fakeTypeParameter in fakeTypeParameters) {
+                val sourceTypeParameter = sourceTypeParameters[fakeTypeParameter.index]
+                fakeTypeParameter.superTypes = sourceTypeParameter.superTypes.map { typeRemapper.remapType(it) }
+            }
+
+            return fakeTypeParameters
         }
 
         private val receiverField = context.ir.symbols.functionReferenceReceiverField.owner
@@ -390,7 +416,11 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                 isSuspend = callee.isSuspend
             }.apply {
                 overriddenSymbols += superMethod
-                dispatchReceiverParameter = parentAsClass.thisReceiver!!.copyTo(this)
+                dispatchReceiverParameter = buildReceiverParameter(
+                    this,
+                    IrDeclarationOrigin.INSTANCE_RECEIVER,
+                    functionReferenceClass.symbol.defaultType
+                )
                 if (isLambda) createLambdaInvokeMethod() else createFunctionReferenceInvokeMethod(receiverVar)
             }
 
@@ -427,8 +457,9 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                                 // will put it into a field.
                                 if (samSuperType == null)
                                     irImplicitCast(
-                                        irGetField(irGet(dispatchReceiverParameter!!),
-                                                   this@FunctionReferenceBuilder.receiverField
+                                        irGetField(
+                                            irGet(dispatchReceiverParameter!!),
+                                            this@FunctionReferenceBuilder.receiverField
                                         ),
                                         boundReceiver.second.type
                                     )

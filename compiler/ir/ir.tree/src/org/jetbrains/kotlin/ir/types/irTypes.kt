@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.isPropertyAccessor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -175,6 +177,10 @@ val IrClass.typeConstructorParameters: Sequence<IrTypeParameter>
                         // we should stop on property accessor here.
                         // NB this can potentially cause problems with inline properties with reified type parameters.
                         // Ideally this should be fixed in FE.
+                        null
+                    }
+                    current.isAnonymousObject -> {
+                        // Anonymous classes don't capture type parameters.
                         null
                     }
                     parent is IrClass && current is IrClass && !current.isInner ->
