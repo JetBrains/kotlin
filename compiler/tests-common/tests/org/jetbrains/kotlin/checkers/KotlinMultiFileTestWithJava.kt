@@ -42,13 +42,16 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
     protected fun createEnvironment(
         file: File,
         files: List<F>,
-        additionalClasspath: File? = null
+        additionalClasspath: File? = null,
+        usePsiClassFilesReading: Boolean = true,
+        excludeNonTypeUseJetbrainsAnnotations: Boolean = false
     ): KotlinCoreEnvironment {
+        val defaultClasspath = getClasspath(file, excludeNonTypeUseJetbrainsAnnotations)
         val configuration = createConfiguration(
             extractConfigurationKind(files),
             getTestJdkKind(files),
             backend,
-            if (additionalClasspath == null) getClasspath(file) else getClasspath(file) + additionalClasspath,
+            if (additionalClasspath == null) defaultClasspath else defaultClasspath + additionalClasspath,
             if (isJavaSourceRootNeeded()) listOf(javaFilesDir) else emptyList(),
             files
         )
@@ -59,9 +62,9 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
             configuration.addKotlinSourceRoot(kotlinSourceRoot!!.path)
         }
 
-        // Currently, we're testing IDE behavior when generating the .txt files for comparison, but this can be changed.
+        // Currently, by default, we're testing IDE behavior when generating the .txt files for comparison, but this can be changed.
         // The main difference is the fact that the new class file reading implementation doesn't load parameter names from JDK classes.
-        configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
+        configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, usePsiClassFilesReading)
 
         updateConfiguration(configuration)
         return createForTests(testRootDisposable, configuration, getEnvironmentConfigFiles())
@@ -77,9 +80,11 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         setupEnvironment(environment)
     }
 
-    private fun getClasspath(file: File): List<File> {
+    private fun getClasspath(file: File, excludeNonTypeUseJetbrainsAnnotations: Boolean): List<File> {
         val result: MutableList<File> = ArrayList()
-        result.add(KotlinTestUtils.getAnnotationsJar())
+        if (!excludeNonTypeUseJetbrainsAnnotations) {
+            result.add(KotlinTestUtils.getAnnotationsJar())
+        }
         result.addAll(getExtraClasspath())
         val fileText = file.readText(Charsets.UTF_8)
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "ANDROID_ANNOTATIONS")) {
@@ -130,7 +135,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
                 fileName: String,
                 text: String,
                 directives: Directives
-            ): F? {
+            ): F {
                 if (fileName.endsWith(".java")) {
                     writeSourceFile(fileName, text, javaFilesDir)
                 }

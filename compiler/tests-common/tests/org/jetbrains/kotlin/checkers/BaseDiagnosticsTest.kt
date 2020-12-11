@@ -86,9 +86,12 @@ abstract class BaseDiagnosticsTest : KotlinMultiFileTestWithJava<TestModule, Tes
     fun doMultiFileTest(
         wholeFile: File,
         files: List<TestFile>,
-        additionalClasspath: File? = null
+        additionalClasspath: File? = null,
+        usePsiClassFilesReading: Boolean = true,
+        excludeNonTypeUseJetbrainsAnnotations: Boolean = false
     ) {
-        environment = createEnvironment(wholeFile, files, additionalClasspath)
+        environment =
+            createEnvironment(wholeFile, files, additionalClasspath, usePsiClassFilesReading, excludeNonTypeUseJetbrainsAnnotations)
         //after environment initialization cause of `tearDown` logic, maybe it's obsolete
         if (shouldSkipTest(wholeFile, files)) {
             println("${wholeFile.name} test is skipped")
