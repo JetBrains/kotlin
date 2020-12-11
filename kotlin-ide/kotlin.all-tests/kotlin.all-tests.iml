@@ -17,7 +17,6 @@
     <orderEntry type="module" module-name="kotlin.compiler-plugins.scripting" />
     <orderEntry type="module" module-name="kotlin.core" />
     <orderEntry type="module" module-name="kotlin.formatter" />
-    <orderEntry type="module" module-name="kotlin.generators" />
     <orderEntry type="module" module-name="kotlin.git" />
     <orderEntry type="module" module-name="kotlin.gradle.gradle-idea" />
     <orderEntry type="module" module-name="kotlin.gradle.gradle-native" />
