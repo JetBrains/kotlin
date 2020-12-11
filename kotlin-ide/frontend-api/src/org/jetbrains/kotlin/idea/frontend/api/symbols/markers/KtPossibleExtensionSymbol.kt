@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols.markers
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 
+data class ReceiverTypeAndAnnotations(val type: KtType, val annotations: List<KtAnnotationCall>)
+
 interface KtPossibleExtensionSymbol {
+    val receiverTypeAndAnnotations: ReceiverTypeAndAnnotations?
     val isExtension: Boolean
-    val receiverType: KtType?
 }
 
 val KtCallableSymbol.isExtension: Boolean
