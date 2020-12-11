@@ -14,9 +14,9 @@ class C {
 }
 
 fun testExt() {
-  s().extension()
+  s() /*!! String */.extension()
 }
 
 fun C.testMemberExt() {
-  (<this>, s()).memberExtension()
+  (<this>, s() /*!! String */).memberExtension()
 }
