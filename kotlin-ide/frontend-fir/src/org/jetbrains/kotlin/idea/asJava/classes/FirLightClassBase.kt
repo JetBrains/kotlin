@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.idea.asJava
 
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.psi.*
+import com.intellij.psi.impl.PsiCachedValueImpl
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
@@ -27,6 +29,7 @@ import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.impl.source.PsiExtensibleClass
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.scope.PsiScopeProcessor
+import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
@@ -34,7 +37,10 @@ import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache
 import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache.Companion.processDeclarationsInEnum
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.cannotModify
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.locks.ReentrantLock
 import javax.swing.Icon
 
 abstract class FirLightClassBase protected constructor(manager: PsiManager) : LightElement(manager, KotlinLanguage.INSTANCE), PsiClass,
@@ -43,9 +49,18 @@ abstract class FirLightClassBase protected constructor(manager: PsiManager) : Li
     override val clsDelegate: PsiClass
         get() = invalidAccess()
 
-    protected open val myInnersCache = KotlinClassInnerStuffCache(
-        myClass = this,
-        externalDependencies = listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker)
+    private class FirLightClassesLazyCreator(private val project: Project) : KotlinClassInnerStuffCache.LazyCreator() {
+        override fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T> = lazyPub {
+            PsiCachedValueImpl(PsiManager.getInstance(project)) {
+                CachedValueProvider.Result.create(initializer(), dependencies)
+            }.value ?: error("initializer cannot return null")
+        }
+    }
+
+    private val myInnersCache = KotlinClassInnerStuffCache(
+        myClass = this@FirLightClassBase,
+        externalDependencies = listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker),
+        lazyCreator = FirLightClassesLazyCreator(project)
     )
 
     override fun getFields(): Array<PsiField> = myInnersCache.fields
