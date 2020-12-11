@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.descriptors.commonizer.utils
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.commonizer.Result
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerResult
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.test.util.DescriptorValidator.*
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -22,13 +22,13 @@ fun assertIsDirectory(file: File) {
 }
 
 @ExperimentalContracts
-fun assertCommonizationPerformed(result: Result) {
+fun assertCommonizationPerformed(result: CommonizerResult) {
     contract {
-        returns() implies (result is Result.Commonized)
+        returns() implies (result is CommonizerResult.Done)
     }
 
-    if (result !is Result.Commonized)
-        fail("$result is not instance of ${Result.Commonized::class}")
+    if (result !is CommonizerResult.Done)
+        fail("$result is not instance of ${CommonizerResult.Done::class}")
 }
 
 @ExperimentalContracts

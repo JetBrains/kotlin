@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.descriptors.commonizer.mergedtree
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
 import org.jetbrains.kotlin.descriptors.commonizer.ModulesProvider.ModuleInfo
-import org.jetbrains.kotlin.descriptors.commonizer.Parameters
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerParameters
 import org.jetbrains.kotlin.descriptors.commonizer.TargetProvider
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.*
@@ -49,11 +49,11 @@ import org.jetbrains.kotlin.storage.StorageManager
 class CirTreeMerger(
     private val storageManager: StorageManager,
     private val classifiers: CirKnownClassifiers,
-    private val parameters: Parameters
+    private val parameters: CommonizerParameters
 ) {
     class CirTreeMergeResult(
         val root: CirRootNode,
-        val absentModuleInfos: Map<LeafTarget, Collection<ModuleInfo>>
+        val missingModuleInfos: Map<LeafTarget, Collection<ModuleInfo>>
     )
 
     private val size = parameters.targetProviders.size
@@ -83,15 +83,15 @@ class CirTreeMerger(
             System.gc()
         }
 
-        val absentModuleInfos = allModuleInfos.mapIndexed { index, moduleInfos ->
+        val missingModuleInfos = allModuleInfos.mapIndexed { index, moduleInfos ->
             val target = parameters.targetProviders[index].target
-            val absentInfos = moduleInfos.filterKeys { name -> name !in commonModuleNames }.values
-            target to absentInfos
+            val missingInfos = moduleInfos.filterKeys { name -> name !in commonModuleNames }.values
+            target to missingInfos
         }.toMap()
 
         return CirTreeMergeResult(
             root = rootNode,
-            absentModuleInfos = absentModuleInfos
+            missingModuleInfos = missingModuleInfos
         )
     }
 

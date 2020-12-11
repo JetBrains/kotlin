@@ -55,11 +55,11 @@ class AggregatedStatsCollector(
     ) : StatsOutput.StatsRow {
         var liftedUp: Int = 0
         var successfullyCommonized: Int = 0
-        var failedBecauseAbsent: Int = 0
+        var failedBecauseMissing: Int = 0
         var failedOther: Int = 0
 
         override fun toList(): List<String> {
-            val total = liftedUp + successfullyCommonized + failedBecauseAbsent + failedOther
+            val total = liftedUp + successfullyCommonized + failedBecauseMissing + failedOther
 
             fun fraction(amount: Int): Double = if (total > 0) amount.toDouble() / total else 0.0
 
@@ -69,8 +69,8 @@ class AggregatedStatsCollector(
                 fraction(liftedUp).toString(),
                 successfullyCommonized.toString(),
                 fraction(successfullyCommonized).toString(),
-                failedBecauseAbsent.toString(),
-                fraction(failedBecauseAbsent).toString(),
+                failedBecauseMissing.toString(),
+                fraction(failedBecauseMissing).toString(),
                 failedOther.toString(),
                 fraction(failedOther).toString(),
                 total.toString()
@@ -96,9 +96,9 @@ private class AggregatingOutput : StatsOutput {
         when (row.common) {
             LIFTED_UP -> aggregatedStatsRow.liftedUp++
             EXPECT -> aggregatedStatsRow.successfullyCommonized++
-            ABSENT -> {
-                if (row.platform.any { it == RawStatsCollector.PlatformDeclarationStatus.ABSENT }) {
-                    aggregatedStatsRow.failedBecauseAbsent++
+            MISSING -> {
+                if (row.platform.any { it == RawStatsCollector.PlatformDeclarationStatus.MISSING }) {
+                    aggregatedStatsRow.failedBecauseMissing++
                 } else {
                     aggregatedStatsRow.failedOther++
                 }

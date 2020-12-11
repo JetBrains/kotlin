@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.commonizer.*
-import org.jetbrains.kotlin.descriptors.commonizer.Target
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.konan.NativeDistributionCommonizer.StatsType.*
 import org.jetbrains.kotlin.descriptors.commonizer.stats.AggregatedStatsCollector
 import org.jetbrains.kotlin.descriptors.commonizer.stats.FileStatsOutput
@@ -136,14 +136,14 @@ class NativeDistributionCommonizer(
         return library
     }
 
-    private fun commonize(allLibraries: AllNativeLibraries): Result {
+    private fun commonize(allLibraries: AllNativeLibraries): CommonizerResult {
         val statsCollector = when (statsType) {
             RAW -> RawStatsCollector(targets, FileStatsOutput(destination, "raw"))
             AGGREGATED -> AggregatedStatsCollector(targets, FileStatsOutput(destination, "aggregated"))
             NONE -> null
         }
         statsCollector.use {
-            val parameters = Parameters(statsCollector, ::logProgress).apply {
+            val parameters = CommonizerParameters(statsCollector, ::logProgress).apply {
                 val storageManager = LockBasedStorageManager("Commonized modules")
 
                 val stdlibProvider = NativeDistributionStdlibProvider(storageManager, allLibraries.stdlib)
@@ -170,13 +170,13 @@ class NativeDistributionCommonizer(
         }
     }
 
-    private fun saveModules(originalLibraries: AllNativeLibraries, result: Result) {
+    private fun saveModules(originalLibraries: AllNativeLibraries, result: CommonizerResult) {
         // optimization: stdlib and endorsed libraries effectively remain the same across all Kotlin/Native targets,
         // so they can be just copied to the new destination without running serializer
         copyCommonStandardLibraries()
 
         when (result) {
-            is Result.NothingToCommonize -> {
+            is CommonizerResult.NothingToDo -> {
                 // It may happen that all targets to be commonized (or at least all but one target) miss platform libraries.
                 // In such case commonizer will do nothing and return a special result value 'NothingToCommonize'.
                 // So, let's just copy platform libraries from the target where they are to the new destination.
@@ -185,7 +185,7 @@ class NativeDistributionCommonizer(
                 }
             }
 
-            is Result.Commonized -> {
+            is CommonizerResult.Done -> {
                 val serializer = KlibMetadataMonolithicSerializer(
                     languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
                     metadataVersion = KlibMetadataVersion.INSTANCE,
@@ -207,8 +207,8 @@ class NativeDistributionCommonizer(
                 targetsToSerialize.forEach { target ->
                     val moduleResults: Collection<ModuleResult> = result.modulesByTargets.getValue(target)
                     val newModules: Collection<ModuleDescriptor> = moduleResults.mapNotNull { (it as? ModuleResult.Commonized)?.module }
-                    val absentModuleLocations: List<File> =
-                        moduleResults.mapNotNull { (it as? ModuleResult.Absent)?.originalLocation }
+                    val missingModuleLocations: List<File> =
+                        moduleResults.mapNotNull { (it as? ModuleResult.Missing)?.originalLocation }
 
                     val manifestProvider: NativeManifestDataProvider
                     val starredTarget: String?
@@ -224,7 +224,7 @@ class NativeDistributionCommonizer(
                     }
 
                     val targetName = leafTargetNames.joinToString { if (it == starredTarget) "$it(*)" else it }
-                    serializeTarget(target, targetName, newModules, absentModuleLocations, manifestProvider, serializer)
+                    serializeTarget(target, targetName, newModules, missingModuleLocations, manifestProvider, serializer)
                 }
             }
         }
@@ -266,10 +266,10 @@ class NativeDistributionCommonizer(
     }
 
     private fun serializeTarget(
-        target: Target,
+        target: CommonizerTarget,
         targetName: String,
         newModules: Collection<ModuleDescriptor>,
-        absentModuleLocations: List<File>,
+        missingModuleLocations: List<File>,
         manifestProvider: NativeManifestDataProvider,
         serializer: KlibMetadataMonolithicSerializer
     ) {
@@ -291,9 +291,9 @@ class NativeDistributionCommonizer(
             writeLibrary(metadata, manifestData, libraryDestination)
         }
 
-        for (absentModuleLocation in absentModuleLocations) {
-            val libraryName = absentModuleLocation.name
-            absentModuleLocation.copyRecursively(librariesDestination.resolve(libraryName))
+        for (missingModuleLocation in missingModuleLocations) {
+            val libraryName = missingModuleLocation.name
+            missingModuleLocation.copyRecursively(librariesDestination.resolve(libraryName))
         }
 
         logProgress("Written libraries for [$targetName]")
@@ -323,7 +323,7 @@ class NativeDistributionCommonizer(
             .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
             .resolve(name)
 
-    private val Target.librariesDestination: File
+    private val CommonizerTarget.librariesDestination: File
         get() = when (this) {
             is LeafTarget -> destination.resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR).resolve(name)
             is SharedTarget -> destination.resolve(KONAN_DISTRIBUTION_COMMON_LIBS_DIR)

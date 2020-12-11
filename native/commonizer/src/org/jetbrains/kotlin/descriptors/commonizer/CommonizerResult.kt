@@ -8,18 +8,18 @@ package org.jetbrains.kotlin.descriptors.commonizer
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.io.File
 
-sealed class Result {
-    object NothingToCommonize : Result()
+sealed class CommonizerResult {
+    object NothingToDo : CommonizerResult()
 
-    class Commonized(
-        val modulesByTargets: Map<Target, Collection<ModuleResult>>
-    ) : Result() {
+    class Done(
+        val modulesByTargets: Map<CommonizerTarget, Collection<ModuleResult>>
+    ) : CommonizerResult() {
         val sharedTarget: SharedTarget by lazy { modulesByTargets.keys.filterIsInstance<SharedTarget>().single() }
         val leafTargets: Set<LeafTarget> by lazy { modulesByTargets.keys.filterIsInstance<LeafTarget>().toSet() }
     }
 }
 
 sealed class ModuleResult {
-    class Absent(val originalLocation: File) : ModuleResult()
+    class Missing(val originalLocation: File) : ModuleResult()
     class Commonized(val module: ModuleDescriptor) : ModuleResult()
 }

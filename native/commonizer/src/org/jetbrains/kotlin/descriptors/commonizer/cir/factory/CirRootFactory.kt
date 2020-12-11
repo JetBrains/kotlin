@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.descriptors.commonizer.cir.factory
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
 import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
-import org.jetbrains.kotlin.descriptors.commonizer.Target
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirRootImpl
 
 object CirRootFactory {
     fun create(
-        target: Target,
+        target: CommonizerTarget,
         builtInsClass: String,
         builtInsProvider: BuiltInsProvider
     ): CirRoot {

@@ -66,7 +66,7 @@ abstract class AbstractCommonizationFromSourcesTest : KtUsefulTestCase() {
         val sourceModuleRoots: SourceModuleRoots = SourceModuleRoots.load(getTestDataDir())
         val analyzedModules: AnalyzedModules = AnalyzedModules.create(sourceModuleRoots, testRootDisposable)
 
-        val result: Result = runCommonization(analyzedModules.toCommonizationParameters())
+        val result: CommonizerResult = runCommonization(analyzedModules.toCommonizationParameters())
         assertCommonizationPerformed(result)
 
         val sharedTarget: SharedTarget = analyzedModules.sharedTarget
@@ -115,8 +115,8 @@ private data class SourceModuleRoot(
 
 private class SourceModuleRoots(
     val originalRoots: Map<LeafTarget, SourceModuleRoot>,
-    val commonizedRoots: Map<Target, SourceModuleRoot>,
-    val dependeeRoots: Map<Target, SourceModuleRoot>
+    val commonizedRoots: Map<CommonizerTarget, SourceModuleRoot>,
+    val dependeeRoots: Map<CommonizerTarget, SourceModuleRoot>
 ) {
     val leafTargets: Set<LeafTarget> = originalRoots.keys
     val sharedTarget: SharedTarget
@@ -143,7 +143,7 @@ private class SourceModuleRoots(
             val leafTargets = originalRoots.keys
             val sharedTarget = SharedTarget(leafTargets)
 
-            fun getTarget(targetName: String): Target =
+            fun getTarget(targetName: String): CommonizerTarget =
                 if (targetName == SHARED_TARGET_NAME) sharedTarget else leafTargets.first { it.name == targetName }
 
             val commonizedRoots = listRoots(dataDir, COMMONIZED_ROOTS_DIR).mapKeys { getTarget(it.key) }
@@ -164,7 +164,7 @@ private class SourceModuleRoots(
 }
 
 private class AnalyzedModuleDependencies(
-    val regularDependencies: Map<Target, List<ModuleDescriptor>>,
+    val regularDependencies: Map<CommonizerTarget, List<ModuleDescriptor>>,
     val expectByDependencies: List<ModuleDescriptor>
 ) {
     fun withExpectByDependency(dependency: ModuleDescriptor) =
@@ -179,9 +179,9 @@ private class AnalyzedModuleDependencies(
 }
 
 private class AnalyzedModules(
-    val originalModules: Map<Target, ModuleDescriptor>,
-    val commonizedModules: Map<Target, ModuleDescriptor>,
-    val dependeeModules: Map<Target, List<ModuleDescriptor>>
+    val originalModules: Map<CommonizerTarget, ModuleDescriptor>,
+    val commonizedModules: Map<CommonizerTarget, ModuleDescriptor>,
+    val dependeeModules: Map<CommonizerTarget, List<ModuleDescriptor>>
 ) {
     val leafTargets: Set<LeafTarget>
     val sharedTarget: SharedTarget
@@ -201,8 +201,8 @@ private class AnalyzedModules(
         check(allTargets.containsAll(dependeeModules.keys))
     }
 
-    fun toCommonizationParameters(): Parameters {
-        val parameters = Parameters()
+    fun toCommonizationParameters(): CommonizerParameters {
+        val parameters = CommonizerParameters()
 
         leafTargets.forEach { leafTarget ->
             val originalModule = originalModules.getValue(leafTarget)
@@ -240,9 +240,9 @@ private class AnalyzedModules(
 
         private fun createDependeeModules(
             sharedTarget: SharedTarget,
-            dependeeRoots: Map<out Target, SourceModuleRoot>,
+            dependeeRoots: Map<out CommonizerTarget, SourceModuleRoot>,
             parentDisposable: Disposable
-        ): Pair<Map<Target, List<ModuleDescriptor>>, AnalyzedModuleDependencies> {
+        ): Pair<Map<CommonizerTarget, List<ModuleDescriptor>>, AnalyzedModuleDependencies> {
             val customDependeeModules =
                 createModules(sharedTarget, dependeeRoots, AnalyzedModuleDependencies.EMPTY, parentDisposable, isDependeeModule = true)
 
@@ -261,12 +261,12 @@ private class AnalyzedModules(
 
         private fun createModules(
             sharedTarget: SharedTarget,
-            moduleRoots: Map<out Target, SourceModuleRoot>,
+            moduleRoots: Map<out CommonizerTarget, SourceModuleRoot>,
             dependencies: AnalyzedModuleDependencies,
             parentDisposable: Disposable,
             isDependeeModule: Boolean = false
-        ): Map<Target, ModuleDescriptor> {
-            val result = mutableMapOf<Target, ModuleDescriptor>()
+        ): Map<CommonizerTarget, ModuleDescriptor> {
+            val result = mutableMapOf<CommonizerTarget, ModuleDescriptor>()
 
             var dependenciesForOthers = dependencies
 
@@ -288,7 +288,7 @@ private class AnalyzedModules(
 
         private fun createModule(
             sharedTarget: SharedTarget,
-            currentTarget: Target,
+            currentTarget: CommonizerTarget,
             moduleRoot: SourceModuleRoot,
             dependencies: AnalyzedModuleDependencies,
             parentDisposable: Disposable,
@@ -336,7 +336,7 @@ private class AnalyzedModules(
 
 private class DependenciesContainerImpl(
     sharedTarget: SharedTarget,
-    currentTarget: Target,
+    currentTarget: CommonizerTarget,
     dependencies: AnalyzedModuleDependencies
 ) : CommonDependenciesContainer {
     private val moduleInfoToModule = mutableMapOf<ModuleInfo, ModuleDescriptor>()

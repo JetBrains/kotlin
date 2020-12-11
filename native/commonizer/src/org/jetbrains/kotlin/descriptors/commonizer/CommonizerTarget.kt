@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 // N.B. TargetPlatform/SimplePlatform are non exhaustive enough to address both target platforms such as
 // JVM, JS and concrete Kotlin/Native targets, e.g. macos_x64, ios_x64, linux_x64.
-sealed class Target
+sealed class CommonizerTarget
 
-data class LeafTarget(val name: String, val konanTarget: KonanTarget? = null) : Target()
+data class LeafTarget(val name: String, val konanTarget: KonanTarget? = null) : CommonizerTarget()
 
-data class SharedTarget(val targets: Set<Target>) : Target() {
+data class SharedTarget(val targets: Set<CommonizerTarget>) : CommonizerTarget() {
     init {
         require(targets.isNotEmpty())
     }

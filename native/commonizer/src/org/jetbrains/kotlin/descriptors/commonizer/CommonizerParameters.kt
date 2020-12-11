@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.descriptors.commonizer
 
 import org.jetbrains.kotlin.descriptors.commonizer.stats.StatsCollector
 
-class Parameters(
+class CommonizerParameters(
     val statsCollector: StatsCollector? = null,
     val progressLogger: ((String) -> Unit)? = null
 ) {
@@ -24,7 +24,7 @@ class Parameters(
             field = value
         }
 
-    fun addTarget(targetProvider: TargetProvider): Parameters {
+    fun addTarget(targetProvider: TargetProvider): CommonizerParameters {
         require(targetProvider.target !in _targetProviders) { "Target ${targetProvider.target} is already added" }
         _targetProviders[targetProvider.target] = targetProvider
 

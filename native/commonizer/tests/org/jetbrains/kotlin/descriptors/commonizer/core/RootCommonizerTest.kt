@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.descriptors.commonizer.LeafTarget
 import org.jetbrains.kotlin.descriptors.commonizer.SharedTarget
-import org.jetbrains.kotlin.descriptors.commonizer.Target
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirRoot
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirRootFactory
 import org.jetbrains.kotlin.descriptors.commonizer.utils.MockBuiltInsProvider
@@ -164,7 +164,7 @@ class RootCommonizerTest : AbstractCommonizerTest<CirRoot, CirRoot>() {
         inline val JVM_BUILT_INS get() = JvmBuiltIns(LockBasedStorageManager.NO_LOCKS, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
         inline val DEFAULT_BUILT_INS get() = DefaultBuiltIns.Instance
 
-        fun KotlinBuiltIns.toMock(target: Target) = CirRootFactory.create(
+        fun KotlinBuiltIns.toMock(target: CommonizerTarget) = CirRootFactory.create(
             target = target,
             builtInsClass = this::class.java.name,
             builtInsProvider = MockBuiltInsProvider(this)
