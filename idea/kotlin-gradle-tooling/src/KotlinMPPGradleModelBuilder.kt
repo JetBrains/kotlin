@@ -826,7 +826,7 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
                 ?: if (!isHMPPEnabled && sourceSet.name == KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME) true else null)?.let { isTest ->
                 sourceSet.isTestModule = isTest
             }
-            (if (isHMPPEnabled) allSourceSetToCompilations[sourceSet] else compiledSourceSetToCompilations[sourceSet])?.let { compilations ->
+            (allSourceSetToCompilations[sourceSet])?.let { compilations ->
                 val platforms = compilations.map { it.platform }
                 sourceSet.actualPlatforms.addSimplePlatforms(platforms)
             }
