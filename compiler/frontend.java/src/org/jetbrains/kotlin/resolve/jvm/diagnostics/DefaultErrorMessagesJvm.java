@@ -86,8 +86,10 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
         MAP.put(NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE);
         MAP.put(NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER,
-                "Type mismatch: type parameter with nullable bounds is used {1} is used where {0} was expected. This warning will become an error soon",
-                RENDER_TYPE, RENDER_TYPE
+                "Type mismatch: value of a nullable type {0} is used where non-nullable type is expected. " +
+                "This warning will become an error soon. " +
+                "See https://youtrack.jetbrains.com/issue/KT-36770 for details",
+                RENDER_TYPE
         );
         MAP.put(RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
                 "Unsafe use of a nullable receiver of type {0}", RENDER_TYPE);
