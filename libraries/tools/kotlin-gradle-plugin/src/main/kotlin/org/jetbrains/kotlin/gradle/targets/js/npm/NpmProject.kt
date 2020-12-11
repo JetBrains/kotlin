@@ -25,11 +25,13 @@ val KotlinJsCompilation.npmProject: NpmProject
  * More info can be obtained from [KotlinCompilationNpmResolution], which is available after project resolution (after [KotlinNpmInstallTask] execution).
  */
 open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
-    val name: String
-        get() = buildNpmProjectName()
+    val name: String by lazy {
+        buildNpmProjectName()
+    }
 
-    val nodeJs
-        get() = NodeJsRootPlugin.apply(project.rootProject)
+    val nodeJs by lazy {
+        NodeJsRootPlugin.apply(project.rootProject)
+    }
 
     val dir: File
         get() = nodeJs.projectPackagesDir.resolve(name)
@@ -90,7 +92,7 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
      * Require [request] nodejs module and return canonical path to it's main js file.
      */
     fun require(request: String): String {
-        nodeJs.npmResolutionManager.requireAlreadyInstalled(project)
+//        nodeJs.npmResolutionManager.requireAlreadyInstalled(project)
         return modules.require(request)
     }
 

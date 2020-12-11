@@ -91,7 +91,8 @@ internal class KotlinCompilationNpmResolver(
     val project get() = target.project
 
     @Transient
-    val packageJsonTaskHolder = KotlinPackageJsonTask.create(compilation)
+    val packageJsonTaskHolder: TaskProvider<KotlinPackageJsonTask>? =
+        KotlinPackageJsonTask.create(compilation)
 
     @Transient
     val publicPackageJsonTaskHolder: TaskProvider<PublicPackageJsonTask> =
@@ -150,7 +151,7 @@ internal class KotlinCompilationNpmResolver(
     @Synchronized
     fun getResolutionOrResolveIfForced(): KotlinCompilationNpmResolution? {
         if (resolution != null) return resolution
-        if (packageJsonTaskHolder.get().state.upToDate) return resolve(skipWriting = true)
+        if (packageJsonTaskHolder == null || packageJsonTaskHolder.get().state.upToDate) return resolve(skipWriting = true)
         if (resolver.forceFullResolve && resolution == null) {
             // need to force all NPM tasks to be configured in IDEA import
             project.tasks.implementing(RequiresNpmDependencies::class).all {}

@@ -112,7 +112,10 @@ constructor(
     }
 
     fun useKarma() = useKarma {}
-    fun useKarma(body: KotlinKarma.() -> Unit) = use(KotlinKarma(compilation), body)
+    fun useKarma(body: KotlinKarma.() -> Unit) = use(
+        KotlinKarma(compilation, services),
+        body
+    )
     fun useKarma(fn: Closure<*>) {
         useKarma {
             ConfigureUtil.configure(fn, this)

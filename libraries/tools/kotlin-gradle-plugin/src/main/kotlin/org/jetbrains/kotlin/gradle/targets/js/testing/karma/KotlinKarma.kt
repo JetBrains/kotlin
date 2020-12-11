@@ -10,6 +10,7 @@ import jetbrains.buildServer.messages.serviceMessages.BaseTestSuiteMessage
 import org.gradle.api.Project
 import org.gradle.api.internal.tasks.testing.TestResultProcessor
 import org.gradle.internal.logging.progress.ProgressLogger
+import org.gradle.internal.service.ServiceRegistry
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.internal.LogType
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.gradle.utils.property
 import org.slf4j.Logger
 import java.io.File
 
-class KotlinKarma(override val compilation: KotlinJsCompilation) :
+class KotlinKarma(override val compilation: KotlinJsCompilation, private val services: ServiceRegistry) :
     KotlinJsTestFramework {
     private val project: Project = compilation.target.project
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
@@ -404,7 +405,7 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) :
             lateinit var progressLogger: ProgressLogger
 
             override fun wrapExecute(body: () -> Unit) {
-                project.operation("Running and building tests with karma and webpack") {
+                services.operation("Running and building tests with karma and webpack") {
                     progressLogger = this
                     body()
                 }

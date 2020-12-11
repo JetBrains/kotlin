@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.dukat
 
 import org.gradle.api.artifacts.FileCollectionDependency
+import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
@@ -103,7 +104,7 @@ internal class DukatCompilationResolverPlugin(
             packageJsonIsUpdated,
             operation = compilation.name + " > " + DukatExecutor.OPERATION,
             compareInputs = true
-        ).execute()
+        ).execute((project as ProjectInternal).services)
     }
 
     companion object {

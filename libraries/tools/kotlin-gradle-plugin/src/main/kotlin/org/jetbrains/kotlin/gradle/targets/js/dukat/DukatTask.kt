@@ -100,7 +100,7 @@ abstract class DukatTask(
             qualifiedPackageName,
             null,
             operation
-        ).execute()
+        ).execute(services)
     }
 }
 

@@ -40,9 +40,9 @@ private constructor() {
 
             val detector = MultiplePluginDeclarationDetector()
             instance = detector
-            gradle.buildFinished {
-                instance = null
-            }
+//            gradle.buildFinished {
+//                instance = null
+//            }
 
             return detector
         }

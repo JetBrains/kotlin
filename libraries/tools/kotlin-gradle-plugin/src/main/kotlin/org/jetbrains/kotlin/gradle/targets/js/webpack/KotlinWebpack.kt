@@ -10,6 +10,7 @@ import org.gradle.api.Incubating
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileResolver
+import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
@@ -44,8 +45,10 @@ constructor(
 
     init {
         // TODO: temporary workaround for configuration cache enabled builds
-        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
+//        disableTaskOnConfigurationCacheBuild { nodeJs.npmResolutionManager.toString() }
     }
+
+    private val npmProject = compilation.npmProject
 
     @get:Inject
     open val fileResolver: FileResolver
@@ -97,7 +100,7 @@ constructor(
 
     @get:OutputFile
     open val configFile: File by lazy {
-        compilation.npmProject.dir.resolve("webpack.config.js")
+        npmProject.dir.resolve("webpack.config.js")
     }
 
     @Input
@@ -137,21 +140,30 @@ constructor(
     open val outputFile: File
         get() = destinationDirectory.resolve(outputFileName)
 
-    open val configDirectory: File?
-        @Optional @InputDirectory get() = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
+    private val projectDir = project.projectDir
+
+    @get:Optional
+    @get:InputDirectory
+    open val configDirectory: File? by lazy {
+        projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
+    }
 
     @Input
     var report: Boolean = false
 
+    private val projectReportsDir = project.reportsDir
+
     open val reportDir: File
         @Internal get() = reportDirProvider.get()
 
-    @OutputDirectory
-    open val reportDirProvider: Provider<File> = entryProperty
-        .map { it.asFile.nameWithoutExtension }
-        .map {
-            project.reportsDir.resolve("webpack").resolve(it)
-        }
+    @get:OutputDirectory
+    open val reportDirProvider: Provider<File> by lazy {
+        entryProperty
+            .map { it.asFile.nameWithoutExtension }
+            .map {
+                projectReportsDir.resolve("webpack").resolve(it)
+            }
+    }
 
     open val evaluatedConfigFile: File
         @Internal get() = evaluatedConfigFileProvider.get()
@@ -217,7 +229,8 @@ constructor(
             .forEach { it(config) }
 
         return KotlinWebpackRunner(
-            compilation.npmProject,
+            npmProject,
+            logger,
             configFile,
             execHandleFactory,
             bin,
@@ -237,7 +250,8 @@ constructor(
 
     @TaskAction
     fun doExecute() {
-        nodeJs.npmResolutionManager.checkRequiredDependencies(this)
+        println(services.get(org.gradle.internal.logging.progress.ProgressLoggerFactory::class.java))
+//        nodeJs.npmResolutionManager?.checkRequiredDependencies(this)
 
         val runner = createRunner()
 
@@ -258,7 +272,7 @@ constructor(
                     progressReporter = true,
                     progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
                 )
-            ).execute()
+            ).execute(services)
         }
     }
 
