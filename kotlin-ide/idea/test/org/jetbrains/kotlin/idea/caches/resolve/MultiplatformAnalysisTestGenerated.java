@@ -31,6 +31,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("testData/multiplatform/aliasesTypeMismatch/");
     }
 
+    @TestMetadata("builtinsAndStdlib")
+    public void testBuiltinsAndStdlib() throws Exception {
+        runTest("idea/testData/multiplatform/builtinsAndStdlib/");
+    }
+
     @TestMetadata("callableReferences")
     public void testCallableReferences() throws Exception {
         runTest("testData/multiplatform/callableReferences/");
