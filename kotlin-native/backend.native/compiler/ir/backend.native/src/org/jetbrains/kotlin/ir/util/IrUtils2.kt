@@ -25,8 +25,6 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.descriptors.WrappedFieldDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -69,11 +67,10 @@ internal fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrC
 private var topLevelInitializersCounter = 0
 
 internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: KonanBackendContext, threadLocal: Boolean) {
-    val descriptor = WrappedFieldDescriptor()
     val irField = IrFieldImpl(
             expression.startOffset, expression.endOffset,
             IrDeclarationOrigin.DEFINED,
-            IrFieldSymbolImpl(descriptor),
+            IrFieldSymbolImpl(),
             "topLevelInitializer${topLevelInitializersCounter++}".synthesizedName,
             expression.type,
             DescriptorVisibilities.PRIVATE,
@@ -81,8 +78,6 @@ internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: Ko
             isExternal = false,
             isStatic = true,
     ).apply {
-        descriptor.bind(this)
-
         expression.setDeclarationsParent(this)
 
         if (threadLocal)
@@ -264,21 +259,18 @@ fun IrBuilderWithScope.irSetVar(variable: IrVariable, value: IrExpression) =
 fun IrBuilderWithScope.irCatch(type: IrType) =
         IrCatchImpl(
                 startOffset, endOffset,
-                WrappedVariableDescriptor().let { descriptor ->
-                    IrVariableImpl(
-                            startOffset,
-                            endOffset,
-                            IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-                            IrVariableSymbolImpl(descriptor),
-                            Name.identifier("e"),
-                            type,
-                            false,
-                            false,
-                            false
-                    ).apply {
-                        descriptor.bind(this)
-                        parent = this@irCatch.parent
-                    }
+                IrVariableImpl(
+                        startOffset,
+                        endOffset,
+                        IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                        IrVariableSymbolImpl(),
+                        Name.identifier("e"),
+                        type,
+                        false,
+                        false,
+                        false
+                ).apply {
+                    parent = this@irCatch.parent
                 }
         )
 
@@ -345,11 +337,11 @@ fun createField(
         name: Name,
         isMutable: Boolean,
         owner: IrClass
-) = WrappedFieldDescriptor().let {
+) =
     IrFieldImpl(
             startOffset, endOffset,
             origin,
-            IrFieldSymbolImpl(it),
+            IrFieldSymbolImpl(),
             name,
             type,
             DescriptorVisibilities.PRIVATE,
@@ -357,14 +349,12 @@ fun createField(
             false,
             false,
     ).apply {
-        it.bind(this)
         owner.declarations += this
         parent = owner
     }
-}
 
 fun IrValueParameter.copy(newDescriptor: ParameterDescriptor): IrValueParameter {
-    // Aggressive use of WrappedDescriptors during deserialization
+    // Aggressive use of IrBasedDescriptors during deserialization
     // makes these types different.
     // Let's hope they not really used afterwards.
     //assert(this.descriptor.type == newDescriptor.type) {

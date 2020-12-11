@@ -25,9 +25,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedClassDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -224,11 +221,11 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
         private val adaptedReferenceOriginalTarget: IrFunction? = adapteeCall?.symbol?.owner
         private val functionReferenceTarget = adaptedReferenceOriginalTarget ?: referencedFunction
 
-        private val functionReferenceClass: IrClass = WrappedClassDescriptor().let {
+        private val functionReferenceClass: IrClass =
             IrClassImpl(
                     startOffset,endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                    IrClassSymbolImpl(it),
+                    IrClassSymbolImpl(),
                     "${functionReferenceTarget.name}\$FUNCTION_REFERENCE\$${context.functionReferenceCount++}".synthesizedName,
                     ClassKind.CLASS,
                     DescriptorVisibilities.PRIVATE,
@@ -241,11 +238,9 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                     isExpect = false,
                     isFun = false
             ).apply {
-                it.bind(this)
                 parent = this@FunctionReferenceBuilder.parent
                 createParameterDeclarations()
             }
-        }
 
         private val functionReferenceThis = functionReferenceClass.thisReceiver!!
 
@@ -337,11 +332,11 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             return BuiltFunctionReference(functionReferenceClass, constructor)
         }
 
-        private fun buildConstructor(): IrConstructor = WrappedClassConstructorDescriptor().let {
+        private fun buildConstructor(): IrConstructor =
             IrConstructorImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                    IrConstructorSymbolImpl(it),
+                    IrConstructorSymbolImpl(),
                     Name.special("<init>"),
                     DescriptorVisibilities.PUBLIC,
                     functionReferenceClass.defaultType,
@@ -350,7 +345,6 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                     isPrimary = true,
                     isExpect = false
             ).apply {
-                it.bind(this)
                 parent = functionReferenceClass
                 functionReferenceClass.declarations += this
 
@@ -387,7 +381,6 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                     }
                 }
             }
-        }
 
         private fun getFlags() =
                 (if (referencedFunction.isSuspend) 1 else 0) + getAdaptedCallableReferenceFlags() shl 1
@@ -418,11 +411,11 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             return false
         }
 
-        private fun buildInvokeMethod(superFunction: IrSimpleFunction): IrSimpleFunction = WrappedSimpleFunctionDescriptor().let {
+        private fun buildInvokeMethod(superFunction: IrSimpleFunction): IrSimpleFunction =
             IrFunctionImpl(
                     startOffset, endOffset,
                     DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                    IrSimpleFunctionSymbolImpl(it),
+                    IrSimpleFunctionSymbolImpl(),
                     superFunction.name,
                     DescriptorVisibilities.PRIVATE,
                     Modality.FINAL,
@@ -436,7 +429,6 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                     isOperator = false,
                     isInfix = false
             ).apply {
-                it.bind(this)
                 val function = this
                 parent = functionReferenceClass
                 functionReferenceClass.declarations += function
@@ -486,6 +478,5 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                     )
                 }
             }
-        }
     }
 }

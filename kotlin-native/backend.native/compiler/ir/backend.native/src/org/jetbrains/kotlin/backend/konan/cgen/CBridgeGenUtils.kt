@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
@@ -81,11 +79,10 @@ internal class KotlinBridgeBuilder(
 
     fun addParameter(type: IrType): IrValueParameter {
         val index = counter++
-        val descriptor = WrappedValueParameterDescriptor()
 
         return IrValueParameterImpl(
                 bridge.startOffset, bridge.endOffset, bridge.origin,
-                IrValueParameterSymbolImpl(descriptor),
+                IrValueParameterSymbolImpl(),
                 Name.identifier("p$index"), index, type,
                 null,
                 isCrossinline = false,
@@ -93,7 +90,6 @@ internal class KotlinBridgeBuilder(
                 isHidden = false,
                 isAssignable = false
         ).apply {
-            descriptor.bind(this)
             parent = bridge
             bridge.valueParameters += this
         }
@@ -114,12 +110,11 @@ private fun createKotlinBridge(
         isExternal: Boolean,
         foreignExceptionMode: ForeignExceptionMode.Mode
 ): IrFunction {
-    val bridgeDescriptor = WrappedSimpleFunctionDescriptor()
     val bridge = IrFunctionImpl(
             startOffset,
             endOffset,
             IrDeclarationOrigin.DEFINED,
-            IrSimpleFunctionSymbolImpl(bridgeDescriptor),
+            IrSimpleFunctionSymbolImpl(),
             Name.identifier(cBridgeName),
             DescriptorVisibilities.PRIVATE,
             Modality.FINAL,
@@ -133,7 +128,6 @@ private fun createKotlinBridge(
             isOperator = false,
             isInfix = false
     )
-    bridgeDescriptor.bind(bridge)
     if (isExternal) {
         bridge.annotations += buildSimpleAnnotation(stubs.irBuiltIns, startOffset, endOffset,
                 stubs.symbols.symbolName.owner, cBridgeName)

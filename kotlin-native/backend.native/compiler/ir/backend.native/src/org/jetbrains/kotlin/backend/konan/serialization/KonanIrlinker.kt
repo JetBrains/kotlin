@@ -210,7 +210,7 @@ internal class KonanIrLinker(
             if (actualModule !== moduleDescriptor) {
                 val moduleDeserializer = deserializersForModules[actualModule] ?: error("No module deserializer for $actualModule")
                 moduleDeserializer.addModuleReachableTopLevel(idSig)
-                return symbolTable.referenceClassFromLinker(descriptor, idSig)
+                return symbolTable.referenceClassFromLinker(idSig)
             }
 
             return declaredDeclaration.getOrPut(idSig) { buildForwardDeclarationStub(descriptor) }.symbol

@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -71,11 +69,11 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                     val arg = jobFunction.valueParameters[0]
                     val startOffset = jobFunction.startOffset
                     val endOffset = jobFunction.endOffset
-                    runtimeJobFunction = WrappedSimpleFunctionDescriptor().let {
+                    runtimeJobFunction =
                         IrFunctionImpl(
                                 startOffset, endOffset,
                                 IrDeclarationOrigin.DEFINED,
-                                IrSimpleFunctionSymbolImpl(it),
+                                IrSimpleFunctionSymbolImpl(),
                                 jobFunction.name,
                                 jobFunction.visibility,
                                 jobFunction.modality,
@@ -88,16 +86,13 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                                 isFakeOverride = false,
                                 isOperator = false,
                                 isInfix = false
-                    ).apply {
-                            it.bind(this)
-                        }
-                    }
+                    )
 
-                    runtimeJobFunction.valueParameters += WrappedValueParameterDescriptor().let {
+                    runtimeJobFunction.valueParameters +=
                         IrValueParameterImpl(
                                 startOffset, endOffset,
                                 IrDeclarationOrigin.DEFINED,
-                                IrValueParameterSymbolImpl(it),
+                                IrValueParameterSymbolImpl(),
                                 arg.name,
                                 arg.index,
                                 type = context.irBuiltIns.anyNType,
@@ -106,8 +101,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
                                 isNoinline = arg.isNoinline,
                                 isHidden = arg.isHidden,
                                 isAssignable = arg.isAssignable
-                        ).apply { it.bind(this) }
-                    }
+                        )
                 }
                 val overriddenJobDescriptor = OverriddenFunctionInfo(jobFunction, runtimeJobFunction)
                 if (!overriddenJobDescriptor.needBridge) return expression
