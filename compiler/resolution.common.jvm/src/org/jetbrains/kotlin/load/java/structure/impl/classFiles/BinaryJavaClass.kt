@@ -96,13 +96,13 @@ class BinaryJavaClass(
                     val baseType: JavaType = if (typeReference.superTypeIndex == -1) superclass!! else interfaces[typeReference.superTypeIndex]
                     val targetType = BinaryJavaAnnotation.computeTargetType(baseType, translatedPath)
 
-                    return BinaryJavaAnnotation.addAnnotation(targetType as JavaPlainType, descriptor, context, signatureParser)
+                    return BinaryJavaAnnotation.addAnnotation(targetType as JavaPlainType, descriptor, context, signatureParser, true)
                 }
                 TypeReference.CLASS_TYPE_PARAMETER_BOUND -> {
                     val baseType = computeTypeParameterBound(typeParameters, typeReference)
                     val targetType = BinaryJavaAnnotation.computeTargetType(baseType, translatedPath)
 
-                    return BinaryJavaAnnotation.addAnnotation(targetType as JavaPlainType, descriptor, context, signatureParser)
+                    return BinaryJavaAnnotation.addAnnotation(targetType as JavaPlainType, descriptor, context, signatureParser, true)
                 }
             }
         }
@@ -110,11 +110,11 @@ class BinaryJavaClass(
         return when (typeReference.sort) {
             TypeReference.CLASS_TYPE_PARAMETER ->
                 BinaryJavaAnnotation.addAnnotation(
-                    typeParameters[typeReference.typeParameterIndex] as BinaryJavaTypeParameter, descriptor, context, signatureParser
+                    typeParameters[typeReference.typeParameterIndex] as BinaryJavaTypeParameter, descriptor, context, signatureParser, true
                 )
             TypeReference.CLASS_TYPE_PARAMETER_BOUND ->
                 BinaryJavaAnnotation.addAnnotation(
-                    computeTypeParameterBound(typeParameters, typeReference) as JavaPlainType, descriptor, context, signatureParser
+                    computeTypeParameterBound(typeParameters, typeReference) as JavaPlainType, descriptor, context, signatureParser, true
                 )
             else -> null
         }
