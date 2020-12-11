@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.isExtension
+import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -146,5 +147,15 @@ private class KotlinAvailableScopesCompletionProvider(prefixMatcher: PrefixMatch
         extensionsWhichCanBeCalled.forEach { addSymbolToCompletion(result, it) }
 
         collectTypesCompletion(result, implicitScopes)
+    }
+}
+
+private object ExpectedTypeProvider {
+    fun KtAnalysisSession.getExpectedType(nameExpression: KtSimpleNameExpression, parameters: CompletionParameters): KtType? =
+        getExpectedTypeByReturnExpression(nameExpression)
+
+    private fun KtAnalysisSession.getExpectedTypeByReturnExpression(nameExpression: KtSimpleNameExpression): KtType? {
+        val parentReturn = nameExpression.parent as? KtReturnExpression ?: return null
+        TODO()
     }
 }

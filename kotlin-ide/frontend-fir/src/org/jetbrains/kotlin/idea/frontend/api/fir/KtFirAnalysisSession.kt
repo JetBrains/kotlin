@@ -45,6 +45,8 @@ private constructor(
     override val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider =
         KtFirSymbolDeclarationOverridesProvider(this, token)
 
+    override val expressionHandlingComponent: KtExpressionHandlingComponent = KtFirExpressionHandlingComponent(this, token)
+
     override fun createContextDependentCopy(): KtAnalysisSession {
         check(!isContextSession) { "Cannot create context-dependent copy of KtAnalysis session from a context dependent one" }
         val contextResolveState = LowLevelFirApiFacadeForCompletion.getResolveStateForCompletion(firResolveState)

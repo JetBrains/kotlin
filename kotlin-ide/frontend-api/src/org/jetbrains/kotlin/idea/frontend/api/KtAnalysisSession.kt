@@ -45,6 +45,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     protected abstract val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider
     @Suppress("LeakingThis")
     protected open val typeRenderer: KtTypeRenderer = KtDefaultTypeRenderer(this, token)
+    protected abstract val expressionHandlingComponent: KtExpressionHandlingComponent
 
     /// TODO: get rid of
     @Deprecated("Used only in completion now, temporary")
@@ -148,4 +149,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     fun KtType.render(options: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT): String =
         typeRenderer.render(this, options)
+
+    fun KtReturnExpression.getReturnTargetSymbol(): KtFunctionLikeSymbol? =
+        expressionHandlingComponent.getReturnExpressionTargetSymbol(this)
 }

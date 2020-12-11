@@ -71,6 +71,7 @@ import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileSt
 import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.AbstractSessionsInvalidationTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
+import org.jetbrains.kotlin.idea.frontend.api.components.AbstractReturnExpressionTargetTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
 import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractMemberScopeByFqNameTest
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
@@ -958,6 +959,10 @@ private fun assembleWorkspace(): TWorkspace = workspace {
 
         testClass<AbstractMemoryLeakInSymbolsTest> {
             model("symbolMemoryLeak")
+        }
+
+        testClass<AbstractReturnExpressionTargetTest> {
+            model("components/returnExpressionTarget")
         }
     }
 
