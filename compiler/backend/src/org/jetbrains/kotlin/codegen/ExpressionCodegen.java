@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil;
+import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor;
 import org.jetbrains.kotlin.load.kotlin.DescriptorBasedTypeSignatureMappingKt;
 import org.jetbrains.kotlin.load.kotlin.MethodSignatureMappingKt;
 import org.jetbrains.kotlin.name.Name;
@@ -2404,9 +2405,14 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             fieldName = KotlinTypeMapper.mapDefaultFieldName(propertyDescriptor, isDelegatedProperty);
         }
 
+        KotlinType propertyType = propertyDescriptor.getOriginal().getType();
+        if (propertyDescriptor instanceof JavaPropertyDescriptor && InlineClassesUtilsKt.isInlineClassType(propertyType)) {
+            propertyType = TypeUtils.makeNullable(propertyType);
+        }
+
         return StackValue.property(
                 propertyDescriptor, backingFieldOwner,
-                typeMapper.mapType(isDelegatedProperty && forceField ? delegateType : propertyDescriptor.getOriginal().getType()),
+                typeMapper.mapType(isDelegatedProperty && forceField ? delegateType : propertyType),
                 isStaticBackingField, fieldName, callableGetter, callableSetter, receiver, this, resolvedCall, skipLateinitAssertion,
                 isDelegatedProperty && forceField ? delegateType : null
         );
@@ -4375,6 +4381,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         Type exprType = expressionType(expr);
         KotlinType exprKotlinType = kotlinType(expr);
+        if (exprKotlinType != null && InlineClassesUtilsKt.isInlineClassType(exprKotlinType) &&
+            FlexibleTypesKt.isNullabilityFlexible(exprKotlinType)) {
+            exprKotlinType = TypeUtils.makeNullable(exprKotlinType);
+        }
         StackValue value;
         if (compileTimeConstant != null) {
             value = StackValue.constant(compileTimeConstant.getValue(), exprType, exprKotlinType);

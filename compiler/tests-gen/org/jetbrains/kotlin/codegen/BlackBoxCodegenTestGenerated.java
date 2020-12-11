@@ -15129,6 +15129,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testInlineClasInSignature() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/javaInterop/inlineClasInSignature.kt");
             }
+
+            @TestMetadata("inlineClasInSignatureNonNull.kt")
+            public void testInlineClasInSignatureNonNull() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/javaInterop/inlineClasInSignatureNonNull.kt");
+            }
+
+            @TestMetadata("inlineClasInSignatureNullable.kt")
+            public void testInlineClasInSignatureNullable() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/javaInterop/inlineClasInSignatureNullable.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods")

@@ -5,14 +5,17 @@
 // FILE: WithInlineClass.java
 
 import kotlin.UInt;
+import org.jetbrains.annotations.Nullable;
 
 public class WithInlineClass {
+    @Nullable
     public static UInt UINT = null;
 
-    public static void acceptsUInt(UInt u) {
+    public static void acceptsUInt(@Nullable UInt u) {
         UINT = u;
     }
 
+    @Nullable
     public static UInt provideUInt() {
         return UINT;
     }
