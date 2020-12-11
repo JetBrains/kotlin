@@ -62,7 +62,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val targets = buildTargets(projectTargets, sourceSetMap, dependencyResolver, project, dependencyMapper) ?: return null
         computeSourceSetsDeferredInfo(sourceSetMap, targets, isHMPPEnabled(project), shouldCoerceRootSourceSetToCommon(project))
         val coroutinesState = getCoroutinesState(project)
-        reportUnresolvedDependencies(targets)
         val kotlinNativeHome = KotlinNativeHomeEvaluator.getKotlinNativeHome(project) ?: NO_KOTLIN_NATIVE_HOME
         return KotlinMPPGradleModelImpl(
             filterOrphanSourceSets(sourceSetMap, targets, project),
@@ -104,15 +103,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
 
     private fun isNativeDependencyPropagationEnabled(project: Project): Boolean {
         return (project.findProperty("kotlin.native.enableDependencyPropagation") as? String)?.toBoolean() ?: true
-    }
-
-    private fun reportUnresolvedDependencies(targets: Collection<KotlinTarget>) {
-        targets.asSequence()
-            .flatMap { it.compilations.asSequence() }
-            .flatMap { it.dependencies.asSequence() }
-            .mapNotNull { (it as? UnresolvedExternalDependency)?.failureMessage }
-            .toSet()
-            .forEach { logger.warn(it) }
     }
 
     private fun getCoroutinesState(project: Project): String? {
