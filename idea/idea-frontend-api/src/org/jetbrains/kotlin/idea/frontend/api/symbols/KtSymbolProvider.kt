@@ -30,6 +30,7 @@ abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     }
 
     abstract fun getParameterSymbol(psi: KtParameter): KtParameterSymbol
+    abstract fun getFileSymbol(psi: KtFile): KtFileSymbol
     abstract fun getFunctionSymbol(psi: KtNamedFunction): KtFunctionSymbol
     abstract fun getConstructorSymbol(psi: KtConstructor<*>): KtConstructorSymbol
     abstract fun getTypeParameterSymbol(psi: KtTypeParameter): KtTypeParameterSymbol

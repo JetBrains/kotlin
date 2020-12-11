@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.mapAnnotationParameters
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSimpleConstantValue
@@ -23,6 +24,9 @@ import org.jetbrains.kotlin.psi.KtFile
 
 internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
     hasAnnotation("kotlin/jvm/JvmSynthetic", annotationUseSiteTarget)
+
+internal fun KtFileSymbol.hasJvmMultifileClassAnnotation(): Boolean =
+    hasAnnotation("kotlin/jvm/JvmMultifileClass", AnnotationUseSiteTarget.FILE)
 
 internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): String? {
     val annotation = annotations.firstOrNull {
@@ -121,10 +125,3 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
 
     return result
 }
-
-internal fun KtFile.hasJvmMultifileClassAnnotation(): Boolean = this.annotationEntries
-    .filter {
-        it.useSiteTarget?.getAnnotationUseSiteTarget() == AnnotationUseSiteTarget.FILE
-    }.any {
-        it.shortName?.asString() == "JvmMultifileClass"
-    }
