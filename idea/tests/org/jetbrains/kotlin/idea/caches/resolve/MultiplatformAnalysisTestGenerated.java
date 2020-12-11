@@ -34,6 +34,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/testData/multiplatform"), Pattern.compile("^([^\\.]+)$"), null, false);
     }
 
+    @TestMetadata("builtinsAndStdlib")
+    public void testBuiltinsAndStdlib() throws Exception {
+        runTest("idea/testData/multiplatform/builtinsAndStdlib/");
+    }
+
     @TestMetadata("callableReferences")
     public void testCallableReferences() throws Exception {
         runTest("idea/testData/multiplatform/callableReferences/");
