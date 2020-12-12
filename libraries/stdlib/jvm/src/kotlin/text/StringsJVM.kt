@@ -45,6 +45,7 @@ internal actual inline fun String.nativeLastIndexOf(str: String, fromIndex: Int)
  * Returns `true` if this string is equal to [other], optionally ignoring character case.
  *
  * @param ignoreCase `true` to ignore character case when comparing strings. By default `false`.
+ * @sample samples.text.Strings.equals
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): Boolean {
@@ -224,6 +225,8 @@ public actual fun ByteArray.decodeToString(
  * Encodes this string to an array of bytes in UTF-8 encoding.
  *
  * Any malformed char sequence is replaced by the replacement byte sequence.
+ *
+ * @sample samples.text.Strings.encodeToByteArray
  */
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
@@ -363,6 +366,8 @@ public fun CharSequence.split(regex: Pattern, limit: Int = 0): List<String> {
 
 /**
  * Returns a substring of this string that starts at the specified [startIndex] and continues to the end of the string.
+ *
+ * @sample samples.text.Strings.substring
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.substring(startIndex: Int): String = (this as java.lang.String).substring(startIndex)
@@ -372,12 +377,16 @@ public actual inline fun String.substring(startIndex: Int): String = (this as ja
  *
  * @param startIndex the start index (inclusive).
  * @param endIndex the end index (exclusive).
+ *
+ * @sample samples.text.Strings.substring
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String.substring(startIndex: Int, endIndex: Int): String = (this as java.lang.String).substring(startIndex, endIndex)
 
 /**
  * Returns `true` if this string starts with the specified prefix.
+ *
+ * @sample samples.text.Strings.startsWith
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false): Boolean {
@@ -389,6 +398,8 @@ public actual fun String.startsWith(prefix: String, ignoreCase: Boolean = false)
 
 /**
  * Returns `true` if a substring of this string starting at the specified offset [startIndex] starts with the specified prefix.
+ *
+ * @sample samples.text.Strings.startsWith
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase: Boolean = false): Boolean {
@@ -400,6 +411,8 @@ public actual fun String.startsWith(prefix: String, startIndex: Int, ignoreCase:
 
 /**
  * Returns `true` if this string ends with the specified suffix.
+ *
+ * @sample samples.text.Strings.endsWith
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.endsWith(suffix: String, ignoreCase: Boolean = false): Boolean {
@@ -491,18 +504,24 @@ public inline fun String(stringBuilder: java.lang.StringBuilder): String =
 
 /**
  * Returns the character (Unicode code point) at the specified index.
+ *
+ * @sample samples.text.Strings.codePointAt
  */
 @kotlin.internal.InlineOnly
 public inline fun String.codePointAt(index: Int): Int = (this as java.lang.String).codePointAt(index)
 
 /**
  * Returns the character (Unicode code point) before the specified index.
+ *
+ * @sample samples.text.Strings.codePointBefore
  */
 @kotlin.internal.InlineOnly
 public inline fun String.codePointBefore(index: Int): Int = (this as java.lang.String).codePointBefore(index)
 
 /**
  * Returns the number of Unicode code points in the specified text range of this String.
+ *
+ * @sample samples.text.Strings.codePointCount
  */
 @kotlin.internal.InlineOnly
 public inline fun String.codePointCount(beginIndex: Int, endIndex: Int): Int =
@@ -608,6 +627,8 @@ public inline fun String.toByteArray(charset: Charset = Charsets.UTF_8): ByteArr
  * Converts the string into a regular expression [Pattern] optionally
  * with the specified [flags] from [Pattern] or'd together
  * so that strings can be split or matched on.
+ *
+ * @sample samples.text.Strings.toPattern
  */
 @kotlin.internal.InlineOnly
 public inline fun String.toPattern(flags: Int = 0): java.util.regex.Pattern {
