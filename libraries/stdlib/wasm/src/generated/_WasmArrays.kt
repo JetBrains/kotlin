@@ -33,32 +33,9 @@ internal inline fun WasmAnyArray.fill(size: Int, init: (Int) -> Any?) {
     }
 }
 
-@WasmArrayOf(Boolean::class, isNullable = false)
-internal class WasmBooleanArray(size: Int) {
-    @WasmOp(WasmOp.ARRAY_GET)
-    fun get(index: Int): Boolean =
-        implementedAsIntrinsic
-
-    @WasmOp(WasmOp.ARRAY_SET)
-    fun set(index: Int, value: Boolean): Unit =
-        implementedAsIntrinsic
-
-    @WasmOp(WasmOp.ARRAY_LEN)
-    fun len(): Int =
-        implementedAsIntrinsic
-}
-
-internal inline fun WasmBooleanArray.fill(size: Int, init: (Int) -> Boolean) {
-    var i = 0
-    while (i < size) {
-        set(i, init(i))
-        i++
-    }
-}
-
 @WasmArrayOf(Byte::class, isNullable = false)
 internal class WasmByteArray(size: Int) {
-    @WasmOp(WasmOp.ARRAY_GET)
+    @WasmOp(WasmOp.ARRAY_GET_S)
     fun get(index: Int): Byte =
         implementedAsIntrinsic
 
@@ -79,9 +56,32 @@ internal inline fun WasmByteArray.fill(size: Int, init: (Int) -> Byte) {
     }
 }
 
+@WasmArrayOf(Char::class, isNullable = false)
+internal class WasmCharArray(size: Int) {
+    @WasmOp(WasmOp.ARRAY_GET_U)
+    fun get(index: Int): Char =
+        implementedAsIntrinsic
+
+    @WasmOp(WasmOp.ARRAY_SET)
+    fun set(index: Int, value: Char): Unit =
+        implementedAsIntrinsic
+
+    @WasmOp(WasmOp.ARRAY_LEN)
+    fun len(): Int =
+        implementedAsIntrinsic
+}
+
+internal inline fun WasmCharArray.fill(size: Int, init: (Int) -> Char) {
+    var i = 0
+    while (i < size) {
+        set(i, init(i))
+        i++
+    }
+}
+
 @WasmArrayOf(Short::class, isNullable = false)
 internal class WasmShortArray(size: Int) {
-    @WasmOp(WasmOp.ARRAY_GET)
+    @WasmOp(WasmOp.ARRAY_GET_S)
     fun get(index: Int): Short =
         implementedAsIntrinsic
 

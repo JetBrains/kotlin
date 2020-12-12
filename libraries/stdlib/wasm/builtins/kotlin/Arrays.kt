@@ -35,17 +35,17 @@ internal fun byteArrayIterator(array: ByteArray) = object : ByteIterator() {
 
 
 public class CharArray(size: Int) {
-    private var storage = WasmShortArray(size)
+    private var storage = WasmCharArray(size)
 
     public constructor(size: Int, init: (Int) -> Char) : this(size) {
-        storage.fill(size) { init(it).toShort() }
+        storage.fill(size) { init(it) }
     }
 
     public operator fun get(index: Int): Char =
-        storage.get(index).toChar()
+        storage.get(index)
 
     public operator fun set(index: Int, value: Char) {
-        storage.set(index, value.toShort())
+        storage.set(index, value)
     }
 
     public val size: Int
@@ -200,17 +200,17 @@ internal fun doubleArrayIterator(array: DoubleArray) = object : DoubleIterator()
 
 
 public class BooleanArray(size: Int) {
-    private var storage = WasmBooleanArray(size)
+    private var storage = WasmByteArray(size)
 
     public constructor(size: Int, init: (Int) -> Boolean) : this(size) {
-        storage.fill(size, init)
+        storage.fill(size) { init(it).toInt().reinterpretAsByte() }
     }
 
     public operator fun get(index: Int): Boolean =
-        storage.get(index)
+        storage.get(index).reinterpretAsInt().reinterpretAsBoolean()
 
     public operator fun set(index: Int, value: Boolean) {
-        storage.set(index, value)
+        storage.set(index, value.toInt().reinterpretAsByte())
     }
 
     public val size: Int
