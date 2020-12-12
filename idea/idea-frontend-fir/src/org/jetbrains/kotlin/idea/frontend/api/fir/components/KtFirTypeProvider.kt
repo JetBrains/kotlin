@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
@@ -38,13 +40,22 @@ internal class KtFirTypeProvider(
         expression.getOrBuildFirOfType<FirExpression>(firResolveState).typeRef.coneType.asKtType()
     }
 
-    override fun getExpectedType(expression: KtExpression): KtType? =
+    override fun getExpectedType(expression: PsiElement): KtType? =
         getExpectedTypeByReturnExpression(expression)
 
-    private fun getExpectedTypeByReturnExpression(expression: KtExpression): KtType? {
-        val returnParent = expression.parentOfType<KtReturnExpression>() ?: return null
+    private fun getExpectedTypeByReturnExpression(expression: PsiElement): KtType? {
+        val returnParent = expression.getReturnExpressionWithThisType() ?: return null
         val targetSymbol = with(analysisSession) { returnParent.getReturnTargetSymbol() } ?: return null
         return targetSymbol.type
+    }
+
+    private fun PsiElement.getReturnExpressionWithThisType(): KtReturnExpression? {
+        val parent = parent
+        return when {
+            parent is KtReturnExpression && parent.returnedExpression == this -> parent
+            parent is KtQualifiedExpression && parent.selectorExpression == this -> parent.getReturnExpressionWithThisType()
+            else -> null
+        }
     }
 
     override fun isEqualTo(first: KtType, second: KtType): Boolean = withValidityAssertion {

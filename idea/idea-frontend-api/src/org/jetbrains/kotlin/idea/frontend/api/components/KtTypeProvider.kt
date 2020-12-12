@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
@@ -19,5 +20,5 @@ abstract class KtTypeProvider : KtAnalysisSessionComponent() {
     //TODO get rid of
     abstract fun isBuiltinFunctionalType(type: KtType): Boolean
 
-    abstract fun getExpectedType(expression: KtExpression): KtType?
+    abstract fun getExpectedType(expression: PsiElement): KtType?
 }

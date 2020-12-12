@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.idea.frontend.api.calls.KtCall
 import org.jetbrains.kotlin.idea.frontend.api.components.*
@@ -66,7 +67,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     infix fun KtType.isSubTypeOf(superType: KtType): Boolean = typeProvider.isSubTypeOf(this, superType)
 
-    fun KtExpression.getExpectedType(): KtType? = typeProvider.getExpectedType(this)
+    fun PsiElement.getExpectedType(): KtType? = typeProvider.getExpectedType(this)
 
     fun KtType.isBuiltInFunctionalType(): Boolean = typeProvider.isBuiltinFunctionalType(this)
 
