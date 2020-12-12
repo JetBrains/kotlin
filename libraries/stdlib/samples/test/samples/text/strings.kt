@@ -421,4 +421,152 @@ class Strings {
         assertPrints(emptyString.lastOrNull(), "null")
         assertFails { emptyString.last() }
     }
+
+    @Sample
+    fun toPattern() {
+        val string = "this is a regex"
+        val pattern = string.toPattern(1)
+        assertPrints(pattern.pattern(), string)
+        assertTrue(pattern.flags() == 1)
+    }
+
+    @Sample
+    fun equals() {
+        val nullString: String? = null
+        val emptyString = ""
+        val lowerCaseString = "something"
+        val upperCaseString = "SOMETHING"
+        val lowerAndUpperCaseString = "SoMeThInG"
+
+        assertTrue(nullString.equals(null))
+        assertFalse(nullString.equals("something"))
+        assertFalse(nullString.equals("SOMETHING"))
+        assertFalse(nullString.equals(""))
+        assertFalse(nullString.equals("something", ignoreCase = true))
+        assertFalse(nullString.equals("SOMETHING", ignoreCase = true))
+        assertFalse(nullString.equals("", ignoreCase = true))
+
+        assertFalse(emptyString.equals(null))
+        assertFalse(emptyString.equals("something"))
+        assertFalse(emptyString.equals("SOMETHING"))
+        assertTrue(emptyString.equals(""))
+        assertFalse(emptyString.equals("something", ignoreCase = true))
+        assertFalse(emptyString.equals("SOMETHING", ignoreCase = true))
+        assertTrue(emptyString.equals("", ignoreCase = true))
+
+        assertFalse(lowerCaseString.equals(null))
+        assertTrue(lowerCaseString.equals("something"))
+        assertFalse(lowerCaseString.equals("SOMETHING"))
+        assertFalse(lowerCaseString.equals(""))
+        assertTrue(lowerCaseString.equals("something", ignoreCase = true))
+        assertTrue(lowerCaseString.equals("SOMETHING", ignoreCase = true))
+        assertFalse(lowerCaseString.equals("", ignoreCase = true))
+
+        assertFalse(upperCaseString.equals(null))
+        assertFalse(upperCaseString.equals("something"))
+        assertTrue(upperCaseString.equals("SOMETHING"))
+        assertFalse(upperCaseString.equals(""))
+        assertTrue(upperCaseString.equals("something", ignoreCase = true))
+        assertTrue(upperCaseString.equals("SOMETHING", ignoreCase = true))
+        assertFalse(upperCaseString.equals("", ignoreCase = true))
+
+        assertFalse(lowerAndUpperCaseString.equals(null))
+        assertFalse(lowerAndUpperCaseString.equals("something"))
+        assertFalse(lowerAndUpperCaseString.equals("SOMETHING"))
+        assertFalse(lowerAndUpperCaseString.equals(""))
+        assertTrue(lowerAndUpperCaseString.equals("something", ignoreCase = true))
+        assertTrue(lowerAndUpperCaseString.equals("SOMETHING", ignoreCase = true))
+        assertFalse(lowerAndUpperCaseString.equals("", ignoreCase = true))
+    }
+
+    @Sample
+    fun encodeToByteArray() {
+        val str = "Hello"
+        val byteArray = str.encodeToByteArray()
+        assertPrints(byteArray.contentToString(), "[72, 101, 108, 108, 111]")
+        assertPrints(byteArray.toString(Charsets.UTF_8), str)
+
+        val byteArrayWithoutFirstLetter = str.encodeToByteArray(startIndex = 1, endIndex = str.length)
+        assertPrints(byteArrayWithoutFirstLetter.contentToString(), "[101, 108, 108, 111]")
+        assertPrints(byteArrayWithoutFirstLetter.toString(Charsets.UTF_8), "ello")
+
+        val byteArrayWithoutLastLetter = str.encodeToByteArray(startIndex = 0, endIndex = str.length - 1)
+        assertPrints(byteArrayWithoutLastLetter.contentToString(), "[72, 101, 108, 108]")
+        assertPrints(byteArrayWithoutLastLetter.toString(Charsets.UTF_8), "Hell")
+    }
+
+    @Sample
+    fun subString() {
+        val str = "abcde"
+        assertPrints(str.substring(0), "abcde")
+        assertPrints(str.substring(1), "bcde")
+        assertFails { str.substring(6) }
+        assertPrints(str.substring(0, 0), "")
+        assertPrints(str.substring(0, 1), "a")
+        assertFails { str.substring(0, 6) }
+        assertFails { str.substring(1, 0) }
+        assertPrints(str.substring(1, 2), "b")
+        assertFails { str.substring(1, 6) }
+    }
+
+    @Sample
+    fun startsWith() {
+        val str = "abcde"
+        assertTrue(str.startsWith("abc", false))
+        assertTrue(str.startsWith("abc", true))
+        assertFalse(str.startsWith("ABC", false))
+        assertTrue(str.startsWith("ABC", true))
+        assertFalse(str.startsWith("abc", 1, false))
+        assertFalse(str.startsWith("abc", 1, true))
+        assertFalse(str.startsWith("ABC", 1, false))
+        assertFalse(str.startsWith("ABC", 1, true))
+        assertFalse(str.startsWith("bcd", false))
+        assertFalse(str.startsWith("bcd", true))
+        assertFalse(str.startsWith("BCD", false))
+        assertFalse(str.startsWith("BCD", true))
+        assertTrue(str.startsWith("bcd", 1, false))
+        assertTrue(str.startsWith("bcd", 1, true))
+        assertFalse(str.startsWith("BCD", 1, false))
+        assertTrue(str.startsWith("BCD", 1, true))
+    }
+
+    @Sample
+    fun endsWith() {
+        val str = "abcde"
+        assertTrue(str.endsWith("cde", false))
+        assertTrue(str.endsWith("cde", true))
+        assertFalse(str.endsWith("CDE", false))
+        assertTrue(str.endsWith("CDE", true))
+        assertFalse(str.endsWith("bcd", false))
+        assertFalse(str.endsWith("bcd", true))
+        assertFalse(str.endsWith("BCD", false))
+        assertFalse(str.endsWith("BCD", true))
+    }
+
+    @Sample
+    fun codePointAt() {
+        val str = "abc"
+        assertPrints(str.codePointAt(0).toString(), "97")
+        assertPrints(str.codePointAt(1).toString(), "98")
+        assertPrints(str.codePointAt(2).toString(), "99")
+        assertFails { str.codePointAt(3) }
+    }
+
+    @Sample
+    fun codePointBefore() {
+        val str = "abc"
+        assertFails { str.codePointBefore(0) }
+        assertPrints(str.codePointBefore(1).toString(), "97")
+        assertPrints(str.codePointBefore(2).toString(), "98")
+        assertPrints(str.codePointBefore(3).toString(), "99")
+    }
+
+    @Sample
+    fun codePointCount() {
+        val str = "abc"
+        assertPrints(str.codePointCount(0, 2).toString(), "2")
+        assertPrints(str.codePointCount(1, 3).toString(), "2")
+        assertPrints(str.codePointCount(2, 2).toString(), "0")
+        assertFails { str.codePointCount(3, 2) }
+    }
 }
