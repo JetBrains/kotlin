@@ -1,3 +1,5 @@
+// FIR_COMPARISON
+
 interface I {
     fun takeXxx(): Int = 0
     fun takeYyy(): String = ""

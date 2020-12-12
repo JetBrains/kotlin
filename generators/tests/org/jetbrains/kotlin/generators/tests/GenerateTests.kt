@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.idea.completion.test.*
 import org.jetbrains.kotlin.idea.completion.test.handlers.*
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractBasicCompletionWeigherTest
 import org.jetbrains.kotlin.idea.completion.test.weighers.AbstractSmartCompletionWeigherTest
+import org.jetbrains.kotlin.idea.completion.wheigher.AbstractHighLevelWeigherTest
 import org.jetbrains.kotlin.idea.configuration.AbstractGradleConfigureProjectByChangingFileTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralKotlinToKotlinCopyPasteTest
@@ -1101,6 +1102,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractHighLevelBasicCompletionHandlerTest> {
                 model("handlers/basic", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+
+            testClass<AbstractHighLevelWeigherTest> {
+                model("weighers/basic", pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
             }
         }
 
