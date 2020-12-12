@@ -18,4 +18,6 @@ abstract class KtTypeProvider : KtAnalysisSessionComponent() {
 
     //TODO get rid of
     abstract fun isBuiltinFunctionalType(type: KtType): Boolean
+
+    abstract fun getExpectedType(expression: KtExpression): KtType?
 }

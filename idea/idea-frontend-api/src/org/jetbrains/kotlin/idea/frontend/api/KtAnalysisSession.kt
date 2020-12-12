@@ -62,9 +62,11 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     fun KtDeclaration.getReturnKtType(): KtType = typeProvider.getReturnTypeForKtDeclaration(this)
 
-    fun KtType.isEqualTo(other: KtType): Boolean = typeProvider.isEqualTo(this, other)
+    infix fun KtType.isEqualTo(other: KtType): Boolean = typeProvider.isEqualTo(this, other)
 
-    fun KtType.isSubTypeOf(superType: KtType): Boolean = typeProvider.isSubTypeOf(this, superType)
+    infix fun KtType.isSubTypeOf(superType: KtType): Boolean = typeProvider.isSubTypeOf(this, superType)
+
+    fun KtExpression.getExpectedType(): KtType? = typeProvider.getExpectedType(this)
 
     fun KtType.isBuiltInFunctionalType(): Boolean = typeProvider.isBuiltinFunctionalType(this)
 
