@@ -1,4 +1,4 @@
 FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
-        R|/JavaClass.JavaClass|<R|ft<kotlin/String, kotlin/String?>!|>(Null(null)).R|FakeOverride</JavaClass.foo: R|ft<kotlin/String, kotlin/String?>!|>|().R|kotlin/String.length|
+        R|/JavaClass.JavaClass|<R|ft<kotlin/String, kotlin/String?>!|>(Null(null)).R|SubstitutionOverride</JavaClass.foo: R|ft<kotlin/String, kotlin/String?>!|>|().R|kotlin/String.length|
     }

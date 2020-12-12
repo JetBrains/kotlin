@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -351,6 +350,9 @@ class RawFirBuilder(
                             it.extractAnnotationsFrom(this)
                         }
                         it.status = status
+                        currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
+                            it.containingClassAttr = lookupTag
+                        }
                     }
             }
             val source = this.toFirSourceElement()
@@ -387,6 +389,9 @@ class RawFirBuilder(
                     this.contractDescription = it
                 }
             }.also {
+                currentDispatchReceiverType()?.lookupTag?.let { lookupTag ->
+                    it.containingClassAttr = lookupTag
+                }
                 accessorTarget.bind(it)
                 this@RawFirBuilder.context.firFunctionTargets.removeLast()
             }
@@ -462,6 +467,8 @@ class RawFirBuilder(
                     visibility
                 ) else null
                 extractAnnotationsTo(this)
+
+                dispatchReceiverType = currentDispatchReceiverType()
             }.apply {
                 isFromVararg = firParameter.isVararg
             }
@@ -561,11 +568,13 @@ class RawFirBuilder(
                                 source = delegateSource
                                 calleeReference =
                                     buildResolvedNamedReference {
+                                        source = delegateSource
                                         name = delegateName
                                         resolvedSymbol = delegateField.symbol
                                     }
                                 rValue = delegateExpression
                                 dispatchReceiver = buildThisReceiverExpression {
+                                    source = delegateSource
                                     calleeReference = buildImplicitThisReference {
                                         boundSymbol = containerSymbol
                                     }
@@ -685,6 +694,8 @@ class RawFirBuilder(
                 this@toFirConstructor?.extractAnnotationsTo(this)
                 this@toFirConstructor?.extractValueParametersTo(this)
                 this.body = body
+            }.apply {
+                containingClassAttr = currentDispatchReceiverType()!!.lookupTag
             }
         }
 
@@ -748,6 +759,8 @@ class RawFirBuilder(
                         val delegatedEntrySelfType = buildResolvedTypeRef {
                             type = ConeClassLikeTypeImpl(this@buildAnonymousObject.symbol.toLookupTag(), emptyArray(), isNullable = false)
                         }
+                        registerSelfType(delegatedEntrySelfType)
+
                         superTypeRefs += delegatedEnumSelfTypeRef
                         val superTypeCallEntry = superTypeListEntries.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
                         val correctedEnumSelfTypeRef = buildResolvedTypeRef {
@@ -775,6 +788,8 @@ class RawFirBuilder(
                         }
                     }
                 }
+            }.apply {
+                containingClassAttr = currentDispatchReceiverType()!!.lookupTag
             }
         }
 
@@ -825,6 +840,8 @@ class RawFirBuilder(
                         addCapturedTypeParameters(typeParameters.take(classOrObject.typeParameters.size))
 
                         val delegatedSelfType = classOrObject.toDelegatedSelfType(this)
+                        registerSelfType(delegatedSelfType)
+
                         val delegatedSuperType = classOrObject.extractSuperTypeListEntriesTo(
                             this,
                             delegatedSelfType,
@@ -882,10 +899,14 @@ class RawFirBuilder(
 
                         if (classOrObject.hasModifier(ENUM_KEYWORD)) {
                             generateValuesFunction(
-                                baseSession, context.packageFqName, context.className, classOrObject.hasExpectModifier()
+                                baseSession,
+                                context.packageFqName,
+                                context.className,
+                                classOrObject.hasExpectModifier()
                             )
                             generateValueOfFunction(
-                                baseSession, context.packageFqName, context.className, classOrObject.hasExpectModifier()
+                                baseSession, context.packageFqName, context.className,
+                                classOrObject.hasExpectModifier()
                             )
                         }
                     }
@@ -905,6 +926,7 @@ class RawFirBuilder(
                     symbol = FirAnonymousObjectSymbol()
                     typeParameters += context.capturedTypeParameters.map { buildOuterClassTypeParameterRef { symbol = it } }
                     val delegatedSelfType = objectDeclaration.toDelegatedSelfType(this)
+                    registerSelfType(delegatedSelfType)
                     objectDeclaration.extractAnnotationsTo(this)
                     val delegatedSuperType = objectDeclaration.extractSuperTypeListEntriesTo(
                         this,
@@ -973,6 +995,7 @@ class RawFirBuilder(
                     name = function.nameAsSafeName
                     labelName = runIf(!name.isSpecial) { name.identifier }
                     symbol = FirNamedFunctionSymbol(callableIdForName(function.nameAsSafeName, function.isLocal))
+                    dispatchReceiverType = currentDispatchReceiverType()
                     status = FirDeclarationStatusImpl(
                         if (function.isLocal) Visibilities.Local else function.visibility,
                         function.modality,
@@ -1168,6 +1191,7 @@ class RawFirBuilder(
                 this.body = body
                 this@RawFirBuilder.context.firFunctionTargets.removeLast()
             }.also {
+                it.containingClassAttr = currentDispatchReceiverType()!!.lookupTag
                 target.bind(it)
             }
         }
@@ -1242,6 +1266,7 @@ class RawFirBuilder(
                     isLocal = false
                     receiverTypeRef = receiverTypeReference.convertSafe()
                     symbol = FirPropertySymbol(callableIdForName(propertyName))
+                    dispatchReceiverType = currentDispatchReceiverType()
                     extractTypeParametersTo(this)
                     withCapturedTypeParameters {
                         addCapturedTypeParameters(this.typeParameters)
@@ -1533,6 +1558,7 @@ class RawFirBuilder(
                 }
                 if (expression.elseKeyword != null) {
                     branches += buildWhenBranch {
+                        source = expression.elseKeyword?.toFirPsiSourceElement()
                         condition = buildElseIfTrueCondition()
                         result = expression.`else`.toFirBlock()
                     }

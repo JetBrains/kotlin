@@ -9,7 +9,7 @@ digraph atMostOnce_kt {
         subgraph cluster_1 {
             color=blue
             1 [label="Enter block"];
-            2 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            2 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             3 [label="Exit block"];
         }
         4 [label="Exit function inlineRun" style="filled" fillcolor=red];
@@ -25,7 +25,7 @@ digraph atMostOnce_kt {
         subgraph cluster_3 {
             color=blue
             6 [label="Enter block"];
-            7 [label="Function call: R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            7 [label="Function call: R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             8 [label="Exit block"];
         }
         9 [label="Exit function myRun" style="filled" fillcolor=red];

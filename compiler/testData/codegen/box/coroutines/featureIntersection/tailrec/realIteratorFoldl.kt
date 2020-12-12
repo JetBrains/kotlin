@@ -1,9 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 // DONT_RUN_GENERATED_CODE: JS
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 tailrec suspend fun <T, A> Iterator<T>.foldl(acc : A, foldFunction : (e : T, acc : A) -> A) : A =
         if (!hasNext()) acc

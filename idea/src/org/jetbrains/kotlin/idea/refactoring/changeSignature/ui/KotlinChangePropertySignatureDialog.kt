@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.refactoring.changeSignature.ui
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.ui.ComboBox
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.ui.RefactoringDialog

@@ -86,6 +86,14 @@ sealed class ModuleDependencyType(
         to = MppModuleConfigurator::class
     )
 
+    object JVMTargetToMPP : ModuleDependencyType(
+        from = JvmTargetConfigurator::class,
+        to = MppModuleConfigurator::class
+    ) {
+        override fun additionalAcceptanceChecker(from: Module, to: Module): Boolean =
+            from !in to.subModules
+    }
+
     object IOSToMppSinglePlatformToMPP : ModuleDependencyType(
         from = IOSSinglePlatformModuleConfigurator::class,
         to = MppModuleConfigurator::class
@@ -184,6 +192,7 @@ sealed class ModuleDependencyType(
             JVMSinglePlatformToJVMSinglePlatform,
             JVMSinglePlatformToMPP,
             AndroidSinglePlatformToMPP,
+            JVMTargetToMPP,
             IOSToMppSinglePlatformToMPP
         )
 

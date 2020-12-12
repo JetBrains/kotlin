@@ -85,7 +85,7 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
 
         return BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS[annotationDescriptor.fqName]?.let { qualifierForDefaultingAnnotation ->
             val state = resolveDefaultAnnotationState(annotationDescriptor).takeIf { it != ReportLevel.IGNORE } ?: return null
-            return qualifierForDefaultingAnnotation.copy(
+            qualifierForDefaultingAnnotation.copy(
                 nullabilityQualifier = qualifierForDefaultingAnnotation.nullabilityQualifier.copy(isForWarningOnly = state.isWarning)
             )
         }

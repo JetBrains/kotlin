@@ -26,13 +26,13 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.org.objectweb.asm.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.GENERATE_SMAP;
 
 public abstract class AbstractClassBuilder implements ClassBuilder {
     protected static final MethodVisitor EMPTY_METHOD_VISITOR = new MethodVisitor(Opcodes.API_VERSION) {};
+    public static final RecordComponentVisitor EMPTY_RECORD_VISITOR = new RecordComponentVisitor(Opcodes.API_VERSION) {};
     protected static final FieldVisitor EMPTY_FIELD_VISITOR = new FieldVisitor(Opcodes.API_VERSION) {};
 
     private String thisName;
@@ -87,6 +87,16 @@ public abstract class AbstractClassBuilder implements ClassBuilder {
         MethodVisitor visitor = getVisitor().visitMethod(access, name, desc, signature, exceptions);
         if (visitor == null) {
             return EMPTY_METHOD_VISITOR;
+        }
+        return visitor;
+    }
+
+    @NotNull
+    @Override
+    public RecordComponentVisitor newRecordComponent(@NotNull String name, @NotNull String desc, @Nullable String signature) {
+        RecordComponentVisitor visitor = getVisitor().visitRecordComponent(name, desc, signature);
+        if (visitor == null) {
+            return EMPTY_RECORD_VISITOR;
         }
         return visitor;
     }

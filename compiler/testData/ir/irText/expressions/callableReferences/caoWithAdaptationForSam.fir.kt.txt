@@ -1,0 +1,98 @@
+fun interface IFoo {
+  abstract fun foo(i: Int)
+
+}
+
+fun interface IFoo2 : IFoo {
+
+}
+
+object A {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+object B {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+operator fun A.get(i: IFoo): Int {
+  return 1
+}
+
+operator fun A.set(i: IFoo, newValue: Int) {
+}
+
+operator fun B.get(i: IFoo): Int {
+  return 1
+}
+
+operator fun B.set(i: IFoo2, newValue: Int) {
+}
+
+fun withVararg(vararg xs: Int): Int {
+  return 42
+}
+
+fun test1() {
+  { // BLOCK
+    val <<array>>: A = A
+    val <<index_0>>: KFunction1<IntArray, Int> = ::withVararg
+    error("") /* ErrorCallExpression */<<index_0>>; error("") /* ErrorCallExpression */<<index_0>>; .plus(other = 1);
+  }
+}
+
+fun test2() {
+  { // BLOCK
+    val <<array>>: B = B
+    val <<index_0>>: KFunction1<IntArray, Int> = ::withVararg
+    error("") /* ErrorCallExpression */<<index_0>>; error("") /* ErrorCallExpression */<<index_0>>; .plus(other = 1);
+  }
+}
+
+fun test3(fn: Function1<Int, Unit>) {
+  { // BLOCK
+    val <<array>>: A = A
+    val <<index_0>>: Function1<Int, Unit> = fn
+    <<array>>.set(i = <<index_0>> /*-> IFoo */, newValue = <<array>>.get(i = <<index_0>> /*-> IFoo */).plus(other = 1))
+  }
+}
+
+fun test4(fn: Function1<Int, Unit>) {
+  when {
+    fn is IFoo -> { // BLOCK
+      val <<array>>: A = A
+      val <<index_0>>: IFoo = fn /*as IFoo */
+      <<array>>.set(i = <<index_0>>, newValue = <<array>>.get(i = <<index_0>>).plus(other = 1))
+    }
+  }
+}
+
+fun test5(a: Any) {
+  a as Function1<Int, Unit> /*~> Unit */
+  { // BLOCK
+    val <<array>>: A = A
+    val <<index_0>>: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
+    <<array>>.set(i = <<index_0>> /*-> IFoo */, newValue = <<array>>.get(i = <<index_0>> /*-> IFoo */).plus(other = 1))
+  }
+}
+
+fun test6(a: Any) {
+  a as Function1<Int, Unit> /*~> Unit */
+  a /*as Function1<Int, Unit> */ as IFoo /*~> Unit */
+  { // BLOCK
+    val <<array>>: A = A
+    val <<index_0>>: Function1<Int, Unit> = a /*as Function1<Int, Unit> */
+    <<array>>.set(i = <<index_0>>, newValue = <<array>>.get(i = <<index_0>>).plus(other = 1))
+  }
+}
+

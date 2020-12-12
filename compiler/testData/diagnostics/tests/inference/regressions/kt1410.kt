@@ -4,6 +4,8 @@
 //+JDK
 package d
 
+import checkSubtype
+
 public fun <T> MutableCollection<out T>.filterToMy(result : MutableList<in T>, filter : (T) -> Boolean) : MutableCollection<out T> {
     for (t in this){
         if (filter(t)){

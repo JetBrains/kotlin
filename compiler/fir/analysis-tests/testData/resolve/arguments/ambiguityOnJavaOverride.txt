@@ -4,11 +4,11 @@ FILE: main.kt
             super<R|A|>()
         }
 
-        public final override fun foo(s: R|kotlin/String|): R|kotlin/Any?| {
+        protected final override fun foo(s: R|kotlin/String|): R|kotlin/Any?| {
             ^foo Null(null)
         }
 
     }
     public final fun test(b: R|B|): R|kotlin/Unit| {
-        R|<local>/b|.R|/B.foo|(String())
+        R|<local>/b|.<HIDDEN: /B.foo is invisible>#(String())
     }

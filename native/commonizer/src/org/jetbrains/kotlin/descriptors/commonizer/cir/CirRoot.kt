@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
 import org.jetbrains.kotlin.descriptors.commonizer.BuiltInsProvider
-import org.jetbrains.kotlin.descriptors.commonizer.Target
+import org.jetbrains.kotlin.descriptors.commonizer.CommonizerTarget
 
 interface CirRoot : CirDeclaration {
-    val target: Target
+    val target: CommonizerTarget
     val builtInsClass: String
     val builtInsProvider: BuiltInsProvider
 }

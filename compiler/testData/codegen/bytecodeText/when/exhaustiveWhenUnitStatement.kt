@@ -1,6 +1,4 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JVM_IR
-// TODO KT-36840 Don't generate 'throw' clause for statement 'when' in JVM_IR
 
 enum class AccessMode { READ, WRITE, EXECUTE }
 

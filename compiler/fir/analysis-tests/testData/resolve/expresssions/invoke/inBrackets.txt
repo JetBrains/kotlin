@@ -1,5 +1,5 @@
 FILE: inBrackets.kt
     public final fun test(e: R|kotlin/Int.() -> kotlin/String|): R|kotlin/Unit| {
-        lval s: R|kotlin/String| = R|<local>/e|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/String|>|(Int(3))
-        lval ss: R|kotlin/String| = R|<local>/e|.R|FakeOverride<kotlin/Function1.invoke: R|kotlin/String|>|(Int(3))
+        lval s: R|kotlin/String| = R|<local>/e|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/String|>|(Int(3))
+        lval ss: R|kotlin/String| = R|<local>/e|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/String|>|(Int(3))
     }

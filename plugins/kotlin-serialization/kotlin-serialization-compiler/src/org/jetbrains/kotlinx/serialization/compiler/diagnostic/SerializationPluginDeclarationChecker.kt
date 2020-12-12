@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.hasBackingField
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
@@ -122,7 +123,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             return false
         }
 
-        if (descriptor.isInline) {
+        if (descriptor.isInlineClass()) {
             trace.reportOnSerializableAnnotation(descriptor, SerializationErrors.INLINE_CLASSES_NOT_SUPPORTED)
             return false
         }

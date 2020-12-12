@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.fir.scopes
 
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
@@ -59,19 +59,26 @@ internal fun FirScope.getCallableSymbols(callableNames: Collection<Name>, builde
     callableNames.forEach { name ->
         val callables = mutableListOf<KtCallableSymbol>()
         processFunctionsByName(name) { firSymbol ->
-            (firSymbol.fir as? FirSimpleFunction)?.let { fir ->
-                callables.add(builder.buildFunctionSymbol(fir))
-            }
+            callables.add(builder.buildFunctionSymbol(firSymbol.fir))
         }
         processPropertiesByName(name) { firSymbol ->
             val symbol = when {
-                firSymbol is FirPropertySymbol && firSymbol.isFakeOverride -> {
+                firSymbol is FirPropertySymbol && firSymbol.fir.isSubstitutionOverride -> {
                     builder.buildVariableSymbol(firSymbol.fir)
                 }
                 else -> builder.buildCallableSymbol(firSymbol.fir)
             }
             callables.add(symbol)
         }
+
+        if (name.isSpecial && name.asString() == "<init>") {
+            processDeclaredConstructors { firConstructor ->
+                firConstructor.fir.let { fir ->
+                    callables.add(builder.buildConstructorSymbol(fir))
+                }
+            }
+        }
+
         yieldAll(callables)
     }
 }

@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.junit.Assert
 import java.io.File
+import java.nio.file.Files
+import kotlin.io.path.*
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
@@ -60,8 +62,9 @@ class CompileTimeFibonacciTest : TestCase() {
             is ResultWithDiagnostics.Failure -> {
                 val error = result.reports.first()
 
+                val expectedFile = File("plugins/scripting/scripting-compiler/testData/compiler/compileTimeFibonacci/unsupported.fib.kts")
                 val expectedErrorMessage = """
-                    (plugins/scripting/scripting-compiler/testData/compiler/compileTimeFibonacci/unsupported.fib.kts:3:1) Fibonacci of non-positive numbers like 0 are not supported
+                    ($expectedFile:3:1) Fibonacci of non-positive numbers like 0 are not supported
                 """.trimIndent()
                 Assert.assertEquals(expectedErrorMessage, error.message)
                 // TODO: the location is not in the diagnostics because the `MessageCollector` defined in KotlinTestUtils,
@@ -160,7 +163,7 @@ object CompileTimeFibonacciConfiguration : ScriptCompilationConfiguration(
                     .mapIndexed { index, number -> "val FIB_${index + 1} = $number" }
                     .joinToString("\n")
 
-                val file = createTempFile("CompileTimeFibonacci", ".fib.kts")
+                val file = Files.createTempFile("CompileTimeFibonacci", ".fib.kts").toFile()
                     .apply {
                         deleteOnExit()
                         writeText(sourceCode)

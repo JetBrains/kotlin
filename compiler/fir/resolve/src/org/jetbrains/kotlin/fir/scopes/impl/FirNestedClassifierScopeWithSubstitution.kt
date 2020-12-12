@@ -10,16 +10,34 @@ import org.jetbrains.kotlin.fir.declarations.isInner
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.createSubstitutionForSupertype
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.Name
 
-class FirNestedClassifierScopeWithSubstitution(
-    private val scope: FirNestedClassifierScope,
+private class FirNestedClassifierScopeWithSubstitution(
+    private val scope: FirScope,
     private val substitutor: ConeSubstitutor
 ) : FirScope() {
+
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
+        scope.processFunctionsByName(name, processor)
+    }
+
+    override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
+        scope.processPropertiesByName(name, processor)
+    }
+
+    override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
+        scope.processDeclaredConstructors(processor)
+    }
+
+    override fun mayContainName(name: Name): Boolean {
+        return scope.mayContainName(name)
+    }
+
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        val matchedClass = scope.getClassifierByName(name) ?: return
+        val matchedClass = scope.getSingleClassifier(name) as? FirRegularClassSymbol ?: return
         val substitutor = substitutor.takeIf { matchedClass.fir.isInner } ?: ConeSubstitutor.Empty
         processor(matchedClass, substitutor)
     }
@@ -28,9 +46,7 @@ class FirNestedClassifierScopeWithSubstitution(
 fun FirScope.wrapNestedClassifierScopeWithSubstitutionForSuperType(
     superType: ConeClassLikeType,
     session: FirSession
-): FirScope = if (this is FirNestedClassifierScope) {
+): FirScope {
     val substitutor = createSubstitutionForSupertype(superType, session)
-    FirNestedClassifierScopeWithSubstitution(this, substitutor)
-} else {
-    this
+    return FirNestedClassifierScopeWithSubstitution(this, substitutor)
 }

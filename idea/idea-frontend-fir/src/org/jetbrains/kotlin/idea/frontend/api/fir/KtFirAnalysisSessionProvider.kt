@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
+import org.jetbrains.kotlin.idea.fir.low.level.api.api.FirModuleResolveState
 import org.jetbrains.kotlin.idea.frontend.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.KtAnalysisSessionProvider
@@ -24,7 +27,8 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
         CachedValuesManager.getManager(project).createCachedValue {
             CachedValueProvider.Result(
                 ConcurrentHashMap<ModuleInfo, KtAnalysisSession>(),
-                PsiModificationTracker.MODIFICATION_COUNT
+                PsiModificationTracker.MODIFICATION_COUNT,
+                ProjectRootModificationTracker.getInstance(project)
             )
         }
 
@@ -35,5 +39,15 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
         }.apply {
             assertIsValid()
         }
+    }
+
+    internal fun getAnalysisSessionByResolveState(firModuleResolveState: FirModuleResolveState): KtAnalysisSession =
+        analysisSessionByModuleInfoCache.value.getOrPut(firModuleResolveState.moduleInfo) {
+            KtFirAnalysisSession.createAnalysisSessionByResolveState(firModuleResolveState)
+        }
+
+    @TestOnly
+    fun clearCaches() {
+        analysisSessionByModuleInfoCache.value.clear()
     }
 }

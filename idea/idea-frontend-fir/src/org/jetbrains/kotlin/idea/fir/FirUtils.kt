@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.idea.fir
 
-import org.jetbrains.kotlin.fir.FirSymbolOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun FirFunctionCall.isImplicitFunctionCall(): Boolean {
     if (dispatchReceiver !is FirQualifiedAccessExpression) return false
-    val resolvedCalleeSymbol = (calleeReference as? FirResolvedNamedReference)?.resolvedSymbol
-    return (resolvedCalleeSymbol as? FirNamedFunctionSymbol)?.fir?.name == OperatorNameConventions.INVOKE
+    return calleeReference.getCandidateSymbols().any(FirBasedSymbol<*>::isInvokeFunction)
 }
+
+private fun FirBasedSymbol<*>.isInvokeFunction() =
+    (this as? FirNamedFunctionSymbol)?.fir?.name == OperatorNameConventions.INVOKE
 
 fun FirFunctionCall.getCalleeSymbol(): FirBasedSymbol<*>? =
     calleeReference.getResolvedSymbolOfNameReference()
@@ -37,19 +39,18 @@ internal fun FirReference.getResolvedKtSymbolOfNameReference(builder: KtSymbolBy
         builder.buildSymbol(firDeclaration)
     }
 
-internal inline fun <reified D> D.unrollFakeOverrides(): D where D : FirDeclaration, D : FirSymbolOwner<*> {
-    val symbol = symbol
-    if (symbol !is PossiblyFirFakeOverrideSymbol<*, *>) return this
-    if (!symbol.isFakeOrIntersectionOverride) return this
-    var current: FirBasedSymbol<*>? = symbol.overriddenSymbol
-    while (current is PossiblyFirFakeOverrideSymbol<*, *> && current.isFakeOrIntersectionOverride) {
-        current = current.overriddenSymbol
+internal fun FirErrorNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
+    when (val diagnostic = diagnostic) {
+        is ConeInapplicableCandidateError -> listOf(diagnostic.candidateSymbol)
+        is ConeHiddenCandidateError -> listOf(diagnostic.candidateSymbol)
+        is ConeAmbiguityError -> diagnostic.candidates
+        is ConeOperatorAmbiguityError -> diagnostic.candidates
+        is ConeUnsupportedCallableReferenceTarget -> listOf(diagnostic.fir.symbol)
+        else -> emptyList()
     }
-    return current?.fir as D
-}
 
-private inline val FirBasedSymbol<*>.isFakeOrIntersectionOverride: Boolean
-    get() {
-        val origin = (fir as? FirDeclaration)?.origin ?: return false
-        return origin == FirDeclarationOrigin.SubstitutionOverride || origin == FirDeclarationOrigin.IntersectionOverride
-    }
+internal fun FirNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<*>> = when(this) {
+    is FirResolvedNamedReference -> listOf(resolvedSymbol)
+    is FirErrorNamedReference -> getCandidateSymbols()
+    else -> emptyList()
+}

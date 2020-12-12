@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.name.FqName
 import java.io.File
 

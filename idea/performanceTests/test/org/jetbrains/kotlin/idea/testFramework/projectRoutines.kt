@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.testFramework
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzerSettings
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.ide.startup.impl.StartupManagerImpl
 import com.intellij.lang.LanguageAnnotators
 import com.intellij.lang.LanguageExtensionPoint
@@ -23,10 +24,10 @@ import com.intellij.openapi.startup.StartupManager
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.testFramework.ExtensionTestUtil
+import com.intellij.testFramework.TestApplicationManager
 import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.perf.util.logMessage
-import org.jetbrains.kotlin.idea.test.runPostStartupActivitiesOnce
 import java.nio.file.Paths
 
 fun commitAllDocuments() {
@@ -68,7 +69,7 @@ fun dispatchAllInvocationEvents() {
 }
 
 fun loadProjectWithName(path: String, name: String): Project? =
-    ProjectManagerEx.getInstanceEx().loadProject(Paths.get(path), name)
+    ProjectManagerEx.getInstanceEx().openProject(Paths.get(path), OpenProjectTask(projectName = name))
 
 fun TestApplicationManager.closeProject(project: Project) {
     val name = project.name
@@ -84,17 +85,12 @@ fun TestApplicationManager.closeProject(project: Project) {
     logMessage { "project '$name' is about to be closed" }
     dispatchAllInvocationEvents()
     val projectManagerEx = ProjectManagerEx.getInstanceEx()
-    projectManagerEx.forceCloseProjectEx(project, true)
-
+    projectManagerEx.forceCloseProject(project)
     logMessage { "project '$name' successfully closed" }
 }
 
 fun runStartupActivities(project: Project) {
-    with(StartupManager.getInstance(project) as StartupManagerImpl) {
-        //scheduleInitialVfsRefresh()
-        runStartupActivities()
-    }
-    runPostStartupActivitiesOnce(project)
+    // obsolete
 }
 
 fun waitForAllEditorsFinallyLoaded(project: Project) {

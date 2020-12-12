@@ -1,0 +1,56 @@
+fun sum(vararg args: Int): Int {
+  var result: Int = 0
+  { // BLOCK
+    val tmp0_iterator: IntIterator = args.iterator()
+    while (tmp0_iterator.hasNext()) { // BLOCK
+      val arg: Int = tmp0_iterator.next()
+      result = result.plus(other = arg)
+    }
+  }
+  return result
+}
+
+fun nsum(vararg args: Number): Int {
+  return sum(args = [*IntArray(size = args.<get-size>(), init = local fun <anonymous>(it: Int): Int {
+    return args.get(index = it).toInt()
+  }
+)])
+}
+
+fun zap(vararg b: String, k: Int = 42) {
+}
+
+fun usePlainArgs(fn: Function2<Int, Int, Int>) {
+}
+
+fun usePrimitiveArray(fn: Function1<IntArray, Int>) {
+}
+
+fun useArray(fn: Function1<Array<Int>, Int>) {
+}
+
+fun useStringArray(fn: Function1<Array<String>, Unit>) {
+}
+
+fun testPlainArgs() {
+  usePlainArgs(fn = local fun sum(p0: Int, p1: Int): Int {
+    return sum(args = [p0, p1])
+  }
+)
+}
+
+fun testPrimitiveArrayAsVararg() {
+  usePrimitiveArray(fn = ::sum)
+}
+
+fun testArrayAsVararg() {
+  useArray(fn = ::nsum)
+}
+
+fun testArrayAndDefaults() {
+  useStringArray(fn = local fun zap(p0: Array<out String>) {
+    zap(b = [*p0])
+  }
+)
+}
+

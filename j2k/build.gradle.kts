@@ -24,10 +24,8 @@ dependencies {
 
     testCompileOnly(intellijDep())
 
-    Platform[192].orHigher {
-        testCompileOnly(intellijPluginDep("java"))
-        testRuntimeOnly(intellijPluginDep("java"))
-    }
+    testCompileOnly(intellijPluginDep("java"))
+    testRuntimeOnly(intellijPluginDep("java"))
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testCompile(project(":idea:idea-gradle-native")) { isTransitive = false }

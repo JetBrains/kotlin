@@ -21,17 +21,28 @@ public final class TopLevelKt {
     public TopLevelKt() {
         super();
     }
-    private static final int topLevelProperty = 2;
     public static final int topLevelConstProperty = 2;
+    private static final int topLevelProperty = 2;
 
-    @org.jetbrains.annotations.Nullable()
-    public static final java.lang.String topLevelFunction() {
+    public static final void extensionFunction(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "rec")
+    java.lang.String $this$extensionFunction, @org.jetbrains.annotations.NotNull()
+    @Anno(value = "1")
+    java.lang.String a, @org.jetbrains.annotations.NotNull()
+    @Anno(value = "2")
+    java.lang.String b) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "propRec")
+    T $this$extensionProperty) {
         return null;
     }
 
-    @org.jetbrains.annotations.Nullable()
-    public static final <X extends java.lang.CharSequence, T extends java.util.List<? extends X>>T topLevelGenericFunction() {
-        return null;
+    @Anno(value = "extpr")
+    @java.lang.Deprecated()
+    public static void getExtensionProperty$annotations(java.lang.Object p0) {
     }
 
     public static final int getTopLevelProperty() {
@@ -43,31 +54,20 @@ public final class TopLevelKt {
         return null;
     }
 
-    public static final void extensionFunction(@org.jetbrains.annotations.NotNull()
-    @Anno(value = "rec")
-    java.lang.String $this$extensionFunction, @org.jetbrains.annotations.NotNull()
-    @Anno(value = "1")
-    java.lang.String a, @org.jetbrains.annotations.NotNull()
-    @Anno(value = "2")
-    java.lang.String b) {
-    }
-
-    @Anno(value = "extpr")
-    @java.lang.Deprecated()
-    public static void getExtensionProperty$annotations(java.lang.Object p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@org.jetbrains.annotations.NotNull()
-    @Anno(value = "propRec")
-    T $this$extensionProperty) {
-        return null;
-    }
-
     public static final <T extends java.lang.Object>void setExtensionProperty(@org.jetbrains.annotations.NotNull()
     @Anno(value = "propRec")
     T $this$extensionProperty, @org.jetbrains.annotations.NotNull()
     @Anno(value = "setparam")
     java.lang.String setParamName) {
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public static final java.lang.String topLevelFunction() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.Nullable()
+    public static final <X extends java.lang.CharSequence, T extends java.util.List<? extends X>>T topLevelGenericFunction() {
+        return null;
     }
 }

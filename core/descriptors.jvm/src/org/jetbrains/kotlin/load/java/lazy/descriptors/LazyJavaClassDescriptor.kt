@@ -76,13 +76,16 @@ class LazyJavaClassDescriptor(
 
     private val modality =
         if (jClass.isAnnotationType || jClass.isEnum) Modality.FINAL
-        else Modality.convertFromFlags(jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
+        // TODO: replace false with jClass.isSealed when it will be properly supported in platform
+        else Modality.convertFromFlags(sealed = false, jClass.isSealed || jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
 
     private val visibility = jClass.visibility
     private val isInner = jClass.outerClass != null && !jClass.isStatic
 
     override fun getKind() = kind
     override fun getModality() = modality
+
+    override fun isRecord(): Boolean = jClass.isRecord
 
     // To workaround a problem with Scala compatibility (KT-9700),
     // we consider private visibility of a Java top level class as package private
@@ -105,6 +108,7 @@ class LazyJavaClassDescriptor(
     override fun isExpect() = false
     override fun isActual() = false
     override fun isFun() = false
+    override fun isValue() = false
 
     private val typeConstructor = LazyJavaClassTypeConstructor()
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
@@ -177,7 +181,14 @@ class LazyJavaClassDescriptor(
     fun wasScopeContentRequested() =
         getUnsubstitutedMemberScope().wasContentRequested() || staticScope.wasContentRequested()
 
-    override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
+    override fun getSealedSubclasses(): Collection<ClassDescriptor> = if (modality == Modality.SEALED) {
+        val attributes = TypeUsage.COMMON.toAttributes()
+        jClass.permittedTypes.mapNotNull {
+            c.typeResolver.transformJavaType(it, attributes).constructor.declarationDescriptor as? ClassDescriptor
+        }
+    } else {
+        emptyList()
+    }
 
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 

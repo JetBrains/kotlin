@@ -107,6 +107,13 @@ class SymbolBasedClass(
     override val isEnum: Boolean
         get() = element.kind == ElementKind.ENUM
 
+    // TODO
+    override val isSealed: Boolean
+        get() = false
+
+    override val permittedTypes: Collection<JavaClassifierType>
+        get() = emptyList()
+
     override val lightClassOriginKind: LightClassOriginKind?
         get() = null
 
@@ -132,6 +139,12 @@ class SymbolBasedClass(
         get() = enclosedElements
             .filter { it.kind == ElementKind.CONSTRUCTOR }
             .map { SymbolBasedConstructor(it as ExecutableElement, this, javac) }
+
+    override val isRecord: Boolean
+        get() = false
+
+    override val recordComponents: Collection<JavaRecordComponent>
+        get() = emptyList()
 
     override fun hasDefaultConstructor() = false // default constructors are explicit in symbols
 

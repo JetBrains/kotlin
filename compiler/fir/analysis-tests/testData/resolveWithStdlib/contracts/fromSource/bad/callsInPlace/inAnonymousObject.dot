@@ -13,7 +13,7 @@ digraph inAnonymousObject_kt {
             3 [label="Variable declaration: lval obj: R|<anonymous>|"];
             4 [label="Access variable R|<local>/obj|"];
             5 [label="Function call: R|<local>/obj|.R|/<anonymous>.run|()"];
-            6 [label="Function call: R|<local>/d|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            6 [label="Function call: R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             7 [label="Exit block"];
         }
         8 [label="Exit function foo" style="filled" fillcolor=red];
@@ -102,7 +102,7 @@ digraph inAnonymousObject_kt {
         subgraph cluster_10 {
             color=blue
             30 [label="Enter block"];
-            31 [label="Function call: R|<local>/c|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            31 [label="Function call: R|<local>/c|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             32 [label="Exit block"];
         }
         33 [label="Exit function run" style="filled" fillcolor=red];

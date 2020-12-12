@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.isStatic
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.ConeNullability.NOT_NULL
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
@@ -54,7 +56,8 @@ class FirSyntheticPropertiesScope(
         getterSymbol: FirFunctionSymbol<*>,
         processor: (FirVariableSymbol<*>) -> Unit
     ) {
-        val getter = getterSymbol.fir as? FirSimpleFunction ?: return
+        if (getterSymbol !is FirNamedFunctionSymbol) return
+        val getter = getterSymbol.fir
 
         if (getter.typeParameters.isNotEmpty()) return
         if (getter.valueParameters.isNotEmpty()) return
@@ -74,7 +77,7 @@ class FirSyntheticPropertiesScope(
                     val parameter = setter.valueParameters.singleOrNull() ?: return
                     if (setter.typeParameters.isNotEmpty() || setter.isStatic) return
                     val parameterType = (parameter.returnTypeRef as? FirResolvedTypeRef)?.type ?: return
-                    if (getter.symbol.callableId.classId == setter.symbol.callableId.classId) {
+                    if (getter.symbol.dispatchReceiverClassOrNull() == setter.symbol.dispatchReceiverClassOrNull()) {
                         if (getterReturnType.withNullability(NOT_NULL) != parameterType.withNullability(NOT_NULL)) {
                             return
                         }
@@ -102,12 +105,16 @@ class FirSyntheticPropertiesScope(
             }
         }
 
+        val classLookupTag = getterSymbol.dispatchReceiverClassOrNull()
+        val packageName = classLookupTag?.classId?.packageFqName ?: getterSymbol.callableId.packageName
+        val className = classLookupTag?.classId?.relativeClassName
+
         val property = buildSyntheticProperty {
             session = this@FirSyntheticPropertiesScope.session
             name = propertyName
             symbol = SyntheticPropertySymbol(
                 accessorId = getterSymbol.callableId,
-                callableId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, propertyName)
+                callableId = CallableId(packageName, className, propertyName)
             )
             delegateGetter = getter
             delegateSetter = matchingSetter
@@ -115,10 +122,10 @@ class FirSyntheticPropertiesScope(
         processor(property.symbol)
     }
 
-    private fun FirFunctionSymbol<*>.hasJavaOverridden(): Boolean {
+    private fun FirNamedFunctionSymbol.hasJavaOverridden(): Boolean {
         var result = false
         baseScope.processOverriddenFunctionsAndSelf(this) {
-            if (it.unwrapSubstitutionOverrides().fir.origin == FirDeclarationOrigin.Enhancement) {
+            if (it.unwrapFakeOverrides().fir.origin == FirDeclarationOrigin.Enhancement) {
                 result = true
                 ProcessorAction.STOP
             } else {

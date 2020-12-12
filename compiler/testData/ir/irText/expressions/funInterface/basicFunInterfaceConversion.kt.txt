@@ -1,0 +1,16 @@
+fun interface Foo {
+  abstract fun invoke(): String 
+
+}
+
+fun foo(f: Foo): String {
+  return f.invoke()
+}
+
+fun test(): String {
+  return foo(f = local fun <anonymous>(): String {
+    return "OK"
+  }
+ /*-> Foo */)
+}
+

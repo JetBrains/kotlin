@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirClass
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirClassFactory
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.name.Name
 
-class ClassCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<CirClass, CirClass>() {
+class ClassCommonizer(classifiers: CirKnownClassifiers) : AbstractStandardCommonizer<CirClass, CirClass>() {
     private lateinit var name: Name
     private lateinit var kind: ClassKind
-    private val typeParameters = TypeParameterListCommonizer(cache)
+    private val typeParameters = TypeParameterListCommonizer(classifiers)
     private val modality = ModalityCommonizer()
     private val visibility = VisibilityCommonizer.equalizing()
     private var isInner = false
@@ -33,8 +33,7 @@ class ClassCommonizer(cache: CirClassifiersCache) : AbstractStandardCommonizer<C
         isData = false,
         isInline = isInline,
         isInner = isInner,
-        isExternal = false,
-        supertypes = mutableListOf()
+        isExternal = false
     )
 
     override fun initialize(first: CirClass) {

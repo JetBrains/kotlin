@@ -1,10 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
-
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 var result = "FAIL"
 
@@ -71,6 +69,18 @@ class Test3 {
     suspend fun test() = bar().s
 }
 
+class Test4 {
+    suspend fun <T> foo(value: T): T = value
+
+    suspend fun bar(): IC? {
+        run {
+            return foo(suspendMe())
+        }
+    }
+
+    suspend fun test() = bar()!!.s
+}
+
 fun box(): String {
     builder {
         Test1().test()
@@ -92,6 +102,13 @@ fun box(): String {
 
     builder {
         Test3().test()
+    }
+    c?.resumeWithException(IllegalStateException("OK"))
+
+    if (result != "OK") return "FAIL 3 $result"
+
+    builder {
+        Test4().test()
     }
     c?.resumeWithException(IllegalStateException("OK"))
 

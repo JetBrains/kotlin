@@ -7,7 +7,7 @@ plugins {
     kotlin("jvm")
 }
 
-val kotlinpAsmVersion = "7.0.1"
+val kotlinpAsmVersion = "8.0.1"
 
 val shadows by configurations.creating
 
@@ -29,9 +29,7 @@ dependencies {
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    Platform[192].orHigher {
-        testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency", "platform-objectSerializer") }
-    }
+    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency", "platform-objectSerializer") }
 
     shadows(project(":kotlinx-metadata-jvm", configuration = "runtime"))
     shadows("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")

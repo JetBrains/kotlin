@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
-import org.jetbrains.kotlin.ir.util.getInlinedClass
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -44,7 +42,8 @@ class CheckIrElementVisitor(
 
     override fun visitElement(element: IrElement) {
         if (config.ensureAllNodesAreDifferent && !visitedElements.add(element)) {
-            reportError(element, "Duplicate IR node: ${element.render()}")
+            val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
+            reportError(element, "Duplicate IR node: $renderString")
         }
     }
 
@@ -91,6 +90,7 @@ class CheckIrElementVisitor(
     override fun <T> visitConst(expression: IrConst<T>) {
         super.visitConst(expression)
 
+        @Suppress("UNUSED_VARIABLE")
         val naturalType = when (expression.kind) {
             IrConstKind.Null -> {
                 expression.ensureNullable()
@@ -107,12 +107,17 @@ class CheckIrElementVisitor(
             IrConstKind.Double -> irBuiltIns.doubleType
         }
 
+        /*
+        TODO: This check used to have JS inline class helpers. Rewrite it in a common way.
         var type = expression.type
         while (true) {
             val inlinedClass = type.getInlinedClass() ?: break
+            if (getInlineClassUnderlyingType(inlinedClass) == type)
+                break
             type = getInlineClassUnderlyingType(inlinedClass)
         }
         expression.ensureTypesEqual(type, naturalType)
+        */
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation) {

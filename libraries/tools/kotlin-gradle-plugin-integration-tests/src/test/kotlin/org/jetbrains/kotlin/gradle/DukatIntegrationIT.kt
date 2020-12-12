@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
@@ -107,7 +108,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         }
 
         val externalSrcs = "build/externals/$projectName/src"
-        project.build("generateExternalsIntegrated") {
+        project.build("compileKotlinJs") {
             assertSuccessful()
 
             assertSingleFileExists(externalSrcs, "index.module_decamelize.kt")
@@ -162,7 +163,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         }
 
         val externalSrcs = "build/externals/$projectName/src"
-        project.build("generateExternalsIntegrated") {
+        project.build("compileKotlinJs") {
             assertSuccessful()
 
             assertSingleFileExists(externalSrcs, "index.module_decamelize.kt")
@@ -330,7 +331,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         project.setupWorkingDir()
         project.gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
-        project.build("assemble") {
+        project.build("assemble", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
         }
     }
@@ -381,7 +382,7 @@ class DukatIntegrationIT : BaseGradleIT() {
         }
 
         val externalSrcs = "build/externals/both-jsIr/src"
-        project.build("assemble") {
+        project.build("assemble", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
 
             assertTasksExecuted(":irGenerateExternalsIntegrated")

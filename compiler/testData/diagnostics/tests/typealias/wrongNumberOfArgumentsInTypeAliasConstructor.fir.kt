@@ -29,9 +29,9 @@ val test3pr = <!INAPPLICABLE_CANDIDATE!>P2<!><String, Int, Int>(1, "")
 class Num<T : Number>(val x: T)
 typealias N<T> = Num<T>
 
-val testN0 = <!UPPER_BOUND_VIOLATED!>N("")<!>
+val testN0 = N("")
 val testN1 = N<Int>(1)
-val testN1a = <!UPPER_BOUND_VIOLATED!>N<String>("")<!>
+val testN1a = N<String>("")
 val testN2 = <!INAPPLICABLE_CANDIDATE!>N<!><Int, Int>(1)
 
 class MyPair<T1 : CharSequence, T2 : Number>(val string: T1, val number: T2)
@@ -39,4 +39,4 @@ typealias MP<T1> = MyPair<String, T1>
 
 val testMP0 = MP<Int>("", 1)
 val testMP1 = <!INAPPLICABLE_CANDIDATE!>MP<!>(1, "")
-val testMP2 = <!UPPER_BOUND_VIOLATED!>MP<String>("", "")<!>
+val testMP2 = MP<String>("", "")

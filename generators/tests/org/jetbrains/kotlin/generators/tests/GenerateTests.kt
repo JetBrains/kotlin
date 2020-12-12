@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassLoadingTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightClassSanityTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightFacadeClassTest
-import org.jetbrains.kotlin.asJava.classes.AbstractUltraLightScriptLoadingTest
+import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.copyright.AbstractUpdateKotlinCopyrightTest
 import org.jetbrains.kotlin.findUsages.*
@@ -81,18 +78,19 @@ import org.jetbrains.kotlin.idea.editor.AbstractMultiLineStringIndentTest
 import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
-import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.fir.AbstractKtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyDeclarationResolveTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleLazyResolveTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.AbstractFirMultiModuleResolveTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.file.structure.AbstractFileStructureTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.sessions.AbstractSessionsInvalidationTest
+import org.jetbrains.kotlin.idea.fir.low.level.api.trackers.AbstractProjectWideOutOfBlockKotlinModificationTrackerTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.frontend.api.fir.AbstractResolveCallTest
 import org.jetbrains.kotlin.idea.frontend.api.scopes.AbstractMemberScopeByFqNameTest
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolFromLibraryPointerRestoreTest
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByFqNameBuildingTest
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolFromSourcePointerRestoreTest
-import org.jetbrains.kotlin.idea.frontend.api.symbols.AbstractSymbolsByPsiBuildingTest
+import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyWithLibTest
 import org.jetbrains.kotlin.idea.highlighter.*
@@ -168,14 +166,13 @@ import org.jetbrains.kotlin.nj2k.AbstractTextNewJavaToKotlinCopyPasteConversionT
 import org.jetbrains.kotlin.nj2k.inference.common.AbstractCommonConstraintCollectorTest
 import org.jetbrains.kotlin.nj2k.inference.mutability.AbstractMutabilityInferenceTest
 import org.jetbrains.kotlin.nj2k.inference.nullability.AbstractNullabilityInferenceTest
-import org.jetbrains.kotlin.noarg.AbstractBlackBoxCodegenTestForNoArg
-import org.jetbrains.kotlin.noarg.AbstractBytecodeListingTestForNoArg
+import org.jetbrains.kotlin.noarg.*
+import org.jetbrains.kotlin.pacelize.ide.test.AbstractParcelizeCheckerTest
+import org.jetbrains.kotlin.pacelize.ide.test.AbstractParcelizeQuickFixTest
 import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeBoxTest
 import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeBytecodeListingTest
 import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeIrBoxTest
 import org.jetbrains.kotlin.parcelize.test.AbstractParcelizeIrBytecodeListingTest
-import org.jetbrains.kotlin.pacelize.ide.test.AbstractParcelizeCheckerTest
-import org.jetbrains.kotlin.pacelize.ide.test.AbstractParcelizeQuickFixTest
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
@@ -1020,6 +1017,10 @@ fun main(args: Array<String>) {
             testClass<AbstractSymbolFromLibraryPointerRestoreTest> {
                 model("resoreSymbolFromLibrary", extension = "txt")
             }
+
+            testClass<AbstractMemoryLeakInSymbolsTest> {
+                model("symbolMemoryLeak")
+            }
         }
 
         testGroup("idea/idea-frontend-fir/idea-fir-low-level-api/tests", "idea/testData") {
@@ -1038,6 +1039,18 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractFirLazyDeclarationResolveTest> {
                 model("lazyResolve")
+            }
+            testClass<AbstractProjectWideOutOfBlockKotlinModificationTrackerTest> {
+                model("outOfBlockProjectWide")
+            }
+            testClass<AbstractFileStructureAndOutOfBlockModificationTrackerConsistencyTest> {
+                model("outOfBlockProjectWide")
+            }
+            testClass<AbstractFileStructureTest> {
+                model("fileStructure")
+            }
+            testClass<AbstractSessionsInvalidationTest> {
+                model("sessionInvalidation", recursive = false, extension = null)
             }
         }
 
@@ -1219,6 +1232,20 @@ fun main(args: Array<String>) {
                     excludeDirs = listOf("local", "compilationErrors", "ideRegression"),
                     pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME
                 )
+            }
+        }
+
+        testGroup("idea/idea-fir/tests", "compiler/testData") {
+            testClass<AbstractFirLightClassTest> {
+                model("asJava/lightClasses", excludeDirs = listOf("delegation", "script"), pattern = KT_WITHOUT_DOTS_IN_NAME)
+            }
+
+            testClass<AbstractFirClassLoadingTest> {
+                model("asJava/ultraLightClasses", pattern = KT_OR_KTS)
+            }
+
+            testClass<AbstractFirLightFacadeClassTest> {
+                model("asJava/ultraLightFacades", pattern = KT_OR_KTS)
             }
         }
 
@@ -1636,13 +1663,17 @@ fun main(args: Array<String>) {
         }
 
         testGroup("plugins/noarg/noarg-cli/test", "plugins/noarg/noarg-cli/testData") {
+            testClass<AbstractDiagnosticsTestForNoArg> { model("diagnostics", extension = "kt") }
+
             testClass<AbstractBytecodeListingTestForNoArg> {
-                model("bytecodeListing", extension = "kt")
+                model("bytecodeListing", extension = "kt", targetBackend = TargetBackend.JVM)
+            }
+            testClass<AbstractIrBytecodeListingTestForNoArg> {
+                model("bytecodeListing", extension = "kt", targetBackend = TargetBackend.JVM_IR)
             }
 
-            testClass<AbstractBlackBoxCodegenTestForNoArg> {
-                model("box", targetBackend = TargetBackend.JVM)
-            }
+            testClass<AbstractBlackBoxCodegenTestForNoArg> { model("box", targetBackend = TargetBackend.JVM) }
+            testClass<AbstractIrBlackBoxCodegenTestForNoArg> { model("box", targetBackend = TargetBackend.JVM_IR) }
         }
 
         testGroup("plugins/sam-with-receiver/sam-with-receiver-cli/test", "plugins/sam-with-receiver/sam-with-receiver-cli/testData") {

@@ -57,7 +57,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
 
     private fun createSession(module: Module, provider: FirProjectSessionProvider): FirJavaModuleBasedSession {
         val moduleInfo = module.productionSourceInfo()!!
-        return FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, moduleInfo.contentScope())
+        return FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, moduleInfo.contentScope(), project)
     }
 
     private fun createLibrarySession(moduleInfo: IdeaModuleInfo, provider: FirProjectSessionProvider): FirLibrarySession {
@@ -69,7 +69,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
         val firFilesPerSession = mutableMapOf<FirJavaModuleBasedSession, List<FirFile>>()
         val processorsPerSession = mutableMapOf<FirJavaModuleBasedSession, List<FirTransformerBasedResolveProcessor>>()
         val sessions = mutableListOf<FirJavaModuleBasedSession>()
-        val provider = FirProjectSessionProvider(project)
+        val provider = FirProjectSessionProvider()
         for (module in project.allModules().drop(1)) {
             val session = createSession(module, provider)
             sessions += session

@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.fir.backend.jvm
 
+import org.jetbrains.kotlin.backend.jvm.codegen.IrTypeMapper
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.firProvider
@@ -41,10 +43,12 @@ class FirJvmSerializerExtension(
     state: GenerationState,
     private val irClass: IrClass,
     private val localDelegatedProperties: List<FirProperty>,
-    private val approximator: AbstractTypeApproximator
+    private val approximator: AbstractTypeApproximator,
+    typeMapper: IrTypeMapper,
+    components: Fir2IrComponents
 ) : FirSerializerExtension() {
     private val globalBindings = state.globalSerializationBindings
-    override val stringTable = FirJvmElementAwareStringTable()
+    override val stringTable = FirJvmElementAwareStringTable(typeMapper, components)
     private val useTypeTable = state.useTypeTableInSerializer
     private val moduleName = state.moduleName
     private val classBuilderMode = state.classBuilderMode
@@ -279,7 +283,7 @@ class FirJvmSerializerExtension(
         if (!hasJvmFieldAnnotation) return false
 
         val container =
-            symbol.callableId.classId?.let {
+            dispatchReceiverType?.classId?.let {
                 session.firProvider.getFirClassifierByFqName(it) as? FirRegularClass
             }
         if (container == null || !container.isCompanion) {

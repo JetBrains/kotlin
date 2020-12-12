@@ -1,0 +1,14 @@
+fun testScalar(a: Any): IntArray {
+  when {
+    a !is Int -> return intArrayOf()
+  }
+  return intArrayOf(elements = [a /*as Int */])
+}
+
+fun testSpread(a: Any): IntArray {
+  when {
+    a !is IntArray -> return intArrayOf()
+  }
+  return intArrayOf(elements = [*a /*as IntArray */])
+}
+

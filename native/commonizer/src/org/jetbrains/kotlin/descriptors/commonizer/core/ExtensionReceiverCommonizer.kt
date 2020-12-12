@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirExtensionReceiver
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirExtensionReceiverFactory
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
 
-class ExtensionReceiverCommonizer(cache: CirClassifiersCache) :
+class ExtensionReceiverCommonizer(classifiers: CirKnownClassifiers) :
     AbstractNullableCommonizer<CirExtensionReceiver, CirExtensionReceiver, CirType, CirType>(
-        wrappedCommonizerFactory = { TypeCommonizer(cache) },
+        wrappedCommonizerFactory = { TypeCommonizer(classifiers) },
         extractor = { it.type },
         builder = { receiverType ->
             CirExtensionReceiverFactory.create(

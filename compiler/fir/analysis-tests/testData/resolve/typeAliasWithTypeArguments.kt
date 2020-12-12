@@ -10,7 +10,7 @@ interface C {
     fun baz()
 }
 
-interface Inv<K, T>() {
+interface <!CONSTRUCTOR_IN_INTERFACE!>Inv<K, T>()<!> {
     fun k(): K
     fun t(): T
 }

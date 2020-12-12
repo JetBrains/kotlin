@@ -169,12 +169,34 @@ interface ParcelizeSyntheticComponent {
     }
 }
 
+val TYPE_PARCELER_FQ_NAMES = listOf(
+    FqName(kotlinx.parcelize.TypeParceler::class.java.name),
+    FqName(kotlinx.android.parcel.TypeParceler::class.java.name)
+)
+
+val WRITE_WITH_FQ_NAMES = listOf(
+    FqName(kotlinx.parcelize.WriteWith::class.java.name),
+    FqName(kotlinx.android.parcel.WriteWith::class.java.name)
+)
+
+val IGNORED_ON_PARCEL_FQ_NAMES = listOf(
+    FqName(kotlinx.parcelize.IgnoredOnParcel::class.java.name),
+    FqName(kotlinx.android.parcel.IgnoredOnParcel::class.java.name)
+)
+
 val PARCELIZE_CLASS_FQ_NAMES: List<FqName> = listOf(
     FqName(kotlinx.parcelize.Parcelize::class.java.canonicalName),
     FqName(kotlinx.android.parcel.Parcelize::class.java.canonicalName)
 )
 
+val RAW_VALUE_ANNOTATION_FQ_NAMES = listOf(
+    FqName(kotlinx.parcelize.RawValue::class.java.name),
+    @Suppress("DEPRECATION") FqName(kotlinx.android.parcel.RawValue::class.java.name)
+)
+
 internal val PARCELER_FQNAME = FqName(kotlinx.parcelize.Parceler::class.java.canonicalName)
+
+internal val OLD_PARCELER_FQNAME = FqName(kotlinx.android.parcel.Parceler::class.java.canonicalName)
 
 val ClassDescriptor.isParcelize: Boolean
     get() {

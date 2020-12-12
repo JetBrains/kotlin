@@ -269,6 +269,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
             offset, offset, classOrigin, vSymbol, Name.special("<this>"), -1, type, null,
             isCrossinline = false,
             isNoinline = false,
+            isHidden = false,
             isAssignable = false
         )
 
@@ -334,6 +335,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
                     offset, offset, memberOrigin, vSymbol, Name.identifier("p$i"), i - 1, vType, null,
                     isCrossinline = false,
                     isNoinline = false,
+                    isHidden = false,
                     isAssignable = false
                 )
                 vDeclaration.parent = fDeclaration
@@ -366,7 +368,7 @@ class IrFunctionFactory(private val irBuiltIns: IrBuiltIns, private val symbolTa
     private fun IrFunction.createValueParameter(descriptor: ParameterDescriptor): IrValueParameter = with(descriptor) {
         irFactory.createValueParameter(
             offset, offset, memberOrigin, IrValueParameterSymbolImpl(this), name, indexOrMinusOne, toIrType(type),
-            (this as? ValueParameterDescriptor)?.varargElementType?.let(::toIrType), isCrossinline, isNoinline
+            (this as? ValueParameterDescriptor)?.varargElementType?.let(::toIrType), isCrossinline, isNoinline, false, false
         ).also {
             it.parent = this@createValueParameter
         }

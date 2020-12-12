@@ -1,11 +1,10 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 // IGNORE_BACKEND: NATIVE
 
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 fun box(): String {
     val gg = object : Grouping<Int, String> {

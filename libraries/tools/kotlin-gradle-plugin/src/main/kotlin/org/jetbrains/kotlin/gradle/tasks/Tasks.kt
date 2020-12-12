@@ -16,6 +16,10 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
+import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -38,7 +42,7 @@ import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
-import org.jetbrains.kotlin.gradle.report.BuildReportMode
+import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
@@ -91,6 +95,10 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments>
 
     @get:Input
     internal var useFallbackCompilerSearch: Boolean = false
+
+    @get:Internal
+    override val metrics: BuildMetricsReporter =
+        BuildMetricsReporterImpl()
 
     @get:Classpath
     @get:InputFiles
@@ -195,7 +203,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         incremental
 
     @get:Internal
-    internal var buildReportMode: BuildReportMode? = null
+    internal var reportingSettings = ReportingSettings()
 
     @get:Internal
     internal val taskData: KotlinCompileTaskData = KotlinCompileTaskData.get(project, name)
@@ -315,6 +323,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
+    /** Keep lazy to avoid computing before all projects are evaluated. */
     @get:Internal
     internal val compilerRunner by lazy { compilerRunner() }
 
@@ -327,20 +336,22 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         // To prevent this, we backup outputs before incremental build and restore when exception is thrown
         val outputsBackup: TaskOutputsBackup? =
             if (isIncrementalCompilationEnabled() && inputs.isIncremental)
-                kotlinLogger.logTime("Backing up outputs for incremental build") {
+                metrics.measure(BuildTime.BACKUP_OUTPUT) {
                     TaskOutputsBackup(allOutputFiles())
                 }
             else null
 
         if (!isIncrementalCompilationEnabled()) {
             clearLocalState("IC is disabled")
+        } else if (!inputs.isIncremental) {
+            clearLocalState("Task cannot run incrementally")
         }
 
         try {
             executeImpl(inputs)
         } catch (t: Throwable) {
             if (outputsBackup != null) {
-                kotlinLogger.logTime("Restoring previous outputs on error") {
+                metrics.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
                     outputsBackup.restoreOutputs()
                 }
             }
@@ -523,7 +534,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         val environment = GradleCompilerEnvironment(
             computedCompilerClasspath, messageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
-            buildReportMode = buildReportMode,
+            reportingSettings = reportingSettings,
             incrementalCompilationEnvironment = icEnv,
             kotlinScriptExtensions = sourceFilesExtensions.toTypedArray()
         )
@@ -583,10 +594,7 @@ internal open class KotlinCompileWithWorkers @Inject constructor(
     private val workerExecutor: WorkerExecutor
 ) : KotlinCompile() {
 
-    @get:Internal
-    val compilerRunnerValue = GradleCompilerRunnerWithWorkers(GradleCompileTaskProvider(this), workerExecutor)
-
-    override fun compilerRunner() = compilerRunnerValue
+    override fun compilerRunner() = GradleCompilerRunnerWithWorkers(GradleCompileTaskProvider(this), workerExecutor)
 }
 
 @CacheableTask
@@ -750,7 +758,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         val environment = GradleCompilerEnvironment(
             computedCompilerClasspath, messageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
-            buildReportMode = buildReportMode,
+            reportingSettings = reportingSettings,
             incrementalCompilationEnvironment = icEnv
         )
         compilerRunner.runJsCompilerAsync(sourceRoots.kotlinSourceFiles, commonSourceSet.toList(), args, environment)

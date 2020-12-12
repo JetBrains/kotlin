@@ -38,6 +38,14 @@ interface IrDeclarationOrigin {
 
     object FILE_CLASS : IrDeclarationOriginImpl("FILE_CLASS")
     object SYNTHETIC_FILE_CLASS : IrDeclarationOriginImpl("SYNTHETIC_FILE_CLASS", isSynthetic = true)
+    object JVM_MULTIFILE_CLASS : IrDeclarationOriginImpl("JVM_MULTIFILE_CLASS")
+
+    object SCRIPT_CLASS : IrDeclarationOriginImpl("SCRIPT_CLASS")
+    object SCRIPT_STATEMENT : IrDeclarationOriginImpl("SCRIPT_STATEMENT")
+    object SCRIPT_CALL_PARAMETER : IrDeclarationOriginImpl("SCRIPT_CALL_PARAMETER")
+    object SCRIPT_IMPLICIT_RECEIVER : IrDeclarationOriginImpl("SCRIPT_IMPLICIT_RECEIVER")
+    object SCRIPT_PROVIDED_PROPERTY : IrDeclarationOriginImpl("SCRIPT_PROVIDED_PROPERTY")
+    object SCRIPT_RESULT_PROPERTY : IrDeclarationOriginImpl("SCRIPT_RESULT_PROPERTY")
     object GENERATED_DATA_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_DATA_CLASS_MEMBER")
     object GENERATED_INLINE_CLASS_MEMBER : IrDeclarationOriginImpl("GENERATED_INLINE_CLASS_MEMBER")
     object LOCAL_FUNCTION_FOR_LAMBDA : IrDeclarationOriginImpl("LOCAL_FUNCTION_FOR_LAMBDA")
@@ -60,7 +68,8 @@ interface IrDeclarationOrigin {
     object ADAPTER_FOR_SUSPEND_CONVERSION : IrDeclarationOriginImpl("ADAPTER_FOR_SUSPEND_CONVERSION")
     object ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION : IrDeclarationOriginImpl("ADAPTER_PARAMETER_FOR_SUSPEND_CONVERSION")
 
-    object GENERATED_SAM_IMPLEMENTATION : IrDeclarationOriginImpl("GENERATED_SAM_IMPLEMENTATION", isSynthetic = true)
+    object GENERATED_SAM_IMPLEMENTATION : IrDeclarationOriginImpl("GENERATED_SAM_IMPLEMENTATION")
+    object SYNTHETIC_GENERATED_SAM_IMPLEMENTATION : IrDeclarationOriginImpl("SYNTHETIC_GENERATED_SAM_IMPLEMENTATION", isSynthetic = true)
 
     val isSynthetic: Boolean get() = false
 }

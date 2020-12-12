@@ -40,9 +40,27 @@ public class D8Checker {
         });
     }
 
+    // Compilation with D8 should proceed with no output. There should be no info, warnings, or errors.
+    static class TestDiagnosticsHandler implements DiagnosticsHandler {
+        @Override
+        public void error(Diagnostic diagnostic) {
+            Assert.fail("D8 dexing error: " + diagnostic.getDiagnosticMessage());
+        }
+
+        @Override
+        public void warning(Diagnostic diagnostic) {
+            Assert.fail("D8 dexing warning: " + diagnostic.getDiagnosticMessage());
+        }
+
+        @Override
+        public void info(Diagnostic diagnostic) {
+            Assert.fail("D8 dexing info: " + diagnostic.getDiagnosticMessage());
+        }
+    }
+
     private static void runD8(Consumer<D8Command.Builder> addInput) {
         ProgramConsumer ignoreOutputConsumer = new DexIndexedConsumer.ForwardingConsumer(null);
-        D8Command.Builder builder = D8Command.builder()
+        D8Command.Builder builder = D8Command.builder(new TestDiagnosticsHandler())
                 .setMinApiLevel(28)
                 .setMode(CompilationMode.DEBUG)
                 .setProgramConsumer(ignoreOutputConsumer);

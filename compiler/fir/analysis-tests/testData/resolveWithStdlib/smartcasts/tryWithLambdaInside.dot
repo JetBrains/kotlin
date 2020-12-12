@@ -101,8 +101,8 @@ finally {
     11 -> {12};
     12 -> {13};
     13 -> {14};
-    14 -> {30 15};
-    14 -> {22}    [label=onUncaughtException];
+    13 -> {22}    [label=onUncaughtException];
+    14 -> {15};
     15 -> {16};
     16 -> {17};
     17 -> {31};
@@ -192,8 +192,8 @@ finally {
     36 -> {37};
     37 -> {38};
     38 -> {39};
-    39 -> {55 40};
-    39 -> {47}    [label=onUncaughtException];
+    38 -> {47}    [label=onUncaughtException];
+    39 -> {40};
     40 -> {41};
     41 -> {42};
     42 -> {43 56};

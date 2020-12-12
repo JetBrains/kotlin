@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Compan
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_SPEC_TASK_NAME
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume.assumeTrue
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -63,6 +65,7 @@ class CocoaPodsIT : BaseGradleIT() {
 
     private val defaultPodRepo = "https://github.com/AFNetworking/AFNetworking"
     private val defaultPodName = "AFNetworking"
+    private val defaultLibraryPodName = "YandexMapKit"
     private val downloadUrlPodName = "podspecWithFilesExample"
     private val downloadUrlRepoName = "https://github.com/alozhkin/podspecWithFilesExample/raw/master"
     private val defaultTarget = "IOS"
@@ -728,6 +731,40 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testUseLibrariesMode() {
+        with(project) {
+            gradleBuildScript().appendToCocoapodsBlock("useLibraries()")
+            gradleBuildScript().addPod(defaultLibraryPodName)
+            testImport()
+        }
+    }
+
+    @Test
+    fun testCommaSeparatedTargets() {
+        with(project) {
+            gradleBuildScript().modify {
+                // Replace a single target with a pair (iosX64 + iosArm64) to test building a fat framework.
+                it.replace("iosX64(\"iOS\")", "ios()")
+            }
+            hooks.addHook {
+                // Check that a built universal framework includes both device and simulator architectures.
+                val framework = fileInWorkingDir("build/cocoapods/framework/cocoapods.framework/cocoapods")
+                with(runProcess(listOf("file", framework.absolutePath), projectDir)) {
+                    assertTrue(isSuccessful)
+                    assertTrue(output.contains("\\(for architecture x86_64\\):\\s+current ar archive".toRegex()))
+                    assertTrue(output.contains("\\(for architecture arm64\\):\\s+current ar archive".toRegex()))
+                }
+            }
+            // Run the build.
+            test(
+                "syncFramework",
+                "-Pkotlin.native.cocoapods.target=ios_x64,ios_arm64",
+                "-Pkotlin.native.cocoapods.configuration=DEBUG"
+            )
+        }
+    }
+
     // paths
 
     private fun CompiledProject.url() = externalSources().resolve("url")
@@ -867,7 +904,6 @@ class CocoaPodsIT : BaseGradleIT() {
         vararg args: String
     ) {
         // check that test executable
-        assumeTrue(HostManager.hostIsMac)
         build(taskName, *args) {
             //base checks
             assertSuccessful()
@@ -1082,7 +1118,6 @@ class CocoaPodsIT : BaseGradleIT() {
         subprojectsToFrameworkNamesMap: Map<String, String?>,
         subprojectsToPodspecContentMap: Map<String, String?>
     ) {
-        assumeTrue(HostManager.hostIsMac)
         val gradleProject = transformProjectWithPluginsDsl(projectName, gradleVersion)
 
         for ((subproject, frameworkName) in subprojectsToFrameworkNamesMap) {
@@ -1154,7 +1189,6 @@ class CocoaPodsIT : BaseGradleIT() {
         iosAppLocation: String?,
         subprojectsToFrameworkNamesMap: Map<String, String?>
     ) {
-        assumeTrue(HostManager.hostIsMac)
         val gradleProject = transformProjectWithPluginsDsl(projectName, gradleVersion)
 
         with(gradleProject) {
@@ -1236,7 +1270,7 @@ class CocoaPodsIT : BaseGradleIT() {
                     spec.pod_target_xcconfig = {
                         'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
                         'KOTLIN_TARGET[sdk=iphoneos*]' => 'ios_arm',
-                        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
+                        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x64',
                         'KOTLIN_TARGET[sdk=watchos*]' => 'watchos_arm',
                         'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
                         'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
@@ -1278,7 +1312,7 @@ class CocoaPodsIT : BaseGradleIT() {
                     spec.pod_target_xcconfig = {
                         'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
                         'KOTLIN_TARGET[sdk=iphoneos*]' => 'ios_arm',
-                        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
+                        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x64',
                         'KOTLIN_TARGET[sdk=watchos*]' => 'watchos_arm',
                         'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
                         'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
@@ -1304,4 +1338,11 @@ class CocoaPodsIT : BaseGradleIT() {
                 end
             """.trimIndent()
 
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun assumeItsMac() {
+            assumeTrue(HostManager.hostIsMac)
+        }
+    }
 }

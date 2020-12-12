@@ -33,12 +33,12 @@ enum class C {
 }
 
 fun f() {
-    C.E1.A
+    C.E1.<!UNRESOLVED_REFERENCE!>A<!>
     C.E1.<!UNRESOLVED_REFERENCE!>A<!>()
     C.E2.B()
 
-    C.E2.O
-    C.E3.O.InO
+    C.E2.<!UNRESOLVED_REFERENCE!>O<!>
+    C.E3.<!UNRESOLVED_REFERENCE!>O<!>.<!UNRESOLVED_REFERENCE!>InO<!>
 
     C.O
     C.O.InO

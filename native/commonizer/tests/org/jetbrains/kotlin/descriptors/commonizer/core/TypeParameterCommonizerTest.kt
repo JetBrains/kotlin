@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.descriptors.commonizer.core
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeParameterFactory
-import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
+import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.junit.Test
 
 class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, CirTypeParameter>() {
-    override fun createCommonizer() = TypeParameterCommonizer(EMPTY_CLASSIFIERS_CACHE)
+    override fun createCommonizer() = TypeParameterCommonizer(MOCK_CLASSIFIERS)
 
     @Test
     fun allAreReified() = doTestSuccess(

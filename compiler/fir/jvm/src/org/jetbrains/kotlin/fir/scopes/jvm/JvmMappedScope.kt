@@ -18,35 +18,38 @@ class JvmMappedScope(
     private val signatures: Signatures
 ) : FirTypeScope() {
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         val visibleMethods = signatures.visibleMethodSignaturesByName[name]
             ?: return declaredMemberScope.processFunctionsByName(name, processor)
+
+        val declared = mutableListOf<FirNamedFunctionSymbol>()
+        declaredMemberScope.processFunctionsByName(name) { symbol ->
+            declared += symbol
+            processor(symbol)
+        }
+
+        val declaredSignatures by lazy {
+            declared.mapTo(mutableSetOf()) { it.fir.computeJvmDescriptorReplacingKotlinToJava() }
+        }
+
         javaMappedClassUseSiteScope.processFunctionsByName(name) { symbol ->
-            val jvmSignature = symbol.fir.computeJvmDescriptor()
-                .replace("kotlin/Any", "java/lang/Object")
-                .replace("kotlin/String", "java/lang/String")
-                .replace("kotlin/Throwable", "java/lang/Throwable")
-            if (jvmSignature in visibleMethods) {
+            val jvmSignature = symbol.fir.computeJvmDescriptorReplacingKotlinToJava()
+            if (jvmSignature in visibleMethods && jvmSignature !in declaredSignatures) {
                 processor(symbol)
             }
         }
-
-        declaredMemberScope.processFunctionsByName(name, processor)
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
-        functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+        functionSymbol: FirNamedFunctionSymbol,
+        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
     ) = ProcessorAction.NONE
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         val hiddenConstructors = signatures.hiddenConstructors
         if (hiddenConstructors.isNotEmpty()) {
             javaMappedClassUseSiteScope.processDeclaredConstructors { symbol ->
-                val jvmSignature = symbol.fir.computeJvmDescriptor()
-                    .replace("kotlin/Any", "java/lang/Object")
-                    .replace("kotlin/String", "java/lang/String")
-                    .replace("kotlin/Throwable", "java/lang/Throwable")
+                val jvmSignature = symbol.fir.computeJvmDescriptorReplacingKotlinToJava()
                 if (jvmSignature !in hiddenConstructors) {
                     processor(symbol)
                 }
@@ -72,7 +75,7 @@ class JvmMappedScope(
     }
 
     override fun getCallableNames(): Set<Name> {
-        return declaredMemberScope.getContainingCallableNamesIfPresent()
+        return declaredMemberScope.getContainingCallableNamesIfPresent() + signatures.visibleMethodSignaturesByName.keys
     }
 
     override fun getClassifierNames(): Set<Name> {
@@ -87,7 +90,7 @@ class JvmMappedScope(
 
         // NOTE: No-arg constructors
         @OptIn(ExperimentalStdlibApi::class)
-        private val additionalHiddenConstructors = buildSet<String> {
+        private val additionalHiddenConstructors = buildSet {
             // kotlin.text.String pseudo-constructors should be used instead of java.lang.String constructors
             listOf(
                 "",
@@ -110,12 +113,13 @@ class JvmMappedScope(
             ).mapTo(this) { arguments -> "java/lang/Throwable.<init>($arguments)V" }
         }
 
-        fun prepareSignatures(klass: FirRegularClass): Signatures {
+        fun prepareSignatures(klass: FirRegularClass, isMutable: Boolean): Signatures {
 
             val signaturePrefix = klass.symbol.classId.toString()
             val visibleMethodsByName = mutableMapOf<Name, MutableSet<String>>()
             JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES.filter { signature ->
-                signature.startsWith(signaturePrefix)
+                signature in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES == isMutable &&
+                        signature.startsWith(signaturePrefix)
             }.map { signature ->
                 // +1 to delete dot before function name
                 signature.substring(signaturePrefix.length + 1)

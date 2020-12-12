@@ -37,7 +37,7 @@ fun test3() {
     catch (e: B) {
         return
     }
-    a.hashCode() // a is nullable here
+    a.<!INAPPLICABLE_CANDIDATE!>hashCode<!>() // a is nullable here
 }
 fun test4() {
     var a: Int? = null

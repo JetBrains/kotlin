@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -60,6 +61,7 @@ class JvmSerializerExtension @JvmOverloads constructor(
     override val metadataVersion = state.metadataVersion
     private val jvmDefaultMode = state.jvmDefaultMode
     private val approximator = state.typeApproximator
+    private val useOldManglingScheme = state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
     override fun shouldSerializeFunction(descriptor: FunctionDescriptor): Boolean {
@@ -215,6 +217,13 @@ class JvmSerializerExtension @JvmOverloads constructor(
         ) {
             versionRequirementTable?.writeFunctionNameManglingForReturnTypeRequirement(proto::addVersionRequirement)
         }
+
+        if ((requiresFunctionNameManglingForReturnType(descriptor) ||
+                    requiresFunctionNameManglingForParameterTypes(descriptor)) &&
+            !DescriptorUtils.hasJvmNameAnnotation(descriptor) && !useOldManglingScheme
+        ) {
+            versionRequirementTable?.writeNewFunctionNameManglingRequirement(proto::addVersionRequirement)
+        }
     }
 
     private fun MutableVersionRequirementTable.writeInlineParameterNullCheckRequirement(add: (Int) -> Unit) {
@@ -229,6 +238,10 @@ class JvmSerializerExtension @JvmOverloads constructor(
         if (functionsWithInlineClassReturnTypesMangled) {
             add(writeVersionRequirement(1, 4, 0, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, this))
         }
+    }
+
+    private fun MutableVersionRequirementTable.writeNewFunctionNameManglingRequirement(add: (Int) -> Unit) {
+        add(writeVersionRequirement(1, 4, 30, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this))
     }
 
     private fun FunctionDescriptor.needsInlineParameterNullCheckRequirement(): Boolean =
@@ -278,6 +291,9 @@ class JvmSerializerExtension @JvmOverloads constructor(
         }
 
         if (!DescriptorUtils.hasJvmNameAnnotation(descriptor) && requiresFunctionNameManglingForReturnType(descriptor)) {
+            if (!useOldManglingScheme) {
+                versionRequirementTable?.writeNewFunctionNameManglingRequirement(proto::addVersionRequirement)
+            }
             versionRequirementTable?.writeFunctionNameManglingForReturnTypeRequirement(proto::addVersionRequirement)
         }
     }

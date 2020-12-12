@@ -1,0 +1,21 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class NoArg {
+    // source: 'nestedClass.kt'
+}
+
+@NoArg
+@kotlin.Metadata
+public final class Outer$Nested {
+    // source: 'nestedClass.kt'
+    public method <init>(): void
+    public method <init>(p0: long): void
+    public final inner class Outer$Nested
+}
+
+@kotlin.Metadata
+public final class Outer {
+    // source: 'nestedClass.kt'
+    public method <init>(): void
+    public final inner class Outer$Nested
+}

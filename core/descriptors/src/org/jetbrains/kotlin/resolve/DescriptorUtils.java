@@ -270,7 +270,7 @@ public class DescriptorUtils {
     }
 
     public static boolean isSealedClass(@Nullable DeclarationDescriptor descriptor) {
-        return isKindOf(descriptor, ClassKind.CLASS) && ((ClassDescriptor) descriptor).getModality() == Modality.SEALED;
+        return (isKindOf(descriptor, ClassKind.CLASS) || isKindOf(descriptor, ClassKind.INTERFACE)) && ((ClassDescriptor) descriptor).getModality() == Modality.SEALED;
     }
 
     public static boolean isAnonymousObject(@NotNull DeclarationDescriptor descriptor) {
@@ -380,10 +380,20 @@ public class DescriptorUtils {
     }
 
     @NotNull
-    public static DescriptorVisibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
+    public static DescriptorVisibility getDefaultConstructorVisibility(
+            @NotNull ClassDescriptor classDescriptor,
+            boolean freedomForSealedInterfacesSupported
+    ) {
         ClassKind classKind = classDescriptor.getKind();
-        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton() || isSealedClass(classDescriptor)) {
+        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton()) {
             return DescriptorVisibilities.PRIVATE;
+        }
+        if (isSealedClass(classDescriptor)) {
+            if (freedomForSealedInterfacesSupported) {
+                return DescriptorVisibilities.INTERNAL;
+            } else {
+                return DescriptorVisibilities.PRIVATE;
+            }
         }
         if (isAnonymousObject(classDescriptor)) {
             return DescriptorVisibilities.DEFAULT_VISIBILITY;

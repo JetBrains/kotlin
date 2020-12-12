@@ -9,7 +9,12 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.codegen.classFileContainsMethod
+import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
+import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -33,7 +38,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 /**
  * Keeps track of replacement functions and inline class box/unbox functions.
  */
-class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, private val irFactory: IrFactory) {
+class MemoizedInlineClassReplacements(
+    private val mangleReturnTypes: Boolean,
+    private val irFactory: IrFactory,
+    private val context: JvmBackendContext
+) {
     private val storageManager = LockBasedStorageManager("inline-class-replacements")
     private val propertyMap = mutableMapOf<IrPropertySymbol, IrProperty>()
 
@@ -63,6 +72,8 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
                     when {
                         it.isRemoveAtSpecialBuiltinStub() ->
                             null
+                        it.isInlineClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod() ->
+                            null
                         it.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ->
                             createMethodReplacement(it)
                         else ->
@@ -70,7 +81,7 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
                     }
 
                 // Otherwise, mangle functions with mangled parameters, ignoring constructors
-                it is IrSimpleFunction && (it.hasMangledParameters || mangleReturnTypes && it.hasMangledReturnType) ->
+                it is IrSimpleFunction && !it.isFromJava() && (it.hasMangledParameters || mangleReturnTypes && it.hasMangledReturnType) ->
                     if (it.dispatchReceiverParameter != null)
                         createMethodReplacement(it)
                     else
@@ -86,6 +97,23 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
                 name.asString() == "remove" &&
                 valueParameters.size == 1 &&
                 valueParameters[0].type.isInt()
+
+    private fun IrFunction.isInlineClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod(): Boolean {
+        if (this !is IrSimpleFunction) return false
+        if (!this.isFakeOverride) return false
+        val parentClass = parentClassOrNull ?: return false
+        if (!parentClass.isInline) return false
+
+        val overridden = resolveFakeOverride() ?: return false
+        if (!overridden.parentAsClass.isJvmInterface) return false
+        if (overridden.modality == Modality.ABSTRACT) return false
+
+        // We have a non-abstract interface member.
+        // It is a JVM default interface method if one of the following conditions are true:
+        // - it is a Java method,
+        // - it is a Kotlin function compiled to JVM default interface method.
+        return overridden.isFromJava() || overridden.isCompiledToJvmDefault(context.state.jvmDefaultMode)
+    }
 
     /**
      * Get the box function for an inline class. Concretely, this is a synthetic
@@ -215,11 +243,19 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
         if (noFakeOverride) {
             isFakeOverride = false
         }
-        name = mangledNameFor(function, mangleReturnTypes)
+        val useOldManglingScheme = context.state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
+        name = mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
+        if (
+            !useOldManglingScheme &&
+            name.asString().contains("-") &&
+            classFileContainsMethod(function, context, name.asString()) == false
+        ) {
+            name = mangledNameFor(function, mangleReturnTypes, true)
+        }
         returnType = function.returnType
     }.apply {
         parent = function.parent
-        annotations += function.annotations
+        annotations = function.annotations
         copyTypeParameters(function.allTypeParameters)
         if (function.metadata != null) {
             metadata = function.metadata
@@ -237,6 +273,7 @@ class MemoizedInlineClassReplacements(private val mangleReturnTypes: Boolean, pr
                     }.apply {
                         parent = propertySymbol.owner.parent
                         copyAttributes(propertySymbol.owner)
+                        annotations = propertySymbol.owner.annotations
                     }
                 }
                 correspondingPropertySymbol = property.symbol

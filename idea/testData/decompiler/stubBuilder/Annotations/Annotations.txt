@@ -52,6 +52,16 @@ PsiJetFileStubImpl[package=]
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=f]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
+                ANNOTATION_TARGET[useSiteTarget=FIELD]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=java]
+                        REFERENCE_EXPRESSION[referencedName=lang]
+                      REFERENCE_EXPRESSION[referencedName=Deprecated]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE

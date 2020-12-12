@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
+import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -14,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.EmptyPackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -29,9 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
@@ -54,9 +52,8 @@ abstract class KotlinIrLinker(
     val logger: LoggingContext,
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
-    private val exportedDependencies: List<ModuleDescriptor>,
-    private val deserializeFakeOverrides: Boolean
-) : IrDeserializer {
+    private val exportedDependencies: List<ModuleDescriptor>
+) : IrDeserializer, FileLocalAwareLinker {
 
     // Kotlin-MPP related data. Consider some refactoring
     private val expectUniqIdToActualUniqId = mutableMapOf<IdSignature, IdSignature>()
@@ -73,7 +70,6 @@ abstract class KotlinIrLinker(
     abstract val translationPluginContext: TranslationPluginContext?
 
     private val haveSeen = mutableSetOf<IrSymbol>()
-    private val fakeOverrideClassQueue = mutableListOf<IrClass>()
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
@@ -130,6 +126,14 @@ abstract class KotlinIrLinker(
             fileToDeserializerMap.values.forEach { it.deserializeExpectActualMapping() }
         }
 
+        override fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature) : IrSimpleFunctionSymbol =
+            fileToDeserializerMap[file]?.referenceSimpleFunctionByLocalSignature(idSignature)
+                ?: error("No deserializer for file $file in module ${moduleDescriptor.name}")
+
+        override fun referencePropertyByLocalSignature(file: IrFile, idSignature: IdSignature): IrPropertySymbol =
+            fileToDeserializerMap[file]?.referencePropertyByLocalSignature(idSignature)
+                ?: error("No deserializer for file $file in module ${moduleDescriptor.name}")
+
         // TODO: fix to topLevel checker
         override fun contains(idSig: IdSignature): Boolean = idSig in moduleReversedFileIndex
 
@@ -168,7 +172,6 @@ abstract class KotlinIrLinker(
                     fileIndex,
                     !strategy.needBodies,
                     strategy.inlineBodies,
-                    deserializeFakeOverrides,
                     moduleDeserializer, allowErrorNodes
                 ).apply {
 
@@ -231,10 +234,18 @@ abstract class KotlinIrLinker(
         private val fileIndex: Int,
         onlyHeaders: Boolean,
         inlineBodies: Boolean,
-        deserializeFakeOverrides: Boolean,
         private val moduleDeserializer: IrModuleDeserializer,
         allowErrorNodes: Boolean
-    ) : IrFileDeserializer(logger, builtIns, symbolTable, !onlyHeaders, deserializeFakeOverrides, fakeOverrideClassQueue, allowErrorNodes) {
+    ) :
+        IrFileDeserializer(
+            logger,
+            builtIns,
+            symbolTable,
+            !onlyHeaders,
+            fakeOverrideBuilder,
+            allowErrorNodes
+        )
+    {
 
         private var fileLoops = mutableMapOf<Int, IrLoop>()
 
@@ -364,6 +375,12 @@ abstract class KotlinIrLinker(
                 referenceDeserializedSymbol(symbolKind, idSig)
             }
         }
+
+        fun referenceSimpleFunctionByLocalSignature(idSignature: IdSignature) : IrSimpleFunctionSymbol =
+            deserializeIrSymbolData(idSignature, BinarySymbolData.SymbolKind.FUNCTION_SYMBOL) as IrSimpleFunctionSymbol
+
+        fun referencePropertyByLocalSignature(idSignature: IdSignature): IrPropertySymbol =
+            deserializeIrSymbolData(idSignature, BinarySymbolData.SymbolKind.PROPERTY_SYMBOL) as IrPropertySymbol
 
         private fun deserializeIrSymbolData(idSignature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
             if (idSignature.isLocal) return deserializeIrLocalSymbolData(idSignature, symbolKind)
@@ -582,6 +599,18 @@ abstract class KotlinIrLinker(
         return symbol.owner as IrDeclaration
     }
 
+    override fun tryReferencingSimpleFunctionByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrSimpleFunctionSymbol? {
+        if (idSignature.isPublic) return null
+        return deserializersForModules[parent.file.packageFragmentDescriptor.containingDeclaration]?.referenceSimpleFunctionByLocalSignature(parent.file, idSignature)
+            ?: error("No module deserializer for ${parent.render()}")
+    }
+
+    override fun tryReferencingPropertyByLocalSignature(parent: IrDeclaration, idSignature: IdSignature): IrPropertySymbol? {
+        if (idSignature.isPublic) return null
+        return deserializersForModules[parent.file.packageFragmentDescriptor.containingDeclaration]?.referencePropertyByLocalSignature(parent.file, idSignature)
+            ?: error("No module deserializer for ${parent.render()}")
+    }
+
     protected open fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer =
         CurrentModuleDeserializer(moduleFragment, dependencies)
 
@@ -600,12 +629,7 @@ abstract class KotlinIrLinker(
 
     override fun postProcess() {
         finalizeExpectActualLinker()
-        
-        while (fakeOverrideClassQueue.isNotEmpty()) {
-            val klass = fakeOverrideClassQueue.removeLast()
-            fakeOverrideBuilder.provideFakeOverrides(klass)
-        }
-
+        fakeOverrideBuilder.provideFakeOverrides()
         haveSeen.clear()
 
         // TODO: fix IrPluginContext to make it not produce additional external reference

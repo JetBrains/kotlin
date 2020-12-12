@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -23,13 +22,11 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.ir.types.isPrimitiveType as irTypePredicates_isPrimitiveType
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesContext, TypeSystemCommonBackendContext {
 
     val irBuiltIns: IrBuiltIns
@@ -90,8 +87,13 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.getArgument(index: Int): TypeArgumentMarker =
         when (this) {
-            is IrSimpleType -> arguments[index]
-            else -> error("Type $this has no arguments")
+            is IrSimpleType ->
+                if (index >= arguments.size)
+                    error("No argument $index in type '${this.render()}'")
+                else
+                    arguments[index]
+            else ->
+                error("Type $this has no arguments")
         }
 
     override fun KotlinTypeMarker.asTypeArgument() = this as IrTypeArgument
@@ -309,7 +311,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? =
         (this as? IrType)?.annotations?.firstOrNull { annotation ->
-            annotation.symbol.owner.parentAsClass.descriptor.fqNameSafe == fqName
+            annotation.symbol.owner.parentAsClass.hasEqualFqName(fqName)
         }?.run {
             if (valueArgumentsCount > 0) (getValueArgument(0) as? IrConst<*>)?.value else null
         }
@@ -345,18 +347,18 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
-        if (this !is IrClassSymbol || !isPublicApi) return null
+        if (this !is IrClassSymbol) return null
 
-        val signature = signature.asPublic()
+        val signature = signature?.asPublic()
         if (signature == null || signature.packageFqName != "kotlin") return null
 
         return PrimitiveType.getByShortName(signature.declarationFqName)
     }
 
     override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? {
-        if (this !is IrClassSymbol || !isPublicApi) return null
+        if (this !is IrClassSymbol) return null
 
-        val signature = signature.asPublic()
+        val signature = signature?.asPublic()
         if (signature == null || signature.packageFqName != "kotlin") return null
 
         return PrimitiveType.getByShortArrayName(signature.declarationFqName)
@@ -388,11 +390,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 }
 
-fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {
+fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
     val result = mutableListOf<IrTypeParameter>()
-    var current: IrDeclarationParent? = klass
+    var current: IrDeclarationParent? = parent
     while (current != null) {
-//        result += current.typeParameters
         (current as? IrTypeParametersContainer)?.let { result += it.typeParameters }
         current =
             when (current) {
@@ -403,9 +404,11 @@ fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {
                     else -> null
                 }
                 is IrConstructor -> current.parent as IrClass
-                is IrFunction -> if (current.visibility == DescriptorVisibilities.LOCAL || current.dispatchReceiverParameter != null) {
-                    current.parent
-                } else null
+                is IrFunction ->
+                    if (current.visibility == DescriptorVisibilities.LOCAL || current.dispatchReceiverParameter != null)
+                        current.parent
+                    else
+                        null
                 else -> null
             }
     }

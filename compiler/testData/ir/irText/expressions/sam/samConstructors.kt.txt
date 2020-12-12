@@ -1,0 +1,25 @@
+fun test1(): Runnable {
+  return local fun <anonymous>() {
+    return Unit
+  }
+ /*-> Runnable */
+}
+
+fun test2(a: Function0<Unit>): Runnable {
+  return a /*-> Runnable */
+}
+
+fun foo() {
+}
+
+fun test3(): Runnable {
+  return ::foo /*-> Runnable */
+}
+
+fun test4(): Comparator<Int> {
+  return local fun <anonymous>(a: @FlexibleNullability Int?, b: @FlexibleNullability Int?): Int {
+    return a /*!! Int */.minus(other = b /*!! Int */)
+  }
+ /*-> Comparator<Int> */
+}
+

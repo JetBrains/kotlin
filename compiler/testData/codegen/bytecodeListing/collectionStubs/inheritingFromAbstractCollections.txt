@@ -1,0 +1,54 @@
+@kotlin.Metadata
+public abstract class ACollD {
+    // source: 'inheritingFromAbstractCollections.kt'
+    public method <init>(): void
+    public bridge method contains(p0: double): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public method iterator(): java.util.Iterator
+}
+
+@kotlin.Metadata
+public abstract class AIterD {
+    // source: 'inheritingFromAbstractCollections.kt'
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public abstract class AListD {
+    // source: 'inheritingFromAbstractCollections.kt'
+    public method <init>(): void
+    public bridge method contains(p0: double): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public bridge method indexOf(p0: double): int
+    public bridge final method indexOf(p0: java.lang.Object): int
+    public bridge method lastIndexOf(p0: double): int
+    public bridge final method lastIndexOf(p0: java.lang.Object): int
+}
+
+@kotlin.Metadata
+public abstract class AMCollD {
+    // source: 'inheritingFromAbstractCollections.kt'
+    public method <init>(): void
+    public bridge method contains(p0: double): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public bridge method remove(p0: double): boolean
+    public bridge final method remove(p0: java.lang.Object): boolean
+}
+
+@kotlin.Metadata
+public abstract class AMSetD {
+    // source: 'inheritingFromAbstractCollections.kt'
+    public method <init>(): void
+    public bridge method contains(p0: double): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
+    public bridge method remove(p0: double): boolean
+    public bridge final method remove(p0: java.lang.Object): boolean
+}
+
+@kotlin.Metadata
+public abstract class ASetD {
+    // source: 'inheritingFromAbstractCollections.kt'
+    public method <init>(): void
+    public bridge method contains(p0: double): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
+}

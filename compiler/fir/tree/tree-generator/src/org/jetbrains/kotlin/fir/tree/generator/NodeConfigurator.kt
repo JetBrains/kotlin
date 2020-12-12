@@ -95,6 +95,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             withArg("F", "FirCallableMemberDeclaration<F>")
             parentArg(callableDeclaration, "F", "F")
             +field("containerSource", type(DeserializedContainerSource::class), nullable = true)
+            +field("dispatchReceiverType", coneKotlinTypeType, nullable = true)
         }
 
         function.configure {
@@ -298,7 +299,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             parentArg(function, "F", simpleFunction)
             parentArg(callableMemberDeclaration, "F", simpleFunction)
             +name
-            +symbol("FirFunctionSymbol<FirSimpleFunction>")
+            +symbol("FirNamedFunctionSymbol")
             +annotations
             +typeParameters
         }
@@ -576,10 +577,6 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +valueParameters
             +returnTypeRef
             +booleanField("isSuspend")
-        }
-
-        composedSuperTypeRef.configure {
-            +fieldList("superTypeRefs", resolvedTypeRef)
         }
 
         thisReceiverExpression.configure {

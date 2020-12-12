@@ -15,5 +15,5 @@ val test5: List<TNString?> = TODO()
 val test6: () -> List<TNString> = TODO()
 
 fun test(x: TNString) {
-    x.hashCode()
+    x.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
 }

@@ -29,7 +29,8 @@ class CallableMethod(
     override val generateCalleeType: Type?,
     override val returnKotlinType: KotlinType?,
     val isInterfaceMethod: Boolean,
-    private val isDefaultMethodInInterface: Boolean
+    private val isDefaultMethodInInterface: Boolean,
+    private val boxInlineClassBeforeInvoke: Boolean
 ) : Callable {
     private val defaultImplMethod: Method by lazy(LazyThreadSafetyMode.PUBLICATION, computeDefaultMethod)
 
@@ -49,6 +50,9 @@ class CallableMethod(
         get() = getAsmMethod().argumentTypes
 
     override fun genInvokeInstruction(v: InstructionAdapter) {
+        if (boxInlineClassBeforeInvoke) {
+            StackValue.boxInlineClass(dispatchReceiverKotlinType!!, v)
+        }
         v.visitMethodInsn(
             invokeOpcode,
             owner.internalName,

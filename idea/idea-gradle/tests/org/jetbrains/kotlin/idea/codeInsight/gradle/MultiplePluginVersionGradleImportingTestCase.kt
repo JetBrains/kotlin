@@ -35,6 +35,10 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
         )
     }
 
+    override fun importProject() {
+        super.importProject(skipIndexing = true)
+    }
+
     @JvmField
     @Parameterized.Parameter(1)
     var gradleKotlinPluginVersionType: String = MINIMAL_SUPPORTED_VERSION
@@ -79,7 +83,6 @@ abstract class MultiplePluginVersionGradleImportingTestCase : GradleImportingTes
     fun repositories(useKts: Boolean): String {
         val customRepositories = arrayOf(
             "https://dl.bintray.com/kotlin/kotlin-dev",
-            "http://dl.bintray.com/kotlin/kotlin-eap"
         )
         val customMavenRepositories = customRepositories.map { if (useKts) "maven(\"$it\")" else "maven { url '$it' } " }.joinToString("\n")
         return """

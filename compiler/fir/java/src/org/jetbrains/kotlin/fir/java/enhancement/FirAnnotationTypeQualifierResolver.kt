@@ -71,7 +71,7 @@ class FirAnnotationTypeQualifierResolver(private val session: FirSession, privat
         val annotationClassId = annotationCall.classId
         return BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATION_IDS[annotationClassId]?.let { qualifierForDefaultingAnnotation ->
             val state = resolveJsr305ReportLevel(annotationCall).takeIf { it != ReportLevel.IGNORE } ?: return null
-            return qualifierForDefaultingAnnotation.copy(
+            qualifierForDefaultingAnnotation.copy(
                 nullabilityQualifier = qualifierForDefaultingAnnotation.nullabilityQualifier.copy(isForWarningOnly = state.isWarning)
             )
         }

@@ -17,5 +17,14 @@ interface KtSymbol : ValidityTokenOwner {
 }
 
 enum class KtSymbolOrigin {
-    SOURCE, LIBRARY, JAVA, SAM_CONSTRUCTOR
+    SOURCE,
+
+    /**
+     * Declaration which do not have it's PSI source and was generated, they are:
+     * For data classes the `copy`, `component{N}`, `toString`, `equals`, `hashCode` functions are generated
+     * For enum classes the `valueOf` & `values` functions are generated
+     */
+    SOURCE_MEMBER_GENERATED,
+    LIBRARY,
+    JAVA, SAM_CONSTRUCTOR
 }

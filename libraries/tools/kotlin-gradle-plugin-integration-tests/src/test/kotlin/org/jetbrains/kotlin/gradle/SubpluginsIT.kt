@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.checkBytecodeContains
 import org.jetbrains.kotlin.gradle.util.modify
@@ -14,6 +15,11 @@ import java.io.File
 import kotlin.test.assertTrue
 
 class SubpluginsIT : BaseGradleIT() {
+
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(warningMode = WarningMode.Summary)
+    }
+
     @Test
     fun testGradleSubplugin() {
         val project = Project("kotlinGradleSubplugin")

@@ -37,7 +37,7 @@ class KotlinSuppressableWarningProblemGroup(
 }
 
 fun createSuppressWarningActions(element: PsiElement, diagnosticFactory: DiagnosticFactory<*>): List<SuppressIntentionAction> =
-    createSuppressWarningActions(element, diagnosticFactory.severity, diagnosticFactory.name)
+    createSuppressWarningActions(element, diagnosticFactory.severity, diagnosticFactory.name!!)
 
 
 fun createSuppressWarningActions(element: PsiElement, severity: Severity, suppressionKey: String): List<SuppressIntentionAction> {

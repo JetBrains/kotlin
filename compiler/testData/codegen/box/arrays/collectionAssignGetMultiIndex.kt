@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: STDLIB_COLLECTIONS
 // KJS_WITH_FULL_RUNTIME
 operator fun ArrayList<String>.get(index1: Int, index2: Int) = this[index1 + index2]
 operator fun ArrayList<String>.set(index1: Int, index2: Int, elem: String) {

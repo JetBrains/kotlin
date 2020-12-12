@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: PROPERTY_REFERENCES
 // Enable when KT-14833 is fixed.
 // IGNORE_BACKEND: JVM
 import kotlin.reflect.KProperty

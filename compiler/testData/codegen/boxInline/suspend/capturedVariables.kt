@@ -1,9 +1,8 @@
 // FILE: test.kt
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 suspend inline fun test1(c: suspend () -> Unit) {
@@ -16,10 +15,8 @@ suspend inline fun test2(crossinline c: suspend () -> Unit) {
 }
 
 // FILE: box.kt
-// COMMON_COROUTINES_TEST
-
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 import helpers.*
 
 fun builder(c: suspend () -> Unit) {

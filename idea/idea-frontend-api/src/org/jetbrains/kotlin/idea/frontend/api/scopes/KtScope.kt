@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.scopes
 
+import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -42,11 +44,11 @@ interface KtCompositeScope : KtScope {
 }
 
 interface KtMemberScope : KtScope {
-    val owner: KtClassOrObjectSymbol
+    val owner: KtSymbolWithDeclarations
 }
 
 interface KtDeclaredMemberScope : KtScope {
-    val owner: KtClassOrObjectSymbol
+    val owner: KtSymbolWithDeclarations
 }
 
 interface KtPackageScope : KtScope, KtSubstitutedScope<KtPackageScope> {

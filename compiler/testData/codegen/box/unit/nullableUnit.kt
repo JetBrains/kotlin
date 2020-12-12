@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: UNIT_ISSUES
 fun isNull(x: Unit?) = x == null
 
 fun <T : Any> isNullGeneric(x: T?) = x == null

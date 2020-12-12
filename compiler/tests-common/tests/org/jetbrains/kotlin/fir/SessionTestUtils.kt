@@ -28,8 +28,8 @@ fun createSession(
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
 ): FirSession {
     val moduleInfo = FirTestModuleInfo(name = Name.identifier(moduleName))
-    val provider = FirProjectSessionProvider(project)
-    return FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, sourceScope).also {
+    val provider = FirProjectSessionProvider()
+    return FirSessionFactory.createJavaModuleBasedSession(moduleInfo, provider, sourceScope, project).also {
         createSessionForDependencies(project, provider, moduleInfo, librariesScope, packagePartProvider)
     }
 }

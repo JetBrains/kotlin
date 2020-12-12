@@ -19,14 +19,9 @@ dependencies {
     compileOnly(intellijCoreDep())
     compileOnly(intellijDep())
     compileOnly(project(":compiler:light-classes"))
+    compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
 
-    Platform[191].orLower {
-        compileOnly(intellijDep()) { includeJars("java-api", "java-impl") }
-    }
-
-    Platform[192].orHigher {
-        compileOnly(intellijPluginDep("java")) { includeJars("java-api", "java-impl") }
-    }
+    testCompile(projectTests(":compiler:tests-common"))
 }
 
 sourceSets {

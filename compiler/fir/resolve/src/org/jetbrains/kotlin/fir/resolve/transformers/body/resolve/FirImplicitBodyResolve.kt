@@ -5,20 +5,17 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
-import org.jetbrains.kotlin.fir.symbols.PossiblyFirFakeOverrideSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
@@ -213,15 +210,14 @@ private class ReturnTypeCalculatorWithJump(
             return tryCalculateReturnType(declaration.getter.delegate)
         }
 
-        if (declaration.origin == FirDeclarationOrigin.IntersectionOverride) {
-            val result = tryCalculateReturnType(declaration.symbol.overriddenSymbol!!.fir)
+        if (declaration.isIntersectionOverride) {
+            val result = tryCalculateReturnType(declaration.symbol.baseForIntersectionOverride!!.fir)
             declaration.replaceReturnTypeRef(result)
             return result
         }
 
-        runIf(declaration.origin == FirDeclarationOrigin.SubstitutionOverride) {
-            val possiblyFirFakeOverrideSymbol = declaration.symbol as PossiblyFirFakeOverrideSymbol<*, *>
-            val overriddenDeclaration = possiblyFirFakeOverrideSymbol.overriddenSymbol?.fir as FirTypedDeclaration? ?: return@runIf
+        runIf(declaration.isSubstitutionOverride) {
+            val overriddenDeclaration = declaration.originalForSubstitutionOverride ?: return@runIf
             tryCalculateReturnType(overriddenDeclaration)
             return FakeOverrideTypeCalculator.Forced.computeReturnType(declaration)
         }
@@ -236,8 +232,6 @@ private class ReturnTypeCalculatorWithJump(
 
     private fun computeReturnTypeRef(declaration: FirCallableMemberDeclaration<*>): FirResolvedTypeRef {
         val symbol = declaration.symbol
-        val id = symbol.callableId
-
         val provider = session.firProvider
 
         val (designation, outerBodyResolveContext) = if (declaration in designationMapForLocalClasses) {
@@ -245,7 +239,7 @@ private class ReturnTypeCalculatorWithJump(
         } else {
             val file = provider.getFirCallableContainerFile(symbol)
 
-            val outerClasses = generateSequence(id.classId) { classId ->
+            val outerClasses = generateSequence(symbol.containingClass()?.classId) { classId ->
                 classId.outerClassId
             }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it) }
 

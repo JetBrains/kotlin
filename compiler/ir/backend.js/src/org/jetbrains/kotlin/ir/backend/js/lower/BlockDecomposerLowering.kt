@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.isPure
+import org.jetbrains.kotlin.ir.util.isPure
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -117,10 +117,6 @@ class BlockDecomposerTransformer(
         function = declaration
 
         with(declaration) {
-            val transformedDeclarations = declarations.map { it.transform(statementTransformer, null) as IrDeclaration }
-            declarations.clear()
-            declarations.addAll(transformedDeclarations)
-
             val transformedStatements = mutableListOf<IrStatement>()
             statements.forEach {
                 val transformer = if (it === statements.last()) expressionTransformer else statementTransformer

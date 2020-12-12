@@ -125,6 +125,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xir-dce-print-reachability-info", description = "Print declarations' reachability info to stdout during performing DCE")
     var irDcePrintReachabilityInfo: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xir-property-lazy-initialization", description = "Perform lazy initialization for properties")
+    var irPropertyLazyInitialization: Boolean by FreezableVar(false)
+
     @Argument(value = "-Xir-only", description = "Disables pre-IR backend")
     var irOnly: Boolean by FreezableVar(false)
 
@@ -172,11 +175,14 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xenable-js-scripting", description = "Enable experimental support of .kts files using K/JS (with -Xir only)")
     var enableJsScripting: Boolean by FreezableVar(false)
 
-    @Argument(value = "-Xdisable-fake-override-validator", description = "Disable IR fake override validator")
-    var disableFakeOverrideValidator: Boolean by FreezableVar(false)
+    @Argument(value = "-Xfake-override-validator", description = "Enable IR fake override validator")
+    var fakeOverrideValidator: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xerror-tolerance-policy", description = "Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)")
     var errorTolerancePolicy: String? by NullableStringFreezableVar(null)
+
+    @Argument(value = "-Xwasm", description = "Use experimental WebAssembly compiler backend")
+    var wasm: Boolean by FreezableVar(false)
 
     override fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
         if (!isIrBackendEnabled()) return
@@ -196,4 +202,4 @@ fun K2JSCompilerArguments.isPreIrBackendDisabled(): Boolean =
     irOnly || irProduceJs || irProduceKlibFile
 
 fun K2JSCompilerArguments.isIrBackendEnabled(): Boolean =
-    irProduceKlibDir || irProduceJs || irProduceKlibFile
+    irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm

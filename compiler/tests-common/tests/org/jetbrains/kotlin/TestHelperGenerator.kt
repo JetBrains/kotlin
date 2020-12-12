@@ -16,33 +16,17 @@ fun createTextForCoroutineHelpers(isReleaseCoroutines: Boolean, checkStateMachin
         else
             StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()
 
-    val emptyContinuationBody =
+    fun continuationBody(t: String, useResult: (String) -> String) =
         if (isReleaseCoroutines)
             """
-                |override fun resumeWith(result: Result<Any?>) {
-                |   result.getOrThrow()
+                |override fun resumeWith(result: Result<$t>) {
+                |   ${useResult("result.getOrThrow()")}
                 |}
             """.trimMargin()
         else
             """
-                |override fun resume(data: Any?) {}
+                |override fun resume(data: $t) { ${useResult("data")} }
                 |override fun resumeWithException(exception: Throwable) { throw exception }
-            """.trimMargin()
-
-    val handleResultContinuationBody =
-        if (isReleaseCoroutines)
-            """
-                |override fun resumeWith(result: Result<T>) {
-                |   x(result.getOrThrow())
-                |}
-            """.trimMargin()
-        else
-            """
-                |override fun resumeWithException(exception: Throwable) {
-                |   throw exception
-                |}
-                |
-                |override fun resume(data: T) = x(data)
             """.trimMargin()
 
     val handleExceptionContinuationBody =
@@ -167,9 +151,8 @@ fun createTextForCoroutineHelpers(isReleaseCoroutines: Boolean, checkStateMachin
             |
             |fun <T> handleResultContinuation(x: (T) -> Unit): Continuation<T> = object: Continuation<T> {
             |    override val context = EmptyCoroutineContext
-            |    $handleResultContinuationBody
+            |    ${continuationBody("T") { "x($it)" }}
             |}
-            |
             |
             |fun handleExceptionContinuation(x: (Throwable) -> Unit): Continuation<Any?> = object: Continuation<Any?> {
             |    override val context = EmptyCoroutineContext
@@ -178,7 +161,14 @@ fun createTextForCoroutineHelpers(isReleaseCoroutines: Boolean, checkStateMachin
             |
             |open class EmptyContinuation(override val context: CoroutineContext = EmptyCoroutineContext) : Continuation<Any?> {
             |    companion object : EmptyContinuation()
-            |    $emptyContinuationBody
+            |    ${continuationBody("Any?") { it }}
+            |}
+            |
+            |class ResultContinuation : Continuation<Any?> {
+            |    override val context = EmptyCoroutineContext
+            |    ${continuationBody("Any?") { "this.result = $it" }}
+            |
+            |    var result: Any? = null
             |}
             |
             |abstract class ContinuationAdapter<in T> : Continuation<T> {

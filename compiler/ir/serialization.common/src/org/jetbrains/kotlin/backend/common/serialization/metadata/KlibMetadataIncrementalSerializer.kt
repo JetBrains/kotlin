@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -22,9 +23,10 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 class KlibMetadataIncrementalSerializer(
     languageVersionSettings: LanguageVersionSettings,
     metadataVersion: BinaryVersion,
+    project: Project,
     skipExpects: Boolean,
     allowErrorTypes: Boolean = false
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, skipExpects, allowErrorTypes = allowErrorTypes) {
+) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, project, skipExpects, allowErrorTypes = allowErrorTypes) {
 
     fun serializePackageFragment(
         module: ModuleDescriptor,

@@ -12,22 +12,39 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class NonExistentType {
+    @org.jetbrains.annotations.NotNull()
+    public static final NonExistentType INSTANCE = null;
     @org.jetbrains.annotations.Nullable()
     private static final error.NonExistentClass a = null;
     @org.jetbrains.annotations.Nullable()
     private static final java.util.List<error.NonExistentClass> b = null;
     @org.jetbrains.annotations.NotNull()
     private static final kotlin.jvm.functions.Function1<error.NonExistentClass, kotlin.Unit> c = null;
-    @org.jetbrains.annotations.Nullable()
-    private static final error.NonExistentClass d = null;
-    public static java.lang.String string2;
     public static error.NonExistentClass coocoo;
     public static error.NonExistentClass coocoo2;
     public static error.NonExistentClass coocoo21;
     public static error.NonExistentClass coocoo3;
     public static error.NonExistentClass coocoo31;
+    @org.jetbrains.annotations.Nullable()
+    private static final error.NonExistentClass d = null;
+    public static java.lang.String string2;
+
+    private NonExistentType() {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
-    public static final NonExistentType INSTANCE = null;
+    public final error.NonExistentClass a(@org.jetbrains.annotations.NotNull()
+    error.NonExistentClass a, @org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final error.NonExistentClass b(@org.jetbrains.annotations.NotNull()
+    java.lang.String s) {
+        return null;
+    }
 
     @org.jetbrains.annotations.Nullable()
     public final error.NonExistentClass getA() {
@@ -44,6 +61,31 @@ public final class NonExistentType {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
+    public final error.NonExistentClass getCoocoo() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final error.NonExistentClass getCoocoo2() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final error.NonExistentClass getCoocoo21() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final error.NonExistentClass getCoocoo3() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final error.NonExistentClass getCoocoo31() {
+        return null;
+    }
+
     @org.jetbrains.annotations.Nullable()
     public final error.NonExistentClass getD() {
         return null;
@@ -54,70 +96,28 @@ public final class NonExistentType {
         return null;
     }
 
-    public final void setString2(@org.jetbrains.annotations.NotNull()
-    java.lang.String p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final error.NonExistentClass getCoocoo() {
-        return null;
-    }
-
     public final void setCoocoo(@org.jetbrains.annotations.NotNull()
     error.NonExistentClass p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final error.NonExistentClass getCoocoo2() {
-        return null;
     }
 
     public final void setCoocoo2(@org.jetbrains.annotations.NotNull()
     error.NonExistentClass p0) {
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public final error.NonExistentClass getCoocoo21() {
-        return null;
-    }
-
     public final void setCoocoo21(@org.jetbrains.annotations.NotNull()
     error.NonExistentClass p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final error.NonExistentClass getCoocoo3() {
-        return null;
     }
 
     public final void setCoocoo3(@org.jetbrains.annotations.NotNull()
     error.NonExistentClass p0) {
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public final error.NonExistentClass getCoocoo31() {
-        return null;
-    }
-
     public final void setCoocoo31(@org.jetbrains.annotations.NotNull()
     error.NonExistentClass p0) {
     }
 
-    @org.jetbrains.annotations.NotNull()
-    public final error.NonExistentClass a(@org.jetbrains.annotations.NotNull()
-    error.NonExistentClass a, @org.jetbrains.annotations.NotNull()
-    java.lang.String s) {
-        return null;
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public final error.NonExistentClass b(@org.jetbrains.annotations.NotNull()
-    java.lang.String s) {
-        return null;
-    }
-
-    private NonExistentType() {
-        super();
+    public final void setString2(@org.jetbrains.annotations.NotNull()
+    java.lang.String p0) {
     }
 }
 

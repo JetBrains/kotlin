@@ -18,13 +18,15 @@ package org.jetbrains.kotlin.descriptors.impl
 
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
+import org.jetbrains.kotlin.descriptors.PackageFragmentProviderOptimized
+import org.jetbrains.kotlin.descriptors.collectPackageFragmentsOptimizedIfPossible
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
 import org.jetbrains.kotlin.name.Name
 
 class CompositePackageFragmentProvider(// can be modified from outside
     private val providers: List<PackageFragmentProvider>
-) : PackageFragmentProvider {
+) : PackageFragmentProviderOptimized {
 
     init {
         assert(providers.size == providers.toSet().size) {
@@ -35,14 +37,14 @@ class CompositePackageFragmentProvider(// can be modified from outside
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
         val result = ArrayList<PackageFragmentDescriptor>()
         for (provider in providers) {
-            provider.collectPackageFragments(fqName, result)
+            provider.collectPackageFragmentsOptimizedIfPossible(fqName, result)
         }
         return result.toList()
     }
 
     override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) {
         for (provider in providers) {
-            provider.collectPackageFragments(fqName, packageFragments)
+            provider.collectPackageFragmentsOptimizedIfPossible(fqName, packageFragments)
         }
     }
 

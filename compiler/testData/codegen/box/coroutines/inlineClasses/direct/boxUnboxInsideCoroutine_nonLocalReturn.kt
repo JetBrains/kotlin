@@ -1,10 +1,8 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
-
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)
@@ -60,6 +58,18 @@ class Test3 {
     suspend fun test() = bar().s
 }
 
+class Test4 {
+    suspend fun <T> foo(value: T): T = value
+
+    suspend fun bar(): IC? {
+        run {
+            return foo(IC("OK"))
+        }
+    }
+
+    suspend fun test() = bar()!!.s
+}
+
 fun box(): String {
 
     var result = "FAIL"
@@ -81,6 +91,14 @@ fun box(): String {
 
     builder {
         result = Test3().test()
+    }
+
+    if (result != "OK") return "FAIL 3 $result"
+
+    result = "FAIL 4"
+
+    builder {
+        result = Test4().test()
     }
 
     return result

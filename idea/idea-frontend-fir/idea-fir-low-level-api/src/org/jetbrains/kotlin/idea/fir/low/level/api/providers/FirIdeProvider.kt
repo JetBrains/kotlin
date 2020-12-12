@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
+import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -79,7 +80,7 @@ internal class FirIdeProvider(
 
 
     override fun getFirCallableContainerFile(symbol: FirCallableSymbol<*>): FirFile? {
-        symbol.overriddenSymbol?.let {
+        symbol.fir.originalForSubstitutionOverride?.symbol?.let {
             return getFirCallableContainerFile(it)
         }
         if (symbol is FirAccessorSymbol) {

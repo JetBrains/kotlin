@@ -16,6 +16,6 @@ abstract class AbstractDiagnosticsTestWithStdLib : AbstractDiagnosticsTest() {
 
     override fun shouldValidateFirTestData(testDataFile: File): Boolean {
         val path = testDataFile.absolutePath
-        return !path.endsWith(".kts") && coroutinesPackage != StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()
+        return !path.endsWith(".kts")
     }
 }

@@ -85,7 +85,6 @@ import static org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class FunctionCodegen {
-    private static final String JAVA_LANG_DEPRECATED = Type.getType(Deprecated.class).getDescriptor();
 
     public final GenerationState state;
     private final KotlinTypeMapper typeMapper;
@@ -225,7 +224,7 @@ public class FunctionCodegen {
                 InlineClassDescriptorResolver.isSpecializedEqualsMethod(functionDescriptor);
         generateMethodAnnotationsIfRequired(
                 functionDescriptor, asmMethod, jvmSignature, mv,
-                isCompatibilityStubInDefaultImpls ? Collections.singletonList(JAVA_LANG_DEPRECATED) : Collections.emptyList(),
+                isCompatibilityStubInDefaultImpls ? Collections.singletonList(CodegenUtilKt.JAVA_LANG_DEPRECATED) : Collections.emptyList(),
                 skipNullabilityAnnotations
         );
         GenerateJava8ParameterNamesKt.generateParameterNames(functionDescriptor, mv, jvmSignature, state, (flags & ACC_SYNTHETIC) != 0);
@@ -1222,7 +1221,12 @@ public class FunctionCodegen {
 
         // 'null' because the "could not find expected declaration" error has been already reported in isDefaultNeeded earlier
         List<ValueParameterDescriptor> valueParameters =
-                CodegenUtil.getFunctionParametersForDefaultValueGeneration(functionDescriptor, null);
+                functionDescriptor.isSuspend()
+                ? CollectionsKt.plus(
+                    CodegenUtil.getFunctionParametersForDefaultValueGeneration(
+                            CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(functionDescriptor), null),
+                    CollectionsKt.last(functionDescriptor.getValueParameters()))
+                : CodegenUtil.getFunctionParametersForDefaultValueGeneration(functionDescriptor, null);
 
         boolean isStatic = isStaticMethod(methodContext.getContextKind(), functionDescriptor);
         FrameMap frameMap = createFrameMap(state, signature, functionDescriptor.getExtensionReceiverParameter(), valueParameters, isStatic);
@@ -1590,7 +1594,7 @@ public class FunctionCodegen {
 
                         // When delegating to inline class, we invoke static implementation method
                         // that takes inline class underlying value as 1st argument.
-                        int toArgsShift = toClass.isInline() ? 1 : 0;
+                        int toArgsShift = InlineClassesUtilsKt.isInlineClass(toClass) ? 1 : 0;
 
                         int reg = 1;
                         for (int i = 0; i < argTypes.length; ++i) {
@@ -1610,7 +1614,7 @@ public class FunctionCodegen {
                         if (toClass.getKind() == ClassKind.INTERFACE) {
                             iv.invokeinterface(internalName, delegateToMethod.getName(), delegateToMethod.getDescriptor());
                         }
-                        else if (toClass.isInline()) {
+                        else if (InlineClassesUtilsKt.isInlineClass(toClass)) {
                             iv.invokestatic(internalName, delegateToMethod.getName(), delegateToMethod.getDescriptor(), false);
                         }
                         else {

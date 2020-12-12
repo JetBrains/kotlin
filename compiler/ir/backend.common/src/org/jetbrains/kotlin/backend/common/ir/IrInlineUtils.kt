@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.ir
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.descriptors.WrappedSimpleFunctionDescriptor
@@ -83,7 +82,6 @@ private fun IrBody.move(
 
 // TODO use a generic inliner (e.g. JS/Native's FunctionInlining.Inliner)
 // Inline simple function calls without type parameters, default parameters, or varargs.
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 fun IrFunction.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrReturnableBlock =
     IrReturnableBlockImpl(startOffset, endOffset, returnType, IrReturnableBlockSymbolImpl(getNewWrappedDescriptor()), null, symbol).apply {
         statements += body!!.move(this@inline, target, symbol, valueParameters.zip(arguments).toMap()).statements

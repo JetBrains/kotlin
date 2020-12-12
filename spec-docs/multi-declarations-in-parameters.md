@@ -180,7 +180,7 @@ NOTE: function expression can not be passed to a function call outside the paren
 
 In a lambda, only parameters (possibly decomposed) and their types can be specified. There's no way to explicitly specify the return type or receiver type. Those have to be inferred, otherwise function expression must be used.
 
-TODO: support qualified returns in lambdas (when return type is unknown, nad has to be inferrred).
+TODO: support qualified returns in lambdas (when return type is unknown, nad has to be inferred).
 
 ### Nested multi-declarations
 

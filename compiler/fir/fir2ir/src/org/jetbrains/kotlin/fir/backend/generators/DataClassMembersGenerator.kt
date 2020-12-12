@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
@@ -17,8 +16,11 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitIntTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
@@ -33,9 +35,7 @@ import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.DataClassMembersGenerator
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 
 /**
  * A generator that generates synthetic members of data class as well as part of inline class.
@@ -49,20 +49,24 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 class DataClassMembersGenerator(val components: Fir2IrComponents) {
 
     fun generateInlineClassMembers(klass: FirClass<*>, irClass: IrClass): List<FirDeclaration> =
-        MyDataClassMethodsGenerator(irClass, klass.symbol.classId, IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER).generate(klass)
+        MyDataClassMethodsGenerator(irClass, klass.symbol.toLookupTag(), IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER).generate(klass)
 
     fun generateDataClassMembers(klass: FirClass<*>, irClass: IrClass): List<FirDeclaration> =
-        MyDataClassMethodsGenerator(irClass, klass.symbol.classId, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate(klass)
+        MyDataClassMethodsGenerator(irClass, klass.symbol.toLookupTag(), IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate(klass)
 
-    fun generateDataClassComponentBody(irFunction: IrFunction, classId: ClassId) =
-        MyDataClassMethodsGenerator(irFunction.parentAsClass, classId, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER)
+    fun generateDataClassComponentBody(irFunction: IrFunction, lookupTag: ConeClassLikeLookupTag) =
+        MyDataClassMethodsGenerator(irFunction.parentAsClass, lookupTag, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER)
             .generateComponentBody(irFunction)
 
-    fun generateDataClassCopyBody(irFunction: IrFunction, classId: ClassId) =
-        MyDataClassMethodsGenerator(irFunction.parentAsClass, classId, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER)
+    fun generateDataClassCopyBody(irFunction: IrFunction, lookupTag: ConeClassLikeLookupTag) =
+        MyDataClassMethodsGenerator(irFunction.parentAsClass, lookupTag, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER)
             .generateCopyBody(irFunction)
 
-    private inner class MyDataClassMethodsGenerator(val irClass: IrClass, val classId: ClassId, val origin: IrDeclarationOrigin) {
+    private inner class MyDataClassMethodsGenerator(
+        val irClass: IrClass,
+        val lookupTag: ConeClassLikeLookupTag,
+        val origin: IrDeclarationOrigin
+    ) {
         private val irDataClassMembersGenerator = object : DataClassMembersGenerator(
             IrGeneratorContextBase(components.irBuiltIns),
             components.symbolTable,
@@ -77,11 +81,11 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                 // TODO
             }
 
-            override fun getBackingField(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrField? =
+            override fun getProperty(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrProperty? =
                 irValueParameter?.let {
                     irClass.properties.single { irProperty ->
                         irProperty.name == irValueParameter.name && irProperty.backingField?.type == irValueParameter.type
-                    }.backingField
+                    }
                 }
 
             override fun transform(typeParameterDescriptor: TypeParameterDescriptor): IrType {
@@ -152,9 +156,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                             withForcedTypeCalculator = true
                         ).processFunctionsByName(name) {
                             val declaration = it.fir
-                            if (declaration is FirSimpleFunction &&
-                                declaration.matchesDataClassSyntheticMemberSignatures
-                            ) {
+                            if (declaration.matchesDataClassSyntheticMemberSignatures) {
                                 putIfAbsent(declaration.name, declaration)
                             }
                         }
@@ -209,8 +211,8 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
         fun generateComponentBody(irFunction: IrFunction) {
             val index = getComponentIndex(irFunction)!!
             val valueParameter = irClass.primaryConstructor!!.valueParameters[index - 1]
-            val backingField = irDataClassMembersGenerator.getBackingField(null, valueParameter)!!
-            irDataClassMembersGenerator.generateComponentFunction(irFunction, backingField)
+            val irProperty = irDataClassMembersGenerator.getProperty(null, valueParameter)!!
+            irDataClassMembersGenerator.generateComponentFunction(irFunction, irProperty)
         }
 
         fun generateCopyBody(irFunction: IrFunction) =
@@ -225,7 +227,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             val firFunction = buildSimpleFunction {
                 origin = FirDeclarationOrigin.Synthetic
                 this.name = name
-                this.symbol = FirNamedFunctionSymbol(CallableId(classId, name))
+                this.symbol = FirNamedFunctionSymbol(CallableId(lookupTag.classId, name))
                 this.status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                 this.session = components.session
                 this.returnTypeRef = when (returnType) {
@@ -248,8 +250,11 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
                         }
                     )
                 }
+                dispatchReceiverType = lookupTag.constructType(
+                    (1..irClass.typeParameters.size).map { ConeStarProjection }.toTypedArray(), isNullable = false
+                )
             }
-            val signature = if (classId.isLocal) null else components.signatureComposer.composeSignature(firFunction)
+            val signature = if (lookupTag.classId.isLocal) null else components.signatureComposer.composeSignature(firFunction)
             return components.declarationStorage.declareIrSimpleFunction(signature, null) { symbol ->
                 components.irFactory.createFunction(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, name, DescriptorVisibilities.PUBLIC, Modality.OPEN, returnType,
@@ -285,7 +290,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) {
             ) { symbol ->
                 components.irFactory.createValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, name, index, type, null,
-                    isCrossinline = false, isNoinline = false, isAssignable = false
+                    isCrossinline = false, isNoinline = false, isHidden = false, isAssignable = false
                 )
             }.apply {
                 parent = irFunction

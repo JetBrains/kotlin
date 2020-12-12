@@ -36,7 +36,7 @@ internal val staticDefaultFunctionPhase = makeIrFilePhase(
     ::StaticDefaultFunctionLowering,
     name = "StaticDefaultFunction",
     description = "Make function adapters for default arguments static",
-    prerequisite = setOf(jvmStaticAnnotationPhase),
+    prerequisite = setOf(jvmStaticInObjectPhase),
 )
 
 private class StaticDefaultFunctionLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {

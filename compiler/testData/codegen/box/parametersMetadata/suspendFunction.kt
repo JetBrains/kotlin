@@ -3,9 +3,8 @@
 // WITH_RUNTIME
 // FULL_JDK
 // KOTLIN_CONFIGURATION_FLAGS: +JVM.PARAMETERS_METADATA
-// COMMON_COROUTINES_TEST
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class A() {
     suspend fun test(OK: String) {

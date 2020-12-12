@@ -15,7 +15,7 @@ import kotlin.coroutines.resume
 
 class ResolutionStageRunner {
     fun processCandidate(candidate: Candidate, context: ResolutionContext, stopOnFirstError: Boolean = true): CandidateApplicability {
-        val sink = CheckerSinkImpl(stopOnFirstError = stopOnFirstError)
+        val sink = CheckerSinkImpl(candidate, stopOnFirstError = stopOnFirstError)
         var finished = false
         sink.continuation = suspend {
             candidate.callInfo.callKind.resolutionSequence.forEachIndexed { index, stage ->
@@ -35,11 +35,10 @@ class ResolutionStageRunner {
 
         while (!finished) {
             sink.continuation!!.resume(Unit)
-            if (!sink.currentApplicability.isSuccess) {
+            if (!candidate.isSuccessful) {
                 break
             }
         }
-        candidate.diagnostics += sink.diagnostics
-        return sink.currentApplicability
+        return candidate.currentApplicability
     }
 }

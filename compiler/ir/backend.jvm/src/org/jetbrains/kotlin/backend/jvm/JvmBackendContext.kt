@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.codegen.*
-import org.jetbrains.kotlin.backend.jvm.codegen.createFakeContinuation
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmSharedVariablesManager
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.lower.BridgeLowering
@@ -51,27 +50,26 @@ class JvmBackendContext(
     irModuleFragment: IrModuleFragment,
     private val symbolTable: SymbolTable,
     val phaseConfig: PhaseConfig,
-    // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
-    // annotated with @JvmPackageName, the correct name is recorded here.
-    val classNameOverride: MutableMap<IrClass, JvmClassName>,
+    val generatorExtensions: JvmGeneratorExtensions,
     val serializerFactory: MetadataSerializerFactory
 ) : CommonBackendContext {
-    override val transformedFunction: MutableMap<IrFunctionSymbol, IrSimpleFunctionSymbol>
-        get() = TODO("not implemented")
+    // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
+    // annotated with @JvmPackageName, the correct name is recorded here.
+    val classNameOverride: MutableMap<IrClass, JvmClassName>
+        get() = generatorExtensions.classNameOverride
 
     override val extractedLocalClasses: MutableSet<IrClass> = hashSetOf()
 
     override val irFactory: IrFactory = IrFactoryImpl
 
     override val scriptMode: Boolean = false
-    override val lateinitNullableFields = mutableMapOf<IrField, IrField>()
 
     override val builtIns = state.module.builtIns
     val typeMapper = IrTypeMapper(this)
     val methodSignatureMapper = MethodSignatureMapper(this)
 
     internal val innerClassesSupport = JvmInnerClassesSupport(irFactory)
-    internal val cachedDeclarations = JvmCachedDeclarations(this, methodSignatureMapper, state.languageVersionSettings)
+    internal val cachedDeclarations = JvmCachedDeclarations(this, state.languageVersionSettings)
 
     override val mapping: Mapping = DefaultMapping()
 
@@ -106,6 +104,16 @@ class JvmBackendContext(
     internal val hiddenConstructors = mutableMapOf<IrConstructor, IrConstructor>()
 
     internal val collectionStubComputer = CollectionStubComputer(this)
+
+    private val overridesWithoutStubs = HashMap<IrSimpleFunction, List<IrSimpleFunctionSymbol>>()
+
+    fun recordOverridesWithoutStubs(function: IrSimpleFunction) {
+        overridesWithoutStubs[function] = function.overriddenSymbols.toList()
+    }
+
+    fun getOverridesWithoutStubs(function: IrSimpleFunction): List<IrSimpleFunctionSymbol> =
+        overridesWithoutStubs.getOrElse(function) { function.overriddenSymbols }
+
     internal val bridgeLoweringCache = BridgeLowering.BridgeLoweringCache(this)
     internal val functionsWithSpecialBridges: MutableSet<IrFunction> = HashSet()
 
@@ -121,7 +129,7 @@ class JvmBackendContext(
 
     val staticDefaultStubs = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunction>()
 
-    val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory)
+    val inlineClassReplacements = MemoizedInlineClassReplacements(state.functionsWithInlineClassReturnTypesMangled, irFactory, this)
 
     internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
         symbolTable.lazyWrapper.referenceClass(descriptor)

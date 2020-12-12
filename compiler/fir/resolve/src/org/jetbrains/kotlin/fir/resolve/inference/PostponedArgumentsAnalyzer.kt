@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariable
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -55,7 +54,7 @@ class PostponedArgumentsAnalyzer(
         argument: PostponedResolvedAtom,
         candidate: Candidate
     ) {
-        return when (argument) {
+        when (argument) {
             is ResolvedLambdaAtom ->
                 analyzeLambda(c, argument, candidate)
 
@@ -97,12 +96,12 @@ class PostponedArgumentsAnalyzer(
         }
     }
 
-    private fun analyzeLambda(
+    fun analyzeLambda(
         c: PostponedArgumentsAnalyzerContext,
         lambda: ResolvedLambdaAtom,
         candidate: Candidate
         //diagnosticHolder: KotlinDiagnosticsHolder
-    ) {
+    ): ReturnArgumentsAnalysisResult {
         val unitType = components.session.builtinTypes.unitType.type
         val stubsForPostponedVariables = c.bindingStubsForPostponedVariables()
         val currentSubstitutor = c.buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(c) })
@@ -117,12 +116,13 @@ class PostponedArgumentsAnalyzer(
             c.canBeProper(rawReturnType) -> substitute(rawReturnType)
 
             // For Unit-coercion
-            c.hasUpperOrEqualUnitConstraint(rawReturnType) -> unitType
+            c.hasUpperOrEqualUnitConstraint(rawReturnType) ->
+                if (rawReturnType.isMarkedNullable) unitType.withNullability(ConeNullability.NULLABLE) else unitType
 
             else -> null
         }
 
-        val (returnArguments, inferenceSession) = lambdaAnalyzer.analyzeAndGetLambdaReturnArguments(
+        val results = lambdaAnalyzer.analyzeAndGetLambdaReturnArguments(
             lambda,
             receiver,
             parameters,
@@ -130,7 +130,18 @@ class PostponedArgumentsAnalyzer(
             rawReturnType,
             stubsForPostponedVariables
         )
+        applyResultsOfAnalyzedLambdaToCandidateSystem(c, lambda, candidate, results, ::substitute)
+        return results
+    }
 
+    fun applyResultsOfAnalyzedLambdaToCandidateSystem(
+        c: PostponedArgumentsAnalyzerContext,
+        lambda: ResolvedLambdaAtom,
+        candidate: Candidate,
+        results: ReturnArgumentsAnalysisResult,
+        substitute: (ConeKotlinType) -> ConeKotlinType = c.createSubstituteFunctorForLambdaAnalysis()
+    ) {
+        val (returnArguments, inferenceSession) = results
         if (inferenceSession != null) {
             val storageSnapshot = c.getBuilder().currentStorage()
 
@@ -151,10 +162,10 @@ class PostponedArgumentsAnalyzer(
 
         returnArguments.forEach { c.addSubsystemFromExpression(it) }
 
-        val checkerSink: CheckerSink = CheckerSinkImpl()
+        val checkerSink: CheckerSink = CheckerSinkImpl(candidate)
 
         var hasExpressionInReturnArguments = false
-        val lambdaReturnType = lambda.returnType.let(::substitute).takeUnless { it.isUnit }
+        val lambdaReturnType = lambda.returnType.let(substitute).takeUnless { it.isUnit }
         returnArguments.forEach {
             if (it !is FirExpression) return@forEach
             hasExpressionInReturnArguments = true
@@ -172,11 +183,21 @@ class PostponedArgumentsAnalyzer(
 
         if (!hasExpressionInReturnArguments && lambdaReturnType != null) {
             /*LambdaArgumentConstraintPosition(lambda)*/
-            c.getBuilder().addEqualityConstraint(lambdaReturnType, unitType, SimpleConstraintSystemConstraintPosition)
+            c.getBuilder().addEqualityConstraint(
+                lambdaReturnType,
+                components.session.builtinTypes.unitType.type,
+                SimpleConstraintSystemConstraintPosition
+            )
         }
 
         lambda.analyzed = true
         lambda.returnStatements = returnArguments
+    }
+
+    fun PostponedArgumentsAnalyzerContext.createSubstituteFunctorForLambdaAnalysis(): (ConeKotlinType) -> ConeKotlinType {
+        val stubsForPostponedVariables = bindingStubsForPostponedVariables()
+        val currentSubstitutor = buildCurrentSubstitutor(stubsForPostponedVariables.mapKeys { it.key.freshTypeConstructor(this) })
+        return { currentSubstitutor.safeSubstitute(this, it) as ConeKotlinType }
     }
 }
 

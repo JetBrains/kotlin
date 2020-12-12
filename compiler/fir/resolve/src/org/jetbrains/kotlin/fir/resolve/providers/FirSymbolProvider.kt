@@ -35,13 +35,11 @@ abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent 
     abstract fun getPackage(fqName: FqName): FqName? // TODO: Replace to symbol sometime
 }
 
-fun FirSymbolProvider.getClassDeclaredCallableSymbols(classId: ClassId, name: Name): List<FirCallableSymbol<*>> {
+fun FirSymbolProvider.getClassDeclaredPropertySymbols(classId: ClassId, name: Name): List<FirVariableSymbol<*>> {
     val classSymbol = getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return emptyList()
     val declaredMemberScope = declaredMemberScope(classSymbol.fir)
-    val result = mutableListOf<FirCallableSymbol<*>>()
-    declaredMemberScope.processFunctionsByName(name, result::add)
+    val result = mutableListOf<FirVariableSymbol<*>>()
     declaredMemberScope.processPropertiesByName(name, result::add)
-    if (name == classId.shortClassName) declaredMemberScope.processDeclaredConstructors(result::add)
 
     return result
 }

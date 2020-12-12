@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -27,6 +28,10 @@ import java.io.File
 
 abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerArguments> : TestWithWorkingDir() {
     protected abstract fun createCompilerArguments(destinationDir: File, testDir: File): Args
+
+    private fun createCompilerArgumentsImpl(destinationDir: File, testDir: File): Args = createCompilerArguments(destinationDir, testDir).apply {
+        parseCommandLineArguments(parseAdditionalArgs(testDir), this)
+    }
 
     fun doTest(path: String) {
         val testDir = File(path)
@@ -40,7 +45,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
 
         val mapWorkingToOriginalFile = HashMap(copyTestSources(testDir, srcDir, filePrefix = ""))
         val sourceRoots = listOf(srcDir)
-        val args = createCompilerArguments(outDir, testDir)
+        val args = createCompilerArgumentsImpl(outDir, testDir)
         val (_, _, errors) = initialMake(cacheDir, sourceRoots, args)
         check(errors.isEmpty()) { "Initial build failed: \n${errors.joinToString("\n")}" }
 
@@ -111,7 +116,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         // todo: also compare caches
         val rebuildOutDir = File(workingDir, "rebuild-out").apply { mkdirs() }
         val rebuildCacheDir = File(workingDir, "rebuild-cache").apply { mkdirs() }
-        val rebuildResult = make(rebuildCacheDir, sourceRoots, createCompilerArguments(rebuildOutDir, testDir))
+        val rebuildResult = make(rebuildCacheDir, sourceRoots, createCompilerArgumentsImpl(rebuildOutDir, testDir))
 
         val rebuildExpectedToSucceed = buildLogSteps.last().compileSucceeded
         val rebuildSucceeded = rebuildResult.exitCode == ExitCode.OK
@@ -158,6 +163,17 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         @JvmStatic
         protected val kotlinStdlibJvm: File = File(distKotlincLib, "kotlin-stdlib.jar").also {
             KtUsefulTestCase.assertExists(it)
+        }
+
+        private const val ARGUMENTS_FILE_NAME = "args.txt"
+
+        private fun parseAdditionalArgs(testDir: File): List<String> {
+            return File(testDir, ARGUMENTS_FILE_NAME)
+                .takeIf { it.exists() }
+                ?.readText()
+                ?.split(" ", "\n")
+                ?.filter { it.isNotBlank() }
+                ?: emptyList()
         }
     }
 }

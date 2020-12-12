@@ -6,7 +6,7 @@ FILE: superAny.kt
             super<R|kotlin/Any|>()
         }
 
-        public open override fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public open override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals this@R|/B|.super<R|kotlin/Any|>.R|kotlin/Any.equals|(R|<local>/other|)
         }
 
@@ -20,7 +20,7 @@ FILE: superAny.kt
             super<R|B|>()
         }
 
-        public final override fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+        public final override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
             ^equals this@R|/C|.super<R|B|>.R|/B.equals|(R|<local>/other|)
         }
 

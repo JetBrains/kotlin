@@ -97,8 +97,9 @@ private val lateinitUsageLoweringPhase = makeIrFilePhase(
 internal val propertiesPhase = makeIrFilePhase(
     ::JvmPropertiesLowering,
     name = "Properties",
-    description = "Move fields and accessors for properties to their classes, replace calls to default property accessors " +
-            "with field accesses, remove unused accessors and create synthetic methods for property annotations",
+    description = "Move fields and accessors for properties to their classes, " +
+            "replace calls to default property accessors with field accesses, " +
+            "remove unused accessors and create synthetic methods for property annotations",
     stickyPostconditions = setOf((PropertiesLowering)::checkNoProperties)
 )
 
@@ -359,7 +360,7 @@ private val jvmFilePhases = listOf(
     initializersPhase,
     initializersCleanupPhase,
     functionNVarargBridgePhase,
-    jvmStaticAnnotationPhase,
+    jvmStaticInCompanionPhase,
     staticDefaultFunctionPhase,
     bridgePhase,
     syntheticAccessorPhase,
@@ -389,7 +390,9 @@ val jvmPhases = NamedCompilerPhase(
     lower = validateIrBeforeLowering then
             processOptionalAnnotationsPhase then
             expectDeclarationsRemovingPhase then
+            scriptsToClassesPhase then
             fileClassPhase then
+            jvmStaticInObjectPhase then
             performByIrFile(lower = jvmFilePhases) then
             generateMultifileFacadesPhase then
             resolveInlineCallsPhase then

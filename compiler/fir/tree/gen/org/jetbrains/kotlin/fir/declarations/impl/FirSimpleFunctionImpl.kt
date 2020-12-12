@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -42,9 +43,10 @@ open class FirSimpleFunctionImpl @FirImplementationDetail constructor(
     override var body: FirBlock?,
     override var status: FirDeclarationStatus,
     override val containerSource: DeserializedContainerSource?,
+    override val dispatchReceiverType: ConeKotlinType?,
     override var contractDescription: FirContractDescription,
     override val name: Name,
-    override val symbol: FirFunctionSymbol<FirSimpleFunction>,
+    override val symbol: FirNamedFunctionSymbol,
     override val annotations: MutableList<FirAnnotationCall>,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirSimpleFunction() {

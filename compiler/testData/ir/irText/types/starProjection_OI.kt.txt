@@ -1,0 +1,15 @@
+interface Continuation<in T : Any?> {
+
+}
+
+abstract class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  abstract fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean 
+
+}
+

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -66,12 +67,25 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     ): T {
         context.className = context.className.child(name)
         context.localBits.add(isLocal)
+        val dispatchReceiversNumber = context.dispatchReceiverTypesStack.size
         return try {
             l()
         } finally {
+            require(context.dispatchReceiverTypesStack.size <= dispatchReceiversNumber + 1) {
+                "Wrong number of ${context.dispatchReceiverTypesStack.size}"
+            }
+
+            if (context.dispatchReceiverTypesStack.size > dispatchReceiversNumber) {
+                context.dispatchReceiverTypesStack.removeAt(context.dispatchReceiverTypesStack.lastIndex)
+            }
+
             context.className = context.className.parent()
             context.localBits.removeLast()
         }
+    }
+
+    fun registerSelfType(selfType: FirResolvedTypeRef) {
+        context.dispatchReceiverTypesStack.add(selfType.type as ConeClassLikeType)
     }
 
     inline fun <T> withCapturedTypeParameters(block: () -> T): T {
@@ -108,6 +122,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             context.className.shortName() == ANONYMOUS_OBJECT_NAME -> CallableId(ANONYMOUS_CLASS_ID, name)
             else -> CallableId(context.packageFqName, context.className, name)
         }
+
+    fun currentDispatchReceiverType(): ConeClassLikeType? = context.dispatchReceiverTypesStack.lastOrNull()
 
     fun callableIdForClassConstructor() =
         if (context.className == FqName.ROOT) CallableId(context.packageFqName, Name.special("<anonymous-init>"))
@@ -370,7 +386,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             source = base?.toFirSourceElement()
             // Fast-pass if there is no non-const string expressions
             if (!hasExpressions) return buildConstExpression(source, FirConstKind.String, sb.toString())
-            argumentList.arguments.singleOrNull()?.let { return it }
         }
     }
 
@@ -1038,6 +1053,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 source = parameterSource
                 typeRef = firPropertyReturnTypeRefWithCorrectSourceKind
                 dispatchReceiver = buildThisReceiverExpression {
+                    source = parameterSource
                     calleeReference = buildImplicitThisReference {
                         boundSymbol = classBuilder.symbol
                     }
@@ -1066,7 +1082,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     this.name = name
                     status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                     symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
-
+                    dispatchReceiverType = currentDispatchReceiverType()
                     // Refer to FIR backend ClassMemberGenerator for body generation.
                 }
                 classBuilder.addDeclaration(componentFunction)
@@ -1086,6 +1102,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     name = copyName
                     status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
                     symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
+                    dispatchReceiverType = currentDispatchReceiverType()
                     for ((ktParameter, firProperty) in zippedParameters) {
                         val propertyName = firProperty.name
                         val parameterSource = ktParameter?.toFirSourceElement(FirFakeSourceElementKind.DataClassGeneratedMembers)
@@ -1112,6 +1129,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     private fun FirVariable<*>.toQualifiedAccess(): FirQualifiedAccessExpression = buildQualifiedAccessExpression {
         calleeReference = buildResolvedNamedReference {
+            source = this@toQualifiedAccess.source
             name = this@toQualifiedAccess.name
             resolvedSymbol = this@toQualifiedAccess.symbol
         }

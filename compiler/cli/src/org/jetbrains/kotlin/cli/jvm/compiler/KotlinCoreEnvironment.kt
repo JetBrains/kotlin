@@ -33,13 +33,16 @@ import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.ExtensionsArea
 import com.intellij.openapi.fileTypes.PlainTextFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.LanguageLevelProjectExtension
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtilRt
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.*
 import com.intellij.openapi.vfs.impl.ZipHandler
+import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
+import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.impl.JavaClassSupersImpl
 import com.intellij.psi.impl.PsiElementFinderImpl
 import com.intellij.psi.impl.PsiTreeChangePreprocessor
@@ -99,8 +102,10 @@ import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtens
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.lazy.declarations.CliDeclarationProviderFactoryService
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
+import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import java.nio.file.FileSystems
 import java.util.zip.ZipFile
 
 class KotlinCoreEnvironment private constructor(
@@ -247,6 +252,8 @@ class KotlinCoreEnvironment private constructor(
         project.putUserData(APPEND_JAVA_SOURCE_ROOTS_HANDLER_KEY, fun(roots: List<File>) {
             updateClasspath(roots.map { JavaSourceRoot(it, null) })
         })
+
+        LanguageLevelProjectExtension.getInstance(project).languageLevel = LanguageLevel.JDK_15_PREVIEW
     }
 
     private fun collectAdditionalSources(project: MockProject) {
@@ -473,10 +480,13 @@ class KotlinCoreEnvironment private constructor(
                 if (System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY).toBooleanLenient() != true) {
                     // JPS may run many instances of the compiler in parallel (there's an option for compiling independent modules in parallel in IntelliJ)
                     // All projects share the same ApplicationEnvironment, and when the last project is disposed, the ApplicationEnvironment is disposed as well
-                    Disposer.register(parentDisposable, Disposable {
-                        synchronized(APPLICATION_LOCK) {
-                            if (--ourProjectCount <= 0) {
-                                disposeApplicationEnvironment()
+                    @Suppress("ObjectLiteralToLambda") // Disposer tree depends on identity of disposables.
+                    Disposer.register(parentDisposable, object : Disposable {
+                        override fun dispose() {
+                            synchronized(APPLICATION_LOCK) {
+                                if (--ourProjectCount <= 0) {
+                                    disposeApplicationEnvironment()
+                                }
                             }
                         }
                     })
@@ -504,6 +514,11 @@ class KotlinCoreEnvironment private constructor(
             val applicationEnvironment = KotlinCoreApplicationEnvironment.create(parentDisposable, unitTestMode)
 
             registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/compiler.xml")
+            // FIX ME WHEN BUNCH 202 REMOVED: this code is required to support compiler bundled to both 202 and 203.
+            // Please, remove "com.intellij.psi.classFileDecompiler" EP registration once 202 is no longer supported by the compiler
+            if (!Extensions.getRootArea().hasExtensionPoint("com.intellij.psi.classFileDecompiler")) {
+                registerApplicationExtensionPointsAndExtensionsFrom(configuration, "extensions/core.xml")
+            }
 
             registerApplicationServicesForCLI(applicationEnvironment)
             registerApplicationServices(applicationEnvironment)
@@ -532,7 +547,11 @@ class KotlinCoreEnvironment private constructor(
                                 "(cp:\n  ${(Thread.currentThread().contextClassLoader as? UrlClassLoader)?.urls?.joinToString("\n  ") { it.file }})"
                     )
 
-            registerExtensionPointAndExtensionsEx(pluginRoot, configFilePath, Extensions.getRootArea())
+            CoreApplicationEnvironment.registerExtensionPointAndExtensions(
+                FileSystems.getDefault().getPath(pluginRoot.path),
+                configFilePath,
+                Extensions.getRootArea()
+            )
         }
 
         @JvmStatic
@@ -555,6 +574,7 @@ class KotlinCoreEnvironment private constructor(
             ShellExtension.registerExtensionPoint(project)
             TypeResolutionInterceptor.registerExtensionPoint(project)
             CandidateInterceptor.registerExtensionPoint(project)
+            DescriptorSerializerPlugin.registerExtensionPoint(project)
         }
 
         internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {

@@ -8,7 +8,7 @@ FILE: smartSet.kt
             public get(): R|kotlin/Int|
             public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public final override fun iterator(): R|kotlin/collections/MutableIterator<T>| {
+        public final override operator fun iterator(): R|kotlin/collections/MutableIterator<T>| {
             ^iterator R|kotlin/TODO|()
         }
 
@@ -19,12 +19,12 @@ FILE: smartSet.kt
         public final override fun clear(): R|kotlin/Unit| {
         }
 
-        public final override fun contains(element: R|T|): R|kotlin/Boolean| {
+        public final override operator fun contains(element: R|T|): R|kotlin/Boolean| {
             ^contains Boolean(false)
         }
 
     }
     public final fun foo(x: R|kotlin/Any|): R|kotlin/Unit| {
         lval s: R|SmartSet<kotlin/Any>| = R|/SmartSet.SmartSet|<R|kotlin/Any|>()
-        R|<local>/s|.R|FakeOverride</SmartSet.add: R|kotlin/Boolean|>|(R|<local>/x|)
+        R|<local>/s|.R|SubstitutionOverride</SmartSet.add: R|kotlin/Boolean|>|(R|<local>/x|)
     }

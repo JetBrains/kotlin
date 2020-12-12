@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: CALLABLE_REFERENCES_FAIL
 inline fun <TT> id(x: TT): TT = x
 inline fun <TT> String.extId(x: TT): String = this
 

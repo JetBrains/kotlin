@@ -14,5 +14,5 @@ public final class SuspendMainKt {
     // source: 'suspendMain.kt'
     inner (anonymous) class SuspendMainKt$main$2
     public final static @org.jetbrains.annotations.Nullable method main(@org.jetbrains.annotations.NotNull p0: java.lang.String[], @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
-    public synthetic final static method main(p0: java.lang.String[]): void
+    public synthetic static method main(p0: java.lang.String[]): void
 }

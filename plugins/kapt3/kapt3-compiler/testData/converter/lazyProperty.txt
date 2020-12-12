@@ -2,13 +2,13 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Foo {
-    private final kotlin.Lazy foo$delegate = null;
     private final kotlin.Lazy bar$delegate = null;
     private final kotlin.Lazy baz$delegate = null;
+    private final kotlin.Lazy foo$delegate = null;
     private final kotlin.Lazy generic1$delegate = null;
 
-    private final java.lang.Runnable getFoo() {
-        return null;
+    public Foo() {
+        super();
     }
 
     private final java.lang.Object getBar() {
@@ -19,12 +19,12 @@ public final class Foo {
         return null;
     }
 
-    private final GenericIntf<java.lang.CharSequence> getGeneric1() {
+    private final java.lang.Runnable getFoo() {
         return null;
     }
 
-    public Foo() {
-        super();
+    private final GenericIntf<java.lang.CharSequence> getGeneric1() {
+        return null;
     }
 }
 

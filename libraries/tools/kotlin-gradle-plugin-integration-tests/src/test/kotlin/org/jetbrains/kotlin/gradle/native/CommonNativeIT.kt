@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
+import org.junit.BeforeClass
 import org.junit.Test
 
 class CommonNativeIT : BaseGradleIT() {
@@ -54,7 +55,6 @@ class CommonNativeIT : BaseGradleIT() {
 
     @Test
     fun testCommonIos() {
-        Assume.assumeTrue(HostManager.hostIsMac)
         doCommonNativeTest(
             "common-ios",
             libTargets = listOf("iosLibArm64", "iosLibX64"),
@@ -64,22 +64,28 @@ class CommonNativeIT : BaseGradleIT() {
 
     @Test
     fun testCommonWatchos() {
-        Assume.assumeTrue(HostManager.hostIsMac)
         doCommonNativeTest(
             "common-watchos",
-            libTargets = listOf("watchosLibArm32", "watchosLibArm64", "watchosLibX86"),
-            appTargets = listOf("watchosArm32", "watchosArm64", "watchosX86")
+            libTargets = listOf("watchosLibArm32", "watchosLibArm64", "watchosLibX64"),
+            appTargets = listOf("watchosArm32", "watchosArm64", "watchosX64")
         )
     }
 
     @Test
     fun testCommonTvos() {
-        Assume.assumeTrue(HostManager.hostIsMac)
         doCommonNativeTest(
             "common-tvos",
             libTargets = listOf("tvosLibArm64", "tvosLibX64"),
             appTargets = listOf("tvosArm64", "tvosX64")
         )
+    }
+
+    companion object {
+        @BeforeClass
+        @JvmStatic
+        fun assumeItsMac() {
+            Assume.assumeTrue(HostManager.hostIsMac)
+        }
     }
 }
 

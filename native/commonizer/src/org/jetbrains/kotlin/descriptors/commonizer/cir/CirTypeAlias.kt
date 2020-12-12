@@ -6,6 +6,6 @@
 package org.jetbrains.kotlin.descriptors.commonizer.cir
 
 interface CirTypeAlias : CirClassifier, CirLiftedUpDeclaration {
-    val underlyingType: CirSimpleType
-    val expandedType: CirSimpleType
+    val underlyingType: CirClassOrTypeAliasType
+    val expandedType: CirClassType
 }

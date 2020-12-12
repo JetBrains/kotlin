@@ -27,7 +27,3 @@ listOf(generateMppTargetContainerWithPresets, generateAbstractBinaryContainer).f
     )
 }
 
-// Workaround: 'java -jar' refuses to read the original dotted filename on Windows, 'Unable to access jarFile org.jetbrains.kotlin....jar'
-tasks.named<Jar>(generateMppTargetContainerWithPresets.name + "WriteClassPath").configure {
-    archiveName = generateMppTargetContainerWithPresets.name
-}

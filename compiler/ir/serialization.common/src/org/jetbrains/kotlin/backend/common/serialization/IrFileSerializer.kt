@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideControl
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryDeclarationWriter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.Actual as ProtoActual
 import org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon as ProtoFieldAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
@@ -53,9 +53,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperator
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType as ProtoDynamicType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall as ProtoEnumConstructorCall
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry as ProtoEnumEntry
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression as ProtoErrorCallExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorDeclaration as ProtoErrorDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorExpression as ProtoErrorExpression
-import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorCallExpression as ProtoErrorCallExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType as ProtoErrorType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
@@ -102,7 +102,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
 import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
 import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression as ProtoNullableIrExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.PublicIdSignature as ProtoPublicIdSignature
-import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 
 open class IrFileSerializer(
     val logger: LoggingContext,
@@ -1092,9 +1091,9 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(variable, LocalVariableFlags.encode(variable)))
             .setNameType(serializeNameAndType(variable.name, variable.type))
             .setDelegate(serializeIrVariable(variable.delegate))
-            .setGetter(serializeIrFunction(variable.getter as IrSimpleFunction)) // TODO: can it be non simple?
+            .setGetter(serializeIrFunction(variable.getter))
 
-        variable.setter?.let { proto.setSetter(serializeIrFunction(it as IrSimpleFunction)) } // TODO: ditto.
+        variable.setter?.let { proto.setSetter(serializeIrFunction(it)) }
 
         return proto.build()
     }
@@ -1243,11 +1242,9 @@ open class IrFileSerializer(
 
     fun memberNeedsSerialization(member: IrDeclaration): Boolean {
         assert(member.parent is IrClass)
-        if (FakeOverrideControl.serializeFakeOverrides) return true
         if (backendSpecificSerializeAllMembers(member.parent as IrClass)) return true
-        // TODO: we can, probably, maintain a privacy bit while traversing the tree
-        // instead of running the parent hierarchy for isExported every time.
-        return !(member.isFakeOverride && declarationTable.isExportedDeclaration(member))
+
+        return (!member.isFakeOverride)
     }
 
     private fun fillPlatformExplicitlyExported(file: IrFile, proto: ProtoFile.Builder) {

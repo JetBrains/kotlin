@@ -3,6 +3,9 @@
 // FILE: a.kt
 package a
 
+import checkType
+import _
+
 class B(x: String)
 typealias A1 = B
 private typealias A2 = B
@@ -18,6 +21,8 @@ fun bar() {
 package usage
 
 import a.B
+import checkType
+import _
 
 fun baz() {
     a.A1("") // resolved to B constructor, OK

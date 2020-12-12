@@ -75,7 +75,7 @@ class ClassGenerator(
 
         fun <T : DeclarationDescriptor> List<T>.sortedByRenderer(): List<T> {
             val rendered = map(DESCRIPTOR_RENDERER::render)
-            val sortedIndices = (0 until size).sortedWith(Comparator { i, j -> rendered[i].compareTo(rendered[j]) })
+            val sortedIndices = (0 until size).sortedWith { i, j -> rendered[i].compareTo(rendered[j]) }
             return sortedIndices.map { this[it] }
         }
     }
@@ -334,7 +334,7 @@ class ClassGenerator(
 
         val delegateToSymbol = context.symbolTable.referenceSimpleFunction(delegateToDescriptor.original)
 
-        val irCall = IrCallImpl(
+        val irCall = IrCallImpl.fromSymbolDescriptor(
             startOffset, endOffset,
             returnType.toIrType(),
             delegateToSymbol,

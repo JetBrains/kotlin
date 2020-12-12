@@ -26,7 +26,7 @@ abstract class AbstractBuildFileGenerationTest : UsefulTestCase() {
 
         val buildSystemsToRunFor = listOfNotNull(
             BuildSystem.GRADLE_KOTLIN_DSL,
-            BuildSystem.GRADLE_GROOVY_DSL,
+            if (testParameters.runForGradleGroovy) BuildSystem.GRADLE_GROOVY_DSL else null,
             if (testParameters.runForMaven) BuildSystem.MAVEN else null
         )
 
@@ -53,9 +53,7 @@ abstract class AbstractBuildFileGenerationTest : UsefulTestCase() {
                 KOTLIN_VERSION_PLACEHOLDER
             ).replaceAllTo(
                 listOf(
-                    Repositories.KOTLIN_EAP_BINTRAY.url,
                     Repositories.KOTLIN_DEV_BINTRAY.url,
-                    KotlinVersionProviderTestWizardService.KOTLIN_EAP_BINTRAY_WITH_CACHE_REDIRECTOR.url,
                     KotlinVersionProviderTestWizardService.KOTLIN_DEV_BINTRAY_WITH_CACHE_REDIRECTOR.url,
                 ),
                 KOTLIN_REPO_PLACEHOLDER

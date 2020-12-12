@@ -50,8 +50,8 @@ public final class InlineMutableMapEntry {
     public method hashCode(): int
     public static method hashCode-impl(p0: java.util.Map$Entry): int
     public synthetic bridge method setValue(p0: java.lang.Object): java.lang.Object
-    public method setValue-jbX5DO8(p0: double): double
-    public static method setValue-jbX5DO8(p0: java.util.Map$Entry, p1: double): double
+    public method setValue-cYiyq8k(p0: double): double
+    public static method setValue-cYiyq8k(p0: java.util.Map$Entry, p1: double): double
     public method toString(): java.lang.String
     public static method toString-impl(p0: java.util.Map$Entry): java.lang.String
     public synthetic final method unbox-impl(): java.util.Map$Entry

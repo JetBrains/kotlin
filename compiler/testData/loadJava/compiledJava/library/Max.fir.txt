@@ -1,5 +1,5 @@
 public open class Max : R|kotlin/Any| {
-    public open fun <T : R|ft<kotlin/Any, kotlin/Any?>!|, R|ft<kotlin/Comparable<in ft<T, T?>!>, kotlin/Comparable<in ft<T, T?>!>?>!|> max(coll: R|ft<kotlin/collections/MutableCollection<out ft<T, T?>!>, kotlin/collections/Collection<out ft<T, T?>!>?>!|): R|ft<T, T?>!|
+    public open fun <T : R|ft<@FlexibleNullability kotlin/Any, kotlin/Any?>!|, R|ft<@FlexibleNullability kotlin/Comparable<in ft<@FlexibleNullability T, T?>!>, kotlin/Comparable<in ft<@FlexibleNullability T, T?>!>?>!|> max(coll: R|ft<@FlexibleNullability kotlin/collections/MutableCollection<out ft<@FlexibleNullability T, T?>!>, kotlin/collections/Collection<out ft<@FlexibleNullability T, T?>!>?>!|): R|ft<@FlexibleNullability T, T?>!|
 
     public constructor(): R|test/Max|
 

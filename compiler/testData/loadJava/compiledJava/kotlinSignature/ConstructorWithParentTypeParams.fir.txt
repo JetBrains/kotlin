@@ -1,4 +1,4 @@
 public open class ConstructorWithParentTypeParams<T : R|ft<kotlin/Any, kotlin/Any?>!|> : R|kotlin/Any| {
-    public constructor<T : R|ft<kotlin/Any, kotlin/Any?>!|>(first: R|ft<T, T?>!|): R|test/ConstructorWithParentTypeParams<T>|
+    public constructor<T : R|ft<kotlin/Any, kotlin/Any?>!|>(first: R|ft<@FlexibleNullability T, T?>!|): R|test/ConstructorWithParentTypeParams<T>|
 
 }

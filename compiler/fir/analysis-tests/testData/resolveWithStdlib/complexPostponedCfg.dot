@@ -41,7 +41,7 @@ digraph complexPostponedCfg_kt {
                             color=blue
                             27 [label="Enter block"];
                             28 [label="Access variable this@R|special/anonymous|"];
-                            29 [label="Function call: this@R|special/anonymous|.R|FakeOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(...)"];
+                            29 [label="Function call: this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(...)"];
                             30 [label="Access variable R|<local>/arguments|"];
                             31 [label="Function call: R|<local>/arguments|.R|kotlin/collections/last|<R|FirBase|>()"];
                             32 [label="Type operator: (R|<local>/arguments|.R|kotlin/collections/last|<R|FirBase|>() as R|FirFunctionCall|)"];
@@ -53,10 +53,10 @@ digraph complexPostponedCfg_kt {
                                     color=blue
                                     40 [label="Enter block"];
                                     41 [label="Access variable this@R|special/anonymous|"];
-                                    42 [label="Function call: this@R|special/anonymous|.R|FakeOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(...)"];
+                                    42 [label="Function call: this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(...)"];
                                     43 [label="Access variable R|<local>/explicitReceiver|"];
                                     44 [label="Type operator: (R|<local>/explicitReceiver| as R|FirFunctionCall|)"];
-                                    45 [label="Function call: this@R|special/anonymous|.R|FakeOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(...)"];
+                                    45 [label="Function call: this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(...)"];
                                     46 [label="Exit block"];
                                 }
                                 47 [label="Exit function anonymousFunction" style="filled" fillcolor=red];

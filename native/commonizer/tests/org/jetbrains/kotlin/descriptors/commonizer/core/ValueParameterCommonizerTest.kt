@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirValueParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.factory.CirTypeFactory
 import org.jetbrains.kotlin.descriptors.commonizer.core.CirTestValueParameter.Companion.areEqual
-import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirClassifiersCache
-import org.jetbrains.kotlin.descriptors.commonizer.utils.EMPTY_CLASSIFIERS_CACHE
+import org.jetbrains.kotlin.descriptors.commonizer.core.TypeCommonizerTest.Companion.areEqual
+import org.jetbrains.kotlin.descriptors.commonizer.mergedtree.CirKnownClassifiers
+import org.jetbrains.kotlin.descriptors.commonizer.utils.MOCK_CLASSIFIERS
 import org.jetbrains.kotlin.descriptors.commonizer.utils.mockClassType
 import org.jetbrains.kotlin.name.Name
 import org.junit.Test
@@ -140,10 +141,10 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
         mockValueParam("kotlin.String", declaresDefaultValue = true)
     )
 
-    override fun createCommonizer() = ValueParameterCommonizer(EMPTY_CLASSIFIERS_CACHE)
+    override fun createCommonizer() = ValueParameterCommonizer(MOCK_CLASSIFIERS)
 
     override fun isEqual(a: CirValueParameter?, b: CirValueParameter?) =
-        (a === b) || (a != null && b != null && areEqual(EMPTY_CLASSIFIERS_CACHE, a, b))
+        (a === b) || (a != null && b != null && areEqual(MOCK_CLASSIFIERS, a, b))
 
     internal companion object {
         fun mockValueParam(
@@ -179,9 +180,9 @@ internal data class CirTestValueParameter(
     override val isNoinline: Boolean
 ) : CirValueParameter {
     companion object {
-        fun areEqual(cache: CirClassifiersCache, a: CirValueParameter, b: CirValueParameter): Boolean {
+        fun areEqual(classifiers: CirKnownClassifiers, a: CirValueParameter, b: CirValueParameter): Boolean {
             if (a.name != b.name
-                || !areTypesEqual(cache, a.returnType, b.returnType)
+                || !areEqual(classifiers, a.returnType, b.returnType)
                 || a.declaresDefaultValue != b.declaresDefaultValue
                 || a.isCrossinline != b.isCrossinline
                 || a.isNoinline != b.isNoinline
@@ -194,7 +195,7 @@ internal data class CirTestValueParameter(
 
             return (aVarargElementType === bVarargElementType)
                     || (aVarargElementType != null && bVarargElementType != null
-                    && areTypesEqual(cache, aVarargElementType, bVarargElementType))
+                    && areEqual(classifiers, aVarargElementType, bVarargElementType))
         }
     }
 }

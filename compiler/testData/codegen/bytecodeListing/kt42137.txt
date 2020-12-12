@@ -1,0 +1,32 @@
+@kotlin.Metadata
+public interface A {
+    // source: 'kt42137.kt'
+    public abstract method getValue(): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface B {
+    // source: 'kt42137.kt'
+}
+
+@kotlin.Metadata
+public class C {
+    // source: 'kt42137.kt'
+    private final @org.jetbrains.annotations.NotNull field value: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public synthetic bridge method getValue(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method getValue(): java.lang.String
+}
+
+@kotlin.Metadata
+public interface X {
+    // source: 'kt42137.kt'
+    public abstract @org.jetbrains.annotations.NotNull method getValue(): java.lang.CharSequence
+}
+
+@kotlin.Metadata
+public final class Y {
+    // source: 'kt42137.kt'
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public synthetic bridge method getValue(): java.lang.CharSequence
+}

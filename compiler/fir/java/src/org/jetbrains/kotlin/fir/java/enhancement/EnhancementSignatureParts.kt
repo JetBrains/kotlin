@@ -42,6 +42,8 @@ internal class EnhancementSignatureParts(
 ) {
     private val isForVarargParameter get() = typeContainer.safeAs<FirValueParameter>()?.isVararg == true
 
+    private val attributesCache = mutableMapOf<FirTypeRef?, ConeAttributes>().withDefault { ConeAttributes.Empty }
+
     private fun ConeKotlinType.toFqNameUnsafe(): FqNameUnsafe? =
         ((this as? ConeLookupTagBasedType)?.lookupTag as? ConeClassLikeLookupTag)?.classId?.asSingleFqName()?.toUnsafe()
 
@@ -62,7 +64,8 @@ internal class EnhancementSignatureParts(
         val typeWithoutEnhancement = current.type.toConeKotlinTypeWithoutEnhancement(
             session,
             javaTypeParameterStack,
-            forAnnotationValueParameter
+            forAnnotationValueParameter,
+            attributes = attributesCache.getValue(current)
         )
         val containsFunctionN = typeWithoutEnhancement.contains {
             if (it is ConeClassErrorType) false
@@ -204,7 +207,11 @@ internal class EnhancementSignatureParts(
             else
                 defaultQualifiersForType
 
-        val nullabilityInfo = composedAnnotation.extractNullability(typeQualifierResolver, javaTypeEnhancementState)
+        val nullabilityInfo = composedAnnotation.extractNullability(typeQualifierResolver, javaTypeEnhancementState).also {
+            if (it?.qualifier == NullabilityQualifier.NOT_NULL) {
+                attributesCache[this] = composedAnnotation.computeTypeAttributesForJavaType()
+            }
+        }
             ?: defaultTypeQualifier?.nullabilityQualifier?.let { nullability ->
                 NullabilityQualifierWithMigrationStatus(
                     nullability.qualifier,

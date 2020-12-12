@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.serialization.knownBuiltins
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -33,7 +34,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -150,7 +150,6 @@ fun generateKLib(
     irBuiltIns.functionFactory = functionFactory
 
     val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
-    val deserializeFakeOverrides = configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
     val feContext = psi2IrContext.run {
         JsIrLinker.JsFePluginContext(moduleDescriptor, bindingContext, symbolTable, typeTranslator, irBuiltIns)
     }
@@ -161,8 +160,7 @@ fun generateKLib(
         psi2IrContext.symbolTable,
         functionFactory,
         feContext,
-        serializedIrFiles?.let { ICData(it, errorPolicy.allowErrors) },
-        deserializeFakeOverrides
+        serializedIrFiles?.let { ICData(it, errorPolicy.allowErrors) }
     )
 
     sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
@@ -172,7 +170,7 @@ fun generateKLib(
     val moduleFragment = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, expectDescriptorToSymbol)
 
     moduleFragment.acceptVoid(ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc)))
-    if (!configuration.getBoolean(JSConfigurationKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR)) {
+    if (configuration.getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
         val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
         irLinker.modules.forEach { fakeOverrideChecker.check(it) }
     }
@@ -185,6 +183,7 @@ fun generateKLib(
 
     serializeModuleIntoKlib(
         moduleName,
+        project,
         configuration,
         psi2IrContext.bindingContext,
         files,
@@ -226,7 +225,6 @@ fun loadIr(
     irFactory: IrFactory,
 ): IrModuleInfo {
     val depsDescriptors = ModulesStructure(project, mainModule, analyzer, configuration, allDependencies, friendDependencies)
-    val deserializeFakeOverrides = configuration.getBoolean(CommonConfigurationKeys.DESERIALIZE_FAKE_OVERRIDES)
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
 
     when (mainModule) {
@@ -239,7 +237,7 @@ fun loadIr(
             val feContext = psi2IrContext.run {
                 JsIrLinker.JsFePluginContext(moduleDescriptor, bindingContext, symbolTable, typeTranslator, irBuiltIns)
             }
-            val irLinker = JsIrLinker(psi2IrContext.moduleDescriptor, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, feContext, null, deserializeFakeOverrides)
+            val irLinker = JsIrLinker(psi2IrContext.moduleDescriptor, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, feContext, null)
             val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
                 irLinker.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(it), it)
             }
@@ -251,7 +249,7 @@ fun loadIr(
             val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
             moduleFragment.acceptVoid(mangleChecker)
 
-            if (!configuration.getBoolean(JSConfigurationKeys.DISABLE_FAKE_OVERRIDE_VALIDATOR)) {
+            if (configuration.getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
                 val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
                 irLinker.modules.forEach { fakeOverrideChecker.check(it) }
             }
@@ -276,7 +274,7 @@ fun loadIr(
             val irBuiltIns = IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable)
             val functionFactory = IrFunctionFactory(irBuiltIns, symbolTable)
             val irLinker =
-                JsIrLinker(null, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, null, null, deserializeFakeOverrides)
+                JsIrLinker(null, emptyLoggingContext, irBuiltIns, symbolTable, functionFactory, null, null)
 
             val deserializedModuleFragments = sortDependencies(allDependencies.getFullList(), depsDescriptors.descriptors).map {
                 val strategy =
@@ -418,7 +416,7 @@ private class ModulesStructure(
         val analysisResult = analyzer.analysisResult
         if (IncrementalCompilation.isEnabledForJs()) {
             /** can throw [IncrementalNextRoundException] */
-            compareMetadataAndGoToNextICRoundIfNeeded(analysisResult, compilerConfiguration, files, errorPolicy.allowErrors)
+            compareMetadataAndGoToNextICRoundIfNeeded(analysisResult, compilerConfiguration, project, files, errorPolicy.allowErrors)
         }
 
         var hasErrors = false
@@ -474,6 +472,7 @@ private fun getDescriptorForElement(
 
 fun serializeModuleIntoKlib(
     moduleName: String,
+    project: Project,
     configuration: CompilerConfiguration,
     bindingContext: BindingContext,
     files: List<KtFile>,
@@ -497,7 +496,7 @@ fun serializeModuleIntoKlib(
         ).serializedIrModule(moduleFragment)
 
     val moduleDescriptor = moduleFragment.descriptor
-    val metadataSerializer = KlibMetadataIncrementalSerializer(configuration, containsErrorCode)
+    val metadataSerializer = KlibMetadataIncrementalSerializer(configuration, project, containsErrorCode)
 
     val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
     val empty = ByteArray(0)
@@ -587,12 +586,13 @@ private fun KlibMetadataIncrementalSerializer.serializeScope(
 private fun compareMetadataAndGoToNextICRoundIfNeeded(
     analysisResult: AnalysisResult,
     config: CompilerConfiguration,
+    project: Project,
     files: List<KtFile>,
     allowErrors: Boolean
 ) {
     val nextRoundChecker = config.get(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER) ?: return
     val bindingContext = analysisResult.bindingContext
-    val serializer = KlibMetadataIncrementalSerializer(config, allowErrors)
+    val serializer = KlibMetadataIncrementalSerializer(config, project, allowErrors)
     for (ktFile in files) {
         val packageFragment = serializer.serializeScope(ktFile, bindingContext, analysisResult.moduleDescriptor)
         // to minimize a number of IC rounds, we should inspect all proto for changes first,
@@ -603,9 +603,10 @@ private fun compareMetadataAndGoToNextICRoundIfNeeded(
     if (nextRoundChecker.shouldGoToNextRound()) throw IncrementalNextRoundException()
 }
 
-private fun KlibMetadataIncrementalSerializer(configuration: CompilerConfiguration, allowErrors: Boolean) = KlibMetadataIncrementalSerializer(
+private fun KlibMetadataIncrementalSerializer(configuration: CompilerConfiguration, project: Project, allowErrors: Boolean) = KlibMetadataIncrementalSerializer(
     languageVersionSettings = configuration.languageVersionSettings,
     metadataVersion = configuration.metadataVersion,
+    project = project,
     skipExpects = !configuration.expectActualLinker,
     allowErrorTypes = allowErrors
 )

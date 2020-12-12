@@ -13,6 +13,7 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.security.MessageDigest
+import java.util.ArrayList
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.host.with
@@ -172,7 +173,7 @@ class CachingTest : TestCase() {
             val cachedScriptClass = cachedScriptClassRes.valueOrThrow()
 
             Assert.assertEquals(compiledScriptClass.qualifiedName, cachedScriptClass.qualifiedName)
-            Assert.assertEquals(compiledScriptClass.supertypes, cachedScriptClass.supertypes)
+            Assert.assertEquals(compiledScriptClass.java.supertypes(), cachedScriptClass.java.supertypes())
 
             val output2 = captureOut {
                 runBlocking {
@@ -298,4 +299,13 @@ private fun File.readCompiledScript(): CompiledScript {
 }
 
 private fun ByteArray.toHexString(): String = joinToString("", transform = { "%02x".format(it) })
+
+private fun Class<*>.supertypes(): MutableList<Class<*>> = when {
+    superclass == null -> interfaces.toMutableList() ?: mutableListOf()
+    interfaces.isEmpty() -> mutableListOf(superclass)
+    else -> ArrayList<Class<*>>(interfaces.size + 1).apply {
+        interfaces.toCollection(this@apply)
+        add(superclass)
+    }
+}
 

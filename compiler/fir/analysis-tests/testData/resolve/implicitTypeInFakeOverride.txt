@@ -1,6 +1,6 @@
 FILE: implicitTypeInFakeOverride.kt
     public final fun <K> extract(x: R|Out<K>|): R|K| {
-        ^extract R|<local>/x|.R|FakeOverride</Out.get: R|K|>|()
+        ^extract R|<local>/x|.R|SubstitutionOverride</Out.get: R|K|>|()
     }
     public final class Out<out T> : R|kotlin/Any| {
         public constructor<out T>(x: R|T|): R|Out<T>| {

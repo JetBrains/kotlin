@@ -17,7 +17,7 @@ class B(const val constructor: Int = 5)
 abstract class C {
     <!INCOMPATIBLE_MODIFIERS!>open<!> <!INCOMPATIBLE_MODIFIERS!>const<!> val x: Int = 6
 
-    <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>const<!> val y: Int = 7
+    <!INCOMPATIBLE_MODIFIERS!>abstract<!> <!INCOMPATIBLE_MODIFIERS!>const<!> val y: Int = <!ABSTRACT_PROPERTY_WITH_INITIALIZER!>7<!>
 
     companion object {
         const val inCompaionObject = 8

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.openapi.application.runWriteAction
+import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.ensureIndexesUpToDate
 import com.intellij.util.ThrowableRunnable
@@ -42,8 +43,7 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
     override fun tearDown() {
         commitAllDocuments()
         RunAll(
-            ThrowableRunnable { super.tearDown() },
-            ThrowableRunnable { stats.flush() }
+            ThrowableRunnable { super.tearDown() }
         ).run()
     }
 
@@ -56,8 +56,18 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         }
     }
 
-    protected fun doPerfTest(unused: String) {
+    private fun testName(): String {
+        val javaClass = this.javaClass
         val testName = getTestName(false)
+        return if (javaClass.isMemberClass) {
+            "${javaClass.simpleName} - $testName"
+        } else {
+            testName
+        }
+    }
+
+    protected fun doPerfTest(unused: String) {
+        val testName = testName()
         innerPerfTest(testName) {
             myFixture.configureByFile(fileName())
 
@@ -71,6 +81,7 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
 
             // to load AST for changed files before it's prohibited by "fileTreeAccessFilter"
             ensureIndexesUpToDate(project)
+            ProjectRootManager.getInstance(project).incModificationCount()
         }
     }
 

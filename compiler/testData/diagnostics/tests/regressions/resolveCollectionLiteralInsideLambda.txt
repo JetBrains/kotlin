@@ -1,0 +1,6 @@
+package
+
+public val a: kotlin.Unit
+public val b: kotlin.Unit
+public fun bar(/*0*/ l: () -> kotlin.String): kotlin.Unit
+public fun foo(/*0*/ l: () -> kotlin.Unit): kotlin.Unit

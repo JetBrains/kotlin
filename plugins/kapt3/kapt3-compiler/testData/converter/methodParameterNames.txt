@@ -3,17 +3,17 @@ import java.lang.System;
 @kotlin.Metadata()
 public abstract class Cls {
 
-    public abstract void foo(@org.jetbrains.annotations.NotNull()
-    java.lang.String abc);
+    public Cls() {
+        super();
+    }
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String bar(int bcd) {
         return null;
     }
 
-    public Cls() {
-        super();
-    }
+    public abstract void foo(@org.jetbrains.annotations.NotNull()
+    java.lang.String abc);
 }
 
 ////////////////////
@@ -24,11 +24,11 @@ import java.lang.System;
 @kotlin.Metadata()
 public abstract interface Intf {
 
-    public abstract void foo(@org.jetbrains.annotations.NotNull()
-    java.lang.String abc);
-
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String bar(int bcd);
+
+    public abstract void foo(@org.jetbrains.annotations.NotNull()
+    java.lang.String abc);
 
     @kotlin.Metadata()
     public static final class DefaultImpls {

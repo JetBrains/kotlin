@@ -74,8 +74,9 @@ FILE fqName:<root> fileName:/stringTemplates.kt
   PROPERTY name:test7 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test7 type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.String' type=kotlin.String origin=null
-          $this: CALL 'public final fun <get-test1> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
+        STRING_CONCATENATION type=kotlin.String
+          CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.String' type=kotlin.String origin=null
+            $this: CALL 'public final fun <get-test1> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:test7 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -84,8 +85,9 @@ FILE fqName:<root> fileName:/stringTemplates.kt
   PROPERTY name:test8 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test8 type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.String' type=kotlin.String origin=null
-          $this: CALL 'public final fun foo (): kotlin.String declared in <root>' type=kotlin.String origin=null
+        STRING_CONCATENATION type=kotlin.String
+          CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.String' type=kotlin.String origin=null
+            $this: CALL 'public final fun foo (): kotlin.String declared in <root>' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test8> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -94,8 +96,9 @@ FILE fqName:<root> fileName:/stringTemplates.kt
   PROPERTY name:test9 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test9 type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
-        CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.Int' type=kotlin.String origin=null
-          $this: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+        STRING_CONCATENATION type=kotlin.String
+          CALL 'public open fun toString (): kotlin.String [fake_override] declared in kotlin.Int' type=kotlin.String origin=null
+            $this: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test9> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:test9 visibility:public modality:FINAL [val]
       BLOCK_BODY

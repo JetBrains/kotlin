@@ -1,0 +1,13 @@
+$TESTDATA_DIR$/jvmRecord.kt
+-d
+$TEMP_DIR$
+-api-version
+1.5
+-language-version
+1.5
+-jdk-home
+$JDK_15$
+-XXLanguage\:+JvmRecordSupport
+-Xjvm-enable-preview
+-jvm-target
+15

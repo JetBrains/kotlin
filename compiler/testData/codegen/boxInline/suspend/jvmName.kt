@@ -1,11 +1,10 @@
 // FILE: test.kt
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
 // TARGET_BACKEND: JVM
 
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 class Result<T>(val x: T)
@@ -17,10 +16,8 @@ suspend inline fun test(c: Result<Int>) = c.x
 suspend inline fun test(c: Result<String>) = c.x
 
 // FILE: box.kt
-// COMMON_COROUTINES_TEST
-
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 import helpers.*
 
 fun builder(c: suspend () -> Unit) {

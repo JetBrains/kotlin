@@ -1,0 +1,27 @@
+package
+
+@kotlin.jvm.JvmRecord public final data class BasicDataRecord : java.lang.Record {
+    public constructor BasicDataRecord(/*0*/ x: kotlin.String)
+    public final val x: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.String = ...): BasicDataRecord
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.jvm.JvmRecord public final class BasicRecord : java.lang.Record {
+    public constructor BasicRecord(/*0*/ x: kotlin.String)
+    public final val x: kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.jvm.JvmRecord public final class BasicRecordWithSuperClass : java.lang.Record {
+    public constructor BasicRecordWithSuperClass(/*0*/ x: kotlin.String)
+    public final val x: kotlin.String
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

@@ -32,20 +32,12 @@ suspend inline fun CheckerSink.yieldDiagnostic(diagnostic: ResolutionDiagnostic)
 }
 
 class CheckerSinkImpl(
+    private val candidate: Candidate,
     var continuation: Continuation<Unit>? = null,
-    val stopOnFirstError: Boolean = true
+    val stopOnFirstError: Boolean = true,
 ) : CheckerSink() {
-    var currentApplicability = CandidateApplicability.RESOLVED
-        private set
-
-    private val _diagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
-
-    val diagnostics: List<ResolutionDiagnostic>
-        get() = _diagnostics
-
     override fun reportDiagnostic(diagnostic: ResolutionDiagnostic) {
-        _diagnostics += diagnostic
-        if (diagnostic.applicability < currentApplicability) currentApplicability = diagnostic.applicability
+        candidate.addDiagnostic(diagnostic)
     }
 
     @PrivateForInline
@@ -55,6 +47,5 @@ class CheckerSinkImpl(
     }
 
     override val needYielding: Boolean
-        get() = stopOnFirstError && !currentApplicability.isSuccess
-
+        get() = stopOnFirstError && !candidate.isSuccessful
 }

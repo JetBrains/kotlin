@@ -198,7 +198,7 @@ ext.configureLegacyPublishing = { Project project ->
 ext.configureJvmIrBackend = { Project project ->
     project.tasks.withType(KotlinCompile.class) { task ->
         task.kotlinOptions {
-            if (CommonUtilKt.getBooleanProperty(project, "kotlin.build.useIRForLibraries")) {
+            if (project.kotlinBuildProperties.useIRForLibraries) {
                 useIR = true
                 freeCompilerArgs += ["-Xir-binary-with-stable-abi"]
             } else {

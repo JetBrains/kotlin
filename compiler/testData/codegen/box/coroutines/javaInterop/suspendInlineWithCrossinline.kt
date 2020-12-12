@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
@@ -19,7 +18,7 @@ import test.InlineMeKt;
 import helpers.CoroutineUtilKt;
 import helpers.EmptyContinuation;
 import kotlin.jvm.functions.Function1;
-import COROUTINES_PACKAGE.Continuation;
+import kotlin.coroutines.Continuation;
 import kotlin.Unit;
 
 public class A {
@@ -41,8 +40,8 @@ public class A {
 
 import test.*
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(CheckStateMachineContinuation)

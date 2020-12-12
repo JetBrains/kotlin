@@ -1,0 +1,39 @@
+package
+
+public val tree: Tree.Inner<kotlin.Int, kotlin.String, kotlin.Unit, kotlin.Int>
+
+public sealed class Tree</*0*/ TIndex, /*1*/ out TCommon, /*2*/ out TInner, /*3*/ out TLeaf> {
+    private constructor Tree</*0*/ TIndex, /*1*/ out TCommon, /*2*/ out TInner, /*3*/ out TLeaf>()
+    public abstract val children: kotlin.collections.Map<TIndex, Tree<TIndex, TCommon, TInner, TLeaf>>
+    public abstract val value: TCommon
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final data class Inner</*0*/ TIndex, /*1*/ TCommon, /*2*/ TInner, /*3*/ TLeaf> : Tree<TIndex, TCommon, TInner, TLeaf> {
+        public constructor Inner</*0*/ TIndex, /*1*/ TCommon, /*2*/ TInner, /*3*/ TLeaf>(/*0*/ value: TCommon, /*1*/ innerValue: TInner, /*2*/ children: kotlin.collections.Map<TIndex, Tree<TIndex, TCommon, TInner, TLeaf>>)
+        public open override /*1*/ val children: kotlin.collections.Map<TIndex, Tree<TIndex, TCommon, TInner, TLeaf>>
+        public final val innerValue: TInner
+        public open override /*1*/ val value: TCommon
+        public final operator /*synthesized*/ fun component1(): TCommon
+        public final operator /*synthesized*/ fun component2(): TInner
+        public final operator /*synthesized*/ fun component3(): kotlin.collections.Map<TIndex, Tree<TIndex, TCommon, TInner, TLeaf>>
+        public final /*synthesized*/ fun copy(/*0*/ value: TCommon = ..., /*1*/ innerValue: TInner = ..., /*2*/ children: kotlin.collections.Map<TIndex, Tree<TIndex, TCommon, TInner, TLeaf>> = ...): Tree.Inner<TIndex, TCommon, TInner, TLeaf>
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    public final data class Leaf</*0*/ TIndex, /*1*/ TCommon, /*2*/ TLeaf> : Tree<TIndex, TCommon, kotlin.Nothing, TLeaf> {
+        public constructor Leaf</*0*/ TIndex, /*1*/ TCommon, /*2*/ TLeaf>(/*0*/ value: TCommon, /*1*/ leafValue: TLeaf)
+        public open override /*1*/ val children: kotlin.collections.Map<TIndex, Tree<TIndex, TCommon, kotlin.Nothing, TLeaf>>
+        public final val leafValue: TLeaf
+        public open override /*1*/ val value: TCommon
+        public final operator /*synthesized*/ fun component1(): TCommon
+        public final operator /*synthesized*/ fun component2(): TLeaf
+        public final /*synthesized*/ fun copy(/*0*/ value: TCommon = ..., /*1*/ leafValue: TLeaf = ...): Tree.Leaf<TIndex, TCommon, TLeaf>
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+}

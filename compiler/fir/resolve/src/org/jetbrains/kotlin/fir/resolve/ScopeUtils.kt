@@ -18,18 +18,20 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithFakeOverrideTypeCalculat
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.name.ClassId
 
 fun ConeKotlinType.scope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     fakeOverrideTypeCalculator: FakeOverrideTypeCalculator
 ): FirTypeScope? {
-    val scope = scope(useSiteSession, scopeSession, FirResolvePhase.STATUS) ?: return null
+    val scope = scope(useSiteSession, scopeSession, FirResolvePhase.DECLARATIONS) ?: return null
     if (fakeOverrideTypeCalculator == FakeOverrideTypeCalculator.DoNothing) return scope
     return FirScopeWithFakeOverrideTypeCalculator(scope, fakeOverrideTypeCalculator)
 }
@@ -48,7 +50,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
             fir.scopeForClass(substitutorByMap(substitution), useSiteSession, scopeSession)
         }
         is ConeTypeParameterType -> {
-            val symbol = lookupTag.toSymbol()
+            val symbol = lookupTag.symbol
             scopeSession.getOrBuild(symbol, TYPE_PARAMETER_SCOPE_KEY) {
                 val intersectionType = ConeTypeIntersector.intersectTypes(
                     useSiteSession.typeContext,
@@ -64,13 +66,22 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
             FirStandardOverrideChecker(useSiteSession),
             intersectedTypes.mapNotNullTo(mutableListOf()) {
                 it.scope(useSiteSession, scopeSession, requiredPhase)
-            }
+            },
+            type
         )
         is ConeDefinitelyNotNullType -> original.scope(useSiteSession, scopeSession, requiredPhase)
         is ConeIntegerLiteralType -> error("ILT should not be in receiver position")
         else -> null
     }
 }
+
+
+fun FirClass<*>.defaultType(): ConeClassLikeType =
+    when (this) {
+        is FirRegularClass -> defaultType()
+        is FirAnonymousObject -> defaultType()
+        else -> error("Unknown class ${this::class}")
+    }
 
 fun FirRegularClass.defaultType(): ConeClassLikeTypeImpl {
     return ConeClassLikeTypeImpl(
@@ -92,5 +103,17 @@ fun FirAnonymousObject.defaultType(): ConeClassLikeType {
         isNullable = false
     )
 }
+
+fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLikeType =
+    ConeClassLikeTypeImpl(
+        ConeClassLikeLookupTagImpl(this),
+        parameters.map {
+            ConeTypeParameterTypeImpl(
+                it.toLookupTag(),
+                isNullable = false
+            )
+        }.toTypedArray(),
+        isNullable = false,
+    )
 
 val TYPE_PARAMETER_SCOPE_KEY = scopeSessionKey<FirTypeParameterSymbol, FirTypeScope>()

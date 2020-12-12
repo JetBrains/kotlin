@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.ideaExt.idea
 import java.io.File
 
 plugins {
@@ -57,14 +58,9 @@ dependencies {
         testCompileOnly(project(it))
     }
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    Platform[193].orLower {
-        testCompileOnly(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
-    }
     testCompileOnly(intellijDep()) { includeJars("idea", "idea_rt", "util", "asm-all", rootProject = rootProject) }
 
-    Platform[192].orHigher {
-        testRuntimeOnly(intellijPluginDep("java"))
-    }
+    testRuntimeOnly(intellijPluginDep("java"))
 
     testRuntime(project(":kotlin-reflect"))
     testRuntime(androidDxJar())
@@ -74,10 +70,20 @@ dependencies {
     antLauncherJar(toolsJar())
 }
 
+val generationRoot = projectDir.resolve("tests-gen")
+
 sourceSets {
     "main" {}
     "test" {
         projectDefault()
+        this.java.srcDir(generationRoot.name)
+    }
+}
+
+if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    apply(plugin = "idea")
+    idea {
+        this.module.generatedSourceDirs.add(generationRoot)
     }
 }
 
@@ -92,6 +98,9 @@ projectTest(parallel = true) {
     }
 }
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt")
+val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt")
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsKt") {
+    dependsOn(generateTestData)
+}
 
 testsJar()

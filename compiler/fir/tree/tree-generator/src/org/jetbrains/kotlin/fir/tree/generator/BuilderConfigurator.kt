@@ -241,10 +241,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
-        builder(composedSuperTypeRef) {
-            withCopy()
-        }
-
         builder(breakExpression) {
             parents += loopJumpBuilder
         }

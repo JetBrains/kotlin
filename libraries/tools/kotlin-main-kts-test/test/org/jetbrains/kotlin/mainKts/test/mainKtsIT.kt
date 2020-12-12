@@ -17,6 +17,8 @@ import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.*
 
 class MainKtsIT {
 
@@ -51,42 +53,44 @@ class MainKtsIT {
         runWithKotlincAndMainKts("$TEST_DATA_ROOT/context-classloader.main.kts", listOf("MainKtsConfigurator"))
     }
 
+    @OptIn(ExperimentalPathApi::class)
     @Test
     fun testCachedReflection() {
-        val cache = createTempDir("main.kts.test")
+        val cache = createTempDirectory("main.kts.test")
 
         try {
             runWithKotlinRunner("$TEST_DATA_ROOT/use-reflect.main.kts", listOf("false"), cacheDir = cache)
             // second run uses the cached script
             runWithKotlinRunner("$TEST_DATA_ROOT/use-reflect.main.kts", listOf("false"), cacheDir = cache)
         } finally {
-            cache.deleteRecursively()
+            cache.toFile().deleteRecursively()
         }
     }
 
+    @OptIn(ExperimentalPathApi::class)
     @Test
     fun testCache() {
         val script = File("$TEST_DATA_ROOT/import-test.main.kts").absolutePath
-        val cache = createTempDir("main.kts.test")
+        val cache = createTempDirectory("main.kts.test")
 
         try {
-            Assert.assertTrue(cache.exists() && cache.listFiles { f: File -> f.extension == "jar" }?.isEmpty() == true)
+            Assert.assertTrue(cache.exists() && cache.listDirectoryEntries("*.jar").isEmpty())
             runWithKotlinRunner(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
-            val cacheFile = cache.listFiles { f: File -> f.extension.equals("jar", ignoreCase = true) }?.firstOrNull()
+            val cacheFile = cache.listDirectoryEntries("*.jar").firstOrNull()
             Assert.assertTrue(cacheFile != null && cacheFile.exists())
 
             // run generated jar with java
             val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
-            val args = listOf(javaExecutable.absolutePath, "-jar", cacheFile!!.path)
+            val args = listOf(javaExecutable.absolutePath, "-jar", cacheFile!!.toString())
             runAndCheckResults(
                 args, OUT_FROM_IMPORT_TEST,
-                additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to cache.absolutePath)
+                additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to cache.toAbsolutePath().toString())
             )
 
             // this run should use the cached script
             runWithKotlinRunner(script, OUT_FROM_IMPORT_TEST, cacheDir = cache)
         } finally {
-            cache.deleteRecursively()
+            cache.toFile().deleteRecursively()
         }
     }
 
@@ -127,11 +131,11 @@ fun runWithKotlinRunner(
     scriptPath: String,
     expectedOutPatterns: List<String> = emptyList(),
     expectedExitCode: Int = 0,
-    cacheDir: File? = null
+    cacheDir: Path? = null
 ) {
     runWithKotlinLauncherScript(
         "kotlin", listOf(scriptPath), expectedOutPatterns, expectedExitCode,
-        additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.absolutePath ?: ""))
+        additionalEnvVars = listOf(COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR to (cacheDir?.toAbsolutePath()?.toString() ?: ""))
     )
 }
 

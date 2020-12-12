@@ -41,12 +41,12 @@ sealed class PostponedResolvedAtom : PostponedResolvedAtomMarker {
 
 class ResolvedLambdaAtom(
     val atom: FirAnonymousFunction,
-    override val expectedType: ConeKotlinType?,
+    expectedType: ConeKotlinType?,
     val isSuspend: Boolean,
     val receiver: ConeKotlinType?,
     val parameters: List<ConeKotlinType>,
     val returnType: ConeKotlinType,
-    val typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
+    typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType?,
     candidateOfOuterCall: Candidate?
 ) : PostponedResolvedAtom() {
     init {
@@ -55,10 +55,24 @@ class ResolvedLambdaAtom(
         }
     }
 
+    var typeVariableForLambdaReturnType = typeVariableForLambdaReturnType
+        private set
+
+    override var expectedType = expectedType
+        private set
+
     lateinit var returnStatements: Collection<FirStatement>
 
     override val inputTypes: Collection<ConeKotlinType> get() = receiver?.let { parameters + it } ?: parameters
     override val outputType: ConeKotlinType get() = returnType
+
+    fun replaceExpectedType(expectedType: ConeKotlinType) {
+        this.expectedType = expectedType
+    }
+
+    fun replaceTypeVariableForLambdaReturnType(typeVariableForLambdaReturnType: ConeTypeVariableForLambdaReturnType) {
+        this.typeVariableForLambdaReturnType = typeVariableForLambdaReturnType
+    }
 }
 
 class LambdaWithTypeVariableAsExpectedTypeAtom(

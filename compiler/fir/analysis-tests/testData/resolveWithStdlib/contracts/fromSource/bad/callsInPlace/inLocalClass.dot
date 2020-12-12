@@ -12,7 +12,7 @@ digraph inLocalClass_kt {
             2 [label="Exit local class foo"];
             3 [label="Function call: R|/LocalClass.LocalClass|()"];
             4 [label="Function call: R|/LocalClass.LocalClass|().R|/LocalClass.run|()"];
-            5 [label="Function call: R|<local>/e|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            5 [label="Function call: R|<local>/e|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             6 [label="Exit block"];
         }
         7 [label="Exit function foo" style="filled" fillcolor=red];
@@ -73,7 +73,7 @@ digraph inLocalClass_kt {
         subgraph cluster_7 {
             color=blue
             21 [label="Enter block"];
-            22 [label="Function call: R|<local>/b|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            22 [label="Function call: R|<local>/b|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             23 [label="Exit block"];
         }
         24 [label="Exit function <init>" style="filled" fillcolor=red];
@@ -109,7 +109,7 @@ digraph inLocalClass_kt {
         subgraph cluster_11 {
             color=blue
             32 [label="Enter block"];
-            33 [label="Function call: R|<local>/d|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
+            33 [label="Function call: R|<local>/d|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()"];
             34 [label="Exit block"];
         }
         35 [label="Exit function run" style="filled" fillcolor=red];

@@ -1,5 +1,3 @@
-// !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 @file:[JvmName("Foo") JvmMultifileClass]
@@ -15,4 +13,10 @@ fun foo() {
 @kotlin.internal.InlineOnly
 inline var prop: String
     get() = "12"
+    set(value) {}
+
+inline var prop2: String
+    get() = "12"
+    @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+    @kotlin.internal.InlineOnly
     set(value) {}

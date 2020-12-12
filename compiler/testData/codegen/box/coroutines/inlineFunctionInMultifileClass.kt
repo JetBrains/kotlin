@@ -1,6 +1,5 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 // IGNORE_LIGHT_ANALYSIS
 // !INHERIT_MULTIFILE_PARTS
 // TARGET_BACKEND: JVM
@@ -13,8 +12,8 @@
 package test
 
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 suspend fun foo(): String = bar("OK")
 

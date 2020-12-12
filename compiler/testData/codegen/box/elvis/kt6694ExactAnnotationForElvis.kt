@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 interface PsiElement {
     fun <T: PsiElement> findChildByType(i: Int): T? =
             if (i == 42) JetOperationReferenceExpression() as T else throw Exception()

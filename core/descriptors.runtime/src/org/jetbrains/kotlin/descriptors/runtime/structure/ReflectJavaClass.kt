@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.descriptors.runtime.structure
 
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
+import org.jetbrains.kotlin.load.java.structure.JavaRecordComponent
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -96,6 +97,9 @@ class ReflectJavaClass(
             .map(::ReflectJavaConstructor)
             .toList()
 
+    override val recordComponents: Collection<JavaRecordComponent>
+        get() = emptyList()
+
     override fun hasDefaultConstructor() = false // any default constructor is returned by constructors
 
     override val lightClassOriginKind: LightClassOriginKind?
@@ -113,6 +117,16 @@ class ReflectJavaClass(
         get() = klass.isAnnotation
     override val isEnum: Boolean
         get() = klass.isEnum
+
+    // TODO: Support reflect
+    override val isRecord: Boolean
+        get() = false
+
+    override val isSealed: Boolean
+        get() = false
+
+    override val permittedTypes: Collection<JavaClassifierType>
+        get() = emptyList()
 
     override fun equals(other: Any?) = other is ReflectJavaClass && klass == other.klass
 

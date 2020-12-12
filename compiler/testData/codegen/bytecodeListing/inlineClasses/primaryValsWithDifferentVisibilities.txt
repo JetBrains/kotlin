@@ -4,6 +4,7 @@ public interface IValue {
     public abstract method getValue(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class TestInternal {
     // source: 'primaryValsWithDifferentVisibilities.kt'
@@ -21,6 +22,7 @@ public final class TestInternal {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class TestOverriding {
     // source: 'primaryValsWithDifferentVisibilities.kt'
@@ -39,6 +41,7 @@ public final class TestOverriding {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class TestPrivate {
     // source: 'primaryValsWithDifferentVisibilities.kt'
@@ -56,6 +59,7 @@ public final class TestPrivate {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class TestPublic {
     // source: 'primaryValsWithDifferentVisibilities.kt'

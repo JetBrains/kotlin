@@ -55,10 +55,10 @@ object Visibilities {
     @OptIn(ExperimentalStdlibApi::class)
     private val ORDERED_VISIBILITIES: Map<Visibility, Int> = buildMap {
         put(PrivateToThis, 0)
-        put(Private, 0);
-        put(Internal, 1);
-        put(Protected, 1);
-        put(Public, 2);
+        put(Private, 0)
+        put(Internal, 1)
+        put(Protected, 1)
+        put(Public, 2)
     }
 
     fun compare(first: Visibility, second: Visibility): Int? {

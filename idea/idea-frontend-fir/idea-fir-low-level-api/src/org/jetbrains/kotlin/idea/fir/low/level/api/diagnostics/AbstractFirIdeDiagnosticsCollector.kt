@@ -42,7 +42,7 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
         override fun report(diagnostic: FirDiagnostic<*>?) {
             if (diagnostic !is FirPsiDiagnostic<*>) return
             if (diagnostic.element.psi !is KtElement) return
-            onDiagnostic(diagnostic.asPsiBasedDiagnostic())
+            onDiagnostic(diagnostic)
         }
     }
 
@@ -56,7 +56,7 @@ internal abstract class AbstractFirIdeDiagnosticsCollector(
         checkCanceled()
     }
 
-    override fun getCollectedDiagnostics(): Iterable<FirDiagnostic<*>> {
+    override fun getCollectedDiagnostics(): List<FirDiagnostic<*>> {
         // Not necessary in IDE
         return emptyList()
     }

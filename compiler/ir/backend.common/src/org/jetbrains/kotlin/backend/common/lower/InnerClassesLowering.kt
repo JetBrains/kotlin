@@ -31,9 +31,7 @@ interface InnerClassesSupport {
 }
 
 class InnerClassesLowering(val context: BackendContext, private val innerClassesSupport: InnerClassesSupport) : DeclarationTransformer {
-    override fun lower(irFile: IrFile) {
-        runPostfix(true).toFileLoweringPass().lower(irFile)
-    }
+    override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrClass && declaration.isInner) {
@@ -99,9 +97,17 @@ private fun InnerClassesSupport.primaryConstructorParameterMap(originalConstruct
 
     val loweredConstructor = getInnerClassConstructorWithOuterThisParameter(originalConstructor)
 
-    originalConstructor.valueParameters.forEach { old ->
-        oldConstructorParameterToNew[old] = loweredConstructor.valueParameters[old.index + 1]
+    var index = 0
+
+    originalConstructor.dispatchReceiverParameter?.let {
+        oldConstructorParameterToNew[it] = loweredConstructor.valueParameters[index++]
     }
+
+    originalConstructor.valueParameters.forEach { old ->
+        oldConstructorParameterToNew[old] = loweredConstructor.valueParameters[index++]
+    }
+
+    assert(loweredConstructor.valueParameters.size == index)
 
     return oldConstructorParameterToNew
 }

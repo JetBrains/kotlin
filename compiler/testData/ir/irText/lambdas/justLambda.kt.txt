@@ -1,0 +1,14 @@
+val test1: Function0<Int>
+  field = local fun <anonymous>(): Int {
+    return 42
+  }
+
+  get
+
+val test2: Function0<Unit>
+  field = local fun <anonymous>() {
+    return Unit
+  }
+
+  get
+

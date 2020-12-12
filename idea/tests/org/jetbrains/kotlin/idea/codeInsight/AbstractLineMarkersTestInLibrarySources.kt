@@ -65,9 +65,7 @@ abstract class AbstractLineMarkersTestInLibrarySources : AbstractLineMarkersTest
             val project = myFixture.project
             for (file in libraryOriginal.walkTopDown().filter { !it.isDirectory }) {
                 myFixture.openFileInEditor(fileSystem.findFileByPath(file.absolutePath)!!)
-                val data = ExpectedHighlightingData(
-                    myFixture.editor.document, false, false, false, myFixture.file
-                )
+                val data = ExpectedHighlightingData(myFixture.editor.document, false, false, false)
                 data.init()
 
                 val librarySourceFile = libraryClean!!.resolve(file.relativeTo(libraryOriginal).path)
@@ -79,7 +77,7 @@ abstract class AbstractLineMarkersTestInLibrarySources : AbstractLineMarkersTest
                     throw AssertionError("File ${myFixture.file.virtualFile.path} should be in library sources!")
                 }
 
-                doAndCheckHighlighting(myFixture.project, document, data, file)
+                doAndCheckHighlighting(myFixture.file, document, data, file)
             }
         }
     }

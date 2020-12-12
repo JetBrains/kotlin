@@ -50,7 +50,7 @@ public class JUnit3RunnerWithInnersForJPS extends Runner implements Filterable, 
     public JUnit3RunnerWithInnersForJPS(Class<?> klass) {
         this.klass = klass;
         requestedRunners.add(klass);
-        ensureCompilerXmlExists();
+        ensureCompilerExtensionFilesExists();
     }
 
     @Override
@@ -86,14 +86,19 @@ public class JUnit3RunnerWithInnersForJPS extends Runner implements Filterable, 
      * compiler.xml needs to be in both compiler & ide module for tests execution.
      * To avoid file duplication copy it to the out dir idea module before test execution.
      */
-    private static void ensureCompilerXmlExists() {
-        String compilerXmlSourcePath = "compiler/cli/cli-common/resources/META-INF/extensions/compiler.xml";
+    private static void ensureCompilerExtensionFilesExists() {
+        copyCompilerResourceFile("compiler.xml");
+        copyCompilerResourceFile("core.xml");
+    }
+
+    private static void copyCompilerResourceFile(String fileName) {
+        String compilerXmlSourcePath = "compiler/cli/cli-common/resources/META-INF/extensions/" + fileName;
 
         String jpsTargetDirectory = "out/production/kotlin.idea.main";
         String pillTargetDirectory = "out/production/idea.main";
 
         String baseDir = Files.exists(Paths.get(jpsTargetDirectory)) ? jpsTargetDirectory : pillTargetDirectory;
-        String compilerXmlTargetPath = baseDir + "/META-INF/extensions/compiler.xml";
+        String compilerXmlTargetPath = baseDir + "/META-INF/extensions/" + fileName;
 
         try {
             Path targetPath = Paths.get(compilerXmlTargetPath);

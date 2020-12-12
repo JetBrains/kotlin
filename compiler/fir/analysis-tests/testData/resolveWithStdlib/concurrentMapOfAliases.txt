@@ -9,7 +9,7 @@ FILE: concurrentMapOfAliases.kt
             private get(): R|java/util/concurrent/ConcurrentHashMap<ft<kotlin/String, kotlin/String?>!, ft<kotlin/CharSequence, kotlin/CharSequence?>!>|
 
         private final fun bar(): R|kotlin/Unit| {
-            this@R|/A|.R|/A.foo|.R|FakeOverride<java/util/concurrent/ConcurrentHashMap.get: R|kotlin/CharSequence?|>|(String(dd))?.{ (this@R|/A|, $subj$).R|/A.baz|() }
+            this@R|/A|.R|/A.foo|.R|SubstitutionOverride<java/util/concurrent/ConcurrentHashMap.get: R|kotlin/CharSequence?|>|(String(dd))?.{ (this@R|/A|, $subj$).R|/A.baz|() }
         }
 
         private final fun R|MyAlias|.baz(): R|kotlin/Unit| {

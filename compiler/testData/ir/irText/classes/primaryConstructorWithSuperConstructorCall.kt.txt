@@ -1,0 +1,48 @@
+open class Base {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class TestImplicitPrimaryConstructor : Base {
+  constructor() /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+}
+
+class TestExplicitPrimaryConstructor : Base {
+  constructor() /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+}
+
+class TestWithDelegatingConstructor : Base {
+  constructor(x: Int, y: Int) /* primary */ {
+    super/*Base*/()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  val y: Int
+    field = y
+    get
+
+  constructor(x: Int) {
+    this/*TestWithDelegatingConstructor*/(x = x, y = 0)
+  }
+
+}
+

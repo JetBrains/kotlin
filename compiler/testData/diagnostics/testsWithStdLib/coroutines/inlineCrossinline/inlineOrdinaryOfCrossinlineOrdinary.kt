@@ -1,9 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// COMMON_COROUTINES_TEST
 // WITH_COROUTINES
 // SKIP_TXT
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 import helpers.*
 
 // Function is NOT suspend

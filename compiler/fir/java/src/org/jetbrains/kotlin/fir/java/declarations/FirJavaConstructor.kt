@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -37,6 +38,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     override val annotations: MutableList<FirAnnotationCall>,
     override var status: FirDeclarationStatus,
     override var resolvePhase: FirResolvePhase,
+    override val dispatchReceiverType: ConeKotlinType?,
 ) : FirConstructor() {
     override val receiverTypeRef: FirTypeRef? get() = null
 
@@ -154,7 +156,8 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
             typeParameters,
             annotations,
             status,
-            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
+            dispatchReceiverType
         )
     }
 

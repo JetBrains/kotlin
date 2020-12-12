@@ -11,7 +11,10 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBreak
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
+import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -21,6 +24,7 @@ import org.jetbrains.kotlin.js.naming.isES5IdentifierPart
 import org.jetbrains.kotlin.js.naming.isES5IdentifierStart
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import java.util.*
 
 fun <T> mapToKey(declaration: T): String {
     return with(JsManglerIr) {
@@ -100,25 +104,18 @@ fun fieldSignature(field: IrField): Signature {
     return BackingFieldSignature(field)
 }
 
-fun functionSignature(declaration: IrFunction): Signature {
+fun jsFunctionSignature(declaration: IrFunction): Signature {
     require(!declaration.isStaticMethodOfClass)
     require(declaration.dispatchReceiverParameter != null)
 
     val declarationName = declaration.getJsNameOrKotlinName().asString()
-    val stableName = StableNameSignature(declarationName)
 
-    if (declaration.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION) {
-        return stableName
-    }
-    if (declaration.isEffectivelyExternal()) {
-        return stableName
-    }
-    if (declaration.getJsName() != null) {
-        return stableName
-    }
-    // Handle names for special functions
-    if (declaration is IrSimpleFunction && declaration.isMethodOfAny()) {
-        return stableName
+    val needsStableName = declaration.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION ||
+            declaration.hasStableJsName() ||
+            (declaration as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
+
+    if (needsStableName) {
+        return StableNameSignature(declarationName)
     }
 
     val nameBuilder = StringBuilder()
@@ -139,7 +136,7 @@ fun functionSignature(declaration: IrFunction): Signature {
     declaration.returnType.let {
         // Return type is only used in signature for inline class and Unit types because
         // they are binary incompatible with supertypes.
-        if (it.isInlined() || it.isUnit()) {
+        if (it.getJsInlinedClass() != null || it.isUnit()) {
             nameBuilder.append("_ret$${it.asString()}")
         }
     }
@@ -182,10 +179,12 @@ class NameTables(
             for (declaration in p.declarations) {
                 generateNamesForTopLevelDecl(declaration)
                 if (declaration is IrScript) {
-                    for (memberDecl in declaration.declarations) {
-                        generateNamesForTopLevelDecl(memberDecl)
-                        if (memberDecl is IrClass) {
-                            classDeclaration += memberDecl
+                    for (memberDecl in declaration.statements) {
+                        if (memberDecl is IrDeclaration) {
+                            generateNamesForTopLevelDecl(memberDecl)
+                            if (memberDecl is IrClass) {
+                                classDeclaration += memberDecl
+                            }
                         }
                     }
                 }
@@ -280,7 +279,7 @@ class NameTables(
     }
 
     private fun generateNameForMemberFunction(declaration: IrSimpleFunction) {
-        when (val signature = functionSignature(declaration)) {
+        when (val signature = jsFunctionSignature(declaration)) {
             is StableNameSignature -> memberNames.declareStableName(signature, signature.name)
             is ParameterTypeBasedSignature -> memberNames.declareFreshName(signature, signature.suggestedName)
         }
@@ -329,7 +328,7 @@ class NameTables(
     }
 
     fun getNameForMemberFunction(function: IrSimpleFunction): String {
-        val signature = functionSignature(function)
+        val signature = jsFunctionSignature(function)
         val name = memberNames.names[signature] ?: mappedNames[mapToKey(signature)]
 
         // TODO Add a compiler flag, which enables this behaviour
@@ -357,6 +356,8 @@ class NameTables(
     inner class LocalNameGenerator(parentDeclaration: IrDeclaration) : IrElementVisitorVoid {
         val table = NameTable<IrDeclaration>(globalNames)
 
+        private val breakableDeque: Deque<IrExpression> = LinkedList()
+
         init {
             localNames[parentDeclaration] = table
         }
@@ -373,21 +374,45 @@ class NameTables(
             super.visitDeclaration(declaration)
         }
 
-        override fun visitLoop(loop: IrLoop) {
-            val label = loop.label
-            if (label != null) {
-                localLoopNames.declareFreshName(loop, label)
-                loopNames[loop] = localLoopNames.names[loop]!!
+        override fun visitBreak(jump: IrBreak) {
+            val loop = jump.loop
+            if (loop.label == null && loop != breakableDeque.firstOrNull()) {
+                persistLoopName(SYNTHETIC_LOOP_LABEL, loop)
             }
+
+            super.visitBreak(jump)
+        }
+
+        override fun visitWhen(expression: IrWhen) {
+            breakableDeque.push(expression)
+
+            super.visitWhen(expression)
+
+            breakableDeque.pop()
+        }
+
+        override fun visitLoop(loop: IrLoop) {
+            breakableDeque.push(loop)
+
             super.visitLoop(loop)
+
+            breakableDeque.pop()
+
+            val label = loop.label
+
+            if (label != null) {
+                persistLoopName(label, loop)
+            }
+        }
+
+        private fun persistLoopName(label: String, loop: IrLoop) {
+            localLoopNames.declareFreshName(loop, label)
+            loopNames[loop] = localLoopNames.names[loop]!!
         }
     }
 
     fun getNameForLoop(loop: IrLoop): String? =
-        if (loop.label == null)
-            null
-        else
-            loopNames[loop]!!
+        loopNames[loop]
 }
 
 
@@ -397,3 +422,5 @@ fun sanitizeName(name: String): String {
     val first = name.first().let { if (it.isES5IdentifierStart()) it else '_' }
     return first.toString() + name.drop(1).map { if (it.isES5IdentifierPart()) it else '_' }.joinToString("")
 }
+
+private const val SYNTHETIC_LOOP_LABEL = "\$l\$break"

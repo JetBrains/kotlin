@@ -47,4 +47,6 @@ interface LazyClassContext {
     val wrappedTypeFactory: WrappedTypeFactory
     val kotlinTypeChecker: NewKotlinTypeChecker
     val samConversionResolver: SamConversionResolver
+    val additionalClassPartsProvider: AdditionalClassPartsProvider
+    val sealedClassInheritorsProvider: SealedClassInheritorsProvider
 }

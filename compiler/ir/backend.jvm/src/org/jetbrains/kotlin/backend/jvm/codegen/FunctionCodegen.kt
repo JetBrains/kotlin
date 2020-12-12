@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.ir.allOverridden
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.BOUND_VALUE_PARAMETER
@@ -117,7 +118,7 @@ class FunctionCodegen(
 
     private fun shouldGenerateAnnotationsOnValueParameters(): Boolean =
         when {
-            irFunction.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS ->
+            irFunction.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS ->
                 false
             irFunction is IrConstructor && irFunction.parentAsClass.shouldNotGenerateConstructorParameterAnnotations() ->
                 // Not generating parameter annotations for default stubs fixes KT-7892, though
@@ -144,38 +145,53 @@ class FunctionCodegen(
 
     private fun IrFunction.calculateMethodFlags(): Int {
         if (origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
-            return getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC or functionDeprecationFlags.let {
-                if (this is IrConstructor) it else it or Opcodes.ACC_STATIC
-            }
+            return getVisibilityForDefaultArgumentStub() or Opcodes.ACC_SYNTHETIC or
+                    (if (isDeprecatedFunction(context)) Opcodes.ACC_DEPRECATED else 0) or
+                    (if (this is IrConstructor) 0 else Opcodes.ACC_STATIC)
         }
 
-        val isVararg = valueParameters.lastOrNull()?.varargElementType != null
-        val isBridge = origin == IrDeclarationOrigin.BRIDGE || origin == IrDeclarationOrigin.BRIDGE_SPECIAL
+        val isVararg = valueParameters.lastOrNull()?.varargElementType != null && !isBridge()
         val modalityFlag = when ((this as? IrSimpleFunction)?.modality) {
             Modality.FINAL -> when {
                 origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER -> 0
                 origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER -> 0
                 parentAsClass.isInterface && body != null -> 0
-                parentAsClass.isAnnotationClass && !isStatic -> Opcodes.ACC_ABSTRACT
+                parentAsClass.isAnnotationClass -> if (isStatic) 0 else Opcodes.ACC_ABSTRACT
                 else -> Opcodes.ACC_FINAL
             }
             Modality.ABSTRACT -> Opcodes.ACC_ABSTRACT
             // TODO transform interface modality on lowering to DefaultImpls
             else -> if (parentAsClass.isJvmInterface && body == null) Opcodes.ACC_ABSTRACT else 0
         }
-        val isSynthetic = origin.isSynthetic || hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
-                (isSuspend && DescriptorVisibilities.isPrivate(visibility) && !isInline) || isReifiable()
+        val isSynthetic = origin.isSynthetic ||
+                hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME) ||
+                (isSuspend && DescriptorVisibilities.isPrivate(visibility) && !isInline) ||
+                isReifiable() ||
+                isDeprecatedHidden()
+
         val isStrict = hasAnnotation(STRICTFP_ANNOTATION_FQ_NAME)
         val isSynchronized = hasAnnotation(SYNCHRONIZED_ANNOTATION_FQ_NAME)
 
-        return getVisibilityAccessFlag() or modalityFlag or functionDeprecationFlags or
+        return getVisibilityAccessFlag() or modalityFlag or
+                (if (isDeprecatedFunction(context)) Opcodes.ACC_DEPRECATED else 0) or
                 (if (isStatic) Opcodes.ACC_STATIC else 0) or
                 (if (isVararg) Opcodes.ACC_VARARGS else 0) or
                 (if (isExternal) Opcodes.ACC_NATIVE else 0) or
-                (if (isBridge) Opcodes.ACC_BRIDGE else 0) or
+                (if (isBridge()) Opcodes.ACC_BRIDGE else 0) or
                 (if (isSynthetic) Opcodes.ACC_SYNTHETIC else 0) or
                 (if (isStrict) Opcodes.ACC_STRICT else 0) or
                 (if (isSynchronized) Opcodes.ACC_SYNCHRONIZED else 0)
+    }
+
+    private fun IrFunction.isDeprecatedHidden(): Boolean {
+        val mightBeDeprecated = if (this is IrSimpleFunction) {
+            allOverridden(true).any {
+                it.isAnnotatedWithDeprecated || it.correspondingPropertySymbol?.owner?.isAnnotatedWithDeprecated == true
+            }
+        } else {
+            isAnnotatedWithDeprecated
+        }
+        return mightBeDeprecated && context.state.deprecationProvider.isDeprecatedHidden(toIrBasedDescriptor())
     }
 
     private fun getThrownExceptions(function: IrFunction): List<String>? {

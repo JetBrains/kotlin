@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -45,11 +46,11 @@ open class MetadataSerializer(
         val (bindingContext, moduleDescriptor) = analyzer.analysisResult
 
         val destDir = checkNotNull(environment.destDir)
-        performSerialization(environment.getSourceFiles(), bindingContext, moduleDescriptor, destDir)
+        performSerialization(environment.getSourceFiles(), bindingContext, moduleDescriptor, destDir, environment.project)
     }
 
     protected open fun performSerialization(
-        files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File
+        files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File, project: Project?
     ) {
         val packageTable = hashMapOf<FqName, PackageParts>()
 
@@ -83,14 +84,14 @@ open class MetadataSerializer(
                         val classDescriptor = bindingContext.get(BindingContext.CLASS, classOrObject)
                             ?: error("No descriptor found for class ${classOrObject.fqName}")
                         val destFile = File(destDir, getClassFilePath(ClassId(packageFqName, classDescriptor.name)))
-                        PackageSerializer(listOf(classDescriptor), emptyList(), packageFqName, destFile).run()
+                        PackageSerializer(listOf(classDescriptor), emptyList(), packageFqName, destFile, project).run()
                     }
                 })
             }
 
             if (members.isNotEmpty()) {
                 val destFile = File(destDir, getPackageFilePath(packageFqName, file.name))
-                PackageSerializer(emptyList(), members, packageFqName, destFile).run()
+                PackageSerializer(emptyList(), members, packageFqName, destFile, project).run()
 
                 packageTable.getOrPut(packageFqName) {
                     PackageParts(packageFqName.asString())
@@ -123,27 +124,29 @@ open class MetadataSerializer(
         private val classes: Collection<DeclarationDescriptor>,
         private val members: Collection<DeclarationDescriptor>,
         private val packageFqName: FqName,
-        private val destFile: File
+        private val destFile: File,
+        private val project: Project? = null
     ) {
         private val proto = ProtoBuf.PackageFragment.newBuilder()
         private val extension = createSerializerExtension()
 
         fun run() {
             val serializer = DescriptorSerializer.createTopLevel(extension)
-            serializeClasses(classes, serializer)
+            serializeClasses(classes, serializer, project)
             serializeMembers(members, serializer)
             serializeStringTable()
             serializeBuiltInsFile()
         }
 
-        private fun serializeClasses(classes: Collection<DeclarationDescriptor>, parentSerializer: DescriptorSerializer) {
+        private fun serializeClasses(classes: Collection<DeclarationDescriptor>, parentSerializer: DescriptorSerializer, project: Project?) {
             for (descriptor in DescriptorSerializer.sort(classes)) {
                 if (descriptor !is ClassDescriptor || descriptor.kind == ClassKind.ENUM_ENTRY) continue
 
-                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer)
+                val serializer = DescriptorSerializer.create(descriptor, extension, parentSerializer, project)
                 serializeClasses(
                     descriptor.unsubstitutedInnerClassesScope.getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS),
-                    serializer
+                    serializer,
+                    project
                 )
 
                 proto.addClass_(serializer.classProto(descriptor).build())

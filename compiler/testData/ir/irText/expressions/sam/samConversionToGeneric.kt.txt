@@ -1,0 +1,52 @@
+fun test1(): J<String> {
+  return local fun <anonymous>(x: @FlexibleNullability String?): @FlexibleNullability String? {
+    return x
+  }
+ /*-> J<String> */
+}
+
+fun test2(): J<@FlexibleNullability String?> {
+  return local fun <anonymous>(x: String): @FlexibleNullability String? {
+    return x
+  }
+ /*-> J<@FlexibleNullability String?> */
+}
+
+fun test3() {
+  return bar<@FlexibleNullability String?>(j = local fun <anonymous>(x: String): @FlexibleNullability String? {
+    return x
+  }
+ /*-> @FlexibleNullability J<@FlexibleNullability String?>? */)
+}
+
+fun test4(a: Any) {
+  a as J<String> /*~> Unit */
+  bar<@FlexibleNullability String?>(j = a /*as J<@FlexibleNullability String?> */)
+}
+
+fun test5(a: Any) {
+  a as Function1<String, String> /*~> Unit */
+  bar<@FlexibleNullability String?>(j = a /*as Function1<@ParameterName(name = "x") @FlexibleNullability String?, @FlexibleNullability String?> */ /*-> @FlexibleNullability J<@FlexibleNullability String?>? */)
+}
+
+fun <T : Any?> test6(a: Function1<T, T>) {
+  bar<@FlexibleNullability T?>(j = a /*-> @FlexibleNullability J<@FlexibleNullability T?>? */)
+}
+
+fun <T : Any?> test7(a: Any) {
+  a as Function1<T, T> /*~> Unit */
+  bar<@FlexibleNullability T?>(j = a /*as Function1<@ParameterName(name = "x") @FlexibleNullability T?, @FlexibleNullability T?> */ /*-> @FlexibleNullability J<@FlexibleNullability T?>? */)
+}
+
+fun test8(efn: @ExtensionFunctionType Function1<String, String>): J<@FlexibleNullability String?> {
+  return efn /*-> J<@FlexibleNullability String?> */
+}
+
+fun test9(efn: @ExtensionFunctionType Function1<String, String>) {
+  bar<@FlexibleNullability String?>(j = efn /*-> @FlexibleNullability J<@FlexibleNullability String?>? */)
+}
+
+fun test10(fn: Function1<Int, String>) {
+  bar2x<@FlexibleNullability Int?>(j2x = fn /*-> @FlexibleNullability J2X<@FlexibleNullability Int?>? */)
+}
+

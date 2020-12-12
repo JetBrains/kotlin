@@ -10,7 +10,7 @@ FILE: typeAliasWithForEach.kt
     public final typealias Arguments = R|kotlin/collections/Map<kotlin/String, ArgsInfo>|
     public final fun R|Arguments|.deepCopy(): R|Arguments| {
         lval result: R|java/util/HashMap<ft<kotlin/String, kotlin/String?>!, ft<ArgsInfo, ArgsInfo?>!>| = R|java/util/HashMap.HashMap|<R|ft<kotlin/String, kotlin/String?>!|, R|ft<ArgsInfo, ArgsInfo?>!|>()
-        this@R|/deepCopy|.R|FakeOverride<kotlin/collections/Map.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|ft<kotlin/String, kotlin/String?>!|, value: R|ft<ArgsInfo, ArgsInfo?>!|): R|kotlin/Unit| {
+        this@R|/deepCopy|.R|SubstitutionOverride<kotlin/collections/Map.forEach: R|kotlin/Unit|>|(<L> = forEach@fun <anonymous>(key: R|ft<kotlin/String, kotlin/String?>!|, value: R|ft<ArgsInfo, ArgsInfo?>!|): R|kotlin/Unit| {
             R|<local>/result|.R|kotlin/collections/set|<R|ft<kotlin/String, kotlin/String?>!|, R|ft<ArgsInfo, ArgsInfo?>!|>(R|<local>/key|, R|/ArgsInfoImpl.ArgsInfoImpl|(R|<local>/value|))
         }
         )

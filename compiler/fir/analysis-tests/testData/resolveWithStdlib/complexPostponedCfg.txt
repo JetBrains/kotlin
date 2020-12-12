@@ -6,10 +6,10 @@ FILE: complexPostponedCfg.kt
     public final fun foo(statements: R|kotlin/collections/List<FirBase>|, arguments: R|kotlin/collections/List<FirBase>|, explicitReceiver: R|FirBase|): R|kotlin/collections/List<FirFunctionCall>| {
         lval firstCalls: R|kotlin/collections/List<FirFunctionCall>| = R|kotlin/with|<R|FirFunctionCall|, R|kotlin/collections/List<FirFunctionCall>|>((R|<local>/statements|.R|kotlin/collections/last|<R|FirBase|>() as R|FirFunctionCall|), <L> = setCall@fun R|FirFunctionCall|.<anonymous>(): R|kotlin/collections/List<FirFunctionCall>| <kind=EXACTLY_ONCE>  {
             ^ R|kotlin/collections/buildList|<R|FirFunctionCall|>(<L> = buildList@fun R|kotlin/collections/MutableList<FirFunctionCall>|.<anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
-                this@R|special/anonymous|.R|FakeOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(this@R|special/anonymous|)
+                this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(this@R|special/anonymous|)
                 R|kotlin/with|<R|FirFunctionCall|, R|kotlin/Boolean|>((R|<local>/arguments|.R|kotlin/collections/last|<R|FirBase|>() as R|FirFunctionCall|), <L> = plusCall@fun R|FirFunctionCall|.<anonymous>(): R|kotlin/Boolean| <kind=EXACTLY_ONCE>  {
-                    this@R|special/anonymous|.R|FakeOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(this@R|special/anonymous|)
-                    this@R|special/anonymous|.R|FakeOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|((R|<local>/explicitReceiver| as R|FirFunctionCall|))
+                    this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(this@R|special/anonymous|)
+                    this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|((R|<local>/explicitReceiver| as R|FirFunctionCall|))
                 }
                 )
             }

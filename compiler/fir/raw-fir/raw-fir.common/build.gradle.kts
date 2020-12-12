@@ -16,10 +16,8 @@ dependencies {
 
     compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
 
-    Platform[192].orHigher {
-        testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-        testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    }
+    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {

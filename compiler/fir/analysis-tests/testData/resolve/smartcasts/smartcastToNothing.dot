@@ -181,7 +181,7 @@ digraph smartcastToNothing_kt {
             57 [label="Const: Null(null)"];
             58 [label="Variable declaration: lvar s: R|A?|"];
             59 [label="Access variable R|<local>/results|"];
-            60 [label="Function call: R|<local>/results|.R|FakeOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Nothing>|>|()"];
+            60 [label="Function call: R|<local>/results|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Nothing>|>|()"];
             61 [label="Variable declaration: lval <iterator>: R|kotlin/collections/Iterator<kotlin/Nothing>|"];
             subgraph cluster_18 {
                 color=blue
@@ -200,7 +200,7 @@ digraph smartcastToNothing_kt {
                         color=blue
                         68 [label="Enter block"];
                         69 [label="Access variable R|<local>/<iterator>|"];
-                        70 [label="Function call: R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.next: R|kotlin/Nothing|>|()"];
+                        70 [label="Function call: R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Nothing|>|()"];
                         71 [label="Stub" style="filled" fillcolor=gray];
                         72 [label="Variable declaration: lval result: R|kotlin/Nothing|" style="filled" fillcolor=gray];
                         73 [label="Access variable R|<local>/result|" style="filled" fillcolor=gray];

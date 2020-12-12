@@ -1,4 +1,3 @@
-// COMMON_COROUTINES_TEST
 // WITH_RUNTIME
 // WITH_COROUTINES
 // CHECK_STATE_MACHINE
@@ -38,7 +37,7 @@ inline fun <T, R1, R2, R3> map3(source: MyDeferred<T>, crossinline mapper1: (T) 
 // FILE: box.kt
 
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 fun builder(c: suspend () -> Unit) {
     c.startCoroutine(EmptyContinuation)

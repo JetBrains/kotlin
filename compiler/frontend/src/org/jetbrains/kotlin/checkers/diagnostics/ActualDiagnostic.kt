@@ -17,7 +17,7 @@ class ActualDiagnostic constructor(val diagnostic: Diagnostic, override val plat
         TextDiagnostic.InferenceCompatibility.OLD
 
     override val name: String
-        get() = diagnostic.factory.name
+        get() = diagnostic.factory.name!!
 
     val file: PsiFile
         get() = diagnostic.psiFile

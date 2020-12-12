@@ -14,28 +14,28 @@ import org.junit.Test
 class PropertySetterCommonizerTest : AbstractCommonizerTest<CirPropertySetter?, CirPropertySetter?>() {
 
     @Test
-    fun absentOnly() = super.doTestSuccess(
+    fun missingOnly() = super.doTestSuccess(
         expected = null,
         null, null, null
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun absentAndPublic() = doTestFailure(
+    fun missingAndPublic() = doTestFailure(
         null, null, null, PUBLIC
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun publicAndAbsent() = doTestFailure(
+    fun publicAndMissing() = doTestFailure(
         PUBLIC, PUBLIC, PUBLIC, null
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun protectedAndAbsent() = doTestFailure(
+    fun protectedAndMissing() = doTestFailure(
         PROTECTED, PROTECTED, null
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
-    fun absentAndInternal() = doTestFailure(
+    fun missingAndInternal() = doTestFailure(
         null, null, INTERNAL
     )
 

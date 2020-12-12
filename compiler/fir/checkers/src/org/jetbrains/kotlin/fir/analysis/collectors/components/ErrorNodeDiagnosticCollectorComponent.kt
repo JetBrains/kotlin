@@ -93,7 +93,7 @@ class ErrorNodeDiagnosticCollectorComponent(collector: AbstractDiagnosticCollect
     private fun ConeSimpleDiagnostic.getFactory(): FirDiagnosticFactory0<FirSourceElement, *> {
         @Suppress("UNCHECKED_CAST")
         return when (kind) {
-            Syntax -> FirErrors.SYNTAX_ERROR
+            Syntax -> FirErrors.SYNTAX
             ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
             UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
             NoThis -> FirErrors.NO_THIS

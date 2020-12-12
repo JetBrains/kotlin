@@ -1,0 +1,51 @@
+fun test1(): J<String?> {
+  return local fun <anonymous>(x: String?): String? {
+    return x
+  }
+ /*-> J<String?> */
+}
+
+fun test2(): J<String?> {
+  return local fun <anonymous>(x: String): String {
+    return x
+  }
+ /*-> J<String?> */
+}
+
+fun test3() {
+  return bar<String?>(j = local fun <anonymous>(x: String): String {
+    return x
+  }
+ /*-> J<X?>? */)
+}
+
+fun test4(a: Any) {
+  a as J<String> /*~> Unit */
+  bar<String?>(j = a /*as J<String> */)
+}
+
+fun test5(a: Any) {
+  a as Function1<String, String> /*~> Unit */
+  bar<String?>(j = a /*as Function1<String, String> */ /*-> J<X?>? */)
+}
+
+fun <T : Any?> test6(a: Function1<T, T>) {
+  bar<T?>(j = a /*-> J<X?>? */)
+}
+
+fun <T : Any?> test7(a: Any) {
+  a as Function1<T, T> /*~> Unit */
+  bar<T?>(j = a /*as Function1<T, T> */ /*-> J<X?>? */)
+}
+
+fun test8(efn: @ExtensionFunctionType @ExtensionFunctionType Function1<String, String>): J<String?> {
+  return efn /*-> J<String?> */
+}
+
+fun test9(efn: @ExtensionFunctionType @ExtensionFunctionType Function1<String, String>) {
+  bar<String?>(j = efn /*-> J<X?>? */)
+}
+
+fun test10(fn: Function1<Int, String>) {
+  bar2x<Int?>(j2x = fn /*-> J2X<Y?>? */)
+}

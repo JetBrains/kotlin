@@ -77,8 +77,9 @@ class KotlinFunctionCallUsage(
         changeNameIfNeeded(changeInfo, element)
 
         if (element.valueArgumentList == null && changeInfo.isParameterSetOrOrderChanged && element.lambdaArguments.isNotEmpty()) {
-            element.calleeExpression?.let {
-                element.addAfter(KtPsiFactory(element).createCallArguments("()"), it)
+            val anchor = element.typeArgumentList ?: element.calleeExpression
+            if (anchor != null) {
+                element.addAfter(KtPsiFactory(element).createCallArguments("()"), anchor)
             }
         }
         if (element.valueArgumentList != null) {

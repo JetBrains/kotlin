@@ -9,13 +9,13 @@ FILE: lambdaInElvis.kt
     }
     public final fun bar1(w: R|kotlin/collections/List<kotlin/CharSequence>|): R|kotlin/collections/List<kotlin/CharSequence>?| {
         ^bar1 R|/foo|<R|kotlin/CharSequence|>(<L> = foo@fun <anonymous>(container: R|kotlin/collections/MutableList<kotlin/CharSequence>|): R|kotlin/Unit| {
-            R|<local>/container|.R|FakeOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
+            R|<local>/container|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
         }
         ) ?: R|<local>/w|
     }
     public final fun bar2(): R|kotlin/collections/List<kotlin/CharSequence>?| {
         ^bar2 R|/foo|<R|kotlin/CharSequence|>(<L> = foo@fun <anonymous>(container: R|kotlin/collections/MutableList<kotlin/CharSequence>|): R|kotlin/Unit| {
-            R|<local>/container|.R|FakeOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
+            R|<local>/container|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String())
         }
         ) ?: R|/listOf|<R|kotlin/CharSequence|>()
     }

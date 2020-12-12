@@ -1,0 +1,13 @@
+class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+val test: A
+  field = A()
+  get
+

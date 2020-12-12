@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -41,10 +40,7 @@ open class DefaultArgumentStubGenerator(
     private val skipExternalMethods: Boolean = false,
     private val forceSetOverrideSymbols: Boolean = true
 ) : DeclarationTransformer {
-
-    override fun lower(irFile: IrFile) {
-        runPostfix(true).toFileLoweringPass().lower(irFile)
-    }
+    override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrFunction) {
@@ -268,8 +264,8 @@ private fun IrFunction.findBaseFunctionWithDefaultArguments(skipInlineMethods: B
         if (skipExternalMethods && isExternalOrInheritedFromExternal()) return null
 
         if (this is IrSimpleFunction) {
-            overriddenSymbols.forEach {
-                val base = it.owner
+            overriddenSymbols.forEach { overridden ->
+                val base = overridden.owner
                 if (base !in visited) base.dfsImpl()?.let { return it }
             }
         }
@@ -448,9 +444,7 @@ class DefaultParameterCleaner(
     val context: CommonBackendContext,
     val replaceDefaultValuesWithStubs: Boolean = false
 ) : DeclarationTransformer {
-    override fun lower(irFile: IrFile) {
-        runPostfix(true).toFileLoweringPass().lower(irFile)
-    }
+    override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrValueParameter && declaration.defaultValue != null) {
@@ -486,12 +480,12 @@ class DefaultParameterPatchOverridenSymbolsLowering(
 }
 
 private fun IrFunction.generateDefaultsFunction(
-        context: CommonBackendContext,
-        skipInlineMethods: Boolean,
-        skipExternalMethods: Boolean,
-        forceSetOverrideSymbols: Boolean,
-        visibility: DescriptorVisibility,
-        useConstructorMarker: Boolean
+    context: CommonBackendContext,
+    skipInlineMethods: Boolean,
+    skipExternalMethods: Boolean,
+    forceSetOverrideSymbols: Boolean,
+    visibility: DescriptorVisibility,
+    useConstructorMarker: Boolean
 ): IrFunction? {
     if (skipInlineMethods && isInline) return null
     if (skipExternalMethods && isExternalOrInheritedFromExternal()) return null
@@ -500,12 +494,14 @@ private fun IrFunction.generateDefaultsFunction(
     if (this is IrSimpleFunction) {
         // If this is an override of a function with default arguments, produce a fake override of a default stub.
         if (overriddenSymbols.any { it.owner.findBaseFunctionWithDefaultArguments(skipInlineMethods, skipExternalMethods) != null })
-            return generateDefaultsFunctionImpl(context, IrDeclarationOrigin.FAKE_OVERRIDE, visibility, true, useConstructorMarker).also {
-                context.mapping.defaultArgumentsDispatchFunction[this] = it
-                context.mapping.defaultArgumentsOriginalFunction[it] = this
+            return generateDefaultsFunctionImpl(
+                context, IrDeclarationOrigin.FAKE_OVERRIDE, visibility, true, useConstructorMarker
+            ).also { defaultsFunction ->
+                context.mapping.defaultArgumentsDispatchFunction[this] = defaultsFunction
+                context.mapping.defaultArgumentsOriginalFunction[defaultsFunction] = this
 
                 if (forceSetOverrideSymbols) {
-                    (it as IrSimpleFunction).overriddenSymbols += overriddenSymbols.mapNotNull {
+                    (defaultsFunction as IrSimpleFunction).overriddenSymbols += overriddenSymbols.mapNotNull {
                         it.owner.generateDefaultsFunction(
                             context,
                             skipInlineMethods,
@@ -539,13 +535,12 @@ private fun IrFunction.generateDefaultsFunction(
     return null
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun IrFunction.generateDefaultsFunctionImpl(
-        context: CommonBackendContext,
-        newOrigin: IrDeclarationOrigin,
-        newVisibility: DescriptorVisibility,
-        isFakeOverride: Boolean,
-        useConstructorMarker: Boolean
+    context: CommonBackendContext,
+    newOrigin: IrDeclarationOrigin,
+    newVisibility: DescriptorVisibility,
+    isFakeOverride: Boolean,
+    useConstructorMarker: Boolean
 ): IrFunction {
     val newFunction = when (this) {
         is IrConstructor ->

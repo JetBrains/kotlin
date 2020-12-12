@@ -21,6 +21,7 @@ import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.ArrayUtil
 import com.intellij.util.PathUtil
 import junit.framework.ComparisonFailure
@@ -120,7 +121,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                     }
                     return TestFile(fileName, linesWithoutDirectives.joinToString(separator = "\n"))
                 }
-            }, ""
+            }
         )
 
         val afterFile = subFiles.firstOrNull { file -> file.path.contains(".after") }
@@ -335,7 +336,7 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
                     TestCase.fail("Action '$text' is available (but must not) in test $testFilePath")
                 }
 
-                invokeIntentionCompat(action, file, editor)
+                CodeInsightTestFixtureImpl.invokeIntention(action, file, editor)
 
                 if (!shouldBeAvailableAfterExecution) {
                     val afterAction = findActionByPattern(pattern, getAvailableActions())

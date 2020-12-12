@@ -43,6 +43,8 @@ abstract class DataClassMembersGenerator(
     val irClass: IrClass,
     val origin: IrDeclarationOrigin
 ) {
+    private val irPropertiesByDescriptor: Map<PropertyDescriptor, IrProperty> =
+        irClass.properties.associateBy { it.descriptor }
 
     inline fun <T : IrDeclaration> T.buildWithScope(builder: (T) -> Unit): T =
         also { irDeclaration ->
@@ -87,12 +89,26 @@ abstract class DataClassMembersGenerator(
             )
         }
 
+        fun irGetProperty(receiver: IrExpression, property: IrProperty): IrExpression {
+            // In some JVM-specific cases, such as when 'allopen' compiler plugin is applied,
+            // data classes and corresponding properties can be non-final.
+            // We should use getters for such properties (see KT-41284).
+            val backingField = property.backingField
+            return if (property.modality == Modality.FINAL && backingField != null) {
+                irGetField(receiver, backingField)
+            } else {
+                irCall(property.getter!!).apply {
+                    dispatchReceiver = receiver
+                }
+            }
+        }
+
         fun putDefault(parameter: ValueParameterDescriptor, value: IrExpression) {
             irFunction.putDefault(parameter, irExprBody(value))
         }
 
-        fun generateComponentFunction(irField: IrField) {
-            +irReturn(irGetField(irThis(), irField))
+        fun generateComponentFunction(irProperty: IrProperty) {
+            +irReturn(irGetProperty(irThis(), irProperty))
         }
 
         fun generateCopyFunction(constructorSymbol: IrConstructorSymbol) {
@@ -120,9 +136,9 @@ abstract class DataClassMembersGenerator(
             +irIfThenReturnFalse(irNotIs(irOther(), irType))
             val otherWithCast = irTemporary(irAs(irOther(), irType), "other_with_cast")
             for (property in properties) {
-                val field = getBackingField(property)
-                val arg1 = irGetField(irThis(), field)
-                val arg2 = irGetField(irGet(irType, otherWithCast.symbol), field)
+                val irProperty = getProperty(property)
+                val arg1 = irGetProperty(irThis(), irProperty)
+                val arg2 = irGetProperty(irGet(irType, otherWithCast.symbol), irProperty)
                 +irIfThenReturnFalse(irNotEquals(arg1, arg2))
             }
             +irReturnTrue()
@@ -176,17 +192,17 @@ abstract class DataClassMembersGenerator(
         }
 
         private fun getHashCodeOfProperty(property: PropertyDescriptor): IrExpression {
-            val field = getBackingField(property)
+            val irProperty = getProperty(property)
             return when {
                 property.type.isNullable() ->
                     irIfNull(
                         context.irBuiltIns.intType,
-                        irGetField(irThis(), field),
+                        irGetProperty(irThis(), irProperty),
                         irInt(0),
-                        getHashCodeOf(property, irGetField(irThis(), field))
+                        getHashCodeOf(property, irGetProperty(irThis(), irProperty))
                     )
                 else ->
-                    getHashCodeOf(property, irGetField(irThis(), field))
+                    getHashCodeOf(property, irGetProperty(irThis(), irProperty))
             }
         }
 
@@ -222,7 +238,7 @@ abstract class DataClassMembersGenerator(
 
                 irConcat.addArgument(irString(property.name.asString() + "="))
 
-                val irPropertyValue = irGetField(irThis(), getBackingField(property))
+                val irPropertyValue = irGetProperty(irThis(), getProperty(property))
 
                 val typeConstructorDescriptor = property.type.constructor.declarationDescriptor
                 val irPropertyStringValue =
@@ -243,8 +259,9 @@ abstract class DataClassMembersGenerator(
         }
     }
 
-    fun getBackingField(property: PropertyDescriptor): IrField =
-        irClass.properties.single { it.descriptor == property }.backingField!!
+    fun getProperty(property: PropertyDescriptor): IrProperty =
+        irPropertiesByDescriptor[property]
+            ?: throw AssertionError("Class: ${irClass.descriptor}: unexpected property descriptor: $property")
 
     abstract fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction
 
@@ -281,20 +298,20 @@ abstract class DataClassMembersGenerator(
     }
 
     // Entry for psi2ir
-    fun generateComponentFunction(function: FunctionDescriptor, irField: IrField) {
+    fun generateComponentFunction(function: FunctionDescriptor, irProperty: IrProperty) {
         buildMember(function) {
-            generateComponentFunction(irField)
+            generateComponentFunction(irProperty)
         }
     }
 
     // Entry for fir2ir
-    fun generateComponentFunction(irFunction: IrFunction, irField: IrField) {
+    fun generateComponentFunction(irFunction: IrFunction, irProperty: IrProperty) {
         buildMember(irFunction) {
-            generateComponentFunction(irField)
+            generateComponentFunction(irProperty)
         }
     }
 
-    abstract fun getBackingField(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrField?
+    abstract fun getProperty(parameter: ValueParameterDescriptor?, irValueParameter: IrValueParameter?): IrProperty?
 
     abstract fun transform(typeParameterDescriptor: TypeParameterDescriptor): IrType
 
@@ -302,7 +319,7 @@ abstract class DataClassMembersGenerator(
     fun generateCopyFunction(function: FunctionDescriptor, constructorSymbol: IrConstructorSymbol) {
         buildMember(function) {
             function.valueParameters.forEach { parameter ->
-                putDefault(parameter, irGetField(irThis(), getBackingField(parameter, null)!!))
+                putDefault(parameter, irGetProperty(irThis(), getProperty(parameter, null)!!))
             }
             generateCopyFunction(constructorSymbol)
         }
@@ -312,7 +329,7 @@ abstract class DataClassMembersGenerator(
     fun generateCopyFunction(irFunction: IrFunction, constructorSymbol: IrConstructorSymbol) {
         buildMember(irFunction) {
             irFunction.valueParameters.forEach { irValueParameter ->
-                irValueParameter.defaultValue = irExprBody(irGetField(irThis(), getBackingField(null, irValueParameter)!!))
+                irValueParameter.defaultValue = irExprBody(irGetProperty(irThis(), getProperty(null, irValueParameter)!!))
             }
             generateCopyFunction(constructorSymbol)
         }

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
+import org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKt;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature;
@@ -42,6 +43,7 @@ import org.jetbrains.org.objectweb.asm.Type;
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import org.jetbrains.org.objectweb.asm.commons.Method;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getDeprecatedAccessFlag;
@@ -408,6 +410,7 @@ public class PropertyCodegen {
         ClassBuilder builder = v;
 
         FieldOwnerContext backingFieldContext = context;
+        List<String> additionalVisibleAnnotations = Collections.emptyList();
         if (DescriptorAsmUtil.isInstancePropertyWithStaticBackingField(propertyDescriptor) ) {
             modifiers |= ACC_STATIC;
 
@@ -415,6 +418,10 @@ public class PropertyCodegen {
                 ImplementationBodyCodegen codegen = (ImplementationBodyCodegen) memberCodegen.getParentCodegen();
                 builder = codegen.v;
                 backingFieldContext = codegen.context;
+                if (DescriptorVisibilities.isPrivate(((ClassDescriptor) propertyDescriptor.getContainingDeclaration()).getVisibility())) {
+                    modifiers |= ACC_DEPRECATED;
+                    additionalVisibleAnnotations = Collections.singletonList(CodegenUtilKt.JAVA_LANG_DEPRECATED);
+                }
             }
         }
         modifiers |= getVisibilityForBackingField(propertyDescriptor, isDelegate);
@@ -429,9 +436,10 @@ public class PropertyCodegen {
         v.getSerializationBindings().put(FIELD_FOR_PROPERTY, propertyDescriptor, new Pair<>(type, name));
 
         if (isBackingFieldOwner) {
+            String signature = isDelegate ? null : typeMapper.mapFieldSignature(kotlinType, propertyDescriptor);
             FieldVisitor fv = builder.newField(
                     JvmDeclarationOriginKt.OtherOrigin(propertyDescriptor), modifiers, name, type.getDescriptor(),
-                    isDelegate ? null : typeMapper.mapFieldSignature(kotlinType, propertyDescriptor), defaultValue
+                    signature, defaultValue
             );
 
             if (annotatedField != null) {
@@ -442,7 +450,11 @@ public class PropertyCodegen {
                         (modifiers & ACC_SYNTHETIC) != 0 ||
                         propertyDescriptor.isLateInit();
                 AnnotationCodegen.forField(fv, memberCodegen, state, skipNullabilityAnnotations)
-                        .genAnnotations(annotatedField, type, propertyDescriptor.getType());
+                        .genAnnotations(annotatedField, type, propertyDescriptor.getType(), null, additionalVisibleAnnotations);
+            }
+
+            if (propertyDescriptor.getContainingDeclaration() instanceof ClassDescriptor && JvmAnnotationUtilKt.isJvmRecord((ClassDescriptor) propertyDescriptor.getContainingDeclaration())) {
+                builder.newRecordComponent(name, type.getDescriptor(), signature);
             }
         }
     }

@@ -116,7 +116,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
 
                     return targetFile
                 }
-            }, ""
+            }
         )
         environment = createEnvironment(content)
         val virtualFiles = srcFiles.map {

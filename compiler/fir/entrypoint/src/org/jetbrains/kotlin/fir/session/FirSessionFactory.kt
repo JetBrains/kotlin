@@ -10,7 +10,8 @@ import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.fir.FirModuleBasedSession
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
@@ -61,11 +62,13 @@ object FirSessionFactory {
         moduleInfo: ModuleInfo,
         sessionProvider: FirProjectSessionProvider,
         scope: GlobalSearchScope,
+        project: Project,
         dependenciesProvider: FirSymbolProvider? = null,
+        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirJavaModuleBasedSession {
         return FirJavaModuleBasedSession(moduleInfo, sessionProvider).apply {
-            registerCommonComponents()
+            registerCommonComponents(languageVersionSettings)
             registerResolveComponents()
             registerJavaSpecificResolveComponents()
 
@@ -80,7 +83,7 @@ object FirSessionFactory {
                     this,
                     listOf(
                         firProvider.symbolProvider,
-                        JavaSymbolProvider(this, sessionProvider.project, scope),
+                        JavaSymbolProvider(this, project, scope),
                         dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
                     )
                 ) as FirSymbolProvider
@@ -91,8 +94,7 @@ object FirSessionFactory {
                 init()
             }.configure()
 
-            PsiElementFinder.EP.getPoint(sessionProvider.project)
-                .registerExtension(FirJavaElementFinder(this, sessionProvider.project), sessionProvider.project)
+            PsiElementFinder.EP.getPoint(project).registerExtension(FirJavaElementFinder(this, project), project)
         }
     }
 
@@ -101,7 +103,8 @@ object FirSessionFactory {
         sessionProvider: FirProjectSessionProvider,
         scope: GlobalSearchScope,
         project: Project,
-        packagePartProvider: PackagePartProvider
+        packagePartProvider: PackagePartProvider,
+        languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
     ): FirLibrarySession {
         val javaClassFinder = JavaClassFinderImpl().apply {
             this.setProjectInstance(project)
@@ -110,9 +113,9 @@ object FirSessionFactory {
 
         val kotlinClassFinder = VirtualFileFinderFactory.getInstance(project).create(scope)
         return FirLibrarySession(moduleInfo, sessionProvider).apply {
-            registerCommonComponents()
+            registerCommonComponents(languageVersionSettings)
 
-            val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
+            val javaSymbolProvider = JavaSymbolProvider(this, project, scope)
 
             val kotlinScopeProvider = KotlinScopeProvider(::wrapScopeWithJvmMapped)
 
@@ -122,7 +125,7 @@ object FirSessionFactory {
                     this,
                     listOf(
                         KotlinDeserializedJvmSymbolsProvider(
-                            this, sessionProvider.project,
+                            this, project,
                             packagePartProvider,
                             javaSymbolProvider,
                             kotlinClassFinder,

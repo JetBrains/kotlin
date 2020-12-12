@@ -9,6 +9,7 @@ import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
 import junit.framework.ComparisonFailure;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.analyzer.AnalysisResult;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.common.config.ContentRootsKt;
@@ -294,12 +295,24 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
                         }
                         return targetFile;
                     }
-                }, "");
+                });
 
         Pair<PackageViewDescriptor, BindingContext> javaPackageAndContext = compileJavaAndLoadTestPackageAndBindingContextFromBinary(
                 srcFiles, compiledDir, ConfigurationKind.ALL
         );
-        checkJavaPackage(getExpectedFile(javaFileName.replaceFirst("\\.java$", ".txt")), javaPackageAndContext.first, javaPackageAndContext.second, configuration);
+
+
+
+        checkJavaPackage(getExpectedFile(
+                useTxtSuffixIfFileExists(javaFileName.replaceFirst("\\.java$", ".txt"), "compiled")
+        ), javaPackageAndContext.first, javaPackageAndContext.second, configuration);
+    }
+
+    public static String useTxtSuffixIfFileExists(String name, String suffix) {
+        File differentResultFile = KotlinTestUtils.replaceExtension(new File(name), suffix + ".txt");
+        if (differentResultFile.exists()) return differentResultFile.getPath();
+
+        return name;
     }
 
     @NotNull
@@ -308,10 +321,19 @@ public abstract class AbstractLoadJavaTest extends TestCaseWithTmpdir {
             @NotNull File outDir,
             @NotNull ConfigurationKind configurationKind
     ) throws IOException {
-        compileJavaWithAnnotationsJar(javaFiles, outDir);
+        compileJavaWithAnnotationsJar(javaFiles, outDir, getAdditionalJavacArgs(), getJdkHomeForJavac());
         return loadTestPackageAndBindingContextFromJavaRoot(outDir, getTestRootDisposable(), getJdkKind(), configurationKind, true,
                                                             usePsiClassFilesReading(), useJavacWrapper(), null,
                                                             getExtraClasspath(), this::configureEnvironment);
+    }
+
+    protected List<String> getAdditionalJavacArgs() {
+        return Collections.emptyList();
+    }
+
+    @Nullable
+    protected File getJdkHomeForJavac() {
+        return null;
     }
 
     private static void checkJavaPackage(

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
@@ -54,18 +55,21 @@ class RedundantInnerClassModifierInspection : AbstractKotlinInspection() {
         return anyDescendantOfType<KtExpression> { expression ->
             when (expression) {
                 is KtNameReferenceExpression -> {
-                    val reference = expression.mainReference.resolve()
-                    val referenceClass = reference?.getStrictParentOfType<KtClass>()
-                    if (expression.getStrictParentOfType<KtSuperTypeCallEntry>() != null) {
-                        return@anyDescendantOfType reference is KtClass && reference.isInner()
-                                || reference is KtPrimaryConstructor && referenceClass?.isInner() == true
+                    val reference = expression.mainReference.resolve()?.let {
+                        (it as? KtConstructor<*>)?.containingClass() ?: it
                     }
-                    if (referenceClass != null) {
-                        if (referenceClass == targetClass) return@anyDescendantOfType false
-                        if (referenceClass in outerClasses) return@anyDescendantOfType true
+                    if (reference is PsiClass && reference.parent is PsiClass) {
+                        return@anyDescendantOfType reference.getJavaClassDescriptor()?.isInner == true
+                    }
+                    val referenceContainingClass = reference?.getStrictParentOfType<KtClass>()
+                    if (referenceContainingClass != null) {
+                        if (referenceContainingClass == targetClass) return@anyDescendantOfType false
+                        if (referenceContainingClass in outerClasses) {
+                            return@anyDescendantOfType reference !is KtClass || reference.isInner()
+                        }
                     }
                     if (!hasSuperType) return@anyDescendantOfType false
-                    val referenceClassDescriptor = referenceClass?.descriptor as? ClassDescriptor
+                    val referenceClassDescriptor = referenceContainingClass?.descriptor as? ClassDescriptor
                         ?: reference?.getStrictParentOfType<PsiClass>()?.getJavaClassDescriptor()
                         ?: (expression.resolveToCall()?.resultingDescriptor as? SyntheticJavaPropertyDescriptor)
                             ?.getMethod?.containingDeclaration as? ClassDescriptor

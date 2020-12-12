@@ -29,9 +29,7 @@ dependencies {
     testCompileOnly(intellijDep())
     testRuntime(intellijDep())
 
-    Platform[192].orHigher {
-        compile(intellijPluginDep("java"))
-    }
+    compile(intellijPluginDep("java"))
 }
 
 sourceSets {
@@ -39,10 +37,13 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-if (rootProject.findProperty("idea.fir.plugin") == "true") {
-    projectTest(parallel = true) {
-        dependsOn(":dist")
-        workingDir = rootDir
+projectTest(parallel = true) {
+    dependsOn(":dist")
+    workingDir = rootDir
+    doFirst {
+        if (!kotlinBuildProperties.useFirIdeaPlugin) {
+            error("Test task in the module should be executed with -Pidea.fir.plugin=true")
+        }
     }
 }
 

@@ -11,14 +11,16 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.SmartList
 
-private val SCRIPT_ORIGIN = object : IrDeclarationOriginImpl("FIELD_FOR_OBJECT_INSTANCE") {}
+private val SCRIPT_ORIGIN = object : IrDeclarationOriginImpl("SCRIPT") {}
 
 class IrScriptImpl(
     override val symbol: IrScriptSymbol,
@@ -38,10 +40,16 @@ class IrScriptImpl(
 
     override var annotations: List<IrConstructorCall> = SmartList()
 
-    override val declarations: MutableList<IrDeclaration> = mutableListOf()
     override val statements: MutableList<IrStatement> = mutableListOf()
 
     override lateinit var thisReceiver: IrValueParameter
+
+    override lateinit var baseClass: IrType
+    override lateinit var explicitCallParameters: List<IrValueParameter>
+    override lateinit var implicitReceiversParameters: List<IrValueParameter>
+    override lateinit var providedProperties: List<Pair<IrValueParameter, IrPropertySymbol>>
+    override var resultProperty: IrPropertySymbol? = null
+    override var earlierScripts: List<IrScriptSymbol>? = null
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ScriptDescriptor
@@ -59,14 +67,18 @@ class IrScriptImpl(
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        declarations.forEach { it.accept(visitor, data) }
         statements.forEach { it.accept(visitor, data) }
         thisReceiver.accept(visitor, data)
+        explicitCallParameters.forEach { it.accept(visitor, data) }
+        implicitReceiversParameters.forEach { it.accept(visitor, data) }
+        providedProperties.forEach { it.first.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        declarations.transformInPlace(transformer, data)
         statements.transformInPlace(transformer, data)
         thisReceiver = thisReceiver.transform(transformer, data)
+        explicitCallParameters = explicitCallParameters.map { it.transform(transformer, data) }
+        implicitReceiversParameters = implicitReceiversParameters.map { it.transform(transformer, data) }
+        providedProperties = providedProperties.map { it.first.transform(transformer, data) to it.second }
     }
 }

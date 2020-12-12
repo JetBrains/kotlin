@@ -20,11 +20,11 @@ import org.jetbrains.kotlin.diagnostics.*
 import java.text.MessageFormat
 
 
-abstract class AbstractDiagnosticWithParametersRenderer<D : Diagnostic> protected constructor(message: String) : DiagnosticRenderer<D> {
+abstract class AbstractDiagnosticWithParametersRenderer<in D : UnboundDiagnostic> protected constructor(message: String) : DiagnosticRenderer<D> {
     private val messageFormat = MessageFormat(message)
 
-    override fun render(obj: D): String {
-        return messageFormat.format(renderParameters(obj))
+    override fun render(diagnostic: D): String {
+        return messageFormat.format(renderParameters(diagnostic))
     }
 
     abstract fun renderParameters(diagnostic: D): Array<out Any>

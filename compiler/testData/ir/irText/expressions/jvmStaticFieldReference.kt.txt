@@ -1,0 +1,35 @@
+fun testFun() {
+  super.#out /*!! PrintStream */.println(p0 = "testFun")
+}
+
+var testProp: Any
+  get(): Any {
+    super.#out /*!! PrintStream */.println(p0 = "testProp/get")
+    return 42
+  }
+  set(value: Any) {
+    super.#out /*!! PrintStream */.println(p0 = "testProp/set")
+  }
+
+class TestClass {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val test: Int
+    field = when {
+      else -> { // BLOCK
+        super.#out /*!! PrintStream */.println(p0 = "TestClass/test")
+        42
+      }
+    }
+    get
+
+  init {
+    super.#out /*!! PrintStream */.println(p0 = "TestClass/init")
+  }
+
+}
+

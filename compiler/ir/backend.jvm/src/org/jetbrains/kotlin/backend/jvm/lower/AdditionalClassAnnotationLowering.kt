@@ -82,14 +82,17 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
         returnType = annotationClass.defaultType
     }
 
-    private fun buildEnumEntry(enumClass: IrClass, entryName: String): IrEnumEntry = IrEnumEntryImpl(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
-        IrEnumEntrySymbolImpl(WrappedEnumEntryDescriptor()),
-        Name.identifier(entryName)
-    ).apply {
-        (descriptor as WrappedEnumEntryDescriptor).bind(this)
-        parent = enumClass
-        enumClass.addChild(this)
+    private fun buildEnumEntry(enumClass: IrClass, entryName: String): IrEnumEntry {
+        val descriptor = WrappedEnumEntryDescriptor()
+        return IrEnumEntryImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB,
+            IrEnumEntrySymbolImpl(descriptor),
+            Name.identifier(entryName)
+        ).apply {
+            descriptor.bind(this)
+            parent = enumClass
+            enumClass.addChild(this)
+        }
     }
 
     private val documentedConstructor = buildAnnotationConstructor(buildAnnotationClass("Documented"))

@@ -2,10 +2,9 @@
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 
 fun builder(c: suspend () -> Unit) {

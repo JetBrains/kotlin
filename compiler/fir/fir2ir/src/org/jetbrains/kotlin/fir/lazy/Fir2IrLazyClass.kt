@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -25,8 +23,9 @@ import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.isFakeOverride
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 class Fir2IrLazyClass(
     components: Fir2IrComponents,
@@ -140,7 +139,7 @@ class Fir2IrLazyClass(
                             result += declarationStorage.getIrFunctionSymbol(declaration.symbol).owner
                         } else {
                             scope.processFunctionsByName(declaration.name) {
-                                if (it is FirNamedFunctionSymbol && it.callableId.classId == fir.symbol.classId) {
+                                if (it.dispatchReceiverClassOrNull() == fir.symbol.toLookupTag()) {
                                     if (it.isAbstractMethodOfAny()) {
                                         return@processFunctionsByName
                                     }
@@ -154,7 +153,7 @@ class Fir2IrLazyClass(
                     if (declaration.name !in processedNames) {
                         processedNames += declaration.name
                         scope.processPropertiesByName(declaration.name) {
-                            if (it is FirPropertySymbol) {
+                            if (it is FirPropertySymbol && it.dispatchReceiverClassOrNull() == fir.symbol.toLookupTag()) {
                                 result += declarationStorage.getIrPropertySymbol(it).owner as IrProperty
                             }
                         }
@@ -175,7 +174,9 @@ class Fir2IrLazyClass(
         // TODO: remove this check to save time
         for (declaration in result) {
             if (declaration.parent != this) {
-                throw AssertionError("Unmatched parent for lazy class member")
+                throw AssertionError(
+                    "Unmatched parent for lazy class ${fir.name} member ${declaration.render()} f/o ${declaration.isFakeOverride}"
+                )
             }
         }
         result

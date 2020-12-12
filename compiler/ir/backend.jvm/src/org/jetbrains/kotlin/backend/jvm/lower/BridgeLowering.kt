@@ -15,13 +15,12 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
-import org.jetbrains.kotlin.backend.jvm.ir.copyCorrespondingPropertyFrom
-import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
-import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
-import org.jetbrains.kotlin.backend.jvm.ir.isJvmAbstract
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -189,8 +188,16 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                 return false
 
             // We don't produce bridges for abstract functions in interfaces.
-            if (irFunction.isJvmAbstract(context.state.jvmDefaultMode))
-                return !irFunction.parentAsClass.isJvmInterface
+            if (irFunction.isJvmAbstract(context.state.jvmDefaultMode)) {
+                if (irFunction.parentAsClass.isJvmInterface) {
+                    // If function requires a special bridge, we should record it for generic signatures generation.
+                    if (irFunction.specialBridgeOrNull != null) {
+                        context.functionsWithSpecialBridges.add(irFunction)
+                    }
+                    return false
+                }
+                return true
+            }
 
             // Finally, the JVM backend also ignores concrete fake overrides whose implementation is directly inherited from an interface.
             // This is sound, since we do not generate type-specialized versions of fake overrides and if the method
@@ -351,9 +358,12 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         //
         // This can still break binary compatibility, but it matches the behavior of the JVM backend.
         if (irFunction.isFakeOverride) {
-            irFunction.overriddenSymbols.asSequence().map { it.owner }.filter { !it.isJvmAbstract(context.state.jvmDefaultMode) }
+            irFunction.overriddenSymbols.asSequence()
+                .map { it.owner }.filter { !it.isJvmAbstract(context.state.jvmDefaultMode) }
                 .forEach { override ->
-                    override.allOverridden().mapTo(blacklist) { it.jvmMethod }
+                    override.allOverridden()
+                        .filter { !it.isFakeOverride }
+                        .mapTo(blacklist) { it.jvmMethod }
                 }
         }
 
@@ -407,16 +417,31 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             overriddenSymbols = irFunction.overriddenSymbols.toList()
         }
 
+    private fun getBridgeVisibility(bridge: Bridge): DescriptorVisibility {
+        // Even though kotlin.Cloneable#clone() is protected, corresponding bridge is 'public' in JVM.
+        if (bridge.overridden.name.asString() == "clone" &&
+            bridge.overridden.parentAsClass.hasEqualFqName(StandardNames.FqNames.cloneable.toSafe())
+        ) {
+            return DescriptorVisibilities.PUBLIC
+        }
+
+        val overriddenVisibility = bridge.overridden.visibility
+        // Internal functions can be overridden by non-internal functions, which changes their names since the names of internal
+        // functions are mangled. In order to avoid mangling the name twice we reset the visibility for bridges to internal
+        // functions to public and use the mangled name directly.
+        return if (overriddenVisibility == DescriptorVisibilities.INTERNAL)
+            DescriptorVisibilities.PUBLIC
+        else
+            overriddenVisibility
+    }
+
     private fun IrClass.addBridge(bridge: Bridge, target: IrSimpleFunction): IrSimpleFunction =
         addFunction {
             startOffset = this@addBridge.startOffset
             endOffset = this@addBridge.startOffset
             modality = Modality.OPEN
             origin = IrDeclarationOrigin.BRIDGE
-            // Internal functions can be overridden by non-internal functions, which changes their names since the names of internal
-            // functions are mangled. In order to avoid mangling the name twice we reset the visibility for bridges to internal
-            // functions to public and use the mangled name directly.
-            visibility = bridge.overridden.visibility.takeUnless { it == DescriptorVisibilities.INTERNAL } ?: DescriptorVisibilities.PUBLIC
+            visibility = getBridgeVisibility(bridge)
             name = Name.identifier(bridge.signature.name)
             returnType = bridge.overridden.returnType.eraseTypeParameters()
             isSuspend = bridge.overridden.isSuspend
@@ -442,7 +467,8 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             modality = if (specialBridge.isFinal) Modality.FINAL else Modality.OPEN
             origin = if (specialBridge.isSynthetic) IrDeclarationOrigin.BRIDGE else IrDeclarationOrigin.BRIDGE_SPECIAL
             name = Name.identifier(specialBridge.signature.name)
-            returnType = specialBridge.substitutedReturnType ?: specialBridge.overridden.returnType.eraseTypeParameters()
+            returnType = specialBridge.substitutedReturnType?.eraseToScope(target.parentAsClass)
+                ?: specialBridge.overridden.returnType.eraseTypeParameters()
         }.apply {
             context.functionsWithSpecialBridges.add(target)
 
@@ -531,26 +557,30 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         from: IrSimpleFunction,
         substitutedParameterTypes: List<IrType>? = null
     ) {
+        val visibleTypeParameters = collectVisibleTypeParameters(this)
         // This is a workaround for a bug affecting fake overrides. Sometimes we encounter fake overrides
         // with dispatch receivers pointing at a superclass instead of the current class.
         dispatchReceiverParameter = irClass.thisReceiver?.copyTo(this, type = irClass.defaultType)
-        extensionReceiverParameter = from.extensionReceiverParameter?.copyWithTypeErasure(this)
+        extensionReceiverParameter = from.extensionReceiverParameter?.copyWithTypeErasure(this, visibleTypeParameters)
         valueParameters = if (substitutedParameterTypes != null) {
             from.valueParameters.zip(substitutedParameterTypes).map { (param, type) ->
-                param.copyWithTypeErasure(this, type)
+                param.copyWithTypeErasure(this, visibleTypeParameters, type)
             }
         } else {
-            from.valueParameters.map { it.copyWithTypeErasure(this) }
+            from.valueParameters.map { it.copyWithTypeErasure(this, visibleTypeParameters) }
         }
     }
 
-    private fun IrValueParameter.copyWithTypeErasure(target: IrSimpleFunction, substitutedType: IrType? = null): IrValueParameter =
-        copyTo(
-            target, IrDeclarationOrigin.BRIDGE,
-            type = (substitutedType ?: type.eraseTypeParameters()),
-            // Currently there are no special bridge methods with vararg parameters, so we don't track substituted vararg element types.
-            varargElementType = varargElementType?.eraseTypeParameters()
-        )
+    private fun IrValueParameter.copyWithTypeErasure(
+        target: IrSimpleFunction,
+        visibleTypeParameters: Set<IrTypeParameter>,
+        substitutedType: IrType? = null
+    ): IrValueParameter = copyTo(
+        target, IrDeclarationOrigin.BRIDGE,
+        type = (substitutedType?.eraseToScope(visibleTypeParameters) ?: type.eraseTypeParameters()),
+        // Currently there are no special bridge methods with vararg parameters, so we don't track substituted vararg element types.
+        varargElementType = varargElementType?.eraseToScope(visibleTypeParameters)
+    )
 
     private fun IrBuilderWithScope.delegatingCall(
         bridge: IrSimpleFunction,
@@ -559,10 +589,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
     ) = irCastIfNeeded(irCall(target, origin = IrStatementOrigin.BRIDGE_DELEGATION, superQualifierSymbol = superQualifierSymbol).apply {
         for ((param, targetParam) in bridge.explicitParameters.zip(target.explicitParameters)) {
             putArgument(targetParam, irGet(param).let { argument ->
-                if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type)
+                if (param == bridge.dispatchReceiverParameter) argument else irCastIfNeeded(argument, targetParam.type.upperBound)
             })
         }
-    }, bridge.returnType)
+    }, bridge.returnType.upperBound)
 
     private fun IrBuilderWithScope.irCastIfNeeded(expression: IrExpression, to: IrType): IrExpression =
         if (expression.type == to || to.isAny() || to.isNullableAny()) expression else irImplicitCast(expression, to)

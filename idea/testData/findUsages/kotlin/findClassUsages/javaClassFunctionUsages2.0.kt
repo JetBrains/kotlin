@@ -35,3 +35,5 @@ open class <caret>A: X {
         println("!$s!")
     }
 }
+
+// FIR_COMPARISON

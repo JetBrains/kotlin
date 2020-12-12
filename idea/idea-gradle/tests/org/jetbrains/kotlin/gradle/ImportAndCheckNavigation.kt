@@ -50,7 +50,7 @@ class ImportAndCheckNavigation : MasterPluginVersionGradleImportingTestCase() {
 
     private fun configureAndImportProject(): List<VirtualFile> {
         val files = configureByFiles()
-        importProject()
+        importProject(skipIndexing = false)
         return files
     }
 

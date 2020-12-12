@@ -1,0 +1,28 @@
+abstract class AbstractClass {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  abstract fun abstractFun() 
+  abstract val abstractVal: Int
+    abstract get
+
+  abstract var abstractVar: Int
+    abstract get
+    abstract set
+
+}
+
+interface Interface {
+  abstract fun abstractFun() 
+  abstract val abstractVal: Int
+    abstract get
+
+  abstract var abstractVar: Int
+    abstract get
+    abstract set
+
+}
+

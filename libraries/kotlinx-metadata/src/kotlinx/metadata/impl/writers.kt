@@ -215,8 +215,8 @@ fun writeProperty(
             t.flags = flags
         }
         // TODO: do not write getterFlags/setterFlags if not needed
-        t.getterFlags = getterFlags
-        t.setterFlags = setterFlags
+        if (Flag.Property.HAS_GETTER(flags)) t.getterFlags = getterFlags
+        if (Flag.Property.HAS_SETTER(flags)) t.setterFlags = setterFlags
         output(t)
     }
 }

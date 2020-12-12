@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.dce.DeadCodeElimination
 import org.jetbrains.kotlin.js.dce.InputFile
 import org.jetbrains.kotlin.js.dce.InputResource
-import org.jetbrains.kotlin.js.engine.ScriptEngineNashorn
-import org.jetbrains.kotlin.js.engine.ScriptEngineV8Lazy
+import org.jetbrains.kotlin.js.engine.loadFiles
 import org.jetbrains.kotlin.js.facade.*
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.parser.sourcemaps.SourceMapError
@@ -63,19 +62,20 @@ import java.io.File
 import java.io.PrintStream
 import java.lang.Boolean.getBoolean
 import java.nio.charset.Charset
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 abstract class BasicBoxTest(
-        protected val pathToTestDir: String,
-        testGroupOutputDirPrefix: String,
-        pathToRootOutputDir: String = BasicBoxTest.TEST_DATA_DIR_PATH,
-        private val typedArraysEnabled: Boolean = true,
-        private val generateSourceMap: Boolean = false,
-        private val generateNodeJsRunner: Boolean = true,
-        private val targetBackend: TargetBackend = TargetBackend.JS
+    protected val pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+    private val typedArraysEnabled: Boolean = true,
+    private val generateSourceMap: Boolean = false,
+    private val generateNodeJsRunner: Boolean = true,
+    private val targetBackend: TargetBackend = TargetBackend.JS
 ) : KotlinTestWithEnvironment() {
-    val additionalCommonFileDirectories = mutableListOf<String>()
+    private val additionalCommonFileDirectories = mutableListOf<String>()
 
+    val pathToRootOutputDir = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
     private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
     private val testGroupOutputDirForMinification = File(pathToRootOutputDir + "out-min/" + testGroupOutputDirPrefix)
     private val testGroupOutputDirForPir = File(pathToRootOutputDir + "out-pir/" + testGroupOutputDirPrefix)
@@ -85,6 +85,7 @@ abstract class BasicBoxTest(
 
     protected open val runMinifierByDefault: Boolean = false
     protected open val skipMinification = getBoolean("kotlin.js.skipMinificationTest")
+    protected open val overwriteReachableNodes = getBoolean(overwriteReachableNodesProperty)
 
     protected open val skipRegularMode: Boolean = false
     protected open val runIrDce: Boolean = false
@@ -102,8 +103,6 @@ abstract class BasicBoxTest(
         doTest(filePath, "OK", MainCallParameters.noCall(), coroutinesPackage)
     }
 
-    open fun dontRunOnSpecificPlatform(targetBackend: TargetBackend): Boolean = false
-
     open fun doTest(filePath: String, expectedResult: String, mainCallParameters: MainCallParameters, coroutinesPackage: String = "") {
         val file = File(filePath)
         val outputDir = getOutputDir(file)
@@ -114,9 +113,13 @@ abstract class BasicBoxTest(
             fileContent = fileContent.replace("COROUTINES_PACKAGE", coroutinesPackage)
         }
 
-        val needsFullIrRuntime = KJS_WITH_FULL_RUNTIME.matcher(fileContent).find()
+        val needsFullIrRuntime = KJS_WITH_FULL_RUNTIME.matcher(fileContent).find() || WITH_RUNTIME.matcher(fileContent).find()
 
-        val actualMainCallParameters = if (CALL_MAIN_PATTERN.matcher(fileContent).find()) MainCallParameters.mainWithArguments(listOf("testArg")) else mainCallParameters
+
+        val actualMainCallParameters = if (CALL_MAIN_PATTERN.matcher(fileContent).find())
+            MainCallParameters.mainWithArguments(listOf("testArg"))
+        else
+            mainCallParameters
 
         val outputPrefixFile = getOutputPrefixFile(filePath)
         val outputPostfixFile = getOutputPostfixFile(filePath)
@@ -131,17 +134,18 @@ abstract class BasicBoxTest(
         val skipDceDriven = SKIP_DCE_DRIVEN.matcher(fileContent).find()
         val splitPerModule = SPLIT_PER_MODULE.matcher(fileContent).find()
 
+        val propertyLazyInitialization = PROPERTY_LAZY_INITIALIZATION.matcher(fileContent).find()
+
         TestFileFactoryImpl(coroutinesPackage).use { testFactory ->
             val inputFiles = TestFiles.createTestFiles(
                 file.name,
                 fileContent,
                 testFactory,
-                true,
-                coroutinesPackage
+                true
             )
             val modules = inputFiles
-                    .map { it.module }.distinct()
-                    .map { it.name to it }.toMap()
+                .map { it.module }.distinct()
+                .map { it.name to it }.toMap()
 
             fun TestModule.allTransitiveDependencies(): Set<String> {
                 return dependenciesSymbols.toSet() + dependenciesSymbols.flatMap { modules[it]!!.allTransitiveDependencies() }
@@ -172,9 +176,28 @@ abstract class BasicBoxTest(
                 val isMainModule = mainModuleName == module.name
                 generateJavaScriptFile(
                     testFactory.tmpDir,
-                    file.parent, module, outputFileName, dceOutputFileName, pirOutputFileName, dependencies, allDependencies, friends, modules.size > 1,
-                    !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(), outputPrefixFile, outputPostfixFile,
-                    actualMainCallParameters, testPackage, testFunction, needsFullIrRuntime, isMainModule, expectActualLinker, skipDceDriven, splitPerModule, errorPolicy
+                    file.parent,
+                    module,
+                    outputFileName,
+                    dceOutputFileName,
+                    pirOutputFileName,
+                    dependencies,
+                    allDependencies,
+                    friends,
+                    modules.size > 1,
+                    !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
+                    outputPrefixFile,
+                    outputPostfixFile,
+                    actualMainCallParameters,
+                    testPackage,
+                    testFunction,
+                    needsFullIrRuntime,
+                    isMainModule,
+                    expectActualLinker,
+                    skipDceDriven,
+                    splitPerModule,
+                    errorPolicy,
+                    propertyLazyInitialization
                 )
 
                 when {
@@ -194,13 +217,13 @@ abstract class BasicBoxTest(
                 JsTestUtils.getFilesInDirectoryByExtension(baseDir + "/", JavaScript.EXTENSION)
             }
             val inputJsFiles = inputFiles
-                    .filter { it.fileName.endsWith(".js") }
-                    .map { inputJsFile ->
-                        val sourceFile = File(inputJsFile.fileName)
-                        val targetFile = File(outputDir, inputJsFile.module.outputFileSimpleName() + "-js-" + sourceFile.name)
-                        FileUtil.copy(File(inputJsFile.fileName), targetFile)
-                        targetFile.absolutePath
-                    }
+                .filter { it.fileName.endsWith(".js") }
+                .map { inputJsFile ->
+                    val sourceFile = File(inputJsFile.fileName)
+                    val targetFile = File(outputDir, inputJsFile.module.outputFileSimpleName() + "-js-" + sourceFile.name)
+                    FileUtil.copy(File(inputJsFile.fileName), targetFile)
+                    targetFile.absolutePath
+                }
 
             val additionalFiles = mutableListOf<String>()
 
@@ -225,16 +248,26 @@ abstract class BasicBoxTest(
             }
 
             val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first } + globalCommonFiles + localCommonFiles +
-                             additionalCommonFiles + additionalMainFiles
+                    additionalCommonFiles + additionalMainFiles
 
-            val dceAllJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first.replace(outputDir.absolutePath, dceOutputDir.absolutePath) } +
+            val dceAllJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map {
+                it.first.replace(
+                    outputDir.absolutePath,
+                    dceOutputDir.absolutePath
+                )
+            } + globalCommonFiles + localCommonFiles + additionalCommonFiles + additionalMainFiles
+
+            val pirAllJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map {
+                it.first.replace(
+                    outputDir.absolutePath,
+                    pirOutputDir.absolutePath
+                )
+            } +
                     globalCommonFiles + localCommonFiles + additionalCommonFiles + additionalMainFiles
 
-            val pirAllJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first.replace(outputDir.absolutePath, pirOutputDir.absolutePath) } +
-                    globalCommonFiles + localCommonFiles + additionalCommonFiles + additionalMainFiles
 
-
-            val dontRunGeneratedCode = InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file) || dontRunOnSpecificPlatform(targetBackend)
+            val dontRunGeneratedCode =
+                InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file)
 
             if (!dontRunGeneratedCode && generateNodeJsRunner && !SKIP_NODE_JS.matcher(fileContent).find()) {
                 val nodeRunnerName = mainModule.outputFileName(outputDir) + ".node.js"
@@ -255,15 +288,6 @@ abstract class BasicBoxTest(
                 if (runIrPir && !skipDceDriven) {
                     runGeneratedCode(pirAllJsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
                 }
-            } else {
-                val ignored = InTextDirectivesUtils.isIgnoredTarget(
-                    targetBackend, file,
-                    InTextDirectivesUtils.IGNORE_BACKEND_DIRECTIVE_PREFIX
-                )
-
-                if (ignored) {
-                    throw AssertionError("Ignored test hasn't been ran. Emulate its failing")
-                }
             }
 
             performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
@@ -275,27 +299,12 @@ abstract class BasicBoxTest(
                 (runMinifierByDefault || expectedReachableNodesFound) &&
                 !SKIP_MINIFICATION.matcher(fileContent).find()
             ) {
-                val thresholdChecker: (Int) -> Unit = { reachableNodesCount ->
-                    val replacement = "// $EXPECTED_REACHABLE_NODES_DIRECTIVE: $reachableNodesCount"
-                    if (!expectedReachableNodesFound) {
-                        file.writeText("$replacement\n$fileContent")
-                        fail("The number of expected reachable nodes was not set. Actual reachable nodes: $reachableNodesCount")
-                    }
-                    else {
-                        val expectedReachableNodes = expectedReachableNodesMatcher.group(1).toInt()
-                        val minThreshold = expectedReachableNodes * 9 / 10
-                        val maxThreshold = expectedReachableNodes * 11 / 10
-                        if (reachableNodesCount < minThreshold || reachableNodesCount > maxThreshold) {
-
-                            val newText = fileContent.substring(0, expectedReachableNodesMatcher.start()) +
-                                          replacement +
-                                          fileContent.substring(expectedReachableNodesMatcher.end())
-                            file.writeText(newText)
-                            fail("Number of reachable nodes ($reachableNodesCount) does not fit into expected range " +
-                                 "[$minThreshold; $maxThreshold]")
-                        }
-                    }
-                }
+                val thresholdChecker: (Int) -> Unit = reachableNodesThresholdChecker(
+                    expectedReachableNodesFound,
+                    expectedReachableNodesMatcher,
+                    fileContent,
+                    file
+                )
 
                 val outputDirForMinification = getOutputDir(file, testGroupOutputDirForMinification)
 
@@ -309,8 +318,51 @@ abstract class BasicBoxTest(
                         testPackage = testPackage,
                         testFunction = testFunction,
                         withModuleSystem = withModuleSystem,
-                        minificationThresholdChecker =  thresholdChecker)
+                        minificationThresholdChecker = thresholdChecker
+                    )
                 }
+            }
+        }
+    }
+
+    private fun reachableNodesThresholdChecker(
+        expectedReachableNodesFound: Boolean,
+        expectedReachableNodesMatcher: Matcher,
+        fileContent: String,
+        file: File
+    ) = { reachableNodesCount: Int ->
+        val replacement = "// $EXPECTED_REACHABLE_NODES_DIRECTIVE: $reachableNodesCount"
+        val enablingMessage = "To set expected reachable nodes use '$replacement'\n" +
+                "To enable automatic overwriting reachable nodes use property '-Pfd.$overwriteReachableNodesProperty=true'"
+        if (expectedReachableNodesFound) {
+            val expectedReachableNodes = expectedReachableNodesMatcher.group(1).toInt()
+            val minThreshold = expectedReachableNodes * 9 / 10
+            val maxThreshold = expectedReachableNodes * 11 / 10
+            if (reachableNodesCount < minThreshold || reachableNodesCount > maxThreshold) {
+
+                val message = "Number of reachable nodes ($reachableNodesCount) does not fit into expected range " +
+                        "[$minThreshold; $maxThreshold]"
+                val additionalMessage: String =
+                    if (overwriteReachableNodes) {
+                        val newText = fileContent.substring(0, expectedReachableNodesMatcher.start()) +
+                                replacement +
+                                fileContent.substring(expectedReachableNodesMatcher.end())
+                        file.writeText(newText)
+                        ""
+                    } else {
+                        "\n$enablingMessage"
+                    }
+
+                fail("$message$additionalMessage")
+            }
+        } else {
+            val baseMessage = "The number of expected reachable nodes was not set. Actual reachable nodes: $reachableNodesCount."
+
+            if (overwriteReachableNodes) {
+                file.writeText("$replacement\n$fileContent")
+                fail(baseMessage)
+            } else {
+                println("$baseMessage\n$enablingMessage")
             }
         }
     }
@@ -330,11 +382,11 @@ abstract class BasicBoxTest(
     protected open fun performAdditionalChecks(inputFile: File, outputFile: File) {}
 
     private fun generateNodeRunner(
-            files: Collection<String>,
-            dir: File,
-            moduleName: String,
-            ignored: Boolean,
-            testPackage: String?
+        files: Collection<String>,
+        dir: File,
+        moduleName: String,
+        ignored: Boolean,
+        testPackage: String?
     ): String {
         val filesToLoad = files.map { FileUtil.getRelativePath(dir, File(it))!!.replace(File.separatorChar, '/') }.map { "\"$it\"" }
         val fqn = testPackage?.let { ".$it" } ?: ""
@@ -351,8 +403,7 @@ abstract class BasicBoxTest(
             sb.append("  catch (e) {\n")
             sb.append("    return 'OK';\n")
             sb.append("}\n")
-        }
-        else {
+        } else {
             sb.append("  return $loadAndRun;\n")
         }
         sb.append("};\n")
@@ -363,10 +414,10 @@ abstract class BasicBoxTest(
     protected fun getOutputDir(file: File, testGroupOutputDir: File = testGroupOutputDirForCompilation): File {
         val stopFile = File(pathToTestDir)
         return generateSequence(file.parentFile) { it.parentFile }
-                .takeWhile { it != stopFile }
-                .map { it.name }
-                .toList().asReversed()
-                .fold(testGroupOutputDir, ::File)
+            .takeWhile { it != stopFile }
+            .map { it.name }
+            .toList().asReversed()
+            .fold(testGroupOutputDir, ::File)
     }
 
     private fun TestModule.outputFileSimpleName(): String {
@@ -398,9 +449,10 @@ abstract class BasicBoxTest(
         expectActualLinker: Boolean,
         skipDceDriven: Boolean,
         splitPerModule: Boolean,
-        errorIgnorancePolicy: ErrorTolerancePolicy
+        errorIgnorancePolicy: ErrorTolerancePolicy,
+        propertyLazyInitialization: Boolean,
     ) {
-        val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
+        val kotlinFiles = module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
         val globalCommonFiles = JsTestUtils.getFilesInDirectoryByExtension(COMMON_FILES_DIR_PATH, KotlinFileType.EXTENSION)
         val localCommonFile = directory + "/" + COMMON_FILES_NAME + "." + KotlinFileType.EXTENSION
@@ -414,21 +466,63 @@ abstract class BasicBoxTest(
         val psiFiles = createPsiFiles(allSourceFiles.sortedBy { it.canonicalPath }.map { it.canonicalPath })
 
         val sourceDirs = (testFiles + additionalFiles).map { File(it).parent }.distinct()
-        val config = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, tmpDir, incrementalData = null, expectActualLinker = expectActualLinker, errorIgnorancePolicy)
+        val config = createConfig(
+            sourceDirs,
+            module,
+            dependencies,
+            allDependencies,
+            friends,
+            multiModule,
+            tmpDir,
+            incrementalData = null,
+            expectActualLinker = expectActualLinker,
+            errorIgnorancePolicy
+        )
         val outputFile = File(outputFileName)
         val dceOutputFile = File(dceOutputFileName)
         val pirOutputFile = File(pirOutputFileName)
 
         val incrementalData = IncrementalData()
         translateFiles(
-            psiFiles.map(TranslationUnit::SourceFile), outputFile, dceOutputFile, pirOutputFile, config, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, isMainModule, skipDceDriven, splitPerModule
+            psiFiles.map(TranslationUnit::SourceFile),
+            outputFile,
+            dceOutputFile,
+            pirOutputFile,
+            config,
+            outputPrefixFile,
+            outputPostfixFile,
+            mainCallParameters,
+            incrementalData,
+            remap,
+            testPackage,
+            testFunction,
+            needsFullIrRuntime,
+            isMainModule,
+            skipDceDriven,
+            splitPerModule,
+            propertyLazyInitialization,
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
             checkIncrementalCompilation(
-                sourceDirs, module, kotlinFiles, dependencies, allDependencies, friends, multiModule, tmpDir, remap,
-                outputFile, outputPrefixFile, outputPostfixFile, mainCallParameters, incrementalData, testPackage, testFunction, needsFullIrRuntime, expectActualLinker
+                sourceDirs,
+                module,
+                kotlinFiles,
+                dependencies,
+                allDependencies,
+                friends,
+                multiModule,
+                tmpDir,
+                remap,
+                outputFile,
+                outputPrefixFile,
+                outputPostfixFile,
+                mainCallParameters,
+                incrementalData,
+                testPackage,
+                testFunction,
+                needsFullIrRuntime,
+                expectActualLinker
             )
         }
     }
@@ -466,15 +560,41 @@ abstract class BasicBoxTest(
             sourceToTranslationUnit[sourceFile] = TranslationUnit.BinaryAst(data.binaryAst, data.inlineData)
         }
         val translationUnits = sourceToTranslationUnit.keys
-                .sortedBy { it.canonicalPath }
-                .map { sourceToTranslationUnit[it]!! }
+            .sortedBy { it.canonicalPath }
+            .map { sourceToTranslationUnit[it]!! }
 
-        val recompiledConfig = createConfig(sourceDirs, module, dependencies, allDependencies, friends, multiModule, tmpDir, incrementalData, expectActualLinker, ErrorTolerancePolicy.DEFAULT)
+        val recompiledConfig = createConfig(
+            sourceDirs,
+            module,
+            dependencies,
+            allDependencies,
+            friends,
+            multiModule,
+            tmpDir,
+            incrementalData,
+            expectActualLinker,
+            ErrorTolerancePolicy.DEFAULT
+        )
         val recompiledOutputFile = File(outputFile.parentFile, outputFile.nameWithoutExtension + "-recompiled.js")
 
         translateFiles(
-            translationUnits, recompiledOutputFile, recompiledOutputFile, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, false, true, false
+            translationUnits,
+            recompiledOutputFile,
+            recompiledOutputFile,
+            recompiledOutputFile,
+            recompiledConfig,
+            outputPrefixFile,
+            outputPostfixFile,
+            mainCallParameters,
+            incrementalData,
+            remap,
+            testPackage,
+            testFunction,
+            needsFullIrRuntime,
+           isMainModule = false,
+           skipDceDriven = true,
+           splitPerModule = false,
+            propertyLazyInitialization = false,
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -482,15 +602,18 @@ abstract class BasicBoxTest(
         assertEquals("Output file changed after recompilation", originalOutput, recompiledOutput)
 
         val originalSourceMap = FileUtil.loadFile(File(outputFile.parentFile, outputFile.name + ".map"))
-        val recompiledSourceMap = removeRecompiledSuffix(
-                FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.name + ".map")))
+        val recompiledSourceMap =
+            removeRecompiledSuffix(FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.name + ".map"))
+        )
         if (originalSourceMap != recompiledSourceMap) {
             val originalSourceMapParse = SourceMapParser.parse(originalSourceMap)
             val recompiledSourceMapParse = SourceMapParser.parse(recompiledSourceMap)
             if (originalSourceMapParse is SourceMapSuccess && recompiledSourceMapParse is SourceMapSuccess) {
-                assertEquals("Source map file changed after recompilation",
-                             originalSourceMapParse.toDebugString(),
-                             recompiledSourceMapParse.toDebugString())
+                assertEquals(
+                    "Source map file changed after recompilation",
+                    originalSourceMapParse.toDebugString(),
+                    recompiledSourceMapParse.toDebugString()
+                )
             }
             assertEquals("Source map file changed after recompilation", originalSourceMap, recompiledSourceMap)
         }
@@ -498,7 +621,8 @@ abstract class BasicBoxTest(
         if (multiModule) {
             val originalMetadata = FileUtil.loadFile(File(outputFile.parentFile, outputFile.nameWithoutExtension + ".meta.js"))
             val recompiledMetadata = removeRecompiledSuffix(
-                    FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.nameWithoutExtension + ".meta.js")))
+                FileUtil.loadFile(File(recompiledOutputFile.parentFile, recompiledOutputFile.nameWithoutExtension + ".meta.js"))
+            )
             assertEquals(
                 "Metadata file changed after recompilation",
                 metadataAsString(originalMetadata),
@@ -548,7 +672,8 @@ abstract class BasicBoxTest(
         needsFullIrRuntime: Boolean,
         isMainModule: Boolean,
         skipDceDriven: Boolean,
-        splitPerModule: Boolean
+        splitPerModule: Boolean,
+        propertyLazyInitialization: Boolean,
     ) {
         val translator = K2JSTranslator(config, false)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
@@ -611,8 +736,8 @@ abstract class BasicBoxTest(
 
     private fun processJsProgram(program: JsProgram, psiFiles: List<KtFile>) {
         psiFiles.asSequence()
-                .map { it.text }
-                .forEach { DirectiveTestUtils.processDirectives(program, it) }
+            .map { it.text }
+            .forEach { DirectiveTestUtils.processDirectives(program, it) }
         program.verifyAst()
     }
 
@@ -624,6 +749,7 @@ abstract class BasicBoxTest(
                 super.visitObjectLiteral(x)
                 x.isMultiline = false
             }
+
             override fun visitVars(x: JsVars) {
                 x.isMultiline = false
                 super.visitVars(x)
@@ -635,8 +761,11 @@ abstract class BasicBoxTest(
         val output = TextOutputImpl()
         val pathResolver = SourceFilePathResolver(mutableListOf(File(".")), null)
         val sourceMapBuilder = SourceMap3Builder(outputFile, output, "")
-        generatedProgram.accept(JsToStringGenerationVisitor(
-                output, SourceMapBuilderConsumer(File("."), sourceMapBuilder, pathResolver, false, false)))
+        generatedProgram.accept(
+            JsToStringGenerationVisitor(
+                output, SourceMapBuilderConsumer(File("."), sourceMapBuilder, pathResolver, false, false)
+            )
+        )
         val code = output.toString()
         val generatedSourceMap = sourceMapBuilder.build()
 
@@ -670,13 +799,11 @@ abstract class BasicBoxTest(
         })
     }
 
-    protected fun createPsiFile(fileName: String): KtFile {
+    private fun createPsiFile(fileName: String): KtFile {
         val psiManager = PsiManager.getInstance(project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
-        val file = fileSystem.findFileByPath(fileName)
-        if (file == null)
-            error("File not found: ${fileName}")
+        val file = fileSystem.findFileByPath(fileName) ?: error("File not found: ${fileName}")
 
         return psiManager.findFile(file) as KtFile
     }
@@ -684,8 +811,16 @@ abstract class BasicBoxTest(
     private fun createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)
 
     private fun createConfig(
-        sourceDirs: List<String>, module: TestModule, dependencies: List<String>, allDependencies: List<String>, friends: List<String>,
-        multiModule: Boolean, tmpDir: File, incrementalData: IncrementalData?, expectActualLinker: Boolean, errorIgnorancePolicy: ErrorTolerancePolicy
+        sourceDirs: List<String>,
+        module: TestModule,
+        dependencies: List<String>,
+        allDependencies: List<String>,
+        friends: List<String>,
+        multiModule: Boolean,
+        tmpDir: File,
+        incrementalData: IncrementalData?,
+        expectActualLinker: Boolean,
+        errorIgnorancePolicy: ErrorTolerancePolicy,
     ): JsConfig {
         val configuration = environment.configuration.copy()
 
@@ -721,7 +856,13 @@ abstract class BasicBoxTest(
             if (header != null) {
                 configuration.put(
                     JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER,
-                    IncrementalDataProviderImpl(header, incrementalData.translatedFiles, JsMetadataVersion.INSTANCE.toArray(), incrementalData.packageMetadata, emptyMap())
+                    IncrementalDataProviderImpl(
+                        header,
+                        incrementalData.translatedFiles,
+                        JsMetadataVersion.INSTANCE.toArray(),
+                        incrementalData.packageMetadata,
+                        emptyMap()
+                    )
                 )
             }
 
@@ -749,9 +890,9 @@ abstract class BasicBoxTest(
     }
 
     private fun minifyAndRun(
-            workDir: File, allJsFiles: List<String>, generatedJsFiles: List<Pair<String, TestModule>>,
-            expectedResult: String, testModuleName: String?, testPackage: String?, testFunction: String, withModuleSystem: Boolean,
-            minificationThresholdChecker: (Int) -> Unit
+        workDir: File, allJsFiles: List<String>, generatedJsFiles: List<Pair<String, TestModule>>,
+        expectedResult: String, testModuleName: String?, testPackage: String?, testFunction: String, withModuleSystem: Boolean,
+        minificationThresholdChecker: (Int) -> Unit
     ) {
         val kotlinJsLib = DIST_DIR_JS_PATH + "kotlin.js"
         val kotlinTestJsLib = DIST_DIR_JS_PATH + "kotlin-test.js"
@@ -768,9 +909,9 @@ abstract class BasicBoxTest(
 
         val testFunctionFqn = testModuleName + (if (testPackage.isNullOrEmpty()) "" else ".$testPackage") + ".$testFunction"
         val additionalReachableNodes = setOf(
-                testFunctionFqn, "kotlin.kotlin.io.BufferedOutput", "kotlin.kotlin.io.output.flush",
-                "kotlin.kotlin.io.output.buffer", "kotlin-test.kotlin.test.overrideAsserter_wbnzx$",
-                "kotlin-test.kotlin.test.DefaultAsserter"
+            testFunctionFqn, "kotlin.kotlin.io.BufferedOutput", "kotlin.kotlin.io.output.flush",
+            "kotlin.kotlin.io.output.buffer", "kotlin-test.kotlin.test.overrideAsserter_wbnzx$",
+            "kotlin-test.kotlin.test.DefaultAsserter"
         )
         val allFilesToMinify = filesToMinify.values + kotlinJsInputFile + kotlinTestJsInputFile
         val dceResult = DeadCodeElimination.run(allFilesToMinify, additionalReachableNodes) { _, _ -> }
@@ -785,9 +926,9 @@ abstract class BasicBoxTest(
         runList += allJsFiles.map { filesToMinify[it]?.outputPath ?: it }
 
         val result = engineForMinifier.runAndRestoreContext {
-            runList.forEach(this::loadFile)
+            loadFiles(runList)
             overrideAsserter()
-            eval<String>(SETUP_KOTLIN_OUTPUT)
+            eval(SETUP_KOTLIN_OUTPUT)
             runTestFunction(testModuleName, testPackage, testFunction, withModuleSystem)
         }
         TestCase.assertEquals(expectedResult, result)
@@ -803,7 +944,7 @@ abstract class BasicBoxTest(
             val currentModule = module ?: defaultModule
 
             val ktFile = KtPsiFactory(project).createFile(text)
-            val boxFunction = ktFile.declarations.find { it is KtNamedFunction && it.name == TEST_FUNCTION  }
+            val boxFunction = ktFile.declarations.find { it is KtNamedFunction && it.name == TEST_FUNCTION }
             if (boxFunction != null) {
                 testPackage = ktFile.packageFqName.asString()
                 if (testPackage?.isEmpty() == true) {
@@ -870,7 +1011,7 @@ abstract class BasicBoxTest(
         }
 
         override fun createModule(name: String, dependencies: List<String>, friends: List<String>) =
-                TestModule(name, dependencies, friends)
+            TestModule(name, dependencies, friends)
 
         override fun close() {
             FileUtil.delete(tmpDir)
@@ -884,10 +1025,10 @@ abstract class BasicBoxTest(
     }
 
     private class TestModule(
-            name: String,
-            dependencies: List<String>,
-            friends: List<String>
-    ): KotlinBaseTest.TestModule(name, dependencies, friends) {
+        name: String,
+        dependencies: List<String>,
+        friends: List<String>
+    ) : KotlinBaseTest.TestModule(name, dependencies, friends) {
         var moduleKind = ModuleKind.PLAIN
         var inliningDisabled = false
         val files = mutableListOf<TestFile>()
@@ -898,7 +1039,7 @@ abstract class BasicBoxTest(
     }
 
     override fun createEnvironment() =
-            KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+        KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
     companion object {
         val METADATA_CACHE = (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).flatMap { path ->
@@ -936,23 +1077,37 @@ abstract class BasicBoxTest(
         private val SOURCE_MAP_SOURCE_EMBEDDING = Regex("^// *SOURCE_MAP_EMBED_SOURCES: ([A-Z]+)*\$", RegexOption.MULTILINE)
         private val CALL_MAIN_PATTERN = Pattern.compile("^// *CALL_MAIN *$", Pattern.MULTILINE)
         private val KJS_WITH_FULL_RUNTIME = Pattern.compile("^// *KJS_WITH_FULL_RUNTIME *\$", Pattern.MULTILINE)
+        private val WITH_RUNTIME = Pattern.compile("^// *WITH_RUNTIME *\$", Pattern.MULTILINE)
         private val EXPECT_ACTUAL_LINKER = Pattern.compile("^// EXPECT_ACTUAL_LINKER *$", Pattern.MULTILINE)
         private val SKIP_DCE_DRIVEN = Pattern.compile("^// *SKIP_DCE_DRIVEN *$", Pattern.MULTILINE)
         private val SPLIT_PER_MODULE = Pattern.compile("^// *SPLIT_PER_MODULE *$", Pattern.MULTILINE)
 
         private val ERROR_POLICY_PATTERN = Pattern.compile("^// *ERROR_POLICY: *(.+)$", Pattern.MULTILINE)
 
+        private val PROPERTY_LAZY_INITIALIZATION = Pattern.compile("^// *PROPERTY_LAZY_INITIALIZATION *$", Pattern.MULTILINE)
+
         @JvmStatic
         protected val runTestInNashorn = getBoolean("kotlin.js.useNashorn")
 
-        val TEST_MODULE = "JS_TESTS"
-        private val DEFAULT_MODULE = "main"
-        private val TEST_FUNCTION = "box"
-        private val OLD_MODULE_SUFFIX = "-old"
+        const val TEST_MODULE = "JS_TESTS"
+        private const val DEFAULT_MODULE = "main"
+        private const val TEST_FUNCTION = "box"
+        private const val OLD_MODULE_SUFFIX = "-old"
 
         const val KOTLIN_TEST_INTERNAL = "\$kotlin_test_internal\$"
-        private val engineForMinifier =
-            if (runTestInNashorn) ScriptEngineNashorn()
-            else ScriptEngineV8Lazy(KotlinTestUtils.tmpDirForReusableFolder("j2v8_library_path").path)
+        private val engineForMinifier = createScriptEngine()
+
+        const val overwriteReachableNodesProperty = "kotlin.js.overwriteReachableNodes"
     }
 }
+
+fun KotlinTestWithEnvironment.createPsiFile(fileName: String): KtFile {
+    val psiManager = PsiManager.getInstance(project)
+    val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+
+    val file = fileSystem.findFileByPath(fileName) ?: error("File not found: $fileName")
+
+    return psiManager.findFile(file) as KtFile
+}
+
+fun KotlinTestWithEnvironment.createPsiFiles(fileNames: List<String>): List<KtFile> = fileNames.map(this::createPsiFile)

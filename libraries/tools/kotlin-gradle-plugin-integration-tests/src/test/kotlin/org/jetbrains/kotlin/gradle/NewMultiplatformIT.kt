@@ -4,6 +4,9 @@
  */
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.checkNativeCommandLineArguments
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.native.configureMemoryInGradleProperties
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProject
@@ -123,14 +126,6 @@ class NewMultiplatformIT : BaseGradleIT() {
             // we use `maven { setUrl(...) }` because this syntax actually works both for Groovy and Kotlin DSLs in Gradle
             gradleBuildScript().appendText("\nrepositories { maven { setUrl(\"$libLocalRepoUri\") } }")
 
-            fun CompiledProject.checkProgramCompilationCommandLine(check: (String) -> Unit) {
-                output.lineSequence().filter {
-                    it.contains("Run tool: \"konanc\"") && it.contains("-p program")
-                }.toList().also {
-                    assertTrue(it.isNotEmpty())
-                }.forEach(check)
-            }
-
             fun CompiledProject.checkAppBuild() {
                 assertSuccessful()
                 assertTasksExecuted(*compileTasksNames.toTypedArray())
@@ -159,8 +154,8 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertFileExists("build/bin/linux64/mainDebugExecutable/$nativeExeName")
 
                 // Check that linker options were correctly passed to the K/N compiler.
-                checkProgramCompilationCommandLine {
-                    assertTrue(it.contains("-linker-option -L."))
+                checkNativeCommandLineArguments(":linkMainDebugExecutableLinux64") { arguments ->
+                    assertTrue(arguments.containsSequentially("-linker-option", "-L."))
                 }
             }
 
@@ -712,7 +707,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertTasksExecuted(":$it")
                 assertContains(
                     "-XXLanguage:+InlineClasses",
-                    " -progressive", "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
+                    "-progressive", "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
                     "-Xopt-in=kotlin.contracts.ExperimentalContracts",
                     "-Xno-inline"
                 )
@@ -1281,7 +1276,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testJsDceInMpp() = with(Project("new-mpp-js-dce", gradleVersion)) {
-        build("runRhino") {
+        build("runRhino", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
             assertTasksExecuted(":mainProject:runDceNodeJsKotlin")
 
@@ -1366,7 +1361,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testDependenciesDsl() = with(transformProjectWithPluginsDsl("newMppDependenciesDsl")) {
         val originalBuildscriptContent = gradleBuildScript("app").readText()
 
-        fun testDependencies() = testResolveAllConfigurations("app") {
+        fun testDependencies() = testResolveAllConfigurations("app", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertContains(">> :app:testNonTransitiveStringNotationApiDependenciesMetadata --> junit-4.12.jar")
             assertEquals(
                 1,
@@ -1400,7 +1395,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testMultipleTargetsSamePlatform() = with(Project("newMppMultipleTargetsSamePlatform", gradleVersion)) {
-        testResolveAllConfigurations("app") {
+        testResolveAllConfigurations("app", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertContains(">> :app:junitCompileClasspath --> lib-junit.jar")
             assertContains(">> :app:junitCompileClasspath --> junit-4.12.jar")
 
@@ -1490,7 +1485,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         val groupDir = "build/repo/com/example/"
 
-        build(":mpp-lib:publish") {
+        build(":mpp-lib:publish", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
             assertFileExists(groupDir + "mpp-lib")
             assertFileExists(groupDir + "mpp-lib-myjvm")
@@ -1507,7 +1502,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     add("-Pkotlin.mpp.keepMppDependenciesIntactInPoms=true")
             }.toTypedArray()
 
-            build(*params) {
+            build(*params, options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
                 assertSuccessful()
                 if (legacyPublishing) {
                     assertTasksExecuted(":jvm-app:uploadArchives")

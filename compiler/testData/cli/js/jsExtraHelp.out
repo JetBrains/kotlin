@@ -1,9 +1,8 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
-  -Xdisable-fake-override-validator
-                             Disable IR fake override validator
   -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
   -Xerror-tolerance-policy   Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)
+  -Xfake-override-validator  Enable IR fake override validator
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
   -Xgenerate-dts             Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only.
@@ -19,8 +18,11 @@ where advanced options include:
   -Xir-produce-klib-dir      Generate unpacked KLIB into parent directory of output JS file.
                              In combination with -meta-info generates both IR and pre-IR versions of library.
   -Xir-produce-klib-file     Generate packed klib into file specified by -output. Disables pre-IR backend
+  -Xir-property-lazy-initialization
+                             Perform lazy initialization for properties
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
+  -Xwasm                     Use experimental WebAssembly compiler backend
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
   -Xcheck-phase-conditions   Check pre- and postconditions on phases
@@ -30,7 +32,6 @@ where advanced options include:
                              Should be a subset of sources passed as free arguments
   -Xcoroutines={enable|warn|error}
                              Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
-  -Xdeserialize-fake-overrides Fallback to deserializing fake overrides
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
   -Xdisable-phases           Disable backend phases

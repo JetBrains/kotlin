@@ -1,0 +1,42 @@
+fun test3(f1: Function1<String, String>, f2: Function1<Int, String>): D<Int?, String?> {
+  return C<String?>(jxx = f1 /*-> J<X?, X?>? */).D<Int?>(jxy = f2 /*-> J<String?, Y?>? */)
+}
+
+class Outer<T1 : Any?> {
+  constructor(j11: J<T1, T1>) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val j11: J<T1, T1>
+    field = j11
+    get
+
+  inner class Inner<T2 : Any?> {
+    constructor(j12: J<T1, T2>) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    val j12: J<T1, T2>
+      field = j12
+      get
+
+  }
+
+}
+
+fun test4(f: Function1<String, String>, g: Function1<Any, String>): Inner<Any?, String?> {
+  return Outer<String?>(j11 = f /*-> J<T1, T1> */).Inner<Any?>(j12 = g /*-> J<String?, T2> */)
+}
+
+fun testGenericJavaCtor1(f: Function1<String, Int>): G<String?> {
+  return G<String?, Int?>(x = f /*-> J<TCtor?, TClass?>? */)
+}
+
+fun testGenericJavaCtor2(x: Any) {
+  x as Function1<String, Int> /*~> Unit */
+  G<String?, Int?>(x = x /*as Function1<String, Int> */ /*-> J<TCtor?, TClass?>? */) /*~> Unit */
+}

@@ -34,15 +34,14 @@ public enum Enum2 {
     private final java.lang.String col = null;
     private final int col2 = 0;
 
+    Enum2(@Anno1(value = "first")
+    java.lang.String col, @Anno1(value = "second")
+    int col2) {
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String color() {
         return null;
-    }
-
-    private final void privateEnumFun() {
-    }
-
-    public final void publicEnumFun() {
     }
 
     @org.jetbrains.annotations.NotNull()
@@ -54,9 +53,10 @@ public enum Enum2 {
         return 0;
     }
 
-    Enum2(@Anno1(value = "first")
-    java.lang.String col, @Anno1(value = "second")
-    int col2) {
+    private final void privateEnumFun() {
+    }
+
+    public final void publicEnumFun() {
     }
 }
 

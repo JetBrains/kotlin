@@ -1,0 +1,49 @@
+class Delegate {
+  constructor(value: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val value: String
+    field = value
+    get
+
+  operator fun getValue(thisRef: Any?, property: Any?): String {
+    return <this>.<get-value>()
+  }
+
+}
+
+class DelegateProvider {
+  constructor(value: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val value: String
+    field = value
+    get
+
+  operator fun provideDelegate(thisRef: Any?, property: Any?): Delegate {
+    return Delegate(value = <this>.<get-value>())
+  }
+
+}
+
+class Host {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val testMember: String /* by */ 
+    field = DelegateProvider(value = "OK").provideDelegate(thisRef = <this>, property = Host::testMember)
+    get(): String {
+      return <this>.#testMember$delegate.getValue(thisRef = <this>, property = Host::testMember)
+    }
+
+}
+

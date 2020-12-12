@@ -2,7 +2,7 @@ FILE: safeCallOnTypeAlias.kt
     public final typealias MyTypeAlias = R|() -> kotlin/String?|
     public final fun foo(x: R|MyTypeAlias|): R|kotlin/Unit| {
         R|<local>/x|?.{ $subj$.R|kotlin/let|<R|() -> kotlin/String?|, R|kotlin/String|>(<L> = let@fun <anonymous>(y: R|() -> kotlin/String?|): R|kotlin/String| <kind=EXACTLY_ONCE>  {
-            ^ R|<local>/y|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String?|>|()?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/String|>(<L> = let@fun <anonymous>(result: R|kotlin/String|): R|kotlin/String| <kind=EXACTLY_ONCE>  {
+            ^ R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String?|>|()?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/String|>(<L> = let@fun <anonymous>(result: R|kotlin/String|): R|kotlin/String| <kind=EXACTLY_ONCE>  {
                 ^ R|/bar|(R|<local>/result|)
             }
             ) }

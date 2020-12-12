@@ -43,8 +43,6 @@ private fun checkConstantSupportedInCommonization(
         }
         is AnnotationValue -> {
             if (allowAnnotationValues) {
-                if (constantValue.value.fqName?.isUnderStandardKotlinPackages != true)
-                    onError("Only ${constantValue::class.java} const values from Kotlin standard packages are supported, $constantValue at ${location()}")
                 return // OK
             } // else fail (see below)
         }

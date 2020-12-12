@@ -52,8 +52,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
     override fun tearDown() {
         commitAllDocuments()
         RunAll(
-            ThrowableRunnable { super.tearDown() },
-            ThrowableRunnable { statsMap.values.forEach(Stats::flush) }
+            ThrowableRunnable { super.tearDown() }
         ).run()
     }
 
@@ -114,7 +113,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         completionChars: String
     ) {
         performanceTest<Unit, Unit> {
-            name(getTestName(false))
+            name(testName())
             stats(stats())
             setUp {
                 setUpFixture(testPath)
@@ -127,6 +126,16 @@ abstract class AbstractPerformanceCompletionHandlerTests(
                     myFixture.file.delete()
                 }
             }
+        }
+    }
+
+    private fun testName(): String {
+        val javaClass = this.javaClass
+        val testName = getTestName(false)
+        return if (javaClass.isMemberClass) {
+            "${javaClass.simpleName} - $testName"
+        } else {
+            testName
         }
     }
 

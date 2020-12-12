@@ -3,3 +3,5 @@
 open class <caret>Foo {
     vv open val foo = 1
 }
+
+// FIR_COMPARISON

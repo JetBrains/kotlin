@@ -1,0 +1,10 @@
+fun test(d: dynamic): dynamic {
+  return { // BLOCK
+    val tmp0_elvis_lhs: dynamic = d
+    when {
+      EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> "other"
+      else -> tmp0_elvis_lhs
+    }
+  }
+}
+

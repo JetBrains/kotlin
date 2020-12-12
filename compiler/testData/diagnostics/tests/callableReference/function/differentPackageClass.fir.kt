@@ -3,6 +3,8 @@
 
 package first
 
+import checkSubtype
+
 class A {
     fun foo() {}
     fun bar(x: Int) {}
@@ -14,7 +16,7 @@ class A {
 package other
 
 import kotlin.reflect.*
-
+import checkSubtype
 import first.A
 
 fun main() {

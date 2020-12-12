@@ -10,17 +10,18 @@ import org.jetbrains.kotlin.descriptors.commonizer.cir.CirAnnotation
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirType
 import org.jetbrains.kotlin.descriptors.commonizer.cir.CirTypeParameter
 import org.jetbrains.kotlin.descriptors.commonizer.cir.impl.CirTypeParameterImpl
+import org.jetbrains.kotlin.descriptors.commonizer.utils.compactMap
 import org.jetbrains.kotlin.descriptors.commonizer.utils.intern
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 object CirTypeParameterFactory {
     fun create(source: TypeParameterDescriptor): CirTypeParameter = create(
-        annotations = source.annotations.map(CirAnnotationFactory::create),
+        annotations = source.annotations.compactMap(CirAnnotationFactory::create),
         name = source.name.intern(),
         isReified = source.isReified,
         variance = source.variance,
-        upperBounds = source.upperBounds.map(CirTypeFactory::create)
+        upperBounds = source.upperBounds.compactMap(CirTypeFactory::create)
     )
 
     @Suppress("NOTHING_TO_INLINE")

@@ -11,13 +11,17 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.intrinsics.JavaClassProperty
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.isFromJava
 import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
+import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
-import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.*
+import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.getNameForReceiverParameter
 import org.jetbrains.kotlin.codegen.coroutines.SuspensionPointKind
 import org.jetbrains.kotlin.codegen.coroutines.generateCoroutineSuspendedCheck
 import org.jetbrains.kotlin.codegen.inline.*
@@ -47,7 +51,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -213,8 +218,14 @@ class ExpressionCodegen(
     fun generate() {
         mv.visitCode()
         val startLabel = markNewLabel()
+        if (irFunction.isMultifileBridge()) {
+            // Multifile bridges need to have line number 1 to be filtered out by the intellij debugging filters.
+            mv.visitLineNumber(1, startLabel)
+        }
         val info = BlockInfo()
-        val body = irFunction.body!!
+        val body = irFunction.body
+            ?: error("Function has no body: ${irFunction.render()}")
+
         generateNonNullAssertions()
         generateFakeContinuationConstructorIfNeeded()
         val result = body.accept(this, info)
@@ -248,6 +259,7 @@ class ExpressionCodegen(
     }
 
     private fun generateFakeContinuationConstructorIfNeeded() {
+        if (!irFunction.isSuspendCapturingCrossinline()) return
         val continuationClass = irFunction.continuationClass() ?: return
         val continuationType = typeMapper.mapClass(continuationClass)
         val continuationIndex = frameMap.getIndex(irFunction.continuationParameter()!!.symbol)
@@ -272,23 +284,25 @@ class ExpressionCodegen(
         if (state.isParamAssertionsDisabled)
             return
 
-        val notCallableFromJava = inlinedInto != null ||
-                (DescriptorVisibilities.isPrivate(irFunction.visibility) && !(irFunction is IrSimpleFunction && irFunction.isOperator)) ||
-                irFunction.origin.isSynthetic ||
-                // TODO: refine this condition to not generate nullability assertions on parameters
-                //       corresponding to captured variables and anonymous object super constructor arguments
-                (irFunction is IrConstructor && irFunction.parentAsClass.isAnonymousObject) ||
-                // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
-                irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
-                // Although these are accessible from Java, the functions they bridge to already have the assertions.
-                irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
-                irFunction.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE ||
-                irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
-                irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA
-
-        if (notCallableFromJava)
+        if (inlinedInto != null ||
+            (DescriptorVisibilities.isPrivate(irFunction.visibility) && !(irFunction is IrSimpleFunction && irFunction.isOperator)) ||
+            irFunction.origin.isSynthetic ||
+            // TODO: refine this condition to not generate nullability assertions on parameters
+            //       corresponding to captured variables and anonymous object super constructor arguments
+            (irFunction is IrConstructor &&
+                    (irFunction.parentAsClass.isAnonymousObject ||
+                            irFunction.parentAsClass.origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION)) ||
+            // TODO: Implement this as a lowering, so that we can more easily exclude generated methods.
+            irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD ||
+            // Although these are accessible from Java, the functions they bridge to already have the assertions.
+            irFunction.origin == IrDeclarationOrigin.BRIDGE_SPECIAL ||
+            irFunction.origin == JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE ||
+            irFunction.origin == JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER ||
+            irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB ||
+            irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.CONTINUATION_CLASS ||
+            irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.SUSPEND_LAMBDA ||
+            irFunction.isMultifileBridge()
+        )
             return
 
         // Do not generate non-null checks for suspend functions. When resumed the arguments
@@ -298,7 +312,12 @@ class ExpressionCodegen(
             return
 
         irFunction.extensionReceiverParameter?.let { generateNonNullAssertion(it) }
-        irFunction.valueParameters.forEach(::generateNonNullAssertion)
+
+        // Private operator functions don't have null checks on value parameters,
+        // see `DescriptorAsmUtil.genNotNullAssertionsForParameters`.
+        if (!DescriptorVisibilities.isPrivate(irFunction.visibility) || irFunction !is IrSimpleFunction || !irFunction.isOperator) {
+            irFunction.valueParameters.forEach(::generateNonNullAssertion)
+        }
     }
 
     private fun generateNonNullAssertion(param: IrValueParameter) {
@@ -328,10 +347,6 @@ class ExpressionCodegen(
     }
 
     private fun writeValueParameterInLocalVariableTable(param: IrValueParameter, startLabel: Label, endLabel: Label, isReceiver: Boolean) {
-        // TODO: old code has a special treatment for destructuring lambda parameters.
-        // There is no (easy) way to reproduce it with IR structures.
-        // Does not show up in tests, but might come to bite us at some point.
-
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
         val name = if (param.origin == BOUND_RECEIVER_PARAMETER || isReceiver) {
@@ -405,8 +420,11 @@ class ExpressionCodegen(
         visitStatementContainer(expression, data)
 
     override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
-        classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
-            ?.invoke(expression, this, data)?.let { return it }
+        val intrinsic = classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
+        if (intrinsic != null) {
+            intrinsic.invoke(expression, this, data)
+                ?.let { return it }
+        }
 
         val callee = expression.symbol.owner
         require(callee.parent is IrClass) { "Unhandled intrinsic in ExpressionCodegen: ${callee.render()}" }
@@ -609,7 +627,25 @@ class ExpressionCodegen(
         expression.markLineNumber(startOffset = true)
         val type = frameMap.typeOf(expression.symbol)
         mv.load(findLocalIndex(expression.symbol), type)
+        unboxResultIfNeeded(expression)
         return MaterialValue(this, type, expression.type)
+    }
+
+    // We do not mangle functions if Result is the only parameter of the function,
+    // thus, if the function overrides generic parameter, its argument is boxed and there is no
+    // bridge to unbox it. Instead, we unbox it in the non-mangled function manually.
+    private fun unboxResultIfNeeded(arg: IrGetValue) {
+        if (arg.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME) return
+        if (irFunction !is IrSimpleFunction) return
+
+        val index = (arg.symbol as? IrValueParameterSymbol)?.owner?.index ?: return
+        val genericOrAnyOverride = irFunction.overriddenSymbols.any {
+            val overriddenParam = if (index < 0) it.owner.dispatchReceiverParameter!! else it.owner.valueParameters[index]
+            overriddenParam.type.erasedUpperBound.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME
+        } || irFunction.parentAsClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL
+        if (!genericOrAnyOverride) return
+
+        StackValue.unboxInlineClass(OBJECT_TYPE, arg.type.toIrBasedKotlinType(), mv)
     }
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
@@ -630,7 +666,8 @@ class ExpressionCodegen(
             ?: receiverType ?: typeMapper.mapClass(callee.parentAsClass)
         val ownerName = ownerType.internalName
         val fieldName = callee.name.asString()
-        val fieldType = callee.type.asmType
+        val calleeIrType = if (callee.isFromJava() && callee.type.isInlined()) callee.type.makeNullable() else callee.type
+        val fieldType = calleeIrType.asmType
         return if (expression is IrSetField) {
             val value = expression.value.accept(this, data)
             // We only initialize enum entries with a subtype of `fieldType` and can avoid the CHECKCAST.
@@ -826,6 +863,10 @@ class ExpressionCodegen(
         }
         val afterReturnLabel = Label()
         expression.value.accept(this, data).materializeAt(returnType, returnIrType)
+        // In case of non-local return from suspend lambda 'materializeAt' does not box return value, box it manually.
+        if (isNonLocalReturn && owner.isInvokeSuspendOfLambda() && expression.value.type.isKotlinResult()) {
+            StackValue.boxInlineClass(expression.value.type.toIrBasedKotlinType(), mv)
+        }
         generateFinallyBlocksIfNeeded(returnType, afterReturnLabel, data)
         expression.markLineNumber(startOffset = true)
         if (isNonLocalReturn) {

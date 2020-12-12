@@ -6,7 +6,7 @@ FILE: atLeastOnce.kt
         >
      {
         [StubStatement]
-        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun myRun(block: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
@@ -15,7 +15,7 @@ FILE: atLeastOnce.kt
         >
      {
         [StubStatement]
-        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+        R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }
     public final fun test_1(): R|kotlin/Unit| {
         lval x: R|kotlin/Int|

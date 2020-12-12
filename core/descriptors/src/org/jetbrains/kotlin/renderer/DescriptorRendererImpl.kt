@@ -982,6 +982,7 @@ internal class DescriptorRendererImpl(
             renderModifier(builder, DescriptorRendererModifier.INNER in modifiers && klass.isInner, "inner")
             renderModifier(builder, DescriptorRendererModifier.DATA in modifiers && klass.isData, "data")
             renderModifier(builder, DescriptorRendererModifier.INLINE in modifiers && klass.isInline, "inline")
+            renderModifier(builder, DescriptorRendererModifier.VALUE in modifiers && klass.isValue, "value")
             renderModifier(builder, DescriptorRendererModifier.FUN in modifiers && klass.isFun, "fun")
             renderClassKindPrefix(klass, builder)
         }

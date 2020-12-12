@@ -21,6 +21,7 @@ import org.jetbrains.plugins.gradle.tooling.annotation.PluginTargetVersions
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.junit.Ignore
 
 //ToDo: Need to remove RUNTIME dependencies when KT-40551 is resolved
 class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportingTestCase() {
@@ -368,7 +369,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
     @PluginTargetVersions(gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testTestTasks() {
         val files = configureByFiles()
-        importProject()
+        importProject(skipIndexing = true)
 
         checkProjectStructure(exhaustiveSourceSourceRootList = false) {
             module("project")
@@ -435,6 +436,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
 
 
     @Test
+    @Ignore
     @PluginTargetVersions(gradleVersion = "5.0+", pluginVersion = "1.3.50+", gradleVersionForLatestPlugin = mppImportTestMinVersionForMaster)
     fun testSingleAndroidTarget() {
         configureByFiles()

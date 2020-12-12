@@ -1,0 +1,15 @@
+fun test(a: SomeJavaClass<out String>) {
+  a.someFunction(hello = local fun <anonymous>(it: @FlexibleNullability String?) {
+    return Unit
+  }
+ /*-> @FlexibleNullability Hello<Nothing>? */)
+  a.plus(hello = local fun <anonymous>(it: @FlexibleNullability String?) {
+    return Unit
+  }
+ /*-> @FlexibleNullability Hello<Nothing>? */)
+  a.get(hello = local fun <anonymous>(it: @FlexibleNullability String?) {
+    return Unit
+  }
+ /*-> @FlexibleNullability Hello<Nothing>? */)
+}
+

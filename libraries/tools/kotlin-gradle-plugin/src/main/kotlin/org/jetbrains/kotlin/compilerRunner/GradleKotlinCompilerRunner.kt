@@ -160,7 +160,7 @@ internal open class GradleCompilerRunner(protected val taskProvider: GradleCompi
             incrementalModuleInfo = modulesInfo,
             outputFiles = environment.outputFiles.toList(),
             taskPath = pathProvider,
-            buildReportMode = environment.buildReportMode,
+            reportingSettings = environment.reportingSettings,
             kotlinScriptExtensions = environment.kotlinScriptExtensions,
             allWarningsAsErrors = compilerArgs.allWarningsAsErrors
         )

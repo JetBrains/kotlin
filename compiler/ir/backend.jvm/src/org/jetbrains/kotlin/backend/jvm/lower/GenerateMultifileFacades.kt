@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -39,7 +40,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
@@ -116,7 +116,7 @@ private fun generateMultifileFacades(
         }.apply {
             parent = file
             createImplicitParameterDeclarationWithWrappedDescriptor()
-            origin = IrDeclarationOrigin.FILE_CLASS
+            origin = IrDeclarationOrigin.JVM_MULTIFILE_CLASS
             if (jvmClassName.packageFqName != kotlinPackageFqName) {
                 context.classNameOverride[this] = jvmClassName
             }
@@ -140,18 +140,26 @@ private fun generateMultifileFacades(
             context.multifileFacadeForPart[partClass.attributeOwnerId as IrClass] = jvmClassName
             context.multifileFacadeClassForPart[partClass.attributeOwnerId as IrClass] = facadeClass
 
-            moveFieldsOfConstProperties(partClass, facadeClass)
-
+            val correspondingProperties = CorrespondingPropertyCache(context, facadeClass)
             for (member in partClass.declarations) {
-                if (member is IrSimpleFunction &&
-                    !member.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
-                ) {
-                    val newMember = member.createMultifileDelegateIfNeeded(context, facadeClass, shouldGeneratePartHierarchy)
-                    if (newMember != null) {
-                        functionDelegates[member] = newMember
-                    }
+                if (member !is IrSimpleFunction) continue
+
+                // KT-43519 Don't generate delegates for external methods
+                if (member.isExternal) continue
+
+                val correspondingProperty = member.correspondingPropertySymbol?.owner
+                if (member.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) ||
+                    correspondingProperty?.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME) == true
+                ) continue
+
+                val newMember =
+                    member.createMultifileDelegateIfNeeded(context, facadeClass, correspondingProperties, shouldGeneratePartHierarchy)
+                if (newMember != null) {
+                    functionDelegates[member] = newMember
                 }
             }
+
+            moveFieldsOfConstProperties(partClass, facadeClass, correspondingProperties)
         }
 
         file
@@ -180,11 +188,16 @@ private fun modifyMultifilePartsForHierarchy(context: JvmBackendContext, parts: 
     return parts.last()
 }
 
-private fun moveFieldsOfConstProperties(partClass: IrClass, facadeClass: IrClass) {
+private fun moveFieldsOfConstProperties(partClass: IrClass, facadeClass: IrClass, correspondingProperties: CorrespondingPropertyCache) {
     partClass.declarations.transformFlat { member ->
         if (member is IrField && member.shouldMoveToFacade()) {
             member.patchDeclarationParents(facadeClass)
             facadeClass.declarations.add(member)
+            member.correspondingPropertySymbol?.let { oldPropertySymbol ->
+                val newProperty = correspondingProperties.getOrCopyProperty(oldPropertySymbol.owner)
+                member.correspondingPropertySymbol = newProperty.symbol
+                newProperty.backingField = member
+            }
             emptyList()
         } else null
     }
@@ -198,25 +211,34 @@ private fun IrField.shouldMoveToFacade(): Boolean {
 private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     context: JvmBackendContext,
     facadeClass: IrClass,
+    correspondingProperties: CorrespondingPropertyCache,
     shouldGeneratePartHierarchy: Boolean
 ): IrSimpleFunction? {
     val target = this
 
-    if (DescriptorVisibilities.isPrivate(visibility) ||
+    val originalVisibility = context.mapping.defaultArgumentsOriginalFunction[this]?.visibility ?: visibility
+
+    if (DescriptorVisibilities.isPrivate(originalVisibility) ||
         name == StaticInitializersLowering.clinitName ||
-        origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
+        origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR ||
+        // $annotations methods in the facade are only needed for const properties.
+        (origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS &&
+                (metadata as? MetadataSource.Property)?.isConst != true)
     ) return null
 
     val function = context.irFactory.buildFun {
         updateFrom(target)
         isFakeOverride = shouldGeneratePartHierarchy
-        name = if (shouldGeneratePartHierarchy) {
-            target.name
-        } else {
-            // Generating a bridge. If the bridge is targeting a property getter
-            // we need to take care to get the name right. The bridge is not a
-            // property getter itself.
-            Name.identifier(context.methodSignatureMapper.mapFunctionName(target))
+        name = target.name
+    }
+
+    val targetProperty = correspondingPropertySymbol?.owner
+    if (targetProperty != null) {
+        val newProperty = correspondingProperties.getOrCopyProperty(targetProperty)
+        function.correspondingPropertySymbol = newProperty.symbol
+        when (target.valueParameters.size) {
+            0 -> newProperty.getter = function
+            1 -> newProperty.setter = function
         }
     }
 
@@ -230,7 +252,6 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
         function.body = null
         function.overriddenSymbols = listOf(symbol)
     } else {
-        function.origin = JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
         function.overriddenSymbols = overriddenSymbols.toList()
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             +irReturn(irCall(target).also { call ->
@@ -250,6 +271,23 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     return function
 }
 
+private class CorrespondingPropertyCache(private val context: JvmBackendContext, private val facadeClass: IrClass) {
+    private var cache: MutableMap<IrProperty, IrProperty>? = null
+
+    fun getOrCopyProperty(from: IrProperty): IrProperty {
+        val cache = cache ?: mutableMapOf<IrProperty, IrProperty>().also { cache = it }
+        return cache.getOrPut(from) {
+            context.irFactory.buildProperty {
+                updateFrom(from)
+                name = from.name
+            }.apply {
+                parent = facadeClass
+                copyAnnotationsFrom(from)
+            }
+        }
+    }
+}
+
 private class UpdateFunctionCallSites(
     private val functionDelegates: MutableMap<IrSimpleFunction, IrSimpleFunction>
 ) : FileLoweringPass, IrElementTransformer<IrFunction?> {
@@ -261,7 +299,7 @@ private class UpdateFunctionCallSites(
         super.visitFunction(declaration, declaration)
 
     override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
-        if (data?.origin == JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE)
+        if (data != null && data.isMultifileBridge())
             return super.visitCall(expression, data)
 
         val newFunction = functionDelegates[expression.symbol.owner]
@@ -269,7 +307,7 @@ private class UpdateFunctionCallSites(
 
         return expression.run {
             // TODO: deduplicate this with ReplaceKFunctionInvokeWithFunctionInvoke
-            IrCallImpl(startOffset, endOffset, type, newFunction.symbol).apply {
+            IrCallImpl.fromSymbolOwner(startOffset, endOffset, type, newFunction.symbol).apply {
                 copyTypeArgumentsFrom(expression)
                 extensionReceiver = expression.extensionReceiver?.transform(this@UpdateFunctionCallSites, null)
                 for (i in 0 until valueArgumentsCount) {
@@ -318,3 +356,6 @@ private class UpdateConstantFacadePropertyReferences(
         ) facadeClass else null
     }
 }
+
+internal fun IrFunction.isMultifileBridge(): Boolean =
+    (parent as? IrClass)?.origin == IrDeclarationOrigin.JVM_MULTIFILE_CLASS

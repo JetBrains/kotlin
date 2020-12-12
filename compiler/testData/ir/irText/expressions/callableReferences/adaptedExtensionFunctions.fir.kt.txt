@@ -1,0 +1,32 @@
+fun use(f: @ExtensionFunctionType @ExtensionFunctionType Function2<C, Int, Unit>) {
+}
+
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun C.extensionVararg(i: Int, vararg s: String) {
+}
+
+fun C.extensionDefault(i: Int, s: String = "") {
+}
+
+fun C.extensionBoth(i: Int, s: String = "", vararg t: String) {
+}
+
+fun testExtensionVararg() {
+  use(f = ::extensionVararg)
+}
+
+fun testExtensionDefault() {
+  use(f = ::extensionDefault)
+}
+
+fun testExtensionBoth() {
+  use(f = ::extensionBoth)
+}

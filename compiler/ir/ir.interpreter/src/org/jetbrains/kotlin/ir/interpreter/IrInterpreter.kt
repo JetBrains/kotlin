@@ -323,8 +323,8 @@ class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map
     }
 
     private fun IrFunction.trySubstituteFunctionBody(): ExecutionResult? {
-        if (!this.symbol.isPublicApi) return null
-        val body = bodyMap[this.symbol.signature]
+        val signature = this.symbol.signature ?: return null
+        val body = bodyMap[signature]
 
         return body?.let {
             try {

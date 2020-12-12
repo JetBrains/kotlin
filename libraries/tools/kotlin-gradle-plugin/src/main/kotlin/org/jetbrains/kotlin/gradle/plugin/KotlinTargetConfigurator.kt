@@ -140,8 +140,8 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         project.locateOrRegisterTask<ProcessResources>(compilation.processResourcesTaskName) { resourcesTask ->
             resourcesTask.description = "Processes $resourceSet."
-            DslObject(resourcesTask).conventionMapping.map("destinationDir") { project.file(compilation.output.resourcesDir) }
             resourcesTask.from(resourceSet)
+            resourcesTask.into(project.file(compilation.output.resourcesDir))
         }
     }
 

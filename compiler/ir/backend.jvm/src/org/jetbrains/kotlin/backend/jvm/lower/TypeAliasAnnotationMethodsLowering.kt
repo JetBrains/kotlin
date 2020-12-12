@@ -45,7 +45,7 @@ class TypeAliasAnnotationMethodsLowering(val context: CommonBackendContext) :
                 visibility = alias.visibility
                 returnType = context.irBuiltIns.unitType
                 modality = Modality.OPEN
-                origin = JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_TYPEALIAS_ANNOTATIONS
+                origin = JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_OR_TYPEALIAS_ANNOTATIONS
             }.apply {
                 body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
                 annotations += alias.annotations

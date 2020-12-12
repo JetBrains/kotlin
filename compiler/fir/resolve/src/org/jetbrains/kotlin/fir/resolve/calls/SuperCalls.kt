@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.modality
+import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -20,12 +20,12 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.SmartList
@@ -123,7 +123,7 @@ private inline fun BodyResolveComponents.resolveSupertypesByMembers(
 private fun BodyResolveComponents.getFunctionMembers(type: ConeKotlinType, name: Name): Collection<FirCallableMemberDeclaration<*>> =
     buildList {
         type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing)?.processFunctionsByName(name) {
-            addIfNotNull(it.fir as? FirSimpleFunction)
+            add(it.fir)
         }
     }
 
@@ -146,5 +146,5 @@ private fun BodyResolveComponents.isConcreteMember(supertype: ConeKotlinType, me
     val classSymbol =
         (supertype as? ConeClassLikeType)?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol ?: return true
     if (classSymbol.fir.classKind != ClassKind.INTERFACE) return true
-    return member.symbol.unwrapSubstitutionOverrides().callableId.classId != StandardClassIds.Any
+    return member.symbol.unwrapFakeOverrides().dispatchReceiverClassOrNull()?.classId != StandardClassIds.Any
 }

@@ -73,17 +73,32 @@ private fun IrFunction.capturesCrossinline(): Boolean {
 }
 
 internal abstract class SuspendLoweringUtils(protected val context: JvmBackendContext) {
-    protected fun IrClass.addFunctionOverride(function: IrSimpleFunction): IrSimpleFunction =
-        addFunction(function.name.asString(), function.returnType).apply {
+    protected fun IrClass.addFunctionOverride(
+        function: IrSimpleFunction,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
+    ): IrSimpleFunction {
+        val overriddenType = superTypes.single { it.classifierOrFail == function.parentAsClass.symbol }
+        val typeSubstitution = (overriddenType.classifierOrFail.owner as IrClass).typeParameters
+            .map { it.symbol }
+            .zip((overriddenType as IrSimpleType).arguments.map { (it as IrTypeProjection).type }) // No star projections in this lowering
+            .toMap()
+        return addFunction(
+            function.name.asString(), function.returnType.substitute(typeSubstitution),
+            startOffset = startOffset, endOffset = endOffset
+        ).apply {
             overriddenSymbols = listOf(function.symbol)
-            valueParameters = function.valueParameters.map { it.copyTo(this) }
+            valueParameters = function.valueParameters.map { it.copyTo(this, type = it.type.substitute(typeSubstitution)) }
         }
+    }
 
     protected fun IrClass.addFunctionOverride(
         function: IrSimpleFunction,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
         makeBody: IrBlockBodyBuilder.(IrFunction) -> Unit
     ): IrSimpleFunction =
-        addFunctionOverride(function).apply {
+        addFunctionOverride(function, startOffset, endOffset).apply {
             body = context.createIrBuilder(symbol).irBlockBody { makeBody(this@apply) }
         }
 
@@ -105,12 +120,9 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
     override fun lower(irFile: IrFile) {
         val inlineReferences = IrInlineReferenceLocator.scan(context, irFile)
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
-            private fun IrFunctionReference.shouldBeTreatedAsSuspendLambda() =
-                isSuspend && (origin == IrStatementOrigin.LAMBDA || origin == IrStatementOrigin.SUSPEND_CONVERSION)
-
             override fun visitBlock(expression: IrBlock): IrExpression {
                 val reference = expression.statements.lastOrNull() as? IrFunctionReference ?: return super.visitBlock(expression)
-                if (reference.shouldBeTreatedAsSuspendLambda() && reference !in inlineReferences) {
+                if (reference.isSuspend && reference.origin.isLambda && reference !in inlineReferences) {
                     assert(expression.statements.size == 2 && expression.statements[0] is IrFunction)
                     expression.transformChildrenVoid(this)
                     val parent = currentDeclarationParent ?: error("No current declaration parent at ${reference.dump()}")
@@ -123,7 +135,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
 
     private fun generateAnonymousObjectForLambda(reference: IrFunctionReference, parent: IrDeclarationParent) =
         context.createIrBuilder(reference.symbol).irBlock(reference.startOffset, reference.endOffset) {
-            assert(reference.getArguments().isEmpty()) { "lambda with bound arguments: ${reference.render()}" }
+            assert(reference.getArgumentsWithIr().isEmpty()) { "lambda with bound arguments: ${reference.render()}" }
             val continuation = generateContinuationClassForLambda(reference, parent)
             +continuation
             +irCall(continuation.constructors.single().symbol).apply {
@@ -177,7 +189,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
             val createToOverride = suspendLambda.symbol.functions.singleOrNull {
                 it.owner.valueParameters.size == arity + 1 && it.owner.name.asString() == "create"
             }
-            val invokeSuspend = addInvokeSuspendForLambda(function, parametersFields)
+            val invokeSuspend = addInvokeSuspendForLambda(function, suspendLambda, parametersFields)
             if (function.capturesCrossinline()) {
                 addInvokeSuspendForInlineForLambda(invokeSuspend)
             }
@@ -191,12 +203,12 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
             context.suspendLambdaToOriginalFunctionMap[attributeOwnerId as IrFunctionReference] = function
         }
 
-    private fun IrClass.addInvokeSuspendForLambda(irFunction: IrFunction, fields: List<IrField>): IrSimpleFunction {
-        val superMethod = context.ir.symbols.suspendLambdaClass.functions.single {
-            it.owner.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.owner.valueParameters.size == 1 &&
-                    it.owner.valueParameters[0].type.isKotlinResult()
-        }.owner
-        return addFunctionOverride(superMethod).apply {
+    private fun IrClass.addInvokeSuspendForLambda(irFunction: IrFunction, suspendLambda: IrClass, fields: List<IrField>): IrSimpleFunction {
+        val superMethod = suspendLambda.functions.single {
+            it.name.asString() == INVOKE_SUSPEND_METHOD_NAME && it.valueParameters.size == 1 &&
+                    it.valueParameters[0].type.isKotlinResult()
+        }
+        return addFunctionOverride(superMethod, irFunction.startOffset, irFunction.endOffset).apply {
             body = irFunction.moveBodyTo(this, mapOf())?.transform(object : IrElementTransformerVoid() {
                 override fun visitGetValue(expression: IrGetValue): IrExpression {
                     val parameter = (expression.symbol.owner as? IrValueParameter)?.takeIf { it.parent == irFunction }
@@ -214,7 +226,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
             INVOKE_SUSPEND_METHOD_NAME + FOR_INLINE_SUFFIX,
             context.irBuiltIns.anyNType,
             Modality.FINAL,
-            origin = JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE
+            origin = JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
         ).apply {
             copyAttributes(invokeSuspend)
             generateErrorForInlineBody()

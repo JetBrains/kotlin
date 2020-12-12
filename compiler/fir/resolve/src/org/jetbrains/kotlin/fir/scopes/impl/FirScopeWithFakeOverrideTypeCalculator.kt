@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
+import org.jetbrains.kotlin.fir.isIntersectionOverride
+import org.jetbrains.kotlin.fir.isSubstitutionOverride
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -22,7 +24,7 @@ class FirScopeWithFakeOverrideTypeCalculator(
         delegate.processClassifiersByNameWithSubstitution(name, processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         delegate.processFunctionsByName(name) {
             updateReturnType(it.fir)
             processor(it)
@@ -45,8 +47,8 @@ class FirScopeWithFakeOverrideTypeCalculator(
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
-        functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+        functionSymbol: FirNamedFunctionSymbol,
+        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
         return delegate.processDirectOverriddenFunctionsWithBaseScope(functionSymbol) { symbol, scope ->
             updateReturnType(symbol.fir)
@@ -73,7 +75,8 @@ class FirScopeWithFakeOverrideTypeCalculator(
     }
 
     private fun updateReturnType(declaration: FirTypedDeclaration) {
-        if (declaration.origin == FirDeclarationOrigin.SubstitutionOverride || declaration.origin == FirDeclarationOrigin.IntersectionOverride) {
+        if (declaration !is FirCallableMemberDeclaration<*>) return
+        if (declaration.isSubstitutionOverride || declaration.isIntersectionOverride) {
             fakeOverrideTypeCalculator.computeReturnType(declaration)
         }
     }

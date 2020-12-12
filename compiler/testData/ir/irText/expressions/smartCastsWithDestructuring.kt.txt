@@ -1,0 +1,27 @@
+interface I1 {
+
+}
+
+interface I2 {
+
+}
+
+operator fun I1.component1(): Int {
+  return 1
+}
+
+operator fun I2.component2(): String {
+  return ""
+}
+
+fun test(x: I1) {
+  when {
+    x !is I2 -> return Unit
+  }
+  // COMPOSITE {
+  val tmp0_container: I1 = x
+  val c1: Int = tmp0_container.component1()
+  val c2: String = tmp0_container /*as I2 */.component2()
+  // }
+}
+

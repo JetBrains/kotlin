@@ -2,57 +2,45 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class PrimitiveTypes {
+    @org.jetbrains.annotations.NotNull()
+    public static final PrimitiveTypes INSTANCE = null;
     public static final boolean booleanFalse = false;
     public static final boolean booleanTrue = true;
-    public static final int int0 = 0;
-    public static final int intMinus1000 = -1000;
-    public static final int intMinValue = -2147483648;
-    public static final int intMaxValue = 2147483647;
-    public static final int intHex = -1;
     public static final byte byte0 = (byte)0;
     public static final byte byte50 = (byte)50;
-    public static final short short5 = (short)5;
-    public static final char charC = 'C';
     public static final char char0 = '\u0000';
     public static final char char10 = '\n';
     public static final char char13 = '\r';
-    public static final long long0 = 0L;
-    public static final long longMaxValue = 9223372036854775807L;
-    public static final long longMinValue = -9223372036854775808L;
-    public static final long longHex = 4294967295L;
-    public static final float float54 = 5.4F;
-    private static final float floatMaxValue = 3.4028235E38F;
-    private static final float floatNan = 0.0F / 0.0F;
-    private static final float floatPositiveInfinity = 1.0F / 0.0F;
-    private static final float floatNegativeInfinity = -1.0F / 0.0F;
+    public static final char charC = 'C';
     public static final double double54 = 5.4;
     private static final double doubleMaxValue = 1.7976931348623157E308;
     private static final double doubleNan = 0.0 / 0.0;
-    private static final double doublePositiveInfinity = 1.0 / 0.0;
     private static final double doubleNegativeInfinity = -1.0 / 0.0;
+    private static final double doublePositiveInfinity = 1.0 / 0.0;
+    public static final float float54 = 5.4F;
+    private static final float floatMaxValue = 3.4028235E38F;
+    private static final float floatNan = 0.0F / 0.0F;
+    private static final float floatNegativeInfinity = -1.0F / 0.0F;
+    private static final float floatPositiveInfinity = 1.0F / 0.0F;
+    public static final int int0 = 0;
+    public static final int intHex = -1;
+    public static final int intMaxValue = 2147483647;
+    public static final int intMinValue = -2147483648;
+    public static final int intMinus1000 = -1000;
+    public static final long long0 = 0L;
+    public static final long longHex = 4294967295L;
+    public static final long longMaxValue = 9223372036854775807L;
+    public static final long longMinValue = -9223372036854775808L;
+    public static final short short5 = (short)5;
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String stringHelloWorld = "Hello, world!";
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String stringQuotes = "quotes \" \'\'quotes";
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String stringRN = "\r\n";
-    @org.jetbrains.annotations.NotNull()
-    public static final PrimitiveTypes INSTANCE = null;
 
-    public final float getFloatMaxValue() {
-        return 0.0F;
-    }
-
-    public final float getFloatNan() {
-        return 0.0F;
-    }
-
-    public final float getFloatPositiveInfinity() {
-        return 0.0F;
-    }
-
-    public final float getFloatNegativeInfinity() {
-        return 0.0F;
+    private PrimitiveTypes() {
+        super();
     }
 
     public final double getDoubleMaxValue() {
@@ -63,15 +51,27 @@ public final class PrimitiveTypes {
         return 0.0;
     }
 
-    public final double getDoublePositiveInfinity() {
-        return 0.0;
-    }
-
     public final double getDoubleNegativeInfinity() {
         return 0.0;
     }
 
-    private PrimitiveTypes() {
-        super();
+    public final double getDoublePositiveInfinity() {
+        return 0.0;
+    }
+
+    public final float getFloatMaxValue() {
+        return 0.0F;
+    }
+
+    public final float getFloatNan() {
+        return 0.0F;
+    }
+
+    public final float getFloatNegativeInfinity() {
+        return 0.0F;
+    }
+
+    public final float getFloatPositiveInfinity() {
+        return 0.0F;
     }
 }

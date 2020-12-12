@@ -1,0 +1,167 @@
+enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
+  private constructor() /* primary */ {
+    super/*Enum*/<TestFinalEnum1>()
+    /* <init>() */
+
+  }
+
+  X1 = TestFinalEnum1()
+
+  fun values(): Array<TestFinalEnum1> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestFinalEnum1 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
+  private constructor(x: Int) /* primary */ {
+    super/*Enum*/<TestFinalEnum2>()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+  X1 = TestFinalEnum2(x = 1)
+
+  fun values(): Array<TestFinalEnum2> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestFinalEnum2 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
+  private constructor() /* primary */ {
+    super/*Enum*/<TestFinalEnum3>()
+    /* <init>() */
+
+  }
+
+  X1 = TestFinalEnum3()
+
+  fun doStuff() {
+  }
+
+  fun values(): Array<TestFinalEnum3> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestFinalEnum3 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
+  private constructor() /* primary */ {
+    super/*Enum*/<TestOpenEnum1>()
+    /* <init>() */
+
+  }
+
+  X1 = X1()
+  private enum entry class X1 : TestOpenEnum1 {
+    private constructor() /* primary */ {
+      super/*TestOpenEnum1*/() /*~> Unit */
+      /* <init>() */
+
+    }
+
+    override fun toString(): String {
+      return "X1"
+    }
+
+  }
+
+  fun values(): Array<TestOpenEnum1> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestOpenEnum1 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
+  private constructor() /* primary */ {
+    super/*Enum*/<TestOpenEnum2>()
+    /* <init>() */
+
+  }
+
+  X1 = X1()
+  private enum entry class X1 : TestOpenEnum2 {
+    private constructor() /* primary */ {
+      super/*TestOpenEnum2*/() /*~> Unit */
+      /* <init>() */
+
+    }
+
+    override fun foo() {
+    }
+
+  }
+
+  open fun foo() {
+  }
+
+  fun values(): Array<TestOpenEnum2> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestOpenEnum2 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
+  private constructor() /* primary */ {
+    super/*Enum*/<TestAbstractEnum1>()
+    /* <init>() */
+
+  }
+
+  X1 = X1()
+  private enum entry class X1 : TestAbstractEnum1 {
+    private constructor() /* primary */ {
+      super/*TestAbstractEnum1*/() /*~> Unit */
+      /* <init>() */
+
+    }
+
+    override fun foo() {
+    }
+
+  }
+
+  abstract fun foo() 
+
+  fun values(): Array<TestAbstractEnum1> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestAbstractEnum1 /* Synthetic body for ENUM_VALUEOF */
+
+}
+
+interface IFoo {
+  abstract fun foo() 
+
+}
+
+abstract enum class TestAbstractEnum2 : Enum<TestAbstractEnum2>, IFoo {
+  private constructor() /* primary */ {
+    super/*Enum*/<TestAbstractEnum2>()
+    /* <init>() */
+
+  }
+
+  X1 = X1()
+  private enum entry class X1 : TestAbstractEnum2 {
+    private constructor() /* primary */ {
+      super/*TestAbstractEnum2*/() /*~> Unit */
+      /* <init>() */
+
+    }
+
+    override fun foo() {
+    }
+
+  }
+
+  fun values(): Array<TestAbstractEnum2> /* Synthetic body for ENUM_VALUES */
+
+  fun valueOf(value: String): TestAbstractEnum2 /* Synthetic body for ENUM_VALUEOF */
+
+}
+

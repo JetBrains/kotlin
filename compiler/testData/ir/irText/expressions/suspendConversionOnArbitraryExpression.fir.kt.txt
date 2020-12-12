@@ -1,0 +1,189 @@
+fun useSuspend(sfn: SuspendFunction0<Unit>) {
+}
+
+fun useSuspendExt(sfn: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction1<Int, Unit>) {
+}
+
+fun useSuspendArg(sfn: SuspendFunction1<Int, Unit>) {
+}
+
+fun <T : Any?> useSuspendArgT(sfn: SuspendFunction1<T, Unit>) {
+}
+
+fun <T : Any?> useSuspendExtT(sfn: @ExtensionFunctionType @ExtensionFunctionType SuspendFunction1<T, Unit>) {
+}
+
+fun produceFun(): Function0<Unit> {
+  return local fun <anonymous>() {
+    return Unit
+  }
+
+}
+
+fun testSimple(fn: Function0<Unit>) {
+  useSuspend(sfn = { // BLOCK
+    local suspend fun Function0<Unit>.suspendConversion() {
+      callee.invoke()
+    }
+
+    fn::suspendConversion
+  })
+}
+
+fun testSimpleNonVal() {
+  useSuspend(sfn = { // BLOCK
+    local suspend fun Function0<Unit>.suspendConversion() {
+      callee.invoke()
+    }
+
+    produceFun()::suspendConversion
+  })
+}
+
+fun testExtAsExt(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>) {
+  useSuspendExt(sfn = { // BLOCK
+    local suspend fun @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>.suspendConversion(p0: Int) {
+      callee.invoke(p1 = p0)
+    }
+
+    fn::suspendConversion
+  })
+}
+
+fun testExtAsSimple(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>) {
+  useSuspendArg(sfn = { // BLOCK
+    local suspend fun @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>.suspendConversion(p0: Int) {
+      callee.invoke(p1 = p0)
+    }
+
+    fn::suspendConversion
+  })
+}
+
+fun testSimpleAsExt(fn: Function1<Int, Unit>) {
+  useSuspendExt(sfn = { // BLOCK
+    local suspend fun Function1<Int, Unit>.suspendConversion(p0: Int) {
+      callee.invoke(p1 = p0)
+    }
+
+    fn::suspendConversion
+  })
+}
+
+fun testSimpleAsSimpleT(fn: Function1<Int, Unit>) {
+  useSuspendArgT<Int>(sfn = { // BLOCK
+    local suspend fun Function1<Int, Unit>.suspendConversion(p0: T) {
+      callee.invoke(p1 = p0)
+    }
+
+    fn::suspendConversion
+  })
+}
+
+fun testSimpleAsExtT(fn: Function1<Int, Unit>) {
+  useSuspendExtT<Int>(sfn = { // BLOCK
+    local suspend fun Function1<Int, Unit>.suspendConversion(p0: T) {
+      callee.invoke(p1 = p0)
+    }
+
+    fn::suspendConversion
+  })
+}
+
+fun testExtAsSimpleT(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>) {
+  useSuspendArgT<Int>(sfn = { // BLOCK
+    local suspend fun @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>.suspendConversion(p0: T) {
+      callee.invoke(p1 = p0)
+    }
+
+    fn::suspendConversion
+  })
+}
+
+fun testExtAsExtT(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>) {
+  useSuspendExtT<Int>(sfn = { // BLOCK
+    local suspend fun @ExtensionFunctionType @ExtensionFunctionType Function1<Int, Unit>.suspendConversion(p0: T) {
+      callee.invoke(p1 = p0)
+    }
+
+    fn::suspendConversion
+  })
+}
+
+fun <S : Any?> testSimpleSAsSimpleT(fn: Function1<S, Unit>) {
+  useSuspendArgT<S>(sfn = { // BLOCK
+    local suspend fun Function1<S, Unit>.suspendConversion(p0: T) {
+      callee.invoke(p1 = p0)
+    }
+
+    fn::suspendConversion
+  })
+}
+
+fun <S : Any?> testSimpleSAsExtT(fn: Function1<S, Unit>) {
+  useSuspendExtT<S>(sfn = { // BLOCK
+    local suspend fun Function1<S, Unit>.suspendConversion(p0: T) {
+      callee.invoke(p1 = p0)
+    }
+
+    fn::suspendConversion
+  })
+}
+
+fun <S : Any?> testExtSAsSimpleT(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<S, Unit>) {
+  useSuspendArgT<S>(sfn = { // BLOCK
+    local suspend fun @ExtensionFunctionType @ExtensionFunctionType Function1<S, Unit>.suspendConversion(p0: T) {
+      callee.invoke(p1 = p0)
+    }
+
+    fn::suspendConversion
+  })
+}
+
+fun <S : Any?> testExtSAsExtT(fn: @ExtensionFunctionType @ExtensionFunctionType Function1<S, Unit>) {
+  useSuspendExtT<S>(sfn = { // BLOCK
+    local suspend fun @ExtensionFunctionType @ExtensionFunctionType Function1<S, Unit>.suspendConversion(p0: T) {
+      callee.invoke(p1 = p0)
+    }
+
+    fn::suspendConversion
+  })
+}
+
+fun testSmartCastWithSuspendConversion(a: Any) {
+  a as Function0<Unit> /*~> Unit */
+  useSuspend(sfn = { // BLOCK
+    local suspend fun Function0<Unit>.suspendConversion() {
+      callee.invoke()
+    }
+
+    a /*as Function0<Unit> */::suspendConversion
+  })
+}
+
+fun testSmartCastOnVarWithSuspendConversion(a: Any) {
+  var b: Any = a
+  b as Function0<Unit> /*~> Unit */
+  useSuspend(sfn = { // BLOCK
+    local suspend fun Function0<Unit>.suspendConversion() {
+      callee.invoke()
+    }
+
+    b /*as Function0<Unit> */::suspendConversion
+  })
+}
+
+fun testSmartCastVsSuspendConversion(a: Function0<Unit>) {
+  a as SuspendFunction0<Unit> /*~> Unit */
+  useSuspend(sfn = a /*as SuspendFunction0<Unit> */)
+}
+
+fun testSmartCastOnVarVsSuspendConversion(a: Function0<Unit>) {
+  var b: Function0<Unit> = a
+  b as SuspendFunction0<Unit> /*~> Unit */
+  useSuspend(sfn = b)
+}
+
+fun <T> testIntersectionVsSuspendConversion(x: T) where T : Function0<Unit>, T : SuspendFunction0<Unit> {
+  useSuspend(sfn = x)
+}

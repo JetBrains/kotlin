@@ -168,7 +168,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun CapturedTypeMarker.lowerType(): KotlinTypeMarker? {
         require(this is ConeCapturedType)
-        return this.lowerType
+        if (!this.isMarkedNullable) return this.lowerType
+        return this.lowerType?.makeNullable()
     }
 
     override fun TypeArgumentMarker.isStarProjection(): Boolean {
@@ -329,7 +330,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
 
         val substitutor = substitutorByMap((0 until argumentsCount).map { index ->
-            (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).toSymbol() to (newArguments[index] as ConeKotlinType)
+            (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).symbol to (newArguments[index] as ConeKotlinType)
         }.toMap())
 
         for (index in 0 until argumentsCount) {
@@ -457,7 +458,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker = TODO("not implemented")
 
-    override fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean = TODO("not implemented")
+    override fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean {
+        require(this is ConeKotlinType)
+        return this.classId == StandardClassIds.Array
+    }
 
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val firRegularClass = toFirRegularClass() ?: return false
@@ -561,8 +565,8 @@ class ConeTypeCheckerContext(
         }
     }
 
-    override fun areEqualTypeConstructors(a: TypeConstructorMarker, b: TypeConstructorMarker): Boolean {
-        return a == b
+    override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
+        return c1 == c2
     }
 
     override fun prepareType(type: KotlinTypeMarker): KotlinTypeMarker {
@@ -580,7 +584,7 @@ class ConeTypeCheckerContext(
         errorTypesEqualToAnything: Boolean,
         stubTypesEqualToAnything: Boolean
     ): AbstractTypeCheckerContext =
-        if (this.isErrorTypeEqualsToAnything == errorTypesEqualToAnything)
+        if (this.isErrorTypeEqualsToAnything == errorTypesEqualToAnything && this.isStubTypeEqualsToAnything == stubTypesEqualToAnything)
             this
         else
             ConeTypeCheckerContext(errorTypesEqualToAnything, stubTypesEqualToAnything, session)

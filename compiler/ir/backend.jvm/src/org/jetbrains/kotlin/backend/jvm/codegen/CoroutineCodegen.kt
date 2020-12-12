@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
-import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.unboxInlineClass
+import org.jetbrains.kotlin.backend.jvm.lower.isMultifileBridge
 import org.jetbrains.kotlin.backend.jvm.lower.suspendFunctionOriginal
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
@@ -100,7 +100,7 @@ internal fun IrFunction.suspendForInlineToOriginal(): IrSimpleFunction? {
     } as IrSimpleFunction?
 }
 
-internal fun IrFunction.alwaysNeedsContinuation(): Boolean =
+internal fun IrFunction.isSuspendCapturingCrossinline(): Boolean =
     this is IrSimpleFunction && hasContinuation() && parentAsClass.declarations.any {
         it is IrSimpleFunction && it.attributeOwnerId == attributeOwnerId &&
                 it.origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE
@@ -143,24 +143,21 @@ internal fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isInvokeSuspen
         // These are tail-call bridges and do not require any bytecode modifications.
         origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER &&
         origin != JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER &&
-        origin != JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE &&
         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR &&
         origin != JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR_FOR_HIDDEN_CONSTRUCTOR &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC &&
-        origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_FOR_COMPATIBILITY_SYNTHETIC &&
+        origin != JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE &&
         origin != IrDeclarationOrigin.BRIDGE &&
         origin != IrDeclarationOrigin.BRIDGE_SPECIAL &&
         origin != IrDeclarationOrigin.DELEGATED_MEMBER &&
+        !isMultifileBridge() &&
         !isInvokeOfSuspendCallableReference() &&
         !isBridgeToSuspendImplMethod() &&
         !isStaticInlineClassReplacementDelegatingCall()
 
-internal fun IrFunction.hasContinuation(): Boolean = isSuspend && shouldContainSuspendMarkers() &&
-        // This is inline-only function
+internal fun IrFunction.hasContinuation(): Boolean = isInvokeSuspendOfLambda() ||
+        isSuspend && shouldContainSuspendMarkers() &&
+        // These are templates for the inliner; the continuation is borrowed from the caller method.
         !isEffectivelyInlineOnly() &&
-        // These are templates for the inliner; the continuation will be generated after it runs.
         origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA &&
         origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE &&
         origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE

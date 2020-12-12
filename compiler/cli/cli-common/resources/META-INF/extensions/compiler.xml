@@ -69,5 +69,9 @@
                         dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar"
                         interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.DescriptorSerializerPlugin"
+                        interface="org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.defaultErrorMessages"
+                        interface="org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages.Extension"/>
     </extensionPoints>
 </idea-plugin>

@@ -39,14 +39,14 @@ abstract class IrMemberAccessExpression<S : IrSymbol>(typeArgumentsCount: Int) :
 
     fun getTypeArgument(index: Int): IrType? {
         if (index >= typeArgumentsCount) {
-            throw AssertionError("$this: No such type argument slot: $index")
+            throwNoSuchArgumentSlotException("type", index, typeArgumentsCount)
         }
         return typeArgumentsByIndex[index]
     }
 
     fun putTypeArgument(index: Int, type: IrType?) {
         if (index >= typeArgumentsCount) {
-            throw AssertionError("$this: No such type argument slot: $index")
+            throwNoSuchArgumentSlotException("type", index, typeArgumentsCount)
         }
         typeArgumentsByIndex[index] = type
     }
@@ -60,6 +60,13 @@ abstract class IrMemberAccessExpression<S : IrSymbol>(typeArgumentsCount: Int) :
         dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         extensionReceiver = extensionReceiver?.transform(transformer, data)
     }
+}
+
+internal fun IrMemberAccessExpression<*>.throwNoSuchArgumentSlotException(kind: String, index: Int, total: Int): Nothing {
+    throw AssertionError(
+        "No such $kind argument slot in ${this::class.java.simpleName}: $index (total=$total)" +
+                (symbol.signature?.let { ".\nSymbol: $it" } ?: "")
+    )
 }
 
 fun IrMemberAccessExpression<*>.getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): IrType? =

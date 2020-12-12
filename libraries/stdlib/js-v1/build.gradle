@@ -255,6 +255,7 @@ task libraryJarWithoutIr(type: Jar, dependsOn: compileJs) {
     from jsOutputMetaFile
     from "${jsOutputFile}.map"
     from sourceSets.main.output
+    filesMatching("*.*") { it.mode = 0b110100100 } // KTI-401
 }
 
 task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
@@ -269,6 +270,7 @@ task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
         def irKlib = tasks.getByPath(":kotlin-stdlib-js-ir:compileKotlinJs")
         fileTree(irKlib.outputs.files.first().path)
     }
+    filesMatching("*.*") { it.mode = 0b110100100 } // KTI-401
 }
 
 jar.dependsOn(libraryJarWithIr)

@@ -26,12 +26,18 @@ interface DeclaredMemberIndex {
     fun findFieldByName(name: Name): JavaField?
     fun getFieldNames(): Set<Name>
 
+    fun getRecordComponentNames(): Set<Name>
+    fun findRecordComponentByName(name: Name): JavaRecordComponent?
+
     object Empty : DeclaredMemberIndex {
         override fun findMethodsByName(name: Name) = listOf<JavaMethod>()
         override fun getMethodNames() = emptySet<Name>()
 
         override fun findFieldByName(name: Name): JavaField? = null
         override fun getFieldNames() = emptySet<Name>()
+
+        override fun getRecordComponentNames(): Set<Name> = emptySet()
+        override fun findRecordComponentByName(name: Name): JavaRecordComponent? = null
     }
 }
 
@@ -45,11 +51,15 @@ open class ClassDeclaredMemberIndex(
 
     private val methods = jClass.methods.asSequence().filter(methodFilter).groupBy { m -> m.name }
     private val fields = jClass.fields.asSequence().filter(memberFilter).associateBy { m -> m.name }
+    private val components = jClass.recordComponents.filter(memberFilter).associateBy { it.name }
 
     override fun findMethodsByName(name: Name): Collection<JavaMethod> = methods[name] ?: listOf()
     override fun getMethodNames(): Set<Name> = jClass.methods.asSequence().filter(methodFilter).mapTo(mutableSetOf(), JavaMethod::name)
 
     override fun findFieldByName(name: Name): JavaField? = fields[name]
     override fun getFieldNames(): Set<Name> = jClass.fields.asSequence().filter(memberFilter).mapTo(mutableSetOf(), JavaField::name)
+
+    override fun getRecordComponentNames(): Set<Name> = components.keys
+    override fun findRecordComponentByName(name: Name): JavaRecordComponent? = components[name]
 }
 

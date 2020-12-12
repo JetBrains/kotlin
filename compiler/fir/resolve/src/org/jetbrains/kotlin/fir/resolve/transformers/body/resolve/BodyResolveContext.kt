@@ -85,8 +85,11 @@ class BodyResolveContext(
     fun getTowerDataContextForConstructorResolution(): FirTowerDataContext =
         firTowerDataContextsForClassParts().forConstructorHeaders
 
-    fun getPrimaryConstructorParametersScope(): FirLocalScope? =
-        towerDataContextsForClassParts?.primaryConstructorParametersScope
+    fun getPrimaryConstructorPureParametersScope(): FirLocalScope? =
+        towerDataContextsForClassParts?.primaryConstructorPureParametersScope
+
+    fun getPrimaryConstructorAllParametersScope(): FirLocalScope? =
+        towerDataContextsForClassParts?.primaryConstructorAllParametersScope
 
     private fun firTowerDataContextsForClassParts() =
         towerDataContextsForClassParts.sure { "towerDataContextForStaticNestedClasses should not be null" }

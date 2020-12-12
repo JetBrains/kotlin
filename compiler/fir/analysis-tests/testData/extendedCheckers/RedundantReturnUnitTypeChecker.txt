@@ -55,7 +55,7 @@ FILE: RedundantReturnUnitTypeChecker.kt
         }
 
         public final fun <T> run(f: R|() -> T|): R|T| {
-            ^run R|<local>/f|.R|FakeOverride<kotlin/Function0.invoke: R|T|>|()
+            ^run R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
         }
 
         public final fun foo(): R|kotlin/Unit| {
@@ -70,7 +70,7 @@ FILE: RedundantReturnUnitTypeChecker.kt
         }
 
         public final fun call(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
-            ^call R|<local>/f|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+            ^call R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
 
         public final fun boo(): R|kotlin/Unit| {
@@ -84,7 +84,7 @@ FILE: RedundantReturnUnitTypeChecker.kt
         }
 
         public final fun <T, R> R|T|.let(f: R|(T) -> R|): R|R| {
-            ^let R|<local>/f|.R|FakeOverride<kotlin/Function1.invoke: R|R|>|(this@R|/B.let|)
+            ^let R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|R|>|(this@R|/B.let|)
         }
 
         public final fun goo(): R|kotlin/Unit| {

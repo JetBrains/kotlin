@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.config
 
-import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -32,14 +31,6 @@ class AnalysisFlag<out T> internal constructor(
 
         object ApiModeDisabledByDefault {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, ExplicitApiMode.DISABLED)
-        }
-
-        object JavaTypeEnhancementStateWarnByDefault {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, JavaTypeEnhancementState.DEFAULT)
-        }
-
-        object JvmDefaultModeDisabledByDefault {
-            operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, JvmDefaultMode.DISABLE)
         }
 
         object ListOfStrings {

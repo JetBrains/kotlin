@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
@@ -87,6 +86,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final boolean isExpect;
     private final boolean isActual;
     private final boolean isFun;
+    private final boolean isValue;
 
     private final Annotations annotations;
     private final Annotations danglingAnnotations;
@@ -160,6 +160,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                         containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isExpect();
 
         this.isFun = modifierList != null && PsiUtilsKt.hasFunModifier(modifierList);
+        this.isValue = modifierList != null && PsiUtilsKt.hasValueModifier(modifierList);
 
         // Annotation entries are taken from both own annotations (if any) and object literal annotations (if any)
         List<KtAnnotationEntry> annotationEntries = new ArrayList<>();
@@ -268,8 +269,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 )
         );
 
-        // TODO: only consider classes from the same file, not the whole package fragment
-        this.sealedSubclasses = storageManager.createLazyValue(() -> DescriptorUtilsKt.computeSealedSubclasses(this));
+        boolean freedomForSealedInterfacesSupported = c.getLanguageVersionSettings().supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage);
+        this.sealedSubclasses = storageManager.createLazyValue(() -> c.getSealedClassInheritorsProvider().computeSealedSubclasses(this, freedomForSealedInterfacesSupported));
     }
 
     private static boolean isIllegalInner(@NotNull DeclarationDescriptor descriptor) {
@@ -550,6 +551,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public boolean isFun() {
         return isFun;
+    }
+
+    @Override
+    public boolean isValue() {
+        return isValue;
     }
 
     @NotNull

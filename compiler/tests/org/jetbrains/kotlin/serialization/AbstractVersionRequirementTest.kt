@@ -203,7 +203,7 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
         )
     }
 
-    fun testInlineClassesAndRelevantDeclarations() {
+    fun testInlineClassesAndRelevantDeclarations13() {
         doTest(
             VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
             fqNamesWithRequirements = listOf(
@@ -215,7 +215,8 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
                 "test.result",
                 "test.Foo",
                 "test.Bar"
-            )
+            ),
+            shouldBeSingleRequirement = false
         )
     }
 }

@@ -7,4 +7,4 @@ package org.jetbrains.kotlin.idea.highlighter.markers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 
-typealias LineMarkerInfos = MutableCollection<LineMarkerInfo<*>>
+typealias LineMarkerInfos = MutableCollection<in LineMarkerInfo<*>>

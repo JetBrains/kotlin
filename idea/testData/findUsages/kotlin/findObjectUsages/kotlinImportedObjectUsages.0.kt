@@ -1,5 +1,5 @@
 // PSI_ELEMENT: org.jetbrains.kotlin.psi.KtObjectDeclaration
-// FIR_IGNORE
+// FIR_COMPARISON
 
 import Imported as Alias
 

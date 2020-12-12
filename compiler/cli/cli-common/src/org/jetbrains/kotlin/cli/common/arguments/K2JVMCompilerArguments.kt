@@ -71,7 +71,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
-        description = "Target version of the generated JVM bytecode (1.6, 1.8, 9, 10, 11, 12, 13 or 14), default is 1.6"
+        description = "Target version of the generated JVM bytecode (1.6, 1.8, 9, 10, 11, 12, 13, 14 or 15), default is 1.6"
     )
     var jvmTarget: String? by NullableStringFreezableVar(JvmTarget.DEFAULT.description)
 
@@ -107,6 +107,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
                 "The author is responsible for verifying that the resulting binaries do indeed have the correct ABI"
     )
     var isIrWithStableAbi: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xir-do-not-clear-binding-context",
+        description = "When using the IR backend, do not clear BindingContext between psi2ir and lowerings"
+    )
+    var doNotClearBindingContext: Boolean by FreezableVar(false)
 
     @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
     var javaModulePath: String? by NullableStringFreezableVar(null)
@@ -372,6 +378,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     var noKotlinNothingValueException: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xno-reset-jar-timestamps",
+        description = "Do not reset jar entry timestamps to a fixed date"
+    )
+    var noResetJarTimestamps: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xno-unified-null-checks",
         description = "Use pre-1.4 exception types in null checks instead of java.lang.NPE. See KT-22275 for more details"
     )
@@ -400,6 +412,19 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var useOldSpilledVarTypeAnalysis: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xuse-14-inline-classes-mangling-scheme",
+        description = "Use 1.4 inline classes mangling scheme instead of 1.4.30 one"
+    )
+    var useOldInlineClassesManglingScheme: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xjvm-enable-preview",
+        description = "Allow using features from Java language that are in preview phase.\n" +
+                "Works as `--enable-preview` in Java. All class files are marked as preview-generated thus it won't be possible to use them in release environment"
+    )
+    var enableJvmPreview: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
@@ -420,6 +445,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
         result[JvmAnalysisFlags.suppressMissingBuiltinsError] = suppressMissingBuiltinsError
         result[JvmAnalysisFlags.irCheckLocalNames] = irCheckLocalNames
+        result[JvmAnalysisFlags.enableJvmPreview] = enableJvmPreview
         result[AnalysisFlags.reportErrorsOnIrDependencies] = !useIR && !useFir && !allowJvmIrDependencies
         result[JvmAnalysisFlags.disableUltraLightClasses] = disableUltraLightClasses
         return result

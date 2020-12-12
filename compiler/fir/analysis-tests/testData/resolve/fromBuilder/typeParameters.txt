@@ -18,11 +18,11 @@ FILE: typeParameters.kt
             super<R|AbstractList<kotlin/Int>|>()
         }
 
-        public final override fun get(index: R|kotlin/Int|): R|kotlin/Int| {
+        public final override operator fun get(index: R|kotlin/Int|): R|kotlin/Int| {
             ^get Int(42)
         }
 
-        public final override fun concat(other: R|List<kotlin/Int>|): R|List<kotlin/Int>| {
+        public final override infix fun concat(other: R|List<kotlin/Int>|): R|List<kotlin/Int>| {
             ^concat this@R|/SomeList|
         }
 

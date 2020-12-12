@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 
 class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(
     KtBinaryExpression::class.java,
@@ -71,9 +73,12 @@ class ElvisToIfThenIntention : SelfTargetingRangeIntention<KtBinaryExpression>(
         if (leftSafeCastReceiver == null) {
             val property = (KtPsiUtil.safeDeparenthesize(element).parent as? KtProperty)
             val propertyName = property?.name
-            if ((right is KtReturnExpression || right is KtBreakExpression || right is KtContinueExpression || right is KtThrowExpression)
-                && propertyName != null
-            ) {
+            val rightIsReturnOrJumps = right is KtReturnExpression
+                    || right is KtBreakExpression
+                    || right is KtContinueExpression
+                    || right is KtThrowExpression
+                    || right.getType(context)?.isNothing() == true
+            if (rightIsReturnOrJumps && propertyName != null) {
                 val parent = property.parent
                 val factory = KtPsiFactory(element)
                 factory.createExpressionByPattern("if ($0 == null) $1", propertyName, right)

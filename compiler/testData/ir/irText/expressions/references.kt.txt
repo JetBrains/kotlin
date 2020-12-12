@@ -1,0 +1,39 @@
+val ok: String
+  field = "OK"
+  get
+
+val ok2: String
+  field = <get-ok>()
+  get
+
+val ok3: String
+  get(): String {
+    return "OK"
+  }
+
+fun test1(): String {
+  return <get-ok>()
+}
+
+fun test2(x: String): String {
+  return x
+}
+
+fun test3(): String {
+  val x: String = "OK"
+  return x
+}
+
+fun test4(): String {
+  return <get-ok3>()
+}
+
+val String.okext: String
+  get(): String {
+    return "OK"
+  }
+
+fun String.test5(): String {
+  return <this>.<get-okext>()
+}
+

@@ -14,6 +14,7 @@ dependencies {
 
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
     implementation(kotlinxCollectionsImmutable())
+    implementation("com.google.code.gson:gson:2.8.6")
 }
 
 sourceSets {

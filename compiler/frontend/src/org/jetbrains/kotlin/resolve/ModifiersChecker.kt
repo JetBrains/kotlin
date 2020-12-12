@@ -52,7 +52,7 @@ object ModifierCheckerCore {
         ABSTRACT_KEYWORD to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
         OPEN_KEYWORD to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, INTERFACE, MEMBER_PROPERTY, MEMBER_FUNCTION),
         FINAL_KEYWORD to EnumSet.of(CLASS_ONLY, LOCAL_CLASS, ENUM_CLASS, OBJECT, MEMBER_PROPERTY, MEMBER_FUNCTION),
-        SEALED_KEYWORD to EnumSet.of(CLASS_ONLY),
+        SEALED_KEYWORD to EnumSet.of(CLASS_ONLY, INTERFACE),
         INNER_KEYWORD to EnumSet.of(CLASS_ONLY),
         OVERRIDE_KEYWORD to EnumSet.of(MEMBER_PROPERTY, MEMBER_FUNCTION),
         PRIVATE_KEYWORD to defaultVisibilityTargets,
@@ -107,7 +107,8 @@ object ModifierCheckerCore {
             ANNOTATION_CLASS,
             TYPEALIAS
         ),
-        FUN_KEYWORD to EnumSet.of(INTERFACE)
+        FUN_KEYWORD to EnumSet.of(INTERFACE),
+        VALUE_KEYWORD to EnumSet.of(CLASS_ONLY)
     )
 
     private val featureDependencies = mapOf(
@@ -118,7 +119,8 @@ object ModifierCheckerCore {
         EXPECT_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
         ACTUAL_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
         LATEINIT_KEYWORD to listOf(LanguageFeature.LateinitTopLevelProperties, LanguageFeature.LateinitLocalVariables),
-        FUN_KEYWORD to listOf(LanguageFeature.FunctionalInterfaceConversion)
+        FUN_KEYWORD to listOf(LanguageFeature.FunctionalInterfaceConversion),
+        VALUE_KEYWORD to listOf(LanguageFeature.InlineClasses)
     )
 
     private val featureDependenciesTargets = mapOf(
@@ -185,12 +187,13 @@ object ModifierCheckerCore {
         result += incompatibilityRegister(PRIVATE_KEYWORD, PROTECTED_KEYWORD, PUBLIC_KEYWORD, INTERNAL_KEYWORD)
         // Abstract + open + final + sealed: incompatible
         result += incompatibilityRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD, FINAL_KEYWORD, SEALED_KEYWORD)
-        // data + open, data + inner, data + abstract, data + sealed, data + inline
+        // data + open, data + inner, data + abstract, data + sealed, data + inline, data + value
         result += incompatibilityRegister(DATA_KEYWORD, OPEN_KEYWORD)
         result += incompatibilityRegister(DATA_KEYWORD, INNER_KEYWORD)
         result += incompatibilityRegister(DATA_KEYWORD, ABSTRACT_KEYWORD)
         result += incompatibilityRegister(DATA_KEYWORD, SEALED_KEYWORD)
         result += incompatibilityRegister(DATA_KEYWORD, INLINE_KEYWORD)
+        result += incompatibilityRegister(DATA_KEYWORD, VALUE_KEYWORD)
         // open is redundant to abstract & override
         result += redundantRegister(ABSTRACT_KEYWORD, OPEN_KEYWORD)
         // abstract is redundant to sealed

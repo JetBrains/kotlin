@@ -1,10 +1,9 @@
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 import helpers.*
 // WITH_REFLECT
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
     suspend fun runInstanceOf(): Boolean = suspendCoroutineUninterceptedOrReturn { x ->

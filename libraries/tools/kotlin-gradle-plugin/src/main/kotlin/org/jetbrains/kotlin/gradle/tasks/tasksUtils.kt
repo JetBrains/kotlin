@@ -1,6 +1,9 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.GradleException
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.compilerRunner.KotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
@@ -22,26 +25,33 @@ fun throwGradleExceptionIfError(exitCode: ExitCode) {
 
 internal fun TaskWithLocalState.clearLocalState(reason: String? = null) {
     val log = GradleKotlinLogger(logger)
-    clearLocalState(allOutputFiles(), log, reason)
+    clearLocalState(allOutputFiles(), log, metrics, reason)
 }
 
-internal fun clearLocalState(outputFiles: Iterable<File>, log: KotlinLogger, reason: String? = null) {
+internal fun clearLocalState(
+    outputFiles: Iterable<File>,
+    log: KotlinLogger,
+    metrics: BuildMetricsReporter,
+    reason: String? = null
+) {
     log.kotlinDebug {
         val suffix = reason?.let { " ($it)" }.orEmpty()
         "Clearing output$suffix:"
     }
 
-    for (file in outputFiles) {
-        if (!file.exists()) continue
-        when {
-            file.isDirectory -> {
-                log.debug("Deleting output directory: $file")
-                file.deleteRecursively()
-                file.mkdirs()
-            }
-            file.isFile -> {
-                log.debug("Deleting output file: $file")
-                file.delete()
+    metrics.measure(BuildTime.CLEAR_OUTPUT) {
+        for (file in outputFiles) {
+            if (!file.exists()) continue
+            when {
+                file.isDirectory -> {
+                    log.debug("Deleting output directory: $file")
+                    file.deleteRecursively()
+                    file.mkdirs()
+                }
+                file.isFile -> {
+                    log.debug("Deleting output file: $file")
+                    file.delete()
+                }
             }
         }
     }

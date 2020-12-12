@@ -1,0 +1,42 @@
+FILE: kt10240.kt
+    public final fun a(): R|kotlin/Int| {
+        local final fun b(): R|kotlin/Int| {
+            lvar c: R|kotlin/Int?| = Null(null)
+            when () {
+                ==(R|<local>/c|, Null(null)) || CMP(<, Int(0).R|kotlin/Int.compareTo|(R|<local>/c|)) ->  {
+                    R|<local>/c| = Int(0)
+                }
+            }
+
+            ^b R|<local>/c| ?: Int(0)
+        }
+
+        lvar c: R|kotlin/Int| = Int(0)
+        R|<local>/c| = Int(0)
+        ^a R|<local>/c|
+    }
+    public final fun myRun(f: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final fun println(arg: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun d(): R|kotlin/Unit| {
+        R|/myRun|(<L> = myRun@fun <anonymous>(): R|kotlin/Unit| {
+            lvar koko: R|kotlin/String?| = String(Alpha)
+            while(!=(R|<local>/koko|, Null(null))) {
+                R|/println|(R|<local>/koko|.R|kotlin/String.length|)
+                R|<local>/koko| = Null(null)
+            }
+
+        }
+        )
+        R|/myRun|(<L> = myRun@fun <anonymous>(): R|kotlin/Unit| {
+            lvar koko: R|kotlin/String?| = String(Omega)
+            while(!=(R|<local>/koko|, Null(null))) {
+                R|/println|(R|<local>/koko|.R|kotlin/String.length|)
+                R|<local>/koko| = Null(null)
+            }
+
+        }
+        )
+    }

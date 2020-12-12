@@ -20,6 +20,7 @@ import com.intellij.icons.AllIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
+import org.jetbrains.kotlin.diagnostics.UnboundDiagnostic;
 import org.jetbrains.kotlin.diagnostics.rendering.*;
 import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle;
 import org.jetbrains.kotlin.js.resolve.diagnostics.ErrorsJs;
@@ -42,7 +43,7 @@ public class IdeErrorMessages {
     private static final DiagnosticFactoryToRendererMap MAP = new DiagnosticFactoryToRendererMap("IDE");
 
     @NotNull
-    public static String render(@NotNull Diagnostic diagnostic) {
+    public static String render(@NotNull UnboundDiagnostic diagnostic) {
         DiagnosticRenderer renderer = MAP.get(diagnostic.getFactory());
 
         if (renderer != null) {
@@ -54,7 +55,7 @@ public class IdeErrorMessages {
     }
 
     @TestOnly
-    public static boolean hasIdeSpecificMessage(@NotNull Diagnostic diagnostic) {
+    public static boolean hasIdeSpecificMessage(@NotNull UnboundDiagnostic diagnostic) {
         return MAP.get(diagnostic.getFactory()) != null;
     }
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.classId
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.fakeElement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -83,6 +84,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable, attributes)
         is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType.create(original.withAttributes(attributes))!!
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable, attributes)
+        is ConeFlexibleType -> ConeFlexibleType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
         else -> error("Not supported: $this: ${this.render()}")
     } as T
 }
@@ -103,8 +105,12 @@ fun ConeTypeContext.hasNullableSuperType(type: ConeKotlinType): Boolean {
     return false
 }
 
-fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability, typeContext: ConeInferenceContext? = null): T {
-    if (this.nullability == nullability) {
+fun <T : ConeKotlinType> T.withNullability(
+    nullability: ConeNullability,
+    typeContext: ConeInferenceContext? = null,
+    attributes: ConeAttributes = this.attributes,
+): T {
+    if (this.nullability == nullability && this.attributes == attributes) {
         return this
     }
 
@@ -183,6 +189,26 @@ fun FirTypeRef.isUnsafeVarianceType(session: FirSession): Boolean {
     return coneTypeSafe<ConeKotlinType>()?.isUnsafeVarianceType(session) == true
 }
 
+fun FirTypeRef.hasEnhancedNullability(): Boolean =
+    coneTypeSafe<ConeKotlinType>()?.hasEnhancedNullability == true
+
+fun FirTypeRef.hasFlexibleNullability(): Boolean =
+    coneTypeSafe<ConeKotlinType>()?.hasFlexibleNullability == true
+
+fun FirTypeRef.withoutEnhancedNullability(): FirTypeRef {
+    require(this is FirResolvedTypeRef)
+    if (!hasEnhancedNullability()) return this
+    return buildResolvedTypeRef {
+        source = this@withoutEnhancedNullability.source
+        type = this@withoutEnhancedNullability.type.withAttributes(
+            ConeAttributes.create(
+                this@withoutEnhancedNullability.type.attributes.filter { it != CompilerConeAttributes.EnhancedNullability }
+            )
+        )
+        annotations += this@withoutEnhancedNullability.annotations
+    }
+}
+
 // Unlike other cases, return types may be implicit, i.e. unresolved
 // But in that cases newType should also be `null`
 fun FirTypeRef.withReplacedReturnType(newType: ConeKotlinType?): FirTypeRef {
@@ -230,15 +256,18 @@ fun FirTypeRef.approximatedIfNeededOrSelf(
     containingCallableVisibility: Visibility?,
     isInlineFunction: Boolean = false
 ): FirTypeRef {
-    val approximatedType = if (this is FirResolvedTypeRef &&
-        (containingCallableVisibility == Visibilities.Public || containingCallableVisibility == Visibilities.Protected)
-    ) {
-        if (type.requiresApproximationInPublicPosition()) this.approximated(approximator, toSuper = true) else this
-    } else {
+    val approximated = if (containingCallableVisibility == Visibilities.Public || containingCallableVisibility == Visibilities.Protected)
+        approximatedForPublicPosition(approximator)
+    else
         this
-    }
-    return approximatedType.hideLocalTypeIfNeeded(containingCallableVisibility, isInlineFunction)
+    return approximated.hideLocalTypeIfNeeded(containingCallableVisibility, isInlineFunction).withoutEnhancedNullability()
 }
+
+fun FirTypeRef.approximatedForPublicPosition(approximator: AbstractTypeApproximator): FirTypeRef =
+    if (this is FirResolvedTypeRef && type.requiresApproximationInPublicPosition())
+        this.approximated(approximator, toSuper = true)
+    else
+        this
 
 private fun ConeKotlinType.requiresApproximationInPublicPosition(): Boolean {
     return when (this) {

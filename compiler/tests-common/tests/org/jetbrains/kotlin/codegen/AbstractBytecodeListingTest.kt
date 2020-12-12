@@ -21,12 +21,17 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
         val actualTxt = BytecodeListingTextCollectingVisitor.getText(
             classFileFactory,
             withSignatures = isWithSignatures(wholeFile),
-            withAnnotations = isWithAnnotations(wholeFile)
+            withAnnotations = isWithAnnotations(wholeFile),
+            filter = object : BytecodeListingTextCollectingVisitor.Filter {
+                override fun shouldWriteClass(access: Int, name: String): Boolean = !name.startsWith("helpers/")
+                override fun shouldWriteMethod(access: Int, name: String, desc: String): Boolean = true
+                override fun shouldWriteField(access: Int, name: String, desc: String): Boolean = true
+                override fun shouldWriteInnerClass(name: String): Boolean = true
+            }
         )
 
         val prefixes = when {
-            backend.isIR -> listOf("_ir", "_1_3", "")
-            coroutinesPackage == StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE.asString() -> listOf("_1_3", "")
+            backend.isIR -> listOf("_ir", "")
             else -> listOf("")
         }
 

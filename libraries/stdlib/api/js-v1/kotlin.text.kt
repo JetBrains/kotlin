@@ -406,11 +406,11 @@ public inline infix fun kotlin.CharSequence.matches(regex: kotlin.text.Regex): k
 
 public fun kotlin.String.matches(regex: kotlin.String): kotlin.Boolean
 
-@kotlin.Deprecated(message = "Use maxOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "maxOrNull()", imports = {}))
+@kotlin.Deprecated(message = "Use maxOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.maxOrNull()", imports = {}))
 @kotlin.DeprecatedSinceKotlin(warningSince = "1.4")
 public fun kotlin.CharSequence.max(): kotlin.Char?
 
-@kotlin.Deprecated(message = "Use maxByOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "maxByOrNull(selector)", imports = {}))
+@kotlin.Deprecated(message = "Use maxByOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.maxByOrNull(selector)", imports = {}))
 @kotlin.DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : kotlin.Comparable<R>> kotlin.CharSequence.maxBy(selector: (kotlin.Char) -> R): kotlin.Char?
 
@@ -460,18 +460,18 @@ public inline fun <R> kotlin.CharSequence.maxOfWithOrNull(comparator: kotlin.Com
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.CharSequence.maxOrNull(): kotlin.Char?
 
-@kotlin.Deprecated(message = "Use maxWithOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "maxWithOrNull(comparator)", imports = {}))
+@kotlin.Deprecated(message = "Use maxWithOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.maxWithOrNull(comparator)", imports = {}))
 @kotlin.DeprecatedSinceKotlin(warningSince = "1.4")
 public fun kotlin.CharSequence.maxWith(comparator: kotlin.Comparator<in kotlin.Char>): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.CharSequence.maxWithOrNull(comparator: kotlin.Comparator<in kotlin.Char>): kotlin.Char?
 
-@kotlin.Deprecated(message = "Use minOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "minOrNull()", imports = {}))
+@kotlin.Deprecated(message = "Use minOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.minOrNull()", imports = {}))
 @kotlin.DeprecatedSinceKotlin(warningSince = "1.4")
 public fun kotlin.CharSequence.min(): kotlin.Char?
 
-@kotlin.Deprecated(message = "Use minByOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "minByOrNull(selector)", imports = {}))
+@kotlin.Deprecated(message = "Use minByOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.minByOrNull(selector)", imports = {}))
 @kotlin.DeprecatedSinceKotlin(warningSince = "1.4")
 public inline fun <R : kotlin.Comparable<R>> kotlin.CharSequence.minBy(selector: (kotlin.Char) -> R): kotlin.Char?
 
@@ -521,7 +521,7 @@ public inline fun <R> kotlin.CharSequence.minOfWithOrNull(comparator: kotlin.Com
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.CharSequence.minOrNull(): kotlin.Char?
 
-@kotlin.Deprecated(message = "Use minWithOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "minWithOrNull(comparator)", imports = {}))
+@kotlin.Deprecated(message = "Use minWithOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.minWithOrNull(comparator)", imports = {}))
 @kotlin.DeprecatedSinceKotlin(warningSince = "1.4")
 public fun kotlin.CharSequence.minWith(comparator: kotlin.Comparator<in kotlin.Char>): kotlin.Char?
 

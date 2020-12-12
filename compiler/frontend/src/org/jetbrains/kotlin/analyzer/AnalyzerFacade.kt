@@ -155,8 +155,15 @@ class LazyModuleDependencies<M : ModuleInfo>(
 
     override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
 
-    override val expectedByDependencies by storageManager.createLazyValue {
+    override val directExpectedByDependencies by storageManager.createLazyValue {
         module.expectedBy.map {
+            @Suppress("UNCHECKED_CAST")
+            resolverForProject.descriptorForModule(it as M)
+        }
+    }
+
+    override val allExpectedByDependencies: Set<ModuleDescriptorImpl> by storageManager.createLazyValue {
+        collectAllExpectedByModules(module).mapTo(HashSet<ModuleDescriptorImpl>()) {
             @Suppress("UNCHECKED_CAST")
             resolverForProject.descriptorForModule(it as M)
         }

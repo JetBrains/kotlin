@@ -39,6 +39,7 @@ internal fun ClassNode.isAnnotation() = (access and Opcodes.ACC_ANNOTATION) != 0
 
 internal fun MethodNode.isVarargs() = (access and Opcodes.ACC_VARARGS) != 0
 internal fun MethodNode.isAbstract() = (access and Opcodes.ACC_ABSTRACT) != 0
+internal fun MethodNode.isStatic() = (access and Opcodes.ACC_STATIC) != 0
 
 internal fun FieldNode.isEnumValue() = (access and Opcodes.ACC_ENUM) != 0
 

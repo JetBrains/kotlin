@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirSimpleFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -50,9 +51,10 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
     override var body: FirBlock? = null
     open lateinit var status: FirDeclarationStatus
     open var containerSource: DeserializedContainerSource? = null
+    open var dispatchReceiverType: ConeKotlinType? = null
     open var contractDescription: FirContractDescription = FirEmptyContractDescription
     open lateinit var name: Name
-    open lateinit var symbol: FirFunctionSymbol<FirSimpleFunction>
+    open lateinit var symbol: FirNamedFunctionSymbol
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
     override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
 
@@ -70,6 +72,7 @@ open class FirSimpleFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwner
             body,
             status,
             containerSource,
+            dispatchReceiverType,
             contractDescription,
             name,
             symbol,
@@ -98,13 +101,14 @@ inline fun buildSimpleFunctionCopy(original: FirSimpleFunction, init: FirSimpleF
     copyBuilder.session = original.session
     copyBuilder.resolvePhase = original.resolvePhase
     copyBuilder.origin = original.origin
-    copyBuilder.attributes = original.attributes
+    copyBuilder.attributes = original.attributes.copy()
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverTypeRef = original.receiverTypeRef
     copyBuilder.valueParameters.addAll(original.valueParameters)
     copyBuilder.body = original.body
     copyBuilder.status = original.status
     copyBuilder.containerSource = original.containerSource
+    copyBuilder.dispatchReceiverType = original.dispatchReceiverType
     copyBuilder.contractDescription = original.contractDescription
     copyBuilder.name = original.name
     copyBuilder.symbol = original.symbol

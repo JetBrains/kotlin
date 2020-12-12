@@ -33,11 +33,12 @@ open class KotlinPackageJsonTask : DefaultTask() {
         get() = compilationResolver.packageJsonProducer
 
     @get:Input
-    val packageJsonCustomFields: Map<String, Any?>
-        get() = PackageJson(fakePackageJsonValue, fakePackageJsonValue)
+    val packageJsonCustomFields: Map<String, Any?> by lazy {
+        PackageJson(fakePackageJsonValue, fakePackageJsonValue)
             .apply {
                 compilation.packageJsonHandlers.forEach { it() }
             }.customFields
+    }
 
     private fun findDependentTasks(): Collection<Any> =
         producer.internalDependencies.map { dependentResolver ->
@@ -47,18 +48,21 @@ open class KotlinPackageJsonTask : DefaultTask() {
         }
 
     @get:Input
-    internal val toolsNpmDependencies: List<String>
-        get() = nodeJs.taskRequirements
+    internal val toolsNpmDependencies: List<String> by lazy {
+        nodeJs.taskRequirements
             .getCompilationNpmRequirements(compilation)
             .map { it.uniqueRepresentation() }
+    }
 
     @get:Nested
-    internal val producerInputs: KotlinCompilationNpmResolver.PackageJsonProducerInputs
-        get() = producer.inputs
+    internal val producerInputs: KotlinCompilationNpmResolver.PackageJsonProducerInputs by lazy {
+        producer.inputs
+    }
 
     @get:OutputFile
-    val packageJson: File
-        get() = compilationResolver.npmProject.prePackageJsonFile
+    val packageJson: File by lazy {
+        compilationResolver.npmProject.prePackageJsonFile
+    }
 
     @TaskAction
     fun resolve() {

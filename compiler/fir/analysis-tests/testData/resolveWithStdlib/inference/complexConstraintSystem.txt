@@ -20,5 +20,5 @@ FILE: complexConstraintSystem.kt
             }
 
         }
-        ).R|kotlin/collections/first|<R|Inv<kotlin/Int>|>().R|FakeOverride</Inv.x: R|kotlin/Int|>|
+        ).R|kotlin/collections/first|<R|Inv<kotlin/Int>|>().R|SubstitutionOverride</Inv.x: R|kotlin/Int|>|
     }

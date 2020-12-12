@@ -15,10 +15,28 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullableAny
 import org.jetbrains.kotlin.ir.types.isUnit
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isTopLevelDeclaration
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.Name
 
 fun TODO(element: IrElement): Nothing = TODO(element::class.java.simpleName + " is not supported yet here")
+
+fun IrFunction.hasStableJsName(): Boolean {
+    val namedOrMissingGetter = when (this) {
+        is IrSimpleFunction -> {
+            val owner = correspondingPropertySymbol?.owner
+            if (owner == null) {
+                true
+            } else {
+                owner.getter?.getJsName() != null
+            }
+        }
+        else -> true
+    }
+
+    return (isEffectivelyExternal() || getJsName() != null || parentClassOrNull?.isJsExport() == true) && namedOrMissingGetter
+}
 
 fun IrFunction.isEqualsInheritedFromAny() =
     name == Name.identifier("equals") &&
@@ -46,37 +64,12 @@ fun List<IrExpression>.toJsArrayLiteral(context: JsIrBackendContext, arrayType: 
     }
 }
 
-// TODO: support more cases like built-in operator call and so on
-
-fun IrExpression?.isPure(anyVariable: Boolean, checkFields: Boolean = true): Boolean {
-    if (this == null) return true
-
-    fun IrExpression.isPureImpl(): Boolean {
-        return when (this) {
-            is IrConst<*> -> true
-            is IrGetValue -> {
-                if (anyVariable) return true
-                val valueDeclaration = symbol.owner
-                if (valueDeclaration is IrVariable) !valueDeclaration.isVar
-                else true
-            }
-            is IrGetObjectValue -> type.isUnit()
-            else -> false
-        }
+val IrValueDeclaration.isDispatchReceiver: Boolean
+    get() {
+        val parent = this.parent
+        if (parent is IrClass)
+            return true
+        if (parent is IrFunction && parent.dispatchReceiverParameter == this)
+            return true
+        return false
     }
-
-    if (isPureImpl()) return true
-
-    if (!checkFields) return false
-
-    if (this is IrGetField) {
-        if (!symbol.owner.isFinal) {
-            if (!anyVariable) {
-                return false
-            }
-        }
-        return receiver.isPure(anyVariable)
-    }
-
-    return false
-}

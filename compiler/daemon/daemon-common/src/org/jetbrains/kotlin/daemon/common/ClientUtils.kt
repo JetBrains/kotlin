@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.daemon.common
 
 import java.io.File
+import java.nio.file.Files
 import java.rmi.registry.LocateRegistry
 
 
@@ -106,7 +107,12 @@ private inline fun tryConnectToDaemon(port: Int, report: (DaemonReportCategory, 
 private const val validFlagFileKeywordChars = "abcdefghijklmnopqrstuvwxyz0123456789-_"
 
 fun makeAutodeletingFlagFile(keyword: String = "compiler-client", baseDir: File? = null): File {
-    val flagFile = File.createTempFile("kotlin-${keyword.filter { validFlagFileKeywordChars.contains(it.toLowerCase()) }}-", "-is-running", baseDir?.takeIf { it.isDirectory && it.exists() })
+    val prefix = "kotlin-${keyword.filter { validFlagFileKeywordChars.contains(it.toLowerCase()) }}-"
+    val flagFile = if (baseDir?.isDirectory == true)
+        Files.createTempFile(baseDir.toPath(), prefix, "-is-running").toFile()
+    else
+        Files.createTempFile(prefix, "-is-running").toFile()
+
     flagFile.deleteOnExit()
     return flagFile
 }

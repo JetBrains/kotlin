@@ -33,7 +33,7 @@ class OptionalAnnotationPackageFragmentProvider(
     notFoundClasses: NotFoundClasses,
     languageVersionSettings: LanguageVersionSettings,
     packagePartProvider: PackagePartProvider,
-) : PackageFragmentProvider {
+) : PackageFragmentProviderOptimized {
     val packages: Map<FqName, PackageFragmentDescriptor> by storageManager.createLazyValue p@{
         // We call getAllOptionalAnnotationClasses under lazy value only because IncrementalPackagePartProvider requires
         // deserializationConfiguration to be injected.

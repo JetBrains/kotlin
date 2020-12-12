@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.packageFragments
@@ -22,10 +23,11 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializer
 class KlibMetadataMonolithicSerializer(
     languageVersionSettings: LanguageVersionSettings,
     metadataVersion: BinaryVersion,
+    project: Project?,
     skipExpects: Boolean,
     includeOnlyModuleContent: Boolean = false,
     allowErrorTypes: Boolean = false
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, skipExpects, includeOnlyModuleContent, allowErrorTypes) {
+) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, project, skipExpects, includeOnlyModuleContent, allowErrorTypes) {
 
     private fun serializePackageFragment(fqName: FqName, module: ModuleDescriptor): List<ProtoBuf.PackageFragment> {
 

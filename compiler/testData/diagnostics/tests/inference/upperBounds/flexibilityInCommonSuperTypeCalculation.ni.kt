@@ -240,11 +240,11 @@ fun case_13() {
     <!DEBUG_INFO_EXPRESSION_TYPE("dynamic")!>result_4<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("dynamic")!>result_5<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("dynamic")!>result_6<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<dynamic>")!>result_7<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<dynamic>")!>result_8<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<dynamic>")!>result_9<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<dynamic>")!>result_10<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<dynamic>")!>result_11<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("A<(kotlin.collections.MutableList<(kotlin.Int..kotlin.Int?)>..kotlin.collections.List<(kotlin.Int..kotlin.Int?)>?)>")!>result_7<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("A<(kotlin.collections.MutableList<(kotlin.Int..kotlin.Int?)>..kotlin.collections.List<(kotlin.Int..kotlin.Int?)>?)>")!>result_8<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("A<(kotlin.collections.MutableList<(kotlin.Int..kotlin.Int?)>..kotlin.collections.List<(kotlin.Int..kotlin.Int?)>?)>")!>result_9<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("A<kotlin.collections.MutableList<kotlin.Int>>")!>result_10<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("A<kotlin.collections.List<kotlin.Int>?>")!>result_11<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("A<dynamic>")!>result_12<!>
 }
 

@@ -1,8 +1,8 @@
 FILE: MapCompute.kt
     public final fun <D> R|kotlin/collections/MutableMap<kotlin/String, kotlin/collections/MutableSet<D>>|.initAndAdd(key: R|kotlin/String|, value: R|D|): R|kotlin/Unit| {
-        this@R|/initAndAdd|.R|FakeOverride<kotlin/collections/MutableMap.compute: R|kotlin/collections/MutableSet<D>?|>|(R|<local>/key|, <L> = compute@fun <anonymous>(_: R|ft<kotlin/String, kotlin/String?>!|, maybeValues: R|ft<kotlin/collections/MutableSet<D>, kotlin/collections/MutableSet<D>?>!|): R|ft<kotlin/collections/MutableSet<D>, kotlin/collections/MutableSet<D>?>!| {
+        this@R|/initAndAdd|.R|SubstitutionOverride<kotlin/collections/MutableMap.compute: R|kotlin/collections/MutableSet<D>?|>|(R|<local>/key|, <L> = compute@fun <anonymous>(_: R|ft<kotlin/String, kotlin/String?>!|, maybeValues: R|ft<kotlin/collections/MutableSet<D>, kotlin/collections/MutableSet<D>?>!|): R|ft<kotlin/collections/MutableSet<D>, kotlin/collections/MutableSet<D>?>!| {
             lval setOfValues: R|kotlin/collections/MutableSet<D>| = R|<local>/maybeValues| ?: R|kotlin/collections/mutableSetOf|<R|D|>()
-            R|<local>/setOfValues|.R|FakeOverride<kotlin/collections/MutableSet.add: R|kotlin/Boolean|>|(R|<local>/value|)
+            R|<local>/setOfValues|.R|SubstitutionOverride<kotlin/collections/MutableSet.add: R|kotlin/Boolean|>|(R|<local>/value|)
             ^ R|<local>/setOfValues|
         }
         )

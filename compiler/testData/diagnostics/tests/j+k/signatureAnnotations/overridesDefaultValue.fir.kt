@@ -87,14 +87,14 @@ fun main() {
     d.<!INAPPLICABLE_CANDIDATE!>first<!>()
     bd.<!INAPPLICABLE_CANDIDATE!>first<!>()
 
-    e.<!INAPPLICABLE_CANDIDATE!>first<!>()
+    e.first()
 
     val g = G()
-    g.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    g.foo()
     g.foo("ok")
 
     val m = M()
-    m.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    m.foo()
 
 }
 

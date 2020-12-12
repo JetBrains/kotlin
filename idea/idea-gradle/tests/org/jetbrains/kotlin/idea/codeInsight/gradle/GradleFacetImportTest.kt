@@ -889,7 +889,7 @@ class GradleFacetImportTest : GradleImportingTestCase() {
         val isCreateEmptyContentRootDirectories = currentExternalProjectSettings.isCreateEmptyContentRootDirectories
         try {
             currentExternalProjectSettings.isCreateEmptyContentRootDirectories = true
-            super.importProject()
+            super.importProject(true)
         } finally {
             currentExternalProjectSettings.isCreateEmptyContentRootDirectories = isCreateEmptyContentRootDirectories
         }

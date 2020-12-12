@@ -3,6 +3,7 @@
 package n
 
 import java.util.*
+import checkSubtype
 
 fun test() {
     val foo = arrayList("").map { it -> it.length }.fold(0, { x, y -> Math.max(x, y) })

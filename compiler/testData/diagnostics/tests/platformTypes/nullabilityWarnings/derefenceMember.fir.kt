@@ -32,7 +32,7 @@ fun test() {
         foo()
     }
     with(platformN) {
-        foo()
+        <!INAPPLICABLE_CANDIDATE!>foo<!>()
     }
     with(platformJ) {
         foo()

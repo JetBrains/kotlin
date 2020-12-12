@@ -39,7 +39,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
     }
 
     val jvmTarget = get(JVMConfigurationKeys.JVM_TARGET) ?: JvmTarget.DEFAULT
-    if (jvmTarget.bytecodeVersion < JvmTarget.JVM_1_8.bytecodeVersion) {
+    if (jvmTarget.majorVersion < JvmTarget.JVM_1_8.majorVersion) {
         val jvmDefaultMode = languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode)
         if (jvmDefaultMode.forAllMethodsWithBody) {
             messageCollector.report(
@@ -53,7 +53,7 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
         val runtimeStringConcat = JvmStringConcat.fromString(arguments.stringConcat!!)
         if (runtimeStringConcat != null) {
             put(JVMConfigurationKeys.STRING_CONCAT, runtimeStringConcat)
-            if (jvmTarget.bytecodeVersion < JvmTarget.JVM_9.bytecodeVersion && runtimeStringConcat != JvmStringConcat.INLINE) {
+            if (jvmTarget.majorVersion < JvmTarget.JVM_9.majorVersion && runtimeStringConcat != JvmStringConcat.INLINE) {
                 messageCollector.report(
                     WARNING,
                     "`-Xstring-concat=${arguments.stringConcat}` does nothing with JVM target `${jvmTarget.description}`."
@@ -61,8 +61,8 @@ fun CompilerConfiguration.setupJvmSpecificArguments(arguments: K2JVMCompilerArgu
             }
         } else {
             messageCollector.report(
-                ERROR, "Unknown `string-concat` mode: ${arguments.jvmTarget}\n" +
-                        "Supported versions: ${JvmStringConcat.values().joinToString { it.name.toLowerCase() }}"
+                ERROR, "Unknown -Xstring-concat mode: ${arguments.jvmTarget}\n" +
+                        "Supported versions: ${JvmStringConcat.values().joinToString { it.description }}"
             )
         }
     }
@@ -173,6 +173,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
 
     put(JVMConfigurationKeys.IR, arguments.useIR && !arguments.noUseIR)
     put(JVMConfigurationKeys.IS_IR_WITH_STABLE_ABI, arguments.isIrWithStableAbi)
+    put(JVMConfigurationKeys.DO_NOT_CLEAR_BINDING_CONTEXT, arguments.doNotClearBindingContext)
     put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, arguments.noCallAssertions)
     put(JVMConfigurationKeys.DISABLE_RECEIVER_ASSERTIONS, arguments.noReceiverAssertions)
     put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, arguments.noParamAssertions)
@@ -184,6 +185,7 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS, arguments.emitJvmTypeAnnotations)
     put(JVMConfigurationKeys.NO_OPTIMIZED_CALLABLE_REFERENCES, arguments.noOptimizedCallableReferences)
     put(JVMConfigurationKeys.NO_KOTLIN_NOTHING_VALUE_EXCEPTION, arguments.noKotlinNothingValueException)
+    put(JVMConfigurationKeys.NO_RESET_JAR_TIMESTAMPS, arguments.noResetJarTimestamps)
     put(JVMConfigurationKeys.NO_UNIFIED_NULL_CHECKS, arguments.noUnifiedNullChecks)
 
     if (!JVMConstructorCallNormalizationMode.isSupportedValue(arguments.constructorCallNormalizationMode)) {
@@ -229,6 +231,13 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
     put(JVMConfigurationKeys.USE_SINGLE_MODULE, arguments.singleModule)
     put(JVMConfigurationKeys.USE_OLD_SPILLED_VAR_TYPE_ANALYSIS, arguments.useOldSpilledVarTypeAnalysis)
+    put(JVMConfigurationKeys.USE_OLD_INLINE_CLASSES_MANGLING_SCHEME, arguments.useOldInlineClassesManglingScheme)
+    put(JVMConfigurationKeys.ENABLE_JVM_PREVIEW, arguments.enableJvmPreview)
+
+    if (arguments.enableJvmPreview) {
+        getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+            .report(INFO, "Using preview Java language features")
+    }
 
     arguments.declarationsOutputPath?.let { put(JVMConfigurationKeys.DECLARATIONS_JSON_PATH, it) }
 }

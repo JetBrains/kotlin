@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.getDispatchReceiverParameterForConstructorCall
+import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.findJvmOverloadsAnnotation
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
+import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToInlineClassTypeValueParameters
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -134,8 +136,9 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             remainingParameters.map { DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtParameter }
 
         val generateAsFinal =
-            functionDescriptor.modality == Modality.FINAL ||
-                    state.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)
+            (functionDescriptor.modality == Modality.FINAL ||
+                    state.languageVersionSettings.supportsFeature(LanguageFeature.GenerateJvmOverloadsAsFinal)) &&
+                    !isJvmInterface(functionDescriptor.containingDeclaration)
         val flags =
             baseMethodFlags or
                     (if (isStatic) Opcodes.ACC_STATIC else 0) or
@@ -264,7 +267,8 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
         if (classDescriptor.kind != ClassKind.CLASS) return false
 
         if (classOrObject.isLocal) return false
-        if (classDescriptor.isInline) return false
+        if (classDescriptor.isInlineClass()) return false
+        if (shouldHideConstructorDueToInlineClassTypeValueParameters(constructorDescriptor)) return false
 
         if (CodegenBinding.canHaveOuter(state.bindingContext, classDescriptor)) return false
 

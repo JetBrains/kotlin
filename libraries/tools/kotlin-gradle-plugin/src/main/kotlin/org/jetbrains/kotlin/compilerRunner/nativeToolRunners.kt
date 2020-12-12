@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.konan.properties.resolvablePropertyString
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import java.nio.file.Files
 import java.util.*
 
 private val Project.jvmArgs
@@ -91,11 +92,13 @@ internal abstract class AbstractKotlinNativeCInteropRunner(toolName: String, pro
     override val mustRunViaExec get() = true
 
     override val execEnvironment by lazy {
-        val llvmExecutablesPath = llvmExecutablesPath
-        if (llvmExecutablesPath != null)
-            super.execEnvironment + ("PATH" to "$llvmExecutablesPath;${System.getenv("PATH")}")
-        else
-            super.execEnvironment
+        val result = mutableMapOf<String, String>()
+        result.putAll(super.execEnvironment)
+        result["LIBCLANG_DISABLE_CRASH_RECOVERY"] = "1"
+        llvmExecutablesPath?.let {
+            result["PATH"] = "$it;${System.getenv("PATH")}"
+        }
+        result
     }
 
     private val llvmExecutablesPath: String? by lazy {
@@ -127,7 +130,7 @@ internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRu
     override fun transformArgs(args: List<String>): List<String> {
         if (!useArgFile) return super.transformArgs(args)
 
-        val argFile = createTempFile(prefix = "kotlinc-native-args", suffix = ".lst").apply { deleteOnExit() }
+        val argFile = Files.createTempFile(/* prefix = */ "kotlinc-native-args", /* suffix = */ ".lst").toFile().apply { deleteOnExit() }
         argFile.printWriter().use { w ->
             args.forEach { arg ->
                 val escapedArg = arg

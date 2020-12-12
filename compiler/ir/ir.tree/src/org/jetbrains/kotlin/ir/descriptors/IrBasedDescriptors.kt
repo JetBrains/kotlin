@@ -10,11 +10,9 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunction
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyProperty
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -308,7 +306,7 @@ fun IrTypeParameter.toIrBasedDescriptor() = IrBasedTypeParameterDescriptor(this)
 
 open class IrBasedVariableDescriptor(owner: IrVariable) : VariableDescriptor, IrBasedCallableDescriptor<IrVariable>(owner) {
 
-    override fun getContainingDeclaration() = (owner.parent as IrFunction).toIrBasedDescriptor()
+    override fun getContainingDeclaration() = (owner.parent as IrDeclaration).toIrBasedDescriptor()
     override fun getType() = owner.type.toIrBasedKotlinType()
     override fun getReturnType() = getType()
     override fun getName() = owner.name
@@ -363,15 +361,17 @@ open class IrBasedVariableDescriptorWithAccessor(owner: IrLocalDelegatedProperty
     override fun isLateInit(): Boolean = false
 
     override val getter: VariableAccessorDescriptor?
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("not implemented")
     override val setter: VariableAccessorDescriptor?
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("not implemented")
     override val isDelegated: Boolean = true
 }
 
 fun IrLocalDelegatedProperty.toIrBasedDescriptor() = IrBasedVariableDescriptorWithAccessor(this)
 
-open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunctionDescriptor,
+// We make all IR-based function descriptors instances of DescriptorWithContainerSource, and use .parentClassId to
+// check whether declaration is deserialized. See IrInlineCodegen.descriptorIsDeserialized
+open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunctionDescriptor, DescriptorWithContainerSource,
     IrBasedCallableDescriptor<IrSimpleFunction>(owner) {
 
     override fun getOverriddenDescriptors(): List<FunctionDescriptor> = owner.overriddenSymbols.map { it.owner.toIrBasedDescriptor() }
@@ -402,6 +402,9 @@ open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunc
     override fun isInfix() = false
     override fun isOperator() = false
 
+    override val containerSource: DeserializedContainerSource?
+        get() = owner.containerSource
+
     override fun getOriginal() = this
     override fun substitute(substitutor: TypeSubstitutor): SimpleFunctionDescriptor {
         TODO("")
@@ -416,11 +419,11 @@ open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunc
         else CallableMemberDescriptor.Kind.SYNTHESIZED
 
     override fun copy(
-            newOwner: DeclarationDescriptor?,
-            modality: Modality?,
-            visibility: DescriptorVisibility?,
-            kind: CallableMemberDescriptor.Kind?,
-            copyOverrides: Boolean
+        newOwner: DeclarationDescriptor?,
+        modality: Modality?,
+        visibility: DescriptorVisibility?,
+        kind: CallableMemberDescriptor.Kind?,
+        copyOverrides: Boolean
     ): Nothing {
         TODO("not implemented")
     }
@@ -444,19 +447,8 @@ open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunc
     }
 }
 
-class IrBasedFunctionDescriptorWithContainerSource(owner: IrSimpleFunction) : IrBasedSimpleFunctionDescriptor(owner),
-    DescriptorWithContainerSource {
-    override val containerSource: DeserializedContainerSource? get() = owner.containerSource
-}
-
 fun IrSimpleFunction.toIrBasedDescriptor() =
-    if (originalFunction is IrLazyFunction || containerSource != null)
-        when {
-            isGetter -> IrBasedPropertyGetterDescriptorWithContainerSource(this)
-            isSetter -> IrBasedPropertySetterDescriptorWithContainerSource(this)
-            else -> IrBasedFunctionDescriptorWithContainerSource(this)
-        }
-    else when {
+    when {
         isGetter -> IrBasedPropertyGetterDescriptor(this)
         isSetter -> IrBasedPropertySetterDescriptor(this)
         else -> IrBasedSimpleFunctionDescriptor(this)
@@ -484,11 +476,11 @@ open class IrBasedClassConstructorDescriptor(owner: IrConstructor) : ClassConstr
     }
 
     override fun copy(
-            newOwner: DeclarationDescriptor,
-            modality: Modality,
-            visibility: DescriptorVisibility,
-            kind: CallableMemberDescriptor.Kind,
-            copyOverrides: Boolean
+        newOwner: DeclarationDescriptor,
+        modality: Modality,
+        visibility: DescriptorVisibility,
+        kind: CallableMemberDescriptor.Kind,
+        copyOverrides: Boolean
     ): ClassConstructorDescriptor {
         throw UnsupportedOperationException()
     }
@@ -556,11 +548,12 @@ open class IrBasedClassConstructorDescriptor(owner: IrConstructor) : ClassConstr
 
 fun IrConstructor.toIrBasedDescriptor() = IrBasedClassConstructorDescriptor(this)
 
-fun IrFunction.toIrBasedDescriptor(): FunctionDescriptor = when(this) {
-    is IrSimpleFunction -> toIrBasedDescriptor()
-    is IrConstructor -> toIrBasedDescriptor()
-    else -> error("Unknown function kind")
-}
+fun IrFunction.toIrBasedDescriptor(): FunctionDescriptor =
+    when (this) {
+        is IrSimpleFunction -> toIrBasedDescriptor()
+        is IrConstructor -> toIrBasedDescriptor()
+        else -> error("Unknown function kind")
+    }
 
 open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDeclarationDescriptor<IrClass>(owner) {
     override fun getName() = owner.name
@@ -590,7 +583,8 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
 
     override fun getModality() = owner.modality
 
-    override fun getCompanionObjectDescriptor() = owner.declarations.filterIsInstance<IrClass>().firstOrNull { it.isCompanion }?.toIrBasedDescriptor()
+    override fun getCompanionObjectDescriptor() =
+        owner.declarations.filterIsInstance<IrClass>().firstOrNull { it.isCompanion }?.toIrBasedDescriptor()
 
     override fun getVisibility() = owner.visibility
 
@@ -601,6 +595,9 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
     override fun isInline() = owner.isInline
 
     override fun isFun() = owner.isFun
+
+    // In IR, inline and value are synonyms
+    override fun isValue() = owner.isInline
 
     override fun getThisAsReceiverParameter() = owner.thisReceiver?.toIrBasedDescriptor() as ReceiverParameterDescriptor
 
@@ -632,13 +629,7 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
     }
 
     private fun collectTypeParameters(): List<TypeParameterDescriptor> =
-        generateSequence(owner as IrTypeParametersContainer,
-                         { current ->
-                             val parent = current.parent as? IrTypeParametersContainer
-                             if (parent is IrClass && current is IrClass && !current.isInner) null
-                             else parent
-                         })
-            .flatMap { it.typeParameters }
+        owner.typeConstructorParameters
             .map { it.toIrBasedDescriptor() }
             .toList()
 
@@ -708,6 +699,8 @@ open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrB
 
     override fun isFun() = false
 
+    override fun isValue() = false
+
     override fun getThisAsReceiverParameter() = (owner.parent as IrClass).toIrBasedDescriptor().thisAsReceiverParameter
 
     override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? {
@@ -758,7 +751,8 @@ open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrB
 
 fun IrEnumEntry.toIrBasedDescriptor() = IrBasedEnumEntryDescriptor(this)
 
-open class IrBasedPropertyDescriptor(owner: IrProperty) : PropertyDescriptor, IrBasedDeclarationDescriptor<IrProperty>(owner) {
+open class IrBasedPropertyDescriptor(owner: IrProperty) :
+    PropertyDescriptor, DescriptorWithContainerSource, IrBasedDeclarationDescriptor<IrProperty>(owner) {
     override fun getModality() = owner.modality
 
     override fun setOverriddenDescriptors(overriddenDescriptors: MutableCollection<out CallableMemberDescriptor>) {
@@ -778,11 +772,11 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) : PropertyDescriptor, Ir
     override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> = mutableListOf()
 
     override fun copy(
-            newOwner: DeclarationDescriptor?,
-            modality: Modality?,
-            visibility: DescriptorVisibility?,
-            kind: CallableMemberDescriptor.Kind?,
-            copyOverrides: Boolean
+        newOwner: DeclarationDescriptor?,
+        modality: Modality?,
+        visibility: DescriptorVisibility?,
+        kind: CallableMemberDescriptor.Kind?,
+        copyOverrides: Boolean
     ): CallableMemberDescriptor {
         TODO("not implemented")
     }
@@ -805,6 +799,8 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) : PropertyDescriptor, Ir
 
     override val setter: PropertySetterDescriptor? get() = owner.setter?.toIrBasedDescriptor() as? PropertySetterDescriptor
 
+    override val containerSource: DeserializedContainerSource? = owner.containerSource
+
     override fun getOriginal() = this
 
     override fun isExpect() = false
@@ -822,13 +818,15 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) : PropertyDescriptor, Ir
 
     override fun isVar() = owner.isVar
 
-    override fun getDispatchReceiverParameter() = owner.getter?.dispatchReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
+    override fun getDispatchReceiverParameter() =
+        owner.getter?.dispatchReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
 
     override fun isConst() = owner.isConst
 
     override fun isLateInit() = owner.isLateinit
 
-    override fun getExtensionReceiverParameter() = owner.getter?.extensionReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
+    override fun getExtensionReceiverParameter() =
+        owner.getter?.extensionReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
 
     override fun isExternal() = owner.isExternal
 
@@ -858,16 +856,7 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) : PropertyDescriptor, Ir
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
 }
 
-class IrBasedPropertyDescriptorWithContainerSource(
-    owner: IrProperty
-) : IrBasedPropertyDescriptor(owner), DescriptorWithContainerSource {
-    override val containerSource: DeserializedContainerSource? = owner.containerSource
-}
-
-fun IrProperty.toIrBasedDescriptor() = if (originalProperty is IrLazyProperty || containerSource != null)
-    IrBasedPropertyDescriptorWithContainerSource(this)
-else
-    IrBasedPropertyDescriptor(this)
+fun IrProperty.toIrBasedDescriptor() = IrBasedPropertyDescriptor(this)
 
 abstract class IrBasedPropertyAccessorDescriptor(owner: IrSimpleFunction) : IrBasedSimpleFunctionDescriptor(owner),
     PropertyAccessorDescriptor {
@@ -888,20 +877,10 @@ open class IrBasedPropertyGetterDescriptor(owner: IrSimpleFunction) : IrBasedPro
     override fun getOriginal(): IrBasedPropertyGetterDescriptor = this
 }
 
-class IrBasedPropertyGetterDescriptorWithContainerSource(owner: IrSimpleFunction) : IrBasedPropertyGetterDescriptor(owner),
-    DescriptorWithContainerSource {
-    override val containerSource: DeserializedContainerSource? get() = owner.containerSource
-}
-
 open class IrBasedPropertySetterDescriptor(owner: IrSimpleFunction) : IrBasedPropertyAccessorDescriptor(owner), PropertySetterDescriptor {
     override fun getOverriddenDescriptors() = super.getOverriddenDescriptors().map { it as PropertySetterDescriptor }
 
     override fun getOriginal(): IrBasedPropertySetterDescriptor = this
-}
-
-class IrBasedPropertySetterDescriptorWithContainerSource(owner: IrSimpleFunction) : IrBasedPropertySetterDescriptor(owner),
-    DescriptorWithContainerSource {
-    override val containerSource: DeserializedContainerSource? get() = owner.containerSource
 }
 
 open class IrBasedTypeAliasDescriptor(owner: IrTypeAlias) : IrBasedDeclarationDescriptor<IrTypeAlias>(owner), TypeAliasDescriptor {
@@ -973,11 +952,11 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
     override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> = mutableListOf()
 
     override fun copy(
-            newOwner: DeclarationDescriptor?,
-            modality: Modality?,
-            visibility: DescriptorVisibility?,
-            kind: CallableMemberDescriptor.Kind?,
-            copyOverrides: Boolean
+        newOwner: DeclarationDescriptor?,
+        modality: Modality?,
+        visibility: DescriptorVisibility?,
+        kind: CallableMemberDescriptor.Kind?,
+        copyOverrides: Boolean
     ): CallableMemberDescriptor {
         TODO("not implemented")
     }
@@ -1079,18 +1058,39 @@ private fun makeKotlinType(
     classifier: IrClassifierSymbol,
     arguments: List<IrTypeArgument>,
     hasQuestionMark: Boolean
-): SimpleType = when (classifier) {
-    is IrTypeParameterSymbol -> classifier.owner.toIrBasedDescriptor().defaultType
-    is IrClassSymbol -> {
-        val classDescriptor = classifier.owner.toIrBasedDescriptor()
-        val kotlinTypeArguments = arguments.mapIndexed { index, it ->
-            when (it) {
-                is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toIrBasedKotlinType())
-                is IrStarProjection -> StarProjectionImpl(classDescriptor.typeConstructor.parameters[index])
-                else -> error(it)
+): SimpleType =
+    when (classifier) {
+        is IrTypeParameterSymbol -> classifier.owner.toIrBasedDescriptor().defaultType
+        is IrClassSymbol -> {
+            val classDescriptor = classifier.owner.toIrBasedDescriptor()
+            val kotlinTypeArguments = arguments.mapIndexed { index, it ->
+                when (it) {
+                    is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toIrBasedKotlinType())
+                    is IrStarProjection -> StarProjectionImpl(classDescriptor.typeConstructor.parameters[index])
+                    else -> error(it)
+                }
+            }
+
+            try {
+                classDescriptor.defaultType.replace(newArguments = kotlinTypeArguments).makeNullableAsSpecified(hasQuestionMark)
+            } catch (e: Throwable) {
+                throw RuntimeException(
+                    "Classifier: ${classifier.owner.render()}\n" +
+                            "Type parameters:\n" +
+                            classDescriptor.defaultType.constructor.parameters.withIndex()
+                                .joinToString(separator = "\n") {
+                                    val irTypeParameter = (it.value as IrBasedTypeParameterDescriptor).owner
+                                    "${it.index}: ${irTypeParameter.render()} " +
+                                            "of ${irTypeParameter.parent.render()}"
+                                } +
+                            "\nType arguments:\n" +
+                            arguments.withIndex()
+                                .joinToString(separator = "\n") {
+                                    "${it.index}: ${it.value.render()}"
+                                },
+                    e
+                )
             }
         }
-        classDescriptor.defaultType.replace(newArguments = kotlinTypeArguments).makeNullableAsSpecified(hasQuestionMark)
+        else -> error("unknown classifier kind $classifier")
     }
-    else -> error("unknown classifier kind $classifier")
-}

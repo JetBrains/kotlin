@@ -44,6 +44,29 @@
       ]
     },
     {
+      "name": "branchShift",
+      "value": false,
+      "on": [
+        {
+          "events": "@branchLegendSymbol:click, @branchLegendLabel:click",
+          "update": "event.shiftKey",
+          "force": true
+        }
+      ]
+    },
+    {
+      "name": "branchClicked",
+      "value": null,
+      "on": [
+        {
+          "events": "@branchLegendSymbol:click, @branchLegendLabel:click",
+          "comment": "note: here `datum` is `selected` data set",
+          "update": "{value: datum.value}",
+          "force": true
+        }
+      ]
+    },
+    {
       "name": "brush",
       "value": 0,
       "on": [
@@ -95,64 +118,95 @@
       "name": "table",
       "comment": "To test chart in VEGA editor https://vega.github.io/editor/#/ change `_values` to `values` and rename `url` property",
       "_values": {
-        "hits" : {
-          "hits" : [
-            {
-              "_source" : {
-                "buildId" : 87834896,
-                "buildTimestamp" : "2020-09-21T21:00:31+0000",
-                "metrics" : [
-                  {"metricName" : "NonNullAssertion", "metricValue" : 31, "metricError" : 1 },
-                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 191, "metricError" : 4 }
-                ],
-                "benchmark" : "highlight"
+        "aggregations" : {
+          "benchmark" : {
+            "doc_count_error_upper_bound" : 0,
+            "sum_other_doc_count" : 0,
+            "buckets" : [
+              {
+                "key" : "highlight",
+                "doc_count" : 1034,
+                "name" : {
+                  "doc_count_error_upper_bound" : 0,
+                  "sum_other_doc_count" : 0,
+                  "buckets" : [
+                    {
+                      "key" : "Annotations",
+                      "doc_count" : 23,
+                      "values" : {
+                        "buckets" : [
+                          {
+                            "key_as_string" : "2020-11-02T09:00:00.000Z",
+                            "key" : 1604307600000,
+                            "doc_count" : 3,
+                            "avgError" : {
+                              "value" : 1.0
+                            },
+                            "avgValue" : {
+                              "value" : 129.0
+                            },
+                            "buildId" : {
+                              "doc_count_error_upper_bound" : 0,
+                              "sum_other_doc_count" : 1,
+                              "buckets" : [
+                                {
+                                  "key" : 93277596,
+                                  "doc_count" : 2
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "key_as_string" : "2020-11-02T21:00:00.000Z",
+                            "key" : 1604350800000,
+                            "doc_count" : 3,
+                            "avgError" : {
+                              "value" : 1.0
+                            },
+                            "avgValue" : {
+                              "value" : 41.0
+                            },
+                            "buildId" : {
+                              "doc_count_error_upper_bound" : 0,
+                              "sum_other_doc_count" : 2,
+                              "buckets" : [
+                                {
+                                  "key" : 93400366,
+                                  "doc_count" : 1
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "key_as_string" : "2020-11-03T09:00:00.000Z",
+                            "key" : 1604394000000,
+                            "doc_count" : 2,
+                            "avgError" : {
+                              "value" : 1.5
+                            },
+                            "avgValue" : {
+                              "value" : 42.0
+                            },
+                            "buildId" : {
+                              "doc_count_error_upper_bound" : 0,
+                              "sum_other_doc_count" : 1,
+                              "buckets" : [
+                                {
+                                  "key" : 93507855,
+                                  "doc_count" : 1
+                                }
+                              ]
+                            }
+                          }
+                        ],
+                        "interval" : "12h"
+                      }
+                    }
+                  ]
+                }
               }
-            },
-            {
-              "_source" : {
-                "buildId" : 87783396,
-                "buildTimestamp" : "2020-09-21T12:34:19+0000",
-                "metrics" : [
-                  {"metricName" : "NonNullAssertion", "metricValue" : 32, "metricError" : 1 },
-                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 189, "metricError" : 4 }
-                ],
-                "benchmark" : "highlight"
-              }
-            },
-            {
-              "_source" : {
-                "buildId" : 87809918,
-                "buildTimestamp" : "2020-09-21T16:47:11+0000",
-                "metrics" : [
-                  {"metricName" : "NonNullAssertion", "metricValue" : 30, "metricError" : 1 },
-                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 188, "metricError" : 4 }
-                ],
-                "benchmark" : "highlight"
-              }
-            },
-            {
-              "_source" : {
-                "buildId" : 87905203,
-                "buildTimestamp" : "2020-09-22T13:23:44+0000",
-                "metrics" : [
-                  {"metricName" : "NonNullAssertion", "metricValue" : 30, "metricError" : 1 },
-                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 180, "metricError" : 4 }
-                ],
-                "benchmark" : "highlight"
-              }
-            },
-            {
-              "_source" : {
-                "buildId" : 87894638,
-                "buildTimestamp" : "2020-09-22T09:12:16+0000",
-                "metrics" : [
-                  {"metricName" : "NonNullAssertion", "metricValue" : 32, "metricError" : 1 },
-                  {"metricName" : "PropertiesWithPropertyDeclarations", "metricValue" : 193, "metricError" : 4 }
-                ],
-                "benchmark" : "highlight"
-              }
-            }
-          ]
+            ]
+          }
         }
       },
       "url": {
@@ -161,45 +215,91 @@
         //"comment": "it's a body of ES _search query to check query place it into `POST /kotlin_ide_benchmarks*/_search`",
         //"comment": "it uses Kibana specific %timefilter% for time frame selection",
         "body": {
-          "size": 1000,
+          "size": 0,
           "query": {
             "bool": {
               "must": [
+                {
+                  "bool": {
+                    "must_not": [
+                       {"exists": {"field": "warmUp"}},
+                       {"exists": {"field": "synthetic"}}
+                     ]
+                   }
+                },
                 {"term": {"benchmark.keyword": "highlight"}},
                 {"range": {"buildTimestamp": {"%timefilter%": true}}}
               ]
             }
           },
-          "_source": [
-            "buildId",
-            "benchmark",
-            "buildTimestamp",
-            "metrics.hasError",
-            "metrics.metricName",
-            "metrics.metricValue",
-            "metrics.metricError"
-          ],
-          "sort": [{"buildTimestamp": {"order": "asc"}}]
+          "aggs": {
+            "benchmark": {
+              "terms": {
+                "field": "benchmark.keyword",
+                "size": 500
+              },
+              "aggs": {
+                "name": {
+                  "terms": {
+                    "field": "name.keyword",
+                    "size": 500
+                  },
+                  "aggs": {
+                    "values": {
+                      "auto_date_histogram": {
+                          "buckets": 500,
+                          "field": "buildTimestamp",
+                          "minimum_interval": "hour"
+                      },
+                      "aggs": {
+                        "buildId": {
+                          "terms": {
+                            "size": 1,
+                            "field": "buildId"
+                          }
+                        },
+                        "branch": {
+                          "terms": {
+                            "size": 1,
+                            "field": "buildBranch.keyword"
+                          }
+                        },
+                        "avgValue":{
+                          "avg": {
+                            "field": "metricValue"
+                          }
+                        },
+                        "avgError":{
+                          "avg": {
+                            "field": "metricError"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       },
-      "format": {"property": "hits.hits"},
+      "format": {"property": "aggregations"},
       "comment": "we need to have follow data: \"buildId\", \"metricName\", \"metricValue\" and \"metricError\"",
       "comment": "so it has to be array of {\"buildId\": \"...\", \"metricName\": \"...\", \"metricValue\": ..., \"metricError\": ...}",
       "transform": [
-        {"type": "collect","sort": {"field": "_source.buildTimestamp"}},
-        {"type": "flatten", "fields": ["_source.metrics"], "as": ["metrics"]},
-        {
-          "type": "project",
-          "fields": [
-            "_source.buildId",
-            "_source.buildTimestamp",
-            "metrics.hasError",
-            "metrics.metricName",
-            "metrics.metricValue",
-            "metrics.metricError"
-          ],
-          "as": ["buildId", "buildTimestamp", "hasError", "metricName", "metricValue", "metricError"]
-        },
+        {"type": "project", "fields": ["benchmark"]},
+        {"type": "flatten", "fields": ["benchmark.buckets"], "as": ["benchmark_buckets"]},
+        {"type": "project", "fields": ["benchmark_buckets.key", "benchmark_buckets.name"], "as": ["benchmark", "benchmark_buckets_name"]},
+        {"type": "flatten", "fields": ["benchmark_buckets_name.buckets"], "as": ["name_buckets"]},
+        {"type": "project", "fields": ["benchmark", "name_buckets.key", "name_buckets.values"], "as": ["benchmark", "name", "name_values"]},
+        {"type": "flatten", "fields": ["name_values.buckets"], "as": ["name_values_buckets"]},
+        {"type": "project", "fields": ["benchmark", "name", "name_values_buckets.key", "name_values_buckets.key_as_string", "name_values_buckets.avgError", "name_values_buckets.avgValue", "name_values_buckets.buildId.buckets", "name_values_buckets.branch.buckets"], "as": ["benchmark", "metricName", "buildTimestamp", "timestamp_value", "avgError", "avgValue", "buildId_buckets", "branch_buckets"]},
+        {"type": "formula", "as": "metricError", "expr": "datum.avgError.value"},
+        {"type": "formula", "as": "metricValue", "expr": "datum.avgValue.value"},
+        {"type": "flatten", "fields": ["buildId_buckets"], "as": ["buildId_values"]},
+        {"type": "flatten", "fields": ["branch_buckets"], "as": ["branch_values"]},
+        {"type": "formula", "as": "buildId", "expr": "datum.buildId_values.key"},
+        {"type": "formula", "as": "branch", "expr": "datum.branch_values.key"},
         {
           "type": "formula",
           "as": "timestamp",
@@ -210,7 +310,8 @@
           "type": "formula",
           "as": "url",
           "expr": "'https://buildserver.labs.intellij.net/buildConfiguration/Kotlin_Benchmarks_PluginPerformanceTests_IdeaPluginPerformanceTests/' + datum.buildId"
-        }
+        },
+        {"type": "collect","sort": {"field": "timestamp"}}
       ]
     },
     {
@@ -221,6 +322,15 @@
         {"trigger": "!shift && clicked", "insert": "clicked"},
         {"trigger": "shift && clicked", "toggle": "clicked"}
       ]
+    },
+    {
+        "name": "selectedBranch",
+        "on": [
+         {"trigger": "clear", "remove": true},
+         {"trigger": "!branchShift", "remove": true},
+         {"trigger": "!branchShift && branchClicked", "insert": "branchClicked"},
+         {"trigger": "branchShift && branchClicked", "toggle": "branchClicked"}
+        ]
     }
   ],
   "axes": [
@@ -281,6 +391,12 @@
       "zero": true,
       "domain": {"data": "table", "field": "metricError"},
       "range": [1, 100]
+    },
+    {
+      "name": "branchColor",
+      "type": "ordinal",
+      "domain": {"data": "table", "field": "branch"},
+      "range": "category"
     }
   ],
   "legends": [
@@ -291,6 +407,7 @@
       "padding": 8,
       "cornerRadius": 4,
       "symbolLimit": 50,
+      "labelLimit": 300,
       "encode": {
         "symbols": {
           "name": "legendSymbol",
@@ -324,6 +441,48 @@
           }
         }
       }
+    },
+    {
+      "title": "Branches",
+      "stroke": "branchColor",
+      "fill": "branchColor",
+      "strokeColor": "#ccc",
+      "padding": 8,
+      "cornerRadius": 4,
+      "symbolLimit": 50,
+      "labelLimit": 300,
+      "encode": {
+        "symbols": {
+          "name": "branchLegendSymbol",
+          "interactive": true,
+          "update": {
+            "strokeWidth": {"value": 2},
+            "opacity": [
+              {
+                "comment": "here `datum` is `selectedBranch` data set",
+                "test": "!length(data('selectedBranch')) || indata('selectedBranch', 'value', datum.value)",
+                "value": 0.7
+              },
+              {"value": 0.15}
+            ],
+            "size": {"value": 64}
+          }
+        },
+        "labels": {
+          "name": "branchLegendLabel",
+          "interactive": true,
+          "update": {
+            "opacity": [
+              {
+                "comment": "here `datum` is `selectedBranch` data set",
+                "test": "!length(data('selectedBranch')) || indata('selectedBranch', 'value', datum.value)",
+                "value": 1
+              },
+              {"value": 0.25}
+            ]
+          }
+        }
+      }
     }
   ],
   "marks": [
@@ -333,6 +492,42 @@
         "facet": {"name": "series", "data": "table", "groupby": "metricName"}
       },
       "marks": [
+        {
+          "type": "text",
+          "from": {"data": "series"},
+          "encode": {
+            "update": {
+              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}},
+              "align": {"value": "center"},
+              "y": {"value": -10},
+              "angle": {"value": 90},
+              "fill": {"value": "#000"},
+              "text": [{"test": "datum.branch != 'master'", "field": "branch"}, {"value": ""}],
+              "fontSize": {"value": 10},
+              "font": {"value": "monospace"}
+            }
+          }
+        },
+        {
+          "type": "rect",
+          "from": {"data": "series"},
+          "encode": {
+            "update": {
+              "x": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}, "offset":-5},
+              "x2": {"scale": "x", "field": {"signal": "timestamp ? 'timestamp' : 'buildId'"}, "offset": 5},
+              "y": {"value": 0},
+              "y2": {"signal": "height"},
+              "fill": [{"test": "datum.branch != 'master'", "scale": "branchColor", "field": "branch"}, {"value": ""}],
+              "opacity": [
+                  {
+                    "test": "(!domain || inrange(datum.branch, domain)) && (!length(data('selectedBranch')) || indata('selectedBranch', 'value', datum.branch))",
+                    "value": 0.1
+                  },
+                  {"value": 0.01}
+                ]
+            }
+          }
+        },
         {
           "type": "line",
           "from": {"data": "series"},

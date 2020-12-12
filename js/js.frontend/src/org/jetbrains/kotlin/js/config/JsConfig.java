@@ -164,9 +164,6 @@ public class JsConfig {
             return false;
         }
 
-        VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
-        VirtualFileSystem jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL);
-
         Set<String> modules = new HashSet<>();
 
         boolean skipMetadataVersionCheck = getLanguageVersionSettings().getFlag(AnalysisFlags.getSkipMetadataVersionCheck());
@@ -174,23 +171,9 @@ public class JsConfig {
         for (String path : libraries) {
             if (librariesToSkip != null && librariesToSkip.contains(path)) continue;
 
-            VirtualFile file;
-
             File filePath = new File(path);
             if (!filePath.exists()) {
                 report.error("Path '" + path + "' does not exist");
-                return true;
-            }
-
-            if (path.endsWith(".jar") || path.endsWith(".zip")) {
-                file = jarFileSystem.findFileByPath(path + URLUtil.JAR_SEPARATOR);
-            }
-            else {
-                file = fileSystem.findFileByPath(path);
-            }
-
-            if (file == null) {
-                report.error("File '" + path + "' does not exist or could not be read");
                 return true;
             }
 

@@ -6,14 +6,14 @@ FILE: main.kt
             ^ Int(1)
         }
     public final fun bar(a: R|A|): R|kotlin/Unit| {
-        R|<local>/a|.R|/foo|.R|tests/_checkType/checkType|<R|kotlin/Int|>(checkType@fun R|tests/_checkType/Inv<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| {
-            this@R|special/anonymous|.R|tests/_checkType/_|<R|kotlin/Int|>()
+        R|<local>/a|.R|/foo|.R|/checkType|<R|kotlin/Int|>(checkType@fun R|CheckTypeInv<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|/_|<R|kotlin/Int|>()
         }
         )
     }
     public final fun R|JavaClass|.bar(a: R|A|): R|kotlin/Unit| {
-        R|<local>/a|.R|/foo|.R|tests/_checkType/checkType|<R|kotlin/Int|>(checkType@fun R|tests/_checkType/Inv<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| {
-            this@R|special/anonymous|.R|tests/_checkType/_|<R|kotlin/Int|>()
+        R|<local>/a|.R|/foo|.R|/checkType|<R|kotlin/Int|>(checkType@fun R|CheckTypeInv<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| {
+            this@R|special/anonymous|.R|/_|<R|kotlin/Int|>()
         }
         )
     }
@@ -21,13 +21,13 @@ FILE: CHECK_TYPE.kt
     public final fun <T> checkSubtype(t: R|T|): R|T| {
         ^checkSubtype R|<local>/t|
     }
-    public final class Inv<T> : R|kotlin/Any| {
-        public constructor<T>(): R|tests/_checkType/Inv<T>| {
+    public final class CheckTypeInv<T> : R|kotlin/Any| {
+        public constructor<T>(): R|CheckTypeInv<T>| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final fun <E> R|tests/_checkType/Inv<E>|._(): R|kotlin/Unit| {
+    public final fun <E> R|CheckTypeInv<E>|._(): R|kotlin/Unit| {
     }
-    public final infix fun <T> R|T|.checkType(f: R|tests/_checkType/Inv<T>.() -> kotlin/Unit|): R|kotlin/Unit| {
+    public final infix fun <T> R|T|.checkType(f: R|CheckTypeInv<T>.() -> kotlin/Unit|): R|kotlin/Unit| {
     }

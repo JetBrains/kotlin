@@ -19,5 +19,5 @@ FILE: ifWithCR.kt
             }
         }
 
-        R|<local>/x|.R|FakeOverride<kotlin/reflect/KMutableProperty0.get: R|kotlin/CharSequence?|>|()
+        R|<local>/x|.R|SubstitutionOverride<kotlin/reflect/KMutableProperty0.get: R|kotlin/CharSequence?|>|()
     }
