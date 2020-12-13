@@ -130,18 +130,15 @@ testOutputStdlib.mkdirs()
 
 konanArtifacts {
     library('testLibrary') {
-        if (!useCustomDist) {
-            dependsOn ':dist'
-        }
         srcDir 'testLibrary'
     }
     def target = project.testTarget ?: 'host'
     library('baseTestClass', targets: [target]) {
-        if (!useCustomDist) {
-            dependsOn ':dist'
-        }
         srcFiles 'testing/library.kt'
     }
+}
+configure(project.tasks.findByName("compileKonanBaseTestClass${UtilsKt.getTestTargetSuffix(project)}")) {
+  UtilsKt.dependsOnDist(it)
 }
 
 def installTestLib = tasks.register("installTestLibrary", KlibInstall) {
@@ -187,14 +184,8 @@ run {
 }
 
 task sanity {
-    def platformLibsTasks = targetList.collect { ":kotlin-native:${it}PlatformLibs" } + ":distPlatformLibs"
-    dependsOn(tasksOf(KonanTest) { task ->
-        task.getDependsOn().every { !platformLibsTasks.contains(it) } &&
-        task.name != "library_mismatch" // This test requires the wasm32 stdlib which is unavailable during a sanity run.
-    })
-    dependsOn(tasksOf(FrameworkTest) { task ->
-        task.getDependsOn().every { !platformLibsTasks.contains(it) }
-    })
+    dependsOn(tasksOf(KonanTest))
+    dependsOn(tasksOf(FrameworkTest))
     dependsOn(tasksOf(MetadataComparisonTest))
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
@@ -238,17 +229,6 @@ boolean isExcluded(String dir) {
         }
     }
     return result
-}
-
-void dependsOnPlatformLibs(Task t) {
-    if (!useCustomDist) {
-        def testTarget = project.target
-        if (testTarget != project.platformManager.Companion.host) {
-            t.dependsOn(":${testTarget}PlatformLibs")
-        } else {
-            t.dependsOn(':kotlin-native:distPlatformLibs')
-        }
-    }
 }
 
 /**
@@ -2112,10 +2092,10 @@ linkTest("link_omit_unused") {
 }
 
 standaloneTest("link_default_libs") {
-    dependsOnPlatformLibs(it)
     enabled = (project.testTarget != 'wasm32') // there will be no posix.klib for wasm
     goldValue = "sizet = 0\n"
     source = "link/default/default.kt"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 standaloneTest("link_testLib_explicitly") {
@@ -2134,11 +2114,11 @@ standaloneTest("link_testLib_explicitly") {
 }
 
 linkTest("no_purge_for_dependencies") {
-    dependsOnPlatformLibs(it)
     enabled = (project.testTarget != 'wasm32') // there will be no posix.klib for wasm
     goldValue = "linked library\nand symbols from posix available: 17; 1.0\n"
     source = "link/purge1/prog.kt"
     lib = "link/purge1/lib.kt"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 task for0(type: KonanLocalTest) {
@@ -3917,10 +3897,10 @@ Task interopTestMultifile(String name, Closure<KonanInteropTest> configureClosur
 }
 
 standaloneTest("interop_objc_allocException") {
-    dependsOnPlatformLibs(it)
     disabled = !isAppleTarget(project)
     expectedExitStatus = 0
     source = "interop/objc/allocException.kt"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 interopTest("interop0") {
@@ -3971,10 +3951,10 @@ interopTest("interop4") {
 }
 
 standaloneTest("interop5") {
-    dependsOnPlatformLibs(it)
     enabled = (project.testTarget != 'wasm32') // No interop for wasm yet.
     goldValue = "Hello!\n"
     source = "interop/basics/5.kt"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 interopTest("interop_bitfields") {
@@ -4285,7 +4265,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_foreignException") {
         source = "interop/objc/foreignException/objc_wrap.kt"
         interop = 'foreignException'
-        dependsOnPlatformLibs(it)
+        UtilsKt.dependsOnPlatformLibs(it)
 
         doBeforeBuild {
             mkdir(buildDir)
@@ -4304,7 +4284,7 @@ if (PlatformInfo.isAppleTarget(project)) {
         source = "interop/objc/foreignException/objcExceptionMode.kt"
         interop = 'foreignExceptionMode_wrap'
         goldValue = "OK: ForeignException\n"
-        dependsOnPlatformLibs(it)
+        UtilsKt.dependsOnPlatformLibs(it)
 
         doBeforeBuild {
             mkdir(buildDir)
@@ -4323,7 +4303,7 @@ if (PlatformInfo.isAppleTarget(project)) {
         source = "interop/objc/foreignException/objcExceptionMode.kt"
         interop = 'foreignExceptionMode_default'
         goldValue = "OK: Ends with uncaught exception handler\n"
-        dependsOnPlatformLibs(it)
+        UtilsKt.dependsOnPlatformLibs(it)
 
         doBeforeBuild {
             mkdir(buildDir)
@@ -4394,24 +4374,24 @@ standaloneTest("jsinterop_math") {
 }
 
 standaloneTest("interop_libiconv") {
-    dependsOnPlatformLibs(it)
     enabled = (project.testTarget == null)
     source = "interop/libiconv.kt"
     goldValue = "72 72\n101 101\n108 108\n108 108\n111 111\n33 33\n"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 standaloneTest("interop_zlib") {
-    dependsOnPlatformLibs(it)
     enabled = (project.testTarget == null)
     source = "interop/platform_zlib.kt"
     goldValue = "Hello!\nHello!\n"
+    UtilsKt.dependsOnPlatformLibs(it)
 }
 
 standaloneTest("interop_objc_illegal_sharing") {
-    dependsOnPlatformLibs(it)
     disabled = !isAppleTarget(project) ||
         isExperimentalMM  // Experimental MM doesn't support multiple mutators yet.
     source = "interop/objc/illegal_sharing.kt"
+    UtilsKt.dependsOnPlatformLibs(it)
     expectedExitStatusChecker = { it != 0 }
     outputChecker = {
       it.startsWith("Before") && !it.contains("After")
@@ -4546,8 +4526,8 @@ tasks.register("library_mismatch", KonanDriverTest) {
 
     if (!useCustomDist) {
         // we actually need any target other than the current one.
-        dependsOn ':wasm32CrossDistRuntime'
-        dependsOn ':wasm32CrossDistEndorsedLibraries'
+        dependsOn ':kotlin-native:wasm32CrossDistRuntime'
+        dependsOn ':kotlin-native:wasm32CrossDistEndorsedLibraries'
     }
 
     doBeforeBuild {
@@ -4627,6 +4607,7 @@ linkTest("private_fake_overrides_1") {
 Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
     return KotlinNativeTestKt.createTest(project, name, FrameworkTest) { task ->
         configurator.delegate = task
+        UtilsKt.dependsOnDist(task)
         configurator()
         if (task.enabled) {
             konanArtifacts {
@@ -4646,10 +4627,6 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
                             UtilsKt.dependsOnKonanBuildingTask(task, fr.library, target)
                         }
 
-                        if (!useCustomDist) {
-                            dependsOn ":kotlin-native:${target.name}CrossDistRuntime", ':kotlin-native:distCompiler'
-                        }
-
                         extraOpts fr.bitcode ? "-Xembed-bitcode" : "-Xembed-bitcode-marker"
                         if (fr.isStatic) extraOpts "-Xstatic-framework"
                         extraOpts fr.opts
@@ -4657,6 +4634,7 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
 
                         artifactName fr.artifact
                     }
+                    UtilsKt.dependsOnDist(project.tasks.findByName("compileKonan${fr.name.capitalize()}${UtilsKt.getTestTargetSuffix(project)}"))
                 }
             }
         }
