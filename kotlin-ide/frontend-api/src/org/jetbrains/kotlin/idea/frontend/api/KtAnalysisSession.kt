@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.psi.*
  */
 abstract class KtAnalysisSession(final override val token: ValidityToken) : ValidityTokenOwner {
     protected abstract val smartCastProvider: KtSmartCastProvider
-    protected abstract val typeProvider: KtTypeProvider
     protected abstract val diagnosticProvider: KtDiagnosticProvider
     protected abstract val scopeProvider: KtScopeProvider
     protected abstract val containingDeclarationProvider: KtSymbolContainingDeclarationProvider
@@ -45,7 +44,11 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     protected abstract val completionCandidateChecker: KtCompletionCandidateChecker
     protected abstract val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider
     @Suppress("LeakingThis")
+
     protected open val typeRenderer: KtTypeRenderer = KtDefaultTypeRenderer(this, token)
+    protected abstract val expressionTypeProvider: KtExpressionTypeProvider
+    protected abstract val typeProvider: KtTypeProvider
+    protected abstract val subtypingComponent: KtSubtypingComponent
     protected abstract val expressionHandlingComponent: KtExpressionHandlingComponent
 
     /// TODO: get rid of
@@ -59,17 +62,19 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     fun KtExpression.getImplicitReceiverSmartCasts(): Collection<ImplicitReceiverSmartCast> = smartCastProvider.getImplicitReceiverSmartCasts(this)
 
-    fun KtExpression.getKtType(): KtType = typeProvider.getKtExpressionType(this)
+    fun KtExpression.getKtType(): KtType = expressionTypeProvider.getKtExpressionType(this)
 
-    fun KtDeclaration.getReturnKtType(): KtType = typeProvider.getReturnTypeForKtDeclaration(this)
+    fun KtDeclaration.getReturnKtType(): KtType = expressionTypeProvider.getReturnTypeForKtDeclaration(this)
 
-    infix fun KtType.isEqualTo(other: KtType): Boolean = typeProvider.isEqualTo(this, other)
+    infix fun KtType.isEqualTo(other: KtType): Boolean = subtypingComponent.isEqualTo(this, other)
 
-    infix fun KtType.isSubTypeOf(superType: KtType): Boolean = typeProvider.isSubTypeOf(this, superType)
+    infix fun KtType.isSubTypeOf(superType: KtType): Boolean = subtypingComponent.isSubTypeOf(this, superType)
 
-    fun PsiElement.getExpectedType(): KtType? = typeProvider.getExpectedType(this)
+    fun PsiElement.getExpectedType(): KtType? = expressionTypeProvider.getExpectedType(this)
 
     fun KtType.isBuiltInFunctionalType(): Boolean = typeProvider.isBuiltinFunctionalType(this)
+
+    val builtinTypes: KtBuiltinTypes get() = typeProvider.builtinTypes
 
     fun KtElement.getDiagnostics(): Collection<Diagnostic> = diagnosticProvider.getDiagnosticsForElement(this)
 

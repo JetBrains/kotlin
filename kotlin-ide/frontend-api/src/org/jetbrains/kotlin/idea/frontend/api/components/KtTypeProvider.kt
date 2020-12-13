@@ -5,26 +5,16 @@
 
 package org.jetbrains.kotlin.idea.frontend.api.components
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
 
 abstract class KtTypeProvider : KtAnalysisSessionComponent() {
-    abstract fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType
-    abstract fun getKtExpressionType(expression: KtExpression): KtType
-
-    abstract fun isEqualTo(first: KtType, second: KtType): Boolean
-    abstract fun isSubTypeOf(subType: KtType, superType: KtType): Boolean
-
-    //TODO get rid of
+    //TODO get rid of it
     abstract fun isBuiltinFunctionalType(type: KtType): Boolean
-
-    abstract fun getExpectedType(expression: PsiElement): KtType?
 
     abstract val builtinTypes: KtBuiltinTypes
 }
+
 
 @Suppress("PropertyName")
 abstract class KtBuiltinTypes : ValidityTokenOwner {
