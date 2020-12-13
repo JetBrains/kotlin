@@ -73,7 +73,9 @@ sealed class WasmImmediate {
     }
 
     class DataIdx(val value: Int) : WasmImmediate()
-    class TableIdx(val value: Int) : WasmImmediate()
+    class TableIdx(val value: WasmSymbolReadOnly<Int>) : WasmImmediate() {
+        constructor(value: Int) : this(WasmSymbol(value))
+    }
 
     class LabelIdx(val value: Int) : WasmImmediate()
     class LabelIdxVector(val value: List<Int>) : WasmImmediate()

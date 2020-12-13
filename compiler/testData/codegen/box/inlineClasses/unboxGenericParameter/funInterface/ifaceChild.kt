@@ -1,3 +1,5 @@
+// DONT_TARGET_EXACT_BACKEND: WASM
+// WASM_MUTE_REASON: SAM_CONVERSIONS
 // !LANGUAGE: +InlineClasses
 
 fun <T> underlying(a: IC): T = bar(a) {
