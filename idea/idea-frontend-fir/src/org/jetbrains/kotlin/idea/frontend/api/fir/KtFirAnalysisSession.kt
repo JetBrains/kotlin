@@ -34,7 +34,7 @@ private constructor(
     }
 
     override val smartCastProvider: KtSmartCastProvider = KtFirSmartcastProvider(this, token)
-    override val typeProvider: KtTypeProvider = KtFirTypeProvider(this, token)
+    override val expressionTypeProvider: KtExpressionTypeProvider = KtFirExpressionTypeProvider(this, token)
     override val diagnosticProvider: KtDiagnosticProvider = KtFirDiagnosticProvider(this, token)
     override val containingDeclarationProvider = KtFirSymbolContainingDeclarationProvider(this, token)
     override val callResolver: KtCallResolver = KtFirCallResolver(this, token)
@@ -46,6 +46,8 @@ private constructor(
         KtFirSymbolDeclarationOverridesProvider(this, token)
 
     override val expressionHandlingComponent: KtExpressionHandlingComponent = KtFirExpressionHandlingComponent(this, token)
+    override val typeProvider: KtTypeProvider = KtFirTypeProvider(this, token)
+    override val subtypingComponent: KtSubtypingComponent = KtFirSubtypingComponent(this, token)
 
     override fun createContextDependentCopy(): KtAnalysisSession {
         check(!isContextSession) { "Cannot create context-dependent copy of KtAnalysis session from a context dependent one" }
