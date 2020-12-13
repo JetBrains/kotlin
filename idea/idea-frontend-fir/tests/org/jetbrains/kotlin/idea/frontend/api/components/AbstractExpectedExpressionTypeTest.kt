@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtReturnExpression
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.uitls.IgnoreTests
 import java.io.File
 
 abstract class AbstractExpectedExpressionTypeTest : KotlinLightCodeInsightFixtureTestCase() {
@@ -37,7 +38,9 @@ abstract class AbstractExpectedExpressionTypeTest : KotlinLightCodeInsightFixtur
             }
         }
 
-        KotlinTestUtils.assertEqualsToFile(File(path), testDataFile.getTextWithActualType(actualExpectedTypeText))
+        IgnoreTests.runTestWithFixMeSupport(testDataFile.toPath()) {
+            KotlinTestUtils.assertEqualsToFile(File(path), testDataFile.getTextWithActualType(actualExpectedTypeText))
+        }
     }
 
     private fun File.getTextWithActualType(actualType: String?) : String {
