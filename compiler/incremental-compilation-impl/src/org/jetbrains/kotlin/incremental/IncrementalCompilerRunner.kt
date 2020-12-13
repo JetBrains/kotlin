@@ -98,10 +98,9 @@ abstract class IncrementalCompilerRunner<
             val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
             return compileIncrementally(args, caches, allKotlinFiles, CompilationMode.Rebuild(reason), messageCollector)
         }
-        // attempt IC
-        // if OK or failed compilation - return
-        // internal error - clear
-        // failed to close - clear
+
+        // If compilation has crashed or we failed to close caches we have to clear them
+        var cachesMayBeCorrupted = true
         return try {
             val changedFiles = providedChangedFiles ?: caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
             val compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector)
@@ -116,12 +115,18 @@ abstract class IncrementalCompilerRunner<
             }
 
             if (!caches.close(flush = true)) throw RuntimeException("Could not flush caches")
-
+            // Here we should analyze exit code of compiler. E.g. compiler failure should lead to caches rebuild,
+            // but now JsKlib compiler reports invalid exit code.
+            cachesMayBeCorrupted = false
             return exitCode
         } catch (e: Exception) { // todo: catch only cache corruption
             // todo: warn?
             reporter.report { "Rebuilding because of possible caches corruption: $e" }
             rebuild(BuildAttribute.CACHE_CORRUPTION)
+        } finally {
+            if (cachesMayBeCorrupted) {
+                clearLocalStateOnRebuild(args)
+            }
         }
     }
 
