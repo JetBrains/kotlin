@@ -255,7 +255,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         call: IrFunctionAccessExpression,
         function: IrFunction
     ): Boolean {
-        if (tryToGenerateWasmOpIntrinsicCall(function)) {
+        if (tryToGenerateWasmOpIntrinsicCall(call, function)) {
             return true
         }
 
@@ -486,7 +486,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
     }
 
     // Return true if function is recognized as intrinsic.
-    fun tryToGenerateWasmOpIntrinsicCall(function: IrFunction): Boolean {
+    fun tryToGenerateWasmOpIntrinsicCall(call: IrFunctionAccessExpression, function: IrFunction): Boolean {
         if (function.hasWasmReinterpretAnnotation()) {
             return true
         }
@@ -509,6 +509,25 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
                                 error("Immediate $imm is unsupported")
                         }
                     )
+                }
+                2 -> {
+                    when (op) {
+                        WasmOp.REF_TEST -> {
+                            val fromIrType = call.getValueArgument(0)!!.type
+                            val fromWasmType = context.transformBoxedType(fromIrType)
+                            val toIrType = call.getTypeArgument(0)!!
+                            val toWasmType = context.transformBoxedType(toIrType)
+                            immediates = arrayOf(
+                                WasmImmediate.HeapType(fromWasmType),
+                                WasmImmediate.HeapType(toWasmType),
+                            )
+
+                            // ref.test takes RTT as a second operand
+                            generateTypeRTT(toIrType)
+                        }
+                        else ->
+                            error("Op $opString is unsupported")
+                    }
                 }
                 else ->
                     error("Op $opString is unsupported")

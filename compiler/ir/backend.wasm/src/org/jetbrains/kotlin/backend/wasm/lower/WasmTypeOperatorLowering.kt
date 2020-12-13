@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.erasedUpperBound
-import org.jetbrains.kotlin.ir.util.isPure
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
@@ -276,12 +275,25 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     }
 
     private fun generateIsSubClass(argument: IrExpression, toType: IrType): IrExpression {
-        val classId = builder.irCall(symbols.wasmClassId).apply {
-            putTypeArgument(0, toType)
+        val fromType = argument.type
+        val fromTypeErased = fromType.erasedType
+        val toTypeErased = toType.erasedType
+        if (fromTypeErased.isSubtypeOfClass(toTypeErased.classOrNull!!)) {
+            return builder.irComposite {
+                +argument
+                +builder.irTrue()
+            }
         }
-        return builder.irCall(symbols.isSubClass).apply {
+        if (!toTypeErased.isSubtypeOfClass(fromTypeErased.classOrNull!!)) {
+            return builder.irComposite {
+                +argument
+                +builder.irFalse()
+            }
+        }
+
+        return builder.irCall(symbols.refTest).apply {
             putValueArgument(0, argument)
-            putValueArgument(1, classId)
+            putTypeArgument(0, toType)
         }
     }
 }
