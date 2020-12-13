@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import com.intellij.lang.jvm.source.JvmDeclarationSearch
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.*
@@ -19,6 +18,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.IrInlineReferenceLocator
 import org.jetbrains.kotlin.codegen.coroutines.COROUTINE_LABEL_FIELD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
+import org.jetbrains.kotlin.codegen.coroutines.normalize
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -27,21 +27,17 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
-import org.jetbrains.kotlin.ir.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.org.objectweb.asm.Type
 
 internal val suspendLambdaPhase = makeIrFilePhase(
     ::SuspendLambdaLowering,
@@ -168,19 +164,37 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                         + context.irBuiltIns.anyNType
             )
             superTypes = listOf(suspendLambda.defaultType, functionNType)
+            val usedParams = ArrayList<IrSymbolOwner>(function.explicitParameters.size)
+
+            // marking the parameters referenced in the function
+            function.acceptChildrenVoid(
+                object : IrElementVisitorVoid {
+                    override fun visitElement(element: IrElement) =
+                        if (element is IrDeclarationReference && element.symbol is IrValueParameterSymbol && element.symbol.owner in function.explicitParameters)
+                            usedParams += element.symbol.owner
+                        else
+                            element.acceptChildrenVoid(this)
+                },
+            )
 
             addField(COROUTINE_LABEL_FIELD_NAME, context.irBuiltIns.intType, JavaDescriptorVisibilities.PACKAGE_VISIBILITY)
+            val varsCountByType = HashMap<Type, Int>()
 
-            val parametersFields = function.explicitParameters.map {
+            val parametersFields = function.explicitParameters.filter { it in usedParams }.map {
                 addField {
+                    val normalizedType = context.typeMapper.mapType(it.type).normalize()
+                    val index = varsCountByType[normalizedType]?.plus(1) ?: 0
+                    varsCountByType[normalizedType] = index
                     // Rename `$this` to avoid being caught by inlineCodegenUtils.isCapturedFieldName()
-                    name = if (it.index < 0) Name.identifier("p\$") else it.name
+                    name = Name.identifier("${normalizedType.descriptor[0]}$$index")
                     type = it.type
                     origin = LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE
                     isFinal = false
                     visibility = if (it.index < 0) DescriptorVisibilities.PRIVATE else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
                 }
             }
+
+            context.continuationClassesVarsCountByType[this] = varsCountByType
             val constructor = addPrimaryConstructorForLambda(suspendLambda, arity)
             val invokeToOverride = functionNClass.functions.single {
                 it.owner.valueParameters.size == arity + 1 && it.owner.name.asString() == "invoke"
@@ -208,7 +222,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
                     it.valueParameters[0].type.isKotlinResult()
         }
         return addFunctionOverride(superMethod, irFunction.startOffset, irFunction.endOffset).apply {
-            val localVals: List<IrVariable> = fields.mapIndexed { index, field ->
+            val localVals: List<IrVariable> = fields.mapIndexed { _, field ->
                 buildVariable(
                     parent = this,
                     startOffset = UNDEFINED_OFFSET,
