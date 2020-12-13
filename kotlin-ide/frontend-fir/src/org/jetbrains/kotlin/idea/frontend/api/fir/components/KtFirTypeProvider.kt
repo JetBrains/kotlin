@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.idea.fir.low.level.api.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.assertIsValid
+import org.jetbrains.kotlin.idea.frontend.api.components.KtBuiltinTypes
 import org.jetbrains.kotlin.idea.frontend.api.components.KtTypeProvider
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
@@ -84,6 +85,9 @@ internal class KtFirTypeProvider(
         check(type is KtFirType)
         type.coneType.isBuiltinFunctionalType(analysisSession.firResolveState.rootModuleSession) //TODO use correct session here
     }
+
+    override val builtinTypes: KtBuiltinTypes =
+        KtFirBuiltInTypes(analysisSession.firResolveState.rootModuleSession.builtinTypes, analysisSession.firSymbolBuilder, token)
 
     private fun createTypeCheckerContext() = ConeTypeCheckerContext(
         isErrorTypeEqualsToAnything = true,
