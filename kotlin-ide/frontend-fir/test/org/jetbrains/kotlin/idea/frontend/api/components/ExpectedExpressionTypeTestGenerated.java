@@ -28,6 +28,26 @@ public class ExpectedExpressionTypeTestGenerated extends AbstractExpectedExpress
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/components/expectedExpressionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("functionLambdaParam.kt")
+    public void testFunctionLambdaParam() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/functionLambdaParam.kt");
+    }
+
+    @TestMetadata("functionNamedlParam.kt")
+    public void testFunctionNamedlParam() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/functionNamedlParam.kt");
+    }
+
+    @TestMetadata("functionParamWithTypeParam.kt")
+    public void testFunctionParamWithTypeParam() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/functionParamWithTypeParam.kt");
+    }
+
+    @TestMetadata("functionPositionalParam.kt")
+    public void testFunctionPositionalParam() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/functionPositionalParam.kt");
+    }
+
     @TestMetadata("ifCondition.kt")
     public void testIfCondition() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/ifCondition.kt");
