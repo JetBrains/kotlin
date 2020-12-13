@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.wasm.ir2wasm
 import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSignature
 import org.jetbrains.kotlin.backend.wasm.lower.wasmSignature
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -77,6 +79,23 @@ class ClassMetadata(
     private val virtualMethodsSignatures: Set<WasmSignature> =
         virtualMethods.map { it.signature }.toSet()
 }
+
+class InterfaceMetadata(
+    val iface: IrClass,
+    irBuiltIns: IrBuiltIns
+) {
+    val methods: List<VirtualMethodMetadata> =
+        iface.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .filter { !it.isFakeOverride && it.visibility != DescriptorVisibilities.PRIVATE && it.modality != Modality.FINAL }
+            .map {
+                VirtualMethodMetadata(
+                    it,
+                    it.wasmSignature(irBuiltIns)
+                )
+            }
+}
+
 
 class VirtualMethodMetadata(
     val function: IrSimpleFunction,

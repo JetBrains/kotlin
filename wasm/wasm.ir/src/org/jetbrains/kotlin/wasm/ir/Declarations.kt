@@ -76,7 +76,7 @@ class WasmData(
 ) : WasmNamedModuleField()
 
 class WasmTable(
-    val limits: WasmLimits = WasmLimits(1u, null),
+    var limits: WasmLimits = WasmLimits(1u, null),
     val elementType: WasmType,
     val importPair: WasmImportPair? = null
 ) : WasmNamedModuleField() {

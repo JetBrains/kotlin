@@ -23,3 +23,9 @@ class WasmIrExpressionBuilder(
     override val lastInstr: WasmOp?
         get() = expression.lastOrNull()?.operator
 }
+
+inline fun buildWasmExpression(body: WasmExpressionBuilder.() -> Unit): MutableList<WasmInstr> {
+    val res = mutableListOf<WasmInstr>()
+    WasmIrExpressionBuilder(res).body()
+    return res
+}

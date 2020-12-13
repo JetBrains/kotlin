@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.wasm.ir.*
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.ConstantDataElement
-import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmBaseCodegenContext
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.wasm.ir.*
 
 /**
  * Interface for generating WebAssembly module.
@@ -22,6 +20,7 @@ interface WasmModuleCodegenContext : WasmBaseCodegenContext {
     fun defineGcType(irClass: IrClassSymbol, wasmType: WasmTypeDeclaration)
     fun defineRTT(irClass: IrClassSymbol, wasmGlobal: WasmGlobal)
     fun defineFunctionType(irFunction: IrFunctionSymbol, wasmFunctionType: WasmFunctionType)
+    fun defineInterfaceMethodTable(irFunction: IrFunctionSymbol, wasmTable: WasmTable)
     fun addJsFun(importName: String, jsCode: String)
 
     fun setStartFunction(wasmFunction: WasmFunction)
@@ -32,4 +31,13 @@ interface WasmModuleCodegenContext : WasmBaseCodegenContext {
     fun registerClass(irClass: IrClassSymbol)
 
     fun generateTypeInfo(irClass: IrClassSymbol, typeInfo: ConstantDataElement)
+    fun generateInterfaceTable(irClass: IrClassSymbol, table: ConstantDataElement)
+
+    fun registerInterfaceImplementationMethod(
+        interfaceImplementation: InterfaceImplementation,
+        table: Map<IrFunctionSymbol, WasmSymbol<WasmFunction>>,
+    )
+
+    fun referenceInterfaceImplementationId(interfaceImplementation: InterfaceImplementation): WasmSymbol<Int>
+    fun referenceInterfaceTableAddress(irClass: IrClassSymbol): WasmSymbol<Int>
 }

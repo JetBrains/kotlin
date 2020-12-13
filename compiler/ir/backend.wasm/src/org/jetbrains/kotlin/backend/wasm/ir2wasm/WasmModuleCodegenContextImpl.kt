@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
-import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSignature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -20,6 +19,7 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.wasm.ir.*
 
 
 class WasmModuleCodegenContextImpl(
@@ -68,6 +68,10 @@ class WasmModuleCodegenContextImpl(
         wasmFragment.typeInfo.define(irClass, typeInfo)
     }
 
+    override fun generateInterfaceTable(irClass: IrClassSymbol, table: ConstantDataElement) {
+        wasmFragment.definedClassITableData.define(irClass, table)
+    }
+
     override fun setStartFunction(wasmFunction: WasmFunction) {
         wasmFragment.startFunction = wasmFunction
     }
@@ -108,6 +112,23 @@ class WasmModuleCodegenContextImpl(
         wasmFragment.functionTypes.define(irFunction, wasmFunctionType)
     }
 
+    override fun defineInterfaceMethodTable(irFunction: IrFunctionSymbol, wasmTable: WasmTable) {
+        wasmFragment.interfaceMethodTables.define(irFunction, wasmTable)
+    }
+
+    override fun referenceInterfaceImplementationId(
+        interfaceImplementation: InterfaceImplementation
+    ): WasmSymbol<Int> =
+        wasmFragment.referencedInterfaceImplementationId.reference(interfaceImplementation)
+
+
+    override fun registerInterfaceImplementationMethod(
+        interfaceImplementation: InterfaceImplementation,
+        table: Map<IrFunctionSymbol, WasmSymbol<WasmFunction>>
+    ) {
+        wasmFragment.interfaceImplementationsMethods[interfaceImplementation] = table
+    }
+
     private val classMetadataCache = mutableMapOf<IrClassSymbol, ClassMetadata>()
     override fun getClassMetadata(irClass: IrClassSymbol): ClassMetadata =
         classMetadataCache.getOrPut(irClass) {
@@ -143,6 +164,12 @@ class WasmModuleCodegenContextImpl(
     override fun referenceClassId(irClass: IrClassSymbol): WasmSymbol<Int> =
         wasmFragment.classIds.reference(irClass)
 
+    override fun referenceInterfaceTableAddress(irClass: IrClassSymbol): WasmSymbol<Int> {
+        if (irClass.owner.modality == Modality.ABSTRACT) return WasmSymbol(-1)
+        return wasmFragment.referencedClassITableAddresses.reference(irClass)
+    }
+
+
     override fun referenceInterfaceId(irInterface: IrClassSymbol): WasmSymbol<Int> {
         // HACK to substitute kotlin.Function5 with kotlin.wasm.internal.Function5
         val defaultType = irInterface.defaultType
@@ -162,6 +189,10 @@ class WasmModuleCodegenContextImpl(
     override fun referenceSignatureId(signature: WasmSignature): WasmSymbol<Int> {
         wasmFragment.signatures.add(signature)
         return wasmFragment.signatureId.reference(signature)
+    }
+
+    override fun referenceInterfaceTable(irFunction: IrFunctionSymbol): WasmSymbol<WasmTable> {
+        return wasmFragment.interfaceMethodTables.reference(irFunction)
     }
 
     override fun getStructFieldRef(field: IrField): WasmSymbol<Int> {
