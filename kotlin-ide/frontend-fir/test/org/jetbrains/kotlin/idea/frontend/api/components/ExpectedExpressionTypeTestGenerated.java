@@ -28,6 +28,16 @@ public class ExpectedExpressionTypeTestGenerated extends AbstractExpectedExpress
         KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("idea/idea-frontend-fir/testData/components/expectedExpressionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("ifCondition.kt")
+    public void testIfCondition() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/ifCondition.kt");
+    }
+
+    @TestMetadata("ifConditionQualified.kt")
+    public void testIfConditionQualified() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/ifConditionQualified.kt");
+    }
+
     @TestMetadata("returnFromFunction.kt")
     public void testReturnFromFunction() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/returnFromFunction.kt");
@@ -46,5 +56,15 @@ public class ExpectedExpressionTypeTestGenerated extends AbstractExpectedExpress
     @TestMetadata("returnFromLambda.kt")
     public void testReturnFromLambda() throws Exception {
         runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/returnFromLambda.kt");
+    }
+
+    @TestMetadata("whileCondition.kt")
+    public void testWhileCondition() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/whileCondition.kt");
+    }
+
+    @TestMetadata("whileConditionQualified.kt")
+    public void testWhileConditionQualified() throws Exception {
+        runTest("idea/idea-frontend-fir/testData/components/expectedExpressionType/whileConditionQualified.kt");
     }
 }
