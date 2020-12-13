@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.frontend.api.fir.components
 
 import com.intellij.psi.PsiElement
-import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
@@ -21,12 +20,10 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtQualifiedExpression
-import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import kotlin.reflect.KClass
 
 internal class KtFirTypeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -43,6 +40,7 @@ internal class KtFirTypeProvider(
 
     override fun getExpectedType(expression: PsiElement): KtType? =
         getExpectedTypeByReturnExpression(expression)
+            ?: getExpressionTypeByIfOrBooleanCondition(expression)
 
     private fun getExpectedTypeByReturnExpression(expression: PsiElement): KtType? {
         val returnParent = expression.getReturnExpressionWithThisType() ?: return null
@@ -50,14 +48,19 @@ internal class KtFirTypeProvider(
         return targetSymbol.type
     }
 
-    private fun PsiElement.getReturnExpressionWithThisType(): KtReturnExpression? {
-        val parent = parent
-        return when {
-            parent is KtReturnExpression && parent.returnedExpression == this -> parent
-            parent is KtQualifiedExpression && parent.selectorExpression == this -> parent.getReturnExpressionWithThisType()
-            else -> null
-        }
+    private fun PsiElement.getReturnExpressionWithThisType(): KtReturnExpression? =
+        unwrapQualified { returnExpr, target -> returnExpr.returnedExpression == target }
+
+    private fun getExpressionTypeByIfOrBooleanCondition(expression: PsiElement): KtType? = when {
+        expression.isWhileLoopCondition() || expression.isIfCondition() -> builtinTypes.BOOLEAN
+        else -> null
     }
+
+    private fun PsiElement.isWhileLoopCondition() =
+        unwrapQualified<KtWhileExpressionBase> { whileExpr, cond -> whileExpr.condition == cond } != null
+
+    private fun PsiElement.isIfCondition() =
+        unwrapQualified<KtIfExpression> { ifExpr, cond -> ifExpr.condition == cond } != null
 
     override fun isEqualTo(first: KtType, second: KtType): Boolean = withValidityAssertion {
         second.assertIsValid()
@@ -95,3 +98,24 @@ internal class KtFirTypeProvider(
         analysisSession.firResolveState.rootModuleSession //TODO use correct session here
     )
 }
+
+private inline fun <reified R : Any> PsiElement.unwrapQualified(check: (R, PsiElement) -> Boolean): R? {
+    val parent = nonContainerParent
+    return when {
+        parent is R && check(parent, this) -> parent
+        parent is KtQualifiedExpression && parent.selectorExpression == this -> {
+            val grandParent = parent.nonContainerParent
+            when {
+                grandParent is R && check(grandParent, parent) -> grandParent
+                else -> null
+            }
+        }
+        else -> null
+    }
+}
+
+private val PsiElement.nonContainerParent: PsiElement?
+    get() = when (val parent = parent) {
+        is KtContainerNode -> parent.parent
+        else -> parent
+    }
