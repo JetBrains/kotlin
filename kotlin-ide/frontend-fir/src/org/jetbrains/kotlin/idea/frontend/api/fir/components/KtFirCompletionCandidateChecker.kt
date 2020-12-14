@@ -92,13 +92,7 @@ internal class KtFirCompletionCandidateChecker(
         firFile: FirFile,
         fakeNameExpression: KtSimpleNameExpression
     ): Sequence<ImplicitReceiverValue<*>?> {
-        val enclosingContext = EnclosingDeclarationContext.detect(originalFile, fakeNameExpression)
-
-        val completionContext = completionContextCache.computeIfAbsent(firFile to enclosingContext.fakeEnclosingDeclaration) {
-            enclosingContext.buildCompletionContext(firFile, firResolveState)
-        }
-
-        val towerDataContext = completionContext.getTowerDataContext(fakeNameExpression)
+        val towerDataContext = analysisSession.towerDataContextProvider.getTowerDataContext(fakeNameExpression)
 
         return sequence {
             yield(null) // otherwise explicit receiver won't be checked when there are no implicit receivers in completion position

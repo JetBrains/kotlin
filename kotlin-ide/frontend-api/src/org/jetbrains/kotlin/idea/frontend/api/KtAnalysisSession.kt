@@ -43,6 +43,7 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     protected abstract val callResolver: KtCallResolver
     protected abstract val completionCandidateChecker: KtCompletionCandidateChecker
     protected abstract val symbolDeclarationOverridesProvider: KtSymbolDeclarationOverridesProvider
+
     @Suppress("LeakingThis")
 
     protected open val typeRenderer: KtTypeRenderer = KtDefaultTypeRenderer(this, token)
@@ -51,16 +52,15 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     protected abstract val subtypingComponent: KtSubtypingComponent
     protected abstract val expressionHandlingComponent: KtExpressionHandlingComponent
 
-    /// TODO: get rid of
-    @Deprecated("Used only in completion now, temporary")
-    abstract fun createContextDependentCopy(): KtAnalysisSession
+    abstract fun createContextDependentCopy(originalKtFile: KtFile, fakeKtElement: KtElement): KtAnalysisSession
 
     fun KtCallableSymbol.getOverriddenSymbols(containingDeclaration: KtClassOrObjectSymbol): List<KtCallableSymbol> =
         symbolDeclarationOverridesProvider.getOverriddenSymbols(this, containingDeclaration)
 
     fun KtExpression.getSmartCasts(): Collection<KtType> = smartCastProvider.getSmartCastedToTypes(this)
 
-    fun KtExpression.getImplicitReceiverSmartCasts(): Collection<ImplicitReceiverSmartCast> = smartCastProvider.getImplicitReceiverSmartCasts(this)
+    fun KtExpression.getImplicitReceiverSmartCasts(): Collection<ImplicitReceiverSmartCast> =
+        smartCastProvider.getImplicitReceiverSmartCasts(this)
 
     fun KtExpression.getKtType(): KtType = expressionTypeProvider.getKtExpressionType(this)
 
@@ -158,6 +158,6 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
     fun KtType.render(options: KtTypeRendererOptions = KtTypeRendererOptions.DEFAULT): String =
         typeRenderer.render(this, options)
 
-    fun KtReturnExpression.getReturnTargetSymbol(): KtFunctionLikeSymbol? =
+    fun KtReturnExpression.getReturnTargetSymbol(): KtCallableSymbol? =
         expressionHandlingComponent.getReturnExpressionTargetSymbol(this)
 }

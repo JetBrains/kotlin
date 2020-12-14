@@ -18,9 +18,9 @@ internal class KtFirExpressionHandlingComponent(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
 ) : KtExpressionHandlingComponent(), KtFirAnalysisSessionComponent {
-    override fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtFunctionLikeSymbol? {
+    override fun getReturnExpressionTargetSymbol(returnExpression: KtReturnExpression): KtCallableSymbol? {
         val fir = returnExpression.getOrBuildFirSafe<FirReturnExpression>(firResolveState) ?: return null
         val firTargetSymbol = fir.target.labeledElement
-        return firSymbolBuilder.buildCallableSymbol(firTargetSymbol) as KtFunctionLikeSymbol
+        return firSymbolBuilder.buildCallableSymbol(firTargetSymbol)
     }
 }
