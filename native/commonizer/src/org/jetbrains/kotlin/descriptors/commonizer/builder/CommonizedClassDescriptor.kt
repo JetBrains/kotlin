@@ -54,7 +54,11 @@ class CommonizedClassDescriptor(
     private val typeConstructor = CommonizedClassTypeConstructor(targetComponents, cirSupertypes)
     private val sealedSubclasses = targetComponents.storageManager.createLazyValue {
         // TODO: pass proper language version settings
-        SealedClassInheritorsProviderImpl.computeSealedSubclasses(this, freedomForSealedInterfacesSupported = false)
+        if (modality == Modality.SEALED) {
+            SealedClassInheritorsProviderImpl.computeSealedSubclasses(this, freedomForSealedInterfacesSupported = false)
+        } else {
+            emptyList()
+        }
     }
 
     private val declaredTypeParametersAndTypeParameterResolver = targetComponents.storageManager.createLazyValue {

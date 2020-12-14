@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 abstract class SealedClassInheritorsProvider {
+    /**
+     * This method may be called by compiler only for classes/interfaces with sealed modality
+     */
     abstract fun computeSealedSubclasses(
         sealedClass: ClassDescriptor,
         freedomForSealedInterfacesSupported: Boolean
