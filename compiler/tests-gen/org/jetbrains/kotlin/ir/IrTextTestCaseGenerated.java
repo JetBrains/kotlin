@@ -55,6 +55,11 @@ public class IrTextTestCaseGenerated extends AbstractIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/argumentReorderingInDelegatingConstructorCall.kt");
         }
 
+        @TestMetadata("clashingFakeOverrideSignatures.kt")
+        public void testClashingFakeOverrideSignatures() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/clashingFakeOverrideSignatures.kt");
+        }
+
         @TestMetadata("classMembers.kt")
         public void testClassMembers() throws Exception {
             runTest("compiler/testData/ir/irText/classes/classMembers.kt");

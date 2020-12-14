@@ -15937,6 +15937,11 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             runTest("compiler/testData/codegen/box/ir/anonymousObjectInsideElvis.kt");
         }
 
+        @TestMetadata("clashingFakeOverrideSignatures.kt")
+        public void testClashingFakeOverrideSignatures() throws Exception {
+            runTest("compiler/testData/codegen/box/ir/clashingFakeOverrideSignatures.kt");
+        }
+
         @TestMetadata("classInitializers.kt")
         public void testClassInitializers() throws Exception {
             runTest("compiler/testData/codegen/box/ir/classInitializers.kt");

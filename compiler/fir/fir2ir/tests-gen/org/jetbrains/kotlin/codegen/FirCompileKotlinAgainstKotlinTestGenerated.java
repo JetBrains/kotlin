@@ -54,6 +54,11 @@ public class FirCompileKotlinAgainstKotlinTestGenerated extends AbstractFirCompi
         runTest("compiler/testData/compileKotlinAgainstKotlin/callsToMultifileClassFromOtherPackage.kt");
     }
 
+    @TestMetadata("clashingFakeOverrideSignatures.kt")
+    public void testClashingFakeOverrideSignatures() throws Exception {
+        runTest("compiler/testData/compileKotlinAgainstKotlin/clashingFakeOverrideSignatures.kt");
+    }
+
     @TestMetadata("classInObject.kt")
     public void testClassInObject() throws Exception {
         runTest("compiler/testData/compileKotlinAgainstKotlin/classInObject.kt");
