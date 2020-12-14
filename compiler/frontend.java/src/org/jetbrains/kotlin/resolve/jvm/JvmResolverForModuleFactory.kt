@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.resolve.jvm
 
 import org.jetbrains.kotlin.analyzer.*
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.container.tryGetService
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -36,12 +38,14 @@ import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactoryService
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JvmPlatformParameters(
     val packagePartProviderFactory: (ModuleContent<*>) -> PackagePartProvider,
     val moduleByJavaClass: (JavaClass) -> ModuleInfo?,
     // params: referenced module info of target class, context module info of current resolver
     val resolverForReferencedModule: ((ModuleInfo, ModuleInfo) -> ResolverForModule?)? = null,
+    val useBuiltinsProviderForModule: (ModuleInfo) -> Boolean
 ) : PlatformAnalysisParameters
 
 
@@ -111,16 +115,15 @@ class JvmResolverForModuleFactory(
             packagePartProvider,
             languageVersionSettings,
             sealedInheritorsProvider = sealedInheritorsProvider,
-            useBuiltInsProvider = false // TODO: load built-ins from module dependencies in IDE
+            useBuiltInsProvider = platformParameters.useBuiltinsProviderForModule(moduleInfo)
         )
-
-        val resolveSession = container.get<ResolveSession>()
-        val javaDescriptorResolver = container.get<JavaDescriptorResolver>()
 
         val providersForModule = arrayListOf(
-            resolveSession.packageFragmentProvider,
-            javaDescriptorResolver.packageFragmentProvider
+            container.get<ResolveSession>().packageFragmentProvider,
+            container.get<JavaDescriptorResolver>().packageFragmentProvider,
         )
+
+        providersForModule.addIfNotNull(container.tryGetService(JvmBuiltInsPackageFragmentProvider::class.java))
 
         providersForModule +=
             PackageFragmentProviderExtension.getInstances(project)

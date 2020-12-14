@@ -9,6 +9,7 @@ import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.impl.scopes.LibraryScopeBase
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.roots.impl.libraries.LibraryEx
@@ -23,10 +24,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
-import org.jetbrains.kotlin.analyzer.CombinedModuleInfo
-import org.jetbrains.kotlin.analyzer.LibraryModuleInfo
-import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.analyzer.TrackableModuleInfo
+import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.caches.project.cacheByClassInvalidatingOnRootModifications
 import org.jetbrains.kotlin.caches.project.cacheInvalidatingOnRootModifications
 import org.jetbrains.kotlin.caches.resolve.resolution
@@ -37,8 +35,10 @@ import org.jetbrains.kotlin.idea.KotlinIdeaAnalysisBundle
 import org.jetbrains.kotlin.idea.caches.resolve.util.enlargedSearchScope
 import org.jetbrains.kotlin.idea.caches.trackers.KotlinModuleOutOfCodeBlockModificationTracker
 import org.jetbrains.kotlin.idea.configuration.BuildSystemType
+import org.jetbrains.kotlin.idea.configuration.IdeBuiltInsLoadingState
 import org.jetbrains.kotlin.idea.configuration.getBuildSystemType
 import org.jetbrains.kotlin.idea.core.isInTestSourceContentKotlinAware
+import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.framework.effectiveKind
 import org.jetbrains.kotlin.idea.framework.platform
 import org.jetbrains.kotlin.idea.klib.AbstractKlibLibraryInfo
@@ -48,11 +48,8 @@ import org.jetbrains.kotlin.idea.util.isInSourceContentWithoutInjected
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
-import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.*
 import org.jetbrains.kotlin.platform.compat.toOldPlatform
-import org.jetbrains.kotlin.platform.idePlatformKind
-import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -356,7 +353,25 @@ abstract class LibraryInfo(override val project: Project, val library: Library) 
         val (libraries, sdks) = LibraryDependenciesCache.getInstance(project).getLibrariesAndSdksUsedWith(this)
 
         result.addAll(sdks)
-        result.addAll(libraries)
+
+        /*
+        * When built-ins are created from module dependencies (as opposed to loading them from classloader)
+        * we must resolve Kotlin standard library containing some of the built-ins declarations in the same
+        * resolver for project as JDK. This comes from the following requirements:
+        * - JvmBuiltins need JDK and standard library descriptors -> resolver for project should be able to
+        *   resolve them
+        * - Builtins are created in BuiltinsCache -> module descriptors should be resolved under lock of the
+        *   SDK resolver to prevent deadlocks
+        * This means we have to maintain dependencies of the standard library manually or effectively drop
+        * resolver for SDK otherwise. Libraries depend on superset of their actual dependencies because of
+        * the inability to get real dependencies from IDEA model. So moving stdlib with all dependencies
+        * down is a questionable option.
+        */
+        if (!IdeBuiltInsLoadingState.isFromClassLoader && this.isCoreKotlinLibrary(project)) {
+            libraries.filterTo(result) { it.isCoreKotlinLibrary(project) }
+        } else {
+            result.addAll(libraries)
+        }
 
         return result.toList()
     }
@@ -432,10 +447,19 @@ data class SdkInfo(override val project: Project, val sdk: Sdk) : IdeaModuleInfo
     override fun dependencies(): List<IdeaModuleInfo> = listOf(this)
 
     override val platform: TargetPlatform
-        get() = JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): provide proper target version
+        get() = when {
+            sdk.sdkType is KotlinSdkType -> CommonPlatforms.defaultCommonPlatform
+            else -> JvmPlatforms.unspecifiedJvmPlatform // TODO(dsavvinov): provide proper target version
+        }
 
     override val analyzerServices: PlatformDependentAnalyzerServices
         get() = JvmPlatformAnalyzerServices
+
+    override val capabilities: Map<ModuleCapability<*>, Any?>
+        get() = when (this.sdk.sdkType) {
+            is JavaSdk -> super.capabilities + mapOf(JDK_CAPABILITY to true)
+            else -> super.capabilities
+        }
 }
 
 object NotUnderContentRootModuleInfo : IdeaModuleInfo {

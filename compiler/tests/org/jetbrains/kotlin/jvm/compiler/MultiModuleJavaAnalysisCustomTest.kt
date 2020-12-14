@@ -88,7 +88,8 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             moduleByJavaClass = { javaClass ->
                 val moduleName = javaClass.name.asString().toLowerCase().first().toString()
                 modules.first { it._name == moduleName }
-            }
+            },
+            useBuiltinsProviderForModule = { false }
         )
 
         val resolverForProject = object : AbstractResolverForProject<TestModule>(

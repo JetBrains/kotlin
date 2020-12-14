@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.context.GlobalContextImpl
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
+import org.jetbrains.kotlin.idea.caches.resolve.util.GlobalFacadeModuleFilters
 import org.jetbrains.kotlin.idea.caches.resolve.util.contextWithCompositeExceptionTracker
 import org.jetbrains.kotlin.idea.caches.trackers.outOfBlockModificationCount
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
@@ -174,13 +175,13 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         )
     }
 
-
     private inner class GlobalFacade(settings: PlatformAnalysisSettings) {
         private val sdkContext = GlobalContext(resolverForSdkName)
+        private val moduleFilters = GlobalFacadeModuleFilters(project)
         val facadeForSdk = ProjectResolutionFacade(
             "facadeForSdk", "$resolverForSdkName with settings=$settings",
             project, sdkContext, settings,
-            moduleFilter = { it is SdkInfo },
+            moduleFilter = moduleFilters::sdkFacadeFilter,
             dependencies = listOf(
                 LibraryModificationTracker.getInstance(project),
                 ProjectRootModificationTracker.getInstance(project)
@@ -194,7 +195,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             "facadeForLibraries", "$resolverForLibrariesName with settings=$settings",
             project, librariesContext, settings,
             reuseDataFrom = facadeForSdk,
-            moduleFilter = { it is LibraryInfo },
+            moduleFilter = moduleFilters::libraryFacadeFilter,
             invalidateOnOOCB = false,
             dependencies = listOf(
                 LibraryModificationTracker.getInstance(project),
@@ -207,7 +208,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             "facadeForModules", "$resolverForModulesName with settings=$settings",
             project, modulesContext, settings,
             reuseDataFrom = facadeForLibraries,
-            moduleFilter = { !it.isLibraryClasses() },
+            moduleFilter = moduleFilters::moduleFacadeFilter,
             dependencies = listOf(
                 LibraryModificationTracker.getInstance(project),
                 ProjectRootModificationTracker.getInstance(project)

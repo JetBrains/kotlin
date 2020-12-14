@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.analyzer.hasJdkCapability
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
@@ -115,6 +116,13 @@ class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory
 
         val dependencies = psi2irContext.moduleDescriptor.allDependencyModules.map {
             val kotlinLibrary = (it.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
+            if (it.hasJdkCapability) {
+                // For IDE environment only, i.e. when compiling for debugger
+                // Deserializer for built-ins module should exist because built-in types returned from SDK belong to that module,
+                // but JDK's built-ins module might not be in current module's dependencies
+                // We have to ensure that deserializer for built-ins module is created
+                irLinker.deserializeIrModuleHeader(it.builtIns.builtInsModule, null)
+            }
             irLinker.deserializeIrModuleHeader(it, kotlinLibrary)
         }
         val irProviders = listOf(irLinker)
