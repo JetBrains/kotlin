@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.idea.frontend.api.components.*
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
@@ -82,9 +83,11 @@ abstract class KtAnalysisSession(final override val token: ValidityToken) : Vali
 
     fun KtSymbolWithKind.getContainingSymbol(): KtSymbolWithKind? = containingDeclarationProvider.getContainingDeclaration(this)
 
-    fun KtSymbolWithDeclarations.getMemberScope(): KtMemberScope = scopeProvider.getMemberScope(this)
+    fun KtSymbolWithMembers.getMemberScope(): KtMemberScope = scopeProvider.getMemberScope(this)
 
-    fun KtSymbolWithDeclarations.getDeclaredMemberScope(): KtDeclaredMemberScope = scopeProvider.getDeclaredMemberScope(this)
+    fun KtSymbolWithMembers.getDeclaredMemberScope(): KtDeclaredMemberScope = scopeProvider.getDeclaredMemberScope(this)
+
+    fun KtFileSymbol.getFileScope(): KtDeclarationScope<KtSymbolWithDeclarations> = scopeProvider.getFileScope(this)
 
     fun KtPackageSymbol.getPackageScope(): KtPackageScope = scopeProvider.getPackageScope(this)
 

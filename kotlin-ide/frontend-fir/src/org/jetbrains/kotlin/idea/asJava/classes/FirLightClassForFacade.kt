@@ -22,11 +22,14 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.asJava.classes.createField
 import org.jetbrains.kotlin.idea.asJava.classes.createMethods
 import org.jetbrains.kotlin.idea.frontend.api.analyze
+import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
+import org.jetbrains.kotlin.idea.frontend.api.scopes.KtDeclarationScope
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.name.FqName
@@ -80,14 +83,17 @@ class FirLightClassForFacade(
     private val _ownMethods: List<KtLightMethod> by lazyPub {
         val result = mutableListOf<KtLightMethod>()
 
+
         val methodsAndProperties = sequence<KtCallableSymbol> {
             for (fileSymbol in fileSymbols) {
-                for (callableSymbol in fileSymbol.topLevelCallableSymbols) {
-                    if (callableSymbol !is KtFunctionSymbol && callableSymbol !is KtPropertySymbol) continue
-                    if (callableSymbol !is KtSymbolWithVisibility) continue
-                    val isPrivate = callableSymbol.toPsiVisibilityForMember(isTopLevel = true) == PsiModifier.PRIVATE
-                    if (isPrivate && multiFileClass) continue
-                    yield(callableSymbol)
+                analyzeWithSymbolAsContext(fileSymbol) {
+                    for (callableSymbol in fileSymbol.getFileScope().getCallableSymbols()) {
+                        if (callableSymbol !is KtFunctionSymbol && callableSymbol !is KtKotlinPropertySymbol) continue
+                        if (callableSymbol !is KtSymbolWithVisibility) continue
+                        val isPrivate = callableSymbol.toPsiVisibilityForMember(isTopLevel = true) == PsiModifier.PRIVATE
+                        if (isPrivate && multiFileClass) continue
+                        yield(callableSymbol)
+                    }
                 }
             }
         }
@@ -101,17 +107,17 @@ class FirLightClassForFacade(
     }
 
     private fun loadFieldsFromFile(
-        fileSymbol: KtFileSymbol,
+        fileScope: KtDeclarationScope<KtSymbolWithDeclarations>,
         nameGenerator: FirLightField.FieldNameGenerator,
         result: MutableList<KtLightField>
     ) {
-        for (propertySymbol in fileSymbol.topLevelCallableSymbols) {
+        for (propertySymbol in fileScope.getCallableSymbols()) {
 
-            if (propertySymbol !is KtPropertySymbol) continue
+            if (propertySymbol !is KtKotlinPropertySymbol) continue
 
-            if (propertySymbol is KtKotlinPropertySymbol && propertySymbol.isConst && multiFileClass) continue
+            if (propertySymbol.isConst && multiFileClass) continue
 
-            val isLateInitWithPublicAccessors = if (propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit) {
+            val isLateInitWithPublicAccessors = if (propertySymbol.isLateInit) {
                 val getterIsPublic = propertySymbol.getter?.toPsiVisibilityForMember(isTopLevel = true)
                     ?.let { it == PsiModifier.PUBLIC } ?: true
                 val setterIsPublic = propertySymbol.setter?.toPsiVisibilityForMember(isTopLevel = true)
@@ -120,7 +126,7 @@ class FirLightClassForFacade(
             } else false
 
             val forceStaticAndPropertyVisibility = isLateInitWithPublicAccessors ||
-                    (propertySymbol is KtKotlinPropertySymbol && propertySymbol.isConst) ||
+                    (propertySymbol.isConst) ||
                     propertySymbol.hasJvmFieldAnnotation()
 
             createField(
@@ -139,7 +145,9 @@ class FirLightClassForFacade(
         val result = mutableListOf<KtLightField>()
         val nameGenerator = FirLightField.FieldNameGenerator()
         for (fileSymbol in fileSymbols) {
-            loadFieldsFromFile(fileSymbol, nameGenerator, result)
+            analyzeWithSymbolAsContext(fileSymbol) {
+                loadFieldsFromFile(fileSymbol.getFileScope(), nameGenerator, result)
+            }
         }
         result
     }
