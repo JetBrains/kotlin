@@ -235,8 +235,16 @@ private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter, srcToDst
     }
 }
 
+fun IrAnnotationContainer.copyAnnotations(): List<IrConstructorCall> {
+    return annotations.map { it.deepCopyWithSymbols(this as? IrDeclarationParent) }
+}
+
+fun IrAnnotationContainer.copyAnnotationsWhen(filter: IrConstructorCall.() -> Boolean): List<IrConstructorCall> {
+    return annotations.mapNotNull { if (it.filter()) it.deepCopyWithSymbols(this as? IrDeclarationParent) else null }
+}
+
 fun IrMutableAnnotationContainer.copyAnnotationsFrom(source: IrAnnotationContainer) {
-    annotations += source.annotations.map { it.deepCopyWithSymbols(this as? IrDeclarationParent) }
+    annotations += source.copyAnnotations()
 }
 
 fun makeTypeParameterSubstitutionMap(
