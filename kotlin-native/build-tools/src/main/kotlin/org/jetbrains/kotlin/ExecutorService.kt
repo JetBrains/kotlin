@@ -54,7 +54,9 @@ fun create(project: Project): ExecutorService {
     val platform = platformManager.platform(testTarget)
     val absoluteTargetToolchain = platform.absoluteTargetToolchain
 
-    return when (testTarget) {
+    return if (project.hasProperty("remote")) {
+        sshExecutor(project)
+    } else when (testTarget) {
         KonanTarget.WASM32 -> object : ExecutorService {
             override fun execute(action: Action<in ExecSpec>): ExecResult? = project.exec { execSpec ->
                 action.execute(execSpec)
@@ -81,10 +83,7 @@ fun create(project: Project): ExecutorService {
         KonanTarget.IOS_ARM32,
         KonanTarget.IOS_ARM64 -> deviceLauncher(project)
 
-        else -> {
-            if (project.hasProperty("remote")) sshExecutor(project)
-            else localExecutorService(project)
-        }
+        else -> localExecutorService(project)
     }
 }
 
