@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.generators
 
-import org.jetbrains.kotlin.generators.impl.TestGeneratorImpl
 import org.jetbrains.kotlin.generators.model.*
-import org.jetbrains.kotlin.generators.InconsistencyChecker.Companion.hasDryRunArg
-import org.jetbrains.kotlin.generators.InconsistencyChecker.Companion.inconsistencyChecker
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
@@ -19,28 +16,6 @@ fun testGroupSuite(
     init: TestGroupSuite.() -> Unit
 ): TestGroupSuite {
     return TestGroupSuite().apply(init)
-}
-
-fun generateTestGroupSuite(
-    args: Array<String>,
-    init: TestGroupSuite.() -> Unit
-) {
-    generateTestGroupSuite(hasDryRunArg(args), init)
-}
-
-fun generateTestGroupSuite(
-    dryRun: Boolean = false,
-    init: TestGroupSuite.() -> Unit
-) {
-    val suite = testGroupSuite(init)
-    for (testGroup in suite.testGroups) {
-        for (testClass in testGroup.testClasses) {
-            val (changed, testSourceFilePath) = TestGeneratorImpl.generateAndSave(testClass, dryRun)
-            if (changed) {
-                inconsistencyChecker(dryRun).add(testSourceFilePath)
-            }
-        }
-    }
 }
 
 class TestGroupSuite {

@@ -36,3 +36,5 @@ fun main(args: Array<String>) {
         }
     }
 }
+
+const val TEST_GENERATOR_NAME = "GenerateNewCompilerTests.kt"

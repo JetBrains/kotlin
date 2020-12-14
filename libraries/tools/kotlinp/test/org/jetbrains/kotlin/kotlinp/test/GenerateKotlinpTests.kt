@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.kotlinp.test
 
-import org.jetbrains.kotlin.generators.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")

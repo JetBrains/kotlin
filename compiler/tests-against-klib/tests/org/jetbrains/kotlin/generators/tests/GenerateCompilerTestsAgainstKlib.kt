@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.codegen.ir.AbstractCompileKotlinAgainstKlibTest
-import org.jetbrains.kotlin.generators.generateTestGroupSuite
+import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
