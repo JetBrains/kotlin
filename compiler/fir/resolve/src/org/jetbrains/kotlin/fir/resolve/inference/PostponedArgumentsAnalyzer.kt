@@ -116,8 +116,7 @@ class PostponedArgumentsAnalyzer(
             c.canBeProper(rawReturnType) -> substitute(rawReturnType)
 
             // For Unit-coercion
-            c.hasUpperOrEqualUnitConstraint(rawReturnType) ->
-                if (rawReturnType.isMarkedNullable) unitType.withNullability(ConeNullability.NULLABLE) else unitType
+            !rawReturnType.isMarkedNullable && c.hasUpperOrEqualUnitConstraint(rawReturnType) -> unitType
 
             else -> null
         }
