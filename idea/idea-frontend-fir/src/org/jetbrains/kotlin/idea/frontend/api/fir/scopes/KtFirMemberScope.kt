@@ -9,14 +9,13 @@ import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.idea.frontend.api.ValidityToken
 import org.jetbrains.kotlin.idea.frontend.api.ValidityTokenOwner
 import org.jetbrains.kotlin.idea.frontend.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtMemberScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtUnsubstitutedScope
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 
 internal class KtFirMemberScope(
-    override val owner: KtSymbolWithDeclarations,
+    override val owner: KtSymbolWithMembers,
     firScope: FirTypeScope,
     token: ValidityToken,
     builder: KtSymbolByFirBuilder

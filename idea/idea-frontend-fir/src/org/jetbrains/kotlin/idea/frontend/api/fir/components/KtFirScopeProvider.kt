@@ -28,13 +28,16 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.scopes.*
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirClassOrObjectSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirEnumEntrySymbol
+import org.jetbrains.kotlin.idea.frontend.api.fir.symbols.KtFirFileSymbol
 import org.jetbrains.kotlin.idea.frontend.api.fir.types.KtFirType
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.EnclosingDeclarationContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.buildCompletionContext
 import org.jetbrains.kotlin.idea.frontend.api.fir.utils.weakRef
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.idea.frontend.api.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtElement
@@ -53,11 +56,12 @@ internal class KtFirScopeProvider(
     private val firResolveState by weakRef(firResolveState)
     private val firScopeStorage = FirScopeRegistry()
 
-    private val memberScopeCache = IdentityHashMap<KtSymbolWithDeclarations, KtMemberScope>()
-    private val declaredMemberScopeCache = IdentityHashMap<KtSymbolWithDeclarations, KtDeclaredMemberScope>()
+    private val memberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtMemberScope>()
+    private val declaredMemberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtDeclaredMemberScope>()
+    private val fileScopeCache = IdentityHashMap<KtFileSymbol, KtDeclarationScope<KtSymbolWithDeclarations>>()
     private val packageMemberScopeCache = IdentityHashMap<KtPackageSymbol, KtPackageScope>()
 
-    private inline fun <T> KtSymbolWithDeclarations.withFirForScope(crossinline body: (FirClass<*>) -> T): T? = when (this) {
+    private inline fun <T> KtSymbolWithMembers.withFirForScope(crossinline body: (FirClass<*>) -> T): T? = when (this) {
         is KtFirClassOrObjectSymbol -> firRef.withFir(FirResolvePhase.SUPER_TYPES, body)
         is KtFirAnonymousObjectSymbol -> firRef.withFir(FirResolvePhase.SUPER_TYPES, body)
         is KtFirEnumEntrySymbol -> firRef.withFir(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
@@ -68,7 +72,7 @@ internal class KtFirScopeProvider(
         else -> error { "Unknown KtSymbolWithDeclarations implementation ${this::class.qualifiedName}" }
     }
 
-    override fun getMemberScope(classSymbol: KtSymbolWithDeclarations): KtMemberScope = withValidityAssertion {
+    override fun getMemberScope(classSymbol: KtSymbolWithMembers): KtMemberScope = withValidityAssertion {
         memberScopeCache.getOrPut(classSymbol) {
 
             val firScope = classSymbol.withFirForScope { fir ->
@@ -86,7 +90,7 @@ internal class KtFirScopeProvider(
         }
     }
 
-    override fun getDeclaredMemberScope(classSymbol: KtSymbolWithDeclarations): KtDeclaredMemberScope = withValidityAssertion {
+    override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtDeclaredMemberScope = withValidityAssertion {
         declaredMemberScopeCache.getOrPut(classSymbol) {
             val firScope = classSymbol.withFirForScope {
                 declaredMemberScope(it)
@@ -95,6 +99,13 @@ internal class KtFirScopeProvider(
             firScopeStorage.register(firScope)
 
             KtFirDeclaredMemberScope(classSymbol, firScope, token, builder)
+        }
+    }
+
+    override fun getFileScope(fileSymbol: KtFileSymbol): KtDeclarationScope<KtSymbolWithDeclarations> = withValidityAssertion {
+        fileScopeCache.getOrPut(fileSymbol) {
+            check(fileSymbol is KtFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${fileSymbol::class} was provided" }
+            KtFirFileScope(fileSymbol, token, builder)
         }
     }
 

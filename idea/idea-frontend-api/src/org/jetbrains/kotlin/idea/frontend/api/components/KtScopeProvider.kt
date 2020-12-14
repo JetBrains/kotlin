@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.idea.frontend.api.components
 
 import org.jetbrains.kotlin.idea.frontend.api.scopes.*
+import org.jetbrains.kotlin.idea.frontend.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
 abstract class KtScopeProvider : KtAnalysisSessionComponent() {
-    abstract fun getMemberScope(classSymbol: KtSymbolWithDeclarations): KtMemberScope
-    abstract fun getDeclaredMemberScope(classSymbol: KtSymbolWithDeclarations): KtDeclaredMemberScope
+    abstract fun getMemberScope(classSymbol: KtSymbolWithMembers): KtMemberScope
+    abstract fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtDeclaredMemberScope
+    abstract fun getFileScope(fileSymbol: KtFileSymbol): KtDeclarationScope<KtSymbolWithDeclarations>
     abstract fun getPackageScope(packageSymbol: KtPackageSymbol): KtPackageScope
     abstract fun getCompositeScope(subScopes: List<KtScope>): KtCompositeScope
 

@@ -9,8 +9,5 @@ import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.pointers.KtSymbolPointer
 
 abstract class KtFileSymbol : KtAnnotatedSymbol {
-
-    abstract val topLevelCallableSymbols: List<KtCallableSymbol>
-
     abstract override fun createPointer(): KtSymbolPointer<KtFileSymbol>
 }

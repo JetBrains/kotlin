@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.idea.frontend.api.fir.analyzeWithSymbolAsContext
 import org.jetbrains.kotlin.idea.frontend.api.symbols.*
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtCommonSymbolModality
 import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolVisibility
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.idea.frontend.api.types.KtClassType
 import org.jetbrains.kotlin.idea.frontend.api.types.KtType
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -304,7 +304,7 @@ internal fun FirLightClassBase.createInheritanceList(forExtendsList: Boolean, su
     return listBuilder
 }
 
-internal fun KtSymbolWithDeclarations.createInnerClasses(manager: PsiManager): List<FirLightClassForSymbol> {
+internal fun KtSymbolWithMembers.createInnerClasses(manager: PsiManager): List<FirLightClassForSymbol> {
     val result = ArrayList<FirLightClassForSymbol>()
 
     // workaround for ClassInnerStuffCache not supporting classes with null names, see KT-13927

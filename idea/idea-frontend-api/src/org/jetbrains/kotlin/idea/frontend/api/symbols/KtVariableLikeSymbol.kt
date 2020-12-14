@@ -15,7 +15,7 @@ sealed class KtVariableLikeSymbol : KtCallableSymbol(), KtTypedSymbol, KtNamedSy
     abstract override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol>
 }
 
-abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithDeclarations, KtSymbolWithKind {
+abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithMembers, KtSymbolWithKind {
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.MEMBER
     abstract val containingEnumClassIdIfNonLocal: ClassId?
 

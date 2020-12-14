@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.idea.frontend.api.scopes.KtMemberScope
 import org.jetbrains.kotlin.idea.frontend.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtClassifierSymbol
-import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithDeclarations
+import org.jetbrains.kotlin.idea.frontend.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.name.Name
 
-internal class KtFirEmptyMemberScope(override val owner: KtSymbolWithDeclarations) : KtMemberScope, KtDeclaredMemberScope, ValidityTokenOwner {
+internal class KtFirEmptyMemberScope(override val owner: KtSymbolWithMembers) : KtMemberScope, KtDeclaredMemberScope, ValidityTokenOwner {
     override fun getCallableNames(): Set<Name> = emptySet()
 
     override fun getClassifierNames(): Set<Name> = emptySet()

@@ -7,4 +7,6 @@ package org.jetbrains.kotlin.idea.frontend.api.symbols.markers
 
 import org.jetbrains.kotlin.idea.frontend.api.symbols.KtSymbol
 
+interface KtSymbolWithMembers : KtSymbolWithDeclarations
+
 interface KtSymbolWithDeclarations : KtSymbol
