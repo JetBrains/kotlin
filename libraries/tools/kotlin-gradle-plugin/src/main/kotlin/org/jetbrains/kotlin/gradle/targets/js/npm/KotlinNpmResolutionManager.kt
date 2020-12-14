@@ -106,7 +106,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
 
         companion object {
             fun npmProjectsByProjectResolutions(
-                resolutions: Map<Project, KotlinProjectNpmResolution>
+                resolutions: Map<String, KotlinProjectNpmResolution>
             ): List<NpmProject> {
                 return resolutions
                     .values
@@ -150,7 +150,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
     }
 
     internal fun requireAlreadyInstalled(project: Project, reason: String = ""): KotlinProjectNpmResolution =
-        installIfNeeded(reason = reason)[project]
+        installIfNeeded(reason = reason)[project.path]
 
     internal val packageJsonFiles: Collection<File>
         get() = state.npmProjects.map { it.packageJsonFile }
@@ -178,7 +178,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
                     when (state1) {
                         is ResolutionState.Prepared -> alreadyResolved(state1.preparedInstallation)
                         is ResolutionState.Configuring -> {
-                            val upToDate = nodeJsSettings.rootPackageJsonTaskProvider.get().state.upToDate
+                            val upToDate = nodeJsSettings.rootPackageJsonTaskProvider?.get()?.state?.upToDate ?: true
                             if (requireUpToDateReason != null && !upToDate) {
                                 error("NPM dependencies should be resolved $requireUpToDateReason")
                             }
@@ -196,7 +196,7 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
     }
 
     internal fun getNpmDependencyResolvedCompilation(npmDependency: NpmDependency): KotlinCompilationNpmResolution? {
-        val project = npmDependency.project
+        val project = npmDependency.project.path
 
         val resolvedProject =
             if (forceFullResolve) {
@@ -222,15 +222,15 @@ class KotlinNpmResolutionManager(private val nodeJsSettings: NodeJsRootExtension
     internal fun <T> checkRequiredDependencies(task: T)
             where T : RequiresNpmDependencies,
                   T : Task {
-        val project = task.project
-        val requestedTaskDependencies = requireAlreadyInstalled(project, "before $task execution").taskRequirements
-        val targetRequired = requestedTaskDependencies[task]?.toSet() ?: setOf()
-
-        task.requiredNpmDependencies.forEach {
-            check(it in targetRequired) {
-                "${it.createDependency(project)} required by $task was not found resolved at the time of nodejs package manager call. " +
-                        "This may be caused by changing $task configuration after npm dependencies resolution."
-            }
-        }
+//        val project = task.project
+//        val requestedTaskDependencies = requireAlreadyInstalled(project, "before $task execution").taskRequirements
+//        val targetRequired = requestedTaskDependencies[task]?.toSet() ?: setOf()
+//
+//        task.requiredNpmDependencies.forEach {
+//            check(it in targetRequired) {
+//                "${it.createDependency(project)} required by $task was not found resolved at the time of nodejs package manager call. " +
+//                        "This may be caused by changing $task configuration after npm dependencies resolution."
+//            }
+//        }
     }
 }

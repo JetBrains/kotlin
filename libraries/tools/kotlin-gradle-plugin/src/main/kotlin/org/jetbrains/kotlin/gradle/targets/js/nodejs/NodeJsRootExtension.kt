@@ -63,8 +63,8 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
     val packageJsonUmbrellaTaskProvider: TaskProvider<Task>
         get() = rootProject.tasks.named(PACKAGE_JSON_UMBRELLA_TASK_NAME)
 
-    val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>
-        get() = rootProject.tasks.withType(RootPackageJsonTask::class.java).named(RootPackageJsonTask.NAME)
+    val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>?
+        get() = rootProject?.tasks?.withType(RootPackageJsonTask::class.java)?.named(RootPackageJsonTask.NAME)
 
     val rootPackageDir: File by lazy {
         rootProject.buildDir.resolve("js")
@@ -121,7 +121,6 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
 
     val versions = NpmVersions()
 
-    @Transient
     internal val npmResolutionManager = KotlinNpmResolutionManager(this)
 
     companion object {

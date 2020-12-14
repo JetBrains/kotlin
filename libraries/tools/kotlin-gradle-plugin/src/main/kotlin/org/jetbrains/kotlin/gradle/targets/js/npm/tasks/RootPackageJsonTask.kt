@@ -31,7 +31,7 @@ open class RootPackageJsonTask : DefaultTask() {
 
     init {
         // TODO: temporary workaround for configuration cache enabled builds
-        disableTaskOnConfigurationCacheBuild { resolutionManager.toString() }
+//        disableTaskOnConfigurationCacheBuild { resolutionManager.toString() }
     }
 
     @get:OutputFile

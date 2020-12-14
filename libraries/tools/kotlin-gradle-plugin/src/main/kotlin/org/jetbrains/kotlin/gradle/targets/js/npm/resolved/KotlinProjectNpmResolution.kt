@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
  * Info about NPM projects inside particular gradle [project].
  */
 class KotlinProjectNpmResolution(
-    val project: Project,
+    val project: String,
     val npmProjects: List<KotlinCompilationNpmResolution>,
-    val taskRequirements: Map<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>
+    val taskRequirements: Map<RequiresNpmDependencies, Collection<RequiredKotlinJsDependency>>?
 ) {
-    val npmProjectsByNpmDependency: Map<NpmDependency, KotlinCompilationNpmResolution> =
+    val npmProjectsByNpmDependency: Map<NpmDependency, KotlinCompilationNpmResolution> by lazy {
         mutableMapOf<NpmDependency, KotlinCompilationNpmResolution>().also { result ->
             npmProjects.forEach { npmPackage ->
                 npmPackage.externalNpmDependencies.forEach { npmDependency ->
@@ -28,15 +28,16 @@ class KotlinProjectNpmResolution(
                 }
             }
         }
+    }
 
-    val byCompilation by lazy { npmProjects.associateBy { it.npmProject.compilation } }
+    val byCompilation by lazy { npmProjects.associateBy { it.npmProject.compilation.name } }
 
     operator fun get(compilation: KotlinJsCompilation): KotlinCompilationNpmResolution {
-        check(compilation.target.project == project)
-        return byCompilation.getValue(compilation)
+        check(compilation.target.project.path == project)
+        return byCompilation.getValue(compilation.name)
     }
 
     companion object {
-        fun empty(project: Project) = KotlinProjectNpmResolution(project, listOf(), mapOf())
+        fun empty(project: String) = KotlinProjectNpmResolution(project, listOf(), mapOf())
     }
 }

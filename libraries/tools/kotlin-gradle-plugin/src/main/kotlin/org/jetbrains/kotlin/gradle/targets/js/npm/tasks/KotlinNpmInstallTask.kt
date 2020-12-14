@@ -30,7 +30,7 @@ open class KotlinNpmInstallTask : DefaultTask() {
 
     init {
         // TODO: temporary workaround for configuration cache enabled builds
-        disableTaskOnConfigurationCacheBuild { resolutionManager.toString() }
+//        disableTaskOnConfigurationCacheBuild { resolutionManager.toString() }
     }
 
     @Input

@@ -44,7 +44,7 @@ abstract class DukatTask(
     @get:Internal
     @delegate:Transient
     val dts by lazy {
-        val resolvedCompilation = nodeJs.npmResolutionManager.requireInstalled()[project][compilation]
+        val resolvedCompilation = nodeJs.npmResolutionManager.requireInstalled()[project.path][compilation]
         val dtsResolver = DtsResolver(resolvedCompilation.npmProject)
         dtsResolver.getAllDts(
             resolvedCompilation.externalNpmDependencies,

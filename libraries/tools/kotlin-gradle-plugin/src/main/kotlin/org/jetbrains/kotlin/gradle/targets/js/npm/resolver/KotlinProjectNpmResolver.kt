@@ -25,16 +25,19 @@ import kotlin.reflect.KClass
  * See [KotlinNpmResolutionManager] for details about resolution process.
  */
 internal class KotlinProjectNpmResolver(
+    @Transient
     val project: Project,
     val resolver: KotlinRootNpmResolver
 ) {
     override fun toString(): String = "ProjectNpmResolver($project)"
 
-    private val byCompilation = mutableMapOf<KotlinJsCompilation, KotlinCompilationNpmResolver>()
+    private val projectPath by lazy { project.path }
+
+    private val byCompilation = mutableMapOf<String, KotlinCompilationNpmResolver>()
 
     operator fun get(compilation: KotlinJsCompilation): KotlinCompilationNpmResolver {
         check(compilation.target.project == project)
-        return byCompilation[compilation] ?: error("$compilation was not registered in $this")
+        return byCompilation[compilation.name] ?: error("$compilation was not registered in $this")
     }
 
     private var closed = false
@@ -103,7 +106,7 @@ internal class KotlinProjectNpmResolver(
     private fun addCompilation(compilation: KotlinJsCompilation) {
         check(!closed) { resolver.alreadyResolvedMessage("add compilation $compilation") }
 
-        byCompilation[compilation] = KotlinCompilationNpmResolver(this, compilation)
+        byCompilation[compilation.name] = KotlinCompilationNpmResolver(this, compilation)
     }
 
     fun close(): KotlinProjectNpmResolution {
@@ -111,9 +114,9 @@ internal class KotlinProjectNpmResolver(
         closed = true
 
         return KotlinProjectNpmResolution(
-            project,
+            projectPath,
             byCompilation.values.mapNotNull { it.close() },
-            resolver.nodeJs.taskRequirements.byTask
+            resolver.nodeJs.taskRequirements?.byTask
         )
     }
 }
