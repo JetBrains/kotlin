@@ -65,7 +65,7 @@ public:
             for (auto& node : queue_) {
                 node.owner_ = nullptr;
             }
-            std::lock_guard<SimpleMutex> guard(owner_.mutex_);
+            std::lock_guard<SpinLock> guard(owner_.mutex_);
             owner_.queue_.splice(owner_.queue_.end(), queue_);
             owner_.deletionQueue_.splice(owner_.deletionQueue_.end(), deletionQueue_);
         }
@@ -108,7 +108,7 @@ public:
         explicit Iterable(MultiSourceQueue& owner) noexcept : owner_(owner), guard_(owner_.mutex_) {}
 
         MultiSourceQueue& owner_; // weak
-        std::unique_lock<SimpleMutex> guard_;
+        std::unique_lock<SpinLock> guard_;
     };
 
     // Lock `MultiSourceQueue` for safe iteration. If element was scheduled for deletion,
@@ -117,7 +117,7 @@ public:
 
     // Lock `MultiSourceQueue` and apply deletions. Only deletes elements that were published.
     void ApplyDeletions() noexcept {
-        std::lock_guard<SimpleMutex> guard(mutex_);
+        std::lock_guard<SpinLock> guard(mutex_);
         std::list<Node*> remainingDeletions;
 
         auto it = deletionQueue_.begin();
@@ -143,7 +143,7 @@ private:
     // which is important for GC mark phase.
     std::list<Node> queue_;
     std::list<Node*> deletionQueue_;
-    SimpleMutex mutex_;
+    SpinLock mutex_;
 };
 
 } // namespace kotlin

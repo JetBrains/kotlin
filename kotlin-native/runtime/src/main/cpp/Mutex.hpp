@@ -18,41 +18,31 @@
 #define RUNTIME_MUTEX_H
 
 #include <cstdint>
+
 #include "KAssert.h"
 #include "Utils.hpp"
 
-class SimpleMutex {
- private:
-  int32_t atomicInt = 0;
+namespace kotlin {
 
- public:
-  void lock() {
-    while (!__sync_bool_compare_and_swap(&atomicInt, 0, 1)) {
-      // TODO: yield.
+class SpinLock : private Pinned {
+public:
+    void lock() noexcept {
+        while (!__sync_bool_compare_and_swap(&atomicInt, 0, 1)) {
+            // TODO: yield.
+        }
     }
-  }
 
-  void unlock() {
-    if (!__sync_bool_compare_and_swap(&atomicInt, 1, 0)) {
-      RuntimeAssert(false, "Unable to unlock");
+    void unlock() noexcept {
+        if (!__sync_bool_compare_and_swap(&atomicInt, 1, 0)) {
+            RuntimeAssert(false, "Unable to unlock");
+        }
     }
-  }
+
+private:
+    // TODO: Consider using `std::atomic_flag`.
+    int32_t atomicInt = 0;
 };
 
-// TODO: use std::lock_guard instead?
-template <class Mutex>
-class LockGuard : private kotlin::Pinned {
- public:
-  explicit LockGuard(Mutex& mutex_) : mutex(mutex_) {
-    mutex.lock();
-  }
-
-  ~LockGuard() {
-    mutex.unlock();
-  }
-
- private:
-  Mutex& mutex;
-};
+} // namespace kotlin
 
 #endif // RUNTIME_MUTEX_H

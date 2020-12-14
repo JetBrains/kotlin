@@ -18,6 +18,7 @@
 #include <stdio.h>
 
 #include <cstddef> // for offsetof
+#include <mutex>
 
 // Allow concurrent global cycle collector.
 #define USE_CYCLIC_GC 0
@@ -218,14 +219,14 @@ class CycleDetector : private kotlin::Pinned {
   }
 
   void insertCandidate(KRef candidate) {
-    LockGuard<SimpleMutex> guard(lock_);
+    std::lock_guard<kotlin::SpinLock> guard(lock_);
 
     auto it = candidateList_.insert(candidateList_.begin(), candidate);
     candidateInList_.emplace(candidate, it);
   }
 
   void removeCandidate(KRef candidate) {
-    LockGuard<SimpleMutex> guard(lock_);
+    std::lock_guard<kotlin::SpinLock> guard(lock_);
 
     auto it = candidateInList_.find(candidate);
     if (it == candidateInList_.end())
@@ -234,7 +235,7 @@ class CycleDetector : private kotlin::Pinned {
     candidateInList_.erase(it);
   }
 
-  SimpleMutex lock_;
+  kotlin::SpinLock lock_;
   using CandidateList = KStdList<KRef>;
   CandidateList candidateList_;
   KStdUnorderedMap<KRef, CandidateList::iterator> candidateInList_;
@@ -2990,7 +2991,7 @@ ScopedRefHolder::~ScopedRefHolder() {
 CycleDetectorRootset CycleDetector::collectRootset() {
   auto& detector = instance();
   CycleDetectorRootset rootset;
-  LockGuard<SimpleMutex> guard(detector.lock_);
+  std::lock_guard<kotlin::SpinLock> guard(detector.lock_);
   for (auto* candidate: detector.candidateList_) {
     // Only frozen candidates are to be analyzed.
     if (!isPermanentOrFrozen(candidate))

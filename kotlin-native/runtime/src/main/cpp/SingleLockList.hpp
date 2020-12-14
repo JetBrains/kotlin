@@ -17,7 +17,7 @@
 namespace kotlin {
 
 // TODO: Consider different locking mechanisms.
-template <typename Value, typename Mutex = SimpleMutex>
+template <typename Value, typename Mutex = SpinLock>
 class SingleLockList : private Pinned {
 public:
     class Node : Pinned {
@@ -71,7 +71,7 @@ public:
     Node* Emplace(Args... args) noexcept {
         auto* nodePtr = new Node(args...);
         std::unique_ptr<Node> node(nodePtr);
-        LockGuard<Mutex> guard(mutex_);
+        std::lock_guard<Mutex> guard(mutex_);
         if (root_) {
             root_->previous = node.get();
         }
@@ -82,7 +82,7 @@ public:
 
     // Using `node` including its referred `Value` after `Erase` is undefined behaviour.
     void Erase(Node* node) noexcept {
-        LockGuard<Mutex> guard(mutex_);
+        std::lock_guard<Mutex> guard(mutex_);
         if (root_.get() == node) {
             root_ = std::move(node->next);
             if (root_) {

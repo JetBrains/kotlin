@@ -24,6 +24,7 @@
 #include <objc/message.h>
 #include <cstdio>
 #include <cstdint>
+#include <mutex>
 
 #include "Memory.h"
 #include "MemorySharedRefs.hpp"
@@ -240,7 +241,7 @@ static void AddMethods(Class clazz, const struct ObjCMethodDescription* methods,
   }
 }
 
-static SimpleMutex classCreationMutex;
+static kotlin::SpinLock classCreationMutex;
 static int anonymousClassNextId = 0;
 
 static Class allocateClass(const KotlinObjCClassInfo* info) {
@@ -271,7 +272,7 @@ static Class allocateClass(const KotlinObjCClassInfo* info) {
 }
 
 void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
-  LockGuard<SimpleMutex> lockGuard(classCreationMutex);
+  std::lock_guard<kotlin::SpinLock> lockGuard(classCreationMutex);
 
   void* createdClass = *info->createdClass;
   if (createdClass != nullptr) {
