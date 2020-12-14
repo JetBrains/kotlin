@@ -224,6 +224,7 @@ fun Test.setUpBoxTests() {
         systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
     }
 
+    systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
     systemProperty("overwrite.output", findProperty("overwrite.output") ?: "false")
 
     val prefixForPpropertiesToForward = "fd."
@@ -247,7 +248,6 @@ projectTest(parallel = true) {
     inputs.dir(rootDir.resolve("libraries/stdlib/api/js"))
     inputs.dir(rootDir.resolve("libraries/stdlib/api/js-v1"))
 
-    systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
     outputs.dir("$buildDir/out")
     outputs.dir("$buildDir/out-min")
     outputs.dir("$buildDir/out-pir")
