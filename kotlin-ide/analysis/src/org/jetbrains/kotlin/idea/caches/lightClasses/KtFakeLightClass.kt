@@ -12,6 +12,7 @@ import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.AbstractLightClass
 import com.intellij.psi.impl.light.LightMethod
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
@@ -48,11 +49,17 @@ class KtFakeLightClass(override val kotlinOrigin: KtClassOrObject) :
     override fun getUseScope() = kotlinOrigin.useScope
 
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        if (manager.areElementsEquivalent(baseClass, this)) return false
         LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
 
         val baseKtClass = (baseClass as? KtLightClass)?.kotlinOrigin ?: return false
         val baseDescriptor = baseKtClass.resolveToDescriptorIfAny() ?: return false
         val thisDescriptor = kotlinOrigin.resolveToDescriptorIfAny() ?: return false
+
+        val thisFqName = DescriptorUtils.getFqName(thisDescriptor).asString()
+        val baseFqName = DescriptorUtils.getFqName(baseDescriptor).asString()
+        if (thisFqName == baseFqName) return false
+
         return if (checkDeep)
             DescriptorUtils.isSubclass(thisDescriptor, baseDescriptor)
         else
