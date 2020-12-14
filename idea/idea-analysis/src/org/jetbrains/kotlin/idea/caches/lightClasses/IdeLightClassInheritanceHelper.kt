@@ -36,6 +36,7 @@ class IdeLightClassInheritanceHelper : LightClassInheritanceHelper {
         checkDeep: Boolean
     ): ImpreciseResolveResult {
         if (baseClass.project.isInDumbMode()) return NO_MATCH
+        if (lightClass.manager.areElementsEquivalent(baseClass, lightClass)) return NO_MATCH
 
         val classOrObject = lightClass.kotlinOrigin ?: return UNSURE
         val entries = classOrObject.superTypeListEntries
