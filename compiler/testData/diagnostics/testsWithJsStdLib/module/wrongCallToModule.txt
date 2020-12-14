@@ -29,7 +29,6 @@ package foo {
     }
 }
 
-
 // -- Module: <m2> --
 package
 
@@ -49,3 +48,4 @@ package bar {
 package foo {
     public external fun baz(): kotlin.Unit
 }
+

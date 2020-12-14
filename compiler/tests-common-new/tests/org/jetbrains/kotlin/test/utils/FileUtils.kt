@@ -26,3 +26,9 @@ val File.firTestDataFile: File
     } else {
         parentFile.resolve("${name.removeSuffix(KT)}$FIR_KT")
     }
+
+fun File.withExtension(extension: String): File {
+    @Suppress("NAME_SHADOWING")
+    val extension = extension.removePrefix(".")
+    return parentFile.resolve("$nameWithoutExtension.$extension")
+}

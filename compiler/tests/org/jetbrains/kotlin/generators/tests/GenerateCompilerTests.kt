@@ -67,10 +67,6 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuite(args) {
         testGroup("compiler/tests-gen", "compiler/testData") {
-            testClass<AbstractDiagnosticsTestWithJsStdLib> {
-                model("diagnostics/testsWithJsStdLib")
-            }
-
             testClass<AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation> {
                 model("diagnostics/testsWithJsStdLibAndBackendCompilation")
             }

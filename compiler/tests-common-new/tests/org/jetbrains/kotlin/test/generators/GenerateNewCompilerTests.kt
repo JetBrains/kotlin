@@ -26,6 +26,10 @@ fun main(args: Array<String>) {
                 model("diagnostics/tests", excludedPattern = excludedFirTestdataPattern)
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedFirTestdataPattern)
             }
+
+            testClass<AbstractDiagnosticsTestWithJsStdLib> {
+                model("diagnostics/testsWithJsStdLib")
+            }
         }
 
         testGroup("compiler/tests-common-new/tests-gen", "compiler/fir/analysis-tests/testData") {
