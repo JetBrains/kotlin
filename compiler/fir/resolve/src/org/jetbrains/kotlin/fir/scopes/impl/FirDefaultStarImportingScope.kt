@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.builder.buildResolvedImport
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerScopeLevel
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.Name
@@ -39,16 +38,22 @@ class FirDefaultStarImportingScope(
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        processCallables(
-            name,
-            TowerScopeLevel.Token.Functions
-        ) { if (it is FirNamedFunctionSymbol) processor(it) }
+        if (name.isSpecial || name.identifier.isNotEmpty()) {
+            for (import in starImports) {
+                for (symbol in provider.getTopLevelFunctionSymbols(import.packageFqName, name)) {
+                    processor(symbol)
+                }
+            }
+        }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        processCallables(
-            name,
-            TowerScopeLevel.Token.Properties
-        ) { if (it is FirVariableSymbol<*>) processor(it) }
+        if (name.isSpecial || name.identifier.isNotEmpty()) {
+            for (import in starImports) {
+                for (symbol in provider.getTopLevelPropertySymbols(import.packageFqName, name)) {
+                    processor(symbol)
+                }
+            }
+        }
     }
 }

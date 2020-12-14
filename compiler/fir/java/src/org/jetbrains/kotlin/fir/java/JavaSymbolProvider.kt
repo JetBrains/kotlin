@@ -71,6 +71,14 @@ class JavaSymbolProvider(
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
     }
 
+    @FirSymbolProviderInternals
+    override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
+    }
+
+    @FirSymbolProviderInternals
+    override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
+    }
+
     private fun JavaTypeParameter.toFirTypeParameterSymbol(
         javaTypeParameterStack: JavaTypeParameterStack
     ): Pair<FirTypeParameterSymbol, Boolean> {

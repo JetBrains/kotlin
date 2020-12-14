@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.name.Name
 class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirScope() {
     private val symbolProvider = session.firSymbolProvider
     private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>?> = mutableMapOf()
-    private val callableCache: MutableMap<Name, List<FirCallableSymbol<*>>> = mutableMapOf()
+    private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = mutableMapOf()
+    private val propertyCache: MutableMap<Name, List<FirPropertySymbol>> = mutableMapOf()
 
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
@@ -37,25 +38,22 @@ class FirPackageMemberScope(val fqName: FqName, val session: FirSession) : FirSc
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        processCallables(name, processor)
+        val symbols = functionCache.getOrPut(name) {
+            symbolProvider.getTopLevelFunctionSymbols(fqName, name)
+        }
+        for (symbol in symbols) {
+            symbol.ensureResolvedForCalls(session)
+            processor(symbol)
+        }
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
-        processCallables(name, processor)
-    }
-
-    private inline fun <reified D : FirCallableSymbol<*>> processCallables(
-        name: Name,
-        processor: (D) -> Unit
-    ) {
-        val symbols = callableCache.getOrPut(name) {
-            symbolProvider.getTopLevelCallableSymbols(fqName, name)
+        val symbols = propertyCache.getOrPut(name) {
+            symbolProvider.getTopLevelPropertySymbols(fqName, name)
         }
         for (symbol in symbols) {
-            if (symbol is D) {
-                symbol.ensureResolvedForCalls(session)
-                processor(symbol)
-            }
+            symbol.ensureResolvedForCalls(session)
+            processor(symbol)
         }
     }
 }
