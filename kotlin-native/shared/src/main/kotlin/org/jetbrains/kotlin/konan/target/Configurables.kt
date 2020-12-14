@@ -112,6 +112,11 @@ interface GccConfigurables : TargetableConfigurables, ClangFlags {
     val dynamicLinker get() = targetString("dynamicLinker")!!
     val abiSpecificLibraries get() = targetList("abiSpecificLibraries")
     val crtFilesLocation get() = targetString("crtFilesLocation")!!
+
+    val linker get() = hostTargetString("linker")
+    val linkerHostSpecificFlags get() = hostTargetList("linkerHostSpecificFlags")
+    val absoluteLinker get() = absolute(linker)
+
     val linkerGccFlags get() = targetList("linkerGccFlags")
 }
 
