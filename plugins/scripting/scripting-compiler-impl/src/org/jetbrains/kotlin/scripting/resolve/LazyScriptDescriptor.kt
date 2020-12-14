@@ -288,7 +288,7 @@ class LazyScriptDescriptor(
 
     internal class ConstructorWithParams(
         val constructor: ClassConstructorDescriptorImpl,
-        val explicitConstructorParameters: List<ValueParameterDescriptor>,
+        val baseClassConstructorParameters: List<ValueParameterDescriptor>,
         val implicitReceiversParameters: List<ValueParameterDescriptor>,
         val scriptProvidedPropertiesParameters: List<ValueParameterDescriptor>
     )
@@ -337,14 +337,14 @@ class LazyScriptDescriptor(
 
         ConstructorWithParams(
             constructorDescriptor,
-            explicitConstructorParameters = explicitParameters,
+            baseClassConstructorParameters = explicitParameters,
             implicitReceiversParameters = implicitReceiversParameters,
             scriptProvidedPropertiesParameters = providedPropertiesParameters
         )
     }
 
     override fun getExplicitConstructorParameters(): List<ValueParameterDescriptor> =
-        scriptPrimaryConstructorWithParams().explicitConstructorParameters
+        scriptPrimaryConstructorWithParams().baseClassConstructorParameters
 
     override fun getImplicitReceiversParameters(): List<ValueParameterDescriptor> =
         scriptPrimaryConstructorWithParams().implicitReceiversParameters
