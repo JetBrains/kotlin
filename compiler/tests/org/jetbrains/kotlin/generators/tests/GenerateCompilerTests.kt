@@ -71,10 +71,6 @@ fun main(args: Array<String>) {
                 model("diagnostics/testsWithJsStdLibAndBackendCompilation")
             }
 
-            testClass<AbstractDiagnosticsNativeTest> {
-                model("diagnostics/nativeTests")
-            }
-
             testClass<AbstractDiagnosticsWithJdk15Test> {
                 model("diagnostics/testsWithJava15")
             }

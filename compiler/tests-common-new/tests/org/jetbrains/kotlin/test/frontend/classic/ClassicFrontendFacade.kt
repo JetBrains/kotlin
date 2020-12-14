@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
@@ -17,8 +19,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JVMConfigurationKeys.JVM_TARGET
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
@@ -31,6 +33,7 @@ import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.native.FakeTopDownAnalyzerFacadeForNative
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -44,6 +47,7 @@ import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
+import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendFacade
@@ -99,7 +103,6 @@ class ClassicFrontendFacade(
             configuration,
             packagePartProviderFactory,
             ktFiles,
-            languageVersionSettings,
             dependentDescriptors,
             hasCommonModules
         )
@@ -131,7 +134,6 @@ class ClassicFrontendFacade(
         configuration: CompilerConfiguration,
         packagePartProviderFactory: (GlobalSearchScope) -> JvmPackagePartProvider,
         files: List<KtFile>,
-        languageVersionSettings: LanguageVersionSettings,
         dependentDescriptors: List<ModuleDescriptorImpl>,
         hasCommonModules: Boolean
     ): AnalysisResult {
@@ -147,8 +149,8 @@ class ClassicFrontendFacade(
                 hasCommonModules
             )
             targetPlatform.isJs() -> performJsModuleResolve(project, configuration, files, dependentDescriptors)
-            targetPlatform.isNative() -> TODO()
-            targetPlatform.isCommon() -> performCommonModuleResolve(module, files, languageVersionSettings)
+            targetPlatform.isNative() -> performNativeModuleResolve(module, project, files)
+            targetPlatform.isCommon() -> performCommonModuleResolve(module, files)
             else -> error("Should not be here")
         }
     }
@@ -175,21 +177,12 @@ class ClassicFrontendFacade(
             )
         }
 
-        val projectContext = ProjectContext(project, "test project context")
-        val storageManager = projectContext.storageManager
-
-        val builtIns = JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
-        val moduleDescriptor = ModuleDescriptorImpl(Name.special("<${module.name}>"), storageManager, builtIns, module.targetPlatform)
-        val dependencies = buildList {
-            add(moduleDescriptor)
-            add(moduleDescriptor.builtIns.builtInsModule)
-            addAll(dependentDescriptors)
-        }
-        moduleDescriptor.setDependencies(dependencies)
-
         val moduleContentScope = GlobalSearchScope.allScope(project)
         val moduleClassResolver = SingleModuleClassResolver()
-        val moduleContext = projectContext.withModule(moduleDescriptor)
+        val moduleContext = createModuleContext(module, project, dependentDescriptors) {
+            JvmBuiltIns(it, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
+        }
+        val moduleDescriptor = moduleContext.module as ModuleDescriptorImpl
         val jvmTarget = configuration[JVM_TARGET] ?: JvmTarget.DEFAULT
         val container = createContainerForLazyResolveWithJava(
             JvmPlatforms.jvmPlatformByTargetVersion(jvmTarget), // TODO(dsavvinov): do not pass JvmTarget around
@@ -243,21 +236,59 @@ class ClassicFrontendFacade(
         )
     }
 
+    private fun performNativeModuleResolve(
+        module: TestModule,
+        project: Project,
+        files: List<KtFile>,
+    ): AnalysisResult {
+        val moduleTrace = NoScopeRecordCliBindingTrace()
+        val moduleContext = createModuleContext(module, project, dependentDescriptors = emptyList()) {
+            DefaultBuiltIns()
+        }
+        return FakeTopDownAnalyzerFacadeForNative.analyzeFilesWithGivenTrace(
+            files,
+            moduleTrace,
+            moduleContext,
+            module.languageVersionSettings
+        )
+    }
+
     private fun performCommonModuleResolve(
         module: TestModule,
         files: List<KtFile>,
-        languageVersionSettings: LanguageVersionSettings,
     ): AnalysisResult {
         return CommonResolverForModuleFactory.analyzeFiles(
             files,
             Name.special("<${module.name}>"),
             dependOnBuiltIns = true,
-            languageVersionSettings,
+            module.languageVersionSettings,
             module.targetPlatform,
             // TODO: add dependency manager
         ) { _ ->
             // TODO
             MetadataPartProvider.Empty
         }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private fun createModuleContext(
+        module: TestModule,
+        project: Project,
+        dependentDescriptors: List<ModuleDescriptorImpl>,
+        builtInsFactory: (StorageManager) -> KotlinBuiltIns,
+    ): ModuleContext {
+        val projectContext = ProjectContext(project, "test project context")
+        val storageManager = projectContext.storageManager
+
+        val builtIns = builtInsFactory(storageManager)
+        val moduleDescriptor = ModuleDescriptorImpl(Name.special("<${module.name}>"), storageManager, builtIns, module.targetPlatform)
+        val dependencies = buildList {
+            add(moduleDescriptor)
+            add(moduleDescriptor.builtIns.builtInsModule)
+            addAll(dependentDescriptors)
+        }
+        moduleDescriptor.setDependencies(dependencies)
+
+        return projectContext.withModule(moduleDescriptor)
     }
 }

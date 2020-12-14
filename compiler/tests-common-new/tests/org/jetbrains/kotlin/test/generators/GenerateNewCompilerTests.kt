@@ -39,6 +39,10 @@ fun main(args: Array<String>) {
             testClass<AbstractDiagnosticsTestWithJvmIrBackend> {
                 model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_IR)
             }
+
+            testClass<AbstractDiagnosticsNativeTest> {
+                model("diagnostics/nativeTests")
+            }
         }
 
         testGroup("compiler/tests-common-new/tests-gen", "compiler/fir/analysis-tests/testData") {

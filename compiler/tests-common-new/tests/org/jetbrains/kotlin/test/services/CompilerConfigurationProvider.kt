@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -59,11 +63,20 @@ class CompilerConfigurationProviderImpl(
 
     override fun getKotlinCoreEnvironment(module: TestModule): KotlinCoreEnvironment {
         return cache.getOrPut(module) {
+            val platform = module.targetPlatform
+            val configFiles = when {
+                platform.isJvm() -> EnvironmentConfigFiles.JVM_CONFIG_FILES
+                platform.isJs() -> EnvironmentConfigFiles.JS_CONFIG_FILES
+                platform.isNative() -> EnvironmentConfigFiles.NATIVE_CONFIG_FILES
+                // TODO: is it correct?
+                platform.isCommon() -> EnvironmentConfigFiles.METADATA_CONFIG_FILES
+                else -> error("Unknown platform: $platform")
+            }
             val projectEnv = KotlinCoreEnvironment.createProjectEnvironmentForTests(testRootDisposable, CompilerConfiguration())
             KotlinCoreEnvironment.createForTests(
                 projectEnv,
                 createCompilerConfiguration(module, projectEnv.project),
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
+                configFiles
             )
         }
     }
