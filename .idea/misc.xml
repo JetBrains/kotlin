@@ -93,8 +93,10 @@
   <component name="PropertiesSeparatorManager">
     <file url="file://$PROJECT_DIR$/intellij/community/plugins/InspectionGadgets/InspectionGadgetsAnalysis/resources/messages/InspectionGadgetsBundle" separator="\u005f" />
   </component>
-  <component name="SuppressKotlinCodeStyleNotification">
-    <option name="disableForAll" value="true" />
+  <component name="RoboscopeState">
+    <option name="teamcityAndroidStudioVersion" value="4.2.0.13" />
+    <option name="teamcityPlatformVersion" value="202.6863838" />
+    <option name="localPlatformVersion" value="202" />
   </component>
   <component name="TeamCityRootDirectoryHolder">
     <option name="myRelativeRootDirectory" />
@@ -108,5 +110,8 @@
   </component>
   <component name="intellij-api-watcher-check-current-project">
     <option name="shouldCheckCurrentProject" value="true" />
+  </component>
+  <component name="RoboscopeState">
+    <option name="platformVersion" value="202" />
   </component>
 </project>
