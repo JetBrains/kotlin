@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.generators
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.generators.impl.TestGeneratorImpl
 import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.InconsistencyChecker.Companion.hasDryRunArg

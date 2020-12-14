@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtTreeVisitorVoid;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.io.File;
 
@@ -92,7 +92,7 @@ public abstract class AbstractPsiCheckerTest extends KotlinLightCodeInsightFixtu
 
     @Override
     protected String getTestDataPath() {
-        return KotlinTestUtils.getTestsRoot(this.getClass());
+        return KtTestUtil.getTestsRoot(this.getClass());
     }
 
 }

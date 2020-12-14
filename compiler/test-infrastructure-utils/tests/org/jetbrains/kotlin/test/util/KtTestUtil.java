@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.util;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.openapi.vfs.CharsetToolkit;
@@ -13,15 +14,26 @@ import com.intellij.psi.PsiFileFactory;
 import com.intellij.psi.impl.PsiFileFactoryImpl;
 import com.intellij.testFramework.LightVirtualFile;
 import com.intellij.util.PathUtil;
+import com.intellij.util.containers.ContainerUtil;
+import kotlin.collections.SetsKt;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.psi.KtFile;
+import org.jetbrains.kotlin.test.KtAssert;
+import org.jetbrains.kotlin.test.TargetBackend;
+import org.jetbrains.kotlin.test.TestMetadata;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import static org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget;
 
 public class KtTestUtil {
     private static String homeDir = computeHomeDirectory();
@@ -192,5 +204,197 @@ public class KtTestUtil {
             }
             throw new IllegalStateException("Failed to create " + file);
         }
+    }
+
+    // ---------------------- assert testdata presented by metadata ----------------------
+
+    private static final String PLEASE_REGENERATE_TESTS = "Please regenerate tests (GenerateTests.kt)";
+
+    public static void assertAllTestsPresentByMetadataWithExcluded(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
+            @Nullable Pattern excludedPattern,
+            boolean recursive,
+            @NotNull String... excludeDirs
+    ) {
+        assertAllTestsPresentByMetadataWithExcluded(testCaseClass, testDataDir, filenamePattern, excludedPattern, TargetBackend.ANY, recursive, excludeDirs);
+    }
+
+    public static void assertAllTestsPresentByMetadata(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
+            boolean recursive,
+            @NotNull String... excludeDirs
+    ) {
+        assertAllTestsPresentByMetadata(
+                testCaseClass,
+                testDataDir,
+                filenamePattern,
+                TargetBackend.ANY,
+                recursive,
+                excludeDirs
+        );
+    }
+
+    public static void assertAllTestsPresentByMetadataWithExcluded(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
+            @Nullable Pattern excludedPattern,
+            @NotNull TargetBackend targetBackend,
+            boolean recursive,
+            @NotNull String... excludeDirs
+    ) {
+        File rootFile = new File(getTestsRoot(testCaseClass));
+
+        Set<String> filePaths = collectPathsMetadata(testCaseClass);
+        Set<String> exclude = SetsKt.setOf(excludeDirs);
+
+        File[] files = testDataDir.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    if (recursive && containsTestData(file, filenamePattern, excludedPattern) && !exclude.contains(file.getName())) {
+                        assertTestClassPresentByMetadata(testCaseClass, file);
+                    }
+                }
+                else {
+                    boolean excluded = excludedPattern != null && excludedPattern.matcher(file.getName()).matches();
+                    if (!excluded && filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
+                        assertFilePathPresent(file, rootFile, filePaths);
+                    }
+                }
+            }
+        }
+    }
+
+    public static void assertAllTestsPresentByMetadata(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
+            @NotNull TargetBackend targetBackend,
+            boolean recursive,
+            @NotNull String... excludeDirs
+    ) {
+        assertAllTestsPresentByMetadataWithExcluded(testCaseClass, testDataDir, filenamePattern, null, targetBackend, recursive, excludeDirs);
+    }
+
+    public static void assertAllTestsPresentInSingleGeneratedClass(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern
+    ) {
+        assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, TargetBackend.ANY);
+    }
+
+    public static void assertAllTestsPresentInSingleGeneratedClassWithExcluded(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
+            @Nullable Pattern excludePattern
+    ) {
+        assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, excludePattern, TargetBackend.ANY);
+    }
+
+    public static void assertAllTestsPresentInSingleGeneratedClass(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
+            @NotNull TargetBackend targetBackend
+    ) {
+        assertAllTestsPresentInSingleGeneratedClass(testCaseClass, testDataDir, filenamePattern, null, targetBackend);
+    }
+
+    public static void assertAllTestsPresentInSingleGeneratedClass(
+            @NotNull Class<?> testCaseClass,
+            @NotNull File testDataDir,
+            @NotNull Pattern filenamePattern,
+            @Nullable Pattern excludePattern,
+            @NotNull TargetBackend targetBackend
+    ) {
+        File rootFile = new File(getTestsRoot(testCaseClass));
+
+        Set<String> filePaths = collectPathsMetadata(testCaseClass);
+
+        FileUtil.processFilesRecursively(testDataDir, file -> {
+            boolean excluded = excludePattern != null && excludePattern.matcher(file.getName()).matches();
+            if (file.isFile() && !excluded && filenamePattern.matcher(file.getName()).matches() && isCompatibleTarget(targetBackend, file)) {
+                assertFilePathPresent(file, rootFile, filePaths);
+            }
+
+            return true;
+        });
+    }
+
+    private static void assertFilePathPresent(File file, File rootFile, Set<String> filePaths) {
+        String path = FileUtil.getRelativePath(rootFile, file);
+        if (path != null) {
+            String relativePath = nameToCompare(path);
+            if (!filePaths.contains(relativePath)) {
+                KtAssert.fail("Test data file missing from the generated test class: " + file + "\n" + PLEASE_REGENERATE_TESTS);
+            }
+        }
+    }
+
+    private static Set<String> collectPathsMetadata(Class<?> testCaseClass) {
+        return new HashSet<>(ContainerUtil.map(collectMethodsMetadata(testCaseClass), KtTestUtil::nameToCompare));
+    }
+
+    @Nullable
+    public static String getMethodMetadata(Method method) {
+        TestMetadata testMetadata = method.getAnnotation(TestMetadata.class);
+        return (testMetadata != null) ? testMetadata.value() : null;
+    }
+
+    private static Set<String> collectMethodsMetadata(Class<?> testCaseClass) {
+        Set<String> filePaths = new HashSet<>();
+        for (Method method : testCaseClass.getDeclaredMethods()) {
+            String path = getMethodMetadata(method);
+            if (path != null) {
+                filePaths.add(path);
+            }
+        }
+        return filePaths;
+    }
+
+    private static boolean containsTestData(File dir, Pattern filenamePattern, @Nullable Pattern excludedPattern) {
+        File[] files = dir.listFiles();
+        assert files != null;
+        for (File file : files) {
+            if (file.isDirectory()) {
+                if (containsTestData(file, filenamePattern, excludedPattern)) {
+                    return true;
+                }
+            }
+            else {
+                boolean excluded = excludedPattern != null && excludedPattern.matcher(file.getName()).matches();
+                if (! excluded && filenamePattern.matcher(file.getName()).matches()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static void assertTestClassPresentByMetadata(@NotNull Class<?> outerClass, @NotNull File testDataDir) {
+        for (Class<?> nestedClass : outerClass.getDeclaredClasses()) {
+            TestMetadata testMetadata = nestedClass.getAnnotation(TestMetadata.class);
+            if (testMetadata != null && testMetadata.value().equals(KtTestUtil.getFilePath(testDataDir))) {
+                return;
+            }
+        }
+        KtAssert.fail("Test data directory missing from the generated test class: " + testDataDir + "\n" + PLEASE_REGENERATE_TESTS);
+    }
+
+    public static String getTestsRoot(@NotNull Class<?> testCaseClass) {
+        TestMetadata testClassMetadata = testCaseClass.getAnnotation(TestMetadata.class);
+        KtAssert.assertNotNull("No metadata for class: " + testCaseClass, testClassMetadata);
+        return testClassMetadata.value();
+    }
+
+    public static String nameToCompare(@NotNull String name) {
+        return (SystemInfo.isFileSystemCaseSensitive ? name : name.toLowerCase()).replace('\\', '/');
     }
 }

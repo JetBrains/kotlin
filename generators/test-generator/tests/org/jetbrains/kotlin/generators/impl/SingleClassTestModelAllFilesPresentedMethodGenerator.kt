@@ -36,13 +36,13 @@ object SingleClassTestModelAllFilesPresentedMethodGenerator : MethodGenerator<Si
                 }
                 assertTestsPresentStr = if (targetBackend !== TargetBackend.ANY) {
                     String.format(
-                        "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s);",
+                        "KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s);",
                         KtTestUtil.getFilePath(rootFile), StringUtil.escapeStringCharacters(filenamePattern.pattern()),
                         excludedArgument, TargetBackend::class.java.simpleName, targetBackend.toString()
                     )
                 } else {
                     String.format(
-                        "KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s);",
+                        "KtTestUtil.assertAllTestsPresentInSingleGeneratedClassWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s);",
                         KtTestUtil.getFilePath(rootFile),
                         StringUtil.escapeStringCharacters(filenamePattern.pattern()),
                         excludedArgument

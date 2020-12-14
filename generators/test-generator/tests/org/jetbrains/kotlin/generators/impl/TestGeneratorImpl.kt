@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -125,6 +126,7 @@ private class TestGeneratorImplInstance(
             p.println("import ", RUNNER.canonicalName, ";")
         }
         p.println("import " + KotlinTestUtils::class.java.canonicalName + ";")
+        p.println("import " + KtTestUtil::class.java.canonicalName + ";")
 
         for (clazz in testClassModels.flatMapTo(mutableSetOf()) { classModel -> classModel.imports }) {
             p.println("import ${clazz.name};")

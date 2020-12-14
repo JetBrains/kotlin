@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.generators.model
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil.fileNameToJavaIdentifier
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File

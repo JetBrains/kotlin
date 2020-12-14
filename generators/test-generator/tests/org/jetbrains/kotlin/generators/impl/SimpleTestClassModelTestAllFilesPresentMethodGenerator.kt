@@ -35,7 +35,7 @@ object SimpleTestClassModelTestAllFilesPresentMethodGenerator : MethodGenerator<
             }
             val assertTestsPresentStr = if (classModel.targetBackend === TargetBackend.ANY) {
                 String.format(
-                    "KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s%s);",
+                    "KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s%s);",
                     KtTestUtil.getFilePath(classModel.rootFile),
                     StringUtil.escapeStringCharacters(classModel.filenamePattern.pattern()),
                     excludedArgument,
@@ -44,7 +44,7 @@ object SimpleTestClassModelTestAllFilesPresentMethodGenerator : MethodGenerator<
                 )
             } else {
                 String.format(
-                    "KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s, %s%s);",
+                    "KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File(\"%s\"), Pattern.compile(\"%s\"), %s, %s.%s, %s%s);",
                     KtTestUtil.getFilePath(classModel.rootFile),
                     StringUtil.escapeStringCharacters(classModel.filenamePattern.pattern()),
                     excludedArgument, TargetBackend::class.java.simpleName, classModel.targetBackend.toString(), classModel.recursive, exclude

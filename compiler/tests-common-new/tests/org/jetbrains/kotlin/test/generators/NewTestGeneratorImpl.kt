@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.generators.model.*
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.Printer
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -130,7 +131,7 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
             p.println("package $suiteClassPackage;")
             p.println()
             p.println("import com.intellij.testFramework.TestDataPath;")
-            p.println("import ${KotlinTestUtils::class.java.canonicalName};")
+            p.println("import ${KtTestUtil::class.java.canonicalName};")
 
             for (clazz in testClassModels.flatMapTo(mutableSetOf()) { classModel -> classModel.imports }) {
                 p.println("import ${clazz.name};")

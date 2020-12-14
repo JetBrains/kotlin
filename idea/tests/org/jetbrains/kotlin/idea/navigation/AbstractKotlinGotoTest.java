@@ -9,7 +9,7 @@ import com.intellij.ide.util.gotoByName.GotoClassModel2;
 import com.intellij.ide.util.gotoByName.GotoSymbolModel2;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import static org.jetbrains.kotlin.idea.navigation.GotoCheck.checkGotoDirectives;
 
@@ -28,7 +28,7 @@ public abstract class AbstractKotlinGotoTest extends KotlinLightCodeInsightFixtu
 
     @Override
     protected void setUp() {
-        dirPath = KotlinTestUtils.getTestsRoot(getClass());
+        dirPath = KtTestUtil.getTestsRoot(getClass());
         super.setUp();
     }
 

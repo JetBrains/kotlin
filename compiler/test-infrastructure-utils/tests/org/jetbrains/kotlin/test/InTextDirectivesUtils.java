@@ -13,7 +13,6 @@ import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
-import org.junit.Assert;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -149,7 +148,7 @@ public final class InTextDirectivesUtils {
 
         prefixes.removeAll(cleanDirectivesFromComments(knownPrefixes));
 
-        Assert.assertTrue("File contains some unexpected directives" + prefixes, prefixes.isEmpty());
+        KtAssert.assertTrue("File contains some unexpected directives" + prefixes, prefixes.isEmpty());
     }
 
     private static String probableDirective(String line) {
