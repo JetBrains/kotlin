@@ -53,13 +53,15 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
 
     override val kind get() = CommonIdePlatformKind
 
-    override fun getKeyForBuiltIns(moduleInfo: ModuleInfo, sdkInfo: SdkInfo?): BuiltInsCacheKey = BuiltInsCacheKey.DefaultBuiltInsKey
+    override fun getKeyForBuiltIns(moduleInfo: ModuleInfo, sdkInfo: SdkInfo?, stdlibInfo: LibraryInfo?): BuiltInsCacheKey =
+        BuiltInsCacheKey.DefaultBuiltInsKey
 
     override fun createBuiltIns(
         moduleInfo: IdeaModuleInfo,
         projectContext: ProjectContext,
         resolverForProject: ResolverForProject<IdeaModuleInfo>,
-        sdkDependency: SdkInfo?
+        sdkDependency: SdkInfo?,
+        stdlibDependency: LibraryInfo?,
     ): KotlinBuiltIns {
         return DefaultBuiltIns.Instance
     }

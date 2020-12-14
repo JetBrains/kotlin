@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.idea.caches.resolve
 
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.analyzer.common.CommonAnalysisParameters
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.caches.resolve.CompositeAnalyzerServices
-import org.jetbrains.kotlin.caches.resolve.CompositeResolverForModuleFactory
-import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
-import org.jetbrains.kotlin.caches.resolve.resolution
+import org.jetbrains.kotlin.caches.resolve.*
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -22,6 +20,7 @@ import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
+import org.jetbrains.kotlin.idea.configuration.IdeBuiltInsLoadingState
 import org.jetbrains.kotlin.idea.project.IdeaEnvironment
 import org.jetbrains.kotlin.idea.compiler.IdeSealedClassInheritorsProvider
 import org.jetbrains.kotlin.idea.project.findAnalyzerServices
@@ -101,6 +100,9 @@ class IdeaResolverForProject(
                     "Unexpected modules passed through JvmPlatformParameters to IDE resolver ($targetModuleInfo, $referencingModuleInfo)"
                 }
                 tryGetResolverForModuleWithResolutionAnchorFallback(targetModuleInfo, referencingModuleInfo)
+            },
+            useBuiltinsProviderForModule = {
+                IdeBuiltInsLoadingState.isFromDependenciesForJvm && it is LibraryInfo && it.isKotlinStdlib(projectContext.project)
             }
         )
 
@@ -132,17 +134,27 @@ class IdeaResolverForProject(
 
         fun getOrCreateIfNeeded(module: IdeaModuleInfo): KotlinBuiltIns = projectContextFromSdkResolver.storageManager.compute {
             val sdk = resolverForSdk.sdkDependency(module)
+            val stdlib = findStdlibForModulesBuiltins(module)
 
-            val key = module.platform.idePlatformKind.resolution.getKeyForBuiltIns(module, sdk)
+            val key = module.platform.idePlatformKind.resolution.getKeyForBuiltIns(module, sdk, stdlib)
             val cachedBuiltIns = cache[key]
             if (cachedBuiltIns != null) return@compute cachedBuiltIns
 
             module.platform.idePlatformKind.resolution
-                .createBuiltIns(module, projectContextFromSdkResolver, resolverForSdk, sdk)
+                .createBuiltIns(module, projectContextFromSdkResolver, resolverForSdk, sdk, stdlib)
                 .also {
                     // TODO: MemoizedFunction should be used here instead, but for proper we also need a module (for LV settings) that is not contained in the key
                     cache[key] = it
                 }
+        }
+
+        private fun findStdlibForModulesBuiltins(module: IdeaModuleInfo): LibraryInfo? {
+            if (IdeBuiltInsLoadingState.isFromClassLoader)
+                return null
+
+            return module.dependencies().lazyClosure { it.dependencies() }.firstOrNull {
+                it is LibraryInfo && it.isKotlinStdlib(projectContextFromSdkResolver.project)
+            } as? LibraryInfo
         }
     }
 

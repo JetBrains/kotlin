@@ -20,7 +20,7 @@ fun getKCallable(): KCallable<*> = ::jvmFun
 fun <!LINE_MARKER!>main<!>() {
     val ref = ::jvmFun
     val typedRef: KCallable<*> = getKCallable()
-    ref.<!UNRESOLVED_REFERENCE!>call<!>()
+    ref.call()
     typedRef.call()
     foo(Foo::bar)
 }
