@@ -159,7 +159,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             )
             val intrinsicRememberEnabled = configuration.get(
                 ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY,
-                true
+                false
             )
             StorageComponentContainerContributor.registerExtension(
                 project,
