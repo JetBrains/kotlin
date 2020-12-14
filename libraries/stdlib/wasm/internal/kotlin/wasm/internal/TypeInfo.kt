@@ -10,8 +10,7 @@ package kotlin.wasm.internal
 internal const val TYPE_INFO_ELEMENT_SIZE = 4
 
 
-internal const val SUPER_CLASS_ID_OFFSET = 0
-internal const val TYPE_INFO_ITABLE_PTR_OFFSET = SUPER_CLASS_ID_OFFSET + TYPE_INFO_ELEMENT_SIZE
+internal const val TYPE_INFO_ITABLE_PTR_OFFSET = 0
 internal const val TYPE_INFO_VTABLE_LENGTH_OFFSET = TYPE_INFO_ITABLE_PTR_OFFSET + TYPE_INFO_ELEMENT_SIZE
 internal const val TYPE_INFO_VTABLE_OFFSET = TYPE_INFO_VTABLE_LENGTH_OFFSET + TYPE_INFO_ELEMENT_SIZE
 
@@ -26,9 +25,6 @@ internal fun getItablePtr(obj: Any): Int =
 
 internal fun getInterfaceListLength(itablePtr: Int): Int =
     wasm_i32_load(itablePtr + TYPE_INFO_VTABLE_LENGTH_OFFSET)
-
-internal fun getSuperClassId(obj: Any): Int =
-    wasm_i32_load(obj.typeInfo + SUPER_CLASS_ID_OFFSET)
 
 internal fun getVirtualMethodId(obj: Any, virtualFunctionSlot: Int): Int {
     val vtablePtr = getVtablePtr(obj)
@@ -52,18 +48,6 @@ internal fun getInterfaceImplId(obj: Any, interfaceId: Int): Int {
     }
 
     return -1
-}
-
-
-internal fun isSubClassOfImpl(currentClassId: Int, otherClassId: Int): Boolean {
-    if (currentClassId == otherClassId) return true
-    val anyClassId = wasmClassId<Any>()
-    if (currentClassId == anyClassId && otherClassId != anyClassId) return false
-    return isSubClassOfImpl(wasm_i32_load(currentClassId + SUPER_CLASS_ID_OFFSET), otherClassId)
-}
-
-internal fun isSubClass(obj: Any, classId: Int): Boolean {
-    return isSubClassOfImpl(obj.typeInfo, classId)
 }
 
 internal fun isInterface(obj: Any, interfaceId: Int): Boolean {

@@ -275,14 +275,6 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
     private fun binaryDataStruct(classMetadata: ClassMetadata): ConstantDataStruct {
         val invalidIndex = -1
-        val superClass = classMetadata.superClass?.klass
-
-        val superClassSymbol: WasmSymbol<Int> =
-            superClass?.let { context.referenceClassId(it.symbol) } ?: WasmSymbol(invalidIndex)
-
-        val superTypeField =
-            ConstantDataIntField("Super class", superClassSymbol)
-
         val vtableSizeField = ConstantDataIntField(
             "V-table length",
             classMetadata.virtualMethods.size
@@ -307,7 +299,6 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         return ConstantDataStruct(
             "Class TypeInfo: ${classMetadata.klass.fqNameWhenAvailable} ",
             listOf(
-                superTypeField,
                 interfaceTablePtr,
                 vtableSizeField,
                 vtableArray,
