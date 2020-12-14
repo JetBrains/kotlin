@@ -33,7 +33,6 @@ build/
 .idea/modules
 .idea/runConfigurations/JPS_*.xml
 .idea/runConfigurations/PILL_*.xml
-.idea/libraries
 .idea/modules.xml
 .idea/gradle.xml
 .idea/compiler.xml
