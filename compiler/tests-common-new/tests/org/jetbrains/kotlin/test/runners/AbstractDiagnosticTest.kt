@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.test.runners
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_API_MODE
@@ -36,6 +38,7 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
 
         defaultDirectives {
             +USE_PSI_CLASS_FILES_READING
+            +REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
         }
 
         enableMetaInfoHandler()

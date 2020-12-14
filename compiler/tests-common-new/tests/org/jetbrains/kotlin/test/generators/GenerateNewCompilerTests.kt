@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.generators
 
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.*
 
 fun main(args: Array<String>) {
@@ -29,6 +30,14 @@ fun main(args: Array<String>) {
 
             testClass<AbstractDiagnosticsTestWithJsStdLib> {
                 model("diagnostics/testsWithJsStdLib")
+            }
+
+            testClass<AbstractDiagnosticsTestWithOldJvmBackend> {
+                model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_OLD)
+            }
+
+            testClass<AbstractDiagnosticsTestWithJvmIrBackend> {
+                model("diagnostics/testsWithJvmBackend", targetBackend = TargetBackend.JVM_IR)
             }
         }
 

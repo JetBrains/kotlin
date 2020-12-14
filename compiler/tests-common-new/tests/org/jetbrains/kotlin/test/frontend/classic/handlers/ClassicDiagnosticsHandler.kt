@@ -11,18 +11,10 @@ import org.jetbrains.kotlin.asJava.getJvmSignatureDiagnostics
 import org.jetbrains.kotlin.checkers.diagnostics.SyntaxErrorDiagnostic
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.checkers.utils.DiagnosticsRenderingConfiguration
-import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
-import org.jetbrains.kotlin.codeMetaInfo.model.DiagnosticCodeMetaInfo
-import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
-import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
@@ -30,6 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.MARK_DYNAMIC_CALLS
+import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -51,6 +44,8 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
     private val diagnosticsService: DiagnosticsService
         get() = testServices.diagnosticsService
 
+    private val reporter = ClassicDiagnosticReporter(testServices)
+
     @OptIn(ExperimentalStdlibApi::class)
     override fun processModule(module: TestModule, info: ClassicFrontendOutputArtifact) {
         var allDiagnostics = info.analysisResult.bindingContext.diagnostics + computeJvmSignatureDiagnostics(info)
@@ -62,42 +57,18 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
         }
 
         val diagnosticsPerFile = allDiagnostics.groupBy { it.psiFile }
-
         val withNewInferenceModeEnabled = testServices.withNewInferenceModeEnabled()
-
-        val configuration = DiagnosticsRenderingConfiguration(
-            platform = null,
-            withNewInference = info.languageVersionSettings.supportsFeature(LanguageFeature.NewInference),
-            languageVersionSettings = info.languageVersionSettings,
-            skipDebugInfoDiagnostics = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-                .getBoolean(JVMConfigurationKeys.IR)
-        )
+        val configuration = reporter.createConfiguration(module)
 
         for ((file, ktFile) in info.ktFiles) {
             val diagnostics = diagnosticsPerFile[ktFile] ?: emptyList()
             for (diagnostic in diagnostics) {
                 if (!diagnostic.isValid) continue
                 if (!diagnosticsService.shouldRenderDiagnostic(module, diagnostic.factory.name)) continue
-                globalMetadataInfoHandler.addMetadataInfosForFile(
-                    file,
-                    diagnostic.toMetaInfo(
-                        module,
-                        file,
-                        configuration.withNewInference,
-                        withNewInferenceModeEnabled
-                    )
-                )
+                reporter.reportDiagnostic(diagnostic, module, file, configuration, withNewInferenceModeEnabled)
             }
             for (errorElement in AnalyzingUtils.getSyntaxErrorRanges(ktFile)) {
-                globalMetadataInfoHandler.addMetadataInfosForFile(
-                    file,
-                    SyntaxErrorDiagnostic(errorElement).toMetaInfo(
-                        module,
-                        file,
-                        configuration.withNewInference,
-                        withNewInferenceModeEnabled
-                    )
-                )
+                reporter.reportDiagnostic(SyntaxErrorDiagnostic(errorElement), module, file, configuration, withNewInferenceModeEnabled)
             }
             processDebugInfoDiagnostics(configuration, module, file, ktFile, info, withNewInferenceModeEnabled)
         }
@@ -105,6 +76,7 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
 
     private fun computeJvmSignatureDiagnostics(info: ClassicFrontendOutputArtifact): Set<Diagnostic> {
         if (testServices.moduleStructure.modules.any { !it.targetPlatform.isJvm() }) return emptySet()
+        if (REPORT_JVM_DIAGNOSTICS_ON_FRONTEND !in testServices.moduleStructure.allDirectives) return emptySet()
         val bindingContext = info.analysisResult.bindingContext
         val project = info.project
         val jvmSignatureDiagnostics = HashSet<Diagnostic>()
@@ -122,32 +94,6 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
         return jvmSignatureDiagnostics
     }
 
-    private fun Diagnostic.toMetaInfo(
-        module: TestModule,
-        file: TestFile,
-        newInferenceEnabled: Boolean,
-        withNewInferenceModeEnabled: Boolean
-    ): List<DiagnosticCodeMetaInfo> = textRanges.map { range ->
-        val metaInfo = DiagnosticCodeMetaInfo(range, ClassicMetaInfoUtils.renderDiagnosticNoArgs, this)
-        if (withNewInferenceModeEnabled) {
-            metaInfo.attributes += if (newInferenceEnabled) OldNewInferenceMetaInfoProcessor.NI else OldNewInferenceMetaInfoProcessor.OI
-        }
-        if (file !in module.files) {
-            val targetPlatform = module.targetPlatform
-            metaInfo.attributes += when {
-                targetPlatform.isJvm() -> "JVM"
-                targetPlatform.isJs() -> "JS"
-                targetPlatform.isNative() -> "NATIVE"
-                targetPlatform.isCommon() -> "COMMON"
-                else -> error("Should not be here")
-            }
-        }
-        val existing = globalMetadataInfoHandler.getExistingMetaInfosForActualMetadata(file, metaInfo)
-        if (existing.any { it.description != null }) {
-            metaInfo.replaceRenderConfiguration(ClassicMetaInfoUtils.renderDiagnosticWithArgs)
-        }
-        metaInfo
-    }
 
     private fun processDebugInfoDiagnostics(
         configuration: DiagnosticsRenderingConfiguration,
@@ -175,79 +121,9 @@ class ClassicDiagnosticsHandler(testServices: TestServices) : ClassicFrontendAna
         )
         debugAnnotations.mapNotNull { debugAnnotation ->
             if (!diagnosticsService.shouldRenderDiagnostic(module, debugAnnotation.diagnostic.factory.name)) return@mapNotNull null
-            globalMetadataInfoHandler.addMetadataInfosForFile(
-                file,
-                debugAnnotation.diagnostic.toMetaInfo(module, file, configuration.withNewInference, withNewInferenceModeEnabled)
-            )
+            reporter.reportDiagnostic(debugAnnotation.diagnostic, module, file, configuration, withNewInferenceModeEnabled)
         }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
-}
-
-class OldNewInferenceMetaInfoProcessor(testServices: TestServices) : AdditionalMetaInfoProcessor(testServices) {
-    companion object {
-        const val OI = "OI"
-        const val NI = "NI"
-    }
-
-    override fun processMetaInfos(module: TestModule, file: TestFile) {
-        /*
-         * Rules for OI/NI attribute:
-         * ┌──────────┬──────┬──────┬──────────┐
-         * │          │  OI  │  NI  │ nothing  │ <- reported
-         * ├──────────┼──────┼──────┼──────────┤
-         * │  nothing │ both │ both │ nothing  │
-         * │    OI    │  OI  │ both │   OI     │
-         * │    NI    │ both │  NI  │   NI     │
-         * │   both   │ both │ both │ opposite │ <- OI if NI enabled in test and vice versa
-         * └──────────┴──────┴──────┴──────────┘
-         *       ^ existed
-         */
-        if (!testServices.withNewInferenceModeEnabled()) return
-        val newInferenceEnabled = module.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
-        val (currentFlag, otherFlag) = when (newInferenceEnabled) {
-            true -> NI to OI
-            false -> OI to NI
-        }
-        val matchedExistedInfos = mutableSetOf<ParsedCodeMetaInfo>()
-        val matchedReportedInfos = mutableSetOf<CodeMetaInfo>()
-        val allReportedInfos = globalMetadataInfoHandler.getReportedMetaInfosForFile(file)
-        for ((_, reportedInfos) in allReportedInfos.groupBy { Triple(it.start, it.end, it.tag) }) {
-            val existedInfos = globalMetadataInfoHandler.getExistingMetaInfosForActualMetadata(file, reportedInfos.first())
-            for ((reportedInfo, existedInfo) in reportedInfos.zip(existedInfos)) {
-                matchedExistedInfos += existedInfo
-                matchedReportedInfos += reportedInfo
-                if (currentFlag !in reportedInfo.attributes) continue
-                if (currentFlag in existedInfo.attributes) continue
-                reportedInfo.attributes.remove(currentFlag)
-            }
-        }
-
-        if (allReportedInfos.size != matchedReportedInfos.size) {
-            for (info in allReportedInfos) {
-                if (info !in matchedReportedInfos) {
-                    info.attributes.remove(currentFlag)
-                }
-            }
-        }
-
-        val allExistedInfos = globalMetadataInfoHandler.getExistingMetaInfosForFile(file)
-        if (allExistedInfos.size == matchedExistedInfos.size) return
-
-        val newInfos = allExistedInfos.mapNotNull {
-            if (it in matchedExistedInfos) return@mapNotNull null
-            if (currentFlag in it.attributes) return@mapNotNull null
-            it.copy().apply {
-                if (otherFlag !in attributes) {
-                    attributes += otherFlag
-                }
-            }
-        }
-        globalMetadataInfoHandler.addMetadataInfosForFile(file, newInfos)
-    }
-}
-
-private fun TestServices.withNewInferenceModeEnabled(): Boolean {
-    return DiagnosticsDirectives.WITH_NEW_INFERENCE in moduleStructure.allDirectives
 }
