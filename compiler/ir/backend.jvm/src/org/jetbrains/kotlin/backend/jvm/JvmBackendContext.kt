@@ -154,6 +154,25 @@ class JvmBackendContext(
             +irThrow(irNull())
         }
 
+    override fun handleDeepCopy(
+        classSymbolMap: MutableMap<IrClassSymbol, IrClassSymbol>,
+        functionSymbolMap: MutableMap<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>
+    ) {
+        val oldClassesWithNameOverride = classNameOverride.keys.toList()
+        for (klass in oldClassesWithNameOverride) {
+            classSymbolMap[klass.symbol]?.let { newSymbol ->
+                classNameOverride[newSymbol.owner] = classNameOverride[klass]!!
+            }
+        }
+        for (multifileFacade in multifileFacadesToAdd) {
+            val oldPartClasses = multifileFacade.value
+            val newPartClasses = oldPartClasses.map { classSymbolMap[it.symbol]?.owner ?: it }
+            multifileFacade.setValue(newPartClasses.toMutableList())
+        }
+
+        super.handleDeepCopy(classSymbolMap, functionSymbolMap)
+    }
+
     inner class JvmIr(
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable

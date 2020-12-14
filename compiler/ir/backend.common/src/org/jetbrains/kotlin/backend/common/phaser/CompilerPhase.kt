@@ -13,7 +13,9 @@ class PhaserState<Data>(
     var depth: Int = 0,
     var phaseCount: Int = 0,
     val stickyPostconditions: MutableSet<Checker<Data>> = mutableSetOf()
-)
+) {
+    fun copyOf() = PhaserState(alreadyDone.toMutableSet(), depth, phaseCount, stickyPostconditions)
+}
 
 // Copy state, forgetting the sticky postconditions (which will not be applicable to the new type)
 fun <Input, Output> PhaserState<Input>.changeType() = PhaserState<Output>(alreadyDone, depth, phaseCount, mutableSetOf())
